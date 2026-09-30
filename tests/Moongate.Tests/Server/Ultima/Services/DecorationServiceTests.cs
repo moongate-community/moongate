@@ -118,6 +118,27 @@ public sealed class DecorationServiceTests
     }
 
     [Fact]
+    public async Task DecorateAsync_ALightDousedSinceTheLastRun_CountsAsThere()
+    {
+        var service = Service(File("trammel", Block("Candelabra", 0x0B1D)));
+        await service.DecorateAsync(_progress);
+        Assert.Single(_items.Items).ItemId = 0x0A27;
+
+        var second = await service.DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(0, 1, 0, 1), second);
+        Assert.Single(_items.Items);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_AHeatingStand_GivesTheSmallCircleWhenLit()
+    {
+        await Service(File("trammel", Block("HeatingStand", 0x184A))).DecorateAsync(_progress);
+
+        Assert.Equal("circle150", Assert.Single(_items.Items).Props!["light"]);
+    }
+
+    [Fact]
     public async Task DecorateAsync_SkipsTheKindsThatNeedTheirOwnLogic_CountingThemByType()
     {
         var file = File(

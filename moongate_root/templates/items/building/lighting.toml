@@ -235,7 +235,6 @@ base_id = "0x0a15_lantern"
 item_id = 2583
 name = "lantern"
 rarity = "common"
-script_id = "light"
 
 [[item]]
 id = "0x0a18_lantern"
@@ -745,6 +744,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x1437_candle"
@@ -754,6 +754,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0f64_torch"
@@ -766,3 +767,4 @@ layer = "two_handed"
 buy_price = 7
 sell_price = 3
 decays = true
+script_id = "light"

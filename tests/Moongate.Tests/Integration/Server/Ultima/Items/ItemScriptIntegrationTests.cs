@@ -318,6 +318,17 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_speech.PlacedSounds);
     }
 
+    [Fact]
+    public async Task TheShippedLightScript_AHeatingStand_LightsWithTheSmallCircle()
+    {
+        var stand = PlaceLight(0x1849, null);
+        var scripts = await StartLightScriptAsync();
+
+        scripts.Run(stand, "on_use", 2L);
+
+        Assert.Equal((0x184A, (object?)"circle150"), (stand.ItemId, stand.Props!["light"]));
+    }
+
     private ItemEntity PlaceLight(int graphic, bool? isProtected)
     {
         var light = new ItemEntity { Id = new Serial(0x40000020), TemplateId = "decoration_light", ItemId = graphic, Amount = 1 };

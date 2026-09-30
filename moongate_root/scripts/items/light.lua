@@ -45,7 +45,7 @@ add(0x142F, 0x142C, "circle150") -- short candle
 add(0x1853, 0x1854, "circle150") -- skull with candle
 add(0x1857, 0x1858, "circle150") -- skull with candle
 add(0x0A1D, 0x0A1A, "circle300") -- hanging lantern
-add(0x1849, 0x184A, "empty") -- heating stand
+add(0x1849, 0x184A, "circle150") -- heating stand
 add(0x0B21, 0x0B20, "circle300") -- lamp post
 add(0x0B23, 0x0B22, "circle300") -- lamp post
 add(0x0B25, 0x0B24, "circle300") -- lamp post
@@ -84,16 +84,16 @@ function light.on_use(serial, user)
     local graphic = item.item_id(serial)
     local unlit = LIGHTS[graphic]
 
+    -- set_item_id refuses a worn or held light: then nothing changes and nothing sounds.
     if unlit then
-        item.set_item_id(serial, unlit[1])
+        if item.set_item_id(serial, unlit[1]) then
+            if not item.get_prop(serial, "light") then
+                item.set_light(serial, unlit[2])
+            end
 
-        if not item.get_prop(serial, "light") then
-            item.set_light(serial, unlit[2])
+            item.play_sound(serial, LIGHT_SOUND)
         end
-
-        item.play_sound(serial, LIGHT_SOUND)
-    elseif DOUSED[graphic] then
-        item.set_item_id(serial, DOUSED[graphic])
+    elseif DOUSED[graphic] and item.set_item_id(serial, DOUSED[graphic]) then
         item.play_sound(serial, DOUSE_SOUND)
     end
 

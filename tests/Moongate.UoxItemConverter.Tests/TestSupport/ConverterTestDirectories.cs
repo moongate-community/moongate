@@ -12,6 +12,7 @@ internal sealed class ConverterTestDirectories : IDisposable
     public string MobileDestinationDirectory { get; }
     public string NamesDestinationPath { get; }
     public string StartingItemsDestinationPath { get; }
+    public string ScriptsSourceDirectory { get; }
 
     public ConverterTestDirectories()
     {
@@ -23,6 +24,7 @@ internal sealed class ConverterTestDirectories : IDisposable
         MobileDestinationDirectory = Path.Combine(root, "mobile-destination");
         NamesDestinationPath = Path.Combine(root, "names", "names.toml");
         StartingItemsDestinationPath = Path.Combine(root, "starting", "starting_items.toml");
+        ScriptsSourceDirectory = Path.Combine(root, "js");
         Directory.CreateDirectory(SourceDirectory);
     }
 
@@ -45,6 +47,18 @@ internal sealed class ConverterTestDirectories : IDisposable
     public string WriteMobileSource(string relativePath, string content)
     {
         var path = Path.GetFullPath(Path.Combine(MobileSourceDirectory, relativePath));
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllText(path, content);
+
+        return path;
+    }
+
+    /// <summary>
+    ///     Writes one file under <see cref="ScriptsSourceDirectory" />, such as jse_objectassociations.scp.
+    /// </summary>
+    public string WriteScriptsSource(string relativePath, string content)
+    {
+        var path = Path.Combine(ScriptsSourceDirectory, relativePath);
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         File.WriteAllText(path, content);
 

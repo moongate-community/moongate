@@ -35,7 +35,7 @@ public sealed class DecorationService : IDecorationService
         ["Brazier"] = LightType.Circle225, ["BrazierTall"] = LightType.Circle300, ["Candelabra"] = LightType.Circle225,
         ["CandelabraStand"] = LightType.Circle225, ["Candle"] = LightType.Circle150, ["CandleLarge"] = LightType.Circle150,
         ["CandleLong"] = LightType.Circle150, ["CandleShort"] = LightType.Circle150, ["CandleSkull"] = LightType.Circle150,
-        ["HangingLantern"] = LightType.Circle300, ["HeatingStand"] = LightType.Empty, ["LampPost1"] = LightType.Circle300,
+        ["HangingLantern"] = LightType.Circle300, ["HeatingStand"] = LightType.Circle150, ["LampPost1"] = LightType.Circle300,
         ["LampPost2"] = LightType.Circle300, ["LampPost3"] = LightType.Circle300, ["Lantern"] = LightType.Circle300,
         ["PaperLantern"] = LightType.Circle150, ["RedHangingLantern"] = LightType.Circle300,
         ["RoundPaperLantern"] = LightType.Circle150, ["ShojiLantern"] = LightType.Circle150, ["Torch"] = LightType.Circle300,
@@ -169,7 +169,7 @@ public sealed class DecorationService : IDecorationService
                     {
                         Count(skipped, OutsideTheMap, 1);
                     }
-                    else if (!seen.Add((map, location, block.ItemId!.Value)) || IsThere(map, location, block.ItemId.Value))
+                    else if (!seen.Add((map, location, block.ItemId!.Value)) || IsThere(map, location, block))
                     {
                         present++;
                     }
@@ -234,11 +234,17 @@ public sealed class DecorationService : IDecorationService
 
     // The same graphic on the spot, or a door opened from it: one graphic further and up to a tile aside, its closed
     // spot kept by door.lua.
-    private bool IsThere(MapType map, Point3D location, int graphic)
+    // A light lit or doused since is still the same kind on the same spot.
+    private bool IsThere(MapType map, Point3D location, DecorationBlock block)
     {
+        var graphic = block.ItemId!.Value;
+        var isLight = LightKinds.ContainsKey(block.Type);
+
         return _sectors.GetItemsInRange(map, location, 1)
                        .Any(item => item.ItemId == graphic && item.GroundLocation == location ||
-                                    item.ItemId == graphic + 1 && IsOpenFrom(item, location));
+                                    item.ItemId == graphic + 1 && IsOpenFrom(item, location) ||
+                                    isLight && item.GroundLocation == location && item.TemplateId == LightTemplate &&
+                                    Equals(item.Props?.GetValueOrDefault(TypeProp), block.Type));
     }
 
     private static bool IsOpenFrom(ItemEntity item, Point3D location)

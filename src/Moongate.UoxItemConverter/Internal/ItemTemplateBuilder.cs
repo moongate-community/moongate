@@ -64,7 +64,11 @@ internal static class ItemTemplateBuilder
         return targets.Length == 1;
     }
 
-    public static ItemTemplate? Build(DfnBlock block, IReadOnlyDictionary<string, string> idByHeader)
+    public static ItemTemplate? Build(
+        DfnBlock block,
+        IReadOnlyDictionary<string, string> idByHeader,
+        UoxScriptAssociations? scripts = null
+    )
     {
         // The Id is the one precomputed up front. A block with no id= of its own keeps item_id 0, which the server's
         // loader fills from its base_id.
@@ -83,6 +87,11 @@ internal static class ItemTemplateBuilder
         };
 
         ApplyBaseFields(block, template);
+
+        if (scripts?.ScriptIdFor(block, (int)itemId.Value) is { } scriptId)
+        {
+            template.ScriptId = scriptId;
+        }
 
         // UOX3's visible= is 0 for everyone; 1 (hidden), 2 (magically invisible) and 3 (GM hidden) all keep the
         // item from players, the closest being visible to staff only.
