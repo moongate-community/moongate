@@ -128,8 +128,11 @@ A double click on a mobile opens its paperdoll (`0x88`) when its body is human i
 `data/bodies.toml` (a monster has none) and it is on the character's map within
 `ultima.world.view_range` along X and Y; the character's own paperdoll button sends its serial
 with the high bit `0x80000000` set and opens without the range check (the body must still be
-human). A body missing from `bodies.toml` has no paperdoll. The title is the name, followed by
-`, <title>` when the mobile has one (NPC templates give titles such as "the mage"). The flags
+human). A body missing from `bodies.toml` has no paperdoll. The title is built as ModernUO's: the fame
+and karma prefix of [`titles.toml`](data-files/titles.md), `Lord` or `Lady` from 10,000 fame,
+the name, then `, <title>` when the mobile has one (NPC templates give titles such as "the
+mage"), as "The Glorious Lord Aria, the mage"; players and human NPCs alike. Skill titles are not
+added yet. The flags
 say war mode (always off for now) and whether the viewer may take items off, set only on the
 character's own paperdoll. The worn items are already known to the client from `0x78`. Other
 double clicks are not handled yet.

@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces.Titles;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Ultima.Types;
@@ -32,6 +33,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     private const uint PaperdollRequestFlag = 0x80000000;
     private const int TooFarCliloc = 500446;
     private const string UseFunction = "on_use";
+    private const int NobleFame = 10000;
 
     private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     private readonly IItemService _items;
@@ -42,6 +44,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     private readonly IContainerLayoutService _layouts;
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
+    private readonly IFameKarmaTitleService _titles;
     private readonly IItemScriptService? _scripts;
 
     public UseRequestPacketHandler(
@@ -53,10 +56,12 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         IContainerLayoutService layouts,
         IPacketSendService sender,
         ITooltipService tooltips,
+        IFameKarmaTitleService titles,
         IItemScriptService? scripts = null
     )
     {
         _tooltips = tooltips;
+        _titles = titles;
         _scripts = scripts;
         _items = items;
         _mobiles = mobiles;
@@ -143,6 +148,29 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
                (result.Kind == ScriptResultKind.Completed && result.Values is [true, ..]);
     }
 
+    // As ModernUO's Titles.ComputeTitle: the fame and karma prefix, Lord or Lady from 10000 fame, the name, then the
+    // mobile's own title, such as "The Glorious Lord Aria, the Guard".
+    private string PaperdollTitle(MobileEntity mobile)
+    {
+        var parts = new List<string>(3);
+        var prefix = _titles.GetTitle(mobile);
+
+        if (!string.IsNullOrEmpty(prefix))
+        {
+            parts.Add(prefix);
+        }
+
+        if (mobile.Fame >= NobleFame)
+        {
+            parts.Add(mobile.Gender == GenderType.Female ? "Lady" : "Lord");
+        }
+
+        parts.Add(mobile.Name);
+        var name = string.Join(' ', parts);
+
+        return string.IsNullOrEmpty(mobile.Title) ? name : $"{name}, {mobile.Title}";
+    }
+
     private void OpenOwnPaperdoll(GameSession session)
     {
         if (session.CharacterId.IsValid && _mobiles.TryGet(session.CharacterId, out var character))
@@ -176,7 +204,6 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
             return;
         }
 
-        var title = string.IsNullOrEmpty(mobile.Title) ? mobile.Name : $"{mobile.Name}, {mobile.Title}";
-        _sender.TrySend(session.SessionId, new DisplayPaperdollPacket(mobile.Id, title, false, own));
+        _sender.TrySend(session.SessionId, new DisplayPaperdollPacket(mobile.Id, PaperdollTitle(mobile), false, own));
     }
 }
