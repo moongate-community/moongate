@@ -67,6 +67,9 @@ max_distance = 25 # Farthest cells along X or Y a point can see.
 
 [ultima.world]
 view_range = 18 # How far players see mobiles and items, in cells along X or Y.
+seconds_per_uo_minute = 5 # Real seconds a game minute lasts: 5 makes a game day last 2 real hours.
+day_light = 0 # Light level of the day, from 0 (brightest) to 31.
+night_light = 12 # Light level of the night, from 0 (brightest) to 31.
 
 [ultima.items]
 backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.

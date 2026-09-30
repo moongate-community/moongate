@@ -196,6 +196,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
             container.Register<IDecorationsLoader, DecorationsLoader>(Reuse.Singleton);
             container.Register<IDecorationService, DecorationService>(Reuse.Singleton);
+            container.Register<IClockService, ClockService>(Reuse.Singleton);
             container.Register<ILootService, LootService>(Reuse.Singleton);
             container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
             container.Register<INpcTickService, NpcTickService>(Reuse.Singleton);

@@ -1,0 +1,16 @@
+using Moongate.Server.Ultima.Data.World;
+using Moongate.Ultima.Types;
+
+namespace Moongate.Server.Ultima.Interfaces;
+
+/// <summary>
+///     The time of day in the game, as ModernUO: it keeps no state, each map runs 320 game minutes after the previous one
+///     and the time moves one minute later every 16 tiles east.
+/// </summary>
+public interface IClockService
+{
+    /// <summary>
+    ///     Gets the time of day on <paramref name="map" /> at the column <paramref name="x" />.
+    /// </summary>
+    GameTime GetTime(MapType map, int x);
+}
