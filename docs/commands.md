@@ -26,6 +26,7 @@ Use `..text` to say `.text` literally.
 | `fame`, `karma` | No | Game/Standalone | GameMaster | Set the fame or karma of the character or NPC you target |
 | `decorate` | Game/Standalone | Yes | Administrator | Place the world decoration: doors, signs, lights and furniture |
 | `globallight` | Game/Standalone | Yes | GameMaster | Give every player the same light, or go back to the time of day |
+| `weather` | No | Game/Standalone | GameMaster | Show the weather where you stand, or force it until the next game hour |
 
 ## Help
 
@@ -232,3 +233,16 @@ every player in the world gets that light at once: `The global light is now 26.`
 level, the light follows the time of day again (see
 [the light cycle](server-configuration.md)). The override is not saved: a restart goes back to
 the time of day.
+
+## Weather
+
+```text
+.weather
+.weather storm
+```
+
+In game only. Without a kind it prints the weather where you stand:
+`Weather here (temperate): rain, density 40, temperature 12.` With `none`, `rain`, `snow` or
+`storm` it forces that weather on the profile of the place (every region using the profile
+gets it) until the next game hour rolls it again. See the
+[weather profiles](data-files/weather.md).

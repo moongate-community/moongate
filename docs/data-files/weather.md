@@ -32,7 +32,23 @@ storm_temperature_drop = 10
 
 The shipped profiles are `none`, `desert`, `tropical`, `temperate`, `highland`,
 `stormy`, `mild`, `snowy`, `cool` and `rainy`. `none` never changes the weather.
-The fields describe how weather is meant to work; no weather system reads them yet.
+`none` also covers regions without a `weather` field, such as the dungeons.
+
+## How the server uses them
+
+Each profile has one weather at a time, shared by every region and map that uses it. Every game
+hour (60 game minutes: 5 real minutes with the default `ultima.world.seconds_per_uo_minute` of 5)
+the server rolls it again: a storm, else snow when the day is colder than `snow_threshold`,
+else rain, else dry; what falls has a density from 10 to 70 particles. Every 24 game hours it
+rolls the day's temperature: a hot day, a cold day or a normal one, lowered by rain or a
+storm. The weather is not saved: a restart rolls it again.
+
+A player sees the weather of its region's profile, or of its map's profile outside every
+region. Inside a building (a static more than 10 above its head) it stays dry. The server
+sends packet `0x65` when the player's weather changes: at login, on a region change, and on a
+check every 5 seconds that catches walking in and out of buildings. During a storm the player
+outside hears thunder now and then. Game masters read or force it with
+[`.weather`](../commands.md#weather).
 
 ## Validation at startup
 

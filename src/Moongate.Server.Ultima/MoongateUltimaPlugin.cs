@@ -301,6 +301,13 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 AccountType.GameMaster,
                 CommandMessages.GlobalLightDescription
             );
+            container.RegisterCommand<WeatherCommand>(
+                "weather",
+                "Shows the weather where you stand or, with none, rain, snow or storm, forces it there until the next game hour.",
+                CommandSourceType.InGame,
+                AccountType.GameMaster,
+                CommandMessages.WeatherDescription
+            );
             container.RegisterCommand<WhereCommand>(
                 "where",
                 "Shows what you target: its serial, or the map and location of a spot.",
