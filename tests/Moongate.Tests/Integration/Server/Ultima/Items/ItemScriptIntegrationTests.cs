@@ -19,6 +19,7 @@ using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -73,6 +74,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
+        _container.RegisterInstance(TestLocalization.With((398, "C'è una serratura.")));
+        _container.AddScriptModule<LocalizationModule>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
                 {
@@ -197,6 +200,38 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.False(door.Props!.ContainsKey("door.open"));
         Assert.Empty(_speech.PlacedSounds);
         Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public async Task TheShippedDoorScript_ALockedDoor_StaysClosedForAPlayer_AndSaysSo()
+    {
+        var (left, right) = PlaceDoubleDoor();
+        left.Props!["locked"] = true;
+        var scripts = await StartDoorScriptAsync();
+
+        var result = scripts.Run(left, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        Assert.Equal((0x0675, 0x0677), (left.ItemId, right.ItemId));
+        var label = Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>());
+        Assert.Equal((SpeechType.Label, "C'è una serratura."), (label.Type, label.Text));
+        Assert.Empty(_speech.PlacedSounds);
+    }
+
+    [Fact]
+    public async Task TheShippedDoorScript_ALockedDoor_OpensForStaff()
+    {
+        var (left, right) = PlaceDoubleDoor();
+        left.Props!["locked"] = true;
+        var scripts = await StartDoorScriptAsync();
+        _fixture.Sessions.TryGetByCharacterId(new Serial(2), out var session);
+        await _fixture.Network.ExecuteOnLoopAsync(() => session!.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        scripts.Run(left, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((0x0676, 0x0678), (left.ItemId, right.ItemId));
     }
 
     [Fact]

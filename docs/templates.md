@@ -440,6 +440,7 @@ or `Gate`; and `decoration_light`, with `script_id = "light"`, for ModernUO's li
 block's graphic, `hue` and `name`; its other settings stay in the item's props, with
 `decoration_type` = the kind for a door or a light. A light also gets its `light` shape (the
 block's or the kind's) and `protected` unless the block says `unprotected`; the graphic already
-says whether it is lit. Teleporters, spawners, mark
+says whether it is lit. A door block with `locked = true` in its props places doors that only
+staff open. Teleporters, spawners, mark
 containers, public moongates and addons are not placed yet.
 

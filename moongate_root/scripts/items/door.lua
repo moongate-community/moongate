@@ -8,12 +8,14 @@
 --   its linked door opens with it. Double clicking an open door closes both,
 --   when nobody stands in either doorway. An open door closes by itself after
 --   20 seconds, then retries every 10 seconds while the doorway is taken.
---   Locks and keys come later.
+--   A locked closed door does not open for players ("That is locked."); game
+--   masters and administrators open it, as in ModernUO. Keys come later.
 --
 -- Props it reads (set by .decorate):
 --   facing           the DoorFacingType, such as west_cw; none opens in place
 --   decoration_type  the kind, such as MetalDoor, which picks the sounds
 --   door.link        the serial of the door that opens with this one
+--   locked           true keeps the closed door shut for players
 --
 -- Props it keeps:
 --   door.open        true while the door is open
@@ -193,8 +195,17 @@ local function schedule_auto_close(serial, seconds)
     end)
 end
 
+-- UOX3's "That is locked.", in the server's language.
+local LOCKED_MESSAGE = 398
+
 -- Called when a player double clicks the door.
 function door.on_use(serial, user)
+    if not is_open(serial) and item.get_prop(serial, "locked") and not world.is_staff(user) then
+        item.message(serial, user, localization.text(LOCKED_MESSAGE) or "That is locked.")
+
+        return true
+    end
+
     if is_open(serial) then
         close(serial)
 

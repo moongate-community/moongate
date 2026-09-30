@@ -56,7 +56,7 @@ public sealed class RepositoryDecorationFilesTests
                       .Select(block => (string)((TomlTable)block["props"])["facing"])
                       .ToList();
 
-        Assert.Equal(354, facings.Count);
+        Assert.Equal(355, facings.Count);
         Assert.All(facings, facing => Assert.True(EnumNameUtils.TryParse<DoorFacingType>(facing, out _), facing));
         Assert.True(EnumNameUtils.TryParse<DoorFacingType>("west_cw", out var westCw) && westCw == DoorFacingType.WestCW);
     }

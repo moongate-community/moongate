@@ -32,11 +32,18 @@ type = "MetalDoor"
 item_id = 0x0675
 props = { facing = "west_cw" }
 locations = [
-    [3481, 2579, 20],
-    [3481, 2568, 20],
     [3485, 2503, 51],
     [3484, 2496, 71],
     [3555, 2466, 15],
+]
+
+[[decoration]]
+type = "MetalDoor"
+item_id = 0x0675
+props = { facing = "west_cw", locked = true } # the side doors of the bank
+locations = [
+    [3481, 2579, 20],
+    [3481, 2568, 20],
 ]
 
 [[decoration]]

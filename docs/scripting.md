@@ -296,7 +296,11 @@ when nobody stands in either doorway. An open door closes by itself after 20 sec
 tries again every 10 seconds while the doorway is taken. A door that cannot swing aside, such
 as one at the edge of the map, stays closed. The open state is the prop `door.open`, with the
 closed spot in `door.x`, `door.y` and `door.z`, saved with the door; the auto-close timer is not, so a door left open when the
-server stops stays open until someone uses it. Locks and keys come later.
+server stops stays open until someone uses it. A closed door with the prop `locked` does not
+open for players, who read "That is locked." (message 398, in the server language); game
+masters and administrators open it. The prop comes from the decoration data
+(`props = { facing = "west_cw", locked = true }`), such as the side doors of the New Haven
+bank. Keys come later.
 
 `scripts/items/light.lua` lights and douses candles, candelabras, lanterns, lamp posts, wall
 sconces and torches: the `decoration_light` template and the light templates of
