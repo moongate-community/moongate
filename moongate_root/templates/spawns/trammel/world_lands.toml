@@ -1,0 +1,4326 @@
+[[spawn]]
+id = "trammel_15600"
+map = "trammel"
+name = "Yew Peninsula NE - 1 Medium"
+mobile_ids = []
+npc_list_ids = ["location_1_medium"]
+max = 35
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 885
+y1 = 257
+x2 = 1048
+y2 = 520
+
+[[spawn]]
+id = "trammel_15601"
+map = "trammel"
+name = "Yew Peninsula NW - 2 Heavy"
+mobile_ids = []
+npc_list_ids = ["location_2_heavy"]
+max = 15
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 771
+y1 = 287
+x2 = 893
+y2 = 533
+
+[[spawn]]
+id = "trammel_15602"
+map = "trammel"
+name = "Yew Peninsula NW - 2 Heavy"
+mobile_ids = []
+npc_list_ids = ["location_2_medium"]
+max = 10
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 771
+y1 = 287
+x2 = 893
+y2 = 533
+
+[[spawn]]
+id = "trammel_15603"
+map = "trammel"
+name = "Yew Peninsula NW - 2 Light"
+mobile_ids = []
+npc_list_ids = ["location_2_light"]
+max = 5
+min_minutes = 45
+max_minutes = 60
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 771
+y1 = 287
+x2 = 893
+y2 = 533
+
+[[spawn]]
+id = "trammel_15604"
+map = "trammel"
+name = "Yew Catacombs NW - Undeads"
+mobile_ids = []
+npc_list_ids = ["location_3_light"]
+max = 10
+min_minutes = 6
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 944
+y1 = 697
+x2 = 967
+y2 = 719
+
+[[spawn]]
+id = "trammel_15605"
+map = "trammel"
+name = "Yew Catacombs NE - Undeads"
+mobile_ids = []
+npc_list_ids = ["location_3_light"]
+max = 5
+min_minutes = 6
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1012
+y1 = 693
+x2 = 1018
+y2 = 710
+
+[[spawn]]
+id = "trammel_15606"
+map = "trammel"
+name = "Yew Catacombs Center - Undeads"
+mobile_ids = []
+npc_list_ids = ["location_3_light"]
+max = 2
+min_minutes = 6
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 960
+y1 = 752
+x2 = 974
+y2 = 762
+
+[[spawn]]
+id = "trammel_15607"
+map = "trammel"
+name = "Yew Catacombs South - Undeads"
+mobile_ids = []
+npc_list_ids = ["location_3_light"]
+max = 3
+min_minutes = 6
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1006
+y1 = 818
+x2 = 1020
+y2 = 824
+
+[[spawn]]
+id = "trammel_15608"
+map = "trammel"
+name = "Yew Justice - 4 Medium"
+mobile_ids = []
+npc_list_ids = ["location_4_medium"]
+max = 35
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1099
+y1 = 116
+x2 = 1565
+y2 = 322
+
+[[spawn]]
+id = "trammel_15609"
+map = "trammel"
+name = "Yew Justice - 4 Medium"
+mobile_ids = []
+npc_list_ids = ["location_4_medium"]
+max = 30
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1171
+y1 = 310
+x2 = 1435
+y2 = 603
+
+[[spawn]]
+id = "trammel_15610"
+map = "trammel"
+name = "Yew Justice - 4 Medium"
+mobile_ids = []
+npc_list_ids = ["location_4_medium"]
+max = 20
+min_minutes = 20
+max_minutes = 30
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 1176
+y1 = 590
+x2 = 1345
+y2 = 800
+[[spawn.exclude]]
+x1 = 1295
+y1 = 628
+x2 = 1306
+y2 = 638
+
+[[spawn]]
+id = "trammel_15611"
+map = "trammel"
+name = "Yew Justice - 4 Medium"
+mobile_ids = []
+npc_list_ids = ["location_4_medium"]
+max = 20
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1041
+y1 = 717
+x2 = 1185
+y2 = 872
+
+[[spawn]]
+id = "trammel_15612"
+map = "trammel"
+name = "Yew Forest East - 4 Medium"
+mobile_ids = []
+npc_list_ids = ["location_4_medium"]
+max = 80
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 768
+y1 = 848
+x2 = 1225
+y2 = 1284
+
+[[spawn]]
+id = "trammel_15613"
+map = "trammel"
+name = "Yew Forest South 1 - 4 Medium"
+mobile_ids = []
+npc_list_ids = ["location_4_medium"]
+max = 30
+min_minutes = 20
+max_minutes = 30
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 313
+y1 = 1286
+x2 = 690
+y2 = 1463
+[[spawn.exclude]]
+x1 = 313
+y1 = 1412
+x2 = 468
+y2 = 1463
+
+[[spawn]]
+id = "trammel_15614"
+map = "trammel"
+name = "Yew Farmlands Center"
+mobile_ids = []
+npc_list_ids = ["location_6_medium"]
+max = 30
+min_minutes = 20
+max_minutes = 30
+call = 5
+only_outside = true
+[[spawn.areas]]
+x1 = 231
+y1 = 865
+x2 = 778
+y2 = 1162
+[[spawn.exclude]]
+x1 = 712
+y1 = 1104
+x2 = 734
+y2 = 1134
+
+[[spawn.exclude]]
+x1 = 560
+y1 = 1088
+x2 = 582
+y2 = 1110
+
+[[spawn.exclude]]
+x1 = 664
+y1 = 928
+x2 = 686
+y2 = 950
+
+[[spawn.exclude]]
+x1 = 335
+y1 = 871
+x2 = 394
+y2 = 921
+
+[[spawn]]
+id = "trammel_15615"
+map = "trammel"
+name = "Yew Farmlands South"
+mobile_ids = []
+npc_list_ids = ["location_6_medium"]
+max = 10
+min_minutes = 20
+max_minutes = 30
+call = 5
+only_outside = true
+[[spawn.areas]]
+x1 = 310
+y1 = 1141
+x2 = 767
+y2 = 1283
+[[spawn.exclude]]
+x1 = 664
+y1 = 1168
+x2 = 686
+y2 = 1190
+
+[[spawn.exclude]]
+x1 = 547
+y1 = 1230
+x2 = 579
+y2 = 1251
+
+[[spawn.exclude]]
+x1 = 367
+y1 = 1176
+x2 = 398
+y2 = 1207
+
+[[spawn]]
+id = "trammel_15616"
+map = "trammel"
+name = "Yew Forest SW - 7 Medium"
+mobile_ids = []
+npc_list_ids = ["location_7_medium"]
+max = 30
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 85
+y1 = 1312
+x2 = 312
+y2 = 1513
+
+[[spawn]]
+id = "trammel_15617"
+map = "trammel"
+name = "Shame Forest Entrance - 9 Heavy"
+mobile_ids = []
+npc_list_ids = ["location_9_heavy"]
+max = 15
+min_minutes = 6
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 325
+y1 = 1556
+x2 = 685
+y2 = 1752
+
+[[spawn]]
+id = "trammel_15618"
+map = "trammel"
+name = "Shame Forest Entrance - 9 medium"
+mobile_ids = []
+npc_list_ids = ["location_9_medium"]
+max = 15
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 325
+y1 = 1556
+x2 = 685
+y2 = 1752
+
+[[spawn]]
+id = "trammel_15619"
+map = "trammel"
+name = "Yew Forest Ruins South"
+mobile_ids = []
+npc_list_ids = ["location_10_light"]
+max = 2
+min_minutes = 45
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 748
+y1 = 1395
+x2 = 766
+y2 = 1411
+
+[[spawn]]
+id = "trammel_15620"
+map = "trammel"
+name = "Rat Valley - 11 Heavy"
+mobile_ids = []
+npc_list_ids = ["location_11_heavy"]
+max = 35
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 914
+y1 = 1282
+x2 = 1102
+y2 = 1479
+
+[[spawn]]
+id = "trammel_15621"
+map = "trammel"
+name = "Rat Valley - 11 Medium"
+mobile_ids = []
+npc_list_ids = ["location_11_medium"]
+max = 20
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 914
+y1 = 1282
+x2 = 1102
+y2 = 1479
+
+[[spawn]]
+id = "trammel_15622"
+map = "trammel"
+name = "Skara Yew Brigand Forest"
+mobile_ids = []
+npc_list_ids = ["location_12_medium"]
+max = 30
+min_minutes = 20
+max_minutes = 30
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 789
+y1 = 1593
+x2 = 908
+y2 = 1751
+[[spawn.exclude]]
+x1 = 836
+y1 = 1672
+x2 = 870
+y2 = 1702
+
+[[spawn]]
+id = "trammel_15623"
+map = "trammel"
+name = "Skara Yew Brigand Forest"
+mobile_ids = []
+npc_list_ids = ["location_12_light"]
+max = 20
+min_minutes = 45
+max_minutes = 60
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 789
+y1 = 1593
+x2 = 908
+y2 = 1751
+[[spawn.exclude]]
+x1 = 836
+y1 = 1672
+x2 = 870
+y2 = 1702
+
+[[spawn]]
+id = "trammel_15624"
+map = "trammel"
+name = "Skara Yew Brigand Forest"
+mobile_ids = []
+npc_list_ids = ["location_12_medium"]
+max = 15
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 698
+y1 = 1690
+x2 = 790
+y2 = 1752
+
+[[spawn]]
+id = "trammel_15626"
+map = "trammel"
+name = "Skara Forest North - Animals"
+mobile_ids = []
+npc_list_ids = ["location_13_heavy"]
+max = 25
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 643
+y1 = 1752
+x2 = 942
+y2 = 2035
+
+[[spawn]]
+id = "trammel_15627"
+map = "trammel"
+name = "Skara Forest North - Low-level Monsters"
+mobile_ids = []
+npc_list_ids = ["location_13_medium"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 643
+y1 = 1752
+x2 = 942
+y2 = 2035
+
+[[spawn]]
+id = "trammel_15628"
+map = "trammel"
+name = "Skara Forest North - Monsters"
+mobile_ids = []
+npc_list_ids = ["location_13_light"]
+max = 15
+min_minutes = 50
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 643
+y1 = 1752
+x2 = 942
+y2 = 2035
+
+[[spawn]]
+id = "trammel_15629"
+map = "trammel"
+name = "Britain X-Roads - 14 medium"
+mobile_ids = []
+npc_list_ids = ["location_14_medium"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1009
+y1 = 1901
+x2 = 1108
+y2 = 2032
+
+[[spawn]]
+id = "trammel_15630"
+map = "trammel"
+name = "Britain X-Roads Pond - Animals Only"
+mobile_ids = []
+npc_list_ids = ["location_15_heavy"]
+max = 25
+min_minutes = 6
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 919
+y1 = 1901
+x2 = 1000
+y2 = 2069
+
+[[spawn]]
+id = "trammel_15631"
+map = "trammel"
+name = "Hedge Maze Forest North"
+mobile_ids = []
+npc_list_ids = ["location_16_light"]
+max = 60
+min_minutes = 50
+max_minutes = 60
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1030
+y1 = 2009
+x2 = 1256
+y2 = 2158
+
+[[spawn]]
+id = "trammel_15632"
+map = "trammel"
+name = "Hedge Maze Center"
+mobile_ids = []
+npc_list_ids = ["location_17_light"]
+max = 15
+min_minutes = 50
+max_minutes = 60
+call = 2
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1112
+y1 = 2199
+x2 = 1177
+y2 = 2262
+
+[[spawn]]
+id = "trammel_15633"
+map = "trammel"
+name = "Skara Forest North - Animals"
+mobile_ids = []
+npc_list_ids = ["location_13_heavy"]
+max = 10
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 436
+y1 = 2010
+x2 = 683
+y2 = 2109
+
+[[spawn]]
+id = "trammel_15637"
+map = "trammel"
+name = "location 20 light island beach"
+mobile_ids = []
+npc_list_ids = ["location_20_light_island"]
+max = 25
+min_minutes = 50
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2294
+y1 = 3364
+x2 = 2420
+y2 = 3544
+
+[[spawn]]
+id = "trammel_15638"
+map = "trammel"
+name = "location 20 heavy island beach"
+mobile_ids = []
+npc_list_ids = ["location_20_heavy"]
+max = 25
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2294
+y1 = 3364
+x2 = 2420
+y2 = 3544
+
+[[spawn]]
+id = "trammel_15639"
+map = "trammel"
+name = "location 20 heavy island white building"
+mobile_ids = []
+npc_list_ids = ["location_20_heavy_island"]
+max = 25
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2440
+y1 = 3536
+x2 = 2558
+y2 = 3664
+
+[[spawn]]
+id = "trammel_15640"
+map = "trammel"
+name = "location 20 light"
+mobile_ids = []
+npc_list_ids = ["location_20_light"]
+max = 25
+min_minutes = 50
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2386
+y1 = 3870
+x2 = 2546
+y2 = 4050
+
+[[spawn]]
+id = "trammel_15641"
+map = "trammel"
+name = "Amoeba Island - 20 light"
+mobile_ids = []
+npc_list_ids = ["location_20_light"]
+max = 20
+min_minutes = 50
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2104
+y1 = 3886
+x2 = 2206
+y2 = 4026
+
+[[spawn]]
+id = "trammel_15642"
+map = "trammel"
+name = "location 21 heavy"
+mobile_ids = []
+npc_list_ids = ["location_21_heavy"]
+max = 20
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2103
+y1 = 3044
+x2 = 2184
+y2 = 3116
+
+[[spawn]]
+id = "trammel_15643"
+map = "trammel"
+name = "location 22 medium"
+mobile_ids = []
+npc_list_ids = ["location_22_medium"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2021
+y1 = 2952
+x2 = 2141
+y2 = 3042
+
+[[spawn]]
+id = "trammel_15644"
+map = "trammel"
+name = "location 22 medium"
+mobile_ids = []
+npc_list_ids = ["location_22_medium"]
+max = 25
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1789
+y1 = 2981
+x2 = 2091
+y2 = 3074
+
+[[spawn]]
+id = "trammel_15645"
+map = "trammel"
+name = "location 22 medium"
+mobile_ids = []
+npc_list_ids = ["location_22_medium"]
+max = 30
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1790
+y1 = 2903
+x2 = 1966
+y2 = 3038
+
+[[spawn]]
+id = "trammel_15646"
+map = "trammel"
+name = "location 23 medium"
+mobile_ids = []
+npc_list_ids = ["location_23_medium"]
+max = 40
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1810
+y1 = 2234
+x2 = 2150
+y2 = 2467
+
+[[spawn]]
+id = "trammel_15647"
+map = "trammel"
+name = "Britain Rural Woods South"
+mobile_ids = []
+npc_list_ids = ["ruralwoods"]
+max = 40
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1256
+y1 = 1866
+x2 = 1601
+y2 = 2122
+
+[[spawn]]
+id = "trammel_15649"
+map = "trammel"
+name = "Britain GY Forest West - 26 heavy"
+mobile_ids = []
+npc_list_ids = ["location_26_heavy"]
+max = 30
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1166
+y1 = 1440
+x2 = 1330
+y2 = 1534
+
+[[spawn]]
+id = "trammel_15650"
+map = "trammel"
+name = "Britain GY Forest West - 26 medium"
+mobile_ids = []
+npc_list_ids = ["location_26_medium"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1166
+y1 = 1440
+x2 = 1330
+y2 = 1534
+
+[[spawn]]
+id = "trammel_15651"
+map = "trammel"
+name = "Britain GY Forest North - 26 heavy"
+mobile_ids = []
+npc_list_ids = ["location_26_heavy"]
+max = 30
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1166
+y1 = 1242
+x2 = 1485
+y2 = 1439
+
+[[spawn]]
+id = "trammel_15652"
+map = "trammel"
+name = "Britain GY Forest North - 26 medium"
+mobile_ids = []
+npc_list_ids = ["location_26_medium"]
+max = 35
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1166
+y1 = 1242
+x2 = 1485
+y2 = 1439
+
+[[spawn]]
+id = "trammel_15653"
+map = "trammel"
+name = "Britain GY Forest East - 26 heavy"
+mobile_ids = []
+npc_list_ids = ["location_26_heavy"]
+max = 5
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1395
+y1 = 1439
+x2 = 1450
+y2 = 1509
+
+[[spawn]]
+id = "trammel_15654"
+map = "trammel"
+name = "Britain GY Forest East - 26 medium"
+mobile_ids = []
+npc_list_ids = ["location_26_medium"]
+max = 5
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1395
+y1 = 1439
+x2 = 1450
+y2 = 1482
+
+[[spawn]]
+id = "trammel_15655"
+map = "trammel"
+name = "Despise Outside - Trolls"
+mobile_ids = []
+npc_list_ids = ["location_27_light"]
+max = 10
+min_minutes = 50
+max_minutes = 60
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1290
+y1 = 1045
+x2 = 1350
+y2 = 1100
+
+[[spawn]]
+id = "trammel_15656"
+map = "trammel"
+name = "Britain Forest NE - 28 heavy"
+mobile_ids = []
+npc_list_ids = ["location_28_heavy"]
+max = 20
+min_minutes = 6
+max_minutes = 10
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 1630
+y1 = 1221
+x2 = 1910
+y2 = 1571
+[[spawn.exclude]]
+x1 = 1630
+y1 = 1483
+x2 = 1752
+y2 = 1571
+
+[[spawn]]
+id = "trammel_15657"
+map = "trammel"
+name = "Britain Forest NE - 28 medium"
+mobile_ids = []
+npc_list_ids = ["location_28_medium"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 1630
+y1 = 1221
+x2 = 1910
+y2 = 1571
+[[spawn.exclude]]
+x1 = 1630
+y1 = 1483
+x2 = 1752
+y2 = 1571
+
+[[spawn]]
+id = "trammel_15658"
+map = "trammel"
+name = "Britain Forest NE - 28 light"
+mobile_ids = []
+npc_list_ids = ["location_28_light"]
+max = 20
+min_minutes = 50
+max_minutes = 60
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 1630
+y1 = 1221
+x2 = 1910
+y2 = 1571
+[[spawn.exclude]]
+x1 = 1630
+y1 = 1483
+x2 = 1752
+y2 = 1571
+
+[[spawn]]
+id = "trammel_15659"
+map = "trammel"
+name = "Britain Peninsula East - 29 heavy"
+mobile_ids = []
+npc_list_ids = ["location_29_heavy"]
+max = 20
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1913
+y1 = 1341
+x2 = 2075
+y2 = 1570
+
+[[spawn]]
+id = "trammel_15660"
+map = "trammel"
+name = "Britain Swamp NE - 30 heavy"
+mobile_ids = []
+npc_list_ids = ["location_30_heavy"]
+max = 25
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1945
+y1 = 928
+x2 = 2104
+y2 = 1123
+
+[[spawn]]
+id = "trammel_15661"
+map = "trammel"
+name = "Britain Mountains NE"
+mobile_ids = []
+npc_list_ids = ["mountainlist"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1817
+y1 = 988
+x2 = 1915
+y2 = 1214
+
+[[spawn]]
+id = "trammel_15662"
+map = "trammel"
+name = "location 31 medium"
+mobile_ids = []
+npc_list_ids = ["location_31_medium"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1835
+y1 = 809
+x2 = 2029
+y2 = 888
+
+[[spawn]]
+id = "trammel_15663"
+map = "trammel"
+name = "location 31 medium"
+mobile_ids = []
+npc_list_ids = ["location_31_medium"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1809
+y1 = 828
+x2 = 1931
+y2 = 983
+
+[[spawn]]
+id = "trammel_15664"
+map = "trammel"
+name = "location 31 medium"
+mobile_ids = []
+npc_list_ids = ["location_31_medium"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1931
+y1 = 809
+x2 = 2004
+y2 = 912
+
+[[spawn]]
+id = "trammel_15665"
+map = "trammel"
+name = "location 31 light"
+mobile_ids = []
+npc_list_ids = ["location_31_light"]
+max = 20
+min_minutes = 50
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1835
+y1 = 809
+x2 = 2029
+y2 = 888
+
+[[spawn]]
+id = "trammel_15666"
+map = "trammel"
+name = "location 31 light"
+mobile_ids = []
+npc_list_ids = ["location_31_light"]
+max = 10
+min_minutes = 50
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1809
+y1 = 828
+x2 = 1931
+y2 = 983
+
+[[spawn]]
+id = "trammel_15667"
+map = "trammel"
+name = "location 31 light"
+mobile_ids = []
+npc_list_ids = ["location_31_light"]
+max = 10
+min_minutes = 50
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1931
+y1 = 809
+x2 = 2004
+y2 = 912
+
+[[spawn]]
+id = "trammel_15668"
+map = "trammel"
+name = "Wrong Forest SW - 32 light"
+mobile_ids = []
+npc_list_ids = ["location_32_light"]
+max = 80
+min_minutes = 50
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1555
+y1 = 322
+x2 = 1896
+y2 = 797
+
+[[spawn]]
+id = "trammel_15669"
+map = "trammel"
+name = "Wrong Peninsula West - 33 medium"
+mobile_ids = []
+npc_list_ids = ["location_33_medium"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1602
+y1 = 174
+x2 = 1896
+y2 = 310
+
+[[spawn]]
+id = "trammel_15670"
+map = "trammel"
+name = "Wrong Forest NW - 34 medium"
+mobile_ids = []
+npc_list_ids = ["location_34_medium"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1890
+y1 = 132
+x2 = 2006
+y2 = 239
+
+[[spawn]]
+id = "trammel_15671"
+map = "trammel"
+name = "Wrong Coast NW - 35 medium"
+mobile_ids = []
+npc_list_ids = ["location_35_medium"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1895
+y1 = 31
+x2 = 2005
+y2 = 132
+
+[[spawn]]
+id = "trammel_15673"
+map = "trammel"
+name = "Minoc Coast NW - 37 heavy"
+mobile_ids = []
+npc_list_ids = ["location_37_heavy"]
+max = 30
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2305
+y1 = 43
+x2 = 2406
+y2 = 232
+
+[[spawn]]
+id = "trammel_15674"
+map = "trammel"
+name = "Minoc High Steppes - 38 heavy"
+mobile_ids = []
+npc_list_ids = ["location_38_heavy"]
+max = 40
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2407
+y1 = 36
+x2 = 2692
+y2 = 279
+
+[[spawn]]
+id = "trammel_15675"
+map = "trammel"
+name = "Minoc High Steppes - 38 medium"
+mobile_ids = []
+npc_list_ids = ["location_38_medium"]
+max = 40
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2407
+y1 = 36
+x2 = 2692
+y2 = 279
+
+[[spawn]]
+id = "trammel_15676"
+map = "trammel"
+name = "Shrine of Sacrifice Forests"
+mobile_ids = []
+npc_list_ids = ["location_39_medium"]
+max = 80
+min_minutes = 18
+max_minutes = 30
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 3302
+y1 = 101
+x2 = 3530
+y2 = 482
+[[spawn.exclude]]
+x1 = 3345
+y1 = 279
+x2 = 3366
+y2 = 301
+
+[[spawn]]
+id = "trammel_15677"
+map = "trammel"
+name = "Vesper Forest East"
+mobile_ids = []
+npc_list_ids = ["location_40_light"]
+max = 70
+min_minutes = 50
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3052
+y1 = 574
+x2 = 3478
+y2 = 809
+
+[[spawn]]
+id = "trammel_15678"
+map = "trammel"
+name = "Minoc Forest SW - 42 medium"
+mobile_ids = []
+npc_list_ids = ["location_42_medium"]
+max = 40
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2284
+y1 = 575
+x2 = 2460
+y2 = 826
+
+[[spawn]]
+id = "trammel_15679"
+map = "trammel"
+name = "location 43 medium"
+mobile_ids = []
+npc_list_ids = ["location_43_medium"]
+max = 65
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2308
+y1 = 940
+x2 = 2715
+y2 = 1078
+
+[[spawn]]
+id = "trammel_15680"
+map = "trammel"
+name = "Cove Forest East 1 - 43 medium"
+mobile_ids = []
+npc_list_ids = ["location_43_medium"]
+max = 30
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2314
+y1 = 1078
+x2 = 2420
+y2 = 1273
+
+[[spawn]]
+id = "trammel_15681"
+map = "trammel"
+name = "Cove Forest East 2 - 43 medium"
+mobile_ids = []
+npc_list_ids = ["location_43_medium"]
+max = 40
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2420
+y1 = 1120
+x2 = 2705
+y2 = 1269
+
+[[spawn]]
+id = "trammel_15682"
+map = "trammel"
+name = "Vesper Forest West - 43 medium"
+mobile_ids = []
+npc_list_ids = ["location_43_medium"]
+max = 30
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2459
+y1 = 1078
+x2 = 2731
+y2 = 1120
+
+[[spawn]]
+id = "trammel_15683"
+map = "trammel"
+name = "New Haven Forest 1"
+mobile_ids = []
+npc_list_ids = ["location_46_light"]
+max = 35
+min_minutes = 30
+max_minutes = 60
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 3340
+y1 = 2529
+x2 = 3501
+y2 = 2786
+[[spawn.exclude]]
+x1 = 3426
+y1 = 2529
+x2 = 3501
+y2 = 2659
+
+[[spawn.exclude]]
+x1 = 3405
+y1 = 2596
+x2 = 3426
+y2 = 2612
+
+[[spawn]]
+id = "trammel_15684"
+map = "trammel"
+name = "location 47 medium"
+mobile_ids = []
+npc_list_ids = ["location_47_medium"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2953
+y1 = 3538
+x2 = 3073
+y2 = 3644
+
+[[spawn]]
+id = "trammel_15685"
+map = "trammel"
+name = "location 48 light"
+mobile_ids = []
+npc_list_ids = ["location_48_light"]
+max = 5
+min_minutes = 50
+max_minutes = 60
+call = 2
+only_outside = false
+[[spawn.areas]]
+x1 = 4577
+y1 = 3549
+x2 = 4614
+y2 = 3623
+[[spawn.exclude]]
+x1 = 4586
+y1 = 3583
+x2 = 4603
+y2 = 3595
+
+[[spawn]]
+id = "trammel_15690"
+map = "trammel"
+name = "Dagger Isle 1"
+mobile_ids = []
+npc_list_ids = ["dagger_isle_extended"]
+max = 30
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3864
+y1 = 174
+x2 = 4056
+y2 = 294
+
+[[spawn]]
+id = "trammel_15691"
+map = "trammel"
+name = "location 47 medium"
+mobile_ids = []
+npc_list_ids = ["location_47_medium"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2754
+y1 = 3413
+x2 = 2859
+y2 = 3570
+
+[[spawn]]
+id = "trammel_15692"
+map = "trammel"
+name = "New Haven Forest 2"
+mobile_ids = []
+npc_list_ids = ["tamewoods"]
+max = 7
+min_minutes = 30
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 3401
+y1 = 2441
+x2 = 3483
+y2 = 2484
+
+[[spawn]]
+id = "trammel_15693"
+map = "trammel"
+name = "New Haven Forest 3"
+mobile_ids = []
+npc_list_ids = ["location_46_light"]
+max = 20
+min_minutes = 30
+max_minutes = 60
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 3450
+y1 = 2360
+x2 = 3742
+y2 = 2442
+[[spawn.exclude]]
+x1 = 3490
+y1 = 2409
+x2 = 3517
+y2 = 2442
+
+[[spawn]]
+id = "trammel_15694"
+map = "trammel"
+name = "New Haven Forest 4"
+mobile_ids = []
+npc_list_ids = ["tamewoods"]
+max = 10
+min_minutes = 30
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3713
+y1 = 2443
+x2 = 3789
+y2 = 2546
+
+[[spawn]]
+id = "trammel_15695"
+map = "trammel"
+name = "Buccs Den Jungle 1"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2583
+y1 = 1935
+x2 = 2805
+y2 = 2071
+
+[[spawn]]
+id = "trammel_15696"
+map = "trammel"
+name = "Buccs Den Jungle 2"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2922
+y1 = 2119
+x2 = 2988
+y2 = 2255
+
+[[spawn]]
+id = "trammel_15697"
+map = "trammel"
+name = "Buccs Den Jungle 3"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2594
+y1 = 2267
+x2 = 2768
+y2 = 2335
+
+[[spawn]]
+id = "trammel_15698"
+map = "trammel"
+name = "Buccs Den Jungle 4"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2763
+y1 = 2212
+x2 = 2879
+y2 = 2344
+
+[[spawn]]
+id = "trammel_15699"
+map = "trammel"
+name = "Buccs Den Jungle 5"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 7
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2763
+y1 = 2071
+x2 = 2849
+y2 = 2148
+
+[[spawn]]
+id = "trammel_15700"
+map = "trammel"
+name = "Buccs Den Jungle 6"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 8
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2576
+y1 = 2070
+x2 = 2622
+y2 = 2266
+
+[[spawn]]
+id = "trammel_15705"
+map = "trammel"
+name = "Yew North Forest 1"
+mobile_ids = []
+npc_list_ids = ["wilderness", "alloverworld"]
+max = 60
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 709
+y1 = 528
+x2 = 1038
+y2 = 860
+
+[[spawn]]
+id = "trammel_15706"
+map = "trammel"
+name = "Yew North Forest 2"
+mobile_ids = []
+npc_list_ids = ["wilderness", "alloverworld"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1033
+y1 = 501
+x2 = 1175
+y2 = 713
+
+[[spawn]]
+id = "trammel_15707"
+map = "trammel"
+name = "Yew Jails Island"
+mobile_ids = []
+npc_list_ids = ["generic_lowrisk_forest"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 193
+y1 = 701
+x2 = 388
+y2 = 860
+
+[[spawn]]
+id = "trammel_15708"
+map = "trammel"
+name = "Yew Farmlands North"
+mobile_ids = []
+npc_list_ids = ["location_6_medium"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 412
+y1 = 774
+x2 = 593
+y2 = 865
+
+[[spawn]]
+id = "trammel_15709"
+map = "trammel"
+name = "Yew Forest South 2 - 4 Medium"
+mobile_ids = []
+npc_list_ids = ["location_4_medium"]
+max = 20
+min_minutes = 20
+max_minutes = 30
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 506
+y1 = 1463
+x2 = 705
+y2 = 1554
+[[spawn.exclude]]
+x1 = 620
+y1 = 1473
+x2 = 651
+y2 = 1499
+
+[[spawn]]
+id = "trammel_15720"
+map = "trammel"
+name = "Yew Catacombs NW 2nd Floor - Undeads"
+mobile_ids = []
+npc_list_ids = ["location_3_light"]
+max = 10
+min_minutes = 6
+max_minutes = 10
+call = 5
+exclude = []
+z = 20
+only_outside = false
+[[spawn.areas]]
+x1 = 948
+y1 = 700
+x2 = 965
+y2 = 717
+
+[[spawn]]
+id = "trammel_15721"
+map = "trammel"
+name = "Yew Catacombs NW 2nd Floor - Undeads"
+mobile_ids = ["lichlord"]
+npc_list_ids = []
+max = 1
+min_minutes = 18
+max_minutes = 30
+call = 1
+exclude = []
+z = 20
+only_outside = false
+[[spawn.areas]]
+x1 = 960
+y1 = 688
+x2 = 965
+y2 = 694
+
+[[spawn]]
+id = "trammel_15722"
+map = "trammel"
+name = "Yew Catacombs NW Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 2
+min_minutes = 8
+max_minutes = 16
+call = 1
+exclude = []
+z = -20
+only_outside = false
+[[spawn.areas]]
+x1 = 960
+y1 = 690
+x2 = 965
+y2 = 701
+
+[[spawn]]
+id = "trammel_15723"
+map = "trammel"
+name = "Yew Catacombs NW Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 2
+min_minutes = 8
+max_minutes = 16
+call = 2
+exclude = []
+z = -40
+only_outside = false
+[[spawn.areas]]
+x1 = 959
+y1 = 704
+x2 = 960
+y2 = 734
+
+[[spawn]]
+id = "trammel_15724"
+map = "trammel"
+name = "Yew Catacombs NW Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 2
+min_minutes = 8
+max_minutes = 16
+call = 2
+exclude = []
+z = -40
+only_outside = false
+[[spawn.areas]]
+x1 = 966
+y1 = 704
+x2 = 968
+y2 = 734
+
+[[spawn]]
+id = "trammel_15725"
+map = "trammel"
+name = "Yew Catacombs Center Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 5
+min_minutes = 8
+max_minutes = 16
+call = 2
+exclude = []
+z = -20
+only_outside = false
+[[spawn.areas]]
+x1 = 960
+y1 = 737
+x2 = 965
+y2 = 759
+
+[[spawn]]
+id = "trammel_15726"
+map = "trammel"
+name = "Yew Catacombs Center Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 4
+min_minutes = 8
+max_minutes = 16
+call = 2
+exclude = []
+z = -40
+only_outside = false
+[[spawn.areas]]
+x1 = 971
+y1 = 724
+x2 = 992
+y2 = 727
+
+[[spawn]]
+id = "trammel_15727"
+map = "trammel"
+name = "Yew Catacombs NE Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["strongundeadlist"]
+max = 1
+min_minutes = 18
+max_minutes = 30
+call = 1
+exclude = []
+z = -20
+only_outside = false
+[[spawn.areas]]
+x1 = 994
+y1 = 712
+x2 = 994
+y2 = 712
+
+[[spawn]]
+id = "trammel_15728"
+map = "trammel"
+name = "Yew Catacombs NE Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 2
+min_minutes = 8
+max_minutes = 16
+call = 1
+exclude = []
+z = -20
+only_outside = false
+[[spawn.areas]]
+x1 = 1012
+y1 = 695
+x2 = 1018
+y2 = 699
+
+[[spawn]]
+id = "trammel_15729"
+map = "trammel"
+name = "Yew Catacombs EE Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["strongundeadlist", "weakundeadlist"]
+max = 3
+min_minutes = 18
+max_minutes = 30
+call = 1
+exclude = []
+z = -40
+only_outside = false
+[[spawn.areas]]
+x1 = 1017
+y1 = 723
+x2 = 1021
+y2 = 738
+
+[[spawn]]
+id = "trammel_15730"
+map = "trammel"
+name = "Yew Catacombs E Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 4
+min_minutes = 8
+max_minutes = 16
+call = 2
+exclude = []
+z = -40
+only_outside = false
+[[spawn.areas]]
+x1 = 1016
+y1 = 745
+x2 = 1019
+y2 = 775
+
+[[spawn]]
+id = "trammel_15731"
+map = "trammel"
+name = "Yew Catacombs E Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["strongundeadlist"]
+max = 2
+min_minutes = 18
+max_minutes = 30
+call = 1
+exclude = []
+z = -60
+only_outside = false
+[[spawn.areas]]
+x1 = 999
+y1 = 763
+x2 = 1008
+y2 = 767
+
+[[spawn]]
+id = "trammel_15732"
+map = "trammel"
+name = "Yew Catacombs S Basement - Undeads"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 4
+min_minutes = 8
+max_minutes = 16
+call = 2
+exclude = []
+z = -20
+only_outside = false
+[[spawn.areas]]
+x1 = 1008
+y1 = 788
+x2 = 1010
+y2 = 811
+
+[[spawn]]
+id = "trammel_15750"
+map = "trammel"
+name = "Britain Forest West 1"
+mobile_ids = []
+npc_list_ids = ["generic_lowrisk_forest"]
+max = 30
+min_minutes = 8
+max_minutes = 16
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 908
+y1 = 1552
+x2 = 1055
+y2 = 1750
+
+[[spawn]]
+id = "trammel_15751"
+map = "trammel"
+name = "Britain Forest West 2"
+mobile_ids = []
+npc_list_ids = ["generic_lowrisk_forest"]
+max = 20
+min_minutes = 8
+max_minutes = 16
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 942
+y1 = 1749
+x2 = 1052
+y2 = 1900
+
+[[spawn]]
+id = "trammel_15752"
+map = "trammel"
+name = "Yew Forest South 2"
+mobile_ids = []
+npc_list_ids = ["generic_lowrisk_forest"]
+max = 35
+min_minutes = 8
+max_minutes = 16
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 736
+y1 = 1319
+x2 = 898
+y2 = 1587
+
+[[spawn]]
+id = "trammel_15760"
+map = "trammel"
+name = "Chaos Forest North 1"
+mobile_ids = []
+npc_list_ids = ["generic_midrisk_forest"]
+max = 25
+min_minutes = 25
+max_minutes = 35
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1800
+y1 = 350
+x2 = 2238
+y2 = 794
+
+[[spawn]]
+id = "trammel_15761"
+map = "trammel"
+name = "Wrong Forest West"
+mobile_ids = []
+npc_list_ids = ["location_32_light"]
+max = 20
+min_minutes = 25
+max_minutes = 35
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1518
+y1 = 349
+x2 = 1806
+y2 = 612
+
+[[spawn]]
+id = "trammel_15762"
+map = "trammel"
+name = "Wrong Forest Entrance"
+mobile_ids = []
+npc_list_ids = ["location_32_light"]
+max = 10
+min_minutes = 25
+max_minutes = 35
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1952
+y1 = 323
+x2 = 2015
+y2 = 421
+
+[[spawn]]
+id = "trammel_15763"
+map = "trammel"
+name = "Wrong Coast North - 34 medium"
+mobile_ids = []
+npc_list_ids = ["location_34_medium"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2006
+y1 = 6
+x2 = 2059
+y2 = 167
+
+[[spawn]]
+id = "trammel_15764"
+map = "trammel"
+name = "Wrong Forest South"
+mobile_ids = []
+npc_list_ids = ["generic_midrisk_forest"]
+max = 70
+min_minutes = 25
+max_minutes = 35
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1893
+y1 = 474
+x2 = 2246
+y2 = 791
+
+[[spawn]]
+id = "trammel_15765"
+map = "trammel"
+name = "Wrong Peninsual SE"
+mobile_ids = []
+npc_list_ids = ["generic_midrisk_forest"]
+max = 10
+min_minutes = 25
+max_minutes = 35
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2211
+y1 = 344
+x2 = 2282
+y2 = 479
+
+[[spawn]]
+id = "trammel_15770"
+map = "trammel"
+name = "Wind Outside Mountain Coast"
+mobile_ids = []
+npc_list_ids = ["mountainlist"]
+max = 20
+min_minutes = 25
+max_minutes = 35
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1274
+y1 = 805
+x2 = 1448
+y2 = 1011
+
+[[spawn]]
+id = "trammel_15771"
+map = "trammel"
+name = "Chaos Valley"
+mobile_ids = []
+npc_list_ids = ["mountainlist"]
+max = 35
+min_minutes = 25
+max_minutes = 35
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1477
+y1 = 804
+x2 = 1662
+y2 = 1112
+
+[[spawn]]
+id = "trammel_15772"
+map = "trammel"
+name = "Chaos Valley"
+mobile_ids = []
+npc_list_ids = ["mountainlist"]
+max = 10
+min_minutes = 25
+max_minutes = 35
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1373
+y1 = 1076
+x2 = 1477
+y2 = 1157
+
+[[spawn]]
+id = "trammel_15773"
+map = "trammel"
+name = "Chaos Valley"
+mobile_ids = []
+npc_list_ids = ["mountainlist"]
+max = 10
+min_minutes = 25
+max_minutes = 35
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1666
+y1 = 804
+x2 = 1788
+y2 = 1204
+
+[[spawn]]
+id = "trammel_15780"
+map = "trammel"
+name = "Britain Forest North - 28 Heavy"
+mobile_ids = []
+npc_list_ids = ["location_28_heavy"]
+max = 10
+min_minutes = 6
+max_minutes = 10
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 1483
+y1 = 1242
+x2 = 1631
+y2 = 1496
+[[spawn.exclude]]
+x1 = 1483
+y1 = 1402
+x2 = 1576
+y2 = 1496
+
+[[spawn]]
+id = "trammel_15781"
+map = "trammel"
+name = "Britain Forest North - 28 medium"
+mobile_ids = []
+npc_list_ids = ["location_28_medium"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 1483
+y1 = 1242
+x2 = 1631
+y2 = 1496
+[[spawn.exclude]]
+x1 = 1483
+y1 = 1402
+x2 = 1576
+y2 = 1496
+
+[[spawn]]
+id = "trammel_15782"
+map = "trammel"
+name = "Britain Forest North - 28 light"
+mobile_ids = []
+npc_list_ids = ["location_28_light"]
+max = 10
+min_minutes = 50
+max_minutes = 60
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 1483
+y1 = 1242
+x2 = 1631
+y2 = 1496
+[[spawn.exclude]]
+x1 = 1483
+y1 = 1402
+x2 = 1576
+y2 = 1496
+
+[[spawn]]
+id = "trammel_15783"
+map = "trammel"
+name = "Britain GY Forest South"
+mobile_ids = []
+npc_list_ids = ["tamewoods"]
+max = 5
+min_minutes = 6
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1332
+y1 = 1509
+x2 = 1447
+y2 = 1534
+
+[[spawn]]
+id = "trammel_15784"
+map = "trammel"
+name = "Britain Forest Coast East"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 8
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1683
+y1 = 1583
+x2 = 1734
+y2 = 1670
+
+[[spawn]]
+id = "trammel_15785"
+map = "trammel"
+name = "Britain Peninsula NE - 29 heavy"
+mobile_ids = []
+npc_list_ids = ["location_29_heavy"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1910
+y1 = 1146
+x2 = 2125
+y2 = 1339
+
+[[spawn]]
+id = "trammel_15786"
+map = "trammel"
+name = "Bloody Plains - Undead"
+mobile_ids = []
+npc_list_ids = ["bloody_plains"]
+max = 30
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2036
+y1 = 791
+x2 = 2247
+y2 = 927
+
+[[spawn]]
+id = "trammel_15787"
+map = "trammel"
+name = "Cove Coast Forest North"
+mobile_ids = []
+npc_list_ids = ["location_43_medium"]
+max = 50
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2247
+y1 = 552
+x2 = 2316
+y2 = 1137
+
+[[spawn]]
+id = "trammel_15790"
+map = "trammel"
+name = "Minoc Forest South"
+mobile_ids = []
+npc_list_ids = ["location_43_medium"]
+max = 50
+min_minutes = 18
+max_minutes = 30
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 2314
+y1 = 751
+x2 = 2623
+y2 = 834
+[[spawn.exclude]]
+x1 = 2324
+y1 = 800
+x2 = 2361
+y2 = 834
+
+[[spawn.exclude]]
+x1 = 2380
+y1 = 825
+x2 = 2406
+y2 = 833
+
+[[spawn]]
+id = "trammel_15791"
+map = "trammel"
+name = "Dagger Isle 2"
+mobile_ids = []
+npc_list_ids = ["dagger_isle"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4038
+y1 = 279
+x2 = 4138
+y2 = 401
+
+[[spawn]]
+id = "trammel_15792"
+map = "trammel"
+name = "Dagger Isle 3"
+mobile_ids = []
+npc_list_ids = ["dagger_isle"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4140
+y1 = 354
+x2 = 4256
+y2 = 520
+
+[[spawn]]
+id = "trammel_15793"
+map = "trammel"
+name = "Dagger Isle 4"
+mobile_ids = []
+npc_list_ids = ["dagger_isle"]
+max = 5
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4236
+y1 = 520
+x2 = 4269
+y2 = 606
+
+[[spawn]]
+id = "trammel_15794"
+map = "trammel"
+name = "Dagger Isle 5"
+mobile_ids = []
+npc_list_ids = ["dagger_isle"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3863
+y1 = 295
+x2 = 3994
+y2 = 490
+
+[[spawn]]
+id = "trammel_15795"
+map = "trammel"
+name = "Dagger Isle 6"
+mobile_ids = []
+npc_list_ids = ["dagger_isle"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3918
+y1 = 490
+x2 = 4033
+y2 = 643
+
+[[spawn]]
+id = "trammel_15796"
+map = "trammel"
+name = "Dagger Isle 7"
+mobile_ids = []
+npc_list_ids = ["dagger_isle"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4035
+y1 = 495
+x2 = 4131
+y2 = 645
+
+[[spawn]]
+id = "trammel_15797"
+map = "trammel"
+name = "Dagger Isle 8"
+mobile_ids = []
+npc_list_ids = ["dagger_isle"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4131
+y1 = 515
+x2 = 4199
+y2 = 608
+
+[[spawn]]
+id = "trammel_15798"
+map = "trammel"
+name = "Dagger Isle 9"
+mobile_ids = []
+npc_list_ids = ["dagger_isle"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4130
+y1 = 606
+x2 = 4300
+y2 = 764
+
+[[spawn]]
+id = "trammel_15800"
+map = "trammel"
+name = "Vesper Forest SW - 43 Medium"
+mobile_ids = []
+npc_list_ids = ["location_43_medium"]
+max = 5
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2715
+y1 = 1024
+x2 = 2784
+y2 = 1079
+
+[[spawn]]
+id = "trammel_15801"
+map = "trammel"
+name = "Vesper Forest West - 43 Medium"
+mobile_ids = []
+npc_list_ids = ["location_43_medium"]
+max = 50
+min_minutes = 18
+max_minutes = 30
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 2622
+y1 = 751
+x2 = 2816
+y2 = 940
+[[spawn.exclude]]
+x1 = 2729
+y1 = 838
+x2 = 2816
+y2 = 900
+
+[[spawn]]
+id = "trammel_15802"
+map = "trammel"
+name = "Minoc Forest SE - 43 Medium"
+mobile_ids = []
+npc_list_ids = ["location_43_medium"]
+max = 50
+min_minutes = 18
+max_minutes = 30
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 2521
+y1 = 632
+x2 = 2816
+y2 = 751
+[[spawn.exclude]]
+x1 = 2521
+y1 = 632
+x2 = 2571
+y2 = 694
+
+[[spawn.exclude]]
+x1 = 2572
+y1 = 632
+x2 = 2628
+y2 = 651
+
+[[spawn]]
+id = "trammel_15803"
+map = "trammel"
+name = "Minoc Forest SE - 43 Medium"
+mobile_ids = []
+npc_list_ids = ["location_43_medium"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2734
+y1 = 571
+x2 = 2816
+y2 = 632
+
+[[spawn]]
+id = "trammel_15810"
+map = "trammel"
+name = "Windemere Woods 1"
+mobile_ids = []
+npc_list_ids = ["windemere_woods"]
+max = 65
+min_minutes = 18
+max_minutes = 30
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 2633
+y1 = 278
+x2 = 2871
+y2 = 573
+[[spawn.exclude]]
+x1 = 2633
+y1 = 462
+x2 = 2673
+y2 = 474
+
+[[spawn]]
+id = "trammel_15811"
+map = "trammel"
+name = "Windemere Woods 2"
+mobile_ids = []
+npc_list_ids = ["windemere_woods"]
+max = 25
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2730
+y1 = 205
+x2 = 2890
+y2 = 278
+
+[[spawn]]
+id = "trammel_15812"
+map = "trammel"
+name = "Windemere Woods 3"
+mobile_ids = []
+npc_list_ids = ["windemere_woods"]
+max = 35
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2825
+y1 = 25
+x2 = 2967
+y2 = 206
+
+[[spawn]]
+id = "trammel_15813"
+map = "trammel"
+name = "Windemere Woods 4"
+mobile_ids = []
+npc_list_ids = ["windemere_woods"]
+max = 80
+min_minutes = 18
+max_minutes = 30
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 2871
+y1 = 296
+x2 = 3080
+y2 = 680
+[[spawn.exclude]]
+x1 = 2871
+y1 = 574
+x2 = 2914
+y2 = 680
+
+[[spawn.exclude]]
+x1 = 2915
+y1 = 593
+x2 = 3017
+y2 = 680
+
+[[spawn]]
+id = "trammel_15814"
+map = "trammel"
+name = "Windemere Woods 5"
+mobile_ids = []
+npc_list_ids = ["windemere_woods"]
+max = 40
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2912
+y1 = 131
+x2 = 3153
+y2 = 294
+
+[[spawn]]
+id = "trammel_15815"
+map = "trammel"
+name = "Windemere Woods 6"
+mobile_ids = []
+npc_list_ids = ["windemere_woods"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3006
+y1 = 12
+x2 = 3200
+y2 = 131
+
+[[spawn]]
+id = "trammel_15816"
+map = "trammel"
+name = "Windemere Woods 7"
+mobile_ids = []
+npc_list_ids = ["windemere_woods"]
+max = 55
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3081
+y1 = 295
+x2 = 3301
+y2 = 554
+
+[[spawn]]
+id = "trammel_15817"
+map = "trammel"
+name = "Windemere Woods 8"
+mobile_ids = []
+npc_list_ids = ["windemere_woods"]
+max = 35
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3162
+y1 = 102
+x2 = 3301
+y2 = 294
+
+[[spawn]]
+id = "trammel_15818"
+map = "trammel"
+name = "Windemere Woods 9"
+mobile_ids = []
+npc_list_ids = ["windemere_woods"]
+max = 45
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3270
+y1 = 482
+x2 = 3494
+y2 = 745
+
+[[spawn]]
+id = "trammel_15819"
+map = "trammel"
+name = "Windemere Woods 10"
+mobile_ids = []
+npc_list_ids = ["windemere_woods"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2524
+y1 = 278
+x2 = 2608
+y2 = 364
+
+[[spawn]]
+id = "trammel_15825"
+map = "trammel"
+name = "Hedge Maze"
+mobile_ids = []
+npc_list_ids = ["weakoverworld"]
+max = 40
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1032
+y1 = 2159
+x2 = 1256
+y2 = 2303
+
+[[spawn]]
+id = "trammel_15830"
+map = "trammel"
+name = "Hedge Maze Forest 1"
+mobile_ids = []
+npc_list_ids = ["hedge_maze_forest"]
+max = 36
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 836
+y1 = 2064
+x2 = 1031
+y2 = 2303
+
+[[spawn]]
+id = "trammel_15831"
+map = "trammel"
+name = "Hedge Maze Forest 2"
+mobile_ids = []
+npc_list_ids = ["hedge_maze_forest"]
+max = 60
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 918
+y1 = 2304
+x2 = 1256
+y2 = 2507
+
+[[spawn]]
+id = "trammel_15832"
+map = "trammel"
+name = "Hedge Maze Forest 3"
+mobile_ids = []
+npc_list_ids = ["hedge_maze_forest"]
+max = 40
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1256
+y1 = 2125
+x2 = 1384
+y2 = 2507
+
+[[spawn]]
+id = "trammel_15833"
+map = "trammel"
+name = "Deep Southern Britannia Forest 1"
+mobile_ids = []
+npc_list_ids = ["deep_forest"]
+max = 65
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1384
+y1 = 2122
+x2 = 1582
+y2 = 2507
+
+[[spawn]]
+id = "trammel_15834"
+map = "trammel"
+name = "Deep Southern Britannia Forest 2"
+mobile_ids = []
+npc_list_ids = ["deep_forest"]
+max = 50
+min_minutes = 18
+max_minutes = 30
+call = 5
+only_outside = true
+[[spawn.areas]]
+x1 = 1582
+y1 = 2162
+x2 = 1791
+y2 = 2507
+[[spawn.exclude]]
+x1 = 1582
+y1 = 2479
+x2 = 1611
+y2 = 2507
+
+[[spawn]]
+id = "trammel_15835"
+map = "trammel"
+name = "Deep Southern Britannia Forest 3"
+mobile_ids = []
+npc_list_ids = ["deep_forest"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1086
+y1 = 2507
+x2 = 1392
+y2 = 2612
+
+[[spawn]]
+id = "trammel_15836"
+map = "trammel"
+name = "Deep Southern Britannia Forest 4"
+mobile_ids = []
+npc_list_ids = ["deep_forest"]
+max = 65
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1394
+y1 = 2507
+x2 = 1668
+y2 = 2781
+
+[[spawn]]
+id = "trammel_15837"
+map = "trammel"
+name = "Deep Southern Britannia Forest 5"
+mobile_ids = []
+npc_list_ids = ["deep_forest"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1540
+y1 = 2782
+x2 = 1666
+y2 = 2881
+
+[[spawn]]
+id = "trammel_15838"
+map = "trammel"
+name = "Deep Southern Britannia Forest 6"
+mobile_ids = []
+npc_list_ids = ["deep_forest"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 907
+y1 = 2508
+x2 = 1085
+y2 = 2765
+
+[[spawn]]
+id = "trammel_15839"
+map = "trammel"
+name = "Deep Southern Britannia Forest 7"
+mobile_ids = []
+npc_list_ids = ["deep_forest"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1084
+y1 = 2628
+x2 = 1339
+y2 = 2730
+
+[[spawn]]
+id = "trammel_15840"
+map = "trammel"
+name = "Deep Southern Britannia Forest 8"
+mobile_ids = []
+npc_list_ids = ["deep_forest"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1310
+y1 = 2735
+x2 = 1397
+y2 = 2815
+
+[[spawn]]
+id = "trammel_15841"
+map = "trammel"
+name = "Trinsic Rural Woods West 1"
+mobile_ids = []
+npc_list_ids = ["ruralwoods"]
+max = 30
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1674
+y1 = 2507
+x2 = 1791
+y2 = 2880
+
+[[spawn]]
+id = "trammel_15842"
+map = "trammel"
+name = "Rural Woods Britain Islands South-East 1"
+mobile_ids = []
+npc_list_ids = ["ruralwoods"]
+max = 12
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1637
+y1 = 1927
+x2 = 1782
+y2 = 2049
+
+[[spawn]]
+id = "trammel_15843"
+map = "trammel"
+name = "Rural Woods Britain Islands South-East 2"
+mobile_ids = []
+npc_list_ids = ["ruralwoods"]
+max = 30
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1998
+y1 = 1908
+x2 = 2215
+y2 = 2210
+
+[[spawn]]
+id = "trammel_15850"
+map = "trammel"
+name = "Britannia Swamp SW - Misc"
+mobile_ids = []
+npc_list_ids = ["location_18_light"]
+max = 30
+min_minutes = 50
+max_minutes = 60
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 1086
+y1 = 2725
+x2 = 1273
+y2 = 3045
+[[spawn.exclude]]
+x1 = 1124
+y1 = 2942
+x2 = 1248
+y2 = 2977
+
+[[spawn]]
+id = "trammel_15851"
+map = "trammel"
+name = "Britannia Swamp SW - Savages"
+mobile_ids = []
+npc_list_ids = ["savageswamp"]
+max = 15
+min_minutes = 30
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1124
+y1 = 2942
+x2 = 1248
+y2 = 2977
+
+[[spawn]]
+id = "trammel_15853"
+map = "trammel"
+name = "location 19 medium"
+mobile_ids = []
+npc_list_ids = ["location_19_medium"]
+max = 30
+min_minutes = 18
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1042
+y1 = 3362
+x2 = 1226
+y2 = 3556
+
+[[spawn]]
+id = "trammel_15854"
+map = "trammel"
+name = "location 19 light"
+mobile_ids = []
+npc_list_ids = ["location_19_light"]
+max = 25
+min_minutes = 50
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1042
+y1 = 3362
+x2 = 1226
+y2 = 3556
+
+[[spawn]]
+id = "trammel_15855"
+map = "trammel"
+name = "Britannia Southern Jungle 1"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1333
+y1 = 2816
+x2 = 1400
+y2 = 2952
+
+[[spawn]]
+id = "trammel_15856"
+map = "trammel"
+name = "Britannia Southern Jungle 2"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 35
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1331
+y1 = 2946
+x2 = 1473
+y2 = 3070
+
+[[spawn]]
+id = "trammel_15857"
+map = "trammel"
+name = "Britannia Southern Jungle 3"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 45
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1295
+y1 = 3070
+x2 = 1549
+y2 = 3270
+
+[[spawn]]
+id = "trammel_15858"
+map = "trammel"
+name = "Britannia Southern Jungle 4"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 35
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1474
+y1 = 2880
+x2 = 1647
+y2 = 3069
+
+[[spawn]]
+id = "trammel_15859"
+map = "trammel"
+name = "Britannia Southern Jungle 5"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 30
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1550
+y1 = 3068
+x2 = 1647
+y2 = 3270
+
+[[spawn]]
+id = "trammel_15860"
+map = "trammel"
+name = "Britannia Southern Jungle 6"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 55
+min_minutes = 18
+max_minutes = 30
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 1661
+y1 = 2885
+x2 = 1789
+y2 = 3268
+[[spawn.exclude]]
+x1 = 1661
+y1 = 2927
+x2 = 1700
+y2 = 3009
+
+[[spawn]]
+id = "trammel_15861"
+map = "trammel"
+name = "Britannia Southern Jungle 7"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 45
+min_minutes = 18
+max_minutes = 30
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 1559
+y1 = 3270
+x2 = 1789
+y2 = 3469
+[[spawn.exclude]]
+x1 = 1740
+y1 = 3426
+x2 = 1754
+y2 = 3446
+
+[[spawn]]
+id = "trammel_15862"
+map = "trammel"
+name = "Britannia Southern Jungle 8"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 25
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1681
+y1 = 3468
+x2 = 1926
+y2 = 3574
+
+[[spawn]]
+id = "trammel_15863"
+map = "trammel"
+name = "Britannia Southern Jungle 9"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 60
+min_minutes = 18
+max_minutes = 30
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 1789
+y1 = 3143
+x2 = 1945
+y2 = 3466
+[[spawn.exclude]]
+x1 = 1835
+y1 = 3195
+x2 = 1859
+y2 = 3211
+
+[[spawn.exclude]]
+x1 = 1916
+y1 = 3409
+x2 = 1937
+y2 = 3430
+
+[[spawn]]
+id = "trammel_15864"
+map = "trammel"
+name = "Britannia Southern Jungle 10"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 45
+min_minutes = 18
+max_minutes = 30
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 1945
+y1 = 3143
+x2 = 2124
+y2 = 3305
+[[spawn.exclude]]
+x1 = 1980
+y1 = 3201
+x2 = 1992
+y2 = 3211
+
+[[spawn]]
+id = "trammel_15865"
+map = "trammel"
+name = "Britannia Southern Jungle 11"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 55
+min_minutes = 18
+max_minutes = 30
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 1945
+y1 = 3305
+x2 = 2231
+y2 = 3465
+[[spawn.exclude]]
+x1 = 2016
+y1 = 3377
+x2 = 2029
+y2 = 3390
+
+[[spawn]]
+id = "trammel_15866"
+map = "trammel"
+name = "Britannia Southern Jungle 12"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2009
+y1 = 3465
+x2 = 2176
+y2 = 3664
+
+[[spawn]]
+id = "trammel_15867"
+map = "trammel"
+name = "Britannia Southern Jungle 13"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 1027
+y1 = 3077
+x2 = 1133
+y2 = 3229
+[[spawn.exclude]]
+x1 = 1048
+y1 = 3129
+x2 = 1064
+y2 = 3145
+
+[[spawn]]
+id = "trammel_15868"
+map = "trammel"
+name = "Fire Isle Jungle 1"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 45
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4543
+y1 = 3330
+x2 = 4810
+y2 = 3549
+
+[[spawn]]
+id = "trammel_15869"
+map = "trammel"
+name = "Fire Isle Jungle 2"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4373
+y1 = 3406
+x2 = 4544
+y2 = 3509
+
+[[spawn]]
+id = "trammel_15870"
+map = "trammel"
+name = "Fire Isle Jungle 3"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4464
+y1 = 3510
+x2 = 4558
+y2 = 3627
+
+[[spawn]]
+id = "trammel_15871"
+map = "trammel"
+name = "Fire Isle Jungle 4"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 15
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4637
+y1 = 3550
+x2 = 4746
+y2 = 3628
+
+[[spawn]]
+id = "trammel_15872"
+map = "trammel"
+name = "Fire Isle Jungle 5"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 45
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4510
+y1 = 3631
+x2 = 4754
+y2 = 3793
+
+[[spawn]]
+id = "trammel_15873"
+map = "trammel"
+name = "Fire Isle Jungle 6"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 45
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4082
+y1 = 3630
+x2 = 4510
+y2 = 3817
+
+[[spawn]]
+id = "trammel_15874"
+map = "trammel"
+name = "Fire Isle Jungle 7"
+mobile_ids = []
+npc_list_ids = ["junglelist"]
+max = 20
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4758
+y1 = 3555
+x2 = 4873
+y2 = 3866
+
+[[spawn]]
+id = "trammel_15875"
+map = "trammel"
+name = "Britannia Southern Jungle Undead 1"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 6
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1740
+y1 = 3426
+x2 = 1754
+y2 = 3446
+
+[[spawn]]
+id = "trammel_15876"
+map = "trammel"
+name = "Britannia Southern Jungle Undead 2"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 8
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1916
+y1 = 3409
+x2 = 1937
+y2 = 3430
+
+[[spawn]]
+id = "trammel_15877"
+map = "trammel"
+name = "Britannia Southern Jungle Undead 3"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 8
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2016
+y1 = 3377
+x2 = 2029
+y2 = 3390
+
+[[spawn]]
+id = "trammel_15878"
+map = "trammel"
+name = "Britannia Southern Jungle Undead 4"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 8
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1980
+y1 = 3201
+x2 = 1992
+y2 = 3211
+
+[[spawn]]
+id = "trammel_15879"
+map = "trammel"
+name = "Britannia Southern Jungle Undead 5"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1835
+y1 = 3195
+x2 = 1859
+y2 = 3211
+
+[[spawn]]
+id = "trammel_15880"
+map = "trammel"
+name = "Britannia Southern Jungle Undead 6"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 6
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1048
+y1 = 3129
+x2 = 1064
+y2 = 3145
+
+[[spawn]]
+id = "trammel_15885"
+map = "trammel"
+name = "Britannia Southern Coast 1"
+mobile_ids = []
+npc_list_ids = ["beachlist"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1591
+y1 = 3505
+x2 = 1681
+y2 = 3578
+
+[[spawn]]
+id = "trammel_15886"
+map = "trammel"
+name = "Fire Isle Beach 1"
+mobile_ids = []
+npc_list_ids = ["beachlist"]
+max = 10
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4373
+y1 = 3349
+x2 = 4518
+y2 = 3406
+
+[[spawn]]
+id = "trammel_15887"
+map = "trammel"
+name = "Fire Isle Beach 2"
+mobile_ids = []
+npc_list_ids = ["beachlist"]
+max = 5
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4410
+y1 = 3507
+x2 = 4463
+y2 = 3558
+
+[[spawn]]
+id = "trammel_15888"
+map = "trammel"
+name = "Fire Isle Beach 3"
+mobile_ids = []
+npc_list_ids = ["beachlist"]
+max = 7
+min_minutes = 18
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4438
+y1 = 3954
+x2 = 4559
+y2 = 3986
+
+[[spawn]]
+id = "trammel_15900"
+map = "trammel"
+name = "Skara Forest North - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 2
+min_minutes = 6
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 643
+y1 = 1752
+x2 = 942
+y2 = 2035
+
+[[spawn]]
+id = "trammel_15901"
+map = "trammel"
+name = "Hedge Maz North - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 2
+min_minutes = 50
+max_minutes = 60
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1030
+y1 = 2009
+x2 = 1256
+y2 = 2158
+
+[[spawn]]
+id = "trammel_15902"
+map = "trammel"
+name = "Shame Forest Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 2
+min_minutes = 6
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 325
+y1 = 1556
+x2 = 685
+y2 = 1752
+
+[[spawn]]
+id = "trammel_15903"
+map = "trammel"
+name = "Yew Peninsula NE - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 885
+y1 = 257
+x2 = 1048
+y2 = 520
+
+[[spawn]]
+id = "trammel_15904"
+map = "trammel"
+name = "Yew North Forest 1 - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 2
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 709
+y1 = 528
+x2 = 1038
+y2 = 860
+
+[[spawn]]
+id = "trammel_15905"
+map = "trammel"
+name = "Yew Forest East - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 3
+min_minutes = 20
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 768
+y1 = 848
+x2 = 1225
+y2 = 1284
+
+[[spawn]]
+id = "trammel_15906"
+map = "trammel"
+name = "Yew Justice - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1171
+y1 = 310
+x2 = 1435
+y2 = 603
+
+[[spawn]]
+id = "trammel_15907"
+map = "trammel"
+name = "Yew Forest South - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 30
+call = 1
+only_outside = false
+[[spawn.areas]]
+x1 = 313
+y1 = 1286
+x2 = 690
+y2 = 1463
+[[spawn.exclude]]
+x1 = 313
+y1 = 1412
+x2 = 468
+y2 = 1463
+
+[[spawn]]
+id = "trammel_15908"
+map = "trammel"
+name = "Wrong Forest South - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 2
+min_minutes = 50
+max_minutes = 60
+call = 2
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1555
+y1 = 322
+x2 = 1896
+y2 = 797
+
+[[spawn]]
+id = "trammel_15909"
+map = "trammel"
+name = "Wrong Forest Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 25
+max_minutes = 35
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1952
+y1 = 323
+x2 = 2015
+y2 = 421
+
+[[spawn]]
+id = "trammel_15910"
+map = "trammel"
+name = "Wrong Outside Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 25
+max_minutes = 35
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1994
+y1 = 239
+x2 = 2059
+y2 = 282
+
+[[spawn]]
+id = "trammel_15911"
+map = "trammel"
+name = "Covetous Outside Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 25
+max_minutes = 35
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2479
+y1 = 926
+x2 = 2556
+y2 = 1007
+
+[[spawn]]
+id = "trammel_15912"
+map = "trammel"
+name = "Windemere Woods 7 - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 2
+min_minutes = 18
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3081
+y1 = 295
+x2 = 3301
+y2 = 554
+
+[[spawn]]
+id = "trammel_15913"
+map = "trammel"
+name = "Windemere Woods 5 - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 18
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2912
+y1 = 131
+x2 = 3153
+y2 = 294
+
+[[spawn]]
+id = "trammel_15914"
+map = "trammel"
+name = "Windemere Woods 1 - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 18
+max_minutes = 30
+call = 1
+only_outside = false
+[[spawn.areas]]
+x1 = 2633
+y1 = 278
+x2 = 2871
+y2 = 573
+[[spawn.exclude]]
+x1 = 2633
+y1 = 462
+x2 = 2673
+y2 = 474
+
+[[spawn]]
+id = "trammel_15915"
+map = "trammel"
+name = "Cove Forest East - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 18
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2420
+y1 = 1120
+x2 = 2705
+y2 = 1269
+
+[[spawn]]
+id = "trammel_15916"
+map = "trammel"
+name = "Wrong Forest SW - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 2
+min_minutes = 50
+max_minutes = 60
+call = 2
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1555
+y1 = 322
+x2 = 1896
+y2 = 797
+
+[[spawn]]
+id = "trammel_15917"
+map = "trammel"
+name = "Destard Outside Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 25
+max_minutes = 35
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1100
+y1 = 2658
+x2 = 1159
+y2 = 2711
+
+[[spawn]]
+id = "trammel_15918"
+map = "trammel"
+name = "Hythloth Outside Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 25
+max_minutes = 35
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4698
+y1 = 3804
+x2 = 4762
+y2 = 3863
+
+[[spawn]]
+id = "trammel_15920"
+map = "trammel"
+name = "Deceit Outside Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4018
+y1 = 495
+x2 = 4087
+y2 = 541
+
+[[spawn]]
+id = "trammel_15921"
+map = "trammel"
+name = "Despise Outside Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1373
+y1 = 1076
+x2 = 1477
+y2 = 1157
+
+[[spawn]]
+id = "trammel_15922"
+map = "trammel"
+name = "Ice Outside Britannia Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1895
+y1 = 31
+x2 = 2005
+y2 = 132
+
+[[spawn]]
+id = "trammel_15923"
+map = "trammel"
+name = "Ice Outside T2A Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5218
+y1 = 2321
+x2 = 5241
+y2 = 2353
+
+[[spawn]]
+id = "trammel_15924"
+map = "trammel"
+name = "Fire Outside T2A Entrance - Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5771
+y1 = 2904
+x2 = 5811
+y2 = 2927
+
+[[spawn]]
+id = "trammel_15925"
+map = "trammel"
+name = "New Haven Forest 5"
+mobile_ids = []
+npc_list_ids = ["tamewoods"]
+max = 7
+min_minutes = 30
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3556
+y1 = 2482
+x2 = 3596
+y2 = 2556
+
+[[spawn]]
+id = "trammel_15926"
+map = "trammel"
+name = "New Haven Forest 6"
+mobile_ids = []
+npc_list_ids = ["tamewoods"]
+max = 10
+min_minutes = 30
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3758
+y1 = 2551
+x2 = 3794
+y2 = 2722
+
+[[spawn]]
+id = "trammel_15950"
+map = "trammel"
+name = "Wrong Outside Entrance - Bunnies"
+mobile_ids = []
+npc_list_ids = ["randomrabbit"]
+max = 6
+min_minutes = 18
+max_minutes = 30
+call = 2
+only_outside = false
+[[spawn.areas]]
+x1 = 2633
+y1 = 278
+x2 = 2871
+y2 = 573
+[[spawn.exclude]]
+x1 = 2633
+y1 = 462
+x2 = 2673
+y2 = 474

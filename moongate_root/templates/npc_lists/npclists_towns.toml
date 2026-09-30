@@ -1,0 +1,1087 @@
+[[npc_list]]
+id = "escorts"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_seeker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_seeker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_sailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_sailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_pirate"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_pirate"
+
+[[npc_list]]
+id = "poorfolk"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_sailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_sailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_beggar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_beggar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_seeker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_seeker"
+
+[[npc_list]]
+id = "richfolk"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_townthief"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_townthief"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_peasant"
+
+[[npc_list]]
+id = "alltownfolk"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_sailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_sailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_beggar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_beggar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_seeker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_seeker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_townthief"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_townthief"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_peasant"
+
+[[npc_list]]
+id = "randomwhealer"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_whealer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_whealer"
+
+[[npc_list]]
+id = "townlist"
+[[npc_list.entries]]
+weight = 3
+mobile_id = "dog"
+
+[[npc_list.entries]]
+weight = 2
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "crow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "canary"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "rat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
+
+[[npc_list]]
+id = "randompeople"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_guard"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_guard"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_pirate"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_pirate"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_brigand"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_brigand"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_sailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_sailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_beggar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_beggar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_thief"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_thief"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_seeker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_seeker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_jailer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_jailer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_artist"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_artist"
+
+[[npc_list]]
+id = "banker"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_banker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_banker"
+
+[[npc_list]]
+id = "bard"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_bard"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_bard"
+
+[[npc_list]]
+id = "miner"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_miner"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_miner"
+
+[[npc_list]]
+id = "weaponsmith"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_weaponsmith"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_weaponsmith"
+
+[[npc_list]]
+id = "baker"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_baker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_baker"
+
+[[npc_list]]
+id = "provisioner"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_provisioner"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_provisioner"
+
+[[npc_list]]
+id = "cobbler"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_cobbler"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_cobbler"
+
+[[npc_list]]
+id = "innkeeper"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_innkeeper"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_innkeeper"
+
+[[npc_list]]
+id = "tavernkeeper"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_tavernkeeper"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_tavernkeeper"
+
+[[npc_list]]
+id = "waiter"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_waiter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_waitress"
+
+[[npc_list]]
+id = "herbalist"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_herbalist"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_herbalist"
+
+[[npc_list]]
+id = "butcher"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_butcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_butcher"
+
+[[npc_list]]
+id = "tailor"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_tailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_tailor"
+
+[[npc_list]]
+id = "weaver"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_weaver"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_weaver"
+
+[[npc_list]]
+id = "bowyer"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_bowyer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_bowyer"
+
+[[npc_list]]
+id = "jeweler"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_jeweler"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_jeweler"
+
+[[npc_list]]
+id = "leatherworker"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_leatherworker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_leatherworker"
+
+[[npc_list]]
+id = "furtrader"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_furtrader"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_furtrader"
+
+[[npc_list]]
+id = "tanner"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_tanner"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_tanner"
+
+[[npc_list]]
+id = "mage"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_mage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_mage"
+
+[[npc_list]]
+id = "scribe"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_scribe"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_scribe"
+
+[[npc_list]]
+id = "shipwright"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_shipwright"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_shipwright"
+
+[[npc_list]]
+id = "mapmaker"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_mapmaker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_mapmaker"
+
+[[npc_list]]
+id = "spinner"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_spinner"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_spinner"
+
+[[npc_list]]
+id = "armourer"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_armourer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_armourer"
+
+[[npc_list]]
+id = "blacksmith"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_blacksmith"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_blacksmith"
+
+[[npc_list]]
+id = "architect"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_architect"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_architect"
+
+[[npc_list]]
+id = "carpenter"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_carpenter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_carpenter"
+
+[[npc_list]]
+id = "farmer"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_farmer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_farmer"
+
+[[npc_list]]
+id = "cook"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_cook"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_cook"
+
+[[npc_list]]
+id = "animaltrainer"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_animaltrainer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_animaltrainer"
+
+[[npc_list]]
+id = "fisher"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_fisher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_fisher"
+
+[[npc_list]]
+id = "alchemist"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_alchemist"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_alchemist"
+
+[[npc_list]]
+id = "tinker"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_tinker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_tinker"
+
+[[npc_list]]
+id = "beekeeper"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_beekeeper"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_beekeeper"
+
+[[npc_list]]
+id = "healer"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_healer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_healer"
+
+[[npc_list]]
+id = "basichuman"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "male"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "female"
+
+[[npc_list]]
+id = "guard"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_guard"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_guard"
+
+[[npc_list]]
+id = "murderer_archmage"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_murderer_archmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_murderer_archmage"
+
+[[npc_list]]
+id = "whealer"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_whealer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_whealer"
+
+[[npc_list]]
+id = "pirate"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_pirate"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_pirate"
+
+[[npc_list]]
+id = "fighter"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_fighter"
+
+[[npc_list]]
+id = "ranger"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_ranger"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_ranger"
+
+[[npc_list]]
+id = "sailor"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_sailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_sailor"
+
+[[npc_list]]
+id = "gambler"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_gambler"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_gambler"
+
+[[npc_list]]
+id = "judge"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_judge"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_judge"
+
+[[npc_list]]
+id = "miller"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_miller"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_miller"
+
+[[npc_list]]
+id = "monk"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_monk"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_monk"
+
+[[npc_list]]
+id = "rancher"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_rancher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_rancher"
+
+[[npc_list]]
+id = "prisoner"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_prisoner"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_prisoner"
+
+[[npc_list]]
+id = "sculptor"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_sculptor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_sculptor"
+
+[[npc_list]]
+id = "brigand"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_brigand"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_brigand"
+
+[[npc_list]]
+id = "beggar"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_beggar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_beggar"
+
+[[npc_list]]
+id = "noble"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_noble"
+
+[[npc_list]]
+id = "thief"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_thief"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_thief"
+
+[[npc_list]]
+id = "peasant"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_peasant"
+
+[[npc_list]]
+id = "gypsy"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_gypsy"
+
+[[npc_list]]
+id = "seeker"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_seeker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_seeker"
+
+[[npc_list]]
+id = "jailer"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_jailer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_jailer"
+
+[[npc_list]]
+id = "towncrier"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_towncrier"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_towncrier"
+
+[[npc_list]]
+id = "artist"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_artist"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_artist"
+
+[[npc_list]]
+id = "thiefguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_thief_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_thief_guildmaster"
+
+[[npc_list]]
+id = "lakeshire_npclist_1"
+[[npc_list.entries]]
+weight = 40
+mobile_id = "meerwarrior"
+
+[[npc_list.entries]]
+weight = 40
+mobile_id = "meermage"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "meercaptain"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "meereternal"
+
+[[npc_list]]
+id = "lakeshire_npclist_2"
+[[npc_list.entries]]
+weight = 40
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "direwolf"
+
+[[npc_list]]
+id = "mistas_npclist_1"
+[[npc_list.entries]]
+weight = 50
+mobile_id = "jukalord"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "jukawarrior"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "jukamage"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "golem"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "golemcontroller"
+
+[[npc_list]]
+id = "montor_npclist_1"
+[[npc_list.entries]]
+weight = 40
+mobile_id = "lavaserpent"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "lavalizard"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "hellhound"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "succubus"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "fireele"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "efreet"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "phoenix"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "daemon"
+
+[[npc_list]]
+id = "montor_npclist_2"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "earthele"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "drake"
+
+[[npc_list]]
+id = "montor_npclist_3"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "stoneharpy"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "stonegargoyle"
+
+[[npc_list]]
+id = "buccsden_town"
+[[npc_list.entries]]
+weight = 75
+mobile_id = "rat"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "sailor"

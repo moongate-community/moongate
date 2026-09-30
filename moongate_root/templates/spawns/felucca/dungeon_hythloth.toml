@@ -1,0 +1,647 @@
+[[spawn]]
+id = "felucca_3700"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5904
+y1 = 24
+x2 = 5926
+y2 = 30
+
+[[spawn]]
+id = "felucca_3701"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5920
+y1 = 24
+x2 = 5926
+y2 = 46
+
+[[spawn]]
+id = "felucca_3702"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5920
+y1 = 48
+x2 = 5990
+y2 = 54
+
+[[spawn]]
+id = "felucca_3703"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5984
+y1 = 32
+x2 = 5990
+y2 = 54
+
+[[spawn]]
+id = "felucca_3704"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_gargoyle"]
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5976
+y1 = 24
+x2 = 5990
+y2 = 30
+
+[[spawn]]
+id = "felucca_3705"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_gargoyle"]
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5984
+y1 = 56
+x2 = 5998
+y2 = 70
+
+[[spawn]]
+id = "felucca_3706"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5944
+y1 = 24
+x2 = 5958
+y2 = 30
+
+[[spawn]]
+id = "felucca_3707"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5960
+y1 = 24
+x2 = 5966
+y2 = 46
+
+[[spawn]]
+id = "felucca_3708"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5960
+y1 = 56
+x2 = 5966
+y2 = 71
+
+[[spawn]]
+id = "felucca_3709"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5960
+y1 = 73
+x2 = 5974
+y2 = 86
+
+[[spawn]]
+id = "felucca_3710"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5976
+y1 = 80
+x2 = 5998
+y2 = 94
+
+[[spawn]]
+id = "felucca_3711"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_gargoyle"]
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5984
+y1 = 96
+x2 = 5998
+y2 = 110
+
+[[spawn]]
+id = "felucca_3712"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5936
+y1 = 96
+x2 = 5950
+y2 = 110
+
+[[spawn]]
+id = "felucca_3713"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5952
+y1 = 73
+x2 = 5958
+y2 = 102
+
+[[spawn]]
+id = "felucca_3714"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5928
+y1 = 64
+x2 = 5958
+y2 = 71
+
+[[spawn]]
+id = "felucca_3715"
+map = "felucca"
+name = "Hythloth Lvl One"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_one_hall_way"]
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5912
+y1 = 80
+x2 = 5934
+y2 = 86
+
+[[spawn]]
+id = "felucca_3716"
+map = "felucca"
+name = "Hythloth Lvl Two"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_two_light"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5960
+y1 = 168
+x2 = 5990
+y2 = 174
+
+[[spawn]]
+id = "felucca_3717"
+map = "felucca"
+name = "Hythloth Lvl Two"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_two_deamon_room"]
+max = 2
+min_minutes = 20
+max_minutes = 40
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5984
+y1 = 144
+x2 = 5998
+y2 = 158
+
+[[spawn]]
+id = "felucca_3718"
+map = "felucca"
+name = "Hythloth Lvl Two"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_two_medium"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5960
+y1 = 176
+x2 = 5967
+y2 = 214
+
+[[spawn]]
+id = "felucca_3719"
+map = "felucca"
+name = "Hythloth Lvl Two"
+mobile_ids = ["gargoyle"]
+npc_list_ids = []
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5944
+y1 = 216
+x2 = 5966
+y2 = 238
+
+[[spawn]]
+id = "felucca_3720"
+map = "felucca"
+name = "Hythloth Lvl Two"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_two_light"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5976
+y1 = 208
+x2 = 5990
+y2 = 230
+
+[[spawn]]
+id = "felucca_3721"
+map = "felucca"
+name = "Hythloth Lvl Two"
+mobile_ids = ["gazer"]
+npc_list_ids = []
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5976
+y1 = 184
+x2 = 5990
+y2 = 206
+
+[[spawn]]
+id = "felucca_3722"
+map = "felucca"
+name = "Hythloth Lvl Two"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_two_deamon_garg"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5912
+y1 = 216
+x2 = 5926
+y2 = 238
+
+[[spawn]]
+id = "felucca_3723"
+map = "felucca"
+name = "Hythloth Lvl Three"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_three_area_one"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6088
+y1 = 152
+x2 = 6110
+y2 = 173
+
+[[spawn]]
+id = "felucca_3724"
+map = "felucca"
+name = "Hythloth Lvl Three"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_three_area_one"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6080
+y1 = 168
+x2 = 6102
+y2 = 190
+
+[[spawn]]
+id = "felucca_3725"
+map = "felucca"
+name = "Hythloth Lvl Three"
+mobile_ids = ["balron"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6080
+y1 = 168
+x2 = 6092
+y2 = 190
+
+[[spawn]]
+id = "felucca_3726"
+map = "felucca"
+name = "Hythloth Lvl Three"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_three_area_three"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6120
+y1 = 152
+x2 = 6126
+y2 = 174
+
+[[spawn]]
+id = "felucca_3727"
+map = "felucca"
+name = "Hythloth Lvl Three"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_three_area_four"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6048
+y1 = 152
+x2 = 6062
+y2 = 166
+
+[[spawn]]
+id = "felucca_3728"
+map = "felucca"
+name = "Hythloth Lvl Three"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_three_area_five"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6032
+y1 = 192
+x2 = 6046
+y2 = 206
+
+[[spawn]]
+id = "felucca_3729"
+map = "felucca"
+name = "Hythloth Lvl Three"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_three_area_two"]
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6112
+y1 = 208
+x2 = 6126
+y2 = 230
+
+[[spawn]]
+id = "felucca_3730"
+map = "felucca"
+name = "Hythloth Lvl Three"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_three_area_six"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6040
+y1 = 219
+x2 = 6054
+y2 = 230
+
+[[spawn]]
+id = "felucca_3731"
+map = "felucca"
+name = "Hythloth Lvl Four"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_four_hallway"]
+max = 20
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6079
+y1 = 48
+x2 = 6102
+y2 = 86
+
+[[spawn]]
+id = "felucca_3732"
+map = "felucca"
+name = "Hythloth Lvl Four"
+mobile_ids = ["gargoyle"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6104
+y1 = 64
+x2 = 6110
+y2 = 70
+
+[[spawn]]
+id = "felucca_3733"
+map = "felucca"
+name = "Hythloth Lvl Four"
+mobile_ids = ["firegargoyle"]
+npc_list_ids = []
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6104
+y1 = 80
+x2 = 6118
+y2 = 94
+
+[[spawn]]
+id = "felucca_3734"
+map = "felucca"
+name = "Hythloth Lvl Four"
+mobile_ids = []
+npc_list_ids = ["hythloth_lvl_four_hallway"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6096
+y1 = 32
+x2 = 6110
+y2 = 46
+
+[[spawn]]
+id = "felucca_3735"
+map = "felucca"
+name = "Hythloth Lvl Four"
+mobile_ids = ["balron"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6096
+y1 = 32
+x2 = 6110
+y2 = 46

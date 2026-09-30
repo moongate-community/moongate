@@ -1,0 +1,521 @@
+[[spawn]]
+id = "ilshenar_18655"
+map = "ilshenar"
+name = "Wandering Healer 1_1"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1083
+y1 = 968
+x2 = 1083
+y2 = 968
+
+[[spawn]]
+id = "ilshenar_18660"
+map = "ilshenar"
+name = "Healer Hut 1_1"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 284
+y1 = 536
+x2 = 285
+y2 = 538
+
+[[spawn]]
+id = "ilshenar_18661"
+map = "ilshenar"
+name = "Healer Hut 1_2"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1088
+y1 = 949
+x2 = 1098
+y2 = 959
+
+[[spawn]]
+id = "ilshenar_18662"
+map = "ilshenar"
+name = "Healer Hut 1_3"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 366
+y1 = 1429
+x2 = 373
+y2 = 1434
+
+[[spawn]]
+id = "ilshenar_18663"
+map = "ilshenar"
+name = "Healer Hut 1_4"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 571
+y1 = 533
+x2 = 574
+y2 = 536
+
+[[spawn]]
+id = "ilshenar_18664"
+map = "ilshenar"
+name = "Healer Hut 1_5"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 681
+y1 = 297
+x2 = 685
+y2 = 300
+
+[[spawn]]
+id = "ilshenar_18670"
+map = "ilshenar"
+name = "Wandering Healer 1_2"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 568
+y1 = 1136
+x2 = 584
+y2 = 1148
+
+[[spawn]]
+id = "ilshenar_18671"
+map = "ilshenar"
+name = "Wandering Healer 1_3"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 925
+y1 = 496
+x2 = 933
+y2 = 506
+
+[[spawn]]
+id = "ilshenar_18672"
+map = "ilshenar"
+name = "Wandering Healer 1_4"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1111
+y1 = 650
+x2 = 1121
+y2 = 660
+
+[[spawn]]
+id = "ilshenar_18673"
+map = "ilshenar"
+name = "Wandering Healer 1_5"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1734
+y1 = 1155
+x2 = 1744
+y2 = 1165
+
+[[spawn]]
+id = "ilshenar_18674"
+map = "ilshenar"
+name = "Wandering Healer 1_6 - Chaos"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1746
+y1 = 233
+x2 = 1753
+y2 = 240
+
+[[spawn]]
+id = "ilshenar_18675"
+map = "ilshenar"
+name = "Wandering Healer 1_7 - Compassion"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1210
+y1 = 461
+x2 = 1224
+y2 = 477
+
+[[spawn]]
+id = "ilshenar_18676"
+map = "ilshenar"
+name = "Wandering Healer 1_8 - Cyclops"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 851
+y1 = 1317
+x2 = 863
+y2 = 1321
+
+[[spawn]]
+id = "ilshenar_18677"
+map = "ilshenar"
+name = "Wandering Healer 1_9"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 18
+y1 = 1181
+x2 = 28
+y2 = 1188
+
+[[spawn]]
+id = "ilshenar_18678"
+map = "ilshenar"
+name = "Wandering Healer 1_10 - Chaos"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 833
+y1 = 808
+x2 = 843
+y2 = 814
+
+[[spawn]]
+id = "ilshenar_18679"
+map = "ilshenar"
+name = "Wandering Healer 1_11 - Honor"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 743
+y1 = 725
+x2 = 753
+y2 = 732
+
+[[spawn]]
+id = "ilshenar_18680"
+map = "ilshenar"
+name = "Wandering Healer 1_12 - Justice"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 974
+y1 = 1006
+x2 = 984
+y2 = 1016
+
+[[spawn]]
+id = "ilshenar_18681"
+map = "ilshenar"
+name = "Wandering Healer 1_13 - Lizardman Fort"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 307
+y1 = 1383
+x2 = 312
+y2 = 1390
+
+[[spawn]]
+id = "ilshenar_18682"
+map = "ilshenar"
+name = "Wandering Healer 1_14 - Montor"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1702
+y1 = 193
+x2 = 1707
+y2 = 201
+
+[[spawn]]
+id = "ilshenar_18683"
+map = "ilshenar"
+name = "Wandering Healer 1_15 - Rock Dungeon"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1784
+y1 = 570
+x2 = 1790
+y2 = 575
+
+[[spawn]]
+id = "ilshenar_18684"
+map = "ilshenar"
+name = "Wandering Healer 1_16 - Sacrifice"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1177
+y1 = 1282
+x2 = 1189
+y2 = 1292
+
+[[spawn]]
+id = "ilshenar_18685"
+map = "ilshenar"
+name = "Wandering Healer 1_17 - Savage Camp"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1139
+y1 = 649
+x2 = 1149
+y2 = 659
+
+[[spawn]]
+id = "ilshenar_18686"
+map = "ilshenar"
+name = "Wandering Healer 1_18 - Sorcerer's Dungeon"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 551
+y1 = 462
+x2 = 559
+y2 = 468
+
+[[spawn]]
+id = "ilshenar_18687"
+map = "ilshenar"
+name = "Wandering Healer 1_19 - Spirituality"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1447
+y1 = 1469
+x2 = 1454
+y2 = 1471
+
+[[spawn]]
+id = "ilshenar_18688"
+map = "ilshenar"
+name = "Wandering Healer 1_20 - Valor"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 525
+y1 = 199
+x2 = 534
+y2 = 209
+
+[[spawn]]
+id = "ilshenar_18689"
+map = "ilshenar"
+name = "Wandering Healer 1_21 - Lava"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 994
+y1 = 465
+x2 = 1004
+y2 = 475
+
+[[spawn]]
+id = "ilshenar_18695"
+map = "ilshenar"
+name = "Wandering Healer 2"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 7
+y1 = 895
+x2 = 16
+y2 = 903
+
+[[spawn]]
+id = "ilshenar_18696"
+map = "ilshenar"
+name = "Healer 1_1"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1355
+y1 = 503
+x2 = 1355
+y2 = 503
+
+[[spawn]]
+id = "ilshenar_18697"
+map = "ilshenar"
+name = "Healer 1_2"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1516
+y1 = 1024
+x2 = 1516
+y2 = 1024

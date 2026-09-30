@@ -1,0 +1,287 @@
+[[spawn]]
+id = "trammel_7200"
+map = "trammel"
+name = "Farmers Market"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2213
+y1 = 1192
+x2 = 2216
+y2 = 1197
+
+[[spawn]]
+id = "trammel_7201"
+map = "trammel"
+name = "Cove guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2274
+y1 = 1196
+x2 = 2278
+y2 = 1202
+
+[[spawn]]
+id = "trammel_7202"
+map = "trammel"
+name = "Cove guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2282
+y1 = 1224
+x2 = 2286
+y2 = 1230
+
+[[spawn]]
+id = "trammel_7203"
+map = "trammel"
+name = "Cove - The Healing Hand"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2240
+y1 = 1227
+x2 = 2242
+y2 = 1230
+
+[[spawn]]
+id = "trammel_7204"
+map = "trammel"
+name = "Cove - The Warrior's Supplies"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2210
+y1 = 1164
+x2 = 2212
+y2 = 1170
+
+[[spawn]]
+id = "trammel_7205"
+map = "trammel"
+name = "Cove - The Warrior's Supplies"
+mobile_ids = ["bowyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2214
+y1 = 1165
+x2 = 2219
+y2 = 1170
+
+[[spawn]]
+id = "trammel_7206"
+map = "trammel"
+name = "Cove - Bank Of Cove"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2226
+y1 = 1195
+x2 = 2230
+y2 = 1201
+
+[[spawn]]
+id = "trammel_7207"
+map = "trammel"
+name = "Cove guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2208
+y1 = 1112
+x2 = 2214
+y2 = 1118
+
+[[spawn]]
+id = "trammel_7208"
+map = "trammel"
+name = "Cove - Thief Guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 2213
+y1 = 1145
+x2 = 2278
+y2 = 1234
+
+[[spawn]]
+id = "trammel_7209"
+map = "trammel"
+name = "Cove - Docks"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2248
+y1 = 1185
+x2 = 2263
+y2 = 1192
+
+[[spawn]]
+id = "trammel_7210"
+map = "trammel"
+name = "Cove - Docks"
+mobile_ids = ["sailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2248
+y1 = 1185
+x2 = 2263
+y2 = 1192
+
+[[spawn]]
+id = "trammel_7211"
+map = "trammel"
+name = "Cove - Farmers Market"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2215
+y1 = 1187
+x2 = 2217
+y2 = 1190
+
+[[spawn]]
+id = "trammel_7212"
+map = "trammel"
+name = "Cove - Farmers Market"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2215
+y1 = 1187
+x2 = 2217
+y2 = 1190
+
+[[spawn]]
+id = "trammel_7213"
+map = "trammel"
+name = "Cove - Farmers Market"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2213
+y1 = 1192
+x2 = 2216
+y2 = 1197
+
+[[spawn]]
+id = "trammel_7214"
+map = "trammel"
+name = "Cove - Poor Folk"
+mobile_ids = []
+npc_list_ids = ["poorfolk"]
+max = 7
+min_minutes = 480
+max_minutes = 600
+call = 3
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 2213
+y1 = 1145
+x2 = 2278
+y2 = 1234
+
+[[spawn]]
+id = "trammel_7215"
+map = "trammel"
+name = "Cove - Poor Folk"
+mobile_ids = []
+npc_list_ids = ["britainanimallist"]
+max = 10
+min_minutes = 480
+max_minutes = 600
+call = 3
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 2213
+y1 = 1145
+x2 = 2278
+y2 = 1234

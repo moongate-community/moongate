@@ -1,0 +1,593 @@
+[[spawn]]
+id = "trammel_13500"
+map = "trammel"
+name = "Covetous Outside"
+mobile_ids = []
+npc_list_ids = ["cov_outside"]
+max = 10
+min_minutes = 5
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2451
+y1 = 852
+x2 = 2549
+y2 = 885
+
+[[spawn]]
+id = "trammel_13501"
+map = "trammel"
+name = "Covetous Outside"
+mobile_ids = []
+npc_list_ids = ["cov_outside"]
+max = 10
+min_minutes = 5
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2500
+y1 = 880
+x2 = 2548
+y2 = 904
+
+[[spawn]]
+id = "trammel_13502"
+map = "trammel"
+name = "Covetous Outside"
+mobile_ids = []
+npc_list_ids = ["cov_outside"]
+max = 10
+min_minutes = 5
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2388
+y1 = 831
+x2 = 2403
+y2 = 905
+
+[[spawn]]
+id = "trammel_13503"
+map = "trammel"
+name = "Covetous Outside"
+mobile_ids = []
+npc_list_ids = ["cov_outside"]
+max = 10
+min_minutes = 5
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2406
+y1 = 855
+x2 = 2430
+y2 = 904
+
+[[spawn]]
+id = "trammel_13504"
+map = "trammel"
+name = "Covetous Outside"
+mobile_ids = []
+npc_list_ids = ["cov_outside"]
+max = 10
+min_minutes = 5
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2350
+y1 = 895
+x2 = 2395
+y2 = 906
+
+[[spawn]]
+id = "trammel_13505"
+map = "trammel"
+name = "Covetous Lvl One Harpies"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_one_harpy_nests"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5403
+y1 = 1928
+x2 = 5421
+y2 = 1944
+
+[[spawn]]
+id = "trammel_13506"
+map = "trammel"
+name = "Covetous Lvl One Harpies"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_one_harpy_nests"]
+max = 7
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5465
+y1 = 1868
+x2 = 5484
+y2 = 1888
+
+[[spawn]]
+id = "trammel_13507"
+map = "trammel"
+name = "Covetous Lvl One Harpies"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_one"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5472
+y1 = 1891
+x2 = 5505
+y2 = 1904
+
+[[spawn]]
+id = "trammel_13508"
+map = "trammel"
+name = "Covetous Lvl One"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_one"]
+max = 15
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5438
+y1 = 1902
+x2 = 5504
+y2 = 1939
+
+[[spawn]]
+id = "trammel_13509"
+map = "trammel"
+name = "Covetous Lvl One"
+mobile_ids = ["gazer"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5391
+y1 = 1852
+x2 = 5406
+y2 = 1864
+
+[[spawn]]
+id = "trammel_13510"
+map = "trammel"
+name = "Covetous Lvl One"
+mobile_ids = ["headless"]
+npc_list_ids = []
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5419
+y1 = 1896
+x2 = 5432
+y2 = 1907
+
+[[spawn]]
+id = "trammel_13511"
+map = "trammel"
+name = "Covetous Lvl One"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_one"]
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5395
+y1 = 1876
+x2 = 5409
+y2 = 1917
+
+[[spawn]]
+id = "trammel_13512"
+map = "trammel"
+name = "Covetous Lvl Two"
+mobile_ids = ["dreadspider"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5431
+y1 = 2018
+x2 = 5456
+y2 = 2034
+
+[[spawn]]
+id = "trammel_13513"
+map = "trammel"
+name = "Covetous Lvl Two"
+mobile_ids = ["dreadspider"]
+npc_list_ids = []
+max = 1
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5467
+y1 = 2031
+x2 = 5479
+y2 = 2039
+
+[[spawn]]
+id = "trammel_13514"
+map = "trammel"
+name = "Covetous Lvl Two"
+mobile_ids = ["dreadspider"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5470
+y1 = 1980
+x2 = 5480
+y2 = 2001
+
+[[spawn]]
+id = "trammel_13515"
+map = "trammel"
+name = "Covetous Lvl Two"
+mobile_ids = ["waterele"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5489
+y1 = 1994
+x2 = 5515
+y2 = 2010
+
+[[spawn]]
+id = "trammel_13516"
+map = "trammel"
+name = "Covetous Lvl Two"
+mobile_ids = ["waterele"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5446
+y1 = 1967
+x2 = 5467
+y2 = 1983
+
+[[spawn]]
+id = "trammel_13517"
+map = "trammel"
+name = "Covetous Lvl Two"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_two_light"]
+max = 15
+min_minutes = 15
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5518
+y1 = 1994
+x2 = 5597
+y2 = 2035
+
+[[spawn]]
+id = "trammel_13518"
+map = "trammel"
+name = "Covetous Lvl Two"
+mobile_ids = ["harpy"]
+npc_list_ids = []
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5404
+y1 = 1994
+x2 = 5426
+y2 = 2009
+
+[[spawn]]
+id = "trammel_13519"
+map = "trammel"
+name = "Covetous Lvl Two"
+mobile_ids = ["harpy"]
+npc_list_ids = []
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5410
+y1 = 1970
+x2 = 5428
+y2 = 1979
+
+[[spawn]]
+id = "trammel_13520"
+map = "trammel"
+name = "Covetous Lvl Two"
+mobile_ids = ["harpy"]
+npc_list_ids = []
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5433
+y1 = 1952
+x2 = 5440
+y2 = 1966
+
+[[spawn]]
+id = "trammel_13521"
+map = "trammel"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_light"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5554
+y1 = 1888
+x2 = 5562
+y2 = 1916
+
+[[spawn]]
+id = "trammel_13522"
+map = "trammel"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_light"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5596
+y1 = 1888
+x2 = 5604
+y2 = 1916
+
+[[spawn]]
+id = "trammel_13523"
+map = "trammel"
+name = "Covetous Lvl Three"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 40
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5568
+y1 = 1852
+x2 = 5590
+y2 = 1866
+
+[[spawn]]
+id = "trammel_13524"
+map = "trammel"
+name = "Covetous Lvl Three"
+mobile_ids = ["skeletalknight"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5536
+y1 = 1876
+x2 = 5543
+y2 = 1887
+
+[[spawn]]
+id = "trammel_13525"
+map = "trammel"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_light"]
+max = 3
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5544
+y1 = 1880
+x2 = 5562
+y2 = 1882
+
+[[spawn]]
+id = "trammel_13526"
+map = "trammel"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_medium"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5552
+y1 = 1840
+x2 = 5562
+y2 = 1882
+
+[[spawn]]
+id = "trammel_13528"
+map = "trammel"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_heavy"]
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5608
+y1 = 1832
+x2 = 5622
+y2 = 1846
+
+[[spawn]]
+id = "trammel_13529"
+map = "trammel"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_medium"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5616
+y1 = 1848
+x2 = 5622
+y2 = 1882
+
+[[spawn]]
+id = "trammel_13530"
+map = "trammel"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_light"]
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5596
+y1 = 1872
+x2 = 5610
+y2 = 1882
+
+[[spawn]]
+id = "trammel_13531"
+map = "trammel"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_light"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5568
+y1 = 1824
+x2 = 5590
+y2 = 1834
+
+[[spawn]]
+id = "trammel_13532"
+map = "trammel"
+name = "Covetous Lvl Four"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_four"]
+max = 10
+min_minutes = 20
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5500
+y1 = 1800
+x2 = 5542
+y2 = 1818
+
+[[spawn]]
+id = "trammel_13533"
+map = "trammel"
+name = "Covetous Lvl Five"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_five"]
+max = 4
+min_minutes = 20
+max_minutes = 40
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5453
+y1 = 1795
+x2 = 5475
+y2 = 1821

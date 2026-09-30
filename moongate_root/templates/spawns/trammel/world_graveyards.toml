@@ -1,0 +1,183 @@
+[[spawn]]
+id = "trammel_15500"
+map = "trammel"
+name = "Moonglow cemetary"
+mobile_ids = []
+npc_list_ids = ["location_53_medium"]
+max = 12
+min_minutes = 18
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4528
+y1 = 1314
+x2 = 4556
+y2 = 1334
+
+[[spawn]]
+id = "trammel_15501"
+map = "trammel"
+name = "Moonglow cemetary"
+mobile_ids = []
+npc_list_ids = ["location_53_light"]
+max = 1
+min_minutes = 58
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4528
+y1 = 1314
+x2 = 4556
+y2 = 1334
+
+[[spawn]]
+id = "trammel_15502"
+map = "trammel"
+name = "Yew Cemetary Location 5 Light"
+mobile_ids = []
+npc_list_ids = ["location_5_light"]
+max = 8
+min_minutes = 58
+max_minutes = 60
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 712
+y1 = 1104
+x2 = 734
+y2 = 1134
+
+[[spawn]]
+id = "trammel_15503"
+map = "trammel"
+name = "Vesper Cemetary"
+mobile_ids = []
+npc_list_ids = ["vesper_graveyard"]
+max = 15
+min_minutes = 58
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2728
+y1 = 840
+x2 = 2782
+y2 = 894
+
+[[spawn]]
+id = "trammel_15505"
+map = "trammel"
+name = "Britain Cemetary"
+mobile_ids = []
+npc_list_ids = ["location_25_light"]
+max = 18
+min_minutes = 58
+max_minutes = 60
+call = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 1338
+y1 = 1445
+x2 = 1374
+y2 = 1509
+[[spawn.exclude]]
+x1 = 1342
+y1 = 1447
+x2 = 1353
+y2 = 1487
+
+[[spawn]]
+id = "trammel_15506"
+map = "trammel"
+name = "Britain Cemetary"
+mobile_ids = []
+npc_list_ids = ["location_25_light"]
+max = 5
+min_minutes = 58
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1368
+y1 = 1444
+x2 = 1389
+y2 = 1491
+
+[[spawn]]
+id = "trammel_15507"
+map = "trammel"
+name = "Jhelom Cemetary 1"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 3
+min_minutes = 18
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1272
+y1 = 3712
+x2 = 1291
+y2 = 3721
+
+[[spawn]]
+id = "trammel_15508"
+map = "trammel"
+name = "Jhelom Cemetary 2"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 5
+min_minutes = 18
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1272
+y1 = 3723
+x2 = 1299
+y2 = 3734
+
+[[spawn]]
+id = "trammel_15509"
+map = "trammel"
+name = "Jhelom Cemetary 3"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 3
+min_minutes = 18
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1272
+y1 = 3723
+x2 = 1299
+y2 = 3734
+
+[[spawn]]
+id = "trammel_15510"
+map = "trammel"
+name = "New Haven Cemetary"
+mobile_ids = []
+npc_list_ids = ["weakundeadlist"]
+max = 3
+min_minutes = 18
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 3591
+y1 = 2441
+x2 = 3605
+y2 = 2461

@@ -138,6 +138,27 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedNpcListsAndSpawns_LoadAgainstTheShippedMobiles()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots))
+                          .LoadDataAsync()).Entities.ToArray();
+        var lists = (await new NpcListsLoader(directories, new StubDataLoaderService().With(mobiles)).LoadDataAsync()).Entities.ToArray();
+
+        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists)).LoadDataAsync())
+                     .Entities.ToDictionary(spawn => spawn.Id);
+
+        Assert.Equal(446, lists.Length);
+        Assert.Equal(2778, spawns.Count);
+        var shop = spawns["felucca_0"];
+        Assert.Equal(("The Hammer And Anvil", MapType.Felucca, 480), (shop.Name, shop.Map, shop.MinMinutes));
+        Assert.Equal(["weaponsmith"], shop.MobileIds);
+    }
+
+    [Fact]
     public async Task ShippedGuardAndOrc_CreateWithTheShippedRacesAndNames()
     {
         var directories = Directories();

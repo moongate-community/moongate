@@ -1,0 +1,396 @@
+[[spawn]]
+id = "felucca_1500"
+map = "felucca"
+name = "delucia - stables"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5291
+y1 = 4004
+x2 = 5299
+y2 = 4011
+
+[[spawn]]
+id = "felucca_1501"
+map = "felucca"
+name = "delucia - hut of magics"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5293
+y1 = 3975
+x2 = 5297
+y2 = 3979
+
+[[spawn]]
+id = "felucca_1502"
+map = "felucca"
+name = "delucia - ye olde eleventh bank"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5270
+y1 = 3972
+x2 = 5276
+y2 = 3985
+
+[[spawn]]
+id = "felucca_1503"
+map = "felucca"
+name = "delucia - tailor shop"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5232
+y1 = 4015
+x2 = 5235
+y2 = 4025
+
+[[spawn]]
+id = "felucca_1504"
+map = "felucca"
+name = "delucia - zoots hammer"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5223
+y1 = 4002
+x2 = 5230
+y2 = 4006
+
+[[spawn]]
+id = "felucca_1505"
+map = "felucca"
+name = "delucia - the supply depot"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5214
+y1 = 4008
+x2 = 5221
+y2 = 4015
+
+[[spawn]]
+id = "felucca_1506"
+map = "felucca"
+name = "delucia - the barely inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5195
+y1 = 4054
+x2 = 5201
+y2 = 4065
+
+[[spawn]]
+id = "felucca_1507"
+map = "felucca"
+name = "delucia - healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5187
+y1 = 3986
+x2 = 5194
+y2 = 3989
+
+[[spawn]]
+id = "felucca_1508"
+map = "felucca"
+name = "delucia - the supply depot"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5214
+y1 = 4008
+x2 = 5221
+y2 = 4015
+
+[[spawn]]
+id = "felucca_1509"
+map = "felucca"
+name = "delucia - zoots hammer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5223
+y1 = 4002
+x2 = 5230
+y2 = 4006
+
+[[spawn]]
+id = "felucca_1510"
+map = "felucca"
+name = "delucia - zoots hammer"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5223
+y1 = 4002
+x2 = 5230
+y2 = 4006
+
+[[spawn]]
+id = "felucca_1511"
+map = "felucca"
+name = "delucia - tailor shop"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5232
+y1 = 4015
+x2 = 5235
+y2 = 4025
+
+[[spawn]]
+id = "felucca_1512"
+map = "felucca"
+name = "delucia - tailor shop"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5232
+y1 = 4015
+x2 = 5235
+y2 = 4025
+
+[[spawn]]
+id = "felucca_1513"
+map = "felucca"
+name = "delucia - tailor shop"
+mobile_ids = ["furtrader"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5232
+y1 = 4015
+x2 = 5235
+y2 = 4025
+
+[[spawn]]
+id = "felucca_1514"
+map = "felucca"
+name = "delucia - towncrier"
+mobile_ids = ["towncrier"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5267
+y1 = 3988
+x2 = 5267
+y2 = 3988
+
+[[spawn]]
+id = "felucca_1515"
+map = "felucca"
+name = "delucia - hut of magics"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5293
+y1 = 3975
+x2 = 5297
+y2 = 3979
+
+[[spawn]]
+id = "felucca_1516"
+map = "felucca"
+name = "delucia - hut of magics"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5283
+y1 = 3978
+x2 = 5288
+y2 = 3983
+
+[[spawn]]
+id = "felucca_1517"
+map = "felucca"
+name = "delucia - hut of magics"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5283
+y1 = 3978
+x2 = 5288
+y2 = 3983
+
+[[spawn]]
+id = "felucca_1518"
+map = "felucca"
+name = "delucia - tower 1st floor"
+mobile_ids = ["fighter"]
+npc_list_ids = []
+max = 2
+min_minutes = 28
+max_minutes = 32
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5262
+y1 = 3935
+x2 = 5266
+y2 = 3943
+
+[[spawn]]
+id = "felucca_1519"
+map = "felucca"
+name = "delucia - tower 2nd floor"
+mobile_ids = ["fighter"]
+npc_list_ids = []
+max = 2
+min_minutes = 28
+max_minutes = 32
+call = 1
+exclude = []
+z = 57
+only_outside = false
+[[spawn.areas]]
+x1 = 5258
+y1 = 3931
+x2 = 5268
+y2 = 3937
+
+[[spawn]]
+id = "felucca_1520"
+map = "felucca"
+name = "delucia - tower outside"
+mobile_ids = ["warrior"]
+npc_list_ids = []
+max = 2
+min_minutes = 28
+max_minutes = 32
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5272
+y1 = 3940
+x2 = 5280
+y2 = 3940
+
+[[spawn]]
+id = "felucca_1536"
+map = "felucca"
+name = "delucia - stables"
+mobile_ids = ["veterinarian"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5291
+y1 = 4004
+x2 = 5299
+y2 = 4011

@@ -1,0 +1,3279 @@
+[[npc_list]]
+id = "orc_party"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orclord"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list]]
+id = "location_1_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orclord"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "reaper"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "direwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "airele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "waterele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gazer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gargoyle"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list]]
+id = "location_2_heavy"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hart"
+
+[[npc_list]]
+id = "location_2_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "reaper"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "direwolf"
+
+[[npc_list]]
+id = "location_2_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "airele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gargoyle"
+
+[[npc_list]]
+id = "location_3_light"
+[[npc_list.entries]]
+weight = 22
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 22
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 22
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 22
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "lich"
+
+[[npc_list.entries]]
+weight = 4
+mobile_id = "lichlord"
+
+[[npc_list]]
+id = "location_4_medium"
+[[npc_list.entries]]
+weight = 30
+npc_list_id = "orc_party"
+
+[[npc_list.entries]]
+weight = 24
+npc_list_id = "alltroll"
+
+[[npc_list.entries]]
+weight = 24
+npc_list_id = "alllizardmen"
+
+[[npc_list.entries]]
+weight = 24
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 4
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 4
+mobile_id = "reaper"
+
+[[npc_list.entries]]
+weight = 4
+mobile_id = "wisp"
+
+[[npc_list.entries]]
+weight = 2
+mobile_id = "airele"
+
+[[npc_list.entries]]
+weight = 2
+mobile_id = "gazer"
+
+[[npc_list.entries]]
+weight = 2
+mobile_id = "gargoyle"
+
+[[npc_list]]
+id = "location_5_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "zombie"
+
+[[npc_list]]
+id = "location_6_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "llama"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "pig"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "sheep"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "canary"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "crow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "falcon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hawk"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_7_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orclord"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "reaper"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gazer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "waterele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "airele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gargoyle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "direwolf"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list]]
+id = "location_8_medium"
+[[npc_list.entries]]
+weight = 75
+npc_list_id = "weakorc"
+
+[[npc_list.entries]]
+weight = 20
+npc_list_id = "strongorc"
+
+[[npc_list.entries]]
+weight = 5
+npc_list_id = "allettin"
+
+[[npc_list]]
+id = "location_9_heavy"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orclord"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "airele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "waterele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gargoyle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gazer"
+
+[[npc_list]]
+id = "location_9_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "reaper"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "direwolf"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list]]
+id = "location_10_light"
+[[npc_list.entries]]
+weight = 30
+npc_list_id = "allettin"
+
+[[npc_list.entries]]
+weight = 30
+npc_list_id = "alltroll"
+
+[[npc_list.entries]]
+weight = 30
+npc_list_id = "alllizardmen"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "lich"
+
+[[npc_list]]
+id = "location_11_heavy"
+[[npc_list.entries]]
+weight = 33
+npc_list_id = "weakorc"
+
+[[npc_list.entries]]
+weight = 33
+npc_list_id = "weakratmen"
+
+[[npc_list.entries]]
+weight = 22
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 11
+npc_list_id = "strongorc"
+
+[[npc_list]]
+id = "location_11_medium"
+[[npc_list.entries]]
+weight = 23
+npc_list_id = "ettinogre"
+
+[[npc_list.entries]]
+weight = 22
+npc_list_id = "alltroll"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "sewerrat"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "gazer"
+
+[[npc_list]]
+id = "location_12_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_brigand"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_brigand"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantspider"
+
+[[npc_list]]
+id = "location_12_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list]]
+id = "location_13_heavy"
+[[npc_list.entries]]
+weight = 60
+npc_list_id = "tamewoods"
+
+[[npc_list.entries]]
+weight = 40
+npc_list_id = "allbearlist"
+
+[[npc_list]]
+id = "location_13_medium"
+[[npc_list.entries]]
+weight = 22
+npc_list_id = "weakorc"
+
+[[npc_list.entries]]
+weight = 22
+npc_list_id = "alllizardmen"
+
+[[npc_list.entries]]
+weight = 22
+npc_list_id = "allratmen"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "wisp"
+
+[[npc_list]]
+id = "location_13_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list]]
+id = "location_14_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list]]
+id = "location_15_heavy"
+[[npc_list.entries]]
+weight = 60
+npc_list_id = "tamewoods"
+
+[[npc_list.entries]]
+weight = 40
+npc_list_id = "allbearlist"
+
+[[npc_list]]
+id = "location_16_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wisp"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_17_light"
+[[npc_list.entries]]
+weight = 45
+npc_list_id = "tamewoods"
+
+[[npc_list.entries]]
+weight = 30
+npc_list_id = "allbearlist"
+
+[[npc_list]]
+id = "location_18_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "snake"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "slime"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantserpent"
+
+[[npc_list]]
+id = "location_19_medium"
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_19_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list]]
+id = "location_20_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wisp"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "snake"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "silverserpent"
+
+[[npc_list]]
+id = "location_20_light_island"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantserpent"
+
+[[npc_list]]
+id = "location_20_heavy"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gorilla"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "rabbit"
+
+[[npc_list]]
+id = "location_20_heavy_island"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "panther"
+
+[[npc_list]]
+id = "location_21_heavy"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spectre"
+
+[[npc_list]]
+id = "location_22_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wisp"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_23_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "snake"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantserpent"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "slime"
+
+[[npc_list]]
+id = "location_24_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_25_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lich"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ghoul"
+
+[[npc_list]]
+id = "location_26_heavy"
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_26_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list]]
+id = "location_27_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list]]
+id = "location_28_heavy"
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "mongbat"
+
+[[npc_list]]
+id = "location_28_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "direwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "reaper"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list]]
+id = "location_28_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gargoyle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gazer"
+
+[[npc_list]]
+id = "location_29_heavy"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gargoyle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "waterele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gazer"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_30_heavy"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "snake"
+
+[[npc_list]]
+id = "location_31_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "scorpion"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantspider"
+
+[[npc_list]]
+id = "location_31_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "earthele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list]]
+id = "location_32_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "airele"
+
+[[npc_list]]
+id = "location_33_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "airele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "waterele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "direwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_34_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_35_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gazer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gargoyle"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_36_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "airele"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_37_heavy"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wisp"
+
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_38_heavy"
+[[npc_list.entries]]
+weight = 13
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list]]
+id = "location_38_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "waterele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wisp"
+
+[[npc_list]]
+id = "location_39_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list]]
+id = "location_40_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "airele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "waterele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list]]
+id = "vesper_graveyard"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "lich"
+
+[[npc_list]]
+id = "location_42_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ghoul"
+
+[[npc_list]]
+id = "location_43_medium"
+[[npc_list.entries]]
+weight = 50
+npc_list_id = "tamewoods"
+
+[[npc_list.entries]]
+weight = 30
+npc_list_id = "allbearlist"
+
+[[npc_list.entries]]
+weight = 20
+npc_list_id = "weakoverworld"
+
+[[npc_list]]
+id = "cove_cemetary"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "lich"
+
+[[npc_list]]
+id = "location_45_heavy"
+[[npc_list.entries]]
+weight = 75
+npc_list_id = "weakorc"
+
+[[npc_list.entries]]
+weight = 20
+npc_list_id = "strongorc"
+
+[[npc_list.entries]]
+weight = 5
+npc_list_id = "allettin"
+
+[[npc_list]]
+id = "location_46_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_brigand"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_brigand"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list]]
+id = "location_47_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantserpent"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "silverserpent"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "snake"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "mongbat"
+
+[[npc_list]]
+id = "location_48_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "fireele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "drake"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "dragon"
+
+[[npc_list]]
+id = "location_53_medium"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ghoul"
+
+[[npc_list]]
+id = "location_53_light"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lich"
+
+[[npc_list]]
+id = "dagger_isle"
+[[npc_list.entries]]
+weight = 25
+mobile_id = "whitewolf"
+
+[[npc_list.entries]]
+weight = 21
+mobile_id = "polarbear"
+
+[[npc_list.entries]]
+weight = 16
+mobile_id = "walrus"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "frosttroll"
+
+[[npc_list.entries]]
+weight = 3
+mobile_id = "snowele"
+
+[[npc_list.entries]]
+weight = 3
+mobile_id = "iceserpent"
+
+[[npc_list]]
+id = "dagger_isle_extended"
+[[npc_list.entries]]
+weight = 25
+mobile_id = "whitewolf"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "polarbear"
+
+[[npc_list.entries]]
+weight = 13
+mobile_id = "walrus"
+
+[[npc_list.entries]]
+weight = 8
+npc_list_id = "weakorc"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "frosttroll"
+
+[[npc_list.entries]]
+weight = 3
+mobile_id = "snowele"
+
+[[npc_list.entries]]
+weight = 3
+mobile_id = "iceserpent"
+
+[[npc_list]]
+id = "generic_lowrisk_forest"
+[[npc_list.entries]]
+weight = 50
+npc_list_id = "wilderness"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "corpser"
+
+[[npc_list]]
+id = "generic_midrisk_forest"
+[[npc_list.entries]]
+weight = 40
+npc_list_id = "wilderness"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "airele"
+
+[[npc_list]]
+id = "bloody_plains"
+[[npc_list.entries]]
+weight = 50
+npc_list_id = "weakundeadlist"
+
+[[npc_list.entries]]
+weight = 30
+npc_list_id = "allghostslist"
+
+[[npc_list.entries]]
+weight = 20
+npc_list_id = "ruralwoods"
+
+[[npc_list]]
+id = "windemere_woods"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "canary"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "crow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "falcon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hawk"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 12
+npc_list_id = "allbirdlist"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "bull"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "chicken"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "cow"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 6
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "pig"
+
+[[npc_list.entries]]
+weight = 4
+mobile_id = "sheep"
+
+[[npc_list.entries]]
+weight = 4
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 3
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 3
+mobile_id = "rat"
+
+[[npc_list.entries]]
+weight = 2
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cougar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "horse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "llama"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "mountaingoat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "panther"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "reaper"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "sewerrat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "snake"
+
+[[npc_list]]
+id = "hedge_maze_forest"
+[[npc_list.entries]]
+weight = 60
+npc_list_id = "wilderness"
+
+[[npc_list.entries]]
+weight = 17
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 3
+npc_list_id = "alltroll"
+
+[[npc_list]]
+id = "deep_forest"
+[[npc_list.entries]]
+weight = 45
+npc_list_id = "wilderness"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 10
+npc_list_id = "alltroll"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 7
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 4
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 2
+mobile_id = "gazer"
+
+[[npc_list]]
+id = "britannia_sw_swamp_lbr"
+[[npc_list.entries]]
+weight = 18
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "bogling"
+
+[[npc_list.entries]]
+weight = 14
+mobile_id = "gianttoad"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "bogthing"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "snake"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "acidele"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "giantrat"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "sewerrat"
+
+[[npc_list.entries]]
+weight = 6
+mobile_id = "swamptentacle"

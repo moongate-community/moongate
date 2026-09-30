@@ -1,0 +1,557 @@
+[[spawn]]
+id = "trammel_7600"
+map = "trammel"
+name = "Moonglow baker"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4385
+y1 = 1058
+x2 = 4390
+y2 = 1065
+
+[[spawn]]
+id = "trammel_7601"
+map = "trammel"
+name = "Moonglow healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4385
+y1 = 1081
+x2 = 4391
+y2 = 1084
+
+[[spawn]]
+id = "trammel_7602"
+map = "trammel"
+name = "Moonglow provisioner"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4409
+y1 = 1057
+x2 = 4414
+y2 = 1059
+
+[[spawn]]
+id = "trammel_7603"
+map = "trammel"
+name = "Moonglow carpenter"
+mobile_ids = ["carpenter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4409
+y1 = 1090
+x2 = 4411
+y2 = 1093
+
+[[spawn]]
+id = "trammel_7604"
+map = "trammel"
+name = "Moonglow mage"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4409
+y1 = 1108
+x2 = 4410
+y2 = 1113
+
+[[spawn]]
+id = "trammel_7605"
+map = "trammel"
+name = "Moonglow weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4385
+y1 = 1104
+x2 = 4390
+y2 = 1109
+
+[[spawn]]
+id = "trammel_7606"
+map = "trammel"
+name = "Moonglow butcher"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4385
+y1 = 1131
+x2 = 4390
+y2 = 1136
+
+[[spawn]]
+id = "trammel_7607"
+map = "trammel"
+name = "Moonglow innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4400
+y1 = 1160
+x2 = 4403
+y2 = 1162
+
+[[spawn]]
+id = "trammel_7608"
+map = "trammel"
+name = "Moonglow herbalist"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4409
+y1 = 1137
+x2 = 4414
+y2 = 1139
+
+[[spawn]]
+id = "trammel_7609"
+map = "trammel"
+name = "Moonglow armorer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4437
+y1 = 1153
+x2 = 4441
+y2 = 1157
+
+[[spawn]]
+id = "trammel_7610"
+map = "trammel"
+name = "Moonglow alchemist"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4453
+y1 = 1081
+x2 = 4456
+y2 = 1082
+
+[[spawn]]
+id = "trammel_7611"
+map = "trammel"
+name = "Moonglow farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4473
+y1 = 1081
+x2 = 4475
+y2 = 1084
+
+[[spawn]]
+id = "trammel_7612"
+map = "trammel"
+name = "Moonglow innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4480
+y1 = 1065
+x2 = 4481
+y2 = 1069
+
+[[spawn]]
+id = "trammel_7613"
+map = "trammel"
+name = "Moonglow - Scholar's Cut"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4457
+y1 = 1058
+x2 = 4460
+y2 = 1061
+
+[[spawn]]
+id = "trammel_7614"
+map = "trammel"
+name = "Moonglow tinker"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4468
+y1 = 1156
+x2 = 4473
+y2 = 1158
+
+[[spawn]]
+id = "trammel_7615"
+map = "trammel"
+name = "Moonglow artist"
+mobile_ids = ["artist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4520
+y1 = 1062
+x2 = 4526
+y2 = 1069
+
+[[spawn]]
+id = "trammel_7616"
+map = "trammel"
+name = "Thief Guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 4374
+y1 = 1041
+x2 = 4488
+y2 = 1176
+
+[[spawn]]
+id = "trammel_7617"
+map = "trammel"
+name = "Moonglow Bank"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4468
+y1 = 1156
+x2 = 4473
+y2 = 1158
+
+[[spawn]]
+id = "trammel_7618"
+map = "trammel"
+name = "Moonglow Mage Shop"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4543
+y1 = 856
+x2 = 4555
+y2 = 861
+
+[[spawn]]
+id = "trammel_7619"
+map = "trammel"
+name = "Moonglow Mage Shop"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4543
+y1 = 856
+x2 = 4555
+y2 = 861
+
+[[spawn]]
+id = "trammel_7620"
+map = "trammel"
+name = "Moonglow Illusionist's Guild"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4623
+y1 = 1200
+x2 = 4629
+y2 = 1206
+
+[[spawn]]
+id = "trammel_7621"
+map = "trammel"
+name = "Moonglow Farmhouse - Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4625
+y1 = 1321
+x2 = 4638
+y2 = 1326
+
+[[spawn]]
+id = "trammel_7622"
+map = "trammel"
+name = "Moonglow Farmhouse - Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4625
+y1 = 1321
+x2 = 4638
+y2 = 1326
+
+[[spawn]]
+id = "trammel_7623"
+map = "trammel"
+name = "Moonglow Sorcerer's Guild"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4677
+y1 = 1407
+x2 = 4690
+y2 = 1413
+
+[[spawn]]
+id = "trammel_7624"
+map = "trammel"
+name = "Moonglow Farmhouse - Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4553
+y1 = 1489
+x2 = 4558
+y2 = 1501
+
+[[spawn]]
+id = "trammel_7625"
+map = "trammel"
+name = "Moonglow Farmhouse - Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4553
+y1 = 1489
+x2 = 4558
+y2 = 1501
+
+[[spawn]]
+id = "trammel_7626"
+map = "trammel"
+name = "Moonglow Farmhouse - Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4409
+y1 = 1463
+x2 = 4420
+y2 = 1466
+
+[[spawn]]
+id = "trammel_7627"
+map = "trammel"
+name = "Moonglow Farmhouse - Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4409
+y1 = 1463
+x2 = 4420
+y2 = 1466
+
+[[spawn]]
+id = "trammel_7628"
+map = "trammel"
+name = "Moonglow - The Scholar's Goods"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4413
+y1 = 1062
+x2 = 4416
+y2 = 1065
+
+[[spawn]]
+id = "trammel_7629"
+map = "trammel"
+name = "Moonglow - Scholar's Cut"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4456
+y1 = 1056
+x2 = 4462
+y2 = 1060
+
+[[spawn]]
+id = "trammel_7660"
+map = "trammel"
+name = "Moonglow - Scholar's Cut"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4460
+y1 = 1066
+x2 = 4462
+y2 = 1069

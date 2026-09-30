@@ -1,0 +1,611 @@
+[[spawn]]
+id = "ilshenar_17350"
+map = "ilshenar"
+name = "Ankh 1_1"
+mobile_ids = []
+npc_list_ids = ["ankh_npclist_1"]
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 109
+y1 = 1510
+x2 = 149
+y2 = 1550
+
+[[spawn]]
+id = "ilshenar_17351"
+map = "ilshenar"
+name = "Ankh 1_2"
+mobile_ids = []
+npc_list_ids = ["ankh_npclist_2"]
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 56
+y1 = 1506
+x2 = 86
+y2 = 1534
+
+[[spawn]]
+id = "ilshenar_17352"
+map = "ilshenar"
+name = "Ankh 1_3"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 80
+y1 = 1464
+x2 = 93
+y2 = 1477
+
+[[spawn]]
+id = "ilshenar_17353"
+map = "ilshenar"
+name = "Ankh 1_4"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 56
+y1 = 1464
+x2 = 69
+y2 = 1477
+
+[[spawn]]
+id = "ilshenar_17354"
+map = "ilshenar"
+name = "Ankh 1_5"
+mobile_ids = ["daemon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 32
+y1 = 1481
+x2 = 45
+y2 = 1501
+
+[[spawn]]
+id = "ilshenar_17355"
+map = "ilshenar"
+name = "Ankh 1_6"
+mobile_ids = ["bloodele"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 24
+y1 = 1456
+x2 = 45
+y2 = 1469
+
+[[spawn]]
+id = "ilshenar_17356"
+map = "ilshenar"
+name = "Ankh 1_7"
+mobile_ids = ["imp"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 8
+y1 = 1496
+x2 = 21
+y2 = 1509
+
+[[spawn]]
+id = "ilshenar_17357"
+map = "ilshenar"
+name = "Ankh 1_8"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 56
+y1 = 1440
+x2 = 69
+y2 = 1453
+
+[[spawn]]
+id = "ilshenar_17358"
+map = "ilshenar"
+name = "Ankh 1_9"
+mobile_ids = ["skeletalknight"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 25
+y1 = 1401
+x2 = 37
+y2 = 1422
+
+[[spawn]]
+id = "ilshenar_17359"
+map = "ilshenar"
+name = "Ankh 1_10"
+mobile_ids = ["mummy"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 81
+y1 = 1437
+x2 = 93
+y2 = 1453
+
+[[spawn]]
+id = "ilshenar_17360"
+map = "ilshenar"
+name = "Ankh 1_11"
+mobile_ids = ["skeletalmage"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 114
+y1 = 1425
+x2 = 134
+y2 = 1445
+
+[[spawn]]
+id = "ilshenar_17361"
+map = "ilshenar"
+name = "Ankh 1_12"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 117
+y1 = 1429
+x2 = 131
+y2 = 1443
+
+[[spawn]]
+id = "ilshenar_17362"
+map = "ilshenar"
+name = "Ankh 1_13"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 96
+y1 = 1384
+x2 = 116
+y2 = 1396
+
+[[spawn]]
+id = "ilshenar_17363"
+map = "ilshenar"
+name = "Ankh 1_14"
+mobile_ids = []
+npc_list_ids = ["ankh_npclist_3"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 112
+y1 = 1312
+x2 = 149
+y2 = 1349
+
+[[spawn]]
+id = "ilshenar_17364"
+map = "ilshenar"
+name = "Ankh 1_15"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 112
+y1 = 1312
+x2 = 149
+y2 = 1349
+
+[[spawn]]
+id = "ilshenar_17365"
+map = "ilshenar"
+name = "Ankh 1_16"
+mobile_ids = []
+npc_list_ids = ["ankh_npclist_4"]
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 32
+y1 = 1280
+x2 = 78
+y2 = 1318
+
+[[spawn]]
+id = "ilshenar_17375"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_1"
+mobile_ids = ["fireele"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 30
+y1 = 890
+x2 = 60
+y2 = 917
+
+[[spawn]]
+id = "ilshenar_17376"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_2"
+mobile_ids = ["poisonele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 37
+y1 = 834
+x2 = 61
+y2 = 858
+
+[[spawn]]
+id = "ilshenar_17377"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_3"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 99
+y1 = 893
+x2 = 129
+y2 = 923
+
+[[spawn]]
+id = "ilshenar_17378"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_4"
+mobile_ids = ["poisonele"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 80
+y1 = 944
+x2 = 120
+y2 = 973
+
+[[spawn]]
+id = "ilshenar_17379"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_5"
+mobile_ids = ["kirin"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 132
+y1 = 936
+x2 = 162
+y2 = 968
+
+[[spawn]]
+id = "ilshenar_17380"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_6"
+mobile_ids = ["dragon"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 12
+y1 = 986
+x2 = 42
+y2 = 1027
+
+[[spawn]]
+id = "ilshenar_17381"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_7"
+mobile_ids = ["drake"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 12
+y1 = 1000
+x2 = 44
+y2 = 1035
+
+[[spawn]]
+id = "ilshenar_17382"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_8"
+mobile_ids = []
+npc_list_ids = ["kirin_npclist_1"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 67
+y1 = 1031
+x2 = 107
+y2 = 1071
+
+[[spawn]]
+id = "ilshenar_17383"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_9"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 97
+y1 = 1090
+x2 = 129
+y2 = 1133
+
+[[spawn]]
+id = "ilshenar_17384"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_10"
+mobile_ids = ["acidele"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 89
+y1 = 1148
+x2 = 109
+y2 = 1168
+
+[[spawn]]
+id = "ilshenar_17385"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_11"
+mobile_ids = ["nightmare"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 60
+y1 = 1165
+x2 = 72
+y2 = 1177
+
+[[spawn]]
+id = "ilshenar_17386"
+map = "ilshenar"
+name = "Ki-Rin Passage 1_12"
+mobile_ids = ["dragon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 117
+y1 = 897
+x2 = 131
+y2 = 909
+
+[[spawn]]
+id = "ilshenar_17390"
+map = "ilshenar"
+name = "Serpentine Passage 1_1"
+mobile_ids = ["pixie"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 430
+y1 = 1540
+x2 = 448
+y2 = 1562
+
+[[spawn]]
+id = "ilshenar_17391"
+map = "ilshenar"
+name = "Serpentine Passage 1_2"
+mobile_ids = ["wisp"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 435
+y1 = 1536
+x2 = 467
+y2 = 1568
+
+[[spawn]]
+id = "ilshenar_17392"
+map = "ilshenar"
+name = "Serpentine Passage 1_3"
+mobile_ids = ["serpentinedragon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 458
+y1 = 1537
+x2 = 488
+y2 = 1567
+
+[[spawn]]
+id = "ilshenar_17393"
+map = "ilshenar"
+name = "Serpentine Passage 1_4"
+mobile_ids = ["centaur"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 435
+y1 = 1559
+x2 = 446
+y2 = 1575
+
+[[spawn]]
+id = "ilshenar_17394"
+map = "ilshenar"
+name = "Serpentine Passage 1_5"
+mobile_ids = ["serpentinedragon"]
+npc_list_ids = []
+max = 1
+min_minutes = 45
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 469
+y1 = 1547
+x2 = 479
+y2 = 1557
+
+[[spawn]]
+id = "ilshenar_17395"
+map = "ilshenar"
+name = "Ankh 1_17"
+mobile_ids = ["ancientlich"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 111
+y1 = 1538
+x2 = 125
+y2 = 1552

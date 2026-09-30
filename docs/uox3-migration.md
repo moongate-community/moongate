@@ -14,7 +14,8 @@ From a source checkout:
 dotnet run --project src/Moongate.UoxItemConverter -- \
   --source <file-or-directory> --destination <dir> [--loot-destination <dir>] \
   [--mobile-source <dfndata> --mobile-destination <dir> --names-destination <file>] \
-  [--starting-items-destination <file>] [--scripts-source <js-dir>]
+  [--starting-items-destination <file>] [--scripts-source <js-dir>] \
+  [--npc-lists-destination <dir> --spawns-destination <dir>]
 ```
 
 Docker images after 0.6.0 bundle the same tool at `/app/mg-uoxconv`; see
@@ -33,6 +34,20 @@ Moongate Lua script gets its `script_id`: the script of the block's `script=`, e
 `jse_fileassociations.scp` ([SCRIPT_LIST]). Today `item/lights.js` becomes `light`
 (`scripts/items/light.lua`); other scripts are left out. Without it no `script_id` is written.
 A folder missing either file exits `2`.
+
+`--npc-lists-destination` and `--spawns-destination` go together and need `--mobile-source`.
+They convert the `[NPCLIST name]` blocks under `npc/` into `templates/npc_lists` (entries
+`20|gorilla` keep their weight, `NPCLIST=trolls` becomes a nested list) and the
+`[REGIONSPAWN n]` blocks under `spawn/` into `templates/spawns/<map>/`, one folder per map from
+the region's own `WORLD=` (0 Felucca, 1 Trammel, 2 Ilshenar), else the source folder. A region's
+`GET=` takes the fields of the region it names, its own winning, but never its map, NPCs, lists
+or eras, as UOX3; a header defined twice keeps its last definition. An unweighted `NPCLIST=x`
+inside a list brings x's entries in (UOX3 splices it); a weighted `n|NPCLIST=x` stays one pick.
+Regions whose `ERAS=` leave out `tol` (the modern era; UOX3's default `lbr` keeps the same
+ones) are skipped, reversed exclude corners and `MINTIME`/`MAXTIME` are put in order, and the
+output is read back and checked as the server's loaders do.
+`MINTIME`/`MAXTIME` stay in minutes as written (UOX3 itself truncates them to a byte). Regions
+spawning only items, and NPCs or lists that do not resolve, are left out and counted.
 
 Every block from every source file is read before any `get=` chain is resolved,
 because a chain's target can live in another file: UOX3's own data keeps a sword's

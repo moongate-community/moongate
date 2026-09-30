@@ -1,0 +1,53 @@
+[[spawn]]
+id = "felucca_4000"
+map = "felucca"
+name = "Fire Dungeon Level 1 Pt1"
+mobile_ids = []
+npc_list_ids = ["fire_level_one"]
+max = 50
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5764
+y1 = 1286
+x2 = 5883
+y2 = 1417
+
+[[spawn]]
+id = "felucca_4001"
+map = "felucca"
+name = "Fire Dungeon Level 1 Pt2"
+mobile_ids = []
+npc_list_ids = ["fire_level_one"]
+max = 50
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5668
+y1 = 1406
+x2 = 5881
+y2 = 1519
+
+[[spawn]]
+id = "felucca_4002"
+map = "felucca"
+name = "Fire Dungeon Level 2"
+mobile_ids = []
+npc_list_ids = ["fire_level_two"]
+max = 50
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5635
+y1 = 1286
+x2 = 5761
+y2 = 1396

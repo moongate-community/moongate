@@ -1,0 +1,539 @@
+[[spawn]]
+id = "trammel_7900"
+map = "trammel"
+name = "Serpents hold guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2939
+y1 = 3370
+x2 = 2947
+y2 = 3378
+
+[[spawn]]
+id = "trammel_7901"
+map = "trammel"
+name = "Serpents Hold - Plenty of Dough"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2973
+y1 = 3353
+x2 = 2976
+y2 = 3354
+
+[[spawn]]
+id = "trammel_7902"
+map = "trammel"
+name = "Serpents Hold - Britannian Herbs"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3009
+y1 = 3352
+x2 = 3014
+y2 = 3358
+
+[[spawn]]
+id = "trammel_7903"
+map = "trammel"
+name = "Serpents Hold - Serpents Spells"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3001
+y1 = 3354
+x2 = 3006
+y2 = 3358
+
+[[spawn]]
+id = "trammel_7904"
+map = "trammel"
+name = "Serpents Hold - Healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3000
+y1 = 3346
+x2 = 3003
+y2 = 3350
+
+[[spawn]]
+id = "trammel_7905"
+map = "trammel"
+name = "Serpents Hold - Supplier"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3004
+y1 = 3385
+x2 = 3006
+y2 = 3388
+
+[[spawn]]
+id = "trammel_7906"
+map = "trammel"
+name = "Serpents Hold - Blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3001
+y1 = 3405
+x2 = 3006
+y2 = 3409
+
+[[spawn]]
+id = "trammel_7907"
+map = "trammel"
+name = "Serpents hold healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2992
+y1 = 3427
+x2 = 2996
+y2 = 3430
+
+[[spawn]]
+id = "trammel_7908"
+map = "trammel"
+name = "Serpents Hold - The Day and Lion Pub"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2968
+y1 = 3416
+x2 = 2971
+y2 = 3418
+
+[[spawn]]
+id = "trammel_7909"
+map = "trammel"
+name = "Serpents Hold - The Broken Arrow Inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2962
+y1 = 3405
+x2 = 2964
+y2 = 3410
+
+[[spawn]]
+id = "trammel_7910"
+map = "trammel"
+name = "Serpents hold guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2956
+y1 = 3443
+x2 = 2961
+y2 = 3448
+
+[[spawn]]
+id = "trammel_7911"
+map = "trammel"
+name = "Serpents Hold - Serpents Arms"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3015
+y1 = 3425
+x2 = 3021
+y2 = 3428
+
+[[spawn]]
+id = "trammel_7912"
+map = "trammel"
+name = "Serpents hold tavernkeeper"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3008
+y1 = 3453
+x2 = 3011
+y2 = 3458
+
+[[spawn]]
+id = "trammel_7913"
+map = "trammel"
+name = "Serpents Hold - Warriors Guild"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3048
+y1 = 3401
+x2 = 3051
+y2 = 3404
+
+[[spawn]]
+id = "trammel_7914"
+map = "trammel"
+name = "Serpents Hold - Silver Serpent Bows"
+mobile_ids = ["bowyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3050
+y1 = 3369
+x2 = 3053
+y2 = 3372
+
+[[spawn]]
+id = "trammel_7915"
+map = "trammel"
+name = "Serpents hold guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3061
+y1 = 3338
+x2 = 3065
+y2 = 3342
+
+[[spawn]]
+id = "trammel_7916"
+map = "trammel"
+name = "Serpents hold animal trainer"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3027
+y1 = 3471
+x2 = 3031
+y2 = 3475
+
+[[spawn]]
+id = "trammel_7917"
+map = "trammel"
+name = "Serpents hold guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2957
+y1 = 3484
+x2 = 2962
+y2 = 3489
+
+[[spawn]]
+id = "trammel_7918"
+map = "trammel"
+name = "Serpents hold tinker"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2931
+y1 = 3504
+x2 = 2934
+y2 = 3505
+
+[[spawn]]
+id = "trammel_7919"
+map = "trammel"
+name = "Serpents Hold - Stablery"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2909
+y1 = 3517
+x2 = 2910
+y2 = 3518
+
+[[spawn]]
+id = "trammel_7920"
+map = "trammel"
+name = "Serpents Hold - Meats"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2906
+y1 = 3486
+x2 = 2909
+y2 = 3487
+
+[[spawn]]
+id = "trammel_7921"
+map = "trammel"
+name = "Serpents Hold - Silver Serpent Tailors"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2874
+y1 = 3508
+x2 = 2877
+y2 = 3510
+
+[[spawn]]
+id = "trammel_7922"
+map = "trammel"
+name = "Serpents hold guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2876
+y1 = 3469
+x2 = 2880
+y2 = 3473
+
+[[spawn]]
+id = "trammel_7923"
+map = "trammel"
+name = "Serpents hold guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3009
+y1 = 3524
+x2 = 3012
+y2 = 3527
+
+[[spawn]]
+id = "trammel_7924"
+map = "trammel"
+name = "Thief Guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 2860
+y1 = 3363
+x2 = 3067
+y2 = 3511
+
+[[spawn]]
+id = "trammel_7925"
+map = "trammel"
+name = "Serpents Hold - Bank"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2874
+y1 = 3466
+x2 = 2879
+y2 = 3476
+
+[[spawn]]
+id = "trammel_7926"
+map = "trammel"
+name = "Serpents Hold - Warrior Guild"
+mobile_ids = ["fighter"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3050
+y1 = 3385
+x2 = 3055
+y2 = 3399
+
+[[spawn]]
+id = "trammel_7927"
+map = "trammel"
+name = "Serpents Hold - Silver Serpent Tailors"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2872
+y1 = 3496
+x2 = 2878
+y2 = 3503
+
+[[spawn]]
+id = "trammel_7928"
+map = "trammel"
+name = "Serpents Hold - Silver Serpent Tailors"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2881
+y1 = 3496
+x2 = 2886
+y2 = 3499
+
+[[spawn]]
+id = "trammel_7929"
+map = "trammel"
+name = "Serpents Hold - Fisherman's Brew"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3018
+y1 = 3450
+x2 = 3020
+y2 = 3461

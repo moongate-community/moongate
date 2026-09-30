@@ -13,6 +13,8 @@ internal sealed class ConverterTestDirectories : IDisposable
     public string NamesDestinationPath { get; }
     public string StartingItemsDestinationPath { get; }
     public string ScriptsSourceDirectory { get; }
+    public string NpcListsDestinationDirectory { get; }
+    public string SpawnsDestinationDirectory { get; }
 
     public ConverterTestDirectories()
     {
@@ -25,6 +27,8 @@ internal sealed class ConverterTestDirectories : IDisposable
         NamesDestinationPath = Path.Combine(root, "names", "names.toml");
         StartingItemsDestinationPath = Path.Combine(root, "starting", "starting_items.toml");
         ScriptsSourceDirectory = Path.Combine(root, "js");
+        NpcListsDestinationDirectory = Path.Combine(root, "npc_lists");
+        SpawnsDestinationDirectory = Path.Combine(root, "spawns");
         Directory.CreateDirectory(SourceDirectory);
     }
 

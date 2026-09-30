@@ -1,0 +1,35 @@
+[[spawn]]
+id = "trammel_13850"
+map = "trammel"
+name = "LBR Wrong lvl 1"
+mobile_ids = []
+npc_list_ids = ["lbr_wrong_lvl_one"]
+max = 50
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5775
+y1 = 510
+x2 = 5885
+y2 = 607
+
+[[spawn]]
+id = "trammel_13851"
+map = "trammel"
+name = "LBR Wrong lvl 2"
+mobile_ids = []
+npc_list_ids = ["lbr_wrong_lvl_two"]
+max = 25
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5634
+y1 = 514
+x2 = 5742
+y2 = 586

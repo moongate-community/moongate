@@ -1,0 +1,729 @@
+[[spawn]]
+id = "trammel_8300"
+map = "trammel"
+name = "Yew - The Tanned Hide"
+mobile_ids = ["leatherworker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 513
+y1 = 989
+x2 = 514
+y2 = 991
+
+[[spawn]]
+id = "trammel_8301"
+map = "trammel"
+name = "Healer Of Yew"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 531
+y1 = 969
+x2 = 533
+y2 = 971
+
+[[spawn]]
+id = "trammel_8302"
+map = "trammel"
+name = "The Sturdy Bow"
+mobile_ids = ["bowyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 561
+y1 = 962
+x2 = 563
+y2 = 964
+
+[[spawn]]
+id = "trammel_8303"
+map = "trammel"
+name = "The Jolly Baker"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 553
+y1 = 985
+x2 = 554
+y2 = 987
+
+[[spawn]]
+id = "trammel_8304"
+map = "trammel"
+name = "Bloody Thumb Woodworks"
+mobile_ids = ["carpenter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 563
+y1 = 1009
+x2 = 565
+y2 = 1012
+
+[[spawn]]
+id = "trammel_8305"
+map = "trammel"
+name = "Bloody Thumb Woodworks"
+mobile_ids = ["architect"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 567
+y1 = 1012
+x2 = 569
+y2 = 1014
+
+[[spawn]]
+id = "trammel_8306"
+map = "trammel"
+name = "Yews Finest Cuts"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 535
+y1 = 1009
+x2 = 538
+y2 = 1010
+
+[[spawn]]
+id = "trammel_8307"
+map = "trammel"
+name = "Yew Mill"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 549
+y1 = 824
+x2 = 554
+y2 = 826
+
+[[spawn]]
+id = "trammel_8308"
+map = "trammel"
+name = "Sheep Pin"
+mobile_ids = ["sheep"]
+npc_list_ids = []
+max = 10
+min_minutes = 19
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 664
+y1 = 928
+x2 = 686
+y2 = 950
+
+[[spawn]]
+id = "trammel_8309"
+map = "trammel"
+name = "healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 642
+y1 = 1081
+x2 = 646
+y2 = 1086
+
+[[spawn]]
+id = "trammel_8310"
+map = "trammel"
+name = "Great Oak Bowyer"
+mobile_ids = ["bowyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 617
+y1 = 1144
+x2 = 623
+y2 = 1147
+
+[[spawn]]
+id = "trammel_8311"
+map = "trammel"
+name = "Sheep Pin 2"
+mobile_ids = ["sheep"]
+npc_list_ids = []
+max = 10
+min_minutes = 19
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 664
+y1 = 1168
+x2 = 686
+y2 = 1190
+
+[[spawn]]
+id = "trammel_8312"
+map = "trammel"
+name = "farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 553
+y1 = 1213
+x2 = 558
+y2 = 1219
+
+[[spawn]]
+id = "trammel_8313"
+map = "trammel"
+name = "Sheep Pin 3"
+mobile_ids = ["sheep"]
+npc_list_ids = []
+max = 10
+min_minutes = 19
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 560
+y1 = 1088
+x2 = 582
+y2 = 1110
+
+[[spawn]]
+id = "trammel_8314"
+map = "trammel"
+name = "healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 329
+y1 = 1243
+x2 = 334
+y2 = 1253
+
+[[spawn]]
+id = "trammel_8315"
+map = "trammel"
+name = "docks"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 497
+y1 = 769
+x2 = 537
+y2 = 782
+
+[[spawn]]
+id = "trammel_8316"
+map = "trammel"
+name = "abby-healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 632
+y1 = 816
+x2 = 638
+y2 = 822
+
+[[spawn]]
+id = "trammel_8317"
+map = "trammel"
+name = "abby-mage"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 624
+y1 = 832
+x2 = 630
+y2 = 864
+
+[[spawn]]
+id = "trammel_8318"
+map = "trammel"
+name = "abby-scribe"
+mobile_ids = ["scribe"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 640
+y1 = 848
+x2 = 646
+y2 = 854
+
+[[spawn]]
+id = "trammel_8319"
+map = "trammel"
+name = "abby-scribe-2"
+mobile_ids = ["scribe"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 624
+y1 = 848
+x2 = 630
+y2 = 854
+
+[[spawn]]
+id = "trammel_8320"
+map = "trammel"
+name = "abby-innkeepr"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 608
+y1 = 808
+x2 = 614
+y2 = 822
+
+[[spawn]]
+id = "trammel_8321"
+map = "trammel"
+name = "abby-alchemist-upstairs"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 20
+only_outside = false
+[[spawn.areas]]
+x1 = 643
+y1 = 843
+x2 = 646
+y2 = 854
+
+[[spawn]]
+id = "trammel_8322"
+map = "trammel"
+name = "abby-herbalist-upstairs"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 20
+only_outside = false
+[[spawn.areas]]
+x1 = 625
+y1 = 843
+x2 = 627
+y2 = 854
+
+[[spawn]]
+id = "trammel_8323"
+map = "trammel"
+name = "abby-banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 656
+y1 = 808
+x2 = 662
+y2 = 814
+
+[[spawn]]
+id = "trammel_8324"
+map = "trammel"
+name = "abby-banker-2"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+pref_z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 664
+y1 = 808
+x2 = 670
+y2 = 822
+
+[[spawn]]
+id = "trammel_8325"
+map = "trammel"
+name = "abby-towncrier"
+mobile_ids = ["towncrier"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 639
+y1 = 856
+x2 = 639
+y2 = 856
+
+[[spawn]]
+id = "trammel_8326"
+map = "trammel"
+name = "Yew - Sheep Farm"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 641
+y1 = 937
+x2 = 653
+y2 = 941
+
+[[spawn]]
+id = "trammel_8327"
+map = "trammel"
+name = "Yew - Sheep Farm"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 641
+y1 = 937
+x2 = 653
+y2 = 941
+
+[[spawn]]
+id = "trammel_8328"
+map = "trammel"
+name = "Yew - Farm"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 657
+y1 = 1001
+x2 = 669
+y2 = 1005
+
+[[spawn]]
+id = "trammel_8329"
+map = "trammel"
+name = "Yew - Great Oak Vessels"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 625
+y1 = 1033
+x2 = 631
+y2 = 1036
+
+[[spawn]]
+id = "trammel_8330"
+map = "trammel"
+name = "Yew - Great Oak Vessels"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 635
+y1 = 1033
+x2 = 637
+y2 = 1036
+
+[[spawn]]
+id = "trammel_8331"
+map = "trammel"
+name = "Yew - Sheep Farm 2"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 673
+y1 = 1201
+x2 = 683
+y2 = 1205
+
+[[spawn]]
+id = "trammel_8332"
+map = "trammel"
+name = "Yew - Sheep Farm 2"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 665
+y1 = 1193
+x2 = 683
+y2 = 1205
+
+[[spawn]]
+id = "trammel_8333"
+map = "trammel"
+name = "Yew - Farm"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 553
+y1 = 1216
+x2 = 571
+y2 = 1241
+
+[[spawn]]
+id = "trammel_8334"
+map = "trammel"
+name = "Yew - Sheep Farm 3"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 568
+y1 = 1121
+x2 = 578
+y2 = 1125
+
+[[spawn]]
+id = "trammel_8335"
+map = "trammel"
+name = "Yew - Sheep Farm 3"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 560
+y1 = 1114
+x2 = 578
+y2 = 1125
+
+[[spawn]]
+id = "trammel_8336"
+map = "trammel"
+name = "Yew - The Tanned Hide"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 512
+y1 = 986
+x2 = 516
+y2 = 987
+
+[[spawn]]
+id = "trammel_8337"
+map = "trammel"
+name = "Yew - The Tanned Hide"
+mobile_ids = ["furtrader"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 512
+y1 = 997
+x2 = 514
+y2 = 997
+
+[[spawn]]
+id = "trammel_8338"
+map = "trammel"
+name = "Yew - Prison"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 20
+only_outside = false
+[[spawn.areas]]
+x1 = 266
+y1 = 764
+x2 = 270
+y2 = 768
+
+[[spawn]]
+id = "trammel_8339"
+map = "trammel"
+name = "Yew - Prison"
+mobile_ids = ["garriot"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 260
+y1 = 774
+x2 = 264
+y2 = 778

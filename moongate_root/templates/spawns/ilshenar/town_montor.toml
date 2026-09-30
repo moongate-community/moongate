@@ -1,0 +1,107 @@
+[[spawn]]
+id = "ilshenar_18050"
+map = "ilshenar"
+name = "Montor 1_1"
+mobile_ids = []
+npc_list_ids = ["montor_npclist_1"]
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1604
+y1 = 299
+x2 = 1637
+y2 = 341
+
+[[spawn]]
+id = "ilshenar_18051"
+map = "ilshenar"
+name = "Montor 1_2"
+mobile_ids = []
+npc_list_ids = ["montor_npclist_1"]
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1638
+y1 = 299
+x2 = 1680
+y2 = 342
+
+[[spawn]]
+id = "ilshenar_18052"
+map = "ilshenar"
+name = "Montor 1_3"
+mobile_ids = []
+npc_list_ids = ["montor_npclist_1"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1626
+y1 = 280
+x2 = 1680
+y2 = 298
+
+[[spawn]]
+id = "ilshenar_18053"
+map = "ilshenar"
+name = "Montor 1_4"
+mobile_ids = []
+npc_list_ids = ["montor_npclist_2"]
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1651
+y1 = 227
+x2 = 1680
+y2 = 265
+
+[[spawn]]
+id = "ilshenar_18054"
+map = "ilshenar"
+name = "Montor 1_5"
+mobile_ids = []
+npc_list_ids = ["montor_npclist_3"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1705
+y1 = 218
+x2 = 1725
+y2 = 238
+
+[[spawn]]
+id = "ilshenar_18055"
+map = "ilshenar"
+name = "Montor 1_6"
+mobile_ids = ["balron"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1699
+y1 = 176
+x2 = 1716
+y2 = 200

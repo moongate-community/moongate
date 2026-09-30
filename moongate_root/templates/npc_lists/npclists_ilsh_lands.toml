@@ -1,0 +1,1085 @@
+[[npc_list]]
+id = "ilshenar_ancient_citadel_1"
+[[npc_list.entries]]
+weight = 20
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "wraith"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "shade"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "skeletalmage"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "skeletalknight"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "boneknight"
+
+[[npc_list]]
+id = "ilshenar_ancient_citadel_2"
+[[npc_list.entries]]
+weight = 10
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "zombie"
+
+[[npc_list]]
+id = "ilshenar_savage_camp_npclist_1"
+[[npc_list.entries]]
+weight = 20
+mobile_id = "savagewarrior"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "savagerider"
+
+[[npc_list]]
+id = "ilshenar_savage_camp_npclist_2"
+[[npc_list.entries]]
+weight = 20
+mobile_id = "savagewarrior"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "savageridgeback"
+
+[[npc_list]]
+id = "ilshenar_savage_camp_npclist_3"
+[[npc_list.entries]]
+weight = 50
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 40
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "direwolf"
+
+[[npc_list]]
+id = "ilshenar_savage_village_npclist_1"
+[[npc_list.entries]]
+weight = 20
+mobile_id = "savagewarrior"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "savagerider"
+
+[[npc_list]]
+id = "ilshenar_savage_village_npclist_2"
+[[npc_list.entries]]
+weight = 20
+mobile_id = "savagewarrior"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "savageshaman"
+
+[[npc_list]]
+id = "ilshenar_savage_village_npclist_3"
+[[npc_list.entries]]
+weight = 20
+mobile_id = "savagewarrior"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "savageshaman"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "savagerider"
+
+[[npc_list]]
+id = "ilshenar_npclist_1"
+[[npc_list.entries]]
+weight = 40
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "scorpion"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "airele"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "earthele"
+
+[[npc_list]]
+id = "ilshenar_npclist_2"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "mummy"
+
+[[npc_list.entries]]
+weight = 40
+mobile_id = "wyvern"
+
+[[npc_list]]
+id = "ilshenar_npclist_3"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "desertostard"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "stoneharpy"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "gargoyle"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "wyvern"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "efreet"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "lichlord"
+
+[[npc_list]]
+id = "ilshenar_npclist_4"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "desertostard"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "stoneharpy"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "gargoyle"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "wyvern"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "efreet"
+
+[[npc_list]]
+id = "ilshenar_npclist_5"
+[[npc_list.entries]]
+weight = 80
+mobile_id = "scorpion"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "earthele"
+
+[[npc_list]]
+id = "ilshenar_npclist_6"
+[[npc_list.entries]]
+weight = 18
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 18
+mobile_id = "wraith"
+
+[[npc_list.entries]]
+weight = 18
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 18
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 18
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "shade"
+
+[[npc_list]]
+id = "ilshenar_npclist_7"
+[[npc_list.entries]]
+weight = 50
+mobile_id = "frosttroll"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "snowele"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "iceele"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "drake"
+
+[[npc_list]]
+id = "ilshenar_npclist_8"
+[[npc_list.entries]]
+weight = 50
+mobile_id = "frostspider"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "frosttroll"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "iceserpent"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "iceele"
+
+[[npc_list]]
+id = "ilshenar_npclist_9"
+[[npc_list.entries]]
+weight = 25
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "shade"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "efreet"
+
+[[npc_list]]
+id = "ilshenar_npclist_10"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "orccaptain"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "troll"
+
+[[npc_list]]
+id = "ilshenar_npclist_11"
+[[npc_list.entries]]
+weight = 80
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "drake"
+
+[[npc_list]]
+id = "ilshenar_npclist_12"
+[[npc_list.entries]]
+weight = 80
+mobile_id = "imp"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "daemon"
+
+[[npc_list]]
+id = "ilshenar_npclist_13"
+[[npc_list.entries]]
+weight = 15
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "sewerrat"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "giantrat"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "bogling"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 6
+mobile_id = "poisonele"
+
+[[npc_list]]
+id = "ilshenar_npclist_14"
+[[npc_list.entries]]
+weight = 15
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "sewerrat"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "giantrat"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "bogling"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "bogthing"
+
+[[npc_list.entries]]
+weight = 6
+mobile_id = "poisonele"
+
+[[npc_list]]
+id = "ilshenar_npclist_16"
+[[npc_list.entries]]
+weight = 15
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "sewerrat"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "giantrat"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "bogling"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "lizardman"
+
+[[npc_list]]
+id = "ilshenar_npclist_17"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "golem"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "golemcontroller"
+
+[[npc_list]]
+id = "ilshenar_npclist_18"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "jukawarrior"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "jukamage"
+
+[[npc_list]]
+id = "ilshenar_npclist_19"
+[[npc_list.entries]]
+weight = 40
+mobile_id = "jukamage"
+
+[[npc_list.entries]]
+weight = 40
+mobile_id = "jukawarrior"
+
+[[npc_list]]
+id = "ilshenar_npclist_20"
+[[npc_list.entries]]
+weight = 50
+mobile_id = "jukawarrior"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "jukalord"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "betrayer"
+
+[[npc_list]]
+id = "ilshenar_npclist_21"
+[[npc_list.entries]]
+weight = 50
+mobile_id = "jukamage"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "jukalord"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "betrayer"
+
+[[npc_list]]
+id = "ilshenar_npclist_22"
+[[npc_list.entries]]
+weight = 40
+mobile_id = "golem"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "golemcontroller"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "betrayer"
+
+[[npc_list]]
+id = "ilshenar_npclist_23"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "gargoyle"
+
+[[npc_list.entries]]
+weight = 40
+mobile_id = "golemcontroller"
+
+[[npc_list]]
+id = "ilshenar_npclist_24"
+[[npc_list.entries]]
+weight = 25
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "wraith"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "skeletalknight"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "wyvern"
+
+[[npc_list]]
+id = "ilshenar_npclist_25"
+[[npc_list.entries]]
+weight = 25
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "skeletalknight"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "stonegargoyle"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "dreadspider"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "poisonele"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "wyvern"
+
+[[npc_list]]
+id = "ilshenar_npclist_26"
+[[npc_list.entries]]
+weight = 25
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "skeletalmage"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "stonegargoyle"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "dreadspider"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "wyvern"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "eldergazer"
+
+[[npc_list]]
+id = "ilshenar_npclist_27"
+[[npc_list.entries]]
+weight = 66
+mobile_id = "gazer"
+
+[[npc_list.entries]]
+weight = 33
+mobile_id = "eldergazer"
+
+[[npc_list]]
+id = "ilshenar_npclist_28"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "shade"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wraith"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "zombie"
+
+[[npc_list]]
+id = "ilshenar_npclist_29"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneknight"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeletalknight"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeletalmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lich"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lichlord"
+
+[[npc_list]]
+id = "ilshenar_npclist_30"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "cyclops"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "titan"
+
+[[npc_list]]
+id = "ilshenar_npclist_31"
+[[npc_list.entries]]
+weight = 80
+mobile_id = "brigand"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "evilmage"
+
+[[npc_list]]
+id = "ilshenar_npclist_32"
+[[npc_list.entries]]
+weight = 50
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "dreadspider"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "wyvern"
+
+[[npc_list]]
+id = "ilshenar_npclist_33"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "scorpion"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "ridgeback"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "earthele"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "efreet"
+
+[[npc_list]]
+id = "ilshenar_npclist_34"
+[[npc_list.entries]]
+weight = 70
+mobile_id = "imp"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "golemcontroller"
+
+[[npc_list]]
+id = "ilshenar_npclist_35"
+[[npc_list.entries]]
+weight = 35
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "shade"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "wraith"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "lich"
+
+[[npc_list]]
+id = "ilshenar_npclist_36"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "chaosdaemon"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "moloch"
+
+[[npc_list]]
+id = "ilshenar_npclist_37"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "quagmire"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "arcanedaemon"
+
+[[npc_list]]
+id = "ilshenar_npclist_38"
+[[npc_list.entries]]
+weight = 70
+mobile_id = "chaosdaemon"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "moloch"
+
+[[npc_list]]
+id = "ilshenar_npclist_39"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "snake"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "forestostard"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "gorilla"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "panther"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "giantserpent"
+
+[[npc_list]]
+id = "ilshenar_npclist_40"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "ratmanmage"
+
+[[npc_list]]
+id = "ilshenar_npclist_41"
+[[npc_list.entries]]
+weight = 70
+mobile_id = "horse"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "pixie"
+
+[[npc_list]]
+id = "ilshenar_npclist_42"
+[[npc_list.entries]]
+weight = 55
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "ghoul"
+
+[[npc_list]]
+id = "ilshenar_npclist_43"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list]]
+id = "ilshenar_npclist_44"
+[[npc_list.entries]]
+weight = 25
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "imp"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "boneknight"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "skeletalknight"
+
+[[npc_list]]
+id = "ilshenar_npclist_45"
+[[npc_list.entries]]
+weight = 70
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "stoneharpy"
+
+[[npc_list]]
+id = "ilshenar_npclist_46"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "reaper"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "dreadspider"
+
+[[npc_list]]
+id = "ilshenar_npclist_47"
+[[npc_list.entries]]
+weight = 70
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "ratmanarcher"
+
+[[npc_list]]
+id = "ilshenar_npclist_48"
+[[npc_list.entries]]
+weight = 70
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "ratmanmage"
+
+[[npc_list]]
+id = "ilshenar_npclist_49"
+[[npc_list.entries]]
+weight = 40
+mobile_id = "slime"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 20
+npc_list_id = "ilshenar_npclist_40"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "hellhound"
+
+[[npc_list]]
+id = "ilshenar_npclist_50"
+[[npc_list.entries]]
+weight = 13
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "shade"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "wraith"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "skeletalknight"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "skeletalmage"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "boneknight"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "bonemage"
+
+[[npc_list]]
+id = "ilshenar_npclist_51"
+[[npc_list.entries]]
+weight = 40
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "gianttoad"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "swamptentacle"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "reaper"
+
+[[npc_list]]
+id = "ilshenar_npclist_52"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "lavalizard"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "wyvern"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "ancientwyrm"
+
+[[npc_list]]
+id = "ilshenar_npclist_53"
+[[npc_list.entries]]
+weight = 70
+mobile_id = "imp"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "fireele"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "airele"
+
+[[npc_list]]
+id = "ilshenar_npclist_54"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "fireele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "airele"
+
+[[npc_list]]
+id = "ilshenar_npclist_55"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "imp"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "wisp"
+
+[[npc_list]]
+id = "ilshenar_npclist_56"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "imp"
+
+[[npc_list.entries]]
+weight = 40
+mobile_id = "gazer"
+
+[[npc_list]]
+id = "ilshenar_npclist_57"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "imp"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "reaper"
+
+[[npc_list]]
+id = "ilshenar_npclist_58"
+[[npc_list.entries]]
+weight = 30
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 40
+mobile_id = "imp"

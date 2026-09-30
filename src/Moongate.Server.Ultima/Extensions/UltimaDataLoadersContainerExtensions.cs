@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Server.Ultima.Data.Templates.Spawns;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Data.Titles;
 using Moongate.Server.Ultima.Data.Weather;
@@ -47,6 +48,9 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<MobileTemplatesLoader, MobileTemplate>(15);
         container.AddUltimaDataLoader<MotdLoader, MotdLine>(16);
         container.AddUltimaDataLoader<TitlesLoader, FameKarmaTitle>(17);
+        // After the mobile templates, which the lists and the spawns name.
+        container.AddUltimaDataLoader<NpcListsLoader, NpcListTemplate>(18);
+        container.AddUltimaDataLoader<SpawnsLoader, SpawnTemplate>(19);
 
         return container;
     }

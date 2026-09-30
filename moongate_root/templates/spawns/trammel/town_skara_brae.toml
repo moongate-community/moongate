@@ -1,0 +1,827 @@
+[[spawn]]
+id = "trammel_8000"
+map = "trammel"
+name = "Skara Brae innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 601
+y1 = 2233
+x2 = 602
+y2 = 2236
+
+[[spawn]]
+id = "trammel_8001"
+map = "trammel"
+name = "Skara Brae - Superior Ships"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 600
+y1 = 2273
+x2 = 602
+y2 = 2274
+
+[[spawn]]
+id = "trammel_8002"
+map = "trammel"
+name = "Skara Brae healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 617
+y1 = 2216
+x2 = 619
+y2 = 2219
+
+[[spawn]]
+id = "trammel_8003"
+map = "trammel"
+name = "Skara Brae tailor"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 649
+y1 = 2179
+x2 = 652
+y2 = 2180
+
+[[spawn]]
+id = "trammel_8004"
+map = "trammel"
+name = "Skara Brae blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 625
+y1 = 2192
+x2 = 627
+y2 = 2195
+
+[[spawn]]
+id = "trammel_8005"
+map = "trammel"
+name = "Skara Brae carpenter"
+mobile_ids = ["carpenter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 626
+y1 = 2162
+x2 = 628
+y2 = 2166
+
+[[spawn]]
+id = "trammel_8006"
+map = "trammel"
+name = "Skara Brae weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 649
+y1 = 2160
+x2 = 651
+y2 = 2162
+
+[[spawn]]
+id = "trammel_8007"
+map = "trammel"
+name = "Skara Brae - Mystic Treasures"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 666
+y1 = 2137
+x2 = 668
+y2 = 2140
+
+[[spawn]]
+id = "trammel_8008"
+map = "trammel"
+name = "Skara Brae farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 608
+y1 = 2154
+x2 = 610
+y2 = 2156
+
+[[spawn]]
+id = "trammel_8009"
+map = "trammel"
+name = "Skara Brae mage"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 601
+y1 = 2177
+x2 = 603
+y2 = 2180
+
+[[spawn]]
+id = "trammel_8010"
+map = "trammel"
+name = "Skara Brae bowyer"
+mobile_ids = ["bowyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 596
+y1 = 2201
+x2 = 598
+y2 = 2205
+
+[[spawn]]
+id = "trammel_8011"
+map = "trammel"
+name = "Skara Brae - Sundry Supplies"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 579
+y1 = 2225
+x2 = 580
+y2 = 2229
+
+[[spawn]]
+id = "trammel_8012"
+map = "trammel"
+name = "Skara Brae butcher"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 577
+y1 = 2185
+x2 = 580
+y2 = 2187
+
+[[spawn]]
+id = "trammel_8013"
+map = "trammel"
+name = "Skara Brae - The Shattered Skull"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 553
+y1 = 2171
+x2 = 556
+y2 = 2174
+
+[[spawn]]
+id = "trammel_8014"
+map = "trammel"
+name = "Skara Brae armorer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 586
+y1 = 2161
+x2 = 589
+y2 = 2163
+
+[[spawn]]
+id = "trammel_8015"
+map = "trammel"
+name = "Skara Brae beekeeper"
+mobile_ids = ["beekeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 592
+y1 = 2136
+x2 = 598
+y2 = 2142
+
+[[spawn]]
+id = "trammel_8016"
+map = "trammel"
+name = "Skara Brae bowyer"
+mobile_ids = ["bowyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 560
+y1 = 2153
+x2 = 562
+y2 = 2156
+
+[[spawn]]
+id = "trammel_8017"
+map = "trammel"
+name = "Skara Brae animal trainer"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 569
+y1 = 2120
+x2 = 571
+y2 = 2122
+
+[[spawn]]
+id = "trammel_8018"
+map = "trammel"
+name = "Thief Guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 554
+y1 = 2128
+x2 = 671
+y2 = 2278
+
+[[spawn]]
+id = "trammel_8019"
+map = "trammel"
+name = "Bank of Skara Brae"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 585
+y1 = 2144
+x2 = 588
+y2 = 2150
+
+[[spawn]]
+id = "trammel_8020"
+map = "trammel"
+name = "Skara Brae Ranger's Guild"
+mobile_ids = ["ranger"]
+npc_list_ids = []
+max = 4
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 744
+y1 = 2136
+x2 = 751
+y2 = 2150
+
+[[spawn]]
+id = "trammel_8021"
+map = "trammel"
+name = "Skara Brae Ranger"
+mobile_ids = ["ranger"]
+npc_list_ids = []
+max = 2
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 745
+y1 = 2265
+x2 = 750
+y2 = 2270
+
+[[spawn]]
+id = "trammel_8022"
+map = "trammel"
+name = "Skara Brae Ranger"
+mobile_ids = ["ranger"]
+npc_list_ids = []
+max = 2
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 785
+y1 = 2217
+x2 = 790
+y2 = 2228
+
+[[spawn]]
+id = "trammel_8023"
+map = "trammel"
+name = "Skara Brae Ranger"
+mobile_ids = ["ranger"]
+npc_list_ids = []
+max = 2
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 809
+y1 = 2193
+x2 = 821
+y2 = 2198
+
+[[spawn]]
+id = "trammel_8024"
+map = "trammel"
+name = "Skara Brae Ranger"
+mobile_ids = ["ranger"]
+npc_list_ids = []
+max = 2
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 865
+y1 = 2312
+x2 = 871
+y2 = 2323
+
+[[spawn]]
+id = "trammel_8025"
+map = "trammel"
+name = "Skara Brae Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 793
+y1 = 2265
+x2 = 805
+y2 = 2269
+
+[[spawn]]
+id = "trammel_8026"
+map = "trammel"
+name = "Skara Brae Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 793
+y1 = 2265
+x2 = 805
+y2 = 2269
+
+[[spawn]]
+id = "trammel_8027"
+map = "trammel"
+name = "Skara Brae Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 809
+y1 = 2320
+x2 = 814
+y2 = 2333
+
+[[spawn]]
+id = "trammel_8028"
+map = "trammel"
+name = "Skara Brae Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 809
+y1 = 2320
+x2 = 814
+y2 = 2333
+
+[[spawn]]
+id = "trammel_8029"
+map = "trammel"
+name = "Skara Brae Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 889
+y1 = 2385
+x2 = 894
+y2 = 2397
+
+[[spawn]]
+id = "trammel_8030"
+map = "trammel"
+name = "Skara Brae Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 889
+y1 = 2385
+x2 = 894
+y2 = 2397
+
+[[spawn]]
+id = "trammel_8033"
+map = "trammel"
+name = "Skara Brae - Mystic Treasures"
+mobile_ids = ["hairstylist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 657
+y1 = 2139
+x2 = 664
+y2 = 2141
+
+[[spawn]]
+id = "trammel_8034"
+map = "trammel"
+name = "Skara Brae - Shear Pleasure"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 648
+y1 = 2177
+x2 = 654
+y2 = 2184
+
+[[spawn]]
+id = "trammel_8035"
+map = "trammel"
+name = "Skara Brae - Shear Pleasure"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 648
+y1 = 2177
+x2 = 654
+y2 = 2184
+
+[[spawn]]
+id = "trammel_8036"
+map = "trammel"
+name = "Skara Brae - West Docks"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 644
+y1 = 2234
+x2 = 666
+y2 = 2238
+
+[[spawn]]
+id = "trammel_8037"
+map = "trammel"
+name = "Skara Brae - West Docks"
+mobile_ids = ["sailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 644
+y1 = 2234
+x2 = 666
+y2 = 2238
+
+[[spawn]]
+id = "trammel_8038"
+map = "trammel"
+name = "Skara Brae - Towncrier"
+mobile_ids = ["towncrier"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 628
+y1 = 2235
+x2 = 628
+y2 = 2235
+
+[[spawn]]
+id = "trammel_8039"
+map = "trammel"
+name = "Skara Brae - Sundry Supplies"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 587
+y1 = 2224
+x2 = 590
+y2 = 2225
+
+[[spawn]]
+id = "trammel_8040"
+map = "trammel"
+name = "Skara Brae - Superior Ships"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 602
+y1 = 2279
+x2 = 603
+y2 = 2285
+
+[[spawn]]
+id = "trammel_8041"
+map = "trammel"
+name = "Skara Brae - Town Hall"
+mobile_ids = ["architect"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 545
+y1 = 2209
+x2 = 566
+y2 = 2214
+
+[[spawn]]
+id = "trammel_8042"
+map = "trammel"
+name = "Skara Brae - The Shattered Skull"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 553
+y1 = 2171
+x2 = 556
+y2 = 2174
+
+[[spawn]]
+id = "trammel_8043"
+map = "trammel"
+name = "Skara Brae - The Shattered Skull"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 552
+y1 = 2178
+x2 = 565
+y2 = 2185
+
+[[spawn]]
+id = "trammel_8044"
+map = "trammel"
+name = "Skara Brae - The Shattered Skull"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 560
+y1 = 2168
+x2 = 565
+y2 = 2178
+
+[[spawn]]
+id = "trammel_8045"
+map = "trammel"
+name = "Skara Brae - Rangers' Guild"
+mobile_ids = ["ranger"]
+npc_list_ids = []
+max = 3
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 552
+y1 = 2136
+x2 = 566
+y2 = 2149
+
+[[spawn]]
+id = "trammel_8046"
+map = "trammel"
+name = "Bank of Skara Brae"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 591
+y1 = 2145
+x2 = 598
+y2 = 2149
+
+[[spawn]]
+id = "trammel_8047"
+map = "trammel"
+name = "Skara Brae - Builders' Delight"
+mobile_ids = ["architect"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 625
+y1 = 2153
+x2 = 631
+y2 = 2158

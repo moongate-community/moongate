@@ -1,0 +1,233 @@
+[[spawn]]
+id = "trammel_8400"
+map = "trammel"
+name = "inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5306
+y1 = 31
+x2 = 5316
+y2 = 40
+
+[[spawn]]
+id = "trammel_8401"
+map = "trammel"
+name = "mages appetite"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5346
+y1 = 52
+x2 = 5351
+y2 = 59
+
+[[spawn]]
+id = "trammel_8402"
+map = "trammel"
+name = "the alchemist of wind"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5300
+y1 = 89
+x2 = 5309
+y2 = 92
+
+[[spawn]]
+id = "trammel_8403"
+map = "trammel"
+name = "wind healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5260
+y1 = 126
+x2 = 5265
+y2 = 135
+
+[[spawn]]
+id = "trammel_8404"
+map = "trammel"
+name = "windy inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5217
+y1 = 173
+x2 = 5226
+y2 = 179
+
+[[spawn]]
+id = "trammel_8405"
+map = "trammel"
+name = "the learned mage"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5234
+y1 = 143
+x2 = 5240
+y2 = 151
+
+[[spawn]]
+id = "trammel_8406"
+map = "trammel"
+name = "seat of knowledge"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5242
+y1 = 177
+x2 = 5247
+y2 = 191
+
+[[spawn]]
+id = "trammel_8407"
+map = "trammel"
+name = "magical supplies"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5212
+y1 = 114
+x2 = 5217
+y2 = 120
+
+[[spawn]]
+id = "trammel_8408"
+map = "trammel"
+name = "mages things"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5152
+y1 = 95
+x2 = 5165
+y2 = 99
+
+[[spawn]]
+id = "trammel_8409"
+map = "trammel"
+name = "windy clothes"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5200
+y1 = 87
+x2 = 5204
+y2 = 93
+
+[[spawn]]
+id = "trammel_8410"
+map = "trammel"
+name = "wind alchemy"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5146
+y1 = 56
+x2 = 5157
+y2 = 65
+
+[[spawn]]
+id = "trammel_8411"
+map = "trammel"
+name = "wind alchemy"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5146
+y1 = 56
+x2 = 5157
+y2 = 65
+
+[[spawn]]
+id = "trammel_8412"
+map = "trammel"
+name = "seekers inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5163
+y1 = 19
+x2 = 5179
+y2 = 22

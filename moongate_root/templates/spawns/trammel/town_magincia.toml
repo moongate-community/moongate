@@ -1,0 +1,89 @@
+[[spawn]]
+id = "trammel_7400"
+map = "trammel"
+name = "Magincia shipwright"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3666
+y1 = 2256
+x2 = 3672
+y2 = 2261
+
+[[spawn]]
+id = "trammel_7401"
+map = "trammel"
+name = "Magincia tavernkeeper"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3690
+y1 = 2246
+x2 = 3698
+y2 = 2247
+
+[[spawn]]
+id = "trammel_7402"
+map = "trammel"
+name = "Magincia waiter"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3690
+y1 = 2249
+x2 = 3698
+y2 = 2261
+
+[[spawn]]
+id = "trammel_7403"
+map = "trammel"
+name = "Magincia fisherman"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 4
+min_minutes = 480
+max_minutes = 600
+call = 4
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3666
+y1 = 2265
+x2 = 3710
+y2 = 2311
+
+[[spawn]]
+id = "trammel_7404"
+map = "trammel"
+name = "Magincia - Bank"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3785
+y1 = 2240
+x2 = 3786
+y2 = 2245
