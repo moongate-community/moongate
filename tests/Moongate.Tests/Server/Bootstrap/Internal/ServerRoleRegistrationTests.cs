@@ -80,7 +80,7 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
-        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30062));
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30065));
     }
 
     [Theory, InlineData(0x09), InlineData(0xBF), InlineData(0xD6)]
@@ -142,6 +142,7 @@ public sealed class ServerRoleRegistrationTests
             Assert.NotNull(container.Resolve<NpcModule>());
             Assert.NotNull(container.Resolve<ItemModule>());
             Assert.NotNull(container.Resolve<WorldModule>());
+            Assert.Same(container.Resolve<IWeatherService>(), Assert.Single(container.Resolve<IEnumerable<IRegionChangeListener>>()));
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcScriptService>());
             Assert.NotNull(container.Resolve<INpcService>());

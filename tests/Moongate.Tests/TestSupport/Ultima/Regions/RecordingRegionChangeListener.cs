@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
@@ -14,5 +15,10 @@ public sealed class RecordingRegionChangeListener : IRegionChangeListener
     public void RegionChanged(MobileEntity player, RegionContent? previous, RegionContent? current)
     {
         Changes.Add($"{player.Name}: {previous?.Name ?? "-"} -> {current?.Name ?? "-"}");
+    }
+
+    public void Left(Serial player)
+    {
+        Changes.Add($"{player} left");
     }
 }

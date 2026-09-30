@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Entities.World;
 
@@ -14,4 +15,9 @@ public interface IRegionChangeListener
     ///     entered the world. Either is null outside every region.
     /// </summary>
     void RegionChanged(MobileEntity player, RegionContent? previous, RegionContent? current);
+
+    /// <summary>
+    ///     <paramref name="player" /> left the world.
+    /// </summary>
+    void Left(Serial player);
 }

@@ -5489,7 +5489,7 @@
 30006 = "Weight: 1 stone"
 30007 = "Weight: {0} stones"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061) and command descriptions (30039-30049, 30053-30054, 30058, 30062).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065).
 30008 = "Target canceled."
 30009 = "A command is already running."
 30010 = "Unknown command: {0}"
@@ -5545,3 +5545,6 @@
 30060 = "The global light is now {0}."
 30061 = "The global light follows the time of day again."
 30062 = "Sets the light of every player (0 brightest, 31 darkest) or, without a level, goes back to the time of day."
+30063 = "Weather here ({0}): {1}, density {2}, temperature {3}."
+30064 = "The weather of {0} is now {1} until the next hour."
+30065 = "Shows the weather where you stand or, with none, rain, snow or storm, forces it there until the next game hour."

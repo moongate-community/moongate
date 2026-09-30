@@ -5486,7 +5486,7 @@
 30006 = "Peso: 1 pietra"
 30007 = "Peso: {0} pietre"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061) and command descriptions (30039-30049, 30053-30054, 30058, 30062).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065).
 30008 = "Bersaglio annullato."
 30009 = "Un comando è già in esecuzione."
 30010 = "Comando sconosciuto: {0}"
@@ -5542,3 +5542,6 @@
 30060 = "La luce globale ora è {0}."
 30061 = "La luce globale segue di nuovo l'ora del giorno."
 30062 = "Imposta la luce di tutti i giocatori (0 la più chiara, 31 la più scura) o, senza livello, torna all'ora del giorno."
+30063 = "Meteo qui ({0}): {1}, densità {2}, temperatura {3}."
+30064 = "Il meteo di {0} ora è {1} fino alla prossima ora."
+30065 = "Mostra il meteo dove ti trovi o, con none, rain, snow o storm, lo forza lì fino alla prossima ora di gioco."
