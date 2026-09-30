@@ -5,6 +5,7 @@ using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
@@ -246,6 +247,37 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         await TickAsync();
 
         Assert.Equal("Spawn: 8 NPCs in 7 regions: R7 2, R1 1, R2 1, R3 1, R4 1 and 2 more", Assert.Single(Notices()).Text);
+    }
+
+    [Fact]
+    public async Task RegionsAtAsync_GivesTheRegionsHere_WithTheirLiveNpcsAndNextSpawn()
+    {
+        // 120 seconds of the 5 minutes.
+        await StartAsync(
+            new ScriptedRandom(120),
+            Spawn("forest", name: "Yew Woods", max: 4, minMinutes: 5, maxMinutes: 5, x1: 10, y1: 10, x2: 20, y2: 20),
+            Spawn("glade", max: 2, minMinutes: 5, maxMinutes: 5, x1: 15, y1: 15, x2: 30, y2: 30),
+            Spawn("elsewhere", x1: 100, y1: 100, x2: 110, y2: 110)
+        );
+        await AddLiveAsync("forest");
+        _clock.Advance(TimeSpan.FromSeconds(30));
+
+        var here = await _service.RegionsAtAsync(MapType.Felucca, 16, 16);
+
+        Assert.Equal(
+            [new("forest", "Yew Woods", 1, 4, TimeSpan.FromSeconds(90)), new SpawnRegionStatus("glade", null, 0, 2, TimeSpan.FromSeconds(90))],
+            here
+        );
+        Assert.Empty(await _service.RegionsAtAsync(MapType.Trammel, 16, 16));
+    }
+
+    [Fact]
+    public async Task RegionsAtAsync_AnOverdueSpawn_IsDueNow()
+    {
+        await StartAsync(new ScriptedRandom(0), Spawn("forest"));
+        _clock.Advance(TimeSpan.FromMinutes(3));
+
+        Assert.Equal(TimeSpan.Zero, Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 10, 10)).NextSpawnIn);
     }
 
     [Fact]

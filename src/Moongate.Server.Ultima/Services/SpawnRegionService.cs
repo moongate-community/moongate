@@ -4,12 +4,14 @@ using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Internal.Spawns;
+using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Speech;
+using Moongate.Ultima.Types;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -143,6 +145,31 @@ public sealed class SpawnRegionService : ISpawnRegionService
         {
             // The spawn under way was cancelled.
         }
+    }
+
+    public async Task<IReadOnlyList<SpawnRegionStatus>> RegionsAtAsync(MapType map, int x, int y)
+    {
+        IReadOnlyList<SpawnRegionStatus> here = [];
+        await OnLoopAsync(
+            () =>
+            {
+                var now = _time.GetUtcNow();
+                var live = CountLive();
+                here = _regions.Where(region => region.Template.Map == map && region.Template.Areas.Any(area => area.Contains(x, y)))
+                               .Select(
+                                   region => new SpawnRegionStatus(
+                                       region.Template.Id,
+                                       region.Template.Name,
+                                       live.GetValueOrDefault(region.Template.Id),
+                                       region.Template.Max,
+                                       region.NextSpawn > now ? region.NextSpawn - now : TimeSpan.Zero
+                                   )
+                               )
+                               .ToList();
+            }
+        );
+
+        return here;
     }
 
     // On the game loop. The spawns themselves run off it, as INpcService asks; no check starts before they are done.

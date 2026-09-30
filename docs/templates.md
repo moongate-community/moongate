@@ -463,6 +463,8 @@ At runtime the spawn regions work as UOX3's:
   something, such as `Spawn: The Hammer And Anvil (Felucca): 1 NPCs`, or `Spawn: 12 NPCs in
   9 regions: ...` naming at most five.
 - Regions on a map the server does not load are skipped.
+- [`.spawns`](commands/spawns.md) lists the regions where a game master stands, with their live
+  NPCs and the minutes to their next spawn.
 
 ## Decorations
 

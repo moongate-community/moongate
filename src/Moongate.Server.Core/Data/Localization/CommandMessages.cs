@@ -58,6 +58,8 @@ public static class CommandMessages
     public const int SpawnedInOneRegion = 30074;
     public const int SpawnedInRegions = 30075;
     public const int SpawnedAndMore = 30076;
+    public const int SpawnRegionHere = 30077;
+    public const int NoSpawnRegionHere = 30078;
 
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
@@ -81,4 +83,5 @@ public static class CommandMessages
     public const int LockDescription = 30069;
     public const int UnlockDescription = 30070;
     public const int KeyDescription = 30073;
+    public const int SpawnsDescription = 30079;
 }
