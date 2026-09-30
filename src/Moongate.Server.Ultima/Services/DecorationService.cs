@@ -1,11 +1,13 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Utils;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Decorations;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -19,10 +21,26 @@ public sealed class DecorationService : IDecorationService
 {
     public const string DecorationTemplate = "decoration";
     public const string DoorTemplate = "decoration_door";
+    public const string LightTemplate = "decoration_light";
+    public const string LightProp = "light";
+    public const string ProtectedProp = "protected";
     public const string TypeProp = "decoration_type";
     public const string LinkProp = "door.link";
     public const string OutsideTheMap = "outside the map";
     public const string OpenProp = "door.open";
+
+    // ModernUO's BaseLight kinds and the light shape each gives by default.
+    private static readonly Dictionary<string, LightType> LightKinds = new(StringComparer.Ordinal)
+    {
+        ["Brazier"] = LightType.Circle225, ["BrazierTall"] = LightType.Circle300, ["Candelabra"] = LightType.Circle225,
+        ["CandelabraStand"] = LightType.Circle225, ["Candle"] = LightType.Circle150, ["CandleLarge"] = LightType.Circle150,
+        ["CandleLong"] = LightType.Circle150, ["CandleShort"] = LightType.Circle150, ["CandleSkull"] = LightType.Circle150,
+        ["HangingLantern"] = LightType.Circle300, ["HeatingStand"] = LightType.Empty, ["LampPost1"] = LightType.Circle300,
+        ["LampPost2"] = LightType.Circle300, ["LampPost3"] = LightType.Circle300, ["Lantern"] = LightType.Circle300,
+        ["PaperLantern"] = LightType.Circle150, ["RedHangingLantern"] = LightType.Circle300,
+        ["RoundPaperLantern"] = LightType.Circle150, ["ShojiLantern"] = LightType.Circle150, ["Torch"] = LightType.Circle300,
+        ["WallSconce"] = LightType.WestBig, ["WallTorch"] = LightType.WestBig, ["WhiteHangingLantern"] = LightType.Circle300
+    };
 
     private readonly ILogger _logger = Log.ForContext<DecorationService>();
     private readonly IDecorationsLoader _loader;
@@ -235,7 +253,8 @@ public sealed class DecorationService : IDecorationService
     private ItemEntity Build(DecorationBlock block, MapType map, Point3D location)
     {
         var door = IsDoor(block.Type);
-        var item = _factory.Create(door ? DoorTemplate : DecorationTemplate);
+        var isLight = LightKinds.TryGetValue(block.Type, out var defaultLight);
+        var item = _factory.Create(door ? DoorTemplate : isLight ? LightTemplate : DecorationTemplate);
         var props = new Dictionary<string, object?>(StringComparer.Ordinal);
         item.ItemId = block.ItemId!.Value;
 
@@ -258,15 +277,33 @@ public sealed class DecorationService : IDecorationService
             }
         }
 
-        if (door)
+        if (door || isLight)
         {
             props[TypeProp] = block.Type;
+        }
+
+        if (isLight)
+        {
+            AddLightProps(props, defaultLight);
         }
 
         item.Props = props.Count > 0 ? props : null;
         item.PlaceOnGround(map, location);
 
         return item;
+    }
+
+    // As ModernUO's decorate: the graphic already says lit or unlit; the shape is the data's or the kind's, and a light is
+    // protected (only staff light or douse it) unless the data says unprotected.
+    private static void AddLightProps(Dictionary<string, object?> props, LightType defaultLight)
+    {
+        var light = props.GetValueOrDefault(LightProp) is string name && EnumNameUtils.TryParse<LightType>(name, out var parsed)
+            ? parsed
+            : defaultLight;
+        props[LightProp] = EnumNameUtils.Format(light);
+        props[ProtectedProp] = props.GetValueOrDefault("unprotected") is not true;
+        props.Remove("unprotected");
+        props.Remove("unlit");
     }
 
     // Pairs each door with an unpaired door of the same kind next to it, as ModernUO's double doors.
