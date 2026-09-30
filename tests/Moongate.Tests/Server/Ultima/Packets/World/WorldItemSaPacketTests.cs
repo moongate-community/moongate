@@ -36,4 +36,12 @@ public sealed class WorldItemSaPacketTests
         Assert.Equal(26, bytes.Length);
         Assert.Equal([0x00, 0x00], bytes[24..]);
     }
+
+    [Fact]
+    public void Encode_ALight_IsTheByteAfterTheZ()
+    {
+        var packet = new WorldItemSaPacket(new Serial(0x40000012), 0x0EED, 1, new Point3D(1496, 1628, 0), default, false, 2);
+
+        Assert.Equal(Convert.FromHexString("F3000100400000120EED000001000105D8065C0002000000"), PacketCodec.Encode(packet));
+    }
 }

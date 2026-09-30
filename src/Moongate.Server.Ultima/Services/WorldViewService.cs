@@ -1,4 +1,5 @@
 using Moongate.Core.Geometry;
+using Moongate.Core.Utils;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.Interfaces;
@@ -8,6 +9,7 @@ using Moongate.Server.Ultima.Data.Internal.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Primitives;
 using Serilog;
@@ -260,10 +262,18 @@ public sealed class WorldViewService : IWorldViewService
         {
             var highSeas = version is null || version.CompareTo(HighSeas) >= 0;
 
-            return new WorldItemSaPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue, highSeas);
+            return new WorldItemSaPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue, highSeas, LightOf(item));
         }
 
-        return new WorldItemPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue);
+        return new WorldItemPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue, LightOf(item));
+    }
+
+    // The item's light shape, kept in its "light" prop by name, such as circle150; none for anything else.
+    private static int LightOf(ItemEntity item)
+    {
+        return item.Props?.GetValueOrDefault("light") is string name && EnumNameUtils.TryParse<LightType>(name, out var light)
+            ? (int)light
+            : 0;
     }
 
     private static (int X, int Y) SectorOf(Point3D location)

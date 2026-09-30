@@ -69,6 +69,9 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(((bool?)false, (bool?)false, (string?)null), (decoration.Movable, decoration.Decays, decoration.Name));
         Assert.True(string.IsNullOrEmpty(decoration.ScriptId));
         Assert.Equal(((bool?)false, (bool?)false, "door"), (door.Movable, door.Decays, door.ScriptId));
+        var light = templates["decoration_light"];
+        Assert.Equal(((bool?)false, (bool?)false, "light"), (light.Movable, light.Decays, light.ScriptId));
+        Assert.Equal("light", templates["0x0a28_candle"].ScriptId);
     }
 
     [Fact]

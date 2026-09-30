@@ -5,6 +5,7 @@ item_id = 2555
 name = "wall sconce"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x09fc_wall_sconce"
@@ -21,6 +22,7 @@ item_id = 2557
 name = "wall sconce"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x09fe_wall_sconce"
@@ -43,6 +45,7 @@ item_id = 2560
 name = "wall sconce"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0a01_wall_sconce"
@@ -59,6 +62,7 @@ item_id = 2562
 name = "wall sconce"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0a03_wall_sconce"
@@ -81,6 +85,7 @@ item_id = 2565
 name = "wall torch"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0a06_wall_torch"
@@ -97,6 +102,7 @@ item_id = 2567
 name = "wall torch"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0a08_wall_torch"
@@ -119,6 +125,7 @@ item_id = 2570
 name = "wall torch"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0a0b_wall_torch"
@@ -135,6 +142,7 @@ item_id = 2572
 name = "wall torch"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0a0d_wall_torch"
@@ -160,6 +168,7 @@ weight = 2.0
 buy_price = 6
 sell_price = 3
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a10_candle"
@@ -185,6 +194,7 @@ weight = 1.0
 buy_price = 7
 sell_price = 3
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a13_torch"
@@ -210,6 +220,7 @@ weight = 2.0
 buy_price = 7
 sell_price = 2
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a16_lantern"
@@ -235,6 +246,7 @@ weight = 2.0
 buy_price = 7
 sell_price = 2
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a1a_lantern"
@@ -246,6 +258,7 @@ weight = 2.0
 buy_price = 7
 sell_price = 2
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a1b_lantern"
@@ -271,6 +284,7 @@ weight = 2.0
 buy_price = 7
 sell_price = 2
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a22_lantern"
@@ -282,6 +296,7 @@ weight = 2.0
 buy_price = 7
 sell_price = 2
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a23_lantern"
@@ -307,6 +322,7 @@ weight = 2.0
 buy_price = 7
 sell_price = 2
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a26_candle"
@@ -316,6 +332,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a27_candlabra"
@@ -325,6 +342,7 @@ name = "candlabra"
 rarity = "common"
 weight = 3.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a28_candle"
@@ -334,6 +352,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0a29_candlabra"
@@ -343,6 +362,7 @@ name = "candlabra"
 rarity = "common"
 weight = 3.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0b1a_candle"
@@ -352,6 +372,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0b1b_candle"
@@ -375,6 +396,7 @@ name = "candlabra"
 rarity = "common"
 weight = 3.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0b1e_candlabra"
@@ -398,6 +420,7 @@ name = "candlabra"
 rarity = "common"
 weight = 3.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0b27_candlabra"
@@ -420,6 +443,7 @@ item_id = 2848
 name = "lamp post"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0b21_lamp_post"
@@ -428,6 +452,7 @@ item_id = 2849
 name = "lamp post"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0b22_lamp_post"
@@ -436,6 +461,7 @@ item_id = 2850
 name = "lamp post"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0b23_lamp_post"
@@ -444,6 +470,7 @@ item_id = 2851
 name = "lamp post"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0b24_lamp_post"
@@ -452,6 +479,7 @@ item_id = 2852
 name = "lamp post"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0b25_lamp_post"
@@ -460,6 +488,7 @@ item_id = 2853
 name = "lamp post"
 rarity = "common"
 movable = false
+script_id = "light"
 
 [[item]]
 id = "0x0e31_brazier"
@@ -638,6 +667,7 @@ item_id = 6227
 name = "skull with candle"
 rarity = "common"
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x1854_skull_with_candle"
@@ -646,6 +676,7 @@ item_id = 6228
 name = "skull with candle"
 rarity = "common"
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x1857_skull_with_candle"
@@ -654,6 +685,7 @@ item_id = 6231
 name = "skull with candle"
 rarity = "common"
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x1858_skull_with_candle"
@@ -662,6 +694,7 @@ item_id = 6232
 name = "skull with candle"
 rarity = "common"
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x142c_candle"
@@ -671,6 +704,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x142f_candle"
@@ -680,6 +714,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x1430_candle"
@@ -689,6 +724,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x1433_candle"
@@ -698,6 +734,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x1434_candle"
@@ -707,6 +744,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x1437_candle"
@@ -716,6 +754,7 @@ name = "candle"
 rarity = "common"
 weight = 1.0
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0f64_torch"
@@ -728,3 +767,4 @@ layer = "two_handed"
 buy_price = 7
 sell_price = 3
 decays = true
+script_id = "light"

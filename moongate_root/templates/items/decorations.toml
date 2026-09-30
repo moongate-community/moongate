@@ -11,7 +11,8 @@
 #   item_id    fallback graphic (a candle, a metal door)
 #   movable    false: players cannot pick decoration up
 #   decays     false: decoration stays on the ground
-#   script_id  the item script of the doors (scripts/items/door.lua)
+#   script_id  the item script of the doors (scripts/items/door.lua) and of the
+#              lights (scripts/items/light.lua)
 # ==============================================================================
 
 [[item]]
@@ -30,3 +31,12 @@ rarity = "common"
 movable = false
 decays = false
 script_id = "door"
+
+[[item]]
+id = "decoration_light"
+base_id = "base_item"
+item_id = 0x0A28
+rarity = "common"
+movable = false
+decays = false
+script_id = "light"

@@ -30,7 +30,8 @@ public sealed class DecorationServiceTests
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
                 new ItemTemplate { Id = "decoration", ItemId = new Serial(0x0A28), Movable = false, Decays = false },
-                new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door" }
+                new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door" },
+                new ItemTemplate { Id = "decoration_light", ItemId = new Serial(0x0A28), Movable = false, Decays = false, ScriptId = "light" }
             )
         );
         _factory = new(templates, new FakeTileDataService());
@@ -88,6 +89,53 @@ public sealed class DecorationServiceTests
         await Service(File("trammel", Block(type, 0x0675))).DecorateAsync(_progress);
 
         Assert.Equal(door ? "decoration_door" : "decoration", Assert.Single(_items.Items).TemplateId);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ALight_UsesTheLightTemplate_ItsKindsShape_AndIsProtected()
+    {
+        await Service(File("trammel", Block("CandleLarge", 0x0A26, props: new() { ["unlit"] = true }))).DecorateAsync(_progress);
+
+        var candle = Assert.Single(_items.Items);
+        Assert.Equal(("decoration_light", 0x0A26), (candle.TemplateId, candle.ItemId));
+        Assert.Equal(
+            new Dictionary<string, object?> { ["light"] = "circle150", ["protected"] = true, ["decoration_type"] = "CandleLarge" },
+            candle.Props
+        );
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ALightWithItsOwnShape_AndUnprotected_KeepsThem()
+    {
+        var block = Block("WallSconce", 0x0A02, props: new() { ["light"] = "NorthBig", ["unprotected"] = true });
+
+        await Service(File("trammel", block)).DecorateAsync(_progress);
+
+        Assert.Equal(
+            new Dictionary<string, object?> { ["light"] = "north_big", ["protected"] = false, ["decoration_type"] = "WallSconce" },
+            Assert.Single(_items.Items).Props
+        );
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ALightDousedSinceTheLastRun_CountsAsThere()
+    {
+        var service = Service(File("trammel", Block("Candelabra", 0x0B1D)));
+        await service.DecorateAsync(_progress);
+        Assert.Single(_items.Items).ItemId = 0x0A27;
+
+        var second = await service.DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(0, 1, 0, 1), second);
+        Assert.Single(_items.Items);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_AHeatingStand_GivesTheSmallCircleWhenLit()
+    {
+        await Service(File("trammel", Block("HeatingStand", 0x184A))).DecorateAsync(_progress);
+
+        Assert.Equal("circle150", Assert.Single(_items.Items).Props!["light"]);
     }
 
     [Fact]

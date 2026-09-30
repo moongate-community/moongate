@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Lua;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Utils;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
@@ -13,6 +14,7 @@ using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Speech;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Speech;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -26,6 +28,7 @@ namespace Moongate.Server.Ultima.Modules;
 [ScriptModule("item", "Reads and changes an item: name, amount, owner, consume, delete, message.")]
 public sealed class ItemModule
 {
+    public const string LightProp = "light";
     public const int MaximumTextLength = 128;
 
     private static readonly Hue LabelHue = new(0x03B2);
@@ -233,6 +236,36 @@ public sealed class ItemModule
         }
 
         item.ItemId = graphic;
+        Refresh(item);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Sets the shape of the light a light source gives, by LightType name, or clears it with nil;
+    ///     <c>item.set_light(serial, "circle150")</c>. The players who see the item are shown it again.
+    /// </summary>
+    [ScriptFunction(helpText: "Sets the item's light shape by name, such as circle150 or west_big, nil clears it; false for an unknown shape or a worn or held item.")]
+    public bool SetLight(long serial, string? type = null)
+    {
+        if (!TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
+        {
+            return false;
+        }
+
+        if (type is null)
+        {
+            item.RemoveProp(LightProp);
+        }
+        else if (EnumNameUtils.TryParse<LightType>(type, out var light))
+        {
+            item.SetProp(LightProp, EnumNameUtils.Format(light));
+        }
+        else
+        {
+            return false;
+        }
+
         Refresh(item);
 
         return true;

@@ -33,8 +33,14 @@ public sealed class WorldItemSaPacket : BasePacket<WorldItemSaPacket>, IOutgoing
 
     public bool HighSeas { get; }
 
-    public WorldItemSaPacket(Serial serial, int itemId, int amount, Point3D location, Hue hue, bool highSeas)
+    /// <summary>
+    ///     The shape of the light a light source gives, a LightType value; 0 for none.
+    /// </summary>
+    public int Light { get; }
+
+    public WorldItemSaPacket(Serial serial, int itemId, int amount, Point3D location, Hue hue, bool highSeas, int light = 0)
     {
+        Light = light;
         Serial = serial;
         ItemId = itemId;
         Amount = amount;
@@ -60,7 +66,7 @@ public sealed class WorldItemSaPacket : BasePacket<WorldItemSaPacket>, IOutgoing
         writer.WriteUInt16BigEndian((ushort)(Location.X & 0x7FFF));
         writer.WriteUInt16BigEndian((ushort)(Location.Y & 0x3FFF));
         writer.WriteByte(unchecked((byte)(sbyte)Location.Z));
-        writer.WriteByte(0);
+        writer.WriteByte((byte)Light);
         writer.WriteUInt16BigEndian(Hue.Value);
         writer.WriteByte(0);
 

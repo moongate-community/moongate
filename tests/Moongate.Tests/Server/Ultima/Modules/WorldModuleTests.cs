@@ -1,3 +1,6 @@
+using Moongate.Tests.TestSupport.Ultima.Speech;
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Core.Data.Sessions;
 using Lua;
 using Lua.Standard;
 using Moongate.Core.Geometry;
@@ -14,10 +17,11 @@ using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Modules;
 
-public sealed class WorldModuleTests
+public sealed class WorldModuleTests : IAsyncLifetime
 {
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly StubClockService _clock = new() { Time = new GameTime(21, 5) };
+    private BroadcastFixture _fixture = null!;
 
     public WorldModuleTests()
     {
@@ -28,6 +32,28 @@ public sealed class WorldModuleTests
                 Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca, Location = new Point3D(1400, 1600, 0)
             }
         );
+    }
+
+    public async Task InitializeAsync()
+    {
+        _fixture = await BroadcastFixture.CreateAsync();
+        await _fixture.AddAsync(2);
+        var gm = await _fixture.AddAsync(3);
+        await _fixture.Network.ExecuteOnLoopAsync(() => gm.Set(SessionKeys.AccountType, AccountType.GameMaster));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
+    }
+
+    [Theory,
+     InlineData("return world.is_staff(3)", true),
+     InlineData("return world.is_staff(2)", false),
+     InlineData("return world.is_staff(0x100)", false)]
+    public void IsStaff_TellsWhetherThePlayersAccountIsAGameMasterOrAbove(string chunk, bool expected)
+    {
+        Assert.Equal(expected, Run(chunk)[0].Read<bool>());
     }
 
     [Theory,
@@ -53,7 +79,7 @@ public sealed class WorldModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
-        binder.Bind(state, new WorldModule(_sectors, _clock));
+        binder.Bind(state, new WorldModule(_sectors, _clock, _fixture.Sessions));
         binder.BindEnum(state, typeof(MapType));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));

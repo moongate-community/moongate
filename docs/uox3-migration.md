@@ -14,7 +14,7 @@ From a source checkout:
 dotnet run --project src/Moongate.UoxItemConverter -- \
   --source <file-or-directory> --destination <dir> [--loot-destination <dir>] \
   [--mobile-source <dfndata> --mobile-destination <dir> --names-destination <file>] \
-  [--starting-items-destination <file>]
+  [--starting-items-destination <file>] [--scripts-source <js-dir>]
 ```
 
 Docker images after 0.6.0 bundle the same tool at `/app/mg-uoxconv`; see
@@ -27,6 +27,12 @@ same relative path, holding one `[[item]]` per block that has an `id=` of its ow
 `--loot-destination` is optional; without it, `LOOTLIST` blocks are skipped. A bare
 invocation prints the help and exits `0`; a missing required argument exits `1`.
 The three mobile arguments go together (see [Mobiles and name lists](#mobiles-and-name-lists)).
+`--scripts-source` is UOX3's `data/js` folder. With it, an item whose UOX3 script has a
+Moongate Lua script gets its `script_id`: the script of the block's `script=`, else the one
+`jse_objectassociations.scp` ([ENVOKE]) gives its graphic, looked up by number in
+`jse_fileassociations.scp` ([SCRIPT_LIST]). Today `item/lights.js` becomes `light`
+(`scripts/items/light.lua`); other scripts are left out. Without it no `script_id` is written.
+A folder missing either file exits `2`.
 
 Every block from every source file is read before any `get=` chain is resolved,
 because a chain's target can live in another file: UOX3's own data keeps a sword's

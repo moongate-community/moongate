@@ -450,6 +450,18 @@ public sealed class WorldViewServiceTests
         );
     }
 
+    [Fact]
+    public void Entered_AnItemWithALight_IsSentWithItsShape()
+    {
+        var candle = Ground(0x40000001, 1500, 1628);
+        candle.Props = new() { ["light"] = "circle150" };
+        Ground(0x40000002, 1501, 1628).Props = new() { ["light"] = "no such light" };
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal([2, 0], _sender.Sent.OfType<WorldItemSaPacket>().Select(packet => packet.Light));
+    }
+
     private ItemEntity Ground(uint serial, int x, int y)
     {
         var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };

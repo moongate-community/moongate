@@ -205,7 +205,9 @@ In game, administrators use `.decorate`. It places the
 [decoration files](templates.md#decorations) of `templates/decorations/`, file by file, as
 fixed items that never decay; the next world save keeps them. Doors and gates get the
 `decoration_door` template, whose [door script](scripting.md) opens and closes them, and
-adjacent doors of the same kind open together. Teleporters, spawners, mark containers, public
+adjacent doors of the same kind open together. Lights get the `decoration_light` template,
+lit or unlit as in the data and protected, so only staff light or douse them with the
+[light script](scripting.md). Teleporters, spawners, mark containers, public
 moongates and addons are skipped for now: they need their own logic.
 
 Each file is reported when it is done, in game as a system message and in the server log:
