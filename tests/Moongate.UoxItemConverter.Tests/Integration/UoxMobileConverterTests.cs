@@ -352,7 +352,7 @@ public sealed class UoxMobileConverterTests : IDisposable
     }
 
     [Fact]
-    public void Run_MovementComesFromCreaturesOnTheBlockThatSetsTheBody()
+    public void Run_MovementComesFromCreaturesOnTheBlockThatSetsTheBody_AndALandBodyOverridesAWaterBase()
     {
         WriteItemsAndNames();
         _dirs.WriteMobileSource(
@@ -362,15 +362,16 @@ public sealed class UoxMobileConverterTests : IDisposable
         );
         _dirs.WriteMobileSource(
             "npc/a.dfn",
-            "[dolphin]\n{\nID=0x0097\n}\n[big_dolphin]\n{\nGET=dolphin\n}\n[walrus]\n{\nID=0x00dd\n}\n[orc]\n{\nID=0x0011\n}\n"
+            "[dolphin]\n{\nID=0x0097\n}\n[big_dolphin]\n{\nGET=dolphin\n}\n[walrus]\n{\nID=0x00dd\n}\n[orc]\n{\nID=0x0011\n}\n" +
+            "[beached]\n{\nGET=dolphin\nID=0x0011\n}\n"
         );
 
         Assert.True(Run() == 0, CombinedOutput);
 
         var mobiles = ReadMobiles("a.toml");
         Assert.Equal(
-            [MobileMovementType.Water, null, MobileMovementType.Both, null],
-            new[] { "dolphin", "big_dolphin", "walrus", "orc" }.Select(id => mobiles[id].Movement)
+            [MobileMovementType.Water, null, MobileMovementType.Both, null, MobileMovementType.Land],
+            new[] { "dolphin", "big_dolphin", "walrus", "orc", "beached" }.Select(id => mobiles[id].Movement)
         );
     }
 

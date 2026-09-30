@@ -13,6 +13,7 @@ namespace Moongate.UoxItemConverter.Internal;
 /// <param name="ColorLists">Each <c>[RANDOMCOLOR n]</c> as a hue range, or null when it is not one run.</param>
 /// <param name="CreatureSounds">The sounds of each body, from <c>creatures.dfn</c>.</param>
 /// <param name="CreatureMovements">The bodies that move in water or both, from <c>creatures.dfn</c>.</param>
+/// <param name="SwimmingHeaders">The npc headers whose own or inherited body moves in water or both.</param>
 /// <param name="Report">Where dropped values are counted.</param>
 internal sealed record MobileBuildContext(
     IReadOnlyDictionary<int, string> Dictionary,
@@ -21,5 +22,6 @@ internal sealed record MobileBuildContext(
     IReadOnlyDictionary<int, HueSpec?> ColorLists,
     IReadOnlyDictionary<int, MobileSounds> CreatureSounds,
     IReadOnlyDictionary<int, MobileMovementType> CreatureMovements,
+    IReadOnlySet<string> SwimmingHeaders,
     ConversionReport Report
 );

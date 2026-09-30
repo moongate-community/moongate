@@ -94,6 +94,11 @@ internal static class MobileTemplateBuilder
             {
                 template.Movement = movement;
             }
+            else if (block.ParentTargets() is [var parent] && context.SwimmingHeaders.Contains(parent))
+            {
+                // A land body of its own: a water or amphibious base must not pass its movement on.
+                template.Movement = MobileMovementType.Land;
+            }
 
             if (HumanoidBodies.TryGetValue(body, out var humanoid))
             {

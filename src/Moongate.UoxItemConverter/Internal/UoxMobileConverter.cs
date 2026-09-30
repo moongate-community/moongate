@@ -72,13 +72,15 @@ internal static class UoxMobileConverter
             }
         }
 
+        var movements = UoxCreatureMovements.Load(Path.Combine(mobileSource, "creatures", "creatures.dfn"));
         var context = new MobileBuildContext(
             dictionary,
             items,
             blocksByHeader.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase),
             UoxColorLists.Load(Path.Combine(mobileSource, "colors", "colors.dfn")),
             UoxCreatureSounds.Load(Path.Combine(mobileSource, "creatures", "creatures.dfn")),
-            UoxCreatureMovements.Load(Path.Combine(mobileSource, "creatures", "creatures.dfn")),
+            movements,
+            SwimmingHeaders(blocksByHeader, movements),
             report
         );
         var written = 0;
@@ -257,5 +259,42 @@ internal static class UoxMobileConverter
 
         return relative.Equals("namelists.dfn", StringComparison.OrdinalIgnoreCase) ||
                relative.StartsWith("npclists/", StringComparison.OrdinalIgnoreCase);
+    }
+
+    // The headers whose body, set on themselves or the nearest GET ancestor with an ID, moves in water or both.
+    private static HashSet<string> SwimmingHeaders(
+        Dictionary<string, DfnBlock> blocksByHeader,
+        IReadOnlyDictionary<int, MobileMovementType> movements
+    )
+    {
+        var swimming = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var header in blocksByHeader.Keys)
+        {
+            var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var current = header;
+
+            while (visited.Add(current) && blocksByHeader.TryGetValue(current, out var block))
+            {
+                if (block.Fields.TryGetValue("ID", out var idText) && UoxNumber.TryParse(idText, out var body))
+                {
+                    if (movements.ContainsKey(body))
+                    {
+                        swimming.Add(header);
+                    }
+
+                    break;
+                }
+
+                if (block.ParentTargets() is not [var parent])
+                {
+                    break;
+                }
+
+                current = parent;
+            }
+        }
+
+        return swimming;
     }
 }
