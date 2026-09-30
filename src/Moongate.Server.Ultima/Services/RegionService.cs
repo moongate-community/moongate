@@ -22,17 +22,18 @@ public sealed class RegionService : IRegionService
     private readonly IDataLoaderService _data;
     private readonly Lazy<Dictionary<(MapType Map, int X, int Y), RegionContent[]>> _cells;
     private readonly ConcurrentDictionary<Serial, RegionContent?> _players = new();
-    private readonly IRegionChangeListener[] _listeners;
+    // Resolved on the first change: the listeners depend on services that depend on this one.
+    private readonly Lazy<IEnumerable<IRegionChangeListener>>? _listeners;
     private readonly ILogger _logger;
 
     public RegionService(
         IDataLoaderService data,
-        IEnumerable<IRegionChangeListener>? listeners = null,
+        Lazy<IEnumerable<IRegionChangeListener>>? listeners = null,
         ILogger? logger = null
     )
     {
         _data = data;
-        _listeners = listeners?.ToArray() ?? [];
+        _listeners = listeners;
         _cells = new(Build);
         _logger = logger ?? Log.ForContext<RegionService>();
     }
@@ -100,7 +101,7 @@ public sealed class RegionService : IRegionService
             return;
         }
 
-        foreach (var listener in _listeners)
+        foreach (var listener in _listeners?.Value ?? [])
         {
             listener.Left(mobile);
         }
@@ -108,7 +109,7 @@ public sealed class RegionService : IRegionService
 
     private void Notify(MobileEntity player, RegionContent? previous, RegionContent? current)
     {
-        foreach (var listener in _listeners)
+        foreach (var listener in _listeners?.Value ?? [])
         {
             listener.RegionChanged(player, previous, current);
         }

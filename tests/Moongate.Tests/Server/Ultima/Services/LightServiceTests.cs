@@ -1,10 +1,12 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
@@ -13,6 +15,10 @@ namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class LightServiceTests : IAsyncLifetime
 {
+    private static readonly RegionContent Despise = new() { Map = MapType.Trammel, Name = "Despise", Type = RegionType.Dungeon };
+    private static readonly RegionContent Jail = new() { Map = MapType.Trammel, Name = "Jail", Type = RegionType.Jail };
+    private static readonly RegionContent MedusasLair = new() { Map = MapType.Trammel, Name = "Medusas Lair", Parent = "Despise" };
+
     private readonly StubClockService _clock = new();
     private readonly RecordingTimerService _timers = new();
     private readonly WorldConfig _world = new();
@@ -22,7 +28,16 @@ public sealed class LightServiceTests : IAsyncLifetime
     public async Task InitializeAsync()
     {
         _fixture = await BroadcastFixture.CreateAsync();
-        _light = new(_clock, _fixture.Sessions, _fixture.Mobiles, _fixture.Sender, _timers, _fixture.Network.Loop, _world);
+        _light = new(
+            _clock,
+            _fixture.Sessions,
+            _fixture.Mobiles,
+            _fixture.Sender,
+            _timers,
+            _fixture.Network.Loop,
+            _world,
+            new StubDataLoaderService().With(Despise, Jail, MedusasLair)
+        );
         await _light.StartAsync();
     }
 
@@ -105,6 +120,58 @@ public sealed class LightServiceTests : IAsyncLifetime
 
         Assert.Null(_light.Override);
         Assert.Equal([(1L, 12), (1L, 25), (1L, 12)], Sent());
+    }
+
+    [Fact]
+    public void LevelFor_ADungeonIsDark_AndAJailDim_WhateverTheTime()
+    {
+        var mobile = Mobile();
+
+        _light.RegionChanged(mobile, null, Despise);
+        Assert.Equal(26, _light.LevelFor(mobile));
+
+        _light.RegionChanged(mobile, Despise, Jail);
+        Assert.Equal(9, _light.LevelFor(mobile));
+
+        _light.Left(mobile.Id);
+        Assert.Equal(0, _light.LevelFor(mobile));
+    }
+
+    [Fact]
+    public void LevelFor_APlainChildOfADungeon_IsDarkToo()
+    {
+        var mobile = Mobile();
+
+        _light.RegionChanged(mobile, Despise, MedusasLair);
+
+        Assert.Equal(26, _light.LevelFor(mobile));
+    }
+
+    [Fact]
+    public async Task LevelFor_TheOverrideWinsEvenInADungeon()
+    {
+        var mobile = Mobile();
+        _light.RegionChanged(mobile, null, Despise);
+
+        await _light.SetOverrideAsync(0);
+
+        Assert.Equal(0, _light.LevelFor(mobile));
+    }
+
+    [Fact]
+    public async Task ARegionChange_SendsTheNewLevelAtOnce_OnlyAfterTheLogin()
+    {
+        await _fixture.AddAsync(2);
+        _fixture.Mobiles.TryGet(new Serial(2), out var early);
+        _light.RegionChanged(early!, null, Despise);
+        Assert.Empty(Sent());
+
+        await LoginAsync(1);
+        _fixture.Mobiles.TryGet(new Serial(1), out var character);
+        _light.RegionChanged(character!, null, Despise);
+        _light.RegionChanged(character!, Despise, Despise);
+
+        Assert.Equal([(1L, 26)], Sent());
     }
 
     [Fact]

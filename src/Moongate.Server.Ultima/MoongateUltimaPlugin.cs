@@ -355,6 +355,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             // The weather follows the players' regions: RegionService tells it, as its region change listener.
             container.AddMoongateService<IWeatherService, WeatherService>(11);
             container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IWeatherService>(), Reuse.Singleton);
+            container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<ILightService>(), Reuse.Singleton);
             container.AddMoongateService<IEquipmentService, EquipmentService>();
             container.AddMoongateService<ITooltipService, TooltipService>();
             // As the ground items: the NPCs are live before the game server takes players.

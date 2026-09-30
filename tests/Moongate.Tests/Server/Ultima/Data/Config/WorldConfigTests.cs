@@ -47,4 +47,20 @@ public sealed class WorldConfigTests
 
         Assert.Contains("world." + key, exception.Message);
     }
+
+    [Fact]
+    public void RegionLight_Defaults_AreModernUOs()
+    {
+        var world = new WorldConfig();
+
+        Assert.Equal((26, 9), (world.DungeonLight, world.JailLight));
+    }
+
+    [Theory, InlineData(-1, 9, "dungeon_light"), InlineData(32, 9, "dungeon_light"), InlineData(26, -1, "jail_light"), InlineData(26, 32, "jail_light")]
+    public void Validate_ARegionLightOutOf0To31_Throws(int dungeon, int jail, string key)
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => new WorldConfig { DungeonLight = dungeon, JailLight = jail }.Validate());
+
+        Assert.Contains("world." + key, exception.Message);
+    }
 }

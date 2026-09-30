@@ -2,10 +2,13 @@ using System.Collections.Concurrent;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Ultima.Types;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -23,6 +26,9 @@ public sealed class LightService : ILightService
 
     private readonly ILogger _logger = Log.ForContext<LightService>();
     private readonly ConcurrentDictionary<Serial, int> _sent = new();
+
+    // The players' regions, from the region change callbacks: asking IRegionService would loop through its listeners.
+    private readonly ConcurrentDictionary<Serial, RegionContent?> _regions = new();
     private readonly IClockService _clock;
     private readonly ISessionService _sessions;
     private readonly IMobileService _mobiles;
@@ -30,6 +36,7 @@ public sealed class LightService : ILightService
     private readonly ITimerService _timers;
     private readonly IGameLoopService _loop;
     private readonly WorldConfig _world;
+    private readonly Lazy<Dictionary<(MapType Map, string Name), RegionContent>> _regionsByName;
 
     private string? _timerId;
     private volatile int _override = NoOverride;
@@ -43,9 +50,16 @@ public sealed class LightService : ILightService
         IPacketSendService sender,
         ITimerService timers,
         IGameLoopService loop,
-        WorldConfig world
+        WorldConfig world,
+        IDataLoaderService data
     )
     {
+        _regionsByName = new(
+            () => data.GetEntities<RegionContent>()
+                      .Where(region => region.Name is not null)
+                      .GroupBy(region => (region.Map, region.Name!))
+                      .ToDictionary(group => group.Key, group => group.First())
+        );
         _clock = clock;
         _sessions = sessions;
         _mobiles = mobiles;
@@ -80,6 +94,15 @@ public sealed class LightService : ILightService
             return level;
         }
 
+        // ModernUO's DungeonRegion and JailRegion.
+        switch (LightTypeOf(_regions.GetValueOrDefault(mobile.Id)))
+        {
+            case RegionType.Dungeon:
+                return _world.DungeonLight;
+            case RegionType.Jail:
+                return _world.JailLight;
+        }
+
         var time = _clock.GetTime(mobile.Map, mobile.Location.X);
         var day = _world.DayLight;
         var night = _world.NightLight;
@@ -92,6 +115,35 @@ public sealed class LightService : ILightService
             < 22 => day,
             _ => day + ((time.Hours - 22) * 60 + time.Minutes) * (night - day) / 120
         };
+    }
+
+    public void RegionChanged(MobileEntity player, RegionContent? previous, RegionContent? current)
+    {
+        _regions[player.Id] = current;
+
+        // As ModernUO's region change, at once; only once the login sent the player its light.
+        if (!_sent.TryGetValue(player.Id, out var last))
+        {
+            return;
+        }
+
+        var level = LevelFor(player);
+
+        if (level == last || !_sessions.TryGetByCharacterId(player.Id, out var session))
+        {
+            return;
+        }
+
+        if (_sender.TrySend(session.SessionId, new GlobalLightLevelPacket(level)))
+        {
+            _sent[player.Id] = level;
+        }
+    }
+
+    public void Left(Serial player)
+    {
+        _regions.TryRemove(player, out _);
+        _sent.TryRemove(player, out _);
     }
 
     public int LevelOnLogin(MobileEntity character)
@@ -113,6 +165,23 @@ public sealed class LightService : ILightService
         );
         await _loop.PostAsync(work, cancellationToken);
         await work.Completion;
+    }
+
+    // A plain region inside a dungeon or a jail, such as the lairs of the Abyss, is lit as its parent, as ModernUO's
+    // regions hand the light over to their parent. The loader refused parent loops.
+    private RegionType? LightTypeOf(RegionContent? region)
+    {
+        while (region is not null)
+        {
+            if (region.Type is RegionType.Dungeon or RegionType.Jail)
+            {
+                return region.Type;
+            }
+
+            region = region.Parent is { } parent ? _regionsByName.Value.GetValueOrDefault((region.Map, parent)) : null;
+        }
+
+        return null;
     }
 
     // A timer callback that throws closes the timer wheel.

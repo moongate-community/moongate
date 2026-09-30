@@ -1,3 +1,5 @@
+using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 
@@ -38,5 +40,13 @@ public sealed class RecordingLightService : ILightService
         Override = level;
 
         return Task.CompletedTask;
+    }
+
+    public void RegionChanged(MobileEntity player, RegionContent? previous, RegionContent? current)
+    {
+    }
+
+    public void Left(Serial player)
+    {
     }
 }
