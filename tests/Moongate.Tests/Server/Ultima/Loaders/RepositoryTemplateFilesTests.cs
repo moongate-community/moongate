@@ -108,11 +108,17 @@ public sealed class RepositoryTemplateFilesTests
 
         var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
-        Assert.Equal(673, mobiles.Count);
+        Assert.Equal(674, mobiles.Count);
         Assert.Equal("{gender}", mobiles["guard"].NameList);
         // Moongate's own cats inherit the UOX3 cat and add their name and script.
         Assert.Equal((201, "Orione", "orione"), (mobiles["orione"].Body, mobiles["orione"].Name, mobiles["orione"].ScriptId));
         Assert.Equal((201, "Vega", "vega"), (mobiles["vega"].Body, mobiles["vega"].Name, mobiles["vega"].ScriptId));
+        var lilly = mobiles["lilly"];
+        Assert.Equal(("Lilly", "the Noble", 32000, 32000), (lilly.Name, lilly.Title, lilly.Fame!.Value.Roll(), lilly.Karma!.Value.Roll()));
+        Assert.Equal(
+            ["0x230e_gilded_dress", "0x1711_thigh_boots", "base_royal_circlet"],
+            lilly.Equipment!.SelectMany(entry => entry.Items)
+        );
     }
 
     [Fact]
@@ -136,6 +142,9 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Contains(guard.Body, new[] { 400, 401 });
         Assert.False(string.IsNullOrWhiteSpace(guard.Name));
         Assert.True(orc.Body > 0 && orc.HitsMax > 0 && !string.IsNullOrWhiteSpace(orc.Name), $"{orc.Body} {orc.Name}");
+
+        var lilly = factory.Create("lilly");
+        Assert.Equal((401, "Lilly", 32000, 32000), (lilly.Body, lilly.Name, lilly.Fame, lilly.Karma));
     }
 
     [Fact]
