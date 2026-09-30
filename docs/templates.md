@@ -444,7 +444,25 @@ only_outside = false                  # true: never under a roof
 Both load at startup, after the mobile templates. A list or a spawn that names a mobile template
 or list that does not exist, a list without entries or looping through its nested lists, a spawn
 with nothing to spawn, a `max` or `call` below 1, `min_minutes` above `max_minutes`, no area or a
-folder that is not a map stop the server. Nothing spawns them yet: the runtime comes next.
+folder that is not a map stop the server.
+
+At runtime the spawn regions work as UOX3's:
+
+- Every 10 seconds (timer `npc_spawn`) each due region below its `max` spawns up to `call` NPCs,
+  then waits a random time between `min_minutes` and `max_minutes`.
+- The first spawn of each region comes within its `min_minutes`, at most 10 minutes after the
+  start, so an empty world fills gradually.
+- A spot is one of up to 100 random cells of the `areas`, outside `exclude`, on the highest surface
+  a mobile can stand on at most `pref_z` above the ground (or at most `z`); with `only_outside`, not
+  under a roof. A region that finds no spot tries again a minute later.
+- Each spawned NPC keeps its region in the prop `spawn.region` and the area it came from in
+  `spawn.x1`, `spawn.y1`, `spawn.x2`, `spawn.y2`. The live NPCs of a region are counted from these
+  props at every check: an NPC removed or killed frees its slot, and a restart keeps the count.
+- `scripts/mobiles/wander.lua` keeps such an NPC inside its area.
+- The game masters and administrators in the world get one message per check that spawned
+  something, such as `Spawn: The Hammer And Anvil (Felucca): 1 NPCs`, or `Spawn: 12 NPCs in
+  9 regions: ...` naming at most five.
+- Regions on a map the server does not load are skipped.
 
 ## Decorations
 

@@ -198,7 +198,12 @@ function wander.on_think(serial)
     thinks[serial] = (thinks[serial] or 0) + 1
 
     if thinks[serial] % 4 == 0 then
-        npc.step(serial, dice.roll("1d8") - 1)
+        -- pick_direction (in the file) keeps a spawned NPC in its home area; nil when no step does.
+        local direction = pick_direction(serial)
+
+        if direction ~= nil then
+            npc.step(serial, direction)
+        end
     end
 end
 
@@ -221,7 +226,9 @@ end
 ```
 
 No template in the repository uses it: add `script_id = "wander"` to a mobile template
-to try it.
+to try it. An NPC spawned by a spawn region carries its home area in the props `spawn.x1`,
+`spawn.y1`, `spawn.x2` and `spawn.y2`: `wander.lua` only steps inside it, and walks the NPC back
+when it is outside.
 
 A script's `local` tables live in memory: they start again empty after a restart or a
 reload. To remember something across restarts, keep it in the NPC's props, prefixing the
