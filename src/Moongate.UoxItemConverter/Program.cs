@@ -32,6 +32,14 @@ internal static class Cli
     /// <param name="startingItemsDestination">
     ///     File to write the starting items of newbie/newbie.dfn to (starting_items.toml). Needs mobileSource.
     /// </param>
+    /// <param name="npcListsDestination">
+    ///     Directory to write UOX3's NPC lists (npc/**/[NPCLIST ...]) to, as templates/npc_lists. Needs mobileSource and
+    ///     spawnsDestination.
+    /// </param>
+    /// <param name="spawnsDestination">
+    ///     Directory to write UOX3's spawn regions (spawn/**/[REGIONSPAWN ...]) to, one folder per map, as
+    ///     templates/spawns. Needs mobileSource and npcListsDestination.
+    /// </param>
     /// <param name="scriptsSource">
     ///     UOX3's js folder, holding jse_fileassociations.scp and jse_objectassociations.scp: the items whose UOX3 script
     ///     has a Moongate Lua script (item/lights.js is light) get its script_id.
@@ -44,7 +52,9 @@ internal static class Cli
         string? mobileDestination = null,
         string? namesDestination = null,
         string? startingItemsDestination = null,
-        string? scriptsSource = null
+        string? scriptsSource = null,
+        string? npcListsDestination = null,
+        string? spawnsDestination = null
     )
     {
         return UoxItemConverterCommand.Run(
@@ -57,7 +67,9 @@ internal static class Cli
             mobileDestination,
             namesDestination,
             startingItemsDestination,
-            scriptsSource
+            scriptsSource,
+            npcListsDestination,
+            spawnsDestination
         );
     }
 }
