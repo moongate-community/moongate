@@ -45,11 +45,19 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
     private static void CreateDirectories(DirectoriesConfig directoriesConfig)
     {
+        // Every folder the loaders and the script services read, so a new root starts with its layout.
         directoriesConfig.CreateDirectoryIfNotExists("data/");
+        directoriesConfig.CreateDirectoryIfNotExists("data/messages/");
+        directoriesConfig.CreateDirectoryIfNotExists("data/regions/");
         directoriesConfig.CreateDirectoryIfNotExists("templates");
         directoriesConfig.CreateDirectoryIfNotExists("templates/mobiles/");
         directoriesConfig.CreateDirectoryIfNotExists("templates/items/");
         directoriesConfig.CreateDirectoryIfNotExists("templates/loots/");
+        directoriesConfig.CreateDirectoryIfNotExists("templates/decorations/");
+        directoriesConfig.CreateDirectoryIfNotExists("templates/npc_lists/");
+        directoriesConfig.CreateDirectoryIfNotExists("templates/spawns/");
+        directoriesConfig.CreateDirectoryIfNotExists("scripts/items/");
+        directoriesConfig.CreateDirectoryIfNotExists("scripts/mobiles/");
     }
 
     private static void RegisterTomlConverters()
