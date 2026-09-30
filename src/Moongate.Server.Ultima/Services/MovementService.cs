@@ -142,11 +142,11 @@ public class MovementService : IMovementService
         var found = false;
         var land = _mapService.GetLand(map, x, y);
         var statics = _mapService.GetStatics(map, x, y);
+        var considerLand = !LandHeights.IsIgnored(land.Id);
+        var average = considerLand ? GetAverageZ(map, x, y) : int.MinValue;
 
-        if (!LandHeights.IsIgnored(land.Id) && IsWater(_tileDataService.GetLand(land.Id & 0x3FFF).Flags))
+        if (considerLand && IsWater(_tileDataService.GetLand(land.Id & 0x3FFF).Flags))
         {
-            var average = GetAverageZ(map, x, y);
-
             if (IsOk(statics, average, average + PersonHeight))
             {
                 z = average;
@@ -164,6 +164,12 @@ public class MovementService : IMovementService
             }
 
             var top = tile.Z + item.StandHeight;
+
+            // As MovementImpl's land check: water under the ground's centre cannot be moved on.
+            if (top < average)
+            {
+                continue;
+            }
 
             if ((!found || top > z) && IsOk(statics, top, top + PersonHeight))
             {

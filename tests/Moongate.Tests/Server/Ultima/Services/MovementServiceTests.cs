@@ -344,6 +344,16 @@ public sealed class MovementServiceTests
     }
 
     [Fact]
+    public void TryGetSwimZ_AWaterStaticBelowTheGround_Fails()
+    {
+        // A swimmer there could not move: the ground at 10 rises over the water at 5.
+        _tiles.Item(0x1797, TileFlagType.Surface | TileFlagType.Wet | TileFlagType.Impassable, 0);
+        _map.SetLandZ(0, 0, 15, 15, 10).AddStatic(4, 4, 0x1797, 5);
+
+        Assert.False(CreateService().TryGetSwimZ(MapType.Felucca, 4, 4, out _));
+    }
+
+    [Fact]
     public void TryGetSwimZ_BloodOrATrough_IsNotWater()
     {
         // Blood is wet but passable; a trough is wet and impassable but stands 6 high.
