@@ -6,7 +6,7 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**150 systems:** ✅ 45 done, 🟡 17 partly done, ❌ 88 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
+**227 systems:** ✅ 54 done, 🟡 29 partly done, ❌ 144 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
 ## Accounts, login and network
 
@@ -23,6 +23,16 @@ works today in more detail.
 | Assistant (Razor) feature negotiation | ❌ | |
 | Public shard list polls | ❌ | |
 | Safe logout in inns and houses | ❌ | A character leaves the world when its session closes |
+| Hashed passwords | ✅ | |
+| Login attempt limits and connection flood protection | ❌ | |
+| Proxy protocol (real client address behind a proxy) | ❌ | |
+| Packet filtering by login phase | 🟡 | Unknown packets are refused; no per-phase filter |
+| Packet hooks: override or extend any packet | 🟡 | Plugins add incoming packets in C#; not from scripts |
+| Suspicious acts logging (forged replies, out-of-range drops) | ❌ | Out-of-range actions are refused, not logged as suspicious |
+| Network statistics per client | ❌ | |
+| One or many characters in the world per account | 🟡 | One per account, not configurable |
+| Login and logout scripts | 🟡 | Script events when a character enters or leaves the world |
+| Obscene word filter | 🟡 | Banned names at character creation; nothing on speech |
 
 ## Characters
 
@@ -41,6 +51,16 @@ works today in more detail.
 | Death, corpses, ghosts and resurrection | ❌ | |
 | Young player protection | ❌ | |
 | Virtues | ❌ | |
+| Status bar | ✅ | Name, stats, hit points, mana, stamina, gold, weight |
+| Extended status (resistances, luck, caps, stat locks) | ❌ | |
+| Staff privileges (move anything, see hidden, invulnerable) | ❌ | |
+| Gargoyle flying | ❌ | |
+| Movement cost and stamina use by weight | ❌ | |
+| Polymorph and incognito | ❌ | |
+| Experience and levels (optional) | ❌ | |
+| Factions and slayers | ❌ | |
+| Renaming pets and characters | ❌ | |
+| Face selection | ❌ | |
 
 ## Combat
 
@@ -54,6 +74,9 @@ works today in more detail.
 | NPC combat AI | ❌ | |
 | Guards in guarded regions | ❌ | |
 | Monster special abilities | ❌ | |
+| Elemental damage and resistances | ❌ | |
+| Aggressor lists and attack timeouts | ❌ | |
+| Combat hooks to replace the core rules from scripts | ❌ | |
 
 ## Magic
 
@@ -61,10 +84,12 @@ works today in more detail.
 | --- | --- | --- |
 | Spell casting: mana, reagents, fizzle, resist | ❌ | |
 | The magery spells | ❌ | |
-| Necromancy and other schools | ❌ | |
+| Necromancy | ❌ | |
 | Spellbooks, scrolls and wands | ❌ | |
 | Fields and summons | ❌ | |
 | Region magic rules (no recall, no gate) | ❌ | |
+| Chivalry, Bushido, Ninjitsu, Spellweaving, Mysticism | ❌ | |
+| Words of power | ❌ | |
 
 ## Skills
 
@@ -82,6 +107,11 @@ works today in more detail.
 | Lore skills: anatomy, arms lore, item ID, evaluate intelligence, taste ID | ❌ | |
 | Meditation, begging, herding, camping, poisoning | ❌ | |
 | Carving corpses | ❌ | |
+| Resource regions (ore, wood, fish per area, regrowing) | ❌ | |
+| Resource processing: smelting, looms, spinning wheels, hides | ❌ | |
+| Skill classes and caps (skill total, stat total) | ❌ | |
+| Training objects: dummies, pickpocket dips, archery buttes | ❌ | |
+| NPC skill training | ❌ | |
 
 ## NPCs
 
@@ -97,6 +127,13 @@ works today in more detail.
 | Pathfinding, following and fleeing | ❌ | |
 | Pets and followers: commands, loyalty, bonding | ❌ | |
 | Mounts | ❌ | |
+| Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |
+| Name pools | ✅ | Name lists by kind and gender |
+| Needs: food, grazing, desires | ❌ | |
+| Special creature actions (breath, rock throwing, webs) | ❌ | |
+| Returning home when lost | 🟡 | Spawned NPCs walk back to their home area |
+| Pet figurines (shrinking pets) | ❌ | |
+| Champion spawns | ❌ | |
 
 ## NPC services
 
@@ -138,6 +175,16 @@ works today in more detail.
 | Magic items | ❌ | |
 | Games (chess, checkers), plants, farming | ❌ | |
 | Dungeon traps and puzzles | ❌ | |
+| Item attributes: blessed, cursed, newbie, insured | 🟡 | Blessed and cursed in tooltips; no rules behind them |
+| Deeds and redeeding | ❌ | |
+| Bandages | ❌ | |
+| Musical instruments | ❌ | |
+| Trash cans | ❌ | |
+| Communication crystals | ❌ | |
+| Item stones (dispensers) | ❌ | |
+| Cannons | ❌ | |
+| Talismans and jewelry properties | ❌ | |
+| Integrity checks and orphan detection | ❌ | |
 
 ## World
 
@@ -160,6 +207,12 @@ works today in more detail.
 | Boats | ❌ | |
 | Facet changes and facet rules | ❌ | |
 | Ambient sounds | ❌ | |
+| Several maps at once | ✅ | Every map of `maps.toml` |
+| Moon phases | ❌ | |
+| Custom house design | ❌ | |
+| Sector sleep | ✅ | NPCs away from players cost nothing |
+| World import and export | ❌ | |
+| Parallel and incremental world saves | 🟡 | Periodic saves in a background transaction |
 
 ## Social
 
@@ -171,6 +224,9 @@ works today in more detail.
 | Chat window | ❌ | |
 | Bulletin boards | ❌ | |
 | Character profile | ❌ | |
+| Tips window | ❌ | |
+| Quest arrow and quest button | ❌ | |
+| Speech modes: say, whisper, yell, emote | 🟡 | Local speech; no whisper or yell ranges |
 
 ## Economy
 
@@ -199,6 +255,12 @@ works today in more detail.
 | Web status pages | ❌ | |
 | Backups | ❌ | |
 | Bug reports | ❌ | |
+| Logging | ✅ | Structured logs with levels |
+| Packet logging per client | ❌ | The `--log-packets` option is parsed but unused |
+| Command log | ❌ | |
+| Remote console (telnet) | ❌ | The gRPC API instead |
+| Crash dumps and watchdog | ❌ | |
+| Windows service | ❌ | Docker images instead |
 
 ## Scripting and content
 
@@ -212,6 +274,16 @@ works today in more detail.
 | Commands from plugins | ✅ | In C#; not from Lua |
 | Data-driven content | ✅ | TOML templates and data files, validated at startup |
 | Importing another emulator's content | ✅ | Items, loot, NPCs, names, starting items, NPC lists and spawn regions |
+| Runaway script protection | ✅ | Instruction budget per resume and per chunk |
+| Persistent values on objects | ✅ | Props on items and NPCs, saved with the world |
+| Global persistent script data | ❌ | |
+| Script debugger for an IDE | ❌ | Editor definitions for completion only |
+| Script profiling | 🟡 | Script metrics; no per-function profile |
+| Files, HTTP, SQL and email from scripts | ❌ | |
+| External TCP services handled by scripts | ❌ | |
+| Scriptable gumps and dialogs | ❌ | |
+| Hooks that replace core rules (skill check, combat, decay) | ❌ | |
+| Overridable system messages | ✅ | Every message in the `data/messages` files |
 
 ## Interface
 
@@ -227,6 +299,11 @@ works today in more detail.
 | Walk sequence and speed checks | ✅ | |
 | Weight and overloading | 🟡 | Items have their weight; nothing overloads |
 | Timed effects (buffs and debuffs) | ❌ | |
+| Text prompts and input | ❌ | |
+| Visual effects: moving, lightning, particles | ❌ | |
+| Sounds and music | 🟡 | Sounds from scripts and thunder; no region music |
+| Client language | ❌ | One server language for everyone |
+| Store and other modern client panels | ❌ | |
 
 ## What Moongate adds
 
