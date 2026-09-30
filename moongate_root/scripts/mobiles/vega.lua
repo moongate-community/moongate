@@ -9,6 +9,9 @@
 --   on_think(serial)                 every think of the cat near a player
 --                                    (500 ms): a step every second, a line
 --                                    every 2 s, a meow every 3 s
+--   on_speech(serial, speaker, text) a player says hello within 15 cells: Vega
+--                                    counts the hellos in the prop
+--                                    vega.greeted, kept across restarts
 -- ==============================================================================
 
 vega = {}
@@ -38,5 +41,15 @@ function vega.on_think(serial)
 
     if count % 6 == 0 then
         npc.play_sound(serial, SOUNDS[dice.roll("1d2")])
+    end
+end
+
+-- Called when a player says something within 15 cells. The count is a prop of the cat, saved with it by the world save,
+-- so Vega remembers it after a restart; a local table would start again from zero.
+function vega.on_speech(serial, speaker, text)
+    if text:lower():find("hello", 1, true) then
+        local times = (npc.get_prop(serial, "vega.greeted") or 0) + 1
+        npc.set_prop(serial, "vega.greeted", times)
+        npc.say(serial, "Meow! That's " .. times .. " hellos.")
     end
 end
