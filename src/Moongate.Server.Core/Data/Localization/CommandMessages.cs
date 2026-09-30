@@ -54,6 +54,11 @@ public static class CommandMessages
     public const int KeyCreated = 30071;
     public const int NoBackpack = 30072;
 
+    // The spawn notice to the staff: one region, several regions, and the ones left out of the names.
+    public const int SpawnedInOneRegion = 30074;
+    public const int SpawnedInRegions = 30075;
+    public const int SpawnedAndMore = 30076;
+
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
 

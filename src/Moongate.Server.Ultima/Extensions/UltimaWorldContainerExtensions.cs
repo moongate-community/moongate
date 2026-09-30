@@ -113,6 +113,10 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<ITooltipService, TooltipService>();
         // As the ground items: the NPCs are live before the game server takes players.
         container.AddMoongateService<INpcService, NpcService>(10);
+        // After the NPCs (10): the live ones of each region are counted from the world.
+        container.AddMoongateService<ISpawnRegionService, SpawnRegionService>(11);
+        // After the NPCs (10): the live ones of each region are counted from the world.
+        container.AddMoongateService<ISpawnRegionService, SpawnRegionService>(11);
 
         return container;
     }

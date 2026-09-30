@@ -29,6 +29,8 @@ public sealed class StubMovementService : IMovementService
 
     public List<(MapType Map, Point3D From, DirectionType Direction)> Checks { get; } = [];
 
+    public List<int> SpawnCeilings { get; } = [];
+
     public bool TryGetDropZ(MapType map, int x, int y, int maxZ, out int z)
     {
         z = DropZ ?? 0;
@@ -38,6 +40,7 @@ public sealed class StubMovementService : IMovementService
 
     public bool TryGetSpawnZ(MapType map, int x, int y, int maxZ, out int z)
     {
+        SpawnCeilings.Add(maxZ);
         var found = SpawnZ(x, y);
         z = found ?? 0;
 

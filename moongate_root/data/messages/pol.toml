@@ -5483,7 +5483,7 @@
 30006 = "Waga: 1 kamień"
 30007 = "Waga: {0} kam."
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30076) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073).
 30008 = "Cel anulowany."
 30009 = "Polecenie jest już wykonywane."
 30010 = "Nieznane polecenie: {0}"
@@ -5550,3 +5550,6 @@
 30071 = "Klucz do drzwi jest w twoim plecaku."
 30072 = "Nie masz plecaka."
 30073 = "Wkłada do plecaka klucz do wskazanych drzwi i połączonych z nimi."
+30074 = "Spawn: {0} ({1}): {2} NPC"
+30075 = "Spawn: {0} NPC w {1} regionach: {2}"
+30076 = "{0} i {1} więcej"

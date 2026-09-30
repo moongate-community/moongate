@@ -1,0 +1,350 @@
+using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
+using Moongate.Server.Core.Data.Localization;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Internal.Spawns;
+using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Server.Ultima.Data.Templates.Spawns;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Speech;
+using Serilog;
+
+namespace Moongate.Server.Ultima.Services;
+
+/// <summary>
+///     UOX3's <c>DoRegionSpawn</c>: the <c>npc_spawn</c> timer checks the regions every 10 seconds, and a due region below
+///     its max spawns up to <c>call</c> NPCs, then waits between its min and max minutes. The first spawn of each region
+///     comes within its min time (at most 10 minutes), so the world fills gradually. The live NPCs of a region are the
+///     ones carrying its id in the prop <c>spawn.region</c>, counted at every check: an NPC removed or killed frees its
+///     slot. After a check that spawned something, the game masters and administrators get one summary message.
+/// </summary>
+public sealed class SpawnRegionService : ISpawnRegionService
+{
+    public const string TimerName = "npc_spawn";
+    public const string RegionProp = "spawn.region";
+    private const int DefaultPrefZ = 18;
+    private const int SpotTries = 100;
+    private const int RoofHeight = 10;
+    private const int FirstSpawnWindowMinutes = 10;
+    private const int NamedRegions = 5;
+
+    private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan RetryDelay = TimeSpan.FromMinutes(1);
+    private static readonly Hue NoticeHue = new(0x03B2);
+
+    private readonly ILogger _logger = Log.ForContext<SpawnRegionService>();
+    private readonly List<SpawnRegionState> _regions = [];
+    private readonly IDataLoaderService _data;
+    private readonly IMapService _map;
+    private readonly IMovementService _movement;
+    private readonly INpcService _npcs;
+    private readonly IMobileService _mobiles;
+    private readonly ISessionService _sessions;
+    private readonly IPacketSendService _sender;
+    private readonly ILocalizationService _localization;
+    private readonly ITimerService _timers;
+    private readonly IGameLoopService _loop;
+    private readonly TimeProvider _time;
+    private readonly Random _random;
+
+    private string? _timer;
+
+    /// <summary>
+    ///     Gets the spawns started by the last check, done once they are all in the world and the staff was told.
+    /// </summary>
+    internal Task Running { get; private set; } = Task.CompletedTask;
+
+    public SpawnRegionService(
+        IDataLoaderService data,
+        IMapService map,
+        IMovementService movement,
+        INpcService npcs,
+        IMobileService mobiles,
+        ISessionService sessions,
+        IPacketSendService sender,
+        ILocalizationService localization,
+        ITimerService timers,
+        IGameLoopService loop,
+        TimeProvider time,
+        Random? random = null
+    )
+    {
+        _data = data;
+        _map = map;
+        _movement = movement;
+        _npcs = npcs;
+        _mobiles = mobiles;
+        _sessions = sessions;
+        _sender = sender;
+        _localization = localization;
+        _timers = timers;
+        _loop = loop;
+        _time = time;
+        _random = random ?? Random.Shared;
+    }
+
+    public Task StartAsync()
+    {
+        var lists = _data.GetEntities<NpcListTemplate>().ToDictionary(list => list.Id, StringComparer.Ordinal);
+        var now = _time.GetUtcNow();
+        var skipped = 0;
+
+        foreach (var spawn in _data.GetEntities<SpawnTemplate>())
+        {
+            if (!_map.Maps.Contains(spawn.Map))
+            {
+                skipped++;
+
+                continue;
+            }
+
+            var window = Math.Min(spawn.MinMinutes, FirstSpawnWindowMinutes) * 60;
+            _regions.Add(
+                new()
+                {
+                    Template = spawn,
+                    Pool = new(spawn, lists),
+                    NextSpawn = now + TimeSpan.FromSeconds(_random.Next(0, window + 1))
+                }
+            );
+        }
+
+        _timer = _timers.RegisterTimer(TimerName, CheckInterval, Check, CheckInterval, true);
+        _logger.Information(
+            "Spawning {Regions} regions for up to {Npcs} NPCs ({Skipped} on maps not loaded)",
+            _regions.Count,
+            _regions.Sum(region => region.Template.Max),
+            skipped
+        );
+
+        return Task.CompletedTask;
+    }
+
+    public async Task StopAsync()
+    {
+        if (_timer is not null)
+        {
+            _timers.UnregisterTimer(_timer);
+            _timer = null;
+        }
+
+        await Running;
+    }
+
+    // On the game loop. The spawns themselves run off it, as INpcService asks; no check starts before they are done.
+    private void Check()
+    {
+        if (!Running.IsCompleted)
+        {
+            return;
+        }
+
+        try
+        {
+            var now = _time.GetUtcNow();
+            var live = CountLive();
+            var planned = new List<(SpawnRegionState Region, string TemplateId, Point3D Location, SpawnArea Area)>();
+
+            foreach (var region in _regions)
+            {
+                if (region.NextSpawn > now)
+                {
+                    continue;
+                }
+
+                var template = region.Template;
+                var count = Math.Min(template.Call, template.Max - live.GetValueOrDefault(template.Id));
+                var missed = false;
+
+                for (var i = 0; i < count; i++)
+                {
+                    if (!TryFindSpot(template, out var location, out var area))
+                    {
+                        missed = true;
+
+                        break;
+                    }
+
+                    planned.Add((region, region.Pool.Pick(_random), location, area));
+                }
+
+                region.NextSpawn = missed
+                    ? now + RetryDelay
+                    : now + TimeSpan.FromSeconds(_random.Next(template.MinMinutes * 60, template.MaxMinutes * 60 + 1));
+            }
+
+            if (planned.Count > 0)
+            {
+                Running = Task.Run(() => SpawnAsync(planned));
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(exception, "The spawn check failed");
+        }
+    }
+
+    private Dictionary<string, int> CountLive()
+    {
+        var live = new Dictionary<string, int>(StringComparer.Ordinal);
+
+        foreach (var mobile in _mobiles.Mobiles)
+        {
+            if (mobile.IsNpc && mobile.TryGetProp<string>(RegionProp, out var region))
+            {
+                live[region] = live.GetValueOrDefault(region) + 1;
+            }
+        }
+
+        return live;
+    }
+
+    // UOX3 FindSpotForNPC: a random cell of the areas, out of the excluded ones, where a mobile stands under the ceiling.
+    private bool TryFindSpot(SpawnTemplate template, out Point3D location, out SpawnArea area)
+    {
+        for (var i = 0; i < SpotTries; i++)
+        {
+            area = template.Areas[_random.Next(0, template.Areas.Count)];
+            var x = _random.Next(area.X1, area.X2 + 1);
+            var y = _random.Next(area.Y1, area.Y2 + 1);
+
+            if (template.Exclude.Any(exclude => exclude.Contains(x, y)) || !_map.Contains(template.Map, x, y))
+            {
+                continue;
+            }
+
+            var ceiling = template.Z ?? _movement.GetAverageZ(template.Map, x, y) + (template.PrefZ ?? DefaultPrefZ);
+
+            if (!_movement.TryGetSpawnZ(template.Map, x, y, ceiling, out var z) ||
+                template.OnlyOutside && IsUnderRoof(template, x, y, z))
+            {
+                continue;
+            }
+
+            location = new(x, y, z);
+
+            return true;
+        }
+
+        location = default;
+        area = null!;
+
+        return false;
+    }
+
+    // UOX3's roof check, as the weather's: a static more than 10 above the spot.
+    private bool IsUnderRoof(SpawnTemplate template, int x, int y, int z)
+    {
+        return _map.GetStatics(template.Map, x, y).Any(tile => tile.Z > z + RoofHeight);
+    }
+
+    private async Task SpawnAsync(List<(SpawnRegionState Region, string TemplateId, Point3D Location, SpawnArea Area)> planned)
+    {
+        var spawned = new List<(SpawnTemplate Template, int Count)>();
+
+        foreach (var (region, templateId, location, area) in planned)
+        {
+            var template = region.Template;
+
+            try
+            {
+                var npc = await _npcs.SpawnAsync(templateId, template.Map, location);
+                await OnLoopAsync(() => SetHome(npc, template, area));
+                var index = spawned.FindIndex(entry => entry.Template == template);
+
+                if (index < 0)
+                {
+                    spawned.Add((template, 1));
+                }
+                else
+                {
+                    spawned[index] = (template, spawned[index].Count + 1);
+                }
+
+                _logger.Debug(
+                    "Spawn {Region} ({Name}): {Template} {Serial} at {Location} on {Map}",
+                    template.Id,
+                    template.Name,
+                    templateId,
+                    npc.Id,
+                    location,
+                    template.Map
+                );
+            }
+            catch (Exception exception)
+            {
+                _logger.Warning(exception, "Spawn {Region} could not spawn {Template}", template.Id, templateId);
+            }
+        }
+
+        if (spawned.Count > 0)
+        {
+            var notice = Notice(spawned);
+            _logger.Debug("{Notice}", notice);
+            await OnLoopAsync(() => TellStaff(notice));
+        }
+    }
+
+    private static void SetHome(MobileEntity npc, SpawnTemplate template, SpawnArea area)
+    {
+        npc.SetProp(RegionProp, template.Id);
+        npc.SetProp("spawn.x1", (long)area.X1);
+        npc.SetProp("spawn.y1", (long)area.Y1);
+        npc.SetProp("spawn.x2", (long)area.X2);
+        npc.SetProp("spawn.y2", (long)area.Y2);
+    }
+
+    private string Notice(List<(SpawnTemplate Template, int Count)> spawned)
+    {
+        if (spawned.Count == 1)
+        {
+            var (template, count) = spawned[0];
+
+            return _localization.Get(CommandMessages.SpawnedInOneRegion, NameOf(template), template.Map, count);
+        }
+
+        var named = string.Join(
+            ", ",
+            spawned.OrderByDescending(entry => entry.Count)
+                   .Take(NamedRegions)
+                   .Select(entry => $"{NameOf(entry.Template)} {entry.Count}")
+        );
+
+        if (spawned.Count > NamedRegions)
+        {
+            named = _localization.Get(CommandMessages.SpawnedAndMore, named, spawned.Count - NamedRegions);
+        }
+
+        return _localization.Get(CommandMessages.SpawnedInRegions, spawned.Sum(entry => entry.Count), spawned.Count, named);
+    }
+
+    private static string NameOf(SpawnTemplate template)
+    {
+        return template.Name ?? template.Id;
+    }
+
+    private void TellStaff(string notice)
+    {
+        var packet = SpeechMessageHelper.CreateSystem(notice, NoticeHue);
+
+        foreach (var session in _sessions.GetAll())
+        {
+            if (session.AccountType >= AccountType.GameMaster && session.CharacterId.IsValid &&
+                _mobiles.IsInWorld(session.CharacterId))
+            {
+                SpeechMessageHelper.TrySend(_sender, session, packet);
+            }
+        }
+    }
+
+    private async Task OnLoopAsync(Action action)
+    {
+        var work = new LoopActionWorkItem(action);
+        await _loop.PostAsync(work, CancellationToken.None);
+        await work.Completion;
+    }
+}
