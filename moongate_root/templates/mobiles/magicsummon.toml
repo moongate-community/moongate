@@ -95,6 +95,7 @@ dexterity = "1d20+65"
 intelligence = "1d25+100"
 damage = "1d9+3"
 armor = 20
+movement = "both"
 [mobile.skills]
 magery = "1d16+69"
 resisting_spells = "1d16+69"

@@ -98,6 +98,7 @@ karma = -4500
 fame = 4500
 loot = ["randompotions", "randompotions", "treasure_map_lvl2loot"]
 gold = "1d51+199"
+movement = "both"
 [mobile.skills]
 magery = "1d16+59"
 resisting_spells = "1d16+99"

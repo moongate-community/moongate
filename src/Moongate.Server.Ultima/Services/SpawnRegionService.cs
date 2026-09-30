@@ -3,7 +3,6 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
-using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Internal.Spawns;
 using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
@@ -12,6 +11,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Speech;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -41,7 +41,7 @@ public sealed class SpawnRegionService : ISpawnRegionService
     private readonly ILogger _logger = Log.ForContext<SpawnRegionService>();
     private readonly List<SpawnRegionState> _regions = [];
     private readonly CancellationTokenSource _stopping = new();
-    private readonly HashSet<string> _swimmers = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, MobileMovementType> _movements = new(StringComparer.Ordinal);
     private readonly IDataLoaderService _data;
     private readonly IMapService _map;
     private readonly IMovementService _movement;
@@ -94,11 +94,15 @@ public sealed class SpawnRegionService : ISpawnRegionService
     public Task StartAsync()
     {
         var lists = _data.GetEntities<NpcListTemplate>().ToDictionary(list => list.Id, StringComparer.Ordinal);
-        var sea = _data.GetEntities<BodyContent>().Where(body => body.Type == BodyType.Sea).Select(body => (int)body.Body.Value).ToHashSet();
-        // A sea body swims, as ModernUO's sea creatures and UOX3's MOVEMENT=WATER: it spawns on the water.
-        _swimmers.UnionWith(
-            _data.GetEntities<MobileTemplate>().Where(mobile => mobile.Body is { } body && sea.Contains(body)).Select(mobile => mobile.Id)
-        );
+
+        // As UOX3: a water mobile spawns on the water, one moving on both on land or else on the water.
+        foreach (var mobile in _data.GetEntities<MobileTemplate>())
+        {
+            if (mobile.Movement is { } movement and not MobileMovementType.Land)
+            {
+                _movements[mobile.Id] = movement;
+            }
+        }
         var now = _time.GetUtcNow();
         var skipped = 0;
 
@@ -226,7 +230,9 @@ public sealed class SpawnRegionService : ISpawnRegionService
             {
                 var templateId = region.Pool.Pick(_random);
 
-                if (!TryFindSpot(template, _swimmers.Contains(templateId), out var location, out var area))
+                var movement = _movements.GetValueOrDefault(templateId, MobileMovementType.Land);
+
+                if (!TryFindSpot(template, movement, out var location, out var area))
                 {
                     missed = true;
 
@@ -263,8 +269,8 @@ public sealed class SpawnRegionService : ISpawnRegionService
     }
 
     // UOX3 FindSpotForNPC: a random cell of the areas, out of the excluded ones, where a mobile stands under the ceiling,
-    // or on the water for a swimmer.
-    private bool TryFindSpot(SpawnTemplate template, bool swims, out Point3D location, out SpawnArea area)
+    // or on the water for a mobile that swims: only there when it cannot walk, else when the cell has no land to stand on.
+    private bool TryFindSpot(SpawnTemplate template, MobileMovementType movement, out Point3D location, out SpawnArea area)
     {
         for (var i = 0; i < SpotTries; i++)
         {
@@ -277,24 +283,10 @@ public sealed class SpawnRegionService : ISpawnRegionService
                 continue;
             }
 
-            int z;
-
-            if (swims)
+            if (!(movement != MobileMovementType.Water && TryGetLandZ(template, x, y, out var z) ||
+                  movement != MobileMovementType.Land && _movement.TryGetSwimZ(template.Map, x, y, out z)))
             {
-                if (!_movement.TryGetSwimZ(template.Map, x, y, out z))
-                {
-                    continue;
-                }
-            }
-            else
-            {
-                var ceiling = template.Z ?? _movement.GetAverageZ(template.Map, x, y) + (template.PrefZ ?? DefaultPrefZ);
-
-                if (!_movement.TryGetSpawnZ(template.Map, x, y, ceiling, out z) ||
-                    template.OnlyOutside && IsUnderRoof(template, x, y, z))
-                {
-                    continue;
-                }
+                continue;
             }
 
             location = new(x, y, z);
@@ -306,6 +298,14 @@ public sealed class SpawnRegionService : ISpawnRegionService
         area = null!;
 
         return false;
+    }
+
+    private bool TryGetLandZ(SpawnTemplate template, int x, int y, out int z)
+    {
+        var ceiling = template.Z ?? _movement.GetAverageZ(template.Map, x, y) + (template.PrefZ ?? DefaultPrefZ);
+
+        return _movement.TryGetSpawnZ(template.Map, x, y, ceiling, out z) &&
+               !(template.OnlyOutside && IsUnderRoof(template, x, y, z));
     }
 
     // UOX3's roof check, as the weather's: a static more than 10 above the spot.

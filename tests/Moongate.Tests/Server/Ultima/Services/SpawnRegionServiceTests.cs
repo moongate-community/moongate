@@ -5,11 +5,11 @@ using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
-using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Random;
 using Moongate.Tests.TestSupport.Scripting;
@@ -280,6 +280,20 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         Assert.Single(_npcs.Spawns);
     }
 
+    [Theory, InlineData(0, 0), InlineData(null, -5)]
+    public async Task AnAmphibian_SpawnsOnLand_ElseOnTheWater(int? land, int expectedZ)
+    {
+        _movement.SpawnZ = (_, _) => land;
+        _movement.SwimZ = (_, _) => -5;
+        var shore = Spawn("shore", x1: 10, y1: 20, x2: 10, y2: 20);
+        shore.MobileIds = ["walrus"];
+        await StartAsync(new ScriptedRandom(0), shore);
+
+        await TickAsync();
+
+        Assert.Equal([("walrus", MapType.Felucca, new Point3D(10, 20, expectedZ))], _npcs.Spawns);
+    }
+
     [Fact]
     public async Task RegionsAtAsync_GivesTheRegionsHere_WithTheirLiveNpcsAndNextSpawn()
     {
@@ -406,8 +420,11 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         var data = new StubDataLoaderService()
                    .With(spawns)
                    .With(new NpcListTemplate { Id = "unused" })
-                   .With(new MobileTemplate { Id = "rabbit", Body = 205 }, new MobileTemplate { Id = "dolphin", Body = 151 })
-                   .With(new BodyContent { Body = new(205), Type = BodyType.Animal }, new BodyContent { Body = new(151), Type = BodyType.Sea });
+                   .With(
+                       new MobileTemplate { Id = "rabbit", Body = 205 },
+                       new MobileTemplate { Id = "dolphin", Body = 151, Movement = MobileMovementType.Water },
+                       new MobileTemplate { Id = "walrus", Body = 221, Movement = MobileMovementType.Both }
+                   );
         (int Id, string Text)[] defaults =
         [
             (CommandMessages.SpawnedInOneRegion, "Spawn: {0} ({1}): {2} NPCs"),

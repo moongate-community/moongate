@@ -78,6 +78,7 @@ internal static class UoxMobileConverter
             blocksByHeader.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase),
             UoxColorLists.Load(Path.Combine(mobileSource, "colors", "colors.dfn")),
             UoxCreatureSounds.Load(Path.Combine(mobileSource, "creatures", "creatures.dfn")),
+            UoxCreatureMovements.Load(Path.Combine(mobileSource, "creatures", "creatures.dfn")),
             report
         );
         var written = 0;
