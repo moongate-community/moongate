@@ -5,10 +5,14 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Commands;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Targeting;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Targeting;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Localization;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Targeting;
 using Moongate.Ultima.Types;
 
@@ -41,6 +45,24 @@ public sealed class WhereCommandTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task ExecuteAsync_ALocationInANamedRegion_AlsoPrintsTheRegion()
+    {
+        var regions = new RegionService(
+            new StubDataLoaderService().With(
+                new RegionContent
+                {
+                    Map = MapType.Trammel, Name = "Britain", Areas = [new RegionAreaContent { X1 = 1400, Y1 = 1500, X2 = 1700, Y2 = 1800 }]
+                }
+            )
+        );
+        _targets.Result = TargetResult.ForLocation(MapType.Trammel, new Point3D(1496, 1628, 10));
+
+        var context = await RunAsync(regions: regions);
+
+        Assert.Equal("Trammel (1496, 1628, 10) in Britain", Assert.Single(context.Output).Text);
+    }
+
+    [Fact]
     public async Task ExecuteAsync_Canceled_SaysSo()
     {
         var context = await RunAsync();
@@ -67,13 +89,13 @@ public sealed class WhereCommandTests : IAsyncDisposable
         Assert.Equal("Bersaglio annullato.", Assert.Single(context.Output).Text);
     }
 
-    private async Task<CommandContext> RunAsync(ILocalizationService? localization = null)
+    private async Task<CommandContext> RunAsync(ILocalizationService? localization = null, IRegionService? regions = null)
     {
         _fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         var context = new CommandContext(".where", "where", [], CommandSourceType.InGame, session);
 
-        await new WhereCommand(_targets, localization).ExecuteAsync(context);
+        await new WhereCommand(_targets, localization, regions).ExecuteAsync(context);
 
         return context;
     }
