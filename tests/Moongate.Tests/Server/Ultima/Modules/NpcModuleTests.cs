@@ -6,9 +6,11 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
 using Moongate.Scripting.Utils;
+using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
@@ -28,6 +30,20 @@ public sealed class NpcModuleTests
         Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
         Location = new Point3D(1600, 1600, 0), Direction = DirectionType.North
     };
+    private readonly MobileEntity _silentOrc = new()
+    {
+        Id = new Serial(0x101), Name = "a quiet orc", TemplateId = "quiet", Map = MapType.Trammel,
+        Location = new Point3D(1602, 1600, 0)
+    };
+    private readonly MobileTemplateService _templates = new(
+        new StubDataLoaderService().With(
+            new MobileTemplate
+            {
+                Id = "orc", Sounds = new MobileSounds { StartAttack = 0x69, Idle = 0x2A3, Attack = 0x6B, Hurt = 0x6C, Death = 0x6D }
+            },
+            new MobileTemplate { Id = "quiet" }
+        )
+    );
     private readonly MobileEntity _player = new()
     {
         Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
@@ -39,6 +55,7 @@ public sealed class NpcModuleTests
         _mobiles = new(_movement, TestSectors.Create());
         _mobiles.EnterWorld(_orc);
         _mobiles.EnterWorld(_player);
+        _mobiles.EnterWorld(_silentOrc);
     }
 
     [Fact]
@@ -132,8 +149,30 @@ public sealed class NpcModuleTests
         Assert.Equal((_orc, 0x69), Assert.Single(_speech.Sounds));
     }
 
-    [Theory, InlineData("return npc.play_sound(2, 0x69)"), InlineData("return npc.play_sound(256, -1)"), InlineData("return npc.play_sound(256, 0x10000)")]
-    public void PlaySound_APlayerOrASoundOutOfRange_IsFalse(string chunk)
+    [Theory,
+     InlineData("idle", 0x2A3),
+     InlineData("start_attack", 0x69),
+     InlineData("attack", 0x6B),
+     InlineData("hurt", 0x6C),
+     InlineData("death", 0x6D)]
+    public void PlaySound_AKindOfItsTemplate_PlaysThatSound(string kind, int expected)
+    {
+        var result = Run($"return npc.play_sound(256, '{kind}')");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal((_orc, expected), Assert.Single(_speech.Sounds));
+    }
+
+    [Theory,
+     InlineData("return npc.play_sound(2, 0x69)"),
+     InlineData("return npc.play_sound(256, -1)"),
+     InlineData("return npc.play_sound(256, 0x10000)"),
+     InlineData("return npc.play_sound(256, 1.5)"),
+     InlineData("return npc.play_sound(256, 'purr')"),
+     InlineData("return npc.play_sound(256, 'Idle')"),
+     InlineData("return npc.play_sound(256, true)"),
+     InlineData("return npc.play_sound(257, 'idle')")]
+    public void PlaySound_APlayerASoundOutOfRangeOrAKindTheTemplateLacks_IsFalse(string chunk)
     {
         Assert.False(Run(chunk)[0].Read<bool>());
         Assert.Empty(_speech.Sounds);
@@ -176,7 +215,7 @@ public sealed class NpcModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view, _templates));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

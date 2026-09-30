@@ -120,6 +120,7 @@ public sealed class NpcSenseIntegrationTests : IDisposable
         _container.RegisterInstance<ITimerService>(_timers);
         _container.RegisterInstance<ISpeechService>(_speech);
         _container.RegisterInstance<IWorldViewService>(new RecordingWorldViewService());
+        _container.RegisterInstance<IMobileTemplateService>(new MobileTemplateService(new StubDataLoaderService()));
         _container.AddScriptModule<NpcModule>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>

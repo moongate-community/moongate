@@ -37,7 +37,13 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly MobileService _mobiles;
     private readonly MobileTemplateService _templates = new(
-        new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "greeter" })
+        new StubDataLoaderService().With(
+            // The UOX3 cat's sounds, which the npc module plays by kind.
+            new MobileTemplate
+            {
+                Id = "cat", ScriptId = "greeter", Sounds = new MobileSounds { StartAttack = 105, Idle = 675 }
+            }
+        )
     );
     private readonly MobileEntity _cat = new()
     {
@@ -61,6 +67,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         _container.RegisterInstance<IMobileService>(_mobiles);
         _container.RegisterInstance<ISpeechService>(_speech);
         _container.RegisterInstance<IWorldViewService>(_view);
+        _container.RegisterInstance<IMobileTemplateService>(_templates);
         _container.AddScriptModule<NpcModule>();
         _container.AddScriptModule<DiceModule>();
         _container.Resolve<IMoongateEventBus>()
@@ -182,7 +189,9 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     {
         _scripts.Write($"mobiles/{cat}.lua", File.ReadAllText(ShippedScript($"mobiles/{cat}.lua")));
         var templates = new MobileTemplateService(
-            new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = cat })
+            new StubDataLoaderService().With(
+                new MobileTemplate { Id = "cat", ScriptId = cat }
+            )
         );
         using var engine = NewEngine();
         await engine.StartAsync();
@@ -203,7 +212,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.Equal(3, _speech.Said.Count);
         Assert.All(_speech.Said, said => Assert.StartsWith("M", said.Text));
         Assert.Equal(2, _speech.Sounds.Count);
-        Assert.All(_speech.Sounds, sound => Assert.Contains(sound.Sound, new[] { 0x69, 0x6A }));
+        Assert.All(_speech.Sounds, sound => Assert.Contains(sound.Sound, new[] { 105, 675 }));
     }
 
     public void Dispose()

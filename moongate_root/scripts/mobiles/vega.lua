@@ -18,7 +18,8 @@ local MESSAGES = {
     "Meow... I'm hiding in the wardrobe!",
 }
 
-local SOUNDS = { 0x69, 0x6A }
+-- Kinds of the cat template's [mobile.sounds], so the cat makes its own sounds.
+local SOUNDS = { "idle", "start_attack" }
 
 -- Thinks per cat, keyed by serial: a think comes every 500 ms.
 local thinks = {}

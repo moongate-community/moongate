@@ -24,12 +24,19 @@ public sealed class NpcModule
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
     private readonly IWorldViewService _view;
+    private readonly IMobileTemplateService _templates;
 
-    public NpcModule(IMobileService mobiles, ISpeechService speech, IWorldViewService view)
+    public NpcModule(
+        IMobileService mobiles,
+        ISpeechService speech,
+        IWorldViewService view,
+        IMobileTemplateService templates
+    )
     {
         _mobiles = mobiles;
         _speech = speech;
         _view = view;
+        _templates = templates;
     }
 
     /// <summary>
@@ -49,18 +56,18 @@ public sealed class NpcModule
     }
 
     /// <summary>
-    ///     Plays <paramref name="sound" /> where the NPC stands for the players within 15 cells;
-    ///     <c>npc.play_sound(serial, 0x69)</c>.
+    ///     Plays a sound where the NPC stands for the players within 15 cells: a sound id, <c>npc.play_sound(serial, 0x69)</c>,
+    ///     or a kind of the NPC template's <c>[mobile.sounds]</c>, <c>npc.play_sound(serial, "idle")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) where the NPC stands; false for an unknown NPC or sound.")]
-    public bool PlaySound(long serial, int sound)
+    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) or a kind of the NPC's template sounds (start_attack, idle, attack, hurt, death) where the NPC stands; false for an unknown NPC, sound or kind.")]
+    public bool PlaySound(long serial, object sound)
     {
-        if (sound is < 0 or > ushort.MaxValue || !TryGetNpc(serial, out var npc))
+        if (!TryGetNpc(serial, out var npc) || ResolveSound(npc, sound) is not { } id)
         {
             return false;
         }
 
-        _speech.PlaySound(npc, sound);
+        _speech.PlaySound(npc, id);
 
         return true;
     }
@@ -122,6 +129,33 @@ public sealed class NpcModule
     public string? Name(long serial)
     {
         return TryGetNpc(serial, out var npc) ? npc.Name : null;
+    }
+
+    // A whole number in the sound range, or a kind the template sets, as UOX3's creature sounds.
+    private int? ResolveSound(MobileEntity npc, object sound)
+    {
+        if (sound is double number)
+        {
+            return number is >= 0 and <= ushort.MaxValue && Math.Floor(number) == number ? (int)number : null;
+        }
+
+        if (sound is not string kind ||
+            npc.TemplateId is not { } templateId ||
+            !_templates.TryGet(templateId, out var template) ||
+            template.Sounds is not { } sounds)
+        {
+            return null;
+        }
+
+        return kind switch
+        {
+            "start_attack" => sounds.StartAttack,
+            "idle" => sounds.Idle,
+            "attack" => sounds.Attack,
+            "hurt" => sounds.Hurt,
+            "death" => sounds.Death,
+            _ => null
+        };
     }
 
     private bool TryGetNpc(long serial, [NotNullWhen(true)] out MobileEntity? npc)
