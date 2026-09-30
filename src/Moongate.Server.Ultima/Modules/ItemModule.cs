@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Speech;
@@ -167,6 +168,45 @@ public sealed class ItemModule
         );
 
         return SpeechMessageHelper.TrySend(_sender, session, label);
+    }
+
+    /// <summary>
+    ///     Gets the prop <paramref name="key" /> the item keeps, saved with it across restarts;
+    ///     <c>item.get_prop(serial, "vega.greeted")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "A value the item keeps across restarts: a string, a number or a bool; nil when it has none.")]
+    public object? GetProp(long serial, string key)
+    {
+        return TryGetItem(serial, out var item) && item.Props is { } props && props.TryGetValue(key, out var value) ? value : null;
+    }
+
+    /// <summary>
+    ///     Keeps <paramref name="value" /> as the prop <paramref name="key" /> of the item, saved with it by the world save,
+    ///     or removes it for <c>nil</c>; <c>item.set_prop(serial, "vega.greeted", 3)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Keeps a string, a number or a bool on the item across restarts, nil removes it; false for a table, a function or a blank key.")]
+    public bool SetProp(long serial, string key, object? value = null)
+    {
+        if (string.IsNullOrWhiteSpace(key) || !TryGetItem(serial, out var item))
+        {
+            return false;
+        }
+
+        if (value is null)
+        {
+            item.RemoveProp(key);
+
+            return true;
+        }
+
+        if (!ScriptPropValue.TryFromLua(value, out var prop))
+        {
+            return false;
+        }
+
+        item.SetProp(key, prop);
+
+        return true;
     }
 
     private bool TryGetItem(long serial, [NotNullWhen(true)] out ItemEntity? item)

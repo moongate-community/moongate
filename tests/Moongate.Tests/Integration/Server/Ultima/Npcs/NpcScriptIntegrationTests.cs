@@ -215,6 +215,28 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.All(_speech.Sounds, sound => Assert.Contains(sound.Sound, new[] { 105, 675 }));
     }
 
+    [Fact]
+    public async Task TheShippedVegaScript_CountsTheHellosInAProp()
+    {
+        _scripts.Write("mobiles/vega.lua", File.ReadAllText(ShippedScript("mobiles/vega.lua")));
+        var templates = new MobileTemplateService(
+            new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "vega" })
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        await scripts.StartAsync();
+        _cat.SetProp("vega.greeted", 4L);
+        var hearing = new NpcHearingService(scripts, _sectors);
+
+        hearing.Heard(_aria, "hello Vega");
+        hearing.Heard(_aria, "Hello again");
+
+        Assert.Empty(_errors);
+        Assert.Equal(["Meow! That's 5 hellos.", "Meow! That's 6 hellos."], _speech.Said.Select(said => said.Text));
+        Assert.Equal(6L, _cat.GetProp<long>("vega.greeted"));
+    }
+
     public void Dispose()
     {
         _container.Dispose();

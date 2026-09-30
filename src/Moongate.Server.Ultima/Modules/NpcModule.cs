@@ -5,6 +5,7 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Server.Ultima.Types.Movement;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -156,6 +157,45 @@ public sealed class NpcModule
             "death" => sounds.Death,
             _ => null
         };
+    }
+
+    /// <summary>
+    ///     Gets the prop <paramref name="key" /> the NPC keeps, saved with it across restarts;
+    ///     <c>npc.get_prop(serial, "vega.greeted")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "A value the NPC keeps across restarts: a string, a number or a bool; nil when it has none.")]
+    public object? GetProp(long serial, string key)
+    {
+        return TryGetNpc(serial, out var npc) && npc.Props is { } props && props.TryGetValue(key, out var value) ? value : null;
+    }
+
+    /// <summary>
+    ///     Keeps <paramref name="value" /> as the prop <paramref name="key" /> of the NPC, saved with it by the world save,
+    ///     or removes it for <c>nil</c>; <c>npc.set_prop(serial, "vega.greeted", 3)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Keeps a string, a number or a bool on the NPC across restarts, nil removes it; false for a table, a function or a blank key.")]
+    public bool SetProp(long serial, string key, object? value = null)
+    {
+        if (string.IsNullOrWhiteSpace(key) || !TryGetNpc(serial, out var npc))
+        {
+            return false;
+        }
+
+        if (value is null)
+        {
+            npc.RemoveProp(key);
+
+            return true;
+        }
+
+        if (!ScriptPropValue.TryFromLua(value, out var prop))
+        {
+            return false;
+        }
+
+        npc.SetProp(key, prop);
+
+        return true;
     }
 
     private bool TryGetNpc(long serial, [NotNullWhen(true)] out MobileEntity? npc)

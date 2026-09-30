@@ -65,6 +65,20 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SetProp_AndGetProp_KeepAValueOnTheItem()
+    {
+        var result = Run(
+            "item.set_prop(0x40000002, 'potion.charges', 2) " +
+            "return item.get_prop(0x40000002, 'potion.charges'), item.set_prop(0x40000002, 'bad', {}), item.get_prop(12, 'x')"
+        );
+
+        Assert.Equal(2d, result[0].Read<double>());
+        Assert.False(result[1].Read<bool>());
+        Assert.Equal(LuaValue.Nil, result[2]);
+        Assert.Equal(2L, _potions.GetProp<long>("potion.charges"));
+    }
+
+    [Fact]
     public void Consume_InAContainer_LowersTheAmountAndUpdatesTheOwner()
     {
         var result = Run("return item.consume(0x40000002)");

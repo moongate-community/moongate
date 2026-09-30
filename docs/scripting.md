@@ -67,8 +67,10 @@ exists but fails compilation/execution aborts server startup.
 | `npc.play_sound(serial, sound)` | Plays a sound where the NPC stands, for the players within 15 cells (0x54): a sound id from 0 to 65535, such as `0x69`, or a kind of the NPC template's `[mobile.sounds]`, `"start_attack"`, `"idle"`, `"attack"`, `"hurt"` or `"death"`, so a script makes each creature sound like itself; `false` for a sound out of range, a kind its template does not set, or a serial that is not an NPC in the world |
 | `npc.step(serial, direction, running?)` | One step toward a `DirectionType` (`North` to `NorthWest`), turning first when needed, seen by the players in range; a run when `running` is `true`. How often the script calls it sets the speed. `false` when blocked or for `DirectionType.Running`, which is not a direction |
 | `npc.location(serial)`, `npc.name(serial)` | `{ x, y, z, map }` and the name of the NPC, or `nil` |
+| `npc.get_prop(serial, key)`, `npc.set_prop(serial, key, value)` | A value the NPC keeps across restarts: a string, a number or a bool, saved with the NPC by the world save; `get_prop` gives `nil` when it has none, `set_prop` with `nil` removes it and gives `false` for a table, a function or a blank key |
 | `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
 | `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` for a worn item, an `amount` below 1, fewer units left, or an item a player holds on the cursor |
+| `item.get_prop(serial, key)`, `item.set_prop(serial, key, value)` | The same for an item, saved with it by the world save or its owner's save |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 
@@ -212,6 +214,22 @@ end
 
 No template in the repository uses it: add `script_id = "wander"` to a mobile template
 to try it.
+
+A script's `local` tables live in memory: they start again empty after a restart or a
+reload. To remember something across restarts, keep it in the NPC's props, prefixing the
+key with the script name, as `vega.lua` counts the hellos it hears:
+
+```lua
+function vega.on_speech(serial, speaker, text)
+    if text:lower():find("hello", 1, true) then
+        local times = (npc.get_prop(serial, "vega.greeted") or 0) + 1
+        npc.set_prop(serial, "vega.greeted", times)
+        npc.say(serial, "Meow! That's " .. times .. " hellos.")
+    end
+end
+```
+
+A change made after the last world save is lost if the server stops without saving.
 
 Reload one script with `script reload mobiles/wander.lua`. Its table is replaced,
 so the NPCs use the new functions from their next think; state kept in `local`

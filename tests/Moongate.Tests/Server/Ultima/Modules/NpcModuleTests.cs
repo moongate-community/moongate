@@ -179,6 +179,60 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void SetProp_StoresStringsNumbersAndBools_GetPropReadsThemBack()
+    {
+        var result = Run(
+            "npc.set_prop(256, 'vega.greeted', 3) npc.set_prop(256, 'vega.mood', 'sleepy') npc.set_prop(256, 'vega.fed', true) " +
+            "npc.set_prop(256, 'vega.weight', 4.5) " +
+            "return npc.get_prop(256, 'vega.greeted'), npc.get_prop(256, 'vega.mood'), npc.get_prop(256, 'vega.fed'), " +
+            "npc.get_prop(256, 'vega.weight'), npc.get_prop(256, 'missing')"
+        );
+
+        Assert.Equal(3d, result[0].Read<double>());
+        Assert.Equal("sleepy", result[1].Read<string>());
+        Assert.True(result[2].Read<bool>());
+        Assert.Equal(4.5, result[3].Read<double>());
+        Assert.Equal(LuaValue.Nil, result[4]);
+        Assert.Equal(3L, _orc.GetProp<long>("vega.greeted"));
+    }
+
+    [Fact]
+    public void SetProp_Nil_RemovesIt()
+    {
+        _orc.SetProp("vega.greeted", 3);
+
+        var result = Run("return npc.set_prop(256, 'vega.greeted', nil), npc.get_prop(256, 'vega.greeted')");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(LuaValue.Nil, result[1]);
+        Assert.Null(_orc.Props);
+    }
+
+    [Theory,
+     InlineData("return npc.set_prop(256, 'bag', {})"),
+     InlineData("return npc.set_prop(256, 'fn', print)"),
+     InlineData("return npc.set_prop(256, '', 1)"),
+     InlineData("return npc.set_prop(256, '  ', 1)"),
+     InlineData("return npc.set_prop(2, 'x', 1)"),
+     InlineData("return npc.set_prop(999, 'x', 1)")]
+    public void SetProp_ATableAFunctionABlankKeyOrNotAnNpc_IsFalseAndStoresNothing(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+        Assert.Null(_orc.Props);
+        Assert.Null(_player.Props);
+    }
+
+    [Fact]
+    public void GetProp_OfAPlayerOrUnknown_IsNil()
+    {
+        _player.SetProp("secret", 1);
+
+        var result = Run("return npc.get_prop(2, 'secret'), npc.get_prop(999, 'secret')");
+
+        Assert.All(result, value => Assert.Equal(LuaValue.Nil, value));
+    }
+
+    [Fact]
     public void Step_APlayer_DoesNothing()
     {
         var result = Run("return npc.step(2, 'North')");
