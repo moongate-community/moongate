@@ -60,6 +60,18 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedDecorationTemplates_AreFixedAndDoNotDecay_AndTheDoorHasTheDoorScript()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        var decoration = templates["decoration"];
+        var door = templates["decoration_door"];
+        Assert.Equal(((bool?)false, (bool?)false, (string?)null), (decoration.Movable, decoration.Decays, decoration.Name));
+        Assert.True(string.IsNullOrEmpty(decoration.ScriptId));
+        Assert.Equal(((bool?)false, (bool?)false, "door"), (door.Movable, door.Decays, door.ScriptId));
+    }
+
+    [Fact]
     public async Task ShippedItemTemplates_MarkTwoHandedWeaponsButNotShieldsOrTorches()
     {
         var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);

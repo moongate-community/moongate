@@ -1,0 +1,32 @@
+# ==============================================================================
+# Moongate - templates/items/decorations.toml
+#
+# What it is for:
+#   The items ".decorate" places from templates/decorations: fixed world
+#   decoration that never decays. Each placed item gets the graphic, hue and
+#   name of its decoration block; item_id here is only the fallback graphic.
+#
+# Fields:
+#   base_id    inherits base_item
+#   item_id    fallback graphic (a candle, a metal door)
+#   movable    false: players cannot pick decoration up
+#   decays     false: decoration stays on the ground
+#   script_id  the item script of the doors (scripts/items/door.lua)
+# ==============================================================================
+
+[[item]]
+id = "decoration"
+base_id = "base_item"
+item_id = 0x0A28
+rarity = "common"
+movable = false
+decays = false
+
+[[item]]
+id = "decoration_door"
+base_id = "base_item"
+item_id = 0x0675
+rarity = "common"
+movable = false
+decays = false
+script_id = "door"

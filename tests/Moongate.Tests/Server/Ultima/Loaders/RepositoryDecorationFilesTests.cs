@@ -13,8 +13,8 @@ public sealed class RepositoryDecorationFilesTests
 {
     private static readonly string[] Folders =
     [
-        "britannia", "trammel", "felucca", "ilshenar", "malas", "tokuno", "ruined_magincia_tram", "ruined_magincia_fel",
-        "bounty_boards"
+        "britannia", "trammel", "felucca", "ilshenar", "malas", "tokuno", "_ruined_magincia_tram", "_ruined_magincia_fel",
+        "_bounty_boards"
     ];
 
     [Fact]

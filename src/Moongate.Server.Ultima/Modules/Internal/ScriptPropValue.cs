@@ -15,7 +15,8 @@ internal static class ScriptPropValue
 
                 return true;
             case double number when double.IsFinite(number):
-                prop = Math.Floor(number) == number && number is >= long.MinValue and <= long.MaxValue ? (long)number : number;
+                // Boxed apart: a conditional of long and double would turn the long back into a double.
+                prop = Math.Floor(number) == number && number is >= long.MinValue and <= long.MaxValue ? (object)(long)number : number;
 
                 return true;
             default:

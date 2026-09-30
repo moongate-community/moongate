@@ -35,6 +35,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly StubGameLoop _loop = new();
     private readonly RecordingTimerService _timers = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+    private readonly List<LuaScriptEngineService> _engines = [];
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingWorldViewService _view = new();
@@ -161,8 +162,152 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal([0xEC, 0xF3], _speech.PlacedSounds.Select(sound => sound.Sound));
     }
 
+    [Fact]
+    public async Task TheShippedDoorScript_OpensTheDoorAndItsLinkedDoor_WithTheirSounds()
+    {
+        var (left, right) = PlaceDoubleDoor();
+        var scripts = await StartDoorScriptAsync();
+
+        var result = scripts.Run(left, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        Assert.Equal((0x0676, new Point3D(1599, 1601, 0)), (left.ItemId, left.GroundLocation!.Value));
+        Assert.Equal((0x0678, new Point3D(1602, 1601, 0)), (right.ItemId, right.GroundLocation!.Value));
+        Assert.Equal([0xEC, 0xEC], _speech.PlacedSounds.Select(sound => sound.Sound));
+        Assert.Equal(
+            [true, 1600L, 1600L, 0L],
+            new[] { left.Props!["door.open"], left.Props["door.x"], left.Props["door.y"], left.Props["door.z"] }
+        );
+    }
+
+    [Fact]
+    public async Task TheShippedDoorScript_ADoorThatCannotSwingAside_StaysClosed()
+    {
+        var door = PlaceDoor(new Serial(0x40000010), "MetalDoor", 0x0675, "west_cw", new Point3D(0, 1600, 0));
+        var scripts = await StartDoorScriptAsync();
+
+        scripts.Run(door, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((0x0675, new Point3D(0, 1600, 0)), (door.ItemId, door.GroundLocation!.Value));
+        Assert.False(door.Props!.ContainsKey("door.open"));
+        Assert.Empty(_speech.PlacedSounds);
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public async Task TheShippedDoorScript_ClosesBothDoorsOnlyWhenBothDoorwaysAreFree()
+    {
+        var (left, right) = PlaceDoubleDoor();
+        var scripts = await StartDoorScriptAsync();
+        scripts.Run(left, "on_use", 2L);
+        var orc = new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
+
+        _sectors.Add(orc);
+        scripts.Run(right, "on_use", 2L);
+        Assert.Equal((0x0676, 0x0678), (left.ItemId, right.ItemId));
+
+        _sectors.Remove(orc);
+        scripts.Run(right, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((0x0675, new Point3D(1600, 1600, 0)), (left.ItemId, left.GroundLocation!.Value));
+        Assert.Equal((0x0677, new Point3D(1601, 1600, 0)), (right.ItemId, right.GroundLocation!.Value));
+        Assert.Equal([0xEC, 0xEC, 0xF3, 0xF3], _speech.PlacedSounds.Select(sound => sound.Sound));
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public async Task TheShippedDoorScript_ClosesByItselfAfter20Seconds_RetryingEvery10WhileTheDoorwayIsTaken()
+    {
+        var door = PlaceDoor(new Serial(0x40000010), "DarkWoodGate", 0x0839, "south_cw", new Point3D(1600, 1600, 0));
+        var scripts = await StartDoorScriptAsync();
+        scripts.Run(door, "on_use", 2L);
+        var first = Assert.Single(_timers.Timers);
+        Assert.Equal(TimeSpan.FromSeconds(20), first.Interval);
+        var orc = new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+        _sectors.Add(orc);
+
+        _timers.Fire(first.Id);
+        var retry = Assert.Single(_timers.Timers);
+        Assert.Equal((TimeSpan.FromSeconds(10), 0x083A), (retry.Interval, door.ItemId));
+
+        _sectors.Remove(orc);
+        _timers.Fire(retry.Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal((0x0839, new Point3D(1600, 1600, 0)), (door.ItemId, door.GroundLocation!.Value));
+        Assert.Equal([0xEB, 0xF2], _speech.PlacedSounds.Select(sound => sound.Sound));
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public async Task TheShippedDoorScript_ASecretDoorWithoutFacing_OpensInPlace()
+    {
+        var door = PlaceDoor(new Serial(0x40000010), "SecretStoneDoor1", 0x00E8, null, new Point3D(1600, 1600, 0));
+        var scripts = await StartDoorScriptAsync();
+
+        scripts.Run(door, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((0x00E9, new Point3D(1600, 1600, 0)), (door.ItemId, door.GroundLocation!.Value));
+        Assert.Equal([0xED], _speech.PlacedSounds.Select(sound => sound.Sound));
+    }
+
+    private (ItemEntity Left, ItemEntity Right) PlaceDoubleDoor()
+    {
+        var left = PlaceDoor(new Serial(0x40000010), "MetalDoor", 0x0675, "west_cw", new Point3D(1600, 1600, 0));
+        var right = PlaceDoor(new Serial(0x40000011), "MetalDoor", 0x0677, "east_ccw", new Point3D(1601, 1600, 0));
+        left.Props!["door.link"] = (long)right.Id.Value;
+        right.Props!["door.link"] = (long)left.Id.Value;
+
+        return (left, right);
+    }
+
+    private ItemEntity PlaceDoor(Serial serial, string type, int graphic, string? facing, Point3D location)
+    {
+        var door = new ItemEntity
+        {
+            Id = serial, TemplateId = "decoration_door", ItemId = graphic, Amount = 1,
+            Props = new() { ["decoration_type"] = type }
+        };
+
+        if (facing is not null)
+        {
+            door.Props["facing"] = facing;
+        }
+
+        door.PlaceOnGround(MapType.Trammel, location);
+        _items.Add([door]);
+
+        return door;
+    }
+
+    private async Task<ItemScriptService> StartDoorScriptAsync()
+    {
+        _scripts.Write("items/door.lua", File.ReadAllText(ShippedScript("items/door.lua")));
+        var engine = NewEngine();
+        _engines.Add(engine);
+        await engine.StartAsync();
+        var scripts = new ItemScriptService(
+            engine,
+            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_door", ScriptId = "door" })),
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
+        await scripts.StartAsync();
+
+        return scripts;
+    }
+
     public async Task DisposeAsync()
     {
+        foreach (var engine in _engines)
+        {
+            engine.Dispose();
+        }
+
         _container.Dispose();
         _scripts.Dispose();
         await _fixture.DisposeAsync();

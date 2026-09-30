@@ -194,6 +194,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
             container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
             container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
+            container.Register<IDecorationsLoader, DecorationsLoader>(Reuse.Singleton);
+            container.Register<IDecorationService, DecorationService>(Reuse.Singleton);
             container.Register<ILootService, LootService>(Reuse.Singleton);
             container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
             container.Register<INpcTickService, NpcTickService>(Reuse.Singleton);
@@ -282,6 +284,13 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 CommandSourceType.InGame,
                 AccountType.GameMaster,
                 CommandMessages.KarmaDescription
+            );
+            container.RegisterCommand<DecorateCommand>(
+                "decorate",
+                "Places the world decoration: doors, signs, lights and furniture.",
+                CommandSourceType.Console | CommandSourceType.InGame,
+                AccountType.Administrator,
+                CommandMessages.DecorateDescription
             );
             container.RegisterCommand<WhereCommand>(
                 "where",

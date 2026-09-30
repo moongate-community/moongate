@@ -414,8 +414,10 @@ To produce these files from an existing UOX3 shard, see
 lights, furniture, teleporters and the like, about 40,500 placements in 100 files. It was
 converted once from ModernUO's `Data/Decoration`, one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
-`tokuno/`, and the special sets `ruined_magincia_tram/`, `ruined_magincia_fel/` and
-`bounty_boards/`.
+`tokuno/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
+`_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename it without the `_`
+to place its decoration. Files starting with `_` inside a loaded folder (the dungeons, such as
+`britannia/_covetous.toml`) are loaded.
 
 ```toml
 [[decoration]]
@@ -427,6 +429,12 @@ locations = [[1411, 1621, 30], [1411, 1622, 30]]
 ```
 
 A block without `item_id` is an addon built from several graphics. `extras`, when present, gives a
-setting per location in the order of `locations`. The files are data only for now: nothing
-places them in the world yet.
+setting per location in the order of `locations`.
+
+[`.decorate`](commands.md#decorate) places them with the two templates of
+`templates/items/decorations.toml`: `decoration`, fixed and never decaying, for most kinds, and
+`decoration_door`, the same with `script_id = "door"`, for the kinds whose name contains `Door`
+or `Gate`. Each item takes the block's graphic, `hue` and `name`; its other settings stay in the
+item's props, with `decoration_type` = the kind for a door. Teleporters, spawners, mark
+containers, public moongates and addons are not placed yet.
 
