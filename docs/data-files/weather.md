@@ -46,7 +46,9 @@ storm. The weather is not saved: a restart rolls it again.
 A player sees the weather of its region's profile, or of its map's profile outside every
 region. Inside a building (a static more than 10 above its head) it stays dry. The server
 sends packet `0x65` when the player's weather changes: at login, on a region change, and on a
-check every 5 seconds that catches walking in and out of buildings. During a storm the player
+check every 5 seconds that catches walking in and out of buildings; it is also resent every
+minute and every game hour, because the client stops showing the weather a few minutes after
+the last packet. During a storm the player
 outside hears thunder now and then. Game masters read or force it with
 [`.weather`](../commands.md#weather).
 

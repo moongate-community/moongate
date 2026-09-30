@@ -33,6 +33,9 @@ public sealed class WeatherService : IWeatherService
     private const int ThunderOneIn = 4;
     private const int FirstThunder = 0x28;
 
+    // The client drops the weather a few minutes after the last 0x65: it is resent every minute and every game hour.
+    private const int ChecksPerResend = 12;
+
     private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(5);
     private static readonly WeatherState Dry = new(WeatherKindType.None, 0, 20);
 
@@ -47,6 +50,7 @@ public sealed class WeatherService : IWeatherService
     private readonly IPacketSendService _sender;
     private readonly ITimerService _timers;
     private readonly IMoongateEventBus _events;
+    private readonly IGameLoopService _loop;
     private readonly WorldConfig _world;
     private readonly Random _random;
 
@@ -54,6 +58,7 @@ public sealed class WeatherService : IWeatherService
     private string? _checkTimer;
     private IDisposable? _logins;
     private int _hours;
+    private int _checks;
 
     public WeatherService(
         IDataLoaderService data,
@@ -62,6 +67,7 @@ public sealed class WeatherService : IWeatherService
         IPacketSendService sender,
         ITimerService timers,
         IMoongateEventBus events,
+        IGameLoopService loop,
         WorldConfig world,
         Random? random = null
     )
@@ -72,6 +78,7 @@ public sealed class WeatherService : IWeatherService
         _sender = sender;
         _timers = timers;
         _events = events;
+        _loop = loop;
         _world = world;
         _random = random ?? Random.Shared;
     }
@@ -83,12 +90,13 @@ public sealed class WeatherService : IWeatherService
         var hour = TimeSpan.FromSeconds(60 * _world.SecondsPerUoMinute);
         _hourTimer = _timers.RegisterTimer(HourTimerName, hour, OnHour, hour, true);
         _checkTimer = _timers.RegisterTimer(CheckTimerName, CheckInterval, Check, CheckInterval, true);
+        // The event comes from the login handler's thread; the viewers change on the game loop only.
         _logins = _events.Subscribe<CharacterEnteredWorldEvent>(
-            (evt, _) =>
+            async (evt, cancellationToken) =>
             {
-                LoggedIn(evt.Character);
-
-                return Task.CompletedTask;
+                var work = new LoopActionWorkItem(() => LoggedIn(evt.Character));
+                await _loop.PostAsync(work, cancellationToken);
+                await work.Completion;
             }
         );
 
@@ -112,6 +120,13 @@ public sealed class WeatherService : IWeatherService
     public void RegionChanged(MobileEntity player, RegionContent? previous, RegionContent? current)
     {
         var viewer = _viewers.GetOrAdd(player.Id, _ => new() { Player = player });
+
+        // A relogin brings a new object for the same character: follow the new one.
+        if (!ReferenceEquals(viewer.Player, player))
+        {
+            viewer = _viewers[player.Id] = new() { Player = player };
+        }
+
         viewer.Region = current;
         Update(viewer, false);
     }
@@ -138,22 +153,26 @@ public sealed class WeatherService : IWeatherService
 
     public void Force(string profile, WeatherKindType kind)
     {
-        var state = StateOf(profile);
-        _states[profile] = state with
+        lock (_rolling)
         {
-            Kind = kind,
-            Density = kind == WeatherKindType.None ? 0 : WeatherRolls.MaxDensity
-        };
+            _states[profile] = StateOf(profile) with
+            {
+                Kind = kind,
+                Density = kind == WeatherKindType.None ? 0 : WeatherRolls.MaxDensity
+            };
+        }
     }
 
     private void LoggedIn(MobileEntity character)
     {
-        if (!_sessions.TryGetByCharacterId(character.Id, out var session))
+        // A player that left before its login completed is not followed any more.
+        if (!_sessions.TryGetByCharacterId(character.Id, out var session) ||
+            !_viewers.TryGetValue(character.Id, out var viewer) ||
+            !ReferenceEquals(viewer.Player, character))
         {
             return;
         }
 
-        var viewer = _viewers.GetOrAdd(character.Id, _ => new() { Player = character });
         viewer.SessionId = session.SessionId;
         viewer.LastSent = null;
         Update(viewer, false);
@@ -170,6 +189,7 @@ public sealed class WeatherService : IWeatherService
             }
 
             RollHour();
+            ResendAll();
         }
         catch (Exception exception)
         {
@@ -181,6 +201,11 @@ public sealed class WeatherService : IWeatherService
     {
         try
         {
+            if (++_checks % ChecksPerResend == 0)
+            {
+                ResendAll();
+            }
+
             foreach (var viewer in _viewers.Values)
             {
                 Update(viewer, true);
@@ -216,6 +241,14 @@ public sealed class WeatherService : IWeatherService
         if (mayThunder && !indoors && state.Kind == WeatherKindType.Storm && _random.Next(0, ThunderOneIn) == 0)
         {
             _sender.TrySend(sessionId, new PlaySoundPacket(FirstThunder + _random.Next(0, 2), player.Location));
+        }
+    }
+
+    private void ResendAll()
+    {
+        foreach (var viewer in _viewers.Values)
+        {
+            viewer.LastSent = null;
         }
     }
 

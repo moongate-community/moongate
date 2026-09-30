@@ -135,6 +135,54 @@ public sealed class WeatherServiceTests : IAsyncLifetime
         Assert.Single(Sent());
     }
 
+    [Fact]
+    public async Task ALoginAfterThePlayerLeft_DoesNotBringItBack()
+    {
+        _weather.RegionChanged(_aria, null, null);
+        _weather.Left(_aria.Id);
+
+        await LoginAsync();
+        _timers.Fire(CheckTimer());
+
+        Assert.Empty(Sent());
+    }
+
+    [Fact]
+    public async Task ARelogin_FollowsTheNewCharacterObject()
+    {
+        _weather.RegionChanged(_aria, null, null);
+        await LoginAsync();
+        var again = new MobileEntity
+        {
+            Id = _aria.Id, Name = "Aria", AccountId = _aria.AccountId, Map = MapType.Felucca, Location = new Point3D(60, 60, 0)
+        };
+        _map.AddStatic(60, 60, 0x0600, 20);
+
+        _weather.RegionChanged(again, null, null);
+        Assert.Single(Sent());
+        await LoginAsync(again);
+
+        Assert.Equal([(WeatherKindType.Rain, 1L), (WeatherKindType.None, 1L)], Sent());
+    }
+
+    [Fact]
+    public async Task TheWeather_IsResentEveryHourAndEveryMinute_EvenWhenItDidNotChange()
+    {
+        _weather.RegionChanged(_aria, null, null);
+        await LoginAsync();
+
+        _timers.Fire(_timers.Timers.Single(timer => timer.Name == WeatherService.HourTimerName).Id);
+        _timers.Fire(CheckTimer());
+        Assert.Equal(2, Sent().Count);
+
+        for (var check = 0; check < 12; check++)
+        {
+            _timers.Fire(CheckTimer());
+        }
+
+        Assert.Equal(3, Sent().Count);
+    }
+
     public async Task DisposeAsync()
     {
         await _weather.StopAsync();
@@ -156,13 +204,23 @@ public sealed class WeatherServiceTests : IAsyncLifetime
               .With(map);
 
         _timers.Timers.Clear();
-        _weather = new(data, _map, _fixture.Sessions, _fixture.Sender, _timers, _container.Resolve<IMoongateEventBus>(), _world, random);
+        _weather = new(
+            data,
+            _map,
+            _fixture.Sessions,
+            _fixture.Sender,
+            _timers,
+            _container.Resolve<IMoongateEventBus>(),
+            _fixture.Network.Loop,
+            _world,
+            random
+        );
         await _weather.StartAsync();
     }
 
-    private async Task LoginAsync()
+    private async Task LoginAsync(MobileEntity? character = null)
     {
-        await _container.Resolve<IMoongateEventBus>().PublishAsync(new CharacterEnteredWorldEvent(_aria));
+        await _container.Resolve<IMoongateEventBus>().PublishAsync(new CharacterEnteredWorldEvent(character ?? _aria));
     }
 
     private string CheckTimer()
