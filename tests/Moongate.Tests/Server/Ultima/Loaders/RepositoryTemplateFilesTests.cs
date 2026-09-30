@@ -72,6 +72,7 @@ public sealed class RepositoryTemplateFilesTests
         var light = templates["decoration_light"];
         Assert.Equal(((bool?)false, (bool?)false, "light"), (light.Movable, light.Decays, light.ScriptId));
         Assert.Equal("light", templates["0x0a28_candle"].ScriptId);
+        Assert.True(templates.ContainsKey(Moongate.Server.Ultima.Commands.KeyCommand.KeyTemplate));
     }
 
     [Fact]

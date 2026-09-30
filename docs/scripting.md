@@ -78,6 +78,7 @@ exists but fails compilation/execution aborts server startup.
 | `world.is_occupied(map, x, y)` | Whether a player or an NPC stands on the tile, at any height, such as a door's doorway; `map` is a `MapType` |
 | `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
 | `world.is_staff(player)` | Whether the player is a game master or an administrator in the world; `false` for an NPC or a player not in the world |
+| `world.carries(mobile, key, value)` | Whether the mobile wears or carries, in its containers at any depth, an item whose prop `key` is `value`, such as the key of a door: `world.carries(user, "key.value", 1234)` |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 
@@ -297,10 +298,12 @@ tries again every 10 seconds while the doorway is taken. A door that cannot swin
 as one at the edge of the map, stays closed. The open state is the prop `door.open`, with the
 closed spot in `door.x`, `door.y` and `door.z`, saved with the door; the auto-close timer is not, so a door left open when the
 server stops stays open until someone uses it. A closed door with the prop `locked` does not
-open for players, who read "That is locked." (message 398, in the server language); game
-masters and administrators open it. The prop comes from the decoration data
+open for players, who read "That is locked." (message 398, in the server language), unless
+they carry anywhere in their backpack a key whose prop `key.value` is the door's `key.value`
+(message 405: they open it and it stays locked); game masters and administrators open it
+(message 404). The prop comes from the decoration data
 (`props = { facing = "west_cw", locked = true }`), such as the side doors of the New Haven
-bank. Keys come later.
+bank. `.lock` gives a door a key number and `.key` makes its key.
 
 `scripts/items/light.lua` lights and douses candles, candelabras, lanterns, lamp posts, wall
 sconces and torches: the `decoration_light` template and the light templates of

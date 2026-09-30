@@ -5486,7 +5486,7 @@
 30006 = "Peso: 1 piedra"
 30007 = "Peso: {0} piedras"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073).
 30008 = "Objetivo cancelado."
 30009 = "Ya hay un comando en ejecución."
 30010 = "Comando desconocido: {0}"
@@ -5550,3 +5550,6 @@
 30068 = "Eso no es una puerta."
 30069 = "Cierra con llave la puerta que eliges y la enlazada: los jugadores no pueden abrirla."
 30070 = "Quita la llave a la puerta que eliges y a la enlazada."
+30071 = "Una llave de la puerta está en tu mochila."
+30072 = "No tienes mochila."
+30073 = "Pone en tu mochila una llave de la puerta que eliges y de la enlazada."

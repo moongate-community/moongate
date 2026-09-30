@@ -52,6 +52,20 @@ public sealed class LockUnlockCommandTests : IAsyncDisposable
 
         Assert.Equal((true, true), (_left.Props!["locked"], _right.Props!["locked"]));
         Assert.Equal("The door is now locked.", Assert.Single(context.Output).Text);
+        var key = Assert.IsType<long>(_left.Props["key.value"]);
+        Assert.True(key > 0);
+        Assert.Equal(key, _right.Props["key.value"]);
+    }
+
+    [Fact]
+    public async Task Lock_ADoorWithAKey_KeepsIt_ForBothDoors()
+    {
+        _right.Props!["key.value"] = 4242L;
+        _targets.Result = TargetResult.ForObject(_left.Id);
+
+        await RunAsync("lock");
+
+        Assert.Equal((4242L, 4242L), (_left.Props!["key.value"], _right.Props["key.value"]));
     }
 
     [Fact]

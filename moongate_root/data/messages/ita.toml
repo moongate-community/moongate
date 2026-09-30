@@ -5486,7 +5486,7 @@
 30006 = "Peso: 1 pietra"
 30007 = "Peso: {0} pietre"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073).
 30008 = "Bersaglio annullato."
 30009 = "Un comando è già in esecuzione."
 30010 = "Comando sconosciuto: {0}"
@@ -5550,3 +5550,6 @@
 30068 = "Non è una porta."
 30069 = "Chiude a chiave la porta che selezioni e quella collegata: i giocatori non possono aprirla."
 30070 = "Toglie la chiave alla porta che selezioni e a quella collegata."
+30071 = "Nel tuo zaino c'è la chiave della porta."
+30072 = "Non hai uno zaino."
+30073 = "Mette nel tuo zaino la chiave della porta che selezioni e di quella collegata."

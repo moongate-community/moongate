@@ -51,6 +51,8 @@ public static class CommandMessages
     public const int DoorLocked = 30066;
     public const int DoorUnlocked = 30067;
     public const int NotADoor = 30068;
+    public const int KeyCreated = 30071;
+    public const int NoBackpack = 30072;
 
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
@@ -73,4 +75,5 @@ public static class CommandMessages
     public const int WeatherDescription = 30065;
     public const int LockDescription = 30069;
     public const int UnlockDescription = 30070;
+    public const int KeyDescription = 30073;
 }

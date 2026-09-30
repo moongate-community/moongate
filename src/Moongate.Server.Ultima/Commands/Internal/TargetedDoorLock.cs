@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Extensions;
@@ -13,14 +11,10 @@ namespace Moongate.Server.Ultima.Commands.Internal;
 
 /// <summary>
 ///     Locks or unlocks the door a game master targets, and the door linked to it: the prop <c>locked</c> that
-///     <c>scripts/items/door.lua</c> reads. A door is an item whose template runs the door script.
+///     <c>scripts/items/door.lua</c> reads. Locking also gives both a key number, if they have none.
 /// </summary>
 internal static class TargetedDoorLock
 {
-    public const string LockedProp = "locked";
-    private const string DoorScript = "door";
-    private const string LinkProp = "door.link";
-
     public static async Task RunAsync(
         CommandContext context,
         string command,
@@ -52,16 +46,22 @@ internal static class TargetedDoorLock
         var work = new LoopActionWorkItem(
             () =>
             {
-                if (!TryGetDoor(items, templates, target.Serial, out var door))
+                if (!DoorKeys.TryGetDoor(items, templates, target.Serial, out var door))
                 {
                     return;
                 }
 
+                var linked = DoorKeys.LinkedDoor(items, templates, door);
+
+                // A locked door needs a key number, so .key can make its key.
+                if (locked)
+                {
+                    DoorKeys.EnsureKeyValue(door, linked);
+                }
+
                 Apply(door, locked);
 
-                if (door.Props?.GetValueOrDefault(LinkProp) is long link &&
-                    link is > 0 and <= uint.MaxValue &&
-                    TryGetDoor(items, templates, new Serial((uint)link), out var linked))
+                if (linked is not null)
                 {
                     Apply(linked, locked);
                 }
@@ -79,36 +79,15 @@ internal static class TargetedDoorLock
         );
     }
 
-    private static bool TryGetDoor(
-        IItemService items,
-        IItemTemplateService templates,
-        Serial serial,
-        [NotNullWhen(true)] out ItemEntity? door
-    )
-    {
-        if (items.TryGet(serial, out var item) &&
-            templates.TryGet(item.TemplateId, out var template) &&
-            template.ScriptId == DoorScript)
-        {
-            door = item;
-
-            return true;
-        }
-
-        door = null;
-
-        return false;
-    }
-
     private static void Apply(ItemEntity door, bool locked)
     {
         if (locked)
         {
-            door.SetProp(LockedProp, true);
+            door.SetProp(DoorKeys.LockedProp, true);
         }
         else
         {
-            door.RemoveProp(LockedProp);
+            door.RemoveProp(DoorKeys.LockedProp);
         }
     }
 }

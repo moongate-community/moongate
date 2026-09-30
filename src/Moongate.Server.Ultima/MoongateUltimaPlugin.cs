@@ -322,6 +322,13 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 AccountType.GameMaster,
                 CommandMessages.UnlockDescription
             );
+            container.RegisterCommand<KeyCommand>(
+                "key",
+                "Puts in your backpack a key for the door you target and its linked door.",
+                CommandSourceType.InGame,
+                AccountType.GameMaster,
+                CommandMessages.KeyDescription
+            );
             container.RegisterCommand<WhereCommand>(
                 "where",
                 "Shows what you target: its serial, or the map and location of a spot.",

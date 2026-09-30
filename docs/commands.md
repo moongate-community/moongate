@@ -28,6 +28,7 @@ Use `..text` to say `.text` literally.
 | `globallight` | Game/Standalone | Yes | GameMaster | Give every player the same light, or go back to the time of day |
 | `weather` | No | Game/Standalone | GameMaster | Show the weather where you stand, or force it until the next game hour |
 | `lock`, `unlock` | No | Game/Standalone | GameMaster | Lock or unlock the door you target and its linked door |
+| `key` | No | Game/Standalone | GameMaster | Put in your backpack a key for the door you target |
 
 ## Help
 
@@ -260,5 +261,16 @@ gets it) until the next game hour rolls it again. See the
 In game only. A target cursor opens; the door you pick, and the door linked to it (a double
 door), gets or loses the prop `locked`: `The door is now locked.` A locked closed door does not
 open for players, who read "That is locked."; game masters and administrators still open it
-(see the [door script](scripting.md)). Picking anything that is not a door prints
+(see the [door script](scripting.md)). Locking also gives both doors a key number (prop
+`key.value`) if they have none. Picking anything that is not a door prints
 `That is not a door.` The lock is saved with the door by the next world save.
+
+## Key
+
+```text
+.key
+```
+
+In game only. Target a door: an iron key with the door's key number (given now if the door
+had none) appears in your backpack: `A key for the door is in your backpack.` A player carrying
+that key anywhere in the backpack opens the locked door, which stays locked for everyone else.
