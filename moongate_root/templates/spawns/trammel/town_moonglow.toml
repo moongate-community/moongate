@@ -395,6 +395,24 @@ x2 = 4638
 y2 = 1326
 
 [[spawn]]
+id = "trammel_7622"
+map = "trammel"
+name = "Moonglow Farmhouse - Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4625
+y1 = 1321
+x2 = 4638
+y2 = 1326
+
+[[spawn]]
 id = "trammel_7623"
 map = "trammel"
 name = "Moonglow Sorcerer's Guild"
@@ -431,10 +449,46 @@ x2 = 4558
 y2 = 1501
 
 [[spawn]]
+id = "trammel_7625"
+map = "trammel"
+name = "Moonglow Farmhouse - Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4553
+y1 = 1489
+x2 = 4558
+y2 = 1501
+
+[[spawn]]
 id = "trammel_7626"
 map = "trammel"
 name = "Moonglow Farmhouse - Farmer"
 mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4409
+y1 = 1463
+x2 = 4420
+y2 = 1466
+
+[[spawn]]
+id = "trammel_7627"
+map = "trammel"
+name = "Moonglow Farmhouse - Peasant"
+mobile_ids = ["peasant"]
 npc_list_ids = []
 max = 1
 min_minutes = 480

@@ -81,6 +81,7 @@ public sealed class UoxSpawnConverterTests : IDisposable
                     [REGIONSPAWN 1]
                     {
                     GET=0
+                    WORLD=1
                     NAME=Next Door
                     NPCLIST=jungle
                     NPCLIST=trolls
@@ -155,6 +156,94 @@ public sealed class UoxSpawnConverterTests : IDisposable
         );
         Assert.Equal(4, spawn.Max);
         Assert.Contains("1 x duplicate spawn region", CombinedOutput);
+    }
+
+    [Fact]
+    public void Run_AnUnweightedNestedList_IsSpliced_AndAWeightedOneStaysAPick()
+    {
+        WriteSources(
+            npcLists: """
+                      [NPCLIST covetous]
+                      {
+                      NPCLIST=trolls
+                      gorilla
+                      2|NPCLIST=trolls
+                      }
+                      [NPCLIST trolls]
+                      {
+                      troll
+                      orc
+                      }
+                      """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var covetous = TomlUtils.DeserializeFromFile<NpcListTemplateFile>(Path.Combine(_dirs.NpcListsDestinationDirectory, "npclists.toml"))!
+                                .NpcList.Single(list => list.Id == "covetous");
+        Assert.Equal(
+            ["troll:1", "orc:1", "gorilla:1", "list trolls:2"],
+            covetous.Entries.Select(entry => entry.MobileId is { } id ? $"{id}:{entry.Weight}" : $"list {entry.NpcListId}:{entry.Weight}")
+        );
+    }
+
+    [Fact]
+    public void Run_ARegionGettingOneOnAnotherMap_StaysOnItsFolderMap_AndInheritsNoNpc()
+    {
+        WriteSources(spawns: Region(0, world: 0));
+        _dirs.WriteMobileSource(
+            "spawn/trammel/spawn_trammel_town_test.dfn",
+            "[REGIONSPAWN 1]\n{\nGET=0\nNPC=troll\n}\n[REGIONSPAWN 2]\n{\nGET=0\nNAME=No npc of its own\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var trammel = Assert.Single(
+            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "trammel", "town_test.toml"))!.Spawn
+        );
+        Assert.Equal(("trammel_1", MapType.Trammel), (trammel.Id, trammel.Map));
+        Assert.Equal(["troll"], trammel.MobileIds);
+        Assert.Equal(1, trammel.Areas[0].X1);
+    }
+
+    [Fact]
+    public void Run_ARegionOfAnotherEra_IsSkipped()
+    {
+        WriteSources(spawns: Region(0, world: 0).Replace("WORLD=0", "WORLD=0\nERAS=UO,T2A,UOR,TD") + Region(1, world: 0).Replace("WORLD=0", "WORLD=0\nERAS=LBR,AOS,TOL"));
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Equal(
+            ["felucca_1"],
+            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml"))!.Spawn.Select(spawn => spawn.Id)
+        );
+        Assert.Contains("1 x spawn region of another era skipped", CombinedOutput);
+    }
+
+    [Fact]
+    public void Run_ReversedExcludeCornersAndTimes_AreSorted_AndTheOutputIsVerified()
+    {
+        WriteSources(spawns: Region(0, world: 0).Replace("WORLD=0", "WORLD=0\nEXCLUDEAREA=4,4,2,2\nMINTIME=10\nMAXTIME=5"));
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var spawn = Assert.Single(
+            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml"))!.Spawn
+        );
+        Assert.Equal((2, 2, 4, 4), (spawn.Exclude[0].X1, spawn.Exclude[0].Y1, spawn.Exclude[0].X2, spawn.Exclude[0].Y2));
+        Assert.Equal((5, 10), (spawn.MinMinutes, spawn.MaxMinutes));
+        Assert.Contains("read back from disk", CombinedOutput);
+    }
+
+    [Fact]
+    public void Run_TheIlishenarFolder_NamesTheFilesWithoutTheirPrefix()
+    {
+        WriteSources();
+        _dirs.WriteMobileSource("spawn/ilishenar/spawn_ilshenar_world_general.dfn", Region(0, world: 2));
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.True(File.Exists(Path.Combine(_dirs.SpawnsDestinationDirectory, "ilshenar", "world_general.toml")), CombinedOutput);
     }
 
     private static string Region(int number, int world)

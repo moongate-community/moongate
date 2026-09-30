@@ -215,6 +215,96 @@ x2 = 2670
 y2 = 2238
 
 [[spawn]]
+id = "trammel_7162"
+map = "trammel"
+name = "Buccaneer's Den Leatherworks"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2705
+y1 = 2177
+x2 = 2710
+y2 = 2182
+
+[[spawn]]
+id = "trammel_7163"
+map = "trammel"
+name = "Buccaneer's Den Leatherworks"
+mobile_ids = ["furtrader"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2705
+y1 = 2177
+x2 = 2710
+y2 = 2182
+
+[[spawn]]
+id = "trammel_7164"
+map = "trammel"
+name = "The Pirate's Provision"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2731
+y1 = 2250
+x2 = 2742
+y2 = 2254
+
+[[spawn]]
+id = "trammel_7165"
+map = "trammel"
+name = "The Pirate's Provision"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2731
+y1 = 2250
+x2 = 2742
+y2 = 2254
+
+[[spawn]]
+id = "trammel_7166"
+map = "trammel"
+name = "The Pirate's Provision"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2731
+y1 = 2250
+x2 = 2742
+y2 = 2254
+
+[[spawn]]
 id = "trammel_7167"
 map = "trammel"
 name = "Bucc's Den Town"

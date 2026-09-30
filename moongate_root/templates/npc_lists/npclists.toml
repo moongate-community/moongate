@@ -71,8 +71,44 @@ mobile_id = "giantrat"
 [[npc_list]]
 id = "destard1"
 [[npc_list.entries]]
+weight = 2
+mobile_id = "graydragon"
+
+[[npc_list.entries]]
+weight = 2
+mobile_id = "graydrake"
+
+[[npc_list.entries]]
 weight = 1
-npc_list_id = "alldragonlist"
+mobile_id = "reddragon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "reddrake"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ancientwyrm"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "whitewyrm"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "shadowwyrm"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeletaldragon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "serpentinedragon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wyvern"
 
 [[npc_list.entries]]
 weight = 1
@@ -82,7 +118,11 @@ mobile_id = "snake"
 id = "covetous2"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
 
 [[npc_list.entries]]
 weight = 1
@@ -92,7 +132,11 @@ mobile_id = "snake"
 id = "wrong2"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "murderer_archmage"
+mobile_id = "m_murderer_archmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_murderer_archmage"
 
 [[npc_list.entries]]
 weight = 1
@@ -119,8 +163,12 @@ mobile_id = "firegargoyle"
 [[npc_list]]
 id = "hyth2"
 [[npc_list.entries]]
+weight = 2
+mobile_id = "daemon"
+
+[[npc_list.entries]]
 weight = 1
-npc_list_id = "alldaemonlist"
+mobile_id = "balron"
 
 [[npc_list.entries]]
 weight = 1
@@ -141,8 +189,12 @@ mobile_id = "wisp"
 [[npc_list]]
 id = "hyth3"
 [[npc_list.entries]]
+weight = 2
+mobile_id = "daemon"
+
+[[npc_list.entries]]
 weight = 1
-npc_list_id = "alldaemonlist"
+mobile_id = "balron"
 
 [[npc_list.entries]]
 weight = 1
@@ -160,11 +212,19 @@ mobile_id = "balron"
 id = "hyth4"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "ettin"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alldaemonlist"
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 2
+mobile_id = "daemon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "balron"
 
 [[npc_list.entries]]
 weight = 1
@@ -182,7 +242,11 @@ mobile_id = "firegargoyle"
 id = "shame1"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
 
 [[npc_list.entries]]
 weight = 1
@@ -192,7 +256,11 @@ mobile_id = "scorpion"
 id = "shame2"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
 
 [[npc_list.entries]]
 weight = 1
@@ -202,11 +270,19 @@ mobile_id = "airele"
 id = "shame3"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "ettin"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "murderer_archmage"
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_murderer_archmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_murderer_archmage"
 
 [[npc_list.entries]]
 weight = 1
@@ -220,11 +296,35 @@ mobile_id = "airele"
 id = "shame5"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allelementals"
+mobile_id = "airele"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "murderer_archmage"
+mobile_id = "earthele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "waterele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "bloodele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "poisonele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "acidele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_murderer_archmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_murderer_archmage"
 
 [[npc_list.entries]]
 weight = 1
@@ -298,7 +398,15 @@ mobile_id = "stoneharpy"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alllizardmen"
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
 
 [[npc_list.entries]]
 weight = 1
@@ -306,11 +414,35 @@ mobile_id = "mummy"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "weakophidians"
+mobile_id = "ophapprentice"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allratmen"
+mobile_id = "ophwarrior"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophenforcer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
 
 [[npc_list.entries]]
 weight = 1
@@ -338,29 +470,105 @@ mobile_id = "sewerrat"
 id = "eerielist"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "weakundeadlist"
+mobile_id = "zombie"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wraith"
 
 [[npc_list]]
 id = "weakforestlist"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "seeker"
+mobile_id = "m_seeker"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "whealer"
+mobile_id = "f_seeker"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allbearlist"
+mobile_id = "m_whealer"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allhorselist"
+mobile_id = "f_whealer"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allbirdlist"
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grayhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "horse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "darkhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "canary"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "crow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "falcon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hawk"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
 
 [[npc_list.entries]]
 weight = 1
@@ -442,43 +650,143 @@ mobile_id = "cougar"
 id = "forestlist"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allorc"
+mobile_id = "orc"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "whealer"
+mobile_id = "cluborc"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "seeker"
+mobile_id = "orcmage"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allbearlist"
+mobile_id = "orclord"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allhorselist"
+mobile_id = "orccaptain"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "m_whealer"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allbirdlist"
+mobile_id = "f_whealer"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alllizardmen"
+mobile_id = "m_seeker"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allratmen"
+mobile_id = "f_seeker"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alltroll"
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grayhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "horse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "darkhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "canary"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "crow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "falcon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hawk"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
 
 [[npc_list.entries]]
 weight = 1
@@ -670,7 +978,11 @@ mobile_id = "earthele"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
 
 [[npc_list.entries]]
 weight = 1
@@ -694,7 +1006,11 @@ mobile_id = "ogre"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alltroll"
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
 
 [[npc_list]]
 id = "beachlist"
@@ -744,7 +1060,15 @@ mobile_id = "corpser"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alllizardmen"
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
 
 [[npc_list.entries]]
 weight = 1
@@ -752,7 +1076,23 @@ mobile_id = "nightmare"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allratmen"
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
 
 [[npc_list.entries]]
 weight = 1
@@ -882,11 +1222,63 @@ mobile_id = "wraith"
 id = "allundeadlist"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "weakundeadlist"
+mobile_id = "zombie"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "strongundeadlist"
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wraith"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gazer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lich"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "mummy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lichlord"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneknight"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "bonemage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeletalmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeletalknight"
 
 [[npc_list]]
 id = "allghostslist"
@@ -1063,12 +1455,36 @@ mobile_id = "veriteele"
 [[npc_list]]
 id = "elementalsdaemons"
 [[npc_list.entries]]
-weight = 1
-npc_list_id = "alldaemonlist"
+weight = 2
+mobile_id = "daemon"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allelementals"
+mobile_id = "balron"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "airele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "earthele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "waterele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "bloodele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "poisonele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "acidele"
 
 [[npc_list]]
 id = "overworldlist"
@@ -1078,7 +1494,11 @@ mobile_id = "ogre"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
 
 [[npc_list.entries]]
 weight = 1
@@ -1106,7 +1526,23 @@ mobile_id = "headless"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allratmen"
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
 
 [[npc_list.entries]]
 weight = 1
@@ -1126,7 +1562,11 @@ mobile_id = "mongbat"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alltroll"
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
 
 [[npc_list.entries]]
 weight = 1
@@ -1134,7 +1574,15 @@ mobile_id = "sewerrat"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alllizardmen"
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
 
 [[npc_list.entries]]
 weight = 1
@@ -1142,11 +1590,199 @@ mobile_id = "boneaxeman"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allorc"
+mobile_id = "orc"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "animallist"
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orclord"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orccaptain"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grayhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "horse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "darkhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gorilla"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "chicken"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "panther"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "dog"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "polarbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "sheep"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "canary"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "crow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "falcon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hawk"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "llama"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "pig"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "panther"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "whitewolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "direwolf"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "dog"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "dog"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "dog"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hellhound"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cougar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "snowleopard"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "walrus"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "sheep"
 
 [[npc_list]]
 id = "weakoverworld"
@@ -1202,7 +1838,19 @@ mobile_id = "goat"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allhorselist"
+mobile_id = "brownhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grayhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "horse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "darkhorse"
 
 [[npc_list.entries]]
 weight = 1
@@ -1250,7 +1898,31 @@ mobile_id = "cat"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allbirdlist"
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "canary"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "crow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "falcon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hawk"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
 
 [[npc_list.entries]]
 weight = 1
@@ -1294,7 +1966,15 @@ mobile_id = "corpser"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alllizardmen"
+mobile_id = "lizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
 
 [[npc_list.entries]]
 weight = 1
@@ -1302,7 +1982,23 @@ mobile_id = "nightmare"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allratmen"
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
 
 [[npc_list.entries]]
 weight = 1
@@ -1400,11 +2096,31 @@ mobile_id = "cow"
 id = "animallist"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allhorselist"
+mobile_id = "brownhorse"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allbearlist"
+mobile_id = "grayhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "horse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "darkhorse"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "grizbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
 
 [[npc_list.entries]]
 weight = 1
@@ -1444,7 +2160,31 @@ mobile_id = "sheep"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allbirdlist"
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "canary"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "crow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "falcon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hawk"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
 
 [[npc_list.entries]]
 weight = 1
@@ -1554,7 +2294,31 @@ mobile_id = "sheep"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allbirdlist"
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "canary"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "crow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "falcon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hawk"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
 
 [[npc_list.entries]]
 weight = 1
@@ -1666,11 +2430,31 @@ mobile_id = "bull"
 id = "allophidians"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "weakophidians"
+mobile_id = "ophapprentice"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "strongophidians"
+mobile_id = "ophwarrior"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophenforcer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophshaman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophknight"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophmatriarch"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophavenger"
 
 [[npc_list]]
 id = "weakophidians"
@@ -1728,11 +2512,23 @@ npc_list_id = "weakophidians"
 id = "allorc"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "weakorc"
+mobile_id = "orc"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "strongorc"
+mobile_id = "cluborc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orclord"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orccaptain"
 
 [[npc_list]]
 id = "weakorc"
@@ -1782,11 +2578,19 @@ mobile_id = "hammerettin"
 id = "ettinogre"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "ettin"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allogre"
+mobile_id = "hammerettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ogrelord"
 
 [[npc_list]]
 id = "allogre"
@@ -1802,45 +2606,93 @@ mobile_id = "ogrelord"
 id = "ogretroll"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alltroll"
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
 
 [[npc_list]]
 id = "ogretrollettin"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allogre"
+mobile_id = "ogre"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alltroll"
+mobile_id = "ogrelord"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
 
 [[npc_list]]
 id = "trollettin"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alltroll"
+mobile_id = "troll"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
 
 [[npc_list]]
 id = "allorckin"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allorc"
+mobile_id = "orc"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alltroll"
+mobile_id = "cluborc"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orclord"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orccaptain"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
 
 [[npc_list]]
 id = "alllizardmen"
@@ -1916,21 +2768,53 @@ mobile_id = "scorpion"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alllizardmen"
+mobile_id = "lizardman"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allratmen"
+mobile_id = "macelizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spearlizardman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
 
 [[npc_list]]
 id = "allterathans"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "weakterathans"
+mobile_id = "teradrone"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "strongterathans"
+mobile_id = "terawarrior"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "teraavenger"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "teramatriarch"
 
 [[npc_list]]
 id = "strongterathans"
@@ -2168,7 +3052,31 @@ mobile_id = "raven"
 id = "farmlist"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allbirdlist"
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "canary"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "crow"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "falcon"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hawk"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
 
 [[npc_list.entries]]
 weight = 1

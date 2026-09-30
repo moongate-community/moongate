@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
@@ -9,11 +10,17 @@ namespace Moongate.UoxItemConverter.Internal;
 ///     Converts UOX3's NPC lists (<c>[NPCLIST name]</c> under <c>npc/</c>) and spawn regions (<c>[REGIONSPAWN n]</c>
 ///     under <c>spawn/</c>) of a dfndata folder, after the mobile pass, against the mobile templates it wrote.
 /// </summary>
-internal static class UoxSpawnConverter
+internal static partial class UoxSpawnConverter
 {
     private const string ListHeaderPrefix = "NPCLIST ";
     private const string NestedListPrefix = "NPCLIST=";
     private const string SpawnHeaderPrefix = "REGIONSPAWN ";
+
+    // The era of the shard: the client is a modern one. UOX3's own default, lbr, keeps the same regions.
+    private const string ShardEra = "tol";
+
+    // What a region never takes from the region it GETs, as UOX3 loads a parent without them.
+    private static readonly HashSet<string> NotInherited = new(StringComparer.Ordinal) { "WORLD", "NPC", "NPCLIST", "ERAS" };
 
     // UOX3's WORLD numbers.
     private static readonly Dictionary<int, MapType> Worlds = new()
@@ -37,6 +44,18 @@ internal static class UoxSpawnConverter
 
         ConverterOutput.WriteReport(output, report);
         output.WriteLine($"Converted {lists.Count} npc list(s) and {spawns} spawn region(s).");
+
+        var errors = Verify(npcListsDestination, spawnsDestination, mobileIds, out var verifiedLists, out var verifiedSpawns);
+
+        if (ConverterOutput.ReportErrors(error, errors, "spawns") != 0)
+        {
+            return 1;
+        }
+
+        output.WriteLine(
+            $"Verified {verifiedLists} npc list(s) and {verifiedSpawns} spawn region(s) read back from disk: every mobile and " +
+            "list resolves, every spawn has an area and its times in order."
+        );
 
         return 0;
     }
@@ -72,6 +91,7 @@ internal static class UoxSpawnConverter
         var npcDirectory = Path.Combine(mobileSource, "npc");
         var byFile = new List<(string Relative, List<NpcListTemplate> Lists)>();
         var byId = new Dictionary<string, NpcListTemplate>(StringComparer.Ordinal);
+        var raw = new Dictionary<string, List<(NpcListEntry Entry, bool Splice)>>(StringComparer.Ordinal);
 
         var files = Directory.Exists(npcDirectory)
             ? Directory.EnumerateFiles(npcDirectory, "*.dfn", SearchOption.AllDirectories).Order(StringComparer.Ordinal).ToList()
@@ -97,7 +117,7 @@ internal static class UoxSpawnConverter
                     continue;
                 }
 
-                list.Entries = block.Entries.Select(ParseListEntry).OfType<NpcListEntry>().ToList();
+                raw[list.Id] = block.Entries.Select(ParseListEntry).OfType<(NpcListEntry Entry, bool Splice)>().ToList();
                 lists.Add(list);
             }
 
@@ -107,6 +127,12 @@ internal static class UoxSpawnConverter
                 var relative = file.StartsWith(root, StringComparison.Ordinal) ? Path.GetRelativePath(root, file) : Path.GetRelativePath(npcDirectory, file);
                 byFile.Add((relative, lists));
             }
+        }
+
+        // An unweighted NPCLIST=x brings x's entries into the list, as UOX3 splices it; a weighted one stays one pick.
+        foreach (var list in byId.Values)
+        {
+            list.Entries = Splice(list.Id, raw, []);
         }
 
         // Drop what does not resolve, then the lists left empty and the entries naming them, until nothing changes.
@@ -165,8 +191,39 @@ internal static class UoxSpawnConverter
         return byId.Keys.ToHashSet(StringComparer.Ordinal);
     }
 
-    // "20|gorilla", "orc" or "7|NPCLIST=allophidians".
-    private static NpcListEntry? ParseListEntry(string rawLine)
+    private static List<NpcListEntry> Splice(
+        string id,
+        Dictionary<string, List<(NpcListEntry Entry, bool Splice)>> raw,
+        HashSet<string> visiting
+    )
+    {
+        var entries = new List<NpcListEntry>();
+
+        if (!raw.TryGetValue(id, out var own) || !visiting.Add(id))
+        {
+            return entries;
+        }
+
+        foreach (var (entry, splice) in own)
+        {
+            if (splice)
+            {
+                // A spliced list that does not exist is kept as a reference, so it is reported as unresolved.
+                entries.AddRange(raw.ContainsKey(entry.NpcListId!) ? Splice(entry.NpcListId!, raw, visiting) : [entry]);
+            }
+            else
+            {
+                entries.Add(entry);
+            }
+        }
+
+        visiting.Remove(id);
+
+        return entries;
+    }
+
+    // "20|gorilla", "orc", "NPCLIST=trolls" (spliced) or "7|NPCLIST=allophidians" (one pick).
+    private static (NpcListEntry Entry, bool Splice)? ParseListEntry(string rawLine)
     {
         var line = rawLine.Trim();
         var weight = 1;
@@ -184,8 +241,8 @@ internal static class UoxSpawnConverter
         }
 
         return line.StartsWith(NestedListPrefix, StringComparison.OrdinalIgnoreCase)
-            ? new() { Weight = weight, NpcListId = StringUtils.ToSnakeCase(line[NestedListPrefix.Length..].Trim()) }
-            : new NpcListEntry { Weight = weight, MobileId = StringUtils.ToSnakeCase(line) };
+            ? (new() { Weight = weight, NpcListId = StringUtils.ToSnakeCase(line[NestedListPrefix.Length..].Trim()) }, pipe < 0)
+            : (new NpcListEntry { Weight = weight, MobileId = StringUtils.ToSnakeCase(line) }, false);
     }
 
     private static int ConvertSpawns(
@@ -220,8 +277,7 @@ internal static class UoxSpawnConverter
         {
             var folder = Path.GetFileName(Path.GetDirectoryName(file)!);
             var stem = Path.GetFileNameWithoutExtension(file);
-            var prefix = $"spawn_{folder}_";
-            var name = StringUtils.ToSnakeCase(stem.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? stem[prefix.Length..] : stem);
+            var name = StringUtils.ToSnakeCase(SpawnFilePrefix().Replace(stem, string.Empty));
 
             foreach (var block in blocks.Where(block => block.Header.StartsWith(SpawnHeaderPrefix, StringComparison.OrdinalIgnoreCase)))
             {
@@ -278,9 +334,8 @@ internal static class UoxSpawnConverter
 
         var inherited = Resolve(parentBlock, byNumber, seen);
         var ownKeys = own.Select(field => field.Key).ToHashSet();
-        var spawnsOwn = ownKeys.Contains("NPC") || ownKeys.Contains("NPCLIST");
 
-        return inherited.Where(field => !ownKeys.Contains(field.Key) && !(spawnsOwn && field.Key is "NPC" or "NPCLIST"))
+        return inherited.Where(field => !ownKeys.Contains(field.Key) && !NotInherited.Contains(field.Key))
                         .Concat(own.Where(field => field.Key != "GET"))
                         .ToList();
     }
@@ -314,6 +369,14 @@ internal static class UoxSpawnConverter
             return null;
         }
 
+        if (Get("ERAS") is { } eras &&
+            !eras.Split(',').Any(era => era.Trim().Equals(ShardEra, StringComparison.OrdinalIgnoreCase)))
+        {
+            report.Count("spawn region of another era skipped");
+
+            return null;
+        }
+
         mobiles.RemoveAll(id => !mobileIds.Contains(id));
         lists.RemoveAll(id => !listIds.Contains(id));
 
@@ -333,8 +396,9 @@ internal static class UoxSpawnConverter
             MobileIds = mobiles.Distinct().ToList(),
             NpcListIds = lists.Distinct().ToList(),
             Max = Number("MAXNPCS", "MAXNPC") ?? 0,
-            MinMinutes = Number("MINTIME") ?? 0,
-            MaxMinutes = Number("MAXTIME") ?? 0,
+            // UOX3 picks between the two whatever their order.
+            MinMinutes = Math.Min(Number("MINTIME") ?? 0, Number("MAXTIME") ?? 0),
+            MaxMinutes = Math.Max(Number("MINTIME") ?? 0, Number("MAXTIME") ?? 0),
             Call = Number("CALL") ?? 1,
             PrefZ = Number("PREFZ"),
             Z = Number("DEFZ"),
@@ -351,7 +415,13 @@ internal static class UoxSpawnConverter
             if (exclude.Length == 4 && exclude.All(part => UoxNumber.TryParse(part.Trim(), out _)))
             {
                 var values = exclude.Select(part => UoxNumber.TryParse(part.Trim(), out var value) ? value : 0).ToArray();
-                spawn.Exclude.Add(new() { X1 = values[0], Y1 = values[1], X2 = values[2], Y2 = values[3] });
+                spawn.Exclude.Add(
+                    new()
+                    {
+                        X1 = Math.Min(values[0], values[2]), Y1 = Math.Min(values[1], values[3]),
+                        X2 = Math.Max(values[0], values[2]), Y2 = Math.Max(values[1], values[3])
+                    }
+                );
             }
         }
 
@@ -376,4 +446,66 @@ internal static class UoxSpawnConverter
             _ => MapType.Felucca
         };
     }
+
+    // Reads back what was written, as the server will, and checks what its loaders check.
+    private static List<string> Verify(
+        string npcListsDestination,
+        string spawnsDestination,
+        HashSet<string> mobileIds,
+        out int verifiedLists,
+        out int verifiedSpawns
+    )
+    {
+        var errors = new List<string>();
+        var lists = Directory.Exists(npcListsDestination)
+            ? Directory.EnumerateFiles(npcListsDestination, "*.toml", SearchOption.AllDirectories)
+                       .SelectMany(file => TomlUtils.DeserializeFromFile<NpcListTemplateFile>(file)?.NpcList ?? [])
+                       .ToList()
+            : [];
+        var listIds = lists.Select(list => list.Id).ToHashSet(StringComparer.Ordinal);
+
+        foreach (var list in lists)
+        {
+            foreach (var entry in list.Entries)
+            {
+                if (entry.MobileId is { } mobile ? !mobileIds.Contains(mobile) : !listIds.Contains(entry.NpcListId ?? string.Empty))
+                {
+                    errors.Add($"npc list '{list.Id}' names '{entry.MobileId ?? entry.NpcListId}', which does not resolve.");
+                }
+            }
+        }
+
+        var spawns = Directory.Exists(spawnsDestination)
+            ? Directory.EnumerateFiles(spawnsDestination, "*.toml", SearchOption.AllDirectories)
+                       .SelectMany(file => TomlUtils.DeserializeFromFile<SpawnTemplateFile>(file)?.Spawn ?? [])
+                       .ToList()
+            : [];
+
+        foreach (var spawn in spawns)
+        {
+            if (spawn.MobileIds.Any(id => !mobileIds.Contains(id)) || spawn.NpcListIds.Any(id => !listIds.Contains(id)))
+            {
+                errors.Add($"spawn '{spawn.Id}' names a mobile or a list that does not resolve.");
+            }
+
+            if (spawn.Max < 1 || spawn.Call < 1 || spawn.MinMinutes > spawn.MaxMinutes || spawn.Areas.Count == 0 ||
+                spawn.Areas.Concat(spawn.Exclude).Any(area => area.X1 > area.X2 || area.Y1 > area.Y2))
+            {
+                errors.Add($"spawn '{spawn.Id}' has a max, call, times or area the loader refuses.");
+            }
+        }
+
+        foreach (var id in spawns.GroupBy(spawn => spawn.Id).Where(group => group.Count() > 1).Select(group => group.Key))
+        {
+            errors.Add($"spawn '{id}' is written twice.");
+        }
+
+        verifiedLists = lists.Count;
+        verifiedSpawns = spawns.Count;
+
+        return errors;
+    }
+
+    [GeneratedRegex("^spawn_[a-z]+_", RegexOptions.IgnoreCase)]
+    private static partial Regex SpawnFilePrefix();
 }

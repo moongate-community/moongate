@@ -9,7 +9,7 @@ namespace Moongate.Server.Ultima.Data.Templates.Spawns;
 public class SpawnTemplate
 {
     /// <summary>
-    ///     Unique on its map, such as <c>britain_0</c>.
+    ///     Unique across the maps: the map and UOX3's region number, such as <c>felucca_12</c>.
     /// </summary>
     public string Id { get; set; } = string.Empty;
 
@@ -24,7 +24,9 @@ public class SpawnTemplate
     public string? Name { get; set; }
 
     /// <summary>
-    ///     The mobile templates spawned, picked at random with the entries of <see cref="NpcListIds" />.
+    ///     The mobile templates spawned. As UOX3, a spawn picks from one pool: these mobiles (weight 1 each) and the
+    ///     entries of every list of <see cref="NpcListIds" /> with their weights; an entry naming another list picks from
+    ///     it in turn.
     /// </summary>
     public List<string> MobileIds { get; set; } = [];
 

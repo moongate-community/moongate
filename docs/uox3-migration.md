@@ -39,8 +39,13 @@ A folder missing either file exits `2`.
 They convert the `[NPCLIST name]` blocks under `npc/` into `templates/npc_lists` (entries
 `20|gorilla` keep their weight, `NPCLIST=trolls` becomes a nested list) and the
 `[REGIONSPAWN n]` blocks under `spawn/` into `templates/spawns/<map>/`, one folder per map from
-`WORLD=` (0 Felucca, 1 Trammel, 2 Ilshenar). A region's `GET=` takes the fields of the region it
-names, its own winning; a header defined twice keeps its last definition, as UOX3.
+the region's own `WORLD=` (0 Felucca, 1 Trammel, 2 Ilshenar), else the source folder. A region's
+`GET=` takes the fields of the region it names, its own winning, but never its map, NPCs, lists
+or eras, as UOX3; a header defined twice keeps its last definition. An unweighted `NPCLIST=x`
+inside a list brings x's entries in (UOX3 splices it); a weighted `n|NPCLIST=x` stays one pick.
+Regions whose `ERAS=` leave out `tol` (the modern era; UOX3's default `lbr` keeps the same
+ones) are skipped, reversed exclude corners and `MINTIME`/`MAXTIME` are put in order, and the
+output is read back and checked as the server's loaders do.
 `MINTIME`/`MAXTIME` stay in minutes as written (UOX3 itself truncates them to a byte). Regions
 spawning only items, and NPCs or lists that do not resolve, are left out and counted.
 

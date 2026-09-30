@@ -1396,3 +1396,21 @@ x1 = 5125
 y1 = 2827
 x2 = 5154
 y2 = 2868
+
+[[spawn]]
+id = "trammel_16373"
+map = "trammel"
+name = "T2A Nightmare Spawn 4 - Oasis"
+mobile_ids = ["nightmare"]
+npc_list_ids = []
+max = 1
+min_minutes = 720
+max_minutes = 1440
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5504
+y1 = 2586
+x2 = 5581
+y2 = 2654

@@ -71,24 +71,6 @@ x2 = 5229
 y2 = 3628
 
 [[spawn]]
-id = "felucca_6205"
-map = "felucca"
-name = "Orc Fort"
-mobile_ids = []
-npc_list_ids = ["allorc"]
-max = 15
-min_minutes = 18
-max_minutes = 22
-call = 5
-exclude = []
-only_outside = false
-[[spawn.areas]]
-x1 = 5200
-y1 = 3610
-x2 = 5229
-y2 = 3628
-
-[[spawn]]
 id = "felucca_6206"
 map = "felucca"
 name = "Cyclops Valley"
@@ -1044,28 +1026,6 @@ x2 = 5229
 y2 = 3628
 
 [[spawn]]
-id = "felucca_6334"
-map = "felucca"
-name = "Around_Orc_Fort"
-mobile_ids = []
-npc_list_ids = ["weakorc"]
-max = 15
-min_minutes = 18
-max_minutes = 22
-call = 5
-only_outside = false
-[[spawn.areas]]
-x1 = 5162
-y1 = 3585
-x2 = 5273
-y2 = 3637
-[[spawn.exclude]]
-x1 = 5200
-y1 = 3610
-x2 = 5229
-y2 = 3628
-
-[[spawn]]
 id = "felucca_6350"
 map = "felucca"
 name = "Delucia Forest East 1"
@@ -1439,64 +1399,6 @@ y2 = 2868
 
 [[spawn]]
 id = "felucca_6373"
-map = "felucca"
-name = "T2A Nightmare Spawn 4 - Oasis"
-mobile_ids = ["nightmare"]
-npc_list_ids = []
-max = 1
-min_minutes = 720
-max_minutes = 1440
-call = 1
-exclude = []
-only_outside = false
-[[spawn.areas]]
-x1 = 5504
-y1 = 2586
-x2 = 5581
-y2 = 2654
-
-[[spawn]]
-id = "felucca_16205"
-map = "felucca"
-name = "Orc Fort"
-mobile_ids = []
-npc_list_ids = ["allorc"]
-max = 15
-min_minutes = 18
-max_minutes = 22
-call = 5
-exclude = []
-only_outside = false
-[[spawn.areas]]
-x1 = 5200
-y1 = 3610
-x2 = 5229
-y2 = 3628
-
-[[spawn]]
-id = "felucca_16334"
-map = "felucca"
-name = "Around_Orc_Fort"
-mobile_ids = []
-npc_list_ids = ["weakorc"]
-max = 15
-min_minutes = 18
-max_minutes = 22
-call = 5
-only_outside = false
-[[spawn.areas]]
-x1 = 5162
-y1 = 3585
-x2 = 5273
-y2 = 3637
-[[spawn.exclude]]
-x1 = 5200
-y1 = 3610
-x2 = 5229
-y2 = 3628
-
-[[spawn]]
-id = "felucca_16373"
 map = "felucca"
 name = "T2A Nightmare Spawn 4 - Oasis"
 mobile_ids = ["nightmare"]

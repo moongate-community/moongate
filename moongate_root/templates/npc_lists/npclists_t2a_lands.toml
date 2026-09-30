@@ -6,7 +6,11 @@ mobile_id = "corpser"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allettin"
+mobile_id = "ettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hammerettin"
 
 [[npc_list.entries]]
 weight = 1
@@ -22,7 +26,23 @@ mobile_id = "harpy"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allratmen"
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
 
 [[npc_list.entries]]
 weight = 1
@@ -30,7 +50,11 @@ mobile_id = "reaper"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "alltroll"
+mobile_id = "troll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "axetroll"
 
 [[npc_list]]
 id = "cyclops_valley"
@@ -90,7 +114,11 @@ mobile_id = "boneknight"
 id = "orc_fort"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "weakorc"
+mobile_id = "orc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cluborc"
 
 [[npc_list.entries]]
 weight = 1
@@ -114,7 +142,31 @@ mobile_id = "savagewarrior"
 id = "ophidian_lair"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allophidians"
+mobile_id = "ophapprentice"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophwarrior"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophenforcer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophshaman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophknight"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophmatriarch"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ophavenger"
 
 [[npc_list]]
 id = "kos_heb_west_east"

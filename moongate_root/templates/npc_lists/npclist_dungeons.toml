@@ -1536,7 +1536,23 @@ mobile_id = "whitewyrm"
 id = "iceleveltwo"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "allratmen"
+mobile_id = "ratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanarcher"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "maceratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swordratman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ratmanmage"
 
 [[npc_list]]
 id = "icelevelthree"

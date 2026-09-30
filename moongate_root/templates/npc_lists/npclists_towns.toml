@@ -136,11 +136,75 @@ mobile_id = "f_peasant"
 id = "alltownfolk"
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "poorfolk"
+mobile_id = "m_sailor"
 
 [[npc_list.entries]]
 weight = 1
-npc_list_id = "richfolk"
+mobile_id = "f_sailor"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_beggar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_beggar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_gypsy"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_seeker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_seeker"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_fighter"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_noble"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_townthief"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_townthief"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_peasant"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_peasant"
 
 [[npc_list]]
 id = "randomwhealer"

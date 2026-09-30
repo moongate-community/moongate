@@ -411,8 +411,8 @@ To produce these files from an existing UOX3 shard, see
 ## NPC lists and spawns
 
 `templates/npc_lists/` holds lists of mobile templates a spawn picks from, converted from UOX3's
-`[NPCLIST name]` blocks (446 lists). An entry names a mobile template or another list, and is
-picked in proportion to its `weight` (1 by default):
+`[NPCLIST name]` blocks. An entry names a mobile template or another list, and is picked in
+proportion to its `weight` (1 by default); an entry naming a list then picks from that list:
 
 ```toml
 [[npc_list]]
@@ -420,8 +420,9 @@ id = "jungle"
 entries = [{ mobile_id = "gorilla", weight = 20 }, { npc_list_id = "all_trolls", weight = 7 }]
 ```
 
-`templates/spawns/<map>/` holds the spawn regions, converted from UOX3's `[REGIONSPAWN n]` blocks
-(2784 regions, up to about 25,000 NPCs); the folder is the map:
+`templates/spawns/<map>/` holds the spawn regions, converted from UOX3's `[REGIONSPAWN n]` blocks;
+the folder is the map. A spawn picks from one pool, as UOX3: its `mobile_ids` (weight 1 each) and
+the entries of its `npc_list_ids` with their weights:
 
 ```toml
 [[spawn]]

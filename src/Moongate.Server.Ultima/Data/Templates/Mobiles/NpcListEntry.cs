@@ -2,7 +2,8 @@ namespace Moongate.Server.Ultima.Data.Templates.Mobiles;
 
 /// <summary>
 ///     One entry of an <see cref="NpcListTemplate" />: a mobile template or another list, picked in proportion to its
-///     weight.
+///     weight. UOX3's unweighted <c>NPCLIST=x</c> is converted into x's own entries; a weighted one stays a list to
+///     pick from.
 /// </summary>
 public class NpcListEntry
 {

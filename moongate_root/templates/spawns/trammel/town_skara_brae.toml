@@ -467,6 +467,24 @@ x2 = 805
 y2 = 2269
 
 [[spawn]]
+id = "trammel_8026"
+map = "trammel"
+name = "Skara Brae Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 793
+y1 = 2265
+x2 = 805
+y2 = 2269
+
+[[spawn]]
 id = "trammel_8027"
 map = "trammel"
 name = "Skara Brae Farmer"
@@ -485,10 +503,46 @@ x2 = 814
 y2 = 2333
 
 [[spawn]]
+id = "trammel_8028"
+map = "trammel"
+name = "Skara Brae Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 809
+y1 = 2320
+x2 = 814
+y2 = 2333
+
+[[spawn]]
 id = "trammel_8029"
 map = "trammel"
 name = "Skara Brae Farmer"
 mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 889
+y1 = 2385
+x2 = 894
+y2 = 2397
+
+[[spawn]]
+id = "trammel_8030"
+map = "trammel"
+name = "Skara Brae Peasant"
+mobile_ids = ["peasant"]
 npc_list_ids = []
 max = 1
 min_minutes = 30

@@ -3386,24 +3386,6 @@ x2 = 1248
 y2 = 2977
 
 [[spawn]]
-id = "felucca_5852"
-map = "felucca"
-name = "Britannia Swamp SW - Savages"
-mobile_ids = []
-npc_list_ids = ["alllizardmen"]
-max = 15
-min_minutes = 30
-max_minutes = 60
-call = 5
-exclude = []
-only_outside = false
-[[spawn.areas]]
-x1 = 1124
-y1 = 2942
-x2 = 1248
-y2 = 2977
-
-[[spawn]]
 id = "felucca_5853"
 map = "felucca"
 name = "location 19 medium"
