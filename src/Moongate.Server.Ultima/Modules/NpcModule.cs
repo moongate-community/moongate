@@ -14,7 +14,7 @@ namespace Moongate.Server.Ultima.Modules;
 ///     that is not an NPC in the world gives <c>false</c> or <c>nil</c>, never an error: a script that waited may outlive
 ///     its NPC, and a script must never move or voice a player.
 /// </summary>
-[ScriptModule("npc", "Acts as an NPC: speaks, walks and reads where it is.")]
+[ScriptModule("npc", "Acts as an NPC: speaks, plays sounds, walks and reads where it is.")]
 public sealed class NpcModule
 {
     public const int MaximumTextLength = 128;
@@ -44,6 +44,23 @@ public sealed class NpcModule
         }
 
         _speech.Say(npc, text.Length > MaximumTextLength ? text[..MaximumTextLength] : text);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Plays <paramref name="sound" /> where the NPC stands for the players within 15 cells;
+    ///     <c>npc.play_sound(serial, 0x69)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) where the NPC stands; false for an unknown NPC or sound.")]
+    public bool PlaySound(long serial, int sound)
+    {
+        if (sound is < 0 or > ushort.MaxValue || !TryGetNpc(serial, out var npc))
+        {
+            return false;
+        }
+
+        _speech.PlaySound(npc, sound);
 
         return true;
     }

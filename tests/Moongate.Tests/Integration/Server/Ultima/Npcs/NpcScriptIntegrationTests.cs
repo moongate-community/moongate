@@ -177,6 +177,35 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.Equal("ok", Assert.Single(_speech.Said).Text);
     }
 
+    [Theory, InlineData("orione"), InlineData("vega")]
+    public async Task TheShippedCatScripts_TalkAndMeowWithoutErrors(string cat)
+    {
+        _scripts.Write($"mobiles/{cat}.lua", File.ReadAllText(ShippedScript($"mobiles/{cat}.lua")));
+        var templates = new MobileTemplateService(
+            new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = cat })
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = new NpcScriptService(
+            engine,
+            templates,
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
+        await scripts.StartAsync();
+
+        for (var think = 0; think < 12; think++)
+        {
+            scripts.Think(_cat);
+        }
+
+        Assert.Empty(_errors);
+        Assert.Equal(3, _speech.Said.Count);
+        Assert.All(_speech.Said, said => Assert.StartsWith("M", said.Text));
+        Assert.Equal(2, _speech.Sounds.Count);
+        Assert.All(_speech.Sounds, sound => Assert.Contains(sound.Sound, new[] { 0x69, 0x6A }));
+    }
+
     public void Dispose()
     {
         _container.Dispose();

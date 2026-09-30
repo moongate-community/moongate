@@ -75,6 +75,7 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0xD6` | `PropertyListPacket` | Outgoing | Variable | — |
 | `0xDC` | `PropertyListInfoPacket` | Outgoing | Fixed 9 | — |
 | `0xC1` | `LocalizedMessagePacket` | Outgoing | Variable | — |
+| `0x54` | `PlaySoundPacket` | Outgoing | Fixed 12 | — |
 
 Normal speech (`say`) reaches the speaker and other player characters within 15
 tiles on the same map. Whisper, yell, emote, global chat and the separate chat

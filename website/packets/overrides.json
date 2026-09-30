@@ -3025,5 +3025,65 @@
     ],
     "notes": "A cliloc shown by the client in its language.",
     "handler": "LookRequestPacketHandler."
+  },
+  "0x54:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mode",
+        "type": "byte",
+        "size": "1",
+        "description": "1: play the sound once."
+      },
+      {
+        "offset": "2",
+        "name": "Sound",
+        "type": "ushort",
+        "size": "2",
+        "description": "Sound identifier."
+      },
+      {
+        "offset": "4",
+        "name": "Volume",
+        "type": "ushort",
+        "size": "2",
+        "description": "Always 0."
+      },
+      {
+        "offset": "6",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the sound plays."
+      },
+      {
+        "offset": "8",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the sound plays."
+      },
+      {
+        "offset": "10",
+        "name": "Z",
+        "type": "short",
+        "size": "2",
+        "description": "Where the sound plays."
+      }
+    ],
+    "notes": "Plays a sound once at a location.",
+    "handler": "SpeechService: npc.play_sound of a mobile script, to the players within 15 cells."
   }
 }

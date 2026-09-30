@@ -108,8 +108,11 @@ public sealed class RepositoryTemplateFilesTests
 
         var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
-        Assert.Equal(671, mobiles.Count);
+        Assert.Equal(673, mobiles.Count);
         Assert.Equal("{gender}", mobiles["guard"].NameList);
+        // Moongate's own cats inherit the UOX3 cat and add their name and script.
+        Assert.Equal((201, "Orione", "orione"), (mobiles["orione"].Body, mobiles["orione"].Name, mobiles["orione"].ScriptId));
+        Assert.Equal((201, "Vega", "vega"), (mobiles["vega"].Body, mobiles["vega"].Name, mobiles["vega"].ScriptId));
     }
 
     [Fact]

@@ -124,6 +124,22 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void PlaySound_PlaysItWhereTheNpcStands()
+    {
+        var result = Run("return npc.play_sound(256, 0x69)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal((_orc, 0x69), Assert.Single(_speech.Sounds));
+    }
+
+    [Theory, InlineData("return npc.play_sound(2, 0x69)"), InlineData("return npc.play_sound(256, -1)"), InlineData("return npc.play_sound(256, 0x10000)")]
+    public void PlaySound_APlayerOrASoundOutOfRange_IsFalse(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+        Assert.Empty(_speech.Sounds);
+    }
+
+    [Fact]
     public void Step_APlayer_DoesNothing()
     {
         var result = Run("return npc.step(2, 'North')");
