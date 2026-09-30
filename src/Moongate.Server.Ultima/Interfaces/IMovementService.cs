@@ -45,6 +45,15 @@ public interface IMovementService
     bool TryGetSpawnZ(MapType map, int x, int y, int maxZ, out int z);
 
     /// <summary>
+    ///     Finds where a swimming mobile can be placed at a cell: the highest water (the land or a static flagged
+    ///     <c>Wet</c>) with room for a person above it, so not under a dock or a bridge.
+    /// </summary>
+    /// <returns>
+    ///     False outside the map, on a map that is not loaded, or with no such water.
+    /// </returns>
+    bool TryGetSwimZ(MapType map, int x, int y, out int z);
+
+    /// <summary>
     ///     Checks one step from <paramref name="from" /> towards <paramref name="direction" />; only its low three bits count, so the running flag is
     ///     ignored. A diagonal step also needs both cells beside it to be passable.
     /// </summary>

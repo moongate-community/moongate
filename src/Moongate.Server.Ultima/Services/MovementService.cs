@@ -128,6 +128,52 @@ public class MovementService : IMovementService
         return found;
     }
 
+    public bool TryGetSwimZ(MapType map, int x, int y, out int z)
+    {
+        z = 0;
+
+        if (!_mapService.Maps.Contains(map) || !_mapService.Contains(map, x, y))
+        {
+            return false;
+        }
+
+        // UOX3's water spawn: the land or a static flagged Wet, as MovementImpl lets a swimmer stand there.
+        var found = false;
+        var land = _mapService.GetLand(map, x, y);
+        var statics = _mapService.GetStatics(map, x, y);
+
+        if (!LandHeights.IsIgnored(land.Id) && (_tileDataService.GetLand(land.Id & 0x3FFF).Flags & TileFlagType.Wet) != 0)
+        {
+            var average = GetAverageZ(map, x, y);
+
+            if (IsOk(statics, average, average + PersonHeight))
+            {
+                z = average;
+                found = true;
+            }
+        }
+
+        foreach (var tile in statics)
+        {
+            var item = _tileDataService.GetItem(tile.Id);
+
+            if ((item.Flags & TileFlagType.Wet) == 0)
+            {
+                continue;
+            }
+
+            var top = tile.Z + item.StandHeight;
+
+            if ((!found || top > z) && IsOk(statics, top, top + PersonHeight))
+            {
+                z = top;
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
     public bool CheckMovement(
         MapType map,
         Point3D from,

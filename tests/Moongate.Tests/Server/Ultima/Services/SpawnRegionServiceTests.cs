@@ -5,6 +5,7 @@ using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
 using Moongate.Server.Ultima.Entities.World;
@@ -250,6 +251,36 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ASeaCreature_SpawnsOnTheWater()
+    {
+        _movement.SwimZ = (_, _) => -5;
+        var ocean = Spawn("ocean", x1: 10, y1: 20, x2: 10, y2: 20);
+        ocean.MobileIds = ["dolphin"];
+        await StartAsync(new ScriptedRandom(0), ocean);
+
+        await TickAsync();
+
+        Assert.Equal([("dolphin", MapType.Felucca, new Point3D(10, 20, -5))], _npcs.Spawns);
+        Assert.Empty(_movement.SpawnCeilings);
+    }
+
+    [Fact]
+    public async Task ASeaCreature_WithNoWater_RetriesAMinuteLater()
+    {
+        var ocean = Spawn("ocean", minMinutes: 30, maxMinutes: 30);
+        ocean.MobileIds = ["dolphin"];
+        await StartAsync(new ScriptedRandom(0), ocean);
+
+        await TickAsync();
+        Assert.Empty(_npcs.Spawns);
+
+        _movement.SwimZ = (_, _) => -5;
+        _clock.Advance(TimeSpan.FromMinutes(1));
+        await TickAsync();
+        Assert.Single(_npcs.Spawns);
+    }
+
+    [Fact]
     public async Task RegionsAtAsync_GivesTheRegionsHere_WithTheirLiveNpcsAndNextSpawn()
     {
         // 120 seconds of the 5 minutes.
@@ -372,7 +403,11 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
 
     private async Task StartAsync(System.Random random, (int Id, string Text)[] messages, params SpawnTemplate[] spawns)
     {
-        var data = new StubDataLoaderService().With(spawns).With(new NpcListTemplate { Id = "unused" });
+        var data = new StubDataLoaderService()
+                   .With(spawns)
+                   .With(new NpcListTemplate { Id = "unused" })
+                   .With(new MobileTemplate { Id = "rabbit", Body = 205 }, new MobileTemplate { Id = "dolphin", Body = 151 })
+                   .With(new BodyContent { Body = new(205), Type = BodyType.Animal }, new BodyContent { Body = new(151), Type = BodyType.Sea });
         (int Id, string Text)[] defaults =
         [
             (CommandMessages.SpawnedInOneRegion, "Spawn: {0} ({1}): {2} NPCs"),

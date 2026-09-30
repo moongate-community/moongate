@@ -307,6 +307,49 @@ public sealed class MovementServiceTests
         Assert.False(CreateService().TryGetSpawnZ(MapType.Trammel, 4, 4, 18, out _));
     }
 
+    [Fact]
+    public void TryGetSwimZ_WaterLand_IsItsZ()
+    {
+        _tiles.Land(0x00A8, TileFlagType.Impassable | TileFlagType.Wet);
+        _map.SetLandId(0, 0, 15, 15, 0x00A8).SetLandZ(0, 0, 15, 15, -5);
+
+        Assert.True(CreateService().TryGetSwimZ(MapType.Felucca, 4, 4, out var z));
+        Assert.Equal(-5, z);
+    }
+
+    [Fact]
+    public void TryGetSwimZ_DryLand_Fails()
+    {
+        Assert.False(CreateService().TryGetSwimZ(MapType.Felucca, 4, 4, out _));
+    }
+
+    [Fact]
+    public void TryGetSwimZ_AWaterStatic_IsItsTop()
+    {
+        _tiles.Item(0x1797, TileFlagType.Surface | TileFlagType.Wet | TileFlagType.Impassable, 0);
+        _map.AddStatic(4, 4, 0x1797, 2);
+
+        Assert.True(CreateService().TryGetSwimZ(MapType.Felucca, 4, 4, out var z));
+        Assert.Equal(2, z);
+    }
+
+    [Fact]
+    public void TryGetSwimZ_WaterUnderADock_Fails()
+    {
+        _tiles.Land(0x00A8, TileFlagType.Impassable | TileFlagType.Wet);
+        _tiles.Item(0x0519, TileFlagType.Surface, 0);
+        _map.SetLandId(4, 4, 4, 4, 0x00A8).AddStatic(4, 4, 0x0519, 5);
+
+        Assert.False(CreateService().TryGetSwimZ(MapType.Felucca, 4, 4, out _));
+    }
+
+    [Fact]
+    public void TryGetSwimZ_OutsideTheMapOrMapNotLoaded_Fails()
+    {
+        Assert.False(CreateService().TryGetSwimZ(MapType.Felucca, 99, 4, out _));
+        Assert.False(CreateService().TryGetSwimZ(MapType.Trammel, 4, 4, out _));
+    }
+
     private MovementService CreateService()
     {
         return new(_map, _tiles);

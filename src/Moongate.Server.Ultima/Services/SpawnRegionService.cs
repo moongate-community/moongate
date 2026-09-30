@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Internal.Spawns;
 using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
@@ -40,6 +41,7 @@ public sealed class SpawnRegionService : ISpawnRegionService
     private readonly ILogger _logger = Log.ForContext<SpawnRegionService>();
     private readonly List<SpawnRegionState> _regions = [];
     private readonly CancellationTokenSource _stopping = new();
+    private readonly HashSet<string> _swimmers = new(StringComparer.Ordinal);
     private readonly IDataLoaderService _data;
     private readonly IMapService _map;
     private readonly IMovementService _movement;
@@ -92,6 +94,11 @@ public sealed class SpawnRegionService : ISpawnRegionService
     public Task StartAsync()
     {
         var lists = _data.GetEntities<NpcListTemplate>().ToDictionary(list => list.Id, StringComparer.Ordinal);
+        var sea = _data.GetEntities<BodyContent>().Where(body => body.Type == BodyType.Sea).Select(body => (int)body.Body.Value).ToHashSet();
+        // A sea body swims, as ModernUO's sea creatures and UOX3's MOVEMENT=WATER: it spawns on the water.
+        _swimmers.UnionWith(
+            _data.GetEntities<MobileTemplate>().Where(mobile => mobile.Body is { } body && sea.Contains(body)).Select(mobile => mobile.Id)
+        );
         var now = _time.GetUtcNow();
         var skipped = 0;
 
@@ -217,14 +224,16 @@ public sealed class SpawnRegionService : ISpawnRegionService
 
             for (var i = 0; i < count; i++)
             {
-                if (!TryFindSpot(template, out var location, out var area))
+                var templateId = region.Pool.Pick(_random);
+
+                if (!TryFindSpot(template, _swimmers.Contains(templateId), out var location, out var area))
                 {
                     missed = true;
 
                     break;
                 }
 
-                planned.Add(new(template, region.Pool.Pick(_random), location, area));
+                planned.Add(new(template, templateId, location, area));
             }
 
             region.NextSpawn = missed
@@ -253,8 +262,9 @@ public sealed class SpawnRegionService : ISpawnRegionService
         return live;
     }
 
-    // UOX3 FindSpotForNPC: a random cell of the areas, out of the excluded ones, where a mobile stands under the ceiling.
-    private bool TryFindSpot(SpawnTemplate template, out Point3D location, out SpawnArea area)
+    // UOX3 FindSpotForNPC: a random cell of the areas, out of the excluded ones, where a mobile stands under the ceiling,
+    // or on the water for a swimmer.
+    private bool TryFindSpot(SpawnTemplate template, bool swims, out Point3D location, out SpawnArea area)
     {
         for (var i = 0; i < SpotTries; i++)
         {
@@ -267,12 +277,24 @@ public sealed class SpawnRegionService : ISpawnRegionService
                 continue;
             }
 
-            var ceiling = template.Z ?? _movement.GetAverageZ(template.Map, x, y) + (template.PrefZ ?? DefaultPrefZ);
+            int z;
 
-            if (!_movement.TryGetSpawnZ(template.Map, x, y, ceiling, out var z) ||
-                template.OnlyOutside && IsUnderRoof(template, x, y, z))
+            if (swims)
             {
-                continue;
+                if (!_movement.TryGetSwimZ(template.Map, x, y, out z))
+                {
+                    continue;
+                }
+            }
+            else
+            {
+                var ceiling = template.Z ?? _movement.GetAverageZ(template.Map, x, y) + (template.PrefZ ?? DefaultPrefZ);
+
+                if (!_movement.TryGetSpawnZ(template.Map, x, y, ceiling, out z) ||
+                    template.OnlyOutside && IsUnderRoof(template, x, y, z))
+                {
+                    continue;
+                }
             }
 
             location = new(x, y, z);

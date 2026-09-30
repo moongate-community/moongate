@@ -31,6 +31,13 @@ public sealed class StubMovementService : IMovementService
 
     public List<int> SpawnCeilings { get; } = [];
 
+    /// <summary>
+    ///     Gets or sets where a swimming mobile can be placed at a cell; null means nowhere, the default.
+    /// </summary>
+    public Func<int, int, int?> SwimZ { get; set; } = (_, _) => null;
+
+    public List<MovementAbilityType> Abilities { get; } = [];
+
     public bool TryGetDropZ(MapType map, int x, int y, int maxZ, out int z)
     {
         z = DropZ ?? 0;
@@ -42,6 +49,14 @@ public sealed class StubMovementService : IMovementService
     {
         SpawnCeilings.Add(maxZ);
         var found = SpawnZ(x, y);
+        z = found ?? 0;
+
+        return found is not null;
+    }
+
+    public bool TryGetSwimZ(MapType map, int x, int y, out int z)
+    {
+        var found = SwimZ(x, y);
         z = found ?? 0;
 
         return found is not null;
@@ -61,6 +76,7 @@ public sealed class StubMovementService : IMovementService
     )
     {
         Checks.Add((map, from, direction));
+        Abilities.Add(ability);
 
         if (ThrowMapNotLoaded)
         {
