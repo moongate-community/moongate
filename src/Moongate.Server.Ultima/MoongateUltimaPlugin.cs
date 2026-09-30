@@ -335,6 +335,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<IItemDecayQueue, ItemDecayQueue>(Reuse.Singleton);
             // After the items (10): the ground items it deletes are loaded by then.
             container.AddMoongateService<ItemDecayService>(11);
+            // The light cycle's timer, like the decay's: the players it lights come after the game server starts.
+            container.AddMoongateService<ILightService, LightService>(11);
             container.AddMoongateService<IEquipmentService, EquipmentService>();
             container.AddMoongateService<ITooltipService, TooltipService>();
             // As the ground items: the NPCs are live before the game server takes players.

@@ -39,6 +39,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
     private readonly IMoongateEventBus _events;
     private readonly ISessionService _sessions;
     private readonly IMotdService _motd;
+    private readonly ILightService? _light;
     private readonly IWorldViewService _view;
 
     public PlayCharacterPacketHandler(
@@ -50,9 +51,11 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         IMoongateEventBus events,
         ISessionService sessions,
         IWorldViewService view,
-        IMotdService motd
+        IMotdService motd,
+        ILightService? light = null
     )
     {
+        _light = light;
         _characters = characters;
         _mobiles = mobiles;
         _items = items;
@@ -190,7 +193,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         );
         yield return new MapChangePacket(character.Map);
         yield return new SeasonChangePacket(map?.Season ?? SeasonType.Summer, false);
-        yield return new GlobalLightLevelPacket(0);
+        yield return new GlobalLightLevelPacket(_light?.LevelOnLogin(character) ?? 0);
         yield return new PersonalLightLevelPacket(character.Id, 0);
         yield return new MobileUpdatePacket(character.Id, body, character.SkinHue, flags, character.Location, direction);
         yield return new MobileIncomingPacket(
