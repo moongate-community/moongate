@@ -284,6 +284,16 @@ function potion.on_use(serial, user)
 end
 ```
 
+The distribution also ships `scripts/items/door.lua`, the script of the `decoration_door`
+template that [`.decorate`](commands.md#decorate) gives to doors and gates. Double clicking
+a closed door opens it and its linked door (prop `door.link`): the graphic goes to the next
+one, the door swings aside by its `facing` prop and plays the sound of its
+`decoration_type` (metal, wood, gate or secret). Double clicking an open door closes both
+when nobody stands in either doorway. An open door closes by itself after 20 seconds, then
+tries again every 10 seconds while the doorway is taken. The open state is the prop
+`door.open`, saved with the door; the auto-close timer is not, so a door left open when the
+server stops stays open until someone uses it. Locks and keys come later.
+
 ## Reload and ownership
 
 The console accepts:
