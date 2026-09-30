@@ -3,6 +3,13 @@
 ## [0.10.0](https://github.com/moongate-community/moongate/compare/v0.9.0...v0.10.0) (2026-09-29)
 
 
+### Upgrade notes
+
+- Apply the new world database migrations `0007`–`0010` (mobile deletion, slot type, mobile direction, ground item index) before starting the updated server; use the [migration guide](https://moongate.sh/server/persistence-migrations/).
+- The gameplay settings moved under `[ultima]`: `[ultima.world]`, `[ultima.characters]`, `[ultima.items]`, `[ultima.starting_items]`, `[ultima.line_of_sight]`, `[ultima.localization]` and the new `[ultima.npcs]`. The old top-level sections are no longer read; move their values. The starting gold is an item of the common set in `starting_items.toml`, not a setting. Missing plugin sections are appended to `moongate.toml` with their defaults at the first start.
+- Run `mgboot` again to add the item, loot and mobile templates and the example scripts that now ship with the server; existing files are preserved. A template a release renamed stays beside its new copy and stops the server on the duplicate id: delete the stale one.
+- Characters enter a playable world: they walk, see each other, talk, move and wear items, and meet the NPCs a game master spawns; NPCs and items run Lua scripts bound by `script_id`. Combat, pathfinding AI, death and skill gain are not yet available.
+
 ### Features
 
 * **boot:** ship the templates and scripts with the server and mgboot ([f14f2c5](https://github.com/moongate-community/moongate/commit/f14f2c5ff5a300c9f0c9213ce474263c625a9e11))
