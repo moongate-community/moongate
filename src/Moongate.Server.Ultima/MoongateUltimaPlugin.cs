@@ -293,6 +293,13 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 AccountType.Administrator,
                 CommandMessages.DecorateDescription
             );
+            container.RegisterCommand<GlobalLightCommand>(
+                "globallight",
+                "Sets the light of every player (0 brightest, 31 darkest) or, without a level, goes back to the time of day.",
+                CommandSourceType.Console | CommandSourceType.InGame,
+                AccountType.GameMaster,
+                CommandMessages.GlobalLightDescription
+            );
             container.RegisterCommand<WhereCommand>(
                 "where",
                 "Shows what you target: its serial, or the map and location of a spot.",

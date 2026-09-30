@@ -44,6 +44,8 @@ public static class CommandMessages
     public const int DecorationDone = 30056;
     public const int DecorationFailed = 30057;
     public const int DecorationRunning = 30059;
+    public const int GlobalLightSet = 30060;
+    public const int GlobalLightCleared = 30061;
 
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
@@ -62,4 +64,5 @@ public static class CommandMessages
     public const int FameDescription = 30053;
     public const int KarmaDescription = 30054;
     public const int DecorateDescription = 30058;
+    public const int GlobalLightDescription = 30062;
 }
