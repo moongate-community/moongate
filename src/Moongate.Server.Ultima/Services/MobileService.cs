@@ -30,6 +30,7 @@ public sealed class MobileService : IMobileService
     private readonly IMovementService _movement;
     private readonly ISectorService _sectors;
     private readonly INpcSenseService? _senses;
+    private readonly IRegionService? _regions;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
     private long _nextVirtual = Serial.MinVirtual;
 
@@ -37,8 +38,14 @@ public sealed class MobileService : IMobileService
 
     public IReadOnlyCollection<MobileEntity> Mobiles => _inWorld.Values.ToArray();
 
-    public MobileService(IMovementService movement, ISectorService sectors, INpcSenseService? senses = null)
+    public MobileService(
+        IMovementService movement,
+        ISectorService sectors,
+        INpcSenseService? senses = null,
+        IRegionService? regions = null
+    )
     {
+        _regions = regions;
         _movement = movement;
         _sectors = sectors;
         _senses = senses;
@@ -65,6 +72,7 @@ public sealed class MobileService : IMobileService
         _deleted.TryRemove(mobile.Id, out _);
         _sectors.Add(mobile);
         _senses?.Appeared(mobile);
+        _regions?.Entered(mobile);
     }
 
     public bool TryGet(Serial serial, [NotNullWhen(true)] out MobileEntity? mobile)
@@ -80,6 +88,7 @@ public sealed class MobileService : IMobileService
         }
 
         _sectors.Remove(mobile);
+        _regions?.Left(serial);
 
         return true;
     }
@@ -141,6 +150,7 @@ public sealed class MobileService : IMobileService
         mobile.Location = new(next.X, next.Y, newZ);
         _sectors.Move(mobile);
         _senses?.Moved(mobile, oldLocation);
+        _regions?.Moved(mobile);
 
         return MoveResultType.Moved;
     }

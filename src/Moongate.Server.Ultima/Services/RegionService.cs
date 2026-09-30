@@ -1,8 +1,12 @@
+using System.Collections.Concurrent;
 using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Regions;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Ultima.Types;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
 
@@ -13,14 +17,18 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class RegionService : IRegionService
 {
     private const int CellShift = 4;
+    private const string NoRegion = "no region";
 
     private readonly IDataLoaderService _data;
     private readonly Lazy<Dictionary<(MapType Map, int X, int Y), RegionContent[]>> _cells;
+    private readonly ConcurrentDictionary<Serial, RegionContent?> _players = new();
+    private readonly ILogger _logger;
 
-    public RegionService(IDataLoaderService data)
+    public RegionService(IDataLoaderService data, ILogger? logger = null)
     {
         _data = data;
         _cells = new(Build);
+        _logger = logger ?? Log.ForContext<RegionService>();
     }
 
     public RegionContent? Find(MapType map, Point3D location)
@@ -40,6 +48,51 @@ public sealed class RegionService : IRegionService
         }
 
         return null;
+    }
+
+    public RegionContent? Current(Serial mobile)
+    {
+        return _players.GetValueOrDefault(mobile);
+    }
+
+    public void Entered(MobileEntity mobile)
+    {
+        if (mobile.IsNpc)
+        {
+            return;
+        }
+
+        var region = Find(mobile.Map, mobile.Location);
+        _players[mobile.Id] = region;
+        _logger.Debug("{Name} is in {Region:l}", mobile.Name, NameOf(region));
+    }
+
+    public void Moved(MobileEntity mobile)
+    {
+        if (!_players.TryGetValue(mobile.Id, out var previous))
+        {
+            return;
+        }
+
+        var region = Find(mobile.Map, mobile.Location);
+
+        if (ReferenceEquals(region, previous))
+        {
+            return;
+        }
+
+        _players[mobile.Id] = region;
+        _logger.Debug("{Name} left {Previous:l} for {Region:l}", mobile.Name, NameOf(previous), NameOf(region));
+    }
+
+    public void Left(Serial mobile)
+    {
+        _players.TryRemove(mobile, out _);
+    }
+
+    private static string NameOf(RegionContent? region)
+    {
+        return region is null ? NoRegion : region.Name ?? $"an unnamed {region.Type} region";
     }
 
     private Dictionary<(MapType, int, int), RegionContent[]> Build()

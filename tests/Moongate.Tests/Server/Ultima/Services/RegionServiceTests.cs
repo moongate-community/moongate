@@ -1,13 +1,19 @@
 using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Ultima.Types;
+using Serilog;
 
 namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class RegionServiceTests
 {
+    private readonly CapturingLogSink _log = new();
+
     [Fact]
     public void Find_TheHighestPriorityCoveringThePoint_Wins()
     {
@@ -62,6 +68,62 @@ public sealed class RegionServiceTests
         Assert.Null(service.Find(MapType.Felucca, new Point3D(50, 50, 0)));
         Assert.Null(service.Find(MapType.Trammel, new Point3D(-5, 50, 0)));
         Assert.Null(service.Find(MapType.Trammel, new Point3D(100000, 50, 0)));
+    }
+
+    [Fact]
+    public void Tracking_APlayerWalkingIntoAnotherRegion_IsLoggedOnceAtDebug()
+    {
+        var service = Tracked(Region("Britain", 50, Area(0, 0, 100, 100)));
+        var aria = Player(95, 50);
+
+        service.Entered(aria);
+        Assert.Equal("Britain", service.Current(aria.Id)?.Name);
+
+        aria.Location = new Point3D(99, 50, 0);
+        service.Moved(aria);
+        aria.Location = new Point3D(100, 50, 0);
+        service.Moved(aria);
+        aria.Location = new Point3D(101, 50, 0);
+        service.Moved(aria);
+
+        Assert.Null(service.Current(aria.Id));
+        Assert.Equal(
+            ["\"Aria\" is in Britain", "\"Aria\" left Britain for no region"],
+            _log.Events.Select(entry => entry.RenderMessage())
+        );
+        Assert.All(_log.Events, entry => Assert.Equal(Serilog.Events.LogEventLevel.Debug, entry.Level));
+    }
+
+    [Fact]
+    public void Tracking_LeftForgetsThePlayer_AndNpcsAreNotTracked()
+    {
+        var service = Tracked(Region("Britain", 50, Area(0, 0, 100, 100)));
+        var aria = Player(50, 50);
+        var orc = new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(50, 50, 0) };
+
+        service.Entered(aria);
+        service.Entered(orc);
+        service.Left(aria.Id);
+
+        Assert.Null(service.Current(aria.Id));
+        Assert.Null(service.Current(orc.Id));
+        Assert.Single(_log.Events);
+    }
+
+    private RegionService Tracked(params RegionContent[] regions)
+    {
+        return new(
+            new StubDataLoaderService().With(regions),
+            new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(_log).CreateLogger()
+        );
+    }
+
+    private static MobileEntity Player(int x, int y)
+    {
+        return new()
+        {
+            Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(x, y, 0)
+        };
     }
 
     private static RegionService Service(params RegionContent[] regions)
