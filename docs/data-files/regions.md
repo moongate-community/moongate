@@ -80,6 +80,11 @@ Where regions overlap, the one with the highest `priority` gives the name, music
 guards, housing and logout rules. Travel works differently: a travel spell is
 blocked when any region covering the place blocks it, whatever its priority.
 
+On a tie the child wins over its parent, then the region written first. The server
+keeps the region each player stands in and logs a change at debug level
+(`"Aria" left Britain for Britain Graveyard`); `.where` prints the region of the spot
+you target: `Trammel (1496, 1628, 10) in Britain`.
+
 ## Travel zones
 
 Travel zones are unnamed regions of priority 0 that only limit travel, such as the

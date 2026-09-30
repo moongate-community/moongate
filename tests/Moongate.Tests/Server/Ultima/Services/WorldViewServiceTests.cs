@@ -9,11 +9,14 @@ using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Ultima.Types;
+using Serilog;
+using Serilog.Events;
 
 namespace Moongate.Tests.Server.Ultima.Services;
 
@@ -26,6 +29,7 @@ public sealed class WorldViewServiceTests
     private readonly WorldConfig _world = new();
     private readonly MobileService _mobiles;
     private readonly ItemService _items;
+    private readonly CapturingLogSink _log = new();
     private readonly WorldViewService _view;
 
     public WorldViewServiceTests()
@@ -34,7 +38,15 @@ public sealed class WorldViewServiceTests
         _items = TestItems.Create(sectors);
         _mobiles = new(new StubMovementService(), sectors);
         // The tooltip revisions (0xDC) are checked on their own below.
-        _view = new(sectors, _mobiles, _items, _sender.Ignore<PropertyListInfoPacket>(), TestTooltips.Create(_items, _mobiles), _world);
+        _view = new(
+            sectors,
+            _mobiles,
+            _items,
+            _sender.Ignore<PropertyListInfoPacket>(),
+            TestTooltips.Create(_items, _mobiles),
+            _world,
+            new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(_log).CreateLogger()
+        );
     }
 
     [Fact]
@@ -398,6 +410,56 @@ public sealed class WorldViewServiceTests
         Enter(2, 1496, 1628, AriaSession);
 
         Assert.Equal([AriaSession, 30L], _sender.SentSessionIds.Distinct().Order());
+    }
+
+    [Fact]
+    public void Entered_LogsAtDebugWhatWasSentFromItsSector()
+    {
+        Ground(0x40000001, 1510, 1628);
+        _mobiles.EnterWorld(Mobile(5, 1505, 1628));
+        var boris = Mobile(3, 1500, 1628);
+        boris.AccountId = new Serial(0x42);
+        _mobiles.EnterWorld(boris);
+
+        Enter(2, 1503, 1628, AriaSession);
+
+        var entry = Assert.Single(_log.Events);
+        Assert.Equal(LogEventLevel.Debug, entry.Level);
+        Assert.Equal(
+            "\"M2\" entered sector (93, 101) of Trammel: sent 1 items, 1 NPCs and 1 players",
+            entry.RenderMessage()
+        );
+    }
+
+    [Fact]
+    public void Moved_IntoAnotherSector_LogsTheNewcomersSent_AndWithinOneLogsNothing()
+    {
+        var aria = Enter(2, 1502, 1628, AriaSession);
+        Ground(0x40000001, 1522, 1628);
+        _mobiles.EnterWorld(Mobile(5, 1522, 1630));
+
+        Step(aria, 1503, 1628, false);
+        Assert.Single(_log.Events);
+
+        Step(aria, 1504, 1628, false);
+
+        Assert.Equal(2, _log.Events.Count);
+        Assert.Equal(
+            "\"M2\" entered sector (94, 101) of Trammel: sent 1 items, 1 NPCs and 0 players",
+            _log.Events[1].RenderMessage()
+        );
+    }
+
+    [Fact]
+    public void Entered_AnItemWithALight_IsSentWithItsShape()
+    {
+        var candle = Ground(0x40000001, 1500, 1628);
+        candle.Props = new() { ["light"] = "circle150" };
+        Ground(0x40000002, 1501, 1628).Props = new() { ["light"] = "no such light" };
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal([2, 0], _sender.Sent.OfType<WorldItemSaPacket>().Select(packet => packet.Light));
     }
 
     private ItemEntity Ground(uint serial, int x, int y)

@@ -1,0 +1,395 @@
+[[spawn]]
+id = "ilshenar_17500"
+map = "ilshenar"
+name = "Exodus 1_1"
+mobile_ids = []
+npc_list_ids = ["exodus_npclist_1"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1952
+y1 = 88
+x2 = 2006
+y2 = 142
+
+[[spawn]]
+id = "ilshenar_17501"
+map = "ilshenar"
+name = "Exodus 1_2"
+mobile_ids = ["exodusminion"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1924
+y1 = 101
+x2 = 1954
+y2 = 131
+
+[[spawn]]
+id = "ilshenar_17502"
+map = "ilshenar"
+name = "Exodus 1_3"
+mobile_ids = []
+npc_list_ids = ["exodus_npclist_2"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1880
+y1 = 96
+x2 = 1901
+y2 = 133
+
+[[spawn]]
+id = "ilshenar_17503"
+map = "ilshenar"
+name = "Exodus 1_4"
+mobile_ids = ["golemcontroller"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1953
+y1 = 153
+x2 = 1973
+y2 = 173
+
+[[spawn]]
+id = "ilshenar_17504"
+map = "ilshenar"
+name = "Exodus 1_5"
+mobile_ids = ["golemcontroller"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1921
+y1 = 153
+x2 = 1941
+y2 = 173
+
+[[spawn]]
+id = "ilshenar_17505"
+map = "ilshenar"
+name = "Exodus 1_6"
+mobile_ids = []
+npc_list_ids = ["exodus_npclist_3"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1917
+y1 = 184
+x2 = 1947
+y2 = 202
+
+[[spawn]]
+id = "ilshenar_17506"
+map = "ilshenar"
+name = "Exodus 1_7"
+mobile_ids = ["gargoyledestroyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1890
+y1 = 154
+x2 = 1905
+y2 = 166
+
+[[spawn]]
+id = "ilshenar_17507"
+map = "ilshenar"
+name = "Exodus 1_8"
+mobile_ids = []
+npc_list_ids = ["exodus_npclist_4"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1960
+y1 = 184
+x2 = 1997
+y2 = 197
+
+[[spawn]]
+id = "ilshenar_17508"
+map = "ilshenar"
+name = "Exodus 1_9"
+mobile_ids = ["golemcontroller"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1985
+y1 = 153
+x2 = 2005
+y2 = 172
+
+[[spawn]]
+id = "ilshenar_17509"
+map = "ilshenar"
+name = "Exodus 1_10"
+mobile_ids = ["gargoyleenforcer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2024
+y1 = 176
+x2 = 2038
+y2 = 189
+
+[[spawn]]
+id = "ilshenar_17510"
+map = "ilshenar"
+name = "Exodus 1_11"
+mobile_ids = ["gargoyleenforcer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2053
+y1 = 173
+x2 = 2056
+y2 = 176
+
+[[spawn]]
+id = "ilshenar_17511"
+map = "ilshenar"
+name = "Exodus 1_12"
+mobile_ids = []
+npc_list_ids = ["exodus_npclist_5"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2048
+y1 = 160
+x2 = 2068
+y2 = 173
+
+[[spawn]]
+id = "ilshenar_17512"
+map = "ilshenar"
+name = "Exodus 1_13"
+mobile_ids = []
+npc_list_ids = ["exodus_npclist_6"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2035
+y1 = 137
+x2 = 2053
+y2 = 149
+
+[[spawn]]
+id = "ilshenar_17513"
+map = "ilshenar"
+name = "Exodus 1_14"
+mobile_ids = []
+npc_list_ids = ["exodus_npclist_2"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2064
+y1 = 104
+x2 = 2078
+y2 = 126
+
+[[spawn]]
+id = "ilshenar_17514"
+map = "ilshenar"
+name = "Exodus 1_15"
+mobile_ids = []
+npc_list_ids = ["exodus_npclist_7"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2035
+y1 = 81
+x2 = 2053
+y2 = 93
+
+[[spawn]]
+id = "ilshenar_17515"
+map = "ilshenar"
+name = "Exodus 1_16"
+mobile_ids = ["gargoyleenforcer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2024
+y1 = 40
+x2 = 2037
+y2 = 53
+
+[[spawn]]
+id = "ilshenar_17516"
+map = "ilshenar"
+name = "Exodus 1_17"
+mobile_ids = ["gargoyledestroyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2028
+y1 = 64
+x2 = 2046
+y2 = 72
+
+[[spawn]]
+id = "ilshenar_17517"
+map = "ilshenar"
+name = "Exodus 1_18"
+mobile_ids = ["golemcontroller"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1985
+y1 = 57
+x2 = 2005
+y2 = 77
+
+[[spawn]]
+id = "ilshenar_17518"
+map = "ilshenar"
+name = "Exodus 1_19"
+mobile_ids = []
+npc_list_ids = ["exodus_npclist_8"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1968
+y1 = 35
+x2 = 1991
+y2 = 45
+
+[[spawn]]
+id = "ilshenar_17519"
+map = "ilshenar"
+name = "Exodus 1_20"
+mobile_ids = ["golemcontroller"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1920
+y1 = 56
+x2 = 1941
+y2 = 77
+
+[[spawn]]
+id = "ilshenar_17520"
+map = "ilshenar"
+name = "Exodus 1_21"
+mobile_ids = ["gargoyledestroyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1893
+y1 = 70
+x2 = 1901
+y2 = 77
+
+[[spawn]]
+id = "ilshenar_17521"
+map = "ilshenar"
+name = "Exodus 1_22"
+mobile_ids = []
+npc_list_ids = ["exodus_npclist_3"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1912
+y1 = 29
+x2 = 1949
+y2 = 45

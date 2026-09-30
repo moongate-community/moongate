@@ -209,6 +209,11 @@ public sealed class MobileEntityPersistenceTests
             ResistPhysical = 25, ResistFire = 20, ResistCold = 10, ResistPoison = 15, ResistEnergy = 22
         };
         orc.SetProp("quest_step", 3);
+        // What a script stores through npc.set_prop: whole numbers as long, the others as double, strings, bools.
+        orc.SetProp("vega.greeted", 7L);
+        orc.SetProp("vega.weight", 4.5);
+        orc.SetProp("vega.mood", "sleepy");
+        orc.SetProp("vega.fed", true);
 
         await orm.Insert(orc).ExecuteAffrowsAsync();
         var loaded = await orm.Select<MobileEntity>().Where(m => m.Id == orc.Id).FirstAsync();
@@ -218,6 +223,10 @@ public sealed class MobileEntityPersistenceTests
         Assert.Equal((1500, -1500, 28), (loaded.Fame, loaded.Karma, loaded.Armor));
         Assert.Equal((25, 20, 10, 15, 22), (loaded.ResistPhysical, loaded.ResistFire, loaded.ResistCold, loaded.ResistPoison, loaded.ResistEnergy));
         Assert.Equal(3, loaded.GetProp<int>("quest_step"));
+        Assert.Equal(7L, loaded.GetProp<long>("vega.greeted"));
+        Assert.Equal(4.5, loaded.GetProp<double>("vega.weight"));
+        Assert.Equal("sleepy", loaded.GetProp<string>("vega.mood"));
+        Assert.True(loaded.GetProp<bool>("vega.fed"));
     }
 
     [Fact]

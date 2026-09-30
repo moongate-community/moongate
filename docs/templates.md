@@ -283,7 +283,7 @@ own, see [TOML value types](toml-types.md).
 | `Layer` | A `LayerType` name such as `one_handed`; unset uses the tiledata layer |
 | `TwoHandedWeapon` | `two_handed_weapon = true` on a weapon held in both hands (bows, polearms, staves), as POL's `TwoHanded`: worn on `two_handed`, it leaves no hand free. Anything else on `two_handed` (shields, torches) goes in the other hand, with a one-handed weapon. Tiledata cannot tell them apart: it marks shields as weapons and bows as one-handed |
 | `BuyPrice`, `SellPrice` | What vendors sell it for and pay for it; unset means vendors do not trade it |
-| `Decays`, `DecayMinutes` | Unset decays when movable, after 60 minutes |
+| `Decays`, `DecayMinutes` | Whether the item decays on the ground, and after how many minutes; unset decays when movable, after 60 minutes, as ModernUO. An item decays when it lies on the ground, is movable and its template is visible to players. The countdown (`DecayAt`, saved with the item, so downtime counts) starts when it lands on the ground, again when a lifted item bounces back there, and stops when it is picked up, moved into a container or worn; the rest of a split stack keeps the stack's time. A check every 5 seconds deletes the due items, a container with its contents, whether or not a player is near |
 | `LootType` | `regular`, `newbied`, `blessed` or `cursed`: what happens when the owner dies; unset is `regular` |
 | `Tags` | Free script values in an `[item.tags]` table; a child's explicit tags replace the entire base map |
 | `Visibility` | The lowest account type that sees the item: `regular`, `game_master` or `administrator`, as `realm_directory.minimum_account_type`. Unset by default, so a template inherits it through `BaseId`; an item with none anywhere is visible to everyone. `IsVisibleTo(accountType)` answers for one viewer |
@@ -339,9 +339,10 @@ to 120; a constant is a bare integer.
 | `Karma`, `Fame` | Dice; karma may be negative |
 | `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |
 | `Loot`, `Gold` | Loot template ids and gold dice rolled into the backpack at spawn; no corpse system yet |
-| `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death` |
+| `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death`; a mobile script plays them by kind with `npc.play_sound(serial, "idle")` |
 | `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn` and `on_mobile_in_range` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting.md#mobile-scripts) |
 | `Visibility` | As in `ItemTemplate` |
+| `Movement` | `land`, `water` (a dolphin: it spawns and swims on the water only) or `both` (a walrus: it walks and swims, and spawns on land else on the water); unset is `land` |
 | `Tags` | Free script values; child keys add to and override parent keys |
 
 `Resistances`, `Sounds`, `Skills` and `Tags` are inherited key by key, so a base such as
@@ -407,3 +408,76 @@ standalone startup (`IMobileTemplateService`).
 
 To produce these files from an existing UOX3 shard, see
 [Migrate from UOX3](uox3-migration.md).
+
+## NPC lists and spawns
+
+`templates/npc_lists/` holds lists of mobile templates a spawn picks from, converted from UOX3's
+`[NPCLIST name]` blocks. An entry names a mobile template or another list, and is picked in
+proportion to its `weight` (1 by default); an entry naming a list then picks from that list:
+
+```toml
+[[npc_list]]
+id = "jungle"
+entries = [{ mobile_id = "gorilla", weight = 20 }, { npc_list_id = "all_trolls", weight = 7 }]
+```
+
+`templates/spawns/<map>/` holds the spawn regions, converted from UOX3's `[REGIONSPAWN n]` blocks;
+the folder is the map. A spawn picks from one pool, as UOX3: its `mobile_ids` (weight 1 each) and
+the entries of its `npc_list_ids` with their weights:
+
+```toml
+[[spawn]]
+id = "felucca_0"                      # unique
+name = "The Hammer And Anvil"
+mobile_ids = ["weaponsmith"]          # mobile templates, picked at random with the lists' entries
+npc_list_ids = []                     # npc lists
+max = 1                               # NPCs alive at once
+min_minutes = 480                     # a new one every min_minutes to max_minutes
+max_minutes = 600
+call = 1                              # NPCs that come at a time
+areas = [{ x1 = 1422, y1 = 1547, x2 = 1426, y2 = 1550 }]   # both corners included
+exclude = []                          # parts of the areas where nothing spawns
+only_outside = false                  # true: never under a roof
+# pref_z = 18                         # how high above the ground a spot may be
+# z = 36                              # a fixed height instead
+```
+
+Both load at startup, after the mobile templates, and a mistake in them stops the server. How the
+regions spawn at runtime, water mobiles included, is in [NPC spawns](spawns.md).
+
+## Decorations
+
+`templates/decorations/` holds the world decoration the client's map files do not: doors, signs,
+lights, furniture, teleporters and the like, about 40,600 placements in 103 files. It was
+converted once from ModernUO's `Data/Decoration`, plus ServUO's New Haven (`trammel/newhaven.toml`,
+`havenisland.toml`, `havenmine.toml`, which ModernUO lacks), one TOML file per source file, in one folder
+per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
+`tokuno/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
+`_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename it without the `_`
+to place its decoration. Files starting with `_` inside a loaded folder (the dungeons, such as
+`britannia/_covetous.toml`) are loaded.
+
+```toml
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"                # the kind, kept as ModernUO names it
+item_id = 0x0675
+props = { facing = "west_cw" }    # the kind's settings; facing is a DoorFacingType
+locations = [[1411, 1621, 30], [1411, 1622, 30]]
+```
+
+A block without `item_id` is an addon built from several graphics. `extras`, when present, gives a
+setting per location in the order of `locations`.
+
+[`.decorate`](commands/decorate.md) places them with the templates of
+`templates/items/decorations.toml`: `decoration`, fixed and never decaying, for most kinds;
+`decoration_door`, the same with `script_id = "door"`, for the kinds whose name contains `Door`
+or `Gate`; and `decoration_light`, with `script_id = "light"`, for ModernUO's light kinds
+(candles, candelabras, lanterns, lamp posts, sconces, torches, braziers). Each item takes the
+block's graphic, `hue` and `name`; its other settings stay in the item's props, with
+`decoration_type` = the kind for a door or a light. A light also gets its `light` shape (the
+block's or the kind's) and `protected` unless the block says `unprotected`; the graphic already
+says whether it is lit. A door block with `locked = true` in its props places doors that only
+staff open. Teleporters, spawners, mark
+containers, public moongates and addons are not placed yet.
+

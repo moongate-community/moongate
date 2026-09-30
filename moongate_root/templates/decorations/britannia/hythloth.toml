@@ -1,0 +1,43 @@
+# ==============================================================================
+# Moongate - templates/decorations/britannia/hythloth.toml
+#
+# What it is for:
+#   World decoration placed on Trammel and Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07A5
+locations = [
+    [6081, 144, -12],
+    [6081, 145, -12],
+    [6081, 146, -12],
+    [6080, 144, -7],
+    [6080, 145, -7],
+    [6080, 146, -7],
+    [6057, 88, 32],
+    [6057, 89, 32],
+    [6057, 90, 32],
+    [6056, 88, 37],
+    [6056, 89, 37],
+    [6056, 90, 37],
+    [6041, 192, 5],
+    [6041, 193, 5],
+    [6041, 194, 5],
+    [6042, 192, 0],
+    [6042, 193, 0],
+    [6042, 194, 0],
+]

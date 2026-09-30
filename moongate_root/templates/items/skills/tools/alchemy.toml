@@ -61,6 +61,7 @@ weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
+script_id = "light"
 
 [[item]]
 id = "unlitheatingstand"
@@ -78,6 +79,7 @@ weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
+script_id = "light"
 
 [[item]]
 id = "litheatingstand"
@@ -95,6 +97,7 @@ weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x184e_heating_stand"
@@ -106,6 +109,7 @@ weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
+script_id = "light"
 
 [[item]]
 id = "0x0e24_empty_vial"

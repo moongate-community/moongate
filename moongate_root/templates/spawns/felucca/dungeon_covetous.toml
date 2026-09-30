@@ -1,0 +1,593 @@
+[[spawn]]
+id = "felucca_3500"
+map = "felucca"
+name = "Covetous Outside"
+mobile_ids = []
+npc_list_ids = ["cov_outside"]
+max = 10
+min_minutes = 5
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2451
+y1 = 852
+x2 = 2549
+y2 = 885
+
+[[spawn]]
+id = "felucca_3501"
+map = "felucca"
+name = "Covetous Outside"
+mobile_ids = []
+npc_list_ids = ["cov_outside"]
+max = 10
+min_minutes = 5
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2500
+y1 = 880
+x2 = 2548
+y2 = 904
+
+[[spawn]]
+id = "felucca_3502"
+map = "felucca"
+name = "Covetous Outside"
+mobile_ids = []
+npc_list_ids = ["cov_outside"]
+max = 10
+min_minutes = 5
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2388
+y1 = 831
+x2 = 2403
+y2 = 905
+
+[[spawn]]
+id = "felucca_3503"
+map = "felucca"
+name = "Covetous Outside"
+mobile_ids = []
+npc_list_ids = ["cov_outside"]
+max = 10
+min_minutes = 5
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2406
+y1 = 855
+x2 = 2430
+y2 = 904
+
+[[spawn]]
+id = "felucca_3504"
+map = "felucca"
+name = "Covetous Outside"
+mobile_ids = []
+npc_list_ids = ["cov_outside"]
+max = 10
+min_minutes = 5
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2350
+y1 = 895
+x2 = 2395
+y2 = 906
+
+[[spawn]]
+id = "felucca_3505"
+map = "felucca"
+name = "Covetous Lvl One Harpies"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_one_harpy_nests"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5403
+y1 = 1928
+x2 = 5421
+y2 = 1944
+
+[[spawn]]
+id = "felucca_3506"
+map = "felucca"
+name = "Covetous Lvl One Harpies"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_one_harpy_nests"]
+max = 7
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5465
+y1 = 1868
+x2 = 5484
+y2 = 1888
+
+[[spawn]]
+id = "felucca_3507"
+map = "felucca"
+name = "Covetous Lvl One Harpies"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_one"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5472
+y1 = 1891
+x2 = 5505
+y2 = 1904
+
+[[spawn]]
+id = "felucca_3508"
+map = "felucca"
+name = "Covetous Lvl One"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_one"]
+max = 15
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5438
+y1 = 1902
+x2 = 5504
+y2 = 1939
+
+[[spawn]]
+id = "felucca_3509"
+map = "felucca"
+name = "Covetous Lvl One"
+mobile_ids = ["gazer"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5391
+y1 = 1852
+x2 = 5406
+y2 = 1864
+
+[[spawn]]
+id = "felucca_3510"
+map = "felucca"
+name = "Covetous Lvl One"
+mobile_ids = ["headless"]
+npc_list_ids = []
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5419
+y1 = 1896
+x2 = 5432
+y2 = 1907
+
+[[spawn]]
+id = "felucca_3511"
+map = "felucca"
+name = "Covetous Lvl One"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_one"]
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5395
+y1 = 1876
+x2 = 5409
+y2 = 1917
+
+[[spawn]]
+id = "felucca_3512"
+map = "felucca"
+name = "Covetous Lvl Two"
+mobile_ids = ["dreadspider"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5431
+y1 = 2018
+x2 = 5456
+y2 = 2034
+
+[[spawn]]
+id = "felucca_3513"
+map = "felucca"
+name = "Covetous Lvl Two"
+mobile_ids = ["dreadspider"]
+npc_list_ids = []
+max = 1
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5467
+y1 = 2031
+x2 = 5479
+y2 = 2039
+
+[[spawn]]
+id = "felucca_3514"
+map = "felucca"
+name = "Covetous Lvl Two"
+mobile_ids = ["dreadspider"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5470
+y1 = 1980
+x2 = 5480
+y2 = 2001
+
+[[spawn]]
+id = "felucca_3515"
+map = "felucca"
+name = "Covetous Lvl Two"
+mobile_ids = ["waterele"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5489
+y1 = 1994
+x2 = 5515
+y2 = 2010
+
+[[spawn]]
+id = "felucca_3516"
+map = "felucca"
+name = "Covetous Lvl Two"
+mobile_ids = ["waterele"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5446
+y1 = 1967
+x2 = 5467
+y2 = 1983
+
+[[spawn]]
+id = "felucca_3517"
+map = "felucca"
+name = "Covetous Lvl Two"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_two_light"]
+max = 15
+min_minutes = 15
+max_minutes = 30
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5518
+y1 = 1994
+x2 = 5597
+y2 = 2035
+
+[[spawn]]
+id = "felucca_3518"
+map = "felucca"
+name = "Covetous Lvl Two"
+mobile_ids = ["harpy"]
+npc_list_ids = []
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5404
+y1 = 1994
+x2 = 5426
+y2 = 2009
+
+[[spawn]]
+id = "felucca_3519"
+map = "felucca"
+name = "Covetous Lvl Two"
+mobile_ids = ["harpy"]
+npc_list_ids = []
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5410
+y1 = 1970
+x2 = 5428
+y2 = 1979
+
+[[spawn]]
+id = "felucca_3520"
+map = "felucca"
+name = "Covetous Lvl Two"
+mobile_ids = ["harpy"]
+npc_list_ids = []
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5433
+y1 = 1952
+x2 = 5440
+y2 = 1966
+
+[[spawn]]
+id = "felucca_3521"
+map = "felucca"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_light"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5554
+y1 = 1888
+x2 = 5562
+y2 = 1916
+
+[[spawn]]
+id = "felucca_3522"
+map = "felucca"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_light"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5596
+y1 = 1888
+x2 = 5604
+y2 = 1916
+
+[[spawn]]
+id = "felucca_3523"
+map = "felucca"
+name = "Covetous Lvl Three"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 40
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5568
+y1 = 1852
+x2 = 5590
+y2 = 1866
+
+[[spawn]]
+id = "felucca_3524"
+map = "felucca"
+name = "Covetous Lvl Three"
+mobile_ids = ["skeletalknight"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5536
+y1 = 1876
+x2 = 5543
+y2 = 1887
+
+[[spawn]]
+id = "felucca_3525"
+map = "felucca"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_light"]
+max = 3
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5544
+y1 = 1880
+x2 = 5562
+y2 = 1882
+
+[[spawn]]
+id = "felucca_3526"
+map = "felucca"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_medium"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5552
+y1 = 1840
+x2 = 5562
+y2 = 1882
+
+[[spawn]]
+id = "felucca_3528"
+map = "felucca"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_heavy"]
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5608
+y1 = 1832
+x2 = 5622
+y2 = 1846
+
+[[spawn]]
+id = "felucca_3529"
+map = "felucca"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_medium"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5616
+y1 = 1848
+x2 = 5622
+y2 = 1882
+
+[[spawn]]
+id = "felucca_3530"
+map = "felucca"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_light"]
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5596
+y1 = 1872
+x2 = 5610
+y2 = 1882
+
+[[spawn]]
+id = "felucca_3531"
+map = "felucca"
+name = "Covetous Lvl Three"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_three_light"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5568
+y1 = 1824
+x2 = 5590
+y2 = 1834
+
+[[spawn]]
+id = "felucca_3532"
+map = "felucca"
+name = "Covetous Lvl Four"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_four"]
+max = 10
+min_minutes = 20
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5500
+y1 = 1800
+x2 = 5542
+y2 = 1818
+
+[[spawn]]
+id = "felucca_3533"
+map = "felucca"
+name = "Covetous Lvl Five"
+mobile_ids = []
+npc_list_ids = ["cov_lvl_five"]
+max = 4
+min_minutes = 20
+max_minutes = 40
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5453
+y1 = 1795
+x2 = 5475
+y2 = 1821

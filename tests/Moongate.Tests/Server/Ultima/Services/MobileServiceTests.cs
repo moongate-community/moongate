@@ -1,10 +1,12 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Npcs;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -104,6 +106,39 @@ public sealed class MobileServiceTests
         mobiles.TryMove(aria, DirectionType.East);
 
         Assert.Equal(["Moved 2 1600,1600,0"], senses.Calls);
+    }
+
+    [Fact]
+    public void EnterMoveAndLeave_KeepThePlayersRegion()
+    {
+        var regions = new RegionService(
+            new StubDataLoaderService().With(
+                new RegionContent
+                {
+                    Map = MapType.Trammel, Name = "Britain", Areas = [new RegionAreaContent { X1 = 1500, Y1 = 1500, X2 = 1601, Y2 = 1700 }]
+                }
+            )
+        );
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create(), regions: regions);
+        var aria = new MobileEntity
+        {
+            Id = new Serial(2), AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0),
+            Direction = DirectionType.East
+        };
+
+        mobiles.EnterWorld(aria);
+        Assert.Equal("Britain", regions.Current(aria.Id)?.Name);
+
+        mobiles.TryMove(aria, DirectionType.East);
+        Assert.Null(regions.Current(aria.Id));
+
+        // The first step west only turns the player.
+        mobiles.TryMove(aria, DirectionType.West);
+        mobiles.TryMove(aria, DirectionType.West);
+        Assert.Equal("Britain", regions.Current(aria.Id)?.Name);
+        mobiles.LeaveWorld(aria.Id);
+
+        Assert.Null(regions.Current(aria.Id));
     }
 
     [Fact]

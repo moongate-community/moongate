@@ -1,9 +1,11 @@
+using Moongate.Core.Geometry;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
-///     Makes a mobile speak overhead to the players around it. Called on the game loop.
+///     What the players around a mobile hear: its overhead speech and the sounds it makes. Called on the game loop.
 /// </summary>
 public interface ISpeechService
 {
@@ -13,4 +15,18 @@ public interface ISpeechService
     /// </summary>
     /// <returns>How many players it was sent to.</returns>
     int Say(MobileEntity speaker, string text);
+
+    /// <summary>
+    ///     Plays <paramref name="sound" /> once where <paramref name="source" /> stands (0x54), for the players within 15
+    ///     cells on its map.
+    /// </summary>
+    /// <returns>How many players it was sent to.</returns>
+    int PlaySound(MobileEntity source, int sound);
+
+    /// <summary>
+    ///     Plays <paramref name="sound" /> once at <paramref name="location" /> on <paramref name="map" /> (0x54), for the
+    ///     players within 15 cells, such as where an item lies.
+    /// </summary>
+    /// <returns>How many players it was sent to.</returns>
+    int PlaySound(MapType map, Point3D location, int sound);
 }

@@ -1,0 +1,143 @@
+[[spawn]]
+id = "ilshenar_18600"
+map = "ilshenar"
+name = "Gypsy Caravan 0_1"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 150
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1253
+y1 = 582
+x2 = 1254
+y2 = 587
+
+[[spawn]]
+id = "ilshenar_18601"
+map = "ilshenar"
+name = "Gypsy Caravan 1_1"
+mobile_ids = ["gypsyanimaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1225
+y1 = 561
+x2 = 1228
+y2 = 565
+
+[[spawn]]
+id = "ilshenar_18602"
+map = "ilshenar"
+name = "Gypsy Caravan 1_2"
+mobile_ids = ["gypsybanker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1226
+y1 = 554
+x2 = 1226
+y2 = 554
+
+[[spawn]]
+id = "ilshenar_18603"
+map = "ilshenar"
+name = "Gypsy Caravan 1_3"
+mobile_ids = ["ironworker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1261
+y1 = 582
+x2 = 1261
+y2 = 582
+
+[[spawn]]
+id = "ilshenar_18604"
+map = "ilshenar"
+name = "Gypsy Caravan 1_4"
+mobile_ids = ["vagabond"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1252
+y1 = 589
+x2 = 1252
+y2 = 589
+
+[[spawn]]
+id = "ilshenar_18610"
+map = "ilshenar"
+name = "Gypsy Caravan 2_1"
+mobile_ids = ["gypsyanimaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1387
+y1 = 427
+x2 = 1392
+y2 = 431
+
+[[spawn]]
+id = "ilshenar_18611"
+map = "ilshenar"
+name = "Gypsy Caravan 2_2"
+mobile_ids = ["f_gypsymaiden"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1400
+y1 = 434
+x2 = 1400
+y2 = 434
+
+[[spawn]]
+id = "ilshenar_18612"
+map = "ilshenar"
+name = "Gypsy Caravan 2_3"
+mobile_ids = ["gypsybanker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1405
+y1 = 439
+x2 = 1405
+y2 = 439

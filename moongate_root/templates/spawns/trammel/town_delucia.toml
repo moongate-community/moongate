@@ -1,0 +1,396 @@
+[[spawn]]
+id = "trammel_8500"
+map = "trammel"
+name = "delucia - stables"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5291
+y1 = 4004
+x2 = 5299
+y2 = 4011
+
+[[spawn]]
+id = "trammel_8501"
+map = "trammel"
+name = "delucia - hut of magics"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5293
+y1 = 3975
+x2 = 5297
+y2 = 3979
+
+[[spawn]]
+id = "trammel_8502"
+map = "trammel"
+name = "ydelucia - ye olde eleventh bank"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5270
+y1 = 3972
+x2 = 5276
+y2 = 3985
+
+[[spawn]]
+id = "trammel_8503"
+map = "trammel"
+name = "delucia - tailor shop"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5232
+y1 = 4015
+x2 = 5235
+y2 = 4025
+
+[[spawn]]
+id = "trammel_8504"
+map = "trammel"
+name = "delucia - zoots hammer"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5223
+y1 = 4002
+x2 = 5230
+y2 = 4006
+
+[[spawn]]
+id = "trammel_8505"
+map = "trammel"
+name = "delucia - the supply depot"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5214
+y1 = 4008
+x2 = 5221
+y2 = 4015
+
+[[spawn]]
+id = "trammel_8506"
+map = "trammel"
+name = "delucia - the barely inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5195
+y1 = 4054
+x2 = 5201
+y2 = 4065
+
+[[spawn]]
+id = "trammel_8507"
+map = "trammel"
+name = "delucia - Healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5187
+y1 = 3986
+x2 = 5194
+y2 = 3989
+
+[[spawn]]
+id = "trammel_8508"
+map = "trammel"
+name = "delucia - the supply depot"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5214
+y1 = 4008
+x2 = 5221
+y2 = 4015
+
+[[spawn]]
+id = "trammel_8509"
+map = "trammel"
+name = "delucia - zoots hammer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5223
+y1 = 4002
+x2 = 5230
+y2 = 4006
+
+[[spawn]]
+id = "trammel_8510"
+map = "trammel"
+name = "delucia - zoots hammer"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5223
+y1 = 4002
+x2 = 5230
+y2 = 4006
+
+[[spawn]]
+id = "trammel_8511"
+map = "trammel"
+name = "delucia - tailor shop"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5232
+y1 = 4015
+x2 = 5235
+y2 = 4025
+
+[[spawn]]
+id = "trammel_8512"
+map = "trammel"
+name = "delucia - tailor shop"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5232
+y1 = 4015
+x2 = 5235
+y2 = 4025
+
+[[spawn]]
+id = "trammel_8513"
+map = "trammel"
+name = "delucia - tailor shop"
+mobile_ids = ["furtrader"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5232
+y1 = 4015
+x2 = 5235
+y2 = 4025
+
+[[spawn]]
+id = "trammel_8514"
+map = "trammel"
+name = "delucia - towncrier"
+mobile_ids = ["towncrier"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5267
+y1 = 3988
+x2 = 5267
+y2 = 3988
+
+[[spawn]]
+id = "trammel_8515"
+map = "trammel"
+name = "delucia - hut of magics"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5293
+y1 = 3975
+x2 = 5297
+y2 = 3979
+
+[[spawn]]
+id = "trammel_8516"
+map = "trammel"
+name = "delucia - hut of magics"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5283
+y1 = 3978
+x2 = 5288
+y2 = 3983
+
+[[spawn]]
+id = "trammel_8517"
+map = "trammel"
+name = "delucia - hut of magics"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5283
+y1 = 3978
+x2 = 5288
+y2 = 3983
+
+[[spawn]]
+id = "trammel_8518"
+map = "trammel"
+name = "delucia - tower 1st floor"
+mobile_ids = ["fighter"]
+npc_list_ids = []
+max = 2
+min_minutes = 28
+max_minutes = 32
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5262
+y1 = 3935
+x2 = 5266
+y2 = 3943
+
+[[spawn]]
+id = "trammel_8519"
+map = "trammel"
+name = "delucia - tower 2nd floor"
+mobile_ids = ["fighter"]
+npc_list_ids = []
+max = 2
+min_minutes = 28
+max_minutes = 32
+call = 1
+exclude = []
+z = 57
+only_outside = false
+[[spawn.areas]]
+x1 = 5258
+y1 = 3931
+x2 = 5268
+y2 = 3937
+
+[[spawn]]
+id = "trammel_8520"
+map = "trammel"
+name = "delucia - tower outside"
+mobile_ids = ["warrior"]
+npc_list_ids = []
+max = 2
+min_minutes = 28
+max_minutes = 32
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5272
+y1 = 3940
+x2 = 5280
+y2 = 3940
+
+[[spawn]]
+id = "trammel_8536"
+map = "trammel"
+name = "delucia - stables"
+mobile_ids = ["veterinarian"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5291
+y1 = 4004
+x2 = 5299
+y2 = 4011

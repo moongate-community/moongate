@@ -1,0 +1,885 @@
+[[spawn]]
+id = "felucca_4250"
+map = "felucca"
+name = "Khaldun - Lysander Gathenwale"
+mobile_ids = ["lysander_gathenwale"]
+npc_list_ids = []
+max = 1
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5433
+y1 = 1287
+x2 = 5477
+y2 = 1327
+
+[[spawn]]
+id = "felucca_4251"
+map = "felucca"
+name = "Khaldun - Morg Bergen"
+mobile_ids = ["morg_bergen"]
+npc_list_ids = []
+max = 1
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5400
+y1 = 1295
+x2 = 5433
+y2 = 1322
+
+[[spawn]]
+id = "felucca_4252"
+map = "felucca"
+name = "Khaldun - Tavara Sewel"
+mobile_ids = ["tavara_sewel"]
+npc_list_ids = []
+max = 1
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5399
+y1 = 1331
+x2 = 5441
+y2 = 1370
+
+[[spawn]]
+id = "felucca_4253"
+map = "felucca"
+name = "Khaldun - Grimmoch Drummel"
+mobile_ids = ["grimmoch_drummel"]
+npc_list_ids = []
+max = 1
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5522
+y1 = 1336
+x2 = 5570
+y2 = 1386
+
+[[spawn]]
+id = "felucca_4255"
+map = "felucca"
+name = "Khaldun - Ancient Lich 1"
+mobile_ids = ["ancientlich"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5442
+y1 = 1438
+x2 = 5479
+y2 = 1465
+
+[[spawn]]
+id = "felucca_4256"
+map = "felucca"
+name = "Khaldun - Ancient Lich 2"
+mobile_ids = ["ancientlich"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5529
+y1 = 1314
+x2 = 5569
+y2 = 1352
+
+[[spawn]]
+id = "felucca_4257"
+map = "felucca"
+name = "Khaldun - Bone Knight"
+mobile_ids = ["boneknight"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5394
+y1 = 1310
+x2 = 5432
+y2 = 1352
+
+[[spawn]]
+id = "felucca_4258"
+map = "felucca"
+name = "Khaldun - Bone Magi"
+mobile_ids = ["bonemage"]
+npc_list_ids = []
+max = 2
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5414
+y1 = 1458
+x2 = 5445
+y2 = 1505
+
+[[spawn]]
+id = "felucca_4259"
+map = "felucca"
+name = "Khaldun - Cursed 1"
+mobile_ids = ["cursed"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5382
+y1 = 1350
+x2 = 5415
+y2 = 1391
+
+[[spawn]]
+id = "felucca_4260"
+map = "felucca"
+name = "Khaldun - Cursed 2"
+mobile_ids = ["cursed"]
+npc_list_ids = []
+max = 3
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5479
+y1 = 1296
+x2 = 5514
+y2 = 1338
+
+[[spawn]]
+id = "felucca_4261"
+map = "felucca"
+name = "Khaldun - Cursed 3"
+mobile_ids = ["cursed"]
+npc_list_ids = []
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5518
+y1 = 1287
+x2 = 5561
+y2 = 1318
+
+[[spawn]]
+id = "felucca_4262"
+map = "felucca"
+name = "Khaldun - Cursed 4"
+mobile_ids = ["cursed"]
+npc_list_ids = []
+max = 3
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5529
+y1 = 1302
+x2 = 5565
+y2 = 1344
+
+[[spawn]]
+id = "felucca_4263"
+map = "felucca"
+name = "Khaldun - Tentacles of the Harrower"
+mobile_ids = ["tentacles_of_the_harrower"]
+npc_list_ids = []
+max = 1
+min_minutes = 30
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5605
+y1 = 1343
+x2 = 5605
+y2 = 1343
+
+[[spawn]]
+id = "felucca_4264"
+map = "felucca"
+name = "Khaldun - Zealot Summoner 1"
+mobile_ids = ["zealot_summoner"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5390
+y1 = 1408
+x2 = 5426
+y2 = 1448
+
+[[spawn]]
+id = "felucca_4265"
+map = "felucca"
+name = "Khaldun - Zealot Summoner 2"
+mobile_ids = ["zealot_summoner"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5442
+y1 = 1424
+x2 = 5489
+y2 = 1470
+
+[[spawn]]
+id = "felucca_4266"
+map = "felucca"
+name = "Khaldun - Zealot Summoner 3"
+mobile_ids = ["zealot_summoner"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5516
+y1 = 1321
+x2 = 5559
+y2 = 1366
+
+[[spawn]]
+id = "felucca_4267"
+map = "felucca"
+name = "Khaldun - Zealot Knight 1"
+mobile_ids = ["zealot_knight"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5390
+y1 = 1408
+x2 = 5426
+y2 = 1448
+
+[[spawn]]
+id = "felucca_4268"
+map = "felucca"
+name = "Khaldun - Khaldun Zealot Knight 2"
+mobile_ids = ["zealot_knight"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5442
+y1 = 1424
+x2 = 5489
+y2 = 1470
+
+[[spawn]]
+id = "felucca_4269"
+map = "felucca"
+name = "Khaldun - Khaldun Zealot Knight 3"
+mobile_ids = ["zealot_knight"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5516
+y1 = 1321
+x2 = 5559
+y2 = 1366
+
+[[spawn]]
+id = "felucca_4270"
+map = "felucca"
+name = "Khaldun - Shadow Fiend 1"
+mobile_ids = ["shadowfiend"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5382
+y1 = 1350
+x2 = 5415
+y2 = 1391
+
+[[spawn]]
+id = "felucca_4271"
+map = "felucca"
+name = "Khaldun - Shadow Fiend 2"
+mobile_ids = ["shadowfiend"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5390
+y1 = 1408
+x2 = 5426
+y2 = 1448
+
+[[spawn]]
+id = "felucca_4272"
+map = "felucca"
+name = "Khaldun - Shadow Fiend 3"
+mobile_ids = ["shadowfiend"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5400
+y1 = 1295
+x2 = 5433
+y2 = 1322
+
+[[spawn]]
+id = "felucca_4273"
+map = "felucca"
+name = "Khaldun - Shadow Fiend 4"
+mobile_ids = ["shadowfiend"]
+npc_list_ids = []
+max = 3
+min_minutes = 10
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5414
+y1 = 1458
+x2 = 5445
+y2 = 1505
+
+[[spawn]]
+id = "felucca_4274"
+map = "felucca"
+name = "Khaldun - Shadow Fiend 5"
+mobile_ids = ["shadowfiend"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5415
+y1 = 1323
+x2 = 5439
+y2 = 1369
+
+[[spawn]]
+id = "felucca_4275"
+map = "felucca"
+name = "Khaldun - Shadow Fiend 6"
+mobile_ids = ["shadowfiend"]
+npc_list_ids = []
+max = 2
+min_minutes = 10
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5466
+y1 = 1424
+x2 = 5505
+y2 = 1465
+
+[[spawn]]
+id = "felucca_4276"
+map = "felucca"
+name = "Khaldun - Shadow Fiend 7"
+mobile_ids = ["shadowfiend"]
+npc_list_ids = []
+max = 2
+min_minutes = 10
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5472
+y1 = 1391
+x2 = 5505
+y2 = 1432
+
+[[spawn]]
+id = "felucca_4277"
+map = "felucca"
+name = "Khaldun - Shadow Fiend 8"
+mobile_ids = ["shadowfiend"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+only_outside = false
+[[spawn.areas]]
+x1 = 5511
+y1 = 1377
+x2 = 5529
+y2 = 1401
+[[spawn.exclude]]
+x1 = 5524
+y1 = 1392
+x2 = 5525
+y2 = 1394
+
+[[spawn]]
+id = "felucca_4278"
+map = "felucca"
+name = "Khaldun - Shadow Fiend 9"
+mobile_ids = ["shadowfiend"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5500
+y1 = 1287
+x2 = 5545
+y2 = 1311
+
+[[spawn]]
+id = "felucca_4279"
+map = "felucca"
+name = "Khaldun - Shadow Fiend 10"
+mobile_ids = ["shadowfiend"]
+npc_list_ids = []
+max = 1
+min_minutes = 8
+max_minutes = 18
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5547
+y1 = 1294
+x2 = 5564
+y2 = 1326
+
+[[spawn]]
+id = "felucca_4280"
+map = "felucca"
+name = "Khaldun - Skeletal Knight 1"
+mobile_ids = ["skeletalknight"]
+npc_list_ids = []
+max = 1
+min_minutes = 8
+max_minutes = 18
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5383
+y1 = 1305
+x2 = 5419
+y2 = 1321
+
+[[spawn]]
+id = "felucca_4281"
+map = "felucca"
+name = "Khaldun - Skeletal Knight 2"
+mobile_ids = ["skeletalknight"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5426
+y1 = 1391
+x2 = 5465
+y2 = 1418
+
+[[spawn]]
+id = "felucca_4282"
+map = "felucca"
+name = "Khaldun - Skeletal Knight 3"
+mobile_ids = ["skeletalknight"]
+npc_list_ids = []
+max = 2
+min_minutes = 8
+max_minutes = 18
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5473
+y1 = 1287
+x2 = 5515
+y2 = 1311
+
+[[spawn]]
+id = "felucca_4283"
+map = "felucca"
+name = "Khaldun - Skeletal Knight 4"
+mobile_ids = ["skeletalknight"]
+npc_list_ids = []
+max = 1
+min_minutes = 8
+max_minutes = 18
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5400
+y1 = 1295
+x2 = 5433
+y2 = 1311
+
+[[spawn]]
+id = "felucca_4284"
+map = "felucca"
+name = "Khaldun - Skeletal Mage"
+mobile_ids = ["skeletalmage"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5442
+y1 = 1433
+x2 = 5489
+y2 = 1470
+
+[[spawn]]
+id = "felucca_4285"
+map = "felucca"
+name = "Khaldun - Skeleton 1"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 2
+min_minutes = 8
+max_minutes = 18
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5383
+y1 = 1311
+x2 = 5425
+y2 = 1352
+
+[[spawn]]
+id = "felucca_4286"
+map = "felucca"
+name = "Khaldun - Skeleton 2"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 2
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5394
+y1 = 1432
+x2 = 5440
+y2 = 1470
+
+[[spawn]]
+id = "felucca_4287"
+map = "felucca"
+name = "Khaldun - Skeleton 3"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 5
+min_minutes = 10
+max_minutes = 20
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5413
+y1 = 1465
+x2 = 5453
+y2 = 1505
+
+[[spawn]]
+id = "felucca_4288"
+map = "felucca"
+name = "Khaldun - Skeleton 4"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 3
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5464
+y1 = 1343
+x2 = 5510
+y2 = 1390
+
+[[spawn]]
+id = "felucca_4289"
+map = "felucca"
+name = "Khaldun - Spectral Armor 1"
+mobile_ids = ["spectralarmor"]
+npc_list_ids = []
+max = 2
+min_minutes = 10
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5455
+y1 = 1379
+x2 = 5497
+y2 = 1418
+
+[[spawn]]
+id = "felucca_4290"
+map = "felucca"
+name = "Khaldun - Spectral Armor 2"
+mobile_ids = ["spectralarmor"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5464
+y1 = 1343
+x2 = 5510
+y2 = 1390
+
+[[spawn]]
+id = "felucca_4291"
+map = "felucca"
+name = "Khaldun - Zombie 1"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 2
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5382
+y1 = 1350
+x2 = 5415
+y2 = 1391
+
+[[spawn]]
+id = "felucca_4292"
+map = "felucca"
+name = "Khaldun - Zombie 2"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 2
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5390
+y1 = 1408
+x2 = 5426
+y2 = 1448
+
+[[spawn]]
+id = "felucca_4293"
+map = "felucca"
+name = "Khaldun - Zombie 3"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 1
+min_minutes = 8
+max_minutes = 18
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5394
+y1 = 1310
+x2 = 5432
+y2 = 1352
+
+[[spawn]]
+id = "felucca_4294"
+map = "felucca"
+name = "Khaldun - Zombie 4"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 1
+min_minutes = 8
+max_minutes = 18
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5399
+y1 = 1331
+x2 = 5441
+y2 = 1370
+
+[[spawn]]
+id = "felucca_4295"
+map = "felucca"
+name = "Khaldun - Zombie 5"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 2
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5404
+y1 = 1431
+x2 = 5442
+y2 = 1471
+
+[[spawn]]
+id = "felucca_4296"
+map = "felucca"
+name = "Khaldun - Zombie 6"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5426
+y1 = 1391
+x2 = 5465
+y2 = 1418
+
+[[spawn]]
+id = "felucca_4297"
+map = "felucca"
+name = "Khaldun - Zombie 7"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5465
+y1 = 1414
+x2 = 5505
+y2 = 1454
+
+[[spawn]]
+id = "felucca_4298"
+map = "felucca"
+name = "Khaldun - Zombie 8"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 2
+min_minutes = 8
+max_minutes = 18
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5472
+y1 = 1287
+x2 = 5514
+y2 = 1327
+
+[[spawn]]
+id = "felucca_4299"
+map = "felucca"
+name = "Khaldun - Zombie 9"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 2
+min_minutes = 8
+max_minutes = 18
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5529
+y1 = 1362
+x2 = 5592
+y2 = 1388

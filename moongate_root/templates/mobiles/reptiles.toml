@@ -16,6 +16,7 @@ armor = 15
 notoriety = "attackable"
 karma = -600
 fame = 600
+movement = "both"
 [mobile.skills]
 resisting_spells = "1d16+24"
 parrying = "1d36+37"

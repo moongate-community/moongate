@@ -1036,14 +1036,92 @@ public sealed class UoxItemConverterCommandTests : IDisposable
                         .Item.ToDictionary(item => item.Id);
     }
 
-    private int Run(bool includeLootDestination = true)
+    [Fact]
+    public void Run_WithTheScriptsSource_GivesTheItemsOfAScriptWithALuaEquivalentItsScriptId()
+    {
+        _dirs.WriteSource(
+            "lighting.dfn",
+            """
+            [0x0a28]
+            {
+            name=candle
+            id=0x0a28
+            }
+
+            [special_lamp]
+            {
+            id=0x0f00
+            script=500
+            }
+
+            [0x0675]
+            {
+            name=metal door
+            id=0x0675
+            }
+
+            [0x0eed]
+            {
+            name=gold coin
+            id=0x0eed
+            }
+            """
+        );
+        _dirs.WriteScriptsSource(
+            "jse_fileassociations.scp",
+            """
+            // comment
+            [SCRIPT_LIST]
+            {
+            500=item/lights.js
+            4500=item/doors.js
+            }
+            """
+        );
+        _dirs.WriteScriptsSource(
+            "jse_objectassociations.scp",
+            """
+            [ENVOKE]
+            {
+            //Lights
+            0x0a28=500
+            0x0675=4500
+            }
+            """
+        );
+
+        var exitCode = Run(scriptsSource: _dirs.ScriptsSourceDirectory);
+
+        Assert.True(exitCode == 0, CombinedOutput);
+        var items = TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, "lighting.toml"))!
+                             .Item.ToDictionary(item => item.Id, item => item.ScriptId);
+        Assert.Equal("light", items["0x0a28_candle"]);
+        Assert.Equal("light", items["special_lamp"]);
+        Assert.True(string.IsNullOrEmpty(items["0x0675_metal_door"]));
+        Assert.True(string.IsNullOrEmpty(items["0x0eed_gold_coin"]));
+    }
+
+    [Fact]
+    public void Run_AScriptsSourceWithoutTheAssociations_Fails()
+    {
+        _dirs.WriteSource("items.dfn", "[coin]\n{\nid=0x0eed\n}\n");
+        Directory.CreateDirectory(_dirs.ScriptsSourceDirectory);
+
+        var exitCode = Run(scriptsSource: _dirs.ScriptsSourceDirectory);
+
+        Assert.Equal(2, exitCode);
+        Assert.Contains("jse_fileassociations.scp", _error.ToString());
+    }
+
+    private int Run(bool includeLootDestination = true, string? scriptsSource = null)
     {
         return UoxItemConverterCommand.Run(
             _dirs.SourceDirectory,
             _dirs.DestinationDirectory,
             includeLootDestination ? _dirs.LootDestinationDirectory : null,
             _output,
-            _error
+            _error,
+            scriptsSource: scriptsSource
         );
     }
 

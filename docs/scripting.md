@@ -64,15 +64,26 @@ exists but fails compilation/execution aborts server startup.
 | `localization.get(id, ...)` | Message `id` of `data/messages` in the server language, with `{0}`, `{1}`, ... filled by the extra arguments; see [Localization](localization.md#read-a-message-from-lua) |
 | `localization.text(id)`, `localization.language()` | The raw text of a message, or `nil`; the server language code |
 | `npc.say(serial, text)` | The NPC says `text` overhead to the players within 15 cells (cut to 128 characters); `false` for blank text or a serial that is not an NPC in the world |
+| `npc.play_sound(serial, sound)` | Plays a sound where the NPC stands, for the players within 15 cells (0x54): a sound id from 0 to 65535, such as `0x69`, or a kind of the NPC template's `[mobile.sounds]`, `"start_attack"`, `"idle"`, `"attack"`, `"hurt"` or `"death"`, so a script makes each creature sound like itself; `false` for a sound out of range, a kind its template does not set, or a serial that is not an NPC in the world |
 | `npc.step(serial, direction, running?)` | One step toward a `DirectionType` (`North` to `NorthWest`), turning first when needed, seen by the players in range; a run when `running` is `true`. How often the script calls it sets the speed. `false` when blocked or for `DirectionType.Running`, which is not a direction |
 | `npc.location(serial)`, `npc.name(serial)` | `{ x, y, z, map }` and the name of the NPC, or `nil` |
+| `npc.get_prop(serial, key)`, `npc.set_prop(serial, key, value)` | A value the NPC keeps across restarts: a string, a number or a bool, saved with the NPC by the world save; `get_prop` gives `nil` when it has none, `set_prop` with `nil` removes it and gives `false` for a table, a function or a blank key |
 | `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
 | `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` for a worn item, an `amount` below 1, fewer units left, or an item a player holds on the cursor |
+| `item.get_prop(serial, key)`, `item.set_prop(serial, key, value)` | The same for an item, saved with it by the world save or its owner's save |
+| `item.item_id(serial)`, `item.set_item_id(serial, graphic)` | The item's graphic, and changing it (0 to 65535), as a door opening: the players around a ground item, or the owner of a carried one, see it change; `false` for an unknown, worn or held item or a graphic out of range; an item inside a container on the ground changes without being shown again |
+| `item.set_light(serial, type)` | The light shape a light source gives, by `LightType` name such as `circle150`, `circle300` or `west_big`; `nil` clears it. The players who see the item are shown it again; the client draws the light only for a lit graphic. `false` for an unknown shape or a worn or held item |
+| `item.location(serial)`, `item.move_to(serial, x, y, z)` | Where a ground item lies, `{ x, y, z, map }`, and moving it on its map: the players around the old spot lose it and those around the new one see it; `nil`/`false` for an item not on the ground, a spot outside the map or a `z` outside -128 to 127; moving restarts a decaying item's decay |
+| `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
+| `world.is_occupied(map, x, y)` | Whether a player or an NPC stands on the tile, at any height, such as a door's doorway; `map` is a `MapType` |
+| `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
+| `world.is_staff(player)` | Whether the player is a game master or an administrator in the world; `false` for an NPC or a player not in the world |
+| `world.carries(mobile, key, value)` | Whether the mobile wears or carries, in its containers at any depth, an item whose prop `key` is `value`, such as the key of a door: `world.carries(user, "key.value", 1234)` |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization`, `npc` and `item` in game and standalone modes.
+The Ultima plugin registers `dice`, `localization`, `npc`, `item` and `world` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -187,7 +198,12 @@ function wander.on_think(serial)
     thinks[serial] = (thinks[serial] or 0) + 1
 
     if thinks[serial] % 4 == 0 then
-        npc.step(serial, dice.roll("1d8") - 1)
+        -- pick_direction (in the file) keeps a spawned NPC in its home area; nil when no step does.
+        local direction = pick_direction(serial)
+
+        if direction ~= nil then
+            npc.step(serial, direction)
+        end
     end
 end
 
@@ -210,7 +226,25 @@ end
 ```
 
 No template in the repository uses it: add `script_id = "wander"` to a mobile template
-to try it.
+to try it. An NPC spawned by a spawn region carries its home area in the props `spawn.x1`,
+`spawn.y1`, `spawn.x2` and `spawn.y2`: `wander.lua` only steps inside it, and walks the NPC back
+when it is outside.
+
+A script's `local` tables live in memory: they start again empty after a restart or a
+reload. To remember something across restarts, keep it in the NPC's props, prefixing the
+key with the script name, as `vega.lua` counts the hellos it hears:
+
+```lua
+function vega.on_speech(serial, speaker, text)
+    if text:lower():find("hello", 1, true) then
+        local times = (npc.get_prop(serial, "vega.greeted") or 0) + 1
+        npc.set_prop(serial, "vega.greeted", times)
+        npc.say(serial, "Meow! That's " .. times .. " hellos.")
+    end
+end
+```
+
+A change made after the last world save is lost if the server stops without saving.
 
 Reload one script with `script reload mobiles/wander.lua`. Its table is replaced,
 so the NPCs use the new functions from their next think; state kept in `local`
@@ -260,6 +294,38 @@ function potion.on_use(serial, user)
     return true
 end
 ```
+
+The distribution also ships `scripts/items/door.lua`, the script of the `decoration_door`
+template that [`.decorate`](commands/decorate.md) gives to doors and gates. Double clicking
+a closed door opens it and its linked door (prop `door.link`): the graphic goes to the next
+one, the door swings aside by its `facing` prop and plays the sound of its
+`decoration_type` (metal, wood, gate or secret). Double clicking an open door closes both
+when nobody stands in either doorway. An open door closes by itself after 20 seconds, then
+tries again every 10 seconds while the doorway is taken. A door that cannot swing aside, such
+as one at the edge of the map, stays closed. The open state is the prop `door.open`, with the
+closed spot in `door.x`, `door.y` and `door.z`, saved with the door; the auto-close timer is not, so a door left open when the
+server stops stays open until someone uses it. A closed door with the prop `locked` does not
+open for players, who read "That is locked." (message 398, in the server language), unless
+they carry anywhere in their backpack a key whose prop `key.value` is the door's `key.value`
+(message 405: they open it and it stays locked); game masters and administrators open it
+(message 404). The prop comes from the decoration data
+(`props = { facing = "west_cw", locked = true }`), such as the side doors of the New Haven
+bank. `.lock` gives a door a key number and `.key` makes its key.
+
+`scripts/items/light.lua` lights and douses candles, candelabras, lanterns, lamp posts, wall
+sconces and torches: the `decoration_light` template and the light templates of
+`templates/items` use it. Double clicking an unlit light gives it the lit graphic (ModernUO's
+pairs), a light shape if it has none, and sound `0x47`; double clicking a lit one gives the
+unlit graphic and sound `0x3BE`, keeping the shape for the next time. A light without an unlit
+graphic, such as a brazier, stays as it is. The lights `.decorate` places have the prop
+`protected`: only game masters and administrators light or douse them. The town lamp posts
+light and douse themselves: every 30 seconds the server calls `on_darkness(serial, dark)` on a
+lamp post whose spot turned dark or light (`ultima.world.lamp_post_light`), and `light.lua`
+switches its graphic silently.
+
+LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
+`{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,
+as `light.lua` does with `add(0x0A27, 0x0B1D, "circle225")`.
 
 ## Reload and ownership
 

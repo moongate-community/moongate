@@ -36,6 +36,12 @@ public interface ISectorService
     bool IsActive(MapType map, Point3D point);
 
     /// <summary>
+    ///     Gets whether <paramref name="x" />, <paramref name="y" /> lies inside the sector grid of <paramref name="map" />:
+    ///     a mobile or a ground item placed outside it is ignored by the grid and seen by nobody.
+    /// </summary>
+    bool IsInside(MapType map, int x, int y);
+
+    /// <summary>
     ///     Gets the mobiles on the map within <paramref name="range" /> tiles of the center on both axes.
     /// </summary>
     IReadOnlyList<MobileEntity> GetMobilesInRange(MapType map, Point3D center, int range);

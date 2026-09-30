@@ -1,0 +1,125 @@
+[[spawn]]
+id = "ilshenar_17450"
+map = "ilshenar"
+name = "Cyclops 1_1"
+mobile_ids = ["imp"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 937
+y1 = 1526
+x2 = 942
+y2 = 1542
+
+[[spawn]]
+id = "ilshenar_17451"
+map = "ilshenar"
+name = "Cyclops 1_2"
+mobile_ids = ["imp"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 937
+y1 = 1487
+x2 = 943
+y2 = 1497
+
+[[spawn]]
+id = "ilshenar_17452"
+map = "ilshenar"
+name = "Cyclops 1_3"
+mobile_ids = []
+npc_list_ids = ["allettin"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 953
+y1 = 1496
+x2 = 965
+y2 = 1508
+
+[[spawn]]
+id = "ilshenar_17453"
+map = "ilshenar"
+name = "Cyclops 1_4"
+mobile_ids = []
+npc_list_ids = ["cyclops_ghosts"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 953
+y1 = 1465
+x2 = 973
+y2 = 1484
+
+[[spawn]]
+id = "ilshenar_17454"
+map = "ilshenar"
+name = "Cyclops 1_5"
+mobile_ids = []
+npc_list_ids = ["cyclops_giants"]
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 985
+y1 = 1496
+x2 = 1012
+y2 = 1524
+
+[[spawn]]
+id = "ilshenar_17456"
+map = "ilshenar"
+name = "Cyclops 1_7"
+mobile_ids = ["balron"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 922
+y1 = 1553
+x2 = 948
+y2 = 1572
+
+[[spawn]]
+id = "ilshenar_17457"
+map = "ilshenar"
+name = "Cyclops 1_8"
+mobile_ids = ["lichlord"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 961
+y1 = 1547
+x2 = 968
+y2 = 1560

@@ -633,6 +633,45 @@
     "notes": "Acknowledges an accepted step.",
     "handler": "MoveRequestPacketHandler: acknowledges an accepted step."
   },
+  "0x65:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Type",
+        "type": "byte",
+        "size": "1",
+        "description": "0 rain, 1 storm, 2 snow, 0xFF none (WeatherKindType)."
+      },
+      {
+        "offset": "2",
+        "name": "Density",
+        "type": "byte",
+        "size": "1",
+        "description": "Number of particles, up to 70."
+      },
+      {
+        "offset": "3",
+        "name": "Temperature",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Temperature, signed."
+      }
+    ],
+    "notes": "Sets the weather the client shows: the profile of the player's region, or dry inside a building.",
+    "handler": "WeatherService: sent at login, on a region change and when the player's weather changes; resent every minute."
+  },
   "0x77:outgoing": {
     "category": "World",
     "tags": [
@@ -970,8 +1009,8 @@
         "description": "Global light."
       }
     ],
-    "notes": "Sets ambient world light.",
-    "handler": "PlayCharacterPacketHandler: sends global light during world entry."
+    "notes": "Sets ambient world light: the day and night cycle, dungeons and jails, or .globallight.",
+    "handler": "PlayCharacterPacketHandler sends it during world entry; LightService resends it when the player's light changes."
   },
   "0x53:outgoing": {
     "category": "Login",
@@ -2582,7 +2621,7 @@
         "name": "Light",
         "type": "byte",
         "size": "1",
-        "description": "Light or layer, 0"
+        "description": "Light shape (LightType) of a light source, 0 for none."
       },
       {
         "offset": "21",
@@ -3025,5 +3064,65 @@
     ],
     "notes": "A cliloc shown by the client in its language.",
     "handler": "LookRequestPacketHandler."
+  },
+  "0x54:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mode",
+        "type": "byte",
+        "size": "1",
+        "description": "1: play the sound once."
+      },
+      {
+        "offset": "2",
+        "name": "Sound",
+        "type": "ushort",
+        "size": "2",
+        "description": "Sound identifier."
+      },
+      {
+        "offset": "4",
+        "name": "Volume",
+        "type": "ushort",
+        "size": "2",
+        "description": "Always 0."
+      },
+      {
+        "offset": "6",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the sound plays."
+      },
+      {
+        "offset": "8",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the sound plays."
+      },
+      {
+        "offset": "10",
+        "name": "Z",
+        "type": "short",
+        "size": "2",
+        "description": "Where the sound plays."
+      }
+    ],
+    "notes": "Plays a sound once at a location.",
+    "handler": "SpeechService: npc.play_sound of a mobile script, to the players within 15 cells."
   }
 }

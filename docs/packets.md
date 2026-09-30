@@ -75,6 +75,7 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0xD6` | `PropertyListPacket` | Outgoing | Variable | — |
 | `0xDC` | `PropertyListInfoPacket` | Outgoing | Fixed 9 | — |
 | `0xC1` | `LocalizedMessagePacket` | Outgoing | Variable | — |
+| `0x54` | `PlaySoundPacket` | Outgoing | Fixed 12 | — |
 
 Normal speech (`say`) reaches the speaker and other player characters within 15
 tiles on the same map. Whisper, yell, emote, global chat and the separate chat
@@ -127,8 +128,11 @@ A double click on a mobile opens its paperdoll (`0x88`) when its body is human i
 `data/bodies.toml` (a monster has none) and it is on the character's map within
 `ultima.world.view_range` along X and Y; the character's own paperdoll button sends its serial
 with the high bit `0x80000000` set and opens without the range check (the body must still be
-human). A body missing from `bodies.toml` has no paperdoll. The title is the name, followed by
-`, <title>` when the mobile has one (NPC templates give titles such as "the mage"). The flags
+human). A body missing from `bodies.toml` has no paperdoll. The title is built as ModernUO's: the fame
+and karma prefix of [`titles.toml`](data-files/titles.md), whose rows from 10,000 fame say `Lord`
+or `Lady`, the name, then `, <title>` when the mobile has one (NPC templates give titles such as "the
+mage"), as "The Glorious Lord Aria, the mage"; players and human NPCs alike. Skill titles are not
+added yet. The flags
 say war mode (always off for now) and whether the viewer may take items off, set only on the
 character's own paperdoll. The worn items are already known to the client from `0x78`. Other
 double clicks are not handled yet.
@@ -187,8 +191,10 @@ ground item that bounces goes back where it lay, and one still held when the ses
 put back too. Dropping onto a ground stack within reach merges them as in the backpack. Players
 walking into range of a ground item, or entering the world near it, get it with the same old and
 new position test as the mobiles. The items on the ground and everything inside them are loaded
-at startup and saved by the world save; they do not decay yet, and a container on the ground
-cannot be opened yet.
+at startup and saved by the world save. A ground item decays after its template's time, 60 minutes
+unless `decay_minutes` says otherwise, counted from when it landed on the ground and restarted
+each time it is put down again; a decayed container takes its contents with it (see
+[Templates](templates.md)). A container on the ground cannot be opened yet.
 
 `ITargetService` shows a player the target cursor (`0x6C`) and hands the pick to a callback on the
 game loop, or to a command awaiting `RequestAsync`. A player has one target at a time: a new one

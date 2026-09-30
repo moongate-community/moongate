@@ -1,0 +1,71 @@
+[[spawn]]
+id = "ilshenar_18800"
+map = "ilshenar"
+name = "Spider Cave 1"
+mobile_ids = ["dreadspider"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1761
+y1 = 951
+x2 = 1854
+y2 = 994
+
+[[spawn]]
+id = "ilshenar_18801"
+map = "ilshenar"
+name = "Spider Cave 2"
+mobile_ids = ["giantblackwidow"]
+npc_list_ids = []
+max = 2
+min_minutes = 4
+max_minutes = 5
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1769
+y1 = 957
+x2 = 1809
+y2 = 997
+
+[[spawn]]
+id = "ilshenar_18802"
+map = "ilshenar"
+name = "Spider Cave 3"
+mobile_ids = []
+npc_list_ids = ["spidercave_npclist_1"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1835
+y1 = 975
+x2 = 1845
+y2 = 985
+
+[[spawn]]
+id = "ilshenar_18803"
+map = "ilshenar"
+name = "Spider Cave 4"
+mobile_ids = ["terawarrior"]
+npc_list_ids = []
+max = 3
+min_minutes = 2
+max_minutes = 3
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1778
+y1 = 956
+x2 = 1846
+y2 = 990

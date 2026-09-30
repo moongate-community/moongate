@@ -2,8 +2,12 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -511,6 +515,97 @@ public sealed class ItemServiceTests
         items.PlaceOnGround(_coin, MapType.Trammel, new Point3D(1496, 1629, 10));
 
         Assert.Empty(scripts.Queued);
+    }
+
+    [Fact]
+    public void Decay_AnItemPutOnTheGroundStartsDecaying_AndStopsWhenItLeavesIt()
+    {
+        var (items, clock) = Decaying();
+        var now = clock.Now.UtcDateTime;
+
+        items.PlaceOnGround(_dagger, MapType.Trammel, new Point3D(1496, 1629, 10));
+        Assert.Equal(now.AddHours(1), _dagger.DecayAt);
+
+        items.Hide(_dagger);
+        Assert.Null(_dagger.DecayAt);
+
+        clock.Advance(TimeSpan.FromMinutes(10));
+        items.Show(_dagger);
+        Assert.Equal(now.AddMinutes(70), _dagger.DecayAt);
+
+        items.MoveToContainer(_dagger, _backpack.Id, new Point2D(10, 10));
+        Assert.Null(_dagger.DecayAt);
+
+        items.PlaceOnGround(_dagger, MapType.Trammel, new Point3D(1496, 1629, 10));
+        items.Equip(_dagger, Aria, LayerType.OneHanded);
+        Assert.Null(_dagger.DecayAt);
+    }
+
+    [Fact]
+    public void Decay_AGroundItemAddedWithASavedTimeKeepsIt_OneWithoutGetsAFreshOne()
+    {
+        var (items, clock) = Decaying();
+        var saved = Item(0x40000010);
+        saved.PlaceOnGround(MapType.Trammel, new Point3D(1496, 1630, 10));
+        saved.DecayAt = clock.Now.UtcDateTime.AddMinutes(-5);
+
+        items.Add([saved]);
+
+        Assert.Equal(clock.Now.UtcDateTime.AddMinutes(-5), saved.DecayAt);
+        Assert.Equal(clock.Now.UtcDateTime.AddHours(1), _ground.DecayAt);
+        Assert.Null(_dagger.DecayAt);
+    }
+
+    [Fact]
+    public void Decay_TheRestOfASplitGroundStackKeepsItsTime()
+    {
+        var (items, clock) = Decaying();
+        var stackTime = _ground.DecayAt;
+        clock.Advance(TimeSpan.FromMinutes(10));
+
+        var rest = items.Split(_ground, 1, new Serial(0x40000020));
+
+        Assert.Equal(stackTime, rest.DecayAt);
+    }
+
+    [Fact]
+    public void Absorb_AGroundItemAPlayerDropped_IsDeletedByThatPlayersSave()
+    {
+        // Its row still says the dropper carries it: without the dropper's tombstone, the dropper's next login would
+        // load it back into the backpack.
+        var items = TestItems.Create();
+        items.Add([_backpack, _bag, _coin, _dagger, _shirt, _ground]);
+        items.PlaceOnGround(_dagger, MapType.Trammel, new Point3D(1496, 1629, 10));
+        items.Release(_dagger, Aria);
+
+        items.Absorb(_dagger);
+
+        Assert.Contains(_dagger.Id, items.TombstonesOf(Aria));
+        Assert.Empty(items.TakeReleasedOf(Aria));
+    }
+
+    [Fact]
+    public void Decay_AnAbsorbedOrRemovedGroundItemStops()
+    {
+        var (items, _) = Decaying();
+
+        items.Absorb(_ground);
+
+        Assert.Null(_ground.DecayAt);
+    }
+
+    private (ItemService Items, SettableClock Clock) Decaying()
+    {
+        var clock = new SettableClock();
+        var decay = new ItemDecayQueue(
+            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "item" })),
+            new FakeTileDataService(),
+            clock
+        );
+        var items = TestItems.Create(decay: decay);
+        items.Add([_backpack, _bag, _coin, _dagger, _shirt, _ground]);
+
+        return (items, clock);
     }
 
     private (ItemService Items, RecordingItemScriptService Scripts) Scripted()

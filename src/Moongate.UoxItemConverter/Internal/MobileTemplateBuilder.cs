@@ -90,6 +90,16 @@ internal static class MobileTemplateBuilder
                 };
             }
 
+            if (context.CreatureMovements.TryGetValue(body, out var movement))
+            {
+                template.Movement = movement;
+            }
+            else if (block.ParentTargets() is [var parent] && context.SwimmingHeaders.Contains(parent))
+            {
+                // A land body of its own: a water or amphibious base must not pass its movement on.
+                template.Movement = MobileMovementType.Land;
+            }
+
             if (HumanoidBodies.TryGetValue(body, out var humanoid))
             {
                 (template.Race, template.Gender) = (humanoid.Race, humanoid.Gender);

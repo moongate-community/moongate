@@ -1,0 +1,2568 @@
+[[spawn]]
+id = "felucca_0"
+map = "felucca"
+name = "The Hammer And Anvil"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1422
+y1 = 1547
+x2 = 1426
+y2 = 1550
+
+[[spawn]]
+id = "felucca_1"
+map = "felucca"
+name = "The Hammer And Anvil"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1417
+y1 = 1544
+x2 = 1420
+y2 = 1550
+
+[[spawn]]
+id = "felucca_2"
+map = "felucca"
+name = "Lord British's Conservatory Of Music"
+mobile_ids = ["bard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1436
+y1 = 1550
+x2 = 1445
+y2 = 1563
+
+[[spawn]]
+id = "felucca_3"
+map = "felucca"
+name = "The Sorceror's Delight"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1486
+y1 = 1547
+x2 = 1491
+y2 = 1550
+
+[[spawn]]
+id = "felucca_4"
+map = "felucca"
+name = "The Sorceror's Delight"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1491
+y1 = 1548
+x2 = 1496
+y2 = 1554
+
+[[spawn]]
+id = "felucca_5"
+map = "felucca"
+name = "Britannia Animal Care"
+mobile_ids = ["veterinarian"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1508
+y1 = 1565
+x2 = 1514
+y2 = 1574
+
+[[spawn]]
+id = "felucca_6"
+map = "felucca"
+name = "The Bucking Horse Stables"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1520
+y1 = 1546
+x2 = 1526
+y2 = 1550
+
+[[spawn]]
+id = "felucca_7"
+map = "felucca"
+name = "The North Side Inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1458
+y1 = 1513
+x2 = 1478
+y2 = 1518
+
+[[spawn]]
+id = "felucca_8"
+map = "felucca"
+name = "Guard Post North"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1510
+y1 = 1611
+x2 = 1516
+y2 = 1616
+
+[[spawn]]
+id = "felucca_9"
+map = "felucca"
+name = "Sweet Dreams Inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1493
+y1 = 1610
+x2 = 1498
+y2 = 1617
+
+[[spawn]]
+id = "felucca_10"
+map = "felucca"
+name = "Healer Of Britain"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1470
+y1 = 1608
+x2 = 1477
+y2 = 1614
+
+[[spawn]]
+id = "felucca_11"
+map = "felucca"
+name = "Strength And Steal"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1480
+y1 = 1583
+x2 = 1484
+y2 = 1589
+
+[[spawn]]
+id = "felucca_12"
+map = "felucca"
+name = "Quality Fletching"
+mobile_ids = ["bowyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1469
+y1 = 1576
+x2 = 1477
+y2 = 1582
+
+[[spawn]]
+id = "felucca_13"
+map = "felucca"
+name = "Good Eats"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1449
+y1 = 1609
+x2 = 1454
+y2 = 1618
+
+[[spawn]]
+id = "felucca_14"
+map = "felucca"
+name = "The Best Hides Of Britain"
+mobile_ids = ["leatherworker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1429
+y1 = 1609
+x2 = 1434
+y2 = 1614
+
+[[spawn]]
+id = "felucca_15"
+map = "felucca"
+name = "The Saw Horse"
+mobile_ids = ["carpenter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1429
+y1 = 1593
+x2 = 1432
+y2 = 1598
+
+[[spawn]]
+id = "felucca_16"
+map = "felucca"
+name = "The Saw Horse"
+mobile_ids = ["architect"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1434
+y1 = 1593
+x2 = 1438
+y2 = 1598
+
+[[spawn]]
+id = "felucca_17"
+map = "felucca"
+name = "Miners Guild"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 30
+only_outside = false
+[[spawn.areas]]
+x1 = 1417
+y1 = 1577
+x2 = 1423
+y2 = 1582
+
+[[spawn]]
+id = "felucca_18"
+map = "felucca"
+name = "The Tinkers Guild"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1422
+y1 = 1648
+x2 = 1429
+y2 = 1663
+
+[[spawn]]
+id = "felucca_19"
+map = "felucca"
+name = "Heavy Metal Armorer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1445
+y1 = 1646
+x2 = 1450
+y2 = 1651
+
+[[spawn]]
+id = "felucca_20"
+map = "felucca"
+name = "Artist Guild"
+mobile_ids = ["artist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 10
+only_outside = false
+[[spawn.areas]]
+x1 = 1443
+y1 = 1660
+x2 = 1453
+y2 = 1668
+
+[[spawn]]
+id = "felucca_21"
+map = "felucca"
+name = "Premier Gems"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1451
+y1 = 1684
+x2 = 1456
+y2 = 1687
+
+[[spawn]]
+id = "felucca_22"
+map = "felucca"
+name = "Britains Premier Provisioner"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1465
+y1 = 1665
+x2 = 1468
+y2 = 1670
+
+[[spawn]]
+id = "felucca_23"
+map = "felucca"
+name = "Britains Premier Provisioner"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1465
+y1 = 1672
+x2 = 1470
+y2 = 1674
+
+[[spawn]]
+id = "felucca_24"
+map = "felucca"
+name = "Britains Premier Provisioner"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1481
+y1 = 1669
+x2 = 1486
+y2 = 1674
+
+[[spawn]]
+id = "felucca_25"
+map = "felucca"
+name = "Etheral Goods"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1497
+y1 = 1657
+x2 = 1502
+y2 = 1663
+
+[[spawn]]
+id = "felucca_26"
+map = "felucca"
+name = "The Blue Boar"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1487
+y1 = 1687
+x2 = 1491
+y2 = 1690
+
+[[spawn]]
+id = "felucca_27"
+map = "felucca"
+name = "The Lords Clothiers"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1467
+y1 = 1684
+x2 = 1471
+y2 = 1689
+
+[[spawn]]
+id = "felucca_28"
+map = "felucca"
+name = "The Lords Clothiers"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1471
+y1 = 1686
+x2 = 1476
+y2 = 1688
+
+[[spawn]]
+id = "felucca_29"
+map = "felucca"
+name = "The First Bank Of Britain"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1425
+y1 = 1687
+x2 = 1429
+y2 = 1691
+
+[[spawn]]
+id = "felucca_30"
+map = "felucca"
+name = "The First Bank Of Britain"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1425
+y1 = 1676
+x2 = 1429
+y2 = 1680
+
+[[spawn]]
+id = "felucca_31"
+map = "felucca"
+name = "The First Bank Of Britain"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1434
+y1 = 1684
+x2 = 1440
+y2 = 1689
+
+[[spawn]]
+id = "felucca_32"
+map = "felucca"
+name = "Guard Post South"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1409
+y1 = 1714
+x2 = 1414
+y2 = 1718
+
+[[spawn]]
+id = "felucca_33"
+map = "felucca"
+name = "Britain - The Cats Lair"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1425
+y1 = 1712
+x2 = 1428
+y2 = 1717
+
+[[spawn]]
+id = "felucca_34"
+map = "felucca"
+name = "Britain - The Oaken Oar"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1413
+y1 = 1746
+x2 = 1419
+y2 = 1755
+
+[[spawn]]
+id = "felucca_35"
+map = "felucca"
+name = "Britain - The Cleaver"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1449
+y1 = 1721
+x2 = 1454
+y2 = 1726
+
+[[spawn]]
+id = "felucca_36"
+map = "felucca"
+name = "The Oaken Oar"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1472
+y1 = 1737
+x2 = 1478
+y2 = 1749
+
+[[spawn]]
+id = "felucca_37"
+map = "felucca"
+name = "Britain - Warriors' Guild"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1340
+y1 = 1731
+x2 = 1345
+y2 = 1735
+
+[[spawn]]
+id = "felucca_38"
+map = "felucca"
+name = "Sosorian Steeds"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1289
+y1 = 1757
+x2 = 1298
+y2 = 1771
+
+[[spawn]]
+id = "felucca_39"
+map = "felucca"
+name = "Britain - The Unicorn's Horn"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1545
+y1 = 1761
+x2 = 1549
+y2 = 1766
+
+[[spawn]]
+id = "felucca_40"
+map = "felucca"
+name = "The Watch Tower"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1616
+y1 = 1762
+x2 = 1622
+y2 = 1766
+
+[[spawn]]
+id = "felucca_41"
+map = "felucca"
+name = "Britain - Profuse Provisions"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1604
+y1 = 1712
+x2 = 1606
+y2 = 1715
+
+[[spawn]]
+id = "felucca_42"
+map = "felucca"
+name = "Britain - Sage Advice"
+mobile_ids = ["scribe"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1569
+y1 = 1703
+x2 = 1582
+y2 = 1710
+
+[[spawn]]
+id = "felucca_43"
+map = "felucca"
+name = "Britain - The Right Fit"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1547
+y1 = 1657
+x2 = 1552
+y2 = 1662
+
+[[spawn]]
+id = "felucca_44"
+map = "felucca"
+name = "Britain - Incantations & Enchantments"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1594
+y1 = 1648
+x2 = 1598
+y2 = 1654
+
+[[spawn]]
+id = "felucca_45"
+map = "felucca"
+name = "Britain - Artistic Armour"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1632
+y1 = 1689
+x2 = 1634
+y2 = 1691
+
+[[spawn]]
+id = "felucca_46"
+map = "felucca"
+name = "A Girl's Best Friend"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1648
+y1 = 1641
+x2 = 1653
+y2 = 1643
+
+[[spawn]]
+id = "felucca_47"
+map = "felucca"
+name = "The Salty Dog"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 1610
+y1 = 1584
+x2 = 1612
+y2 = 1586
+
+[[spawn]]
+id = "felucca_48"
+map = "felucca"
+name = "The Salty Dog"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 1610
+y1 = 1584
+x2 = 1630
+y2 = 1590
+
+[[spawn]]
+id = "felucca_49"
+map = "felucca"
+name = "The WayFarer's Inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1593
+y1 = 1585
+x2 = 1596
+y2 = 1586
+
+[[spawn]]
+id = "felucca_50"
+map = "felucca"
+name = "The Blue Boar"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1487
+y1 = 1687
+x2 = 1491
+y2 = 1690
+
+[[spawn]]
+id = "felucca_51"
+map = "felucca"
+name = "The Blue Boar"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1494
+y1 = 1676
+x2 = 1500
+y2 = 1698
+
+[[spawn]]
+id = "felucca_52"
+map = "felucca"
+name = "Town People"
+mobile_ids = []
+npc_list_ids = ["alltownfolk"]
+max = 25
+min_minutes = 15
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1416
+y1 = 1535
+x2 = 1655
+y2 = 1788
+
+[[spawn]]
+id = "felucca_53"
+map = "felucca"
+name = "animal spawn"
+mobile_ids = []
+npc_list_ids = ["britainanimallist"]
+max = 25
+min_minutes = 15
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1416
+y1 = 1535
+x2 = 1655
+y2 = 1788
+
+[[spawn]]
+id = "felucca_54"
+map = "felucca"
+name = "farm animal spawn"
+mobile_ids = []
+npc_list_ids = ["barnlist"]
+max = 20
+min_minutes = 15
+max_minutes = 20
+call = 5
+only_outside = true
+[[spawn.areas]]
+x1 = 1100
+y1 = 1536
+x2 = 1289
+y2 = 1905
+[[spawn.exclude]]
+x1 = 1100
+y1 = 1862
+x2 = 1182
+y2 = 1905
+
+[[spawn]]
+id = "felucca_55"
+map = "felucca"
+name = "thief guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1416
+y1 = 1535
+x2 = 1655
+y2 = 1788
+
+[[spawn]]
+id = "felucca_56"
+map = "felucca"
+name = "The Second Bank Of Britain"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1649
+y1 = 1601
+x2 = 1653
+y2 = 1614
+
+[[spawn]]
+id = "felucca_57"
+map = "felucca"
+name = "Britain - The Lords Clothiers"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1467
+y1 = 1684
+x2 = 1471
+y2 = 1689
+
+[[spawn]]
+id = "felucca_58"
+map = "felucca"
+name = "Britain - The Right Fit"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1547
+y1 = 1657
+x2 = 1552
+y2 = 1662
+
+[[spawn]]
+id = "felucca_59"
+map = "felucca"
+name = "Best Hides of Britain"
+mobile_ids = ["furtrader"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1428
+y1 = 1608
+x2 = 1437
+y2 = 1614
+
+[[spawn]]
+id = "felucca_60"
+map = "felucca"
+name = "Best Hides of Britain"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1428
+y1 = 1608
+x2 = 1437
+y2 = 1614
+
+[[spawn]]
+id = "felucca_61"
+map = "felucca"
+name = "Castle British Stables"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1387
+y1 = 1642
+x2 = 1389
+y2 = 1662
+
+[[spawn]]
+id = "felucca_62"
+map = "felucca"
+name = "Castle British Tailor"
+mobile_ids = []
+npc_list_ids = ["tailor"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 30
+only_outside = false
+[[spawn.areas]]
+x1 = 1384
+y1 = 1596
+x2 = 1393
+y2 = 1605
+
+[[spawn]]
+id = "felucca_63"
+map = "felucca"
+name = "Castle British Tailor"
+mobile_ids = []
+npc_list_ids = ["weaver"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 30
+only_outside = false
+[[spawn.areas]]
+x1 = 1384
+y1 = 1596
+x2 = 1393
+y2 = 1605
+
+[[spawn]]
+id = "felucca_64"
+map = "felucca"
+name = "Castle British Lords Arms"
+mobile_ids = []
+npc_list_ids = ["blacksmith"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 30
+only_outside = false
+[[spawn.areas]]
+x1 = 1360
+y1 = 1572
+x2 = 1370
+y2 = 1577
+
+[[spawn]]
+id = "felucca_65"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["productiveanimallist"]
+max = 3
+min_minutes = 1
+max_minutes = 2
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1313
+y1 = 1801
+x2 = 1325
+y2 = 1829
+
+[[spawn]]
+id = "felucca_66"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["barnlist"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1305
+y1 = 1766
+x2 = 1306
+y2 = 1767
+
+[[spawn]]
+id = "felucca_67"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["barnlist"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1305
+y1 = 1772
+x2 = 1306
+y2 = 1773
+
+[[spawn]]
+id = "felucca_68"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["barnlist"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1305
+y1 = 1769
+x2 = 1306
+y2 = 1770
+
+[[spawn]]
+id = "felucca_69"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["barnlist"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1305
+y1 = 1775
+x2 = 1306
+y2 = 1776
+
+[[spawn]]
+id = "felucca_70"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["barnlist"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1305
+y1 = 1778
+x2 = 1306
+y2 = 1779
+
+[[spawn]]
+id = "felucca_71"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["barnlist"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1305
+y1 = 1781
+x2 = 1306
+y2 = 1782
+
+[[spawn]]
+id = "felucca_72"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 3
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1130
+y1 = 1555
+x2 = 1206
+y2 = 1612
+
+[[spawn]]
+id = "felucca_73"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 5
+min_minutes = 1
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1209
+y1 = 1587
+x2 = 1276
+y2 = 1689
+
+[[spawn]]
+id = "felucca_74"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 3
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1102
+y1 = 1630
+x2 = 1202
+y2 = 1693
+
+[[spawn]]
+id = "felucca_75"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 5
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1208
+y1 = 1714
+x2 = 1248
+y2 = 1799
+
+[[spawn]]
+id = "felucca_76"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 3
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1105
+y1 = 1777
+x2 = 1162
+y2 = 1810
+
+[[spawn]]
+id = "felucca_77"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 5
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1177
+y1 = 1806
+x2 = 1303
+y2 = 1845
+
+[[spawn]]
+id = "felucca_78"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 5
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1184
+y1 = 1862
+x2 = 1252
+y2 = 1929
+
+[[spawn]]
+id = "felucca_79"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 3
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1335
+y1 = 1797
+x2 = 1375
+y2 = 1837
+
+[[spawn]]
+id = "felucca_80"
+map = "felucca"
+name = "Britain Farm Animals"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 5
+min_minutes = 1
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1274
+y1 = 1849
+x2 = 1423
+y2 = 1889
+
+[[spawn]]
+id = "felucca_81"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1187
+y1 = 1708
+x2 = 1194
+y2 = 1711
+
+[[spawn]]
+id = "felucca_82"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1250
+y1 = 1705
+x2 = 1253
+y2 = 1709
+
+[[spawn]]
+id = "felucca_83"
+map = "felucca"
+name = "Britain Farmhand"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1242
+y1 = 1698
+x2 = 1245
+y2 = 1701
+
+[[spawn]]
+id = "felucca_84"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1136
+y1 = 1820
+x2 = 1142
+y2 = 1823
+
+[[spawn]]
+id = "felucca_85"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1202
+y1 = 1853
+x2 = 1206
+y2 = 1855
+
+[[spawn]]
+id = "felucca_86"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1260
+y1 = 1889
+x2 = 1262
+y2 = 1894
+
+[[spawn]]
+id = "felucca_87"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = []
+npc_list_ids = ["farmer"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1388
+y1 = 1804
+x2 = 1390
+y2 = 1807
+
+[[spawn]]
+id = "felucca_88"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = []
+npc_list_ids = ["farmer"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1403
+y1 = 1804
+x2 = 1406
+y2 = 1807
+
+[[spawn]]
+id = "felucca_89"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = []
+npc_list_ids = ["farmer"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1403
+y1 = 1821
+x2 = 1405
+y2 = 1823
+
+[[spawn]]
+id = "felucca_90"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = []
+npc_list_ids = ["farmer"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1387
+y1 = 1821
+x2 = 1391
+y2 = 1823
+
+[[spawn]]
+id = "felucca_91"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1154
+y1 = 1619
+x2 = 1158
+y2 = 1623
+
+[[spawn]]
+id = "felucca_92"
+map = "felucca"
+name = "Britain Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1146
+y1 = 1619
+x2 = 1148
+y2 = 1622
+
+[[spawn]]
+id = "felucca_93"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1154
+y1 = 1548
+x2 = 1158
+y2 = 1551
+
+[[spawn]]
+id = "felucca_94"
+map = "felucca"
+name = "Britain Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1146
+y1 = 1545
+x2 = 1149
+y2 = 1548
+
+[[spawn]]
+id = "felucca_95"
+map = "felucca"
+name = "Britain Farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1225
+y1 = 1571
+x2 = 1230
+y2 = 1581
+
+[[spawn]]
+id = "felucca_96"
+map = "felucca"
+name = "Britain Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1233
+y1 = 1569
+x2 = 1237
+y2 = 1575
+
+[[spawn]]
+id = "felucca_97"
+map = "felucca"
+name = "Britain Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1194
+y1 = 1705
+x2 = 1197
+y2 = 1707
+
+[[spawn]]
+id = "felucca_98"
+map = "felucca"
+name = "Britain Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1129
+y1 = 1817
+x2 = 1135
+y2 = 1819
+
+[[spawn]]
+id = "felucca_99"
+map = "felucca"
+name = "Britain Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1193
+y1 = 1849
+x2 = 1202
+y2 = 1852
+
+[[spawn]]
+id = "felucca_100"
+map = "felucca"
+name = "Britain Peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1257
+y1 = 1883
+x2 = 1260
+y2 = 1886
+
+[[spawn]]
+id = "felucca_101"
+map = "felucca"
+name = "Britain Blacksmith Guild"
+mobile_ids = []
+npc_list_ids = ["blacksmith"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1348
+y1 = 1773
+x2 = 1357
+y2 = 1775
+
+[[spawn]]
+id = "felucca_102"
+map = "felucca"
+name = "Britain Blacksmith Guild"
+mobile_ids = []
+npc_list_ids = ["blacksmith"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1348
+y1 = 1782
+x2 = 1357
+y2 = 1784
+
+[[spawn]]
+id = "felucca_103"
+map = "felucca"
+name = "Britain poorfolk"
+mobile_ids = []
+npc_list_ids = ["poorfolk"]
+max = 3
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1416
+y1 = 1696
+x2 = 1422
+y2 = 1740
+
+[[spawn]]
+id = "felucca_104"
+map = "felucca"
+name = "Britain poorfolk"
+mobile_ids = []
+npc_list_ids = ["poorfolk"]
+max = 3
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1415
+y1 = 1644
+x2 = 1420
+y2 = 1688
+
+[[spawn]]
+id = "felucca_105"
+map = "felucca"
+name = "Britain poorfolk"
+mobile_ids = []
+npc_list_ids = ["poorfolk"]
+max = 2
+min_minutes = 1
+max_minutes = 15
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1457
+y1 = 1654
+x2 = 1460
+y2 = 1676
+
+[[spawn]]
+id = "felucca_106"
+map = "felucca"
+name = "Britain poorfolk"
+mobile_ids = []
+npc_list_ids = ["poorfolk"]
+max = 1
+min_minutes = 1
+max_minutes = 15
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1510
+y1 = 1652
+x2 = 1514
+y2 = 1668
+
+[[spawn]]
+id = "felucca_107"
+map = "felucca"
+name = "Britain poorfolk"
+mobile_ids = []
+npc_list_ids = ["poorfolk"]
+max = 1
+min_minutes = 1
+max_minutes = 15
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1474
+y1 = 1699
+x2 = 1479
+y2 = 1714
+
+[[spawn]]
+id = "felucca_108"
+map = "felucca"
+name = "Britain poorfolk"
+mobile_ids = []
+npc_list_ids = ["poorfolk"]
+max = 1
+min_minutes = 1
+max_minutes = 15
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1450
+y1 = 1696
+x2 = 1463
+y2 = 1700
+
+[[spawn]]
+id = "felucca_109"
+map = "felucca"
+name = "Britain richfolk"
+mobile_ids = []
+npc_list_ids = ["richfolk"]
+max = 3
+min_minutes = 1
+max_minutes = 15
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1421
+y1 = 1620
+x2 = 1467
+y2 = 1630
+
+[[spawn]]
+id = "felucca_110"
+map = "felucca"
+name = "Britain richfolk"
+mobile_ids = []
+npc_list_ids = ["richfolk"]
+max = 2
+min_minutes = 1
+max_minutes = 15
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1435
+y1 = 1571
+x2 = 1477
+y2 = 1575
+
+[[spawn]]
+id = "felucca_111"
+map = "felucca"
+name = "Britain richfolk"
+mobile_ids = []
+npc_list_ids = ["richfolk"]
+max = 2
+min_minutes = 1
+max_minutes = 15
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1489
+y1 = 1583
+x2 = 1494
+y2 = 1597
+
+[[spawn]]
+id = "felucca_112"
+map = "felucca"
+name = "Britain richfolk"
+mobile_ids = []
+npc_list_ids = ["richfolk"]
+max = 2
+min_minutes = 1
+max_minutes = 15
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1441
+y1 = 1539
+x2 = 1467
+y2 = 1544
+
+[[spawn]]
+id = "felucca_113"
+map = "felucca"
+name = "Britain richfolk"
+mobile_ids = []
+npc_list_ids = ["richfolk"]
+max = 1
+min_minutes = 1
+max_minutes = 15
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1452
+y1 = 1602
+x2 = 1468
+y2 = 1605
+
+[[spawn]]
+id = "felucca_114"
+map = "felucca"
+name = "Britain folk"
+mobile_ids = []
+npc_list_ids = ["alltownfolk"]
+max = 5
+min_minutes = 1
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1561
+y1 = 1667
+x2 = 1619
+y2 = 1684
+
+[[spawn]]
+id = "felucca_115"
+map = "felucca"
+name = "Britain folk"
+mobile_ids = []
+npc_list_ids = ["alltownfolk"]
+max = 3
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1560
+y1 = 1570
+x2 = 1604
+y2 = 1579
+
+[[spawn]]
+id = "felucca_116"
+map = "felucca"
+name = "Britain folk"
+mobile_ids = []
+npc_list_ids = ["alltownfolk"]
+max = 3
+min_minutes = 1
+max_minutes = 15
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1667
+y1 = 1604
+x2 = 1677
+y2 = 1635
+
+[[spawn]]
+id = "felucca_117"
+map = "felucca"
+name = "Britain guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 2
+min_minutes = 0
+max_minutes = 1
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1422
+y1 = 1695
+x2 = 1442
+y2 = 1698
+
+[[spawn]]
+id = "felucca_118"
+map = "felucca"
+name = "Britain guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 0
+max_minutes = 1
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1504
+y1 = 1673
+x2 = 1515
+y2 = 1677
+
+[[spawn]]
+id = "felucca_119"
+map = "felucca"
+name = "Britain guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 2
+min_minutes = 0
+max_minutes = 1
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1487
+y1 = 1623
+x2 = 1580
+y2 = 1636
+
+[[spawn]]
+id = "felucca_120"
+map = "felucca"
+name = "Britain guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 0
+max_minutes = 1
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1484
+y1 = 1573
+x2 = 1501
+y2 = 1578
+
+[[spawn]]
+id = "felucca_121"
+map = "felucca"
+name = "Britain guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 2
+min_minutes = 0
+max_minutes = 1
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1472
+y1 = 1525
+x2 = 1490
+y2 = 1535
+
+[[spawn]]
+id = "felucca_122"
+map = "felucca"
+name = "Britain guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 0
+max_minutes = 1
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1422
+y1 = 1561
+x2 = 1432
+y2 = 1572
+
+[[spawn]]
+id = "felucca_123"
+map = "felucca"
+name = "Britain guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 3
+min_minutes = 0
+max_minutes = 1
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1538
+y1 = 1737
+x2 = 1549
+y2 = 1749
+
+[[spawn]]
+id = "felucca_124"
+map = "felucca"
+name = "Lord British"
+mobile_ids = ["lordbritish"]
+npc_list_ids = []
+max = 1
+min_minutes = 0
+max_minutes = 1
+call = 1
+exclude = []
+z = 55
+only_outside = false
+[[spawn.areas]]
+x1 = 1325
+y1 = 1624
+x2 = 1325
+y2 = 1624
+
+[[spawn]]
+id = "felucca_125"
+map = "felucca"
+name = "Lord Blackthorn"
+mobile_ids = ["lordblackthorn"]
+npc_list_ids = []
+max = 1
+min_minutes = 0
+max_minutes = 1
+call = 1
+exclude = []
+z = 55
+only_outside = false
+[[spawn.areas]]
+x1 = 1540
+y1 = 1415
+x2 = 1540
+y2 = 1415
+
+[[spawn]]
+id = "felucca_134"
+map = "felucca"
+name = "Britain - Incantations & Enchantments"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1589
+y1 = 1649
+x2 = 1592
+y2 = 1654
+
+[[spawn]]
+id = "felucca_135"
+map = "felucca"
+name = "Britain - Profuse Provisions"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1601
+y1 = 1708
+x2 = 1606
+y2 = 1710
+
+[[spawn]]
+id = "felucca_136"
+map = "felucca"
+name = "Britain - Sage Advice"
+mobile_ids = ["monk"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1569
+y1 = 1697
+x2 = 1582
+y2 = 1700
+
+[[spawn]]
+id = "felucca_137"
+map = "felucca"
+name = "Britain - The Unicorn's Horn"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1552
+y1 = 1761
+x2 = 1558
+y2 = 1771
+
+[[spawn]]
+id = "felucca_138"
+map = "felucca"
+name = "Britain - The Unicorn's Horn"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1545
+y1 = 1761
+x2 = 1549
+y2 = 1766
+
+[[spawn]]
+id = "felucca_139"
+map = "felucca"
+name = "Britain - The Right Fit"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1555
+y1 = 1657
+x2 = 1560
+y2 = 1660
+
+[[spawn]]
+id = "felucca_140"
+map = "felucca"
+name = "Britain - The North Side Inn"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1474
+y1 = 1513
+x2 = 1478
+y2 = 1515
+
+[[spawn]]
+id = "felucca_141"
+map = "felucca"
+name = "Britain - Britain Public Library"
+mobile_ids = ["scribe"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1409
+y1 = 1593
+x2 = 1418
+y2 = 1610
+
+[[spawn]]
+id = "felucca_142"
+map = "felucca"
+name = "Britain - The First Library of Britain"
+mobile_ids = ["scribe"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1409
+y1 = 1593
+x2 = 1418
+y2 = 1610
+
+[[spawn]]
+id = "felucca_143"
+map = "felucca"
+name = "Britain - Docks (East)"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1493
+y1 = 1715
+x2 = 1498
+y2 = 1719
+
+[[spawn]]
+id = "felucca_144"
+map = "felucca"
+name = "Britain - Docks (East)"
+mobile_ids = ["sailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1493
+y1 = 1715
+x2 = 1498
+y2 = 1719
+
+[[spawn]]
+id = "felucca_145"
+map = "felucca"
+name = "Britain - The Cats Lair"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1425
+y1 = 1712
+x2 = 1428
+y2 = 1717
+
+[[spawn]]
+id = "felucca_146"
+map = "felucca"
+name = "Britain - The Cats Lair"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1424
+y1 = 1720
+x2 = 1429
+y2 = 1734
+
+[[spawn]]
+id = "felucca_147"
+map = "felucca"
+name = "Britain - The Cats Lair"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1432
+y1 = 1712
+x2 = 1437
+y2 = 1721
+
+[[spawn]]
+id = "felucca_148"
+map = "felucca"
+name = "Britain - The Oaken Oar"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1413
+y1 = 1746
+x2 = 1419
+y2 = 1755
+
+[[spawn]]
+id = "felucca_149"
+map = "felucca"
+name = "Britain - The Warriors Guild"
+mobile_ids = ["fighter"]
+npc_list_ids = []
+max = 3
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1337
+y1 = 1730
+x2 = 1350
+y2 = 1738

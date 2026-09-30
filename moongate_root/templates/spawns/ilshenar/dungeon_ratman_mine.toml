@@ -1,0 +1,197 @@
+[[spawn]]
+id = "ilshenar_17550"
+map = "ilshenar"
+name = "Ratman Mine 1_1"
+mobile_ids = ["agapiteele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1316
+y1 = 1509
+x2 = 1320
+y2 = 1513
+
+[[spawn]]
+id = "ilshenar_17551"
+map = "ilshenar"
+name = "Ratman Mine 1_2"
+mobile_ids = ["copperele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1322
+y1 = 1531
+x2 = 1332
+y2 = 1541
+
+[[spawn]]
+id = "ilshenar_17552"
+map = "ilshenar"
+name = "Ratman Mine 1_3"
+mobile_ids = []
+npc_list_ids = ["ratmanmine_npclist_1"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1299
+y1 = 1515
+x2 = 1319
+y2 = 1535
+
+[[spawn]]
+id = "ilshenar_17553"
+map = "ilshenar"
+name = "Ratman Mine 1_4"
+mobile_ids = []
+npc_list_ids = ["ratmanmine_npclist_2"]
+max = 21
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1279
+y1 = 1470
+x2 = 1341
+y2 = 1571
+
+[[spawn]]
+id = "ilshenar_17554"
+map = "ilshenar"
+name = "Ratman Mine 1_5"
+mobile_ids = ["dullcopperele"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1315
+y1 = 1477
+x2 = 1343
+y2 = 1530
+
+[[spawn]]
+id = "ilshenar_17555"
+map = "ilshenar"
+name = "Ratman Mine 1_6"
+mobile_ids = ["veriteele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1302
+y1 = 1500
+x2 = 1312
+y2 = 1510
+
+[[spawn]]
+id = "ilshenar_17556"
+map = "ilshenar"
+name = "Ratman Mine 2_1"
+mobile_ids = []
+npc_list_ids = ["ratmanmine_npclist_3"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1180
+y1 = 1512
+x2 = 1242
+y2 = 1549
+
+[[spawn]]
+id = "ilshenar_17557"
+map = "ilshenar"
+name = "Ratman Mine 2_2"
+mobile_ids = []
+npc_list_ids = ["ratmanmine_npclist_3"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1180
+y1 = 1473
+x2 = 1242
+y2 = 1511
+
+[[spawn]]
+id = "ilshenar_17558"
+map = "ilshenar"
+name = "Ratman Mine 2_3"
+mobile_ids = ["skeletaldragon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1171
+y1 = 1502
+x2 = 1182
+y2 = 1520
+
+[[spawn]]
+id = "ilshenar_17559"
+map = "ilshenar"
+name = "Ratman Mine 1_5"
+mobile_ids = ["valoriteele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1297
+y1 = 1496
+x2 = 1301
+y2 = 1500
+
+[[spawn]]
+id = "ilshenar_17560"
+map = "ilshenar"
+name = "Ratman Mine 1_6"
+mobile_ids = ["shadowironele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1332
+y1 = 1484
+x2 = 1339
+y2 = 1491

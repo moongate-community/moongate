@@ -34,10 +34,17 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+    private readonly List<LuaScriptEngineService> _engines = [];
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly MobileService _mobiles;
     private readonly MobileTemplateService _templates = new(
-        new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "greeter" })
+        new StubDataLoaderService().With(
+            // The UOX3 cat's sounds, which the npc module plays by kind.
+            new MobileTemplate
+            {
+                Id = "cat", ScriptId = "greeter", Sounds = new MobileSounds { StartAttack = 105, Idle = 675 }
+            }
+        )
     );
     private readonly MobileEntity _cat = new()
     {
@@ -61,6 +68,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         _container.RegisterInstance<IMobileService>(_mobiles);
         _container.RegisterInstance<ISpeechService>(_speech);
         _container.RegisterInstance<IWorldViewService>(_view);
+        _container.RegisterInstance<IMobileTemplateService>(_templates);
         _container.AddScriptModule<NpcModule>();
         _container.AddScriptModule<DiceModule>();
         _container.Resolve<IMoongateEventBus>()
@@ -162,6 +170,53 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     }
 
     [Fact]
+    public async Task TheShippedWanderScript_KeepsASpawnedNpcInItsHomeArea()
+    {
+        SetHome(1600, 1600, 1601, 1600);
+        var scripts = await StartWanderAsync();
+
+        for (var think = 0; think < 40; think++)
+        {
+            scripts.Think(_cat);
+        }
+
+        Assert.Empty(_errors);
+        Assert.Equal(10, _view.Calls.Count);
+        Assert.InRange(_cat.Location.X, 1600, 1601);
+        Assert.Equal(1600, _cat.Location.Y);
+    }
+
+    [Fact]
+    public async Task TheShippedWanderScript_LeavesAnNpcWithAOneCellHomeWhereItIs()
+    {
+        SetHome(1600, 1600, 1600, 1600);
+        var scripts = await StartWanderAsync();
+
+        for (var think = 0; think < 8; think++)
+        {
+            scripts.Think(_cat);
+        }
+
+        Assert.Empty(_errors);
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public async Task TheShippedWanderScript_WalksAnNpcOutsideItsHomeAreaBackToIt()
+    {
+        SetHome(1610, 1590, 1612, 1592);
+        var scripts = await StartWanderAsync();
+
+        for (var think = 0; think < 4; think++)
+        {
+            scripts.Think(_cat);
+        }
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(1601, 1599, 0), _cat.Location);
+    }
+
+    [Fact]
     public async Task AMobileScriptWithASyntaxError_IsReportedAndTheServerStartsWithTheOthers()
     {
         _scripts.Write("mobiles/broken.lua", "broken = {} function broken.on_think(serial) npc.say(serial, end");
@@ -177,8 +232,66 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.Equal("ok", Assert.Single(_speech.Said).Text);
     }
 
+    [Theory, InlineData("orione"), InlineData("vega")]
+    public async Task TheShippedCatScripts_TalkAndMeowWithoutErrors(string cat)
+    {
+        _scripts.Write($"mobiles/{cat}.lua", File.ReadAllText(ShippedScript($"mobiles/{cat}.lua")));
+        var templates = new MobileTemplateService(
+            new StubDataLoaderService().With(
+                new MobileTemplate { Id = "cat", ScriptId = cat }
+            )
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = new NpcScriptService(
+            engine,
+            templates,
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
+        await scripts.StartAsync();
+
+        for (var think = 0; think < 12; think++)
+        {
+            scripts.Think(_cat);
+        }
+
+        Assert.Empty(_errors);
+        Assert.Equal(3, _speech.Said.Count);
+        Assert.All(_speech.Said, said => Assert.StartsWith("M", said.Text));
+        Assert.Equal(2, _speech.Sounds.Count);
+        Assert.All(_speech.Sounds, sound => Assert.Contains(sound.Sound, new[] { 105, 675 }));
+    }
+
+    [Fact]
+    public async Task TheShippedVegaScript_CountsTheHellosInAProp()
+    {
+        _scripts.Write("mobiles/vega.lua", File.ReadAllText(ShippedScript("mobiles/vega.lua")));
+        var templates = new MobileTemplateService(
+            new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "vega" })
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        await scripts.StartAsync();
+        _cat.SetProp("vega.greeted", 4L);
+        var hearing = new NpcHearingService(scripts, _sectors);
+
+        hearing.Heard(_aria, "hello Vega");
+        hearing.Heard(_aria, "Hello again");
+
+        Assert.Empty(_errors);
+        Assert.Equal(["Meow! That's 5 hellos.", "Meow! That's 6 hellos."], _speech.Said.Select(said => said.Text));
+        Assert.Equal(6L, _cat.GetProp<long>("vega.greeted"));
+    }
+
     public void Dispose()
     {
+        foreach (var engine in _engines)
+        {
+            engine.Dispose();
+        }
+
         _container.Dispose();
         _scripts.Dispose();
     }
@@ -198,6 +311,34 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     private NpcScriptService NewScripts(IScriptEngine engine)
     {
         return new(engine, _templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+    }
+
+    private void SetHome(long x1, long y1, long x2, long y2)
+    {
+        _cat.SetProp("spawn.x1", x1);
+        _cat.SetProp("spawn.y1", y1);
+        _cat.SetProp("spawn.x2", x2);
+        _cat.SetProp("spawn.y2", y2);
+    }
+
+    private async Task<NpcScriptService> StartWanderAsync()
+    {
+        _scripts.Write("mobiles/wander.lua", File.ReadAllText(ShippedScript("mobiles/wander.lua")));
+        var templates = new MobileTemplateService(
+            new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "wander" })
+        );
+        var engine = NewEngine();
+        _engines.Add(engine);
+        await engine.StartAsync();
+        var scripts = new NpcScriptService(
+            engine,
+            templates,
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
+        await scripts.StartAsync();
+
+        return scripts;
     }
 
     private LuaScriptEngineService NewEngine()

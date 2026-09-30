@@ -1,0 +1,54 @@
+[[spawn]]
+id = "felucca_5521"
+map = "felucca"
+name = "guardpost near yew"
+mobile_ids = []
+npc_list_ids = ["guard"]
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = 30
+only_outside = false
+[[spawn.areas]]
+x1 = 746
+y1 = 1291
+x2 = 753
+y2 = 1320
+
+[[spawn]]
+id = "felucca_5522"
+map = "felucca"
+name = "guardpost near yew 2"
+mobile_ids = []
+npc_list_ids = ["guard"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1036
+y1 = 1077
+x2 = 1044
+y2 = 1083
+
+[[spawn]]
+id = "felucca_5523"
+map = "felucca"
+name = "guardpost near orc fort"
+mobile_ids = []
+npc_list_ids = ["guard"]
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 710
+y1 = 1479
+x2 = 720
+y2 = 1488

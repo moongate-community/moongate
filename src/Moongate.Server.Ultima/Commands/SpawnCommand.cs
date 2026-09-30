@@ -4,6 +4,7 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Targeting;
 using Serilog;
 
@@ -18,15 +19,18 @@ public sealed class SpawnCommand : ICommandExecutor
     private readonly INpcService _npcs;
     private readonly IMobileTemplateService _templates;
     private readonly ITargetService _targets;
+    private readonly IMovementService _movement;
     private readonly ILocalizationService? _localization;
 
     public SpawnCommand(
         INpcService npcs,
         IMobileTemplateService templates,
         ITargetService targets,
+        IMovementService movement,
         ILocalizationService? localization = null
     )
     {
+        _movement = movement;
         _localization = localization;
         _npcs = npcs;
         _templates = templates;
@@ -51,7 +55,7 @@ public sealed class SpawnCommand : ICommandExecutor
 
         var templateId = context.Arguments[0];
 
-        if (!_templates.TryGet(templateId, out _))
+        if (!_templates.TryGet(templateId, out var template))
         {
             context.PrintError(_localization.Text(CommandMessages.UnknownMobileTemplate, "Unknown mobile template: {0}", templateId));
 
@@ -72,9 +76,20 @@ public sealed class SpawnCommand : ICommandExecutor
             return;
         }
 
+        // A water creature on land could never move.
+        if (template.Movement == MobileMovementType.Water &&
+            !_movement.TryGetSwimZ(target.Map, target.Location.X, target.Location.Y, out _))
+        {
+            context.PrintError(
+                _localization.Text(CommandMessages.SpawnNeedsWater, "{0} lives in the water: target the water.", templateId)
+            );
+
+            return;
+        }
+
         try
         {
-            var npc = await _npcs.SpawnAsync(templateId, target.Map, target.Location, context.CancellationToken);
+            var npc = await _npcs.SpawnAsync(templateId, target.Map, target.Location, cancellationToken: context.CancellationToken);
             var spot = npc.Location;
             context.Print(
                 _localization.Text(

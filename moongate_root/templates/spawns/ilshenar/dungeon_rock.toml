@@ -1,0 +1,233 @@
+[[spawn]]
+id = "ilshenar_17600"
+map = "ilshenar"
+name = "Rock 1_1"
+mobile_ids = []
+npc_list_ids = ["rock_npclist_1"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2187
+y1 = 300
+x2 = 2190
+y2 = 317
+
+[[spawn]]
+id = "ilshenar_17601"
+map = "ilshenar"
+name = "Rock 1_2"
+mobile_ids = ["acidele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2211
+y1 = 68
+x2 = 2227
+y2 = 80
+
+[[spawn]]
+id = "ilshenar_17602"
+map = "ilshenar"
+name = "Rock 1_3"
+mobile_ids = ["stonegargoyle"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2201
+y1 = 110
+x2 = 2212
+y2 = 118
+
+[[spawn]]
+id = "ilshenar_17603"
+map = "ilshenar"
+name = "Rock 1_4"
+mobile_ids = []
+npc_list_ids = ["rock_npclist_2"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2224
+y1 = 139
+x2 = 2233
+y2 = 147
+
+[[spawn]]
+id = "ilshenar_17604"
+map = "ilshenar"
+name = "Rock 1_5"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2147
+y1 = 158
+x2 = 2159
+y2 = 165
+
+[[spawn]]
+id = "ilshenar_17605"
+map = "ilshenar"
+name = "Rock 1_6"
+mobile_ids = []
+npc_list_ids = ["rock_npclist_2"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2121
+y1 = 159
+x2 = 2130
+y2 = 170
+
+[[spawn]]
+id = "ilshenar_17606"
+map = "ilshenar"
+name = "Rock 1_7"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2121
+y1 = 133
+x2 = 2130
+y2 = 138
+
+[[spawn]]
+id = "ilshenar_17607"
+map = "ilshenar"
+name = "Rock 1_8"
+mobile_ids = ["eldergazer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2134
+y1 = 92
+x2 = 2143
+y2 = 101
+
+[[spawn]]
+id = "ilshenar_17608"
+map = "ilshenar"
+name = "Rock 1_9"
+mobile_ids = []
+npc_list_ids = ["rock_npclist_3"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2179
+y1 = 77
+x2 = 2188
+y2 = 91
+
+[[spawn]]
+id = "ilshenar_17609"
+map = "ilshenar"
+name = "Rock 1_10"
+mobile_ids = []
+npc_list_ids = ["rock_npclist_4"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2150
+y1 = 17
+x2 = 2158
+y2 = 31
+
+[[spawn]]
+id = "ilshenar_17611"
+map = "ilshenar"
+name = "Rock 1_12"
+mobile_ids = ["executioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2090
+y1 = 53
+x2 = 2097
+y2 = 61
+
+[[spawn]]
+id = "ilshenar_17612"
+map = "ilshenar"
+name = "Rock 1_13"
+mobile_ids = []
+npc_list_ids = ["rock_npclist_6"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2122
+y1 = 23
+x2 = 2132
+y2 = 32
+
+[[spawn]]
+id = "ilshenar_17613"
+map = "ilshenar"
+name = "Rock 1_14"
+mobile_ids = ["executioner"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2089
+y1 = 52
+x2 = 2097
+y2 = 59

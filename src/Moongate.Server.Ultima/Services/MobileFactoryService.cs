@@ -143,6 +143,7 @@ public class MobileFactoryService : IMobileFactoryService
         string templateId,
         MapType map,
         Point3D location,
+        IReadOnlyDictionary<string, object?>? props = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -164,6 +165,12 @@ public class MobileFactoryService : IMobileFactoryService
 
         mobile.Map = map;
         mobile.Location = location;
+
+        foreach (var (key, value) in props ?? new Dictionary<string, object?>())
+        {
+            mobile.SetProp(key, value);
+        }
+
         await _eventBus.PublishAsync(new MobileBeforeSpawnEvent(mobile, map, location), cancellationToken);
 
         // A handler may have moved the mobile: it must still be on its map.

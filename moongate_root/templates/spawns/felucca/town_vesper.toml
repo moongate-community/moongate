@@ -1,0 +1,971 @@
+[[spawn]]
+id = "felucca_1200"
+map = "felucca"
+name = "Vesper - Healer of Vesper"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2914
+y1 = 851
+x2 = 2916
+y2 = 853
+
+[[spawn]]
+id = "felucca_1201"
+map = "felucca"
+name = "Vesper guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2738
+y1 = 986
+x2 = 2741
+y2 = 989
+
+[[spawn]]
+id = "felucca_1202"
+map = "felucca"
+name = "Vesper - The Ironwood Inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2775
+y1 = 964
+x2 = 2779
+y2 = 968
+
+[[spawn]]
+id = "felucca_1204"
+map = "felucca"
+name = "Vesper - Tanner's Shop"
+mobile_ids = ["leatherworker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2857
+y1 = 992
+x2 = 2860
+y2 = 996
+
+[[spawn]]
+id = "felucca_1205"
+map = "felucca"
+name = "Vesper - Vesper Museum"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2929
+y1 = 970
+x2 = 2931
+y2 = 974
+
+[[spawn]]
+id = "felucca_1206"
+map = "felucca"
+name = "Vesper - Vesper Museum"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2928
+y1 = 981
+x2 = 2930
+y2 = 985
+
+[[spawn]]
+id = "felucca_1207"
+map = "felucca"
+name = "Vesper - Vesper Museum"
+mobile_ids = ["bard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2914
+y1 = 985
+x2 = 2917
+y2 = 988
+
+[[spawn]]
+id = "felucca_1208"
+map = "felucca"
+name = "Vesper - The Majestic Boat"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2946
+y1 = 934
+x2 = 2949
+y2 = 938
+
+[[spawn]]
+id = "felucca_1209"
+map = "felucca"
+name = "Vesper - The Marsh Hall"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2896
+y1 = 913
+x2 = 2897
+y2 = 915
+
+[[spawn]]
+id = "felucca_1210"
+map = "felucca"
+name = "Vesper - The Adventurer's Friend"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2843
+y1 = 865
+x2 = 2845
+y2 = 868
+
+[[spawn]]
+id = "felucca_1211"
+map = "felucca"
+name = "Vesper - The Spinning Wheel (Center)"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2841
+y1 = 882
+x2 = 2844
+y2 = 885
+
+[[spawn]]
+id = "felucca_1212"
+map = "felucca"
+name = "Vesper - The Ironworks"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2865
+y1 = 849
+x2 = 2867
+y2 = 852
+
+[[spawn]]
+id = "felucca_1213"
+map = "felucca"
+name = "Vesper - Warrior's Companion"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2843
+y1 = 810
+x2 = 2845
+y2 = 812
+
+[[spawn]]
+id = "felucca_1214"
+map = "felucca"
+name = "Vesper - Warrior's Companion"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2843
+y1 = 793
+x2 = 2845
+y2 = 796
+
+[[spawn]]
+id = "felucca_1215"
+map = "felucca"
+name = "Vesper - The Ranger's Tool"
+mobile_ids = ["bowyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2864
+y1 = 810
+x2 = 2866
+y2 = 812
+
+[[spawn]]
+id = "felucca_1216"
+map = "felucca"
+name = "Vesper - The Gadget's Corner"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2897
+y1 = 786
+x2 = 2900
+y2 = 788
+
+[[spawn]]
+id = "felucca_1217"
+map = "felucca"
+name = "Vesper - The Hammer and Nail"
+mobile_ids = ["carpenter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2913
+y1 = 798
+x2 = 2915
+y2 = 800
+
+[[spawn]]
+id = "felucca_1218"
+map = "felucca"
+name = "Vesper - The Hammer and Nail"
+mobile_ids = ["architect"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2921
+y1 = 794
+x2 = 2924
+y2 = 797
+
+[[spawn]]
+id = "felucca_1219"
+map = "felucca"
+name = "Vesper - The Shimmering Jewel"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2874
+y1 = 721
+x2 = 2876
+y2 = 723
+
+[[spawn]]
+id = "felucca_1220"
+map = "felucca"
+name = "Vesper - The Mint of Vesper"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2881
+y1 = 675
+x2 = 2886
+y2 = 678
+
+[[spawn]]
+id = "felucca_1221"
+map = "felucca"
+name = "Vesper - The Magical Light"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2913
+y1 = 665
+x2 = 2916
+y2 = 667
+
+[[spawn]]
+id = "felucca_1222"
+map = "felucca"
+name = "Vesper - The Bubbling Brew"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2889
+y1 = 650
+x2 = 2891
+y2 = 653
+
+[[spawn]]
+id = "felucca_1223"
+map = "felucca"
+name = "Vesper - The Spinning Wheel (North)"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2961
+y1 = 625
+x2 = 2964
+y2 = 628
+
+[[spawn]]
+id = "felucca_1224"
+map = "felucca"
+name = "Vesper - The Spinning Wheel (North)"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2955
+y1 = 618
+x2 = 2958
+y2 = 621
+
+[[spawn]]
+id = "felucca_1225"
+map = "felucca"
+name = "Vesper - The Adventurer's Supplies"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2993
+y1 = 641
+x2 = 2996
+y2 = 644
+
+[[spawn]]
+id = "felucca_1226"
+map = "felucca"
+name = "Vesper - The Busy Bees"
+mobile_ids = ["beekeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2958
+y1 = 705
+x2 = 2960
+y2 = 708
+
+[[spawn]]
+id = "felucca_1227"
+map = "felucca"
+name = "Vesper - The Twisted Baker"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2994
+y1 = 761
+x2 = 2996
+y2 = 764
+
+[[spawn]]
+id = "felucca_1228"
+map = "felucca"
+name = "Vesper - The Butcher's Knife"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2987
+y1 = 776
+x2 = 2989
+y2 = 778
+
+[[spawn]]
+id = "felucca_1229"
+map = "felucca"
+name = "Vesper - Fisherman's Wharf"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3016
+y1 = 779
+x2 = 3018
+y2 = 781
+
+[[spawn]]
+id = "felucca_1230"
+map = "felucca"
+name = "Vesper - Farmer's Market"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3017
+y1 = 764
+x2 = 3019
+y2 = 766
+
+[[spawn]]
+id = "felucca_1231"
+map = "felucca"
+name = "Vesper - The Majestic Boat"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2994
+y1 = 810
+x2 = 2996
+y2 = 812
+
+[[spawn]]
+id = "felucca_1232"
+map = "felucca"
+name = "Vesper - The Magician's Friend"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2993
+y1 = 834
+x2 = 2994
+y2 = 836
+
+[[spawn]]
+id = "felucca_1233"
+map = "felucca"
+name = "Vesper - Vesper Youth Hostel"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2969
+y1 = 883
+x2 = 2972
+y2 = 886
+
+[[spawn]]
+id = "felucca_1234"
+map = "felucca"
+name = "Thief Guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 2837
+y1 = 680
+x2 = 3031
+y2 = 950
+
+[[spawn]]
+id = "felucca_1235"
+map = "felucca"
+name = "Vesper - Vesper Stables"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2873
+y1 = 658
+x2 = 2875
+y2 = 665
+
+[[spawn]]
+id = "felucca_1236"
+map = "felucca"
+name = "Vesper - Tanner's Shop"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2857
+y1 = 999
+x2 = 2861
+y2 = 1003
+
+[[spawn]]
+id = "felucca_1237"
+map = "felucca"
+name = "Vesper - Tanner's Shop"
+mobile_ids = ["furtrader"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2865
+y1 = 1000
+x2 = 2869
+y2 = 1003
+
+[[spawn]]
+id = "felucca_1238"
+map = "felucca"
+name = "Vesper - The Marsh Hall"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2892
+y1 = 901
+x2 = 2905
+y2 = 917
+
+[[spawn]]
+id = "felucca_1239"
+map = "felucca"
+name = "Vesper - The Champions of Light"
+mobile_ids = ["fighter"]
+npc_list_ids = []
+max = 3
+min_minutes = 60
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2832
+y1 = 896
+x2 = 2838
+y2 = 918
+
+[[spawn]]
+id = "felucca_1240"
+map = "felucca"
+name = "Vesper - The Spinning Wheel"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2835
+y1 = 880
+x2 = 2846
+y2 = 886
+
+[[spawn]]
+id = "felucca_1241"
+map = "felucca"
+name = "Vesper - The Spinning Wheel"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2835
+y1 = 880
+x2 = 2846
+y2 = 886
+
+[[spawn]]
+id = "felucca_1242"
+map = "felucca"
+name = "Vesper - The Adventurer's Friend"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2835
+y1 = 867
+x2 = 2841
+y2 = 870
+
+[[spawn]]
+id = "felucca_1243"
+map = "felucca"
+name = "Vesper - The Majestic Boat"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2994
+y1 = 814
+x2 = 2995
+y2 = 821
+
+[[spawn]]
+id = "felucca_1244"
+map = "felucca"
+name = "Vesper - The Magician's Friend"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2993
+y1 = 839
+x2 = 2998
+y2 = 846
+
+[[spawn]]
+id = "felucca_1245"
+map = "felucca"
+name = "Vesper - Fisher (Docks)"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3015
+y1 = 826
+x2 = 3040
+y2 = 829
+
+[[spawn]]
+id = "felucca_1246"
+map = "felucca"
+name = "Vesper - Sailor (Docks)"
+mobile_ids = ["sailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 60
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3015
+y1 = 826
+x2 = 3040
+y2 = 829
+
+[[spawn]]
+id = "felucca_1247"
+map = "felucca"
+name = "Vesper - The Coloured Canvas"
+mobile_ids = ["artist"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2904
+y1 = 705
+x2 = 2909
+y2 = 717
+
+[[spawn]]
+id = "felucca_1248"
+map = "felucca"
+name = "Vesper - The Musician's Hall"
+mobile_ids = ["bard"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2880
+y1 = 737
+x2 = 2894
+y2 = 750
+
+[[spawn]]
+id = "felucca_1249"
+map = "felucca"
+name = "Vesper - Towncrier (SW)"
+mobile_ids = ["towncrier"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2768
+y1 = 983
+x2 = 2768
+y2 = 983
+
+[[spawn]]
+id = "felucca_1250"
+map = "felucca"
+name = "Vesper - Towncrier (SW)"
+mobile_ids = ["towncrier"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2895
+y1 = 686
+x2 = 2895
+y2 = 686
+
+[[spawn]]
+id = "felucca_1251"
+map = "felucca"
+name = "Vesper - The Ore of Vesper"
+mobile_ids = ["miner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2852
+y1 = 730
+x2 = 2861
+y2 = 742
+
+[[spawn]]
+id = "felucca_1252"
+map = "felucca"
+name = "Vesper - The Magical Light"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2913
+y1 = 669
+x2 = 2926
+y2 = 678
+
+[[spawn]]
+id = "felucca_1253"
+map = "felucca"
+name = "Vesper - The Spinning Wheel (North)"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2955
+y1 = 618
+x2 = 2958
+y2 = 621
+
+[[spawn]]
+id = "felucca_1254"
+map = "felucca"
+name = "Vesper - The Adventurer's Supplies"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2979
+y1 = 635
+x2 = 2990
+y2 = 638

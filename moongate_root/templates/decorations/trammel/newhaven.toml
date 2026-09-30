@@ -1,0 +1,437 @@
+# ==============================================================================
+# Moongate - templates/decorations/trammel/newhaven.toml
+#
+# What it is for:
+#   World decoration placed on Trammel: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "Metal"
+type = "MetalDoor"
+item_id = 0x0677
+props = { facing = "east_ccw" }
+locations = [
+    [3486, 2503, 51],
+    [3485, 2496, 71],
+]
+
+[[decoration]]
+type = "MetalDoor"
+item_id = 0x0675
+props = { facing = "west_cw" }
+locations = [
+    [3485, 2503, 51],
+    [3484, 2496, 71],
+    [3555, 2466, 15],
+]
+
+[[decoration]]
+type = "MetalDoor"
+item_id = 0x0675
+props = { facing = "west_cw", locked = true } # the side doors of the bank
+locations = [
+    [3481, 2579, 20],
+    [3481, 2568, 20],
+]
+
+[[decoration]]
+type = "MetalDoor"
+item_id = 0x067F
+props = { facing = "north_ccw" }
+locations = [[3491, 2571, 21]]
+
+[[decoration]]
+type = "MetalDoor"
+item_id = 0x067D
+props = { facing = "south_cw" }
+locations = [
+    [3491, 2573, 21],
+    [3472, 2489, 91],
+    [3550, 2453, 15],
+    [3550, 2458, 15],
+    [3550, 2462, 15],
+]
+
+[[decoration]]
+type = "MetalDoor"
+item_id = 0x0683
+props = { facing = "north_cw" }
+locations = [
+    [3559, 2452, 15],
+    [3559, 2458, 15],
+    [3559, 2462, 15],
+]
+
+[[decoration]]
+type = "MetalDoor"
+item_id = 0x0681
+props = { facing = "south_ccw" }
+locations = [[3482, 2489, 91]]
+
+[[decoration]]
+comment = "Wood"
+type = "DarkWoodDoor"
+item_id = 0x06A7
+props = { facing = "east_ccw" }
+locations = [
+    [3470, 2522, 68],
+    [3500, 2518, 47],
+    [3495, 2518, 47],
+]
+
+[[decoration]]
+type = "DarkWoodDoor"
+item_id = 0x06AB
+props = { facing = "east_cw" }
+locations = [
+    [3495, 2516, 47],
+    [3500, 2516, 47],
+]
+
+[[decoration]]
+type = "DarkWoodDoor"
+item_id = 0x06A5
+props = { facing = "west_cw" }
+locations = [
+    [3469, 2522, 68],
+    [3442, 2570, 35],
+    [3458, 2526, 53],
+    [3458, 2531, 53],
+    [3506, 2526, 27],
+    [3508, 2549, 20],
+    [3497, 2549, 20],
+    [3497, 2556, 20],
+    [3497, 2554, 40],
+    [3508, 2556, 20],
+    [3503, 2549, 40],
+]
+
+[[decoration]]
+type = "DarkWoodDoor"
+item_id = 0x06A9
+props = { facing = "west_ccw" }
+locations = [
+    [3459, 2596, 15],
+    [3508, 2545, 17],
+]
+
+[[decoration]]
+type = "DarkWoodDoor"
+item_id = 0x06AF
+props = { facing = "north_ccw" }
+locations = [
+    [3461, 2524, 73],
+    [3497, 2534, 27],
+]
+
+[[decoration]]
+type = "DarkWoodDoor"
+item_id = 0x06B3
+props = { facing = "north_cw" }
+locations = [
+    [3457, 2599, 18],
+    [3496, 2589, 35],
+    [3501, 2547, 20],
+    [3491, 2547, 17],
+    [3495, 2547, 40],
+    [3501, 2547, 40],
+    [3504, 2547, 40],
+    [3496, 2517, 27],
+    [3509, 2513, 47],
+    [3509, 2518, 27],
+]
+
+[[decoration]]
+type = "DarkWoodDoor"
+item_id = 0x06AD
+props = { facing = "south_cw" }
+locations = [
+    [3473, 2530, 68],
+    [3477, 2527, 48],
+    [3483, 2533, 38],
+    [3474, 2519, 48],
+]
+
+[[decoration]]
+type = "DarkWoodDoor"
+item_id = 0x06B1
+props = { facing = "south_ccw" }
+locations = [
+    [3504, 2527, 47],
+    [3504, 2522, 47],
+    [3496, 2518, 27],
+]
+
+[[decoration]]
+type = "LightWoodDoor"
+item_id = 0x06DD
+props = { facing = "south_cw" }
+locations = [
+    [3456, 2567, 32],
+    [3465, 2567, 35],
+    [3462, 2551, 35],
+    [3468, 2559, 35],
+    [3459, 2558, 32],
+    [3447, 2589, 35],
+    [3446, 2579, 35],
+    [3446, 2582, 35],
+    [3448, 2552, 35],
+    [3449, 2606, 30],
+]
+
+[[decoration]]
+type = "LightWoodDoor"
+item_id = 0x06DF
+props = { facing = "north_ccw" }
+locations = [[3448, 2551, 35]]
+
+[[decoration]]
+type = "LightWoodDoor"
+item_id = 0x06D5
+props = { facing = "west_cw" }
+locations = [
+    [3435, 2572, 53],
+    [3443, 2563, 55],
+    [3457, 2555, 35],
+    [3462, 2562, 35],
+    [3446, 2603, 30],
+]
+
+[[decoration]]
+type = "LightWoodDoor"
+item_id = 0x06D7
+props = { facing = "east_ccw" }
+locations = [
+    [3436, 2572, 53],
+    [3445, 2563, 35],
+]
+
+[[decoration]]
+type = "LightWoodDoor"
+item_id = 0x06DB
+props = { facing = "east_cw" }
+locations = [[3436, 2563, 48]]
+
+[[decoration]]
+type = "LightWoodDoor"
+item_id = 0x06D9
+props = { facing = "west_ccw" }
+locations = [[3435, 2563, 49]]
+
+[[decoration]]
+comment = "Gate's"
+type = "LightWoodGate"
+item_id = 0x0845
+props = { facing = "south_ccw" }
+locations = [[3522, 2577, 7]]
+
+[[decoration]]
+type = "LightWoodGate"
+item_id = 0x0847
+props = { facing = "north_cw" }
+locations = [[3522, 2576, 7]]
+
+[[decoration]]
+comment = "large forge"
+type = "Forge"
+item_id = 0x197A
+props = { light = "Circle300" }
+locations = [[3474, 2538, 31]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x197E
+props = { light = "Circle300" }
+locations = [[3475, 2538, 31]]
+
+[[decoration]]
+type = "Forge"
+item_id = 0x19A2
+props = { light = "Circle300" }
+locations = [[3476, 2538, 31]]
+
+[[decoration]]
+type = "Forge"
+item_id = 0x199E
+props = { light = "Circle300" }
+locations = [[3477, 2538, 31]]
+
+[[decoration]]
+comment = "forge"
+type = "Forge"
+item_id = 0x0FB1
+props = { light = "Circle300" }
+locations = [
+    [3467, 2539, 36],
+    [3467, 2541, 36],
+]
+
+[[decoration]]
+comment = "anvil"
+type = "AnvilSouthAddon"
+item_id = 0x0FB0
+locations = [[3470, 2535, 41]]
+
+[[decoration]]
+type = "AnvilSouthAddon"
+item_id = 0x0FB0
+locations = [[3468, 2535, 41]]
+
+[[decoration]]
+comment = "loom"
+type = "Static"
+item_id = 0x1062
+locations = [[3499, 2546, 20]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x1061
+locations = [[3498, 2546, 20]]
+
+[[decoration]]
+comment = "gem's"
+type = "Static"
+item_id = 0x0F21
+locations = [[3505, 2552, 23]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0F13
+locations = [[3505, 2551, 23]]
+
+[[decoration]]
+comment = "regs"
+type = "Static"
+item_id = 0x0F7B
+locations = [[3468, 2519, 51]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0F8D
+locations = [[3468, 2520, 51]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0F88
+locations = [[3468, 2518, 51]]
+
+[[decoration]]
+comment = "#########"
+type = "Static"
+item_id = 0x0B9E
+locations = [
+    [3473, 2543, 36],
+    [3498, 2557, 24],
+    [3459, 2532, 55],
+    [3434, 2573, 55],
+    [3510, 2557, 22],
+]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BC8
+locations = [[3473, 2543, 36]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BAE
+locations = [[3495, 2536, 28]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BC5
+locations = [[3475, 2520, 52]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BB3
+locations = [[3510, 2525, 27]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BA6
+locations = [[3498, 2557, 24]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0C0B
+locations = [[3494, 2569, 23]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BB5
+locations = [[3497, 2594, 37]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BA3
+locations = [[3469, 2574, 37]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BAB
+locations = [[3469, 2558, 37]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BC5
+locations = [[3471, 2566, 20]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0C02
+locations = [[3459, 2532, 55]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BC3
+locations = [[3451, 2547, 50]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BC4
+locations = [[3434, 2573, 55]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BB7
+locations = [[3522, 2574, 1]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BC2
+locations = [[3510, 2557, 22]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0B95
+locations = [[3478, 2528, 50]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0BA1
+locations = [
+    [3450, 2607, 27],
+    [3478, 2528, 50],
+    [3522, 2574, 1],
+    [3451, 2547, 50],
+    [3471, 2566, 20],
+    [3469, 2558, 37],
+    [3469, 2574, 37],
+    [3497, 2594, 37],
+    [3494, 2569, 23],
+    [3475, 2520, 52],
+    [3510, 2525, 27],
+]

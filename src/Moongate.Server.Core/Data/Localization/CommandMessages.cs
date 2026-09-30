@@ -37,6 +37,31 @@ public static class CommandMessages
     public const int AccountCreated = 30036;
     public const int AccountCreationFailed = 30037;
     public const int LocalConsoleOnly = 30038;
+    public const int FameSet = 30050;
+    public const int KarmaSet = 30051;
+    public const int NotAMobile = 30052;
+    public const int DecoratingFile = 30055;
+    public const int DecorationDone = 30056;
+    public const int DecorationFailed = 30057;
+    public const int DecorationRunning = 30059;
+    public const int GlobalLightSet = 30060;
+    public const int GlobalLightCleared = 30061;
+    public const int WeatherHere = 30063;
+    public const int WeatherForced = 30064;
+    public const int DoorLocked = 30066;
+    public const int DoorUnlocked = 30067;
+    public const int NotADoor = 30068;
+    public const int KeyCreated = 30071;
+    public const int NoBackpack = 30072;
+
+    // The spawn notice to the staff: one region, several regions, and the ones left out of the names.
+    public const int SpawnedInOneRegion = 30074;
+    public const int SpawnedInRegions = 30075;
+    public const int SpawnedAndMore = 30076;
+    public const int SpawnRegionHere = 30077;
+    public const int NoSpawnRegionHere = 30078;
+    public const int SpawnRegionRetrying = 30080;
+    public const int SpawnNeedsWater = 30081;
 
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
@@ -52,4 +77,13 @@ public static class CommandMessages
     public const int EchoDescription = 30047;
     public const int HelpDescriptionText = 30048;
     public const int ScriptDescription = 30049;
+    public const int FameDescription = 30053;
+    public const int KarmaDescription = 30054;
+    public const int DecorateDescription = 30058;
+    public const int GlobalLightDescription = 30062;
+    public const int WeatherDescription = 30065;
+    public const int LockDescription = 30069;
+    public const int UnlockDescription = 30070;
+    public const int KeyDescription = 30073;
+    public const int SpawnsDescription = 30079;
 }

@@ -1,0 +1,50 @@
+# ==============================================================================
+# Moongate - templates/decorations/malas/markcontainers.toml
+#
+# What it is for:
+#   World decoration placed on Malas: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "Standard pouches"
+type = "MarkContainer"
+item_id = 0x0E79
+props = { target_map = "Malas" }
+extras = [[1006, 994, -70], [1019, 1062, -70], [1214, 1313, -90], [1554, 172, -90], [1061, 1161, -70], [1201, 1554, -70], [1183, 462, -45]]
+locations = [
+    [951, 546, -70],
+    [914, 192, -79],
+    [1614, 143, -90],
+    [2176, 324, -90],
+    [864, 812, -90],
+    [1326, 523, -87],
+    [1313, 1115, -85],
+]
+
+[[decoration]]
+comment = "Auto-lock pouch"
+type = "MarkContainer"
+item_id = 0x0E79
+props = { target_map = "Malas", locked = true }
+extras = [[1076, 1244, -70]]
+locations = [[1051, 1434, -85]]
+
+[[decoration]]
+comment = "Bone container"
+type = "MarkContainer"
+item_id = 0x0ECA
+props = { target_map = "Malas", bone = true }
+extras = [[2333, 1501, -90]]
+locations = [[424, 189, -1]]

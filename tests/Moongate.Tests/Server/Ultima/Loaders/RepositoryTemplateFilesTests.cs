@@ -60,6 +60,22 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedDecorationTemplates_AreFixedAndDoNotDecay_AndTheDoorHasTheDoorScript()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        var decoration = templates["decoration"];
+        var door = templates["decoration_door"];
+        Assert.Equal(((bool?)false, (bool?)false, (string?)null), (decoration.Movable, decoration.Decays, decoration.Name));
+        Assert.True(string.IsNullOrEmpty(decoration.ScriptId));
+        Assert.Equal(((bool?)false, (bool?)false, "door"), (door.Movable, door.Decays, door.ScriptId));
+        var light = templates["decoration_light"];
+        Assert.Equal(((bool?)false, (bool?)false, "light"), (light.Movable, light.Decays, light.ScriptId));
+        Assert.Equal("light", templates["0x0a28_candle"].ScriptId);
+        Assert.True(templates.ContainsKey(Moongate.Server.Ultima.Commands.KeyCommand.KeyTemplate));
+    }
+
+    [Fact]
     public async Task ShippedItemTemplates_MarkTwoHandedWeaponsButNotShieldsOrTorches()
     {
         var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
@@ -108,8 +124,38 @@ public sealed class RepositoryTemplateFilesTests
 
         var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
-        Assert.Equal(671, mobiles.Count);
+        Assert.Equal(674, mobiles.Count);
         Assert.Equal("{gender}", mobiles["guard"].NameList);
+        // Moongate's own cats inherit the UOX3 cat and add their name and script.
+        Assert.Equal((201, "Orione", "orione"), (mobiles["orione"].Body, mobiles["orione"].Name, mobiles["orione"].ScriptId));
+        Assert.Equal((201, "Vega", "vega"), (mobiles["vega"].Body, mobiles["vega"].Name, mobiles["vega"].ScriptId));
+        var lilly = mobiles["lilly"];
+        Assert.Equal(("Lilly", "the Noble", 32000, 32000), (lilly.Name, lilly.Title, lilly.Fame!.Value.Roll(), lilly.Karma!.Value.Roll()));
+        Assert.Equal(
+            ["0x230e_gilded_dress", "0x1711_thigh_boots", "base_royal_circlet"],
+            lilly.Equipment!.SelectMany(entry => entry.Items)
+        );
+    }
+
+    [Fact]
+    public async Task ShippedNpcListsAndSpawns_LoadAgainstTheShippedMobiles()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots))
+                          .LoadDataAsync()).Entities.ToArray();
+        var lists = (await new NpcListsLoader(directories, new StubDataLoaderService().With(mobiles)).LoadDataAsync()).Entities.ToArray();
+
+        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists)).LoadDataAsync())
+                     .Entities.ToDictionary(spawn => spawn.Id);
+
+        Assert.Equal(446, lists.Length);
+        Assert.Equal(2778, spawns.Count);
+        var shop = spawns["felucca_0"];
+        Assert.Equal(("The Hammer And Anvil", MapType.Felucca, 480), (shop.Name, shop.Map, shop.MinMinutes));
+        Assert.Equal(["weaponsmith"], shop.MobileIds);
     }
 
     [Fact]
@@ -133,6 +179,9 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Contains(guard.Body, new[] { 400, 401 });
         Assert.False(string.IsNullOrWhiteSpace(guard.Name));
         Assert.True(orc.Body > 0 && orc.HitsMax > 0 && !string.IsNullOrWhiteSpace(orc.Name), $"{orc.Body} {orc.Name}");
+
+        var lilly = factory.Create("lilly");
+        Assert.Equal((401, "Lilly", 32000, 32000), (lilly.Body, lilly.Name, lilly.Fame, lilly.Karma));
     }
 
     [Fact]

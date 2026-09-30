@@ -1,0 +1,32 @@
+# ==============================================================================
+# Moongate - templates/mobiles/moongate_lilly.toml
+#
+# What it is for:
+#   Lilly, the noble lady of Moongate v2, dressed as a princess: a gilded dress,
+#   thigh boots and a royal circlet. Her fame and karma are at their highest, so
+#   her paperdoll reads "The Glorious Lady Lilly, the Noble". She has no script.
+#   Spawn her with ".spawn lilly".
+#
+# Fields:
+#   fame, karma  32000, the highest the titles and the fame and karma commands allow
+#   equipment    one item per layer, from templates/items/gear
+# ==============================================================================
+
+[[mobile]]
+id = "lilly"
+name = "Lilly"
+title = "the Noble"
+gender = "female"
+race = "human"
+fame = 32000
+karma = 32000
+notoriety = "invulnerable"
+
+[[mobile.equipment]]
+items = ["0x230e_gilded_dress"]
+
+[[mobile.equipment]]
+items = ["0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["base_royal_circlet"]

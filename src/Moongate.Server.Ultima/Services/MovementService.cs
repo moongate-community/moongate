@@ -80,6 +80,107 @@ public class MovementService : IMovementService
         return found;
     }
 
+    public bool TryGetSpawnZ(MapType map, int x, int y, int maxZ, out int z)
+    {
+        z = 0;
+
+        if (!_mapService.Maps.Contains(map) || !_mapService.Contains(map, x, y))
+        {
+            return false;
+        }
+
+        // UOX3 FindSpotForNPC: the highest surface under the ceiling a mobile can stand on, as ModernUO CanSpawnMobile.
+        var found = false;
+        var land = _mapService.GetLand(map, x, y);
+        var statics = _mapService.GetStatics(map, x, y);
+
+        if (!LandHeights.IsIgnored(land.Id) &&
+            (_tileDataService.GetLand(land.Id & 0x3FFF).Flags & (TileFlagType.Impassable | TileFlagType.Wet)) == 0)
+        {
+            var average = GetAverageZ(map, x, y);
+
+            if (average <= maxZ && IsOk(statics, average, average + PersonHeight))
+            {
+                z = average;
+                found = true;
+            }
+        }
+
+        foreach (var tile in statics)
+        {
+            var item = _tileDataService.GetItem(tile.Id);
+
+            if ((item.Flags & TileFlagType.Surface) == 0 ||
+                (item.Flags & (TileFlagType.Impassable | TileFlagType.Wet)) != 0)
+            {
+                continue;
+            }
+
+            var top = tile.Z + item.StandHeight;
+
+            if (top <= maxZ && (!found || top > z) && IsOk(statics, top, top + PersonHeight))
+            {
+                z = top;
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
+    public bool TryGetSwimZ(MapType map, int x, int y, out int z)
+    {
+        z = 0;
+
+        if (!_mapService.Maps.Contains(map) || !_mapService.Contains(map, x, y))
+        {
+            return false;
+        }
+
+        // UOX3's water spawn. Water is wet and impassable (so a walker cannot enter it) and flat; a wet static that is
+        // passable or has a height, such as blood or a trough, is not water.
+        var found = false;
+        var land = _mapService.GetLand(map, x, y);
+        var statics = _mapService.GetStatics(map, x, y);
+        var considerLand = !LandHeights.IsIgnored(land.Id);
+        var average = considerLand ? GetAverageZ(map, x, y) : int.MinValue;
+
+        if (considerLand && IsWater(_tileDataService.GetLand(land.Id & 0x3FFF).Flags))
+        {
+            if (IsOk(statics, average, average + PersonHeight))
+            {
+                z = average;
+                found = true;
+            }
+        }
+
+        foreach (var tile in statics)
+        {
+            var item = _tileDataService.GetItem(tile.Id);
+
+            if (!IsWater(item.Flags) || item.Height != 0)
+            {
+                continue;
+            }
+
+            var top = tile.Z + item.StandHeight;
+
+            // As MovementImpl's land check: water under the ground's centre cannot be moved on.
+            if (top < average)
+            {
+                continue;
+            }
+
+            if ((!found || top > z) && IsOk(statics, top, top + PersonHeight))
+            {
+                z = top;
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
     public bool CheckMovement(
         MapType map,
         Point3D from,
@@ -303,6 +404,11 @@ public class MovementService : IMovementService
         }
 
         return moveIsOk;
+    }
+
+    private static bool IsWater(TileFlagType flags)
+    {
+        return (flags & (TileFlagType.Wet | TileFlagType.Impassable)) == (TileFlagType.Wet | TileFlagType.Impassable);
     }
 
     // ModernUO MovementImpl.IsOk: no impassable or surface static overlaps the space from ourZ to ourTop.

@@ -1,0 +1,3375 @@
+[[spawn]]
+id = "ilshenar_18250"
+map = "ilshenar"
+name = "Ilsh Outdoors 1"
+mobile_ids = ["dragon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1733
+y1 = 314
+x2 = 1772
+y2 = 379
+
+[[spawn]]
+id = "ilshenar_18251"
+map = "ilshenar"
+name = "Ilsh Outdoors 2"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1770
+y1 = 415
+x2 = 1802
+y2 = 460
+
+[[spawn]]
+id = "ilshenar_18252"
+map = "ilshenar"
+name = "Ilsh Outdoors 3"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_1"]
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1769
+y1 = 419
+x2 = 1864
+y2 = 519
+
+[[spawn]]
+id = "ilshenar_18253"
+map = "ilshenar"
+name = "Ilsh Outdoors 4"
+mobile_ids = ["stonegargoyle"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1846
+y1 = 471
+x2 = 1859
+y2 = 491
+
+[[spawn]]
+id = "ilshenar_18254"
+map = "ilshenar"
+name = "Ilsh Outdoors 5"
+mobile_ids = ["brigand"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1823
+y1 = 494
+x2 = 1867
+y2 = 547
+
+[[spawn]]
+id = "ilshenar_18255"
+map = "ilshenar"
+name = "Ilsh Outdoors 6"
+mobile_ids = ["airele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1765
+y1 = 520
+x2 = 1785
+y2 = 540
+
+[[spawn]]
+id = "ilshenar_18256"
+map = "ilshenar"
+name = "Ilsh Outdoors 7"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_2"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1788
+y1 = 561
+x2 = 1866
+y2 = 627
+
+[[spawn]]
+id = "ilshenar_18258"
+map = "ilshenar"
+name = "Ilsh Outdoors 9"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_3"]
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1617
+y1 = 572
+x2 = 1677
+y2 = 625
+
+[[spawn]]
+id = "ilshenar_18259"
+map = "ilshenar"
+name = "Ilsh Outdoors 10"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_4"]
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1561
+y1 = 572
+x2 = 1623
+y2 = 636
+
+[[spawn]]
+id = "ilshenar_18260"
+map = "ilshenar"
+name = "Ilsh Outdoors 11"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_5"]
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1670
+y1 = 516
+x2 = 1730
+y2 = 576
+
+[[spawn]]
+id = "ilshenar_18261"
+map = "ilshenar"
+name = "Ilsh Outdoors 12"
+mobile_ids = []
+npc_list_ids = ["allratmen"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1575
+y1 = 533
+x2 = 1586
+y2 = 543
+
+[[spawn]]
+id = "ilshenar_18262"
+map = "ilshenar"
+name = "Ilsh Outdoors 13"
+mobile_ids = []
+npc_list_ids = ["allratmen"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1576
+y1 = 549
+x2 = 1585
+y2 = 559
+
+[[spawn]]
+id = "ilshenar_18263"
+map = "ilshenar"
+name = "Ilsh Outdoors 14"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1528
+y1 = 624
+x2 = 1543
+y2 = 638
+
+[[spawn]]
+id = "ilshenar_18264"
+map = "ilshenar"
+name = "Ilsh Outdoors 15"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1521
+y1 = 662
+x2 = 1536
+y2 = 674
+
+[[spawn]]
+id = "ilshenar_18265"
+map = "ilshenar"
+name = "Ilsh Outdoors 16"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_6"]
+max = 16
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1519
+y1 = 586
+x2 = 1549
+y2 = 615
+
+[[spawn]]
+id = "ilshenar_18266"
+map = "ilshenar"
+name = "Ilsh Outdoors 17"
+mobile_ids = ["imp"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1431
+y1 = 658
+x2 = 1465
+y2 = 701
+
+[[spawn]]
+id = "ilshenar_18267"
+map = "ilshenar"
+name = "Ilsh Outdoors 18"
+mobile_ids = ["harpy"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1382
+y1 = 662
+x2 = 1425
+y2 = 712
+
+[[spawn]]
+id = "ilshenar_18268"
+map = "ilshenar"
+name = "Ilsh Outdoors 19"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_7"]
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1330
+y1 = 645
+x2 = 1374
+y2 = 689
+
+[[spawn]]
+id = "ilshenar_18269"
+map = "ilshenar"
+name = "Ilsh Outdoors 20"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_8"]
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1347
+y1 = 598
+x2 = 1397
+y2 = 648
+
+[[spawn]]
+id = "ilshenar_18280"
+map = "ilshenar"
+name = "Ilsh Outdoors 21"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_7"]
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1310
+y1 = 623
+x2 = 1322
+y2 = 643
+
+[[spawn]]
+id = "ilshenar_18281"
+map = "ilshenar"
+name = "Ilsh Outdoors 22"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_6"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1432
+y1 = 566
+x2 = 1452
+y2 = 586
+
+[[spawn]]
+id = "ilshenar_18282"
+map = "ilshenar"
+name = "Ilsh Outdoors 23"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_9"]
+max = 11
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1385
+y1 = 557
+x2 = 1415
+y2 = 583
+
+[[spawn]]
+id = "ilshenar_18283"
+map = "ilshenar"
+name = "Ilsh Outdoors 24"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_10"]
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1391
+y1 = 487
+x2 = 1451
+y2 = 547
+
+[[spawn]]
+id = "ilshenar_18284"
+map = "ilshenar"
+name = "Ilsh Outdoors 25"
+mobile_ids = ["gargoyle"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1304
+y1 = 545
+x2 = 1326
+y2 = 575
+
+[[spawn]]
+id = "ilshenar_18285"
+map = "ilshenar"
+name = "Ilsh Outdoors 26"
+mobile_ids = []
+npc_list_ids = ["allratmen"]
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1245
+y1 = 468
+x2 = 1263
+y2 = 490
+
+[[spawn]]
+id = "ilshenar_18286"
+map = "ilshenar"
+name = "Ilsh Outdoors 27"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_11"]
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1239
+y1 = 370
+x2 = 1310
+y2 = 436
+
+[[spawn]]
+id = "ilshenar_18287"
+map = "ilshenar"
+name = "Ilsh Outdoors 28"
+mobile_ids = ["troll"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1417
+y1 = 355
+x2 = 1475
+y2 = 414
+
+[[spawn]]
+id = "ilshenar_18288"
+map = "ilshenar"
+name = "Ilsh Outdoors 29"
+mobile_ids = ["ancientwyrm"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1410
+y1 = 315
+x2 = 1420
+y2 = 320
+
+[[spawn]]
+id = "ilshenar_18289"
+map = "ilshenar"
+name = "Ilsh Outdoors 30"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_13"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1488
+y1 = 280
+x2 = 1506
+y2 = 290
+
+[[spawn]]
+id = "ilshenar_18290"
+map = "ilshenar"
+name = "Ilsh Outdoors 31"
+mobile_ids = ["ettin"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1454
+y1 = 237
+x2 = 1474
+y2 = 250
+
+[[spawn]]
+id = "ilshenar_18291"
+map = "ilshenar"
+name = "Ilsh Outdoors 32"
+mobile_ids = ["ettin"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1493
+y1 = 229
+x2 = 1513
+y2 = 246
+
+[[spawn]]
+id = "ilshenar_18292"
+map = "ilshenar"
+name = "Ilsh Outdoors 33"
+mobile_ids = ["imp"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1561
+y1 = 250
+x2 = 1581
+y2 = 256
+
+[[spawn]]
+id = "ilshenar_18293"
+map = "ilshenar"
+name = "Ilsh Outdoors 34"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_13"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1040
+y1 = 720
+x2 = 1072
+y2 = 780
+
+[[spawn]]
+id = "ilshenar_18294"
+map = "ilshenar"
+name = "Ilsh Outdoors 35"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_13"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1073
+y1 = 720
+x2 = 1104
+y2 = 780
+
+[[spawn]]
+id = "ilshenar_18295"
+map = "ilshenar"
+name = "Ilsh Outdoors 36"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_14"]
+max = 22
+min_minutes = 5
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1105
+y1 = 713
+x2 = 1165
+y2 = 773
+
+[[spawn]]
+id = "ilshenar_18296"
+map = "ilshenar"
+name = "Ilsh Outdoors 38"
+mobile_ids = []
+npc_list_ids = ["weakorc"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1709
+y1 = 602
+x2 = 1721
+y2 = 611
+
+[[spawn]]
+id = "ilshenar_18297"
+map = "ilshenar"
+name = "Ilsh Outdoors 39"
+mobile_ids = ["orccaptain"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1709
+y1 = 602
+x2 = 1721
+y2 = 611
+
+[[spawn]]
+id = "ilshenar_18298"
+map = "ilshenar"
+name = "Ilsh Outdoors 40"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_16"]
+max = 16
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1130
+y1 = 651
+x2 = 1190
+y2 = 711
+
+[[spawn]]
+id = "ilshenar_18299"
+map = "ilshenar"
+name = "Ilsh Outdoors 41"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_17"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1090
+y1 = 696
+x2 = 1102
+y2 = 707
+
+[[spawn]]
+id = "ilshenar_18300"
+map = "ilshenar"
+name = "Ilsh Outdoors 42"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_17"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1081
+y1 = 696
+x2 = 1089
+y2 = 703
+
+[[spawn]]
+id = "ilshenar_18301"
+map = "ilshenar"
+name = "Ilsh Outdoors 43"
+mobile_ids = ["jukamage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1081
+y1 = 672
+x2 = 1087
+y2 = 678
+
+[[spawn]]
+id = "ilshenar_18302"
+map = "ilshenar"
+name = "Ilsh Outdoors 44"
+mobile_ids = ["jukawarrior"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1052
+y1 = 669
+x2 = 1066
+y2 = 682
+
+[[spawn]]
+id = "ilshenar_18303"
+map = "ilshenar"
+name = "Ilsh Outdoors 45"
+mobile_ids = ["jukawarrior"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1057
+y1 = 656
+x2 = 1063
+y2 = 663
+
+[[spawn]]
+id = "ilshenar_18304"
+map = "ilshenar"
+name = "Ilsh Outdoors 46"
+mobile_ids = ["jukawarrior"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1057
+y1 = 640
+x2 = 1063
+y2 = 646
+
+[[spawn]]
+id = "ilshenar_18305"
+map = "ilshenar"
+name = "Ilsh Outdoors 47"
+mobile_ids = ["jukamage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1072
+y1 = 625
+x2 = 1078
+y2 = 631
+
+[[spawn]]
+id = "ilshenar_18306"
+map = "ilshenar"
+name = "Ilsh Outdoors 48"
+mobile_ids = ["jukawarrior"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1089
+y1 = 625
+x2 = 1095
+y2 = 631
+
+[[spawn]]
+id = "ilshenar_18307"
+map = "ilshenar"
+name = "Ilsh Outdoors 49"
+mobile_ids = ["jukawarrior"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1078
+y1 = 633
+x2 = 1088
+y2 = 643
+
+[[spawn]]
+id = "ilshenar_18308"
+map = "ilshenar"
+name = "Ilsh Outdoors 50"
+mobile_ids = ["jukamage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1090
+y1 = 633
+x2 = 1100
+y2 = 643
+
+[[spawn]]
+id = "ilshenar_18309"
+map = "ilshenar"
+name = "Ilsh Outdoors 51"
+mobile_ids = ["jukawarrior"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1090
+y1 = 659
+x2 = 1100
+y2 = 669
+
+[[spawn]]
+id = "ilshenar_18310"
+map = "ilshenar"
+name = "Ilsh Outdoors 52"
+mobile_ids = ["jukalord"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1078
+y1 = 659
+x2 = 1088
+y2 = 669
+
+[[spawn]]
+id = "ilshenar_18311"
+map = "ilshenar"
+name = "Ilsh Outdoors 53"
+mobile_ids = ["jukalord"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1065
+y1 = 634
+x2 = 1075
+y2 = 644
+
+[[spawn]]
+id = "ilshenar_18312"
+map = "ilshenar"
+name = "Ilsh Outdoors 54"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_18"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1065
+y1 = 645
+x2 = 1075
+y2 = 655
+
+[[spawn]]
+id = "ilshenar_18313"
+map = "ilshenar"
+name = "Ilsh Outdoors 55"
+mobile_ids = ["jukawarrior"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1066
+y1 = 645
+x2 = 1078
+y2 = 657
+
+[[spawn]]
+id = "ilshenar_18314"
+map = "ilshenar"
+name = "Ilsh Outdoors 56"
+mobile_ids = ["jukawarrior"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1080
+y1 = 625
+x2 = 1086
+y2 = 631
+
+[[spawn]]
+id = "ilshenar_18315"
+map = "ilshenar"
+name = "Ilsh Outdoors 57"
+mobile_ids = ["jukamage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1104
+y1 = 624
+x2 = 1110
+y2 = 630
+
+[[spawn]]
+id = "ilshenar_18316"
+map = "ilshenar"
+name = "Ilsh Outdoors 58"
+mobile_ids = ["betrayer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1080
+y1 = 672
+x2 = 1086
+y2 = 678
+
+[[spawn]]
+id = "ilshenar_18317"
+map = "ilshenar"
+name = "Ilsh Outdoors 59"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_19"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1079
+y1 = 652
+x2 = 1097
+y2 = 670
+
+[[spawn]]
+id = "ilshenar_18318"
+map = "ilshenar"
+name = "Ilsh Outdoors 60"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_20"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1087
+y1 = 643
+x2 = 1093
+y2 = 649
+
+[[spawn]]
+id = "ilshenar_18319"
+map = "ilshenar"
+name = "Ilsh Outdoors 61"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_20"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1084
+y1 = 633
+x2 = 1092
+y2 = 641
+
+[[spawn]]
+id = "ilshenar_18320"
+map = "ilshenar"
+name = "Ilsh Outdoors 62"
+mobile_ids = ["betrayer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1057
+y1 = 649
+x2 = 1063
+y2 = 655
+
+[[spawn]]
+id = "ilshenar_18321"
+map = "ilshenar"
+name = "Ilsh Outdoors 63"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_22"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1073
+y1 = 641
+x2 = 1093
+y2 = 661
+
+[[spawn]]
+id = "ilshenar_18322"
+map = "ilshenar"
+name = "Ilsh Outdoors 64"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_23"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1074
+y1 = 642
+x2 = 1094
+y2 = 662
+
+[[spawn]]
+id = "ilshenar_18340"
+map = "ilshenar"
+name = "Ilsh Outdoors 65 - Undead Camp"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_24"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 835
+y1 = 447
+x2 = 875
+y2 = 482
+
+[[spawn]]
+id = "ilshenar_18341"
+map = "ilshenar"
+name = "Ilsh Outdoors 66"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_25"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 56
+only_outside = false
+[[spawn.areas]]
+x1 = 974
+y1 = 251
+x2 = 1024
+y2 = 294
+
+[[spawn]]
+id = "ilshenar_18342"
+map = "ilshenar"
+name = "Ilsh Outdoors 67"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_25"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 56
+only_outside = false
+[[spawn.areas]]
+x1 = 1016
+y1 = 251
+x2 = 1066
+y2 = 294
+
+[[spawn]]
+id = "ilshenar_18343"
+map = "ilshenar"
+name = "Ilsh Outdoors 68"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_26"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 76
+only_outside = false
+[[spawn.areas]]
+x1 = 974
+y1 = 251
+x2 = 1024
+y2 = 294
+
+[[spawn]]
+id = "ilshenar_18344"
+map = "ilshenar"
+name = "Ilsh Outdoors 69"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_26"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 76
+only_outside = false
+[[spawn.areas]]
+x1 = 1016
+y1 = 251
+x2 = 1066
+y2 = 294
+
+[[spawn]]
+id = "ilshenar_18345"
+map = "ilshenar"
+name = "Ilsh Outdoors 70 - Memorial to Gwenno"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_27"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 741
+y1 = 480
+x2 = 757
+y2 = 500
+
+[[spawn]]
+id = "ilshenar_18346"
+map = "ilshenar"
+name = "Ilsh Outdoors 71"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_28"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 758
+y1 = 423
+x2 = 808
+y2 = 473
+
+[[spawn]]
+id = "ilshenar_18347"
+map = "ilshenar"
+name = "Ilsh Outdoors 72"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_29"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 758
+y1 = 423
+x2 = 808
+y2 = 473
+
+[[spawn]]
+id = "ilshenar_18348"
+map = "ilshenar"
+name = "Ilsh Outdoors 73"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_28"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 717
+y1 = 415
+x2 = 767
+y2 = 465
+
+[[spawn]]
+id = "ilshenar_18349"
+map = "ilshenar"
+name = "Ilsh Outdoors 74"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_29"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 717
+y1 = 415
+x2 = 767
+y2 = 465
+
+[[spawn]]
+id = "ilshenar_18360"
+map = "ilshenar"
+name = "Ilsh Outdoors 75"
+mobile_ids = ["cyclops"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 746
+y1 = 197
+x2 = 771
+y2 = 218
+
+[[spawn]]
+id = "ilshenar_18361"
+map = "ilshenar"
+name = "Ilsh Outdoors 77"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_30"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 704
+y1 = 229
+x2 = 774
+y2 = 299
+
+[[spawn]]
+id = "ilshenar_18362"
+map = "ilshenar"
+name = "Ilsh Outdoors 77"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_30"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 743
+y1 = 229
+x2 = 813
+y2 = 299
+
+[[spawn]]
+id = "ilshenar_18363"
+map = "ilshenar"
+name = "Ilsh Outdoors 78"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_31"]
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 491
+y1 = 525
+x2 = 531
+y2 = 565
+
+[[spawn]]
+id = "ilshenar_18364"
+map = "ilshenar"
+name = "Ilsh Outdoors 79"
+mobile_ids = ["wyvern"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 598
+y1 = 515
+x2 = 678
+y2 = 595
+
+[[spawn]]
+id = "ilshenar_18365"
+map = "ilshenar"
+name = "Ilsh Outdoors 80"
+mobile_ids = ["wyvern"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 525
+y1 = 303
+x2 = 605
+y2 = 383
+
+[[spawn]]
+id = "ilshenar_18366"
+map = "ilshenar"
+name = "Ilsh Outdoors 81"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_27"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 464
+y1 = 463
+x2 = 514
+y2 = 513
+
+[[spawn]]
+id = "ilshenar_18367"
+map = "ilshenar"
+name = "Ilsh Outdoors 82"
+mobile_ids = ["dragon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 365
+y1 = 401
+x2 = 405
+y2 = 441
+
+[[spawn]]
+id = "ilshenar_18368"
+map = "ilshenar"
+name = "Ilsh Outdoors 83"
+mobile_ids = ["dragon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 427
+y1 = 405
+x2 = 467
+y2 = 445
+
+[[spawn]]
+id = "ilshenar_18369"
+map = "ilshenar"
+name = "Ilsh Outdoors 84"
+mobile_ids = ["dragon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 415
+y1 = 336
+x2 = 475
+y2 = 396
+
+[[spawn]]
+id = "ilshenar_18370"
+map = "ilshenar"
+name = "Ilsh Outdoors 85"
+mobile_ids = ["dragon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 415
+y1 = 288
+x2 = 475
+y2 = 348
+
+[[spawn]]
+id = "ilshenar_18371"
+map = "ilshenar"
+name = "Ilsh Outdoors 86"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_32"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 355
+y1 = 249
+x2 = 385
+y2 = 279
+
+[[spawn]]
+id = "ilshenar_18372"
+map = "ilshenar"
+name = "Ilsh Outdoors 87"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_32"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 394
+y1 = 249
+x2 = 424
+y2 = 279
+
+[[spawn]]
+id = "ilshenar_18373"
+map = "ilshenar"
+name = "Ilsh Outdoors 88"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_32"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 434
+y1 = 249
+x2 = 464
+y2 = 279
+
+[[spawn]]
+id = "ilshenar_18380"
+map = "ilshenar"
+name = "Ilsh Outdoors 89"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_33"]
+max = 11
+min_minutes = 5
+max_minutes = 10
+call = 15
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 925
+y1 = 598
+x2 = 1004
+y2 = 640
+
+[[spawn]]
+id = "ilshenar_18381"
+map = "ilshenar"
+name = "Ilsh Outdoors 90"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_33"]
+max = 11
+min_minutes = 5
+max_minutes = 10
+call = 15
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 925
+y1 = 641
+x2 = 1004
+y2 = 678
+
+[[spawn]]
+id = "ilshenar_18382"
+map = "ilshenar"
+name = "Ilsh Outdoors 91"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 968
+y1 = 460
+x2 = 991
+y2 = 480
+
+[[spawn]]
+id = "ilshenar_18383"
+map = "ilshenar"
+name = "Ilsh Outdoors 92"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_34"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 968
+y1 = 460
+x2 = 991
+y2 = 480
+
+[[spawn]]
+id = "ilshenar_18384"
+map = "ilshenar"
+name = "Ilsh Outdoors 93"
+mobile_ids = ["lavalizard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 963
+y1 = 450
+x2 = 983
+y2 = 470
+
+[[spawn]]
+id = "ilshenar_18385"
+map = "ilshenar"
+name = "Ilsh Outdoors 94"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 954
+y1 = 446
+x2 = 974
+y2 = 466
+
+[[spawn]]
+id = "ilshenar_18386"
+map = "ilshenar"
+name = "Ilsh Outdoors 95"
+mobile_ids = ["exodusoverseer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 958
+y1 = 451
+x2 = 968
+y2 = 461
+
+[[spawn]]
+id = "ilshenar_18387"
+map = "ilshenar"
+name = "Ilsh Outdoors 96"
+mobile_ids = ["imp"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 937
+y1 = 467
+x2 = 945
+y2 = 475
+
+[[spawn]]
+id = "ilshenar_18388"
+map = "ilshenar"
+name = "Ilsh Outdoors 97"
+mobile_ids = ["gargoyle"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 936
+y1 = 420
+x2 = 956
+y2 = 440
+
+[[spawn]]
+id = "ilshenar_18390"
+map = "ilshenar"
+name = "Ilsh Outdoors 99"
+mobile_ids = ["imp"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 928
+y1 = 443
+x2 = 948
+y2 = 463
+
+[[spawn]]
+id = "ilshenar_18391"
+map = "ilshenar"
+name = "Ilsh Outdoors 100"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 955
+y1 = 519
+x2 = 965
+y2 = 529
+
+[[spawn]]
+id = "ilshenar_18392"
+map = "ilshenar"
+name = "Ilsh Outdoors 101"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 906
+y1 = 497
+x2 = 916
+y2 = 507
+
+[[spawn]]
+id = "ilshenar_18393"
+map = "ilshenar"
+name = "Ilsh Outdoors 102"
+mobile_ids = ["imp"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 925
+y1 = 514
+x2 = 935
+y2 = 524
+
+[[spawn]]
+id = "ilshenar_18394"
+map = "ilshenar"
+name = "Ilsh Outdoors 102"
+mobile_ids = ["golemcontroller"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 805
+y1 = 771
+x2 = 818
+y2 = 791
+
+[[spawn]]
+id = "ilshenar_18395"
+map = "ilshenar"
+name = "Ilsh Outdoors 103"
+mobile_ids = ["quagmire"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 836
+y1 = 745
+x2 = 863
+y2 = 779
+
+[[spawn]]
+id = "ilshenar_18396"
+map = "ilshenar"
+name = "Ilsh Outdoors 104"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_36"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 804
+y1 = 741
+x2 = 838
+y2 = 775
+
+[[spawn]]
+id = "ilshenar_18397"
+map = "ilshenar"
+name = "Ilsh Outdoors 105"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_37"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 804
+y1 = 785
+x2 = 838
+y2 = 814
+
+[[spawn]]
+id = "ilshenar_18398"
+map = "ilshenar"
+name = "Ilsh Outdoors 106"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_38"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 841
+y1 = 782
+x2 = 875
+y2 = 811
+
+[[spawn]]
+id = "ilshenar_18399"
+map = "ilshenar"
+name = "Ilsh Outdoors 107"
+mobile_ids = ["chaosdaemon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 869
+y1 = 771
+x2 = 889
+y2 = 791
+
+[[spawn]]
+id = "ilshenar_18415"
+map = "ilshenar"
+name = "Ilsh Outdoors 108"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 887
+y1 = 760
+x2 = 927
+y2 = 800
+
+[[spawn]]
+id = "ilshenar_18416"
+map = "ilshenar"
+name = "Ilsh Outdoors 109"
+mobile_ids = ["earthele"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 967
+y1 = 771
+x2 = 1007
+y2 = 801
+
+[[spawn]]
+id = "ilshenar_18417"
+map = "ilshenar"
+name = "Ilsh Outdoors 110"
+mobile_ids = ["airele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 245
+y1 = 423
+x2 = 305
+y2 = 476
+
+[[spawn]]
+id = "ilshenar_18418"
+map = "ilshenar"
+name = "Ilsh Outdoors 111"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 20
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 602
+y1 = 505
+x2 = 702
+y2 = 605
+
+[[spawn]]
+id = "ilshenar_18419"
+map = "ilshenar"
+name = "Ilsh Outdoors 112"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 60
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 560
+y1 = 215
+x2 = 810
+y2 = 465
+
+[[spawn]]
+id = "ilshenar_18420"
+map = "ilshenar"
+name = "Ilsh Outdoors 113"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 20
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 410
+y1 = 419
+x2 = 510
+y2 = 519
+
+[[spawn]]
+id = "ilshenar_18421"
+map = "ilshenar"
+name = "Ilsh Outdoors 114"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 35
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 277
+y1 = 240
+x2 = 477
+y2 = 440
+
+[[spawn]]
+id = "ilshenar_18422"
+map = "ilshenar"
+name = "Ilsh Outdoors 115"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_40"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1044
+y1 = 1129
+x2 = 1073
+y2 = 1173
+
+[[spawn]]
+id = "ilshenar_18423"
+map = "ilshenar"
+name = "Ilsh Outdoors 116"
+mobile_ids = ["brigand"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1117
+y1 = 1224
+x2 = 1141
+y2 = 1248
+
+[[spawn]]
+id = "ilshenar_18425"
+map = "ilshenar"
+name = "Ilsh Outdoors 118"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_41"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1522
+y1 = 1121
+x2 = 1662
+y2 = 1261
+
+[[spawn]]
+id = "ilshenar_18426"
+map = "ilshenar"
+name = "Ilsh Outdoors 119"
+mobile_ids = ["unicorn"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1542
+y1 = 1141
+x2 = 1642
+y2 = 1241
+
+[[spawn]]
+id = "ilshenar_18427"
+map = "ilshenar"
+name = "Ilsh Outdoors 120"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_41"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1410
+y1 = 1137
+x2 = 1550
+y2 = 1277
+
+[[spawn]]
+id = "ilshenar_18428"
+map = "ilshenar"
+name = "Ilsh Outdoors 121"
+mobile_ids = ["unicorn"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1430
+y1 = 1157
+x2 = 1530
+y2 = 1257
+
+[[spawn]]
+id = "ilshenar_18429"
+map = "ilshenar"
+name = "Ilsh Outdoors 122"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_41"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1278
+y1 = 1206
+x2 = 1358
+y2 = 1286
+
+[[spawn]]
+id = "ilshenar_18430"
+map = "ilshenar"
+name = "Ilsh Outdoors 123"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_42"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1177
+y1 = 1282
+x2 = 1189
+y2 = 1292
+
+[[spawn]]
+id = "ilshenar_18440"
+map = "ilshenar"
+name = "Ilsh Outdoors 124"
+mobile_ids = ["sheep"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1305
+y1 = 1322
+x2 = 1331
+y2 = 1340
+
+[[spawn]]
+id = "ilshenar_18441"
+map = "ilshenar"
+name = "Ilsh Outdoors 125"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_43"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1703
+y1 = 1131
+x2 = 1763
+y2 = 1191
+
+[[spawn]]
+id = "ilshenar_18442"
+map = "ilshenar"
+name = "Ilsh Outdoors 126"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_44"]
+max = 11
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1732
+y1 = 1206
+x2 = 1762
+y2 = 1236
+
+[[spawn]]
+id = "ilshenar_18443"
+map = "ilshenar"
+name = "Ilsh Outdoors 127"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_45"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1666
+y1 = 953
+x2 = 1691
+y2 = 985
+
+[[spawn]]
+id = "ilshenar_18444"
+map = "ilshenar"
+name = "Ilsh Outdoors 128"
+mobile_ids = ["evilmagelord"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 32
+only_outside = false
+[[spawn.areas]]
+x1 = 1672
+y1 = 1073
+x2 = 1677
+y2 = 1075
+
+[[spawn]]
+id = "ilshenar_18445"
+map = "ilshenar"
+name = "Ilsh Outdoors 129"
+mobile_ids = ["giantrat"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1580
+y1 = 987
+x2 = 1591
+y2 = 995
+
+[[spawn]]
+id = "ilshenar_18446"
+map = "ilshenar"
+name = "Ilsh Outdoors 130"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_46"]
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1396
+y1 = 920
+x2 = 1476
+y2 = 1000
+
+[[spawn]]
+id = "ilshenar_18447"
+map = "ilshenar"
+name = "Ilsh Outdoors 131"
+mobile_ids = ["pixie"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -15
+only_outside = false
+[[spawn.areas]]
+x1 = 1239
+y1 = 947
+x2 = 1259
+y2 = 967
+
+[[spawn]]
+id = "ilshenar_18448"
+map = "ilshenar"
+name = "Ilsh Outdoors 132"
+mobile_ids = ["troll"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1350
+y1 = 878
+x2 = 1370
+y2 = 898
+
+[[spawn]]
+id = "ilshenar_18449"
+map = "ilshenar"
+name = "Ilsh Outdoors 133"
+mobile_ids = ["giantspider"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1492
+y1 = 868
+x2 = 1520
+y2 = 887
+
+[[spawn]]
+id = "ilshenar_18450"
+map = "ilshenar"
+name = "Ilsh Outdoors 134"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_40"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 658
+y1 = 662
+x2 = 670
+y2 = 677
+
+[[spawn]]
+id = "ilshenar_18451"
+map = "ilshenar"
+name = "Ilsh Outdoors 135"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_47"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -15
+only_outside = false
+[[spawn.areas]]
+x1 = 658
+y1 = 658
+x2 = 670
+y2 = 672
+
+[[spawn]]
+id = "ilshenar_18452"
+map = "ilshenar"
+name = "Ilsh Outdoors 136"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_48"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -35
+only_outside = false
+[[spawn.areas]]
+x1 = 659
+y1 = 655
+x2 = 670
+y2 = 677
+
+[[spawn]]
+id = "ilshenar_18453"
+map = "ilshenar"
+name = "Ilsh Outdoors 137"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_40"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 625
+y1 = 799
+x2 = 664
+y2 = 839
+
+[[spawn]]
+id = "ilshenar_18463"
+map = "ilshenar"
+name = "Ilsh Outdoor 141"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_49"]
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 445
+y1 = 851
+x2 = 525
+y2 = 931
+
+[[spawn]]
+id = "ilshenar_18464"
+map = "ilshenar"
+name = "Ilsh Outdoor 142"
+mobile_ids = ["jwilson"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 447
+y1 = 850
+x2 = 527
+y2 = 930
+
+[[spawn]]
+id = "ilshenar_18465"
+map = "ilshenar"
+name = "Ilsh Outdoor 143"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_50"]
+max = 17
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 305
+y1 = 856
+x2 = 345
+y2 = 906
+
+[[spawn]]
+id = "ilshenar_18466"
+map = "ilshenar"
+name = "Ilsh Outdoor 144"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 316
+y1 = 886
+x2 = 330
+y2 = 901
+
+[[spawn]]
+id = "ilshenar_18467"
+map = "ilshenar"
+name = "Ilsh Outdoor 145"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 359
+y1 = 874
+x2 = 373
+y2 = 888
+
+[[spawn]]
+id = "ilshenar_18468"
+map = "ilshenar"
+name = "Ilsh Outdoor 146"
+mobile_ids = ["lichlord"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 334
+y1 = 860
+x2 = 343
+y2 = 869
+
+[[spawn]]
+id = "ilshenar_18469"
+map = "ilshenar"
+name = "Ilsh Outdoor 147"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_6"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 333
+y1 = 1120
+x2 = 373
+y2 = 1160
+
+[[spawn]]
+id = "ilshenar_18470"
+map = "ilshenar"
+name = "Ilsh Outdoor 148"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_51"]
+max = 40
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 370
+y1 = 1116
+x2 = 490
+y2 = 1236
+
+[[spawn]]
+id = "ilshenar_18471"
+map = "ilshenar"
+name = "Ilsh Outdoor 149"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_51"]
+max = 18
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 310
+y1 = 1164
+x2 = 390
+y2 = 1244
+
+[[spawn]]
+id = "ilshenar_18472"
+map = "ilshenar"
+name = "Ilsh Outdoor 150"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_51"]
+max = 18
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 330
+y1 = 1264
+x2 = 470
+y2 = 1404
+
+[[spawn]]
+id = "ilshenar_18473"
+map = "ilshenar"
+name = "Ilsh Outdoor 151"
+mobile_ids = []
+npc_list_ids = ["alllizardlist"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 266
+y1 = 1286
+x2 = 321
+y2 = 1343
+
+[[spawn]]
+id = "ilshenar_18474"
+map = "ilshenar"
+name = "Ilsh Outdoor 152"
+mobile_ids = []
+npc_list_ids = ["alllizardlist"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 266
+y1 = 1318
+x2 = 325
+y2 = 1378
+
+[[spawn]]
+id = "ilshenar_18475"
+map = "ilshenar"
+name = "Ilsh Outdoor 153"
+mobile_ids = []
+npc_list_ids = ["alllizardlist"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 292
+y1 = 1571
+x2 = 312
+y2 = 1589
+
+[[spawn]]
+id = "ilshenar_18476"
+map = "ilshenar"
+name = "Ilsh Outdoor 154"
+mobile_ids = []
+npc_list_ids = ["alllizardlist"]
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 317
+y1 = 1572
+x2 = 330
+y2 = 1580
+
+[[spawn]]
+id = "ilshenar_18477"
+map = "ilshenar"
+name = "Ilsh Outdoor 155"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_52"]
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 204
+y1 = 1340
+x2 = 243
+y2 = 1380
+
+[[spawn]]
+id = "ilshenar_18485"
+map = "ilshenar"
+name = "Ilsh Outdoor 156"
+mobile_ids = ["efreet"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 271
+y1 = 1432
+x2 = 286
+y2 = 1448
+
+[[spawn]]
+id = "ilshenar_18486"
+map = "ilshenar"
+name = "Ilsh Outdoor 157"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_53"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 299
+y1 = 1421
+x2 = 329
+y2 = 1451
+
+[[spawn]]
+id = "ilshenar_18487"
+map = "ilshenar"
+name = "Ilsh Outdoor 158"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_53"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 335
+y1 = 1426
+x2 = 365
+y2 = 1448
+
+[[spawn]]
+id = "ilshenar_18488"
+map = "ilshenar"
+name = "Ilsh Outdoor 159"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_54"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 418
+y1 = 1411
+x2 = 458
+y2 = 1451
+
+[[spawn]]
+id = "ilshenar_18489"
+map = "ilshenar"
+name = "Ilsh Outdoor 160"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_55"]
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 623
+y1 = 1299
+x2 = 673
+y2 = 1346
+
+[[spawn]]
+id = "ilshenar_18490"
+map = "ilshenar"
+name = "Ilsh Outdoor 161"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_56"]
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 702
+y1 = 1334
+x2 = 742
+y2 = 1374
+
+[[spawn]]
+id = "ilshenar_18491"
+map = "ilshenar"
+name = "Ilsh Outdoor 162"
+mobile_ids = ["waterele"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 903
+y1 = 925
+x2 = 923
+y2 = 945
+
+[[spawn]]
+id = "ilshenar_18492"
+map = "ilshenar"
+name = "Ilsh Outdoor 163"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_57"]
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 943
+y1 = 1008
+x2 = 983
+y2 = 1048
+
+[[spawn]]
+id = "ilshenar_18493"
+map = "ilshenar"
+name = "Ilsh Outdoor 164"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_58"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 915
+y1 = 1139
+x2 = 955
+y2 = 1179
+
+[[spawn]]
+id = "ilshenar_18494"
+map = "ilshenar"
+name = "Ilsh Outdoor 165"
+mobile_ids = ["ettin"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 797
+y1 = 1299
+x2 = 847
+y2 = 1344
+
+[[spawn]]
+id = "ilshenar_18495"
+map = "ilshenar"
+name = "Ilsh Outdoor 166"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_30"]
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 867
+y1 = 1273
+x2 = 937
+y2 = 1343
+
+[[spawn]]
+id = "ilshenar_18496"
+map = "ilshenar"
+name = "Ilsh Outdoor 167"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 606
+y1 = 1169
+x2 = 686
+y2 = 1249
+
+[[spawn]]
+id = "ilshenar_18497"
+map = "ilshenar"
+name = "Ilsh Outdoor 168"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 560
+y1 = 1016
+x2 = 650
+y2 = 1106
+
+[[spawn]]
+id = "ilshenar_18498"
+map = "ilshenar"
+name = "Ilsh Outdoor 169"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 519
+y1 = 1097
+x2 = 609
+y2 = 1187
+
+[[spawn]]
+id = "ilshenar_18499"
+map = "ilshenar"
+name = "Ilsh Outdoor 170"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 631
+y1 = 1075
+x2 = 731
+y2 = 1175
+
+[[spawn]]
+id = "ilshenar_18500"
+map = "ilshenar"
+name = "Ilsh Outdoor 171"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 653
+y1 = 934
+x2 = 749
+y2 = 1034
+
+[[spawn]]
+id = "ilshenar_18501"
+map = "ilshenar"
+name = "Ilsh Outdoor 172"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 555
+y1 = 923
+x2 = 655
+y2 = 1023
+
+[[spawn]]
+id = "ilshenar_18502"
+map = "ilshenar"
+name = "Ilsh Outdoor 173"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 484
+y1 = 1195
+x2 = 544
+y2 = 1255
+
+[[spawn]]
+id = "ilshenar_18503"
+map = "ilshenar"
+name = "Ilsh Outdoor 174"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 683
+y1 = 1188
+x2 = 783
+y2 = 1288
+
+[[spawn]]
+id = "ilshenar_18504"
+map = "ilshenar"
+name = "Ilsh Outdoor 175"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 347
+y1 = 908
+x2 = 447
+y2 = 1008
+
+[[spawn]]
+id = "ilshenar_18505"
+map = "ilshenar"
+name = "Ilsh Outdoor 176"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 428
+y1 = 834
+x2 = 508
+y2 = 914
+
+[[spawn]]
+id = "ilshenar_18506"
+map = "ilshenar"
+name = "Ilsh Outdoor 177"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 25
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 545
+y1 = 743
+x2 = 621
+y2 = 913
+
+[[spawn]]
+id = "ilshenar_18507"
+map = "ilshenar"
+name = "Ilsh Outdoor 178"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 25
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 513
+y1 = 599
+x2 = 655
+y2 = 742
+
+[[spawn]]
+id = "ilshenar_18508"
+map = "ilshenar"
+name = "Ilsh Outdoor 179"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 656
+y1 = 689
+x2 = 720
+y2 = 742
+
+[[spawn]]
+id = "ilshenar_18509"
+map = "ilshenar"
+name = "Ilsh Outdoor 180"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 622
+y1 = 743
+x2 = 736
+y2 = 795
+
+[[spawn]]
+id = "ilshenar_18510"
+map = "ilshenar"
+name = "Ilsh Outdoor 181"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 670
+y1 = 796
+x2 = 742
+y2 = 843
+
+[[spawn]]
+id = "ilshenar_18511"
+map = "ilshenar"
+name = "Ilsh Outdoor 182"
+mobile_ids = []
+npc_list_ids = ["ilshenar_npclist_39"]
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 622
+y1 = 842
+x2 = 729
+y2 = 913
+
+[[spawn]]
+id = "ilshenar_18529"
+map = "ilshenar"
+name = "Ilsh Outdoors 187 - Valor Jungle"
+mobile_ids = ["reddragon"]
+npc_list_ids = []
+max = 1
+min_minutes = 4
+max_minutes = 5
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 352
+y1 = 390
+x2 = 392
+y2 = 430
+
+[[spawn]]
+id = "ilshenar_18530"
+map = "ilshenar"
+name = "Ilsh Outdoors 188"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -15
+only_outside = false
+[[spawn.areas]]
+x1 = 664
+y1 = 662
+x2 = 670
+y2 = 668
+
+[[spawn]]
+id = "ilshenar_18531"
+map = "ilshenar"
+name = "Ilsh Outdoors 189"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1315
+y1 = 1323
+x2 = 1322
+y2 = 1330
+
+[[spawn]]
+id = "ilshenar_18532"
+map = "ilshenar"
+name = "Ilsh Outdoors 190"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1315
+y1 = 1323
+x2 = 1322
+y2 = 1330
+
+[[spawn]]
+id = "ilshenar_18533"
+map = "ilshenar"
+name = "Ilsh Outdoors 191"
+mobile_ids = ["gypsybanker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1183
+y1 = 1228
+x2 = 1183
+y2 = 1228
+
+[[spawn]]
+id = "ilshenar_18534"
+map = "ilshenar"
+name = "Ilsh Outdoors 192"
+mobile_ids = ["gypsybanker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 961
+y1 = 929
+x2 = 961
+y2 = 929
+
+[[spawn]]
+id = "ilshenar_18535"
+map = "ilshenar"
+name = "Ilsh Outdoors 193"
+mobile_ids = ["f_gypsyfortuneteller"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 564
+y1 = 812
+x2 = 564
+y2 = 812
+
+[[spawn]]
+id = "ilshenar_18536"
+map = "ilshenar"
+name = "Ilsh Outdoors 194"
+mobile_ids = ["f_gypsyfortuneteller"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 827
+y1 = 1211
+x2 = 827
+y2 = 1211
+
+[[spawn]]
+id = "ilshenar_18537"
+map = "ilshenar"
+name = "Ilsh Outdoors 195"
+mobile_ids = ["kirin"]
+npc_list_ids = []
+max = 10
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1599
+y1 = 1155
+x2 = 1649
+y2 = 1205
+
+[[spawn]]
+id = "ilshenar_18538"
+map = "ilshenar"
+name = "Ilsh Outdoors 196"
+mobile_ids = ["swampdragon"]
+npc_list_ids = []
+max = 5
+min_minutes = 1
+max_minutes = 1
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 615
+y1 = 1190
+x2 = 690
+y2 = 1244
+
+[[spawn]]
+id = "ilshenar_18539"
+map = "ilshenar"
+name = "Ilsh Outdoors 197"
+mobile_ids = ["unicorn"]
+npc_list_ids = []
+max = 10
+min_minutes = 2
+max_minutes = 3
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1541
+y1 = 1165
+x2 = 1601
+y2 = 1225

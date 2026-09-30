@@ -1,3 +1,6 @@
+using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Server.Ultima.Data.World;
+using Moongate.Server.Ultima.Data.Config;
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -47,6 +50,28 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     public void Dispose()
     {
         _events.Dispose();
+    }
+
+    [Fact]
+    public async Task HandleAsync_SendsTheLightOfTheCharactersTimeOfDay()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var characters = new RecordingCharacterService { ForPlay = Aria() };
+        var light = new LightService(
+            new StubClockService { Time = new GameTime(1, 0) },
+            _sessions,
+            _mobiles,
+            sender,
+            new RecordingTimerService(),
+            fixture.Loop,
+            new WorldConfig(),
+            new StubDataLoaderService()
+        );
+
+        await Handler(characters, sender, light: light).HandleAsync(context, Packet(2), CancellationToken.None);
+
+        Assert.Equal(12, Assert.Single(sender.Sent.OfType<GlobalLightLevelPacket>()).Level);
     }
 
     [Fact]
@@ -267,7 +292,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     private PlayCharacterPacketHandler Handler(
         RecordingCharacterService characters,
         StubPacketSendService sender,
-        IMobileService? mobiles = null
+        IMobileService? mobiles = null,
+        ILightService? light = null
     )
     {
         _events.RegisterMoongateEventBus();
@@ -284,7 +310,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         );
 
         _motd.Sender = sender;
-        return new(characters, mobiles ?? _mobiles, _items, _leaves, loaders, bus, _sessions, _view, _motd);
+        return new(characters, mobiles ?? _mobiles, _items, _leaves, loaders, bus, _sessions, _view, _motd, light);
     }
 
     private static CharacterForPlay Aria(int hair = 0x203C, int beard = 0)

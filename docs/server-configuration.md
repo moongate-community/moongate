@@ -67,6 +67,12 @@ max_distance = 25 # Farthest cells along X or Y a point can see.
 
 [ultima.world]
 view_range = 18 # How far players see mobiles and items, in cells along X or Y.
+seconds_per_uo_minute = 5 # Real seconds a game minute lasts: 5 makes a game day last 2 real hours.
+day_light = 0 # Light level of the day, from 0 (brightest) to 31.
+night_light = 12 # Light level of the night, from 0 (brightest) to 31.
+dungeon_light = 26 # Light level inside a dungeon region, from 0 (brightest) to 31.
+jail_light = 9 # Light level inside a jail region, from 0 (brightest) to 31.
+lamp_post_light = 6 # Light level from which the town lamp posts are lit, from 0 to 31.
 
 [ultima.items]
 backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.
@@ -172,6 +178,10 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
 | `ultima.line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
 | `ultima.world.view_range` | From 5 to 24; default 18, as ModernUO and POL. How far players see mobiles and ground items along X or Y; the client's `0xC8` request is answered with it. Used in game and standalone modes. |
+| `ultima.world.seconds_per_uo_minute` | From 1 to 3600; default 5, as ModernUO: a game day lasts 2 real hours. The time of day is counted from ModernUO's world start and needs no save; each map runs 320 game minutes after the previous one (Felucca, Trammel, Ilshenar, Malas, Tokuno, Ter Mur), and the time moves one minute later every 16 tiles east. |
+| `ultima.world.day_light`, `ultima.world.night_light` | From 0 (brightest) to 31; defaults 0 and 12, as ModernUO. Night from 00:00 to 03:59, brightening until 06:00, day until 21:59, darkening until midnight. Players are sent their light at login and, when it changes, every 5 seconds; `.globallight` overrides it for everyone. |
+| `ultima.world.dungeon_light`, `ultima.world.jail_light` | From 0 (brightest) to 31; defaults 26 and 9, as ModernUO. The light inside a region of type `dungeon` or `jail`, whatever the time of day; sent as soon as a player walks in or out. `.globallight` still wins, so a game master can see. |
+| `ultima.world.lamp_post_light` | From 0 to 31; default 6. Every 30 seconds the town lamp posts placed by `.decorate` (kinds `LampPost1` to `LampPost3`) are lit where the light of the time of day (or `.globallight`) is at least this level, and doused where it is below; with the default night of 12 that is about 23:00 to 05:00, game time. Regions do not count. |
 | `ultima.items.backpack_template`, `ultima.items.gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Used for the backpack of new characters and spawned NPCs and for the gold of spawned NPCs; the starting gold of new characters is an item of the common set in [`starting_items.toml`](data-files/starting-items.md). Both must exist in `templates/items/`, and the gold template must stack, or the game server stops at startup. See [Starting items](data-files/starting-items.md). |
 | `ultima.starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |
 | `ultima.characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |

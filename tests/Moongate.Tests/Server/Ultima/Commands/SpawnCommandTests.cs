@@ -8,10 +8,12 @@ using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
+using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Targeting;
 using Moongate.Ultima.Types;
 
@@ -22,8 +24,12 @@ public sealed class SpawnCommandTests : IAsyncDisposable
     private readonly StubTargetService _targets = new();
     private readonly StubNpcService _npcs = new();
     private readonly MobileTemplateService _templates = new(
-        new StubDataLoaderService().With(new MobileTemplate { Id = "orc" })
+        new StubDataLoaderService().With(
+            new MobileTemplate { Id = "orc" },
+            new MobileTemplate { Id = "dolphin", Movement = MobileMovementType.Water }
+        )
     );
+    private readonly StubMovementService _movement = new();
 
     private SessionFixture? _fixture;
 
@@ -54,6 +60,28 @@ public sealed class SpawnCommandTests : IAsyncDisposable
 
         Assert.Equal(("orc", MapType.Trammel, new Point3D(1496, 1628, 0)), Assert.Single(_npcs.Spawns));
         Assert.Equal("Spawned Orc (0x00000100) at Trammel (1496, 1628, 0).", Assert.Single(context.Output).Text);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_AWaterCreatureOnLand_IsRefused()
+    {
+        _targets.Result = TargetResult.ForLocation(MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        var context = await RunAsync("dolphin");
+
+        Assert.Empty(_npcs.Spawns);
+        Assert.Equal((CommandOutputLevel.Error, "dolphin lives in the water: target the water."), (Assert.Single(context.Output).Level, context.Output[0].Text));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_AWaterCreatureOnTheWater_Spawns()
+    {
+        _movement.SwimZ = (_, _) => -5;
+        _targets.Result = TargetResult.ForLocation(MapType.Trammel, new Point3D(1496, 1628, -5));
+
+        await RunAsync("dolphin");
+
+        Assert.Equal(("dolphin", MapType.Trammel, new Point3D(1496, 1628, -5)), Assert.Single(_npcs.Spawns));
     }
 
     [Fact]
@@ -95,7 +123,7 @@ public sealed class SpawnCommandTests : IAsyncDisposable
     {
         var context = new CommandContext("spawn orc", "spawn", ["orc"], CommandSourceType.Console, null);
 
-        await new SpawnCommand(_npcs, _templates, _targets).ExecuteAsync(context);
+        await new SpawnCommand(_npcs, _templates, _targets, _movement).ExecuteAsync(context);
 
         Assert.Equal(CommandOutputLevel.Error, Assert.Single(context.Output).Level);
         Assert.Equal(0, _targets.Requests);
@@ -120,7 +148,7 @@ public sealed class SpawnCommandTests : IAsyncDisposable
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         var context = new CommandContext(".spawn", "spawn", arguments, CommandSourceType.InGame, session);
 
-        await new SpawnCommand(_npcs, _templates, _targets, localization).ExecuteAsync(context);
+        await new SpawnCommand(_npcs, _templates, _targets, _movement, localization).ExecuteAsync(context);
 
         return context;
     }

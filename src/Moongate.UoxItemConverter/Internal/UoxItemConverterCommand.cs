@@ -27,12 +27,29 @@ internal static class UoxItemConverterCommand
         string? mobileSource = null,
         string? mobileDestination = null,
         string? namesDestination = null,
-        string? startingItemsDestination = null
+        string? startingItemsDestination = null,
+        string? scriptsSource = null,
+        string? npcListsDestination = null,
+        string? spawnsDestination = null
     )
     {
         if (ValidateOptions(mobileSource, mobileDestination, namesDestination, startingItemsDestination, error) is { } invalid)
         {
             return invalid;
+        }
+
+        if ((npcListsDestination is null) != (spawnsDestination is null))
+        {
+            error.WriteLine("--npc-lists-destination and --spawns-destination go together: a spawn names npc lists.");
+
+            return 2;
+        }
+
+        if (npcListsDestination is not null && mobileSource is null)
+        {
+            error.WriteLine("--npc-lists-destination and --spawns-destination need --mobile-source, which holds npc/ and spawn/.");
+
+            return 2;
         }
 
         source = Path.GetFullPath(source);
@@ -47,6 +64,22 @@ internal static class UoxItemConverterCommand
         }
 
         RegisterTomlConverters();
+
+        UoxScriptAssociations? scripts = null;
+
+        if (scriptsSource is not null)
+        {
+            try
+            {
+                scripts = UoxScriptAssociations.Load(Path.GetFullPath(scriptsSource));
+            }
+            catch (FileNotFoundException exception)
+            {
+                error.WriteLine(exception.Message);
+
+                return 2;
+            }
+        }
 
         var sourceFiles = File.Exists(source)
             ? [source]
@@ -79,7 +112,8 @@ internal static class UoxItemConverterCommand
             itemNameById,
             lootIdByHeader,
             knownLootIds,
-            output
+            output,
+            scripts
         );
 
         // A real read-back of what was actually written to disk, not a re-check of the resolution
@@ -120,18 +154,37 @@ internal static class UoxItemConverterCommand
             error
         );
 
-        if (mobileResult != 0 || startingItemsDestination is null)
+        if (mobileResult != 0)
         {
             return mobileResult;
         }
 
-        return UoxStartingItemsConverter.Run(
-            mobileSource,
-            Path.GetFullPath(startingItemsDestination),
-            items,
-            output,
-            error
-        );
+        if (startingItemsDestination is not null)
+        {
+            var startingResult = UoxStartingItemsConverter.Run(
+                mobileSource,
+                Path.GetFullPath(startingItemsDestination),
+                items,
+                output,
+                error
+            );
+
+            if (startingResult != 0)
+            {
+                return startingResult;
+            }
+        }
+
+        return npcListsDestination is null
+            ? 0
+            : UoxSpawnConverter.Run(
+                mobileSource,
+                Path.GetFullPath(mobileDestination!),
+                Path.GetFullPath(npcListsDestination),
+                Path.GetFullPath(spawnsDestination!),
+                output,
+                error
+            );
     }
 
     // Writes one item file per source file and one loot file per table, then the summary of what was skipped.
@@ -145,7 +198,8 @@ internal static class UoxItemConverterCommand
         Dictionary<string, string> itemNameById,
         Dictionary<string, string> lootIdByHeader,
         HashSet<string> knownLootIds,
-        TextWriter output
+        TextWriter output,
+        UoxScriptAssociations? scripts
     )
     {
         var written = 0;
@@ -200,7 +254,7 @@ internal static class UoxItemConverterCommand
                     continue;
                 }
 
-                var template = ItemTemplateBuilder.Build(block, idByHeader);
+                var template = ItemTemplateBuilder.Build(block, idByHeader, scripts);
 
                 if (template is null)
                 {

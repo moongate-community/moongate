@@ -1,0 +1,287 @@
+[[spawn]]
+id = "ilshenar_18775"
+map = "ilshenar"
+name = "Savage Village 1_1"
+mobile_ids = ["savagewarrior"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1156
+y1 = 663
+x2 = 1166
+y2 = 673
+
+[[spawn]]
+id = "ilshenar_18776"
+map = "ilshenar"
+name = "Savage Village 1_2"
+mobile_ids = ["savagewarrior"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1175
+y1 = 679
+x2 = 1196
+y2 = 701
+
+[[spawn]]
+id = "ilshenar_18777"
+map = "ilshenar"
+name = "Savage Village 1_3"
+mobile_ids = ["savagerider"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1175
+y1 = 679
+x2 = 1196
+y2 = 701
+
+[[spawn]]
+id = "ilshenar_18778"
+map = "ilshenar"
+name = "Savage Village 1_4"
+mobile_ids = ["savagewarrior"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1193
+y1 = 752
+x2 = 1213
+y2 = 772
+
+[[spawn]]
+id = "ilshenar_18779"
+map = "ilshenar"
+name = "Savage Village 1_5"
+mobile_ids = ["savageshaman"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1224
+y1 = 750
+x2 = 1244
+y2 = 770
+
+[[spawn]]
+id = "ilshenar_18780"
+map = "ilshenar"
+name = "Savage Village 1_6"
+mobile_ids = []
+npc_list_ids = ["ilshenar_savage_village_npclist_1"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1203
+y1 = 709
+x2 = 1223
+y2 = 729
+
+[[spawn]]
+id = "ilshenar_18781"
+map = "ilshenar"
+name = "Savage Village 1_7"
+mobile_ids = ["savagewarrior"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1204
+y1 = 734
+x2 = 1224
+y2 = 754
+
+[[spawn]]
+id = "ilshenar_18782"
+map = "ilshenar"
+name = "Savage Village 1_8"
+mobile_ids = []
+npc_list_ids = ["ilshenar_savage_village_npclist_2"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1221
+y1 = 684
+x2 = 1241
+y2 = 704
+
+[[spawn]]
+id = "ilshenar_18783"
+map = "ilshenar"
+name = "Savage Village 1_9"
+mobile_ids = ["savagewarrior"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1241
+y1 = 693
+x2 = 1261
+y2 = 713
+
+[[spawn]]
+id = "ilshenar_18784"
+map = "ilshenar"
+name = "Savage Village 1_10"
+mobile_ids = ["savagewarrior"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1264
+y1 = 718
+x2 = 1284
+y2 = 738
+
+[[spawn]]
+id = "ilshenar_18785"
+map = "ilshenar"
+name = "Savage Village 1_11"
+mobile_ids = ["savagewarrior"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1288
+y1 = 751
+x2 = 1296
+y2 = 759
+
+[[spawn]]
+id = "ilshenar_18786"
+map = "ilshenar"
+name = "Savage Village 1_12"
+mobile_ids = ["savagewarrior"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1270
+y1 = 765
+x2 = 1287
+y2 = 777
+
+[[spawn]]
+id = "ilshenar_18787"
+map = "ilshenar"
+name = "Savage Village 1_13"
+mobile_ids = ["ridgeback"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1271
+y1 = 777
+x2 = 1284
+y2 = 786
+
+[[spawn]]
+id = "ilshenar_18788"
+map = "ilshenar"
+name = "Savage Village 1_14"
+mobile_ids = []
+npc_list_ids = ["ilshenar_savage_village_npclist_3"]
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1234
+y1 = 718
+x2 = 1252
+y2 = 746
+
+[[spawn]]
+id = "ilshenar_18789"
+map = "ilshenar"
+name = "Savage Village 1_15"
+mobile_ids = ["savagewarrior"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1250
+y1 = 754
+x2 = 1276
+y2 = 763
+
+[[spawn]]
+id = "ilshenar_18790"
+map = "ilshenar"
+name = "Savage Village 1_16"
+mobile_ids = ["savagewarrior"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1257
+y1 = 748
+x2 = 1268
+y2 = 769

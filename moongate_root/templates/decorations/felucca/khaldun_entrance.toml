@@ -1,0 +1,732 @@
+# ==============================================================================
+# Moongate - templates/decorations/felucca/khaldun_entrance.toml
+#
+# What it is for:
+#   World decoration placed on Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [6012, 3786, 25] }
+locations = [[5571, 1299, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [6013, 3786, 25] }
+locations = [[5572, 1299, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5570, 1300, 0] }
+locations = [[6011, 3787, 22]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5571, 1300, 0] }
+locations = [[6012, 3787, 20]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5572, 1300, 0] }
+locations = [[6013, 3787, 20]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5573, 1300, 0] }
+locations = [[6014, 3787, 21]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5402, 1289, 0] }
+locations = [[5878, 3817, -2]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5402, 1290, 0] }
+locations = [[5878, 3818, -2]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5881, 3818, 0] }
+locations = [[5403, 1288, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5881, 3819, 0] }
+locations = [[5403, 1289, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5881, 3820, 0] }
+locations = [[5403, 1290, 0]]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x036F
+props = { hue = 0x0455 }
+locations = [
+    [5998, 3764, 20],
+    [5998, 3766, 20],
+]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x036F
+props = { hue = 0x0973 }
+locations = [
+    [5998, 3763, 20],
+    [5998, 3765, 20],
+]
+
+[[decoration]]
+comment = "tent pole"
+type = "Static"
+item_id = 0x036B
+locations = [[5998, 3762, 20]]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x036E
+props = { hue = 0x0455 }
+locations = [
+    [5999, 3762, 20],
+    [6001, 3762, 20],
+]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x036E
+props = { hue = 0x0973 }
+locations = [
+    [6000, 3762, 20],
+    [6002, 3762, 20],
+]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x036D
+props = { hue = 0x0973 }
+locations = [[6003, 3762, 20]]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x036A
+props = { hue = 0x0455 }
+locations = [
+    [6003, 3763, 20],
+    [6003, 3765, 20],
+]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x036A
+props = { hue = 0x0973 }
+locations = [
+    [6003, 3764, 20],
+    [6003, 3766, 20],
+]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x0368
+props = { hue = 0x0455 }
+locations = [[6003, 3767, 20]]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x0369
+props = { hue = 0x0455 }
+locations = [
+    [6002, 3767, 20],
+    [5999, 3767, 20],
+]
+
+[[decoration]]
+comment = "pickaxe"
+type = "Static"
+item_id = 0x0E86
+locations = [[6004, 3772, 21]]
+
+[[decoration]]
+comment = "bamboo stool"
+type = "Static"
+item_id = 0x11FC
+locations = [
+    [6002, 3773, 20],
+    [6000, 3773, 21],
+]
+
+[[decoration]]
+comment = "fire pit"
+type = "Static"
+item_id = 0x0FAC
+locations = [[6001, 3772, 21]]
+
+[[decoration]]
+comment = "crate"
+type = "LargeCrate"
+item_id = 0x0E3C
+locations = [[5999, 3770, 19]]
+
+[[decoration]]
+comment = "crate"
+type = "MediumCrate"
+item_id = 0x0E3E
+locations = [[5999, 3770, 22]]
+
+[[decoration]]
+comment = "lantern"
+type = "Static"
+item_id = 0x0A15
+locations = [[5999, 3770, 25]]
+
+[[decoration]]
+comment = "wooden fence"
+type = "Static"
+item_id = 0x0835
+locations = [[5998, 3773, 21]]
+
+[[decoration]]
+comment = "wooden fence"
+type = "Static"
+item_id = 0x0837
+locations = [
+    [5998, 3772, 21],
+    [5996, 3772, 21],
+    [5996, 3773, 21],
+]
+
+[[decoration]]
+comment = "wooden fence"
+type = "Static"
+item_id = 0x0836
+locations = [
+    [5998, 3771, 21],
+    [5997, 3771, 21],
+    [5997, 3773, 21],
+]
+
+[[decoration]]
+comment = "wooden logs"
+type = "Static"
+item_id = 0x0504
+locations = [[5997, 3772, 21]]
+
+[[decoration]]
+comment = "flowstone"
+type = "Static"
+item_id = 0x08E8
+locations = [
+    [5876, 3821, 0],
+    [5878, 3820, -4],
+    [5878, 3816, -9],
+]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1776
+locations = [
+    [5879, 3815, -4],
+    [5878, 3819, 22],
+    [6009, 3782, 17],
+    [6009, 3785, 32],
+    [6007, 3787, 30],
+    [6008, 3788, 30],
+    [6008, 3789, 29],
+]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1775
+locations = [
+    [5880, 3815, -4],
+    [5877, 3820, 22],
+    [5878, 3817, 17],
+    [6010, 3782, 19],
+    [6010, 3783, 21],
+]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1777
+locations = [
+    [5877, 3818, 22],
+    [5878, 3818, 21],
+]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1778
+locations = [
+    [5878, 3818, 21],
+    [6005, 3782, 22],
+    [6019, 3786, 46],
+    [6008, 3788, 48],
+    [6008, 3787, 30],
+]
+
+[[decoration]]
+comment = "tapestry"
+type = "Static"
+item_id = 0x0FE3
+props = { hue = 0x0001, name = "a dark cavern" }
+locations = [
+    [5878, 3819, -4],
+    [5878, 3818, -5],
+]
+
+[[decoration]]
+comment = "tapestry"
+type = "Static"
+item_id = 0x0FE4
+props = { hue = 0x0001, name = "a dark cavern" }
+locations = [
+    [5878, 3817, -5],
+    [5878, 3818, -4],
+]
+
+[[decoration]]
+comment = "stone post"
+type = "Static"
+item_id = 0x01D2
+locations = [
+    [6015, 3790, 41],
+    [6016, 3784, 31],
+    [6013, 3790, 45],
+    [6010, 3784, 28],
+]
+
+[[decoration]]
+comment = "stone wall"
+type = "Static"
+item_id = 0x01EB
+locations = [
+    [6014, 3774, 20],
+    [6010, 3778, 22],
+]
+
+[[decoration]]
+comment = "stone arch"
+type = "Static"
+item_id = 0x01E4
+locations = [[6015, 3777, 21]]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x078B
+locations = [
+    [6013, 3782, 19],
+    [6013, 3783, 25],
+    [6014, 3782, 17],
+    [6014, 3783, 23],
+    [6013, 3782, 18],
+    [6012, 3782, 18],
+    [6012, 3783, 23],
+    [6011, 3782, 18],
+    [6011, 3783, 25],
+]
+
+[[decoration]]
+comment = "stone"
+type = "Static"
+item_id = 0x0788
+locations = [
+    [6013, 3783, 19],
+    [6013, 3784, 25],
+    [6012, 3784, 25],
+    [6011, 3784, 25],
+    [6014, 3783, 17],
+    [6014, 3784, 25],
+    [6014, 3784, 19],
+    [6014, 3785, 19],
+    [6013, 3784, 19],
+    [6013, 3785, 18],
+    [6012, 3783, 17],
+    [6012, 3784, 19],
+    [6012, 3785, 19],
+    [6011, 3783, 19],
+    [6011, 3784, 19],
+    [6011, 3785, 19],
+]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x0789
+locations = [
+    [6012, 3785, 25],
+    [6014, 3785, 25],
+    [6014, 3786, 20],
+    [6013, 3785, 25],
+    [6013, 3786, 20],
+    [6012, 3786, 21],
+    [6011, 3785, 25],
+    [6011, 3786, 21],
+]
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x0521
+props = { hue = 0x0001 }
+locations = [
+    [6013, 3787, 20],
+    [6011, 3787, 22],
+    [6012, 3787, 20],
+    [6012, 3786, 20],
+    [6013, 3786, 19],
+]
+
+[[decoration]]
+comment = "shovel"
+type = "Static"
+item_id = 0x0F39
+locations = [[6004, 3771, 19]]
+
+[[decoration]]
+comment = "crate"
+type = "MediumCrate"
+item_id = 0x0E3F
+locations = [[6002, 3771, 22]]
+
+[[decoration]]
+comment = "bottles of ale"
+type = "Static"
+item_id = 0x09A1
+locations = [[6002, 3771, 27]]
+
+[[decoration]]
+comment = "hay"
+type = "Static"
+item_id = 0x0F34
+locations = [
+    [5999, 3773, 21],
+    [5998, 3774, 20],
+    [5997, 3774, 19],
+]
+
+[[decoration]]
+comment = "large vase"
+type = "Static"
+item_id = 0x0B45
+locations = [[5997, 3772, 22]]
+
+[[decoration]]
+comment = "large vase"
+type = "Static"
+item_id = 0x0B47
+locations = [[5997, 3774, 20]]
+
+[[decoration]]
+comment = "cave floor"
+type = "Static"
+item_id = 0x0548
+locations = [[5878, 3817, -2]]
+
+[[decoration]]
+comment = "cave floor"
+type = "Static"
+item_id = 0x0546
+locations = [
+    [5878, 3819, -2],
+    [5878, 3818, -2],
+]
+
+[[decoration]]
+comment = "torch%es%"
+type = "Static"
+item_id = 0x0F64
+locations = [[6003, 3771, 21]]
+
+[[decoration]]
+comment = "torch%es%"
+type = "Static"
+item_id = 0x0F6B
+locations = [[6003, 3771, 22]]
+
+[[decoration]]
+comment = "stone wall"
+type = "Static"
+item_id = 0x01E9
+locations = [[6008, 3785, 32]]
+
+[[decoration]]
+comment = "stone arch"
+type = "Static"
+item_id = 0x01E0
+locations = [[6019, 3785, 32]]
+
+[[decoration]]
+comment = "stone wall"
+type = "Static"
+item_id = 0x01EA
+locations = [[6019, 3787, 47]]
+
+[[decoration]]
+comment = "stone arch"
+type = "Static"
+item_id = 0x01E3
+locations = [[6020, 3787, 45]]
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x0521
+locations = [
+    [6013, 3778, 21],
+    [6011, 3779, 22],
+    [6012, 3779, 19],
+    [6013, 3779, 20],
+    [6012, 3780, 18],
+    [6013, 3781, 17],
+    [6011, 3781, 20],
+]
+
+[[decoration]]
+comment = "stone arch"
+type = "Static"
+item_id = 0x01E2
+locations = [[6009, 3778, 19]]
+
+[[decoration]]
+comment = "stone wall"
+type = "Static"
+item_id = 0x01D1
+locations = [
+    [6016, 3785, 31],
+    [6016, 3786, 27],
+    [6016, 3787, 25],
+    [6015, 3787, 20],
+    [6015, 3788, 22],
+    [6010, 3785, 25],
+    [6010, 3786, 23],
+    [6010, 3787, 22],
+    [6012, 3790, 44],
+]
+
+[[decoration]]
+comment = "stone arch"
+type = "Static"
+item_id = 0x01DC
+locations = [
+    [6017, 3786, 30],
+    [6017, 3789, 33],
+    [6016, 3790, 45],
+    [6014, 3790, 47],
+]
+
+[[decoration]]
+comment = "stone arch"
+type = "Static"
+item_id = 0x01DE
+locations = [
+    [6015, 3791, 45],
+    [6014, 3792, 59],
+]
+
+[[decoration]]
+comment = "stone pillar"
+type = "Static"
+item_id = 0x01DA
+locations = [
+    [6016, 3792, 46],
+    [6012, 3792, 44],
+]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0665
+props = { hue = 0x0973 }
+locations = [[5999, 3763, 38]]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0600
+props = { hue = 0x0455 }
+locations = [
+    [6000, 3763, 38],
+    [6002, 3763, 38],
+]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0600
+props = { hue = 0x0973 }
+locations = [
+    [6001, 3763, 38],
+    [6001, 3764, 41],
+]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0664
+props = { hue = 0x0973 }
+locations = [[6003, 3763, 38]]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x05FF
+props = { hue = 0x0455 }
+locations = [
+    [5999, 3764, 38],
+    [5999, 3766, 38],
+]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0665
+props = { hue = 0x0455 }
+locations = [[6000, 3764, 41]]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0664
+props = { hue = 0x0455 }
+locations = [[6002, 3764, 41]]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0602
+props = { hue = 0x0455 }
+locations = [
+    [6003, 3764, 38],
+    [6003, 3766, 38],
+]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x05FF
+props = { hue = 0x0973 }
+locations = [
+    [5999, 3765, 38],
+    [6000, 3765, 41],
+]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0608
+props = { hue = 0x0973 }
+locations = [[6001, 3765, 49]]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0602
+props = { hue = 0x0973 }
+locations = [
+    [6002, 3765, 41],
+    [6003, 3765, 38],
+]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0666
+props = { hue = 0x0455 }
+locations = [[6000, 3766, 41]]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0601
+props = { hue = 0x0973 }
+locations = [
+    [6001, 3766, 41],
+    [6001, 3767, 38],
+]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0663
+props = { hue = 0x0455 }
+locations = [[6002, 3766, 41]]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0666
+props = { hue = 0x0973 }
+locations = [[5999, 3767, 38]]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0601
+props = { hue = 0x0455 }
+locations = [
+    [6000, 3767, 38],
+    [6002, 3767, 38],
+]
+
+[[decoration]]
+comment = "tent roof"
+type = "Static"
+item_id = 0x0663
+props = { hue = 0x0973 }
+locations = [[6003, 3767, 38]]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x036C
+props = { hue = 0x0973 }
+locations = [[5998, 3767, 20]]

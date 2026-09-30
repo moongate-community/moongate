@@ -1,0 +1,53 @@
+[[spawn]]
+id = "felucca_4200"
+map = "felucca"
+name = "Orc Dungeon lvl 1"
+mobile_ids = []
+npc_list_ids = ["orcdungeonlvl1"]
+max = 20
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5123
+y1 = 1944
+x2 = 5165
+y2 = 2020
+
+[[spawn]]
+id = "felucca_4201"
+map = "felucca"
+name = "Orc Dungeon lvl 2"
+mobile_ids = []
+npc_list_ids = ["orcdungeonlvl2"]
+max = 50
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5284
+y1 = 1283
+x2 = 5372
+y2 = 1387
+
+[[spawn]]
+id = "felucca_4202"
+map = "felucca"
+name = "Orc Dungeon lvl 3"
+mobile_ids = []
+npc_list_ids = ["orcdungeonlvl3"]
+max = 30
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5271
+y1 = 1952
+x2 = 5363
+y2 = 2046

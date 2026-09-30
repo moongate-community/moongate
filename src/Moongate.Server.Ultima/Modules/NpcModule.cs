@@ -5,6 +5,8 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules.Internal;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -14,7 +16,7 @@ namespace Moongate.Server.Ultima.Modules;
 ///     that is not an NPC in the world gives <c>false</c> or <c>nil</c>, never an error: a script that waited may outlive
 ///     its NPC, and a script must never move or voice a player.
 /// </summary>
-[ScriptModule("npc", "Acts as an NPC: speaks, walks and reads where it is.")]
+[ScriptModule("npc", "Acts as an NPC: speaks, plays sounds, walks and reads where it is.")]
 public sealed class NpcModule
 {
     public const int MaximumTextLength = 128;
@@ -24,12 +26,19 @@ public sealed class NpcModule
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
     private readonly IWorldViewService _view;
+    private readonly IMobileTemplateService _templates;
 
-    public NpcModule(IMobileService mobiles, ISpeechService speech, IWorldViewService view)
+    public NpcModule(
+        IMobileService mobiles,
+        ISpeechService speech,
+        IWorldViewService view,
+        IMobileTemplateService templates
+    )
     {
         _mobiles = mobiles;
         _speech = speech;
         _view = view;
+        _templates = templates;
     }
 
     /// <summary>
@@ -49,6 +58,23 @@ public sealed class NpcModule
     }
 
     /// <summary>
+    ///     Plays a sound where the NPC stands for the players within 15 cells: a sound id, <c>npc.play_sound(serial, 0x69)</c>,
+    ///     or a kind of the NPC template's <c>[mobile.sounds]</c>, <c>npc.play_sound(serial, "idle")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) or a kind of the NPC's template sounds (start_attack, idle, attack, hurt, death) where the NPC stands; false for an unknown NPC, sound or kind.")]
+    public bool PlaySound(long serial, object sound)
+    {
+        if (!TryGetNpc(serial, out var npc) || ResolveSound(npc, sound) is not { } id)
+        {
+            return false;
+        }
+
+        _speech.PlaySound(npc, id);
+
+        return true;
+    }
+
+    /// <summary>
     ///     Turns the NPC toward <paramref name="direction" /> when needed and takes one step, a run when
     ///     <paramref name="running" />; <c>npc.step(serial, DirectionType.North, true)</c>. The players in range see the
     ///     turn and the step. <c>DirectionType.Running</c> is not a direction: pass <paramref name="running" /> instead.
@@ -63,11 +89,12 @@ public sealed class NpcModule
 
         var oldLocation = npc.Location;
         var oldDirection = npc.Direction;
-        var result = _mobiles.TryMove(npc, direction);
+        var ability = AbilityOf(npc);
+        var result = _mobiles.TryMove(npc, direction, ability);
 
         if (result == MoveResultType.Turned)
         {
-            result = _mobiles.TryMove(npc, direction);
+            result = _mobiles.TryMove(npc, direction, ability);
         }
 
         if (npc.Location != oldLocation || npc.Direction != oldDirection)
@@ -105,6 +132,85 @@ public sealed class NpcModule
     public string? Name(long serial)
     {
         return TryGetNpc(serial, out var npc) ? npc.Name : null;
+    }
+
+    // A whole number in the sound range, or a kind the template sets, as UOX3's creature sounds.
+    private int? ResolveSound(MobileEntity npc, object sound)
+    {
+        if (sound is double number)
+        {
+            return number is >= 0 and <= ushort.MaxValue && Math.Floor(number) == number ? (int)number : null;
+        }
+
+        if (sound is not string kind ||
+            npc.TemplateId is not { } templateId ||
+            !_templates.TryGet(templateId, out var template) ||
+            template.Sounds is not { } sounds)
+        {
+            return null;
+        }
+
+        return kind switch
+        {
+            "start_attack" => sounds.StartAttack,
+            "idle" => sounds.Idle,
+            "attack" => sounds.Attack,
+            "hurt" => sounds.Hurt,
+            "death" => sounds.Death,
+            _ => null
+        };
+    }
+
+    /// <summary>
+    ///     Gets the prop <paramref name="key" /> the NPC keeps, saved with it across restarts;
+    ///     <c>npc.get_prop(serial, "vega.greeted")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "A value the NPC keeps across restarts: a string, a number or a bool; nil when it has none.")]
+    public object? GetProp(long serial, string key)
+    {
+        return TryGetNpc(serial, out var npc) && npc.Props is { } props && props.TryGetValue(key, out var value) ? value : null;
+    }
+
+    /// <summary>
+    ///     Keeps <paramref name="value" /> as the prop <paramref name="key" /> of the NPC, saved with it by the world save,
+    ///     or removes it for <c>nil</c>; <c>npc.set_prop(serial, "vega.greeted", 3)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Keeps a string, a number or a bool on the NPC across restarts, nil removes it; false for a table, a function or a blank key.")]
+    public bool SetProp(long serial, string key, object? value = null)
+    {
+        if (string.IsNullOrWhiteSpace(key) || !TryGetNpc(serial, out var npc))
+        {
+            return false;
+        }
+
+        if (value is null)
+        {
+            npc.RemoveProp(key);
+
+            return true;
+        }
+
+        if (!ScriptPropValue.TryFromLua(value, out var prop))
+        {
+            return false;
+        }
+
+        npc.SetProp(key, prop);
+
+        return true;
+    }
+
+    // As its template says: a water mobile swims, an amphibious one walks and swims.
+    private MovementAbilityType AbilityOf(MobileEntity npc)
+    {
+        var movement = npc.TemplateId is { } id && _templates.TryGet(id, out var template) ? template.Movement : null;
+
+        return movement switch
+        {
+            MobileMovementType.Water => MovementAbilityType.Swim,
+            MobileMovementType.Both => MovementAbilityType.Walk | MovementAbilityType.Swim,
+            _ => MovementAbilityType.Walk
+        };
     }
 
     private bool TryGetNpc(long serial, [NotNullWhen(true)] out MobileEntity? npc)

@@ -1,0 +1,971 @@
+[[spawn]]
+id = "trammel_8101"
+map = "trammel"
+name = "- Britannia Provisions"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1846
+y1 = 2795
+x2 = 1848
+y2 = 2797
+
+[[spawn]]
+id = "trammel_8102"
+map = "trammel"
+name = "- Britannia Provisions"
+mobile_ids = ["architect"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1851
+y1 = 2789
+x2 = 1857
+y2 = 2794
+
+[[spawn]]
+id = "trammel_8103"
+map = "trammel"
+name = "Trinsic banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1811
+y1 = 2820
+x2 = 1816
+y2 = 2823
+
+[[spawn]]
+id = "trammel_8104"
+map = "trammel"
+name = "Trinsic banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1813
+y1 = 2825
+x2 = 1815
+y2 = 2826
+
+[[spawn]]
+id = "trammel_8105"
+map = "trammel"
+name = "Trinsic guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1823
+y1 = 2825
+x2 = 1827
+y2 = 2830
+
+[[spawn]]
+id = "trammel_8106"
+map = "trammel"
+name = "Trinsic healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1919
+y1 = 2807
+x2 = 1921
+y2 = 2811
+
+[[spawn]]
+id = "trammel_8107"
+map = "trammel"
+name = "Trinsic jeweler"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1897
+y1 = 2804
+x2 = 1899
+y2 = 2806
+
+[[spawn]]
+id = "trammel_8108"
+map = "trammel"
+name = "Trinsic baker"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1879
+y1 = 2807
+x2 = 1881
+y2 = 2810
+
+[[spawn]]
+id = "trammel_8109"
+map = "trammel"
+name = "Trinsic - Adventurer's Clothing"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1980
+y1 = 2840
+x2 = 1983
+y2 = 2842
+
+[[spawn]]
+id = "trammel_8110"
+map = "trammel"
+name = "Trinsic - Trinsic Fine Hides"
+mobile_ids = ["leatherworker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1986
+y1 = 2866
+x2 = 1987
+y2 = 2868
+
+[[spawn]]
+id = "trammel_8111"
+map = "trammel"
+name = "Trinsic butcher"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1991
+y1 = 2888
+x2 = 1992
+y2 = 2890
+
+[[spawn]]
+id = "trammel_8112"
+map = "trammel"
+name = "Trinsic guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1989
+y1 = 2909
+x2 = 1992
+y2 = 2912
+
+[[spawn]]
+id = "trammel_8113"
+map = "trammel"
+name = "Trinsic fisherman"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2024
+y1 = 2845
+x2 = 2025
+y2 = 2847
+
+[[spawn]]
+id = "trammel_8114"
+map = "trammel"
+name = "Trinsic guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2045
+y1 = 2777
+x2 = 2047
+y2 = 2779
+
+[[spawn]]
+id = "trammel_8115"
+map = "trammel"
+name = "Trinsic innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2019
+y1 = 2803
+x2 = 2021
+y2 = 2805
+
+[[spawn]]
+id = "trammel_8116"
+map = "trammel"
+name = "Trinsic animal trainer"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2012
+y1 = 2803
+x2 = 2014
+y2 = 2805
+
+[[spawn]]
+id = "trammel_8117"
+map = "trammel"
+name = "Trinsic - The Keg and Anchor"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1926
+y1 = 2794
+x2 = 1927
+y2 = 2797
+
+[[spawn]]
+id = "trammel_8118"
+map = "trammel"
+name = "Trinsic weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1935
+y1 = 2765
+x2 = 1938
+y2 = 2767
+
+[[spawn]]
+id = "trammel_8119"
+map = "trammel"
+name = "Trinsic innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1842
+y1 = 2734
+x2 = 1844
+y2 = 2736
+
+[[spawn]]
+id = "trammel_8120"
+map = "trammel"
+name = "Trinsic animal trainer"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1821
+y1 = 2732
+x2 = 1823
+y2 = 2735
+
+[[spawn]]
+id = "trammel_8121"
+map = "trammel"
+name = "Trinsic guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1823
+y1 = 2674
+x2 = 1827
+y2 = 2678
+
+[[spawn]]
+id = "trammel_8122"
+map = "trammel"
+name = "Trinsic tinker"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1842
+y1 = 2674
+x2 = 1845
+y2 = 2677
+
+[[spawn]]
+id = "trammel_8123"
+map = "trammel"
+name = "Trinsic - Encyclopedia Magicka"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1846
+y1 = 2715
+x2 = 1849
+y2 = 2717
+
+[[spawn]]
+id = "trammel_8124"
+map = "trammel"
+name = "Trinsic guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1865
+y1 = 2643
+x2 = 1868
+y2 = 2646
+
+[[spawn]]
+id = "trammel_8125"
+map = "trammel"
+name = "Trinsic - Shining Path Armoury"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1885
+y1 = 2650
+x2 = 1887
+y2 = 2657
+
+[[spawn]]
+id = "trammel_8126"
+map = "trammel"
+name = "Trinsic banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1884
+y1 = 2689
+x2 = 1886
+y2 = 2693
+
+[[spawn]]
+id = "trammel_8127"
+map = "trammel"
+name = "Trinsic banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1893
+y1 = 2689
+x2 = 1895
+y2 = 2692
+
+[[spawn]]
+id = "trammel_8128"
+map = "trammel"
+name = "Town People"
+mobile_ids = []
+npc_list_ids = ["alltownfolk"]
+max = 50
+min_minutes = 18
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1838
+y1 = 2662
+x2 = 2055
+y2 = 2860
+
+[[spawn]]
+id = "trammel_8129"
+map = "trammel"
+name = "animal spawn"
+mobile_ids = []
+npc_list_ids = ["britainanimallist"]
+max = 50
+min_minutes = 18
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1838
+y1 = 2662
+x2 = 2055
+y2 = 2860
+
+[[spawn]]
+id = "trammel_8130"
+map = "trammel"
+name = "Trinsic - Thief Guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1838
+y1 = 2662
+x2 = 2055
+y2 = 2860
+
+[[spawn]]
+id = "trammel_8131"
+map = "trammel"
+name = "Trinsic - Britannia Provisions"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1845
+y1 = 2789
+x2 = 1848
+y2 = 2793
+
+[[spawn]]
+id = "trammel_8132"
+map = "trammel"
+name = "Trinsic - Britannia Provisions"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1845
+y1 = 2789
+x2 = 1848
+y2 = 2793
+
+[[spawn]]
+id = "trammel_8133"
+map = "trammel"
+name = "Trinsic - Britannia Provisions"
+mobile_ids = ["carpenter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1851
+y1 = 2789
+x2 = 1857
+y2 = 2794
+
+[[spawn]]
+id = "trammel_8134"
+map = "trammel"
+name = "Trinsic - Britannia Provisions"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1851
+y1 = 2789
+x2 = 1857
+y2 = 2794
+
+[[spawn]]
+id = "trammel_8135"
+map = "trammel"
+name = "Trinsic - Dupre"
+mobile_ids = ["dupre"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1812
+y1 = 2807
+x2 = 1812
+y2 = 2807
+
+[[spawn]]
+id = "trammel_8136"
+map = "trammel"
+name = "Trinsic - The Keg and Anchor"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1926
+y1 = 2789
+x2 = 1927
+y2 = 2793
+
+[[spawn]]
+id = "trammel_8137"
+map = "trammel"
+name = "Trinsic - The Keg and Anchor"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1930
+y1 = 2791
+x2 = 1938
+y2 = 2792
+
+[[spawn]]
+id = "trammel_8138"
+map = "trammel"
+name = "Trinsic - Towncrier"
+mobile_ids = ["towncrier"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1915
+y1 = 2687
+x2 = 1915
+y2 = 2687
+
+[[spawn]]
+id = "trammel_8139"
+map = "trammel"
+name = "Trinsic - Shining Path Armoury"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1891
+y1 = 2645
+x2 = 1899
+y2 = 2654
+
+[[spawn]]
+id = "trammel_8140"
+map = "trammel"
+name = "Trinsic - Encyclopedia Magicka 2"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1840
+y1 = 2702
+x2 = 1841
+y2 = 2707
+
+[[spawn]]
+id = "trammel_8141"
+map = "trammel"
+name = "Trinsic - Encyclopedia Magicka 2"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1846
+y1 = 2702
+x2 = 1847
+y2 = 2707
+
+[[spawn]]
+id = "trammel_8142"
+map = "trammel"
+name = "Trinsic - Adventurer's Clothing"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1978
+y1 = 2830
+x2 = 1983
+y2 = 2835
+
+[[spawn]]
+id = "trammel_8143"
+map = "trammel"
+name = "Trinsic - Adventurer's Clothing"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1985
+y1 = 2839
+x2 = 1989
+y2 = 2843
+
+[[spawn]]
+id = "trammel_8144"
+map = "trammel"
+name = "Trinsic - Trinsic Fine Hides"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1985
+y1 = 2870
+x2 = 1994
+y2 = 2875
+
+[[spawn]]
+id = "trammel_8145"
+map = "trammel"
+name = "Trinsic - Trinsic Fine Hides"
+mobile_ids = ["furtrader"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1985
+y1 = 2870
+x2 = 1994
+y2 = 2875
+
+[[spawn]]
+id = "trammel_8146"
+map = "trammel"
+name = "Trinsic - Docks"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2058
+y1 = 2855
+x2 = 2075
+y2 = 2856
+
+[[spawn]]
+id = "trammel_8147"
+map = "trammel"
+name = "Trinsic - Docks"
+mobile_ids = ["sailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2058
+y1 = 2855
+x2 = 2075
+y2 = 2856
+
+[[spawn]]
+id = "trammel_8148"
+map = "trammel"
+name = "Trinsic - Paladin's Library"
+mobile_ids = ["paladin"]
+npc_list_ids = []
+max = 2
+min_minutes = 60
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1984
+y1 = 2727
+x2 = 1996
+y2 = 2740
+
+[[spawn]]
+id = "trammel_8149"
+map = "trammel"
+name = "Trinsic - Paladin's Library"
+mobile_ids = ["paladin"]
+npc_list_ids = []
+max = 3
+min_minutes = 60
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1995
+y1 = 2715
+x2 = 2009
+y2 = 2726
+
+[[spawn]]
+id = "trammel_8150"
+map = "trammel"
+name = "Trinsic - Paladin's Library"
+mobile_ids = ["paladin"]
+npc_list_ids = []
+max = 3
+min_minutes = 60
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2000
+y1 = 2728
+x2 = 2012
+y2 = 2757
+
+[[spawn]]
+id = "trammel_8151"
+map = "trammel"
+name = "Trinsic - Paladin's Library"
+mobile_ids = ["paladin"]
+npc_list_ids = []
+max = 2
+min_minutes = 60
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1979
+y1 = 2744
+x2 = 1999
+y2 = 2753
+
+[[spawn]]
+id = "trammel_8152"
+map = "trammel"
+name = "Trinsic - Paladin's Library"
+mobile_ids = ["paladin"]
+npc_list_ids = []
+max = 3
+min_minutes = 60
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2015
+y1 = 2705
+x2 = 2033
+y2 = 2729
+
+[[spawn]]
+id = "trammel_8153"
+map = "trammel"
+name = "Trinsic - Paladin's Library"
+mobile_ids = ["paladin"]
+npc_list_ids = []
+max = 2
+min_minutes = 60
+max_minutes = 90
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2016
+y1 = 2745
+x2 = 2030
+y2 = 2750
+
+[[spawn]]
+id = "trammel_8154"
+map = "trammel"
+name = "Trinsic animal trainer"
+mobile_ids = ["veterinarian"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1821
+y1 = 2732
+x2 = 1823
+y2 = 2735

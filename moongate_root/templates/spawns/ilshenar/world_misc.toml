@@ -1,0 +1,180 @@
+[[spawn]]
+id = "ilshenar_18700"
+map = "ilshenar"
+name = "Meer Catacombs 1_1"
+mobile_ids = []
+npc_list_ids = ["meercata_npclist_1"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1752
+y1 = 43
+x2 = 1792
+y2 = 92
+
+[[spawn]]
+id = "ilshenar_18701"
+map = "ilshenar"
+name = "Meer Catacombs 1_2"
+mobile_ids = []
+npc_list_ids = ["meercata_npclist_1"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1783
+y1 = 43
+x2 = 1822
+y2 = 92
+
+[[spawn]]
+id = "ilshenar_18705"
+map = "ilshenar"
+name = "Savage Camp 1_1"
+mobile_ids = []
+npc_list_ids = ["ilshenar_savage_camp_npclist_1"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1031
+y1 = 502
+x2 = 1061
+y2 = 532
+
+[[spawn]]
+id = "ilshenar_18706"
+map = "ilshenar"
+name = "Savage Camp 1_2"
+mobile_ids = ["savageshaman"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1039
+y1 = 510
+x2 = 1053
+y2 = 524
+
+[[spawn]]
+id = "ilshenar_18707"
+map = "ilshenar"
+name = "Savage Camp 1_3"
+mobile_ids = []
+npc_list_ids = ["ilshenar_savage_camp_npclist_2"]
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1101
+y1 = 512
+x2 = 1131
+y2 = 542
+
+[[spawn]]
+id = "ilshenar_18708"
+map = "ilshenar"
+name = "Savage Camp 1_4"
+mobile_ids = []
+npc_list_ids = ["ilshenar_savage_camp_npclist_3"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1074
+y1 = 457
+x2 = 1130
+y2 = 512
+
+[[spawn]]
+id = "ilshenar_18709"
+map = "ilshenar"
+name = "Savage Camp 1_5"
+mobile_ids = []
+npc_list_ids = ["ilshenar_savage_camp_npclist_3"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1074
+y1 = 513
+x2 = 1130
+y2 = 562
+
+[[spawn]]
+id = "ilshenar_18710"
+map = "ilshenar"
+name = "Savage Camp 1_6"
+mobile_ids = ["ridgeback"]
+npc_list_ids = []
+max = 15
+min_minutes = 59
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1063
+y1 = 474
+x2 = 1143
+y2 = 554
+
+[[spawn]]
+id = "ilshenar_18711"
+map = "ilshenar"
+name = "Savage Camp 1_7"
+mobile_ids = ["ridgeback"]
+npc_list_ids = []
+max = 10
+min_minutes = 59
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1057
+y1 = 407
+x2 = 1107
+y2 = 457
+
+[[spawn]]
+id = "ilshenar_18715"
+map = "ilshenar"
+name = "Twin Oaks Tavern 1_1"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 7
+only_outside = false
+[[spawn.areas]]
+x1 = 1551
+y1 = 1054
+x2 = 1564
+y2 = 1054

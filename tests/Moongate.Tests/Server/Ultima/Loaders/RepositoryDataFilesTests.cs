@@ -74,7 +74,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5512, messages.Count);
+        Assert.Equal(5544, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
@@ -96,6 +96,9 @@ public sealed class RepositoryDataFilesTests
         Assert.All(regions.Where(region => region.Type == RegionType.Dungeon), region => Assert.Equal("none", region.Weather));
         Assert.Equal(new Point3D(1495, 1629, 10), britain.GoLocation);
         Assert.True(britain.Contains(1495, 1629, 10));
+        var lookup = new RegionService(service);
+        Assert.Equal("Britain", lookup.Find(MapType.Trammel, new Point3D(1495, 1629, 10))?.Name);
+        Assert.Equal("snowy", lookup.Find(MapType.Felucca, new Point3D(4000, 300, 0))?.Weather);
         Assert.All(regions.Where(region => region.Map == MapType.Ilshenar), region => Assert.False(region.RecallIn));
 
         // Travel zones: Felucca's Lost Lands block recalling out; Trammel's Wind allows it but blocks recalling in.
@@ -133,7 +136,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5512, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5544, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     [Theory,
@@ -185,7 +188,7 @@ public sealed class RepositoryDataFilesTests
         var messages = (Tomlyn.Model.TomlTable)own["messages"];
 
         // Every language carries its own text, not the English fallback.
-        Assert.All(Enumerable.Range(30008, 42), id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}"));
+        Assert.All(Enumerable.Range(30008, 47), id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}"));
     }
 
     private static string FindRepositoryRoot()

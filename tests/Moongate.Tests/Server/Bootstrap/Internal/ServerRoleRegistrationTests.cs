@@ -8,6 +8,7 @@ using Moongate.Scripting.Interfaces;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Realms;
+using Moongate.Server.Core.Data.Services;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Diagnostics;
 using Moongate.Server.Core.Interfaces.Services;
@@ -80,7 +81,7 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
-        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30049));
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30079));
     }
 
     [Theory, InlineData(0x09), InlineData(0xBF), InlineData(0xD6)]
@@ -102,6 +103,31 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         Assert.True(container.Resolve<PacketRegistry>().TryGetDescriptor((byte)opCode, PacketDirection.Incoming, out _));
+    }
+
+    [Fact]
+    public void Register_EveryServiceIsRegisteredOnce()
+    {
+        // A service registered twice cannot be resolved: the server would not start.
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Standalone));
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        var twice = container.Resolve<List<ServiceRegistrationData>>()
+                             .GroupBy(registration => registration.ServiceType)
+                             .Where(group => group.Count() > 1)
+                             .Select(group => group.Key.Name);
+        Assert.Empty(twice);
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
@@ -141,12 +167,20 @@ public sealed class ServerRoleRegistrationTests
             Assert.IsType<SpeechService>(container.Resolve<ISpeechService>());
             Assert.NotNull(container.Resolve<NpcModule>());
             Assert.NotNull(container.Resolve<ItemModule>());
+            Assert.NotNull(container.Resolve<WorldModule>());
+            Assert.Equal(
+                [container.Resolve<IWeatherService>(), container.Resolve<ILightService>()],
+                container.Resolve<IEnumerable<IRegionChangeListener>>()
+            );
+            Assert.NotNull(container.Resolve<IMobileService>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcScriptService>());
             Assert.NotNull(container.Resolve<INpcService>());
             Assert.IsType<NpcSenseService>(container.Resolve<INpcSenseService>());
             Assert.IsType<ItemScriptService>(container.Resolve<IItemScriptService>());
             Assert.IsType<ItemService>(container.Resolve<IItemService>());
+            Assert.IsType<ItemDecayQueue>(container.Resolve<IItemDecayQueue>());
+            Assert.NotNull(container.Resolve<ItemDecayService>());
             Assert.IsType<MobileService>(container.Resolve<IMobileService>());
             Assert.IsType<NpcHearingService>(container.Resolve<INpcSpeechListener>());
             Assert.Contains(container.ResolveMany<IMetricProvider>(), provider => provider.ProviderName == "npcs");

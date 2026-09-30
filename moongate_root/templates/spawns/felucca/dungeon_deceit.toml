@@ -1,0 +1,521 @@
+[[spawn]]
+id = "felucca_3550"
+map = "felucca"
+name = "Deceit Lvl One"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_one_light"]
+max = 20
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5137
+y1 = 577
+x2 = 5155
+y2 = 627
+
+[[spawn]]
+id = "felucca_3551"
+map = "felucca"
+name = "Deceit Lvl One"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_one_medium"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5216
+y1 = 529
+x2 = 5231
+y2 = 575
+
+[[spawn]]
+id = "felucca_3552"
+map = "felucca"
+name = "Deceit Lvl One"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_one_medium"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5185
+y1 = 536
+x2 = 5190
+y2 = 566
+
+[[spawn]]
+id = "felucca_3553"
+map = "felucca"
+name = "Deceit Lvl One"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_one_light"]
+max = 20
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5168
+y1 = 584
+x2 = 5206
+y2 = 622
+
+[[spawn]]
+id = "felucca_3554"
+map = "felucca"
+name = "Deceit Lvl One"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_one"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5160
+y1 = 560
+x2 = 5174
+y2 = 574
+
+[[spawn]]
+id = "felucca_3555"
+map = "felucca"
+name = "Deceit Lvl Two"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_two"]
+max = 20
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5280
+y1 = 536
+x2 = 5342
+y2 = 550
+
+[[spawn]]
+id = "felucca_3556"
+map = "felucca"
+name = "Deceit Lvl Two"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_two"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5280
+y1 = 536
+x2 = 5286
+y2 = 574
+
+[[spawn]]
+id = "felucca_3557"
+map = "felucca"
+name = "Deceit Lvl Two"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_two"]
+max = 15
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5280
+y1 = 576
+x2 = 5326
+y2 = 590
+
+[[spawn]]
+id = "felucca_3558"
+map = "felucca"
+name = "Deceit Lvl Two"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_two"]
+max = 15
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5280
+y1 = 576
+x2 = 5326
+y2 = 590
+
+[[spawn]]
+id = "felucca_3559"
+map = "felucca"
+name = "Deceit Lvl Two"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_two"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5296
+y1 = 600
+x2 = 5310
+y2 = 614
+
+[[spawn]]
+id = "felucca_3560"
+map = "felucca"
+name = "Deceit Lvl Two"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_two"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5288
+y1 = 616
+x2 = 5302
+y2 = 630
+
+[[spawn]]
+id = "felucca_3561"
+map = "felucca"
+name = "Deceit Lvl Two"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_two"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5336
+y1 = 576
+x2 = 5342
+y2 = 622
+
+[[spawn]]
+id = "felucca_3562"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_three_poison"]
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5148
+y1 = 688
+x2 = 5162
+y2 = 702
+
+[[spawn]]
+id = "felucca_3563"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_three_poison"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5209
+y1 = 721
+x2 = 5230
+y2 = 750
+
+[[spawn]]
+id = "felucca_3564"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = ["poisonele"]
+npc_list_ids = []
+max = 2
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5176
+y1 = 721
+x2 = 5190
+y2 = 734
+
+[[spawn]]
+id = "felucca_3565"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = ["poisonele"]
+npc_list_ids = []
+max = 1
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5184
+y1 = 688
+x2 = 5198
+y2 = 702
+
+[[spawn]]
+id = "felucca_3566"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_three_light"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5168
+y1 = 656
+x2 = 5174
+y2 = 702
+
+[[spawn]]
+id = "felucca_3567"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_three_light"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5168
+y1 = 656
+x2 = 5206
+y2 = 662
+
+[[spawn]]
+id = "felucca_3568"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_three_poison"]
+max = 3
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5184
+y1 = 648
+x2 = 5206
+y2 = 662
+
+[[spawn]]
+id = "felucca_3569"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_three_light"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5217
+y1 = 673
+x2 = 5230
+y2 = 710
+
+[[spawn]]
+id = "felucca_3570"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_three_light"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5136
+y1 = 673
+x2 = 5174
+y2 = 678
+
+[[spawn]]
+id = "felucca_3571"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_three_light"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5136
+y1 = 653
+x2 = 5142
+y2 = 687
+
+[[spawn]]
+id = "felucca_3572"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_three_light"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5128
+y1 = 689
+x2 = 5136
+y2 = 726
+
+[[spawn]]
+id = "felucca_3573"
+map = "felucca"
+name = "Deceit Lvl Three"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_three"]
+max = 8
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5144
+y1 = 712
+x2 = 5158
+y2 = 734
+
+[[spawn]]
+id = "felucca_3574"
+map = "felucca"
+name = "Deceit Lvl Four"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_fourlichroom"]
+max = 4
+min_minutes = 25
+max_minutes = 50
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5304
+y1 = 741
+x2 = 5327
+y2 = 758
+
+[[spawn]]
+id = "felucca_3575"
+map = "felucca"
+name = "Deceit Lvl Four"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_four_light"]
+max = 6
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5320
+y1 = 672
+x2 = 5334
+y2 = 710
+
+[[spawn]]
+id = "felucca_3576"
+map = "felucca"
+name = "Deceit Lvl Four"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_four_light"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5296
+y1 = 664
+x2 = 5318
+y2 = 686
+
+[[spawn]]
+id = "felucca_3577"
+map = "felucca"
+name = "Deceit Lvl Four"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_four_light"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5280
+y1 = 688
+x2 = 5310
+y2 = 702
+
+[[spawn]]
+id = "felucca_3579"
+map = "felucca"
+name = "Deceit Lvl Four"
+mobile_ids = []
+npc_list_ids = ["deceit_lvl_four_light"]
+max = 4
+min_minutes = 15
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5280
+y1 = 648
+x2 = 5286
+y2 = 662

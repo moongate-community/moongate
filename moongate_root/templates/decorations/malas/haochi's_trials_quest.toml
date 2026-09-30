@@ -1,0 +1,158 @@
+# ==============================================================================
+# Moongate - templates/decorations/malas/haochi's_trials_quest.toml
+#
+# What it is for:
+#   World decoration placed on Malas: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "Candle"
+type = "HonorCandle"
+item_id = 0x1433
+props = { unlit = true, unprotected = true }
+locations = [
+    [419, 731, 17],
+    [420, 731, 17],
+    [422, 731, 17],
+    [421, 731, 17],
+]
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x051C
+props = { hue = 0x00FA }
+locations = [
+    [389, 704, -1],
+    [426, 780, -1],
+    [331, 769, -1],
+    [355, 745, -1],
+    [330, 706, -1],
+]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [384, 733, -1], map_dest = "Malas" }
+locations = [
+    [389, 704, -1],
+    [426, 780, -1],
+    [331, 769, -1],
+    [355, 745, -1],
+    [330, 706, -1],
+]
+
+[[decoration]]
+comment = "moongate"
+type = "Static"
+item_id = 0x1FD7
+props = { hue = 0x00FA }
+locations = [[391, 777, -1]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [770, 1209, 25], map_dest = "Tokuno" }
+locations = [[391, 777, -1]]
+
+[[decoration]]
+comment = "ankh"
+type = "AnkhNorth"
+item_id = 0x0004
+props = { hue = 0x00FA }
+locations = [
+    [351, 733, 18],
+    [388, 724, 13],
+]
+
+[[decoration]]
+comment = "Welcome to your new home, Samurai."
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1063295 }
+locations = [[369, 777, -1]]
+
+[[decoration]]
+comment = "chest"
+type = "HaochisTreasureChest"
+item_id = 0x2811
+locations = [
+    [424, 704, 8],
+    [424, 705, 8],
+    [424, 706, 8],
+]
+
+[[decoration]]
+comment = "katana"
+type = "Static"
+item_id = 0x13FF
+props = { hue = 0x0482 }
+locations = [[414, 703, 9]]
+
+[[decoration]]
+comment = "Haochi's katana generator"
+type = "HaochisKatanaGenerator"
+item_id = 0x1B7B
+locations = [[415, 703, 1]]
+
+[[decoration]]
+comment = "Haochi"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Haochi", count = 1, home_range = 0 }
+locations = [[377, 742, 1]]
+
+[[decoration]]
+comment = "Haochi's Guardsmen"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "HaochisGuardsman", count = 1, home_range = 0 }
+locations = [
+    [367, 749, -1],
+    [367, 750, -1],
+    [367, 739, -1],
+    [367, 740, -1],
+    [367, 730, -1],
+    [367, 729, -1],
+    [379, 727, -1],
+    [380, 727, -1],
+    [392, 730, -1],
+    [392, 731, -1],
+    [392, 739, -1],
+    [392, 740, -1],
+    [397, 749, -1],
+    [398, 748, -1],
+]
+
+[[decoration]]
+comment = "Deadly Imp"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "DeadlyImp", count = 1, home_range = 0 }
+locations = [[342, 736, -1]]
+
+[[decoration]]
+comment = "Fierce Dragon"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "FierceDragon", count = 1, home_range = 0 }
+locations = [[339, 741, -1]]
+
+[[decoration]]
+comment = "Relnia"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Relnia", count = 1, home_range = 0 }
+locations = [[379, 710, -1]]

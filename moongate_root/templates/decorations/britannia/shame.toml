@@ -1,0 +1,123 @@
+# ==============================================================================
+# Moongate - templates/decorations/britannia/shame.toml
+#
+# What it is for:
+#   World decoration placed on Trammel and Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "wooden logs"
+type = "Static"
+item_id = 0x0509
+locations = [[5620, 66, 0]]
+
+[[decoration]]
+comment = "wooden logs"
+type = "Static"
+item_id = 0x050A
+locations = [
+    [5546, 12, 0],
+    [5546, 13, 0],
+    [5546, 14, 0],
+    [5548, 14, 0],
+    [5553, 14, 0],
+    [5555, 12, 0],
+]
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x051E
+locations = [
+    [5443, 179, 22],
+    [5444, 179, 22],
+]
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x051F
+locations = [[5574, 199, 22]]
+
+[[decoration]]
+comment = "stone"
+type = "Static"
+item_id = 0x071E
+locations = [
+    [5513, 9, 0],
+    [5514, 10, 0],
+    [5490, 19, -30],
+]
+
+[[decoration]]
+comment = "suspension bridge"
+type = "Static"
+item_id = 0x07F0
+locations = [[5617, 70, 0]]
+
+[[decoration]]
+comment = "suspension bridge"
+type = "Static"
+item_id = 0x080F
+locations = [[5552, 15, 0]]
+
+[[decoration]]
+comment = "water"
+type = "Static"
+item_id = 0x1797
+locations = [
+    [5546, 15, -5],
+    [5548, 15, -5],
+    [5549, 15, -5],
+    [5550, 13, -5],
+    [5554, 10, -5],
+    [5617, 57, -5],
+    [5617, 64, -5],
+    [5620, 66, -5],
+    [5621, 67, -5],
+    [5672, 43, -5],
+    [5436, 168, -5],
+]
+
+[[decoration]]
+comment = "wooden planks"
+type = "Static"
+item_id = 0x04C9
+locations = [
+    [5460, 185, 0],
+    [5460, 186, 0],
+    [5460, 187, 0],
+    [5460, 188, 0],
+    [5456, 185, 0],
+    [5456, 186, 0],
+    [5456, 187, 0],
+    [5456, 188, 0],
+]
+
+[[decoration]]
+comment = "moongate"
+type = "Static"
+item_id = 0x1FD4
+props = { light = "Circle300" }
+locations = [
+    [5490, 19, -24],
+    [5514, 10, 6],
+    [5604, 102, 6],
+    [5514, 147, 26],
+    [5538, 170, 6],
+    [5513, 176, 6],
+    [5507, 162, 6],
+    [5875, 19, -4],
+]

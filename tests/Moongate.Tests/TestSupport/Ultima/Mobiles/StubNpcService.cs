@@ -22,6 +22,11 @@ public sealed class StubNpcService : INpcService
 
     public List<Serial> Removals { get; } = [];
 
+    /// <summary>
+    ///     Gets or sets what each spawn waits for before it completes; null means it completes at once.
+    /// </summary>
+    public TaskCompletionSource? Gate { get; set; }
+
     public Task StartAsync()
     {
         return Task.CompletedTask;
@@ -32,10 +37,11 @@ public sealed class StubNpcService : INpcService
         return Task.CompletedTask;
     }
 
-    public Task<MobileEntity> SpawnAsync(
+    public async Task<MobileEntity> SpawnAsync(
         string templateId,
         MapType map,
         Point3D location,
+        IReadOnlyDictionary<string, object?>? props = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -43,7 +49,17 @@ public sealed class StubNpcService : INpcService
         Spawned.Map = map;
         Spawned.Location = location;
 
-        return SpawnFailure is null ? Task.FromResult(Spawned) : Task.FromException<MobileEntity>(SpawnFailure);
+        foreach (var (key, value) in props ?? new Dictionary<string, object?>())
+        {
+            Spawned.SetProp(key, value);
+        }
+
+        if (Gate is not null)
+        {
+            await Gate.Task.WaitAsync(cancellationToken);
+        }
+
+        return SpawnFailure is null ? Spawned : throw SpawnFailure;
     }
 
     public Task<bool> RemoveAsync(Serial serial, CancellationToken cancellationToken = default)

@@ -84,10 +84,11 @@ public sealed class NpcService : INpcService
         string templateId,
         MapType map,
         Point3D location,
+        IReadOnlyDictionary<string, object?>? props = null,
         CancellationToken cancellationToken = default
     )
     {
-        var spawned = await _factory.SpawnAsync(templateId, map, location, cancellationToken);
+        var spawned = await _factory.SpawnAsync(templateId, map, location, props, cancellationToken);
         var npc = spawned.Mobile;
 
         // Saved already: from here it is live whatever the caller does.

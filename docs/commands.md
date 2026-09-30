@@ -13,168 +13,44 @@ message to everyone in the local world, and a successful `save` announces comple
 `shutdown` also announces the requested server stop to players.
 Use `..text` to say `.text` literally.
 
-| Command | Console | In-game registration | Minimum in-game level | Purpose |
-| --- | --- | --- | --- | --- |
-| `echo`, `e` | Yes | Yes | Regular | Print the arguments back to the caller |
-| `help` | Yes | Yes | Regular | List accessible commands or show details for one command |
-| `script` | Game/Standalone | No | — | Reload one Lua script or show script metrics |
-| `account` | Login/Standalone | Yes | Administrator | Create an account in the Accounts database |
-| `character` | Game/Standalone | Yes | GameMaster | List characters pending deletion and restore them |
-| `save` | Game/Standalone | Yes | Administrator | Save the world and announce completion |
-| `broadcast` | Game/Standalone | Yes | Administrator | Send a system message to players on this instance |
-| `shutdown` | Game/Standalone | Yes | Administrator | Stop the server gracefully, immediately or after a delay |
+## All commands at a glance
 
-## Help
+"Console" means the server console (always treated as an administrator); "In game" means
+typed with a leading dot by a character whose account has at least the minimum level. The
+role is the server mode that registers the command: `Login`, `Game`, or both in `Standalone`.
 
-```text
-help
-help account
-help e
-```
+| Command | Syntax | Console | In game | Minimum level | Role |
+| --- | --- | --- | --- | --- | --- |
+| [`help`](commands/help.md) | `help [command]` | Yes | Yes | Regular | Every role |
+| [`echo`, `e`](commands/echo.md) | `echo <text>` | Yes | Yes | Regular | Every role |
+| [`script`](commands/script.md) | `script reload <file>` / `script metrics` | Yes | No | — | Game |
+| [`account`](commands/account.md) | `account create <username> <password> [level]` / `account api-access <username> <on\|off>` | Yes | Yes | Administrator | Login |
+| [`character`](commands/character.md) | `character pending [account-serial]` / `character restore <character-serial>` | Yes | Yes | GameMaster | Game |
+| [`save`](commands/save.md) | `save` | Yes | Yes | Administrator | Game |
+| [`broadcast`](commands/broadcast.md) | `broadcast <text>` | Yes | Yes | Administrator | Game |
+| [`shutdown`](commands/shutdown.md) | `shutdown [seconds]` | Yes | Yes | Administrator | Game |
+| [`decorate`](commands/decorate.md) | `decorate` | Yes | Yes | Administrator | Game |
+| [`globallight`](commands/globallight.md) | `globallight [0-31]` | Yes | Yes | GameMaster | Game |
+| [`spawn`](commands/spawn.md) | `spawn <template>`, then target a spot | No | Yes | GameMaster | Game |
+| [`remove`](commands/remove.md) | `remove`, then target an NPC | No | Yes | GameMaster | Game |
+| [`where`](commands/where.md) | `where`, then target anything | No | Yes | GameMaster | Game |
+| [`fame`](commands/fame.md) | `fame <0..32000>`, then target a mobile | No | Yes | GameMaster | Game |
+| [`karma`](commands/karma.md) | `karma <-32000..32000>`, then target a mobile | No | Yes | GameMaster | Game |
+| [`weather`](commands/weather.md) | `weather [none\|rain\|snow\|storm]` | No | Yes | GameMaster | Game |
+| [`spawns`](commands/spawns.md) | `spawns` | No | Yes | GameMaster | Game |
+| [`lock`](commands/lock.md) | `lock`, then target a door | No | Yes | GameMaster | Game |
+| [`unlock`](commands/unlock.md) | `unlock`, then target a door | No | Yes | GameMaster | Game |
+| [`key`](commands/key.md) | `key`, then target a door | No | Yes | GameMaster | Game |
 
-`help` lists each command available to the caller once, under its primary name.
-`help <name>` also accepts an alias and shows the description, aliases, allowed
-sources, and minimum account level. In-game callers only see commands allowed for
-their source and account level.
+### By who uses them
 
-## Echo
+- **Everyone:** `help`, `echo`.
+- **Game masters:** `character`, `spawn`, `remove`, `where`, `fame`, `karma`, `globallight`,
+  `weather`, `spawns`, `lock`, `unlock`, `key`.
+- **Administrators:** `account`, `save`, `broadcast`, `shutdown`, `decorate`, plus everything a
+  game master uses.
+- **Console only:** `script`.
 
-```text
-echo hello world
-e hello world
-```
-
-Both forms print `hello world`. With no arguments, the command prints a blank line.
-
-## Script
-
-```text
-script reload ai/guard.lua
-script metrics
-```
-
-`script reload` reloads one file relative to the configured `scripts/` directory.
-It runs the reload on the game loop and reports an error if the script fails to
-load. `script metrics` prints the Lua engine's current counters.
-
-## Account
-
-```text
-account create <username> <password> [Regular|GameMaster|Administrator]
-```
-
-The account level defaults to `Regular`. The command waits for
-`IAccountService.CreateAccountAsync` and reports success, an existing username, or
-an error without printing the password. The interactive console masks the password
-token while it is typed and does not include the raw command line in its error log.
-The account is stored in the shared Accounts PostgreSQL database.
-Game-only processes do not register this command or receive Accounts credentials.
-
-In-game administrators can type `.account create ...`. The server does not echo
-or broadcast the input and does not write it to its logs. The UO client may
-retain the typed command in its own local history.
-
-Plugins can add commands through `RegisterCommand<TExecutor>`; see
-[Writing a plugin](plugins.md#console-commands).
-
-Every text a command shows to players, its description in `help` and the dispatcher's replies
-(unknown command, not available here, not allowed, failed) come from the message files
-in the server language (`ILocalizationService`, ids 30008–30049; see
-[Localization](localization.md#moongates-own-messages)). Command syntax, account
-types, sources and map names stay technical names, as the commands take them. On a
-login-only process, which has no message files, the texts are English. Operator-only
-console output (`account api-access`, `script`) stays English.
-
-### Local API access provisioning
-
-```text
-account api-access <username> <on|off>
-```
-
-Available only in the Login/Standalone local console, even when the caller is an in-game Administrator. Accounts created with `account create` start with API access disabled. Enable an existing Administrator to provision the first panel user; disabling access revokes its administrative sessions across hosts. Game login is unaffected. See [Administration API](admin-api.md).
-
-## Character
-
-```text
-character pending [account-serial]
-character restore <character-serial>
-```
-
-A character a player deletes from the character list is only marked for deletion:
-it disappears from the list, gives up its slot and no longer counts toward
-`ultima.characters.max_per_account`, so the player can create a new character in its
-place. It stays restorable until it is removed; after
-`ultima.characters.deletion_delay_hours` (default 24) it becomes eligible for removal,
-by a job that is not built yet. `character pending` lists every
-pending character, or those of one account, with when the deletion was requested
-and when the character becomes eligible for removal. `character restore` cancels
-the deletion and gives the character the first free slot; if the account filled
-up meanwhile it stays without a slot, may exceed the limit by one, and appears in
-the list once a slot frees. Serials
-are hexadecimal with `0x` (`0x0000002A`) or decimal.
-
-## Save
-
-```text
-save
-```
-
-In game, administrators use `.save`. The command requests a save through the existing
-world save coordinator and waits for durable persistence to finish. A request made
-during another save joins that save rather than starting a competing operation.
-Each successful command broadcasts `The world has been saved in <seconds> seconds.`
-(message 30015, in the server language) to connected characters currently in the
-world on this instance, across all maps. The console also prints the same completion
-message; an in-game caller receives it through the broadcast. The elapsed time
-measures the wait for saving, excluding broadcast delivery, in seconds with two
-decimals (for example, `The world has been saved in 1.23 seconds.`).
-
-A failed save produces an error for the caller and no success broadcast. Extra
-arguments print usage without saving. Automatic and shutdown saves keep their
-existing behavior; this announcement belongs to the `save` command.
-
-## Broadcast
-
-```text
-broadcast Server maintenance in five minutes.
-```
-
-In game, administrators use `.broadcast Server maintenance in five minutes.`.
-The text is delivered as a Unicode system chat message to connected characters
-currently in the world on this instance, regardless of map or distance. Character
-selection sessions and disconnected clients are excluded. Other server instances
-do not receive the message.
-
-Text after the command name is sent without needing quotes. Leading and trailing
-whitespace is trimmed; spaces inside the message are preserved. Empty input prints
-usage and sends nothing. The caller receives the number of players whose outgoing
-queues accepted the message; this is not a client receipt acknowledgment. In-game
-input retains the existing 128-character speech limit, including the dot and command.
-Console messages must fit both the Unicode speech packet and the compressed transport
-limit. Oversized messages are rejected before any player receives them.
-
-## Shutdown
-
-```text
-shutdown
-shutdown 60
-```
-
-In-game administrators use `.shutdown` or `.shutdown 60`. With no argument or `0`,
-the server announces `The server is shutting down now.` (message 30016) and requests
-graceful shutdown. A positive number announces `The server will shut down in <seconds>
-seconds.` (30017) and
-schedules the stop. The command returns without waiting for the countdown; console
-input and gameplay remain available until the deadline. The delay starts after
-the announcement is queued and is rounded up to the server timer resolution.
-
-The server accepts one shutdown request. Further requests report an error without
-changing the deadline or repeating the announcement. Seconds must be a whole number
-from `0` to `2147483647`; negative, fractional, overflowing and extra arguments are
-rejected. A scheduled shutdown survives the invoking player disconnecting.
-
-The command stops this process, including both roles in Standalone mode. It uses the
-same ordered cleanup as the host shutdown path: services stop, the final world save
-completes, and persistence is disposed. It does not force-kill the process. Other
-instances are unaffected. A manual host stop during the delay takes precedence and
-the timer is discarded with the game loop. There is no cancel or restart subcommand.
+Commands that ask for a target open the client's target cursor after checking their
+arguments; pressing Escape prints `Target canceled.` and changes nothing. The texts they
+print are in the server language (see [Localization](localization.md)).

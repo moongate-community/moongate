@@ -1,0 +1,413 @@
+[[spawn]]
+id = "felucca_801"
+map = "felucca"
+name = "Ocllo cook"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3665
+y1 = 2649
+x2 = 3668
+y2 = 2650
+
+[[spawn]]
+id = "felucca_802"
+map = "felucca"
+name = "Ocllo shipwright"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3633
+y1 = 2634
+x2 = 3636
+y2 = 2636
+
+[[spawn]]
+id = "felucca_803"
+map = "felucca"
+name = "Ocllo innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3667
+y1 = 2618
+x2 = 3671
+y2 = 2619
+
+[[spawn]]
+id = "felucca_804"
+map = "felucca"
+name = "Ocllo healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3625
+y1 = 2604
+x2 = 3628
+y2 = 2607
+
+[[spawn]]
+id = "felucca_805"
+map = "felucca"
+name = "Ocllo leatherworker"
+mobile_ids = ["leatherworker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3601
+y1 = 2601
+x2 = 3604
+y2 = 2604
+
+[[spawn]]
+id = "felucca_806"
+map = "felucca"
+name = "Ocllo baker"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3600
+y1 = 2571
+x2 = 3604
+y2 = 2574
+
+[[spawn]]
+id = "felucca_807"
+map = "felucca"
+name = "Ocllo provisioner"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3633
+y1 = 2569
+x2 = 3636
+y2 = 2570
+
+[[spawn]]
+id = "felucca_808"
+map = "felucca"
+name = "Ocllo - A Stitch in Time"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3665
+y1 = 2585
+x2 = 3669
+y2 = 2589
+
+[[spawn]]
+id = "felucca_809"
+map = "felucca"
+name = "Ocllo mage"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3625
+y1 = 2546
+x2 = 3629
+y2 = 2547
+
+[[spawn]]
+id = "felucca_810"
+map = "felucca"
+name = "Ocllo herbalist"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3627
+y1 = 2536
+x2 = 3629
+y2 = 2539
+
+[[spawn]]
+id = "felucca_811"
+map = "felucca"
+name = "Ocllo bard"
+mobile_ids = ["bard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3668
+y1 = 2529
+x2 = 3670
+y2 = 2531
+
+[[spawn]]
+id = "felucca_812"
+map = "felucca"
+name = "Ocllo artist"
+mobile_ids = ["artist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3640
+y1 = 2498
+x2 = 3643
+y2 = 2500
+
+[[spawn]]
+id = "felucca_813"
+map = "felucca"
+name = "Ocllo banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 3
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3689
+y1 = 2510
+x2 = 3694
+y2 = 2518
+
+[[spawn]]
+id = "felucca_814"
+map = "felucca"
+name = "Thief Guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 3615
+y1 = 2480
+x2 = 3671
+y2 = 2665
+
+[[spawn]]
+id = "felucca_815"
+map = "felucca"
+name = "Ocllo Farmland Animals"
+mobile_ids = []
+npc_list_ids = ["farmlist"]
+max = 25
+min_minutes = 30
+max_minutes = 60
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3685
+y1 = 2549
+x2 = 3790
+y2 = 2714
+
+[[spawn]]
+id = "felucca_816"
+map = "felucca"
+name = "Ocllo - Smithy"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3642
+y1 = 2600
+x2 = 3646
+y2 = 2602
+
+[[spawn]]
+id = "felucca_817"
+map = "felucca"
+name = "Ocllo leatherworker"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3601
+y1 = 2606
+x2 = 3605
+y2 = 2622
+
+[[spawn]]
+id = "felucca_818"
+map = "felucca"
+name = "Ocllo leatherworker"
+mobile_ids = ["furtrader"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3601
+y1 = 2606
+x2 = 3605
+y2 = 2622
+
+[[spawn]]
+id = "felucca_819"
+map = "felucca"
+name = "Ocllo provisioner"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3628
+y1 = 2571
+x2 = 3630
+y2 = 2573
+
+[[spawn]]
+id = "felucca_820"
+map = "felucca"
+name = "Ocllo library"
+mobile_ids = ["scribe"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3609
+y1 = 2470
+x2 = 3621
+y2 = 2477
+
+[[spawn]]
+id = "felucca_821"
+map = "felucca"
+name = "Ocllo shipwright"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3635
+y1 = 2640
+x2 = 3636
+y2 = 2644
+
+[[spawn]]
+id = "felucca_822"
+map = "felucca"
+name = "Ocllo - A Stitch in Time"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3665
+y1 = 2591
+x2 = 3670
+y2 = 2598
+
+[[spawn]]
+id = "felucca_823"
+map = "felucca"
+name = "Ocllo - A Stitch in Time"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3666
+y1 = 2578
+x2 = 3670
+y2 = 2582

@@ -1,0 +1,723 @@
+[[spawn]]
+id = "trammel_16001"
+map = "trammel"
+name = "Ocean creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 15
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1749
+y1 = 1626
+x2 = 2517
+y2 = 1918
+
+[[spawn]]
+id = "trammel_16002"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 30
+min_minutes = 5
+max_minutes = 15
+call = 15
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2521
+y1 = 1356
+x2 = 3468
+y2 = 1917
+
+[[spawn]]
+id = "trammel_16003"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 20
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3057
+y1 = 1938
+x2 = 3466
+y2 = 2364
+
+[[spawn]]
+id = "trammel_16004"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 40
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2186
+y1 = 2394
+x2 = 3119
+y2 = 3003
+
+[[spawn]]
+id = "trammel_16005"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 40
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3474
+y1 = 1441
+x2 = 4362
+y2 = 1993
+
+[[spawn]]
+id = "trammel_16006"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 30
+min_minutes = 5
+max_minutes = 15
+call = 15
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3845
+y1 = 836
+x2 = 4240
+y2 = 1434
+
+[[spawn]]
+id = "trammel_16007"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 40
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3561
+y1 = 25
+x2 = 3832
+y2 = 898
+
+[[spawn]]
+id = "trammel_16008"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 20
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2259
+y1 = 1347
+x2 = 2512
+y2 = 1620
+
+[[spawn]]
+id = "trammel_16009"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 30
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2830
+y1 = 1026
+x2 = 3466
+y2 = 1337
+
+[[spawn]]
+id = "trammel_16010"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 60
+min_minutes = 5
+max_minutes = 15
+call = 30
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3155
+y1 = 2910
+x2 = 4012
+y2 = 3687
+
+[[spawn]]
+id = "trammel_16011"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 80
+min_minutes = 5
+max_minutes = 15
+call = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 3833
+y1 = 2088
+x2 = 4784
+y2 = 2876
+[[spawn.exclude]]
+x1 = 4533
+y1 = 2265
+x2 = 4607
+y2 = 2441
+
+[[spawn]]
+id = "trammel_16012"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 40
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4397
+y1 = 1546
+x2 = 5000
+y2 = 2048
+
+[[spawn]]
+id = "trammel_16013"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 50
+min_minutes = 5
+max_minutes = 15
+call = 30
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4748
+y1 = 760
+x2 = 5000
+y2 = 1531
+
+[[spawn]]
+id = "trammel_16014"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 60
+min_minutes = 5
+max_minutes = 15
+call = 40
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4327
+y1 = 25
+x2 = 5000
+y2 = 748
+
+[[spawn]]
+id = "trammel_16015"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 40
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 60
+y1 = 25
+x2 = 626
+y2 = 689
+
+[[spawn]]
+id = "trammel_16016"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 15
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 60
+y1 = 713
+x2 = 212
+y2 = 1307
+
+[[spawn]]
+id = "trammel_16017"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 50
+min_minutes = 5
+max_minutes = 15
+call = 30
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 60
+y1 = 1619
+x2 = 368
+y2 = 2411
+
+[[spawn]]
+id = "trammel_16018"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 20
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 396
+y1 = 1777
+x2 = 618
+y2 = 2004
+
+[[spawn]]
+id = "trammel_16019"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 15
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 400
+y1 = 2287
+x2 = 656
+y2 = 2446
+
+[[spawn]]
+id = "trammel_16020"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 60
+min_minutes = 5
+max_minutes = 15
+call = 40
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 60
+y1 = 2493
+x2 = 867
+y2 = 3279
+
+[[spawn]]
+id = "trammel_16021"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 70
+min_minutes = 5
+max_minutes = 15
+call = 40
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 60
+y1 = 3286
+x2 = 986
+y2 = 4050
+
+[[spawn]]
+id = "trammel_16022"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 20
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1038
+y1 = 3744
+x2 = 1206
+y2 = 4050
+
+[[spawn]]
+id = "trammel_16023"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 25
+min_minutes = 5
+max_minutes = 15
+call = 15
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1256
+y1 = 3245
+x2 = 1485
+y2 = 3583
+
+[[spawn]]
+id = "trammel_16024"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 35
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1549
+y1 = 3617
+x2 = 2077
+y2 = 4050
+
+[[spawn]]
+id = "trammel_16025"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 30
+min_minutes = 5
+max_minutes = 15
+call = 23
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2181
+y1 = 3673
+x2 = 2817
+y2 = 3843
+
+[[spawn]]
+id = "trammel_16026"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 70
+min_minutes = 5
+max_minutes = 15
+call = 40
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2837
+y1 = 3684
+x2 = 3790
+y2 = 4050
+
+[[spawn]]
+id = "trammel_16027"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 15
+min_minutes = 5
+max_minutes = 15
+call = 15
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2576
+y1 = 3869
+x2 = 2816
+y2 = 4050
+
+[[spawn]]
+id = "trammel_16028"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 40
+min_minutes = 5
+max_minutes = 15
+call = 30
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2273
+y1 = 3025
+x2 = 3140
+y2 = 3323
+
+[[spawn]]
+id = "trammel_16029"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 10
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2479
+y1 = 3368
+x2 = 2710
+y2 = 3522
+
+[[spawn]]
+id = "trammel_16030"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 30
+min_minutes = 5
+max_minutes = 15
+call = 15
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3814
+y1 = 3809
+x2 = 4387
+y2 = 4050
+
+[[spawn]]
+id = "trammel_16031"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 40
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4844
+y1 = 3295
+x2 = 5000
+y2 = 4050
+
+[[spawn]]
+id = "trammel_16032"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 15
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4581
+y1 = 3943
+x2 = 4829
+y2 = 4050
+
+[[spawn]]
+id = "trammel_16033"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 30
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4597
+y1 = 2894
+x2 = 5000
+y2 = 3284
+
+[[spawn]]
+id = "trammel_16034"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 40
+min_minutes = 5
+max_minutes = 15
+call = 20
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4803
+y1 = 2089
+x2 = 5000
+y2 = 2883
+
+[[spawn]]
+id = "trammel_16035"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 30
+min_minutes = 5
+max_minutes = 15
+call = 14
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4031
+y1 = 2894
+x2 = 4335
+y2 = 3628
+
+[[spawn]]
+id = "trammel_16036"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 10
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4374
+y1 = 2901
+x2 = 4564
+y2 = 3063
+
+[[spawn]]
+id = "trammel_16037"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 20
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3871
+y1 = 25
+x2 = 4311
+y2 = 170
+
+[[spawn]]
+id = "trammel_16038"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 25
+min_minutes = 5
+max_minutes = 15
+call = 15
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3001
+y1 = 915
+x2 = 3817
+y2 = 1024
+
+[[spawn]]
+id = "trammel_16039"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 25
+min_minutes = 5
+max_minutes = 15
+call = 14
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2232
+y1 = 1929
+x2 = 2566
+y2 = 2383
+
+[[spawn]]
+id = "trammel_16040"
+map = "trammel"
+name = "Ocean Creatures"
+mobile_ids = []
+npc_list_ids = ["oceanlist"]
+max = 25
+min_minutes = 5
+max_minutes = 15
+call = 10
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1462
+y1 = 1799
+x2 = 1736
+y2 = 1868

@@ -1,0 +1,17 @@
+[[spawn]]
+id = "trammel_13950"
+map = "trammel"
+name = "Sewers"
+mobile_ids = []
+npc_list_ids = ["britain_sewers"]
+max = 50
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 6029
+y1 = 1427
+x2 = 6125
+y2 = 1507

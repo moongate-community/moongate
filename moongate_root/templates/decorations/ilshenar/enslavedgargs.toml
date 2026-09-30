@@ -1,0 +1,166 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/enslavedgargs.toml
+#
+# What it is for:
+#   World decoration placed on Ilshenar: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "stalagmites"
+type = "Static"
+item_id = 0x08E1
+locations = [
+    [707, 667, -37],
+    [709, 667, -16],
+]
+
+[[decoration]]
+comment = "flowstone"
+type = "Static"
+item_id = 0x08E2
+locations = [[708, 667, -38]]
+
+[[decoration]]
+comment = "stalagmites"
+type = "Static"
+item_id = 0x08E4
+locations = [
+    [710, 667, -10],
+    [714, 668, -29],
+]
+
+[[decoration]]
+comment = "stalagmites"
+type = "Static"
+item_id = 0x08E5
+locations = [[712, 667, -9]]
+
+[[decoration]]
+comment = "flowstone"
+type = "Static"
+item_id = 0x08E6
+locations = [
+    [710, 667, -17],
+    [712, 667, -15],
+]
+
+[[decoration]]
+comment = "flowstone"
+type = "Static"
+item_id = 0x08E8
+locations = [
+    [712, 667, -38],
+    [713, 667, -37],
+]
+
+[[decoration]]
+comment = "anvil"
+type = "AnvilEastAddon"
+item_id = 0x0FAF
+locations = [
+    [947, 413, -80],
+    [958, 421, -80],
+    [958, 422, -80],
+]
+
+[[decoration]]
+comment = "forge"
+type = "SmallForgeAddon"
+item_id = 0x0FB1
+locations = [[946, 413, -80]]
+
+[[decoration]]
+comment = "sledge hammer"
+type = "Static"
+item_id = 0x0FB4
+locations = [[957, 427, -74]]
+
+[[decoration]]
+comment = "sledge hammer"
+type = "Static"
+item_id = 0x0FB5
+locations = [[955, 415, -74]]
+
+[[decoration]]
+comment = "tapestry"
+type = "Static"
+item_id = 0x0FE1
+props = { hue = 0x0001, name = "a cave entrance" }
+locations = [[709, 667, -42]]
+
+[[decoration]]
+comment = "tapestry"
+type = "Static"
+item_id = 0x0FE2
+props = { hue = 0x0001, name = "a cave entrance" }
+locations = [
+    [710, 667, -42],
+    [711, 667, -42],
+]
+
+[[decoration]]
+comment = "butcher knife"
+type = "Static"
+item_id = 0x13F6
+locations = [[864, 468, 7]]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1774
+locations = [[706, 668, -36]]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1776
+locations = [[711, 667, -16]]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x1992
+locations = [
+    [958, 420, -80],
+    [958, 425, -80],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x1996
+locations = [
+    [958, 419, -80],
+    [958, 424, -80],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x199A
+locations = [
+    [958, 418, -80],
+    [958, 423, -80],
+]
+
+[[decoration]]
+comment = "nodraw"
+type = "Static"
+item_id = 0x2198
+locations = [
+    [911, 451, -80],
+    [911, 452, -80],
+    [911, 453, -80],
+]

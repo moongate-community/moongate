@@ -5,6 +5,7 @@ using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Loaders;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Directories;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 
@@ -63,6 +64,41 @@ public sealed class MobileTemplatesLoaderTests
 
         captain.Skills["wrestling"] = DiceSpec.FromValue(1);
         Assert.Equal("50", templates["base_orc"].Skills!["wrestling"].ToString());
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_InheritsTheMovement()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/mobiles/sea.toml",
+            """
+            [[mobile]]
+            id = "base_serpent"
+            body = 150
+            movement = "water"
+
+            [[mobile]]
+            id = "sea_serpent"
+            base_id = "base_serpent"
+
+            [[mobile]]
+            id = "walrus"
+            body = 221
+            movement = "both"
+
+            [[mobile]]
+            id = "orc"
+            body = 17
+            """
+        );
+
+        var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        Assert.Equal(
+            [MobileMovementType.Water, MobileMovementType.Both, null],
+            new[] { "sea_serpent", "walrus", "orc" }.Select(id => templates[id].Movement)
+        );
     }
 
     [Theory,

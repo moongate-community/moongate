@@ -1,0 +1,143 @@
+[[spawn]]
+id = "trammel_15531"
+map = "trammel"
+name = "Moonglow zoo bear"
+mobile_ids = ["blackbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 58
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4525
+y1 = 1383
+x2 = 4535
+y2 = 1391
+
+[[spawn]]
+id = "trammel_15532"
+map = "trammel"
+name = "Moonglow zoo bear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 58
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4506
+y1 = 1390
+x2 = 4517
+y2 = 1398
+
+[[spawn]]
+id = "trammel_15533"
+map = "trammel"
+name = "Moonglow zoo grey wolf"
+mobile_ids = ["graywolf"]
+npc_list_ids = []
+max = 3
+min_minutes = 58
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4506
+y1 = 1369
+x2 = 4518
+y2 = 1383
+
+[[spawn]]
+id = "trammel_15534"
+map = "trammel"
+name = "Moonglow zoo gorilla"
+mobile_ids = ["gorilla"]
+npc_list_ids = []
+max = 3
+min_minutes = 58
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4514
+y1 = 1354
+x2 = 4525
+y2 = 1362
+
+[[spawn]]
+id = "trammel_15535"
+map = "trammel"
+name = "Moonglow zoo birds"
+mobile_ids = []
+npc_list_ids = ["allbirdlist"]
+max = 5
+min_minutes = 58
+max_minutes = 60
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4488
+y1 = 1354
+x2 = 4499
+y2 = 1374
+
+[[spawn]]
+id = "trammel_15536"
+map = "trammel"
+name = "Moonglow zoo alligator"
+mobile_ids = ["alligator"]
+npc_list_ids = []
+max = 2
+min_minutes = 58
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4480
+y1 = 1378
+x2 = 4490
+y2 = 1396
+
+[[spawn]]
+id = "trammel_15537"
+map = "trammel"
+name = "Moonglow zoo scorpion"
+mobile_ids = ["scorpion"]
+npc_list_ids = []
+max = 2
+min_minutes = 58
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4527
+y1 = 1354
+x2 = 4535
+y2 = 1373
+
+[[spawn]]
+id = "trammel_15538"
+map = "trammel"
+name = "Moonglow zoo hart"
+mobile_ids = ["hart"]
+npc_list_ids = []
+max = 2
+min_minutes = 58
+max_minutes = 60
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 4527
+y1 = 1354
+x2 = 4535
+y2 = 1373

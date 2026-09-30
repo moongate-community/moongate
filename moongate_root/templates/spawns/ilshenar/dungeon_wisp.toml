@@ -1,0 +1,305 @@
+[[spawn]]
+id = "ilshenar_17750"
+map = "ilshenar"
+name = "Wisp 1_1"
+mobile_ids = ["wisp"]
+npc_list_ids = []
+max = 20
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 632
+y1 = 1495
+x2 = 701
+y2 = 1573
+
+[[spawn]]
+id = "ilshenar_17755"
+map = "ilshenar"
+name = "Wisp 2_0"
+mobile_ids = ["darkwisp"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 849
+y1 = 1530
+x2 = 854
+y2 = 1556
+
+[[spawn]]
+id = "ilshenar_17756"
+map = "ilshenar"
+name = "Wisp 2_1"
+mobile_ids = ["darkwisp"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 825
+y1 = 1472
+x2 = 837
+y2 = 1493
+
+[[spawn]]
+id = "ilshenar_17757"
+map = "ilshenar"
+name = "Wisp 2_2"
+mobile_ids = ["darkwisp"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 889
+y1 = 1497
+x2 = 908
+y2 = 1516
+
+[[spawn]]
+id = "ilshenar_17758"
+map = "ilshenar"
+name = "Wisp 2_3"
+mobile_ids = ["skeletalmage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 849
+y1 = 1560
+x2 = 862
+y2 = 1573
+
+[[spawn]]
+id = "ilshenar_17759"
+map = "ilshenar"
+name = "Wisp 2_4"
+mobile_ids = ["shade"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 849
+y1 = 1560
+x2 = 862
+y2 = 1573
+
+[[spawn]]
+id = "ilshenar_17760"
+map = "ilshenar"
+name = "Wisp 2_5"
+mobile_ids = ["rottingcorpse"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 849
+y1 = 1480
+x2 = 854
+y2 = 1517
+
+[[spawn]]
+id = "ilshenar_17761"
+map = "ilshenar"
+name = "Wisp 2_6"
+mobile_ids = []
+npc_list_ids = ["wisp_undead_1"]
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 818
+y1 = 1466
+x2 = 838
+y2 = 1493
+
+[[spawn]]
+id = "ilshenar_17762"
+map = "ilshenar"
+name = "Wisp 2_7"
+mobile_ids = []
+npc_list_ids = ["wisp_undead_2"]
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 874
+y1 = 1465
+x2 = 906
+y2 = 1477
+
+[[spawn]]
+id = "ilshenar_17763"
+map = "ilshenar"
+name = "Wisp 2_8"
+mobile_ids = ["evilmagelord"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 889
+y1 = 1497
+x2 = 908
+y2 = 1516
+
+[[spawn]]
+id = "ilshenar_17764"
+map = "ilshenar"
+name = "Wisp 2_9"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 865
+y1 = 1524
+x2 = 877
+y2 = 1541
+
+[[spawn]]
+id = "ilshenar_17765"
+map = "ilshenar"
+name = "Wisp 2_10"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 833
+y1 = 1513
+x2 = 847
+y2 = 1534
+
+[[spawn]]
+id = "ilshenar_17766"
+map = "ilshenar"
+name = "Wisp 2_11"
+mobile_ids = ["rottingcorpse"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 884
+y1 = 1529
+x2 = 894
+y2 = 1546
+
+[[spawn]]
+id = "ilshenar_17767"
+map = "ilshenar"
+name = "Wisp 2_12"
+mobile_ids = []
+npc_list_ids = ["wisp_evilmages"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 877
+y1 = 1557
+x2 = 901
+y2 = 1581
+
+[[spawn]]
+id = "ilshenar_17768"
+map = "ilshenar"
+name = "Wisp 2_13"
+mobile_ids = ["balron"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 761
+y1 = 1465
+x2 = 789
+y2 = 1493
+
+[[spawn]]
+id = "ilshenar_17769"
+map = "ilshenar"
+name = "Wisp 2_14"
+mobile_ids = ["imp"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 761
+y1 = 1465
+x2 = 789
+y2 = 1493
+
+[[spawn]]
+id = "ilshenar_17780"
+map = "ilshenar"
+name = "Wisp Entrance Wandering Healer"
+mobile_ids = ["whealer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 640
+y1 = 1299
+x2 = 647
+y2 = 1305

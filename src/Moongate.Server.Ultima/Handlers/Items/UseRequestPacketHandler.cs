@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces.Titles;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Ultima.Types;
@@ -42,6 +43,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     private readonly IContainerLayoutService _layouts;
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
+    private readonly IFameKarmaTitleService _titles;
     private readonly IItemScriptService? _scripts;
 
     public UseRequestPacketHandler(
@@ -53,10 +55,12 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         IContainerLayoutService layouts,
         IPacketSendService sender,
         ITooltipService tooltips,
+        IFameKarmaTitleService titles,
         IItemScriptService? scripts = null
     )
     {
         _tooltips = tooltips;
+        _titles = titles;
         _scripts = scripts;
         _items = items;
         _mobiles = mobiles;
@@ -143,6 +147,16 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
                (result.Kind == ScriptResultKind.Completed && result.Values is [true, ..]);
     }
 
+    // As ModernUO's Titles.ComputeTitle: the fame and karma prefix of titles.toml, whose rows from 10000 fame already
+    // say Lord or Lady, the name, then the mobile's own title, such as "The Glorious Lady Lilly, the Noble".
+    private string PaperdollTitle(MobileEntity mobile)
+    {
+        var prefix = _titles.GetTitle(mobile);
+        var name = string.IsNullOrEmpty(prefix) ? mobile.Name : $"{prefix} {mobile.Name}";
+
+        return string.IsNullOrEmpty(mobile.Title) ? name : $"{name}, {mobile.Title}";
+    }
+
     private void OpenOwnPaperdoll(GameSession session)
     {
         if (session.CharacterId.IsValid && _mobiles.TryGet(session.CharacterId, out var character))
@@ -176,7 +190,6 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
             return;
         }
 
-        var title = string.IsNullOrEmpty(mobile.Title) ? mobile.Name : $"{mobile.Name}, {mobile.Title}";
-        _sender.TrySend(session.SessionId, new DisplayPaperdollPacket(mobile.Id, title, false, own));
+        _sender.TrySend(session.SessionId, new DisplayPaperdollPacket(mobile.Id, PaperdollTitle(mobile), false, own));
     }
 }

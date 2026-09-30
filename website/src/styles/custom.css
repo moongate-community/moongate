@@ -2,6 +2,14 @@
    night sky #1C1928 / #252230, rune stone indigo #656394, portal blue #6BA0D6,
    moonlight cream #F5F1EA. Starlight reads these tokens for every component. */
 
+/* Starlight keeps the text column at 45rem; the command tables and the code need more room on
+   wide screens. Phones and tablets keep Starlight's own layout. */
+@media (min-width: 72rem) {
+  :root {
+    --sl-content-width: 64rem;
+  }
+}
+
 /* Dark theme (default) */
 :root {
   --sl-color-accent-low: #2b2c5e;

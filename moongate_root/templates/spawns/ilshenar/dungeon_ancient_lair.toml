@@ -1,0 +1,125 @@
+[[spawn]]
+id = "ilshenar_17300"
+map = "ilshenar"
+name = "Ancient Lair 1_1"
+mobile_ids = ["ancientwyrm"]
+npc_list_ids = []
+max = 1
+min_minutes = 10
+max_minutes = 20
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 31
+y1 = 673
+x2 = 84
+y2 = 720
+
+[[spawn]]
+id = "ilshenar_17301"
+map = "ilshenar"
+name = "Ancient Lair 1_2"
+mobile_ids = []
+npc_list_ids = ["ancientlair_npclist_1"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 100
+y1 = 708
+x2 = 123
+y2 = 727
+
+[[spawn]]
+id = "ilshenar_17302"
+map = "ilshenar"
+name = "Ancient Lair 1_3"
+mobile_ids = []
+npc_list_ids = ["ancientlair_npclist_1"]
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 31
+y1 = 673
+x2 = 63
+y2 = 699
+
+[[spawn]]
+id = "ilshenar_17303"
+map = "ilshenar"
+name = "Ancient Lair 1_4"
+mobile_ids = []
+npc_list_ids = ["ancientlair_npclist_1"]
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 48
+y1 = 708
+x2 = 64
+y2 = 727
+
+[[spawn]]
+id = "ilshenar_17304"
+map = "ilshenar"
+name = "Ancient Lair 1_5"
+mobile_ids = []
+npc_list_ids = ["ancientlair_npclist_1"]
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 67
+y1 = 703
+x2 = 96
+y2 = 730
+
+[[spawn]]
+id = "ilshenar_17305"
+map = "ilshenar"
+name = "Ancient Lair 1_6"
+mobile_ids = []
+npc_list_ids = ["ancientlair_npclist_1"]
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 69
+y1 = 682
+x2 = 88
+y2 = 697
+
+[[spawn]]
+id = "ilshenar_17306"
+map = "ilshenar"
+name = "Ancient Lair 1_7"
+mobile_ids = []
+npc_list_ids = ["ancientlair_npclist_1"]
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 73
+y1 = 683
+x2 = 83
+y2 = 693

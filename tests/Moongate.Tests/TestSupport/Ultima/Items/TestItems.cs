@@ -23,7 +23,8 @@ public static class TestItems
         ILineOfSightService? sight = null,
         IDataAccess<ItemEntity>? data = null,
         IGameLoopService? loop = null,
-        IItemScriptService? scripts = null
+        IItemScriptService? scripts = null,
+        IItemDecayQueue? decay = null
     )
     {
         return new(
@@ -32,7 +33,8 @@ public static class TestItems
             sight ?? new StubLineOfSightService(),
             data ?? new RecordingDataAccess<ItemEntity>(),
             loop ?? new StubGameLoop(),
-            scripts
+            scripts,
+            decay
         );
     }
 }

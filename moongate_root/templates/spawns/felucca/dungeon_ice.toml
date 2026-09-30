@@ -1,0 +1,53 @@
+[[spawn]]
+id = "felucca_4050"
+map = "felucca"
+name = "ice Dungeon Level 1"
+mobile_ids = []
+npc_list_ids = ["icelevelone"]
+max = 50
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5663
+y1 = 136
+x2 = 5884
+y2 = 262
+
+[[spawn]]
+id = "felucca_4051"
+map = "felucca"
+name = "ice Dungeon Level 2"
+mobile_ids = []
+npc_list_ids = ["iceleveltwo"]
+max = 25
+min_minutes = 15
+max_minutes = 25
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5803
+y1 = 337
+x2 = 5861
+y2 = 383
+
+[[spawn]]
+id = "felucca_4052"
+map = "felucca"
+name = "ice Dungeon Level 3"
+mobile_ids = []
+npc_list_ids = ["icelevelthree"]
+max = 6
+min_minutes = 30
+max_minutes = 40
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5656
+y1 = 301
+x2 = 5691
+y2 = 335

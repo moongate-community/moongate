@@ -1,0 +1,89 @@
+[[spawn]]
+id = "trammel_13650"
+map = "trammel"
+name = "Destard Lvl One"
+mobile_ids = []
+npc_list_ids = ["destard_lvl_one"]
+max = 30
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5217
+y1 = 780
+x2 = 5317
+y2 = 858
+
+[[spawn]]
+id = "trammel_13651"
+map = "trammel"
+name = "Destard Lvl One"
+mobile_ids = []
+npc_list_ids = ["destard_lvl_one_light"]
+max = 20
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5125
+y1 = 899
+x2 = 5366
+y2 = 950
+
+[[spawn]]
+id = "trammel_13652"
+map = "trammel"
+name = "Destard Lvl One"
+mobile_ids = []
+npc_list_ids = ["destard_lvl_one_light"]
+max = 10
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5201
+y1 = 961
+x2 = 5336
+y2 = 991
+
+[[spawn]]
+id = "trammel_13653"
+map = "trammel"
+name = "Destard Lvl Three"
+mobile_ids = []
+npc_list_ids = ["destard_lvl_three"]
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5133
+y1 = 959
+x2 = 5146
+y2 = 997
+
+[[spawn]]
+id = "trammel_13654"
+map = "trammel"
+name = "Destard Lvl Three"
+mobile_ids = []
+npc_list_ids = ["destard_lvl_three"]
+max = 5
+min_minutes = 15
+max_minutes = 30
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5150
+y1 = 989
+x2 = 5190
+y2 = 1016

@@ -1,0 +1,71 @@
+[[spawn]]
+id = "trammel_15511"
+map = "trammel"
+name = "Location 8 Medium orc fort"
+mobile_ids = []
+npc_list_ids = ["location_8_medium"]
+max = 12
+min_minutes = 18
+max_minutes = 22
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 623
+y1 = 1478
+x2 = 645
+y2 = 1495
+
+[[spawn]]
+id = "trammel_15512"
+map = "trammel"
+name = "location 12 Medium brigand fort"
+mobile_ids = []
+npc_list_ids = ["brigand"]
+max = 15
+min_minutes = 18
+max_minutes = 22
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 836
+y1 = 1672
+x2 = 870
+y2 = 1702
+
+[[spawn]]
+id = "trammel_15513"
+map = "trammel"
+name = "Cove Orc Fort - Main"
+mobile_ids = []
+npc_list_ids = ["location_45_heavy"]
+max = 25
+min_minutes = 4
+max_minutes = 8
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2142
+y1 = 1328
+x2 = 2222
+y2 = 1422
+
+[[spawn]]
+id = "trammel_15514"
+map = "trammel"
+name = "Cove Orc Fort - North"
+mobile_ids = []
+npc_list_ids = ["location_45_heavy"]
+max = 15
+min_minutes = 18
+max_minutes = 22
+call = 3
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2143
+y1 = 1261
+x2 = 2230
+y2 = 1328

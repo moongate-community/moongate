@@ -69,9 +69,18 @@ public interface IMobileService : IPersistenceDeletionSource
 
     /// <summary>
     ///     Turns the mobile towards <paramref name="direction" /> or, when it already faces that way, steps it to the next
-    ///     cell if <see cref="IMovementService" /> allows it. The running bit is ignored.
+    ///     cell if <see cref="IMovementService" /> allows it for <paramref name="ability" />, walking by default. The running
+    ///     bit is ignored.
     /// </summary>
-    MoveResultType TryMove(MobileEntity mobile, DirectionType direction);
+    /// <remarks>
+    ///     Every change of a mobile's location must go through this service, as this method does, so the sectors, the NPC
+    ///     senses and the players' regions follow it; a future teleport belongs here too.
+    /// </remarks>
+    MoveResultType TryMove(
+        MobileEntity mobile,
+        DirectionType direction,
+        MovementAbilityType ability = MovementAbilityType.Walk
+    );
 
     /// <summary>
     ///     Gets whether the mobile is in the world.

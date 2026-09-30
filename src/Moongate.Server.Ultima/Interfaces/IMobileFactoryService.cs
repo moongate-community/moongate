@@ -20,7 +20,8 @@ public interface IMobileFactoryService
 
     /// <summary>
     ///     Creates a mobile from template <paramref name="templateId" />, puts it at <paramref name="location" /> on
-    ///     <paramref name="map" />, and saves it with the equipment of its template in one transaction. It always wears a
+    ///     <paramref name="map" />, with the <paramref name="props" /> given, and saves it with the equipment of its template in one
+    ///     transaction. It always wears a
     ///     backpack, which holds the equipment it cannot wear, its gold (piles of at most 65535) and one roll of each of
     ///     its loot tables. Publishes
     ///     <c>MobileBeforeSpawnEvent</c> before saving (a handler may change the mobile), then
@@ -34,6 +35,7 @@ public interface IMobileFactoryService
         string templateId,
         MapType map,
         Point3D location,
+        IReadOnlyDictionary<string, object?>? props = null,
         CancellationToken cancellationToken = default
     );
 

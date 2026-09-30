@@ -7,11 +7,13 @@ using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Titles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Titles;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
@@ -97,6 +99,47 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
 
         var paperdoll = Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
         Assert.Equal((Bran, "Bran", false), (paperdoll.Mobile, paperdoll.Title, paperdoll.CanLift));
+    }
+
+    [Fact]
+    public async Task Handle_AFamousCharacter_ShowsTheKarmaTitleAndLordBeforeTheName()
+    {
+        await StartAsync(Aria);
+        Assert.True(_mobiles.TryGet(Bran, out var bran));
+        bran.Fame = 10000;
+        bran.Karma = 0;
+
+        await UseAsync(Bran);
+
+        Assert.Equal("The Glorious Lord Bran", Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent)).Title);
+    }
+
+    [Fact]
+    public async Task Handle_AFamousWoman_IsALady()
+    {
+        await StartAsync(Aria);
+        Assert.True(_mobiles.TryGet(Aria, out var aria));
+        aria.Fame = 12000;
+        aria.Gender = GenderType.Female;
+
+        await UseAsync(new Serial(Aria.Value | 0x80000000));
+
+        Assert.Equal("The Glorious Lady Aria", Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent)).Title);
+    }
+
+    [Fact]
+    public async Task Handle_AHumanNpcWithBadKarma_ShowsItsPrefixWithoutLordBelow10000Fame()
+    {
+        var mage = Mobile(new Serial(0x100), "Nystul", 400, new(1005, 1000, 0));
+        mage.Title = "the mage";
+        mage.Fame = 9999;
+        mage.Karma = -100;
+        _mobiles.EnterWorld(mage);
+        await StartAsync(Aria);
+
+        await UseAsync(mage.Id);
+
+        Assert.Equal("The Outcast Nystul, the mage", Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent)).Title);
     }
 
     [Fact]
@@ -376,9 +419,22 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             new BodyContent { Body = new(401), Type = BodyType.Human },
             new BodyContent { Body = new(17), Type = BodyType.Monster }
         );
-        var handler = new UseRequestPacketHandler(_items, _mobiles, bodies, new WorldConfig(), _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts);
+        var handler = new UseRequestPacketHandler(_items, _mobiles, bodies, new WorldConfig(), _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), Titles(), _scripts);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));
+    }
+
+    // The classic bands this test needs, as titles.toml writes them: the rows from 10000 fame already say Lord or Lady.
+    private static FameKarmaTitleService Titles()
+    {
+        return new(
+            new StubDataLoaderService().With(
+                new FameKarmaTitle(0, -15000, "The Outcast"),
+                new FameKarmaTitle(0, 0, ""),
+                new FameKarmaTitle(10000, -15000, "The Dread Lord", "The Dread Lady"),
+                new FameKarmaTitle(10000, 0, "The Glorious Lord", "The Glorious Lady")
+            )
+        );
     }
 
     private static MobileEntity Mobile(Serial id, string name, int body, Point3D location)

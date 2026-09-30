@@ -1,0 +1,253 @@
+# ==============================================================================
+# Moongate - templates/decorations/malas/emino's_undertaking_quest.toml
+#
+# What it is for:
+#   World decoration placed on Malas: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "moongate"
+type = "Static"
+item_id = 0x1FD7
+props = { hue = 0x03F1 }
+locations = [[375, 802, 1]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [770, 1209, 25], map_dest = "Tokuno" }
+locations = [[375, 802, 1]]
+
+[[decoration]]
+comment = "ankh"
+type = "AnkhNorth"
+item_id = 0x0004
+props = { hue = 0x00FA }
+locations = [[397, 801, 4]]
+
+[[decoration]]
+comment = "Emino"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Emino", count = 1, home_range = 0 }
+locations = [[411, 810, -1]]
+
+[[decoration]]
+comment = "Zoel"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Zoel", count = 1, home_range = 0 }
+locations = [[388, 817, -1]]
+
+[[decoration]]
+comment = "Hidden figures"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "HiddenFigure", count = 1, home_range = 0 }
+locations = [
+    [403, 1118, 0],
+    [405, 1118, 0],
+    [403, 1110, 0],
+    [403, 1112, 0],
+    [403, 1103, 0],
+    [404, 1101, 0],
+    [419, 1118, 0],
+    [418, 1120, 0],
+    [419, 1111, 0],
+    [418, 1109, 0],
+    [419, 1102, 0],
+    [418, 1103, 0],
+]
+
+[[decoration]]
+comment = "Enshrouded figure"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "EnshroudedFigure", count = 1, home_range = 0 }
+locations = [[403, 1094, 0]]
+
+[[decoration]]
+comment = "Jedah Entille"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "JedahEntille", count = 1, home_range = 0 }
+locations = [[404, 1093, 0]]
+
+[[decoration]]
+comment = "Guardian barrier"
+type = "GuardianBarrier"
+item_id = 0x3967
+locations = [
+    [404, 1140, 0],
+    [405, 1140, 0],
+    [406, 1140, 0],
+    [407, 1140, 0],
+    [408, 1140, 0],
+    [409, 1140, 0],
+]
+
+[[decoration]]
+comment = "Green teleporters"
+type = "GreenNinjaQuestTeleporter"
+item_id = 0x051C
+locations = [[418, 804, -1]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x051C
+props = { hue = 0x017E }
+locations = [[412, 1123, 0]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [417, 806, -1] }
+locations = [[412, 1123, 0]]
+
+[[decoration]]
+comment = "Blue teleporters"
+type = "BlueNinjaQuestTeleporter"
+item_id = 0x051C
+locations = [[423, 805, -1]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x051C
+props = { hue = 0x0002 }
+locations = [[411, 1117, 0]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [422, 806, -1] }
+locations = [[411, 1117, 0]]
+
+[[decoration]]
+comment = "Red teleporter"
+type = "Static"
+item_id = 0x051C
+props = { hue = 0x0021 }
+locations = [[421, 1092, 0]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [391, 803, -1] }
+locations = [[421, 1092, 0]]
+
+[[decoration]]
+comment = "White teleporters"
+type = "WhiteNinjaQuestTeleporter"
+item_id = 0x051C
+locations = [[392, 802, -1]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x051C
+props = { hue = 0x047E }
+locations = [[412, 1086, 0]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [391, 803, -1] }
+locations = [[412, 1086, 0]]
+
+[[decoration]]
+comment = "wooden chest"
+type = "EminosKatanaChest"
+item_id = 0x0E42
+locations = [[393, 989, -15]]
+
+[[decoration]]
+comment = "floor spikes"
+type = "SpikeTrap"
+item_id = 0x119A
+locations = [[418, 1084, 0]]
+
+[[decoration]]
+comment = "floor saw"
+type = "SawTrap"
+item_id = 0x11AC
+locations = [[421, 1077, 0]]
+
+[[decoration]]
+comment = "hole"
+type = "FireColumnTrap"
+item_id = 0x1B71
+locations = [
+    [403, 1073, 0],
+    [410, 1050, 0],
+    [408, 1044, 0],
+    [409, 1044, 0],
+    [410, 1044, 0],
+    [411, 1044, 0],
+    [412, 1044, 0],
+    [413, 1044, 0],
+]
+
+[[decoration]]
+comment = "haramaki-do"
+type = "Static"
+item_id = 0x2674
+props = { hue = 0x048C }
+locations = [[409, 1009, -13]]
+
+[[decoration]]
+comment = "war mace"
+type = "Static"
+item_id = 0x1406
+props = { hue = 0x047E }
+locations = [[409, 1008, -13]]
+
+[[decoration]]
+comment = "kabuto"
+type = "Static"
+item_id = 0x236D
+props = { hue = 0x048C }
+locations = [[409, 1008, -13]]
+
+[[decoration]]
+comment = "chest"
+type = "OrnateWoodenChest"
+item_id = 0x280D
+locations = [[436, 999, -15]]
+
+[[decoration]]
+comment = "kimono"
+type = "Static"
+item_id = 0x2681
+locations = [[396, 1149, 0]]
+
+[[decoration]]
+comment = "ninja pants"
+type = "Static"
+item_id = 0x2651
+props = { hue = 0x0530 }
+locations = [[397, 1146, 1]]
+
+[[decoration]]
+comment = "ninja mask"
+type = "Static"
+item_id = 0x26A4
+props = { hue = 0x0530 }
+locations = [[395, 1146, 0]]
+
+[[decoration]]
+comment = "ninja shirt"
+type = "Static"
+item_id = 0x2668
+props = { hue = 0x0530 }
+locations = [[396, 1146, 0]]

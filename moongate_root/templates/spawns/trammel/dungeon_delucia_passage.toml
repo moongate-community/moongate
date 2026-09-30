@@ -1,0 +1,17 @@
+[[spawn]]
+id = "trammel_14150"
+map = "trammel"
+name = "delucia_passage Level 1"
+mobile_ids = []
+npc_list_ids = ["deluciapassagelvlone"]
+max = 100
+min_minutes = 10
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5890
+y1 = 1287
+x2 = 6032
+y2 = 1410
