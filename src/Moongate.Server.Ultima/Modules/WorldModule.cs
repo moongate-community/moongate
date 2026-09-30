@@ -1,6 +1,9 @@
 using Lua;
 using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Ultima.Types;
 
@@ -15,11 +18,25 @@ public sealed class WorldModule
 {
     private readonly ISectorService _sectors;
     private readonly IClockService _clock;
+    private readonly ISessionService _sessions;
 
-    public WorldModule(ISectorService sectors, IClockService clock)
+    public WorldModule(ISectorService sectors, IClockService clock, ISessionService sessions)
     {
         _sectors = sectors;
         _clock = clock;
+        _sessions = sessions;
+    }
+
+    /// <summary>
+    ///     Gets whether <paramref name="player" /> is a game master or an administrator in the world, such as to let staff
+    ///     use a protected light; <c>world.is_staff(user)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the player is a game master or an administrator; false for an NPC or a player not in the world.")]
+    public bool IsStaff(long player)
+    {
+        return player is > 0 and <= uint.MaxValue &&
+               _sessions.TryGetByCharacterId(new Serial((uint)player), out var session) &&
+               session.AccountType >= AccountType.GameMaster;
     }
 
     /// <summary>

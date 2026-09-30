@@ -100,6 +100,19 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SetLight_OnTheGround_KeepsTheShapeByName_AndNilClearsIt()
+    {
+        var result = Run("return item.set_light(0x40000003, 'circle150'), item.set_light(0x40000003, 'Circle225'), item.set_light(0x40000003, 'moonbeam')");
+
+        Assert.Equal((true, true, false), (result[0].Read<bool>(), result[1].Read<bool>(), result[2].Read<bool>()));
+        Assert.Equal("circle225", _ground.Props!["light"]);
+        Assert.Equal(["Appeared 1073741827", "Appeared 1073741827"], _view.Calls);
+
+        Assert.True(Run("return item.set_light(0x40000003)")[0].Read<bool>());
+        Assert.Null(_ground.Props?.GetValueOrDefault("light"));
+    }
+
+    [Fact]
     public void SetItemId_InAContainer_UpdatesTheOwner()
     {
         Assert.True(Run("return item.set_item_id(0x40000002, 0x0F0C)")[0].Read<bool>());
