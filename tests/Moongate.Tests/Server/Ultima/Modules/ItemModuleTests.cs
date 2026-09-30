@@ -86,6 +86,7 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.False(result[1].Read<bool>());
         Assert.Equal(LuaValue.Nil, result[2]);
         Assert.Equal(2L, _potions.GetProp<long>("potion.charges"));
+        Assert.IsType<long>(_potions.Props!["potion.charges"]);
     }
 
     [Fact]

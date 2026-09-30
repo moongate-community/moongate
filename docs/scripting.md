@@ -290,8 +290,9 @@ a closed door opens it and its linked door (prop `door.link`): the graphic goes 
 one, the door swings aside by its `facing` prop and plays the sound of its
 `decoration_type` (metal, wood, gate or secret). Double clicking an open door closes both
 when nobody stands in either doorway. An open door closes by itself after 20 seconds, then
-tries again every 10 seconds while the doorway is taken. The open state is the prop
-`door.open`, saved with the door; the auto-close timer is not, so a door left open when the
+tries again every 10 seconds while the doorway is taken. A door that cannot swing aside, such
+as one at the edge of the map, stays closed. The open state is the prop `door.open`, with the
+closed spot in `door.x`, `door.y` and `door.z`, saved with the door; the auto-close timer is not, so a door left open when the
 server stops stays open until someone uses it. Locks and keys come later.
 
 ## Reload and ownership

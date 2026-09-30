@@ -175,6 +175,25 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal((0x0676, new Point3D(1599, 1601, 0)), (left.ItemId, left.GroundLocation!.Value));
         Assert.Equal((0x0678, new Point3D(1602, 1601, 0)), (right.ItemId, right.GroundLocation!.Value));
         Assert.Equal([0xEC, 0xEC], _speech.PlacedSounds.Select(sound => sound.Sound));
+        Assert.Equal(
+            [true, 1600L, 1600L, 0L],
+            new[] { left.Props!["door.open"], left.Props["door.x"], left.Props["door.y"], left.Props["door.z"] }
+        );
+    }
+
+    [Fact]
+    public async Task TheShippedDoorScript_ADoorThatCannotSwingAside_StaysClosed()
+    {
+        var door = PlaceDoor(new Serial(0x40000010), "MetalDoor", 0x0675, "west_cw", new Point3D(0, 1600, 0));
+        var scripts = await StartDoorScriptAsync();
+
+        scripts.Run(door, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((0x0675, new Point3D(0, 1600, 0)), (door.ItemId, door.GroundLocation!.Value));
+        Assert.False(door.Props!.ContainsKey("door.open"));
+        Assert.Empty(_speech.PlacedSounds);
+        Assert.Empty(_timers.Timers);
     }
 
     [Fact]

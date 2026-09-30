@@ -17,6 +17,8 @@
 --
 -- Props it keeps:
 --   door.open        true while the door is open
+--   door.x, door.y,  the closed spot of an open door, where closing puts it
+--   door.z           back and where ".decorate" looks for it
 --
 -- Functions:
 --   on_use(serial, user)             a player double clicks the door;
@@ -68,12 +70,12 @@ local function offset(serial)
     return 0, 0
 end
 
--- The door and the door linked to it, while that one still exists.
+-- The door and the door linked to it, while that one still exists and links back.
 local function doors_of(serial)
     local doors = { serial }
     local link = item.get_prop(serial, "door.link")
 
-    if link and link ~= serial and item.item_id(link) then
+    if link and link ~= serial and item.item_id(link) and item.get_prop(link, "door.link") == serial then
         doors[2] = link
     end
 
@@ -91,18 +93,41 @@ local function cancel_auto_close(serial)
     end
 end
 
+-- Where an open door goes back to: the spot it kept, or its offset back for a door opened before it kept one.
+local function closed_spot(serial, here)
+    local x, y, z = item.get_prop(serial, "door.x"), item.get_prop(serial, "door.y"), item.get_prop(serial, "door.z")
+
+    if x and y and z then
+        return x, y, z
+    end
+
+    local dx, dy = offset(serial)
+
+    return here.x - dx, here.y - dy, here.z
+end
+
+-- Opens one door; false when it is not on the ground or cannot swing aside.
 local function open_one(serial)
     local here = item.location(serial)
 
     if not here or is_open(serial) then
-        return
+        return false
     end
 
     local dx, dy = offset(serial)
+
+    if not item.move_to(serial, here.x + dx, here.y + dy, here.z) then
+        return false
+    end
+
     item.set_item_id(serial, item.item_id(serial) + 1)
-    item.move_to(serial, here.x + dx, here.y + dy, here.z)
     item.set_prop(serial, "door.open", true)
+    item.set_prop(serial, "door.x", here.x)
+    item.set_prop(serial, "door.y", here.y)
+    item.set_prop(serial, "door.z", here.z)
     item.play_sound(serial, (sounds(serial)))
+
+    return true
 end
 
 local function close_one(serial)
@@ -112,11 +137,18 @@ local function close_one(serial)
         return
     end
 
-    local dx, dy = offset(serial)
+    local x, y, z = closed_spot(serial, here)
+
+    if not item.move_to(serial, x, y, z) then
+        return
+    end
+
     local _, closing = sounds(serial)
     item.set_item_id(serial, item.item_id(serial) - 1)
-    item.move_to(serial, here.x - dx, here.y - dy, here.z)
     item.set_prop(serial, "door.open", nil)
+    item.set_prop(serial, "door.x", nil)
+    item.set_prop(serial, "door.y", nil)
+    item.set_prop(serial, "door.z", nil)
     item.play_sound(serial, closing)
 end
 
@@ -128,9 +160,9 @@ local function free_to_close(serial)
         return true
     end
 
-    local dx, dy = offset(serial)
+    local x, y = closed_spot(serial, here)
 
-    return not world.is_occupied(here.map, here.x - dx, here.y - dy)
+    return not world.is_occupied(here.map, x, y)
 end
 
 -- Closes the door and its linked door; false when a doorway is taken.
@@ -169,8 +201,14 @@ function door.on_use(serial, user)
         return true
     end
 
-    for _, each in ipairs(doors_of(serial)) do
-        open_one(each)
+    local doors = doors_of(serial)
+
+    if not open_one(serial) then
+        return true
+    end
+
+    if doors[2] then
+        open_one(doors[2])
     end
 
     cancel_auto_close(serial)
