@@ -96,6 +96,9 @@ public sealed class RepositoryDataFilesTests
         Assert.All(regions.Where(region => region.Type == RegionType.Dungeon), region => Assert.Equal("none", region.Weather));
         Assert.Equal(new Point3D(1495, 1629, 10), britain.GoLocation);
         Assert.True(britain.Contains(1495, 1629, 10));
+        var lookup = new RegionService(service);
+        Assert.Equal("Britain", lookup.Find(MapType.Trammel, new Point3D(1495, 1629, 10))?.Name);
+        Assert.Equal("snowy", lookup.Find(MapType.Felucca, new Point3D(4000, 300, 0))?.Weather);
         Assert.All(regions.Where(region => region.Map == MapType.Ilshenar), region => Assert.False(region.RecallIn));
 
         // Travel zones: Felucca's Lost Lands block recalling out; Trammel's Wind allows it but blocks recalling in.
