@@ -2,10 +2,12 @@ using System.Collections.Concurrent;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Ultima.Types;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -23,6 +25,9 @@ public sealed class LightService : ILightService
 
     private readonly ILogger _logger = Log.ForContext<LightService>();
     private readonly ConcurrentDictionary<Serial, int> _sent = new();
+
+    // The players' regions, from the region change callbacks: asking IRegionService would loop through its listeners.
+    private readonly ConcurrentDictionary<Serial, RegionContent?> _regions = new();
     private readonly IClockService _clock;
     private readonly ISessionService _sessions;
     private readonly IMobileService _mobiles;
@@ -80,6 +85,15 @@ public sealed class LightService : ILightService
             return level;
         }
 
+        // ModernUO's DungeonRegion and JailRegion.
+        switch (_regions.GetValueOrDefault(mobile.Id)?.Type)
+        {
+            case RegionType.Dungeon:
+                return _world.DungeonLight;
+            case RegionType.Jail:
+                return _world.JailLight;
+        }
+
         var time = _clock.GetTime(mobile.Map, mobile.Location.X);
         var day = _world.DayLight;
         var night = _world.NightLight;
@@ -92,6 +106,30 @@ public sealed class LightService : ILightService
             < 22 => day,
             _ => day + ((time.Hours - 22) * 60 + time.Minutes) * (night - day) / 120
         };
+    }
+
+    public void RegionChanged(MobileEntity player, RegionContent? previous, RegionContent? current)
+    {
+        _regions[player.Id] = current;
+
+        // As ModernUO's region change, at once; only once the login sent the player its light.
+        if (!_sent.TryGetValue(player.Id, out var last) ||
+            LevelFor(player) is var level && level == last ||
+            !_sessions.TryGetByCharacterId(player.Id, out var session))
+        {
+            return;
+        }
+
+        if (_sender.TrySend(session.SessionId, new GlobalLightLevelPacket(level)))
+        {
+            _sent[player.Id] = level;
+        }
+    }
+
+    public void Left(Serial player)
+    {
+        _regions.TryRemove(player, out _);
+        _sent.TryRemove(player, out _);
     }
 
     public int LevelOnLogin(MobileEntity character)

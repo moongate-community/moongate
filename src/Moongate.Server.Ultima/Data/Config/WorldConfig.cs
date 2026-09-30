@@ -26,6 +26,16 @@ public sealed class WorldConfig
     public int NightLight { get; set; } = 12;
 
     /// <summary>
+    ///     Gets or sets the light level inside a dungeon region, from 0 (brightest) to 31; 26, as ModernUO.
+    /// </summary>
+    public int DungeonLight { get; set; } = 26;
+
+    /// <summary>
+    ///     Gets or sets the light level inside a jail region, from 0 (brightest) to 31; 9, as ModernUO.
+    /// </summary>
+    public int JailLight { get; set; } = 9;
+
+    /// <summary>
     ///     Validates the section before server services begin startup: the range must be one the client supports, from
     ///     5 to 24, as ModernUO and POL allow; a game minute from 1 to 3600 seconds; the light levels from 0 to 31.
     /// </summary>
@@ -51,6 +61,16 @@ public sealed class WorldConfig
         if (NightLight is < 0 or > 31)
         {
             throw new InvalidOperationException($"ultima.world.night_light must be from 0 to 31, found {NightLight}.");
+        }
+
+        if (DungeonLight is < 0 or > 31)
+        {
+            throw new InvalidOperationException($"ultima.world.dungeon_light must be from 0 to 31, found {DungeonLight}.");
+        }
+
+        if (JailLight is < 0 or > 31)
+        {
+            throw new InvalidOperationException($"ultima.world.jail_light must be from 0 to 31, found {JailLight}.");
         }
     }
 }

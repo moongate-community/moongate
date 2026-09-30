@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Data.Regions;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -101,7 +102,7 @@ public sealed class RegionServiceTests
         var listener = new RecordingRegionChangeListener();
         var service = new RegionService(
             new StubDataLoaderService().With(Region("Britain", 50, Area(0, 0, 100, 100))),
-            [listener]
+            new Lazy<IEnumerable<IRegionChangeListener>>(() => [listener])
         );
         var aria = Player(99, 50);
 

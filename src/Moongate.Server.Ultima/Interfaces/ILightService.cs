@@ -5,9 +5,10 @@ namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
 ///     The day and night light of the players, as ModernUO's light cycle: every 5 seconds each player in the world whose
-///     level changed is sent the new one (0x4F).
+///     level changed is sent the new one (0x4F). Dungeon and jail regions have their own level, sent as soon as a player
+///     walks in or out.
 /// </summary>
-public interface ILightService : IMoongateStartupService
+public interface ILightService : IMoongateStartupService, IRegionChangeListener
 {
     /// <summary>
     ///     Gets the level every player is given instead of the clock's, set by <c>.globallight</c>; null follows the
@@ -16,8 +17,9 @@ public interface ILightService : IMoongateStartupService
     int? Override { get; }
 
     /// <summary>
-    ///     Gets the light level where <paramref name="mobile" /> stands: night from 00:00 to 03:59, brightening until 06:00,
-    ///     day until 21:59, darkening until midnight; the override when set.
+    ///     Gets the light level where <paramref name="mobile" /> stands: the override when set; else the dungeon or jail
+    ///     level in such a region; else night from 00:00 to 03:59, brightening until 06:00, day until 21:59, darkening until
+    ///     midnight.
     /// </summary>
     int LevelFor(MobileEntity mobile);
 
