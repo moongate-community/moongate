@@ -569,6 +569,22 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void Absorb_AGroundItemAPlayerDropped_IsDeletedByThatPlayersSave()
+    {
+        // Its row still says the dropper carries it: without the dropper's tombstone, the dropper's next login would
+        // load it back into the backpack.
+        var items = TestItems.Create();
+        items.Add([_backpack, _bag, _coin, _dagger, _shirt, _ground]);
+        items.PlaceOnGround(_dagger, MapType.Trammel, new Point3D(1496, 1629, 10));
+        items.Release(_dagger, Aria);
+
+        items.Absorb(_dagger);
+
+        Assert.Contains(_dagger.Id, items.TombstonesOf(Aria));
+        Assert.Empty(items.TakeReleasedOf(Aria));
+    }
+
+    [Fact]
     public void Decay_AnAbsorbedOrRemovedGroundItemStops()
     {
         var (items, _) = Decaying();

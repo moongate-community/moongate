@@ -76,8 +76,8 @@ public sealed class ItemDecayQueue : IItemDecayQueue
     // How long the item lasts on the ground, or null when it never decays.
     private TimeSpan? DecayTime(ItemEntity item)
     {
-        if (item.Movable == false ||
-            !_templates.TryGet(item.TemplateId, out var template) ||
+        if (!_templates.TryGet(item.TemplateId, out var template) ||
+            !(item.Movable ?? template.EffectiveMovable(_tiles)) ||
             template.Visibility is { } visibility && visibility > AccountType.Regular ||
             !template.EffectiveDecays(_tiles))
         {

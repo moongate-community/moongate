@@ -344,6 +344,13 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     private void AbsorbFor(ItemEntity item, Serial? owner)
     {
+        // A ground item a player released still has that player's row: the player's save must delete it, or the next
+        // login would load it back into the backpack.
+        if (_released.TryRemove(item.Id, out var releasedBy))
+        {
+            owner ??= releasedBy;
+        }
+
         _tombstones[item.Id] = owner;
         _items.TryRemove(item.Id, out _);
         _sectors.RemoveItem(item);

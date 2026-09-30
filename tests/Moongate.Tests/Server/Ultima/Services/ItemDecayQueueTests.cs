@@ -23,7 +23,8 @@ public sealed class ItemDecayQueueTests
                 new ItemTemplate { Id = "gold" },
                 new ItemTemplate { Id = "bottle", DecayMinutes = 5 },
                 new ItemTemplate { Id = "statue", Decays = false },
-                new ItemTemplate { Id = "gm_marker", Visibility = AccountType.GameMaster }
+                new ItemTemplate { Id = "gm_marker", Visibility = AccountType.GameMaster },
+                new ItemTemplate { Id = "anvil", Movable = false, Decays = true }
             )
         );
         _queue = new(templates, new FakeTileDataService(), _clock);
@@ -54,7 +55,7 @@ public sealed class ItemDecayQueueTests
         Assert.Equal(_clock.Now.UtcDateTime.AddMinutes(5), bottle.DecayAt);
     }
 
-    [Theory, InlineData("statue"), InlineData("gm_marker"), InlineData("unknown")]
+    [Theory, InlineData("statue"), InlineData("gm_marker"), InlineData("anvil"), InlineData("unknown")]
     public void Restart_AnItemThatDoesNotDecay_HasNoDecayTime(string template)
     {
         var item = Ground(0x40000003, template);
