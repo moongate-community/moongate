@@ -50,7 +50,7 @@ check every 5 seconds that catches walking in and out of buildings; it is also r
 minute and every game hour, because the client stops showing the weather a few minutes after
 the last packet. During a storm the player
 outside hears thunder now and then. Game masters read or force it with
-[`.weather`](../commands.md#weather).
+[`.weather`](../commands/weather.md).
 
 ## Validation at startup
 

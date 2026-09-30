@@ -289,7 +289,7 @@ end
 ```
 
 The distribution also ships `scripts/items/door.lua`, the script of the `decoration_door`
-template that [`.decorate`](commands.md#decorate) gives to doors and gates. Double clicking
+template that [`.decorate`](commands/decorate.md) gives to doors and gates. Double clicking
 a closed door opens it and its linked door (prop `door.link`): the graphic goes to the next
 one, the door swings aside by its `facing` prop and plays the sound of its
 `decoration_type` (metal, wood, gate or secret). Double clicking an open door closes both

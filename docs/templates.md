@@ -432,7 +432,7 @@ locations = [[1411, 1621, 30], [1411, 1622, 30]]
 A block without `item_id` is an addon built from several graphics. `extras`, when present, gives a
 setting per location in the order of `locations`.
 
-[`.decorate`](commands.md#decorate) places them with the templates of
+[`.decorate`](commands/decorate.md) places them with the templates of
 `templates/items/decorations.toml`: `decoration`, fixed and never decaying, for most kinds;
 `decoration_door`, the same with `script_id = "door"`, for the kinds whose name contains `Door`
 or `Gate`; and `decoration_light`, with `script_id = "light"`, for ModernUO's light kinds
