@@ -38,6 +38,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
     private readonly IDataAccess<ItemEntity> _data;
     private readonly IGameLoopService _loop;
     private readonly IItemScriptService? _scripts;
+    private readonly IItemDecayQueue? _decay;
 
     public IReadOnlyCollection<ItemEntity> Items => _items.Values.ToArray();
 
@@ -47,7 +48,8 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         ILineOfSightService sight,
         IDataAccess<ItemEntity> data,
         IGameLoopService loop,
-        IItemScriptService? scripts = null
+        IItemScriptService? scripts = null,
+        IItemDecayQueue? decay = null
     )
     {
         _sectors = sectors;
@@ -56,6 +58,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         _data = data;
         _loop = loop;
         _scripts = scripts;
+        _decay = decay;
     }
 
     public async Task StartAsync()
@@ -90,6 +93,11 @@ public sealed class ItemService : IItemService, IMoongateStartupService
             _tombstones.TryRemove(item.Id, out _);
             _sectors.AddItem(item);
             Index(item);
+
+            if (item.GroundLocation is not null)
+            {
+                _decay?.Track(item);
+            }
         }
     }
 
@@ -106,6 +114,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
             {
                 _sectors.RemoveItem(item);
                 Unindex(item);
+                _decay?.Stop(item);
             }
         }
     }
@@ -155,6 +164,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         _sectors.RemoveItem(item);
         Unindex(item);
         item.PutInContainer(container, position);
+        _decay?.Stop(item);
         WearerChanged(item, wearer);
     }
 
@@ -165,6 +175,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         Unindex(item);
         item.PlaceOnGround(map, location);
         _sectors.AddItem(item);
+        _decay?.Restart(item);
         WearerChanged(item, wearer);
     }
 
@@ -175,6 +186,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         Unindex(item);
         item.Equip(mobile, layer);
         Index(item);
+        _decay?.Stop(item);
         WearerChanged(item, wearer);
     }
 
@@ -237,11 +249,13 @@ public sealed class ItemService : IItemService, IMoongateStartupService
     public void Hide(ItemEntity item)
     {
         _sectors.RemoveItem(item);
+        _decay?.Stop(item);
     }
 
     public void Show(ItemEntity item)
     {
         _sectors.AddItem(item);
+        _decay?.Restart(item);
     }
 
     public ItemEntity Split(ItemEntity item, int amount, Serial serial)
@@ -253,6 +267,12 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         _items[rest.Id] = rest;
         _sectors.AddItem(rest);
         Index(rest);
+
+        // The rest stays where the stack lies, with the stack's decay time.
+        if (rest.GroundLocation is not null)
+        {
+            _decay?.Track(rest);
+        }
 
         return rest;
     }
@@ -328,6 +348,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         _items.TryRemove(item.Id, out _);
         _sectors.RemoveItem(item);
         Unindex(item);
+        _decay?.Stop(item);
 
         // A worn item merged into a stack leaves its layer for good.
         if (item.MobileId is { } wearer)
