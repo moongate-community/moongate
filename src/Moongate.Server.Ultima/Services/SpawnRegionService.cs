@@ -6,7 +6,6 @@ using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Internal.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
-using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Services.Internal;
@@ -38,6 +37,7 @@ public sealed class SpawnRegionService : ISpawnRegionService
 
     private readonly ILogger _logger = Log.ForContext<SpawnRegionService>();
     private readonly List<SpawnRegionState> _regions = [];
+    private readonly CancellationTokenSource _stopping = new();
     private readonly IDataLoaderService _data;
     private readonly IMapService _map;
     private readonly IMovementService _movement;
@@ -132,7 +132,17 @@ public sealed class SpawnRegionService : ISpawnRegionService
             _timer = null;
         }
 
-        await Running;
+        // Stopped before the world save stops the game loop: the spawn under way ends, the ones still to come never start.
+        await _stopping.CancelAsync();
+
+        try
+        {
+            await Running;
+        }
+        catch (OperationCanceledException)
+        {
+            // The spawn under way was cancelled.
+        }
     }
 
     // On the game loop. The spawns themselves run off it, as INpcService asks; no check starts before they are done.
@@ -147,44 +157,57 @@ public sealed class SpawnRegionService : ISpawnRegionService
         {
             var now = _time.GetUtcNow();
             var live = CountLive();
-            var planned = new List<(SpawnRegionState Region, string TemplateId, Point3D Location, SpawnArea Area)>();
+            var planned = new List<PlannedSpawn>();
 
             foreach (var region in _regions)
             {
-                if (region.NextSpawn > now)
+                if (region.NextSpawn <= now)
                 {
-                    continue;
+                    Plan(region, now, live, planned);
                 }
-
-                var template = region.Template;
-                var count = Math.Min(template.Call, template.Max - live.GetValueOrDefault(template.Id));
-                var missed = false;
-
-                for (var i = 0; i < count; i++)
-                {
-                    if (!TryFindSpot(template, out var location, out var area))
-                    {
-                        missed = true;
-
-                        break;
-                    }
-
-                    planned.Add((region, region.Pool.Pick(_random), location, area));
-                }
-
-                region.NextSpawn = missed
-                    ? now + RetryDelay
-                    : now + TimeSpan.FromSeconds(_random.Next(template.MinMinutes * 60, template.MaxMinutes * 60 + 1));
             }
 
             if (planned.Count > 0)
             {
-                Running = Task.Run(() => SpawnAsync(planned));
+                Running = Task.Run(() => SpawnAsync(planned, _stopping.Token));
             }
         }
         catch (Exception exception)
         {
             _logger.Error(exception, "The spawn check failed");
+        }
+    }
+
+    // A region that throws is retried a minute later; the others go on.
+    private void Plan(SpawnRegionState region, DateTimeOffset now, Dictionary<string, int> live, List<PlannedSpawn> planned)
+    {
+        var template = region.Template;
+
+        try
+        {
+            var count = Math.Min(template.Call, template.Max - live.GetValueOrDefault(template.Id));
+            var missed = false;
+
+            for (var i = 0; i < count; i++)
+            {
+                if (!TryFindSpot(template, out var location, out var area))
+                {
+                    missed = true;
+
+                    break;
+                }
+
+                planned.Add(new(template, region.Pool.Pick(_random), location, area));
+            }
+
+            region.NextSpawn = missed
+                ? now + RetryDelay
+                : now + TimeSpan.FromSeconds(_random.Next(template.MinMinutes * 60, template.MaxMinutes * 60 + 1));
+        }
+        catch (Exception exception)
+        {
+            region.NextSpawn = now + RetryDelay;
+            _logger.Error(exception, "Spawn {Region} failed its check", template.Id);
         }
     }
 
@@ -242,18 +265,21 @@ public sealed class SpawnRegionService : ISpawnRegionService
         return _map.GetStatics(template.Map, x, y).Any(tile => tile.Z > z + RoofHeight);
     }
 
-    private async Task SpawnAsync(List<(SpawnRegionState Region, string TemplateId, Point3D Location, SpawnArea Area)> planned)
+    private async Task SpawnAsync(List<PlannedSpawn> planned, CancellationToken cancellationToken)
     {
         var spawned = new List<(SpawnTemplate Template, int Count)>();
 
-        foreach (var (region, templateId, location, area) in planned)
+        foreach (var (template, templateId, location, area) in planned)
         {
-            var template = region.Template;
+            if (cancellationToken.IsCancellationRequested)
+            {
+                break;
+            }
 
             try
             {
-                var npc = await _npcs.SpawnAsync(templateId, template.Map, location);
-                await OnLoopAsync(() => SetHome(npc, template, area));
+                // The home goes into the first save, so a spawned NPC is always counted.
+                var npc = await _npcs.SpawnAsync(templateId, template.Map, location, HomeOf(template, area), cancellationToken);
                 var index = spawned.FindIndex(entry => entry.Template == template);
 
                 if (index < 0)
@@ -275,27 +301,43 @@ public sealed class SpawnRegionService : ISpawnRegionService
                     template.Map
                 );
             }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                break;
+            }
             catch (Exception exception)
             {
                 _logger.Warning(exception, "Spawn {Region} could not spawn {Template}", template.Id, templateId);
             }
         }
 
-        if (spawned.Count > 0)
+        if (spawned.Count == 0 || cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
+
+        try
         {
             var notice = Notice(spawned);
             _logger.Debug("{Notice}", notice);
             await OnLoopAsync(() => TellStaff(notice));
         }
+        catch (Exception exception)
+        {
+            _logger.Warning(exception, "The spawn notice could not be sent");
+        }
     }
 
-    private static void SetHome(MobileEntity npc, SpawnTemplate template, SpawnArea area)
+    private static Dictionary<string, object?> HomeOf(SpawnTemplate template, SpawnArea area)
     {
-        npc.SetProp(RegionProp, template.Id);
-        npc.SetProp("spawn.x1", (long)area.X1);
-        npc.SetProp("spawn.y1", (long)area.Y1);
-        npc.SetProp("spawn.x2", (long)area.X2);
-        npc.SetProp("spawn.y2", (long)area.Y2);
+        return new()
+        {
+            [RegionProp] = template.Id,
+            ["spawn.x1"] = (long)area.X1,
+            ["spawn.y1"] = (long)area.Y1,
+            ["spawn.x2"] = (long)area.X2,
+            ["spawn.y2"] = (long)area.Y2
+        };
     }
 
     private string Notice(List<(SpawnTemplate Template, int Count)> spawned)

@@ -74,7 +74,7 @@ public sealed class SpawnCommand : ICommandExecutor
 
         try
         {
-            var npc = await _npcs.SpawnAsync(templateId, target.Map, target.Location, context.CancellationToken);
+            var npc = await _npcs.SpawnAsync(templateId, target.Map, target.Location, cancellationToken: context.CancellationToken);
             var spot = npc.Location;
             context.Print(
                 _localization.Text(

@@ -249,6 +249,47 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task StopAsync_CancelsTheSpawnsStillToCome()
+    {
+        _npcs.Gate = new();
+        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 3, max: 3));
+        await _fixture.Network.ExecuteOnLoopAsync(() => _timers.Fire(TimerId()));
+
+        await _service.StopAsync();
+
+        Assert.Single(_npcs.Spawns);
+    }
+
+    [Fact]
+    public async Task ARegionThatFails_DoesNotStopTheOthers_AndRetriesAMinuteLater()
+    {
+        var broken = Spawn("broken");
+        broken.Areas = [];
+        await StartAsync(new ScriptedRandom(0), broken, Spawn("forest", minMinutes: 30, maxMinutes: 30));
+
+        await TickAsync();
+        Assert.Single(_npcs.Spawns);
+
+        broken.Areas = [new() { X1 = 10, Y1 = 10, X2 = 10, Y2 = 10 }];
+        _clock.Advance(TimeSpan.FromMinutes(1));
+        await TickAsync();
+        Assert.Equal(2, _npcs.Spawns.Count);
+    }
+
+    [Fact]
+    public async Task ABrokenNotice_DoesNotFaultTheSpawns()
+    {
+        await AddPlayerAsync(1, AccountType.GameMaster);
+        // The notice needs {3}, which is never given.
+        await StartAsync(new ScriptedRandom(0), [(CommandMessages.SpawnedInOneRegion, "{3}")], Spawn("forest"));
+
+        await TickAsync();
+
+        Assert.True(_service.Running.IsCompletedSuccessfully);
+        Assert.Single(_npcs.Spawns);
+    }
+
+    [Fact]
     public async Task StopAsync_UnregistersTheTimer()
     {
         await StartAsync(new ScriptedRandom(0), Spawn("forest"));
@@ -292,13 +333,22 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         };
     }
 
-    private async Task StartAsync(System.Random random, params SpawnTemplate[] spawns)
+    private Task StartAsync(System.Random random, params SpawnTemplate[] spawns)
+    {
+        return StartAsync(random, [], spawns);
+    }
+
+    private async Task StartAsync(System.Random random, (int Id, string Text)[] messages, params SpawnTemplate[] spawns)
     {
         var data = new StubDataLoaderService().With(spawns).With(new NpcListTemplate { Id = "unused" });
-        var localization = TestLocalization.With(
+        (int Id, string Text)[] defaults =
+        [
             (CommandMessages.SpawnedInOneRegion, "Spawn: {0} ({1}): {2} NPCs"),
             (CommandMessages.SpawnedInRegions, "Spawn: {0} NPCs in {1} regions: {2}"),
             (CommandMessages.SpawnedAndMore, "{0} and {1} more")
+        ];
+        var localization = TestLocalization.With(
+            messages.Concat(defaults.Where(message => messages.All(given => given.Id != message.Id))).ToArray()
         );
         _service = new(
             data,
