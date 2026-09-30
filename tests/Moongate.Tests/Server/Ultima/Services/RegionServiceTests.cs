@@ -5,6 +5,7 @@ using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Regions;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -95,6 +96,24 @@ public sealed class RegionServiceTests
     }
 
     [Fact]
+    public void Tracking_TellsTheListenersOnEntryAndOnEveryChange()
+    {
+        var listener = new RecordingRegionChangeListener();
+        var service = new RegionService(
+            new StubDataLoaderService().With(Region("Britain", 50, Area(0, 0, 100, 100))),
+            [listener]
+        );
+        var aria = Player(99, 50);
+
+        service.Entered(aria);
+        service.Moved(aria);
+        aria.Location = new Point3D(100, 50, 0);
+        service.Moved(aria);
+
+        Assert.Equal(["Aria: - -> Britain", "Aria: Britain -> -"], listener.Changes);
+    }
+
+    [Fact]
     public void Tracking_LeftForgetsThePlayer_AndNpcsAreNotTracked()
     {
         var service = Tracked(Region("Britain", 50, Area(0, 0, 100, 100)));
@@ -114,7 +133,7 @@ public sealed class RegionServiceTests
     {
         return new(
             new StubDataLoaderService().With(regions),
-            new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(_log).CreateLogger()
+            logger: new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(_log).CreateLogger()
         );
     }
 

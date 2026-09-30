@@ -22,11 +22,17 @@ public sealed class RegionService : IRegionService
     private readonly IDataLoaderService _data;
     private readonly Lazy<Dictionary<(MapType Map, int X, int Y), RegionContent[]>> _cells;
     private readonly ConcurrentDictionary<Serial, RegionContent?> _players = new();
+    private readonly IRegionChangeListener[] _listeners;
     private readonly ILogger _logger;
 
-    public RegionService(IDataLoaderService data, ILogger? logger = null)
+    public RegionService(
+        IDataLoaderService data,
+        IEnumerable<IRegionChangeListener>? listeners = null,
+        ILogger? logger = null
+    )
     {
         _data = data;
+        _listeners = listeners?.ToArray() ?? [];
         _cells = new(Build);
         _logger = logger ?? Log.ForContext<RegionService>();
     }
@@ -65,6 +71,7 @@ public sealed class RegionService : IRegionService
         var region = Find(mobile.Map, mobile.Location);
         _players[mobile.Id] = region;
         _logger.Debug("{Name} is in {Region:l}", mobile.Name, NameOf(region));
+        Notify(mobile, null, region);
     }
 
     public void Moved(MobileEntity mobile)
@@ -83,11 +90,20 @@ public sealed class RegionService : IRegionService
 
         _players[mobile.Id] = region;
         _logger.Debug("{Name} left {Previous:l} for {Region:l}", mobile.Name, NameOf(previous), NameOf(region));
+        Notify(mobile, previous, region);
     }
 
     public void Left(Serial mobile)
     {
         _players.TryRemove(mobile, out _);
+    }
+
+    private void Notify(MobileEntity player, RegionContent? previous, RegionContent? current)
+    {
+        foreach (var listener in _listeners)
+        {
+            listener.RegionChanged(player, previous, current);
+        }
     }
 
     private static string NameOf(RegionContent? region)
