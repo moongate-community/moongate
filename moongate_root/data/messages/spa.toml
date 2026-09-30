@@ -5486,7 +5486,7 @@
 30006 = "Peso: 1 piedra"
 30007 = "Peso: {0} piedras"
 
-# Moongate: command texts (30008-30038) and command descriptions (30039-30049).
+# Moongate: command texts (30008-30038, 30050-30052) and command descriptions (30039-30049, 30053-30054).
 30008 = "Objetivo cancelado."
 30009 = "Ya hay un comando en ejecución."
 30010 = "Comando desconocido: {0}"
@@ -5529,3 +5529,8 @@
 30047 = "Repite sus argumentos."
 30048 = "Lista los comandos disponibles o muestra los detalles de un comando."
 30049 = "Recarga un archivo de script o muestra los contadores del motor: script reload <archivo> | script metrics."
+30050 = "{0} ahora tiene {1} de fama."
+30051 = "{0} ahora tiene {1} de karma."
+30052 = "No es un personaje ni un PNJ."
+30053 = "Establece la fama (de 0 a 32000) del personaje o PNJ que seleccionas."
+30054 = "Establece el karma (de -32000 a 32000) del personaje o PNJ que seleccionas."

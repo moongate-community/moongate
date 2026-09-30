@@ -23,6 +23,7 @@ Use `..text` to say `.text` literally.
 | `save` | Game/Standalone | Yes | Administrator | Save the world and announce completion |
 | `broadcast` | Game/Standalone | Yes | Administrator | Send a system message to players on this instance |
 | `shutdown` | Game/Standalone | Yes | Administrator | Stop the server gracefully, immediately or after a delay |
+| `fame`, `karma` | No | Game/Standalone | GameMaster | Set the fame or karma of the character or NPC you target |
 
 ## Help
 
@@ -178,3 +179,15 @@ same ordered cleanup as the host shutdown path: services stop, the final world s
 completes, and persistence is disposed. It does not force-kill the process. Other
 instances are unaffected. A manual host stop during the delay takes precedence and
 the timer is discarded with the game loop. There is no cancel or restart subcommand.
+
+## Fame and karma
+
+```text
+.fame <0..32000>
+.karma <-32000..32000>
+```
+
+In game only. The value is checked first; then a target cursor opens and the character or NPC
+you pick gets it: `Bran now has 10000 fame.` Picking an item or cancelling changes nothing. The
+paperdoll title follows at once: the [fame and karma prefix](data-files/titles.md), and `Lord` or
+`Lady` from 10,000 fame. The value is saved with the mobile by its next save.

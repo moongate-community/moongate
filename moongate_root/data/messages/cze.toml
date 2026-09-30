@@ -5479,7 +5479,7 @@
 30006 = "Váha: 1 kámen"
 30007 = "Váha: {0} kam."
 
-# Moongate: command texts (30008-30038) and command descriptions (30039-30049).
+# Moongate: command texts (30008-30038, 30050-30052) and command descriptions (30039-30049, 30053-30054).
 30008 = "Cíl zrušen."
 30009 = "Příkaz již běží."
 30010 = "Neznámý příkaz: {0}"
@@ -5522,3 +5522,8 @@
 30047 = "Zopakuje své argumenty."
 30048 = "Vypíše dostupné příkazy nebo podrobnosti o jednom příkazu."
 30049 = "Znovu načte soubor skriptu nebo ukáže čítače enginu: script reload <soubor> | script metrics."
+30050 = "{0} má nyní {1} slávy."
+30051 = "{0} má nyní {1} karmy."
+30052 = "To není postava ani NPC."
+30053 = "Nastaví slávu (0 až 32000) postavy nebo NPC, na kterou zamíříte."
+30054 = "Nastaví karmu (-32000 až 32000) postavy nebo NPC, na kterou zamíříte."

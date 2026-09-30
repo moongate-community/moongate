@@ -37,6 +37,9 @@ public static class CommandMessages
     public const int AccountCreated = 30036;
     public const int AccountCreationFailed = 30037;
     public const int LocalConsoleOnly = 30038;
+    public const int FameSet = 30050;
+    public const int KarmaSet = 30051;
+    public const int NotAMobile = 30052;
 
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
@@ -52,4 +55,6 @@ public static class CommandMessages
     public const int EchoDescription = 30047;
     public const int HelpDescriptionText = 30048;
     public const int ScriptDescription = 30049;
+    public const int FameDescription = 30053;
+    public const int KarmaDescription = 30054;
 }

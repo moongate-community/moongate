@@ -269,6 +269,20 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 AccountType.GameMaster,
                 CommandMessages.RemoveDescription
             );
+            container.RegisterCommand<FameCommand>(
+                "fame",
+                "Sets the fame (0 to 32000) of the character or NPC you target.",
+                CommandSourceType.InGame,
+                AccountType.GameMaster,
+                CommandMessages.FameDescription
+            );
+            container.RegisterCommand<KarmaCommand>(
+                "karma",
+                "Sets the karma (-32000 to 32000) of the character or NPC you target.",
+                CommandSourceType.InGame,
+                AccountType.GameMaster,
+                CommandMessages.KarmaDescription
+            );
             container.RegisterCommand<WhereCommand>(
                 "where",
                 "Shows what you target: its serial, or the map and location of a spot.",
