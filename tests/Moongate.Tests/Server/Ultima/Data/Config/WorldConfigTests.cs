@@ -23,4 +23,28 @@ public sealed class WorldConfigTests
 
         Assert.Contains("world.view_range", exception.Message);
     }
+
+    [Fact]
+    public void LightCycle_Defaults_AreModernUOs()
+    {
+        var world = new WorldConfig();
+
+        Assert.Equal((5, 0, 12), (world.SecondsPerUoMinute, world.DayLight, world.NightLight));
+    }
+
+    [Theory, InlineData(0), InlineData(3601)]
+    public void Validate_SecondsPerUoMinuteOutOf1To3600_Throws(int seconds)
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => new WorldConfig { SecondsPerUoMinute = seconds }.Validate());
+
+        Assert.Contains("world.seconds_per_uo_minute", exception.Message);
+    }
+
+    [Theory, InlineData(-1, 12, "day_light"), InlineData(32, 12, "day_light"), InlineData(0, -1, "night_light"), InlineData(0, 32, "night_light")]
+    public void Validate_ALightOutOf0To31_Throws(int day, int night, string key)
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => new WorldConfig { DayLight = day, NightLight = night }.Validate());
+
+        Assert.Contains("world." + key, exception.Message);
+    }
 }

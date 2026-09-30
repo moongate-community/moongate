@@ -196,6 +196,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
             container.Register<IDecorationsLoader, DecorationsLoader>(Reuse.Singleton);
             container.Register<IDecorationService, DecorationService>(Reuse.Singleton);
+            container.Register<IClockService, ClockService>(Reuse.Singleton);
             container.Register<ILootService, LootService>(Reuse.Singleton);
             container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
             container.Register<INpcTickService, NpcTickService>(Reuse.Singleton);
@@ -292,6 +293,13 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 AccountType.Administrator,
                 CommandMessages.DecorateDescription
             );
+            container.RegisterCommand<GlobalLightCommand>(
+                "globallight",
+                "Sets the light of every player (0 brightest, 31 darkest) or, without a level, goes back to the time of day.",
+                CommandSourceType.Console | CommandSourceType.InGame,
+                AccountType.GameMaster,
+                CommandMessages.GlobalLightDescription
+            );
             container.RegisterCommand<WhereCommand>(
                 "where",
                 "Shows what you target: its serial, or the map and location of a spot.",
@@ -334,6 +342,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<IItemDecayQueue, ItemDecayQueue>(Reuse.Singleton);
             // After the items (10): the ground items it deletes are loaded by then.
             container.AddMoongateService<ItemDecayService>(11);
+            // The light cycle's timer, like the decay's: the players it lights come after the game server starts.
+            container.AddMoongateService<ILightService, LightService>(11);
             container.AddMoongateService<IEquipmentService, EquipmentService>();
             container.AddMoongateService<ITooltipService, TooltipService>();
             // As the ground items: the NPCs are live before the game server takes players.

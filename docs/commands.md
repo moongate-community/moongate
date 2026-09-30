@@ -25,6 +25,7 @@ Use `..text` to say `.text` literally.
 | `shutdown` | Game/Standalone | Yes | Administrator | Stop the server gracefully, immediately or after a delay |
 | `fame`, `karma` | No | Game/Standalone | GameMaster | Set the fame or karma of the character or NPC you target |
 | `decorate` | Game/Standalone | Yes | Administrator | Place the world decoration: doors, signs, lights and furniture |
+| `globallight` | Game/Standalone | Yes | GameMaster | Give every player the same light, or go back to the time of day |
 
 ## Help
 
@@ -218,3 +219,16 @@ An item with the same graphic already on the spot is kept, so running `decorate`
 places what is missing. The files are read at each run: an edited file needs no restart. A
 failure, such as a folder that is not a map, prints `The decoration failed. Check the server
 logs.` and the reason goes to the log; the files done before it stay placed.
+
+## Global light
+
+```text
+globallight 26
+globallight
+```
+
+In game, game masters use `.globallight 26`. With a level from 0 (brightest) to 31 (darkest),
+every player in the world gets that light at once: `The global light is now 26.` Without a
+level, the light follows the time of day again (see
+[the light cycle](server-configuration.md)). The override is not saved: a restart goes back to
+the time of day.

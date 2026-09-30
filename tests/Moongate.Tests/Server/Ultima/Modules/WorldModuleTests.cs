@@ -4,10 +4,12 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
+using Moongate.Server.Ultima.Data.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Modules;
@@ -15,6 +17,7 @@ namespace Moongate.Tests.Server.Ultima.Modules;
 public sealed class WorldModuleTests
 {
     private readonly SectorService _sectors = TestSectors.Create();
+    private readonly StubClockService _clock = new() { Time = new GameTime(21, 5) };
 
     public WorldModuleTests()
     {
@@ -37,12 +40,20 @@ public sealed class WorldModuleTests
         Assert.Equal(expected, Run(chunk)[0].Read<bool>());
     }
 
+    [Fact]
+    public void Time_GivesTheHoursAndMinutesOfTheMap()
+    {
+        var result = Run("local t = world.time(MapType.Trammel, 1600) return t.hours, t.minutes");
+
+        Assert.Equal((21, 5), (result[0].Read<int>(), result[1].Read<int>()));
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
-        binder.Bind(state, new WorldModule(_sectors));
+        binder.Bind(state, new WorldModule(_sectors, _clock));
         binder.BindEnum(state, typeof(MapType));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
