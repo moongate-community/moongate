@@ -80,6 +80,54 @@ public class MovementService : IMovementService
         return found;
     }
 
+    public bool TryGetSpawnZ(MapType map, int x, int y, int maxZ, out int z)
+    {
+        z = 0;
+
+        if (!_mapService.Maps.Contains(map) || !_mapService.Contains(map, x, y))
+        {
+            return false;
+        }
+
+        // UOX3 FindSpotForNPC: the highest surface under the ceiling a mobile can stand on, as ModernUO CanSpawnMobile.
+        var found = false;
+        var land = _mapService.GetLand(map, x, y);
+        var statics = _mapService.GetStatics(map, x, y);
+
+        if (!LandHeights.IsIgnored(land.Id) &&
+            (_tileDataService.GetLand(land.Id & 0x3FFF).Flags & (TileFlagType.Impassable | TileFlagType.Wet)) == 0)
+        {
+            var average = GetAverageZ(map, x, y);
+
+            if (average <= maxZ && IsOk(statics, average, average + PersonHeight))
+            {
+                z = average;
+                found = true;
+            }
+        }
+
+        foreach (var tile in statics)
+        {
+            var item = _tileDataService.GetItem(tile.Id);
+
+            if ((item.Flags & TileFlagType.Surface) == 0 ||
+                (item.Flags & (TileFlagType.Impassable | TileFlagType.Wet)) != 0)
+            {
+                continue;
+            }
+
+            var top = tile.Z + item.StandHeight;
+
+            if (top <= maxZ && (!found || top > z) && IsOk(statics, top, top + PersonHeight))
+            {
+                z = top;
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
     public bool CheckMovement(
         MapType map,
         Point3D from,

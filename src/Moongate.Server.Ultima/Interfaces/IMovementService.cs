@@ -36,6 +36,15 @@ public interface IMovementService
     bool TryGetDropZ(MapType map, int x, int y, int maxZ, out int z);
 
     /// <summary>
+    ///     Finds where a walking mobile can be placed at a cell: the highest passable, dry surface (the land or a static) at or
+    ///     below <paramref name="maxZ" /> with room for a person above it.
+    /// </summary>
+    /// <returns>
+    ///     False outside the map, on a map that is not loaded, or with no such surface.
+    /// </returns>
+    bool TryGetSpawnZ(MapType map, int x, int y, int maxZ, out int z);
+
+    /// <summary>
     ///     Checks one step from <paramref name="from" /> towards <paramref name="direction" />; only its low three bits count, so the running flag is
     ///     ignored. A diagonal step also needs both cells beside it to be passable.
     /// </summary>

@@ -231,6 +231,82 @@ public sealed class MovementServiceTests
         Assert.False(CreateService().TryGetDropZ(MapType.Trammel, 4, 4, 16, out _));
     }
 
+    [Fact]
+    public void TryGetSpawnZ_FlatLand_IsTheLand()
+    {
+        _map.SetLandZ(0, 0, 15, 15, 5);
+
+        Assert.True(CreateService().TryGetSpawnZ(MapType.Felucca, 4, 4, 23, out var z));
+        Assert.Equal(5, z);
+    }
+
+    [Fact]
+    public void TryGetSpawnZ_AFloorUnderTheCeiling_IsTheHighestSurface()
+    {
+        _tiles.Item(0x0519, TileFlagType.Surface, 0);
+        _map.AddStatic(4, 4, 0x0519, 10);
+
+        Assert.True(CreateService().TryGetSpawnZ(MapType.Felucca, 4, 4, 18, out var z));
+        Assert.Equal(10, z);
+    }
+
+    [Fact]
+    public void TryGetSpawnZ_AFloorAboveTheCeiling_IsSkipped()
+    {
+        _tiles.Item(0x0519, TileFlagType.Surface, 0);
+        _map.AddStatic(4, 4, 0x0519, 40);
+
+        Assert.True(CreateService().TryGetSpawnZ(MapType.Felucca, 4, 4, 18, out var z));
+        Assert.Equal(0, z);
+    }
+
+    [Fact]
+    public void TryGetSpawnZ_ATreeOnTheLand_Fails()
+    {
+        _tiles.Item(0x0CCA, TileFlagType.Impassable, 20);
+        _map.AddStatic(4, 4, 0x0CCA, 0);
+
+        Assert.False(CreateService().TryGetSpawnZ(MapType.Felucca, 4, 4, 18, out _));
+    }
+
+    [Fact]
+    public void TryGetSpawnZ_NoHeadroomOnTheHighestFloor_TakesTheOneUnderIt()
+    {
+        // The floor at 16 has 9 of headroom under the floor at 25; the land at 0 has the full 16.
+        _tiles.Item(0x0519, TileFlagType.Surface, 0);
+        _map.AddStatic(4, 4, 0x0519, 16).AddStatic(4, 4, 0x0519, 25);
+
+        Assert.True(CreateService().TryGetSpawnZ(MapType.Felucca, 4, 4, 18, out var z));
+        Assert.Equal(0, z);
+    }
+
+    [Fact]
+    public void TryGetSpawnZ_NoHeadroomAnywhere_Fails()
+    {
+        _tiles.Item(0x0519, TileFlagType.Surface, 0);
+        // Under the ceiling at 12: the land at 0 is capped by the floor at 8, the floor at 8 by the floor at 16.
+        _map.AddStatic(4, 4, 0x0519, 8).AddStatic(4, 4, 0x0519, 16);
+
+        Assert.False(CreateService().TryGetSpawnZ(MapType.Felucca, 4, 4, 12, out _));
+    }
+
+    [Fact]
+    public void TryGetSpawnZ_Water_Fails()
+    {
+        _tiles.Land(0x00A8, TileFlagType.Impassable | TileFlagType.Wet);
+        _tiles.Item(0x1797, TileFlagType.Surface | TileFlagType.Wet | TileFlagType.Impassable, 0);
+        _map.SetLandId(4, 4, 4, 4, 0x00A8).AddStatic(4, 4, 0x1797, 0);
+
+        Assert.False(CreateService().TryGetSpawnZ(MapType.Felucca, 4, 4, 18, out _));
+    }
+
+    [Fact]
+    public void TryGetSpawnZ_OutsideTheMapOrMapNotLoaded_Fails()
+    {
+        Assert.False(CreateService().TryGetSpawnZ(MapType.Felucca, 99, 4, 18, out _));
+        Assert.False(CreateService().TryGetSpawnZ(MapType.Trammel, 4, 4, 18, out _));
+    }
+
     private MovementService CreateService()
     {
         return new(_map, _tiles);
