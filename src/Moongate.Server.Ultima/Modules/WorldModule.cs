@@ -23,10 +23,9 @@ public sealed class WorldModule
     ///     Gets whether a player or an NPC stands on the tile <paramref name="x" />, <paramref name="y" /> of
     ///     <paramref name="map" />; <c>world.is_occupied(MapType.Trammel, x, y)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Whether a player or an NPC stands on the tile x, y of the map.")]
+    [ScriptFunction(helpText: "Whether a player or an NPC stands on the tile x, y of the map, at any height.")]
     public bool IsOccupied(MapType map, int x, int y)
     {
-        return _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0)
-                       .Any(mobile => mobile.Location.X == x && mobile.Location.Y == y);
+        return _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0).Count > 0;
     }
 }

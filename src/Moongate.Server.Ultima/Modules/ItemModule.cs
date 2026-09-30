@@ -37,6 +37,7 @@ public sealed class ItemModule
     private readonly ITooltipService _tooltips;
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
+    private readonly ISectorService _sectors;
 
     public ItemModule(
         IItemService items,
@@ -45,7 +46,8 @@ public sealed class ItemModule
         IWorldViewService view,
         ITooltipService tooltips,
         IMobileService mobiles,
-        ISpeechService speech
+        ISpeechService speech,
+        ISectorService sectors
     )
     {
         _items = items;
@@ -55,6 +57,7 @@ public sealed class ItemModule
         _tooltips = tooltips;
         _mobiles = mobiles;
         _speech = speech;
+        _sectors = sectors;
     }
 
     /// <summary>
@@ -259,15 +262,15 @@ public sealed class ItemModule
     ///     Moves a ground item on its map, such as a door swinging; <c>item.move_to(serial, x, y, z)</c>. The players
     ///     around the old spot lose it and those around the new one see it.
     /// </summary>
-    [ScriptFunction(helpText: "Moves a ground item to x, y, z on its map; false for an item not on the ground or an impossible spot.")]
+    [ScriptFunction(helpText: "Moves a ground item to x, y, z on its map; false for an item not on the ground, a spot outside the map or a z outside -128 to 127.")]
     public bool MoveTo(long serial, int x, int y, int z)
     {
-        if (x < 0 ||
-            y < 0 ||
-            z is < sbyte.MinValue or > sbyte.MaxValue ||
+        // Outside the map's grid the item would be taken off its sector and never put back: seen by nobody.
+        if (z is < sbyte.MinValue or > sbyte.MaxValue ||
             !TryGetItem(serial, out var item) ||
             item.Map is not { } map ||
-            !_items.IsLyingOnGround(item))
+            !_items.IsLyingOnGround(item) ||
+            !_sectors.IsInside(map, x, y))
         {
             return false;
         }

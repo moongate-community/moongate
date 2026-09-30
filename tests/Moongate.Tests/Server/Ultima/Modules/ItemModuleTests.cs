@@ -13,6 +13,7 @@ using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -24,7 +25,8 @@ public sealed class ItemModuleTests : IAsyncLifetime
 {
     private readonly RecordingWorldViewService _view = new();
     private readonly RecordingSpeechService _speech = new();
-    private readonly ItemService _items = TestItems.Create();
+    private readonly SectorService _sectors = TestSectors.Create();
+    private readonly ItemService _items;
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
     private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", Name = "a potion", ItemId = 0x0F0E, Amount = 3 };
     private readonly ItemEntity _ground = new() { Id = new Serial(0x40000003), TemplateId = "potion", ItemId = 0x0F0E, Amount = 2 };
@@ -32,6 +34,11 @@ public sealed class ItemModuleTests : IAsyncLifetime
 
     private BroadcastFixture _fixture = null!;
     private MobileEntity _owner = null!;
+
+    public ItemModuleTests()
+    {
+        _items = TestItems.Create(_sectors);
+    }
 
     public async Task InitializeAsync()
     {
@@ -136,7 +143,9 @@ public sealed class ItemModuleTests : IAsyncLifetime
      InlineData("return item.move_to(0x40000004, 1601, 1599, 5)"),
      InlineData("return item.move_to(0x40000003, -1, 1599, 5)"),
      InlineData("return item.move_to(0x40000003, 1601, 1599, 200)"),
-     InlineData("return item.move_to(12, 1601, 1599, 5)")]
+     InlineData("return item.move_to(12, 1601, 1599, 5)"),
+     InlineData("return item.move_to(0x40000003, 7168, 1599, 5)"),
+     InlineData("return item.move_to(0x40000003, 1601, 4096, 5)")]
     public void MoveTo_AnItemNotOnTheGroundOrAnImpossibleSpot_IsFalse(string chunk)
     {
         Assert.False(Run(chunk)[0].Read<bool>());
@@ -265,7 +274,7 @@ public sealed class ItemModuleTests : IAsyncLifetime
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
-        var module = new ItemModule(_items, _fixture.Sessions, _fixture.Sender, _view, TestTooltips.Create(_items, _fixture.Mobiles), _fixture.Mobiles, _speech);
+        var module = new ItemModule(_items, _fixture.Sessions, _fixture.Sender, _view, TestTooltips.Create(_items, _fixture.Mobiles), _fixture.Mobiles, _speech, _sectors);
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
