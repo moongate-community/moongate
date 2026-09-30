@@ -36,6 +36,12 @@ public sealed class WorldConfig
     public int JailLight { get; set; } = 9;
 
     /// <summary>
+    ///     Gets or sets the light level from which the town lamp posts are lit, from 0 to 31; 6, half of a default night,
+    ///     lights them from about 23:00 to 05:00.
+    /// </summary>
+    public int LampPostLight { get; set; } = 6;
+
+    /// <summary>
     ///     Validates the section before server services begin startup: the range must be one the client supports, from
     ///     5 to 24, as ModernUO and POL allow; a game minute from 1 to 3600 seconds; the light levels from 0 to 31.
     /// </summary>
@@ -71,6 +77,11 @@ public sealed class WorldConfig
         if (JailLight is < 0 or > 31)
         {
             throw new InvalidOperationException($"ultima.world.jail_light must be from 0 to 31, found {JailLight}.");
+        }
+
+        if (LampPostLight is < 0 or > 31)
+        {
+            throw new InvalidOperationException($"ultima.world.lamp_post_light must be from 0 to 31, found {LampPostLight}.");
         }
     }
 }

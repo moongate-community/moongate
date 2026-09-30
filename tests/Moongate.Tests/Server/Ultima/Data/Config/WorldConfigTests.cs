@@ -63,4 +63,18 @@ public sealed class WorldConfigTests
 
         Assert.Contains("world." + key, exception.Message);
     }
+
+    [Fact]
+    public void LampPostLight_Default_Is6()
+    {
+        Assert.Equal(6, new WorldConfig().LampPostLight);
+    }
+
+    [Theory, InlineData(-1), InlineData(32)]
+    public void Validate_ALampPostLightOutOf0To31_Throws(int level)
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => new WorldConfig { LampPostLight = level }.Validate());
+
+        Assert.Contains("world.lamp_post_light", exception.Message);
+    }
 }

@@ -311,7 +311,10 @@ sconces and torches: the `decoration_light` template and the light templates of
 pairs), a light shape if it has none, and sound `0x47`; double clicking a lit one gives the
 unlit graphic and sound `0x3BE`, keeping the shape for the next time. A light without an unlit
 graphic, such as a brazier, stays as it is. The lights `.decorate` places have the prop
-`protected`: only game masters and administrators light or douse them.
+`protected`: only game masters and administrators light or douse them. The town lamp posts
+light and douse themselves: every 30 seconds the server calls `on_darkness(serial, dark)` on a
+lamp post whose spot turned dark or light (`ultima.world.lamp_post_light`), and `light.lua`
+switches its graphic silently.
 
 LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
 `{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,

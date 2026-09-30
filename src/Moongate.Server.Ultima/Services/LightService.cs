@@ -20,12 +20,21 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class LightService : ILightService
 {
     public const string TimerName = "light_cycle";
+    public const string DarknessFunction = "on_darkness";
+    private const string LightTemplate = "decoration_light";
+    private const string TypeProp = "decoration_type";
+
+    // Every sixth check, 30 seconds: the lamp posts follow the light slowly, as it changes.
+    private const int ChecksPerLampPostCheck = 6;
     private const int NoOverride = -1;
 
     private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(5);
 
     private readonly ILogger _logger = Log.ForContext<LightService>();
+    private static readonly HashSet<string> LampPostKinds = new(StringComparer.Ordinal) { "LampPost1", "LampPost2", "LampPost3" };
+
     private readonly ConcurrentDictionary<Serial, int> _sent = new();
+    private readonly Dictionary<Serial, bool> _lampPosts = [];
 
     // The players' regions, from the region change callbacks: asking IRegionService would loop through its listeners.
     private readonly ConcurrentDictionary<Serial, RegionContent?> _regions = new();
@@ -37,9 +46,12 @@ public sealed class LightService : ILightService
     private readonly IGameLoopService _loop;
     private readonly WorldConfig _world;
     private readonly Lazy<Dictionary<(MapType Map, string Name), RegionContent>> _regionsByName;
+    private readonly IItemService? _items;
+    private readonly IItemScriptService? _itemScripts;
 
     private string? _timerId;
     private volatile int _override = NoOverride;
+    private int _checks;
 
     public int? Override => _override is var level && level != NoOverride ? level : null;
 
@@ -51,9 +63,13 @@ public sealed class LightService : ILightService
         ITimerService timers,
         IGameLoopService loop,
         WorldConfig world,
-        IDataLoaderService data
+        IDataLoaderService data,
+        IItemService? items = null,
+        IItemScriptService? itemScripts = null
     )
     {
+        _items = items;
+        _itemScripts = itemScripts;
         _regionsByName = new(
             () => data.GetEntities<RegionContent>()
                       .Where(region => region.Name is not null)
@@ -103,7 +119,12 @@ public sealed class LightService : ILightService
                 return _world.JailLight;
         }
 
-        var time = _clock.GetTime(mobile.Map, mobile.Location.X);
+        return ClockLevel(mobile.Map, mobile.Location.X);
+    }
+
+    private int ClockLevel(MapType map, int x)
+    {
+        var time = _clock.GetTime(map, x);
         var day = _world.DayLight;
         var night = _world.NightLight;
 
@@ -161,6 +182,7 @@ public sealed class LightService : ILightService
             {
                 _override = level ?? NoOverride;
                 Send();
+                CheckLampPosts();
             }
         );
         await _loop.PostAsync(work, cancellationToken);
@@ -190,10 +212,47 @@ public sealed class LightService : ILightService
         try
         {
             Send();
+
+            if (++_checks % ChecksPerLampPostCheck == 0)
+            {
+                CheckLampPosts();
+            }
         }
         catch (Exception exception)
         {
             _logger.Error(exception, "The light cycle failed");
+        }
+    }
+
+    // UOX3's dynamic lamp posts: each town lamp post's script is told when its spot turns dark or light (the time of day or
+    // the override; the regions do not count), and only then.
+    private void CheckLampPosts()
+    {
+        if (_items is null || _itemScripts is null)
+        {
+            return;
+        }
+
+        foreach (var item in _items.Items)
+        {
+            if (item.TemplateId != LightTemplate ||
+                item.Map is not { } map ||
+                item.GroundLocation is not { } spot ||
+                item.Props?.GetValueOrDefault(TypeProp) is not string kind ||
+                !LampPostKinds.Contains(kind))
+            {
+                continue;
+            }
+
+            var dark = (Override ?? ClockLevel(map, spot.X)) >= _world.LampPostLight;
+
+            if (_lampPosts.TryGetValue(item.Id, out var wasDark) && wasDark == dark)
+            {
+                continue;
+            }
+
+            _lampPosts[item.Id] = dark;
+            _itemScripts.Queue(item, DarknessFunction, dark);
         }
     }
 

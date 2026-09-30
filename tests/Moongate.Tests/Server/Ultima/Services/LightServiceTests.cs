@@ -1,3 +1,5 @@
+using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Regions;
@@ -22,6 +24,9 @@ public sealed class LightServiceTests : IAsyncLifetime
     private readonly StubClockService _clock = new();
     private readonly RecordingTimerService _timers = new();
     private readonly WorldConfig _world = new();
+    private readonly ItemService _items = TestItems.Create();
+    private readonly RecordingItemScriptService _itemScripts = new() { Scripted = { "decoration_light" } };
+    private readonly ItemEntity _lampPost = Light(0x40000001, 0x0B21, "LampPost1");
     private BroadcastFixture _fixture = null!;
     private LightService _light = null!;
 
@@ -36,8 +41,11 @@ public sealed class LightServiceTests : IAsyncLifetime
             _timers,
             _fixture.Network.Loop,
             _world,
-            new StubDataLoaderService().With(Despise, Jail, MedusasLair)
+            new StubDataLoaderService().With(Despise, Jail, MedusasLair),
+            _items,
+            _itemScripts
         );
+        _items.Add([_lampPost, Light(0x40000002, 0x0A28, "Candle")]);
         await _light.StartAsync();
     }
 
@@ -175,6 +183,42 @@ public sealed class LightServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void LampPosts_AreToldWhenItGetsDarkOrLight_EveryThirtySeconds_OnlyOnAChange()
+    {
+        var timer = Assert.Single(_timers.Timers).Id;
+
+        FireChecks(timer, 5);
+        Assert.Empty(_itemScripts.Queued);
+
+        FireChecks(timer, 1);
+        Assert.Equal(["0x40000001 on_darkness False"], _itemScripts.Queued);
+
+        _clock.Time = new GameTime(1, 0);
+        FireChecks(timer, 6);
+        FireChecks(timer, 6);
+
+        Assert.Equal(["0x40000001 on_darkness False", "0x40000001 on_darkness True"], _itemScripts.Queued);
+    }
+
+    [Fact]
+    public void LampPosts_TurnOnAtTheConfiguredLevel()
+    {
+        _world.LampPostLight = 10;
+        _clock.Time = new GameTime(23, 0);
+        FireChecks(Assert.Single(_timers.Timers).Id, 6);
+
+        Assert.Equal(["0x40000001 on_darkness False"], _itemScripts.Queued);
+    }
+
+    [Fact]
+    public async Task LampPosts_FollowTheOverrideAtOnce()
+    {
+        await _light.SetOverrideAsync(26);
+
+        Assert.Equal(["0x40000001 on_darkness True"], _itemScripts.Queued);
+    }
+
+    [Fact]
     public async Task StopAsync_RemovesTheTimer()
     {
         await _light.StopAsync();
@@ -201,6 +245,26 @@ public sealed class LightServiceTests : IAsyncLifetime
                        .Where(pair => pair.packet is GlobalLightLevelPacket)
                        .Select(pair => (_fixture.Sender.SentSessionIds[pair.index], ((GlobalLightLevelPacket)pair.packet).Level))
                        .ToList();
+    }
+
+    private void FireChecks(string timer, int count)
+    {
+        for (var check = 0; check < count; check++)
+        {
+            _timers.Fire(timer);
+        }
+    }
+
+    private static ItemEntity Light(uint serial, int graphic, string type)
+    {
+        var light = new ItemEntity
+        {
+            Id = new Serial(serial), TemplateId = "decoration_light", ItemId = graphic, Amount = 1,
+            Props = new() { ["decoration_type"] = type }
+        };
+        light.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+
+        return light;
     }
 
     private static MobileEntity Mobile()

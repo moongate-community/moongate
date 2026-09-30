@@ -406,6 +406,25 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal((0x184A, (object?)"circle150"), (stand.ItemId, stand.Props!["light"]));
     }
 
+    [Fact]
+    public async Task TheShippedLightScript_ALampPost_LightsInTheDark_AndDousesInTheLight_Silently()
+    {
+        var lamp = PlaceLight(0x0B21, true);
+        var scripts = await StartLightScriptAsync();
+
+        scripts.Run(lamp, "on_darkness", true);
+        Assert.Equal((0x0B20, (object?)"circle300"), (lamp.ItemId, lamp.Props!["light"]));
+
+        scripts.Run(lamp, "on_darkness", true);
+        Assert.Equal(0x0B20, lamp.ItemId);
+
+        scripts.Run(lamp, "on_darkness", false);
+
+        Assert.Empty(_errors);
+        Assert.Equal(0x0B21, lamp.ItemId);
+        Assert.Empty(_speech.PlacedSounds);
+    }
+
     private ItemEntity PlaceLight(int graphic, bool? isProtected)
     {
         var light = new ItemEntity { Id = new Serial(0x40000020), TemplateId = "decoration_light", ItemId = graphic, Amount = 1 };

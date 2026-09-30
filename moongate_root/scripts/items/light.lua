@@ -18,6 +18,9 @@
 -- Functions:
 --   on_use(serial, user)             a player double clicks the light;
 --                                    returns true
+--   on_darkness(serial, dark)        a town lamp post's spot turned dark (true)
+--                                    or light (false): the lamp post lights or
+--                                    douses itself, silently
 -- ==============================================================================
 
 light = {}
@@ -98,4 +101,18 @@ function light.on_use(serial, user)
     end
 
     return true
+end
+
+-- Called for the town lamp posts when their spot turns dark or light.
+function light.on_darkness(serial, dark)
+    local graphic = item.item_id(serial)
+    local unlit = LIGHTS[graphic]
+
+    if dark and unlit then
+        if item.set_item_id(serial, unlit[1]) and not item.get_prop(serial, "light") then
+            item.set_light(serial, unlit[2])
+        end
+    elseif not dark and DOUSED[graphic] then
+        item.set_item_id(serial, DOUSED[graphic])
+    end
 end
