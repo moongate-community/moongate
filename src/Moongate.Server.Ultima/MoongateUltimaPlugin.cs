@@ -285,6 +285,13 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 AccountType.GameMaster,
                 CommandMessages.KarmaDescription
             );
+            container.RegisterCommand<DecorateCommand>(
+                "decorate",
+                "Places the world decoration: doors, signs, lights and furniture.",
+                CommandSourceType.Console | CommandSourceType.InGame,
+                AccountType.Administrator,
+                CommandMessages.DecorateDescription
+            );
             container.RegisterCommand<WhereCommand>(
                 "where",
                 "Shows what you target: its serial, or the map and location of a spot.",

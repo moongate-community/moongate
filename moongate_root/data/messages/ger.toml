@@ -5487,7 +5487,7 @@
 30006 = "Gewicht: 1 Stein"
 30007 = "Gewicht: {0} Steine"
 
-# Moongate: command texts (30008-30038, 30050-30052) and command descriptions (30039-30049, 30053-30054).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057) and command descriptions (30039-30049, 30053-30054, 30058).
 30008 = "Ziel abgebrochen."
 30009 = "Ein Befehl wird bereits ausgeführt."
 30010 = "Unbekannter Befehl: {0}"
@@ -5535,3 +5535,7 @@
 30052 = "Das ist weder ein Charakter noch ein NPC."
 30053 = "Setzt den Ruhm (0 bis 32000) des Charakters oder NPCs, den du anvisierst."
 30054 = "Setzt das Karma (-32000 bis 32000) des Charakters oder NPCs, den du anvisierst."
+30055 = "Dekoriere {0}/{1}: {2} platziert, {3} bereits vorhanden, {4} übersprungen{5}."
+30056 = "Dekoration fertig: {0} platziert, {1} bereits vorhanden, {2} übersprungen in {3} Dateien."
+30057 = "Die Dekoration ist fehlgeschlagen. Prüfe die Serverprotokolle."
+30058 = "Platziert die Dekoration der Welt: Türen, Schilder, Lichter und Möbel."

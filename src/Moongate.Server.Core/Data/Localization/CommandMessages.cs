@@ -40,6 +40,9 @@ public static class CommandMessages
     public const int FameSet = 30050;
     public const int KarmaSet = 30051;
     public const int NotAMobile = 30052;
+    public const int DecoratingFile = 30055;
+    public const int DecorationDone = 30056;
+    public const int DecorationFailed = 30057;
 
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
@@ -57,4 +60,5 @@ public static class CommandMessages
     public const int ScriptDescription = 30049;
     public const int FameDescription = 30053;
     public const int KarmaDescription = 30054;
+    public const int DecorateDescription = 30058;
 }
