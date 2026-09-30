@@ -10,15 +10,17 @@ namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
 ///     Asks for a target and prints what was picked: the serial of an item or a mobile, or the map and location of a
-///     spot on the ground or on a static.
+///     spot on the ground or on a static, with the name of its region.
 /// </summary>
 public sealed class WhereCommand : ICommandExecutor
 {
     private readonly ITargetService _targets;
     private readonly ILocalizationService? _localization;
+    private readonly IRegionService? _regions;
 
-    public WhereCommand(ITargetService targets, ILocalizationService? localization = null)
+    public WhereCommand(ITargetService targets, ILocalizationService? localization = null, IRegionService? regions = null)
     {
+        _regions = regions;
         _localization = localization;
         _targets = targets;
     }
@@ -47,7 +49,16 @@ public sealed class WhereCommand : ICommandExecutor
                 break;
             case TargetResultType.Location:
                 var spot = result.Location;
-                context.Print("{0} ({1}, {2}, {3})", result.Map, spot.X, spot.Y, spot.Z);
+                // The region name is data, not a translated text.
+                var region = _regions?.Find(result.Map, spot)?.Name;
+                context.Print(
+                    region is null ? "{0} ({1}, {2}, {3})" : "{0} ({1}, {2}, {3}) in {4}",
+                    result.Map,
+                    spot.X,
+                    spot.Y,
+                    spot.Z,
+                    region ?? string.Empty
+                );
 
                 break;
             default:
