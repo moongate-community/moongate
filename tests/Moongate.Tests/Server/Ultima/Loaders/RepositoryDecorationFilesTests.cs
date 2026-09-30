@@ -6,7 +6,8 @@ using Tomlyn.Model;
 namespace Moongate.Tests.Server.Ultima.Loaders;
 
 /// <summary>
-///     Reads the decoration files converted from ModernUO's Data/Decoration into <c>moongate_root/templates/decorations</c>,
+///     Reads the decoration files converted from ModernUO's Data/Decoration (and ServUO's New Haven) into
+///     <c>moongate_root/templates/decorations</c>,
 ///     so a broken file fails here instead of when the world is decorated.
 /// </summary>
 public sealed class RepositoryDecorationFilesTests
@@ -23,8 +24,8 @@ public sealed class RepositoryDecorationFilesTests
         var root = DecorationsRoot();
 
         Assert.Equal(Folders.Order(), Directory.GetDirectories(root).Select(Path.GetFileName).Order());
-        Assert.Equal(100, Directory.GetFiles(root, "*.toml", SearchOption.AllDirectories).Length);
-        Assert.Equal(40522, Blocks().Sum(block => ((TomlArray)block["locations"]).Count));
+        Assert.Equal(103, Directory.GetFiles(root, "*.toml", SearchOption.AllDirectories).Length);
+        Assert.Equal(40655, Blocks().Sum(block => ((TomlArray)block["locations"]).Count));
     }
 
     [Fact]
@@ -55,7 +56,7 @@ public sealed class RepositoryDecorationFilesTests
                       .Select(block => (string)((TomlTable)block["props"])["facing"])
                       .ToList();
 
-        Assert.Equal(332, facings.Count);
+        Assert.Equal(354, facings.Count);
         Assert.All(facings, facing => Assert.True(EnumNameUtils.TryParse<DoorFacingType>(facing, out _), facing));
         Assert.True(EnumNameUtils.TryParse<DoorFacingType>("west_cw", out var westCw) && westCw == DoorFacingType.WestCW);
     }

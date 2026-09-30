@@ -411,8 +411,9 @@ To produce these files from an existing UOX3 shard, see
 ## Decorations
 
 `templates/decorations/` holds the world decoration the client's map files do not: doors, signs,
-lights, furniture, teleporters and the like, about 40,500 placements in 100 files. It was
-converted once from ModernUO's `Data/Decoration`, one TOML file per source file, in one folder
+lights, furniture, teleporters and the like, about 40,600 placements in 103 files. It was
+converted once from ModernUO's `Data/Decoration`, plus ServUO's New Haven (`trammel/newhaven.toml`,
+`havenisland.toml`, `havenmine.toml`, which ModernUO lacks), one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
 `tokuno/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
 `_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename it without the `_`
