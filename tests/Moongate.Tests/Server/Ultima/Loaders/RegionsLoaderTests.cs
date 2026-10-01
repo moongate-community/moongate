@@ -73,7 +73,7 @@ public sealed class RegionsLoaderTests
         var tavern = result.Entities.First(region => region.Name == "The Tavern");
         Assert.Equal("Britain", tavern.Parent);
         Assert.Null(tavern.GoLocation);
-        Assert.Null(tavern.Music);
+        Assert.Equal(MusicType.Britain1, tavern.Music);
         Assert.Equal(50, tavern.Priority);
         Assert.True(tavern.InstantLogout);
     }
@@ -140,6 +140,21 @@ public sealed class RegionsLoaderTests
         root.CreateFile("data/regions/trammel.toml", Town.Replace("type = \"town\"", "type = \"town\"\nparent = \"The Tavern\"") + Tavern);
 
         await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_RegionWithoutMusic_TakesItsNearestParentsMusic()
+    {
+        using var root = new TemporaryDirectory();
+        var cellar = Tavern.Replace("The Tavern", "The Cellar").Replace("\"Britain\"", "\"The Tavern\"");
+        var stage = Tavern.Replace("The Tavern", "The Stage").Replace("instant_logout = true", "music = \"Tavern04\"");
+        root.CreateFile("data/regions/trammel.toml", Town + Tavern + cellar + stage);
+
+        var regions = (await CreateLoader(root).LoadDataAsync()).Entities;
+
+        Assert.Equal(MusicType.Britain1, regions.Single(region => region.Name == "The Tavern").Music);
+        Assert.Equal(MusicType.Britain1, regions.Single(region => region.Name == "The Cellar").Music);
+        Assert.Equal(MusicType.Tavern04, regions.Single(region => region.Name == "The Stage").Music);
     }
 
     [Fact]

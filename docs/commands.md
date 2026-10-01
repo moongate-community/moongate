@@ -40,6 +40,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`weather`](commands/weather.md) | `weather [none\|rain\|snow\|storm]` | No | Yes | GameMaster | Game |
 | [`spawns`](commands/spawns.md) | `spawns` | No | Yes | GameMaster | Game |
 | [`gump`](commands/gump.md) | `gump <id> [name=value ...]` | No | Yes | GameMaster | Game |
+| [`music`](commands/music.md) | `music [track]` | No | Yes | GameMaster | Game |
 | [`lock`](commands/lock.md) | `lock`, then target a door | No | Yes | GameMaster | Game |
 | [`unlock`](commands/unlock.md) | `unlock`, then target a door | No | Yes | GameMaster | Game |
 | [`key`](commands/key.md) | `key`, then target a door | No | Yes | GameMaster | Game |
@@ -48,7 +49,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 
 - **Everyone:** `help`, `echo`.
 - **Game masters:** `character`, `spawn`, `remove`, `where`, `fame`, `karma`, `globallight`,
-  `weather`, `spawns`, `gump`, `lock`, `unlock`, `key`.
+  `weather`, `music`, `spawns`, `gump`, `lock`, `unlock`, `key`.
 - **Administrators:** `account`, `save`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, plus everything a
   game master uses.

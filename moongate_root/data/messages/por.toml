@@ -5473,7 +5473,7 @@
 30006 = "Peso: 1 pedra"
 30007 = "Peso: {0} pedras"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30088, 30092) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30093).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093).
 30008 = "Alvo cancelado."
 30009 = "Já há um comando em execução."
 30010 = "Comando desconhecido: {0}"
@@ -5555,5 +5555,8 @@
 30086 = "Abre em você um gump de templates/gumps para testá-lo; os pares nome=valor preenchem seus marcadores."
 30087 = "Não foi possível abrir o gump {0}."
 30088 = "{0} - mundo {1}/{2} ({3}%)"
+30089 = "Música aqui: {0}."
+30090 = "Tocando {0}."
+30091 = "Mostra a música onde você está ou, com o nome de uma faixa, toca-a para você até a próxima mudança de região."
 30092 = "Preenchendo {0} regiões de spawn: {1} NPCs a criar. As mensagens de spawn mostram o progresso."
 30093 = "Preenche cada região de spawn até o máximo na próxima verificação."

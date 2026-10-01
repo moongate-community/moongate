@@ -5479,7 +5479,7 @@
 30006 = "Váha: 1 kámen"
 30007 = "Váha: {0} kam."
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30088, 30092) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30093).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093).
 30008 = "Cíl zrušen."
 30009 = "Příkaz již běží."
 30010 = "Neznámý příkaz: {0}"
@@ -5561,5 +5561,8 @@
 30086 = "Otevře na tobě gump z templates/gumps k vyzkoušení; dvojice název=hodnota vyplní zástupné symboly."
 30087 = "Gump {0} se nepodařilo otevřít."
 30088 = "{0} - svět {1}/{2} ({3}%)"
+30089 = "Hudba zde: {0}."
+30090 = "Hraje {0}."
+30091 = "Ukáže hudbu tam, kde stojíš, nebo se jménem skladby ti ji pustí do další změny oblasti."
 30092 = "Plním {0} oblastí spawnu: {1} NPC k vytvoření. Zprávy o spawnu ukazují postup."
 30093 = "Naplní každou oblast spawnu na maximum při příští kontrole."

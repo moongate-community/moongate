@@ -36,6 +36,7 @@ export const contentEntries = [
   { source: 'docs/commands/initial_spawn.md', slug: 'server/commands/initial-spawn', title: 'initial_spawn', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/spawns.md', slug: 'server/commands/spawns', title: 'spawns', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/gump.md', slug: 'server/commands/gump', title: 'gump', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/music.md', slug: 'server/commands/music', title: 'music', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/lock.md', slug: 'server/commands/lock', title: 'lock', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/unlock.md', slug: 'server/commands/unlock', title: 'unlock', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/key.md', slug: 'server/commands/key', title: 'key', group: 'Run a shard', subgroup: 'Commands' },

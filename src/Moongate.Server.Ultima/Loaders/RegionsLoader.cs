@@ -80,6 +80,7 @@ public class RegionsLoader : IDataLoader<RegionContent>
             }
 
             ValidateNamesAndParents(file, mapRegions);
+            InheritMusic(mapRegions);
             regions.AddRange(mapRegions);
         }
 
@@ -109,6 +110,23 @@ public class RegionsLoader : IDataLoader<RegionContent>
                 throw new InvalidDataException(
                     $"{file}: region '{region.Name}' has an area whose end is not past its start."
                 );
+            }
+        }
+    }
+
+    // A region without music plays its nearest parent's, as in ModernUO; the parents are already validated.
+    private static void InheritMusic(List<RegionContent> regions)
+    {
+        var byName = regions.Where(region => region.Name is not null).ToDictionary(region => region.Name!, StringComparer.Ordinal);
+
+        foreach (var region in regions.Where(region => region.Music is null))
+        {
+            var parentName = region.Parent;
+
+            while (region.Music is null && parentName is not null && byName.TryGetValue(parentName, out var parent))
+            {
+                region.Music = parent.Music;
+                parentName = parent.Parent;
             }
         }
     }
