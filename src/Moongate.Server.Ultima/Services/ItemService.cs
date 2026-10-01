@@ -126,15 +126,20 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public Serial? GetOwner(ItemEntity item)
     {
+        return GetWornRoot(item)?.MobileId;
+    }
+
+    public ItemEntity? GetWornRoot(ItemEntity item)
+    {
         var visited = new HashSet<Serial>();
         var current = item;
 
-        // Climbs the containers; a cycle or a container that is not live has no owner.
+        // Climbs the containers; a cycle or a container that is not live has no root.
         while (visited.Add(current.Id))
         {
-            if (current.MobileId is { } wearer)
+            if (current.MobileId is not null)
             {
-                return wearer;
+                return current;
             }
 
             if (current.ContainerId is not { } container || !_items.TryGetValue(container, out var parent))

@@ -237,6 +237,16 @@ public sealed class MobileServiceTests
     }
 
     [Fact]
+    public void GetEquipment_LeavesOutTheBankBox_WhichTheClientNeverDraws()
+    {
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
+
+        var equipment = mobiles.GetEquipment(Aria(hair: 0), [Worn(0x40000001, LayerType.Backpack), Worn(0x40000002, LayerType.Bank)]);
+
+        Assert.Equal([LayerType.Backpack], equipment.Select(entry => entry.Layer));
+    }
+
+    [Fact]
     public void GetEquipment_NoHairOrBeardStyle_AddsNoEntryForThem()
     {
         var equipment = new MobileService(new StubMovementService(), TestSectors.Create()).GetEquipment(Aria(hair: 0), []);

@@ -76,6 +76,14 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void GetWornRoot_IsTheWornItemAtTheTop_AndNullOnTheGround()
+    {
+        var service = Service();
+
+        Assert.Equal((_backpack, _backpack, null), (service.GetWornRoot(_coin), service.GetWornRoot(_backpack), service.GetWornRoot(_ground)));
+    }
+
+    [Fact]
     public void GetOwner_OfAGroundItem_IsNobody()
     {
         Assert.Null(Service().GetOwner(_ground));

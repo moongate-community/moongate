@@ -51,7 +51,15 @@ public sealed class WorldModuleTests : IAsyncLifetime
             Props = new() { ["key.value"] = 1234L }
         };
         key.PutInContainer(pouch.Id, new Point2D(44, 65));
-        _items.Add([backpack, pouch, key]);
+        var bank = new ItemEntity { Id = new Serial(0x40000004), TemplateId = "bank_box", ItemId = 0x0E7C, Amount = 1 };
+        bank.Equip(new Serial(2), LayerType.Bank);
+        var banked = new ItemEntity
+        {
+            Id = new Serial(0x40000005), TemplateId = "0x1010_iron_key", ItemId = 0x1010, Amount = 1,
+            Props = new() { ["key.value"] = 777L }
+        };
+        banked.PutInContainer(bank.Id, new Point2D(44, 65));
+        _items.Add([backpack, pouch, key, bank, banked]);
         var gm = await _fixture.AddAsync(3);
         await _fixture.Network.ExecuteOnLoopAsync(() => gm.Set(SessionKeys.AccountType, AccountType.GameMaster));
     }
@@ -74,8 +82,9 @@ public sealed class WorldModuleTests : IAsyncLifetime
      InlineData("return world.carries(2, 'key.value', 1234)", true),
      InlineData("return world.carries(2, 'key.value', 999)", false),
      InlineData("return world.carries(3, 'key.value', 1234)", false),
-     InlineData("return world.carries(2, 'door.open', true)", false)]
-    public void Carries_LooksThroughEverythingThePlayerWearsAndCarries(string chunk, bool expected)
+     InlineData("return world.carries(2, 'door.open', true)", false),
+     InlineData("return world.carries(2, 'key.value', 777)", false)]
+    public void Carries_LooksThroughEverythingThePlayerWearsAndCarries_ButTheBank(string chunk, bool expected)
     {
         Assert.Equal(expected, Run(chunk)[0].Read<bool>());
     }

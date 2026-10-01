@@ -44,8 +44,13 @@ public sealed class WorldModule
             return false;
         }
 
+        // What lies in the bank is not carried.
         return _items.GetOwnedBy(new Serial((uint)mobile))
-                     .Any(item => item.Props?.GetValueOrDefault(key) is { } prop && Equals(prop, wanted));
+                     .Any(
+                         item => item.Props?.GetValueOrDefault(key) is { } prop &&
+                                 Equals(prop, wanted) &&
+                                 _items.GetWornRoot(item)?.Layer != LayerType.Bank
+                     );
     }
 
     /// <summary>

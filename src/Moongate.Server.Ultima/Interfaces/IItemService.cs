@@ -51,6 +51,12 @@ public interface IItemService : IPersistenceDeletionSource
     Serial? GetOwner(ItemEntity item);
 
     /// <summary>
+    ///     Gets the worn item the item is, or is in at any depth, such as the backpack or the bank box; null for an item
+    ///     on the ground or inside a container that is not live.
+    /// </summary>
+    ItemEntity? GetWornRoot(ItemEntity item);
+
+    /// <summary>
     ///     Gets the live items the mobile wears and everything inside them, at any depth.
     /// </summary>
     IReadOnlyList<ItemEntity> GetOwnedBy(Serial mobile);
