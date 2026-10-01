@@ -1,0 +1,550 @@
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_0"
+map = "ter_mur"
+name = "TerMur guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 14
+only_outside = false
+[[spawn.areas]]
+x1 = 1127
+y1 = 1202
+x2 = 1127
+y2 = 1202
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_1"
+map = "ter_mur"
+name = "TerMur guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 14
+only_outside = false
+[[spawn.areas]]
+x1 = 1130
+y1 = 1202
+x2 = 1130
+y2 = 1202
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_4"
+map = "ter_mur"
+name = "TerMur slime"
+mobile_ids = ["slime"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -7
+only_outside = false
+[[spawn.areas]]
+x1 = 1103
+y1 = 1162
+x2 = 1117
+y2 = 1176
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_8"
+map = "ter_mur"
+name = "TerMur kraken"
+mobile_ids = ["kraken"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -49
+only_outside = false
+[[spawn.areas]]
+x1 = 1054
+y1 = 1096
+x2 = 1074
+y2 = 1116
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_10"
+map = "ter_mur"
+name = "TerMur waterele"
+mobile_ids = ["waterele"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 1
+call = 1
+exclude = []
+z = -24
+only_outside = false
+[[spawn.areas]]
+x1 = 1180
+y1 = 1179
+x2 = 1194
+y2 = 1193
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_20_shade"
+map = "ter_mur"
+name = "TerMur shade"
+mobile_ids = ["shade"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1001
+y1 = 1104
+x2 = 1029
+y2 = 1132
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_20_spectre"
+map = "ter_mur"
+name = "TerMur spectre"
+mobile_ids = ["spectre"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1001
+y1 = 1104
+x2 = 1029
+y2 = 1132
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_20_wraith"
+map = "ter_mur"
+name = "TerMur wraith"
+mobile_ids = ["wraith"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1001
+y1 = 1104
+x2 = 1029
+y2 = 1132
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_20_skeletalmage"
+map = "ter_mur"
+name = "TerMur skeletalmage"
+mobile_ids = ["skeletalmage"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1001
+y1 = 1104
+x2 = 1029
+y2 = 1132
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_20_bonemage"
+map = "ter_mur"
+name = "TerMur bonemage"
+mobile_ids = ["bonemage"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1001
+y1 = 1104
+x2 = 1029
+y2 = 1132
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_20_skeleton"
+map = "ter_mur"
+name = "TerMur skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1001
+y1 = 1104
+x2 = 1029
+y2 = 1132
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_20_skeletalknight"
+map = "ter_mur"
+name = "TerMur skeletalknight"
+mobile_ids = ["skeletalknight"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1001
+y1 = 1104
+x2 = 1029
+y2 = 1132
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_20_boneknight"
+map = "ter_mur"
+name = "TerMur boneknight"
+mobile_ids = ["boneknight"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1001
+y1 = 1104
+x2 = 1029
+y2 = 1132
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_21_wraith"
+map = "ter_mur"
+name = "TerMur wraith"
+mobile_ids = ["wraith"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1010
+y1 = 1075
+x2 = 1034
+y2 = 1099
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_21_shade"
+map = "ter_mur"
+name = "TerMur shade"
+mobile_ids = ["shade"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1010
+y1 = 1075
+x2 = 1034
+y2 = 1099
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_21_spectre"
+map = "ter_mur"
+name = "TerMur spectre"
+mobile_ids = ["spectre"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1010
+y1 = 1075
+x2 = 1034
+y2 = 1099
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_21_bonemage"
+map = "ter_mur"
+name = "TerMur bonemage"
+mobile_ids = ["bonemage"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1010
+y1 = 1075
+x2 = 1034
+y2 = 1099
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_21_skeletalmage"
+map = "ter_mur"
+name = "TerMur skeletalmage"
+mobile_ids = ["skeletalmage"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1010
+y1 = 1075
+x2 = 1034
+y2 = 1099
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_21_skeleton"
+map = "ter_mur"
+name = "TerMur skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1010
+y1 = 1075
+x2 = 1034
+y2 = 1099
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_21_skeletalknight"
+map = "ter_mur"
+name = "TerMur skeletalknight"
+mobile_ids = ["skeletalknight"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1010
+y1 = 1075
+x2 = 1034
+y2 = 1099
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_21_boneknight"
+map = "ter_mur"
+name = "TerMur boneknight"
+mobile_ids = ["boneknight"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1010
+y1 = 1075
+x2 = 1034
+y2 = 1099
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_32_lich"
+map = "ter_mur"
+name = "TerMur lich"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -36
+only_outside = false
+[[spawn.areas]]
+x1 = 1207
+y1 = 1064
+x2 = 1227
+y2 = 1084
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_32_spectre"
+map = "ter_mur"
+name = "TerMur spectre"
+mobile_ids = ["spectre"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -36
+only_outside = false
+[[spawn.areas]]
+x1 = 1207
+y1 = 1064
+x2 = 1227
+y2 = 1084
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_32_shade"
+map = "ter_mur"
+name = "TerMur shade"
+mobile_ids = ["shade"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -36
+only_outside = false
+[[spawn.areas]]
+x1 = 1207
+y1 = 1064
+x2 = 1227
+y2 = 1084
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_32_wraith"
+map = "ter_mur"
+name = "TerMur wraith"
+mobile_ids = ["wraith"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -36
+only_outside = false
+[[spawn.areas]]
+x1 = 1207
+y1 = 1064
+x2 = 1227
+y2 = 1084
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_32_skeleton"
+map = "ter_mur"
+name = "TerMur skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -36
+only_outside = false
+[[spawn.areas]]
+x1 = 1207
+y1 = 1064
+x2 = 1227
+y2 = 1084
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_32_rottingcorpse"
+map = "ter_mur"
+name = "TerMur rottingcorpse"
+mobile_ids = ["rottingcorpse"]
+npc_list_ids = []
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -36
+only_outside = false
+[[spawn.areas]]
+x1 = 1207
+y1 = 1064
+x2 = 1227
+y2 = 1084
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_32_mummy"
+map = "ter_mur"
+name = "TerMur mummy"
+mobile_ids = ["mummy"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -36
+only_outside = false
+[[spawn.areas]]
+x1 = 1207
+y1 = 1064
+x2 = 1227
+y2 = 1084
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_underworld_35_bloodele"
+map = "ter_mur"
+name = "TerMur bloodele"
+mobile_ids = ["bloodele"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 1109
+y1 = 993
+x2 = 1139
+y2 = 1023

@@ -1,0 +1,2184 @@
+[[spawn]]
+id = "malas_modernuo_shared_north_0"
+map = "malas"
+name = "Malas unicorn"
+mobile_ids = ["unicorn"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 2155
+y1 = 95
+x2 = 2255
+y2 = 195
+
+[[spawn]]
+id = "malas_modernuo_shared_north_1_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1442
+y1 = 307
+x2 = 1522
+y2 = 387
+
+[[spawn]]
+id = "malas_modernuo_shared_north_1_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1442
+y1 = 307
+x2 = 1522
+y2 = 387
+
+[[spawn]]
+id = "malas_modernuo_shared_north_1_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1442
+y1 = 307
+x2 = 1522
+y2 = 387
+
+[[spawn]]
+id = "malas_modernuo_shared_north_1_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1442
+y1 = 307
+x2 = 1522
+y2 = 387
+
+[[spawn]]
+id = "malas_modernuo_shared_north_1_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1442
+y1 = 307
+x2 = 1522
+y2 = 387
+
+[[spawn]]
+id = "malas_modernuo_shared_north_1_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1442
+y1 = 307
+x2 = 1522
+y2 = 387
+
+[[spawn]]
+id = "malas_modernuo_shared_north_2_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1234
+y1 = 260
+x2 = 1314
+y2 = 340
+
+[[spawn]]
+id = "malas_modernuo_shared_north_2_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1234
+y1 = 260
+x2 = 1314
+y2 = 340
+
+[[spawn]]
+id = "malas_modernuo_shared_north_2_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1234
+y1 = 260
+x2 = 1314
+y2 = 340
+
+[[spawn]]
+id = "malas_modernuo_shared_north_2_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1234
+y1 = 260
+x2 = 1314
+y2 = 340
+
+[[spawn]]
+id = "malas_modernuo_shared_north_2_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1234
+y1 = 260
+x2 = 1314
+y2 = 340
+
+[[spawn]]
+id = "malas_modernuo_shared_north_2_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1234
+y1 = 260
+x2 = 1314
+y2 = 340
+
+[[spawn]]
+id = "malas_modernuo_shared_north_4_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 2101
+y1 = 577
+x2 = 2141
+y2 = 617
+
+[[spawn]]
+id = "malas_modernuo_shared_north_4_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 2101
+y1 = 577
+x2 = 2141
+y2 = 617
+
+[[spawn]]
+id = "malas_modernuo_shared_north_4_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 2101
+y1 = 577
+x2 = 2141
+y2 = 617
+
+[[spawn]]
+id = "malas_modernuo_shared_north_4_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 2101
+y1 = 577
+x2 = 2141
+y2 = 617
+
+[[spawn]]
+id = "malas_modernuo_shared_north_4_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 2101
+y1 = 577
+x2 = 2141
+y2 = 617
+
+[[spawn]]
+id = "malas_modernuo_shared_north_4_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 2101
+y1 = 577
+x2 = 2141
+y2 = 617
+
+[[spawn]]
+id = "malas_modernuo_shared_north_5_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 746
+y1 = 94
+x2 = 786
+y2 = 134
+
+[[spawn]]
+id = "malas_modernuo_shared_north_5_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 746
+y1 = 94
+x2 = 786
+y2 = 134
+
+[[spawn]]
+id = "malas_modernuo_shared_north_5_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 746
+y1 = 94
+x2 = 786
+y2 = 134
+
+[[spawn]]
+id = "malas_modernuo_shared_north_5_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 746
+y1 = 94
+x2 = 786
+y2 = 134
+
+[[spawn]]
+id = "malas_modernuo_shared_north_5_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 746
+y1 = 94
+x2 = 786
+y2 = 134
+
+[[spawn]]
+id = "malas_modernuo_shared_north_5_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 746
+y1 = 94
+x2 = 786
+y2 = 134
+
+[[spawn]]
+id = "malas_modernuo_shared_north_6_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1690
+y1 = 383
+x2 = 1730
+y2 = 423
+
+[[spawn]]
+id = "malas_modernuo_shared_north_6_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1690
+y1 = 383
+x2 = 1730
+y2 = 423
+
+[[spawn]]
+id = "malas_modernuo_shared_north_6_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1690
+y1 = 383
+x2 = 1730
+y2 = 423
+
+[[spawn]]
+id = "malas_modernuo_shared_north_6_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1690
+y1 = 383
+x2 = 1730
+y2 = 423
+
+[[spawn]]
+id = "malas_modernuo_shared_north_6_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1690
+y1 = 383
+x2 = 1730
+y2 = 423
+
+[[spawn]]
+id = "malas_modernuo_shared_north_6_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1690
+y1 = 383
+x2 = 1730
+y2 = 423
+
+[[spawn]]
+id = "malas_modernuo_shared_north_7_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 1639
+y1 = 92
+x2 = 1679
+y2 = 132
+
+[[spawn]]
+id = "malas_modernuo_shared_north_7_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 1639
+y1 = 92
+x2 = 1679
+y2 = 132
+
+[[spawn]]
+id = "malas_modernuo_shared_north_7_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 1639
+y1 = 92
+x2 = 1679
+y2 = 132
+
+[[spawn]]
+id = "malas_modernuo_shared_north_7_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 1639
+y1 = 92
+x2 = 1679
+y2 = 132
+
+[[spawn]]
+id = "malas_modernuo_shared_north_7_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 1639
+y1 = 92
+x2 = 1679
+y2 = 132
+
+[[spawn]]
+id = "malas_modernuo_shared_north_7_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 1639
+y1 = 92
+x2 = 1679
+y2 = 132
+
+[[spawn]]
+id = "malas_modernuo_shared_north_8_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1940
+y1 = 620
+x2 = 2020
+y2 = 700
+
+[[spawn]]
+id = "malas_modernuo_shared_north_8_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1940
+y1 = 620
+x2 = 2020
+y2 = 700
+
+[[spawn]]
+id = "malas_modernuo_shared_north_8_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1940
+y1 = 620
+x2 = 2020
+y2 = 700
+
+[[spawn]]
+id = "malas_modernuo_shared_north_8_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1940
+y1 = 620
+x2 = 2020
+y2 = 700
+
+[[spawn]]
+id = "malas_modernuo_shared_north_8_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1940
+y1 = 620
+x2 = 2020
+y2 = 700
+
+[[spawn]]
+id = "malas_modernuo_shared_north_8_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1940
+y1 = 620
+x2 = 2020
+y2 = 700
+
+[[spawn]]
+id = "malas_modernuo_shared_north_9_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1829
+y1 = 440
+x2 = 1909
+y2 = 520
+
+[[spawn]]
+id = "malas_modernuo_shared_north_9_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1829
+y1 = 440
+x2 = 1909
+y2 = 520
+
+[[spawn]]
+id = "malas_modernuo_shared_north_9_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1829
+y1 = 440
+x2 = 1909
+y2 = 520
+
+[[spawn]]
+id = "malas_modernuo_shared_north_9_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1829
+y1 = 440
+x2 = 1909
+y2 = 520
+
+[[spawn]]
+id = "malas_modernuo_shared_north_9_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1829
+y1 = 440
+x2 = 1909
+y2 = 520
+
+[[spawn]]
+id = "malas_modernuo_shared_north_9_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1829
+y1 = 440
+x2 = 1909
+y2 = 520
+
+[[spawn]]
+id = "malas_modernuo_shared_north_10_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1990
+y1 = 460
+x2 = 2070
+y2 = 540
+
+[[spawn]]
+id = "malas_modernuo_shared_north_10_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1990
+y1 = 460
+x2 = 2070
+y2 = 540
+
+[[spawn]]
+id = "malas_modernuo_shared_north_10_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1990
+y1 = 460
+x2 = 2070
+y2 = 540
+
+[[spawn]]
+id = "malas_modernuo_shared_north_10_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1990
+y1 = 460
+x2 = 2070
+y2 = 540
+
+[[spawn]]
+id = "malas_modernuo_shared_north_10_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1990
+y1 = 460
+x2 = 2070
+y2 = 540
+
+[[spawn]]
+id = "malas_modernuo_shared_north_10_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1990
+y1 = 460
+x2 = 2070
+y2 = 540
+
+[[spawn]]
+id = "malas_modernuo_shared_north_11_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1341
+y1 = 300
+x2 = 1421
+y2 = 380
+
+[[spawn]]
+id = "malas_modernuo_shared_north_11_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1341
+y1 = 300
+x2 = 1421
+y2 = 380
+
+[[spawn]]
+id = "malas_modernuo_shared_north_11_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1341
+y1 = 300
+x2 = 1421
+y2 = 380
+
+[[spawn]]
+id = "malas_modernuo_shared_north_11_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1341
+y1 = 300
+x2 = 1421
+y2 = 380
+
+[[spawn]]
+id = "malas_modernuo_shared_north_11_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1341
+y1 = 300
+x2 = 1421
+y2 = 380
+
+[[spawn]]
+id = "malas_modernuo_shared_north_11_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1341
+y1 = 300
+x2 = 1421
+y2 = 380
+
+[[spawn]]
+id = "malas_modernuo_shared_north_12_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1117
+y1 = 203
+x2 = 1157
+y2 = 243
+
+[[spawn]]
+id = "malas_modernuo_shared_north_12_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1117
+y1 = 203
+x2 = 1157
+y2 = 243
+
+[[spawn]]
+id = "malas_modernuo_shared_north_12_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1117
+y1 = 203
+x2 = 1157
+y2 = 243
+
+[[spawn]]
+id = "malas_modernuo_shared_north_12_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1117
+y1 = 203
+x2 = 1157
+y2 = 243
+
+[[spawn]]
+id = "malas_modernuo_shared_north_12_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1117
+y1 = 203
+x2 = 1157
+y2 = 243
+
+[[spawn]]
+id = "malas_modernuo_shared_north_12_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1117
+y1 = 203
+x2 = 1157
+y2 = 243
+
+[[spawn]]
+id = "malas_modernuo_shared_north_13_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1186
+y1 = 171
+x2 = 1226
+y2 = 211
+
+[[spawn]]
+id = "malas_modernuo_shared_north_13_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1186
+y1 = 171
+x2 = 1226
+y2 = 211
+
+[[spawn]]
+id = "malas_modernuo_shared_north_13_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1186
+y1 = 171
+x2 = 1226
+y2 = 211
+
+[[spawn]]
+id = "malas_modernuo_shared_north_13_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1186
+y1 = 171
+x2 = 1226
+y2 = 211
+
+[[spawn]]
+id = "malas_modernuo_shared_north_13_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1186
+y1 = 171
+x2 = 1226
+y2 = 211
+
+[[spawn]]
+id = "malas_modernuo_shared_north_13_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1186
+y1 = 171
+x2 = 1226
+y2 = 211
+
+[[spawn]]
+id = "malas_modernuo_shared_north_14_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1547
+y1 = 346
+x2 = 1627
+y2 = 426
+
+[[spawn]]
+id = "malas_modernuo_shared_north_14_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1547
+y1 = 346
+x2 = 1627
+y2 = 426
+
+[[spawn]]
+id = "malas_modernuo_shared_north_14_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1547
+y1 = 346
+x2 = 1627
+y2 = 426
+
+[[spawn]]
+id = "malas_modernuo_shared_north_14_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1547
+y1 = 346
+x2 = 1627
+y2 = 426
+
+[[spawn]]
+id = "malas_modernuo_shared_north_14_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1547
+y1 = 346
+x2 = 1627
+y2 = 426
+
+[[spawn]]
+id = "malas_modernuo_shared_north_14_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1547
+y1 = 346
+x2 = 1627
+y2 = 426
+
+[[spawn]]
+id = "malas_modernuo_shared_north_15_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 2173
+y1 = 495
+x2 = 2293
+y2 = 615
+
+[[spawn]]
+id = "malas_modernuo_shared_north_15_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 2173
+y1 = 495
+x2 = 2293
+y2 = 615
+
+[[spawn]]
+id = "malas_modernuo_shared_north_15_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 2173
+y1 = 495
+x2 = 2293
+y2 = 615
+
+[[spawn]]
+id = "malas_modernuo_shared_north_15_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 2173
+y1 = 495
+x2 = 2293
+y2 = 615
+
+[[spawn]]
+id = "malas_modernuo_shared_north_15_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 2173
+y1 = 495
+x2 = 2293
+y2 = 615
+
+[[spawn]]
+id = "malas_modernuo_shared_north_15_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 2173
+y1 = 495
+x2 = 2293
+y2 = 615
+
+[[spawn]]
+id = "malas_modernuo_shared_north_16_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1003
+y1 = 172
+x2 = 1043
+y2 = 212
+
+[[spawn]]
+id = "malas_modernuo_shared_north_16_walrus"
+map = "malas"
+name = "Malas walrus"
+mobile_ids = ["walrus"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1003
+y1 = 172
+x2 = 1043
+y2 = 212
+
+[[spawn]]
+id = "malas_modernuo_shared_north_16_snowleopard"
+map = "malas"
+name = "Malas snowleopard"
+mobile_ids = ["snowleopard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1003
+y1 = 172
+x2 = 1043
+y2 = 212
+
+[[spawn]]
+id = "malas_modernuo_shared_north_16_whitewolf"
+map = "malas"
+name = "Malas whitewolf"
+mobile_ids = ["whitewolf"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1003
+y1 = 172
+x2 = 1043
+y2 = 212
+
+[[spawn]]
+id = "malas_modernuo_shared_north_16_icesnake"
+map = "malas"
+name = "Malas icesnake"
+mobile_ids = ["icesnake"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1003
+y1 = 172
+x2 = 1043
+y2 = 212
+
+[[spawn]]
+id = "malas_modernuo_shared_north_16_polarbear"
+map = "malas"
+name = "Malas polarbear"
+mobile_ids = ["polarbear"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1003
+y1 = 172
+x2 = 1043
+y2 = 212
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_0_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1080
+y1 = 491
+x2 = 1158
+y2 = 569
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_0_hart"
+map = "malas"
+name = "Malas hart"
+mobile_ids = ["hart"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1080
+y1 = 491
+x2 = 1158
+y2 = 569
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_0_jackrabbit"
+map = "malas"
+name = "Malas jackrabbit"
+mobile_ids = ["jackrabbit"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1080
+y1 = 491
+x2 = 1158
+y2 = 569
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_0_hind"
+map = "malas"
+name = "Malas hind"
+mobile_ids = ["hind"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1080
+y1 = 491
+x2 = 1158
+y2 = 569
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_1_crystalele"
+map = "malas"
+name = "Malas crystalele"
+mobile_ids = ["crystalele"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1574
+y1 = 559
+x2 = 1774
+y2 = 759
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_1_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1574
+y1 = 559
+x2 = 1774
+y2 = 759
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_1_hind"
+map = "malas"
+name = "Malas hind"
+mobile_ids = ["hind"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1574
+y1 = 559
+x2 = 1774
+y2 = 759
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_1_hart"
+map = "malas"
+name = "Malas hart"
+mobile_ids = ["hart"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1574
+y1 = 559
+x2 = 1774
+y2 = 759
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_1_jackrabbit"
+map = "malas"
+name = "Malas jackrabbit"
+mobile_ids = ["jackrabbit"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1574
+y1 = 559
+x2 = 1774
+y2 = 759
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_2_crystalele"
+map = "malas"
+name = "Malas crystalele"
+mobile_ids = ["crystalele"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -73
+only_outside = false
+[[spawn.areas]]
+x1 = 1334
+y1 = 507
+x2 = 1534
+y2 = 707
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_2_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -73
+only_outside = false
+[[spawn.areas]]
+x1 = 1334
+y1 = 507
+x2 = 1534
+y2 = 707
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_2_hind"
+map = "malas"
+name = "Malas hind"
+mobile_ids = ["hind"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -73
+only_outside = false
+[[spawn.areas]]
+x1 = 1334
+y1 = 507
+x2 = 1534
+y2 = 707
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_2_hart"
+map = "malas"
+name = "Malas hart"
+mobile_ids = ["hart"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -73
+only_outside = false
+[[spawn.areas]]
+x1 = 1334
+y1 = 507
+x2 = 1534
+y2 = 707
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_2_jackrabbit"
+map = "malas"
+name = "Malas jackrabbit"
+mobile_ids = ["jackrabbit"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -73
+only_outside = false
+[[spawn.areas]]
+x1 = 1334
+y1 = 507
+x2 = 1534
+y2 = 707
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_3_crystalele"
+map = "malas"
+name = "Malas crystalele"
+mobile_ids = ["crystalele"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1094
+y1 = 538
+x2 = 1294
+y2 = 738
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_3_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1094
+y1 = 538
+x2 = 1294
+y2 = 738
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_3_hind"
+map = "malas"
+name = "Malas hind"
+mobile_ids = ["hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1094
+y1 = 538
+x2 = 1294
+y2 = 738
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_3_hart"
+map = "malas"
+name = "Malas hart"
+mobile_ids = ["hart"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1094
+y1 = 538
+x2 = 1294
+y2 = 738
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_3_jackrabbit"
+map = "malas"
+name = "Malas jackrabbit"
+mobile_ids = ["jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1094
+y1 = 538
+x2 = 1294
+y2 = 738
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_4_crystalele"
+map = "malas"
+name = "Malas crystalele"
+mobile_ids = ["crystalele"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 860
+y1 = 296
+x2 = 980
+y2 = 416
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_4_bird"
+map = "malas"
+name = "Malas bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 860
+y1 = 296
+x2 = 980
+y2 = 416
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_4_hind"
+map = "malas"
+name = "Malas hind"
+mobile_ids = ["hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 860
+y1 = 296
+x2 = 980
+y2 = 416
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_4_hart"
+map = "malas"
+name = "Malas hart"
+mobile_ids = ["hart"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 860
+y1 = 296
+x2 = 980
+y2 = 416
+
+[[spawn]]
+id = "malas_modernuo_post_uoml_north_4_jackrabbit"
+map = "malas"
+name = "Malas jackrabbit"
+mobile_ids = ["jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 860
+y1 = 296
+x2 = 980
+y2 = 416

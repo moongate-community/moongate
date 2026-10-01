@@ -1,0 +1,1025 @@
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_0"
+map = "ter_mur"
+name = "TerMur giantblackwidow, giantspider"
+mobile_ids = ["giantblackwidow", "giantspider"]
+npc_list_ids = []
+max = 18
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -18
+only_outside = false
+[[spawn.areas]]
+x1 = 1059
+y1 = 3694
+x2 = 1159
+y2 = 3794
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_3"
+map = "ter_mur"
+name = "TerMur greatermongbat, mongbat, silverserpent, bird"
+mobile_ids = ["greatermongbat", "mongbat", "silverserpent", "bird"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1034
+y1 = 3383
+x2 = 1234
+y2 = 3583
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_4"
+map = "ter_mur"
+name = "TerMur greatermongbat, mongbat, silverserpent, bird"
+mobile_ids = ["greatermongbat", "mongbat", "silverserpent", "bird"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1018
+y1 = 3316
+x2 = 1218
+y2 = 3516
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_5"
+map = "ter_mur"
+name = "TerMur rabbit, bird"
+mobile_ids = ["rabbit", "bird"]
+npc_list_ids = []
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -29
+only_outside = false
+[[spawn.areas]]
+x1 = 1012
+y1 = 3524
+x2 = 1212
+y2 = 3724
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_6"
+map = "ter_mur"
+name = "TerMur snake"
+mobile_ids = ["snake"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1006
+y1 = 3640
+x2 = 1066
+y2 = 3700
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_7"
+map = "ter_mur"
+name = "TerMur snake"
+mobile_ids = ["snake"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -14
+only_outside = false
+[[spawn.areas]]
+x1 = 982
+y1 = 3622
+x2 = 1042
+y2 = 3682
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_8"
+map = "ter_mur"
+name = "TerMur hind, horse, jackrabbit, rabbit, mongbat, rat, llama, snake, timberwolf"
+mobile_ids = ["hind", "horse", "jackrabbit", "rabbit", "mongbat", "rat", "llama", "snake", "timberwolf"]
+npc_list_ids = []
+max = 17
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 946
+y1 = 3356
+x2 = 1046
+y2 = 3456
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_9"
+map = "ter_mur"
+name = "TerMur hind, horse, jackrabbit, rabbit, mongbat, rat, llama, snake, timberwolf"
+mobile_ids = ["hind", "horse", "jackrabbit", "rabbit", "mongbat", "rat", "llama", "snake", "timberwolf"]
+npc_list_ids = []
+max = 17
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 801
+y1 = 3592
+x2 = 901
+y2 = 3692
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_10"
+map = "ter_mur"
+name = "TerMur hind, horse, jackrabbit, rabbit, mongbat, rat, llama, snake, timberwolf"
+mobile_ids = ["hind", "horse", "jackrabbit", "rabbit", "mongbat", "rat", "llama", "snake", "timberwolf"]
+npc_list_ids = []
+max = 17
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 884
+y1 = 3514
+x2 = 984
+y2 = 3614
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_11"
+map = "ter_mur"
+name = "TerMur hind, horse, jackrabbit, rabbit, mongbat, rat, llama, snake, timberwolf"
+mobile_ids = ["hind", "horse", "jackrabbit", "rabbit", "mongbat", "rat", "llama", "snake", "timberwolf"]
+npc_list_ids = []
+max = 17
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 915
+y1 = 3439
+x2 = 1015
+y2 = 3539
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_12"
+map = "ter_mur"
+name = "TerMur rabbit, bird"
+mobile_ids = ["rabbit", "bird"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 818
+y1 = 3492
+x2 = 898
+y2 = 3572
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_13"
+map = "ter_mur"
+name = "TerMur rabbit, bird"
+mobile_ids = ["rabbit", "bird"]
+npc_list_ids = []
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 931
+y1 = 3268
+x2 = 1031
+y2 = 3368
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_14"
+map = "ter_mur"
+name = "TerMur rabbit, bird"
+mobile_ids = ["rabbit", "bird"]
+npc_list_ids = []
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 831
+y1 = 3294
+x2 = 931
+y2 = 3394
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_15"
+map = "ter_mur"
+name = "TerMur sewerrat, greatermongbat, mongbat, silverserpent, bird"
+mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "silverserpent", "bird"]
+npc_list_ids = []
+max = 11
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1023
+y1 = 3272
+x2 = 1123
+y2 = 3372
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_16"
+map = "ter_mur"
+name = "TerMur rabbit, bird"
+mobile_ids = ["rabbit", "bird"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 941
+y1 = 3534
+x2 = 1021
+y2 = 3614
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_17"
+map = "ter_mur"
+name = "TerMur rabbit, rat, timberwolf, hind, horse, jackrabbit"
+mobile_ids = ["rabbit", "rat", "timberwolf", "hind", "horse", "jackrabbit"]
+npc_list_ids = []
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 859
+y1 = 3185
+x2 = 959
+y2 = 3285
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_18"
+map = "ter_mur"
+name = "TerMur rabbit, rat, timberwolf, hind, horse, jackrabbit"
+mobile_ids = ["rabbit", "rat", "timberwolf", "hind", "horse", "jackrabbit"]
+npc_list_ids = []
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 56
+only_outside = false
+[[spawn.areas]]
+x1 = 752
+y1 = 3181
+x2 = 852
+y2 = 3281
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_19"
+map = "ter_mur"
+name = "TerMur rabbit, rat, hind, horse, jackrabbit"
+mobile_ids = ["rabbit", "rat", "hind", "horse", "jackrabbit"]
+npc_list_ids = []
+max = 16
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 629
+y1 = 3198
+x2 = 729
+y2 = 3298
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_20"
+map = "ter_mur"
+name = "TerMur rabbit, rat, timberwolf, hind, horse, jackrabbit"
+mobile_ids = ["rabbit", "rat", "timberwolf", "hind", "horse", "jackrabbit"]
+npc_list_ids = []
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 538
+y1 = 3217
+x2 = 638
+y2 = 3317
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_21"
+map = "ter_mur"
+name = "TerMur hind, horse, silverserpent, rabbit, bird"
+mobile_ids = ["hind", "horse", "silverserpent", "rabbit", "bird"]
+npc_list_ids = []
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 471
+y1 = 3305
+x2 = 571
+y2 = 3405
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_22"
+map = "ter_mur"
+name = "TerMur hind, rabbit, bird"
+mobile_ids = ["hind", "rabbit", "bird"]
+npc_list_ids = []
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 471
+y1 = 3233
+x2 = 551
+y2 = 3313
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_23"
+map = "ter_mur"
+name = "TerMur hind, horse, silverserpent, rabbit, bird"
+mobile_ids = ["hind", "horse", "silverserpent", "rabbit", "bird"]
+npc_list_ids = []
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 497
+y1 = 3371
+x2 = 597
+y2 = 3471
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_24"
+map = "ter_mur"
+name = "TerMur hind, rabbit, bird"
+mobile_ids = ["hind", "rabbit", "bird"]
+npc_list_ids = []
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 541
+y1 = 3476
+x2 = 601
+y2 = 3536
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_25"
+map = "ter_mur"
+name = "TerMur sewerrat, greatermongbat, mongbat, silverserpent, bird"
+mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "silverserpent", "bird"]
+npc_list_ids = []
+max = 13
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1119
+y1 = 3288
+x2 = 1219
+y2 = 3388
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_26"
+map = "ter_mur"
+name = "TerMur rabbit, bird, rat, sewerrat, snake"
+mobile_ids = ["rabbit", "bird", "rat", "sewerrat", "snake"]
+npc_list_ids = []
+max = 19
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 639
+y1 = 3661
+x2 = 739
+y2 = 3761
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_27"
+map = "ter_mur"
+name = "TerMur rabbit, bird, rat, sewerrat, snake"
+mobile_ids = ["rabbit", "bird", "rat", "sewerrat", "snake"]
+npc_list_ids = []
+max = 19
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 711
+y1 = 3600
+x2 = 811
+y2 = 3700
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_28"
+map = "ter_mur"
+name = "TerMur reaper, rat, bird"
+mobile_ids = ["reaper", "rat", "bird"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 586
+y1 = 3654
+x2 = 646
+y2 = 3714
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_29"
+map = "ter_mur"
+name = "TerMur bird, rat, mongbat"
+mobile_ids = ["bird", "rat", "mongbat"]
+npc_list_ids = []
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -15
+only_outside = false
+[[spawn.areas]]
+x1 = 628
+y1 = 3791
+x2 = 708
+y2 = 3871
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_31"
+map = "ter_mur"
+name = "TerMur horse, mongbat, rat, bird"
+mobile_ids = ["horse", "mongbat", "rat", "bird"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 710
+y1 = 3760
+x2 = 810
+y2 = 3860
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_32"
+map = "ter_mur"
+name = "TerMur horse, mongbat, rat, bird"
+mobile_ids = ["horse", "mongbat", "rat", "bird"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 776
+y1 = 3712
+x2 = 876
+y2 = 3812
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_34"
+map = "ter_mur"
+name = "TerMur horse, mongbat, rat, bird"
+mobile_ids = ["horse", "mongbat", "rat", "bird"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 64
+only_outside = false
+[[spawn.areas]]
+x1 = 749
+y1 = 3813
+x2 = 849
+y2 = 3913
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_35"
+map = "ter_mur"
+name = "TerMur greatermongbat, mongbat, silverserpent, bird, rabbit"
+mobile_ids = ["greatermongbat", "mongbat", "silverserpent", "bird", "rabbit"]
+npc_list_ids = []
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 713
+y1 = 3941
+x2 = 813
+y2 = 4041
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_36"
+map = "ter_mur"
+name = "TerMur sewerrat, greatermongbat, mongbat, bird"
+mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "bird"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1089
+y1 = 3123
+x2 = 1169
+y2 = 3203
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_38"
+map = "ter_mur"
+name = "TerMur greatermongbat, mongbat, silverserpent, bird, rabbit"
+mobile_ids = ["greatermongbat", "mongbat", "silverserpent", "bird", "rabbit"]
+npc_list_ids = []
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -27
+only_outside = false
+[[spawn.areas]]
+x1 = 591
+y1 = 3872
+x2 = 691
+y2 = 3972
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_39"
+map = "ter_mur"
+name = "TerMur desertostard, scorpion"
+mobile_ids = ["desertostard", "scorpion"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 90
+only_outside = false
+[[spawn.areas]]
+x1 = 1025
+y1 = 2956
+x2 = 1105
+y2 = 3036
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_43"
+map = "ter_mur"
+name = "TerMur rabbit, bird, silverserpent, timberwolf"
+mobile_ids = ["rabbit", "bird", "silverserpent", "timberwolf"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 121
+only_outside = false
+[[spawn.areas]]
+x1 = 702
+y1 = 3013
+x2 = 822
+y2 = 3133
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_44"
+map = "ter_mur"
+name = "TerMur rabbit, bird, silverserpent, timberwolf"
+mobile_ids = ["rabbit", "bird", "silverserpent", "timberwolf"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 857
+y1 = 3028
+x2 = 977
+y2 = 3148
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_45"
+map = "ter_mur"
+name = "TerMur rabbit, bird, silverserpent, timberwolf"
+mobile_ids = ["rabbit", "bird", "silverserpent", "timberwolf"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 99
+only_outside = false
+[[spawn.areas]]
+x1 = 779
+y1 = 3026
+x2 = 899
+y2 = 3146
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_46"
+map = "ter_mur"
+name = "TerMur horse, bird, rabbit"
+mobile_ids = ["horse", "bird", "rabbit"]
+npc_list_ids = []
+max = 11
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 92
+only_outside = false
+[[spawn.areas]]
+x1 = 757
+y1 = 2900
+x2 = 877
+y2 = 3020
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_48"
+map = "ter_mur"
+name = "TerMur horse, bird, rabbit"
+mobile_ids = ["horse", "bird", "rabbit"]
+npc_list_ids = []
+max = 11
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 801
+y1 = 2863
+x2 = 921
+y2 = 2983
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_49"
+map = "ter_mur"
+name = "TerMur hind, horse, rat, timberwolf, bird, rabbit"
+mobile_ids = ["hind", "horse", "rat", "timberwolf", "bird", "rabbit"]
+npc_list_ids = []
+max = 16
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 593
+y1 = 3076
+x2 = 703
+y2 = 3186
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_50"
+map = "ter_mur"
+name = "TerMur bird, eagle"
+mobile_ids = ["bird", "eagle"]
+npc_list_ids = []
+max = 15
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 51
+only_outside = false
+[[spawn.areas]]
+x1 = 522
+y1 = 2945
+x2 = 722
+y2 = 3145
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_51"
+map = "ter_mur"
+name = "TerMur giantrat, rat, bird"
+mobile_ids = ["giantrat", "rat", "bird"]
+npc_list_ids = []
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 635
+y1 = 2851
+x2 = 735
+y2 = 2951
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_52"
+map = "ter_mur"
+name = "TerMur silverserpent, bird"
+mobile_ids = ["silverserpent", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 522
+y1 = 2902
+x2 = 602
+y2 = 2982
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_53"
+map = "ter_mur"
+name = "TerMur hind, bird, rabbit"
+mobile_ids = ["hind", "bird", "rabbit"]
+npc_list_ids = []
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 451
+y1 = 3176
+x2 = 521
+y2 = 3246
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_54"
+map = "ter_mur"
+name = "TerMur rat, snake, bird"
+mobile_ids = ["rat", "snake", "bird"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 376
+y1 = 3140
+x2 = 476
+y2 = 3240
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_55"
+map = "ter_mur"
+name = "TerMur bird, rabbit"
+mobile_ids = ["bird", "rabbit"]
+npc_list_ids = []
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 73
+only_outside = false
+[[spawn.areas]]
+x1 = 304
+y1 = 3233
+x2 = 404
+y2 = 3333
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_56"
+map = "ter_mur"
+name = "TerMur bird, rabbit"
+mobile_ids = ["bird", "rabbit"]
+npc_list_ids = []
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 393
+y1 = 3572
+x2 = 513
+y2 = 3692
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_57"
+map = "ter_mur"
+name = "TerMur bird, rabbit"
+mobile_ids = ["bird", "rabbit"]
+npc_list_ids = []
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 337
+y1 = 3474
+x2 = 437
+y2 = 3574
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_58"
+map = "ter_mur"
+name = "TerMur sewerrat, greatermongbat, mongbat, silverserpent, bird"
+mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "silverserpent", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1080
+y1 = 3190
+x2 = 1180
+y2 = 3290
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_59"
+map = "ter_mur"
+name = "TerMur sewerrat, greatermongbat, mongbat, bird"
+mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "bird"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 1004
+y1 = 3165
+x2 = 1104
+y2 = 3265
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_60"
+map = "ter_mur"
+name = "TerMur sewerrat, greatermongbat, mongbat, bird"
+mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "bird"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 1007
+y1 = 3117
+x2 = 1107
+y2 = 3217
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_61"
+map = "ter_mur"
+name = "TerMur hind, horse, snake"
+mobile_ids = ["hind", "horse", "snake"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1146
+y1 = 3518
+x2 = 1226
+y2 = 3598
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_ter_mur_62"
+map = "ter_mur"
+name = "TerMur silverserpent"
+mobile_ids = ["silverserpent"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 11
+only_outside = false
+[[spawn.areas]]
+x1 = 20
+y1 = 84
+x2 = 50
+y2 = 114

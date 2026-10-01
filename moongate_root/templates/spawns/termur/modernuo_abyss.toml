@@ -1,0 +1,189 @@
+[[spawn]]
+id = "termur_modernuo_post_uoml_abyss_4"
+map = "ter_mur"
+name = "TerMur snake, lavasnake, giantserpent"
+mobile_ids = ["snake", "lavasnake", "giantserpent"]
+npc_list_ids = []
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 691
+y1 = 695
+x2 = 741
+y2 = 745
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_abyss_5"
+map = "ter_mur"
+name = "TerMur greatermongbat, imp, daemon"
+mobile_ids = ["greatermongbat", "imp", "daemon"]
+npc_list_ids = []
+max = 21
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 25
+only_outside = false
+[[spawn.areas]]
+x1 = 972
+y1 = 317
+x2 = 1012
+y2 = 357
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_abyss_12"
+map = "ter_mur"
+name = "TerMur lavasnake, lavalizard, firegargoyle, efreet"
+mobile_ids = ["lavasnake", "lavalizard", "firegargoyle", "efreet"]
+npc_list_ids = []
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 949
+y1 = 136
+x2 = 999
+y2 = 186
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_abyss_14"
+map = "ter_mur"
+name = "TerMur lavalizard, lavasnake, hellcat, lavaserpent, hellhound"
+mobile_ids = ["lavalizard", "lavasnake", "hellcat", "lavaserpent", "hellhound"]
+npc_list_ids = []
+max = 14
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -76
+only_outside = false
+[[spawn.areas]]
+x1 = 506
+y1 = 746
+x2 = 546
+y2 = 786
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_abyss_15"
+map = "ter_mur"
+name = "TerMur skeleton, wraith, skeletalmage, rottingcorpse"
+mobile_ids = ["skeleton", "wraith", "skeletalmage", "rottingcorpse"]
+npc_list_ids = []
+max = 20
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 24
+only_outside = false
+[[spawn.areas]]
+x1 = 502
+y1 = 623
+x2 = 570
+y2 = 691
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_abyss_16"
+map = "ter_mur"
+name = "TerMur lavalizard, lavasnake, hellhound, lavaserpent"
+mobile_ids = ["lavalizard", "lavasnake", "hellhound", "lavaserpent"]
+npc_list_ids = []
+max = 19
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -44
+only_outside = false
+[[spawn.areas]]
+x1 = 566
+y1 = 870
+x2 = 636
+y2 = 940
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_abyss_18"
+map = "ter_mur"
+name = "TerMur acidele, interredgrizzle"
+mobile_ids = ["acidele", "interredgrizzle"]
+npc_list_ids = []
+max = 13
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 1
+only_outside = false
+[[spawn.areas]]
+x1 = 649
+y1 = 544
+x2 = 719
+y2 = 614
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_abyss_19"
+map = "ter_mur"
+name = "TerMur pixie, wisp, darkwisp"
+mobile_ids = ["pixie", "wisp", "darkwisp"]
+npc_list_ids = []
+max = 23
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 405
+y1 = 673
+x2 = 475
+y2 = 743
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_abyss_20"
+map = "ter_mur"
+name = "TerMur skeleton, skeletalknight, boneknight, skeletalmage, bonemage"
+mobile_ids = ["skeleton", "skeletalknight", "boneknight", "skeletalmage", "bonemage"]
+npc_list_ids = []
+max = 19
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -93
+only_outside = false
+[[spawn.areas]]
+x1 = 649
+y1 = 803
+x2 = 699
+y2 = 853
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_abyss_21"
+map = "ter_mur"
+name = "TerMur wyvern"
+mobile_ids = ["wyvern"]
+npc_list_ids = []
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 19
+only_outside = false
+[[spawn.areas]]
+x1 = 867
+y1 = 257
+x2 = 907
+y2 = 297

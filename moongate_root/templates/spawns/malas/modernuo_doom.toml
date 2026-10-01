@@ -1,0 +1,702 @@
+[[spawn]]
+id = "malas_modernuo_shared_doom_0"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 6
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 437
+y1 = 15
+x2 = 457
+y2 = 35
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_2"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 6
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 257
+y1 = 51
+x2 = 317
+y2 = 111
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_3"
+map = "malas"
+name = "Malas lich"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 305
+y1 = 192
+x2 = 335
+y2 = 222
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_4_boneknight"
+map = "malas"
+name = "Malas boneknight"
+mobile_ids = ["boneknight"]
+npc_list_ids = []
+max = 1
+min_minutes = 2
+max_minutes = 3
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 459
+y1 = 148
+x2 = 499
+y2 = 188
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_5_skeleton"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 4
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 283
+y1 = 50
+x2 = 363
+y2 = 130
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_6_skeleton"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 348
+y1 = 32
+x2 = 364
+y2 = 48
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_7"
+map = "malas"
+name = "Malas rottingcorpse"
+mobile_ids = ["rottingcorpse"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 458
+y1 = 186
+x2 = 498
+y2 = 226
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_8"
+map = "malas"
+name = "Malas lich"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 315
+y1 = 121
+x2 = 345
+y2 = 151
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_9"
+map = "malas"
+name = "Malas rottingcorpse"
+mobile_ids = ["rottingcorpse"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 417
+y1 = 246
+x2 = 437
+y2 = 266
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_10_lich"
+map = "malas"
+name = "Malas lich"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 14
+only_outside = false
+[[spawn.areas]]
+x1 = 450
+y1 = 10
+x2 = 490
+y2 = 50
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_11"
+map = "malas"
+name = "Malas bonedaemon"
+mobile_ids = ["bonedaemon"]
+npc_list_ids = []
+max = 1
+min_minutes = 20
+max_minutes = 40
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 412
+y1 = 175
+x2 = 472
+y2 = 235
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_13_rottingcorpse"
+map = "malas"
+name = "Malas rottingcorpse"
+mobile_ids = ["rottingcorpse"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 411
+y1 = 48
+x2 = 471
+y2 = 108
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_15"
+map = "malas"
+name = "Malas zombie"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 7
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 285
+y1 = 79
+x2 = 355
+y2 = 149
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_17"
+map = "malas"
+name = "Malas mummy"
+mobile_ids = ["mummy"]
+npc_list_ids = []
+max = 3
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 295
+y1 = 89
+x2 = 345
+y2 = 139
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_18"
+map = "malas"
+name = "Malas lich"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 2
+min_minutes = 3
+max_minutes = 5
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 460
+y1 = 207
+x2 = 500
+y2 = 247
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_19"
+map = "malas"
+name = "Malas lichlord"
+mobile_ids = ["lichlord"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 21
+only_outside = false
+[[spawn.areas]]
+x1 = 284
+y1 = 149
+x2 = 294
+y2 = 159
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_21"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 3
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 346
+y1 = 224
+x2 = 366
+y2 = 244
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_24"
+map = "malas"
+name = "Malas lich"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 395
+y1 = 169
+x2 = 405
+y2 = 179
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_29"
+map = "malas"
+name = "Malas lich"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 3
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 462
+y1 = 135
+x2 = 474
+y2 = 147
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_30_lichlord"
+map = "malas"
+name = "Malas lichlord"
+mobile_ids = ["lichlord"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 397
+y1 = 226
+x2 = 457
+y2 = 286
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_31_skeleton"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 4
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 299
+y1 = 5
+x2 = 319
+y2 = 25
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_31_bonemage"
+map = "malas"
+name = "Malas bonemage"
+mobile_ids = ["bonemage"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 299
+y1 = 5
+x2 = 319
+y2 = 25
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_31_boneknight"
+map = "malas"
+name = "Malas boneknight"
+mobile_ids = ["boneknight"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 299
+y1 = 5
+x2 = 319
+y2 = 25
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_33"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 6
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 481
+y1 = 190
+x2 = 505
+y2 = 214
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_34_skeleton"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 3
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 352
+y1 = 181
+x2 = 392
+y2 = 221
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_34_boneknight"
+map = "malas"
+name = "Malas boneknight"
+mobile_ids = ["boneknight"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 352
+y1 = 181
+x2 = 392
+y2 = 221
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_35_skeleton"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 3
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 479
+y1 = 110
+x2 = 495
+y2 = 126
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_35_mummy"
+map = "malas"
+name = "Malas mummy"
+mobile_ids = ["mummy"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 479
+y1 = 110
+x2 = 495
+y2 = 126
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_36"
+map = "malas"
+name = "Malas lich"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 3
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 356
+y1 = 3
+x2 = 376
+y2 = 23
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_37"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 3
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 460
+y1 = 207
+x2 = 500
+y2 = 247
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_38"
+map = "malas"
+name = "Malas lichlord"
+mobile_ids = ["lichlord"]
+npc_list_ids = []
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 326
+y1 = 132
+x2 = 334
+y2 = 140
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_39_rottingcorpse"
+map = "malas"
+name = "Malas rottingcorpse"
+mobile_ids = ["rottingcorpse"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 403
+y1 = 88
+x2 = 483
+y2 = 168
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_42_rottingcorpse"
+map = "malas"
+name = "Malas rottingcorpse"
+mobile_ids = ["rottingcorpse"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 247
+y1 = 41
+x2 = 327
+y2 = 121
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_43"
+map = "malas"
+name = "Malas lich"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 432
+y1 = 10
+x2 = 462
+y2 = 40
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_44"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 5
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 459
+y1 = 148
+x2 = 499
+y2 = 188
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_45"
+map = "malas"
+name = "Malas lichlord"
+mobile_ids = ["lichlord"]
+npc_list_ids = []
+max = 2
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 261
+y1 = 21
+x2 = 271
+y2 = 31
+
+[[spawn]]
+id = "malas_modernuo_shared_doom_46"
+map = "malas"
+name = "Malas lichlord"
+mobile_ids = ["lichlord"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 460
+y1 = 207
+x2 = 500
+y2 = 247

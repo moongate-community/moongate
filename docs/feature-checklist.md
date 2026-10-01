@@ -202,7 +202,7 @@ works today in more detail.
 | Guarded towns and region rules | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |
 | World decoration | ✅ | Placed by `.decorate` |
-| Spawn regions | ✅ | Fast first fill, `.initial_spawn` and respawn, land and water; see [NPC spawns](spawns.md) |
+| Spawn regions | ✅ | On every map: UOX3's data, ModernUO's for New Haven, Malas, Tokuno and TerMur; fast first fill, `.initial_spawn`, respawn, land and water; see [NPC spawns](spawns.md) |
 | Spawner items | ❌ | |
 | Housing | ❌ | |
 | Boats | ❌ | |
@@ -274,7 +274,7 @@ works today in more detail.
 | Script timers | ✅ | |
 | Commands from plugins | ✅ | In C#; not from Lua |
 | Data-driven content | ✅ | TOML templates and data files, validated at startup |
-| Importing another emulator's content | ✅ | Items, loot, NPCs, names, starting items, NPC lists and spawn regions |
+| Importing another emulator's content | ✅ | UOX3 items, loot, NPCs, names, starting items, NPC lists and spawn regions; ModernUO spawners |
 | Runaway script protection | ✅ | Instruction budget per resume and per chunk |
 | Persistent values on objects | ✅ | Props on items and NPCs, saved with the world |
 | Global persistent script data | ❌ | |

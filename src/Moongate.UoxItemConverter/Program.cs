@@ -1,7 +1,11 @@
 using ConsoleAppFramework;
+using Moongate.Ultima.Types;
 using Moongate.UoxItemConverter.Internal;
 
-ConsoleApp.Run(args, Cli.Run);
+var app = ConsoleApp.Create();
+app.Add("", Cli.Run);
+app.Add("modernuo-spawns", Cli.ModernUoSpawns);
+app.Run(args);
 
 internal static class Cli
 {
@@ -70,6 +74,50 @@ internal static class Cli
             scriptsSource,
             npcListsDestination,
             spawnsDestination
+        );
+    }
+
+    /// <summary>
+    ///     Converts ModernUO's spawners of the chosen maps (the shared and post-uoml eras) into Moongate spawn regions,
+    ///     for the maps UOX3 has no spawns for, such as Malas, Tokuno and TerMur.
+    /// </summary>
+    /// <param name="source">
+    ///     ModernUO's Distribution/Data/Spawns folder.
+    /// </param>
+    /// <param name="maps">
+    ///     The maps to convert, comma separated, such as malas,tokuno,termur.
+    /// </param>
+    /// <param name="mobiles">
+    ///     The mobile templates folder (templates/mobiles): spawners naming no template there are skipped.
+    /// </param>
+    /// <param name="destination">
+    ///     The spawns folder (templates/spawns); each map gets modernuo_*.toml files, replacing those of a previous run.
+    /// </param>
+    public static int ModernUoSpawns(string source, string maps, string mobiles, string destination)
+    {
+        var chosen = new List<MapType>();
+
+        foreach (var name in maps.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            if (!Enum.TryParse<MapType>(name, true, out var map) || !Enum.IsDefined(map))
+            {
+                Console.Error.WriteLine($"Unknown map: {name}");
+
+                return 2;
+            }
+
+            chosen.Add(map);
+        }
+
+        UoxItemConverterCommand.RegisterTomlConverters();
+
+        return ModernUoSpawnConverter.Run(
+            Path.GetFullPath(source),
+            chosen,
+            Path.GetFullPath(mobiles),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
         );
     }
 }

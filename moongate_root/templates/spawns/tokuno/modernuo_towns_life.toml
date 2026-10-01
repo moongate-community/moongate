@@ -1,0 +1,1500 @@
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_0_sheep"
+map = "tokuno"
+name = "Tokuno sheep"
+mobile_ids = ["sheep"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 724
+y1 = 1327
+x2 = 764
+y2 = 1367
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_0_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 724
+y1 = 1327
+x2 = 764
+y2 = 1367
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_0_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 724
+y1 = 1327
+x2 = 764
+y2 = 1367
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_0_rat"
+map = "tokuno"
+name = "Tokuno rat"
+mobile_ids = ["rat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 724
+y1 = 1327
+x2 = 764
+y2 = 1367
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_1_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 701
+y1 = 1254
+x2 = 741
+y2 = 1294
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_1_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 701
+y1 = 1254
+x2 = 741
+y2 = 1294
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_1_cat"
+map = "tokuno"
+name = "Tokuno cat"
+mobile_ids = ["cat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 701
+y1 = 1254
+x2 = 741
+y2 = 1294
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_1_rat"
+map = "tokuno"
+name = "Tokuno rat"
+mobile_ids = ["rat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 701
+y1 = 1254
+x2 = 741
+y2 = 1294
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_2_crane"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 605
+y1 = 1297
+x2 = 645
+y2 = 1337
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_2_goat"
+map = "tokuno"
+name = "Tokuno goat"
+mobile_ids = ["goat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 605
+y1 = 1297
+x2 = 645
+y2 = 1337
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_2_rabbit"
+map = "tokuno"
+name = "Tokuno rabbit"
+mobile_ids = ["rabbit"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 605
+y1 = 1297
+x2 = 645
+y2 = 1337
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_3_rat"
+map = "tokuno"
+name = "Tokuno rat"
+mobile_ids = ["rat"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 783
+y1 = 1318
+x2 = 823
+y2 = 1358
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_3_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 783
+y1 = 1318
+x2 = 823
+y2 = 1358
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_4"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 659
+y1 = 1204
+x2 = 699
+y2 = 1244
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_5"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 814
+y1 = 1331
+x2 = 854
+y2 = 1371
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_6_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 748
+y1 = 1172
+x2 = 788
+y2 = 1212
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_6_rat"
+map = "tokuno"
+name = "Tokuno rat"
+mobile_ids = ["rat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 748
+y1 = 1172
+x2 = 788
+y2 = 1212
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_6_cat"
+map = "tokuno"
+name = "Tokuno cat"
+mobile_ids = ["cat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 748
+y1 = 1172
+x2 = 788
+y2 = 1212
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_6_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 748
+y1 = 1172
+x2 = 788
+y2 = 1212
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_7_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 824
+y1 = 1298
+x2 = 864
+y2 = 1338
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_7_crane"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 824
+y1 = 1298
+x2 = 864
+y2 = 1338
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_7_jackrabbit"
+map = "tokuno"
+name = "Tokuno jackrabbit"
+mobile_ids = ["jackrabbit"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 824
+y1 = 1298
+x2 = 864
+y2 = 1338
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_7_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 824
+y1 = 1298
+x2 = 864
+y2 = 1338
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_7_pig"
+map = "tokuno"
+name = "Tokuno pig"
+mobile_ids = ["pig"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 824
+y1 = 1298
+x2 = 864
+y2 = 1338
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_8_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 792
+y1 = 1202
+x2 = 832
+y2 = 1242
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_8_cat"
+map = "tokuno"
+name = "Tokuno cat"
+mobile_ids = ["cat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 792
+y1 = 1202
+x2 = 832
+y2 = 1242
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_8_jackrabbit"
+map = "tokuno"
+name = "Tokuno jackrabbit"
+mobile_ids = ["jackrabbit"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 792
+y1 = 1202
+x2 = 832
+y2 = 1242
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_9"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 608
+y1 = 1290
+x2 = 648
+y2 = 1330
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_10_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 691
+y1 = 1302
+x2 = 731
+y2 = 1342
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_10_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 691
+y1 = 1302
+x2 = 731
+y2 = 1342
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_10_crane"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 691
+y1 = 1302
+x2 = 731
+y2 = 1342
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_10_sheep"
+map = "tokuno"
+name = "Tokuno sheep"
+mobile_ids = ["sheep"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 691
+y1 = 1302
+x2 = 731
+y2 = 1342
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_11_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 610
+y1 = 1205
+x2 = 650
+y2 = 1245
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_11_crane"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 610
+y1 = 1205
+x2 = 650
+y2 = 1245
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_11_rabbit"
+map = "tokuno"
+name = "Tokuno rabbit"
+mobile_ids = ["rabbit"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 610
+y1 = 1205
+x2 = 650
+y2 = 1245
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_12"
+map = "tokuno"
+name = "Tokuno rabbit"
+mobile_ids = ["rabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 647
+y1 = 1323
+x2 = 687
+y2 = 1363
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_13"
+map = "tokuno"
+name = "Tokuno cat"
+mobile_ids = ["cat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 692
+y1 = 1218
+x2 = 732
+y2 = 1258
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_14_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 736
+y1 = 1216
+x2 = 776
+y2 = 1256
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_14_cat"
+map = "tokuno"
+name = "Tokuno cat"
+mobile_ids = ["cat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 736
+y1 = 1216
+x2 = 776
+y2 = 1256
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_14_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 736
+y1 = 1216
+x2 = 776
+y2 = 1256
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_14_rat"
+map = "tokuno"
+name = "Tokuno rat"
+mobile_ids = ["rat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 736
+y1 = 1216
+x2 = 776
+y2 = 1256
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_15"
+map = "tokuno"
+name = "Tokuno rat"
+mobile_ids = ["rat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 663
+y1 = 1211
+x2 = 703
+y2 = 1251
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_16_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 608
+y1 = 1252
+x2 = 648
+y2 = 1292
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_16_cat"
+map = "tokuno"
+name = "Tokuno cat"
+mobile_ids = ["cat"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 608
+y1 = 1252
+x2 = 648
+y2 = 1292
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_16_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 608
+y1 = 1252
+x2 = 648
+y2 = 1292
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_17_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 824
+y1 = 1178
+x2 = 864
+y2 = 1218
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_17_rat"
+map = "tokuno"
+name = "Tokuno rat"
+mobile_ids = ["rat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 824
+y1 = 1178
+x2 = 864
+y2 = 1218
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_17_rabbit"
+map = "tokuno"
+name = "Tokuno rabbit"
+mobile_ids = ["rabbit"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 824
+y1 = 1178
+x2 = 864
+y2 = 1218
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_17_horse"
+map = "tokuno"
+name = "Tokuno horse"
+mobile_ids = ["horse"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 824
+y1 = 1178
+x2 = 864
+y2 = 1218
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_17_pig"
+map = "tokuno"
+name = "Tokuno pig"
+mobile_ids = ["pig"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 824
+y1 = 1178
+x2 = 864
+y2 = 1218
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_18"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 720
+y1 = 1264
+x2 = 760
+y2 = 1304
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_19_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 787
+y1 = 1267
+x2 = 827
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_19_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 787
+y1 = 1267
+x2 = 827
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_19_cat"
+map = "tokuno"
+name = "Tokuno cat"
+mobile_ids = ["cat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 787
+y1 = 1267
+x2 = 827
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_19_jackrabbit"
+map = "tokuno"
+name = "Tokuno jackrabbit"
+mobile_ids = ["jackrabbit"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 787
+y1 = 1267
+x2 = 827
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_20_crane"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 693
+y1 = 1331
+x2 = 733
+y2 = 1371
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_20_cat"
+map = "tokuno"
+name = "Tokuno cat"
+mobile_ids = ["cat"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 693
+y1 = 1331
+x2 = 733
+y2 = 1371
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_21_sheep"
+map = "tokuno"
+name = "Tokuno sheep"
+mobile_ids = ["sheep"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 833
+y1 = 1267
+x2 = 873
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_21_rat"
+map = "tokuno"
+name = "Tokuno rat"
+mobile_ids = ["rat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 833
+y1 = 1267
+x2 = 873
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_21_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 833
+y1 = 1267
+x2 = 873
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_21_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 833
+y1 = 1267
+x2 = 873
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_22_rabbit"
+map = "tokuno"
+name = "Tokuno rabbit"
+mobile_ids = ["rabbit"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 616
+y1 = 1311
+x2 = 656
+y2 = 1351
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_22_pig"
+map = "tokuno"
+name = "Tokuno pig"
+mobile_ids = ["pig"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 616
+y1 = 1311
+x2 = 656
+y2 = 1351
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_22_crane"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 616
+y1 = 1311
+x2 = 656
+y2 = 1351
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_23"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 690
+y1 = 1330
+x2 = 730
+y2 = 1370
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_24"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 686
+y1 = 1188
+x2 = 726
+y2 = 1228
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_25_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 750
+y1 = 1324
+x2 = 790
+y2 = 1364
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_25_goat"
+map = "tokuno"
+name = "Tokuno goat"
+mobile_ids = ["goat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 750
+y1 = 1324
+x2 = 790
+y2 = 1364
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_25_pig"
+map = "tokuno"
+name = "Tokuno pig"
+mobile_ids = ["pig"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 750
+y1 = 1324
+x2 = 790
+y2 = 1364
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_25_horse"
+map = "tokuno"
+name = "Tokuno horse"
+mobile_ids = ["horse"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 750
+y1 = 1324
+x2 = 790
+y2 = 1364
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_26_sheep"
+map = "tokuno"
+name = "Tokuno sheep"
+mobile_ids = ["sheep"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 823
+y1 = 1227
+x2 = 863
+y2 = 1267
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_26_pig"
+map = "tokuno"
+name = "Tokuno pig"
+mobile_ids = ["pig"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 823
+y1 = 1227
+x2 = 863
+y2 = 1267
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_27_sheep"
+map = "tokuno"
+name = "Tokuno sheep"
+mobile_ids = ["sheep"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 837
+y1 = 1146
+x2 = 877
+y2 = 1186
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_27_rat"
+map = "tokuno"
+name = "Tokuno rat"
+mobile_ids = ["rat"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 837
+y1 = 1146
+x2 = 877
+y2 = 1186
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_27_bird"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 837
+y1 = 1146
+x2 = 877
+y2 = 1186
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_27_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 837
+y1 = 1146
+x2 = 877
+y2 = 1186
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_28_dog"
+map = "tokuno"
+name = "Tokuno dog"
+mobile_ids = ["dog"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 670
+y1 = 1268
+x2 = 710
+y2 = 1308
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_28_rat"
+map = "tokuno"
+name = "Tokuno rat"
+mobile_ids = ["rat"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 670
+y1 = 1268
+x2 = 710
+y2 = 1308
+
+[[spawn]]
+id = "tokuno_modernuo_shared_towns_life_28_cat"
+map = "tokuno"
+name = "Tokuno cat"
+mobile_ids = ["cat"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 670
+y1 = 1268
+x2 = 710
+y2 = 1308

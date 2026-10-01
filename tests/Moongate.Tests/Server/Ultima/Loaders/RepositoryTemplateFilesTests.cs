@@ -154,7 +154,7 @@ public sealed class RepositoryTemplateFilesTests
                      .Entities.ToDictionary(spawn => spawn.Id);
 
         Assert.Equal(446, lists.Length);
-        Assert.Equal(2835, spawns.Count);
+        Assert.Equal(4041, spawns.Count);
         var shop = spawns["felucca_0"];
         Assert.Equal(("The Hammer And Anvil", MapType.Felucca, 480), (shop.Name, shop.Map, shop.MinMinutes));
         Assert.Equal(["weaponsmith"], shop.MobileIds);
