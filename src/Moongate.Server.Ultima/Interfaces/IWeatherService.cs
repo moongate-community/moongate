@@ -26,4 +26,9 @@ public interface IWeatherService : IMoongateStartupService, IRegionChangeListene
     ///     Makes it <paramref name="kind" /> in <paramref name="profile" /> until the next game hour.
     /// </summary>
     void Force(string profile, WeatherKindType kind);
+
+    /// <summary>
+    ///     Sends the player its weather again, even unchanged: a season packet (0xBC) stops the client's weather.
+    /// </summary>
+    void Resend(MobileEntity player);
 }
