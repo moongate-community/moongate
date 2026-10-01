@@ -60,6 +60,24 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task FillAll_FillsEveryRegionToItsMaxAtTheNextCheck_AndTellsWhatIsMissing()
+    {
+        // 600 seconds: the regions' own first spawn is far away.
+        await StartAsync(
+            new ScriptedRandom(600),
+            Spawn("forest", call: 1, max: 5, minMinutes: 30, maxMinutes: 30),
+            Spawn("glade", call: 1, max: 3, minMinutes: 30, maxMinutes: 30)
+        );
+        await AddLiveAsync("forest");
+
+        var (regions, missing) = await _service.FillAllAsync();
+        await TickAsync();
+
+        Assert.Equal((2, 7), (regions, missing));
+        Assert.Equal(7, _npcs.Spawns.Count);
+    }
+
+    [Fact]
     public async Task WithoutTheInitialFill_TheFirstSpawnGoesByCall()
     {
         await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 1, max: 5));

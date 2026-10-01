@@ -109,10 +109,13 @@ when its area is a single cell, and walks it back when it is outside.
 - [`.spawns`](commands/spawns.md) lists the regions where you stand, with their live NPCs, their
   `max` and the minutes to their next spawn, or `no spot found, retrying` for a region that could
   not place anything.
+- [`.initial_spawn`](commands/initial_spawn.md) (administrators) fills every region to its `max`
+  at the next check, whatever `initial_fill` says, for a new world or after a large cleanup.
 - [`.spawn`](commands/spawn.md) and [`.remove`](commands/remove.md) place and remove single NPCs by
   hand; a removed spawned NPC is replaced at its region's next spawn.
 
-The messages are in the server language (ids 30074-30081, see [Localization](localization.md)).
+The messages are in the server language (ids 30074-30081, 30088 and 30092, see
+[Localization](localization.md)).
 
 ## See also
 
