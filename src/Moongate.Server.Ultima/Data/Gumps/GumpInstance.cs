@@ -1,4 +1,5 @@
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Ultima.Types.Gumps;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -20,4 +21,9 @@ public sealed class GumpInstance
     ///     Gets what runs on the game loop with the player's answer; button 0 means the gump was closed.
     /// </summary>
     public required Action<GameSession, GumpResponse> OnResponse { get; init; }
+
+    /// <summary>
+    ///     Gets what runs on the game loop when the server closes the gump before the player answers it.
+    /// </summary>
+    public Action<GameSession, GumpCloseReasonType>? OnClosed { get; init; }
 }

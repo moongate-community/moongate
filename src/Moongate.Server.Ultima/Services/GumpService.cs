@@ -6,6 +6,7 @@ using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Data.Internal.Gumps;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.Gumps;
+using Moongate.Server.Ultima.Types.Gumps;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -57,12 +58,12 @@ public sealed class GumpService : IGumpService
 
         if (state.Open.FindIndex(open => open.TypeId == typeId) is var same and >= 0)
         {
-            CloseAt(session, state, same);
+            CloseAt(session, state, same, GumpCloseReasonType.Replaced);
         }
 
         if (state.Open.Count >= MaxOpenGumps)
         {
-            CloseAt(session, state, 0);
+            CloseAt(session, state, 0, GumpCloseReasonType.Server);
         }
 
         var serial = ++_lastSerial == 0 ? ++_lastSerial : _lastSerial;
@@ -89,7 +90,7 @@ public sealed class GumpService : IGumpService
             return false;
         }
 
-        CloseAt(session, state!, index);
+        CloseAt(session, state!, index, GumpCloseReasonType.Server);
 
         return true;
     }
@@ -129,7 +130,7 @@ public sealed class GumpService : IGumpService
         var response = new GumpResponse
         {
             ButtonId = packet.ButtonId, Switches = packet.Switches.ToHashSet(),
-            Texts = packet.TextEntries.GroupBy(entry => entry.Id).ToDictionary(group => group.Key, group => group.Last().Text)
+            Texts = packet.TextEntries.ToDictionary(entry => entry.Id, entry => entry.Text)
         };
 
         try
@@ -144,7 +145,18 @@ public sealed class GumpService : IGumpService
 
     public void OnSessionClosed(GameSession session)
     {
-        session.Get(GumpSessionKeys.State)?.Open.Clear();
+        if (session.Get(GumpSessionKeys.State) is not { } state)
+        {
+            return;
+        }
+
+        var open = state.Open.ToList();
+        state.Open.Clear();
+
+        foreach (var gump in open)
+        {
+            Closed(session, gump, GumpCloseReasonType.Disconnect);
+        }
     }
 
     private static string? Invalid(GumpBuildResult built, GumpResponsePacket packet)
@@ -160,6 +172,11 @@ public sealed class GumpService : IGumpService
             {
                 return $"switch {id}, which it does not have";
             }
+        }
+
+        if (packet.TextEntries.DistinctBy(entry => entry.Id).Count() != packet.TextEntries.Count)
+        {
+            return "the same text entry twice";
         }
 
         foreach (var (id, text) in packet.TextEntries)
@@ -178,11 +195,24 @@ public sealed class GumpService : IGumpService
         return null;
     }
 
-    private void CloseAt(GameSession session, GumpState state, int index)
+    private void CloseAt(GameSession session, GumpState state, int index, GumpCloseReasonType reason)
     {
         var open = state.Open[index];
         state.Open.RemoveAt(index);
         _sender.TrySend(session.SessionId, new CloseGumpPacket(open.TypeId, 0));
+        Closed(session, open, reason);
+    }
+
+    private void Closed(GameSession session, OpenGump open, GumpCloseReasonType reason)
+    {
+        try
+        {
+            open.Gump.OnClosed?.Invoke(session, reason);
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(exception, "Gump {Gump} failed to handle being closed ({Reason})", open.Gump.Id, reason);
+        }
     }
 
     private static GumpState State(GameSession session)
