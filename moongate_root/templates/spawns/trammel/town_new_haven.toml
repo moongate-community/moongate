@@ -1,0 +1,799 @@
+# New Haven townsfolk, vendors and town animals, one small area per spawn point.
+
+[[spawn]]
+id = "trammel_new_haven_0"
+map = "trammel"
+name = "New Haven banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3482, y1 = 2568, x2 = 3486, y2 = 2572 }]
+
+[[spawn]]
+id = "trammel_new_haven_1"
+map = "trammel"
+name = "New Haven hairstylist"
+mobile_ids = ["hairstylist"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3467, y1 = 2516, x2 = 3473, y2 = 2522 }]
+
+[[spawn]]
+id = "trammel_new_haven_2"
+map = "trammel"
+name = "New Haven fisher"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3500, y1 = 2608, x2 = 3508, y2 = 2616 }]
+
+[[spawn]]
+id = "trammel_new_haven_3"
+map = "trammel"
+name = "New Haven shipwright"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3491, y1 = 2586, x2 = 3499, y2 = 2594 }]
+
+[[spawn]]
+id = "trammel_new_haven_4"
+map = "trammel"
+name = "New Haven weaver"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3492, y1 = 2543, x2 = 3500, y2 = 2551 }]
+
+[[spawn]]
+id = "trammel_new_haven_5"
+map = "trammel"
+name = "New Haven tailor"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3493, y1 = 2548, x2 = 3501, y2 = 2556 }]
+
+[[spawn]]
+id = "trammel_new_haven_6"
+map = "trammel"
+name = "New Haven tailor"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3490, y1 = 2547, x2 = 3498, y2 = 2555 }]
+
+[[spawn]]
+id = "trammel_new_haven_7"
+map = "trammel"
+name = "New Haven banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3479, y1 = 2567, x2 = 3483, y2 = 2571 }]
+
+[[spawn]]
+id = "trammel_new_haven_8"
+map = "trammel"
+name = "New Haven banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3479, y1 = 2573, x2 = 3483, y2 = 2577 }]
+
+[[spawn]]
+id = "trammel_new_haven_9"
+map = "trammel"
+name = "New Haven healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3459, y1 = 2554, x2 = 3467, y2 = 2562 }]
+
+[[spawn]]
+id = "trammel_new_haven_10"
+map = "trammel"
+name = "New Haven healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3459, y1 = 2554, x2 = 3467, y2 = 2562 }]
+
+[[spawn]]
+id = "trammel_new_haven_11"
+map = "trammel"
+name = "New Haven seeker"
+mobile_ids = ["seeker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3478, y1 = 2531, x2 = 3482, y2 = 2535 }]
+
+[[spawn]]
+id = "trammel_new_haven_12"
+map = "trammel"
+name = "New Haven noble"
+mobile_ids = ["noble"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3521, y1 = 2510, x2 = 3533, y2 = 2522 }]
+
+[[spawn]]
+id = "trammel_new_haven_13"
+map = "trammel"
+name = "New Haven noble"
+mobile_ids = ["noble"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3467, y1 = 2487, x2 = 3479, y2 = 2499 }]
+
+[[spawn]]
+id = "trammel_new_haven_14"
+map = "trammel"
+name = "New Haven noble"
+mobile_ids = ["noble"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3479, y1 = 2487, x2 = 3491, y2 = 2499 }]
+
+[[spawn]]
+id = "trammel_new_haven_15"
+map = "trammel"
+name = "New Haven noble"
+mobile_ids = ["noble"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3520, y1 = 2513, x2 = 3532, y2 = 2525 }]
+
+[[spawn]]
+id = "trammel_new_haven_16"
+map = "trammel"
+name = "New Haven blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3468, y1 = 2537, x2 = 3472, y2 = 2541 }]
+
+[[spawn]]
+id = "trammel_new_haven_17"
+map = "trammel"
+name = "New Haven blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3467, y1 = 2534, x2 = 3471, y2 = 2538 }]
+
+[[spawn]]
+id = "trammel_new_haven_18"
+map = "trammel"
+name = "New Haven blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3524, y1 = 2534, x2 = 3528, y2 = 2538 }]
+
+[[spawn]]
+id = "trammel_new_haven_19"
+map = "trammel"
+name = "New Haven weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3469, y1 = 2537, x2 = 3473, y2 = 2541 }]
+
+[[spawn]]
+id = "trammel_new_haven_20"
+map = "trammel"
+name = "New Haven armourer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3472, y1 = 2537, x2 = 3476, y2 = 2541 }]
+
+[[spawn]]
+id = "trammel_new_haven_21"
+map = "trammel"
+name = "New Haven scribe"
+mobile_ids = ["scribe"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3468, y1 = 2525, x2 = 3474, y2 = 2531 }]
+
+[[spawn]]
+id = "trammel_new_haven_22"
+map = "trammel"
+name = "New Haven herbalist"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3458, y1 = 2563, x2 = 3464, y2 = 2569 }]
+
+[[spawn]]
+id = "trammel_new_haven_23"
+map = "trammel"
+name = "New Haven herbalist"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3467, y1 = 2516, x2 = 3473, y2 = 2522 }]
+
+[[spawn]]
+id = "trammel_new_haven_24"
+map = "trammel"
+name = "New Haven animaltrainer"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3523, y1 = 2572, x2 = 3531, y2 = 2580 }]
+
+[[spawn]]
+id = "trammel_new_haven_25"
+map = "trammel"
+name = "New Haven fisher"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3516, y1 = 2594, x2 = 3524, y2 = 2602 }]
+
+[[spawn]]
+id = "trammel_new_haven_26"
+map = "trammel"
+name = "New Haven banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3482, y1 = 2574, x2 = 3486, y2 = 2578 }]
+
+[[spawn]]
+id = "trammel_new_haven_27"
+map = "trammel"
+name = "New Haven tinker"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3454, y1 = 2520, x2 = 3462, y2 = 2528 }]
+
+[[spawn]]
+id = "trammel_new_haven_28"
+map = "trammel"
+name = "New Haven tinker"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3454, y1 = 2524, x2 = 3462, y2 = 2532 }]
+
+[[spawn]]
+id = "trammel_new_haven_29"
+map = "trammel"
+name = "New Haven mage"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3492, y1 = 2524, x2 = 3498, y2 = 2530 }]
+
+[[spawn]]
+id = "trammel_new_haven_30"
+map = "trammel"
+name = "New Haven thief"
+mobile_ids = ["thief"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3444, y1 = 2563, x2 = 3456, y2 = 2575 }]
+
+[[spawn]]
+id = "trammel_new_haven_31"
+map = "trammel"
+name = "New Haven baker"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3459, y1 = 2572, x2 = 3467, y2 = 2580 }]
+
+[[spawn]]
+id = "trammel_new_haven_32"
+map = "trammel"
+name = "New Haven alchemist"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3457, y1 = 2562, x2 = 3465, y2 = 2570 }]
+
+[[spawn]]
+id = "trammel_new_haven_33"
+map = "trammel"
+name = "New Haven waiter"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3439, y1 = 2546, x2 = 3451, y2 = 2558 }]
+
+[[spawn]]
+id = "trammel_new_haven_34"
+map = "trammel"
+name = "New Haven hairstylist"
+mobile_ids = ["hairstylist"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3457, y1 = 2562, x2 = 3465, y2 = 2570 }]
+
+[[spawn]]
+id = "trammel_new_haven_35"
+map = "trammel"
+name = "New Haven waiter"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3437, y1 = 2546, x2 = 3449, y2 = 2558 }]
+
+[[spawn]]
+id = "trammel_new_haven_36"
+map = "trammel"
+name = "New Haven waiter"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3436, y1 = 2561, x2 = 3448, y2 = 2573 }]
+
+[[spawn]]
+id = "trammel_new_haven_37"
+map = "trammel"
+name = "New Haven waiter"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3499, y1 = 2512, x2 = 3511, y2 = 2524 }]
+
+[[spawn]]
+id = "trammel_new_haven_38"
+map = "trammel"
+name = "New Haven innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3497, y1 = 2513, x2 = 3505, y2 = 2521 }]
+
+[[spawn]]
+id = "trammel_new_haven_39"
+map = "trammel"
+name = "New Haven cook"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3493, y1 = 2514, x2 = 3501, y2 = 2522 }]
+
+[[spawn]]
+id = "trammel_new_haven_40"
+map = "trammel"
+name = "New Haven mage"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3492, y1 = 2529, x2 = 3498, y2 = 2535 }]
+
+[[spawn]]
+id = "trammel_new_haven_41"
+map = "trammel"
+name = "New Haven mage"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3492, y1 = 2527, x2 = 3498, y2 = 2533 }]
+
+[[spawn]]
+id = "trammel_new_haven_42"
+map = "trammel"
+name = "New Haven leatherworker"
+mobile_ids = ["leatherworker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3442, y1 = 2602, x2 = 3450, y2 = 2610 }]
+
+[[spawn]]
+id = "trammel_new_haven_43"
+map = "trammel"
+name = "New Haven furtrader"
+mobile_ids = ["furtrader"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3442, y1 = 2602, x2 = 3450, y2 = 2610 }]
+
+[[spawn]]
+id = "trammel_new_haven_44"
+map = "trammel"
+name = "New Haven tanner"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3442, y1 = 2602, x2 = 3450, y2 = 2610 }]
+
+[[spawn]]
+id = "trammel_new_haven_45"
+map = "trammel"
+name = "New Haven jeweler"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3504, y1 = 2549, x2 = 3512, y2 = 2557 }]
+
+[[spawn]]
+id = "trammel_new_haven_46"
+map = "trammel"
+name = "New Haven ironworker"
+mobile_ids = ["ironworker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3522, y1 = 2532, x2 = 3530, y2 = 2540 }]
+
+[[spawn]]
+id = "trammel_new_haven_47"
+map = "trammel"
+name = "New Haven seeker"
+mobile_ids = ["seeker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3480, y1 = 2505, x2 = 3482, y2 = 2507 }]
+
+[[spawn]]
+id = "trammel_new_haven_48"
+map = "trammel"
+name = "New Haven miner"
+mobile_ids = ["miner"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3522, y1 = 2532, x2 = 3530, y2 = 2540 }]
+
+[[spawn]]
+id = "trammel_new_haven_49"
+map = "trammel"
+name = "New Haven tavernkeeper"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3433, y1 = 2567, x2 = 3435, y2 = 2569 }]
+
+[[spawn]]
+id = "trammel_new_haven_50"
+map = "trammel"
+name = "New Haven vagabond"
+mobile_ids = ["vagabond"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3427, y1 = 2549, x2 = 3437, y2 = 2559 }]
+
+[[spawn]]
+id = "trammel_new_haven_51"
+map = "trammel"
+name = "New Haven tavernkeeper"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3435, y1 = 2564, x2 = 3439, y2 = 2568 }]
+
+[[spawn]]
+id = "trammel_new_haven_52"
+map = "trammel"
+name = "New Haven seeker"
+mobile_ids = ["seeker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3470, y1 = 2588, x2 = 3472, y2 = 2590 }]
+
+[[spawn]]
+id = "trammel_new_haven_53"
+map = "trammel"
+name = "New Haven peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3448, y1 = 2582, x2 = 3456, y2 = 2590 }]
+
+[[spawn]]
+id = "trammel_new_haven_54"
+map = "trammel"
+name = "New Haven seeker"
+mobile_ids = ["seeker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3441, y1 = 2533, x2 = 3445, y2 = 2537 }]
+
+[[spawn]]
+id = "trammel_new_haven_55"
+map = "trammel"
+name = "New Haven cat"
+mobile_ids = ["cat"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3441, y1 = 2553, x2 = 3447, y2 = 2559 }]
+
+[[spawn]]
+id = "trammel_new_haven_56"
+map = "trammel"
+name = "New Haven dog and cat and bird"
+mobile_ids = ["dog", "cat", "bird"]
+npc_list_ids = []
+max = 30
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+areas = [{ x1 = 3477, y1 = 2539, x2 = 3497, y2 = 2559 }]

@@ -3,7 +3,9 @@
 The world fills itself with NPCs from spawn regions, as UOX3's `[REGIONSPAWN]`: every region keeps
 up to its `max` NPCs alive, spawning a few at a time, and spawns new ones when some are removed or
 killed. The shipped data is UOX3's, converted by [`mg-uoxconv`](uox3-migration.md): 2778 regions on
-Felucca, Trammel and Ilshenar, for up to about 25,000 NPCs, picking from 446 NPC lists.
+Felucca, Trammel and Ilshenar, for up to about 25,000 NPCs, picking from 446 NPC lists. UOX3 has no
+spawns for New Haven, so `spawns/trammel/town_new_haven.toml` adds its 57 spawn points from
+ModernUO: the vendors, the bankers, the townsfolk and the town animals, 99 NPCs in all.
 
 ## Where the data is
 
