@@ -201,7 +201,7 @@ works today in more detail.
 | Guarded towns, region music and region rules | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |
 | World decoration | ✅ | Placed by `.decorate` |
-| Spawn regions | ✅ | Gradual fill and respawn, land and water; see [NPC spawns](spawns.md) |
+| Spawn regions | ✅ | Fast first fill, `.initial_spawn` and respawn, land and water; see [NPC spawns](spawns.md) |
 | Spawner items | ❌ | |
 | Housing | ❌ | |
 | Boats | ❌ | |

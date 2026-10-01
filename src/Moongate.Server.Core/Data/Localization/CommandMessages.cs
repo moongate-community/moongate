@@ -59,6 +59,7 @@ public static class CommandMessages
     public const int SpawnedInRegions = 30075;
     public const int SpawnedAndMore = 30076;
     public const int SpawnedWorldProgress = 30088;
+    public const int InitialSpawnStarted = 30092;
     public const int SpawnRegionHere = 30077;
     public const int NoSpawnRegionHere = 30078;
     public const int SpawnRegionRetrying = 30080;
@@ -95,4 +96,5 @@ public static class CommandMessages
     public const int KeyDescription = 30073;
     public const int SpawnsDescription = 30079;
     public const int GumpDescription = 30086;
+    public const int InitialSpawnDescription = 30093;
 }

@@ -30,6 +30,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`broadcast`](commands/broadcast.md) | `broadcast <text>` | Yes | Yes | Administrator | Game |
 | [`shutdown`](commands/shutdown.md) | `shutdown [seconds]` | Yes | Yes | Administrator | Game |
 | [`decorate`](commands/decorate.md) | `decorate` | Yes | Yes | Administrator | Game |
+| [`initial_spawn`](commands/initial_spawn.md) | `initial_spawn` | Yes | Yes | Administrator | Game |
 | [`globallight`](commands/globallight.md) | `globallight [0-31]` | Yes | Yes | GameMaster | Game |
 | [`spawn`](commands/spawn.md) | `spawn <template>`, then target a spot | No | Yes | GameMaster | Game |
 | [`remove`](commands/remove.md) | `remove`, then target an NPC | No | Yes | GameMaster | Game |
@@ -48,7 +49,8 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 - **Everyone:** `help`, `echo`.
 - **Game masters:** `character`, `spawn`, `remove`, `where`, `fame`, `karma`, `globallight`,
   `weather`, `spawns`, `gump`, `lock`, `unlock`, `key`.
-- **Administrators:** `account`, `save`, `broadcast`, `shutdown`, `decorate`, plus everything a
+- **Administrators:** `account`, `save`, `broadcast`, `shutdown`, `decorate`,
+  `initial_spawn`, plus everything a
   game master uses.
 - **Console only:** `script`.
 

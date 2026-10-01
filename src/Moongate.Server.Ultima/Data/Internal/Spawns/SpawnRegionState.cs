@@ -19,5 +19,10 @@ internal sealed class SpawnRegionState
     /// </summary>
     public bool Filled { get; set; }
 
+    /// <summary>
+    ///     Gets or sets whether the next spawn fills the region to its max, as <c>.initial_spawn</c> asks.
+    /// </summary>
+    public bool FillNow { get; set; }
+
     public bool Retrying { get; set; }
 }

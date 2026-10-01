@@ -94,6 +94,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.GumpDescription
         );
+        container.RegisterCommand<InitialSpawnCommand>(
+            "initial_spawn",
+            "Fills every spawn region to its max at the next spawn check.",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Administrator,
+            CommandMessages.InitialSpawnDescription
+        );
         container.RegisterCommand<SpawnsCommand>(
             "spawns",
             "Lists the spawn regions where you stand, with their live NPCs and the minutes to their next spawn.",

@@ -188,6 +188,30 @@ public sealed class SpawnRegionService : ISpawnRegionService
         return here;
     }
 
+    public async Task<(int Regions, int Missing)> FillAllAsync()
+    {
+        var regions = 0;
+        var missing = 0;
+        await OnLoopAsync(
+            () =>
+            {
+                var now = _time.GetUtcNow();
+                var live = CountLive();
+
+                foreach (var region in _regions)
+                {
+                    region.FillNow = true;
+                    region.NextSpawn = now;
+                    missing += Math.Max(0, region.Template.Max - live.GetValueOrDefault(region.Template.Id));
+                }
+
+                regions = _regions.Count;
+            }
+        );
+
+        return (regions, missing);
+    }
+
     // On the game loop. The spawns themselves run off it, as INpcService asks; no check starts before they are done.
     private void Check()
     {
@@ -231,7 +255,7 @@ public sealed class SpawnRegionService : ISpawnRegionService
             var room = template.Max - live.GetValueOrDefault(template.Id);
 
             // The first spawn after the start fills the region; later ones bring call NPCs at a time.
-            var count = _config.InitialFill && !region.Filled ? room : Math.Min(template.Call, room);
+            var count = region.FillNow || _config.InitialFill && !region.Filled ? room : Math.Min(template.Call, room);
             var found = 0;
 
             // A pick with no spot, such as a sea creature in a region with little water, leaves the others to spawn.
@@ -252,6 +276,7 @@ public sealed class SpawnRegionService : ISpawnRegionService
             if (!missed)
             {
                 region.Filled = true;
+                region.FillNow = false;
             }
             region.Retrying = missed;
 

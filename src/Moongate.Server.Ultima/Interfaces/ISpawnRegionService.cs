@@ -15,4 +15,13 @@ public interface ISpawnRegionService : IMoongateStartupService
     ///     <paramref name="map" />, in file order. Call it off the game loop.
     /// </summary>
     Task<IReadOnlyList<SpawnRegionStatus>> RegionsAtAsync(MapType map, int x, int y);
+
+    /// <summary>
+    ///     Makes every region fill to its max at the next check, whatever its next spawn time and
+    ///     <c>ultima.spawns.initial_fill</c>. Call it off the game loop.
+    /// </summary>
+    /// <returns>
+    ///     The regions, and the NPCs missing to fill them.
+    /// </returns>
+    Task<(int Regions, int Missing)> FillAllAsync();
 }
