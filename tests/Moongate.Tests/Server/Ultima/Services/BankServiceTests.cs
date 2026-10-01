@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Speech;
@@ -21,6 +22,7 @@ public sealed class BankServiceTests : IAsyncLifetime
 {
     private readonly ItemService _items = TestItems.Create();
     private readonly FakeItemFactoryService _factory;
+    private readonly SettableClock _time = new() { Now = new DateTimeOffset(2026, 10, 1, 12, 0, 0, TimeSpan.Zero) };
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
@@ -47,7 +49,7 @@ public sealed class BankServiceTests : IAsyncLifetime
         var layouts = new ContainerLayoutService(
             new StubDataLoaderService().With(new ContainerContent { Name = "metal chest", Gump = 0x004A, Items = [0x0E7C], Default = true })
         );
-        _bank = new(_items, _factory, _fixture.Sessions, _fixture.Mobiles, _fixture.Sender, TestTooltips.Create(_items, _fixture.Mobiles), layouts, _fixture.Network.Loop);
+        _bank = new(_items, _factory, _fixture.Sessions, _fixture.Mobiles, _fixture.Sender, TestTooltips.Create(_items, _fixture.Mobiles), layouts, _fixture.Network.Loop, time: _time);
     }
 
     public async Task DisposeAsync()
@@ -139,6 +141,40 @@ public sealed class BankServiceTests : IAsyncLifetime
         _aria.Map = MapType.Trammel;
         Assert.True(_bank.IsOpen(_aria));
         Assert.False(_bank.IsOpen(new MobileEntity { Id = _aria.Id, Map = MapType.Trammel, Location = _aria.Location }));
+    }
+
+    [Fact]
+    public async Task Close_EndsIt_EvenBackOnTheSameSpot()
+    {
+        AddBank();
+        await OnLoopAsync(() => _bank.Open(_aria));
+
+        _bank.Close(_aria);
+
+        Assert.False(_bank.IsOpen(_aria));
+    }
+
+    [Fact]
+    public async Task ASessionClosing_EndsIt()
+    {
+        AddBank();
+        await OnLoopAsync(() => _bank.Open(_aria));
+
+        _bank.OnSessionClosed(_session);
+
+        Assert.False(_bank.IsOpen(_aria));
+    }
+
+    [Fact]
+    public async Task Open_AgainWithinASecond_ShowsTheBankOnce_AsManyBankersHearTheSameWord()
+    {
+        AddBank();
+
+        await OnLoopAsync(() => _bank.Open(_aria) && _bank.Open(_aria));
+        _time.Advance(TimeSpan.FromSeconds(1));
+        await OnLoopAsync(() => _bank.Open(_aria));
+
+        Assert.Equal(2, _fixture.Sender.Sent.OfType<DisplayContainerPacket>().Count());
     }
 
     [Fact]

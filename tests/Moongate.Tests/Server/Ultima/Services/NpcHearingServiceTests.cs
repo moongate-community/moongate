@@ -40,6 +40,20 @@ public sealed class NpcHearingServiceTests
     }
 
     [Fact]
+    public async Task Heard_GivesEachNpcItsOwnKeywordsTable()
+    {
+        Add(0x100, "orc", 1615, 1600);
+        Add(0x101, "orc", 1610, 1600);
+        var hearing = Create();
+        await _scripts.StartAsync();
+
+        hearing.Heard(_aria, "bank", [0x002]);
+
+        Assert.Equal(2, _engine.MemberCalls.Count);
+        Assert.NotSame(_engine.MemberCalls[0].Args[3], _engine.MemberCalls[1].Args[3]);
+    }
+
+    [Fact]
     public async Task Heard_SkipsFarOtherMapScriptlessNpcsAndPlayers()
     {
         Add(0x101, "orc", 1616, 1600);

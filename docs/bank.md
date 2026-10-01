@@ -22,7 +22,8 @@ the script, so every banker of the [spawns](spawns.md) answers.
 ## While it is open
 
 The bank stays open while the player stands where it opened: a step, a teleport, a map change or a
-new login closes it. Turning in place does not.
+new login closes it, and coming back to the spot does not open it again. Turning in place does not
+close it. When several bankers hear the same word, the bank shows once.
 
 - Its owner lifts, drops and uses what is inside only while it is open: a closed bank refuses the
   lift, bounces what is dropped into it and opens nothing.

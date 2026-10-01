@@ -23,6 +23,18 @@ public sealed class NpcHearingService : INpcSpeechListener
 
     public void Heard(MobileEntity speaker, string text, IReadOnlyList<int>? keywords = null)
     {
+        foreach (var npc in _sectors.GetMobilesInRange(speaker.Map, speaker.Location, HearingRange))
+        {
+            if (npc.IsNpc)
+            {
+                _scripts.Run(npc, "on_speech", (long)speaker.Id.Value, text, Table(keywords));
+            }
+        }
+    }
+
+    // One table per NPC: a script that changes its table cannot change what the next NPC hears.
+    private static LuaTable Table(IReadOnlyList<int>? keywords)
+    {
         var table = new LuaTable();
 
         for (var index = 0; index < keywords?.Count; index++)
@@ -30,12 +42,6 @@ public sealed class NpcHearingService : INpcSpeechListener
             table[index + 1] = keywords[index];
         }
 
-        foreach (var npc in _sectors.GetMobilesInRange(speaker.Map, speaker.Location, HearingRange))
-        {
-            if (npc.IsNpc)
-            {
-                _scripts.Run(npc, "on_speech", (long)speaker.Id.Value, text, table);
-            }
-        }
+        return table;
     }
 }

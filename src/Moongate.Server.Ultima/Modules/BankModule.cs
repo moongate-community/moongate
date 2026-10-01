@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -38,7 +39,7 @@ public sealed class BankModule
         return TryGetPlayer(player, out var mobile) && _bank.IsOpen(mobile);
     }
 
-    private bool TryGetPlayer(long serial, out Entities.World.MobileEntity mobile)
+    private bool TryGetPlayer(long serial, out MobileEntity mobile)
     {
         mobile = null!;
 

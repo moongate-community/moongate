@@ -26,6 +26,7 @@ public sealed class BankService : IBankService
     public const string BankTemplate = "bank_box";
 
     private static readonly Hue MessageHue = new(0x03B2);
+    private static readonly TimeSpan ShowAgainAfter = TimeSpan.FromSeconds(1);
 
     private readonly ILogger _logger = Log.ForContext<BankService>();
     private readonly ConcurrentDictionary<Serial, OpenBank> _open = new();
@@ -39,6 +40,7 @@ public sealed class BankService : IBankService
     private readonly IContainerLayoutService _layouts;
     private readonly IGameLoopService _loop;
     private readonly ILocalizationService? _localization;
+    private readonly TimeProvider _time;
 
     public BankService(
         IItemService items,
@@ -49,9 +51,11 @@ public sealed class BankService : IBankService
         ITooltipService tooltips,
         IContainerLayoutService layouts,
         IGameLoopService loop,
-        ILocalizationService? localization = null
+        ILocalizationService? localization = null,
+        TimeProvider? time = null
     )
     {
+        _time = time ?? TimeProvider.System;
         _items = items;
         _factory = factory;
         _sessions = sessions;
@@ -72,7 +76,11 @@ public sealed class BankService : IBankService
 
         if (BoxOf(player.Id) is { } box)
         {
-            Show(player, session, box);
+            // Every banker in range hears the same word: the bank shows once.
+            if (!IsOpen(player) || _time.GetUtcNow() - _open[player.Id].At >= ShowAgainAfter)
+            {
+                Show(player, session, box);
+            }
 
             return true;
         }
@@ -83,6 +91,16 @@ public sealed class BankService : IBankService
         }
 
         return true;
+    }
+
+    public void Close(MobileEntity player)
+    {
+        _open.TryRemove(player.Id, out _);
+    }
+
+    public void OnSessionClosed(GameSession session)
+    {
+        _open.TryRemove(session.CharacterId, out _);
     }
 
     public bool IsOpen(MobileEntity player)
@@ -149,7 +167,7 @@ public sealed class BankService : IBankService
 
     private void Show(MobileEntity player, GameSession session, ItemEntity box)
     {
-        _open[player.Id] = new(player, player.Map, player.Location);
+        _open[player.Id] = new(player, player.Map, player.Location, _time.GetUtcNow());
         var contents = _items.GetContents(box.Id);
 
         _sender.TrySend(session.SessionId, new WornItemPacket(box));

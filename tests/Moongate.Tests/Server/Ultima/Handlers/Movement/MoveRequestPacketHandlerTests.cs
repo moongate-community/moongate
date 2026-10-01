@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
@@ -22,6 +23,7 @@ namespace Moongate.Tests.Server.Ultima.Handlers.Movement;
 public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
 {
     private readonly ManualTimeProvider _time = new();
+    private readonly StubBankService _bank = new();
     private readonly StubMovementService _movement = new() { LandingZ = 10 };
     private readonly StubPacketSendService _sender = new();
     private readonly RecordingWorldViewService _view = new();
@@ -50,6 +52,16 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(new Point3D(1497, 1628, 10), _aria.Location);
         var ack = Assert.IsType<MovementAckPacket>(Assert.Single(_sender.Sent));
         Assert.Equal(((byte)0, NotorietyType.Innocent), (ack.Sequence, ack.Notoriety));
+    }
+
+    [Fact]
+    public async Task Handle_AStep_ClosesTheBank_ATurnDoesNot()
+    {
+        await EnterAsync();
+        await StepAsync(DirectionType.East, 0);
+        await StepAsync(DirectionType.South, 1);
+
+        Assert.Equal([_aria], _bank.Closed);
     }
 
     [Fact]
@@ -254,7 +266,7 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
 
     private Task StepAsync(DirectionType direction, byte sequence, bool running = false)
     {
-        var handler = new MoveRequestPacketHandler(_mobiles, _view, _sender, _time);
+        var handler = new MoveRequestPacketHandler(_mobiles, _view, _sender, _time, _bank);
         var packet = new MoveRequestPacket { Direction = direction, Running = running, Sequence = sequence, FastWalkKey = 0 };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));

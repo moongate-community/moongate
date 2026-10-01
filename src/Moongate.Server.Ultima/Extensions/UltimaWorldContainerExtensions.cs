@@ -6,13 +6,13 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Events;
-using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
+using Moongate.Server.Ultima.Services.Diagnostics;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Speech;
-using Moongate.Server.Ultima.Services.Diagnostics;
 
 namespace Moongate.Server.Ultima.Extensions;
 
@@ -79,6 +79,7 @@ public static class UltimaWorldContainerExtensions
         container.RegisterMapping<ISessionClosedListener, IGumpService>();
         container.Register<IGumpTemplateService, GumpTemplateService>(Reuse.Singleton);
         container.Register<IBankService, BankService>(Reuse.Singleton);
+        container.RegisterMapping<ISessionClosedListener, IBankService>();
         container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
         container.Register<ITileDataService, TileDataService>(Reuse.Singleton);

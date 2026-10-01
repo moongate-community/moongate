@@ -16,11 +16,22 @@ public sealed class StubBankService : IBankService
 
     public bool Answer { get; set; } = true;
 
+    public List<MobileEntity> Closed { get; } = [];
+
     public bool Open(MobileEntity player)
     {
         Opened.Add(player);
 
         return Answer;
+    }
+
+    public void OnSessionClosed(GameSession session)
+    {
+    }
+
+    public void Close(MobileEntity player)
+    {
+        Closed.Add(player);
     }
 
     public bool IsOpen(MobileEntity player)

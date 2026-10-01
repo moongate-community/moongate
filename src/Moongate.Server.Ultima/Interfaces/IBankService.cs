@@ -1,4 +1,5 @@
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Ultima.Entities.World;
 
 namespace Moongate.Server.Ultima.Interfaces;
@@ -8,13 +9,18 @@ namespace Moongate.Server.Ultima.Interfaces;
 ///     owner reaches only while it is open. It stays open while the player stands where it was opened: a step, a
 ///     teleport, a map change or a new login closes it. Called on the game loop.
 /// </summary>
-public interface IBankService
+public interface IBankService : ISessionClosedListener
 {
     /// <summary>
     ///     Opens the player's bank box and shows it, making it first when the player has none (it shows once saved);
     ///     false when the player has no session in the world.
     /// </summary>
     bool Open(MobileEntity player);
+
+    /// <summary>
+    ///     Closes the player's bank box, as a step does.
+    /// </summary>
+    void Close(MobileEntity player);
 
     /// <summary>
     ///     Gets whether the player's bank box is open: the same character on the spot where it opened it.
