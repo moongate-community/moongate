@@ -6,6 +6,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules.Internal;
+using Moongate.Server.Ultima.Types.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -14,7 +15,7 @@ namespace Moongate.Server.Ultima.Modules;
 ///     The <c>world</c> Lua module: what a script can ask about the world around its NPC or item, such as whether a door's
 ///     doorway is free.
 /// </summary>
-[ScriptModule("world", "Asks about the world: who stands where, what time it is.")]
+[ScriptModule("world", "Asks about the world: who stands where, what time it is, the moons.")]
 public sealed class WorldModule
 {
     private readonly ISectorService _sectors;
@@ -67,6 +68,17 @@ public sealed class WorldModule
     public bool IsOccupied(MapType map, int x, int y)
     {
         return _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0).Count > 0;
+    }
+
+    /// <summary>
+    ///     Gets the phase of a moon, <paramref name="moon" /> being <c>MapType.Trammel</c> or <c>MapType.Felucca</c>, seen
+    ///     from the column <paramref name="x" />, as the spyglass shows it;
+    ///     <c>world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The phase of the moon (MapType.Trammel or MapType.Felucca) seen from the column x, a MoonPhaseType.")]
+    public MoonPhaseType Moon(MapType moon, int x)
+    {
+        return _clock.GetMoonPhase(moon, x);
     }
 
     /// <summary>

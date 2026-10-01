@@ -11,6 +11,7 @@ using Moongate.Scripting.Internal;
 using Moongate.Server.Ultima.Data.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
+using Moongate.Server.Ultima.Types.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -97,6 +98,14 @@ public sealed class WorldModuleTests : IAsyncLifetime
         Assert.Equal((21, 5), (result[0].Read<int>(), result[1].Read<int>()));
     }
 
+    [Fact]
+    public void Moon_GivesThePhaseOfTheMoon_AsAMoonPhaseType()
+    {
+        var result = Run("return world.moon(MapType.Trammel, 1600) == MoonPhaseType.FullMoon");
+
+        Assert.True(result[0].Read<bool>());
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
@@ -104,6 +113,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
         binder.Bind(state, new WorldModule(_sectors, _clock, _fixture.Sessions, _items));
         binder.BindEnum(state, typeof(MapType));
+        binder.BindEnum(state, typeof(MoonPhaseType));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }
