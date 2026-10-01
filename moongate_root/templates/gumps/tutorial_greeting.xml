@@ -3,7 +3,7 @@
   Moongate - templates/gumps/tutorial_greeting.xml
 
   What it is for:
-    Step 2 of the gump tutorial (docs/tutorials/first-gump.md): greets the name step 1 bound.
+    Step 2 of the gump tutorial (docs/gump-tutorial.md): greets the name step 1 bound.
     Back returns to step 1 with the name still in it; Done calls tutorial_greeting.done in
     scripts/gumps/tutorial_greeting.lua.
 -->

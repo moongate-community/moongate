@@ -72,7 +72,9 @@ public sealed class GumpsLoaderTests
      InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"3\" /><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"3\" />", "button id 3 twice"),
      InlineData("<checkbox x=\"1\" y=\"1\" off=\"1\" on=\"2\" switch=\"4\" /><group><radio x=\"1\" y=\"1\" off=\"1\" on=\"2\" switch=\"4\" /></group>", "switch 4 twice"),
      InlineData("<text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"2\" /><text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"2\" />", "entry 2 twice"),
-     InlineData("<page><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" page=\"2\" /></page>", "page 2, but the gump has 1")]
+     InlineData("<page><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" page=\"2\" /></page>", "page 2, but the gump has 1"),
+     InlineData("<slot name=\"rows\" x=\"1\" y=\"1\" /><page />", "a slot cannot be in a gump with pages"),
+     InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" on_click=\"__x\" />", "reserved")]
     public async Task LoadDataAsync_AControlTheSchemaCannotCheck_StopsWithTheReason(string control, string expected)
     {
         using var root = new TemporaryDirectory();

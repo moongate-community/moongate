@@ -3,7 +3,7 @@
 --
 -- What it is for:
 --   The script of the dynamic list of the gump tutorial
---   (docs/tutorials/first-gump.md): fills the "rows" slot of
+--   (docs/gump-tutorial.md): fills the "rows" slot of
 --   templates/gumps/tutorial_list.xml with one row per city, eight per page.
 --
 -- Functions:

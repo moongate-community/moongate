@@ -59,6 +59,7 @@ public sealed class GumpBuilderTests : IAsyncLifetime
     [Fact]
     public void AButtonWithAFunction_CallsIt_WithTheAnswerAndTheArgs()
     {
+        _scripts.CurrentScript = "items/potion.lua";
         Run(
             """
             local g = gump.create("menu")
@@ -71,8 +72,8 @@ public sealed class GumpBuilderTests : IAsyncLifetime
         Answer(1);
         Answer(2, gump: 0);
 
-        var (gumpId, _, args) = Assert.Single(_scripts.FunctionCalls);
-        Assert.Equal(("menu", 7L), (gumpId, args[0]));
+        var (owner, _, args) = Assert.Single(_scripts.FunctionCalls);
+        Assert.Equal(("items/potion.lua", 7L), (owner, args[0]));
         Assert.Equal("Aria", Assert.IsType<LuaTable>(args[2])["name"].Read<string>());
         Assert.Equal("named", Assert.Single(_scripts.Calls).Function);
     }
@@ -143,6 +144,43 @@ public sealed class GumpBuilderTests : IAsyncLifetime
         Assert.Equal("{ page 0 }{ text 1 1 0 0 }{ text 105 210 0 1 }", _gumps.Opened[0].Gump.Layout.Build().Layout);
     }
 
+    [Fact]
+    public void TheBuildersMethods_CannotBeReachedOrChangedByScripts()
+    {
+        var result = Run("return getmetatable(gump.create('menu'))");
+
+        Assert.Equal(LuaValueType.String, result[0].Type);
+    }
+
+    [Theory,
+     InlineData("g:checkbox{ x = 1, y = 1, off = 1, on = 2, switch = 1, checked = 'yes' }", "checked"),
+     InlineData("g:button{ x = 1, y = 1, up = 1, down = 2, page = 1, on_click = 'a' }", "exactly one"),
+     InlineData("g:button{ x = 1, y = 1, up = 1, down = 2, open = 'nowhere' }", "nowhere"),
+     InlineData("g:item_property{}", "serial"),
+     InlineData("g:button{ x = 1, y = 1, up = 1, down = 2, on_click = '__reserved' }", "reserved")]
+    public void Send_ABuiltGumpTheChecksRefuse_FailsWithTheReason(string control, string expected)
+    {
+        var exception = Assert.ThrowsAny<Exception>(() => Run($"local g = gump.create('menu') {control} return gump.send(7, g)"));
+
+        Assert.Contains(expected, exception.Message);
+        Assert.Empty(_gumps.Opened);
+    }
+
+    [Fact]
+    public void Create_AnIdThatIsNotAName_Fails()
+    {
+        Assert.ThrowsAny<Exception>(() => Run("gump.create('Bad Id')"));
+    }
+
+    [Fact]
+    public void ASlotFunctionThatFails_OpensNothing()
+    {
+        _scripts.CallResult = Moongate.Scripting.Data.Scripts.ScriptResult.Failed(new("gumps/with_slot.lua", 1, "boom", null));
+
+        Assert.False(Run("return gump.open(7, 'with_slot', {})")[0].Read<bool>());
+        Assert.Empty(_gumps.Opened);
+    }
+
     public async Task DisposeAsync()
     {
         await _fixture.DisposeAsync();
@@ -168,7 +206,7 @@ public sealed class GumpBuilderTests : IAsyncLifetime
         );
         var data = new StubDataLoaderService().With(new GumpTemplate { Id = "with_slot", File = "a.xml", Root = withSlot });
         var templates = new GumpTemplateService(_gumps, data, _fixture.Network.Loop, _fixture.Sessions);
-        var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts));
+        var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts), _fixture.Network.Loop);
 
         using var state = LuaState.Create();
         state.OpenBasicLibrary();

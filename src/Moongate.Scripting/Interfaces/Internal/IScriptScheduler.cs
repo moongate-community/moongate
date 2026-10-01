@@ -16,6 +16,11 @@ internal interface IScriptScheduler
     string? CurrentOwner { get; }
 
     /// <summary>
+    ///     Gets whether a coroutine is being resumed, when starting another one would nest.
+    /// </summary>
+    bool IsResuming { get; }
+
+    /// <summary>
     ///     Starts <paramref name="function" /> as a coroutine owned by <paramref name="owner" />.
     /// </summary>
     ScriptResult Start(LuaFunction function, string owner, params object?[] args);

@@ -17,7 +17,9 @@ internal static class GumpBuilder
     private const string XKey = "__x";
     private const string YKey = "__y";
     private const string PagerKey = "__pager";
-    private const string FunctionPrefix = "__function_";
+    // XML on_click names may not start with __ (the loader refuses them), so these never meet one.
+    public const string ReservedPrefix = "__";
+    private const string FunctionPrefix = "__fn_";
 
     private static readonly string[] Controls =
     [
@@ -148,6 +150,10 @@ internal static class GumpBuilder
             {
                 element.Value = Text(value);
             }
+            else if (name == "on_click" && value.TryRead<string>(out var named) && named.StartsWith(ReservedPrefix, StringComparison.Ordinal))
+            {
+                throw new ArgumentException($"on_click names starting with {ReservedPrefix} are reserved: {named}");
+            }
             else if (name == "on_click" && value.TryRead<LuaFunction>(out var function))
             {
                 var functionName = $"{FunctionPrefix}{functions.Count}";
@@ -245,7 +251,8 @@ internal static class GumpBuilder
             }
         );
 
-        // g:pager{ previous = { x, y, up, down }, next = { ... } }: where g:paginate puts its buttons.
+        // g:pager{ previous = { x = 0, y = 0, up = 4014, down = 4015 }, next = { ... } }: where g:paginate puts its
+        // buttons; any key left out keeps its default.
         methods["pager"] = new LuaFunction(
             "pager",
             (context, _) =>
@@ -290,6 +297,9 @@ internal static class GumpBuilder
 
         var metatable = new LuaTable();
         metatable["__index"] = methods;
+
+        // getmetatable gives this string instead of the shared table, so no script can change the methods.
+        metatable["__metatable"] = "gump builder";
 
         return metatable;
     }

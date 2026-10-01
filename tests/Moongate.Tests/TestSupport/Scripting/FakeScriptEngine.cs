@@ -56,6 +56,10 @@ public sealed class FakeScriptEngine : IScriptEngine
     /// <inheritdoc />
     public List<(string Owner, LuaFunction Function, object?[] Args)> FunctionCalls { get; } = [];
 
+    public bool IsRunningScript { get; set; }
+
+    public string? CurrentScript { get; set; }
+
     public ScriptResult CallFunction(string owner, LuaFunction function, params object?[] args)
     {
         FunctionCalls.Add((owner, function, args));

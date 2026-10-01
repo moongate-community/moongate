@@ -31,7 +31,7 @@ public sealed class GumpCommandTests : IAsyncLifetime
             _fixture.Network.Loop,
             _fixture.Sessions
         );
-        var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(new RecordingGumpScriptService()));
+        var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(new RecordingGumpScriptService()), _fixture.Network.Loop);
         _command = new(module, templates, _fixture.Network.Loop);
     }
 

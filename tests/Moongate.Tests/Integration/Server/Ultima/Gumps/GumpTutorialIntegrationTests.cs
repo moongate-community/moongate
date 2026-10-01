@@ -49,8 +49,20 @@ public sealed class GumpTutorialIntegrationTests : IAsyncLifetime
             _scripts.Write($"gumps/{Path.GetFileName(file)}", await File.ReadAllTextAsync(file));
         }
 
+        _scripts.Write(
+            "gumps/probe.lua",
+            """
+            probe = {}
+            function probe.open_list(player) return gump.open(player, "tutorial_list") end
+            function probe.open_twice(player) gump.open(player, "probe") gump.open(player, "probe") end
+            function probe.on_close(player, args, reason) probe_closed = reason end
+            function probe.closed() return probe_closed end
+            """
+        );
         var gumpTemplates = (await new GumpsLoader(new DirectoriesConfig(Path.Combine(RepositoryRoot(), "moongate_root"), ["templates"]))
-                                 .LoadDataAsync()).Entities.ToArray();
+                                 .LoadDataAsync()).Entities
+                                                  .Append(new() { Id = "probe", File = "probe.xml", Root = System.Xml.Linq.XElement.Parse("""<gump id="probe"><text x="1" y="1">p</text></gump>""") })
+                                                  .ToArray();
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,
@@ -109,6 +121,31 @@ public sealed class GumpTutorialIntegrationTests : IAsyncLifetime
         Assert.Contains("Britain", built.Strings);
         Assert.Contains("Yew", built.Strings);
         Answer(0, built.Buttons.Min());
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void AScript_OpensAGumpWithASlot()
+    {
+        _loop.DeferTryPost = true;
+
+        var result = _engine.CallMember("gumps/probe.lua", "probe", "open_list", 7L);
+        _loop.RunDeferred();
+
+        Assert.Equal([true], result.Values);
+        Assert.Contains("Britain", Assert.Single(_gumps.Opened).Gump.Layout.Build().Strings);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void AScriptReplacingAGump_GetsItsOnClose()
+    {
+        _loop.DeferTryPost = true;
+
+        _engine.CallMember("gumps/probe.lua", "probe", "open_twice", 7L);
+        _loop.RunDeferred();
+
+        Assert.Equal(["replaced"], _engine.CallMember("gumps/probe.lua", "probe", "closed").Values);
         Assert.Empty(_errors);
     }
 

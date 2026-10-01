@@ -2,7 +2,7 @@
 -- Moongate - scripts/gumps/tutorial_greeting.lua
 --
 -- What it is for:
---   The script of step 2 of the gump tutorial (docs/tutorials/first-gump.md).
+--   The script of step 2 of the gump tutorial (docs/gump-tutorial.md).
 --   The table is named after the gump id; its functions are the on_click
 --   names of templates/gumps/tutorial_greeting.xml, plus on_close.
 --

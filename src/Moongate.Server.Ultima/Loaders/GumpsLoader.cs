@@ -105,7 +105,47 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
         }
 
         var root = document.Root!;
+        CheckRules(path, root);
 
+        foreach (var button in root.Descendants("button"))
+        {
+            if (button.Attribute("on_click")?.Value is { } click && click.StartsWith("__", StringComparison.Ordinal))
+            {
+                throw new InvalidDataException(
+                    $"{path}: line {((IXmlLineInfo)button).LineNumber}: on_click names starting with __ are reserved."
+                );
+            }
+        }
+
+        return new() { Id = (string)root.Attribute("id")!, File = path, Root = root };
+    }
+
+    /// <summary>
+    ///     Checks a gump made at runtime, such as one built from Lua or with its slots filled, as a file is checked:
+    ///     against the schema, the rules the schema cannot say, and the gumps its <c>open</c> buttons name.
+    /// </summary>
+    /// <exception cref="InvalidDataException">The gump breaks a rule; the message says which.</exception>
+    public static void Validate(string source, XElement root, Func<string, bool> gumpExists)
+    {
+        var document = new XDocument(new XElement(root));
+        document.Validate(
+            Schema.Value,
+            (_, args) => throw new InvalidDataException($"{source}: {args.Message}"),
+            false
+        );
+        CheckRules(source, root);
+
+        foreach (var button in root.Descendants("button"))
+        {
+            if (button.Attribute("open")?.Value is { } target && !gumpExists(target))
+            {
+                throw new InvalidDataException($"{source}: a button opens gump '{target}', which does not exist.");
+            }
+        }
+    }
+
+    private static void CheckRules(string path, XElement root)
+    {
         foreach (var element in root.Descendants())
         {
             Check(path, element);
@@ -113,7 +153,13 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
 
         CheckIds(path, root);
 
-        return new() { Id = (string)root.Attribute("id")!, File = path, Root = root };
+        // A slot's pages follow the gump's; with pages of its own the gump would number them twice.
+        if (root.Elements("page").Any() && root.Descendants("slot").FirstOrDefault() is { } slot)
+        {
+            throw new InvalidDataException(
+                $"{path}: line {((IXmlLineInfo)slot).LineNumber}: a slot cannot be in a gump with pages."
+            );
+        }
     }
 
     // What XSD 1.0 cannot say.

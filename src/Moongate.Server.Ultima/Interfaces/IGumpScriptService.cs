@@ -17,8 +17,18 @@ public interface IGumpScriptService
     ScriptResult Call(string gumpId, string function, params object?[] args);
 
     /// <summary>
-    ///     Calls a function a script handed over for gump <paramref name="gumpId" />, such as a button callback of a built
-    ///     gump; its coroutine belongs to the gump's script file.
+    ///     Calls a function a script handed over, such as a button callback of a built gump; its coroutine belongs to
+    ///     <paramref name="owner" />, the script file it came from.
     /// </summary>
-    ScriptResult CallFunction(string gumpId, LuaFunction function, params object?[] args);
+    ScriptResult CallFunction(string owner, LuaFunction function, params object?[] args);
+
+    /// <summary>
+    ///     Gets whether a script is running now: calling one from the host would nest, so the work goes to the game loop.
+    /// </summary>
+    bool IsRunningScript { get; }
+
+    /// <summary>
+    ///     Gets the script file running now, null outside any script.
+    /// </summary>
+    string? CurrentScript { get; }
 }

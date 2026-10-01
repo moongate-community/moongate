@@ -3,7 +3,7 @@
   Moongate - templates/gumps/tutorial_list.xml
 
   What it is for:
-    The dynamic part of the gump tutorial (docs/tutorials/first-gump.md): the frame is here,
+    The dynamic part of the gump tutorial (docs/gump-tutorial.md): the frame is here,
     the rows come from tutorial_list.rows in scripts/gumps/tutorial_list.lua, which fills the
     slot and pages the list. Try it with .gump tutorial_list.
 -->

@@ -274,6 +274,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     /// <inheritdoc />
+    public bool IsRunningScript => _scheduler?.IsResuming ?? false;
+
+    /// <inheritdoc />
+    public string? CurrentScript => _scheduler?.IsResuming == true ? _scheduler.CurrentOwner : null;
+
+    /// <inheritdoc />
     public ScriptResult CallFunction(string owner, LuaFunction function, params object?[] args)
     {
         _guard.EnsureScriptThread(nameof(CallFunction));

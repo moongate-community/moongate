@@ -11,7 +11,16 @@ public sealed class RecordingGumpScriptService : IGumpScriptService
 {
     public List<(string Gump, string Function, object?[] Args)> Calls { get; } = [];
 
-    public List<(string Gump, LuaFunction Function, object?[] Args)> FunctionCalls { get; } = [];
+    public List<(string Owner, LuaFunction Function, object?[] Args)> FunctionCalls { get; } = [];
+
+    public string? CurrentScript { get; set; }
+
+    public bool IsRunningScript { get; set; }
+
+    /// <summary>
+    ///     Gets or sets what <see cref="Call" /> returns.
+    /// </summary>
+    public ScriptResult CallResult { get; set; } = ScriptResult.Missing;
 
     /// <summary>
     ///     Gets or sets what a call does, such as filling a slot's builder; null does nothing.
@@ -23,12 +32,12 @@ public sealed class RecordingGumpScriptService : IGumpScriptService
         Calls.Add((gumpId, function, args));
         OnCall?.Invoke(gumpId, function, args);
 
-        return ScriptResult.Missing;
+        return CallResult;
     }
 
-    public ScriptResult CallFunction(string gumpId, LuaFunction function, params object?[] args)
+    public ScriptResult CallFunction(string owner, LuaFunction function, params object?[] args)
     {
-        FunctionCalls.Add((gumpId, function, args));
+        FunctionCalls.Add((owner, function, args));
 
         return ScriptResult.Completed([]);
     }

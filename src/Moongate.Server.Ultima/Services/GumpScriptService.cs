@@ -43,11 +43,13 @@ public sealed class GumpScriptService : IGumpScriptService, IMoongateStartupServ
         return Task.CompletedTask;
     }
 
-    public ScriptResult CallFunction(string gumpId, LuaFunction function, params object?[] args)
+    public bool IsRunningScript => _engine.IsRunningScript;
+
+    public string? CurrentScript => _engine.CurrentScript;
+
+    public ScriptResult CallFunction(string owner, LuaFunction function, params object?[] args)
     {
-        return _running
-            ? _engine.CallFunction($"{GumpsDirectory}/{gumpId}.lua", function, args)
-            : ScriptResult.Missing;
+        return _running ? _engine.CallFunction(owner, function, args) : ScriptResult.Missing;
     }
 
     public ScriptResult Call(string gumpId, string function, params object?[] args)

@@ -93,11 +93,12 @@ checks at startup that the gump an `open` names exists. A script decides by itse
 
 ### Slots
 
-`<slot name="rows" x="20" y="45" />` is filled when the gump opens: the server calls the function
+`<slot name="rows" x="20" y="45" />` (plain numbers, no placeholders) is filled when the gump opens: the server calls the function
 `rows` of the gump's script with a builder, `rows(g, player, args)`, and puts what it adds at the
 slot, coordinates counted from the slot. Pages the function makes (`g:page()`, `g:paginate`) are
-added after the gump's own, so a slot that pages belongs in a gump without `<page>` elements. The
-function must not call `wait()`.
+added as the gump's pages, so a slot cannot be in a gump with `<page>` elements: the server refuses
+it at startup. A missing slot function leaves the slot empty with a warning; one that fails or calls
+`wait()` keeps the gump from opening. What the slot adds is checked like a gump file.
 
 ## Gumps built in Lua
 
@@ -133,8 +134,13 @@ gump.send(player, g, {})
 
 Every method but `g:paginate` returns `g`, so calls can be chained. A button whose `on_click` is a
 function calls it with `(player, response, args)`; the function sees the variables around it, such
-as `pet` above. A built gump answers like an XML one: texts, `bind`, `open`, `on_close` and the
-checks are the same.
+as `pet` above, and belongs with the script that sent the gump. `gump.send` checks the gump as a
+file is checked and fails with the reason, such as a `checked` that is not `true` or `false`. A built
+gump answers like an XML one: texts, `bind`, `open` and `on_close` are the same. Placeholders are
+escaped in `html`; text you join yourself, such as `"Hi " .. name`, is not, so write
+`text = "Hi ${name}"` and pass `name` in the arguments.
+
+`on_click` names starting with `__` are reserved for the server.
 
 ## The script
 

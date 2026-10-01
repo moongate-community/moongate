@@ -40,6 +40,8 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     /// </summary>
     public string? CurrentOwner => _current?.Owner ?? _currentOwner();
 
+    public bool IsResuming => _resuming;
+
     public CoroutineScheduler(
         LuaState state,
         ITimerService timers,
