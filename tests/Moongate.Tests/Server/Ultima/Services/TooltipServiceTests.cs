@@ -292,6 +292,15 @@ public sealed class TooltipServiceTests
     }
 
     [Fact]
+    public void TryBuildFor_TheBankBoxOfAnotherMobile_IsRefused_ButItsOwnersIsBuilt()
+    {
+        var box = Placed(0x40000006, item => item.Equip(Bran, LayerType.Bank));
+
+        Assert.False(_tooltips.TryBuildFor(Aria, box.Id, out _));
+        Assert.True(_tooltips.TryBuildFor(Bran, box.Id, out _));
+    }
+
+    [Fact]
     public void TryBuildFor_AGroundItem_IsBuiltOnlyInViewRange()
     {
         var near = Placed(0x40000004, item => { });

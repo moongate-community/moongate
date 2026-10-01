@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Primitives;
+using Moongate.Ultima.Types;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -303,7 +304,8 @@ public sealed class WorldViewService : IWorldViewService
         _sender.TrySend(sessionId, incoming);
         _sender.TrySend(sessionId, _tooltips.Info(mobile));
 
-        foreach (var item in _items.GetWorn(mobile.Id))
+        // Not the bank box: the others never see it.
+        foreach (var item in _items.GetWorn(mobile.Id).Where(item => item.Layer != LayerType.Bank))
         {
             _sender.TrySend(sessionId, _tooltips.Info(item));
         }

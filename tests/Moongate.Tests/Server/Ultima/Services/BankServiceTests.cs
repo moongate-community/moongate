@@ -47,7 +47,7 @@ public sealed class BankServiceTests : IAsyncLifetime
         var layouts = new ContainerLayoutService(
             new StubDataLoaderService().With(new ContainerContent { Name = "metal chest", Gump = 0x004A, Items = [0x0E7C], Default = true })
         );
-        _bank = new(_items, _factory, _fixture.Sessions, _fixture.Sender, TestTooltips.Create(_items, _fixture.Mobiles), layouts, _fixture.Network.Loop);
+        _bank = new(_items, _factory, _fixture.Sessions, _fixture.Mobiles, _fixture.Sender, TestTooltips.Create(_items, _fixture.Mobiles), layouts, _fixture.Network.Loop);
     }
 
     public async Task DisposeAsync()
@@ -69,6 +69,46 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.Single(_fixture.Sender.Sent.OfType<ContainerContentPacket>());
         Assert.Contains(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>(), message => message.Text == "Bank container has 0 items.");
         Assert.True(_bank.IsOpen(_aria));
+    }
+
+    [Fact]
+    public async Task Open_ThePlayerLeavesBeforeTheBoxIsSaved_LeavesItToTheNextLogin()
+    {
+        await OnLoopAsync(
+            () =>
+            {
+                _bank.Open(_aria);
+                _fixture.Sessions.Remove(_session.SessionId);
+                _fixture.Mobiles.LeaveWorld(_aria.Id);
+
+                return true;
+            }
+        );
+        await OnLoopAsync(() => true);
+
+        Assert.Single(_factory.Saved);
+        Assert.Empty(_items.GetWorn(_aria.Id));
+        Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public async Task Open_ThePlayerLogsInAgainBeforeTheBoxIsSaved_ShowsNothingToTheOldCharacter()
+    {
+        var again = new MobileEntity { Id = _aria.Id, Name = "Aria", AccountId = _aria.AccountId, Map = MapType.Trammel, Location = _aria.Location };
+        await OnLoopAsync(
+            () =>
+            {
+                _bank.Open(_aria);
+                _fixture.Mobiles.EnterWorld(again);
+
+                return true;
+            }
+        );
+        await OnLoopAsync(() => true);
+
+        Assert.Empty(_items.GetWorn(_aria.Id));
+        Assert.Empty(_fixture.Sender.Sent);
+        Assert.False(_bank.IsOpen(again));
     }
 
     [Fact]

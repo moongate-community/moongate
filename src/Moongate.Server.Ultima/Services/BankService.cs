@@ -33,6 +33,7 @@ public sealed class BankService : IBankService
     private readonly IItemService _items;
     private readonly IItemFactoryService _factory;
     private readonly ISessionService _sessions;
+    private readonly IMobileService _mobiles;
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
     private readonly IContainerLayoutService _layouts;
@@ -43,6 +44,7 @@ public sealed class BankService : IBankService
         IItemService items,
         IItemFactoryService factory,
         ISessionService sessions,
+        IMobileService mobiles,
         IPacketSendService sender,
         ITooltipService tooltips,
         IContainerLayoutService layouts,
@@ -53,6 +55,7 @@ public sealed class BankService : IBankService
         _items = items;
         _factory = factory;
         _sessions = sessions;
+        _mobiles = mobiles;
         _sender = sender;
         _tooltips = tooltips;
         _layouts = layouts;
@@ -105,8 +108,8 @@ public sealed class BankService : IBankService
         return _items.GetWorn(player).FirstOrDefault(item => item.Layer == LayerType.Bank);
     }
 
-    // Saved first, off the loop: the database gives the box its serial. Then shown on the loop, if the player is
-    // still there.
+    // Saved first, off the loop: the database gives the box its serial. Then live and shown on the loop, only if the
+    // same character is still in the world: otherwise its next login loads the saved box.
     private async Task MakeAsync(MobileEntity player)
     {
         try
@@ -115,20 +118,27 @@ public sealed class BankService : IBankService
             box.Equip(player.Id, LayerType.Bank);
             await _factory.SaveAsync(box);
 
-            _loop.TryPost(
+            var posted = _loop.TryPost(
                 new LoopActionWorkItem(
                     () =>
                     {
                         _making.TryRemove(player.Id, out _);
-                        _items.Add([box]);
 
-                        if (_sessions.TryGetByCharacterId(player.Id, out var session))
+                        if (_mobiles.TryGet(player.Id, out var live) &&
+                            ReferenceEquals(live, player) &&
+                            _sessions.TryGetByCharacterId(player.Id, out var session))
                         {
+                            _items.Add([box]);
                             Show(player, session, box);
                         }
                     }
                 )
             );
+
+            if (!posted)
+            {
+                _making.TryRemove(player.Id, out _);
+            }
         }
         catch (Exception exception)
         {
