@@ -48,7 +48,6 @@ The server stops when:
 `ILineOfSightService` answer movement and sight questions on them; see
 [Client files and world queries](../world-queries.md).
 
-
 ## Seasons
 
 The client draws the season itself: green trees and flowers in spring, the usual look in summer,
@@ -65,7 +64,8 @@ A player sees the season of its region when the region sets one (`season` in
    other emulator rotates the seasons, so it is off by default.
 
 The season is sent (0xBC) at login, when a player walks into a region with another season, and
-within a minute of a rotation; the light and the weather follow it, since the client resets them.
+within a minute of a rotation, and at once on `.season`; the light and the weather follow it,
+since the client resets them.
 
 ## See also
 

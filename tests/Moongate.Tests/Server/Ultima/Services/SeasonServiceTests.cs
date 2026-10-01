@@ -118,6 +118,15 @@ public sealed class SeasonServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Rotation_BeforeTheWorldStart_StillGivesASeason()
+    {
+        _world.SeasonRotation = true;
+        _clock.Day = -1;
+
+        Assert.Equal(SeasonType.Winter, _seasons.SeasonOf(MapType.Trammel));
+    }
+
+    [Fact]
     public void WithoutRotation_TheMapKeepsItsSeason()
     {
         _clock.Day = 100;

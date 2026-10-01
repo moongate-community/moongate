@@ -143,9 +143,10 @@ public sealed class SeasonService : ISeasonService
             return configured;
         }
 
-        var turns = _clock.GetDay(map) / _world.DaysPerSeason;
+        // Floored, so a clock before the world start still counts backwards through the seasons.
+        var turns = (long)Math.Floor((double)_clock.GetDay(map) / _world.DaysPerSeason);
 
-        return Rotation[(int)((start + turns) % Rotation.Length)];
+        return Rotation[(int)(((start + turns) % Rotation.Length + Rotation.Length) % Rotation.Length)];
     }
 
     public SeasonType SeasonOnLogin(MobileEntity character)
