@@ -158,6 +158,33 @@ public sealed class RegionsLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_Season_IsReadAndTakenFromTheNearestParent()
+    {
+        using var root = new TemporaryDirectory();
+        var cellar = Tavern.Replace("The Tavern", "The Cellar").Replace("\"Britain\"", "\"The Tavern\"");
+        root.CreateFile(
+            "data/regions/trammel.toml",
+            Town.Replace("guarded = true", "season = \"winter\"\nguarded = true") + Tavern + cellar
+        );
+
+        var regions = (await CreateLoader(root).LoadDataAsync()).Entities;
+
+        Assert.Equal(SeasonType.Winter, regions.Single(region => region.Name == "Britain").Season);
+        Assert.Equal(SeasonType.Winter, regions.Single(region => region.Name == "The Cellar").Season);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_NoSeason_LeavesTheMapsSeason()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/regions/trammel.toml", Town + Tavern);
+
+        var regions = (await CreateLoader(root).LoadDataAsync()).Entities;
+
+        Assert.All(regions, region => Assert.Null(region.Season));
+    }
+
+    [Fact]
     public async Task LoadDataAsync_UnknownMusic_ThrowsTomlException()
     {
         using var root = new TemporaryDirectory();
