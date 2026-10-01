@@ -46,6 +46,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<INpcSenseService, NpcSenseService>(Reuse.Singleton);
         // After the script engine (70), as the mobile scripts.
         container.AddMoongateService<IItemScriptService, ItemScriptService>(LuaScriptEngineService.StartupPriority + 5);
+        container.AddMoongateService<IGumpScriptService, GumpScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.AddMetricProvider<NpcTickMetricsProvider>();
         container.Register<ISectorService, SectorService>(Reuse.Singleton);
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
@@ -85,6 +86,7 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<NpcModule>();
         container.AddScriptModule<ItemModule>();
         container.AddScriptModule<WorldModule>();
+        container.AddScriptModule<GumpModule>();
 
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
         container.AddLiveWorldMobiles();

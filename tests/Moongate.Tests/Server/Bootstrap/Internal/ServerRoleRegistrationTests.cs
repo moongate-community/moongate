@@ -24,6 +24,7 @@ using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.Gumps;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -129,6 +130,27 @@ public sealed class ServerRoleRegistrationTests
                              .Where(group => group.Count() > 1)
                              .Select(group => group.Key.Name);
         Assert.Empty(twice);
+    }
+
+    [Fact]
+    public void Register_TheGumpModule_ResolvesWithItsScriptsLate()
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Standalone));
+        container.RegisterMoongateEventBus();
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        Assert.NotNull(container.Resolve<GumpModule>());
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
