@@ -100,6 +100,8 @@ data/messages/
 - Every file has the same format: a `[messages]` table of `number = "text"`.
 - The files of the directory are read in name order. Subdirectories and files that do
   not end in `.toml` are ignored.
+- Write the directory name and the `.toml` extension in lower case: on Linux
+  `eng/Shard.TOML` and `ENG/shard.toml` are not read.
 - A number can be in one file only. The same number in two files of one language stops
   the server and the error names both files.
 

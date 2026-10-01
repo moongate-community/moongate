@@ -290,7 +290,7 @@ works today in more detail.
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Target cursor | ✅ | |
-| Localized messages | ✅ | 8 languages |
+| Localized messages | ✅ | 8 languages; a language can be split into `data/messages/<language>/*.toml` |
 | Races | 🟡 | Human, elf and gargoyle bodies and looks; no racial gameplay |
 | Gumps | ✅ | XML layouts checked by an XSD, Lua scripts, gumps built in Lua, chained gumps, checked answers |
 | Menus | ❌ | |
