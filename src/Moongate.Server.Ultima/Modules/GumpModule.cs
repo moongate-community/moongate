@@ -2,11 +2,13 @@ using System.Globalization;
 using Lua;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types.Gumps;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Modules;
 
@@ -19,6 +21,7 @@ namespace Moongate.Server.Ultima.Modules;
 [ScriptModule("gump", "Opens the gumps of templates/gumps on players; their script gets the answer.")]
 public sealed class GumpModule
 {
+    private readonly ILogger _logger = Log.ForContext<GumpModule>();
     private readonly ISessionService _sessions;
     private readonly IGumpService _gumps;
     private readonly IGumpTemplateService _templates;
@@ -86,7 +89,10 @@ public sealed class GumpModule
 
         if (answered.Click is { } function)
         {
-            _scripts.Value.Call(id, function, player, answer, args);
+            if (_scripts.Value.Call(id, function, player, answer, args).Kind == ScriptResultKind.Missing)
+            {
+                _logger.Warning("Gump {Gump}: on_click {Function} is not a function of scripts/gumps/{Gump}.lua", id, function, id);
+            }
         }
         else
         {

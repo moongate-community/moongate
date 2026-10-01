@@ -95,6 +95,8 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
             Check(path, element);
         }
 
+        CheckIds(path, root);
+
         return new() { Id = (string)root.Attribute("id")!, File = path, Root = root };
     }
 
@@ -109,12 +111,52 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
                 "an html takes a cliloc or message, not both",
             "html" when element.Attribute("cliloc") is not null && !string.IsNullOrWhiteSpace(element.Value) =>
                 "an html takes a cliloc or a text, not both",
+            "html" when element.Attribute("color") is not null && element.Attribute("cliloc") is null =>
+                "an html color needs a cliloc",
+            "text" or "label_cropped" or "html" when element.Attribute("message") is not null &&
+                                                     !string.IsNullOrWhiteSpace(element.Value) =>
+                $"a {element.Name.LocalName} takes a message or a text, not both",
             _ => null
         };
 
         if (reason is not null)
         {
             throw new InvalidDataException($"{path}: line {((IXmlLineInfo)element).LineNumber}: {reason}.");
+        }
+    }
+
+    // What the client answers with must be told apart, and a page button must lead somewhere.
+    private static void CheckIds(string path, XElement root)
+    {
+        void Twice(string kind, IEnumerable<XElement> elements, string attribute)
+        {
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (var element in elements)
+            {
+                if (element.Attribute(attribute)?.Value is { } id && !seen.Add(id))
+                {
+                    throw new InvalidDataException(
+                        $"{path}: line {((IXmlLineInfo)element).LineNumber}: {kind} {id} twice."
+                    );
+                }
+            }
+        }
+
+        Twice("button id", root.Descendants("button"), "id");
+        Twice("switch", root.Descendants().Where(element => element.Name.LocalName is "checkbox" or "radio"), "switch");
+        Twice("entry", root.Descendants("text_entry"), "entry");
+
+        var pages = root.Elements("page").Count();
+
+        foreach (var button in root.Descendants("button"))
+        {
+            if ((int?)button.Attribute("page") is { } page && page > pages)
+            {
+                throw new InvalidDataException(
+                    $"{path}: line {((IXmlLineInfo)button).LineNumber}: a button turns to page {page}, but the gump has {pages}."
+                );
+            }
         }
     }
 
