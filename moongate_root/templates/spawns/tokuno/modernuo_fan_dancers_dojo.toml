@@ -1,0 +1,398 @@
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_0"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 81
+y1 = 525
+x2 = 111
+y2 = 555
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_1"
+map = "tokuno"
+name = "Tokuno fandancer, oni, daemon"
+mobile_ids = ["fandancer", "oni", "daemon"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 153
+y1 = 595
+x2 = 193
+y2 = 635
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_2"
+map = "tokuno"
+name = "Tokuno headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 110
+y1 = 405
+x2 = 130
+y2 = 425
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_3"
+map = "tokuno"
+name = "Tokuno fandancer, hellhound, hellcat"
+mobile_ids = ["fandancer", "hellhound", "hellcat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 129
+y1 = 646
+x2 = 139
+y2 = 656
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_4"
+map = "tokuno"
+name = "Tokuno headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 74
+y1 = 516
+x2 = 84
+y2 = 526
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_5"
+map = "tokuno"
+name = "Tokuno headless, fandancer"
+mobile_ids = ["headless", "fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 142
+y1 = 641
+x2 = 152
+y2 = 651
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_6"
+map = "tokuno"
+name = "Tokuno daemon, headless"
+mobile_ids = ["daemon", "headless"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 44
+y1 = 468
+x2 = 84
+y2 = 508
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_7"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 39
+only_outside = false
+[[spawn.areas]]
+x1 = 962
+y1 = 203
+x2 = 992
+y2 = 233
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_8"
+map = "tokuno"
+name = "Tokuno daemon, hellhound, succubus"
+mobile_ids = ["daemon", "hellhound", "succubus"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 63
+y1 = 531
+x2 = 93
+y2 = 561
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_9"
+map = "tokuno"
+name = "Tokuno fandancer, hellcat, balron"
+mobile_ids = ["fandancer", "hellcat", "balron"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 100
+y1 = 639
+x2 = 120
+y2 = 659
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_10"
+map = "tokuno"
+name = "Tokuno headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 113
+y1 = 377
+x2 = 133
+y2 = 397
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_11"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 68
+y1 = 312
+x2 = 108
+y2 = 352
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_12"
+map = "tokuno"
+name = "Tokuno daemon, hellhound, succubus"
+mobile_ids = ["daemon", "hellhound", "succubus"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 95
+y1 = 525
+x2 = 125
+y2 = 555
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_13"
+map = "tokuno"
+name = "Tokuno headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 101
+y1 = 342
+x2 = 121
+y2 = 362
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_14"
+map = "tokuno"
+name = "Tokuno hellcat, balron"
+mobile_ids = ["hellcat", "balron"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 155
+y1 = 640
+x2 = 195
+y2 = 680
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_15"
+map = "tokuno"
+name = "Tokuno hellhound, succubus"
+mobile_ids = ["hellhound", "succubus"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 86
+y1 = 665
+x2 = 126
+y2 = 705
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_16"
+map = "tokuno"
+name = "Tokuno headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 89
+y1 = 377
+x2 = 109
+y2 = 397
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_17"
+map = "tokuno"
+name = "Tokuno headless, succubus"
+mobile_ids = ["headless", "succubus"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 77
+y1 = 447
+x2 = 117
+y2 = 487
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_18"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 122
+y1 = 672
+x2 = 162
+y2 = 712
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_19"
+map = "tokuno"
+name = "Tokuno daemon, headless"
+mobile_ids = ["daemon", "headless"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 80
+y1 = 479
+x2 = 120
+y2 = 519
+
+[[spawn]]
+id = "tokuno_modernuo_fan_dancers_dojo_20"
+map = "tokuno"
+name = "Tokuno fandancer, headless, daemon"
+mobile_ids = ["fandancer", "headless", "daemon"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 45
+y1 = 351
+x2 = 95
+y2 = 401

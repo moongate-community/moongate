@@ -1,0 +1,797 @@
+[[spawn]]
+id = "malas_modernuo_south_0"
+map = "malas"
+name = "Malas mongbat, scorpion, snake, spectre"
+mobile_ids = ["mongbat", "scorpion", "snake", "spectre"]
+npc_list_ids = []
+max = 33
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -79
+only_outside = false
+[[spawn.areas]]
+x1 = 2071
+y1 = 1445
+x2 = 2391
+y2 = 1765
+
+[[spawn]]
+id = "malas_modernuo_south_1"
+map = "malas"
+name = "Malas healer, ghoul, ogre, reaper, gargoyle, harpy, earthele, fireele"
+mobile_ids = ["healer", "ghoul", "ogre", "reaper", "gargoyle", "harpy", "earthele", "fireele"]
+npc_list_ids = []
+max = 71
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1800
+y1 = 1004
+x2 = 2040
+y2 = 1244
+
+[[spawn]]
+id = "malas_modernuo_south_2"
+map = "malas"
+name = "Malas brownbear, grizbear, blackbear, cougar, panther, direwolf, timberwolf, greywolf, bird, eagle, jackrabbit, rabbit, hind, hart"
+mobile_ids = ["brownbear", "grizbear", "blackbear", "cougar", "panther", "direwolf", "timberwolf", "greywolf", "bird", "eagle", "jackrabbit", "rabbit", "hind", "hart"]
+npc_list_ids = []
+max = 32
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1800
+y1 = 1004
+x2 = 2040
+y2 = 1244
+
+[[spawn]]
+id = "malas_modernuo_south_3"
+map = "malas"
+name = "Malas healer, ghoul, ogre, reaper, gargoyle, harpy, nightmare"
+mobile_ids = ["healer", "ghoul", "ogre", "reaper", "gargoyle", "harpy", "nightmare"]
+npc_list_ids = []
+max = 102
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 2116
+y1 = 1068
+x2 = 2416
+y2 = 1368
+
+[[spawn]]
+id = "malas_modernuo_south_4"
+map = "malas"
+name = "Malas brownbear, grizbear, blackbear, cougar, panther, direwolf, timberwolf, greywolf, bird, eagle, jackrabbit, rabbit, hind, hart"
+mobile_ids = ["brownbear", "grizbear", "blackbear", "cougar", "panther", "direwolf", "timberwolf", "greywolf", "bird", "eagle", "jackrabbit", "rabbit", "hind", "hart"]
+npc_list_ids = []
+max = 32
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 2117
+y1 = 1068
+x2 = 2417
+y2 = 1368
+
+[[spawn]]
+id = "malas_modernuo_south_5"
+map = "malas"
+name = "Malas corpser, ogre, earthele, fireele, wraith, zombie, gorilla"
+mobile_ids = ["corpser", "ogre", "earthele", "fireele", "wraith", "zombie", "gorilla"]
+npc_list_ids = []
+max = 26
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -70
+only_outside = false
+[[spawn.areas]]
+x1 = 2233
+y1 = 1188
+x2 = 2373
+y2 = 1328
+
+[[spawn]]
+id = "malas_modernuo_south_6"
+map = "malas"
+name = "Malas ettin, reaper, headless, troll, ghoul, healer"
+mobile_ids = ["ettin", "reaper", "headless", "troll", "ghoul", "healer"]
+npc_list_ids = []
+max = 21
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -70
+only_outside = false
+[[spawn.areas]]
+x1 = 2234
+y1 = 1188
+x2 = 2374
+y2 = 1328
+
+[[spawn]]
+id = "malas_modernuo_south_7"
+map = "malas"
+name = "Malas scorpion, snake, desertostard"
+mobile_ids = ["scorpion", "snake", "desertostard"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -94
+only_outside = false
+[[spawn.areas]]
+x1 = 1541
+y1 = 1697
+x2 = 1741
+y2 = 1897
+
+[[spawn]]
+id = "malas_modernuo_south_8"
+map = "malas"
+name = "Malas scorpion, snake, desertostard"
+mobile_ids = ["scorpion", "snake", "desertostard"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -94
+only_outside = false
+[[spawn.areas]]
+x1 = 1799
+y1 = 1509
+x2 = 1999
+y2 = 1709
+
+[[spawn]]
+id = "malas_modernuo_south_9"
+map = "malas"
+name = "Malas scorpion, snake, desertostard"
+mobile_ids = ["scorpion", "snake", "desertostard"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -94
+only_outside = false
+[[spawn.areas]]
+x1 = 1641
+y1 = 1387
+x2 = 1841
+y2 = 1587
+
+[[spawn]]
+id = "malas_modernuo_south_10"
+map = "malas"
+name = "Malas scorpion, snake, desertostard"
+mobile_ids = ["scorpion", "snake", "desertostard"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -94
+only_outside = false
+[[spawn.areas]]
+x1 = 1737
+y1 = 1703
+x2 = 1937
+y2 = 1903
+
+[[spawn]]
+id = "malas_modernuo_south_11"
+map = "malas"
+name = "Malas skeletalknight, boneknight, zombie, skeleton"
+mobile_ids = ["skeletalknight", "boneknight", "zombie", "skeleton"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1822
+y1 = 1798
+x2 = 1824
+y2 = 1800
+
+[[spawn]]
+id = "malas_modernuo_south_12"
+map = "malas"
+name = "Malas giantrat, mummy, zombie, skeleton"
+mobile_ids = ["giantrat", "mummy", "zombie", "skeleton"]
+npc_list_ids = []
+max = 9
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -94
+only_outside = false
+[[spawn.areas]]
+x1 = 1820
+y1 = 1797
+x2 = 1822
+y2 = 1799
+
+[[spawn]]
+id = "malas_modernuo_south_13"
+map = "malas"
+name = "Malas hind, hart"
+mobile_ids = ["hind", "hart"]
+npc_list_ids = []
+max = 33
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1346
+y1 = 1298
+x2 = 1586
+y2 = 1538
+
+[[spawn]]
+id = "malas_modernuo_south_14"
+map = "malas"
+name = "Malas hind, hart"
+mobile_ids = ["hind", "hart"]
+npc_list_ids = []
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 1427
+y1 = 1191
+x2 = 1527
+y2 = 1291
+
+[[spawn]]
+id = "malas_modernuo_south_15"
+map = "malas"
+name = "Malas hind, hart, sheep"
+mobile_ids = ["hind", "hart", "sheep"]
+npc_list_ids = []
+max = 11
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -94
+only_outside = false
+[[spawn.areas]]
+x1 = 1217
+y1 = 1609
+x2 = 1477
+y2 = 1869
+
+[[spawn]]
+id = "malas_modernuo_south_16"
+map = "malas"
+name = "Malas hind, hart"
+mobile_ids = ["hind", "hart"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1292
+y1 = 1111
+x2 = 1362
+y2 = 1181
+
+[[spawn]]
+id = "malas_modernuo_south_17"
+map = "malas"
+name = "Malas hind, hart"
+mobile_ids = ["hind", "hart"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1221
+y1 = 1186
+x2 = 1291
+y2 = 1256
+
+[[spawn]]
+id = "malas_modernuo_south_18"
+map = "malas"
+name = "Malas hind, hart"
+mobile_ids = ["hind", "hart"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 1295
+y1 = 1264
+x2 = 1395
+y2 = 1364
+
+[[spawn]]
+id = "malas_modernuo_south_19"
+map = "malas"
+name = "Malas brigand"
+mobile_ids = ["brigand"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 933
+y1 = 1140
+x2 = 953
+y2 = 1160
+
+[[spawn]]
+id = "malas_modernuo_south_20"
+map = "malas"
+name = "Malas hind, hart"
+mobile_ids = ["hind", "hart"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 874
+y1 = 1468
+x2 = 926
+y2 = 1520
+
+[[spawn]]
+id = "malas_modernuo_south_21"
+map = "malas"
+name = "Malas hind, hart"
+mobile_ids = ["hind", "hart"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 799
+y1 = 1444
+x2 = 859
+y2 = 1504
+
+[[spawn]]
+id = "malas_modernuo_south_22"
+map = "malas"
+name = "Malas hind, hart"
+mobile_ids = ["hind", "hart"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -66
+only_outside = false
+[[spawn.areas]]
+x1 = 949
+y1 = 1379
+x2 = 1029
+y2 = 1459
+
+[[spawn]]
+id = "malas_modernuo_south_23"
+map = "malas"
+name = "Malas hind, hart"
+mobile_ids = ["hind", "hart"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 877
+y1 = 1299
+x2 = 949
+y2 = 1371
+
+[[spawn]]
+id = "malas_modernuo_south_24"
+map = "malas"
+name = "Malas pixie"
+mobile_ids = ["pixie"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 866
+y1 = 912
+x2 = 896
+y2 = 942
+
+[[spawn]]
+id = "malas_modernuo_south_25"
+map = "malas"
+name = "Malas pixie"
+mobile_ids = ["pixie"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 867
+y1 = 985
+x2 = 897
+y2 = 1015
+
+[[spawn]]
+id = "malas_modernuo_south_26"
+map = "malas"
+name = "Malas pixie"
+mobile_ids = ["pixie"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -66
+only_outside = false
+[[spawn.areas]]
+x1 = 974
+y1 = 1405
+x2 = 1004
+y2 = 1435
+
+[[spawn]]
+id = "malas_modernuo_south_27"
+map = "malas"
+name = "Malas pixie"
+mobile_ids = ["pixie"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1445
+y1 = 1435
+x2 = 1465
+y2 = 1455
+
+[[spawn]]
+id = "malas_modernuo_south_28"
+map = "malas"
+name = "Malas pixie"
+mobile_ids = ["pixie"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -94
+only_outside = false
+[[spawn.areas]]
+x1 = 1414
+y1 = 1534
+x2 = 1444
+y2 = 1564
+
+[[spawn]]
+id = "malas_modernuo_south_29"
+map = "malas"
+name = "Malas pixie"
+mobile_ids = ["pixie"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1290
+y1 = 1080
+x2 = 1320
+y2 = 1110
+
+[[spawn]]
+id = "malas_modernuo_south_30"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 670
+y1 = 828
+x2 = 910
+y2 = 1068
+
+[[spawn]]
+id = "malas_modernuo_south_31"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 716
+y1 = 1314
+x2 = 816
+y2 = 1414
+
+[[spawn]]
+id = "malas_modernuo_south_32"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 606
+y1 = 1381
+x2 = 706
+y2 = 1481
+
+[[spawn]]
+id = "malas_modernuo_south_33"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 740
+y1 = 1167
+x2 = 870
+y2 = 1297
+
+[[spawn]]
+id = "malas_modernuo_south_34"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 622
+y1 = 1187
+x2 = 722
+y2 = 1287
+
+[[spawn]]
+id = "malas_modernuo_south_35"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 634
+y1 = 1059
+x2 = 734
+y2 = 1159
+
+[[spawn]]
+id = "malas_modernuo_south_36"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1044
+y1 = 1405
+x2 = 1114
+y2 = 1475
+
+[[spawn]]
+id = "malas_modernuo_south_37"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 916
+y1 = 1163
+x2 = 1016
+y2 = 1263
+
+[[spawn]]
+id = "malas_modernuo_south_38"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 875
+y1 = 1055
+x2 = 975
+y2 = 1155
+
+[[spawn]]
+id = "malas_modernuo_south_39"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 999
+y1 = 1282
+x2 = 1099
+y2 = 1382
+
+[[spawn]]
+id = "malas_modernuo_south_40"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1056
+y1 = 1037
+x2 = 1116
+y2 = 1097
+
+[[spawn]]
+id = "malas_modernuo_south_41"
+map = "malas"
+name = "Malas hart, hind"
+mobile_ids = ["hart", "hind"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1032
+y1 = 958
+x2 = 1092
+y2 = 1018

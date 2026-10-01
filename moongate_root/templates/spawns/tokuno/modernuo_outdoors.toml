@@ -1,0 +1,2754 @@
+[[spawn]]
+id = "tokuno_modernuo_outdoors_0"
+map = "tokuno"
+name = "Tokuno bonemage, skeletalknight, revenantlion, boneknight, skeletalmage, skeleton"
+mobile_ids = ["bonemage", "skeletalknight", "revenantlion", "boneknight", "skeletalmage", "skeleton"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 182
+y1 = 616
+x2 = 242
+y2 = 676
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_1"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 57
+only_outside = false
+[[spawn.areas]]
+x1 = 228
+y1 = 505
+x2 = 268
+y2 = 545
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_2"
+map = "tokuno"
+name = "Tokuno bakekitsune"
+mobile_ids = ["bakekitsune"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 488
+y1 = 447
+x2 = 548
+y2 = 507
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_3"
+map = "tokuno"
+name = "Tokuno raiju"
+mobile_ids = ["raiju"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 50
+only_outside = false
+[[spawn.areas]]
+x1 = 354
+y1 = 800
+x2 = 394
+y2 = 840
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_4"
+map = "tokuno"
+name = "Tokuno kappa, lizardman, swamptentacle"
+mobile_ids = ["kappa", "lizardman", "swamptentacle"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 155
+y1 = 1016
+x2 = 215
+y2 = 1076
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_5"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 950
+y1 = 248
+x2 = 1010
+y2 = 308
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_6"
+map = "tokuno"
+name = "Tokuno yomotsuwarrior"
+mobile_ids = ["yomotsuwarrior"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 70
+only_outside = false
+[[spawn.areas]]
+x1 = 326
+y1 = 692
+x2 = 386
+y2 = 752
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_7"
+map = "tokuno"
+name = "Tokuno kappa, lizardman, swamptentacle"
+mobile_ids = ["kappa", "lizardman", "swamptentacle"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 162
+y1 = 984
+x2 = 222
+y2 = 1044
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_8"
+map = "tokuno"
+name = "Tokuno reaper"
+mobile_ids = ["reaper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 38
+only_outside = false
+[[spawn.areas]]
+x1 = 1059
+y1 = 561
+x2 = 1065
+y2 = 567
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_9"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 19
+only_outside = false
+[[spawn.areas]]
+x1 = 902
+y1 = 334
+x2 = 962
+y2 = 394
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_10"
+map = "tokuno"
+name = "Tokuno kappa, lizardman, swamptentacle, giantserpent"
+mobile_ids = ["kappa", "lizardman", "swamptentacle", "giantserpent"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 180
+y1 = 1055
+x2 = 240
+y2 = 1115
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_11"
+map = "tokuno"
+name = "Tokuno reaper"
+mobile_ids = ["reaper"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 1228
+y1 = 501
+x2 = 1288
+y2 = 561
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_12"
+map = "tokuno"
+name = "Tokuno oni"
+mobile_ids = ["oni"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 28
+only_outside = false
+[[spawn.areas]]
+x1 = 1252
+y1 = 868
+x2 = 1312
+y2 = 928
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_13"
+map = "tokuno"
+name = "Tokuno giantspider, giantblackwidow"
+mobile_ids = ["giantspider", "giantblackwidow"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 72
+only_outside = false
+[[spawn.areas]]
+x1 = 1046
+y1 = 834
+x2 = 1106
+y2 = 894
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_14"
+map = "tokuno"
+name = "Tokuno bonemage, skeletalknight, revenantlion, boneknight, skeletalmage, skeleton"
+mobile_ids = ["bonemage", "skeletalknight", "revenantlion", "boneknight", "skeletalmage", "skeleton"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 61
+only_outside = false
+[[spawn.areas]]
+x1 = 150
+y1 = 556
+x2 = 210
+y2 = 616
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_15"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 37
+only_outside = false
+[[spawn.areas]]
+x1 = 1004
+y1 = 263
+x2 = 1064
+y2 = 323
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_16"
+map = "tokuno"
+name = "Tokuno bakekitsune"
+mobile_ids = ["bakekitsune"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 44
+only_outside = false
+[[spawn.areas]]
+x1 = 632
+y1 = 465
+x2 = 692
+y2 = 525
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_17"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 986
+y1 = 262
+x2 = 1046
+y2 = 322
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_18"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 39
+only_outside = false
+[[spawn.areas]]
+x1 = 932
+y1 = 173
+x2 = 992
+y2 = 233
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_19"
+map = "tokuno"
+name = "Tokuno bakekitsune, hellcat"
+mobile_ids = ["bakekitsune", "hellcat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 613
+y1 = 510
+x2 = 673
+y2 = 570
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_20"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 1025
+y1 = 857
+x2 = 1085
+y2 = 917
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_21"
+map = "tokuno"
+name = "Tokuno evilmage"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 72
+only_outside = false
+[[spawn.areas]]
+x1 = 759
+y1 = 246
+x2 = 819
+y2 = 306
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_22"
+map = "tokuno"
+name = "Tokuno raiju"
+mobile_ids = ["raiju"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 619
+y1 = 379
+x2 = 679
+y2 = 439
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_23"
+map = "tokuno"
+name = "Tokuno iceele, snowele, iceserpent, ladyofthesnow, polarbear, walrus, snowleopard"
+mobile_ids = ["iceele", "snowele", "iceserpent", "ladyofthesnow", "polarbear", "walrus", "snowleopard"]
+npc_list_ids = []
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 884
+y1 = 25
+x2 = 944
+y2 = 85
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_24"
+map = "tokuno"
+name = "Tokuno skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 60
+only_outside = false
+[[spawn.areas]]
+x1 = 660
+y1 = 936
+x2 = 700
+y2 = 976
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_25"
+map = "tokuno"
+name = "Tokuno evilmage"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 768
+y1 = 347
+x2 = 828
+y2 = 407
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_26"
+map = "tokuno"
+name = "Tokuno reaper"
+mobile_ids = ["reaper"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 39
+only_outside = false
+[[spawn.areas]]
+x1 = 1142
+y1 = 505
+x2 = 1202
+y2 = 565
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_27"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 29
+only_outside = false
+[[spawn.areas]]
+x1 = 1315
+y1 = 851
+x2 = 1375
+y2 = 911
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_28"
+map = "tokuno"
+name = "Tokuno evilmage"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 50
+only_outside = false
+[[spawn.areas]]
+x1 = 869
+y1 = 241
+x2 = 929
+y2 = 301
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_29"
+map = "tokuno"
+name = "Tokuno kappa, lizardman, swamptentacle, giantserpent"
+mobile_ids = ["kappa", "lizardman", "swamptentacle", "giantserpent"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 202
+y1 = 1086
+x2 = 262
+y2 = 1146
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_30"
+map = "tokuno"
+name = "Tokuno orc"
+mobile_ids = ["orc"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 680
+y1 = 806
+x2 = 720
+y2 = 846
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_31"
+map = "tokuno"
+name = "Tokuno iceele, snowele, iceserpent, ladyofthesnow, polarbear, walrus, snowleopard"
+mobile_ids = ["iceele", "snowele", "iceserpent", "ladyofthesnow", "polarbear", "walrus", "snowleopard"]
+npc_list_ids = []
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 51
+only_outside = false
+[[spawn.areas]]
+x1 = 946
+y1 = 114
+x2 = 1006
+y2 = 174
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_32"
+map = "tokuno"
+name = "Tokuno yomotsuwarrior"
+mobile_ids = ["yomotsuwarrior"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 57
+only_outside = false
+[[spawn.areas]]
+x1 = 228
+y1 = 679
+x2 = 288
+y2 = 739
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_33"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 25
+only_outside = false
+[[spawn.areas]]
+x1 = 921
+y1 = 379
+x2 = 981
+y2 = 439
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_34"
+map = "tokuno"
+name = "Tokuno evilmage, evilmagelord"
+mobile_ids = ["evilmage", "evilmagelord"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 843
+y1 = 296
+x2 = 903
+y2 = 356
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_35"
+map = "tokuno"
+name = "Tokuno skeletalmage"
+mobile_ids = ["skeletalmage"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 581
+y1 = 910
+x2 = 621
+y2 = 950
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_36"
+map = "tokuno"
+name = "Tokuno iceele, snowele, iceserpent, ladyofthesnow, polarbear, walrus, snowleopard"
+mobile_ids = ["iceele", "snowele", "iceserpent", "ladyofthesnow", "polarbear", "walrus", "snowleopard"]
+npc_list_ids = []
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 65
+only_outside = false
+[[spawn.areas]]
+x1 = 896
+y1 = 115
+x2 = 956
+y2 = 175
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_37"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 918
+y1 = 217
+x2 = 978
+y2 = 277
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_38"
+map = "tokuno"
+name = "Tokuno lesserhiryu, revenantlion"
+mobile_ids = ["lesserhiryu", "revenantlion"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 1261
+y1 = 665
+x2 = 1321
+y2 = 725
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_39"
+map = "tokuno"
+name = "Tokuno giantspider, giantblackwidow"
+mobile_ids = ["giantspider", "giantblackwidow"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 66
+only_outside = false
+[[spawn.areas]]
+x1 = 1075
+y1 = 825
+x2 = 1135
+y2 = 885
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_40"
+map = "tokuno"
+name = "Tokuno evilmage, evilmagelord, fandancer"
+mobile_ids = ["evilmage", "evilmagelord", "fandancer"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 811
+y1 = 296
+x2 = 871
+y2 = 356
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_41"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 69
+only_outside = false
+[[spawn.areas]]
+x1 = 497
+y1 = 363
+x2 = 557
+y2 = 423
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_42"
+map = "tokuno"
+name = "Tokuno orc"
+mobile_ids = ["orc"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 663
+y1 = 837
+x2 = 703
+y2 = 877
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_43"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 18
+only_outside = false
+[[spawn.areas]]
+x1 = 949
+y1 = 447
+x2 = 1009
+y2 = 507
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_44"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 831
+y1 = 305
+x2 = 891
+y2 = 365
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_45"
+map = "tokuno"
+name = "Tokuno lesserhiryu"
+mobile_ids = ["lesserhiryu"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 1263
+y1 = 834
+x2 = 1323
+y2 = 894
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_46"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 1034
+y1 = 999
+x2 = 1094
+y2 = 1059
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_47"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 877
+y1 = 364
+x2 = 937
+y2 = 424
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_48"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 953
+y1 = 418
+x2 = 1013
+y2 = 478
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_49"
+map = "tokuno"
+name = "Tokuno bonemage, skeletalknight, revenantlion, boneknight, skeletalmage, skeleton"
+mobile_ids = ["bonemage", "skeletalknight", "revenantlion", "boneknight", "skeletalmage", "skeleton"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 127
+y1 = 655
+x2 = 187
+y2 = 715
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_50"
+map = "tokuno"
+name = "Tokuno bakekitsune"
+mobile_ids = ["bakekitsune"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 541
+y1 = 520
+x2 = 601
+y2 = 580
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_51"
+map = "tokuno"
+name = "Tokuno mongbat"
+mobile_ids = ["mongbat"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 50
+only_outside = false
+[[spawn.areas]]
+x1 = 191
+y1 = 938
+x2 = 251
+y2 = 998
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_52"
+map = "tokuno"
+name = "Tokuno lesserhiryu, oni"
+mobile_ids = ["lesserhiryu", "oni"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 469
+y1 = 500
+x2 = 529
+y2 = 560
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_53"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 29
+only_outside = false
+[[spawn.areas]]
+x1 = 1028
+y1 = 769
+x2 = 1088
+y2 = 829
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_54"
+map = "tokuno"
+name = "Tokuno hellhound, fireele, lavaserpent"
+mobile_ids = ["hellhound", "fireele", "lavaserpent"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 86
+only_outside = false
+[[spawn.areas]]
+x1 = 1114
+y1 = 637
+x2 = 1174
+y2 = 697
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_55"
+map = "tokuno"
+name = "Tokuno bakekitsune, hellcat"
+mobile_ids = ["bakekitsune", "hellcat"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 496
+y1 = 526
+x2 = 556
+y2 = 586
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_56"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 28
+only_outside = false
+[[spawn.areas]]
+x1 = 921
+y1 = 437
+x2 = 981
+y2 = 497
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_57"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 251
+y1 = 1176
+x2 = 271
+y2 = 1196
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_58"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 30
+only_outside = false
+[[spawn.areas]]
+x1 = 1120
+y1 = 1042
+x2 = 1180
+y2 = 1102
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_59"
+map = "tokuno"
+name = "Tokuno iceele, snowele, iceserpent, ladyofthesnow, polarbear, walrus, snowleopard"
+mobile_ids = ["iceele", "snowele", "iceserpent", "ladyofthesnow", "polarbear", "walrus", "snowleopard"]
+npc_list_ids = []
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 62
+only_outside = false
+[[spawn.areas]]
+x1 = 917
+y1 = 73
+x2 = 977
+y2 = 133
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_60"
+map = "tokuno"
+name = "Tokuno kappa, lizardman, swamptentacle, giantserpent"
+mobile_ids = ["kappa", "lizardman", "swamptentacle", "giantserpent"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 29
+only_outside = false
+[[spawn.areas]]
+x1 = 255
+y1 = 1126
+x2 = 315
+y2 = 1186
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_61"
+map = "tokuno"
+name = "Tokuno hiryu"
+mobile_ids = ["hiryu"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 55
+only_outside = false
+[[spawn.areas]]
+x1 = 853
+y1 = 574
+x2 = 913
+y2 = 634
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_62"
+map = "tokuno"
+name = "Tokuno bakekitsune, hellcat, hellhound"
+mobile_ids = ["bakekitsune", "hellcat", "hellhound"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 552
+y1 = 475
+x2 = 612
+y2 = 535
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_63"
+map = "tokuno"
+name = "Tokuno yamandon"
+mobile_ids = ["yamandon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 1064
+y1 = 444
+x2 = 1104
+y2 = 484
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_64"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 978
+y1 = 216
+x2 = 1038
+y2 = 276
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_65"
+map = "tokuno"
+name = "Tokuno hellhound, fireele, lavaserpent"
+mobile_ids = ["hellhound", "fireele", "lavaserpent"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 106
+only_outside = false
+[[spawn.areas]]
+x1 = 1184
+y1 = 622
+x2 = 1244
+y2 = 682
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_66"
+map = "tokuno"
+name = "Tokuno kappa, lizardman, swamptentacle, giantserpent"
+mobile_ids = ["kappa", "lizardman", "swamptentacle", "giantserpent"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 221
+y1 = 1044
+x2 = 281
+y2 = 1104
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_67"
+map = "tokuno"
+name = "Tokuno earthele, yomotsuwarrior"
+mobile_ids = ["earthele", "yomotsuwarrior"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 71
+only_outside = false
+[[spawn.areas]]
+x1 = 216
+y1 = 738
+x2 = 276
+y2 = 798
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_68"
+map = "tokuno"
+name = "Tokuno orc, orccaptain"
+mobile_ids = ["orc", "orccaptain"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 38
+only_outside = false
+[[spawn.areas]]
+x1 = 799
+y1 = 924
+x2 = 839
+y2 = 964
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_69"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 61
+only_outside = false
+[[spawn.areas]]
+x1 = 463
+y1 = 348
+x2 = 523
+y2 = 408
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_70"
+map = "tokuno"
+name = "Tokuno reaper"
+mobile_ids = ["reaper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 38
+only_outside = false
+[[spawn.areas]]
+x1 = 1039
+y1 = 556
+x2 = 1045
+y2 = 562
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_71"
+map = "tokuno"
+name = "Tokuno bonemage, revenantlion, skeletalmage"
+mobile_ids = ["bonemage", "revenantlion", "skeletalmage"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 1090
+y1 = 1069
+x2 = 1150
+y2 = 1129
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_72"
+map = "tokuno"
+name = "Tokuno mongbat"
+mobile_ids = ["mongbat"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 23
+only_outside = false
+[[spawn.areas]]
+x1 = 243
+y1 = 576
+x2 = 303
+y2 = 636
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_73"
+map = "tokuno"
+name = "Tokuno giantspider, giantblackwidow"
+mobile_ids = ["giantspider", "giantblackwidow"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 976
+y1 = 827
+x2 = 1036
+y2 = 887
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_74"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 39
+only_outside = false
+[[spawn.areas]]
+x1 = 886
+y1 = 195
+x2 = 946
+y2 = 255
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_75"
+map = "tokuno"
+name = "Tokuno yomotsuwarrior"
+mobile_ids = ["yomotsuwarrior"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 78
+only_outside = false
+[[spawn.areas]]
+x1 = 170
+y1 = 773
+x2 = 230
+y2 = 833
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_76"
+map = "tokuno"
+name = "Tokuno evilmage"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 695
+y1 = 216
+x2 = 755
+y2 = 276
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_77"
+map = "tokuno"
+name = "Tokuno evilmage, fandancer"
+mobile_ids = ["evilmage", "fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 789
+y1 = 178
+x2 = 849
+y2 = 238
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_78"
+map = "tokuno"
+name = "Tokuno bonemage, skeletalknight, revenantlion, boneknight, skeletalmage, skeleton"
+mobile_ids = ["bonemage", "skeletalknight", "revenantlion", "boneknight", "skeletalmage", "skeleton"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 93
+y1 = 617
+x2 = 153
+y2 = 677
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_79"
+map = "tokuno"
+name = "Tokuno evilmage, fandancer"
+mobile_ids = ["evilmage", "fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 49
+only_outside = false
+[[spawn.areas]]
+x1 = 794
+y1 = 250
+x2 = 854
+y2 = 310
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_80"
+map = "tokuno"
+name = "Tokuno iceele, snowele, iceserpent, ladyofthesnow, polarbear, walrus, snowleopard"
+mobile_ids = ["iceele", "snowele", "iceserpent", "ladyofthesnow", "polarbear", "walrus", "snowleopard"]
+npc_list_ids = []
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 60
+only_outside = false
+[[spawn.areas]]
+x1 = 849
+y1 = 98
+x2 = 909
+y2 = 158
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_81"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 21
+only_outside = false
+[[spawn.areas]]
+x1 = 962
+y1 = 353
+x2 = 1022
+y2 = 413
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_82"
+map = "tokuno"
+name = "Tokuno reaper"
+mobile_ids = ["reaper"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 42
+only_outside = false
+[[spawn.areas]]
+x1 = 1166
+y1 = 477
+x2 = 1226
+y2 = 537
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_83"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 30
+only_outside = false
+[[spawn.areas]]
+x1 = 862
+y1 = 361
+x2 = 922
+y2 = 421
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_84"
+map = "tokuno"
+name = "Tokuno lesserhiryu"
+mobile_ids = ["lesserhiryu"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 518
+y1 = 542
+x2 = 538
+y2 = 562
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_85"
+map = "tokuno"
+name = "Tokuno yomotsuwarrior"
+mobile_ids = ["yomotsuwarrior"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 68
+only_outside = false
+[[spawn.areas]]
+x1 = 160
+y1 = 826
+x2 = 220
+y2 = 886
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_86"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 30
+only_outside = false
+[[spawn.areas]]
+x1 = 888
+y1 = 409
+x2 = 948
+y2 = 469
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_87"
+map = "tokuno"
+name = "Tokuno mongbat"
+mobile_ids = ["mongbat"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 72
+only_outside = false
+[[spawn.areas]]
+x1 = 162
+y1 = 740
+x2 = 222
+y2 = 800
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_88"
+map = "tokuno"
+name = "Tokuno yomotsuwarrior"
+mobile_ids = ["yomotsuwarrior"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 218
+y1 = 898
+x2 = 278
+y2 = 958
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_89"
+map = "tokuno"
+name = "Tokuno orc, orccaptain"
+mobile_ids = ["orc", "orccaptain"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 62
+only_outside = false
+[[spawn.areas]]
+x1 = 648
+y1 = 966
+x2 = 688
+y2 = 1006
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_90"
+map = "tokuno"
+name = "Tokuno lesserhiryu"
+mobile_ids = ["lesserhiryu"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 27
+only_outside = false
+[[spawn.areas]]
+x1 = 982
+y1 = 601
+x2 = 1042
+y2 = 661
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_91"
+map = "tokuno"
+name = "Tokuno evilmage"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 58
+only_outside = false
+[[spawn.areas]]
+x1 = 735
+y1 = 159
+x2 = 795
+y2 = 219
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_92"
+map = "tokuno"
+name = "Tokuno hellhound, fireele, lavaserpent"
+mobile_ids = ["hellhound", "fireele", "lavaserpent"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 88
+only_outside = false
+[[spawn.areas]]
+x1 = 1146
+y1 = 671
+x2 = 1206
+y2 = 731
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_93"
+map = "tokuno"
+name = "Tokuno hellhound, fireele, lavaserpent, lavalizard"
+mobile_ids = ["hellhound", "fireele", "lavaserpent", "lavalizard"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 88
+only_outside = false
+[[spawn.areas]]
+x1 = 1104
+y1 = 675
+x2 = 1164
+y2 = 735
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_94"
+map = "tokuno"
+name = "Tokuno lesserhiryu"
+mobile_ids = ["lesserhiryu"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 1314
+y1 = 744
+x2 = 1374
+y2 = 804
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_95"
+map = "tokuno"
+name = "Tokuno lavaserpent"
+mobile_ids = ["lavaserpent"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 37
+only_outside = false
+[[spawn.areas]]
+x1 = 1367
+y1 = 872
+x2 = 1387
+y2 = 892
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_96"
+map = "tokuno"
+name = "Tokuno evilmage, evilmagelord"
+mobile_ids = ["evilmage", "evilmagelord"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 28
+only_outside = false
+[[spawn.areas]]
+x1 = 739
+y1 = 122
+x2 = 799
+y2 = 182
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_97"
+map = "tokuno"
+name = "Tokuno mongbat"
+mobile_ids = ["mongbat"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 354
+y1 = 430
+x2 = 414
+y2 = 490
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_98"
+map = "tokuno"
+name = "Tokuno lavaserpent"
+mobile_ids = ["lavaserpent"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 1174
+y1 = 606
+x2 = 1194
+y2 = 626
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_99"
+map = "tokuno"
+name = "Tokuno evilmage"
+mobile_ids = ["evilmage"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 80
+only_outside = false
+[[spawn.areas]]
+x1 = 743
+y1 = 199
+x2 = 803
+y2 = 259
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_100"
+map = "tokuno"
+name = "Tokuno yomotsuwarrior"
+mobile_ids = ["yomotsuwarrior"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 171
+y1 = 701
+x2 = 231
+y2 = 761
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_101"
+map = "tokuno"
+name = "Tokuno lesserhiryu"
+mobile_ids = ["lesserhiryu"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 22
+only_outside = false
+[[spawn.areas]]
+x1 = 1217
+y1 = 761
+x2 = 1277
+y2 = 821
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_102"
+map = "tokuno"
+name = "Tokuno orc, orccaptain"
+mobile_ids = ["orc", "orccaptain"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 43
+only_outside = false
+[[spawn.areas]]
+x1 = 799
+y1 = 882
+x2 = 839
+y2 = 922
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_103"
+map = "tokuno"
+name = "Tokuno lesserhiryu"
+mobile_ids = ["lesserhiryu"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 1154
+y1 = 807
+x2 = 1214
+y2 = 867
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_104"
+map = "tokuno"
+name = "Tokuno bakekitsune"
+mobile_ids = ["bakekitsune"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 487
+y1 = 483
+x2 = 547
+y2 = 543
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_105"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 14
+only_outside = false
+[[spawn.areas]]
+x1 = 967
+y1 = 377
+x2 = 1027
+y2 = 437
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_106"
+map = "tokuno"
+name = "Tokuno mongbat"
+mobile_ids = ["mongbat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 59
+only_outside = false
+[[spawn.areas]]
+x1 = 178
+y1 = 906
+x2 = 238
+y2 = 966
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_107"
+map = "tokuno"
+name = "Tokuno direwolf, timberwolf"
+mobile_ids = ["direwolf", "timberwolf"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 24
+only_outside = false
+[[spawn.areas]]
+x1 = 1042
+y1 = 449
+x2 = 1082
+y2 = 489
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_108"
+map = "tokuno"
+name = "Tokuno revenantlion, boneknight, skeletalknight, skeletalmage, bonemage"
+mobile_ids = ["revenantlion", "boneknight", "skeletalknight", "skeletalmage", "bonemage"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 1291
+y1 = 589
+x2 = 1351
+y2 = 649
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_109"
+map = "tokuno"
+name = "Tokuno orc, orccaptain"
+mobile_ids = ["orc", "orccaptain"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 60
+only_outside = false
+[[spawn.areas]]
+x1 = 668
+y1 = 959
+x2 = 708
+y2 = 999
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_110"
+map = "tokuno"
+name = "Tokuno fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 877
+y1 = 262
+x2 = 937
+y2 = 322
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_111"
+map = "tokuno"
+name = "Tokuno oni"
+mobile_ids = ["oni"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 492
+y1 = 543
+x2 = 512
+y2 = 563
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_112"
+map = "tokuno"
+name = "Tokuno kappa, lizardman, swamptentacle, giantserpent"
+mobile_ids = ["kappa", "lizardman", "swamptentacle", "giantserpent"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 29
+only_outside = false
+[[spawn.areas]]
+x1 = 213
+y1 = 1001
+x2 = 273
+y2 = 1061
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_113"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 42
+only_outside = false
+[[spawn.areas]]
+x1 = 1022
+y1 = 946
+x2 = 1082
+y2 = 1006
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_114"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 424
+y1 = 344
+x2 = 484
+y2 = 404
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_115"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 39
+only_outside = false
+[[spawn.areas]]
+x1 = 901
+y1 = 803
+x2 = 961
+y2 = 863
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_116"
+map = "tokuno"
+name = "Tokuno skeleton, shade, bonemage, skeletalknight"
+mobile_ids = ["skeleton", "shade", "bonemage", "skeletalknight"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 592
+y1 = 868
+x2 = 632
+y2 = 908
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_117"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 49
+only_outside = false
+[[spawn.areas]]
+x1 = 1062
+y1 = 950
+x2 = 1122
+y2 = 1010
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_118"
+map = "tokuno"
+name = "Tokuno yamandon"
+mobile_ids = ["yamandon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 42
+only_outside = false
+[[spawn.areas]]
+x1 = 496
+y1 = 269
+x2 = 556
+y2 = 329
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_119"
+map = "tokuno"
+name = "Tokuno hiryu"
+mobile_ids = ["hiryu"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 43
+only_outside = false
+[[spawn.areas]]
+x1 = 1167
+y1 = 783
+x2 = 1227
+y2 = 843
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_120"
+map = "tokuno"
+name = "Tokuno giantspider, giantblackwidow, dreadspider"
+mobile_ids = ["giantspider", "giantblackwidow", "dreadspider"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 950
+y1 = 785
+x2 = 1010
+y2 = 845
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_121"
+map = "tokuno"
+name = "Tokuno lesserhiryu"
+mobile_ids = ["lesserhiryu"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 51
+only_outside = false
+[[spawn.areas]]
+x1 = 1313
+y1 = 624
+x2 = 1373
+y2 = 684
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_122"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 823
+y1 = 356
+x2 = 883
+y2 = 416
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_123"
+map = "tokuno"
+name = "Tokuno mountaingoat, sheep"
+mobile_ids = ["mountaingoat", "sheep"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 891
+y1 = 563
+x2 = 951
+y2 = 623
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_124"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 1185
+y1 = 1056
+x2 = 1245
+y2 = 1116
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_125"
+map = "tokuno"
+name = "Tokuno orc"
+mobile_ids = ["orc"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 695
+y1 = 811
+x2 = 735
+y2 = 851
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_126"
+map = "tokuno"
+name = "Tokuno skeleton, shade, bonemage, skeletalknight"
+mobile_ids = ["skeleton", "shade", "bonemage", "skeletalknight"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 49
+only_outside = false
+[[spawn.areas]]
+x1 = 561
+y1 = 933
+x2 = 601
+y2 = 973
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_127"
+map = "tokuno"
+name = "Tokuno bakekitsune"
+mobile_ids = ["bakekitsune"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 524
+y1 = 446
+x2 = 584
+y2 = 506
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_128"
+map = "tokuno"
+name = "Tokuno mongbat"
+mobile_ids = ["mongbat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 72
+only_outside = false
+[[spawn.areas]]
+x1 = 176
+y1 = 861
+x2 = 236
+y2 = 921
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_129"
+map = "tokuno"
+name = "Tokuno kappa"
+mobile_ids = ["kappa"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 77
+only_outside = false
+[[spawn.areas]]
+x1 = 1056
+y1 = 880
+x2 = 1116
+y2 = 940
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_130"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 27
+only_outside = false
+[[spawn.areas]]
+x1 = 900
+y1 = 375
+x2 = 960
+y2 = 435
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_131"
+map = "tokuno"
+name = "Tokuno mongbat"
+mobile_ids = ["mongbat"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 388
+y1 = 433
+x2 = 448
+y2 = 493
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_132"
+map = "tokuno"
+name = "Tokuno bakekitsune, hellcat"
+mobile_ids = ["bakekitsune", "hellcat"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 585
+y1 = 526
+x2 = 645
+y2 = 586
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_133"
+map = "tokuno"
+name = "Tokuno revenantlion, bakekitsune, oni"
+mobile_ids = ["revenantlion", "bakekitsune", "oni"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 647
+y1 = 416
+x2 = 707
+y2 = 476
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_134"
+map = "tokuno"
+name = "Tokuno revenantlion"
+mobile_ids = ["revenantlion"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 607
+y1 = 327
+x2 = 667
+y2 = 387
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_135"
+map = "tokuno"
+name = "Tokuno hiryu"
+mobile_ids = ["hiryu"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 1281
+y1 = 746
+x2 = 1341
+y2 = 806
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_136"
+map = "tokuno"
+name = "Tokuno giantspider, giantblackwidow"
+mobile_ids = ["giantspider", "giantblackwidow"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 991
+y1 = 772
+x2 = 1051
+y2 = 832
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_137"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 30
+only_outside = false
+[[spawn.areas]]
+x1 = 897
+y1 = 421
+x2 = 957
+y2 = 481
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_138"
+map = "tokuno"
+name = "Tokuno yomotsuwarrior"
+mobile_ids = ["yomotsuwarrior"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 58
+only_outside = false
+[[spawn.areas]]
+x1 = 168
+y1 = 894
+x2 = 228
+y2 = 954
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_139"
+map = "tokuno"
+name = "Tokuno yomotsuwarrior"
+mobile_ids = ["yomotsuwarrior"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 71
+only_outside = false
+[[spawn.areas]]
+x1 = 264
+y1 = 718
+x2 = 324
+y2 = 778
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_140"
+map = "tokuno"
+name = "Tokuno yamandon"
+mobile_ids = ["yamandon"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 65
+only_outside = false
+[[spawn.areas]]
+x1 = 126
+y1 = 543
+x2 = 206
+y2 = 623
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_141"
+map = "tokuno"
+name = "Tokuno orc"
+mobile_ids = ["orc"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 774
+y1 = 870
+x2 = 814
+y2 = 910
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_142"
+map = "tokuno"
+name = "Tokuno skeleton, shade, bonemage, skeletalknight"
+mobile_ids = ["skeleton", "shade", "bonemage", "skeletalknight"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 553
+y1 = 913
+x2 = 593
+y2 = 953
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_143"
+map = "tokuno"
+name = "Tokuno lizardman"
+mobile_ids = ["lizardman"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 30
+only_outside = false
+[[spawn.areas]]
+x1 = 1056
+y1 = 422
+x2 = 1116
+y2 = 482
+
+[[spawn]]
+id = "tokuno_modernuo_outdoors_144"
+map = "tokuno"
+name = "Tokuno hellcat, lavalizard"
+mobile_ids = ["hellcat", "lavalizard"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 60
+only_outside = false
+[[spawn.areas]]
+x1 = 1075
+y1 = 723
+x2 = 1135
+y2 = 783

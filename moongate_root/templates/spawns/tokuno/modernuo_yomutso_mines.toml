@@ -1,0 +1,170 @@
+[[spawn]]
+id = "tokuno_modernuo_yomutso_mines_0"
+map = "tokuno"
+name = "Tokuno earthele, dullcopperele, yomotsuwarrior, yomotsupriest"
+mobile_ids = ["earthele", "dullcopperele", "yomotsuwarrior", "yomotsupriest"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 41
+y1 = 0
+x2 = 101
+y2 = 59
+
+[[spawn]]
+id = "tokuno_modernuo_yomutso_mines_1"
+map = "tokuno"
+name = "Tokuno earthele, dullcopperele, yomotsuwarrior, yomotsupriest"
+mobile_ids = ["earthele", "dullcopperele", "yomotsuwarrior", "yomotsupriest"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 81
+y1 = 0
+x2 = 141
+y2 = 50
+
+[[spawn]]
+id = "tokuno_modernuo_yomutso_mines_2"
+map = "tokuno"
+name = "Tokuno firebeetle"
+mobile_ids = ["firebeetle"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 102
+y1 = 18
+x2 = 112
+y2 = 28
+
+[[spawn]]
+id = "tokuno_modernuo_yomutso_mines_3"
+map = "tokuno"
+name = "Tokuno earthele, dullcopperele, yomotsuwarrior, yomotsupriest"
+mobile_ids = ["earthele", "dullcopperele", "yomotsuwarrior", "yomotsupriest"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 24
+y1 = 37
+x2 = 84
+y2 = 97
+
+[[spawn]]
+id = "tokuno_modernuo_yomutso_mines_4"
+map = "tokuno"
+name = "Tokuno earthele, dullcopperele, yomotsuwarrior, yomotsupriest"
+mobile_ids = ["earthele", "dullcopperele", "yomotsuwarrior", "yomotsupriest"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 0
+y1 = 26
+x2 = 46
+y2 = 86
+
+[[spawn]]
+id = "tokuno_modernuo_yomutso_mines_5"
+map = "tokuno"
+name = "Tokuno earthele, dullcopperele, yomotsuwarrior, yomotsupriest"
+mobile_ids = ["earthele", "dullcopperele", "yomotsuwarrior", "yomotsupriest"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 72
+y1 = 54
+x2 = 132
+y2 = 114
+
+[[spawn]]
+id = "tokuno_modernuo_yomutso_mines_6"
+map = "tokuno"
+name = "Tokuno earthele, dullcopperele, yomotsuwarrior, yomotsupriest"
+mobile_ids = ["earthele", "dullcopperele", "yomotsuwarrior", "yomotsupriest"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 53
+y1 = 84
+x2 = 113
+y2 = 144
+
+[[spawn]]
+id = "tokuno_modernuo_yomutso_mines_7"
+map = "tokuno"
+name = "Tokuno earthele, dullcopperele, yomotsuwarrior, yomotsupriest"
+mobile_ids = ["earthele", "dullcopperele", "yomotsuwarrior", "yomotsupriest"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 86
+y1 = 31
+x2 = 146
+y2 = 91
+
+[[spawn]]
+id = "tokuno_modernuo_yomutso_mines_8"
+map = "tokuno"
+name = "Tokuno earthele, dullcopperele, yomotsuwarrior, yomotsupriest"
+mobile_ids = ["earthele", "dullcopperele", "yomotsuwarrior", "yomotsupriest"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 0
+y1 = 0
+x2 = 55
+y2 = 49

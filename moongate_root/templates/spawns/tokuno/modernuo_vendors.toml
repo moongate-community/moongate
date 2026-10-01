@@ -1,0 +1,873 @@
+[[spawn]]
+id = "tokuno_modernuo_vendors_0"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 499
+y1 = 586
+x2 = 505
+y2 = 592
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_1"
+map = "tokuno"
+name = "Tokuno armourer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 755
+y1 = 1301
+x2 = 757
+y2 = 1303
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_2"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 1174
+y1 = 982
+x2 = 1180
+y2 = 988
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_3"
+map = "tokuno"
+name = "Tokuno jeweler"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 723
+y1 = 1296
+x2 = 725
+y2 = 1298
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_4"
+map = "tokuno"
+name = "Tokuno mage"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 694
+y1 = 1296
+x2 = 696
+y2 = 1298
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_5"
+map = "tokuno"
+name = "Tokuno mapmaker"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 63
+only_outside = false
+[[spawn.areas]]
+x1 = 690
+y1 = 1263
+x2 = 692
+y2 = 1265
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_6"
+map = "tokuno"
+name = "Tokuno animaltrainer"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 788
+y1 = 1277
+x2 = 790
+y2 = 1279
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_7"
+map = "tokuno"
+name = "Tokuno blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 42
+only_outside = false
+[[spawn.areas]]
+x1 = 772
+y1 = 1247
+x2 = 774
+y2 = 1249
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_8"
+map = "tokuno"
+name = "Tokuno scribe"
+mobile_ids = ["scribe"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 688
+y1 = 1254
+x2 = 690
+y2 = 1256
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_9"
+map = "tokuno"
+name = "Tokuno alchemist"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 701
+y1 = 1297
+x2 = 703
+y2 = 1299
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_10"
+map = "tokuno"
+name = "Tokuno herbalist"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 682
+y1 = 1297
+x2 = 684
+y2 = 1299
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_11"
+map = "tokuno"
+name = "Tokuno innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 678
+y1 = 1206
+x2 = 680
+y2 = 1208
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_12"
+map = "tokuno"
+name = "Tokuno tavernkeeper"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 691
+y1 = 1212
+x2 = 693
+y2 = 1214
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_13"
+map = "tokuno"
+name = "Tokuno provisioner"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 729
+y1 = 1281
+x2 = 731
+y2 = 1283
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_14"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 73
+only_outside = false
+[[spawn.areas]]
+x1 = 223
+y1 = 783
+x2 = 229
+y2 = 789
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_15"
+map = "tokuno"
+name = "Tokuno noble, peasant, beggar"
+mobile_ids = ["noble", "peasant", "beggar"]
+npc_list_ids = []
+max = 30
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 675
+y1 = 1196
+x2 = 795
+y2 = 1316
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_16"
+map = "tokuno"
+name = "Tokuno tinker"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 61
+only_outside = false
+[[spawn.areas]]
+x1 = 719
+y1 = 1212
+x2 = 721
+y2 = 1214
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_17"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 87
+only_outside = false
+[[spawn.areas]]
+x1 = 760
+y1 = 244
+x2 = 766
+y2 = 250
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_18"
+map = "tokuno"
+name = "Tokuno armourer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 741
+y1 = 1303
+x2 = 743
+y2 = 1305
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_19"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 295
+y1 = 635
+x2 = 299
+y2 = 639
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_20"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 245
+y1 = 1086
+x2 = 251
+y2 = 1092
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_21"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 780
+y1 = 1218
+x2 = 782
+y2 = 1220
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_22"
+map = "tokuno"
+name = "Tokuno blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 660
+y1 = 1208
+x2 = 662
+y2 = 1210
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_23"
+map = "tokuno"
+name = "Tokuno armourer, weaponsmith"
+mobile_ids = ["armourer", "weaponsmith"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 745
+y1 = 1299
+x2 = 753
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_24"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 366
+y1 = 426
+x2 = 376
+y2 = 436
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_25"
+map = "tokuno"
+name = "Tokuno shipwright"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 63
+only_outside = false
+[[spawn.areas]]
+x1 = 668
+y1 = 1265
+x2 = 670
+y2 = 1267
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_26"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 81
+only_outside = false
+[[spawn.areas]]
+x1 = 1149
+y1 = 933
+x2 = 1155
+y2 = 939
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_27"
+map = "tokuno"
+name = "Tokuno towncrier"
+mobile_ids = ["towncrier"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 731
+y1 = 1255
+x2 = 733
+y2 = 1257
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_28"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 396
+y1 = 546
+x2 = 402
+y2 = 552
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_29"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 34
+only_outside = false
+[[spawn.areas]]
+x1 = 1108
+y1 = 492
+x2 = 1114
+y2 = 498
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_30"
+map = "tokuno"
+name = "Tokuno tanner"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 719
+y1 = 1210
+x2 = 721
+y2 = 1212
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_31"
+map = "tokuno"
+name = "Tokuno carpenter"
+mobile_ids = ["carpenter"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 61
+only_outside = false
+[[spawn.areas]]
+x1 = 738
+y1 = 1222
+x2 = 740
+y2 = 1224
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_32"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 43
+only_outside = false
+[[spawn.areas]]
+x1 = 1218
+y1 = 491
+x2 = 1224
+y2 = 497
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_33"
+map = "tokuno"
+name = "Tokuno weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 42
+only_outside = false
+[[spawn.areas]]
+x1 = 778
+y1 = 1258
+x2 = 780
+y2 = 1260
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_34"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 69
+only_outside = false
+[[spawn.areas]]
+x1 = 893
+y1 = 517
+x2 = 897
+y2 = 521
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_35"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 37
+only_outside = false
+[[spawn.areas]]
+x1 = 974
+y1 = 233
+x2 = 984
+y2 = 243
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_36"
+map = "tokuno"
+name = "Tokuno baker, butcher, cook"
+mobile_ids = ["baker", "butcher", "cook"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 702
+y1 = 1261
+x2 = 704
+y2 = 1263
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_37"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 555
+y1 = 531
+x2 = 561
+y2 = 537
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_38"
+map = "tokuno"
+name = "Tokuno banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 728
+y1 = 1248
+x2 = 730
+y2 = 1250
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_39"
+map = "tokuno"
+name = "Tokuno weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 805
+y1 = 1307
+x2 = 807
+y2 = 1309
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_40"
+map = "tokuno"
+name = "Tokuno weaver"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 743
+y1 = 1209
+x2 = 745
+y2 = 1211
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_41"
+map = "tokuno"
+name = "Tokuno tailor"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 743
+y1 = 1218
+x2 = 745
+y2 = 1220
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_42"
+map = "tokuno"
+name = "Tokuno blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 661
+y1 = 1209
+x2 = 663
+y2 = 1211
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_43"
+map = "tokuno"
+name = "Tokuno bard"
+mobile_ids = ["bard"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 671
+y1 = 1261
+x2 = 679
+y2 = 1269
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_44"
+map = "tokuno"
+name = "Tokuno bowyer"
+mobile_ids = ["bowyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 42
+only_outside = false
+[[spawn.areas]]
+x1 = 780
+y1 = 1300
+x2 = 782
+y2 = 1302
+
+[[spawn]]
+id = "tokuno_modernuo_vendors_45"
+map = "tokuno"
+name = "Tokuno healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 43
+only_outside = false
+[[spawn.areas]]
+x1 = 1163
+y1 = 799
+x2 = 1169
+y2 = 805

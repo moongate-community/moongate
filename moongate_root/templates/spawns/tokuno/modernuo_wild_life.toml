@@ -1,0 +1,3248 @@
+[[spawn]]
+id = "tokuno_modernuo_wild_life_0"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 592
+y1 = 837
+x2 = 632
+y2 = 877
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_1"
+map = "tokuno"
+name = "Tokuno llama, rabbit, dog"
+mobile_ids = ["llama", "rabbit", "dog"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 560
+y1 = 1150
+x2 = 600
+y2 = 1190
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_2"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 61
+only_outside = false
+[[spawn.areas]]
+x1 = 854
+y1 = 951
+x2 = 894
+y2 = 991
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_3"
+map = "tokuno"
+name = "Tokuno gaman, crane"
+mobile_ids = ["gaman", "crane"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 442
+y1 = 306
+x2 = 502
+y2 = 366
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_4"
+map = "tokuno"
+name = "Tokuno direwolf, timberwolf, mongbat, blackbear, brownbear, bird, llama, horse, greywolf"
+mobile_ids = ["direwolf", "timberwolf", "mongbat", "blackbear", "brownbear", "bird", "llama", "horse", "greywolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 388
+y1 = 433
+x2 = 448
+y2 = 493
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_5"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 826
+y1 = 294
+x2 = 886
+y2 = 354
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_6"
+map = "tokuno"
+name = "Tokuno mountaingoat"
+mobile_ids = ["mountaingoat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 88
+only_outside = false
+[[spawn.areas]]
+x1 = 1146
+y1 = 671
+x2 = 1206
+y2 = 731
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_7"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, brownbear, bird, blackbear, direwolf, llama"
+mobile_ids = ["horse", "timberwolf", "greywolf", "brownbear", "bird", "blackbear", "direwolf", "llama"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 42
+only_outside = false
+[[spawn.areas]]
+x1 = 981
+y1 = 479
+x2 = 1041
+y2 = 539
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_8"
+map = "tokuno"
+name = "Tokuno crane, rat, bird"
+mobile_ids = ["crane", "rat", "bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 863
+y1 = 1101
+x2 = 903
+y2 = 1141
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_9"
+map = "tokuno"
+name = "Tokuno bird, gaman, brownbear, blackbear, horse"
+mobile_ids = ["bird", "gaman", "brownbear", "blackbear", "horse"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 38
+only_outside = false
+[[spawn.areas]]
+x1 = 351
+y1 = 481
+x2 = 411
+y2 = 541
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_10"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 33
+only_outside = false
+[[spawn.areas]]
+x1 = 958
+y1 = 305
+x2 = 1018
+y2 = 365
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_11"
+map = "tokuno"
+name = "Tokuno dog, bird, jackrabbit, cat"
+mobile_ids = ["dog", "bird", "jackrabbit", "cat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 85
+only_outside = false
+[[spawn.areas]]
+x1 = 1061
+y1 = 867
+x2 = 1121
+y2 = 927
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_12"
+map = "tokuno"
+name = "Tokuno goat, sheep, bird, rabbit"
+mobile_ids = ["goat", "sheep", "bird", "rabbit"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 552
+y1 = 1191
+x2 = 592
+y2 = 1231
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_13"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit"
+mobile_ids = ["gaman", "bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 50
+only_outside = false
+[[spawn.areas]]
+x1 = 1062
+y1 = 994
+x2 = 1122
+y2 = 1054
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_14"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 484
+y1 = 1022
+x2 = 524
+y2 = 1062
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_15"
+map = "tokuno"
+name = "Tokuno goat, horse, rabbit, llama"
+mobile_ids = ["goat", "horse", "rabbit", "llama"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 580
+y1 = 1178
+x2 = 620
+y2 = 1218
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_16"
+map = "tokuno"
+name = "Tokuno bird, crane, pig, goat"
+mobile_ids = ["bird", "crane", "pig", "goat"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 37
+only_outside = false
+[[spawn.areas]]
+x1 = 576
+y1 = 1269
+x2 = 616
+y2 = 1309
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_17"
+map = "tokuno"
+name = "Tokuno jackrabbit, bird"
+mobile_ids = ["jackrabbit", "bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 50
+only_outside = false
+[[spawn.areas]]
+x1 = 704
+y1 = 811
+x2 = 744
+y2 = 851
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_18"
+map = "tokuno"
+name = "Tokuno crane, brownbear, jackrabbit"
+mobile_ids = ["crane", "brownbear", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 39
+only_outside = false
+[[spawn.areas]]
+x1 = 1044
+y1 = 776
+x2 = 1104
+y2 = 836
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_19"
+map = "tokuno"
+name = "Tokuno gaman"
+mobile_ids = ["gaman"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 68
+only_outside = false
+[[spawn.areas]]
+x1 = 160
+y1 = 826
+x2 = 220
+y2 = 886
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_20"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 867
+y1 = 1052
+x2 = 907
+y2 = 1092
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_21"
+map = "tokuno"
+name = "Tokuno crane, pig, dog, cat"
+mobile_ids = ["crane", "pig", "dog", "cat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 33
+only_outside = false
+[[spawn.areas]]
+x1 = 896
+y1 = 1100
+x2 = 936
+y2 = 1140
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_22"
+map = "tokuno"
+name = "Tokuno crane, dog, cat, sheep"
+mobile_ids = ["crane", "dog", "cat", "sheep"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 27
+only_outside = false
+[[spawn.areas]]
+x1 = 887
+y1 = 1123
+x2 = 927
+y2 = 1163
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_23"
+map = "tokuno"
+name = "Tokuno crane, rat, bird, giantrat, bullfrog, gianttoad"
+mobile_ids = ["crane", "rat", "bird", "giantrat", "bullfrog", "gianttoad"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 180
+y1 = 1055
+x2 = 240
+y2 = 1115
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_24"
+map = "tokuno"
+name = "Tokuno crane, rat, bird, giantrat, bullfrog, gianttoad"
+mobile_ids = ["crane", "rat", "bird", "giantrat", "bullfrog", "gianttoad"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 202
+y1 = 1086
+x2 = 262
+y2 = 1146
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_25"
+map = "tokuno"
+name = "Tokuno bird, cat, brownbear, blackbear, horse, dog, jackrabbit"
+mobile_ids = ["bird", "cat", "brownbear", "blackbear", "horse", "dog", "jackrabbit"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 49
+only_outside = false
+[[spawn.areas]]
+x1 = 277
+y1 = 542
+x2 = 337
+y2 = 602
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_26"
+map = "tokuno"
+name = "Tokuno mountaingoat"
+mobile_ids = ["mountaingoat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 86
+only_outside = false
+[[spawn.areas]]
+x1 = 1114
+y1 = 637
+x2 = 1174
+y2 = 697
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_27"
+map = "tokuno"
+name = "Tokuno llama, blackbear, brownbear, bird"
+mobile_ids = ["llama", "blackbear", "brownbear", "bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 755
+y1 = 1107
+x2 = 795
+y2 = 1147
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_28"
+map = "tokuno"
+name = "Tokuno crane, rat"
+mobile_ids = ["crane", "rat"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 162
+y1 = 984
+x2 = 222
+y2 = 1044
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_29"
+map = "tokuno"
+name = "Tokuno crane, jackrabbit, bird"
+mobile_ids = ["crane", "jackrabbit", "bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 750
+y1 = 855
+x2 = 790
+y2 = 895
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_30"
+map = "tokuno"
+name = "Tokuno brownbear, timberwolf, greywolf, blackbear, direwolf"
+mobile_ids = ["brownbear", "timberwolf", "greywolf", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 1092
+y1 = 471
+x2 = 1152
+y2 = 531
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_31"
+map = "tokuno"
+name = "Tokuno llama, timberwolf, greywolf, brownbear, bird, blackbear, direwolf"
+mobile_ids = ["llama", "timberwolf", "greywolf", "brownbear", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 39
+only_outside = false
+[[spawn.areas]]
+x1 = 1151
+y1 = 517
+x2 = 1211
+y2 = 577
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_32"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit, dog, cat, horse, crane"
+mobile_ids = ["gaman", "bird", "jackrabbit", "dog", "cat", "horse", "crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 1103
+y1 = 1006
+x2 = 1163
+y2 = 1066
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_33"
+map = "tokuno"
+name = "Tokuno crane, bird, horse"
+mobile_ids = ["crane", "bird", "horse"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 514
+y1 = 1169
+x2 = 554
+y2 = 1209
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_34"
+map = "tokuno"
+name = "Tokuno crane, jackrabbit"
+mobile_ids = ["crane", "jackrabbit"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 56
+only_outside = false
+[[spawn.areas]]
+x1 = 702
+y1 = 896
+x2 = 742
+y2 = 936
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_35"
+map = "tokuno"
+name = "Tokuno crane, dog"
+mobile_ids = ["crane", "dog"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 1058
+y1 = 950
+x2 = 1118
+y2 = 1010
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_36"
+map = "tokuno"
+name = "Tokuno direwolf, timberwolf, blackbear, brownbear, bird, llama, horse, greywolf"
+mobile_ids = ["direwolf", "timberwolf", "blackbear", "brownbear", "bird", "llama", "horse", "greywolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 413
+y1 = 372
+x2 = 473
+y2 = 432
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_37"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 1009
+y1 = 922
+x2 = 1069
+y2 = 982
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_38"
+map = "tokuno"
+name = "Tokuno gaman, crane"
+mobile_ids = ["gaman", "crane"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 424
+y1 = 344
+x2 = 484
+y2 = 404
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_39"
+map = "tokuno"
+name = "Tokuno gaman, bird, direwolf, timberwolf, blackbear, brownbear, llama, horse"
+mobile_ids = ["gaman", "bird", "direwolf", "timberwolf", "blackbear", "brownbear", "llama", "horse"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 72
+only_outside = false
+[[spawn.areas]]
+x1 = 176
+y1 = 861
+x2 = 236
+y2 = 921
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_40"
+map = "tokuno"
+name = "Tokuno crane, rat, bird, giantrat, bullfrog, gianttoad"
+mobile_ids = ["crane", "rat", "bird", "giantrat", "bullfrog", "gianttoad"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 221
+y1 = 1044
+x2 = 281
+y2 = 1104
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_41"
+map = "tokuno"
+name = "Tokuno crane, bird, jackrabbit"
+mobile_ids = ["crane", "bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 38
+only_outside = false
+[[spawn.areas]]
+x1 = 665
+y1 = 871
+x2 = 705
+y2 = 911
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_42"
+map = "tokuno"
+name = "Tokuno crane, rat, bird, giantrat, bullfrog, gianttoad"
+mobile_ids = ["crane", "rat", "bird", "giantrat", "bullfrog", "gianttoad"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 29
+only_outside = false
+[[spawn.areas]]
+x1 = 255
+y1 = 1126
+x2 = 315
+y2 = 1186
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_43"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit, dog, cat, horse"
+mobile_ids = ["gaman", "bird", "jackrabbit", "dog", "cat", "horse"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 64
+only_outside = false
+[[spawn.areas]]
+x1 = 1109
+y1 = 969
+x2 = 1169
+y2 = 1029
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_44"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 45
+only_outside = false
+[[spawn.areas]]
+x1 = 930
+y1 = 263
+x2 = 990
+y2 = 323
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_45"
+map = "tokuno"
+name = "Tokuno jackrabbit"
+mobile_ids = ["jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 663
+y1 = 837
+x2 = 703
+y2 = 877
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_46"
+map = "tokuno"
+name = "Tokuno gaman, dog, jackrabbit"
+mobile_ids = ["gaman", "dog", "jackrabbit"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 334
+y1 = 535
+x2 = 394
+y2 = 595
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_47"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 813
+y1 = 888
+x2 = 853
+y2 = 928
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_48"
+map = "tokuno"
+name = "Tokuno greywolf, pig, timberwolf"
+mobile_ids = ["greywolf", "pig", "timberwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 49
+only_outside = false
+[[spawn.areas]]
+x1 = 541
+y1 = 1081
+x2 = 581
+y2 = 1121
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_49"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit"
+mobile_ids = ["gaman", "bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 1315
+y1 = 745
+x2 = 1375
+y2 = 805
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_50"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 24
+only_outside = false
+[[spawn.areas]]
+x1 = 875
+y1 = 301
+x2 = 935
+y2 = 361
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_51"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit"
+mobile_ids = ["gaman", "bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 28
+only_outside = false
+[[spawn.areas]]
+x1 = 1225
+y1 = 836
+x2 = 1285
+y2 = 896
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_52"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit, horse"
+mobile_ids = ["gaman", "bird", "jackrabbit", "horse"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 37
+only_outside = false
+[[spawn.areas]]
+x1 = 1200
+y1 = 792
+x2 = 1260
+y2 = 852
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_53"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, brownbear, bird, blackbear, direwolf, llama"
+mobile_ids = ["horse", "timberwolf", "greywolf", "brownbear", "bird", "blackbear", "direwolf", "llama"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 32
+only_outside = false
+[[spawn.areas]]
+x1 = 926
+y1 = 675
+x2 = 986
+y2 = 735
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_54"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 827
+y1 = 346
+x2 = 887
+y2 = 406
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_55"
+map = "tokuno"
+name = "Tokuno bird, crane, rabbit"
+mobile_ids = ["bird", "crane", "rabbit"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 38
+only_outside = false
+[[spawn.areas]]
+x1 = 546
+y1 = 1267
+x2 = 586
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_56"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 32
+only_outside = false
+[[spawn.areas]]
+x1 = 751
+y1 = 804
+x2 = 791
+y2 = 844
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_57"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit, horse, dog"
+mobile_ids = ["gaman", "bird", "jackrabbit", "horse", "dog"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 38
+only_outside = false
+[[spawn.areas]]
+x1 = 1200
+y1 = 865
+x2 = 1260
+y2 = 925
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_58"
+map = "tokuno"
+name = "Tokuno gaman, blackbear, brownbear, bird, llama, horse"
+mobile_ids = ["gaman", "blackbear", "brownbear", "bird", "llama", "horse"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 23
+only_outside = false
+[[spawn.areas]]
+x1 = 243
+y1 = 576
+x2 = 303
+y2 = 636
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_59"
+map = "tokuno"
+name = "Tokuno direwolf, timberwolf, blackbear, brownbear, bird, llama, horse, greywolf"
+mobile_ids = ["direwolf", "timberwolf", "blackbear", "brownbear", "bird", "llama", "horse", "greywolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 326
+y1 = 373
+x2 = 386
+y2 = 433
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_60"
+map = "tokuno"
+name = "Tokuno direwolf, greywolf, timberwolf"
+mobile_ids = ["direwolf", "greywolf", "timberwolf"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 44
+only_outside = false
+[[spawn.areas]]
+x1 = 624
+y1 = 1122
+x2 = 664
+y2 = 1162
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_61"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit, brownbear, horse"
+mobile_ids = ["gaman", "bird", "jackrabbit", "brownbear", "horse"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 1167
+y1 = 821
+x2 = 1227
+y2 = 881
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_62"
+map = "tokuno"
+name = "Tokuno mountaingoat, hind, hart, blackbear, brownbear, bird"
+mobile_ids = ["mountaingoat", "hind", "hart", "blackbear", "brownbear", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 599
+y1 = 480
+x2 = 659
+y2 = 540
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_63"
+map = "tokuno"
+name = "Tokuno gaman, goat, bird"
+mobile_ids = ["gaman", "goat", "bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 32
+only_outside = false
+[[spawn.areas]]
+x1 = 859
+y1 = 1018
+x2 = 899
+y2 = 1058
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_64"
+map = "tokuno"
+name = "Tokuno crane, brownbear, jackrabbit"
+mobile_ids = ["crane", "brownbear", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 1071
+y1 = 802
+x2 = 1131
+y2 = 862
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_65"
+map = "tokuno"
+name = "Tokuno llama, direwolf, bird"
+mobile_ids = ["llama", "direwolf", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 59
+only_outside = false
+[[spawn.areas]]
+x1 = 543
+y1 = 1113
+x2 = 583
+y2 = 1153
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_66"
+map = "tokuno"
+name = "Tokuno sheep, mountaingoat, bird, llama, crane"
+mobile_ids = ["sheep", "mountaingoat", "bird", "llama", "crane"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 42
+only_outside = false
+[[spawn.areas]]
+x1 = 657
+y1 = 409
+x2 = 717
+y2 = 469
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_67"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 79
+only_outside = false
+[[spawn.areas]]
+x1 = 741
+y1 = 198
+x2 = 801
+y2 = 258
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_68"
+map = "tokuno"
+name = "Tokuno sheep, mountaingoat, bird, llama"
+mobile_ids = ["sheep", "mountaingoat", "bird", "llama"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 535
+y1 = 417
+x2 = 595
+y2 = 477
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_69"
+map = "tokuno"
+name = "Tokuno gaman, jackrabbit"
+mobile_ids = ["gaman", "jackrabbit"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 389
+y1 = 499
+x2 = 449
+y2 = 559
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_70"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 32
+only_outside = false
+[[spawn.areas]]
+x1 = 726
+y1 = 794
+x2 = 766
+y2 = 834
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_71"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 914
+y1 = 1213
+x2 = 954
+y2 = 1253
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_72"
+map = "tokuno"
+name = "Tokuno bird, jackrabbit"
+mobile_ids = ["bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 50
+only_outside = false
+[[spawn.areas]]
+x1 = 1147
+y1 = 972
+x2 = 1207
+y2 = 1032
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_73"
+map = "tokuno"
+name = "Tokuno gaman"
+mobile_ids = ["gaman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 113
+y1 = 101
+x2 = 173
+y2 = 161
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_74"
+map = "tokuno"
+name = "Tokuno bird, dog, cat, rabbit"
+mobile_ids = ["bird", "dog", "cat", "rabbit"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 527
+y1 = 1220
+x2 = 567
+y2 = 1260
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_75"
+map = "tokuno"
+name = "Tokuno crane, rat, bird, giantrat, bullfrog, gianttoad"
+mobile_ids = ["crane", "rat", "bird", "giantrat", "bullfrog", "gianttoad"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 29
+only_outside = false
+[[spawn.areas]]
+x1 = 213
+y1 = 1001
+x2 = 273
+y2 = 1061
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_76"
+map = "tokuno"
+name = "Tokuno bird, cat, brownbear, blackbear, horse, dog, jackrabbit"
+mobile_ids = ["bird", "cat", "brownbear", "blackbear", "horse", "dog", "jackrabbit"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 116
+y1 = 79
+x2 = 176
+y2 = 139
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_77"
+map = "tokuno"
+name = "Tokuno crane, cat, sheep"
+mobile_ids = ["crane", "cat", "sheep"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 922
+y1 = 1150
+x2 = 962
+y2 = 1190
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_78"
+map = "tokuno"
+name = "Tokuno crane, rabbit, horse"
+mobile_ids = ["crane", "rabbit", "horse"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 505
+y1 = 1243
+x2 = 545
+y2 = 1283
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_79"
+map = "tokuno"
+name = "Tokuno crane, jackrabbit, bird"
+mobile_ids = ["crane", "jackrabbit", "bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 43
+only_outside = false
+[[spawn.areas]]
+x1 = 925
+y1 = 798
+x2 = 985
+y2 = 858
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_80"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 57
+only_outside = false
+[[spawn.areas]]
+x1 = 782
+y1 = 188
+x2 = 842
+y2 = 248
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_81"
+map = "tokuno"
+name = "Tokuno llama, timberwolf, bird"
+mobile_ids = ["llama", "timberwolf", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 530
+y1 = 1072
+x2 = 570
+y2 = 1112
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_82"
+map = "tokuno"
+name = "Tokuno direwolf, timberwolf"
+mobile_ids = ["direwolf", "timberwolf"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 24
+only_outside = false
+[[spawn.areas]]
+x1 = 1042
+y1 = 449
+x2 = 1082
+y2 = 489
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_83"
+map = "tokuno"
+name = "Tokuno gaman, direwolf, timberwolf, blackbear, brownbear, bird, llama, horse"
+mobile_ids = ["gaman", "direwolf", "timberwolf", "blackbear", "brownbear", "bird", "llama", "horse"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 50
+only_outside = false
+[[spawn.areas]]
+x1 = 191
+y1 = 938
+x2 = 251
+y2 = 998
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_84"
+map = "tokuno"
+name = "Tokuno mountaingoat, bird, sheep, llama"
+mobile_ids = ["mountaingoat", "bird", "sheep", "llama"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 63
+only_outside = false
+[[spawn.areas]]
+x1 = 859
+y1 = 486
+x2 = 919
+y2 = 546
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_85"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 69
+only_outside = false
+[[spawn.areas]]
+x1 = 513
+y1 = 971
+x2 = 553
+y2 = 1011
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_86"
+map = "tokuno"
+name = "Tokuno brownbear, blackbear, llama, horse, timberwolf, direwolf, greywolf, bird"
+mobile_ids = ["brownbear", "blackbear", "llama", "horse", "timberwolf", "direwolf", "greywolf", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 66
+only_outside = false
+[[spawn.areas]]
+x1 = 326
+y1 = 675
+x2 = 386
+y2 = 735
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_87"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit"
+mobile_ids = ["gaman", "bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 25
+only_outside = false
+[[spawn.areas]]
+x1 = 1269
+y1 = 784
+x2 = 1329
+y2 = 844
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_88"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit, dog, cat"
+mobile_ids = ["gaman", "bird", "jackrabbit", "dog", "cat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 80
+only_outside = false
+[[spawn.areas]]
+x1 = 1103
+y1 = 927
+x2 = 1163
+y2 = 987
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_89"
+map = "tokuno"
+name = "Tokuno gaman, bird, crane"
+mobile_ids = ["gaman", "bird", "crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 1177
+y1 = 1007
+x2 = 1237
+y2 = 1067
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_90"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 27
+only_outside = false
+[[spawn.areas]]
+x1 = 506
+y1 = 869
+x2 = 546
+y2 = 909
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_91"
+map = "tokuno"
+name = "Tokuno gaman"
+mobile_ids = ["gaman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 488
+y1 = 299
+x2 = 548
+y2 = 359
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_92"
+map = "tokuno"
+name = "Tokuno llama, timberwolf, greywolf, brownbear, bird, blackbear, direwolf"
+mobile_ids = ["llama", "timberwolf", "greywolf", "brownbear", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 19
+only_outside = false
+[[spawn.areas]]
+x1 = 937
+y1 = 725
+x2 = 997
+y2 = 785
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_93"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit"
+mobile_ids = ["gaman", "bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 37
+only_outside = false
+[[spawn.areas]]
+x1 = 1282
+y1 = 674
+x2 = 1342
+y2 = 734
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_94"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, brownbear, bird, blackbear, direwolf, llama"
+mobile_ids = ["horse", "timberwolf", "greywolf", "brownbear", "bird", "blackbear", "direwolf", "llama"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 27
+only_outside = false
+[[spawn.areas]]
+x1 = 968
+y1 = 626
+x2 = 1028
+y2 = 686
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_95"
+map = "tokuno"
+name = "Tokuno llama, timberwolf, greywolf, brownbear, bird, blackbear, direwolf"
+mobile_ids = ["llama", "timberwolf", "greywolf", "brownbear", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 44
+only_outside = false
+[[spawn.areas]]
+x1 = 1205
+y1 = 476
+x2 = 1265
+y2 = 536
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_96"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit"
+mobile_ids = ["gaman", "bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 1233
+y1 = 724
+x2 = 1293
+y2 = 784
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_97"
+map = "tokuno"
+name = "Tokuno brownbear, timberwolf, greywolf, bird, blackbear, direwolf, llama"
+mobile_ids = ["brownbear", "timberwolf", "greywolf", "bird", "blackbear", "direwolf", "llama"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 45
+only_outside = false
+[[spawn.areas]]
+x1 = 997
+y1 = 532
+x2 = 1057
+y2 = 592
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_98"
+map = "tokuno"
+name = "Tokuno jackrabbit, bird"
+mobile_ids = ["jackrabbit", "bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 60
+only_outside = false
+[[spawn.areas]]
+x1 = 615
+y1 = 946
+x2 = 655
+y2 = 986
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_99"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 39
+only_outside = false
+[[spawn.areas]]
+x1 = 1026
+y1 = 874
+x2 = 1086
+y2 = 934
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_100"
+map = "tokuno"
+name = "Tokuno horse, dog, timberwolf"
+mobile_ids = ["horse", "dog", "timberwolf"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 55
+only_outside = false
+[[spawn.areas]]
+x1 = 707
+y1 = 1051
+x2 = 747
+y2 = 1091
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_101"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit"
+mobile_ids = ["gaman", "bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 25
+only_outside = false
+[[spawn.areas]]
+x1 = 1281
+y1 = 747
+x2 = 1341
+y2 = 807
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_102"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 33
+only_outside = false
+[[spawn.areas]]
+x1 = 467
+y1 = 423
+x2 = 527
+y2 = 483
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_103"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 49
+only_outside = false
+[[spawn.areas]]
+x1 = 793
+y1 = 249
+x2 = 853
+y2 = 309
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_104"
+map = "tokuno"
+name = "Tokuno crane, horse"
+mobile_ids = ["crane", "horse"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 1197
+y1 = 1052
+x2 = 1257
+y2 = 1112
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_105"
+map = "tokuno"
+name = "Tokuno gaman, horse, brownbear, jackrabbit"
+mobile_ids = ["gaman", "horse", "brownbear", "jackrabbit"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 42
+only_outside = false
+[[spawn.areas]]
+x1 = 374
+y1 = 562
+x2 = 434
+y2 = 622
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_106"
+map = "tokuno"
+name = "Tokuno jackrabbit, bird"
+mobile_ids = ["jackrabbit", "bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 22
+only_outside = false
+[[spawn.areas]]
+x1 = 538
+y1 = 842
+x2 = 578
+y2 = 882
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_107"
+map = "tokuno"
+name = "Tokuno mountaingoat, llama"
+mobile_ids = ["mountaingoat", "llama"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 88
+only_outside = false
+[[spawn.areas]]
+x1 = 1104
+y1 = 675
+x2 = 1164
+y2 = 735
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_108"
+map = "tokuno"
+name = "Tokuno mountaingoat, hind, hart, blackbear, brownbear, bird"
+mobile_ids = ["mountaingoat", "hind", "hart", "blackbear", "brownbear", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 593
+y1 = 521
+x2 = 653
+y2 = 581
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_109"
+map = "tokuno"
+name = "Tokuno direwolf, rabbit, llama"
+mobile_ids = ["direwolf", "rabbit", "llama"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 547
+y1 = 1140
+x2 = 587
+y2 = 1180
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_110"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit"
+mobile_ids = ["gaman", "bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 1168
+y1 = 911
+x2 = 1228
+y2 = 971
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_111"
+map = "tokuno"
+name = "Tokuno crane, rat"
+mobile_ids = ["crane", "rat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 893
+y1 = 1035
+x2 = 933
+y2 = 1075
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_112"
+map = "tokuno"
+name = "Tokuno brownbear, blackbear, llama, horse, timberwolf, direwolf, greywolf, bird"
+mobile_ids = ["brownbear", "blackbear", "llama", "horse", "timberwolf", "direwolf", "greywolf", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 66
+only_outside = false
+[[spawn.areas]]
+x1 = 347
+y1 = 605
+x2 = 407
+y2 = 665
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_113"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 58
+only_outside = false
+[[spawn.areas]]
+x1 = 228
+y1 = 548
+x2 = 258
+y2 = 578
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_114"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 1228
+y1 = 501
+x2 = 1288
+y2 = 561
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_115"
+map = "tokuno"
+name = "Tokuno jackrabbit, crane"
+mobile_ids = ["jackrabbit", "crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 32
+only_outside = false
+[[spawn.areas]]
+x1 = 891
+y1 = 1005
+x2 = 931
+y2 = 1045
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_116"
+map = "tokuno"
+name = "Tokuno mountaingoat, hind, hart, blackbear, brownbear, bird"
+mobile_ids = ["mountaingoat", "hind", "hart", "blackbear", "brownbear", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 472
+y1 = 502
+x2 = 532
+y2 = 562
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_117"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 831
+y1 = 305
+x2 = 891
+y2 = 365
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_118"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 40
+only_outside = false
+[[spawn.areas]]
+x1 = 1022
+y1 = 1000
+x2 = 1082
+y2 = 1060
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_119"
+map = "tokuno"
+name = "Tokuno mountaingoat, sheep"
+mobile_ids = ["mountaingoat", "sheep"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 891
+y1 = 563
+x2 = 951
+y2 = 623
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_120"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit, dog"
+mobile_ids = ["gaman", "bird", "jackrabbit", "dog"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 1235
+y1 = 897
+x2 = 1295
+y2 = 957
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_121"
+map = "tokuno"
+name = "Tokuno jackrabbit, bird"
+mobile_ids = ["jackrabbit", "bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 74
+only_outside = false
+[[spawn.areas]]
+x1 = 571
+y1 = 990
+x2 = 611
+y2 = 1030
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_122"
+map = "tokuno"
+name = "Tokuno goat, rat"
+mobile_ids = ["goat", "rat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 29
+only_outside = false
+[[spawn.areas]]
+x1 = 867
+y1 = 1266
+x2 = 907
+y2 = 1306
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_123"
+map = "tokuno"
+name = "Tokuno crane, jackrabbit"
+mobile_ids = ["crane", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 29
+only_outside = false
+[[spawn.areas]]
+x1 = 998
+y1 = 788
+x2 = 1058
+y2 = 848
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_124"
+map = "tokuno"
+name = "Tokuno bird, horse"
+mobile_ids = ["bird", "horse"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 72
+only_outside = false
+[[spawn.areas]]
+x1 = 162
+y1 = 740
+x2 = 222
+y2 = 800
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_125"
+map = "tokuno"
+name = "Tokuno llama, timberwolf, greywolf, brownbear, bird, blackbear, direwolf"
+mobile_ids = ["llama", "timberwolf", "greywolf", "brownbear", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 38
+only_outside = false
+[[spawn.areas]]
+x1 = 1075
+y1 = 509
+x2 = 1135
+y2 = 569
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_126"
+map = "tokuno"
+name = "Tokuno sheep, mountaingoat, bird, llama"
+mobile_ids = ["sheep", "mountaingoat", "bird", "llama"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 49
+only_outside = false
+[[spawn.areas]]
+x1 = 626
+y1 = 381
+x2 = 686
+y2 = 441
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_127"
+map = "tokuno"
+name = "Tokuno jackrabbit"
+mobile_ids = ["jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 772
+y1 = 900
+x2 = 812
+y2 = 940
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_128"
+map = "tokuno"
+name = "Tokuno bird, sheep, gaman"
+mobile_ids = ["bird", "sheep", "gaman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 51
+only_outside = false
+[[spawn.areas]]
+x1 = 536
+y1 = 400
+x2 = 596
+y2 = 460
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_129"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 20
+only_outside = false
+[[spawn.areas]]
+x1 = 925
+y1 = 361
+x2 = 985
+y2 = 421
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_130"
+map = "tokuno"
+name = "Tokuno brownbear, blackbear, llama, horse, timberwolf, direwolf, greywolf, bird"
+mobile_ids = ["brownbear", "blackbear", "llama", "horse", "timberwolf", "direwolf", "greywolf", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 28
+y1 = 74
+x2 = 88
+y2 = 134
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_131"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 57
+only_outside = false
+[[spawn.areas]]
+x1 = 755
+y1 = 273
+x2 = 815
+y2 = 333
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_132"
+map = "tokuno"
+name = "Tokuno brownbear, timberwolf, greywolf, bird, blackbear, direwolf"
+mobile_ids = ["brownbear", "timberwolf", "greywolf", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 38
+only_outside = false
+[[spawn.areas]]
+x1 = 1044
+y1 = 499
+x2 = 1104
+y2 = 559
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_133"
+map = "tokuno"
+name = "Tokuno llama, timberwolf, greywolf, brownbear, bird, blackbear, direwolf"
+mobile_ids = ["llama", "timberwolf", "greywolf", "brownbear", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 23
+only_outside = false
+[[spawn.areas]]
+x1 = 919
+y1 = 559
+x2 = 979
+y2 = 619
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_134"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 978
+y1 = 230
+x2 = 1038
+y2 = 290
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_135"
+map = "tokuno"
+name = "Tokuno greywolf, timberwolf"
+mobile_ids = ["greywolf", "timberwolf"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 57
+only_outside = false
+[[spawn.areas]]
+x1 = 690
+y1 = 1095
+x2 = 730
+y2 = 1135
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_136"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 871
+y1 = 234
+x2 = 931
+y2 = 294
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_137"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit"
+mobile_ids = ["gaman", "bird", "jackrabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 20
+only_outside = false
+[[spawn.areas]]
+x1 = 1259
+y1 = 813
+x2 = 1319
+y2 = 873
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_138"
+map = "tokuno"
+name = "Tokuno mountaingoat"
+mobile_ids = ["mountaingoat"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 1174
+y1 = 606
+x2 = 1194
+y2 = 626
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_139"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 23
+only_outside = false
+[[spawn.areas]]
+x1 = 838
+y1 = 630
+x2 = 898
+y2 = 690
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_140"
+map = "tokuno"
+name = "Tokuno gaman, crane"
+mobile_ids = ["gaman", "crane"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 61
+only_outside = false
+[[spawn.areas]]
+x1 = 463
+y1 = 348
+x2 = 523
+y2 = 408
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_141"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 35
+only_outside = false
+[[spawn.areas]]
+x1 = 1148
+y1 = 1046
+x2 = 1208
+y2 = 1106
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_142"
+map = "tokuno"
+name = "Tokuno gaman"
+mobile_ids = ["gaman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 37
+only_outside = false
+[[spawn.areas]]
+x1 = 429
+y1 = 453
+x2 = 489
+y2 = 513
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_143"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 44
+only_outside = false
+[[spawn.areas]]
+x1 = 991
+y1 = 267
+x2 = 1051
+y2 = 327
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_144"
+map = "tokuno"
+name = "Tokuno mountaingoat, hind, hart, blackbear, brownbear, bird"
+mobile_ids = ["mountaingoat", "hind", "hart", "blackbear", "brownbear", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 521
+y1 = 514
+x2 = 581
+y2 = 574
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_145"
+map = "tokuno"
+name = "Tokuno sheep, bird, blackbear, brownbear"
+mobile_ids = ["sheep", "bird", "blackbear", "brownbear"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 475
+y1 = 444
+x2 = 535
+y2 = 504
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_146"
+map = "tokuno"
+name = "Tokuno bird, sheep, mountaingoat"
+mobile_ids = ["bird", "sheep", "mountaingoat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 70
+only_outside = false
+[[spawn.areas]]
+x1 = 832
+y1 = 460
+x2 = 892
+y2 = 520
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_147"
+map = "tokuno"
+name = "Tokuno gaman, bird, direwolf, timberwolf, blackbear, brownbear, llama, horse"
+mobile_ids = ["gaman", "bird", "direwolf", "timberwolf", "blackbear", "brownbear", "llama", "horse"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 59
+only_outside = false
+[[spawn.areas]]
+x1 = 178
+y1 = 906
+x2 = 238
+y2 = 966
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_148"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 38
+only_outside = false
+[[spawn.areas]]
+x1 = 919
+y1 = 1179
+x2 = 959
+y2 = 1219
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_149"
+map = "tokuno"
+name = "Tokuno sheep, pig, rabbit"
+mobile_ids = ["sheep", "pig", "rabbit"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 45
+only_outside = false
+[[spawn.areas]]
+x1 = 864
+y1 = 1132
+x2 = 904
+y2 = 1172
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_150"
+map = "tokuno"
+name = "Tokuno gaman"
+mobile_ids = ["gaman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 69
+only_outside = false
+[[spawn.areas]]
+x1 = 497
+y1 = 363
+x2 = 557
+y2 = 423
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_151"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 251
+y1 = 1176
+x2 = 271
+y2 = 1196
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_152"
+map = "tokuno"
+name = "Tokuno llama, mountaingoat"
+mobile_ids = ["llama", "mountaingoat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 37
+only_outside = false
+[[spawn.areas]]
+x1 = 1367
+y1 = 872
+x2 = 1387
+y2 = 892
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_153"
+map = "tokuno"
+name = "Tokuno gaman, bird, horse"
+mobile_ids = ["gaman", "bird", "horse"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 21
+only_outside = false
+[[spawn.areas]]
+x1 = 1225
+y1 = 774
+x2 = 1285
+y2 = 834
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_154"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 34
+only_outside = false
+[[spawn.areas]]
+x1 = 692
+y1 = 409
+x2 = 712
+y2 = 429
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_155"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 33
+only_outside = false
+[[spawn.areas]]
+x1 = 911
+y1 = 176
+x2 = 971
+y2 = 236
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_156"
+map = "tokuno"
+name = "Tokuno mountaingoat"
+mobile_ids = ["mountaingoat"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 33
+only_outside = false
+[[spawn.areas]]
+x1 = 1045
+y1 = 688
+x2 = 1085
+y2 = 728
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_157"
+map = "tokuno"
+name = "Tokuno brownbear, blackbear, llama, horse, timberwolf, direwolf, greywolf, bird"
+mobile_ids = ["brownbear", "blackbear", "llama", "horse", "timberwolf", "direwolf", "greywolf", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 45
+only_outside = false
+[[spawn.areas]]
+x1 = 294
+y1 = 634
+x2 = 354
+y2 = 694
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_158"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 774
+y1 = 870
+x2 = 814
+y2 = 910
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_159"
+map = "tokuno"
+name = "Tokuno gaman, jackrabbit, horse, cat"
+mobile_ids = ["gaman", "jackrabbit", "horse", "cat"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 297
+y1 = 574
+x2 = 357
+y2 = 634
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_160"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 63
+only_outside = false
+[[spawn.areas]]
+x1 = 660
+y1 = 967
+x2 = 700
+y2 = 1007
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_161"
+map = "tokuno"
+name = "Tokuno crane, rat, bird, giantrat"
+mobile_ids = ["crane", "rat", "bird", "giantrat"]
+npc_list_ids = []
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 155
+y1 = 1016
+x2 = 215
+y2 = 1076
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_162"
+map = "tokuno"
+name = "Tokuno gaman"
+mobile_ids = ["gaman"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 248
+y1 = 612
+x2 = 328
+y2 = 692
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_163"
+map = "tokuno"
+name = "Tokuno gaman, bird, jackrabbit, horse, cat, dog"
+mobile_ids = ["gaman", "bird", "jackrabbit", "horse", "cat", "dog"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 73
+only_outside = false
+[[spawn.areas]]
+x1 = 1111
+y1 = 864
+x2 = 1171
+y2 = 924
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_164"
+map = "tokuno"
+name = "Tokuno horse, timberwolf, greywolf, llama, bird, blackbear, direwolf"
+mobile_ids = ["horse", "timberwolf", "greywolf", "llama", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 763
+y1 = 338
+x2 = 823
+y2 = 398
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_165"
+map = "tokuno"
+name = "Tokuno direwolf, timberwolf, mongbat, blackbear, brownbear, bird, llama, horse, greywolf"
+mobile_ids = ["direwolf", "timberwolf", "mongbat", "blackbear", "brownbear", "bird", "llama", "horse", "greywolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 48
+only_outside = false
+[[spawn.areas]]
+x1 = 354
+y1 = 430
+x2 = 414
+y2 = 490
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_166"
+map = "tokuno"
+name = "Tokuno llama, timberwolf, greywolf, brownbear, bird, blackbear, direwolf"
+mobile_ids = ["llama", "timberwolf", "greywolf", "brownbear", "bird", "blackbear", "direwolf"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 881
+y1 = 613
+x2 = 941
+y2 = 673
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_167"
+map = "tokuno"
+name = "Tokuno crane"
+mobile_ids = ["crane"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 32
+only_outside = false
+[[spawn.areas]]
+x1 = 817
+y1 = 1055
+x2 = 857
+y2 = 1095
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_168"
+map = "tokuno"
+name = "Tokuno timberwolf, greywolf, bird"
+mobile_ids = ["timberwolf", "greywolf", "bird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 47
+only_outside = false
+[[spawn.areas]]
+x1 = 1277
+y1 = 529
+x2 = 1337
+y2 = 589
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_169"
+map = "tokuno"
+name = "Tokuno bird"
+mobile_ids = ["bird"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 34
+only_outside = false
+[[spawn.areas]]
+x1 = 504
+y1 = 1034
+x2 = 544
+y2 = 1074
+
+[[spawn]]
+id = "tokuno_modernuo_wild_life_170"
+map = "tokuno"
+name = "Tokuno bird, sheep"
+mobile_ids = ["bird", "sheep"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 32
+only_outside = false
+[[spawn.areas]]
+x1 = 915
+y1 = 501
+x2 = 955
+y2 = 541

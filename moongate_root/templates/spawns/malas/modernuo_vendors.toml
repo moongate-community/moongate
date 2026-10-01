@@ -1,0 +1,531 @@
+[[spawn]]
+id = "malas_modernuo_vendors_0"
+map = "malas"
+name = "Malas healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -39
+only_outside = false
+[[spawn.areas]]
+x1 = 949
+y1 = 519
+x2 = 951
+y2 = 521
+
+[[spawn]]
+id = "malas_modernuo_vendors_1"
+map = "malas"
+name = "Malas healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -59
+only_outside = false
+[[spawn.areas]]
+x1 = 2067
+y1 = 1371
+x2 = 2069
+y2 = 1373
+
+[[spawn]]
+id = "malas_modernuo_vendors_2"
+map = "malas"
+name = "Malas healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -39
+only_outside = false
+[[spawn.areas]]
+x1 = 1028
+y1 = 519
+x2 = 1030
+y2 = 521
+
+[[spawn]]
+id = "malas_modernuo_vendors_3"
+map = "malas"
+name = "Malas jeweler"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 2044
+y1 = 1396
+x2 = 2046
+y2 = 1398
+
+[[spawn]]
+id = "malas_modernuo_vendors_4"
+map = "malas"
+name = "Malas mage, alchemist"
+mobile_ids = ["mage", "alchemist"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 2022
+y1 = 1378
+x2 = 2024
+y2 = 1380
+
+[[spawn]]
+id = "malas_modernuo_vendors_5"
+map = "malas"
+name = "Malas innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 988
+y1 = 526
+x2 = 990
+y2 = 528
+
+[[spawn]]
+id = "malas_modernuo_vendors_6"
+map = "malas"
+name = "Malas blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 1976
+y1 = 1364
+x2 = 1978
+y2 = 1366
+
+[[spawn]]
+id = "malas_modernuo_vendors_7"
+map = "malas"
+name = "Malas tanner, furtrader"
+mobile_ids = ["tanner", "furtrader"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 2077
+y1 = 1326
+x2 = 2079
+y2 = 1328
+
+[[spawn]]
+id = "malas_modernuo_vendors_8"
+map = "malas"
+name = "Malas animaltrainer"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -54
+only_outside = false
+[[spawn.areas]]
+x1 = 1026
+y1 = 493
+x2 = 1028
+y2 = 495
+
+[[spawn]]
+id = "malas_modernuo_vendors_9"
+map = "malas"
+name = "Malas blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 975
+y1 = 511
+x2 = 977
+y2 = 513
+
+[[spawn]]
+id = "malas_modernuo_vendors_10"
+map = "malas"
+name = "Malas animaltrainer"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1991
+y1 = 1314
+x2 = 1993
+y2 = 1316
+
+[[spawn]]
+id = "malas_modernuo_vendors_11"
+map = "malas"
+name = "Malas carpenter, architect"
+mobile_ids = ["carpenter", "architect"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 2059
+y1 = 1282
+x2 = 2061
+y2 = 1284
+
+[[spawn]]
+id = "malas_modernuo_vendors_12"
+map = "malas"
+name = "Malas innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 2036
+y1 = 1310
+x2 = 2038
+y2 = 1312
+
+[[spawn]]
+id = "malas_modernuo_vendors_13"
+map = "malas"
+name = "Malas banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 988
+y1 = 519
+x2 = 990
+y2 = 521
+
+[[spawn]]
+id = "malas_modernuo_vendors_14"
+map = "malas"
+name = "Malas provisioner, cobbler"
+mobile_ids = ["provisioner", "cobbler"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 2010
+y1 = 1325
+x2 = 2012
+y2 = 1327
+
+[[spawn]]
+id = "malas_modernuo_vendors_15"
+map = "malas"
+name = "Malas herbalist, alchemist, hairstylist"
+mobile_ids = ["herbalist", "alchemist", "hairstylist"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 2024
+y1 = 1386
+x2 = 2026
+y2 = 1388
+
+[[spawn]]
+id = "malas_modernuo_vendors_16"
+map = "malas"
+name = "Malas banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 2047
+y1 = 1342
+x2 = 2049
+y2 = 1344
+
+[[spawn]]
+id = "malas_modernuo_vendors_17"
+map = "malas"
+name = "Malas herbalist, alchemist, hairstylist"
+mobile_ids = ["herbalist", "alchemist", "hairstylist"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1003
+y1 = 526
+x2 = 1005
+y2 = 528
+
+[[spawn]]
+id = "malas_modernuo_vendors_18"
+map = "malas"
+name = "Malas tavernkeeper, waiter, cook"
+mobile_ids = ["tavernkeeper", "waiter", "cook"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 2026
+y1 = 1352
+x2 = 2028
+y2 = 1354
+
+[[spawn]]
+id = "malas_modernuo_vendors_19"
+map = "malas"
+name = "Malas innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 1055
+y1 = 1433
+x2 = 1057
+y2 = 1435
+
+[[spawn]]
+id = "malas_modernuo_vendors_20"
+map = "malas"
+name = "Malas tinker, carpenter, architect"
+mobile_ids = ["tinker", "carpenter", "architect"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1002
+y1 = 511
+x2 = 1004
+y2 = 513
+
+[[spawn]]
+id = "malas_modernuo_vendors_21"
+map = "malas"
+name = "Malas tailor, weaver"
+mobile_ids = ["tailor", "weaver"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 2082
+y1 = 1321
+x2 = 2084
+y2 = 1323
+
+[[spawn]]
+id = "malas_modernuo_vendors_22"
+map = "malas"
+name = "Malas provisioner, cobbler, jeweler"
+mobile_ids = ["provisioner", "cobbler", "jeweler"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 992
+y1 = 510
+x2 = 994
+y2 = 512
+
+[[spawn]]
+id = "malas_modernuo_vendors_23"
+map = "malas"
+name = "Malas tinker"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 2065
+y1 = 1281
+x2 = 2067
+y2 = 1283
+
+[[spawn]]
+id = "malas_modernuo_vendors_24"
+map = "malas"
+name = "Malas tailor, weaver, tanner, furtrader"
+mobile_ids = ["tailor", "weaver", "tanner", "furtrader"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 975
+y1 = 526
+x2 = 977
+y2 = 528
+
+[[spawn]]
+id = "malas_modernuo_vendors_25"
+map = "malas"
+name = "Malas baker"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 2016
+y1 = 1355
+x2 = 2018
+y2 = 1357
+
+[[spawn]]
+id = "malas_modernuo_vendors_26"
+map = "malas"
+name = "Malas waiter, cook, tavernkeeper"
+mobile_ids = ["waiter", "cook", "tavernkeeper"]
+npc_list_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -69
+only_outside = false
+[[spawn.areas]]
+x1 = 1049
+y1 = 1433
+x2 = 1051
+y2 = 1435
+
+[[spawn]]
+id = "malas_modernuo_vendors_27"
+map = "malas"
+name = "Malas animaltrainer, veterinarian"
+mobile_ids = ["animaltrainer", "veterinarian"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1038
+y1 = 1440
+x2 = 1046
+y2 = 1448

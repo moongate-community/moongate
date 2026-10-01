@@ -1,0 +1,18 @@
+[[spawn]]
+id = "malas_modernuo_bedlam_0"
+map = "malas"
+name = "Malas boneknight, bonemage, skeletalmage, zombie, skeleton, rottingcorpse"
+mobile_ids = ["boneknight", "bonemage", "skeletalmage", "zombie", "skeleton", "rottingcorpse"]
+npc_list_ids = []
+max = 16
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 58
+y1 = 1616
+x2 = 138
+y2 = 1696

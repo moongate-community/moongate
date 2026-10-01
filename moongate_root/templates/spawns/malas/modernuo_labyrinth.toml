@@ -1,0 +1,208 @@
+[[spawn]]
+id = "malas_modernuo_labyrinth_0"
+map = "malas"
+name = "Malas drake, airele, rat, snake"
+mobile_ids = ["drake", "airele", "rat", "snake"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 346
+y1 = 1908
+x2 = 386
+y2 = 1948
+
+[[spawn]]
+id = "malas_modernuo_labyrinth_1"
+map = "malas"
+name = "Malas rat, tropicalbird"
+mobile_ids = ["rat", "tropicalbird"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 21
+only_outside = false
+[[spawn.areas]]
+x1 = 412
+y1 = 1908
+x2 = 442
+y2 = 1938
+
+[[spawn]]
+id = "malas_modernuo_labyrinth_2"
+map = "malas"
+name = "Malas eagle, cat, bird, tropicalbird"
+mobile_ids = ["eagle", "cat", "bird", "tropicalbird"]
+npc_list_ids = []
+max = 8
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 380
+y1 = 1873
+x2 = 400
+y2 = 1893
+
+[[spawn]]
+id = "malas_modernuo_labyrinth_3"
+map = "malas"
+name = "Malas reptalon"
+mobile_ids = ["reptalon"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 335
+y1 = 1898
+x2 = 375
+y2 = 1938
+
+[[spawn]]
+id = "malas_modernuo_labyrinth_4"
+map = "malas"
+name = "Malas squirrel, tropicalbird, bird, cat"
+mobile_ids = ["squirrel", "tropicalbird", "bird", "cat"]
+npc_list_ids = []
+max = 20
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 372
+y1 = 1897
+x2 = 412
+y2 = 1937
+
+[[spawn]]
+id = "malas_modernuo_labyrinth_5"
+map = "malas"
+name = "Malas scorpion, snake"
+mobile_ids = ["scorpion", "snake"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -68
+only_outside = false
+[[spawn.areas]]
+x1 = 1730
+y1 = 978
+x2 = 1754
+y2 = 1002
+
+[[spawn]]
+id = "malas_modernuo_labyrinth_6"
+map = "malas"
+name = "Malas tropicalbird, bird"
+mobile_ids = ["tropicalbird", "bird"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 334
+y1 = 1898
+x2 = 358
+y2 = 1922
+
+[[spawn]]
+id = "malas_modernuo_labyrinth_7"
+map = "malas"
+name = "Malas snake"
+mobile_ids = ["snake"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 374
+y1 = 1922
+x2 = 394
+y2 = 1942
+
+[[spawn]]
+id = "malas_modernuo_labyrinth_8"
+map = "malas"
+name = "Malas healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -64
+only_outside = false
+[[spawn.areas]]
+x1 = 1725
+y1 = 975
+x2 = 1755
+y2 = 1005
+
+[[spawn]]
+id = "malas_modernuo_labyrinth_9"
+map = "malas"
+name = "Malas tropicalbird, eagle, rat, bird"
+mobile_ids = ["tropicalbird", "eagle", "rat", "bird"]
+npc_list_ids = []
+max = 16
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 333
+y1 = 1933
+x2 = 363
+y2 = 1963
+
+[[spawn]]
+id = "malas_modernuo_labyrinth_10"
+map = "malas"
+name = "Malas squirrel, rat"
+mobile_ids = ["squirrel", "rat"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 336
+y1 = 1949
+x2 = 356
+y2 = 1969
