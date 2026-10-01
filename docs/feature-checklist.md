@@ -197,7 +197,7 @@ works today in more detail.
 | Dungeon and jail light | ✅ | |
 | Weather by region | ✅ | Rain, snow, storms with thunder, dry indoors; no weather damage |
 | Seasons | ❌ | |
-| Regions | 🟡 | Found for every player; they set the weather and the dungeon light |
+| Regions | 🟡 | Found for every player; they set the weather, the music and the dungeon light |
 | Region music | ✅ | The region's track, else the map's; `.music` |
 | Guarded towns and region rules | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |

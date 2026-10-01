@@ -15,6 +15,11 @@ public sealed class StubMusicService : IMusicService
 
     public List<(MobileEntity Player, MusicType Music)> Played { get; } = [];
 
+    /// <summary>
+    ///     Gets the managed thread of the last <see cref="Play" />.
+    /// </summary>
+    public int PlayedOnThread { get; private set; }
+
     public Task StartAsync()
     {
         return Task.CompletedTask;
@@ -41,5 +46,6 @@ public sealed class StubMusicService : IMusicService
     public void Play(MobileEntity player, MusicType music)
     {
         Played.Add((player, music));
+        PlayedOnThread = System.Environment.CurrentManagedThreadId;
     }
 }

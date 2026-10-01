@@ -3,6 +3,7 @@ using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Ultima.Types;
@@ -19,22 +20,29 @@ public sealed class MusicCommand : ICommandExecutor
 
     private readonly IMusicService _music;
     private readonly IMobileService _mobiles;
+    private readonly IGameLoopService _loop;
     private readonly ILocalizationService? _localization;
 
-    public MusicCommand(IMusicService music, IMobileService mobiles, ILocalizationService? localization = null)
+    public MusicCommand(
+        IMusicService music,
+        IMobileService mobiles,
+        IGameLoopService loop,
+        ILocalizationService? localization = null
+    )
     {
         _music = music;
         _mobiles = mobiles;
+        _loop = loop;
         _localization = localization;
     }
 
-    public Task ExecuteAsync(CommandContext context)
+    public async Task ExecuteAsync(CommandContext context)
     {
         if (context.Session is not { } session || !_mobiles.TryGet(session.CharacterId, out var character))
         {
             context.PrintError("music works in game only.");
 
-            return Task.CompletedTask;
+            return;
         }
 
         if (context.Arguments.Length == 0)
@@ -43,19 +51,20 @@ public sealed class MusicCommand : ICommandExecutor
                 _localization.Text(CommandMessages.MusicHere, "Music here: {0}.", EnumNameUtils.Format(_music.MusicOf(character)))
             );
 
-            return Task.CompletedTask;
+            return;
         }
 
         if (context.Arguments.Length != 1 || !EnumNameUtils.TryParse<MusicType>(context.Arguments[0], out var music))
         {
             context.PrintError(_localization.Text(CommandMessages.Usage, "Usage: {0}", UsageText));
 
-            return Task.CompletedTask;
+            return;
         }
 
-        _music.Play(character, music);
+        // The music service is driven by the loop; commands run off it.
+        var play = new LoopActionWorkItem(() => _music.Play(character, music));
+        await _loop.PostAsync(play, context.CancellationToken);
+        await play.Completion;
         context.Print(_localization.Text(CommandMessages.MusicPlaying, "Playing {0}.", EnumNameUtils.Format(music)));
-
-        return Task.CompletedTask;
     }
 }

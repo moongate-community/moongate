@@ -42,6 +42,16 @@ public sealed class MusicCommandTests : IAsyncDisposable
         Assert.Equal("Playing tavern04.", Assert.Single(context.Output).Text);
     }
 
+    [Fact]
+    public async Task WithATrack_PlaysItOnTheGameLoop()
+    {
+        await RunAsync("tavern04");
+        var loopThread = 0;
+        await _fixture!.ExecuteOnLoopAsync(() => loopThread = Environment.CurrentManagedThreadId);
+
+        Assert.Equal(loopThread, _music.PlayedOnThread);
+    }
+
     [Theory, InlineData("no_such_track"), InlineData("tavern04 now")]
     public async Task ABadTrack_ShowsTheUsage(string arguments)
     {
@@ -54,9 +64,10 @@ public sealed class MusicCommandTests : IAsyncDisposable
     [Fact]
     public async Task FromTheConsole_IsRefused()
     {
+        _fixture = await SessionFixture.CreateAsync();
         var context = new CommandContext("music", "music", [], CommandSourceType.Console, null);
 
-        await new MusicCommand(_music, _mobiles).ExecuteAsync(context);
+        await new MusicCommand(_music, _mobiles, _fixture.Loop).ExecuteAsync(context);
 
         Assert.Equal(CommandOutputLevel.Error, Assert.Single(context.Output).Level);
     }
@@ -82,7 +93,7 @@ public sealed class MusicCommandTests : IAsyncDisposable
         _mobiles.EnterWorld(new MobileEntity { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
         var context = new CommandContext(".music", "music", arguments, CommandSourceType.InGame, session);
 
-        await new MusicCommand(_music, _mobiles, localization).ExecuteAsync(context);
+        await new MusicCommand(_music, _mobiles, _fixture.Loop, localization).ExecuteAsync(context);
 
         return context;
     }
