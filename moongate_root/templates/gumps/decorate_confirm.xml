@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/decorate_confirm.xml
+
+  What it is for:
+    Asks an administrator to confirm .decorate in game. The command goes on only on the
+    confirm button; cancel, a right click or anything else places nothing. The texts are
+    server messages 30083-30084 (data/messages) and the client's CONTINUE and CANCEL.
+-->
+<gump id="decorate_confirm" x="150" y="150"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="360" height="160" />
+  <alpha_region x="10" y="10" width="340" height="140" />
+  <text x="20" y="18" hue="1152" message="30083" />
+  <html x="20" y="45" width="320" height="60" message="30084" />
+  <button x="20" y="120" up="4005" down="4007" on_click="confirm" />
+  <html x="55" y="122" width="100" height="20" cliloc="1011011" />
+  <button x="190" y="120" up="4017" down="4019" on_click="cancel" />
+  <html x="225" y="122" width="100" height="20" cliloc="1011012" />
+</gump>

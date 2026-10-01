@@ -8,6 +8,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Data.Templates.Gumps;
 using Moongate.Server.Ultima.Modules;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Gumps;
 using Moongate.Tests.TestSupport.Ultima.Gumps;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -137,7 +138,8 @@ public sealed class GumpModuleTests : IAsyncLifetime
             """
         );
         var data = new StubDataLoaderService().With(new GumpTemplate { Id = "release_pet", File = "a.xml", Root = root });
-        var module = new GumpModule(_fixture.Sessions, _gumps, data, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts));
+        var templates = new GumpTemplateService(_gumps, data, _fixture.Network.Loop);
+        var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts));
 
         using var state = LuaState.Create();
         state.OpenBasicLibrary();

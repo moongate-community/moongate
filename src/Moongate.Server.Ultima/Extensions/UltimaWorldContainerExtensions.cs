@@ -76,6 +76,7 @@ public static class UltimaWorldContainerExtensions
         container.RegisterMapping<ISessionClosedListener, ITargetService>();
         container.Register<IGumpService, GumpService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IGumpService>();
+        container.Register<IGumpTemplateService, GumpTemplateService>(Reuse.Singleton);
         container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
         container.Register<ITileDataService, TileDataService>(Reuse.Singleton);

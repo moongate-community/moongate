@@ -5,12 +5,8 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Gumps;
-using Moongate.Server.Ultima.Data.Templates.Gumps;
 using Moongate.Server.Ultima.Interfaces;
-using Moongate.Server.Ultima.Interfaces.Loaders;
-using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Gumps;
-using Serilog;
 
 namespace Moongate.Server.Ultima.Modules;
 
@@ -23,26 +19,22 @@ namespace Moongate.Server.Ultima.Modules;
 [ScriptModule("gump", "Opens the gumps of templates/gumps on players; their script gets the answer.")]
 public sealed class GumpModule
 {
-    private readonly ILogger _logger = Log.ForContext<GumpModule>();
     private readonly ISessionService _sessions;
     private readonly IGumpService _gumps;
-    private readonly IDataLoaderService _data;
+    private readonly IGumpTemplateService _templates;
     private readonly Lazy<IGumpScriptService> _scripts;
-    private readonly ILocalizationService? _localization;
 
     public GumpModule(
         ISessionService sessions,
         IGumpService gumps,
-        IDataLoaderService data,
-        Lazy<IGumpScriptService> scripts,
-        ILocalizationService? localization = null
+        IGumpTemplateService templates,
+        Lazy<IGumpScriptService> scripts
     )
     {
         _sessions = sessions;
         _gumps = gumps;
-        _data = data;
+        _templates = templates;
         _scripts = scripts;
-        _localization = localization;
     }
 
     /// <summary>
@@ -57,28 +49,15 @@ public sealed class GumpModule
             return false;
         }
 
-        var template = _data.GetEntities<GumpTemplate>().FirstOrDefault(gump => gump.Id == id);
-
-        if (template is null)
-        {
-            _logger.Warning("No gump {Gump} in templates/gumps", id);
-
-            return false;
-        }
-
         var table = args ?? new LuaTable();
-        var rendered = GumpXmlRenderer.Render(template, Strings(table), _localization);
-        _gumps.Open(
-            session,
-            new()
-            {
-                Id = id, Layout = rendered.Layout, X = rendered.X, Y = rendered.Y,
-                OnResponse = (answered, response) => Answered(id, answered, response, rendered.Clicks, table),
-                OnClosed = (closed, reason) => _scripts.Value.Call(id, "on_close", PlayerOf(closed), table, ReasonOf(reason))
-            }
-        );
 
-        return true;
+        return _templates.Open(
+            session,
+            id,
+            Strings(table),
+            (answered, answer) => Answered(id, answered, answer, table),
+            (closed, reason) => _scripts.Value.Call(id, "on_close", PlayerOf(closed), table, ReasonOf(reason))
+        );
     }
 
     /// <summary>
@@ -91,15 +70,10 @@ public sealed class GumpModule
         return TryGetSession(player, out var session) && _gumps.Close(session, id);
     }
 
-    private void Answered(
-        string id,
-        GameSession session,
-        GumpResponse response,
-        IReadOnlyDictionary<int, string> clicks,
-        LuaTable args
-    )
+    private void Answered(string id, GameSession session, GumpTemplateAnswer answered, LuaTable args)
     {
         var player = PlayerOf(session);
+        var response = answered.Response;
 
         if (response.ButtonId == 0)
         {
@@ -110,7 +84,7 @@ public sealed class GumpModule
 
         var answer = ToLua(response);
 
-        if (clicks.TryGetValue(response.ButtonId, out var function))
+        if (answered.Click is { } function)
         {
             _scripts.Value.Call(id, function, player, answer, args);
         }

@@ -5473,7 +5473,7 @@
 30006 = "Peso: 1 pedra"
 30007 = "Peso: {0} pedras"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30081) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30084) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079).
 30008 = "Alvo cancelado."
 30009 = "Já há um comando em execução."
 30010 = "Comando desconhecido: {0}"
@@ -5548,3 +5548,6 @@
 30079 = "Lista as regiões de spawn onde você está, com os NPCs vivos e os minutos até o próximo spawn."
 30080 = "{0} ({1}): {2}/{3} NPCs, nenhum local encontrado, nova tentativa em {4} min."
 30081 = "{0} vive na água: escolha a água."
+30082 = "Decoração cancelada."
+30083 = "Colocar a decoração do mundo?"
+30084 = "Todas as portas, placas e luzes de templates/decorations são colocadas; o que já existe é mantido."

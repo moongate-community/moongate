@@ -1,9 +1,11 @@
 using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
+using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Services.Motd;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Ultima.Types;
@@ -156,6 +158,16 @@ public sealed class RepositoryTemplateFilesTests
         var shop = spawns["felucca_0"];
         Assert.Equal(("The Hammer And Anvil", MapType.Felucca, 480), (shop.Name, shop.Map, shop.MinMinutes));
         Assert.Equal(["weaponsmith"], shop.MobileIds);
+    }
+
+    [Fact]
+    public async Task ShippedGumps_LoadAndTheDecorationConfirmationOffersConfirmAndCancel()
+    {
+        var gumps = (await new GumpsLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(gump => gump.Id);
+
+        var rendered = GumpXmlRenderer.Render(gumps[DecorateCommand.ConfirmGump], new Dictionary<string, string>(), null);
+
+        Assert.Equal(["cancel", DecorateCommand.ConfirmClick], rendered.Clicks.Values.Order());
     }
 
     [Fact]

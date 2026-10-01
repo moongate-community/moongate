@@ -14,7 +14,7 @@
 
   <xs:simpleType name="placeholder">
     <xs:restriction base="xs:string">
-      <xs:pattern value="\$\{[a-z_][a-z0-9_]*\}" />
+      <xs:pattern value="[$]\{[a-z_][a-z0-9_]*\}" />
     </xs:restriction>
   </xs:simpleType>
 

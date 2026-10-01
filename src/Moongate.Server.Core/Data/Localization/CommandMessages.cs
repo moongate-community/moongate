@@ -63,6 +63,11 @@ public static class CommandMessages
     public const int SpawnRegionRetrying = 30080;
     public const int SpawnNeedsWater = 30081;
 
+    // The decoration confirmation: the answer to a cancel, and the gump's title and text.
+    public const int DecorationCanceled = 30082;
+    public const int DecorationConfirmTitle = 30083;
+    public const int DecorationConfirmText = 30084;
+
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
 
