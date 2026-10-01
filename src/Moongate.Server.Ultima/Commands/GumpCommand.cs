@@ -45,7 +45,7 @@ public sealed class GumpCommand : ICommandExecutor
             return;
         }
 
-        if (context.Arguments.Length == 0 || context.Arguments.Skip(1).Any(pair => !pair.Contains('=')))
+        if (context.Arguments.Length == 0 || context.Arguments.Skip(1).Any(pair => pair.IndexOf('=') < 1))
         {
             context.PrintError(_localization.Text(CommandMessages.Usage, "Usage: {0}", UsageText));
 
@@ -66,11 +66,18 @@ public sealed class GumpCommand : ICommandExecutor
         foreach (var pair in context.Arguments.Skip(1))
         {
             var equals = pair.IndexOf('=');
-            args[pair[..equals]] = pair[(equals + 1)..];
+            // The placeholders are lower case.
+            args[pair[..equals].ToLowerInvariant()] = pair[(equals + 1)..];
         }
 
-        var open = new LoopActionWorkItem(() => _gumps.Open(session.CharacterId.Value, id, args));
+        var opened = false;
+        var open = new LoopActionWorkItem(() => opened = _gumps.Open(session.CharacterId.Value, id, args));
         await _loop.PostAsync(open, context.CancellationToken);
         await open.Completion;
+
+        if (!opened)
+        {
+            context.PrintError(_localization.Text(CommandMessages.GumpNotOpened, "Gump {0} could not open.", id));
+        }
     }
 }

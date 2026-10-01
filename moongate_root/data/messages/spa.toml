@@ -5486,7 +5486,7 @@
 30006 = "Peso: 1 piedra"
 30007 = "Peso: {0} piedras"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086).
 30008 = "Objetivo cancelado."
 30009 = "Ya hay un comando en ejecución."
 30010 = "Comando desconocido: {0}"
@@ -5566,3 +5566,4 @@
 30084 = "Se colocan todas las puertas, carteles y luces de templates/decorations; lo que ya está se conserva."
 30085 = "No hay ningún gump {0} en templates/gumps."
 30086 = "Abre sobre ti un gump de templates/gumps para probarlo; los pares nombre=valor rellenan sus marcadores."
+30087 = "No se pudo abrir el gump {0}."

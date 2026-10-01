@@ -79,7 +79,8 @@ are removed from client message arguments, so a player's name cannot break the l
 A gump can lead to another, with the same arguments, as a wizard does:
 
 - `bind="name"` on a `text_entry`, `checkbox` or `radio` writes the answer into the argument `name`
-  when the player answers: the text, `true`/`false`, or the `switch` of the radio that is on;
+  when the player answers: the text, `true`/`false`, or the `switch` of the radio that is on (`false`
+  when none of its group is);
 - `open="other_gump"` on a button opens that gump with the arguments, bound values included.
 
 ```xml
@@ -138,7 +139,8 @@ as `pet` above, and belongs with the script that sent the gump. `gump.send` chec
 file is checked and fails with the reason, such as a `checked` that is not `true` or `false`. A built
 gump answers like an XML one: texts, `bind`, `open` and `on_close` are the same. Placeholders are
 escaped in `html`; text you join yourself, such as `"Hi " .. name`, is not, so write
-`text = "Hi ${name}"` and pass `name` in the arguments.
+`text = "Hi ${name}"` and pass `name` in the arguments. Escaping covers `&`, `<`, `>` and `"`, so a
+placeholder inside a quoted attribute, such as `href="${link}"`, cannot break out of it.
 
 `on_click` names starting with `__` are reserved for the server.
 

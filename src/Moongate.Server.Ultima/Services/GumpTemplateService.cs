@@ -80,6 +80,11 @@ public sealed class GumpTemplateService : IGumpTemplateService
     {
         var id = template.Id;
 
+        if (template.Root.Descendants("slot").Any())
+        {
+            _logger.Warning("Gump {Gump} has slots, which only gump.open from a script fills: they stay empty", id);
+        }
+
         // A session closed before this ran would never answer nor be told of a close.
         if (!_sessions.TryGet(session.SessionId, out var live) || !ReferenceEquals(live, session))
         {
@@ -201,6 +206,12 @@ public sealed class GumpTemplateService : IGumpTemplateService
                     break;
                 case GumpBindType.Radio when response.Switches.Contains(bind.Id):
                     bound[bind.Name] = (long)bind.Id;
+
+                    break;
+
+                // A group with none on gives false, unless another radio of it is on.
+                case GumpBindType.Radio:
+                    bound.TryAdd(bind.Name, false);
 
                     break;
             }

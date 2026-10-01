@@ -145,6 +145,20 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void ARadioGroupWithNoneOn_BindsFalse()
+    {
+        var answers = new List<GumpTemplateAnswer>();
+        _templates.Open(_session, "step1", new Dictionary<string, string>(), (_, answer) => answers.Add(answer));
+
+        _gumps.Opened[0].Gump.OnResponse(
+            _session,
+            new GumpResponse { ButtonId = 1, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = "Aria" } }
+        );
+
+        Assert.Equal(false, Assert.Single(answers).Bound["city"]);
+    }
+
+    [Fact]
     public async Task AskAsync_FollowsOpenButtons_WithTheBoundValues()
     {
         var asking = _templates.AskAsync(_session, "step1", new Dictionary<string, string>());

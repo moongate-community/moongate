@@ -66,6 +66,18 @@ public sealed class DecorateCommandTests : IAsyncDisposable
         Assert.Equal("A decoration is already running.", Assert.Single(context.Output).Text);
     }
 
+    [Fact]
+    public async Task ADecorationStartedByAnotherAtTheSameMoment_SaysItIsRunning()
+    {
+        var decorations = new StubDecorationService { Failure = new InvalidOperationException("A decoration is already running.") };
+        decorations.BeforeRun = () => decorations.IsRunning = true;
+        var context = new CommandContext("decorate", "decorate", [], CommandSourceType.Console, null);
+
+        await new DecorateCommand(decorations, _sender).ExecuteAsync(context);
+
+        Assert.Equal((CommandOutputLevel.Error, "A decoration is already running."), (Assert.Single(context.Output).Level, context.Output[0].Text));
+    }
+
     [Theory, InlineData("cancel"), InlineData(null)]
     public async Task InGame_WithTheConfirmationGump_CancelledPlacesNothing(string? answer)
     {

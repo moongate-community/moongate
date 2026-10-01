@@ -166,6 +166,9 @@ public sealed class GumpXmlRendererTests
 
         var built = rendered.Layout.Build();
         Assert.Equal(["<b>Hi</b> &lt;a href=x&gt;Aria&lt;/a&gt;", "<a href=x>Aria</a>"], built.Strings);
+
+        var quoted = Render("""<gump id="a"><html x="1" y="1" width="1" height="1">&lt;a href="${link}"&gt;go&lt;/a&gt;</html></gump>""", new() { ["link"] = "x\" onclick=\"y" });
+        Assert.Equal("<a href=\"x&quot; onclick=&quot;y\">go</a>", quoted.Layout.Build().Strings[0]);
         Assert.Contains("@&lt;a href=x&gt;Aria&lt;/a&gt;@", built.Layout);
     }
 

@@ -275,7 +275,9 @@ internal sealed partial class GumpXmlRenderContext
                 {
                     var value = _args.GetValueOrDefault(match.Groups[1].Value, string.Empty);
 
-                    return html ? value.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") : value;
+                    return html
+                        ? value.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")
+                        : value;
                 }
             );
     }

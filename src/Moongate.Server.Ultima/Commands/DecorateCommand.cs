@@ -99,6 +99,11 @@ public sealed class DecorateCommand : ICommandExecutor
         {
             throw;
         }
+        catch (InvalidOperationException) when (_decorations.IsRunning)
+        {
+            // Another administrator started one between the check above and this one.
+            context.PrintError(_localization.Text(CommandMessages.DecorationRunning, "A decoration is already running."));
+        }
         catch (Exception exception)
         {
             // The exception is English and technical: the administrator gets the reason from the log.

@@ -55,7 +55,25 @@ public sealed class GumpCommandTests : IAsyncLifetime
         Assert.Empty(_gumps.Opened);
     }
 
-    [Theory, InlineData(), InlineData("hello", "no_equals_sign")]
+    [Fact]
+    public async Task ArgumentNames_AreLowerCased_AsThePlaceholders()
+    {
+        await RunAsync("hello", "Name=Aria");
+
+        Assert.Equal("Hi Aria ", Assert.Single(_gumps.Opened).Gump.Layout.Build().Strings[0]);
+    }
+
+    [Fact]
+    public async Task AGumpThatCannotOpen_SaysSo()
+    {
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Sessions.Remove(_session.SessionId));
+
+        var context = await RunAsync("hello");
+
+        Assert.Equal((CommandOutputLevel.Error, "Gump hello could not open."), (Assert.Single(context.Output).Level, context.Output[0].Text));
+    }
+
+    [Theory, InlineData(), InlineData("hello", "no_equals_sign"), InlineData("hello", "=empty")]
     public async Task BadArguments_ShowTheUsage(params string[] arguments)
     {
         var context = await RunAsync(arguments);
