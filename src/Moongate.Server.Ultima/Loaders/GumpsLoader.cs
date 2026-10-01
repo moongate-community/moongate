@@ -12,8 +12,8 @@ namespace Moongate.Server.Ultima.Loaders;
 /// <summary>
 ///     Loads every <c>*.xml</c> of <c>templates/gumps/</c>, checked against the gump schema built into the server (the
 ///     <c>gump.xsd</c> next to the files is for editors). A file the schema refuses, a button with not exactly one of
-///     <c>on_click</c>, <c>id</c> or <c>page</c>, an html with both a cliloc and a message or a text, or the same id twice
-///     stop the server with the file, the line and the reason.
+///     <c>on_click</c>, <c>id</c>, <c>page</c> or <c>open</c>, a button opening a gump that does not exist, mixed
+///     text sources, ids used twice, or the same gump id twice stop the server with the file, the line and the reason.
 /// </summary>
 public sealed class GumpsLoader : IDataLoader<GumpTemplate>
 {
@@ -53,6 +53,22 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
                 }
 
                 gumps.Add(gump);
+            }
+        }
+
+        // Known only once every file is read.
+        var ids = gumps.Select(gump => gump.Id).ToHashSet(StringComparer.Ordinal);
+
+        foreach (var gump in gumps)
+        {
+            foreach (var button in gump.Root.Descendants("button"))
+            {
+                if (button.Attribute("open")?.Value is { } target && !ids.Contains(target))
+                {
+                    throw new InvalidDataException(
+                        $"{gump.File}: line {((IXmlLineInfo)button).LineNumber}: a button opens gump '{target}', which does not exist."
+                    );
+                }
             }
         }
 
@@ -105,8 +121,8 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
     {
         string? reason = element.Name.LocalName switch
         {
-            "button" when new[] { "on_click", "id", "page" }.Count(name => element.Attribute(name) is not null) != 1 =>
-                "a button needs exactly one of on_click, id or page",
+            "button" when new[] { "on_click", "id", "page", "open" }.Count(name => element.Attribute(name) is not null) != 1 =>
+                "a button needs exactly one of on_click, id, page or open",
             "html" when element.Attribute("cliloc") is not null && element.Attribute("message") is not null =>
                 "an html takes a cliloc or message, not both",
             "html" when element.Attribute("cliloc") is not null && !string.IsNullOrWhiteSpace(element.Value) =>

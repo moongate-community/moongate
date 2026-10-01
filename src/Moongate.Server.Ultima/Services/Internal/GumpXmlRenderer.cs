@@ -25,12 +25,14 @@ internal static class GumpXmlRenderer
         var root = template.Root;
         var layout = new GumpLayout();
         var clicks = new Dictionary<int, string>();
+        var opens = new Dictionary<int, string>();
+        var binds = new List<GumpBind>();
         var used = root.Descendants("button")
                        .Select(button => button.Attribute("id")?.Value)
                        .Select(id => int.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number) ? number : 0)
                        .Where(id => id > 0)
                        .ToHashSet();
-        var context = new GumpXmlRenderContext(layout, args, localization, clicks, used);
+        var context = new GumpXmlRenderContext(layout, args, localization, clicks, opens, binds, used);
 
         foreach (var (attribute, flag) in new[]
                  {
@@ -66,7 +68,8 @@ internal static class GumpXmlRenderer
 
         return new()
         {
-            Layout = layout, X = context.Number(root, "x"), Y = context.Number(root, "y"), Clicks = clicks
+            Layout = layout, X = context.Number(root, "x"), Y = context.Number(root, "y"), Clicks = clicks, Opens = opens,
+            Binds = binds
         };
     }
 }

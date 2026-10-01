@@ -1,3 +1,4 @@
+using System.Globalization;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Gumps;
@@ -72,7 +73,11 @@ public sealed class GumpTemplateService : IGumpTemplateService
                 Id = id, Layout = rendered.Layout, X = rendered.X, Y = rendered.Y,
                 OnResponse = (answered, response) => onAnswer(
                     answered,
-                    new() { Response = response, Click = rendered.Clicks.GetValueOrDefault(response.ButtonId) }
+                    new()
+                    {
+                        Response = response, Click = rendered.Clicks.GetValueOrDefault(response.ButtonId),
+                        Open = rendered.Opens.GetValueOrDefault(response.ButtonId), Bound = Bound(rendered.Binds, response)
+                    }
                 ),
                 OnClosed = onClosed
             }
@@ -89,21 +94,44 @@ public sealed class GumpTemplateService : IGumpTemplateService
     )
     {
         var completion = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var open = new LoopActionWorkItem(
-            () =>
-            {
-                if (!Open(
-                        session,
-                        id,
-                        args,
-                        (_, answer) => completion.TrySetResult(answer.Click),
-                        (_, _) => completion.TrySetResult(null)
-                    ))
+        var current = id;
+
+        // An open button goes on to its gump, with the bound values added to the arguments.
+        void Ask(string gump, IReadOnlyDictionary<string, string> values)
+        {
+            current = gump;
+            var opened = Open(
+                session,
+                gump,
+                values,
+                (_, answer) =>
                 {
-                    completion.TrySetResult(null);
-                }
+                    if (answer.Open is { } next)
+                    {
+                        var merged = new Dictionary<string, string>(values, StringComparer.Ordinal);
+
+                        foreach (var (name, value) in answer.Bound)
+                        {
+                            merged[name] = Format(value);
+                        }
+
+                        Ask(next, merged);
+
+                        return;
+                    }
+
+                    completion.TrySetResult(answer.Click);
+                },
+                (_, _) => completion.TrySetResult(null)
+            );
+
+            if (!opened)
+            {
+                completion.TrySetResult(null);
             }
-        );
+        }
+
+        var open = new LoopActionWorkItem(() => Ask(id, args));
         await _loop.PostAsync(open, cancellationToken);
         await open.Completion;
 
@@ -112,12 +140,52 @@ public sealed class GumpTemplateService : IGumpTemplateService
             {
                 if (completion.TrySetCanceled(cancellationToken))
                 {
-                    _loop.TryPost(new LoopActionWorkItem(() => _gumps.Close(session, id)));
+                    _loop.TryPost(new LoopActionWorkItem(() => _gumps.Close(session, current)));
                 }
             }
         );
 
         return await completion.Task;
+    }
+
+    /// <summary>
+    ///     Formats a bound value as a placeholder takes it: a bool as <c>true</c> or <c>false</c>, a number in the
+    ///     invariant culture.
+    /// </summary>
+    public static string Format(object value)
+    {
+        return value switch
+        {
+            bool flag => flag ? "true" : "false",
+            IFormattable number => number.ToString(null, CultureInfo.InvariantCulture),
+            _ => value.ToString() ?? string.Empty
+        };
+    }
+
+    private static Dictionary<string, object> Bound(IReadOnlyList<GumpBind> binds, GumpResponse response)
+    {
+        var bound = new Dictionary<string, object>(StringComparer.Ordinal);
+
+        foreach (var bind in binds)
+        {
+            switch (bind.Kind)
+            {
+                case GumpBindType.Text:
+                    bound[bind.Name] = response.Texts.GetValueOrDefault(bind.Id, string.Empty);
+
+                    break;
+                case GumpBindType.Checkbox:
+                    bound[bind.Name] = response.Switches.Contains(bind.Id);
+
+                    break;
+                case GumpBindType.Radio when response.Switches.Contains(bind.Id):
+                    bound[bind.Name] = (long)bind.Id;
+
+                    break;
+            }
+        }
+
+        return bound;
     }
 
     private GumpTemplate? Find(string id)

@@ -14,9 +14,10 @@ namespace Moongate.Server.Ultima.Modules;
 
 /// <summary>
 ///     The <c>gump</c> Lua module: opens the gumps of <c>templates/gumps</c> on players and calls their script,
-///     <c>scripts/gumps/&lt;id&gt;.lua</c>, with the answer: an <c>on_click</c> button calls the function it names, an
-///     <c>id</c> button calls <c>on_button</c>, and <c>on_close</c> runs when the gump goes away without a button,
-///     with the reason: <c>player</c>, <c>replaced</c>, <c>server</c> or <c>disconnect</c>.
+///     <c>scripts/gumps/&lt;id&gt;.lua</c>, with the answer: the controls with <c>bind</c> write into the arguments, an
+///     <c>open</c> button opens its gump with them, an <c>on_click</c> button calls the function it names, an <c>id</c>
+///     button calls <c>on_button</c>, and <c>on_close</c> runs when the gump goes away without a button, with the
+///     reason: <c>player</c>, <c>replaced</c>, <c>server</c> or <c>disconnect</c>.
 /// </summary>
 [ScriptModule("gump", "Opens the gumps of templates/gumps on players; their script gets the answer.")]
 public sealed class GumpModule
@@ -81,6 +82,24 @@ public sealed class GumpModule
         if (response.ButtonId == 0)
         {
             _scripts.Value.Call(id, "on_close", player, args, "player");
+
+            return;
+        }
+
+        foreach (var (name, value) in answered.Bound)
+        {
+            args[name] = value switch
+            {
+                bool flag => flag,
+                long number => number,
+                _ => (string)value
+            };
+        }
+
+        // An open button goes on to its gump with the same arguments, the bound values in them.
+        if (answered.Open is { } next)
+        {
+            Open(player, next, args);
 
             return;
         }

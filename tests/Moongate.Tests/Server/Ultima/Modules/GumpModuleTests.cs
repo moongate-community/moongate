@@ -111,6 +111,23 @@ public sealed class GumpModuleTests : IAsyncLifetime
         Assert.Equal(("on_close", expected), (function, args[2]));
     }
 
+    [Fact]
+    public void AnOpenButton_WritesTheBoundValuesIntoArgs_AndOpensTheNextGumpWithThem()
+    {
+        Run("gump.open(7, 'ask_name', { greeting = 'Hi' })");
+
+        _gumps.Opened[0].Gump.OnResponse(
+            _session,
+            new GumpResponse { ButtonId = 1, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = "Aria" } }
+        );
+
+        Assert.Equal(2, _gumps.Opened.Count);
+        Assert.Equal("Hi Aria", _gumps.Opened[1].Gump.Layout.Build().Strings[0]);
+        Assert.Empty(_scripts.Calls);
+        _gumps.Opened[1].Gump.OnClosed!(_session, GumpCloseReasonType.Disconnect);
+        Assert.Equal("Aria", Assert.IsType<LuaTable>(Assert.Single(_scripts.Calls).Args[1])["name"].Read<string>());
+    }
+
     public async Task DisposeAsync()
     {
         await _fixture.DisposeAsync();
@@ -137,7 +154,20 @@ public sealed class GumpModuleTests : IAsyncLifetime
             </gump>
             """
         );
-        var data = new StubDataLoaderService().With(new GumpTemplate { Id = "release_pet", File = "a.xml", Root = root });
+        var askName = XElement.Parse(
+            """
+            <gump id="ask_name">
+              <text_entry x="1" y="1" width="1" height="1" entry="1" bind="name" />
+              <button x="1" y="1" up="1" down="2" open="greet" />
+            </gump>
+            """
+        );
+        var greet = XElement.Parse("""<gump id="greet"><text x="1" y="1">${greeting} ${name}</text></gump>""");
+        var data = new StubDataLoaderService().With(
+            new GumpTemplate { Id = "release_pet", File = "a.xml", Root = root },
+            new GumpTemplate { Id = "ask_name", File = "b.xml", Root = askName },
+            new GumpTemplate { Id = "greet", File = "c.xml", Root = greet }
+        );
         var templates = new GumpTemplateService(_gumps, data, _fixture.Network.Loop, _fixture.Sessions);
         var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts));
 

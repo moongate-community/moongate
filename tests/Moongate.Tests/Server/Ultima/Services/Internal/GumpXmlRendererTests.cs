@@ -1,6 +1,7 @@
 using System.Xml.Linq;
 using Moongate.Server.Ultima.Data.Templates.Gumps;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Types.Gumps;
 using Moongate.Tests.TestSupport.Localization;
 
 namespace Moongate.Tests.Server.Ultima.Services.Internal;
@@ -123,6 +124,30 @@ public sealed class GumpXmlRendererTests
         var built = rendered.Layout.Build();
         Assert.Equal("{ page 0 }{ text 0 1 0 0 }{ text 1 1 0 1 }", built.Layout);
         Assert.Equal(["[]", ""], built.Strings);
+    }
+
+    [Fact]
+    public void Render_OpenButtonsAndBoundControls_AreListed()
+    {
+        var rendered = Render(
+            """
+            <gump id="a">
+              <text_entry x="0" y="0" width="1" height="1" entry="3" bind="name" />
+              <checkbox x="0" y="0" off="1" on="2" switch="4" bind="hardcore" />
+              <group>
+                <radio x="0" y="0" off="1" on="2" switch="5" bind="city" />
+                <radio x="0" y="0" off="1" on="2" switch="6" bind="city" />
+              </group>
+              <button x="0" y="0" up="1" down="2" open="step2" />
+            </gump>
+            """
+        );
+
+        Assert.Equal(new Dictionary<int, string> { [1] = "step2" }, rendered.Opens);
+        Assert.Equal(
+            [("name", GumpBindType.Text, 3), ("hardcore", GumpBindType.Checkbox, 4), ("city", GumpBindType.Radio, 5), ("city", GumpBindType.Radio, 6)],
+            rendered.Binds.Select(bind => (bind.Name, bind.Kind, bind.Id))
+        );
     }
 
     [Fact]
