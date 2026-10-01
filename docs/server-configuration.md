@@ -60,7 +60,7 @@ certificate_password = ""
 ultima_path = "ChangeMe" # Replace with your client data directory.
 
 [ultima.localization]
-language = "eng" # Reads <root>/data/messages/eng.toml.
+language = "eng" # Reads <root>/data/messages/eng.toml and eng/*.toml.
 
 [ultima.line_of_sight]
 max_distance = 25 # Farthest cells along X or Y a point can see.
@@ -178,7 +178,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.hook_interval` | Positive instruction-check interval, no greater than either instruction budget. |
 | `scripting.write_definitions` | Generates `definitions.lua` and `.luarc.json` for editor support. |
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
-| `ultima.localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
+| `ultima.localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml` and the directory `data/messages/<language>/` of toml files; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. The English texts must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
 | `ultima.line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
 | `ultima.world.view_range` | From 5 to 24; default 18, as ModernUO and POL. How far players see mobiles and ground items along X or Y; the client's `0xC8` request is answered with it. Used in game and standalone modes. |
 | `ultima.world.seconds_per_uo_minute` | From 1 to 3600; default 5, as ModernUO: a game day lasts 2 real hours. The time of day is counted from ModernUO's world start and needs no save; each map runs 320 game minutes after the previous one (Felucca, Trammel, Ilshenar, Malas, Tokuno, Ter Mur), and the time moves one minute later every 16 tiles east. |

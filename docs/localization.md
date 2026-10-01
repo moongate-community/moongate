@@ -18,7 +18,8 @@ Set the language code in the `[ultima.localization]` section:
 language = "ita"
 ```
 
-The code names the file `data/messages/<language>.toml`; the default is `eng`. The
+The code names the file `data/messages/<language>.toml` and the directory
+`data/messages/<language>/`; the default is `eng`. The
 server ships these languages:
 
 | Code | Language |
@@ -57,7 +58,7 @@ the UOX3 printf placeholders (`%s`, `%i`, `%d`) turned into `{0}`, `{1}`, ...
 
 ### English fallback
 
-`eng.toml` is the reference and must always exist. The server loads it first, then
+English is the reference and must always exist. The server loads it first, then
 replaces each text with the one in the chosen language. A message missing from the
 chosen language stays in English, so a partial translation still works. The log
 reports how many messages fell back:
@@ -70,13 +71,40 @@ Found 5462 messages in ita, 3 of them in English
 
 `MessagesLoader` stops the server at startup when:
 
-- `eng.toml` or the chosen language's file does not exist;
-- `eng.toml` has no messages;
+- English or the chosen language has neither its file nor a toml file in its directory;
+- English has no messages;
 - a key is not a number;
 - a text is empty or is not a valid composite format, such as a lone `{`;
 - a translation needs more values than the English text, which would fail when the
   code passes the English number of values;
-- a translation has a number that `eng.toml` does not have.
+- a translation has a number that English does not have;
+- the same number is in two files of one language.
+
+### Split a language into several files
+
+Besides `data/messages/<language>.toml`, the server reads every `*.toml` file in the
+directory `data/messages/<language>/` and merges them all into one set of messages:
+
+```text
+data/messages/
+  eng.toml            # shipped texts
+  eng/
+    shard.toml        # your own texts
+    quests.toml
+  ita.toml
+  ita/
+    shard.toml
+```
+
+- The file and the directory can both exist, or only one of them.
+- Every file has the same format: a `[messages]` table of `number = "text"`.
+- The files of the directory are read in name order. Subdirectories and files that do
+  not end in `.toml` are ignored.
+- A number can be in one file only. The same number in two files of one language stops
+  the server and the error names both files.
+
+Keep your shard's texts in `data/messages/eng/` so that an update of the shipped
+`eng.toml` does not overwrite them.
 
 ## Read a message from code
 
@@ -169,7 +197,8 @@ abbreviated ("kam."), since one text with `{0}` cannot follow their plural forms
 
 ## Add or change a text
 
-1. Add the message to `data/messages/eng.toml` with a number that is not used yet.
+1. Add the message to `data/messages/eng.toml`, or to a file in `data/messages/eng/`,
+   with a number that is not used yet.
 2. Add the translation with the same number to the other files. A language without it
    shows the English text.
 3. Use the same values, in the same order, in every language.
@@ -177,4 +206,5 @@ abbreviated ("kam."), since one text with `{0}` cannot follow their plural forms
    with the real loader.
 
 To add a language, copy `eng.toml` to `data/messages/<code>.toml`, translate the texts
-and set `language = "<code>"`. The code may contain only ASCII letters.
+and set `language = "<code>"`. The code may contain only ASCII letters. A directory
+`data/messages/<code>/` of toml files works as well.
