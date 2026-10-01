@@ -215,6 +215,7 @@ gender = "female"
 
 [[mobile]]
 id = "banker"
+script_id = "banker"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Banker"
