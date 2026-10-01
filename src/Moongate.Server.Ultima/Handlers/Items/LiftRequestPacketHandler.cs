@@ -35,6 +35,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
     private readonly IItemScriptService? _scripts;
+    private readonly IBankService? _bank;
 
     public LiftRequestPacketHandler(
         IItemService items,
@@ -44,9 +45,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         ITileDataService tiles,
         IPacketSendService sender,
         ITooltipService tooltips,
-        IItemScriptService? scripts = null
+        IItemScriptService? scripts = null,
+        IBankService? bank = null
     )
     {
+        _bank = bank;
         _tooltips = tooltips;
         _scripts = scripts;
         _items = items;
@@ -79,6 +82,14 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             packet.Amount > item.Amount ||
             // A worn stack is taken whole: the rest of a split would be a second item on the same layer.
             (packet.Amount < item.Amount && (worn || !IsStackable(item))))
+        {
+            Refuse(session, LiftRejectReasonType.CannotLift, item);
+
+            return;
+        }
+
+        // What lies in a bank box is reached only while the bank is open.
+        if (_bank is not null && _mobiles.TryGet(session.CharacterId, out var character) && !_bank.CanAccess(session, character, item))
         {
             Refuse(session, LiftRejectReasonType.CannotLift, item);
 
@@ -129,10 +140,10 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         }
     }
 
-    // The character's own worn item, except the backpack, which never leaves it.
+    // The character's own worn item, except the backpack and the bank box, which never leave it.
     private static bool IsOwnWornItem(GameSession session, ItemEntity item)
     {
-        return item.MobileId == session.CharacterId && item.Layer is { } layer && layer != LayerType.Backpack;
+        return item.MobileId == session.CharacterId && item.Layer is { } layer and not (LayerType.Backpack or LayerType.Bank);
     }
 
     private bool CanReachFromTheGround(GameSession session, ItemEntity item, out LiftRejectReasonType reason)
