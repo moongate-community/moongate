@@ -5479,7 +5479,7 @@
 30006 = "Váha: 1 kámen"
 30007 = "Váha: {0} kam."
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30081) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30084) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079).
 30008 = "Cíl zrušen."
 30009 = "Příkaz již běží."
 30010 = "Neznámý příkaz: {0}"
@@ -5554,3 +5554,6 @@
 30079 = "Vypíše oblasti spawnu, kde stojíš, s živými NPC a minutami do dalšího spawnu."
 30080 = "{0} ({1}): {2}/{3} NPC, žádné místo nenalezeno, další pokus za {4} min."
 30081 = "{0} žije ve vodě: ukaž na vodu."
+30082 = "Dekorace zrušena."
+30083 = "Umístit dekoraci světa?"
+30084 = "Umístí se všechny dveře, cedule a světla z templates/decorations; co už tam je, zůstane."

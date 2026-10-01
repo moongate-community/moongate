@@ -33,7 +33,7 @@ public sealed class GumpHtmlLocalized : GumpEntry
         if (Args is not null)
         {
             layout.Append(
-                Invariant($"{{ xmfhtmltok {box} {Flag(Background)} {Flag(Scrollbar)} {Color ?? 0} {Cliloc} @{Args}@ }}")
+                Invariant($"{{ xmfhtmltok {box} {Flag(Background)} {Flag(Scrollbar)} {Color ?? 0} {Cliloc} @{Arguments(Args)}@ }}")
             );
         }
         else if (Color is { } color)

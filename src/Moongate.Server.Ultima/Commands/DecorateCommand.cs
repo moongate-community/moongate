@@ -13,25 +13,32 @@ using Serilog;
 namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
-///     Places the world decoration of <c>templates/decorations</c>: <c>decorate</c>. In game every file is reported as
-///     it is done; the server log has the same lines, and the totals end the output.
+///     Places the world decoration of <c>templates/decorations</c>: <c>decorate</c>. In game it first asks with the gump
+///     <c>decorate_confirm</c> of <c>templates/gumps</c>, when there is one, and goes on only on its <c>confirm</c> button;
+///     every file is reported as it is done; the server log has the same lines, and the totals end the output.
 /// </summary>
 public sealed class DecorateCommand : ICommandExecutor
 {
+    public const string ConfirmGump = "decorate_confirm";
+    public const string ConfirmClick = "confirm";
+
     private static readonly Hue ProgressHue = new(0x03B2);
 
     private readonly ILogger _logger = Log.ForContext<DecorateCommand>();
     private readonly IDecorationService _decorations;
     private readonly IPacketSendService _sender;
     private readonly ILocalizationService? _localization;
+    private readonly IGumpTemplateService? _gumps;
 
     public DecorateCommand(
         IDecorationService decorations,
         IPacketSendService sender,
-        ILocalizationService? localization = null
+        ILocalizationService? localization = null,
+        IGumpTemplateService? gumps = null
     )
     {
         _localization = localization;
+        _gumps = gumps;
         _decorations = decorations;
         _sender = sender;
     }
@@ -48,6 +55,14 @@ public sealed class DecorateCommand : ICommandExecutor
         if (_decorations.IsRunning)
         {
             context.PrintError(_localization.Text(CommandMessages.DecorationRunning, "A decoration is already running."));
+
+            return;
+        }
+
+        if (context.Session is { } asking && _gumps is not null && _gumps.Exists(ConfirmGump) &&
+            await _gumps.AskAsync(asking, ConfirmGump, new Dictionary<string, string>(), context.CancellationToken) != ConfirmClick)
+        {
+            context.Print(_localization.Text(CommandMessages.DecorationCanceled, "Decoration canceled."));
 
             return;
         }

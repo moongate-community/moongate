@@ -16,4 +16,13 @@ public abstract class GumpEntry
     {
         return value ? 1 : 0;
     }
+
+    /// <summary>
+    ///     Removes from cliloc arguments the characters that would end them or open a new command: <c>@</c>, <c>{</c>
+    ///     and <c>}</c>.
+    /// </summary>
+    protected static string Arguments(string args)
+    {
+        return string.Concat(args.Where(character => character is not ('@' or '{' or '}')));
+    }
 }

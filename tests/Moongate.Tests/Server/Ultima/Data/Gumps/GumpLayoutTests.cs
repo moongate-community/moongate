@@ -61,6 +61,35 @@ public sealed class GumpLayoutTests
     }
 
     [Fact]
+    public void ClilocArguments_CannotBreakTheLayout()
+    {
+        var layout = new GumpLayout()
+                     .Add(new GumpHtmlLocalized { Cliloc = 1070000, Args = "x@ }{ button 0 0 1 2 1 0 9 }" })
+                     .Add(new GumpTooltip { Cliloc = 1070722, Args = "a@b{c}" });
+
+        Assert.Equal(
+            "{ xmfhtmltok 0 0 0 0 0 0 0 1070000 @x  button 0 0 1 2 1 0 9 @ }{ tooltip 1070722 @abc@ }",
+            layout.Build().Layout
+        );
+    }
+
+    [Theory, InlineData(-1), InlineData(65536)]
+    public void ATextEntryIdThatDoesNotFitTheAnswer_IsRefused(int entryId)
+    {
+        var layout = new GumpLayout().Add(new GumpTextEntry { EntryId = entryId });
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => layout.Build());
+    }
+
+    [Fact]
+    public void AStringLongerThanThePacketAllows_IsCut()
+    {
+        var layout = new GumpLayout().Add(new GumpHtml { Text = new string('a', 70000) });
+
+        Assert.Equal(ushort.MaxValue, Assert.Single(layout.Build().Strings).Length);
+    }
+
+    [Fact]
     public void TextEntries_PointIntoTheStringTable_SharingRepeatedStrings()
     {
         var layout = new GumpLayout();

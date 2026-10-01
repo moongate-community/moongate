@@ -10,8 +10,16 @@ public sealed class GumpStrings
 
     public IReadOnlyList<string> Strings => _strings;
 
+    /// <summary>
+    ///     Gets the index of <paramref name="text" />, cut to the 65535 characters a string of the table can hold.
+    /// </summary>
     public int Intern(string text)
     {
+        if (text.Length > ushort.MaxValue)
+        {
+            text = text[..ushort.MaxValue];
+        }
+
         if (!_indexes.TryGetValue(text, out var index))
         {
             index = _strings.Count;

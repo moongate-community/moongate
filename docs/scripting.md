@@ -79,6 +79,7 @@ exists but fails compilation/execution aborts server startup.
 | `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
 | `world.is_staff(player)` | Whether the player is a game master or an administrator in the world; `false` for an NPC or a player not in the world |
 | `world.carries(mobile, key, value)` | Whether the mobile wears or carries, in its containers at any depth, an item whose prop `key` is `value`, such as the key of a door: `world.carries(user, "key.value", 1234)` |
+| `gump.open(player, id, args)`, `gump.close(player, id)` | Opens the gump `templates/gumps/<id>.xml` on the player, its `${name}` filled from `args`, and closes it; its script `scripts/gumps/<id>.lua` gets the answer. `false` for an unknown player or gump. See [Gumps](gumps.md) |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 

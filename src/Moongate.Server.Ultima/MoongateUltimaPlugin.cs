@@ -56,8 +56,10 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         directoriesConfig.CreateDirectoryIfNotExists("templates/decorations/");
         directoriesConfig.CreateDirectoryIfNotExists("templates/npc_lists/");
         directoriesConfig.CreateDirectoryIfNotExists("templates/spawns/");
+        directoriesConfig.CreateDirectoryIfNotExists("templates/gumps/");
         directoriesConfig.CreateDirectoryIfNotExists("scripts/items/");
         directoriesConfig.CreateDirectoryIfNotExists("scripts/mobiles/");
+        directoriesConfig.CreateDirectoryIfNotExists("scripts/gumps/");
     }
 
     private static void RegisterTomlConverters()

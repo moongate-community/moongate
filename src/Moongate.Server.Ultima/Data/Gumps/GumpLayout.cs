@@ -45,6 +45,9 @@ public sealed class GumpLayout
 
                     break;
                 case GumpTextEntry textEntry:
+                    // The answer carries the entry id in two bytes.
+                    ArgumentOutOfRangeException.ThrowIfNegative(textEntry.EntryId);
+                    ArgumentOutOfRangeException.ThrowIfGreaterThan(textEntry.EntryId, ushort.MaxValue);
                     entries.Add(textEntry.EntryId);
 
                     break;

@@ -3,6 +3,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Packets.Gumps;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Gumps;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -10,6 +11,7 @@ namespace Moongate.Tests.Server.Ultima.Services;
 public sealed class GumpServiceTests : IAsyncLifetime
 {
     private readonly List<(GameSession Session, GumpResponse Response)> _responses = [];
+    private readonly List<(string Gump, GumpCloseReasonType Reason)> _closes = [];
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
@@ -147,6 +149,52 @@ public sealed class GumpServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ServerSideCloses_TellTheGumpWhy()
+    {
+        await OnLoopAsync(() => _gumps.Open(_session, Confirm(id: "a")));
+        await OnLoopAsync(() => _gumps.Open(_session, Confirm(id: "a")));
+        await OnLoopAsync(() => _gumps.Open(_session, Confirm(id: "b")));
+        await OnLoopAsync(() => _gumps.Close(_session, "b"));
+        await OnLoopAsync(() => _gumps.OnSessionClosed(_session));
+
+        Assert.Equal(
+            [("a", GumpCloseReasonType.Replaced), ("b", GumpCloseReasonType.Server), ("a", GumpCloseReasonType.Disconnect)],
+            _closes
+        );
+    }
+
+    [Fact]
+    public async Task AnAnswer_IsNotAServerClose()
+    {
+        await OnLoopAsync(() => _gumps.Open(_session, Confirm()));
+
+        await OnLoopAsync(() => _gumps.Respond(_session, Reply(0)));
+
+        Assert.Empty(_closes);
+    }
+
+    [Fact]
+    public async Task TheSixtyFifthGump_ClosesTheOldestAsAServerClose()
+    {
+        for (var index = 0; index < 65; index++)
+        {
+            await OnLoopAsync(() => _gumps.Open(_session, Confirm(id: $"gump{index}")));
+        }
+
+        Assert.Equal([("gump0", GumpCloseReasonType.Server)], _closes);
+    }
+
+    [Fact]
+    public async Task AnAnswerWithTheSameTextEntryTwice_IsDropped()
+    {
+        await OnLoopAsync(() => _gumps.Open(_session, Confirm()));
+
+        await OnLoopAsync(() => _gumps.Respond(_session, Reply(2, [10], [(3, "a"), (3, "b")])));
+
+        Assert.Empty(_responses);
+    }
+
+    [Fact]
     public async Task ACallbackThatThrows_IsLogged()
     {
         await OnLoopAsync(() => _gumps.Open(_session, Confirm((_, _) => throw new InvalidOperationException("boom"))));
@@ -199,7 +247,8 @@ public sealed class GumpServiceTests : IAsyncLifetime
         return new()
         {
             Id = id, Layout = layout, X = 100, Y = 50,
-            OnResponse = onResponse ?? ((session, response) => _responses.Add((session, response)))
+            OnResponse = onResponse ?? ((session, response) => _responses.Add((session, response))),
+            OnClosed = (_, reason) => _closes.Add((id, reason))
         };
     }
 
