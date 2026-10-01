@@ -23,11 +23,18 @@ public class UltimaConfig : IConfigSection
 
     public NpcsConfig Npcs { get; set; } = new();
 
+    public SpawnsConfig Spawns { get; set; } = new();
+
     /// <summary>
     ///     Validates the sub-tables before server services begin startup.
     /// </summary>
     public void Validate()
     {
+        if (Spawns is null)
+        {
+            throw new InvalidOperationException("The ultima.spawns configuration section cannot be null.");
+        }
+
         if (Localization is null)
         {
             throw new InvalidOperationException("The ultima.localization configuration section cannot be null.");

@@ -60,8 +60,11 @@ A region picks each NPC from one pool: its `mobile_ids`, weight 1 each, and the 
    between `min_minutes` and `max_minutes`. A region already at `max` spawns nothing and waits
    again.
 2. **Gradual fill.** At startup the first spawn of each region comes at a random time within its
-   `min_minutes`, at most 10 minutes. An empty world fills over the first minutes instead of all
-   at once. The NPCs are saved with the world, so after a restart the regions are already full.
+   `min_minutes`, at most 10 minutes, and fills the region to its `max` at once: an empty world is
+   full about 10 minutes after the start, without every NPC arriving in the same moment. Later spawns
+   follow `call` and the times again. `[ultima.spawns] initial_fill = false` keeps UOX3's way, where
+   the first spawn also brings only `call` NPCs, and a region with a `call` of 1 can take hours to
+   fill. The NPCs are saved with the world, so after a restart the regions are already full.
 3. **The spot.** For each NPC the region picks the template first, then tries up to 100 random
    cells of its `areas`, outside `exclude`:
    - a land mobile stands on the highest surface at most `pref_z` above the ground (or at most `z`),

@@ -5,6 +5,7 @@ using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
 using Moongate.Server.Ultima.Entities.World;
@@ -35,9 +36,37 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     private SpawnRegionService _service = null!;
     private uint _nextSerial = 0x1000;
 
+    // Most tests follow the spawn rules after the first fill.
+    private bool _initialFill;
+
     public async Task InitializeAsync()
     {
         _fixture = await BroadcastFixture.CreateAsync();
+    }
+
+    [Fact]
+    public async Task TheFirstSpawnAfterTheStart_FillsTheRegionToItsMax_ThenItGoesByCall()
+    {
+        _initialFill = true;
+        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 1, max: 5, minMinutes: 5, maxMinutes: 5));
+        await AddLiveAsync("forest");
+
+        await TickAsync();
+        Assert.Equal(4, _npcs.Spawns.Count);
+
+        _clock.Advance(TimeSpan.FromMinutes(5));
+        await TickAsync();
+        Assert.Equal(5, _npcs.Spawns.Count);
+    }
+
+    [Fact]
+    public async Task WithoutTheInitialFill_TheFirstSpawnGoesByCall()
+    {
+        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 1, max: 5));
+
+        await TickAsync();
+
+        Assert.Single(_npcs.Spawns);
     }
 
     [Fact]
@@ -504,7 +533,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
             _timers,
             _fixture.Network.Loop,
             _clock,
-            random
+            random,
+            new SpawnsConfig { InitialFill = _initialFill }
         );
         await _service.StartAsync();
     }

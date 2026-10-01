@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Spawns;
 using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
@@ -54,6 +55,7 @@ public sealed class SpawnRegionService : ISpawnRegionService
     private readonly IGameLoopService _loop;
     private readonly TimeProvider _time;
     private readonly Random _random;
+    private readonly SpawnsConfig _config;
 
     private string? _timer;
 
@@ -74,9 +76,11 @@ public sealed class SpawnRegionService : ISpawnRegionService
         ITimerService timers,
         IGameLoopService loop,
         TimeProvider time,
-        Random? random = null
+        Random? random = null,
+        SpawnsConfig? config = null
     )
     {
+        _config = config ?? new();
         _data = data;
         _map = map;
         _movement = movement;
@@ -224,7 +228,10 @@ public sealed class SpawnRegionService : ISpawnRegionService
 
         try
         {
-            var count = Math.Min(template.Call, template.Max - live.GetValueOrDefault(template.Id));
+            var room = template.Max - live.GetValueOrDefault(template.Id);
+
+            // The first spawn after the start fills the region; later ones bring call NPCs at a time.
+            var count = _config.InitialFill && !region.Filled ? room : Math.Min(template.Call, room);
             var found = 0;
 
             // A pick with no spot, such as a sea creature in a region with little water, leaves the others to spawn.
@@ -241,6 +248,11 @@ public sealed class SpawnRegionService : ISpawnRegionService
             }
 
             var missed = count > 0 && found == 0;
+
+            if (!missed)
+            {
+                region.Filled = true;
+            }
             region.Retrying = missed;
 
             region.NextSpawn = missed

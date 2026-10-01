@@ -14,5 +14,10 @@ internal sealed class SpawnRegionState
 
     public DateTimeOffset NextSpawn { get; set; }
 
+    /// <summary>
+    ///     Gets or sets whether the region has had its first spawn since the start, the one that fills it to its max.
+    /// </summary>
+    public bool Filled { get; set; }
+
     public bool Retrying { get; set; }
 }

@@ -89,6 +89,9 @@ deletion_delay_hours = 24             # Hours before a deleted character may be 
 think_interval_ms = 500               # Milliseconds between two thinks of an NPC near a player.
 sense_range = 8                       # Cells within which an NPC's script senses another mobile.
 
+[ultima.spawns]
+initial_fill = true                   # The first spawn of each region after the start fills it to its max.
+
 [persistence]
 auto_sync_schema = false
 
