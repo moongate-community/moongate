@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -21,6 +22,6 @@ public sealed class GumpCheckbox : GumpEntry
 
     public override void Write(StringBuilder layout, GumpStrings strings)
     {
-        layout.Append($"{{ checkbox {X} {Y} {Off} {On} {Flag(Checked)} {SwitchId} }}");
+        layout.Append(Invariant($"{{ checkbox {X} {Y} {Off} {On} {Flag(Checked)} {SwitchId} }}"));
     }
 }

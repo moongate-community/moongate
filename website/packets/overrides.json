@@ -3189,8 +3189,8 @@
         "description": "The layout commands (such as { resizepic 0 0 9200 300 400 }) and their NUL; then a ushort string count and each string as a ushort length in characters and UTF-16 big-endian text."
       }
     ],
-    "notes": "Opens a gump on clients before 5.0.0. The layout refers to the strings by index.",
-    "handler": "GumpService: opens a gump when the client is older than 5.0.0."
+    "notes": "Opens a gump on clients before 5.0.0a. The layout refers to the strings by index.",
+    "handler": "GumpService: opens a gump when the client is older than 5.0.0a."
   },
   "0xDD:outgoing": {
     "category": "Gumps",
@@ -3263,8 +3263,8 @@
         "description": "The zlib layout; then a uint string count, a uint compressed table length plus 4 (0 with no strings), a uint plain table length and the zlib table (each string as ushort length and UTF-16 big-endian text)."
       }
     ],
-    "notes": "Opens a gump on clients from 5.0.0, compressed.",
-    "handler": "GumpService: opens a gump on a client from 5.0.0."
+    "notes": "Opens a gump on clients from 5.0.0a, compressed.",
+    "handler": "GumpService: opens a gump on a client from 5.0.0a."
   },
   "0xB1:incoming": {
     "category": "Gumps",

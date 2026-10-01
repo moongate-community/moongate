@@ -24,6 +24,16 @@ public sealed class GumpPacketTests
     }
 
     [Fact]
+    public void Encode_WritesTheLayoutInLatin1()
+    {
+        var built = new GumpLayout().Add(new GumpTooltip { Cliloc = 1070722, Args = "Jörg" }).Build();
+
+        var bytes = PacketCodec.Encode(new GumpPacket(1, 2, 0, 0, built));
+
+        Assert.Equal("{ tooltip 1070722 @Jörg@ }\0", System.Text.Encoding.Latin1.GetString(bytes, 21, bytes.Length - 23));
+    }
+
+    [Fact]
     public void Encode_WithNoStrings_WritesAnEmptyTable()
     {
         var built = new GumpLayout().Add(new GumpPage()).Build();

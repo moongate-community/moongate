@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -11,6 +12,6 @@ public sealed class GumpGroup : GumpEntry
 
     public override void Write(StringBuilder layout, GumpStrings strings)
     {
-        layout.Append("{ group ").Append(Group).Append(" }");
+        layout.Append(Invariant($"{{ group {Group} }}"));
     }
 }

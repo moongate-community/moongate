@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -13,6 +14,6 @@ public sealed class GumpTooltip : GumpEntry
 
     public override void Write(StringBuilder layout, GumpStrings strings)
     {
-        layout.Append(Args is null ? $"{{ tooltip {Cliloc} }}" : $"{{ tooltip {Cliloc} @{Args}@ }}");
+        layout.Append(Args is null ? Invariant($"{{ tooltip {Cliloc} }}") : Invariant($"{{ tooltip {Cliloc} @{Args}@ }}"));
     }
 }

@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -17,6 +18,6 @@ public sealed class GumpText : GumpEntry
 
     public override void Write(StringBuilder layout, GumpStrings strings)
     {
-        layout.Append($"{{ text {X} {Y} {Hue} {strings.Intern(Text)} }}");
+        layout.Append(Invariant($"{{ text {X} {Y} {Hue} {strings.Intern(Text)} }}"));
     }
 }

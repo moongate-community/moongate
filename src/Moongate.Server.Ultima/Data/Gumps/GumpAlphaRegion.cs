@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -17,6 +18,6 @@ public sealed class GumpAlphaRegion : GumpEntry
 
     public override void Write(StringBuilder layout, GumpStrings strings)
     {
-        layout.Append($"{{ checkertrans {X} {Y} {Width} {Height} }}");
+        layout.Append(Invariant($"{{ checkertrans {X} {Y} {Width} {Height} }}"));
     }
 }

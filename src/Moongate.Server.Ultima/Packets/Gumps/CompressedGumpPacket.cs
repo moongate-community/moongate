@@ -40,7 +40,7 @@ public sealed class CompressedGumpPacket : BasePacket<CompressedGumpPacket>, IOu
         X = x;
         Y = y;
 
-        var layout = Encoding.UTF8.GetBytes(gump.Layout + "\0");
+        var layout = Encoding.Latin1.GetBytes(gump.Layout + "\0");
         _layoutLength = layout.Length;
         _layout = Compress(layout);
         _stringCount = gump.Strings.Count;

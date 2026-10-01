@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -24,7 +25,7 @@ public sealed class GumpHtml : GumpEntry
     public override void Write(StringBuilder layout, GumpStrings strings)
     {
         layout.Append(
-            $"{{ htmlgump {X} {Y} {Width} {Height} {strings.Intern(Text)} {Flag(Background)} {Flag(Scrollbar)} }}"
+            Invariant($"{{ htmlgump {X} {Y} {Width} {Height} {strings.Intern(Text)} {Flag(Background)} {Flag(Scrollbar)} }}")
         );
     }
 }

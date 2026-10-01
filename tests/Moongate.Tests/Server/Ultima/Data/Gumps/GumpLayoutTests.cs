@@ -1,3 +1,4 @@
+using System.Globalization;
 using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Types.Gumps;
 
@@ -39,6 +40,24 @@ public sealed class GumpLayoutTests
         layout.Add(entry);
 
         Assert.Equal(expected, layout.Build().Layout);
+    }
+
+    [Fact]
+    public void Numbers_AreWrittenTheSameWhateverTheServerLanguage()
+    {
+        var culture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = new CultureInfo("sv-SE");
+
+        try
+        {
+            var layout = new GumpLayout().Add(new GumpPage { Page = 1 }).Add(new GumpImage { X = -10, Y = -2, GumpId = 5, Hue = 33 });
+
+            Assert.Equal("{ page 1 }{ gumppic -10 -2 5 hue=33 }", layout.Build().Layout);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = culture;
+        }
     }
 
     [Fact]

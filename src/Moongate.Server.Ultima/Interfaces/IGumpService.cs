@@ -13,7 +13,7 @@ namespace Moongate.Server.Ultima.Interfaces;
 public interface IGumpService : ISessionClosedListener
 {
     /// <summary>
-    ///     Sends <paramref name="gump" />, compressed (0xDD) for clients from 5.0.0 and plain (0xB0) for older ones; a gump
+    ///     Sends <paramref name="gump" />, compressed (0xDD) for clients from 5.0.0a and plain (0xB0) for older ones; a gump
     ///     with the same id already open on the player is closed first.
     /// </summary>
     void Open(GameSession session, GumpInstance gump);

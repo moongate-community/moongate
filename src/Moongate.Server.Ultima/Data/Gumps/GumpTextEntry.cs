@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -29,8 +30,8 @@ public sealed class GumpTextEntry : GumpEntry
 
         layout.Append(
             MaxLength == 0
-                ? $"{{ textentry {X} {Y} {Width} {Height} {Hue} {EntryId} {text} }}"
-                : $"{{ textentrylimited {X} {Y} {Width} {Height} {Hue} {EntryId} {text} {MaxLength} }}"
+                ? Invariant($"{{ textentry {X} {Y} {Width} {Height} {Hue} {EntryId} {text} }}")
+                : Invariant($"{{ textentrylimited {X} {Y} {Width} {Height} {Hue} {EntryId} {text} {MaxLength} }}")
         );
     }
 }

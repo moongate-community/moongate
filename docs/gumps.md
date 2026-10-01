@@ -70,5 +70,5 @@ The server keeps every gump it opens on each player, and checks every answer:
 - opening a gump with the same id closes the one already open, and a player keeps at most 64
   gumps.
 
-A forged answer never reaches `OnResponse`. Clients from 5.0.0 get the compressed packet (0xDD),
+A forged answer never reaches `OnResponse`. Clients from 5.0.0a get the compressed packet (0xDD),
 older ones the plain one (0xB0); see the [packet reference](packets.md).

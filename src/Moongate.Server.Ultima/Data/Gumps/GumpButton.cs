@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -23,8 +24,8 @@ public sealed class GumpButton : GumpEntry
     {
         layout.Append(
             Page == 0
-                ? $"{{ button {X} {Y} {Up} {Down} 1 0 {ButtonId} }}"
-                : $"{{ button {X} {Y} {Up} {Down} 0 {Page} 0 }}"
+                ? Invariant($"{{ button {X} {Y} {Up} {Down} 1 0 {ButtonId} }}")
+                : Invariant($"{{ button {X} {Y} {Up} {Down} 0 {Page} 0 }}")
         );
     }
 }

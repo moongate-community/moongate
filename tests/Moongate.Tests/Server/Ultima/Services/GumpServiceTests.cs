@@ -23,7 +23,7 @@ public sealed class GumpServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Open_SendsTheCompressedGumpToAModernClient()
+    public async Task Open_WithNoClientVersionYet_SendsTheCompressedGump()
     {
         await OnLoopAsync(() => _gumps.Open(_session, Confirm()));
 
@@ -32,14 +32,18 @@ public sealed class GumpServiceTests : IAsyncLifetime
         Assert.NotEqual(0u, packet.Serial);
     }
 
-    [Fact]
-    public async Task Open_SendsTheUncompressedGumpToAnOldClient()
+    [Theory,
+     InlineData("4.0.11c", typeof(GumpPacket)),
+     InlineData("5.0.0", typeof(GumpPacket)),
+     InlineData("5.0.0a", typeof(CompressedGumpPacket)),
+     InlineData("7.0.15.1", typeof(CompressedGumpPacket))]
+    public async Task Open_SendsTheCompressedGumpFrom500a(string version, Type expected)
     {
-        _session.NetworkSession.SetClientVersion(new ClientVersion(4, 0, 11, 0));
+        _session.NetworkSession.SetClientVersion(ClientVersion.Parse(version));
 
         await OnLoopAsync(() => _gumps.Open(_session, Confirm()));
 
-        Assert.IsType<GumpPacket>(Assert.Single(_fixture.Sender.Sent));
+        Assert.IsType(expected, Assert.Single(_fixture.Sender.Sent));
     }
 
     [Fact]

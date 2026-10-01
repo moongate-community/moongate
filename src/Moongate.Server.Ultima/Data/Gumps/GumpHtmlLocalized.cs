@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -27,21 +28,21 @@ public sealed class GumpHtmlLocalized : GumpEntry
 
     public override void Write(StringBuilder layout, GumpStrings strings)
     {
-        var box = $"{X} {Y} {Width} {Height}";
+        var box = Invariant($"{X} {Y} {Width} {Height}");
 
         if (Args is not null)
         {
             layout.Append(
-                $"{{ xmfhtmltok {box} {Flag(Background)} {Flag(Scrollbar)} {Color ?? 0} {Cliloc} @{Args}@ }}"
+                Invariant($"{{ xmfhtmltok {box} {Flag(Background)} {Flag(Scrollbar)} {Color ?? 0} {Cliloc} @{Args}@ }}")
             );
         }
         else if (Color is { } color)
         {
-            layout.Append($"{{ xmfhtmlgumpcolor {box} {Cliloc} {Flag(Background)} {Flag(Scrollbar)} {color} }}");
+            layout.Append(Invariant($"{{ xmfhtmlgumpcolor {box} {Cliloc} {Flag(Background)} {Flag(Scrollbar)} {color} }}"));
         }
         else
         {
-            layout.Append($"{{ xmfhtmlgump {box} {Cliloc} {Flag(Background)} {Flag(Scrollbar)} }}");
+            layout.Append(Invariant($"{{ xmfhtmlgump {box} {Cliloc} {Flag(Background)} {Flag(Scrollbar)} }}"));
         }
     }
 }

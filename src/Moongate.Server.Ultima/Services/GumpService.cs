@@ -22,7 +22,8 @@ public sealed class GumpService : IGumpService
     // The paperdoll's virtue gump answers with this type id unasked.
     private const uint VirtueGumpTypeId = 0x1CD;
 
-    private static readonly ClientVersion Compressed = new(5, 0, 0, 0);
+    // 5.0.0a, the first client that reads 0xDD; a client that has not told its version yet is taken as a modern one.
+    private static readonly ClientVersion Compressed = new(5, 0, 0, 1);
 
     private readonly ILogger _logger = Log.ForContext<GumpService>();
     private readonly IPacketSendService _sender;

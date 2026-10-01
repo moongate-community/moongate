@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -17,6 +18,6 @@ public sealed class GumpItem : GumpEntry
 
     public override void Write(StringBuilder layout, GumpStrings strings)
     {
-        layout.Append(Hue == 0 ? $"{{ tilepic {X} {Y} {ItemId} }}" : $"{{ tilepichue {X} {Y} {ItemId} {Hue} }}");
+        layout.Append(Hue == 0 ? Invariant($"{{ tilepic {X} {Y} {ItemId} }}") : Invariant($"{{ tilepichue {X} {Y} {ItemId} {Hue} }}"));
     }
 }

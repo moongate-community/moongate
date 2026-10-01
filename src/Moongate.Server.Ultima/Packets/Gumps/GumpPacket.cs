@@ -9,7 +9,8 @@ using Moongate.Server.Ultima.Data.Gumps;
 namespace Moongate.Server.Ultima.Packets.Gumps;
 
 /// <summary>
-///     Opens a gump on clients before 5.0.0a (0xB0): the layout as text and the string table in UTF-16, uncompressed.
+///     Opens a gump on clients before 5.0.0a (0xB0): the layout as Latin-1 text and the string table in UTF-16,
+///     uncompressed.
 /// </summary>
 [PacketHandler(0xB0, PacketSizing.Variable, MinimumLength = 23)]
 public sealed class GumpPacket : BasePacket<GumpPacket>, IOutgoingPacket
@@ -33,7 +34,7 @@ public sealed class GumpPacket : BasePacket<GumpPacket>, IOutgoingPacket
         TypeId = typeId;
         X = x;
         Y = y;
-        _layout = Encoding.UTF8.GetBytes(gump.Layout + "\0");
+        _layout = Encoding.Latin1.GetBytes(gump.Layout + "\0");
         _strings = gump.Strings.Select(Encoding.BigEndianUnicode.GetBytes).ToArray();
         Length = 21 + _layout.Length + 2 + _strings.Sum(text => 2 + text.Length);
 

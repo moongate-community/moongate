@@ -1,4 +1,5 @@
 using System.Text;
+using static System.FormattableString;
 
 namespace Moongate.Server.Ultima.Data.Gumps;
 
@@ -21,6 +22,6 @@ public sealed class GumpLabelCropped : GumpEntry
 
     public override void Write(StringBuilder layout, GumpStrings strings)
     {
-        layout.Append($"{{ croppedtext {X} {Y} {Width} {Height} {Hue} {strings.Intern(Text)} }}");
+        layout.Append(Invariant($"{{ croppedtext {X} {Y} {Width} {Height} {Hue} {strings.Intern(Text)} }}"));
     }
 }
