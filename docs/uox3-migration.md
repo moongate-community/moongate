@@ -221,6 +221,35 @@ and are not converted. Set `ultima.starting_items.best_skills` in the server
 configuration, and give the `STARTGOLD` coins with a gold entry in the common set, as
 the [shipped file](data-files/starting-items.md) does.
 
+## Spawns of ModernUO
+
+UOX3 has no spawns for Malas, Tokuno and TerMur. The `modernuo-spawns` command takes them from
+[ModernUO](https://github.com/modernuo/ModernUO)'s spawners:
+
+```sh
+dotnet run --project src/Moongate.UoxItemConverter -- modernuo-spawns \
+  --source <ModernUO>/Distribution/Data/Spawns --maps malas,tokuno,termur \
+  --mobiles moongate_root/templates/mobiles --destination moongate_root/templates/spawns
+```
+
+It reads the `shared` and `post-uoml` eras of each map (the world of a modern client) and writes
+one spawn region per spawner into `<map>/modernuo_<file>.toml`, such as
+`malas/modernuo_doom.toml`, replacing the `modernuo_` files of that map a previous run wrote; the
+other files of the folder are left alone. A spawner becomes:
+
+- `mobile_ids`: its entries, each ModernUO class found among the `--mobiles` templates. The command
+  tries an alias of its table first (`Minter` is `banker`, `GreatHart` is `hart`, guildmasters are
+  their trade's vendor), then the class in snake case (`GreatHart` is `great_hart`), then the class
+  with the ids' underscores ignored, then UOX3's short name of an elemental (`DullCopperElemental`
+  is `dullcopperele`). A class with no template is counted as `unknown mobile <Class>`, and a
+  spawner with none left is skipped.
+- `max`: its `count`; `min_minutes` and `max_minutes`: its delays, a minute at least; `call` 1.
+- `areas`: the square of its home range around its spot (1 tile when it has none); `z`: 16 above
+  the spot, so a spawner in a cave does not spawn on the land over it.
+
+An unknown map name exits `2`, as does a missing `--source`. The shipped Malas, Tokuno and TerMur
+spawns come from this command; the classes it reports unknown are the NPCs still to write.
+
 ## Verifying the output
 
 After writing every file, the converter reads all of it back from disk, as a real
