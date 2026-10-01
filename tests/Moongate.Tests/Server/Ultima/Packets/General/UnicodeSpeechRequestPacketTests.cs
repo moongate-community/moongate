@@ -40,13 +40,15 @@ public sealed class UnicodeSpeechRequestPacketTests
     }
 
     [Theory]
-    [InlineData("AD00148003B20003454E550000100162616E6B00")]
-    [InlineData("AD00168003B20003454E5500002001002062616E6B00")]
-    public void TryDecode_EncodedSayWithKeywordIds_ReadsTextAfterPackedIds(string hex)
+    [InlineData("AD00148003B20003454E550000100162616E6B00", new[] { 0x001 })]
+    [InlineData("AD00168003B20003454E5500002001002062616E6B00", new[] { 0x001, 0x002 })]
+    [InlineData("AD00178003B20003454E550000300200203462616E6B00", new[] { 0x002, 0x002, 0x034 })]
+    public void TryDecode_EncodedSayWithKeywordIds_ReadsTheIdsAndTheTextAfterThem(string hex, int[] keywords)
     {
         Assert.True(PacketCodec.TryDecode<UnicodeSpeechRequestPacket>(Convert.FromHexString(hex), out var packet));
         Assert.Equal("bank", packet.Speech.Text);
         Assert.Equal(SpeechType.Regular, packet.Speech.Type);
+        Assert.Equal(keywords, packet.Speech.Keywords);
     }
 
     [Fact]

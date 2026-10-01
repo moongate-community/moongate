@@ -11,6 +11,7 @@ using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Server.Ultima.Services.Diagnostics;
 
 namespace Moongate.Server.Ultima.Extensions;
@@ -88,6 +89,8 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<ItemModule>();
         container.AddScriptModule<WorldModule>();
         container.AddScriptModule<GumpModule>();
+        // No module function takes it: registered so on_speech can compare its keywords with names.
+        container.RegisterScriptEnum<SpeechKeywordType>();
 
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
         container.AddLiveWorldMobiles();

@@ -52,6 +52,7 @@ public sealed class UnicodeSpeechRequestPacket : BasePacket<UnicodeSpeechRequest
 
         var encoded = (data[3] & EncodedBit) != 0;
         var textBytes = data[12..];
+        int[] keywords = [];
 
         if (encoded)
         {
@@ -74,6 +75,7 @@ public sealed class UnicodeSpeechRequestPacket : BasePacket<UnicodeSpeechRequest
                 return false;
             }
 
+            keywords = ReadKeywords(textBytes, keywordCount);
             textBytes = textBytes[(2 + packedKeywordBytes)..];
         }
 
@@ -102,7 +104,7 @@ public sealed class UnicodeSpeechRequestPacket : BasePacket<UnicodeSpeechRequest
                     (SpeechFontType)BinaryPrimitives.ReadUInt16BigEndian(data[6..8]),
                     Encoding.ASCII.GetString(languageBytes[..3]),
                     text
-                )
+                ) { Keywords = keywords }
             );
 
             return true;
@@ -111,5 +113,30 @@ public sealed class UnicodeSpeechRequestPacket : BasePacket<UnicodeSpeechRequest
         {
             return false;
         }
+    }
+
+    // The ids are 12 bits each after the 12-bit count, as ModernUO reads them: the count's low nibble starts the first.
+    private static int[] ReadKeywords(ReadOnlySpan<byte> textBytes, int count)
+    {
+        var keywords = new int[count];
+        var hold = textBytes[1] & 0x0F;
+        var offset = 2;
+
+        for (var index = 0; index < count; index++)
+        {
+            if (index % 2 == 0)
+            {
+                keywords[index] = (hold << 8) | textBytes[offset++];
+            }
+            else
+            {
+                var value = BinaryPrimitives.ReadUInt16BigEndian(textBytes[offset..]);
+                offset += 2;
+                keywords[index] = value >> 4;
+                hold = value & 0x0F;
+            }
+        }
+
+        return keywords;
     }
 }

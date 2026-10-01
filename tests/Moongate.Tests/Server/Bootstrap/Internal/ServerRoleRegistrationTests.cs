@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Types.Speech;
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.Incoming.Login;
@@ -191,6 +192,7 @@ public sealed class ServerRoleRegistrationTests
             Assert.NotNull(container.Resolve<NpcModule>());
             Assert.NotNull(container.Resolve<ItemModule>());
             Assert.NotNull(container.Resolve<WorldModule>());
+            Assert.Contains(typeof(SpeechKeywordType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
             Assert.Equal(
                 [container.Resolve<IWeatherService>(), container.Resolve<ILightService>(), container.Resolve<IMusicService>(), container.Resolve<ISeasonService>()],
                 container.Resolve<IEnumerable<IRegionChangeListener>>()

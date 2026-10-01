@@ -1,3 +1,4 @@
+using Lua;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Data.Config;
@@ -29,11 +30,13 @@ public sealed class NpcHearingServiceTests
         var hearing = Create();
         await _scripts.StartAsync();
 
-        hearing.Heard(_aria, "hello");
+        hearing.Heard(_aria, "hello", [0x002, 0x034]);
 
         var call = Assert.Single(_engine.MemberCalls);
         Assert.Equal(("mobiles/wander.lua", "wander", "on_speech"), (call.Owner, call.Table, call.Function));
-        Assert.Equal([0x100L, 2L, "hello"], call.Args);
+        Assert.Equal([0x100L, 2L, "hello"], call.Args.Take(3));
+        var keywords = Assert.IsType<LuaTable>(call.Args[3]);
+        Assert.Equal((2, 2L, 0x34L), (keywords.ArrayLength, keywords[1].Read<long>(), keywords[2].Read<long>()));
     }
 
     [Fact]
