@@ -16,6 +16,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <!-- The gump schema ships in the server root for editors; the server checks the gump files with this copy. -->
+        <EmbeddedResource Include="../../moongate_root/templates/gumps/gump.xsd" LogicalName="Moongate.Gumps.gump.xsd"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>
         <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj"/>
         <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj"/>

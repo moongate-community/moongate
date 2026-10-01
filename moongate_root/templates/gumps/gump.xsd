@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/gump.xsd
+
+  The schema of the gump files in templates/gumps: one <gump> per file, its controls on page 0 (shown
+  on every page) or inside <page> elements (pages 1, 2, ... in order). A gump file names it with
+  xsi:noNamespaceSchemaLocation="gump.xsd" so editors complete and check it; the server checks every
+  file against it at startup.
+
+  Numbers may be a placeholder such as ${count}, filled from the arguments the gump is opened with;
+  so may every text.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:simpleType name="placeholder">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\$\{[a-z_][a-z0-9_]*\}" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="number">
+    <xs:union memberTypes="xs:int placeholder" />
+  </xs:simpleType>
+
+  <xs:simpleType name="identifier">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-z_][a-z0-9_]*" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:attributeGroup name="position">
+    <xs:attribute name="x" type="number" use="required" />
+    <xs:attribute name="y" type="number" use="required" />
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="size">
+    <xs:attribute name="width" type="number" use="required" />
+    <xs:attribute name="height" type="number" use="required" />
+  </xs:attributeGroup>
+
+  <xs:group name="controls">
+    <xs:choice>
+      <xs:element name="background">
+        <xs:annotation><xs:documentation>A resizable background (resizepic).</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="position" />
+          <xs:attribute name="gump" type="number" use="required" />
+          <xs:attributeGroup ref="size" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="alpha_region">
+        <xs:annotation><xs:documentation>A see-through region (checkertrans).</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="position" />
+          <xs:attributeGroup ref="size" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="image">
+        <xs:annotation><xs:documentation>A gump image (gumppic), with an optional hue.</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="position" />
+          <xs:attribute name="gump" type="number" use="required" />
+          <xs:attribute name="hue" type="number" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="image_tiled">
+        <xs:annotation><xs:documentation>A gump image repeated over a box (gumppictiled).</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="position" />
+          <xs:attributeGroup ref="size" />
+          <xs:attribute name="gump" type="number" use="required" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="item">
+        <xs:annotation><xs:documentation>An item graphic (tilepic, tilepichue with a hue).</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="position" />
+          <xs:attribute name="item" type="number" use="required" />
+          <xs:attribute name="hue" type="number" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="text">
+        <xs:annotation><xs:documentation>A line of text: its inner text, or a server message by id (message).</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attributeGroup ref="position" />
+              <xs:attribute name="hue" type="number" />
+              <xs:attribute name="message" type="number" />
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="label_cropped">
+        <xs:annotation><xs:documentation>Text cut to a box (croppedtext): its inner text or a server message.</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attributeGroup ref="position" />
+              <xs:attributeGroup ref="size" />
+              <xs:attribute name="hue" type="number" />
+              <xs:attribute name="message" type="number" />
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="html">
+        <xs:annotation>
+          <xs:documentation>
+            HTML text in a box: its inner text, a server message (message), or a client message (cliloc),
+            coloured (color, 15-bit) or with arguments (args, tab separated).
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attributeGroup ref="position" />
+              <xs:attributeGroup ref="size" />
+              <xs:attribute name="background" type="xs:boolean" default="false" />
+              <xs:attribute name="scrollbar" type="xs:boolean" default="false" />
+              <xs:attribute name="message" type="number" />
+              <xs:attribute name="cliloc" type="number" />
+              <xs:attribute name="color" type="number" />
+              <xs:attribute name="args" type="xs:string" />
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="button">
+        <xs:annotation>
+          <xs:documentation>
+            A button: on_click names the function of the gump script it calls, id sends that number to
+            on_button, page turns to that page. Exactly one of them.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="position" />
+          <xs:attribute name="up" type="number" use="required" />
+          <xs:attribute name="down" type="number" use="required" />
+          <xs:attribute name="on_click" type="identifier" />
+          <xs:attribute name="id" type="xs:positiveInteger" />
+          <xs:attribute name="page" type="xs:positiveInteger" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="checkbox">
+        <xs:annotation><xs:documentation>A checkbox; switch is its id in the answer when it is on.</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="position" />
+          <xs:attribute name="off" type="number" use="required" />
+          <xs:attribute name="on" type="number" use="required" />
+          <xs:attribute name="switch" type="xs:nonNegativeInteger" use="required" />
+          <xs:attribute name="checked" type="xs:boolean" default="false" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="group">
+        <xs:annotation><xs:documentation>Radio buttons of which only one can be on.</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="radio" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:attributeGroup ref="position" />
+                <xs:attribute name="off" type="number" use="required" />
+                <xs:attribute name="on" type="number" use="required" />
+                <xs:attribute name="switch" type="xs:nonNegativeInteger" use="required" />
+                <xs:attribute name="checked" type="xs:boolean" default="false" />
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="text_entry">
+        <xs:annotation><xs:documentation>A text field; its inner text is the starting text, entry its id in the answer.</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attributeGroup ref="position" />
+              <xs:attributeGroup ref="size" />
+              <xs:attribute name="hue" type="number" />
+              <xs:attribute name="entry" use="required">
+                <xs:simpleType>
+                  <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="65535" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:attribute>
+              <xs:attribute name="max_length" type="xs:positiveInteger" />
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="tooltip">
+        <xs:annotation><xs:documentation>The tooltip of the control before it: a client message with optional arguments.</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="cliloc" type="number" use="required" />
+          <xs:attribute name="args" type="xs:string" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="item_property">
+        <xs:annotation><xs:documentation>The tooltip of a real item, by serial.</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="serial" use="required">
+            <xs:simpleType>
+              <xs:union memberTypes="xs:unsignedInt placeholder" />
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+  </xs:group>
+
+  <xs:element name="gump">
+    <xs:annotation>
+      <xs:documentation>
+        A gump. id names it (and its script, scripts/gumps/&lt;id&gt;.lua); x and y place it on the screen;
+        closable, movable, disposable and resizable are true unless set to false.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="controls" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="page" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:group ref="controls" minOccurs="0" maxOccurs="unbounded" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="id" type="identifier" use="required" />
+      <xs:attribute name="x" type="number" default="0" />
+      <xs:attribute name="y" type="number" default="0" />
+      <xs:attribute name="closable" type="xs:boolean" default="true" />
+      <xs:attribute name="movable" type="xs:boolean" default="true" />
+      <xs:attribute name="disposable" type="xs:boolean" default="true" />
+      <xs:attribute name="resizable" type="xs:boolean" default="true" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

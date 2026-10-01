@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
+using Moongate.Server.Ultima.Data.Templates.Gumps;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
@@ -51,6 +52,7 @@ public static class UltimaDataLoadersContainerExtensions
         // After the mobile templates, which the lists and the spawns name.
         container.AddUltimaDataLoader<NpcListsLoader, NpcListTemplate>(18);
         container.AddUltimaDataLoader<SpawnsLoader, SpawnTemplate>(19);
+        container.AddUltimaDataLoader<GumpsLoader, GumpTemplate>(20);
 
         return container;
     }
