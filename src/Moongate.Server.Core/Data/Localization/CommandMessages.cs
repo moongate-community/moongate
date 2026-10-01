@@ -61,6 +61,8 @@ public static class CommandMessages
     public const int SpawnedWorldProgress = 30088;
     public const int InitialSpawnStarted = 30092;
     public const int TimeHere = 30094;
+    public const int SeasonHere = 30097;
+    public const int SeasonSet = 30098;
     public const int SpawnRegionHere = 30077;
     public const int NoSpawnRegionHere = 30078;
     public const int SpawnRegionRetrying = 30080;
@@ -103,4 +105,5 @@ public static class CommandMessages
     public const int MusicDescription = 30091;
     public const int InitialSpawnDescription = 30093;
     public const int TimeDescription = 30095;
+    public const int SeasonDescription = 30099;
 }

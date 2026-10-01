@@ -115,6 +115,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.Regular,
             CommandMessages.TimeDescription
         );
+        container.RegisterCommand<SeasonCommand>(
+            "season",
+            "Shows the season where you stand and your map's or, with a season or auto, sets your map's until the restart.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.SeasonDescription
+        );
         container.RegisterCommand<MusicCommand>(
             "music",
             "Shows the music where you stand or, with a track name, plays it to you until your next region change.",
