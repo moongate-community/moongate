@@ -34,6 +34,7 @@ items = ["0x1eff_fancy_dress"]
 
 [[mobile]]
 id = "f_banker"
+script_id = "banker"
 base_id = "basehuman"
 name_list = "female"
 title = "the Banker"

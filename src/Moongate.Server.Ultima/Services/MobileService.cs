@@ -198,8 +198,9 @@ public sealed class MobileService : IMobileService
 
     public List<MobileEquipmentEntry> GetEquipment(MobileEntity mobile, IEnumerable<ItemEntity> worn)
     {
+        // The bank box is worn but never drawn: ModernUO leaves it out too.
         var entries = worn
-            .Where(item => item.Layer is not null)
+            .Where(item => item.Layer is not null and not LayerType.Bank)
             .GroupBy(item => item.Layer!.Value)
             .Select(group => group.First())
             .Select(item => new MobileEquipmentEntry(item.Id, item.ItemId, item.Layer!.Value, item.Hue))

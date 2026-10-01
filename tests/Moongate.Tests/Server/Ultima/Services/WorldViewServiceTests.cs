@@ -302,8 +302,10 @@ public sealed class WorldViewServiceTests
         var boris = Mobile(3, 1500, 1628);
         var shirt = new ItemEntity { Id = new(0x40000010), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
         shirt.Equip(boris.Id, LayerType.Shirt);
+        var bank = new ItemEntity { Id = new(0x40000011), TemplateId = "bank_box", ItemId = 0x0E7C, Amount = 1 };
+        bank.Equip(boris.Id, LayerType.Bank);
         var gold = new ItemEntity { Id = new(0x40000050), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
-        items.Add([shirt, gold]);
+        items.Add([shirt, bank, gold]);
         items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1500, 1629, 0));
         mobiles.EnterWorld(boris);
         var aria = Mobile(2, 1496, 1628);

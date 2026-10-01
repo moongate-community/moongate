@@ -8,7 +8,8 @@ namespace Moongate.Server.Ultima.Interfaces;
 public interface INpcSpeechListener
 {
     /// <summary>
-    ///     <paramref name="speaker" /> said <paramref name="text" /> aloud; commands never reach it.
+    ///     <paramref name="speaker" /> said <paramref name="text" /> aloud, with the speech keywords the client found in
+    ///     it; commands never reach it.
     /// </summary>
-    void Heard(MobileEntity speaker, string text);
+    void Heard(MobileEntity speaker, string text, IReadOnlyList<int>? keywords = null);
 }

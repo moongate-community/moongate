@@ -135,7 +135,7 @@ public sealed class SpeechRequestPacketHandler :
                     }
                 }
 
-                _npcs?.Heard(speaker, text);
+                _npcs?.Heard(speaker, text, speech.Keywords);
             },
             cancellationToken
         );

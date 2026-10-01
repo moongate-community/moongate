@@ -189,14 +189,17 @@ public sealed class TooltipService : ITooltipService
         return list;
     }
 
-    // Carried or worn by the viewer, worn by a mobile it sees, or lying on the ground in view; never inside someone
-    // else's containers.
+    // Carried or worn by the viewer, worn by a mobile it sees (not its bank box), or lying on the ground in view; never
+    // inside someone else's containers.
     private bool IsVisibleTo(MobileEntity viewer, ItemEntity item)
     {
         if (_items.GetOwner(item) is { } owner)
         {
             return owner == viewer.Id ||
-                   (item.MobileId == owner && _mobiles.TryGet(owner, out var wearer) && InView(viewer, wearer.Map, wearer.Location));
+                   (item.MobileId == owner &&
+                    item.Layer != LayerType.Bank &&
+                    _mobiles.TryGet(owner, out var wearer) &&
+                    InView(viewer, wearer.Map, wearer.Location));
         }
 
         return item.Map is { } map &&

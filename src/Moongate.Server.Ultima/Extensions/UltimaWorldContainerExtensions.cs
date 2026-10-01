@@ -6,12 +6,13 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Events;
-using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
-using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Services.Diagnostics;
+using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Speech;
 
 namespace Moongate.Server.Ultima.Extensions;
 
@@ -77,6 +78,8 @@ public static class UltimaWorldContainerExtensions
         container.Register<IGumpService, GumpService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IGumpService>();
         container.Register<IGumpTemplateService, GumpTemplateService>(Reuse.Singleton);
+        container.Register<IBankService, BankService>(Reuse.Singleton);
+        container.RegisterMapping<ISessionClosedListener, IBankService>();
         container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
         container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
@@ -88,6 +91,9 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<ItemModule>();
         container.AddScriptModule<WorldModule>();
         container.AddScriptModule<GumpModule>();
+        container.AddScriptModule<BankModule>();
+        // No module function takes it: registered so on_speech can compare its keywords with names.
+        container.RegisterScriptEnum<SpeechKeywordType>();
 
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
         container.AddLiveWorldMobiles();

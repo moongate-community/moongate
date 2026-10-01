@@ -6,7 +6,7 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**228 systems:** ✅ 59 done, 🟡 28 partly done, ❌ 141 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
+**228 systems:** ✅ 60 done, 🟡 29 partly done, ❌ 139 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
 ## Accounts, login and network
 
@@ -140,7 +140,7 @@ works today in more detail.
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Vendors: buy, sell, restock | ❌ | |
-| Banker and bank box | ❌ | |
+| Banker and bank box | ✅ | The *bank* keyword in any client language; open while the player stands still; see [Bank](bank.md) |
 | Stable master, veterinarian | ❌ | |
 | Skill trainers | ❌ | |
 | Healers that resurrect | ❌ | |
@@ -234,7 +234,7 @@ works today in more detail.
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Gold | 🟡 | Starting gold and NPC loot; nothing to spend it on |
-| Banking and bank checks | ❌ | |
+| Banking and bank checks | 🟡 | The bank box; no withdraw, balance or checks |
 | Vendor prices | ❌ | |
 | House costs and limits | ❌ | |
 

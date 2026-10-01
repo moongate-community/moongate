@@ -43,6 +43,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
     private readonly IItemScriptService? _scripts;
+    private readonly IBankService? _bank;
 
     public DropRequestPacketHandler(
         IItemService items,
@@ -52,9 +53,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         IContainerLayoutService layouts,
         IPacketSendService sender,
         ITooltipService tooltips,
-        IItemScriptService? scripts = null
+        IItemScriptService? scripts = null,
+        IBankService? bank = null
     )
     {
+        _bank = bank;
         _tooltips = tooltips;
         _scripts = scripts;
         _items = items;
@@ -162,6 +165,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             stack.Id == item.Id ||
             stack.ContainerId is null ||
             _items.GetOwner(stack) != session.CharacterId ||
+            !CanAccess(session, stack) ||
             !IsSameKind(stack, item) ||
             (long)stack.Amount + item.Amount > MaxStack ||
             !IsStackable(stack))
@@ -211,7 +215,8 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     {
         if (!packet.Destination.IsItem ||
             !_items.TryGet(packet.Destination, out var target) ||
-            _items.GetOwner(target) != session.CharacterId)
+            _items.GetOwner(target) != session.CharacterId ||
+            !CanAccess(session, target))
         {
             return false;
         }
@@ -228,6 +233,12 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         }
 
         return TryPut(item, container, target.GridLocation!.Value);
+    }
+
+    // What lies in a bank box is reached only while the bank is open.
+    private bool CanAccess(GameSession session, ItemEntity target)
+    {
+        return _bank is null || !_mobiles.TryGet(session.CharacterId, out var character) || _bank.CanAccess(session, character, target);
     }
 
     private bool TryPut(ItemEntity item, ItemEntity container, Point2D position)

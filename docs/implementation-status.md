@@ -37,6 +37,7 @@ server does today and what it does not. It describes the current source tree; th
 
 - Place the world decoration once: `.decorate`.
 - Spawn and remove single NPCs: `.spawn`, `.remove`.
+- Open the bank box at a banker by saying *bank*, in any client language.
 - See the spawn regions where they stand: `.spawns`; get a message when regions spawn.
 - Lock and unlock doors and make their keys: `.lock`, `.unlock`, `.key`.
 - Force the light, the weather or the season, try a music track: `.globallight`, `.weather`,

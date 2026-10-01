@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Types.Speech;
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.Incoming.Login;
@@ -191,6 +192,9 @@ public sealed class ServerRoleRegistrationTests
             Assert.NotNull(container.Resolve<NpcModule>());
             Assert.NotNull(container.Resolve<ItemModule>());
             Assert.NotNull(container.Resolve<WorldModule>());
+            Assert.Contains(typeof(SpeechKeywordType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
+            Assert.IsType<BankService>(container.Resolve<IBankService>());
+            Assert.NotNull(container.Resolve<BankModule>());
             Assert.Equal(
                 [container.Resolve<IWeatherService>(), container.Resolve<ILightService>(), container.Resolve<IMusicService>(), container.Resolve<ISeasonService>()],
                 container.Resolve<IEnumerable<IRegionChangeListener>>()
@@ -268,7 +272,8 @@ public sealed class ServerRoleRegistrationTests
             // The host registers the event bus; this test container does not.
             container.RegisterMoongateEventBus();
             var listeners = container.ResolveMany<ISessionClosedListener>().ToList();
-            Assert.Equal(3, listeners.Count);
+            Assert.Equal(4, listeners.Count);
+            Assert.Contains(listeners, listener => listener is BankService);
             Assert.Contains(listeners, listener => listener is CharacterLeaveWorldService);
             Assert.Contains(listeners, listener => listener is TargetService);
             Assert.Contains(listeners, listener => listener is GumpService);

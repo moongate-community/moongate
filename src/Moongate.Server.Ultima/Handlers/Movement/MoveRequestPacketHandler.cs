@@ -34,14 +34,17 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private readonly IWorldViewService _view;
     private readonly IPacketSendService _sender;
     private readonly TimeProvider _time;
+    private readonly IBankService? _bank;
 
     public MoveRequestPacketHandler(
         IMobileService mobiles,
         IWorldViewService view,
         IPacketSendService sender,
-        TimeProvider time
+        TimeProvider time,
+        IBankService? bank = null
     )
     {
+        _bank = bank;
         _mobiles = mobiles;
         _view = view;
         _sender = sender;
@@ -93,6 +96,8 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         }
 
         state.NextStepAt = Math.Max(now, state.NextStepAt) + (packet.Running ? RunDelayMs : WalkDelayMs);
+        // As ModernUO, a step closes the bank box.
+        _bank?.Close(mobile);
         Accept(session, state, mobile, packet.Sequence);
         _view.Moved(mobile, oldLocation, packet.Running);
     }

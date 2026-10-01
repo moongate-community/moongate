@@ -62,6 +62,20 @@ public sealed class SpeechRequestPacketHandlerTests
     }
 
     [Fact]
+    public async Task Handle_Say_PassesTheClientsKeywordsToTheNpcs()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+        Assert.True(
+            UnicodeSpeechRequestPacket.TryParse(Convert.FromHexString("AD00168003B20003454E5500002001002062616E6B00"), out var packet)
+        );
+
+        await fixture.Handler.HandleAsync(fixture.Context(), packet, CancellationToken.None);
+
+        Assert.Equal([0x001, 0x002], Assert.Single(fixture.Listener.Keywords));
+    }
+
+    [Fact]
     public async Task Handle_ACommand_IsNotHeardByTheNpcs()
     {
         await using var fixture = await SpeechHandlerFixture.CreateAsync();
