@@ -1,10 +1,105 @@
 [[spawn]]
-id = "malas_modernuo_bedlam_0"
+id = "malas_modernuo_shared_bedlam_0_boneknight"
 map = "malas"
-name = "Malas boneknight, bonemage, skeletalmage, zombie, skeleton, rottingcorpse"
-mobile_ids = ["boneknight", "bonemage", "skeletalmage", "zombie", "skeleton", "rottingcorpse"]
+name = "Malas boneknight"
+mobile_ids = ["boneknight"]
 npc_list_ids = []
-max = 16
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 58
+y1 = 1616
+x2 = 138
+y2 = 1696
+
+[[spawn]]
+id = "malas_modernuo_shared_bedlam_0_bonemage"
+map = "malas"
+name = "Malas bonemage"
+mobile_ids = ["bonemage"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 58
+y1 = 1616
+x2 = 138
+y2 = 1696
+
+[[spawn]]
+id = "malas_modernuo_shared_bedlam_0_skeletalmage"
+map = "malas"
+name = "Malas skeletalmage"
+mobile_ids = ["skeletalmage"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 58
+y1 = 1616
+x2 = 138
+y2 = 1696
+
+[[spawn]]
+id = "malas_modernuo_shared_bedlam_0_zombie"
+map = "malas"
+name = "Malas zombie"
+mobile_ids = ["zombie"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 58
+y1 = 1616
+x2 = 138
+y2 = 1696
+
+[[spawn]]
+id = "malas_modernuo_shared_bedlam_0_skeleton"
+map = "malas"
+name = "Malas skeleton"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 58
+y1 = 1616
+x2 = 138
+y2 = 1696
+
+[[spawn]]
+id = "malas_modernuo_shared_bedlam_0_rottingcorpse"
+map = "malas"
+name = "Malas rottingcorpse"
+mobile_ids = ["rottingcorpse"]
+npc_list_ids = []
+max = 2
 min_minutes = 5
 max_minutes = 10
 call = 1

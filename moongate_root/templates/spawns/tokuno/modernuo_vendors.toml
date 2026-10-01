@@ -1,5 +1,5 @@
 [[spawn]]
-id = "tokuno_modernuo_vendors_0"
+id = "tokuno_modernuo_shared_vendors_0"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -18,7 +18,7 @@ x2 = 505
 y2 = 592
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_1"
+id = "tokuno_modernuo_shared_vendors_1"
 map = "tokuno"
 name = "Tokuno armourer"
 mobile_ids = ["armourer"]
@@ -31,13 +31,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 755
-y1 = 1301
-x2 = 757
-y2 = 1303
+x1 = 756
+y1 = 1302
+x2 = 756
+y2 = 1302
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_2"
+id = "tokuno_modernuo_shared_vendors_2"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -56,7 +56,7 @@ x2 = 1180
 y2 = 988
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_3"
+id = "tokuno_modernuo_shared_vendors_3"
 map = "tokuno"
 name = "Tokuno jeweler"
 mobile_ids = ["jeweler"]
@@ -69,13 +69,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 723
-y1 = 1296
-x2 = 725
-y2 = 1298
+x1 = 724
+y1 = 1297
+x2 = 724
+y2 = 1297
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_4"
+id = "tokuno_modernuo_shared_vendors_4"
 map = "tokuno"
 name = "Tokuno mage"
 mobile_ids = ["mage"]
@@ -88,13 +88,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 694
-y1 = 1296
-x2 = 696
-y2 = 1298
+x1 = 695
+y1 = 1297
+x2 = 695
+y2 = 1297
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_5"
+id = "tokuno_modernuo_shared_vendors_5"
 map = "tokuno"
 name = "Tokuno mapmaker"
 mobile_ids = ["mapmaker"]
@@ -107,13 +107,13 @@ exclude = []
 z = 63
 only_outside = false
 [[spawn.areas]]
-x1 = 690
-y1 = 1263
-x2 = 692
-y2 = 1265
+x1 = 691
+y1 = 1264
+x2 = 691
+y2 = 1264
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_6"
+id = "tokuno_modernuo_shared_vendors_6"
 map = "tokuno"
 name = "Tokuno animaltrainer"
 mobile_ids = ["animaltrainer"]
@@ -126,13 +126,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 788
-y1 = 1277
-x2 = 790
-y2 = 1279
+x1 = 789
+y1 = 1278
+x2 = 789
+y2 = 1278
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_7"
+id = "tokuno_modernuo_shared_vendors_7"
 map = "tokuno"
 name = "Tokuno blacksmith"
 mobile_ids = ["blacksmith"]
@@ -145,13 +145,13 @@ exclude = []
 z = 42
 only_outside = false
 [[spawn.areas]]
-x1 = 772
-y1 = 1247
-x2 = 774
-y2 = 1249
+x1 = 773
+y1 = 1248
+x2 = 773
+y2 = 1248
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_8"
+id = "tokuno_modernuo_shared_vendors_8"
 map = "tokuno"
 name = "Tokuno scribe"
 mobile_ids = ["scribe"]
@@ -164,13 +164,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 688
-y1 = 1254
-x2 = 690
-y2 = 1256
+x1 = 689
+y1 = 1255
+x2 = 689
+y2 = 1255
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_9"
+id = "tokuno_modernuo_shared_vendors_9"
 map = "tokuno"
 name = "Tokuno alchemist"
 mobile_ids = ["alchemist"]
@@ -183,13 +183,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 701
-y1 = 1297
-x2 = 703
-y2 = 1299
+x1 = 702
+y1 = 1298
+x2 = 702
+y2 = 1298
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_10"
+id = "tokuno_modernuo_shared_vendors_10"
 map = "tokuno"
 name = "Tokuno herbalist"
 mobile_ids = ["herbalist"]
@@ -202,13 +202,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 682
-y1 = 1297
-x2 = 684
-y2 = 1299
+x1 = 683
+y1 = 1298
+x2 = 683
+y2 = 1298
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_11"
+id = "tokuno_modernuo_shared_vendors_11"
 map = "tokuno"
 name = "Tokuno innkeeper"
 mobile_ids = ["innkeeper"]
@@ -221,13 +221,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 678
-y1 = 1206
-x2 = 680
-y2 = 1208
+x1 = 679
+y1 = 1207
+x2 = 679
+y2 = 1207
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_12"
+id = "tokuno_modernuo_shared_vendors_12"
 map = "tokuno"
 name = "Tokuno tavernkeeper"
 mobile_ids = ["tavernkeeper"]
@@ -240,13 +240,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 691
-y1 = 1212
-x2 = 693
-y2 = 1214
+x1 = 692
+y1 = 1213
+x2 = 692
+y2 = 1213
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_13"
+id = "tokuno_modernuo_shared_vendors_13"
 map = "tokuno"
 name = "Tokuno provisioner"
 mobile_ids = ["provisioner"]
@@ -259,13 +259,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 729
-y1 = 1281
-x2 = 731
-y2 = 1283
+x1 = 730
+y1 = 1282
+x2 = 730
+y2 = 1282
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_14"
+id = "tokuno_modernuo_shared_vendors_14"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -284,12 +284,12 @@ x2 = 229
 y2 = 789
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_15"
+id = "tokuno_modernuo_shared_vendors_15_noble"
 map = "tokuno"
-name = "Tokuno noble, peasant, beggar"
-mobile_ids = ["noble", "peasant", "beggar"]
+name = "Tokuno noble"
+mobile_ids = ["noble"]
 npc_list_ids = []
-max = 30
+max = 10
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -303,7 +303,45 @@ x2 = 795
 y2 = 1316
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_16"
+id = "tokuno_modernuo_shared_vendors_15_peasant"
+map = "tokuno"
+name = "Tokuno peasant"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 675
+y1 = 1196
+x2 = 795
+y2 = 1316
+
+[[spawn]]
+id = "tokuno_modernuo_shared_vendors_15_beggar"
+map = "tokuno"
+name = "Tokuno beggar"
+mobile_ids = ["beggar"]
+npc_list_ids = []
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 675
+y1 = 1196
+x2 = 795
+y2 = 1316
+
+[[spawn]]
+id = "tokuno_modernuo_shared_vendors_16"
 map = "tokuno"
 name = "Tokuno tinker"
 mobile_ids = ["tinker"]
@@ -316,13 +354,13 @@ exclude = []
 z = 61
 only_outside = false
 [[spawn.areas]]
-x1 = 719
-y1 = 1212
-x2 = 721
-y2 = 1214
+x1 = 720
+y1 = 1213
+x2 = 720
+y2 = 1213
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_17"
+id = "tokuno_modernuo_shared_vendors_17"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -341,7 +379,7 @@ x2 = 766
 y2 = 250
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_18"
+id = "tokuno_modernuo_shared_vendors_18"
 map = "tokuno"
 name = "Tokuno armourer"
 mobile_ids = ["armourer"]
@@ -354,13 +392,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 741
-y1 = 1303
-x2 = 743
-y2 = 1305
+x1 = 742
+y1 = 1304
+x2 = 742
+y2 = 1304
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_19"
+id = "tokuno_modernuo_shared_vendors_19"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -379,7 +417,7 @@ x2 = 299
 y2 = 639
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_20"
+id = "tokuno_modernuo_shared_vendors_20"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -398,7 +436,7 @@ x2 = 251
 y2 = 1092
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_21"
+id = "tokuno_modernuo_shared_vendors_21"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -411,13 +449,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 780
-y1 = 1218
-x2 = 782
-y2 = 1220
+x1 = 781
+y1 = 1219
+x2 = 781
+y2 = 1219
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_22"
+id = "tokuno_modernuo_shared_vendors_22"
 map = "tokuno"
 name = "Tokuno blacksmith"
 mobile_ids = ["blacksmith"]
@@ -430,18 +468,18 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 660
-y1 = 1208
-x2 = 662
-y2 = 1210
+x1 = 661
+y1 = 1209
+x2 = 661
+y2 = 1209
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_23"
+id = "tokuno_modernuo_shared_vendors_24_armourer"
 map = "tokuno"
-name = "Tokuno armourer, weaponsmith"
-mobile_ids = ["armourer", "weaponsmith"]
+name = "Tokuno armourer"
+mobile_ids = ["armourer"]
 npc_list_ids = []
-max = 2
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -455,7 +493,26 @@ x2 = 753
 y2 = 1307
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_24"
+id = "tokuno_modernuo_shared_vendors_24_weaponsmith"
+map = "tokuno"
+name = "Tokuno weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 745
+y1 = 1299
+x2 = 753
+y2 = 1307
+
+[[spawn]]
+id = "tokuno_modernuo_shared_vendors_25"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -474,7 +531,7 @@ x2 = 376
 y2 = 436
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_25"
+id = "tokuno_modernuo_shared_vendors_26"
 map = "tokuno"
 name = "Tokuno shipwright"
 mobile_ids = ["shipwright"]
@@ -487,13 +544,13 @@ exclude = []
 z = 63
 only_outside = false
 [[spawn.areas]]
-x1 = 668
-y1 = 1265
-x2 = 670
-y2 = 1267
+x1 = 669
+y1 = 1266
+x2 = 669
+y2 = 1266
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_26"
+id = "tokuno_modernuo_shared_vendors_27"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -512,7 +569,7 @@ x2 = 1155
 y2 = 939
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_27"
+id = "tokuno_modernuo_shared_vendors_28"
 map = "tokuno"
 name = "Tokuno towncrier"
 mobile_ids = ["towncrier"]
@@ -525,13 +582,13 @@ exclude = []
 z = 46
 only_outside = false
 [[spawn.areas]]
-x1 = 731
-y1 = 1255
-x2 = 733
-y2 = 1257
+x1 = 732
+y1 = 1256
+x2 = 732
+y2 = 1256
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_28"
+id = "tokuno_modernuo_shared_vendors_29"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -550,7 +607,7 @@ x2 = 402
 y2 = 552
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_29"
+id = "tokuno_modernuo_shared_vendors_30"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -569,7 +626,7 @@ x2 = 1114
 y2 = 498
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_30"
+id = "tokuno_modernuo_shared_vendors_31"
 map = "tokuno"
 name = "Tokuno tanner"
 mobile_ids = ["tanner"]
@@ -582,13 +639,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 719
-y1 = 1210
-x2 = 721
-y2 = 1212
+x1 = 720
+y1 = 1211
+x2 = 720
+y2 = 1211
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_31"
+id = "tokuno_modernuo_shared_vendors_32"
 map = "tokuno"
 name = "Tokuno carpenter"
 mobile_ids = ["carpenter"]
@@ -601,13 +658,13 @@ exclude = []
 z = 61
 only_outside = false
 [[spawn.areas]]
-x1 = 738
-y1 = 1222
-x2 = 740
-y2 = 1224
+x1 = 739
+y1 = 1223
+x2 = 739
+y2 = 1223
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_32"
+id = "tokuno_modernuo_shared_vendors_33"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -626,7 +683,7 @@ x2 = 1224
 y2 = 497
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_33"
+id = "tokuno_modernuo_shared_vendors_34"
 map = "tokuno"
 name = "Tokuno weaponsmith"
 mobile_ids = ["weaponsmith"]
@@ -639,13 +696,13 @@ exclude = []
 z = 42
 only_outside = false
 [[spawn.areas]]
-x1 = 778
-y1 = 1258
-x2 = 780
-y2 = 1260
+x1 = 779
+y1 = 1259
+x2 = 779
+y2 = 1259
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_34"
+id = "tokuno_modernuo_shared_vendors_35"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -664,7 +721,7 @@ x2 = 897
 y2 = 521
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_35"
+id = "tokuno_modernuo_shared_vendors_36"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -683,12 +740,12 @@ x2 = 984
 y2 = 243
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_36"
+id = "tokuno_modernuo_shared_vendors_37_baker"
 map = "tokuno"
-name = "Tokuno baker, butcher, cook"
-mobile_ids = ["baker", "butcher", "cook"]
+name = "Tokuno baker"
+mobile_ids = ["baker"]
 npc_list_ids = []
-max = 3
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -696,13 +753,51 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 702
-y1 = 1261
-x2 = 704
-y2 = 1263
+x1 = 703
+y1 = 1262
+x2 = 703
+y2 = 1262
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_37"
+id = "tokuno_modernuo_shared_vendors_37_butcher"
+map = "tokuno"
+name = "Tokuno butcher"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 703
+y1 = 1262
+x2 = 703
+y2 = 1262
+
+[[spawn]]
+id = "tokuno_modernuo_shared_vendors_37_cook"
+map = "tokuno"
+name = "Tokuno cook"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 703
+y1 = 1262
+x2 = 703
+y2 = 1262
+
+[[spawn]]
+id = "tokuno_modernuo_shared_vendors_38"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]
@@ -721,7 +816,7 @@ x2 = 561
 y2 = 537
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_38"
+id = "tokuno_modernuo_shared_vendors_39"
 map = "tokuno"
 name = "Tokuno banker"
 mobile_ids = ["banker"]
@@ -734,13 +829,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 728
-y1 = 1248
-x2 = 730
-y2 = 1250
+x1 = 729
+y1 = 1249
+x2 = 729
+y2 = 1249
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_39"
+id = "tokuno_modernuo_shared_vendors_40"
 map = "tokuno"
 name = "Tokuno weaponsmith"
 mobile_ids = ["weaponsmith"]
@@ -753,13 +848,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 805
-y1 = 1307
-x2 = 807
-y2 = 1309
+x1 = 806
+y1 = 1308
+x2 = 806
+y2 = 1308
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_40"
+id = "tokuno_modernuo_shared_vendors_41"
 map = "tokuno"
 name = "Tokuno weaver"
 mobile_ids = ["weaver"]
@@ -772,13 +867,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 743
-y1 = 1209
-x2 = 745
-y2 = 1211
+x1 = 744
+y1 = 1210
+x2 = 744
+y2 = 1210
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_41"
+id = "tokuno_modernuo_shared_vendors_42"
 map = "tokuno"
 name = "Tokuno tailor"
 mobile_ids = ["tailor"]
@@ -791,13 +886,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 743
-y1 = 1218
-x2 = 745
-y2 = 1220
+x1 = 744
+y1 = 1219
+x2 = 744
+y2 = 1219
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_42"
+id = "tokuno_modernuo_shared_vendors_43"
 map = "tokuno"
 name = "Tokuno blacksmith"
 mobile_ids = ["blacksmith"]
@@ -810,13 +905,13 @@ exclude = []
 z = 41
 only_outside = false
 [[spawn.areas]]
-x1 = 661
-y1 = 1209
-x2 = 663
-y2 = 1211
+x1 = 662
+y1 = 1210
+x2 = 662
+y2 = 1210
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_43"
+id = "tokuno_modernuo_shared_vendors_44"
 map = "tokuno"
 name = "Tokuno bard"
 mobile_ids = ["bard"]
@@ -835,7 +930,7 @@ x2 = 679
 y2 = 1269
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_44"
+id = "tokuno_modernuo_shared_vendors_45"
 map = "tokuno"
 name = "Tokuno bowyer"
 mobile_ids = ["bowyer"]
@@ -848,13 +943,13 @@ exclude = []
 z = 42
 only_outside = false
 [[spawn.areas]]
-x1 = 780
-y1 = 1300
-x2 = 782
-y2 = 1302
+x1 = 781
+y1 = 1301
+x2 = 781
+y2 = 1301
 
 [[spawn]]
-id = "tokuno_modernuo_vendors_45"
+id = "tokuno_modernuo_shared_vendors_46"
 map = "tokuno"
 name = "Tokuno healer"
 mobile_ids = ["healer"]

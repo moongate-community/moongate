@@ -53,7 +53,7 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         Assert.True(Run(MapType.Malas) == 0, CombinedOutput);
 
         var spawns = Read("malas", "modernuo_outdoors");
-        Assert.Equal(["malas_modernuo_outdoors_0", "malas_modernuo_outdoors_1"], spawns.Select(spawn => spawn.Id));
+        Assert.Equal(["malas_modernuo_shared_outdoors_0", "malas_modernuo_shared_outdoors_1"], spawns.Select(spawn => spawn.Id));
 
         var hart = spawns[0];
         Assert.Equal(MapType.Malas, hart.Map);
@@ -63,11 +63,79 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         Assert.Equal((995, 495, 1005, 505), (area.X1, area.Y1, area.X2, area.Y2));
         Assert.Equal(26, hart.Z);
 
-        // A spawner without a home range still spawns around its spot; a short delay is a minute at least.
+        // A spawner without a home range spawns on its spot, as in ModernUO; a short delay is a minute at least.
         var bank = spawns[1];
         Assert.Equal(["banker", "orcmage", "earthele"], bank.MobileIds);
         Assert.Equal((1, 1), (bank.MinMinutes, bank.MaxMinutes));
-        Assert.Equal((19, 29, 21, 31), (bank.Areas[0].X1, bank.Areas[0].Y1, bank.Areas[0].X2, bank.Areas[0].Y2));
+        Assert.Equal((20, 30, 20, 30), (bank.Areas[0].X1, bank.Areas[0].Y1, bank.Areas[0].X2, bank.Areas[0].Y2));
+    }
+
+    [Fact]
+    public void Run_AnEntryCappedBelowTheCount_GetsItsOwnRegion_AndUnknownEntriesKeepTheirShare()
+    {
+        WriteSpawners(
+            "post-uoml/malas/South.json",
+            Spawner(500, 500, 0, 10, 10, "00:05:00", "00:10:00", "GreatHart", "Slith").Replace(
+                "\"entries\": [",
+                "\"entries\": [{ \"name\": \"Minter\", \"maxCount\": 1, \"probability\": 100 },"
+            )
+        );
+
+        Assert.True(Run(MapType.Malas) == 0, CombinedOutput);
+
+        // ModernUO: at most one banker; the other 9 picks split between the hart and the unknown slith.
+        var spawns = Read("malas", "modernuo_south");
+        Assert.Equal(
+            [("malas_modernuo_post_uoml_south_0", "great_hart", 5), ("malas_modernuo_post_uoml_south_0_banker", "banker", 1)],
+            spawns.Select(spawn => (spawn.Id, Assert.Single(spawn.MobileIds), spawn.Max))
+        );
+    }
+
+    [Fact]
+    public void Run_ACappedClassListedTwice_IsOneRegionWithBothCaps()
+    {
+        var twice = "{ \"name\": \"Minter\", \"maxCount\": 1, \"probability\": 100 },";
+        WriteSpawners(
+            "shared/malas/Bedlam.json",
+            Spawner(500, 500, 0, 10, 10, "00:05:00", "00:10:00", "GreatHart").Replace("\"entries\": [", "\"entries\": [" + twice + twice)
+        );
+
+        Assert.True(Run(MapType.Malas) == 0, CombinedOutput);
+
+        Assert.Equal(
+            [("malas_modernuo_shared_bedlam_0", 8), ("malas_modernuo_shared_bedlam_0_banker", 2)],
+            Read("malas", "modernuo_bedlam").Select(spawn => (spawn.Id, spawn.Max))
+        );
+    }
+
+    [Fact]
+    public void Run_SpawnBounds_AreTheArea_AndTheirTopTheCeiling()
+    {
+        WriteSpawners(
+            "shared/tokuno/TownsLife.json",
+            Spawner(713, 1351, 25, 0, 4, "00:05:00", "00:10:00", "GreatHart").Replace(
+                "\"team\": 0,",
+                "\"team\": 0, \"spawnBounds\": { \"start\": { \"x\": 693, \"y\": 1331, \"z\": -128 }, \"end\": { \"x\": 733, \"y\": 1371, \"z\": 40 } },"
+            )
+        );
+
+        Assert.True(Run(MapType.Tokuno) == 0, CombinedOutput);
+
+        var spawn = Assert.Single(Read("tokuno", "modernuo_towns_life"));
+        Assert.Equal((693, 1331, 733, 1371, 40), (spawn.Areas[0].X1, spawn.Areas[0].Y1, spawn.Areas[0].X2, spawn.Areas[0].Y2, spawn.Z));
+    }
+
+    [Fact]
+    public void Run_AMobilesFolderWithoutTemplates_IsAnError_AndKeepsTheOldFiles()
+    {
+        WriteSpawners("shared/malas/Vendors.json", Spawner(10, 10, 0, 2, 1, "00:05:00", "00:10:00", "Minter"));
+        Directory.CreateDirectory(Path.Combine(Destination, "malas"));
+        File.WriteAllText(Path.Combine(Destination, "malas", "modernuo_vendors.toml"), "");
+
+        Assert.Equal(2, ModernUoSpawnConverter.Run(Source, [MapType.Malas], Path.Combine(_root, "nowhere"), Destination, _output, _error));
+
+        Assert.Contains("no mobile templates", _error.ToString(), StringComparison.Ordinal);
+        Assert.True(File.Exists(Path.Combine(Destination, "malas", "modernuo_vendors.toml")));
     }
 
     [Fact]

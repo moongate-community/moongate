@@ -7,7 +7,7 @@ Felucca, Trammel and Ilshenar, for up to about 25,000 NPCs, picking from 446 NPC
 spawns for New Haven, so `spawns/trammel/town_new_haven.toml` adds its 57 spawn points from
 ModernUO: the vendors, the bankers, the townsfolk and the town animals, 99 NPCs in all. Malas,
 Tokuno and TerMur, which UOX3 has no spawns for either, take theirs from ModernUO's spawners through
-[`mg-uoxconv modernuo-spawns`](uox3-migration.md#spawns-of-modernuo): 669 regions, about 4,400
+[`mg-uoxconv modernuo-spawns`](uox3-migration.md#spawns-of-modernuo): 1,206 regions, about 4,200
 NPCs, in the `modernuo_*.toml` files of their folders; the spawners whose creatures have no template
 yet are left out.
 

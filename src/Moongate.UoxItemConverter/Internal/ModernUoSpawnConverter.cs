@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
@@ -7,9 +8,10 @@ namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
 ///     Converts ModernUO's spawners (<c>Distribution/Data/Spawns/&lt;era&gt;/&lt;map&gt;/*.json</c>) of the chosen maps
-///     into spawn regions, one small area per spawner, for the maps UOX3 has no spawns for. It reads the <c>shared</c>
-///     and <c>post-uoml</c> eras, the world of a modern client, and writes <c>&lt;map&gt;/modernuo_&lt;file&gt;.toml</c>,
-///     replacing the <c>modernuo_</c> files of the map it wrote before.
+///     into spawn regions, for the maps UOX3 has no spawns for. It reads the <c>shared</c> and <c>post-uoml</c> eras,
+///     the world of a modern client, and writes <c>&lt;map&gt;/modernuo_&lt;file&gt;.toml</c>, replacing the
+///     <c>modernuo_</c> files of the map it wrote before. A region id names the era, the file and the spawner's index in
+///     it, so it stays the same when a later run resolves more mobiles.
 /// </summary>
 internal static class ModernUoSpawnConverter
 {
@@ -37,6 +39,15 @@ internal static class ModernUoSpawnConverter
         }
 
         var ids = UoxSpawnConverter.ReadMobileIds(mobileDestination);
+
+        // Without templates every spawner would be skipped and the shipped files replaced by nothing.
+        if (ids.Count == 0)
+        {
+            error.WriteLine($"Found no mobile templates under {mobileDestination}.");
+
+            return 2;
+        }
+
         var flatIds = new Dictionary<string, string>(StringComparer.Ordinal);
 
         foreach (var id in ids.Order(StringComparer.Ordinal))
@@ -53,7 +64,7 @@ internal static class ModernUoSpawnConverter
         }
 
         ConverterOutput.WriteReport(output, report);
-        output.WriteLine($"Converted {written} ModernUO spawner(s) into spawn regions.");
+        output.WriteLine($"Wrote {written} spawn region(s) from ModernUO's spawners.");
 
         return 0;
     }
@@ -91,16 +102,20 @@ internal static class ModernUoSpawnConverter
                 }
 
                 using var document = JsonDocument.Parse(File.ReadAllText(file));
+                var index = 0;
 
                 foreach (var spawner in document.RootElement.EnumerateArray())
                 {
-                    if (Build(spawner, map, ids, flatIds, report) is { } spawn)
-                    {
-                        spawn.Id = $"{mapName}_modernuo_{stem}_{spawns.Count}";
-                        spawns.Add(spawn);
-                    }
+                    var id = $"{mapName}_modernuo_{StringUtils.ToSnakeCase(era)}_{stem}_{index++}";
+                    spawns.AddRange(Build(spawner, id, map, ids, flatIds, report));
                 }
             }
+        }
+
+        // Nothing to write keeps what a previous run wrote.
+        if (byFile.Values.All(spawns => spawns.Count == 0))
+        {
+            return 0;
         }
 
         var mapDestination = Path.Combine(spawnsDestination, mapName);
@@ -127,63 +142,132 @@ internal static class ModernUoSpawnConverter
         return written;
     }
 
-    private static SpawnTemplate? Build(
+    // ModernUO picks each spawn among the entries under their maxCount, up to the spawner's count. An entry capped
+    // below the count becomes a region of its own with its cap; the others share one region with what is left, less
+    // the share of the entries no template matches.
+    private static IEnumerable<SpawnTemplate> Build(
         JsonElement spawner,
+        string id,
         MapType map,
         HashSet<string> ids,
         Dictionary<string, string> flatIds,
         ConversionReport report
     )
     {
-        var mobiles = new List<string>();
+        var count = Math.Max(1, spawner.TryGetProperty("count", out var countValue) ? countValue.GetInt32() : 1);
+        // By mobile, in entry order: a class listed twice adds its caps.
+        var capped = new List<(string Mobile, int Cap)>();
+        var shared = new List<string>();
+        var unknownShared = 0;
+        var cappedTotal = 0;
 
         foreach (var entry in spawner.GetProperty("entries").EnumerateArray())
         {
             var name = entry.GetProperty("name").GetString() ?? string.Empty;
+            var cap = Math.Min(count, entry.TryGetProperty("maxCount", out var maxCount) ? maxCount.GetInt32() : count);
+            var mobile = ModernUoMobileNames.Resolve(name, flatIds, ids);
 
-            if (ModernUoMobileNames.Resolve(name, flatIds, ids) is { } id)
-            {
-                if (!mobiles.Contains(id))
-                {
-                    mobiles.Add(id);
-                }
-            }
-            else
+            if (mobile is null)
             {
                 report.Count($"unknown mobile {name}");
             }
+
+            if (cap < count)
+            {
+                cappedTotal += cap;
+
+                if (mobile is not null && cap > 0)
+                {
+                    var known = capped.FindIndex(pair => pair.Mobile == mobile);
+
+                    if (known < 0)
+                    {
+                        capped.Add((mobile, cap));
+                    }
+                    else
+                    {
+                        capped[known] = (mobile, Math.Min(count, capped[known].Cap + cap));
+                    }
+                }
+            }
+            else if (mobile is null)
+            {
+                unknownShared++;
+            }
+            else if (!shared.Contains(mobile))
+            {
+                shared.Add(mobile);
+            }
         }
 
-        if (mobiles.Count == 0)
+        if (capped.Count == 0 && shared.Count == 0)
         {
             report.Count("spawner without known mobiles skipped");
 
-            return null;
+            yield break;
         }
 
+        var rest = Math.Max(1, count - cappedTotal);
+
+        if (shared.Count > 0)
+        {
+            var max = Math.Max(1, (int)Math.Round(rest * shared.Count / (double)(shared.Count + unknownShared), MidpointRounding.AwayFromZero));
+
+            yield return Region(spawner, id, map, shared, max);
+        }
+
+        foreach (var (mobile, cap) in capped)
+        {
+            yield return Region(spawner, $"{id}_{mobile}", map, [mobile], cap);
+        }
+    }
+
+    private static SpawnTemplate Region(JsonElement spawner, string id, MapType map, List<string> mobiles, int max)
+    {
         var location = spawner.GetProperty("location");
         var (x, y, z) = (location[0].GetInt32(), location[1].GetInt32(), location[2].GetInt32());
-        var range = Math.Max(1, spawner.TryGetProperty("homeRange", out var home) ? home.GetInt32() : 0);
         var min = Minutes(spawner, "minDelay");
-        var max = Math.Max(min, Minutes(spawner, "maxDelay"));
-
-        return new()
+        var spawn = new SpawnTemplate
         {
+            Id = id,
             Map = map,
             Name = $"{map} {string.Join(", ", mobiles)}",
-            MobileIds = mobiles,
-            Max = Math.Max(1, spawner.TryGetProperty("count", out var count) ? count.GetInt32() : 1),
+            MobileIds = [..mobiles],
+            Max = max,
             MinMinutes = min,
-            MaxMinutes = max,
-            Z = z + Headroom,
-            Areas = [new() { X1 = Math.Max(0, x - range), Y1 = Math.Max(0, y - range), X2 = x + range, Y2 = y + range }]
+            MaxMinutes = Math.Max(min, Minutes(spawner, "maxDelay"))
         };
+
+        if (spawner.TryGetProperty("spawnBounds", out var bounds))
+        {
+            var (start, end) = (bounds.GetProperty("start"), bounds.GetProperty("end"));
+            spawn.Areas.Add(
+                new()
+                {
+                    X1 = Math.Max(0, start.GetProperty("x").GetInt32()),
+                    Y1 = Math.Max(0, start.GetProperty("y").GetInt32()),
+                    X2 = end.GetProperty("x").GetInt32(),
+                    Y2 = end.GetProperty("y").GetInt32()
+                }
+            );
+            spawn.Z = end.GetProperty("z").GetInt32();
+
+            return spawn;
+        }
+
+        // Without a home range ModernUO spawns on the spawner's own spot.
+        var range = Math.Max(0, spawner.TryGetProperty("homeRange", out var home) ? home.GetInt32() : 0);
+        spawn.Areas.Add(new() { X1 = Math.Max(0, x - range), Y1 = Math.Max(0, y - range), X2 = x + range, Y2 = y + range });
+        spawn.Z = z + Headroom;
+
+        return spawn;
     }
 
     // A ModernUO delay, "hh:mm:ss", in whole minutes, a minute at least.
     private static int Minutes(JsonElement spawner, string property)
     {
-        return spawner.TryGetProperty(property, out var value) && TimeSpan.TryParse(value.GetString(), out var delay)
+        return spawner.TryGetProperty(property, out var value) &&
+               TimeSpan.TryParse(value.GetString(), CultureInfo.InvariantCulture, out var delay)
             ? Math.Max(1, (int)delay.TotalMinutes)
             : 1;
     }

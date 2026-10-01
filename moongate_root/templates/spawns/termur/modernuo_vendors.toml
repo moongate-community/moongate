@@ -1,5 +1,5 @@
 [[spawn]]
-id = "termur_modernuo_vendors_0"
+id = "termur_modernuo_post_uoml_vendors_0"
 map = "ter_mur"
 name = "TerMur baker"
 mobile_ids = ["baker"]
@@ -12,13 +12,13 @@ exclude = []
 z = -26
 only_outside = false
 [[spawn.areas]]
-x1 = 975
-y1 = 3880
-x2 = 977
-y2 = 3882
+x1 = 976
+y1 = 3881
+x2 = 976
+y2 = 3881
 
 [[spawn]]
-id = "termur_modernuo_vendors_1"
+id = "termur_modernuo_post_uoml_vendors_1_blacksmith"
 map = "ter_mur"
 name = "TerMur blacksmith"
 mobile_ids = ["blacksmith"]
@@ -31,13 +31,13 @@ exclude = []
 z = -26
 only_outside = false
 [[spawn.areas]]
-x1 = 1009
-y1 = 3882
-x2 = 1011
-y2 = 3884
+x1 = 1010
+y1 = 3883
+x2 = 1010
+y2 = 3883
 
 [[spawn]]
-id = "termur_modernuo_vendors_2"
+id = "termur_modernuo_post_uoml_vendors_2_healer"
 map = "ter_mur"
 name = "TerMur healer"
 mobile_ids = ["healer"]
@@ -50,13 +50,13 @@ exclude = []
 z = -26
 only_outside = false
 [[spawn.areas]]
-x1 = 1012
-y1 = 3912
-x2 = 1014
-y2 = 3914
+x1 = 1013
+y1 = 3913
+x2 = 1013
+y2 = 3913
 
 [[spawn]]
-id = "termur_modernuo_vendors_3"
+id = "termur_modernuo_post_uoml_vendors_3_tinker"
 map = "ter_mur"
 name = "TerMur tinker"
 mobile_ids = ["tinker"]
@@ -69,13 +69,13 @@ exclude = []
 z = -26
 only_outside = false
 [[spawn.areas]]
-x1 = 976
-y1 = 3908
-x2 = 978
-y2 = 3910
+x1 = 977
+y1 = 3909
+x2 = 977
+y2 = 3909
 
 [[spawn]]
-id = "termur_modernuo_vendors_4"
+id = "termur_modernuo_post_uoml_vendors_4"
 map = "ter_mur"
 name = "TerMur innkeeper"
 mobile_ids = ["innkeeper"]
@@ -88,13 +88,13 @@ exclude = []
 z = -26
 only_outside = false
 [[spawn.areas]]
-x1 = 942
-y1 = 3923
-x2 = 944
-y2 = 3925
+x1 = 943
+y1 = 3924
+x2 = 943
+y2 = 3924
 
 [[spawn]]
-id = "termur_modernuo_vendors_5"
+id = "termur_modernuo_post_uoml_vendors_5_blacksmith"
 map = "ter_mur"
 name = "TerMur blacksmith"
 mobile_ids = ["blacksmith"]
@@ -107,13 +107,13 @@ exclude = []
 z = -26
 only_outside = false
 [[spawn.areas]]
-x1 = 1019
-y1 = 3883
-x2 = 1021
-y2 = 3885
+x1 = 1020
+y1 = 3884
+x2 = 1020
+y2 = 3884
 
 [[spawn]]
-id = "termur_modernuo_vendors_6"
+id = "termur_modernuo_post_uoml_vendors_6"
 map = "ter_mur"
 name = "TerMur innkeeper"
 mobile_ids = ["innkeeper"]
@@ -126,13 +126,13 @@ exclude = []
 z = -3
 only_outside = false
 [[spawn.areas]]
-x1 = 739
-y1 = 3465
-x2 = 741
-y2 = 3467
+x1 = 740
+y1 = 3466
+x2 = 740
+y2 = 3466
 
 [[spawn]]
-id = "termur_modernuo_vendors_7"
+id = "termur_modernuo_post_uoml_vendors_7"
 map = "ter_mur"
 name = "TerMur scribe"
 mobile_ids = ["scribe"]
@@ -145,18 +145,75 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 771
-y1 = 3466
-x2 = 773
-y2 = 3468
+x1 = 772
+y1 = 3467
+x2 = 772
+y2 = 3467
 
 [[spawn]]
-id = "termur_modernuo_vendors_8"
+id = "termur_modernuo_post_uoml_vendors_8_herbalist"
 map = "ter_mur"
-name = "TerMur herbalist, alchemist, hairstylist"
-mobile_ids = ["herbalist", "alchemist", "hairstylist"]
+name = "TerMur herbalist"
+mobile_ids = ["herbalist"]
 npc_list_ids = []
-max = 3
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -4
+only_outside = false
+[[spawn.areas]]
+x1 = 773
+y1 = 3478
+x2 = 773
+y2 = 3478
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_8_alchemist"
+map = "ter_mur"
+name = "TerMur alchemist"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -4
+only_outside = false
+[[spawn.areas]]
+x1 = 773
+y1 = 3478
+x2 = 773
+y2 = 3478
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_8_hairstylist"
+map = "ter_mur"
+name = "TerMur hairstylist"
+mobile_ids = ["hairstylist"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -4
+only_outside = false
+[[spawn.areas]]
+x1 = 773
+y1 = 3478
+x2 = 773
+y2 = 3478
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_9_mage"
+map = "ter_mur"
+name = "TerMur mage"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 2
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -165,17 +222,17 @@ z = -4
 only_outside = false
 [[spawn.areas]]
 x1 = 772
-y1 = 3477
-x2 = 774
-y2 = 3479
+y1 = 3490
+x2 = 772
+y2 = 3490
 
 [[spawn]]
-id = "termur_modernuo_vendors_9"
+id = "termur_modernuo_post_uoml_vendors_9_alchemist"
 map = "ter_mur"
-name = "TerMur mage, alchemist"
-mobile_ids = ["mage", "alchemist"]
+name = "TerMur alchemist"
+mobile_ids = ["alchemist"]
 npc_list_ids = []
-max = 3
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -183,13 +240,13 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 771
-y1 = 3489
-x2 = 773
-y2 = 3491
+x1 = 772
+y1 = 3490
+x2 = 772
+y2 = 3490
 
 [[spawn]]
-id = "termur_modernuo_vendors_10"
+id = "termur_modernuo_post_uoml_vendors_10_healer"
 map = "ter_mur"
 name = "TerMur healer"
 mobile_ids = ["healer"]
@@ -202,18 +259,18 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 782
-y1 = 3490
-x2 = 784
-y2 = 3492
+x1 = 783
+y1 = 3491
+x2 = 783
+y2 = 3491
 
 [[spawn]]
-id = "termur_modernuo_vendors_11"
+id = "termur_modernuo_post_uoml_vendors_11_provisioner"
 map = "ter_mur"
-name = "TerMur provisioner, cobbler"
-mobile_ids = ["provisioner", "cobbler"]
+name = "TerMur provisioner"
+mobile_ids = ["provisioner"]
 npc_list_ids = []
-max = 2
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -221,13 +278,32 @@ exclude = []
 z = 16
 only_outside = false
 [[spawn.areas]]
-x1 = 796
-y1 = 3493
-x2 = 798
-y2 = 3495
+x1 = 797
+y1 = 3494
+x2 = 797
+y2 = 3494
 
 [[spawn]]
-id = "termur_modernuo_vendors_12"
+id = "termur_modernuo_post_uoml_vendors_11_cobbler"
+map = "ter_mur"
+name = "TerMur cobbler"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 797
+y1 = 3494
+x2 = 797
+y2 = 3494
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_12"
 map = "ter_mur"
 name = "TerMur baker"
 mobile_ids = ["baker"]
@@ -240,13 +316,13 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 804
-y1 = 3490
-x2 = 806
-y2 = 3492
+x1 = 805
+y1 = 3491
+x2 = 805
+y2 = 3491
 
 [[spawn]]
-id = "termur_modernuo_vendors_13"
+id = "termur_modernuo_post_uoml_vendors_13"
 map = "ter_mur"
 name = "TerMur butcher"
 mobile_ids = ["butcher"]
@@ -259,18 +335,18 @@ exclude = []
 z = 6
 only_outside = false
 [[spawn.areas]]
-x1 = 816
-y1 = 3455
-x2 = 818
-y2 = 3457
+x1 = 817
+y1 = 3456
+x2 = 817
+y2 = 3456
 
 [[spawn]]
-id = "termur_modernuo_vendors_14"
+id = "termur_modernuo_post_uoml_vendors_14_carpenter"
 map = "ter_mur"
-name = "TerMur carpenter, architect"
-mobile_ids = ["carpenter", "architect"]
+name = "TerMur carpenter"
+mobile_ids = ["carpenter"]
 npc_list_ids = []
-max = 3
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -278,13 +354,32 @@ exclude = []
 z = 16
 only_outside = false
 [[spawn.areas]]
-x1 = 816
-y1 = 3437
-x2 = 818
-y2 = 3439
+x1 = 817
+y1 = 3438
+x2 = 817
+y2 = 3438
 
 [[spawn]]
-id = "termur_modernuo_vendors_15"
+id = "termur_modernuo_post_uoml_vendors_14_architect"
+map = "ter_mur"
+name = "TerMur architect"
+mobile_ids = ["architect"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 817
+y1 = 3438
+x2 = 817
+y2 = 3438
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_15_tinker"
 map = "ter_mur"
 name = "TerMur tinker"
 mobile_ids = ["tinker"]
@@ -297,13 +392,13 @@ exclude = []
 z = 16
 only_outside = false
 [[spawn.areas]]
-x1 = 816
-y1 = 3425
-x2 = 818
-y2 = 3427
+x1 = 817
+y1 = 3426
+x2 = 817
+y2 = 3426
 
 [[spawn]]
-id = "termur_modernuo_vendors_16"
+id = "termur_modernuo_post_uoml_vendors_16_blacksmith"
 map = "ter_mur"
 name = "TerMur blacksmith"
 mobile_ids = ["blacksmith"]
@@ -316,35 +411,16 @@ exclude = []
 z = 16
 only_outside = false
 [[spawn.areas]]
-x1 = 815
-y1 = 3418
-x2 = 817
-y2 = 3420
+x1 = 816
+y1 = 3419
+x2 = 816
+y2 = 3419
 
 [[spawn]]
-id = "termur_modernuo_vendors_17"
+id = "termur_modernuo_post_uoml_vendors_17_tailor"
 map = "ter_mur"
-name = "TerMur tailor, weaver"
-mobile_ids = ["tailor", "weaver"]
-npc_list_ids = []
-max = 3
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 804
-y1 = 3396
-x2 = 806
-y2 = 3398
-
-[[spawn]]
-id = "termur_modernuo_vendors_18"
-map = "ter_mur"
-name = "TerMur tanner, furtrader"
-mobile_ids = ["tanner", "furtrader"]
+name = "TerMur tailor"
+mobile_ids = ["tailor"]
 npc_list_ids = []
 max = 2
 min_minutes = 5
@@ -354,13 +430,70 @@ exclude = []
 z = 16
 only_outside = false
 [[spawn.areas]]
-x1 = 803
-y1 = 3386
+x1 = 805
+y1 = 3397
 x2 = 805
-y2 = 3388
+y2 = 3397
 
 [[spawn]]
-id = "termur_modernuo_vendors_19"
+id = "termur_modernuo_post_uoml_vendors_17_weaver"
+map = "ter_mur"
+name = "TerMur weaver"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 805
+y1 = 3397
+x2 = 805
+y2 = 3397
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_18_tanner"
+map = "ter_mur"
+name = "TerMur tanner"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 804
+y1 = 3387
+x2 = 804
+y2 = 3387
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_18_furtrader"
+map = "ter_mur"
+name = "TerMur furtrader"
+mobile_ids = ["furtrader"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 804
+y1 = 3387
+x2 = 804
+y2 = 3387
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_19"
 map = "ter_mur"
 name = "TerMur animaltrainer"
 mobile_ids = ["animaltrainer"]
@@ -373,13 +506,13 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 850
-y1 = 3403
-x2 = 852
-y2 = 3405
+x1 = 851
+y1 = 3404
+x2 = 851
+y2 = 3404
 
 [[spawn]]
-id = "termur_modernuo_vendors_20"
+id = "termur_modernuo_post_uoml_vendors_20_banker"
 map = "ter_mur"
 name = "TerMur banker"
 mobile_ids = ["banker"]
@@ -392,13 +525,13 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 832
-y1 = 3438
-x2 = 834
-y2 = 3440
+x1 = 833
+y1 = 3439
+x2 = 833
+y2 = 3439
 
 [[spawn]]
-id = "termur_modernuo_vendors_21"
+id = "termur_modernuo_post_uoml_vendors_21_banker"
 map = "ter_mur"
 name = "TerMur banker"
 mobile_ids = ["banker"]
@@ -411,18 +544,18 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 842
-y1 = 3438
-x2 = 844
-y2 = 3440
+x1 = 843
+y1 = 3439
+x2 = 843
+y2 = 3439
 
 [[spawn]]
-id = "termur_modernuo_vendors_22"
+id = "termur_modernuo_post_uoml_vendors_22_tailor"
 map = "ter_mur"
-name = "TerMur tailor, weaver"
-mobile_ids = ["tailor", "weaver"]
+name = "TerMur tailor"
+mobile_ids = ["tailor"]
 npc_list_ids = []
-max = 3
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -430,18 +563,18 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 701
-y1 = 3434
-x2 = 703
-y2 = 3436
+x1 = 702
+y1 = 3435
+x2 = 702
+y2 = 3435
 
 [[spawn]]
-id = "termur_modernuo_vendors_23"
+id = "termur_modernuo_post_uoml_vendors_22_weaver"
 map = "ter_mur"
-name = "TerMur armourer, weaponsmith"
-mobile_ids = ["armourer", "weaponsmith"]
+name = "TerMur weaver"
+mobile_ids = ["weaver"]
 npc_list_ids = []
-max = 2
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -449,13 +582,51 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 726
-y1 = 3424
-x2 = 728
-y2 = 3426
+x1 = 702
+y1 = 3435
+x2 = 702
+y2 = 3435
 
 [[spawn]]
-id = "termur_modernuo_vendors_24"
+id = "termur_modernuo_post_uoml_vendors_23_armourer"
+map = "ter_mur"
+name = "TerMur armourer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -4
+only_outside = false
+[[spawn.areas]]
+x1 = 727
+y1 = 3425
+x2 = 727
+y2 = 3425
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_23_weaponsmith"
+map = "ter_mur"
+name = "TerMur weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -4
+only_outside = false
+[[spawn.areas]]
+x1 = 727
+y1 = 3425
+x2 = 727
+y2 = 3425
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_24_farmer"
 map = "ter_mur"
 name = "TerMur farmer"
 mobile_ids = ["farmer"]
@@ -468,18 +639,18 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 714
-y1 = 3445
-x2 = 716
-y2 = 3447
+x1 = 715
+y1 = 3446
+x2 = 715
+y2 = 3446
 
 [[spawn]]
-id = "termur_modernuo_vendors_25"
+id = "termur_modernuo_post_uoml_vendors_25_tavernkeeper"
 map = "ter_mur"
-name = "TerMur tavernkeeper, waiter"
-mobile_ids = ["tavernkeeper", "waiter"]
+name = "TerMur tavernkeeper"
+mobile_ids = ["tavernkeeper"]
 npc_list_ids = []
-max = 4
+max = 2
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -487,13 +658,32 @@ exclude = []
 z = -4
 only_outside = false
 [[spawn.areas]]
-x1 = 712
-y1 = 3437
-x2 = 714
-y2 = 3439
+x1 = 713
+y1 = 3438
+x2 = 713
+y2 = 3438
 
 [[spawn]]
-id = "termur_modernuo_vendors_26"
+id = "termur_modernuo_post_uoml_vendors_25_waiter"
+map = "ter_mur"
+name = "TerMur waiter"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -4
+only_outside = false
+[[spawn.areas]]
+x1 = 713
+y1 = 3438
+x2 = 713
+y2 = 3438
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_26_farmer"
 map = "ter_mur"
 name = "TerMur farmer"
 mobile_ids = ["farmer"]
@@ -506,13 +696,13 @@ exclude = []
 z = 6
 only_outside = false
 [[spawn.areas]]
-x1 = 793
-y1 = 3445
-x2 = 795
-y2 = 3447
+x1 = 794
+y1 = 3446
+x2 = 794
+y2 = 3446
 
 [[spawn]]
-id = "termur_modernuo_vendors_27"
+id = "termur_modernuo_post_uoml_vendors_27"
 map = "ter_mur"
 name = "TerMur jeweler"
 mobile_ids = ["jeweler"]
@@ -525,13 +715,13 @@ exclude = []
 z = 6
 only_outside = false
 [[spawn.areas]]
-x1 = 778
-y1 = 3430
-x2 = 780
-y2 = 3432
+x1 = 779
+y1 = 3431
+x2 = 779
+y2 = 3431
 
 [[spawn]]
-id = "termur_modernuo_vendors_28"
+id = "termur_modernuo_post_uoml_vendors_28"
 map = "ter_mur"
 name = "TerMur towncrier"
 mobile_ids = ["towncrier"]
@@ -544,7 +734,7 @@ exclude = []
 z = -2
 only_outside = false
 [[spawn.areas]]
-x1 = 841
-y1 = 3452
-x2 = 843
-y2 = 3454
+x1 = 842
+y1 = 3453
+x2 = 842
+y2 = 3453

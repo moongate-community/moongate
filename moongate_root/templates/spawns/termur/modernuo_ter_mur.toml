@@ -1,5 +1,5 @@
 [[spawn]]
-id = "termur_modernuo_ter_mur_0"
+id = "termur_modernuo_post_uoml_ter_mur_0"
 map = "ter_mur"
 name = "TerMur giantblackwidow, giantspider"
 mobile_ids = ["giantblackwidow", "giantspider"]
@@ -18,12 +18,12 @@ x2 = 1159
 y2 = 3794
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_1"
+id = "termur_modernuo_post_uoml_ter_mur_3"
 map = "ter_mur"
 name = "TerMur greatermongbat, mongbat, silverserpent, bird"
 mobile_ids = ["greatermongbat", "mongbat", "silverserpent", "bird"]
 npc_list_ids = []
-max = 18
+max = 10
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -37,12 +37,12 @@ x2 = 1234
 y2 = 3583
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_2"
+id = "termur_modernuo_post_uoml_ter_mur_4"
 map = "ter_mur"
 name = "TerMur greatermongbat, mongbat, silverserpent, bird"
 mobile_ids = ["greatermongbat", "mongbat", "silverserpent", "bird"]
 npc_list_ids = []
-max = 15
+max = 10
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -56,7 +56,7 @@ x2 = 1218
 y2 = 3516
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_3"
+id = "termur_modernuo_post_uoml_ter_mur_5"
 map = "ter_mur"
 name = "TerMur rabbit, bird"
 mobile_ids = ["rabbit", "bird"]
@@ -75,12 +75,12 @@ x2 = 1212
 y2 = 3724
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_4"
+id = "termur_modernuo_post_uoml_ter_mur_6"
 map = "ter_mur"
 name = "TerMur snake"
 mobile_ids = ["snake"]
 npc_list_ids = []
-max = 8
+max = 4
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -94,12 +94,12 @@ x2 = 1066
 y2 = 3700
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_5"
+id = "termur_modernuo_post_uoml_ter_mur_7"
 map = "ter_mur"
 name = "TerMur snake"
 mobile_ids = ["snake"]
 npc_list_ids = []
-max = 5
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -113,12 +113,12 @@ x2 = 1042
 y2 = 3682
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_6"
+id = "termur_modernuo_post_uoml_ter_mur_8"
 map = "ter_mur"
 name = "TerMur hind, horse, jackrabbit, rabbit, mongbat, rat, llama, snake, timberwolf"
 mobile_ids = ["hind", "horse", "jackrabbit", "rabbit", "mongbat", "rat", "llama", "snake", "timberwolf"]
 npc_list_ids = []
-max = 19
+max = 17
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -132,12 +132,12 @@ x2 = 1046
 y2 = 3456
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_7"
+id = "termur_modernuo_post_uoml_ter_mur_9"
 map = "ter_mur"
 name = "TerMur hind, horse, jackrabbit, rabbit, mongbat, rat, llama, snake, timberwolf"
 mobile_ids = ["hind", "horse", "jackrabbit", "rabbit", "mongbat", "rat", "llama", "snake", "timberwolf"]
 npc_list_ids = []
-max = 19
+max = 17
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -151,12 +151,12 @@ x2 = 901
 y2 = 3692
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_8"
+id = "termur_modernuo_post_uoml_ter_mur_10"
 map = "ter_mur"
 name = "TerMur hind, horse, jackrabbit, rabbit, mongbat, rat, llama, snake, timberwolf"
 mobile_ids = ["hind", "horse", "jackrabbit", "rabbit", "mongbat", "rat", "llama", "snake", "timberwolf"]
 npc_list_ids = []
-max = 19
+max = 17
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -170,12 +170,12 @@ x2 = 984
 y2 = 3614
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_9"
+id = "termur_modernuo_post_uoml_ter_mur_11"
 map = "ter_mur"
 name = "TerMur hind, horse, jackrabbit, rabbit, mongbat, rat, llama, snake, timberwolf"
 mobile_ids = ["hind", "horse", "jackrabbit", "rabbit", "mongbat", "rat", "llama", "snake", "timberwolf"]
 npc_list_ids = []
-max = 19
+max = 17
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -189,7 +189,7 @@ x2 = 1015
 y2 = 3539
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_10"
+id = "termur_modernuo_post_uoml_ter_mur_12"
 map = "ter_mur"
 name = "TerMur rabbit, bird"
 mobile_ids = ["rabbit", "bird"]
@@ -208,7 +208,7 @@ x2 = 898
 y2 = 3572
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_11"
+id = "termur_modernuo_post_uoml_ter_mur_13"
 map = "ter_mur"
 name = "TerMur rabbit, bird"
 mobile_ids = ["rabbit", "bird"]
@@ -227,7 +227,7 @@ x2 = 1031
 y2 = 3368
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_12"
+id = "termur_modernuo_post_uoml_ter_mur_14"
 map = "ter_mur"
 name = "TerMur rabbit, bird"
 mobile_ids = ["rabbit", "bird"]
@@ -246,12 +246,12 @@ x2 = 931
 y2 = 3394
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_13"
+id = "termur_modernuo_post_uoml_ter_mur_15"
 map = "ter_mur"
 name = "TerMur sewerrat, greatermongbat, mongbat, silverserpent, bird"
 mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "silverserpent", "bird"]
 npc_list_ids = []
-max = 18
+max = 11
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -265,7 +265,7 @@ x2 = 1123
 y2 = 3372
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_14"
+id = "termur_modernuo_post_uoml_ter_mur_16"
 map = "ter_mur"
 name = "TerMur rabbit, bird"
 mobile_ids = ["rabbit", "bird"]
@@ -284,12 +284,12 @@ x2 = 1021
 y2 = 3614
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_15"
+id = "termur_modernuo_post_uoml_ter_mur_17"
 map = "ter_mur"
 name = "TerMur rabbit, rat, timberwolf, hind, horse, jackrabbit"
 mobile_ids = ["rabbit", "rat", "timberwolf", "hind", "horse", "jackrabbit"]
 npc_list_ids = []
-max = 19
+max = 14
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -303,12 +303,12 @@ x2 = 959
 y2 = 3285
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_16"
+id = "termur_modernuo_post_uoml_ter_mur_18"
 map = "ter_mur"
 name = "TerMur rabbit, rat, timberwolf, hind, horse, jackrabbit"
 mobile_ids = ["rabbit", "rat", "timberwolf", "hind", "horse", "jackrabbit"]
 npc_list_ids = []
-max = 19
+max = 14
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -322,7 +322,7 @@ x2 = 852
 y2 = 3281
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_17"
+id = "termur_modernuo_post_uoml_ter_mur_19"
 map = "ter_mur"
 name = "TerMur rabbit, rat, hind, horse, jackrabbit"
 mobile_ids = ["rabbit", "rat", "hind", "horse", "jackrabbit"]
@@ -341,12 +341,12 @@ x2 = 729
 y2 = 3298
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_18"
+id = "termur_modernuo_post_uoml_ter_mur_20"
 map = "ter_mur"
 name = "TerMur rabbit, rat, timberwolf, hind, horse, jackrabbit"
 mobile_ids = ["rabbit", "rat", "timberwolf", "hind", "horse", "jackrabbit"]
 npc_list_ids = []
-max = 19
+max = 14
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -360,12 +360,12 @@ x2 = 638
 y2 = 3317
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_19"
+id = "termur_modernuo_post_uoml_ter_mur_21"
 map = "ter_mur"
 name = "TerMur hind, horse, silverserpent, rabbit, bird"
 mobile_ids = ["hind", "horse", "silverserpent", "rabbit", "bird"]
 npc_list_ids = []
-max = 18
+max = 15
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -379,7 +379,7 @@ x2 = 571
 y2 = 3405
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_20"
+id = "termur_modernuo_post_uoml_ter_mur_22"
 map = "ter_mur"
 name = "TerMur hind, rabbit, bird"
 mobile_ids = ["hind", "rabbit", "bird"]
@@ -398,12 +398,12 @@ x2 = 551
 y2 = 3313
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_21"
+id = "termur_modernuo_post_uoml_ter_mur_23"
 map = "ter_mur"
 name = "TerMur hind, horse, silverserpent, rabbit, bird"
 mobile_ids = ["hind", "horse", "silverserpent", "rabbit", "bird"]
 npc_list_ids = []
-max = 18
+max = 15
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -417,7 +417,7 @@ x2 = 597
 y2 = 3471
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_22"
+id = "termur_modernuo_post_uoml_ter_mur_24"
 map = "ter_mur"
 name = "TerMur hind, rabbit, bird"
 mobile_ids = ["hind", "rabbit", "bird"]
@@ -436,12 +436,12 @@ x2 = 601
 y2 = 3536
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_23"
+id = "termur_modernuo_post_uoml_ter_mur_25"
 map = "ter_mur"
 name = "TerMur sewerrat, greatermongbat, mongbat, silverserpent, bird"
 mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "silverserpent", "bird"]
 npc_list_ids = []
-max = 18
+max = 13
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -455,7 +455,7 @@ x2 = 1219
 y2 = 3388
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_24"
+id = "termur_modernuo_post_uoml_ter_mur_26"
 map = "ter_mur"
 name = "TerMur rabbit, bird, rat, sewerrat, snake"
 mobile_ids = ["rabbit", "bird", "rat", "sewerrat", "snake"]
@@ -474,7 +474,7 @@ x2 = 739
 y2 = 3761
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_25"
+id = "termur_modernuo_post_uoml_ter_mur_27"
 map = "ter_mur"
 name = "TerMur rabbit, bird, rat, sewerrat, snake"
 mobile_ids = ["rabbit", "bird", "rat", "sewerrat", "snake"]
@@ -493,7 +493,7 @@ x2 = 811
 y2 = 3700
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_26"
+id = "termur_modernuo_post_uoml_ter_mur_28"
 map = "ter_mur"
 name = "TerMur reaper, rat, bird"
 mobile_ids = ["reaper", "rat", "bird"]
@@ -512,12 +512,12 @@ x2 = 646
 y2 = 3714
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_27"
+id = "termur_modernuo_post_uoml_ter_mur_29"
 map = "ter_mur"
 name = "TerMur bird, rat, mongbat"
 mobile_ids = ["bird", "rat", "mongbat"]
 npc_list_ids = []
-max = 18
+max = 14
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -531,12 +531,12 @@ x2 = 708
 y2 = 3871
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_28"
+id = "termur_modernuo_post_uoml_ter_mur_31"
 map = "ter_mur"
 name = "TerMur horse, mongbat, rat, bird"
 mobile_ids = ["horse", "mongbat", "rat", "bird"]
 npc_list_ids = []
-max = 18
+max = 12
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -550,12 +550,12 @@ x2 = 810
 y2 = 3860
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_29"
+id = "termur_modernuo_post_uoml_ter_mur_32"
 map = "ter_mur"
 name = "TerMur horse, mongbat, rat, bird"
 mobile_ids = ["horse", "mongbat", "rat", "bird"]
 npc_list_ids = []
-max = 18
+max = 10
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -569,12 +569,12 @@ x2 = 876
 y2 = 3812
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_30"
+id = "termur_modernuo_post_uoml_ter_mur_34"
 map = "ter_mur"
 name = "TerMur horse, mongbat, rat, bird"
 mobile_ids = ["horse", "mongbat", "rat", "bird"]
 npc_list_ids = []
-max = 18
+max = 10
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -588,12 +588,12 @@ x2 = 849
 y2 = 3913
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_31"
+id = "termur_modernuo_post_uoml_ter_mur_35"
 map = "ter_mur"
 name = "TerMur greatermongbat, mongbat, silverserpent, bird, rabbit"
 mobile_ids = ["greatermongbat", "mongbat", "silverserpent", "bird", "rabbit"]
 npc_list_ids = []
-max = 18
+max = 15
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -607,12 +607,12 @@ x2 = 813
 y2 = 4041
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_32"
+id = "termur_modernuo_post_uoml_ter_mur_36"
 map = "ter_mur"
 name = "TerMur sewerrat, greatermongbat, mongbat, bird"
 mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "bird"]
 npc_list_ids = []
-max = 7
+max = 6
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -626,12 +626,12 @@ x2 = 1169
 y2 = 3203
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_33"
+id = "termur_modernuo_post_uoml_ter_mur_38"
 map = "ter_mur"
 name = "TerMur greatermongbat, mongbat, silverserpent, bird, rabbit"
 mobile_ids = ["greatermongbat", "mongbat", "silverserpent", "bird", "rabbit"]
 npc_list_ids = []
-max = 18
+max = 15
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -645,12 +645,12 @@ x2 = 691
 y2 = 3972
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_34"
+id = "termur_modernuo_post_uoml_ter_mur_39"
 map = "ter_mur"
 name = "TerMur desertostard, scorpion"
 mobile_ids = ["desertostard", "scorpion"]
 npc_list_ids = []
-max = 16
+max = 6
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -664,12 +664,12 @@ x2 = 1105
 y2 = 3036
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_35"
+id = "termur_modernuo_post_uoml_ter_mur_43"
 map = "ter_mur"
 name = "TerMur rabbit, bird, silverserpent, timberwolf"
 mobile_ids = ["rabbit", "bird", "silverserpent", "timberwolf"]
 npc_list_ids = []
-max = 20
+max = 10
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -683,12 +683,12 @@ x2 = 822
 y2 = 3133
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_36"
+id = "termur_modernuo_post_uoml_ter_mur_44"
 map = "ter_mur"
 name = "TerMur rabbit, bird, silverserpent, timberwolf"
 mobile_ids = ["rabbit", "bird", "silverserpent", "timberwolf"]
 npc_list_ids = []
-max = 20
+max = 10
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -702,12 +702,12 @@ x2 = 977
 y2 = 3148
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_37"
+id = "termur_modernuo_post_uoml_ter_mur_45"
 map = "ter_mur"
 name = "TerMur rabbit, bird, silverserpent, timberwolf"
 mobile_ids = ["rabbit", "bird", "silverserpent", "timberwolf"]
 npc_list_ids = []
-max = 20
+max = 10
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -721,12 +721,12 @@ x2 = 899
 y2 = 3146
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_38"
+id = "termur_modernuo_post_uoml_ter_mur_46"
 map = "ter_mur"
 name = "TerMur horse, bird, rabbit"
 mobile_ids = ["horse", "bird", "rabbit"]
 npc_list_ids = []
-max = 18
+max = 11
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -740,12 +740,12 @@ x2 = 877
 y2 = 3020
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_39"
+id = "termur_modernuo_post_uoml_ter_mur_48"
 map = "ter_mur"
 name = "TerMur horse, bird, rabbit"
 mobile_ids = ["horse", "bird", "rabbit"]
 npc_list_ids = []
-max = 18
+max = 11
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -759,12 +759,12 @@ x2 = 921
 y2 = 2983
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_40"
+id = "termur_modernuo_post_uoml_ter_mur_49"
 map = "ter_mur"
 name = "TerMur hind, horse, rat, timberwolf, bird, rabbit"
 mobile_ids = ["hind", "horse", "rat", "timberwolf", "bird", "rabbit"]
 npc_list_ids = []
-max = 19
+max = 16
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -778,7 +778,7 @@ x2 = 703
 y2 = 3186
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_41"
+id = "termur_modernuo_post_uoml_ter_mur_50"
 map = "ter_mur"
 name = "TerMur bird, eagle"
 mobile_ids = ["bird", "eagle"]
@@ -797,12 +797,12 @@ x2 = 722
 y2 = 3145
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_42"
+id = "termur_modernuo_post_uoml_ter_mur_51"
 map = "ter_mur"
 name = "TerMur giantrat, rat, bird"
 mobile_ids = ["giantrat", "rat", "bird"]
 npc_list_ids = []
-max = 18
+max = 14
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -816,12 +816,12 @@ x2 = 735
 y2 = 2951
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_43"
+id = "termur_modernuo_post_uoml_ter_mur_52"
 map = "ter_mur"
 name = "TerMur silverserpent, bird"
 mobile_ids = ["silverserpent", "bird"]
 npc_list_ids = []
-max = 16
+max = 8
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -835,7 +835,7 @@ x2 = 602
 y2 = 2982
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_44"
+id = "termur_modernuo_post_uoml_ter_mur_53"
 map = "ter_mur"
 name = "TerMur hind, bird, rabbit"
 mobile_ids = ["hind", "bird", "rabbit"]
@@ -854,12 +854,12 @@ x2 = 521
 y2 = 3246
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_45"
+id = "termur_modernuo_post_uoml_ter_mur_54"
 map = "ter_mur"
 name = "TerMur rat, snake, bird"
 mobile_ids = ["rat", "snake", "bird"]
 npc_list_ids = []
-max = 17
+max = 10
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -873,7 +873,7 @@ x2 = 476
 y2 = 3240
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_46"
+id = "termur_modernuo_post_uoml_ter_mur_55"
 map = "ter_mur"
 name = "TerMur bird, rabbit"
 mobile_ids = ["bird", "rabbit"]
@@ -892,7 +892,7 @@ x2 = 404
 y2 = 3333
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_47"
+id = "termur_modernuo_post_uoml_ter_mur_56"
 map = "ter_mur"
 name = "TerMur bird, rabbit"
 mobile_ids = ["bird", "rabbit"]
@@ -911,7 +911,7 @@ x2 = 513
 y2 = 3692
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_48"
+id = "termur_modernuo_post_uoml_ter_mur_57"
 map = "ter_mur"
 name = "TerMur bird, rabbit"
 mobile_ids = ["bird", "rabbit"]
@@ -930,12 +930,12 @@ x2 = 437
 y2 = 3574
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_49"
+id = "termur_modernuo_post_uoml_ter_mur_58"
 map = "ter_mur"
 name = "TerMur sewerrat, greatermongbat, mongbat, silverserpent, bird"
 mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "silverserpent", "bird"]
 npc_list_ids = []
-max = 10
+max = 8
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -949,7 +949,7 @@ x2 = 1180
 y2 = 3290
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_50"
+id = "termur_modernuo_post_uoml_ter_mur_59"
 map = "ter_mur"
 name = "TerMur sewerrat, greatermongbat, mongbat, bird"
 mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "bird"]
@@ -968,12 +968,12 @@ x2 = 1104
 y2 = 3265
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_51"
+id = "termur_modernuo_post_uoml_ter_mur_60"
 map = "ter_mur"
 name = "TerMur sewerrat, greatermongbat, mongbat, bird"
 mobile_ids = ["sewerrat", "greatermongbat", "mongbat", "bird"]
 npc_list_ids = []
-max = 15
+max = 12
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -987,12 +987,12 @@ x2 = 1107
 y2 = 3217
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_52"
+id = "termur_modernuo_post_uoml_ter_mur_61"
 map = "ter_mur"
 name = "TerMur hind, horse, snake"
 mobile_ids = ["hind", "horse", "snake"]
 npc_list_ids = []
-max = 5
+max = 4
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -1006,12 +1006,12 @@ x2 = 1226
 y2 = 3598
 
 [[spawn]]
-id = "termur_modernuo_ter_mur_53"
+id = "termur_modernuo_post_uoml_ter_mur_62"
 map = "ter_mur"
 name = "TerMur silverserpent"
 mobile_ids = ["silverserpent"]
 npc_list_ids = []
-max = 10
+max = 5
 min_minutes = 5
 max_minutes = 10
 call = 1

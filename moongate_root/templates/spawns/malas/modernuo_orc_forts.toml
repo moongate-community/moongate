@@ -1,10 +1,10 @@
 [[spawn]]
-id = "malas_modernuo_orc_forts_0"
+id = "malas_modernuo_shared_orc_forts_0_orcbrute"
 map = "malas"
-name = "Malas orcbrute, orclord, orc, orcmage, orcbomber"
-mobile_ids = ["orcbrute", "orclord", "orc", "orcmage", "orcbomber"]
+name = "Malas orcbrute"
+mobile_ids = ["orcbrute"]
 npc_list_ids = []
-max = 10
+max = 1
 min_minutes = 5
 max_minutes = 15
 call = 1
@@ -18,12 +18,88 @@ x2 = 1392
 y2 = 1245
 
 [[spawn]]
-id = "malas_modernuo_orc_forts_1"
+id = "malas_modernuo_shared_orc_forts_0_orclord"
 map = "malas"
-name = "Malas orc, orclord, orcmage"
-mobile_ids = ["orc", "orclord", "orcmage"]
+name = "Malas orclord"
+mobile_ids = ["orclord"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1352
+y1 = 1205
+x2 = 1392
+y2 = 1245
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_0_orc"
+map = "malas"
+name = "Malas orc"
+mobile_ids = ["orc"]
 npc_list_ids = []
 max = 4
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1352
+y1 = 1205
+x2 = 1392
+y2 = 1245
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_0_orcmage"
+map = "malas"
+name = "Malas orcmage"
+mobile_ids = ["orcmage"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1352
+y1 = 1205
+x2 = 1392
+y2 = 1245
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_0_orcbomber"
+map = "malas"
+name = "Malas orcbomber"
+mobile_ids = ["orcbomber"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1352
+y1 = 1205
+x2 = 1392
+y2 = 1245
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_1_orc"
+map = "malas"
+name = "Malas orc"
+mobile_ids = ["orc"]
+npc_list_ids = []
+max = 2
 min_minutes = 5
 max_minutes = 15
 call = 1
@@ -37,12 +113,50 @@ x2 = 1368
 y2 = 600
 
 [[spawn]]
-id = "malas_modernuo_orc_forts_2"
+id = "malas_modernuo_shared_orc_forts_1_orclord"
 map = "malas"
-name = "Malas orc, orclord, orcmage"
-mobile_ids = ["orc", "orclord", "orcmage"]
+name = "Malas orclord"
+mobile_ids = ["orclord"]
 npc_list_ids = []
-max = 4
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -70
+only_outside = false
+[[spawn.areas]]
+x1 = 1360
+y1 = 592
+x2 = 1368
+y2 = 600
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_1_orcmage"
+map = "malas"
+name = "Malas orcmage"
+mobile_ids = ["orcmage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -70
+only_outside = false
+[[spawn.areas]]
+x1 = 1360
+y1 = 592
+x2 = 1368
+y2 = 600
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_2_orc"
+map = "malas"
+name = "Malas orc"
+mobile_ids = ["orc"]
+npc_list_ids = []
+max = 2
 min_minutes = 5
 max_minutes = 15
 call = 1
@@ -56,12 +170,50 @@ x2 = 1209
 y2 = 704
 
 [[spawn]]
-id = "malas_modernuo_orc_forts_3"
+id = "malas_modernuo_shared_orc_forts_2_orclord"
 map = "malas"
-name = "Malas orc, orclord, orcmage"
-mobile_ids = ["orc", "orclord", "orcmage"]
+name = "Malas orclord"
+mobile_ids = ["orclord"]
 npc_list_ids = []
-max = 4
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -72
+only_outside = false
+[[spawn.areas]]
+x1 = 1201
+y1 = 696
+x2 = 1209
+y2 = 704
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_2_orcmage"
+map = "malas"
+name = "Malas orcmage"
+mobile_ids = ["orcmage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -72
+only_outside = false
+[[spawn.areas]]
+x1 = 1201
+y1 = 696
+x2 = 1209
+y2 = 704
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_3_orc"
+map = "malas"
+name = "Malas orc"
+mobile_ids = ["orc"]
+npc_list_ids = []
+max = 2
 min_minutes = 5
 max_minutes = 15
 call = 1
@@ -75,7 +227,45 @@ x2 = 1261
 y2 = 1330
 
 [[spawn]]
-id = "malas_modernuo_orc_forts_4"
+id = "malas_modernuo_shared_orc_forts_3_orclord"
+map = "malas"
+name = "Malas orclord"
+mobile_ids = ["orclord"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1253
+y1 = 1322
+x2 = 1261
+y2 = 1330
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_3_orcmage"
+map = "malas"
+name = "Malas orcmage"
+mobile_ids = ["orcmage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1253
+y1 = 1322
+x2 = 1261
+y2 = 1330
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_4"
 map = "malas"
 name = "Malas orc"
 mobile_ids = ["orc"]
@@ -94,12 +284,12 @@ x2 = 1347
 y2 = 1200
 
 [[spawn]]
-id = "malas_modernuo_orc_forts_5"
+id = "malas_modernuo_shared_orc_forts_5_orc"
 map = "malas"
-name = "Malas orc, orclord, orcmage"
-mobile_ids = ["orc", "orclord", "orcmage"]
+name = "Malas orc"
+mobile_ids = ["orc"]
 npc_list_ids = []
-max = 4
+max = 2
 min_minutes = 5
 max_minutes = 15
 call = 1
@@ -113,12 +303,50 @@ x2 = 915
 y2 = 198
 
 [[spawn]]
-id = "malas_modernuo_orc_forts_6"
+id = "malas_modernuo_shared_orc_forts_5_orclord"
 map = "malas"
-name = "Malas orc, orclord, orcmage"
-mobile_ids = ["orc", "orclord", "orcmage"]
+name = "Malas orclord"
+mobile_ids = ["orclord"]
 npc_list_ids = []
-max = 4
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -63
+only_outside = false
+[[spawn.areas]]
+x1 = 907
+y1 = 190
+x2 = 915
+y2 = 198
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_5_orcmage"
+map = "malas"
+name = "Malas orcmage"
+mobile_ids = ["orcmage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -63
+only_outside = false
+[[spawn.areas]]
+x1 = 907
+y1 = 190
+x2 = 915
+y2 = 198
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_6_orc"
+map = "malas"
+name = "Malas orc"
+mobile_ids = ["orc"]
+npc_list_ids = []
+max = 2
 min_minutes = 5
 max_minutes = 15
 call = 1
@@ -132,12 +360,50 @@ x2 = 1602
 y2 = 1823
 
 [[spawn]]
-id = "malas_modernuo_orc_forts_7"
+id = "malas_modernuo_shared_orc_forts_6_orclord"
 map = "malas"
-name = "Malas orc, orclord, orcmage"
-mobile_ids = ["orc", "orclord", "orcmage"]
+name = "Malas orclord"
+mobile_ids = ["orclord"]
 npc_list_ids = []
-max = 4
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -94
+only_outside = false
+[[spawn.areas]]
+x1 = 1594
+y1 = 1815
+x2 = 1602
+y2 = 1823
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_6_orcmage"
+map = "malas"
+name = "Malas orcmage"
+mobile_ids = ["orcmage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -94
+only_outside = false
+[[spawn.areas]]
+x1 = 1594
+y1 = 1815
+x2 = 1602
+y2 = 1823
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_7_orc"
+map = "malas"
+name = "Malas orc"
+mobile_ids = ["orc"]
+npc_list_ids = []
+max = 2
 min_minutes = 5
 max_minutes = 15
 call = 1
@@ -151,12 +417,50 @@ x2 = 1669
 y2 = 360
 
 [[spawn]]
-id = "malas_modernuo_orc_forts_8"
+id = "malas_modernuo_shared_orc_forts_7_orclord"
 map = "malas"
-name = "Malas orcbrute, orclord, orc, orcmage, orcbomber"
-mobile_ids = ["orcbrute", "orclord", "orc", "orcmage", "orcbomber"]
+name = "Malas orclord"
+mobile_ids = ["orclord"]
 npc_list_ids = []
-max = 10
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1661
+y1 = 352
+x2 = 1669
+y2 = 360
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_7_orcmage"
+map = "malas"
+name = "Malas orcmage"
+mobile_ids = ["orcmage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -34
+only_outside = false
+[[spawn.areas]]
+x1 = 1661
+y1 = 352
+x2 = 1669
+y2 = 360
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_8_orcbrute"
+map = "malas"
+name = "Malas orcbrute"
+mobile_ids = ["orcbrute"]
+npc_list_ids = []
+max = 1
 min_minutes = 5
 max_minutes = 15
 call = 1
@@ -170,7 +474,83 @@ x2 = 1342
 y2 = 1245
 
 [[spawn]]
-id = "malas_modernuo_orc_forts_9"
+id = "malas_modernuo_shared_orc_forts_8_orclord"
+map = "malas"
+name = "Malas orclord"
+mobile_ids = ["orclord"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1302
+y1 = 1205
+x2 = 1342
+y2 = 1245
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_8_orc"
+map = "malas"
+name = "Malas orc"
+mobile_ids = ["orc"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1302
+y1 = 1205
+x2 = 1342
+y2 = 1245
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_8_orcmage"
+map = "malas"
+name = "Malas orcmage"
+mobile_ids = ["orcmage"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1302
+y1 = 1205
+x2 = 1342
+y2 = 1245
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_8_orcbomber"
+map = "malas"
+name = "Malas orcbomber"
+mobile_ids = ["orcbomber"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 15
+call = 1
+exclude = []
+z = -74
+only_outside = false
+[[spawn.areas]]
+x1 = 1302
+y1 = 1205
+x2 = 1342
+y2 = 1245
+
+[[spawn]]
+id = "malas_modernuo_shared_orc_forts_9"
 map = "malas"
 name = "Malas orc"
 mobile_ids = ["orc"]
