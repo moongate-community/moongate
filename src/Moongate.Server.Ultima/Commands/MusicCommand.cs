@@ -1,0 +1,61 @@
+using Moongate.Core.Utils;
+using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Data.Localization;
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Commands;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Ultima.Types;
+
+namespace Moongate.Server.Ultima.Commands;
+
+/// <summary>
+///     Prints the music where the game master stands, <c>music</c>, or plays a track to them until their next region
+///     change, <c>music &lt;track&gt;</c>, by <see cref="MusicType" /> name such as <c>tavern04</c>.
+/// </summary>
+public sealed class MusicCommand : ICommandExecutor
+{
+    private const string UsageText = "music [track]";
+
+    private readonly IMusicService _music;
+    private readonly IMobileService _mobiles;
+    private readonly ILocalizationService? _localization;
+
+    public MusicCommand(IMusicService music, IMobileService mobiles, ILocalizationService? localization = null)
+    {
+        _music = music;
+        _mobiles = mobiles;
+        _localization = localization;
+    }
+
+    public Task ExecuteAsync(CommandContext context)
+    {
+        if (context.Session is not { } session || !_mobiles.TryGet(session.CharacterId, out var character))
+        {
+            context.PrintError("music works in game only.");
+
+            return Task.CompletedTask;
+        }
+
+        if (context.Arguments.Length == 0)
+        {
+            context.Print(
+                _localization.Text(CommandMessages.MusicHere, "Music here: {0}.", EnumNameUtils.Format(_music.MusicOf(character)))
+            );
+
+            return Task.CompletedTask;
+        }
+
+        if (context.Arguments.Length != 1 || !EnumNameUtils.TryParse<MusicType>(context.Arguments[0], out var music))
+        {
+            context.PrintError(_localization.Text(CommandMessages.Usage, "Usage: {0}", UsageText));
+
+            return Task.CompletedTask;
+        }
+
+        _music.Play(character, music);
+        context.Print(_localization.Text(CommandMessages.MusicPlaying, "Playing {0}.", EnumNameUtils.Format(music)));
+
+        return Task.CompletedTask;
+    }
+}

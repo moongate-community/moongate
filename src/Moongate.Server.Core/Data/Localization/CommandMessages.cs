@@ -70,6 +70,8 @@ public static class CommandMessages
     public const int DecorationConfirmText = 30084;
     public const int GumpNotFound = 30085;
     public const int GumpNotOpened = 30087;
+    public const int MusicHere = 30089;
+    public const int MusicPlaying = 30090;
 
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
@@ -95,4 +97,5 @@ public static class CommandMessages
     public const int KeyDescription = 30073;
     public const int SpawnsDescription = 30079;
     public const int GumpDescription = 30086;
+    public const int MusicDescription = 30091;
 }

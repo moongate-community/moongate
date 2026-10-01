@@ -101,6 +101,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.SpawnsDescription
         );
+        container.RegisterCommand<MusicCommand>(
+            "music",
+            "Shows the music where you stand or, with a track name, plays it to you until your next region change.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.MusicDescription
+        );
         container.RegisterCommand<LockCommand>(
             "lock",
             "Locks the door you target and the door linked to it: players cannot open it.",

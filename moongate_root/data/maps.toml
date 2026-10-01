@@ -16,6 +16,8 @@
 #               desolation
 #   weather     the weather profile of weather.toml used where no region covers
 #               a place
+#   music       the music track (a MusicType name such as britain1) played where
+#               no region with music covers a place; left out, the music stops
 # ==============================================================================
 
 [[map]]
