@@ -192,7 +192,7 @@ public sealed class ServerRoleRegistrationTests
             Assert.NotNull(container.Resolve<ItemModule>());
             Assert.NotNull(container.Resolve<WorldModule>());
             Assert.Equal(
-                [container.Resolve<IWeatherService>(), container.Resolve<ILightService>(), container.Resolve<IMusicService>()],
+                [container.Resolve<IWeatherService>(), container.Resolve<ILightService>(), container.Resolve<IMusicService>(), container.Resolve<ISeasonService>()],
                 container.Resolve<IEnumerable<IRegionChangeListener>>()
             );
             Assert.NotNull(container.Resolve<IMobileService>());

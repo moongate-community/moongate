@@ -117,6 +117,9 @@ public static class UltimaWorldContainerExtensions
         // The music follows the players' regions too.
         container.AddMoongateService<IMusicService, MusicService>(11);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IMusicService>(), Reuse.Singleton);
+        // The seasons too; after a new season they send the light and the weather again.
+        container.AddMoongateService<ISeasonService, SeasonService>(11);
+        container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<ISeasonService>(), Reuse.Singleton);
         container.AddMoongateService<IEquipmentService, EquipmentService>();
         container.AddMoongateService<ITooltipService, TooltipService>();
         // As the ground items: the NPCs are live before the game server takes players.
