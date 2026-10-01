@@ -6,7 +6,7 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**227 systems:** ✅ 56 done, 🟡 29 partly done, ❌ 142 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
+**228 systems:** ✅ 58 done, 🟡 28 partly done, ❌ 142 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
 ## Accounts, login and network
 
@@ -198,7 +198,8 @@ works today in more detail.
 | Weather by region | ✅ | Rain, snow, storms with thunder, dry indoors; no weather damage |
 | Seasons | ❌ | |
 | Regions | 🟡 | Found for every player; they set the weather and the dungeon light |
-| Guarded towns, region music and region rules | ❌ | |
+| Region music | ✅ | The region's track, else the map's; `.music` |
+| Guarded towns and region rules | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |
 | World decoration | ✅ | Placed by `.decorate` |
 | Spawn regions | ✅ | Gradual fill and respawn, land and water; see [NPC spawns](spawns.md) |
@@ -301,7 +302,7 @@ works today in more detail.
 | Timed effects (buffs and debuffs) | ❌ | |
 | Text prompts and input | ❌ | |
 | Visual effects: moving, lightning, particles | ❌ | |
-| Sounds and music | 🟡 | Sounds from scripts and thunder; no region music |
+| Sounds and music | ✅ | Sounds from scripts, thunder and region music |
 | Client language | ❌ | One server language for everyone |
 | Store and other modern client panels | ❌ | |
 

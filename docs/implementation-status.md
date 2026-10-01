@@ -39,7 +39,7 @@ server does today and what it does not. It describes the current source tree; th
 - Spawn and remove single NPCs: `.spawn`, `.remove`.
 - See the spawn regions where they stand: `.spawns`; get a message when regions spawn.
 - Lock and unlock doors and make their keys: `.lock`, `.unlock`, `.key`.
-- Force the light or the weather: `.globallight`, `.weather`.
+- Force the light or the weather, try a music track: `.globallight`, `.weather`, `.music`.
 - Try any gump on themselves: `.gump`.
 - Set fame and karma, inspect what a target cursor picks: `.fame`, `.karma`, `.where`.
 - Save, broadcast, shut down, manage accounts and characters.
@@ -54,7 +54,7 @@ See all of them in [Commands](commands.md).
 - Teleporters, public moongates, map changes and mounts.
 - Houses and boats (placement, and multis in movement and line of sight).
 - Containers on the ground, dressing other characters, strength requirements.
-- Region rules: guards, housing, music. Regions only drive the weather and the dungeon light.
+- Region rules: guards and housing. Regions drive the weather, the dungeon light and the music.
 - Spawner items (the [spawn regions](spawns.md) do the respawning), seasons.
 - Per-player language, database backup and restore, a web administration panel.
 - Old Kingdom Reborn AES/E3 encryption; the Enhanced Client has not been tested.
@@ -79,8 +79,8 @@ See all of them in [Commands](commands.md).
 - **Map sectors:** players, NPCs and ground items are seen within the view range; NPCs away from
   every player sleep.
 - **Light:** a game clock with day and night by map and longitude; dark dungeons and dim jails.
-- **Regions and weather:** the region of every player is followed; each region has UOX3's weather,
-  rolled every game hour, and it is dry indoors.
+- **Regions, weather and music:** the region of every player is followed; each region has UOX3's
+  weather, rolled every game hour (dry indoors), and its music track.
 - **Decoration:** ModernUO's world decoration (and ServUO's New Haven) placed by `.decorate`: doors,
   locks and keys, signs, lights; the town lamp posts light up at night.
 - **NPC spawns:** UOX3's spawn regions fill the world gradually and respawn NPCs, on land and on

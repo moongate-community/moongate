@@ -3371,5 +3371,30 @@
     ],
     "notes": "Extended command subcommand 0x04 closes a gump.",
     "handler": "GumpService: closes a gump replaced by one with the same id, or closed by the server."
+  },
+  "0x6D:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Music",
+        "type": "ushort",
+        "size": "2",
+        "description": "The track (MusicType); 0x1FFF stops the music."
+      }
+    ],
+    "notes": "Plays a music track on the client.",
+    "handler": "MusicService: the track of the player's region, else its map's, when it changes; .music plays one."
   }
 }
