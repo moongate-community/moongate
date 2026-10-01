@@ -73,6 +73,14 @@ public sealed class GumpLayoutTests
         );
     }
 
+    [Fact]
+    public void ClilocArguments_LoseControlCharacters_ButKeepTheirTabs()
+    {
+        var layout = new GumpLayout().Add(new GumpTooltip { Cliloc = 1, Args = "a\0b\nc\td" });
+
+        Assert.Equal("{ tooltip 1 @abc\td@ }", layout.Build().Layout);
+    }
+
     [Theory, InlineData(-1), InlineData(65536)]
     public void ATextEntryIdThatDoesNotFitTheAnswer_IsRefused(int entryId)
     {

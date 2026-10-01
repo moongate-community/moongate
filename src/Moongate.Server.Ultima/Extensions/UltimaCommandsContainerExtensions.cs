@@ -87,6 +87,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.WeatherDescription
         );
+        container.RegisterCommand<GumpCommand>(
+            "gump",
+            "Opens a gump of templates/gumps on you to try it; name=value pairs fill its placeholders.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.GumpDescription
+        );
         container.RegisterCommand<SpawnsCommand>(
             "spawns",
             "Lists the spawn regions where you stand, with their live NPCs and the minutes to their next spawn.",

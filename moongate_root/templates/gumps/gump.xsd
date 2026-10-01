@@ -142,7 +142,8 @@
         <xs:annotation>
           <xs:documentation>
             A button: on_click names the function of the gump script it calls, id sends that number to
-            on_button, page turns to that page. Exactly one of them.
+            on_button, page turns to that page, open opens another gump with the same arguments.
+            Exactly one of them.
           </xs:documentation>
         </xs:annotation>
         <xs:complexType>
@@ -152,6 +153,9 @@
           <xs:attribute name="on_click" type="identifier" />
           <xs:attribute name="id" type="replyId" />
           <xs:attribute name="page" type="replyId" />
+          <xs:attribute name="open" type="identifier">
+            <xs:annotation><xs:documentation>Opens that gump with the same arguments, after the bind values are written.</xs:documentation></xs:annotation>
+          </xs:attribute>
         </xs:complexType>
       </xs:element>
       <xs:element name="checkbox">
@@ -161,6 +165,7 @@
           <xs:attribute name="off" type="number" use="required" />
           <xs:attribute name="on" type="number" use="required" />
           <xs:attribute name="switch" type="switchId" use="required" />
+          <xs:attribute name="bind" type="identifier" />
           <xs:attribute name="checked" type="xs:boolean" default="false" />
         </xs:complexType>
       </xs:element>
@@ -174,6 +179,7 @@
                 <xs:attribute name="off" type="number" use="required" />
                 <xs:attribute name="on" type="number" use="required" />
                 <xs:attribute name="switch" type="switchId" use="required" />
+                <xs:attribute name="bind" type="identifier" />
                 <xs:attribute name="checked" type="xs:boolean" default="false" />
               </xs:complexType>
             </xs:element>
@@ -188,6 +194,9 @@
               <xs:attributeGroup ref="position" />
               <xs:attributeGroup ref="size" />
               <xs:attribute name="hue" type="number" />
+              <xs:attribute name="bind" type="identifier">
+                <xs:annotation><xs:documentation>Writes the text into this argument when the player answers.</xs:documentation></xs:annotation>
+              </xs:attribute>
               <xs:attribute name="entry" use="required">
                 <xs:simpleType>
                   <xs:restriction base="xs:int">
@@ -214,6 +223,19 @@
         <xs:complexType>
           <xs:attribute name="cliloc" type="number" use="required" />
           <xs:attribute name="args" type="xs:string" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="slot">
+        <xs:annotation>
+          <xs:documentation>
+            Filled when the gump opens by the function name of its script, &lt;id&gt;.&lt;name&gt;(g, player, args),
+            with the controls it adds to g, moved to x, y; the pages it makes follow the gump's.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="name" type="identifier" use="required" />
+          <xs:attribute name="x" type="xs:int" use="required" />
+          <xs:attribute name="y" type="xs:int" use="required" />
         </xs:complexType>
       </xs:element>
       <xs:element name="item_property">

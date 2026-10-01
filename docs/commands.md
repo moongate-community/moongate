@@ -38,6 +38,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`karma`](commands/karma.md) | `karma <-32000..32000>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`weather`](commands/weather.md) | `weather [none\|rain\|snow\|storm]` | No | Yes | GameMaster | Game |
 | [`spawns`](commands/spawns.md) | `spawns` | No | Yes | GameMaster | Game |
+| [`gump`](commands/gump.md) | `gump <id> [name=value ...]` | No | Yes | GameMaster | Game |
 | [`lock`](commands/lock.md) | `lock`, then target a door | No | Yes | GameMaster | Game |
 | [`unlock`](commands/unlock.md) | `unlock`, then target a door | No | Yes | GameMaster | Game |
 | [`key`](commands/key.md) | `key`, then target a door | No | Yes | GameMaster | Game |
@@ -46,7 +47,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 
 - **Everyone:** `help`, `echo`.
 - **Game masters:** `character`, `spawn`, `remove`, `where`, `fame`, `karma`, `globallight`,
-  `weather`, `spawns`, `lock`, `unlock`, `key`.
+  `weather`, `spawns`, `gump`, `lock`, `unlock`, `key`.
 - **Administrators:** `account`, `save`, `broadcast`, `shutdown`, `decorate`, plus everything a
   game master uses.
 - **Console only:** `script`.

@@ -1,40 +1,53 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Lua;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Gumps;
+using Moongate.Server.Ultima.Data.Templates.Gumps;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Loaders;
+using Moongate.Server.Ultima.Modules.Internal;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Gumps;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Modules;
 
 /// <summary>
 ///     The <c>gump</c> Lua module: opens the gumps of <c>templates/gumps</c> on players and calls their script,
-///     <c>scripts/gumps/&lt;id&gt;.lua</c>, with the answer: an <c>on_click</c> button calls the function it names, an
-///     <c>id</c> button calls <c>on_button</c>, and <c>on_close</c> runs when the gump goes away without a button,
-///     with the reason: <c>player</c>, <c>replaced</c>, <c>server</c> or <c>disconnect</c>.
+///     <c>scripts/gumps/&lt;id&gt;.lua</c>, with the answer: the controls with <c>bind</c> write into the arguments, an
+///     <c>open</c> button opens its gump with them, an <c>on_click</c> button calls the function it names, an <c>id</c>
+///     button calls <c>on_button</c>, and <c>on_close</c> runs when the gump goes away without a button, with the
+///     reason: <c>player</c>, <c>replaced</c>, <c>server</c> or <c>disconnect</c>.
 /// </summary>
 [ScriptModule("gump", "Opens the gumps of templates/gumps on players; their script gets the answer.")]
-public sealed class GumpModule
+public sealed partial class GumpModule
 {
+    private readonly ILogger _logger = Log.ForContext<GumpModule>();
     private readonly ISessionService _sessions;
     private readonly IGumpService _gumps;
     private readonly IGumpTemplateService _templates;
     private readonly Lazy<IGumpScriptService> _scripts;
+    private readonly IGameLoopService _loop;
 
     public GumpModule(
         ISessionService sessions,
         IGumpService gumps,
         IGumpTemplateService templates,
-        Lazy<IGumpScriptService> scripts
+        Lazy<IGumpScriptService> scripts,
+        IGameLoopService loop
     )
     {
         _sessions = sessions;
         _gumps = gumps;
         _templates = templates;
         _scripts = scripts;
+        _loop = loop;
     }
 
     /// <summary>
@@ -49,15 +62,60 @@ public sealed class GumpModule
             return false;
         }
 
+        if (!_templates.TryGet(id, out var template))
+        {
+            _logger.Warning("No gump {Gump} in templates/gumps", id);
+
+            return false;
+        }
+
         var table = args ?? new LuaTable();
 
-        return _templates.Open(
-            session,
-            id,
-            Strings(table),
-            (answered, answer) => Answered(id, answered, answer, table),
-            (closed, reason) => _scripts.Value.Call(id, "on_close", PlayerOf(closed), table, ReasonOf(reason))
-        );
+        return RunOrPost(() => OpenNow(session, template, player, table));
+    }
+
+    /// <summary>
+    ///     Starts a gump built from Lua; <c>local g = gump.create("pet_list")</c>, then <c>g:text{ x = 20, y = 20,
+    ///     text = "Pets" }</c> and the other controls, with the attributes of the XML elements of the same name.
+    /// </summary>
+    [ScriptFunction(helpText: "Starts a gump built from Lua: add controls with g:text{...}, g:button{...}, ..., then gump.send.")]
+    public LuaTable Create(string id, int x = 0, int y = 0)
+    {
+        if (!GumpId().IsMatch(id))
+        {
+            throw new ArgumentException($"A gump id is lower case letters, digits and _, starting with a letter or _: '{id}'.");
+        }
+
+        return GumpBuilder.Create(id, x, y);
+    }
+
+    /// <summary>
+    ///     Opens a gump built with <see cref="Create" /> on the player; its buttons call their <c>on_click</c> function, or
+    ///     the function of that name of <c>scripts/gumps/&lt;id&gt;.lua</c>; <c>gump.send(player, g, args)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Opens a gump built with gump.create on the player; false for an unknown player.")]
+    public bool Send(long player, LuaTable gump, LuaTable? args = null)
+    {
+        if (!TryGetSession(player, out var session))
+        {
+            return false;
+        }
+
+        var id = GumpBuilder.IdOf(gump);
+        var (x, y) = GumpBuilder.PositionOf(gump);
+        var built = new Dictionary<string, LuaFunction>(StringComparer.Ordinal);
+        var (controls, pages) = GumpBuilder.ToXml(gump, 0, 0, built);
+        var root = new XElement("gump", new XAttribute("id", id), new XAttribute("x", x), new XAttribute("y", y), controls, pages);
+
+        // Checked as a file is, so a mistake fails here with its reason instead of drawing a broken gump.
+        GumpsLoader.Validate($"gump.send('{id}')", root, _templates.Exists);
+
+        // The callbacks belong with the script that built the gump: reloading it ends what they left waiting.
+        var owner = _scripts.Value.CurrentScript ?? $"gumps/{id}.lua";
+        var functions = built.ToDictionary(pair => pair.Key, pair => (pair.Value, owner), StringComparer.Ordinal);
+        var table = args ?? new LuaTable();
+
+        return RunOrPost(() => OpenTemplate(session, new() { Id = id, File = "(built from Lua)", Root = root }, table, functions));
     }
 
     /// <summary>
@@ -67,10 +125,137 @@ public sealed class GumpModule
     [ScriptFunction(helpText: "Closes the player's gump; false for an unknown player or a gump that is not open.")]
     public bool Close(long player, string id)
     {
-        return TryGetSession(player, out var session) && _gumps.Close(session, id);
+        return TryGetSession(player, out var session) && RunOrPost(() => _gumps.Close(session, id));
     }
 
-    private void Answered(string id, GameSession session, GumpTemplateAnswer answered, LuaTable args)
+    // From inside a running script, opening or closing a gump would run other script functions (slots, on_close) as
+    // nested coroutines, which the engine refuses: the work goes to the next turn of the game loop instead.
+    private bool RunOrPost(Func<bool> work)
+    {
+        return _scripts.Value.IsRunningScript ? _loop.TryPost(new LoopActionWorkItem(() => work())) : work();
+    }
+
+    private bool OpenNow(GameSession session, GumpTemplate template, long player, LuaTable table)
+    {
+        var functions = new Dictionary<string, (LuaFunction Function, string Owner)>(StringComparer.Ordinal);
+
+        if (template.Root.Descendants("slot").Any())
+        {
+            if (FillSlots(template, player, table, functions) is not { } root)
+            {
+                return false;
+            }
+
+            try
+            {
+                GumpsLoader.Validate($"{template.File} (slots filled)", root, _templates.Exists);
+            }
+            catch (InvalidDataException exception)
+            {
+                _logger.Error(exception, "Gump {Gump}: its slots made a gump that cannot open", template.Id);
+
+                return false;
+            }
+
+            template = new() { Id = template.Id, File = template.File, Root = root };
+        }
+
+        return OpenTemplate(session, template, table, functions);
+    }
+
+    private bool OpenTemplate(
+        GameSession session,
+        GumpTemplate template,
+        LuaTable table,
+        Dictionary<string, (LuaFunction Function, string Owner)> functions
+    )
+    {
+        var id = template.Id;
+
+        return _templates.Open(
+            session,
+            template,
+            Strings(table),
+            (answered, answer) => Answered(id, answered, answer, table, functions),
+            (closed, reason) => _scripts.Value.Call(id, "on_close", PlayerOf(closed), table, ReasonOf(reason))
+        );
+    }
+
+    // Each <slot> becomes what <id>.<name>(g, player, args) adds to g, moved to the slot; its pages follow the gump's.
+    // A slot function that fails or waits leaves the gump unopened; a missing one leaves the slot empty.
+    private XElement? FillSlots(
+        GumpTemplate template,
+        long player,
+        LuaTable table,
+        Dictionary<string, (LuaFunction Function, string Owner)> functions
+    )
+    {
+        var root = new XElement(template.Root);
+        var owner = $"gumps/{template.Id}.lua";
+
+        foreach (var slot in root.Descendants("slot").ToList())
+        {
+            var name = (string)slot.Attribute("name")!;
+            var builder = GumpBuilder.Create(template.Id, 0, 0);
+            var result = _scripts.Value.Call(template.Id, name, builder, player, table);
+
+            switch (result.Kind)
+            {
+                case ScriptResultKind.Missing:
+                    _logger.Warning("Gump {Gump}: slot {Slot} has no function in {Owner}", template.Id, name, owner);
+
+                    break;
+                case ScriptResultKind.Failed or ScriptResultKind.Suspended:
+                    _logger.Error(
+                        "Gump {Gump}: slot function {Slot} {Outcome}, so the gump does not open",
+                        template.Id,
+                        name,
+                        result.Kind == ScriptResultKind.Failed ? "failed" : "called wait()"
+                    );
+
+                    return null;
+            }
+
+            var built = new Dictionary<string, LuaFunction>(StringComparer.Ordinal);
+            var (controls, pages) = GumpBuilder.ToXml(builder, Coordinate(slot, "x"), Coordinate(slot, "y"), built);
+
+            foreach (var (key, function) in built)
+            {
+                // Numbered per slot, so two slots never share a name.
+                functions[$"{key}_{name}"] = (function, owner);
+                foreach (var button in controls.Concat(pages).SelectMany(element => element.DescendantsAndSelf("button")))
+                {
+                    if ((string?)button.Attribute("on_click") == key)
+                    {
+                        button.SetAttributeValue("on_click", $"{key}_{name}");
+                    }
+                }
+            }
+
+            slot.ReplaceWith(controls);
+            root.Add(pages);
+        }
+
+        return root;
+    }
+
+    [GeneratedRegex("^[a-z_][a-z0-9_]*$")]
+    private static partial Regex GumpId();
+
+    private static int Coordinate(XElement element, string name)
+    {
+        return int.TryParse((string?)element.Attribute(name), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)
+            ? value
+            : 0;
+    }
+
+    private void Answered(
+        string id,
+        GameSession session,
+        GumpTemplateAnswer answered,
+        LuaTable args,
+        IReadOnlyDictionary<string, (LuaFunction Function, string Owner)> functions
+    )
     {
         var player = PlayerOf(session);
         var response = answered.Response;
@@ -82,11 +267,36 @@ public sealed class GumpModule
             return;
         }
 
+        foreach (var (name, value) in answered.Bound)
+        {
+            args[name] = value switch
+            {
+                bool flag => flag,
+                long number => number,
+                _ => (string)value
+            };
+        }
+
+        // An open button goes on to its gump with the same arguments, the bound values in them.
+        if (answered.Open is { } next)
+        {
+            Open(player, next, args);
+
+            return;
+        }
+
         var answer = ToLua(response);
 
-        if (answered.Click is { } function)
+        if (answered.Click is { } click && functions.TryGetValue(click, out var callback))
         {
-            _scripts.Value.Call(id, function, player, answer, args);
+            _scripts.Value.CallFunction(callback.Owner, callback.Function, player, answer, args);
+        }
+        else if (answered.Click is { } function)
+        {
+            if (_scripts.Value.Call(id, function, player, answer, args).Kind == ScriptResultKind.Missing)
+            {
+                _logger.Warning("Gump {Gump}: on_click {Function} is not a function of scripts/gumps/{Gump}.lua", id, function, id);
+            }
         }
         else
         {

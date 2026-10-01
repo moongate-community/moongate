@@ -5489,7 +5489,7 @@
 30006 = "Weight: 1 stone"
 30007 = "Weight: {0} stones"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30084) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086).
 30008 = "Target canceled."
 30009 = "A command is already running."
 30010 = "Unknown command: {0}"
@@ -5567,3 +5567,5 @@
 30082 = "Decoration canceled."
 30083 = "Place the world decoration?"
 30084 = "Every door, sign and light of templates/decorations is placed; what is already there is kept."
+30085 = "No gump {0} in templates/gumps."
+30086 = "Opens a gump of templates/gumps on you to try it; name=value pairs fill its placeholders."

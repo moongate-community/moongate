@@ -34,6 +34,7 @@ export const contentEntries = [
   { source: 'docs/commands/karma.md', slug: 'server/commands/karma', title: 'karma', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/weather.md', slug: 'server/commands/weather', title: 'weather', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/spawns.md', slug: 'server/commands/spawns', title: 'spawns', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/gump.md', slug: 'server/commands/gump', title: 'gump', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/lock.md', slug: 'server/commands/lock', title: 'lock', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/unlock.md', slug: 'server/commands/unlock', title: 'unlock', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/key.md', slug: 'server/commands/key', title: 'key', group: 'Run a shard', subgroup: 'Commands' },
@@ -46,7 +47,8 @@ export const contentEntries = [
   // Scripting and content: shard content without C#.
   { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Scripting and content' },
   { source: 'docs/templates.md', slug: 'server/templates', title: 'Loading TOML templates', group: 'Scripting and content' },
-  { source: 'docs/gumps.md', slug: 'server/gumps', title: 'Gumps', group: 'Scripting and content' },
+  { source: 'docs/gumps.md', slug: 'server/gumps', title: 'Gumps', group: 'Scripting and content', subgroup: 'Gumps' },
+  { source: 'docs/gump-tutorial.md', slug: 'server/gump-tutorial', title: 'Your first gump', group: 'Scripting and content', subgroup: 'Gumps' },
   { source: 'docs/spawns.md', slug: 'server/spawns', title: 'NPC spawns', group: 'Scripting and content' },
   { source: 'docs/toml-types.md', slug: 'server/toml-types', title: 'TOML value types', group: 'Scripting and content' },
   { source: 'docs/localization.md', slug: 'server/localization', title: 'Localization', group: 'Scripting and content' },

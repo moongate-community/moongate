@@ -40,6 +40,7 @@ server does today and what it does not. It describes the current source tree; th
 - See the spawn regions where they stand: `.spawns`; get a message when regions spawn.
 - Lock and unlock doors and make their keys: `.lock`, `.unlock`, `.key`.
 - Force the light or the weather: `.globallight`, `.weather`.
+- Try any gump on themselves: `.gump`.
 - Set fame and karma, inspect what a target cursor picks: `.fame`, `.karma`, `.where`.
 - Save, broadcast, shut down, manage accounts and characters.
 
@@ -91,8 +92,9 @@ See all of them in [Commands](commands.md).
   definitions. See [Writing Lua scripts](scripting.md).
 - Modules: `engine`, `log`, `timer`, `events`, and in the Ultima plugin `dice`, `localization`,
   `npc`, `item`, `world` and `gump`.
-- Gumps: XML layouts checked by `gump.xsd`, with a Lua script per gump for the answers; see
-  [Gumps](gumps.md). Dynamic gumps built from Lua are not done yet.
+- Gumps: XML layouts checked by `gump.xsd`, a Lua script per gump for the answers, slots and whole
+  gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
+  [Your first gump](gump-tutorial.md).
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
   `door.lua`, `light.lua`, `wander.lua`, `potion.lua`, and the cats Orione and Vega.
 - Not yet: character and inventory APIs.

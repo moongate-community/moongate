@@ -16,9 +16,32 @@ public sealed class StubGumpTemplateService : IGumpTemplateService
 
     public List<string> Asked { get; } = [];
 
+    /// <summary>
+    ///     Gets or sets what happens while the player is being asked, before the answer.
+    /// </summary>
+    public Action? WhileAsking { get; set; }
+
     public bool Exists(string id)
     {
         return Ids.Contains(id);
+    }
+
+    public bool TryGet(string id, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Moongate.Server.Ultima.Data.Templates.Gumps.GumpTemplate? template)
+    {
+        template = null;
+
+        return false;
+    }
+
+    public bool Open(
+        GameSession session,
+        Moongate.Server.Ultima.Data.Templates.Gumps.GumpTemplate template,
+        IReadOnlyDictionary<string, string> args,
+        Action<GameSession, GumpTemplateAnswer> onAnswer,
+        Action<GameSession, GumpCloseReasonType>? onClosed = null
+    )
+    {
+        return Ids.Contains(template.Id);
     }
 
     public bool Open(
@@ -40,6 +63,7 @@ public sealed class StubGumpTemplateService : IGumpTemplateService
     )
     {
         Asked.Add(id);
+        WhileAsking?.Invoke();
 
         return Task.FromResult(Ids.Contains(id) ? Answer : null);
     }

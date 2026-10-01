@@ -62,10 +62,19 @@ public sealed class GumpsLoaderTests
     }
 
     [Theory,
-     InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" />", "one of on_click, id or page"),
-     InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"1\" page=\"2\" />", "one of on_click, id or page"),
+     InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" />", "one of on_click, id, page or open"),
+     InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"1\" page=\"2\" />", "one of on_click, id, page or open"),
+     InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" open=\"nowhere\" />", "opens gump 'nowhere'"),
      InlineData("<html x=\"1\" y=\"1\" width=\"1\" height=\"1\" cliloc=\"5\" message=\"6\" />", "cliloc or message"),
-     InlineData("<html x=\"1\" y=\"1\" width=\"1\" height=\"1\" cliloc=\"5\">text</html>", "cliloc or a text")]
+     InlineData("<html x=\"1\" y=\"1\" width=\"1\" height=\"1\" cliloc=\"5\">text</html>", "cliloc or a text"),
+     InlineData("<text x=\"1\" y=\"1\" message=\"5\">text</text>", "message or a text"),
+     InlineData("<html x=\"1\" y=\"1\" width=\"1\" height=\"1\" color=\"5\">text</html>", "color needs a cliloc"),
+     InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"3\" /><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"3\" />", "button id 3 twice"),
+     InlineData("<checkbox x=\"1\" y=\"1\" off=\"1\" on=\"2\" switch=\"4\" /><group><radio x=\"1\" y=\"1\" off=\"1\" on=\"2\" switch=\"4\" /></group>", "switch 4 twice"),
+     InlineData("<text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"2\" /><text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"2\" />", "entry 2 twice"),
+     InlineData("<page><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" page=\"2\" /></page>", "page 2, but the gump has 1"),
+     InlineData("<slot name=\"rows\" x=\"1\" y=\"1\" /><page />", "a slot cannot be in a gump with pages"),
+     InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" on_click=\"__x\" />", "reserved")]
     public async Task LoadDataAsync_AControlTheSchemaCannotCheck_StopsWithTheReason(string control, string expected)
     {
         using var root = new TemporaryDirectory();
@@ -74,6 +83,16 @@ public sealed class GumpsLoaderTests
         var exception = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
 
         Assert.Contains(expected, exception.Message);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_AButtonOpeningAnotherGump_Loads()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/gumps/step1.xml", "<gump id=\"step1\"><text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"1\" bind=\"name\" /><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" open=\"step2\" /></gump>");
+        root.CreateFile("templates/gumps/step2.xml", "<gump id=\"step2\" />");
+
+        Assert.Equal(2, (await CreateLoader(root).LoadDataAsync()).Entities.Count);
     }
 
     [Fact]

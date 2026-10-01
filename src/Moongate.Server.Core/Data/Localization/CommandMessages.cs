@@ -67,6 +67,7 @@ public static class CommandMessages
     public const int DecorationCanceled = 30082;
     public const int DecorationConfirmTitle = 30083;
     public const int DecorationConfirmText = 30084;
+    public const int GumpNotFound = 30085;
 
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
@@ -91,4 +92,5 @@ public static class CommandMessages
     public const int UnlockDescription = 30070;
     public const int KeyDescription = 30073;
     public const int SpawnsDescription = 30079;
+    public const int GumpDescription = 30086;
 }

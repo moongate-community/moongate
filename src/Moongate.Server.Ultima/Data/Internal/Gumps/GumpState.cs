@@ -6,4 +6,9 @@ namespace Moongate.Server.Ultima.Data.Internal.Gumps;
 public sealed class GumpState
 {
     public List<OpenGump> Open { get; } = [];
+
+    /// <summary>
+    ///     Gets or sets whether the session is closing: nothing more opens on it.
+    /// </summary>
+    public bool Closing { get; set; }
 }

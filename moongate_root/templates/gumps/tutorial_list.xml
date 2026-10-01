@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/tutorial_list.xml
+
+  What it is for:
+    The dynamic part of the gump tutorial (docs/gump-tutorial.md): the frame is here,
+    the rows come from tutorial_list.rows in scripts/gumps/tutorial_list.lua, which fills the
+    slot and pages the list. Try it with .gump tutorial_list.
+-->
+<gump id="tutorial_list" x="120" y="80"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="300" height="300" />
+  <text x="20" y="15" hue="1152">The cities of Britannia</text>
+  <slot name="rows" x="20" y="45" />
+</gump>

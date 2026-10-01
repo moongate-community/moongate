@@ -164,6 +164,63 @@ public sealed class GumpServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ReopeningFromOnClose_LeavesOneGumpOpen()
+    {
+        var reopened = false;
+        var again = new GumpInstance
+        {
+            Id = "a", Layout = new GumpLayout().Add(new GumpButton { ButtonId = 2 }),
+            OnResponse = (session, response) => _responses.Add((session, response)),
+            OnClosed = (session, _) =>
+            {
+                if (!reopened)
+                {
+                    reopened = true;
+                    _gumps.Open(session, Confirm(id: "a"));
+                }
+            }
+        };
+
+        await OnLoopAsync(() => _gumps.Open(_session, again));
+        await OnLoopAsync(() => _gumps.Open(_session, Confirm(id: "a")));
+        await OnLoopAsync(() => _gumps.Open(_session, Confirm(id: "b")));
+
+        Assert.Equal(2, _session.Get(GumpSessionKeys.State)!.Open.Count);
+    }
+
+    [Fact]
+    public async Task AGumpTooLargeToSend_IsNotKept()
+    {
+        _session.NetworkSession.SetClientVersion(ClientVersion.Parse("4.0.11c"));
+        var huge = new GumpInstance
+        {
+            Id = "huge", Layout = new GumpLayout().Add(new GumpHtml { Text = new string('a', 40000) }),
+            OnResponse = (_, _) => { }, OnClosed = (_, reason) => _closes.Add(("huge", reason))
+        };
+
+        await Assert.ThrowsAsync<ArgumentException>(() => OnLoopAsync(() => _gumps.Open(_session, huge)));
+
+        await OnLoopAsync(() => _gumps.OnSessionClosed(_session));
+        Assert.Empty(_closes);
+    }
+
+    [Fact]
+    public async Task OpeningOnAClosingSession_KeepsNothing()
+    {
+        await OnLoopAsync(() => _gumps.Open(_session, Confirm(id: "a")));
+        var reopen = new GumpInstance
+        {
+            Id = "b", Layout = new GumpLayout(), OnResponse = (_, _) => { },
+            OnClosed = (session, _) => _gumps.Open(session, Confirm(id: "c"))
+        };
+        await OnLoopAsync(() => _gumps.Open(_session, reopen));
+
+        await OnLoopAsync(() => _gumps.OnSessionClosed(_session));
+
+        Assert.Empty(_session.Get(GumpSessionKeys.State)!.Open);
+    }
+
+    [Fact]
     public async Task AnAnswer_IsNotAServerClose()
     {
         await OnLoopAsync(() => _gumps.Open(_session, Confirm()));

@@ -1,3 +1,4 @@
+using Lua;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Interfaces;
@@ -40,6 +41,15 @@ public sealed class GumpScriptService : IGumpScriptService, IMoongateStartupServ
         _running = false;
 
         return Task.CompletedTask;
+    }
+
+    public bool IsRunningScript => _engine.IsRunningScript;
+
+    public string? CurrentScript => _engine.CurrentScript;
+
+    public ScriptResult CallFunction(string owner, LuaFunction function, params object?[] args)
+    {
+        return _running ? _engine.CallFunction(owner, function, args) : ScriptResult.Missing;
     }
 
     public ScriptResult Call(string gumpId, string function, params object?[] args)

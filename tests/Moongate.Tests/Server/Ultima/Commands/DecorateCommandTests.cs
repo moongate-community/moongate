@@ -54,6 +54,18 @@ public sealed class DecorateCommandTests : IAsyncDisposable
         Assert.StartsWith("Decoration done", Assert.Single(context.Output).Text);
     }
 
+    [Fact]
+    public async Task InGame_ADecorationStartedWhileAsking_IsNotStartedAgain()
+    {
+        var gumps = new StubGumpTemplateService { Answer = "confirm", WhileAsking = () => _decorations.IsRunning = true };
+        gumps.Ids.Add(DecorateCommand.ConfirmGump);
+
+        var context = await RunInGameAsync(gumps: gumps);
+
+        Assert.Equal(0, _decorations.Calls);
+        Assert.Equal("A decoration is already running.", Assert.Single(context.Output).Text);
+    }
+
     [Theory, InlineData("cancel"), InlineData(null)]
     public async Task InGame_WithTheConfirmationGump_CancelledPlacesNothing(string? answer)
     {
