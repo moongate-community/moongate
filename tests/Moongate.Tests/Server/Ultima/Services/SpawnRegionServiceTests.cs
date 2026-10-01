@@ -235,7 +235,21 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
 
         await TickAsync();
 
-        Assert.Equal([(staff, "Spawn: Yew Woods (Felucca): 2 NPCs")], Notices());
+        Assert.Equal([(staff, "Spawn: Yew Woods (Felucca): 2 NPCs - world 0/2 (0%)")], Notices());
+    }
+
+    [Fact]
+    public async Task TheStaff_HearHowFullTheWorldIs()
+    {
+        var staff = await AddPlayerAsync(1, AccountType.GameMaster);
+        await StartAsync(new ScriptedRandom(0), Spawn("forest", name: "Yew Woods", call: 1, max: 4), Spawn("glade", max: 4));
+        await AddLiveAsync("forest");
+        await AddLiveAsync("glade");
+        await AddLiveAsync("glade");
+
+        await TickAsync();
+
+        Assert.Equal((staff, "Spawn: 2 NPCs in 2 regions: Yew Woods 1, glade 1 - world 3/8 (37%)"), Assert.Single(Notices()));
     }
 
     [Fact]
@@ -247,7 +261,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
 
         await TickAsync();
 
-        Assert.Equal("Spawn: 8 NPCs in 7 regions: R7 2, R1 1, R2 1, R3 1, R4 1 and 2 more", Assert.Single(Notices()).Text);
+        Assert.Equal("Spawn: 8 NPCs in 7 regions: R7 2, R1 1, R2 1, R3 1, R4 1 and 2 more - world 0/14 (0%)", Assert.Single(Notices()).Text);
     }
 
     [Fact]
@@ -472,6 +486,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         [
             (CommandMessages.SpawnedInOneRegion, "Spawn: {0} ({1}): {2} NPCs"),
             (CommandMessages.SpawnedInRegions, "Spawn: {0} NPCs in {1} regions: {2}"),
+            (CommandMessages.SpawnedWorldProgress, "{0} - world {1}/{2} ({3}%)"),
             (CommandMessages.SpawnedAndMore, "{0} and {1} more")
         ];
         var localization = TestLocalization.With(

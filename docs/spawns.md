@@ -99,8 +99,10 @@ when its area is a single cell, and walks it back when it is outside.
 
 - Game masters and administrators in the world get one message after each check that spawned
   something: `Spawn: The Hammer And Anvil (Felucca): 1 NPCs` for one region, or
-  `Spawn: 12 NPCs in 9 regions: Yew Woods 3, ... and 4 more` naming at most five. The full detail
-  of each spawn goes to the server log at Debug level.
+  `Spawn: 12 NPCs in 9 regions: Yew Woods 3, ... and 4 more` naming at most five, followed by how
+  full the world is: `- world 3120/24805 (12%)`, the live NPCs of every region against their
+  `max`. The same line goes to the server log at Information level, so the gradual fill can be
+  followed there; the detail of each spawn is at Debug level.
 - [`.spawns`](commands/spawns.md) lists the regions where you stand, with their live NPCs, their
   `max` and the minutes to their next spawn, or `no spot found, retrying` for a region that could
   not place anything.

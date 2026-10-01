@@ -371,8 +371,15 @@ public sealed class SpawnRegionService : ISpawnRegionService
         try
         {
             var notice = Notice(spawned);
-            _logger.Debug("{Notice}", notice);
-            await OnLoopAsync(() => TellStaff(notice));
+            await OnLoopAsync(
+                () =>
+                {
+                    // The live NPCs are counted on the game loop, where the world changes.
+                    var full = WithProgress(notice);
+                    _logger.Information("{Notice}", full);
+                    TellStaff(full);
+                }
+            );
         }
         catch (Exception exception)
         {
@@ -414,6 +421,17 @@ public sealed class SpawnRegionService : ISpawnRegionService
         }
 
         return _localization.Get(CommandMessages.SpawnedInRegions, spawned.Sum(entry => entry.Count), spawned.Count, named);
+    }
+
+    // How full the world is: the live NPCs of the regions against their maxes, as the gradual fill goes.
+    private string WithProgress(string notice)
+    {
+        var live = CountLive();
+        var alive = _regions.Sum(region => Math.Min(live.GetValueOrDefault(region.Template.Id), region.Template.Max));
+        var max = _regions.Sum(region => region.Template.Max);
+        var percent = max == 0 ? 100 : alive * 100 / max;
+
+        return _localization.Get(CommandMessages.SpawnedWorldProgress, notice, alive, max, percent);
     }
 
     private static string NameOf(SpawnTemplate template)
