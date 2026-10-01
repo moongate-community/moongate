@@ -62,6 +62,7 @@ public static class CommandMessages
     public const int InitialSpawnStarted = 30092;
     public const int TimeHere = 30094;
     public const int TimeMoons = 30100;
+    public const int BankContents = 30101;
     public const int SeasonHere = 30097;
     public const int SeasonSet = 30098;
     public const int SpawnRegionHere = 30077;

@@ -1,0 +1,24 @@
+# ==============================================================================
+# Moongate - templates/items/bank.toml
+#
+# What it is for:
+#   The bank box every player gets the first time a banker opens it: a
+#   container worn on the bank layer that the client never draws, opened only
+#   by its owner standing where it was opened.
+#
+# Fields:
+#   base_id     inherits base_item
+#   item_id     the graphic of ModernUO's bank box (0x0E7C, a metal chest)
+#   movable     false: the box itself never leaves the bank layer
+#   decays      false
+# ==============================================================================
+
+[[item]]
+id = "bank_box"
+base_id = "base_item"
+item_id = 0x0E7C
+name = "bank box"
+rarity = "common"
+movable = false
+decays = false
+weight = 0.0
