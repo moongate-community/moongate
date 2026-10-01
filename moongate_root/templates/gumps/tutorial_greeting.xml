@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/tutorial_greeting.xml
+
+  What it is for:
+    Step 2 of the gump tutorial (docs/tutorials/first-gump.md): greets the name step 1 bound.
+    Back returns to step 1 with the name still in it; Done calls tutorial_greeting.done in
+    scripts/gumps/tutorial_greeting.lua.
+-->
+<gump id="tutorial_greeting" x="120" y="120"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="320" height="150" />
+  <html x="20" y="18" width="280" height="60">Hello, &lt;basefont color=#FFD700&gt;${name}&lt;/basefont&gt;! Welcome to the shard.</html>
+  <button x="20" y="100" up="4014" down="4015" open="tutorial_name" />
+  <text x="55" y="101">Back</text>
+  <button x="180" y="100" up="4005" down="4007" on_click="done" />
+  <text x="215" y="101">Done</text>
+</gump>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/tutorial_name.xml
+
+  What it is for:
+    Step 1 of the gump tutorial (docs/tutorials/first-gump.md): asks a name. bind="name" writes
+    it into the arguments, and the button opens step 2 with them. Try it with .gump tutorial_name.
+-->
+<gump id="tutorial_name" x="120" y="120"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="320" height="150" />
+  <text x="20" y="18" hue="1152">What is your name?</text>
+  <image_tiled x="20" y="50" width="280" height="24" gump="2624" />
+  <text_entry x="25" y="52" width="270" height="20" hue="1152" entry="1" max_length="30" bind="name">${name}</text_entry>
+  <button x="20" y="100" up="4005" down="4007" open="tutorial_greeting" />
+  <text x="55" y="101">Next</text>
+</gump>
