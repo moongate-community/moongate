@@ -80,13 +80,14 @@ exists but fails compilation/execution aborts server startup.
 | `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
 | `world.is_staff(player)` | Whether the player is a game master or an administrator in the world; `false` for an NPC or a player not in the world |
 | `world.carries(mobile, key, value)` | Whether the mobile wears or carries, in its containers at any depth, an item whose prop `key` is `value`, such as the key of a door: `world.carries(user, "key.value", 1234)` |
+| `bank.open(player)`, `bank.is_open(player)` | Opens the player's bank box, made the first time, open while the player stands still; and whether it is open. `false` for an NPC or a player not in the world; see [Bank](bank.md) |
 | `gump.open(player, id, args)`, `gump.close(player, id)` | Opens the gump `templates/gumps/<id>.xml` on the player, its `${name}` filled from `args`, and closes it; its script `scripts/gumps/<id>.lua` gets the answer. `false` for an unknown player or gump. See [Gumps](gumps.md) |
 | `gump.create(id, x, y)`, `gump.send(player, g, args)` | Builds a gump in Lua (`g:text{...}`, `g:button{...}`, `g:paginate(...)`, ...) and opens it; a button's `on_click` may be a function. See [Gumps built in Lua](gumps.md#gumps-built-in-lua) |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization`, `npc`, `item` and `world` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
+The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `world`, `gump` and `bank` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -176,7 +177,7 @@ The table may define these functions; each one is optional:
 | Function | When |
 | --- | --- |
 | `on_think(serial)` | On every think of the NPC: every `ultima.npcs.think_interval_ms` (500 ms by default) while a player is within the 5×5 sectors around it; see [NPC tick](game-loop-and-timers.md#npc-tick). A think is instantaneous, as ModernUO's: it must not call `wait` (the server warns once per script), so keep the timing in the script, for example by counting thinks. |
-| `on_speech(serial, speaker, text)` | When a player says `text` within 15 cells (commands are not heard). `speaker` is the player's serial. It may call `wait`. |
+| `on_speech(serial, speaker, text, keywords)` | When a player says `text` within 15 cells (commands are not heard). `speaker` is the player's serial; `keywords` the speech keywords the client found, an array of numbers whatever its language, such as `SpeechKeywordType.Bank`. It may call `wait`. |
 | `on_spawn(serial)` | Once, right after the NPC is spawned (`.spawn`), in the world with its items and shown, before any other function of its script. Not when the saved NPCs are loaded at startup. It may call `wait`. |
 | `on_mobile_in_range(serial, other)` | Each time another mobile, player or NPC, comes within `ultima.npcs.sense_range` cells (8 by default, a square along X and Y) by a step or by entering the world. Once per arrival: it fires again only after the mobile has left the range and come back. Both ways: an NPC walking toward a mobile senses it too. NPCs loaded together at startup do not sense each other until one moves out of range and back. `other` is its serial; `npc.name(other)` gives `nil` for a player. It may call `wait`. |
 
