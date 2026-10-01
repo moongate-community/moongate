@@ -161,11 +161,6 @@ public sealed class SeasonService : ISeasonService
         return season;
     }
 
-    public SeasonType? OverrideOf(MapType map)
-    {
-        return _overrides.TryGetValue(map, out var season) ? season : null;
-    }
-
     public void SetOverride(MapType map, SeasonType? season)
     {
         if (season is { } value)

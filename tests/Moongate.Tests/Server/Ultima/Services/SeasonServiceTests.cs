@@ -161,7 +161,32 @@ public sealed class SeasonServiceTests : IAsyncLifetime
         _seasons.SetOverride(MapType.Trammel, null);
 
         Assert.Equal([(SeasonType.Winter, 1L), (SeasonType.Spring, 1L)], Sent());
-        Assert.Null(_seasons.OverrideOf(MapType.Trammel));
+        Assert.Equal(SeasonType.Spring, _seasons.SeasonOf(MapType.Trammel));
+    }
+
+    [Fact]
+    public async Task ARelogin_FollowsTheNewCharacter_AndForgetsTheOldOne()
+    {
+        await EnterAsync(null);
+        var again = new MobileEntity { Id = _aria.Id, Name = "Aria", Map = MapType.Trammel, Location = _aria.Location };
+
+        _seasons.RegionChanged(again, null, IceCave);
+        _seasons.SeasonOnLogin(again);
+        await LoginAsync(again);
+
+        Assert.Equal((SeasonType.Winter, SeasonType.Spring), (_seasons.SeasonOf(again), _seasons.SeasonOf(_aria)));
+        Assert.Empty(Sent());
+    }
+
+    [Fact]
+    public void AMapMissingFromMapsToml_IsSummer_AndRotatesFromThere()
+    {
+        Assert.Equal(SeasonType.Summer, _seasons.SeasonOf(MapType.Ilshenar));
+
+        _world.SeasonRotation = true;
+        _clock.Day = 12;
+
+        Assert.Equal(SeasonType.Fall, _seasons.SeasonOf(MapType.Ilshenar));
     }
 
     [Fact]

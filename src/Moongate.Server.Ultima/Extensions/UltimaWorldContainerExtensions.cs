@@ -117,7 +117,8 @@ public static class UltimaWorldContainerExtensions
         // The music follows the players' regions too.
         container.AddMoongateService<IMusicService, MusicService>(11);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IMusicService>(), Reuse.Singleton);
-        // The seasons too; after a new season they send the light and the weather again.
+        // The seasons too; after a new season they send the light and the weather again. Keep it after the light and
+        // the weather: the listeners run in this order, so those already follow the new region when it resends them.
         container.AddMoongateService<ISeasonService, SeasonService>(11);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<ISeasonService>(), Reuse.Singleton);
         container.AddMoongateService<IEquipmentService, EquipmentService>();

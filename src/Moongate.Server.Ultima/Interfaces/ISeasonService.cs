@@ -29,11 +29,6 @@ public interface ISeasonService : IMoongateStartupService, IRegionChangeListener
     SeasonType SeasonOnLogin(MobileEntity character);
 
     /// <summary>
-    ///     Gets the season set at runtime on the map, or null.
-    /// </summary>
-    SeasonType? OverrideOf(MapType map);
-
-    /// <summary>
     ///     Sets, or with null clears, the map's season until the restart, and sends it to the map's players. Call it on
     ///     the game loop.
     /// </summary>

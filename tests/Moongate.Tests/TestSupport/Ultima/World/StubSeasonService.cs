@@ -52,11 +52,6 @@ public sealed class StubSeasonService : ISeasonService
         return Here;
     }
 
-    public SeasonType? OverrideOf(MapType map)
-    {
-        return Overrides.LastOrDefault(entry => entry.Map == map).Season;
-    }
-
     public void SetOverride(MapType map, SeasonType? season)
     {
         Overrides.Add((map, season));
