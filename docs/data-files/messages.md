@@ -1,7 +1,9 @@
 # Messages
 
-`data/messages/<lang>.toml` holds the texts the server sends, one file per
-language. `ILocalizationService` reads them at runtime. See
+`data/messages/<lang>.toml` holds the texts the server sends in one
+language. Every `*.toml` file in the directory `data/messages/<lang>/` is merged
+with it, so a language can be split into several files. `ILocalizationService`
+reads them at runtime. See
 [Localization](../localization.md) for the format, the English fallback and the
 validation rules.
 

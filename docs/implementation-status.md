@@ -106,7 +106,8 @@ See all of them in [Commands](commands.md).
 - Templates in `templates/`: items, loot, mobiles, NPC lists, spawn regions and decoration, with
   `base_id` inheritance. See [Loading TOML templates](templates.md).
 - Client files read from `ultima.ultima_path`: tile data, maps (MUL or UOP) and multis.
-- Messages in 8 languages, ported from UOX3. See [Localization](localization.md).
+- Messages in 8 languages, ported from UOX3; a language can be split into several toml
+  files. See [Localization](localization.md).
 
 ### Persistence
 
