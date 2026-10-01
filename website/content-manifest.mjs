@@ -35,6 +35,7 @@ export const contentEntries = [
   { source: 'docs/commands/weather.md', slug: 'server/commands/weather', title: 'weather', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/initial_spawn.md', slug: 'server/commands/initial-spawn', title: 'initial_spawn', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/time.md', slug: 'server/commands/time', title: 'time', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/season.md', slug: 'server/commands/season', title: 'season', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/spawns.md', slug: 'server/commands/spawns', title: 'spawns', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/gump.md', slug: 'server/commands/gump', title: 'gump', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/music.md', slug: 'server/commands/music', title: 'music', group: 'Run a shard', subgroup: 'Commands' },

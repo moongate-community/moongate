@@ -6,7 +6,7 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**228 systems:** ✅ 58 done, 🟡 28 partly done, ❌ 142 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
+**228 systems:** ✅ 59 done, 🟡 28 partly done, ❌ 141 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
 ## Accounts, login and network
 
@@ -196,7 +196,7 @@ works today in more detail.
 | Day and night | ✅ | By map and longitude; `.globallight`, `.time` |
 | Dungeon and jail light | ✅ | |
 | Weather by region | ✅ | Rain, snow, storms with thunder, dry indoors; no weather damage |
-| Seasons | ❌ | |
+| Seasons | ✅ | By map and region, optional rotation with the game days; `.season` |
 | Regions | 🟡 | Found for every player; they set the weather, the music and the dungeon light |
 | Region music | ✅ | The region's track, else the map's; `.music` |
 | Guarded towns and region rules | ❌ | |

@@ -16,6 +16,8 @@ public sealed class StubWeatherService : IWeatherService
 
     public List<(string Profile, WeatherKindType Kind)> Forced { get; } = [];
 
+    public List<MobileEntity> Resent { get; } = [];
+
     public Task StartAsync()
     {
         return Task.CompletedTask;
@@ -47,5 +49,10 @@ public sealed class StubWeatherService : IWeatherService
     public void Force(string profile, WeatherKindType kind)
     {
         Forced.Add((profile, kind));
+    }
+
+    public void Resend(MobileEntity player)
+    {
+        Resent.Add(player);
     }
 }

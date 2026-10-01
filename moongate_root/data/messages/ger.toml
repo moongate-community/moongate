@@ -5487,7 +5487,7 @@
 30006 = "Gewicht: 1 Stein"
 30007 = "Gewicht: {0} Steine"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099).
 30008 = "Ziel abgebrochen."
 30009 = "Ein Befehl wird bereits ausgeführt."
 30010 = "Unbekannter Befehl: {0}"
@@ -5577,3 +5577,6 @@
 30094 = "Spielzeit hier: {0}."
 30095 = "Zeigt die Spielzeit an deinem Standort."
 30096 = "{0} konnte nicht abgespielt werden."
+30097 = "Jahreszeit hier: {0}; {1}: {2}."
+30098 = "Jahreszeit von {0}: {1}."
+30099 = "Zeigt die Jahreszeit an deinem Standort und die deiner Karte oder setzt mit einer Jahreszeit oder auto die deiner Karte bis zum Neustart."

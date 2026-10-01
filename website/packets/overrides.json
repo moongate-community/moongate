@@ -1885,8 +1885,8 @@
         "description": "Whether the client plays the season sound."
       }
     ],
-    "notes": "Sets the displayed season.",
-    "handler": "PlayCharacterPacketHandler: sends the season during world entry."
+    "notes": "Sets the displayed season. The client resets its light and stops its weather on it, so 0x4F and 0x65 follow.",
+    "handler": "PlayCharacterPacketHandler at world entry; SeasonService on a region change to another season, a rotation and .season, followed by 0x4F light and 0x65 weather."
   },
   "0xBD:incoming": {
     "category": "Login",

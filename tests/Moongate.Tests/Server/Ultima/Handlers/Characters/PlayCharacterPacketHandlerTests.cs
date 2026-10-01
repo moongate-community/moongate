@@ -138,6 +138,18 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     }
 
     [Fact]
+    public async Task HandleAsync_SendsTheSeasonOfTheSeasonService()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender, seasons: new StubSeasonService { Here = SeasonType.Fall })
+              .HandleAsync(context, Packet(0), CancellationToken.None);
+
+        Assert.Equal(SeasonType.Fall, sender.Sent.OfType<SeasonChangePacket>().Single().Season);
+    }
+
+    [Fact]
     public async Task HandleAsync_TellsTheClientTheMapSizeAndSeason()
     {
         await using var fixture = await SessionFixture.CreateAsync();
@@ -293,7 +305,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         RecordingCharacterService characters,
         StubPacketSendService sender,
         IMobileService? mobiles = null,
-        ILightService? light = null
+        ILightService? light = null,
+        ISeasonService? seasons = null
     )
     {
         _events.RegisterMoongateEventBus();
@@ -310,7 +323,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         );
 
         _motd.Sender = sender;
-        return new(characters, mobiles ?? _mobiles, _items, _leaves, loaders, bus, _sessions, _view, _motd, light);
+        return new(characters, mobiles ?? _mobiles, _items, _leaves, loaders, bus, _sessions, _view, _motd, light, seasons);
     }
 
     private static CharacterForPlay Aria(int hair = 0x203C, int beard = 0)

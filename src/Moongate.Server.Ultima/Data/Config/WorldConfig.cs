@@ -42,8 +42,21 @@ public sealed class WorldConfig
     public int LampPostLight { get; set; } = 6;
 
     /// <summary>
+    ///     Gets or sets whether the maps change season with the game days: spring, summer, fall, winter, starting from the
+    ///     map's <c>season</c>. Off by default, as in every other emulator; a desolation map never rotates.
+    /// </summary>
+    public bool SeasonRotation { get; set; }
+
+    /// <summary>
+    ///     Gets or sets how many game days a season lasts when they rotate, from 1 to 365; 12, a real day at the default
+    ///     game minute.
+    /// </summary>
+    public int DaysPerSeason { get; set; } = 12;
+
+    /// <summary>
     ///     Validates the section before server services begin startup: the range must be one the client supports, from
-    ///     5 to 24, as ModernUO and POL allow; a game minute from 1 to 3600 seconds; the light levels from 0 to 31.
+    ///     5 to 24, as ModernUO and POL allow; a game minute from 1 to 3600 seconds; the light levels from 0 to 31; a season
+    ///     from 1 to 365 game days.
     /// </summary>
     public void Validate()
     {
@@ -82,6 +95,11 @@ public sealed class WorldConfig
         if (LampPostLight is < 0 or > 31)
         {
             throw new InvalidOperationException($"ultima.world.lamp_post_light must be from 0 to 31, found {LampPostLight}.");
+        }
+
+        if (DaysPerSeason is < 1 or > 365)
+        {
+            throw new InvalidOperationException($"ultima.world.days_per_season must be from 1 to 365, found {DaysPerSeason}.");
         }
     }
 }

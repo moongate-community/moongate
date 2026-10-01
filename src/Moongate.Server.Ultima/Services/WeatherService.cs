@@ -163,6 +163,15 @@ public sealed class WeatherService : IWeatherService
         }
     }
 
+    public void Resend(MobileEntity player)
+    {
+        if (_viewers.TryGetValue(player.Id, out var viewer) && ReferenceEquals(viewer.Player, player))
+        {
+            viewer.LastSent = null;
+            Update(viewer, false);
+        }
+    }
+
     private void LoggedIn(MobileEntity character)
     {
         // A player that left before its login completed is not followed any more.

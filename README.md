@@ -34,7 +34,7 @@ one process. See [Docker login and realms](docs/docker-login-realms.md).
 created, enter the world, walk and run, see each other and talk, and move items in
 their backpack and on the ground. The world is decorated, with doors that open,
 locked doors and their keys, and lights; days and nights pass, dungeons are dark,
-and each region has its weather. Spawn regions fill the world with NPCs, on land
+and each region has its weather, music and season. Spawn regions fill the world with NPCs, on land
 and water, and respawn them; game masters also spawn and remove NPCs by hand. NPCs
 near a player run their Lua mobile script, and items react to Lua item scripts.
 There is no combat, pathfinding AI, death or skill gain yet.
