@@ -6,7 +6,7 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**227 systems:** ✅ 54 done, 🟡 30 partly done, ❌ 143 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
+**227 systems:** ✅ 54 done, 🟡 31 partly done, ❌ 142 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
 ## Accounts, login and network
 
@@ -269,7 +269,7 @@ works today in more detail.
 | Script engine | ✅ | Sandboxed Lua 5.2 with an instruction budget |
 | Scripts bound to templates | ✅ | `script_id` on item and mobile templates |
 | Script events | 🟡 | NPC and item events; no combat, skill, login or region events |
-| Script API | 🟡 | `npc`, `item`, `world`, `dice`, `localization`, `timer`, `events`; no character or inventory API |
+| Script API | 🟡 | `npc`, `item`, `world`, `gump`, `dice`, `localization`, `timer`, `events`; no character or inventory API |
 | Script timers | ✅ | |
 | Commands from plugins | ✅ | In C#; not from Lua |
 | Data-driven content | ✅ | TOML templates and data files, validated at startup |
@@ -281,7 +281,7 @@ works today in more detail.
 | Script profiling | 🟡 | Script metrics; no per-function profile |
 | Files, HTTP, SQL and email from scripts | ❌ | |
 | External TCP services handled by scripts | ❌ | |
-| Scriptable gumps and dialogs | ❌ | |
+| Scriptable gumps and dialogs | 🟡 | XML layouts with Lua callbacks; dynamic gumps next |
 | Hooks that replace core rules (skill check, combat, decay) | ❌ | |
 | Overridable system messages | ✅ | Every message in the `data/messages` files |
 
@@ -292,7 +292,7 @@ works today in more detail.
 | Target cursor | ✅ | |
 | Localized messages | ✅ | 8 languages |
 | Races | 🟡 | Human, elf and gargoyle bodies and looks; no racial gameplay |
-| Gumps | 🟡 | Opened from C# with checked answers; XML layouts and Lua next |
+| Gumps | 🟡 | XML layouts checked by an XSD, Lua scripts, checked answers; dynamic gumps from Lua next |
 | Menus | ❌ | |
 | Context menus | ❌ | |
 | Buff bar | ❌ | |

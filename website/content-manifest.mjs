@@ -46,6 +46,7 @@ export const contentEntries = [
   // Scripting and content: shard content without C#.
   { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Scripting and content' },
   { source: 'docs/templates.md', slug: 'server/templates', title: 'Loading TOML templates', group: 'Scripting and content' },
+  { source: 'docs/gumps.md', slug: 'server/gumps', title: 'Gumps', group: 'Scripting and content' },
   { source: 'docs/spawns.md', slug: 'server/spawns', title: 'NPC spawns', group: 'Scripting and content' },
   { source: 'docs/toml-types.md', slug: 'server/toml-types', title: 'TOML value types', group: 'Scripting and content' },
   { source: 'docs/localization.md', slug: 'server/localization', title: 'Localization', group: 'Scripting and content' },
@@ -67,7 +68,6 @@ export const contentEntries = [
 
   // Extend with C#: plugins and the subsystems they plug into.
   { source: 'docs/plugins.md', slug: 'server/plugins', title: 'Writing a plugin', group: 'Extend with C#', subgroup: 'Plugins' },
-  { source: 'docs/gumps.md', slug: 'server/gumps', title: 'Gumps', group: 'Extend with C#', subgroup: 'Plugins' },
   { source: 'docs/lua-modules.md', slug: 'server/lua-modules', title: 'Writing a Lua module', group: 'Extend with C#', subgroup: 'Plugins' },
   { source: 'docs/metric-providers.md', slug: 'server/metric-providers', title: 'Registering a metric provider', group: 'Extend with C#', subgroup: 'Plugins' },
   { source: 'docs/persistence.md', slug: 'server/persistence', title: 'Entities and data access', group: 'Extend with C#', subgroup: 'Persistence' },

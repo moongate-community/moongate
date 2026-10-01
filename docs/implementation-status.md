@@ -90,7 +90,9 @@ See all of them in [Commands](commands.md).
 - Sandboxed Lua 5.2 with an instruction budget, `wait`, timers, events, hot reload and editor
   definitions. See [Writing Lua scripts](scripting.md).
 - Modules: `engine`, `log`, `timer`, `events`, and in the Ultima plugin `dice`, `localization`,
-  `npc`, `item` and `world`.
+  `npc`, `item`, `world` and `gump`.
+- Gumps: XML layouts checked by `gump.xsd`, with a Lua script per gump for the answers; see
+  [Gumps](gumps.md). Dynamic gumps built from Lua are not done yet.
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
   `door.lua`, `light.lua`, `wander.lua`, `potion.lua`, and the cats Orione and Vega.
 - Not yet: character and inventory APIs.
