@@ -1,5 +1,6 @@
 using System.Text;
 using Moongate.Network.Packets.Data.Clients;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Gumps;
@@ -54,29 +55,44 @@ public sealed class GumpService : IGumpService
     public void Open(GameSession session, GumpInstance gump)
     {
         var state = State(session);
+
+        if (state.Closing)
+        {
+            _logger.Debug("Gump {Gump} not opened: session {SessionId} is closing", gump.Id, session.SessionId);
+
+            return;
+        }
+
         var typeId = TypeIdOf(gump.Id);
+        var serial = ++_lastSerial == 0 ? ++_lastSerial : _lastSerial;
+        var built = gump.Layout.Build();
+
+        // Built first: a gump too large to send leaves nothing behind.
+        var version = session.NetworkSession.ClientVersion;
+        IOutgoingPacket packet = version is null || version >= Compressed
+            ? new CompressedGumpPacket(serial, typeId, gump.X, gump.Y, built)
+            : new GumpPacket(serial, typeId, gump.X, gump.Y, built);
+
+        var closed = new List<(OpenGump Gump, GumpCloseReasonType Reason)>();
 
         if (state.Open.FindIndex(open => open.TypeId == typeId) is var same and >= 0)
         {
-            CloseAt(session, state, same, GumpCloseReasonType.Replaced);
+            closed.Add((Take(session, state, same), GumpCloseReasonType.Replaced));
         }
 
         if (state.Open.Count >= MaxOpenGumps)
         {
-            CloseAt(session, state, 0, GumpCloseReasonType.Server);
+            closed.Add((Take(session, state, 0), GumpCloseReasonType.Server));
         }
 
-        var serial = ++_lastSerial == 0 ? ++_lastSerial : _lastSerial;
-        var built = gump.Layout.Build();
         state.Open.Add(new() { Serial = serial, TypeId = typeId, Gump = gump, Built = built });
+        _sender.TrySend(session.SessionId, packet);
 
-        var version = session.NetworkSession.ClientVersion;
-        _sender.TrySend(
-            session.SessionId,
-            version is null || version >= Compressed
-                ? new CompressedGumpPacket(serial, typeId, gump.X, gump.Y, built)
-                : new GumpPacket(serial, typeId, gump.X, gump.Y, built)
-        );
+        // Told last, so a gump they open again replaces this one instead of sitting beside it.
+        foreach (var (open, reason) in closed)
+        {
+            Closed(session, open, reason);
+        }
     }
 
     public bool Close(GameSession session, string id)
@@ -90,7 +106,7 @@ public sealed class GumpService : IGumpService
             return false;
         }
 
-        CloseAt(session, state!, index, GumpCloseReasonType.Server);
+        Closed(session, Take(session, state!, index), GumpCloseReasonType.Server);
 
         return true;
     }
@@ -150,6 +166,7 @@ public sealed class GumpService : IGumpService
             return;
         }
 
+        state.Closing = true;
         var open = state.Open.ToList();
         state.Open.Clear();
 
@@ -195,12 +212,14 @@ public sealed class GumpService : IGumpService
         return null;
     }
 
-    private void CloseAt(GameSession session, GumpState state, int index, GumpCloseReasonType reason)
+    // Takes the gump off the session and off the client, without telling it yet.
+    private OpenGump Take(GameSession session, GumpState state, int index)
     {
         var open = state.Open[index];
         state.Open.RemoveAt(index);
         _sender.TrySend(session.SessionId, new CloseGumpPacket(open.TypeId, 0));
-        Closed(session, open, reason);
+
+        return open;
     }
 
     private void Closed(GameSession session, OpenGump open, GumpCloseReasonType reason)

@@ -107,7 +107,15 @@ public sealed class GumpTemplateService : IGumpTemplateService
         await _loop.PostAsync(open, cancellationToken);
         await open.Completion;
 
-        await using var registration = cancellationToken.Register(() => completion.TrySetCanceled(cancellationToken));
+        await using var registration = cancellationToken.Register(
+            () =>
+            {
+                if (completion.TrySetCanceled(cancellationToken))
+                {
+                    _loop.TryPost(new LoopActionWorkItem(() => _gumps.Close(session, id)));
+                }
+            }
+        );
 
         return await completion.Task;
     }

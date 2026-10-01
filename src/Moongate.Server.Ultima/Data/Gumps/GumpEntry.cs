@@ -18,11 +18,11 @@ public abstract class GumpEntry
     }
 
     /// <summary>
-    ///     Removes from cliloc arguments the characters that would end them or open a new command: <c>@</c>, <c>{</c>
-    ///     and <c>}</c>.
+    ///     Removes from cliloc arguments the characters that would end them or open a new command (<c>@</c>, <c>{</c>,
+    ///     <c>}</c>) and the control characters, NUL included, but the tabs that separate them.
     /// </summary>
     protected static string Arguments(string args)
     {
-        return string.Concat(args.Where(character => character is not ('@' or '{' or '}')));
+        return string.Concat(args.Where(character => character is not ('@' or '{' or '}') && (character == '\t' || !char.IsControl(character))));
     }
 }

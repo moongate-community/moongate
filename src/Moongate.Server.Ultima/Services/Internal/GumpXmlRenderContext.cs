@@ -116,13 +116,13 @@ internal sealed partial class GumpXmlRenderContext
                     new GumpTextEntry
                     {
                         X = N("x"), Y = N("y"), Width = N("width"), Height = N("height"), Hue = N("hue"), EntryId = N("entry"),
-                        Text = Fill(element.Value), MaxLength = N("max_length")
+                        Text = Fill(Plain(element.Value)), MaxLength = N("max_length")
                     }
                 );
 
                 break;
             case "tooltip":
-                _layout.Add(new GumpTooltip { Cliloc = N("cliloc"), Args = Optional(element, "args") });
+                _layout.Add(new GumpTooltip { Cliloc = N("cliloc"), Args = Optional(element, "args", true) });
 
                 break;
             case "item_property":
@@ -161,7 +161,7 @@ internal sealed partial class GumpXmlRenderContext
                 {
                     X = N("x"), Y = N("y"), Width = N("width"), Height = N("height"), Cliloc = N("cliloc"),
                     Background = Flag(element, "background"), Scrollbar = Flag(element, "scrollbar"),
-                    Color = element.Attribute("color") is null ? null : N("color"), Args = Optional(element, "args")
+                    Color = element.Attribute("color") is null ? null : N("color"), Args = Optional(element, "args", true)
                 }
             );
 
@@ -171,7 +171,7 @@ internal sealed partial class GumpXmlRenderContext
         _layout.Add(
             new GumpHtml
             {
-                X = N("x"), Y = N("y"), Width = N("width"), Height = N("height"), Text = Text(element),
+                X = N("x"), Y = N("y"), Width = N("width"), Height = N("height"), Text = Text(element, true),
                 Background = Flag(element, "background"), Scrollbar = Flag(element, "scrollbar")
             }
         );
@@ -204,22 +204,29 @@ internal sealed partial class GumpXmlRenderContext
         _layout.Add(new GumpButton { X = button.X, Y = button.Y, Up = button.Up, Down = button.Down, ButtonId = id });
     }
 
-    // The element's text, or the server message it names; with its placeholders filled.
-    private string Text(XElement element)
+    // The element's text without the file's indentation, or the server message it names; with its placeholders
+    // filled, escaped where the client reads HTML.
+    private string Text(XElement element, bool html = false)
     {
         if (element.Attribute("message") is null)
         {
-            return Fill(element.Value);
+            return Fill(Plain(element.Value), html);
         }
 
         return _localization is not null && _localization.TryGetText(Number(element, "message"), out var text)
-            ? Fill(text)
+            ? Fill(text, html)
             : string.Empty;
     }
 
-    private string? Optional(XElement element, string name)
+    private string? Optional(XElement element, string name, bool html = false)
     {
-        return element.Attribute(name) is { } attribute ? Fill(attribute.Value) : null;
+        return element.Attribute(name) is { } attribute ? Fill(attribute.Value, html) : null;
+    }
+
+    // The words of a text written over several indented lines, one space apart.
+    private static string Plain(string text)
+    {
+        return string.Join(' ', text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
     }
 
     private static bool Flag(XElement element, string name)
@@ -230,8 +237,18 @@ internal sealed partial class GumpXmlRenderContext
     [GeneratedRegex(@"\$\{([a-z_][a-z0-9_]*)\}")]
     private static partial Regex Placeholder();
 
-    private string Fill(string text)
+    // An argument shown as HTML is escaped, so a player's name cannot add links or fake controls.
+    private string Fill(string text, bool html = false)
     {
-        return Placeholder().Replace(text, match => _args.GetValueOrDefault(match.Groups[1].Value, string.Empty));
+        return Placeholder()
+            .Replace(
+                text,
+                match =>
+                {
+                    var value = _args.GetValueOrDefault(match.Groups[1].Value, string.Empty);
+
+                    return html ? value.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") : value;
+                }
+            );
     }
 }

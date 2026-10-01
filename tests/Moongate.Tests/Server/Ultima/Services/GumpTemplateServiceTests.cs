@@ -103,6 +103,24 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
         Assert.Empty(_gumps.Opened);
     }
 
+    [Fact]
+    public async Task AskAsync_Cancelled_ClosesTheGump()
+    {
+        using var cancellation = new CancellationTokenSource();
+        var asking = _templates.AskAsync(_session, "confirm", new Dictionary<string, string>(), cancellation.Token);
+        await WaitForOpenAsync();
+
+        await cancellation.CancelAsync();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => asking);
+        for (var tries = 0; tries < 200 && _gumps.Closed.Count == 0; tries++)
+        {
+            await Task.Delay(5);
+        }
+
+        Assert.Equal([(_session, "confirm")], _gumps.Closed);
+    }
+
     public async Task DisposeAsync()
     {
         await _fixture.DisposeAsync();

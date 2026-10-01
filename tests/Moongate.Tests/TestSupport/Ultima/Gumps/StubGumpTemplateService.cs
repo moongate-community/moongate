@@ -16,6 +16,11 @@ public sealed class StubGumpTemplateService : IGumpTemplateService
 
     public List<string> Asked { get; } = [];
 
+    /// <summary>
+    ///     Gets or sets what happens while the player is being asked, before the answer.
+    /// </summary>
+    public Action? WhileAsking { get; set; }
+
     public bool Exists(string id)
     {
         return Ids.Contains(id);
@@ -40,6 +45,7 @@ public sealed class StubGumpTemplateService : IGumpTemplateService
     )
     {
         Asked.Add(id);
+        WhileAsking?.Invoke();
 
         return Task.FromResult(Ids.Contains(id) ? Answer : null);
     }

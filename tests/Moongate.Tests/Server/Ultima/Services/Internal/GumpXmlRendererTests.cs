@@ -125,6 +125,43 @@ public sealed class GumpXmlRendererTests
         Assert.Equal(["[]", ""], built.Strings);
     }
 
+    [Fact]
+    public void Render_PlaceholdersInHtml_AreEscaped_AndTheAuthorsHtmlIsKept()
+    {
+        var rendered = Render(
+            """
+            <gump id="a">
+              <html x="1" y="1" width="1" height="1">&lt;b&gt;Hi&lt;/b&gt; ${name}</html>
+              <html x="1" y="1" width="1" height="1" cliloc="1070722" args="${name}" />
+              <text x="1" y="1">${name}</text>
+            </gump>
+            """,
+            new() { ["name"] = "<a href=x>Aria</a>" }
+        );
+
+        var built = rendered.Layout.Build();
+        Assert.Equal(["<b>Hi</b> &lt;a href=x&gt;Aria&lt;/a&gt;", "<a href=x>Aria</a>"], built.Strings);
+        Assert.Contains("@&lt;a href=x&gt;Aria&lt;/a&gt;@", built.Layout);
+    }
+
+    [Fact]
+    public void Render_TextsLoseTheIndentationOfTheFile()
+    {
+        var rendered = Render(
+            """
+            <gump id="a">
+              <html x="1" y="1" width="1" height="1">
+                Line one
+                Line two
+              </html>
+              <text x="1" y="1">   padded   </text>
+            </gump>
+            """
+        );
+
+        Assert.Equal(["Line one Line two", "padded"], rendered.Layout.Build().Strings);
+    }
+
     private static Moongate.Server.Ultima.Data.Gumps.RenderedGump Render(string xml, Dictionary<string, string>? args = null)
     {
         return GumpXmlRenderer.Render(Template(xml), args ?? NoArgs, null);
