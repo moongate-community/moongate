@@ -33,7 +33,7 @@ public sealed class MusicCommandTests : IAsyncDisposable
         Assert.Empty(_music.Played);
     }
 
-    [Theory, InlineData("tavern04"), InlineData("Tavern04")]
+    [Theory, InlineData("tavern04"), InlineData("Tavern04"), InlineData("tavern_04")]
     public async Task WithATrack_PlaysItToYou(string track)
     {
         var context = await RunAsync(track);
@@ -59,6 +59,16 @@ public sealed class MusicCommandTests : IAsyncDisposable
 
         Assert.Equal((CommandOutputLevel.Error, "Usage: music [track]"), (Assert.Single(context.Output).Level, context.Output[0].Text));
         Assert.Empty(_music.Played);
+    }
+
+    [Fact]
+    public async Task ATrackThatCouldNotPlay_IsAnError()
+    {
+        _music.Follows = false;
+
+        var context = await RunAsync("tavern04");
+
+        Assert.Equal((CommandOutputLevel.Error, "tavern04 could not play."), (Assert.Single(context.Output).Level, context.Output[0].Text));
     }
 
     [Fact]

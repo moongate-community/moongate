@@ -17,7 +17,11 @@ public interface IMusicService : IMoongateStartupService, IRegionChangeListener
     MusicType MusicOf(MobileEntity player);
 
     /// <summary>
-    ///     Plays <paramref name="music" /> to the player until its next region change brings another track.
+    ///     Plays <paramref name="music" /> to the player until its next region change brings another track, sending it
+    ///     even when it is already playing, so it starts again.
     /// </summary>
-    void Play(MobileEntity player, MusicType music);
+    /// <returns>
+    ///     <c>false</c> when the player is not followed or the packet could not be sent.
+    /// </returns>
+    bool Play(MobileEntity player, MusicType music);
 }

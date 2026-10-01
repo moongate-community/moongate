@@ -62,9 +62,18 @@ public sealed class MusicCommand : ICommandExecutor
         }
 
         // The music service is driven by the loop; commands run off it.
-        var play = new LoopActionWorkItem(() => _music.Play(character, music));
+        var played = false;
+        var play = new LoopActionWorkItem(() => played = _music.Play(character, music));
         await _loop.PostAsync(play, context.CancellationToken);
         await play.Completion;
+
+        if (!played)
+        {
+            context.PrintError(_localization.Text(CommandMessages.MusicNotPlayed, "{0} could not play.", EnumNameUtils.Format(music)));
+
+            return;
+        }
+
         context.Print(_localization.Text(CommandMessages.MusicPlaying, "Playing {0}.", EnumNameUtils.Format(music)));
     }
 }

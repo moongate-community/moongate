@@ -16,6 +16,11 @@ public sealed class StubMusicService : IMusicService
     public List<(MobileEntity Player, MusicType Music)> Played { get; } = [];
 
     /// <summary>
+    ///     Gets or sets what <see cref="Play" /> answers: whether the player is followed.
+    /// </summary>
+    public bool Follows { get; set; } = true;
+
+    /// <summary>
     ///     Gets the managed thread of the last <see cref="Play" />.
     /// </summary>
     public int PlayedOnThread { get; private set; }
@@ -43,9 +48,16 @@ public sealed class StubMusicService : IMusicService
         return Here;
     }
 
-    public void Play(MobileEntity player, MusicType music)
+    public bool Play(MobileEntity player, MusicType music)
     {
+        if (!Follows)
+        {
+            return false;
+        }
+
         Played.Add((player, music));
         PlayedOnThread = System.Environment.CurrentManagedThreadId;
+
+        return true;
     }
 }

@@ -111,6 +111,66 @@ public sealed class MusicServiceTests : IAsyncLifetime
         Assert.Equal([MusicType.Britain1], Sent());
     }
 
+    [Fact]
+    public async Task Play_TheTrackAlreadyPlaying_SendsItAgain()
+    {
+        _music.RegionChanged(_aria, null, Britain);
+        await LoginAsync();
+
+        Assert.True(_music.Play(_aria, MusicType.Britain1));
+
+        Assert.Equal([MusicType.Britain1, MusicType.Britain1], Sent());
+    }
+
+    [Fact]
+    public void Play_ToAPlayerNotFollowed_SendsNothing_AndSaysSo()
+    {
+        Assert.False(_music.Play(_aria, MusicType.Tavern04));
+
+        Assert.Empty(Sent());
+    }
+
+    [Fact]
+    public async Task ALoginOutsideAnyRegion_PlaysTheMapMusic()
+    {
+        _music.RegionChanged(_aria, null, null);
+
+        await LoginAsync();
+
+        Assert.Equal([MusicType.Create1], Sent());
+    }
+
+    [Fact]
+    public async Task ALoginAfterLeaving_PlaysNothing()
+    {
+        _music.RegionChanged(_aria, null, Britain);
+        _music.Left(_aria.Id);
+
+        await LoginAsync();
+
+        Assert.Empty(Sent());
+    }
+
+    [Fact]
+    public async Task ARelogin_FollowsTheNewCharacter_AndPlaysItsMusicAgain()
+    {
+        _music.RegionChanged(_aria, null, Britain);
+        await LoginAsync();
+        var again = new MobileEntity { Id = _aria.Id, Name = "Aria", Map = MapType.Felucca, Location = _aria.Location };
+
+        _music.RegionChanged(again, null, Britain);
+        await LoginAsync(again);
+        _music.RegionChanged(_aria, Britain, Quiet);
+
+        Assert.Equal([MusicType.Britain1, MusicType.Britain1], Sent());
+    }
+
+    [Fact]
+    public void MusicOf_APlayerNotFollowed_IsItsMapMusic()
+    {
+        Assert.Equal(MusicType.Create1, _music.MusicOf(_aria));
+    }
+
     public async Task DisposeAsync()
     {
         await _music.StopAsync();
@@ -118,9 +178,9 @@ public sealed class MusicServiceTests : IAsyncLifetime
         await _fixture.DisposeAsync();
     }
 
-    private async Task LoginAsync()
+    private async Task LoginAsync(MobileEntity? character = null)
     {
-        await _container.Resolve<IMoongateEventBus>().PublishAsync(new CharacterEnteredWorldEvent(_aria));
+        await _container.Resolve<IMoongateEventBus>().PublishAsync(new CharacterEnteredWorldEvent(character ?? _aria));
     }
 
     private List<MusicType> Sent()

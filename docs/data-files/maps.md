@@ -22,7 +22,7 @@ weather = "temperate"
 | `rules` | The name of the rule set of the map. |
 | `season` | The season of packet 0xBC: `spring`, `summer`, `fall`, `winter` or `desolation`. |
 | `weather` | The profile of `weather.toml` used where no region covers a place. Defaults to `none`. |
-| `music` | The music track, a `MusicType` name such as `Britain1`, played where no region with music covers a place. Left out, the music stops there. |
+| `music` | The music track, a `MusicType` name such as `Britain1`, played where no region with music covers a place. Left out, the music stops there; no shipped map sets one, so outside the regions it is silent, as in ModernUO. |
 
 The shipped file lists the six maps; Felucca and Trammel use `temperate`, the others
 `none`.

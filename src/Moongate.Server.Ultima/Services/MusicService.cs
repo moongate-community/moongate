@@ -95,12 +95,17 @@ public sealed class MusicService : IMusicService
             : MapMusic(player.Map);
     }
 
-    public void Play(MobileEntity player, MusicType music)
+    public bool Play(MobileEntity player, MusicType music)
     {
-        if (_listeners.TryGetValue(player.Id, out var listener) && ReferenceEquals(listener.Player, player))
+        if (!_listeners.TryGetValue(player.Id, out var listener) || !ReferenceEquals(listener.Player, player))
         {
-            Send(listener, music);
+            return false;
         }
+
+        listener.LastSent = null;
+        Send(listener, music);
+
+        return listener.LastSent == music;
     }
 
     private void LoggedIn(MobileEntity character)

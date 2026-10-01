@@ -115,6 +115,24 @@ public sealed class RegionServiceTests
     }
 
     [Fact]
+    public void Tracking_AMapChangeOutsideAnyRegion_TellsTheListeners()
+    {
+        var listener = new RecordingRegionChangeListener();
+        var service = new RegionService(
+            new StubDataLoaderService().With(Region("Britain", 50, Area(0, 0, 100, 100))),
+            new Lazy<IEnumerable<IRegionChangeListener>>(() => [listener])
+        );
+        var aria = Player(500, 500);
+
+        service.Entered(aria);
+        service.Moved(aria);
+        aria.Map = MapType.Felucca;
+        service.Moved(aria);
+
+        Assert.Equal(["Aria: - -> -", "Aria: - -> -"], listener.Changes);
+    }
+
+    [Fact]
     public void Tracking_LeftForgetsThePlayer_AndNpcsAreNotTracked()
     {
         var service = Tracked(Region("Britain", 50, Area(0, 0, 100, 100)));
