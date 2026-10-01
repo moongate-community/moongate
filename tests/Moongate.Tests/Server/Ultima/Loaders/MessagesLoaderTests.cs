@@ -164,6 +164,67 @@ public sealed class MessagesLoaderTests
         Assert.Contains("shard.toml", exception.Message);
     }
 
+    [Theory, InlineData("eng"), InlineData("ita")]
+    public async Task LoadDataAsync_SameIdInTwoFilesOfTheDirectory_NamesTheFirstFileByNameAsTheOwner(string duplicated)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/messages/eng.toml", English);
+        root.CreateFile("data/messages/ita.toml", Italian);
+        root.CreateFile($"data/messages/{duplicated}/b.toml", "[messages]\n7 = \"Second.\"\n");
+        root.CreateFile($"data/messages/{duplicated}/a.toml", "[messages]\n7 = \"First.\"\n");
+
+        var exception = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root, "ita").LoadDataAsync());
+
+        Assert.StartsWith(Path.Join(root.Path, "data", "messages", duplicated, "b.toml"), exception.Message);
+        Assert.EndsWith(Path.Join(duplicated, "a.toml") + ".", exception.Message);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_Subdirectory_IsIgnored()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/messages/eng.toml", English);
+        root.CreateFile("data/messages/eng/sub/more.toml", "[messages]\n9 = \"Ignored.\"\n");
+
+        var messages = (await CreateLoader(root, "eng").LoadDataAsync()).Entities;
+
+        Assert.Equal([0, 1, 2], messages.Select(message => message.Id));
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_UpperCaseExtension_IsRead()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/messages/eng.toml", English);
+        root.CreateFile("data/messages/eng/Shard.TOML", "[messages]\n9 = \"Welcome.\"\n");
+
+        var messages = (await CreateLoader(root, "eng").LoadDataAsync()).Entities;
+
+        Assert.Equal([0, 1, 2, 9], messages.Select(message => message.Id));
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_SameIdTwiceInOneFile_ThrowsInvalidDataException()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/messages/eng.toml", "[messages]\n1 = \"One.\"\n01 = \"One again.\"\n");
+
+        await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root, "eng").LoadDataAsync());
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_NoEnglishMessages_NamesTheFilesRead()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/messages/eng.toml", "# nothing\n");
+        root.CreateFile("data/messages/eng/shard.toml", "[message]\n1 = \"Wrong table.\"\n");
+
+        var exception = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root, "eng").LoadDataAsync());
+
+        Assert.Contains("eng.toml", exception.Message);
+        Assert.Contains("shard.toml", exception.Message);
+    }
+
     private static MessagesLoader CreateLoader(TemporaryDirectory root, string language)
     {
         return new(new DirectoriesConfig(root.Path, ["data"]), new LocalizationConfig { Language = language });

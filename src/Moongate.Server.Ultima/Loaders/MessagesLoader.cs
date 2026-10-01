@@ -22,6 +22,8 @@ public class MessagesLoader : IDataLoader<MessageContent>
 
     private const int MaxValues = 16;
 
+    private static readonly EnumerationOptions TomlFiles = new() { MatchCasing = MatchCasing.CaseInsensitive };
+
     private static readonly object[] SampleValues = Enumerable.Repeat<object>(0, MaxValues).ToArray();
 
     private readonly DirectoriesConfig _directoriesConfig;
@@ -60,7 +62,9 @@ public class MessagesLoader : IDataLoader<MessageContent>
 
         if (english.Count == 0)
         {
-            throw new InvalidDataException($"The {EnglishLanguage} messages have no [messages] entries.");
+            throw new InvalidDataException(
+                $"The {EnglishLanguage} messages have no [messages] entries: {string.Join(", ", GetPaths(EnglishLanguage))}."
+            );
         }
 
         var translated = new Dictionary<int, string>();
@@ -127,7 +131,7 @@ public class MessagesLoader : IDataLoader<MessageContent>
 
         if (Directory.Exists(directory))
         {
-            paths.AddRange(Directory.EnumerateFiles(directory, "*.toml").Order(StringComparer.Ordinal));
+            paths.AddRange(Directory.EnumerateFiles(directory, "*.toml", TomlFiles).Order(StringComparer.Ordinal));
         }
 
         return paths;
@@ -178,7 +182,10 @@ public class MessagesLoader : IDataLoader<MessageContent>
                 );
             }
 
-            messages[id] = text;
+            if (!messages.TryAdd(id, text))
+            {
+                throw new InvalidDataException($"{path}: message {id} is written more than once.");
+            }
         }
 
         return messages;

@@ -78,7 +78,7 @@ Found 5462 messages in ita, 3 of them in English
 - a translation needs more values than the English text, which would fail when the
   code passes the English number of values;
 - a translation has a number that English does not have;
-- the same number is in two files of one language.
+- the same number is in two files of one language, or twice in one file (`1` and `01`).
 
 ### Split a language into several files
 
@@ -100,8 +100,8 @@ data/messages/
 - Every file has the same format: a `[messages]` table of `number = "text"`.
 - The files of the directory are read in name order. Subdirectories and files that do
   not end in `.toml` are ignored.
-- Write the directory name and the `.toml` extension in lower case: on Linux
-  `eng/Shard.TOML` and `ENG/shard.toml` are not read.
+- Write the directory name in lower case: on Linux `ENG/shard.toml` is not read. The
+  case of the file name and of the `.toml` extension does not matter.
 - A number can be in one file only. The same number in two files of one language stops
   the server and the error names both files.
 
