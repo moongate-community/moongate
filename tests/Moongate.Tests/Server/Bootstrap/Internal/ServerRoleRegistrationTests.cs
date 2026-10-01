@@ -24,6 +24,7 @@ using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Packets.Gumps;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
@@ -238,16 +239,17 @@ public sealed class ServerRoleRegistrationTests
                     typeof(ClientHardwareInfoPacket), typeof(AttackRequestPacket), typeof(LiftRequestPacket),
                     typeof(DropRequestPacket), typeof(TextCommandPacket), typeof(EquipRequestPacket),
                     typeof(ResynchronizeRequestPacket), typeof(UnicodeSpeechRequestPacket), typeof(OpenChatWindowPacket),
-                    typeof(ClientTypePacket), typeof(PublicHouseContentPacket)
+                    typeof(ClientTypePacket), typeof(PublicHouseContentPacket), typeof(GumpResponsePacket)
                 ],
                 packet => Assert.Contains(packet, container.Resolve<PacketHandlerRegistry>().Registrations.Keys)
             );
             // The host registers the event bus; this test container does not.
             container.RegisterMoongateEventBus();
             var listeners = container.ResolveMany<ISessionClosedListener>().ToList();
-            Assert.Equal(2, listeners.Count);
+            Assert.Equal(3, listeners.Count);
             Assert.Contains(listeners, listener => listener is CharacterLeaveWorldService);
             Assert.Contains(listeners, listener => listener is TargetService);
+            Assert.Contains(listeners, listener => listener is GumpService);
             Assert.Contains(
                 "character_left_world",
                 container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(registration => registration.Name)
