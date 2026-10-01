@@ -23,6 +23,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | --- | --- | --- | --- | --- | --- |
 | [`help`](commands/help.md) | `help [command]` | Yes | Yes | Regular | Every role |
 | [`echo`, `e`](commands/echo.md) | `echo <text>` | Yes | Yes | Regular | Every role |
+| [`time`](commands/time.md) | `time` | No | Yes | Regular | Game |
 | [`script`](commands/script.md) | `script reload <file>` / `script metrics` | Yes | No | — | Game |
 | [`account`](commands/account.md) | `account create <username> <password> [level]` / `account api-access <username> <on\|off>` | Yes | Yes | Administrator | Login |
 | [`character`](commands/character.md) | `character pending [account-serial]` / `character restore <character-serial>` | Yes | Yes | GameMaster | Game |
@@ -47,7 +48,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 
 ### By who uses them
 
-- **Everyone:** `help`, `echo`.
+- **Everyone:** `help`, `echo`, `time`.
 - **Game masters:** `character`, `spawn`, `remove`, `where`, `fame`, `karma`, `globallight`,
   `weather`, `music`, `spawns`, `gump`, `lock`, `unlock`, `key`.
 - **Administrators:** `account`, `save`, `broadcast`, `shutdown`, `decorate`,

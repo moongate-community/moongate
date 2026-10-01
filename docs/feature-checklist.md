@@ -193,7 +193,7 @@ works today in more detail.
 | Maps, statics and multis from the client files | ✅ | MUL and UOP |
 | Movement and line of sight checks | ✅ | Terrain and statics; not items, mobiles or multis yet |
 | Map sectors and view range | ✅ | |
-| Day and night | ✅ | By map and longitude; `.globallight` |
+| Day and night | ✅ | By map and longitude; `.globallight`, `.time` |
 | Dungeon and jail light | ✅ | |
 | Weather by region | ✅ | Rain, snow, storms with thunder, dry indoors; no weather damage |
 | Seasons | ❌ | |

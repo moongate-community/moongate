@@ -108,6 +108,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.SpawnsDescription
         );
+        container.RegisterCommand<TimeCommand>(
+            "time",
+            "Shows the game time where you stand.",
+            CommandSourceType.InGame,
+            AccountType.Regular,
+            CommandMessages.TimeDescription
+        );
         container.RegisterCommand<MusicCommand>(
             "music",
             "Shows the music where you stand or, with a track name, plays it to you until your next region change.",

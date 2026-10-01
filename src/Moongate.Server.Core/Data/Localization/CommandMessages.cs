@@ -60,6 +60,7 @@ public static class CommandMessages
     public const int SpawnedAndMore = 30076;
     public const int SpawnedWorldProgress = 30088;
     public const int InitialSpawnStarted = 30092;
+    public const int TimeHere = 30094;
     public const int SpawnRegionHere = 30077;
     public const int NoSpawnRegionHere = 30078;
     public const int SpawnRegionRetrying = 30080;
@@ -100,4 +101,5 @@ public static class CommandMessages
     public const int GumpDescription = 30086;
     public const int MusicDescription = 30091;
     public const int InitialSpawnDescription = 30093;
+    public const int TimeDescription = 30095;
 }

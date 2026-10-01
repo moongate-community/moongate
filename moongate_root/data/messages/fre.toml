@@ -5456,7 +5456,7 @@
 30006 = "Poids : 1 pierre"
 30007 = "Poids : {0} pierres"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095).
 30008 = "Cible annulée."
 30009 = "Une commande est déjà en cours."
 30010 = "Commande inconnue : {0}"
@@ -5543,3 +5543,5 @@
 30091 = "Indique la musique de l'endroit où vous êtes ou, avec un nom de morceau, vous le joue jusqu'au prochain changement de région."
 30092 = "Remplissage de {0} régions de spawn : {1} PNJ à créer. Les messages de spawn montrent l'avancement."
 30093 = "Remplit chaque région de spawn jusqu'à son maximum à la prochaine vérification."
+30094 = "Heure du jeu ici : {0}."
+30095 = "Affiche l'heure du jeu là où vous êtes."
