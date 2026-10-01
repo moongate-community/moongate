@@ -6,7 +6,7 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**228 systems:** ✅ 60 done, 🟡 29 partly done, ❌ 139 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
+**228 systems:** ✅ 61 done, 🟡 29 partly done, ❌ 138 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
 ## Accounts, login and network
 
@@ -121,7 +121,7 @@ works today in more detail.
 | Scripted behaviour | ✅ | Lua mobile scripts: `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range` |
 | Sleeping away from players | ✅ | NPCs think only near a player |
 | Wandering | 🟡 | `wander.lua` keeps spawned NPCs in their home area |
-| Speech keywords and answers | 🟡 | From the NPC's Lua script |
+| Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
 | Pathfinding, following and fleeing | ❌ | |
@@ -197,7 +197,7 @@ works today in more detail.
 | Dungeon and jail light | ✅ | |
 | Weather by region | ✅ | Rain, snow, storms with thunder, dry indoors; no weather damage |
 | Seasons | ✅ | By map and region, optional rotation with the game days; `.season` |
-| Regions | 🟡 | Found for every player; they set the weather, the music and the dungeon light |
+| Regions | 🟡 | Found for every player; they set the weather, the music, the season and the dungeon light; no guards or housing rules |
 | Region music | ✅ | The region's track, else the map's; `.music` |
 | Guarded towns and region rules | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |
@@ -209,7 +209,7 @@ works today in more detail.
 | Facet changes and facet rules | ❌ | |
 | Ambient sounds | ❌ | |
 | Several maps at once | ✅ | Every map of `maps.toml` |
-| Moon phases | ❌ | |
+| Moon phases | ✅ | Trammel and Felucca on the game clock, as ModernUO's spyglass; `.time`, `world.moon` in Lua |
 | Custom house design | ❌ | |
 | Sector sleep | ✅ | NPCs away from players cost nothing |
 | World import and export | ❌ | |
