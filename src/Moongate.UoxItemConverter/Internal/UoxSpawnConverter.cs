@@ -60,7 +60,7 @@ internal static partial class UoxSpawnConverter
         return 0;
     }
 
-    private static HashSet<string> ReadMobileIds(string mobileDestination)
+    internal static HashSet<string> ReadMobileIds(string mobileDestination)
     {
         var ids = new HashSet<string>(StringComparer.Ordinal);
 

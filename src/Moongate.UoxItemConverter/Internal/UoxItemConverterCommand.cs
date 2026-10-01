@@ -321,7 +321,7 @@ internal static class UoxItemConverterCommand
         return null;
     }
 
-    private static void RegisterTomlConverters()
+    internal static void RegisterTomlConverters()
     {
         AppContext.SetSwitch("Tomlyn.TomlSerializer.IsReflectionEnabledByDefault", true);
         TomlUtils.AddTomlConverter(new SerialTomlConverter());
