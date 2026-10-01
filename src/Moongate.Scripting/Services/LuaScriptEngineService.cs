@@ -273,6 +273,17 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         return scheduler.Start(value.Read<LuaFunction>(), ScriptFileLoader.Normalize(owner), args);
     }
 
+    /// <inheritdoc />
+    public ScriptResult CallFunction(string owner, LuaFunction function, params object?[] args)
+    {
+        _guard.EnsureScriptThread(nameof(CallFunction));
+        ArgumentException.ThrowIfNullOrWhiteSpace(owner);
+        var scheduler = Ready(_scheduler);
+        _callsStarted++;
+
+        return scheduler.Start(function, ScriptFileLoader.Normalize(owner), args);
+    }
+
     /// <summary>
     ///     Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread;
     ///     diagnostics collectors run off the loop.

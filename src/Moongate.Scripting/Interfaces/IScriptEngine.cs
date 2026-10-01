@@ -1,3 +1,4 @@
+using Lua;
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Scripting.Data.Scripts;
 
@@ -50,6 +51,12 @@ public interface IScriptEngine
     ///     exist; otherwise the result as <see cref="Call" /> gives it.
     /// </returns>
     ScriptResult CallMember(string owner, string table, string function, params object?[] args);
+
+    /// <summary>
+    ///     Calls a function value a script handed to the host, such as a button callback kept by a module; it runs like
+    ///     <see cref="Call" />, its coroutine belonging to <paramref name="owner" />, the script file it belongs with.
+    /// </summary>
+    ScriptResult CallFunction(string owner, LuaFunction function, params object?[] args);
 
     /// <summary>
     ///     Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread;
