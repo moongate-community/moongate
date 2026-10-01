@@ -49,6 +49,22 @@ public sealed class WorldConfigTests
     }
 
     [Fact]
+    public void Seasons_Default_DoNotRotate_And12GameDaysEach()
+    {
+        var world = new WorldConfig();
+
+        Assert.Equal((false, 12), (world.SeasonRotation, world.DaysPerSeason));
+    }
+
+    [Theory, InlineData(0), InlineData(366)]
+    public void Validate_DaysPerSeasonOutOf1To365_Throws(int days)
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => new WorldConfig { DaysPerSeason = days }.Validate());
+
+        Assert.Contains("world.days_per_season", exception.Message);
+    }
+
+    [Fact]
     public void RegionLight_Defaults_AreModernUOs()
     {
         var world = new WorldConfig();

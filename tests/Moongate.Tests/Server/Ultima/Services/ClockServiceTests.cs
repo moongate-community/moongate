@@ -52,6 +52,17 @@ public sealed class ClockServiceTests
         Assert.Equal(new GameTime(0, 45), Clock().GetTime(MapType.Felucca, 0));
     }
 
+    [Fact]
+    public void GetDay_CountsTheGameDaysOfTheMap_WithItsOffset()
+    {
+        Assert.Equal((0, 0), (Clock().GetDay(MapType.Felucca), Clock().GetDay(MapType.Trammel)));
+
+        // 1120 game minutes later Trammel, 320 minutes ahead, starts its second day.
+        _now.Advance(TimeSpan.FromSeconds(1120 * 5));
+
+        Assert.Equal((0, 1), (Clock().GetDay(MapType.Felucca), Clock().GetDay(MapType.Trammel)));
+    }
+
     private ClockService Clock()
     {
         return new(_now, _world);

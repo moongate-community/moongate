@@ -27,11 +27,21 @@ public sealed class ClockService : IClockService
 
     public GameTime GetTime(MapType map, int x)
     {
-        var elapsed = _time.GetUtcNow() - WorldStart;
-        var total = (long)(elapsed.TotalSeconds / _world.SecondsPerUoMinute) +
-                    (int)map * MinutesPerMap +
-                    Math.Max(0, x) / TilesPerMinute;
+        var total = MinutesOf(map) + Math.Max(0, x) / TilesPerMinute;
 
         return new((int)(total / 60 % 24), (int)(total % 60));
+    }
+
+    public long GetDay(MapType map)
+    {
+        return MinutesOf(map) / (24 * 60);
+    }
+
+    // The game minutes since the world start on the map's west edge.
+    private long MinutesOf(MapType map)
+    {
+        var elapsed = _time.GetUtcNow() - WorldStart;
+
+        return (long)(elapsed.TotalSeconds / _world.SecondsPerUoMinute) + (int)map * MinutesPerMap;
     }
 }

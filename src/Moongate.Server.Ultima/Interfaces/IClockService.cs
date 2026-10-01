@@ -13,4 +13,9 @@ public interface IClockService
     ///     Gets the time of day on <paramref name="map" /> at the column <paramref name="x" />.
     /// </summary>
     GameTime GetTime(MapType map, int x);
+
+    /// <summary>
+    ///     Gets how many game days <paramref name="map" /> has lived since the world start, at its west edge.
+    /// </summary>
+    long GetDay(MapType map);
 }
