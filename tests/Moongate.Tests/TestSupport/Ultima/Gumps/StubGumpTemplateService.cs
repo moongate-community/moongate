@@ -26,6 +26,24 @@ public sealed class StubGumpTemplateService : IGumpTemplateService
         return Ids.Contains(id);
     }
 
+    public bool TryGet(string id, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Moongate.Server.Ultima.Data.Templates.Gumps.GumpTemplate? template)
+    {
+        template = null;
+
+        return false;
+    }
+
+    public bool Open(
+        GameSession session,
+        Moongate.Server.Ultima.Data.Templates.Gumps.GumpTemplate template,
+        IReadOnlyDictionary<string, string> args,
+        Action<GameSession, GumpTemplateAnswer> onAnswer,
+        Action<GameSession, GumpCloseReasonType>? onClosed = null
+    )
+    {
+        return Ids.Contains(template.Id);
+    }
+
     public bool Open(
         GameSession session,
         string id,

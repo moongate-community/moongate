@@ -225,6 +225,18 @@
           <xs:attribute name="args" type="xs:string" />
         </xs:complexType>
       </xs:element>
+      <xs:element name="slot">
+        <xs:annotation>
+          <xs:documentation>
+            Filled when the gump opens by the function name of its script, &lt;id&gt;.&lt;name&gt;(g, player, args),
+            with the controls it adds to g, moved to x, y; the pages it makes follow the gump's.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="name" type="identifier" use="required" />
+          <xs:attributeGroup ref="position" />
+        </xs:complexType>
+      </xs:element>
       <xs:element name="item_property">
         <xs:annotation><xs:documentation>The tooltip of a real item, by serial.</xs:documentation></xs:annotation>
         <xs:complexType>

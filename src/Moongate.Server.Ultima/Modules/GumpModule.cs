@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Xml.Linq;
 using Lua;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
@@ -6,7 +7,9 @@ using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Gumps;
+using Moongate.Server.Ultima.Data.Templates.Gumps;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Server.Ultima.Types.Gumps;
 using Serilog;
 
@@ -53,15 +56,53 @@ public sealed class GumpModule
             return false;
         }
 
-        var table = args ?? new LuaTable();
+        if (!_templates.TryGet(id, out var template))
+        {
+            _logger.Warning("No gump {Gump} in templates/gumps", id);
 
-        return _templates.Open(
-            session,
-            id,
-            Strings(table),
-            (answered, answer) => Answered(id, answered, answer, table),
-            (closed, reason) => _scripts.Value.Call(id, "on_close", PlayerOf(closed), table, ReasonOf(reason))
-        );
+            return false;
+        }
+
+        var table = args ?? new LuaTable();
+        var functions = new Dictionary<string, LuaFunction>(StringComparer.Ordinal);
+
+        if (template.Root.Descendants("slot").Any())
+        {
+            template = new() { Id = template.Id, File = template.File, Root = FillSlots(template, player, table, functions) };
+        }
+
+        return OpenTemplate(session, template, table, functions);
+    }
+
+    /// <summary>
+    ///     Starts a gump built from Lua; <c>local g = gump.create("pet_list")</c>, then <c>g:text{ x = 20, y = 20,
+    ///     text = "Pets" }</c> and the other controls, with the attributes of the XML elements of the same name.
+    /// </summary>
+    [ScriptFunction(helpText: "Starts a gump built from Lua: add controls with g:text{...}, g:button{...}, ..., then gump.send.")]
+    public LuaTable Create(string id, int x = 0, int y = 0)
+    {
+        return GumpBuilder.Create(id, x, y);
+    }
+
+    /// <summary>
+    ///     Opens a gump built with <see cref="Create" /> on the player; its buttons call their <c>on_click</c> function, or
+    ///     the function of that name of <c>scripts/gumps/&lt;id&gt;.lua</c>; <c>gump.send(player, g, args)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Opens a gump built with gump.create on the player; false for an unknown player.")]
+    public bool Send(long player, LuaTable gump, LuaTable? args = null)
+    {
+        if (!TryGetSession(player, out var session))
+        {
+            return false;
+        }
+
+        var id = GumpBuilder.IdOf(gump);
+        var (x, y) = GumpBuilder.PositionOf(gump);
+        var functions = new Dictionary<string, LuaFunction>(StringComparer.Ordinal);
+        var (controls, pages) = GumpBuilder.ToXml(gump, 0, 0, functions);
+        var root = new XElement("gump", new XAttribute("id", id), new XAttribute("x", x), new XAttribute("y", y), controls, pages);
+
+        return OpenTemplate(session, new() { Id = id, File = "(built from Lua)", Root = root }, args ?? new LuaTable(), functions);
     }
 
     /// <summary>
@@ -74,7 +115,55 @@ public sealed class GumpModule
         return TryGetSession(player, out var session) && _gumps.Close(session, id);
     }
 
-    private void Answered(string id, GameSession session, GumpTemplateAnswer answered, LuaTable args)
+    private bool OpenTemplate(
+        GameSession session,
+        GumpTemplate template,
+        LuaTable table,
+        Dictionary<string, LuaFunction> functions
+    )
+    {
+        var id = template.Id;
+
+        return _templates.Open(
+            session,
+            template,
+            Strings(table),
+            (answered, answer) => Answered(id, answered, answer, table, functions),
+            (closed, reason) => _scripts.Value.Call(id, "on_close", PlayerOf(closed), table, ReasonOf(reason))
+        );
+    }
+
+    // Each <slot> becomes what <id>.<name>(g, player, args) adds to g, moved to the slot; its pages follow the gump's.
+    private XElement FillSlots(GumpTemplate template, long player, LuaTable table, Dictionary<string, LuaFunction> functions)
+    {
+        var root = new XElement(template.Root);
+
+        foreach (var slot in root.Descendants("slot").ToList())
+        {
+            var builder = GumpBuilder.Create(template.Id, 0, 0);
+            _scripts.Value.Call(template.Id, (string)slot.Attribute("name")!, builder, player, table);
+            var (controls, pages) = GumpBuilder.ToXml(builder, Coordinate(slot, "x"), Coordinate(slot, "y"), functions);
+            slot.ReplaceWith(controls);
+            root.Add(pages);
+        }
+
+        return root;
+    }
+
+    private static int Coordinate(XElement element, string name)
+    {
+        return int.TryParse((string?)element.Attribute(name), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)
+            ? value
+            : 0;
+    }
+
+    private void Answered(
+        string id,
+        GameSession session,
+        GumpTemplateAnswer answered,
+        LuaTable args,
+        IReadOnlyDictionary<string, LuaFunction> functions
+    )
     {
         var player = PlayerOf(session);
         var response = answered.Response;
@@ -106,7 +195,11 @@ public sealed class GumpModule
 
         var answer = ToLua(response);
 
-        if (answered.Click is { } function)
+        if (answered.Click is { } click && functions.TryGetValue(click, out var callback))
+        {
+            _scripts.Value.CallFunction(id, callback, player, answer, args);
+        }
+        else if (answered.Click is { } function)
         {
             if (_scripts.Value.Call(id, function, player, answer, args).Kind == ScriptResultKind.Missing)
             {

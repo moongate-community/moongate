@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
@@ -44,6 +45,13 @@ public sealed class GumpTemplateService : IGumpTemplateService
         return Find(id) is not null;
     }
 
+    public bool TryGet(string id, [NotNullWhen(true)] out GumpTemplate? template)
+    {
+        template = Find(id);
+
+        return template is not null;
+    }
+
     public bool Open(
         GameSession session,
         string id,
@@ -58,6 +66,19 @@ public sealed class GumpTemplateService : IGumpTemplateService
 
             return false;
         }
+
+        return Open(session, template, args, onAnswer, onClosed);
+    }
+
+    public bool Open(
+        GameSession session,
+        GumpTemplate template,
+        IReadOnlyDictionary<string, string> args,
+        Action<GameSession, GumpTemplateAnswer> onAnswer,
+        Action<GameSession, GumpCloseReasonType>? onClosed = null
+    )
+    {
+        var id = template.Id;
 
         // A session closed before this ran would never answer nor be told of a close.
         if (!_sessions.TryGet(session.SessionId, out var live) || !ReferenceEquals(live, session))

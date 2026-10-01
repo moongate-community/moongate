@@ -1,3 +1,4 @@
+using Lua;
 using Moongate.Scripting.Data.Scripts;
 
 namespace Moongate.Server.Ultima.Interfaces;
@@ -14,4 +15,10 @@ public interface IGumpScriptService
     ///     the gump has no script or the script lacks it.
     /// </summary>
     ScriptResult Call(string gumpId, string function, params object?[] args);
+
+    /// <summary>
+    ///     Calls a function a script handed over for gump <paramref name="gumpId" />, such as a button callback of a built
+    ///     gump; its coroutine belongs to the gump's script file.
+    /// </summary>
+    ScriptResult CallFunction(string gumpId, LuaFunction function, params object?[] args);
 }
