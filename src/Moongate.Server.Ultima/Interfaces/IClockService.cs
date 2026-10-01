@@ -1,4 +1,5 @@
 using Moongate.Server.Ultima.Data.World;
+using Moongate.Server.Ultima.Types.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Interfaces;
@@ -18,4 +19,10 @@ public interface IClockService
     ///     Gets how many game days <paramref name="map" /> has lived since the world start, at its west edge.
     /// </summary>
     long GetDay(MapType map);
+
+    /// <summary>
+    ///     Gets the phase of a moon, as ModernUO's spyglass: <paramref name="moon" /> is Felucca or Trammel, read on that
+    ///     map's clock at the column <paramref name="x" />. Felucca turns every 10 game minutes, Trammel every 30.
+    /// </summary>
+    MoonPhaseType GetMoonPhase(MapType moon, int x);
 }

@@ -33,7 +33,11 @@ public sealed class TimeCommandTests : IAsyncDisposable
 
         var context = await RunAsync();
 
-        Assert.Equal("Game time here: 07:05.", Assert.Single(context.Output).Text);
+        // The moons: Felucca (5 + 100) / 10 = 10, Trammel (5 + 320 + 100) / 30 = 14, modulo 8.
+        Assert.Equal(
+            ["Game time here: 07:05.", "Moons: Trammel last quarter, Felucca first quarter."],
+            context.Output.Select(line => line.Text)
+        );
     }
 
     [Fact]
@@ -59,7 +63,7 @@ public sealed class TimeCommandTests : IAsyncDisposable
     {
         var context = await RunAsync([], TestLocalization.With((30094, "Ora di gioco qui: {0}.")));
 
-        Assert.Equal("Ora di gioco qui: 07:00.", Assert.Single(context.Output).Text);
+        Assert.Equal("Ora di gioco qui: 07:00.", context.Output[0].Text);
     }
 
     private async Task<CommandContext> RunAsync(string[]? arguments = null, ILocalizationService? localization = null)

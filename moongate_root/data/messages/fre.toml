@@ -5456,7 +5456,7 @@
 30006 = "Poids : 1 pierre"
 30007 = "Poids : {0} pierres"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099).
 30008 = "Cible annulée."
 30009 = "Une commande est déjà en cours."
 30010 = "Commande inconnue : {0}"
@@ -5549,3 +5549,4 @@
 30097 = "Saison ici : {0} ; {1} : {2}."
 30098 = "Saison de {0} : {1}."
 30099 = "Affiche la saison là où vous êtes et celle de votre carte ou, avec une saison ou auto, fixe celle de votre carte jusqu'au redémarrage."
+30100 = "Lunes : Trammel {0}, Felucca {1}."

@@ -1,5 +1,6 @@
 using Moongate.Server.Ultima.Data.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.TestSupport.Ultima.World;
@@ -21,5 +22,10 @@ public sealed class StubClockService : IClockService
     public long GetDay(MapType map)
     {
         return Day;
+    }
+
+    public MoonPhaseType GetMoonPhase(MapType moon, int x)
+    {
+        return MoonPhaseType.FullMoon;
     }
 }

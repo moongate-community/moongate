@@ -1,6 +1,7 @@
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Services;
@@ -35,6 +36,13 @@ public sealed class ClockService : IClockService
     public long GetDay(MapType map)
     {
         return MinutesOf(map) / (24 * 60);
+    }
+
+    public MoonPhaseType GetMoonPhase(MapType moon, int x)
+    {
+        var total = MinutesOf(moon) + Math.Max(0, x) / TilesPerMinute;
+
+        return (MoonPhaseType)(total / (10 + (int)moon * 20) % 8);
     }
 
     // The game minutes since the world start on the map's west edge.
