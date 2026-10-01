@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 using Moongate.Server.Core.Interfaces.Services;
@@ -25,8 +26,9 @@ internal static class GumpXmlRenderer
         var layout = new GumpLayout();
         var clicks = new Dictionary<int, string>();
         var used = root.Descendants("button")
-                       .Select(button => (int?)button.Attribute("id"))
-                       .OfType<int>()
+                       .Select(button => button.Attribute("id")?.Value)
+                       .Select(id => int.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number) ? number : 0)
+                       .Where(id => id > 0)
                        .ToHashSet();
         var context = new GumpXmlRenderContext(layout, args, localization, clicks, used);
 

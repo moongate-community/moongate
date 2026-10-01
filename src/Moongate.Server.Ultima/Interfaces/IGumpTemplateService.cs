@@ -20,7 +20,7 @@ public interface IGumpTemplateService
     ///     on the game loop.
     /// </summary>
     /// <returns>
-    ///     False when there is no such gump.
+    ///     False when there is no such gump or the session has closed.
     /// </returns>
     bool Open(
         GameSession session,
@@ -32,7 +32,8 @@ public interface IGumpTemplateService
 
     /// <summary>
     ///     Opens gump <paramref name="id" /> and completes with the <c>on_click</c> name of the button the player presses;
-    ///     null when the player closes it, presses an <c>id</c> button, the server closes it, or there is no such gump.
+    ///     null when the player closes it, presses an <c>id</c> button, the server closes it, there is no such gump, or
+    ///     the session has closed.
     ///     Call it off the game loop.
     /// </summary>
     Task<string?> AskAsync(

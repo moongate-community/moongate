@@ -47,7 +47,7 @@ the controls inside each `<page>` show on pages 1, 2, ... in order.
 | `button` | A button: `on_click` (a function of the script), `id` (to `on_button`) or `page` (turns the page) |
 | `checkbox` | A checkbox (`switch` id, `checked`) |
 | `group` with `radio` | Radio buttons of which one can be on |
-| `text_entry` | A text field (`entry` id, `max_length`; its inner text is the starting text) |
+| `text_entry` | A text field (`entry` id, `max_length` up to 239; its inner text is the starting text) |
 | `tooltip` | The tooltip of the control before it (`cliloc`, `args`) |
 | `item_property` | The tooltip of a real item (`serial`) |
 
@@ -69,7 +69,8 @@ one gump can mix two languages until per-player languages exist.
 ### Placeholders
 
 `${name}` in a text or a number is filled from the arguments the gump is opened with; a missing
-one is empty. `args` (tab separated) fills a client message's `~1_NAME~` markers. `@`, `{` and `}`
+one is empty. The ids (`id`, `page`, `switch`, `entry`) and `max_length` take plain numbers only, so
+the schema can check them. `args` (tab separated) fills a client message's `~1_NAME~` markers. `@`, `{` and `}`
 are removed from client message arguments, so a player's name cannot break the layout.
 
 ## The script
@@ -112,7 +113,7 @@ The server keeps every gump it opens on each player, and checks every answer:
 - an answer for a gump the player was not sent, or already answered, is dropped;
 - an answer with a button, switch or text entry the gump does not have, or the same text entry
   twice, is dropped;
-- a text longer than 239 characters is dropped;
+- a text longer than 239 characters is dropped (the schema keeps `max_length` at 239 or less);
 - opening a gump with the same id closes the one already open, and a player keeps at most 64
   gumps.
 

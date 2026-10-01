@@ -45,7 +45,11 @@ public sealed class GumpsLoaderTests
      InlineData("<gump id=\"a\"><dragon /></gump>", "dragon"),
      InlineData("<gump id=\"Bad Id\" />", "'id'"),
      InlineData("<gump id=\"a\">\n<text x=\"1\" y=\"1\" cliloc=\"5\" /></gump>", "line 2"),
-     InlineData("<gump id=\"a\"", "a.xml")]
+     InlineData("<gump id=\"a\"", "a.xml"),
+     InlineData("<gump xmlns=\"urn:x\" id=\"a\"><text x=\"one\" y=\"1\" /></gump>", "line 1"),
+     InlineData("<gump id=\"a\"><text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"1\" max_length=\"240\" /></gump>", "max_length"),
+     InlineData("<gump id=\"a\"><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"99999999999\" /></gump>", "'id'"),
+     InlineData("<gump id=\"a\"><checkbox x=\"1\" y=\"1\" off=\"1\" on=\"2\" switch=\"99999999999\" /></gump>", "'switch'")]
     public async Task LoadDataAsync_AFileTheSchemaRefuses_StopsWithTheFileAndLine(string xml, string expected)
     {
         using var root = new TemporaryDirectory();

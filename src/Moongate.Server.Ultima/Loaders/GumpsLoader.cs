@@ -65,7 +65,11 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
     {
         var settings = new XmlReaderSettings
         {
-            ValidationType = ValidationType.Schema, Schemas = Schema.Value, DtdProcessing = DtdProcessing.Prohibit
+            ValidationType = ValidationType.Schema, Schemas = Schema.Value, DtdProcessing = DtdProcessing.Prohibit,
+            XmlResolver = null,
+
+            // A root the schema does not declare, such as one in a namespace, is only a warning: it must stop the server.
+            ValidationFlags = XmlSchemaValidationFlags.ReportValidationWarnings
         };
         settings.ValidationEventHandler += (_, args) =>
             throw new InvalidDataException(

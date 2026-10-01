@@ -28,6 +28,18 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="replyId">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="switchId">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="0" />
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:attributeGroup name="position">
     <xs:attribute name="x" type="number" use="required" />
     <xs:attribute name="y" type="number" use="required" />
@@ -138,8 +150,8 @@
           <xs:attribute name="up" type="number" use="required" />
           <xs:attribute name="down" type="number" use="required" />
           <xs:attribute name="on_click" type="identifier" />
-          <xs:attribute name="id" type="xs:positiveInteger" />
-          <xs:attribute name="page" type="xs:positiveInteger" />
+          <xs:attribute name="id" type="replyId" />
+          <xs:attribute name="page" type="replyId" />
         </xs:complexType>
       </xs:element>
       <xs:element name="checkbox">
@@ -148,7 +160,7 @@
           <xs:attributeGroup ref="position" />
           <xs:attribute name="off" type="number" use="required" />
           <xs:attribute name="on" type="number" use="required" />
-          <xs:attribute name="switch" type="xs:nonNegativeInteger" use="required" />
+          <xs:attribute name="switch" type="switchId" use="required" />
           <xs:attribute name="checked" type="xs:boolean" default="false" />
         </xs:complexType>
       </xs:element>
@@ -161,7 +173,7 @@
                 <xs:attributeGroup ref="position" />
                 <xs:attribute name="off" type="number" use="required" />
                 <xs:attribute name="on" type="number" use="required" />
-                <xs:attribute name="switch" type="xs:nonNegativeInteger" use="required" />
+                <xs:attribute name="switch" type="switchId" use="required" />
                 <xs:attribute name="checked" type="xs:boolean" default="false" />
               </xs:complexType>
             </xs:element>
@@ -184,7 +196,15 @@
                   </xs:restriction>
                 </xs:simpleType>
               </xs:attribute>
-              <xs:attribute name="max_length" type="xs:positiveInteger" />
+              <xs:attribute name="max_length">
+                <xs:annotation><xs:documentation>At most 239: the server drops a longer answer.</xs:documentation></xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                    <xs:maxInclusive value="239" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:attribute>
             </xs:extension>
           </xs:simpleContent>
         </xs:complexType>

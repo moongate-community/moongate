@@ -34,7 +34,8 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
         _templates = new(
             _gumps,
             new StubDataLoaderService().With(new GumpTemplate { Id = "confirm", File = "confirm.xml", Root = root }),
-            _fixture.Network.Loop
+            _fixture.Network.Loop,
+            _fixture.Sessions
         );
     }
 
@@ -91,6 +92,15 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
         Assert.Null(await closed);
         Assert.Null(await other);
         Assert.Null(await _templates.AskAsync(_session, "unknown", new Dictionary<string, string>()));
+    }
+
+    [Fact]
+    public async Task AskAsync_ForASessionAlreadyGone_CompletesWithNullAndOpensNothing()
+    {
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Sessions.Remove(_session.SessionId));
+
+        Assert.Null(await _templates.AskAsync(_session, "confirm", new Dictionary<string, string>()));
+        Assert.Empty(_gumps.Opened);
     }
 
     public async Task DisposeAsync()

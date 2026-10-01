@@ -20,18 +20,21 @@ public sealed class GumpTemplateService : IGumpTemplateService
     private readonly IGumpService _gumps;
     private readonly IDataLoaderService _data;
     private readonly IGameLoopService _loop;
+    private readonly ISessionService _sessions;
     private readonly ILocalizationService? _localization;
 
     public GumpTemplateService(
         IGumpService gumps,
         IDataLoaderService data,
         IGameLoopService loop,
+        ISessionService sessions,
         ILocalizationService? localization = null
     )
     {
         _gumps = gumps;
         _data = data;
         _loop = loop;
+        _sessions = sessions;
         _localization = localization;
     }
 
@@ -52,6 +55,12 @@ public sealed class GumpTemplateService : IGumpTemplateService
         {
             _logger.Warning("No gump {Gump} in templates/gumps", id);
 
+            return false;
+        }
+
+        // A session closed before this ran would never answer nor be told of a close.
+        if (!_sessions.TryGet(session.SessionId, out var live) || !ReferenceEquals(live, session))
+        {
             return false;
         }
 

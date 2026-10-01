@@ -138,7 +138,7 @@ public sealed class GumpModuleTests : IAsyncLifetime
             """
         );
         var data = new StubDataLoaderService().With(new GumpTemplate { Id = "release_pet", File = "a.xml", Root = root });
-        var templates = new GumpTemplateService(_gumps, data, _fixture.Network.Loop);
+        var templates = new GumpTemplateService(_gumps, data, _fixture.Network.Loop, _fixture.Sessions);
         var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts));
 
         using var state = LuaState.Create();
