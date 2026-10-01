@@ -8,8 +8,8 @@ A gump is two files:
 - `templates/gumps/<id>.xml`: the layout, checked against `templates/gumps/gump.xsd`;
 - `scripts/gumps/<id>.lua`: what happens when the player answers or closes it.
 
-Dynamic gumps built from Lua come next
-([issue #215](https://github.com/moongate-community/moongate/issues/215)).
+Parts that change with the data come from the script: a `<slot>` in the XML, or a whole gump
+built in Lua. New to gumps? Follow [Your first gump](gump-tutorial.md).
 
 ## The layout
 
@@ -44,12 +44,13 @@ the controls inside each `<page>` show on pages 1, 2, ... in order.
 | `text` | A line of text (`hue`) |
 | `label_cropped` | Text cut to a box |
 | `html` | HTML text in a box (`background`, `scrollbar`), or a client message (`cliloc`, `color`, `args`) |
-| `button` | A button: `on_click` (a function of the script), `id` (to `on_button`) or `page` (turns the page) |
-| `checkbox` | A checkbox (`switch` id, `checked`) |
-| `group` with `radio` | Radio buttons of which one can be on |
-| `text_entry` | A text field (`entry` id, `max_length` up to 239; its inner text is the starting text) |
+| `button` | A button: `on_click` (a function of the script), `id` (to `on_button`), `page` (turns the page) or `open` (opens another gump) |
+| `checkbox` | A checkbox (`switch` id, `checked`, `bind`) |
+| `group` with `radio` | Radio buttons of which one can be on (`switch`, `checked`, `bind`) |
+| `text_entry` | A text field (`entry` id, `max_length` up to 239, `bind`; its inner text is the starting text) |
 | `tooltip` | The tooltip of the control before it (`cliloc`, `args`) |
 | `item_property` | The tooltip of a real item (`serial`) |
+| `slot` | Where the script adds controls when the gump opens (`name`, `x`, `y`); see [Slots](#slots) |
 
 ### Texts
 
@@ -72,6 +73,68 @@ one gump can mix two languages until per-player languages exist.
 one is empty. The ids (`id`, `page`, `switch`, `entry`) and `max_length` take plain numbers only, so
 the schema can check them. `args` (tab separated) fills a client message's `~1_NAME~` markers. `@`, `{` and `}`
 are removed from client message arguments, so a player's name cannot break the layout.
+
+### Gumps in a row
+
+A gump can lead to another, with the same arguments, as a wizard does:
+
+- `bind="name"` on a `text_entry`, `checkbox` or `radio` writes the answer into the argument `name`
+  when the player answers: the text, `true`/`false`, or the `switch` of the radio that is on;
+- `open="other_gump"` on a button opens that gump with the arguments, bound values included.
+
+```xml
+<text_entry x="20" y="40" width="200" height="20" entry="1" bind="name">${name}</text_entry>
+<button x="20" y="80" up="4005" down="4007" open="step2" />
+```
+
+`step2` can show `${name}`, and every callback of either gump finds `args.name`. The server
+checks at startup that the gump an `open` names exists. A script decides by itself where to go with
+`gump.open(player, "step2", args)`.
+
+### Slots
+
+`<slot name="rows" x="20" y="45" />` is filled when the gump opens: the server calls the function
+`rows` of the gump's script with a builder, `rows(g, player, args)`, and puts what it adds at the
+slot, coordinates counted from the slot. Pages the function makes (`g:page()`, `g:paginate`) are
+added after the gump's own, so a slot that pages belongs in a gump without `<page>` elements. The
+function must not call `wait()`.
+
+## Gumps built in Lua
+
+`gump.create(id, x, y)` gives a builder whose methods add the controls of the XML elements of the
+same name, with the same attributes; `gump.send(player, g, args)` opens it:
+
+```lua
+local g = gump.create("pet_list", 100, 100)
+g:background{ x = 0, y = 0, gump = 9200, width = 300, height = 300 }
+g:text{ x = 20, y = 15, hue = 1152, text = "Your pets" }
+g:pager{ previous = { x = 20, y = 260 }, next = { x = 250, y = 260 } }
+
+for i, pet in ipairs(pets) do
+    local row = g:paginate(i, 10)
+    g:button{ x = 20, y = 45 + row * 22, up = 4005, down = 4007, on_click = function(player, response, args)
+        npc.say(pet.serial, "*follows*")
+    end }
+    g:text{ x = 55, y = 45 + row * 22, text = pet.name }
+end
+
+gump.send(player, g, {})
+```
+
+| Method | Adds |
+| --- | --- |
+| `g:background{}`, `g:alpha_region{}`, `g:image{}`, `g:image_tiled{}`, `g:item{}` | The element of the same name |
+| `g:text{}`, `g:label_cropped{}`, `g:html{}`, `g:text_entry{}` | The element, `text = "..."` being its text |
+| `g:button{}`, `g:checkbox{}`, `g:radio{}`, `g:tooltip{}`, `g:item_property{}` | The element; `on_click` may be a function |
+| `g:group()` | A radio group: the radios after it belong to it |
+| `g:page()` | A new page: what follows shows on it |
+| `g:pager{ previous = {...}, next = {...} }` | Where `g:paginate` puts its buttons (`x`, `y`, `up`, `down`) |
+| `g:paginate(index, per_page)` | A new page every `per_page` items, with the buttons between pages; returns the item's row on its page, from 0 |
+
+Every method but `g:paginate` returns `g`, so calls can be chained. A button whose `on_click` is a
+function calls it with `(player, response, args)`; the function sees the variables around it, such
+as `pet` above. A built gump answers like an XML one: texts, `bind`, `open`, `on_close` and the
+checks are the same.
 
 ## The script
 
@@ -103,6 +166,8 @@ Open and close a gump from any script:
 gump.open(player, "release_pet", { pet_name = "Fido", pet = serial })  -- false for an unknown gump
 gump.close(player, "release_pet")
 ```
+
+In game, [`.gump release_pet pet_name=Fido`](commands/gump.md) opens it on yourself to try it.
 
 The arguments take strings, numbers and booleans, and come back to every callback.
 
