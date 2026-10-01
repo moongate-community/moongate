@@ -6,7 +6,7 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**227 systems:** ✅ 54 done, 🟡 29 partly done, ❌ 144 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
+**227 systems:** ✅ 54 done, 🟡 30 partly done, ❌ 143 not built yet. The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
 ## Accounts, login and network
 
@@ -292,7 +292,7 @@ works today in more detail.
 | Target cursor | ✅ | |
 | Localized messages | ✅ | 8 languages |
 | Races | 🟡 | Human, elf and gargoyle bodies and looks; no racial gameplay |
-| Gumps | ❌ | |
+| Gumps | 🟡 | Opened from C# with checked answers; XML layouts and Lua next |
 | Menus | ❌ | |
 | Context menus | ❌ | |
 | Buff bar | ❌ | |

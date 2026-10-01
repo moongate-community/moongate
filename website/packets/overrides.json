@@ -3124,5 +3124,252 @@
     ],
     "notes": "Plays a sound once at a location.",
     "handler": "SpeechService: npc.play_sound of a mobile script, to the players within 15 cells."
+  },
+  "0xB0:outgoing": {
+    "category": "Gumps",
+    "tags": [
+      "Gumps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Gump serial, unique per gump sent."
+      },
+      {
+        "offset": "7",
+        "name": "Type id",
+        "type": "uint",
+        "size": "4",
+        "description": "Gump type id: FNV-1a of the gump id."
+      },
+      {
+        "offset": "11",
+        "name": "X",
+        "type": "uint",
+        "size": "4",
+        "description": "Left edge on the screen."
+      },
+      {
+        "offset": "15",
+        "name": "Y",
+        "type": "uint",
+        "size": "4",
+        "description": "Top edge on the screen."
+      },
+      {
+        "offset": "19",
+        "name": "Layout length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Bytes of the layout, NUL included."
+      },
+      {
+        "offset": "21",
+        "name": "Layout and strings",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "The layout commands (such as { resizepic 0 0 9200 300 400 }) and their NUL; then a ushort string count and each string as a ushort length in characters and UTF-16 big-endian text."
+      }
+    ],
+    "notes": "Opens a gump on clients before 5.0.0. The layout refers to the strings by index.",
+    "handler": "GumpService: opens a gump when the client is older than 5.0.0."
+  },
+  "0xDD:outgoing": {
+    "category": "Gumps",
+    "tags": [
+      "Gumps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Gump serial, unique per gump sent."
+      },
+      {
+        "offset": "7",
+        "name": "Type id",
+        "type": "uint",
+        "size": "4",
+        "description": "Gump type id: FNV-1a of the gump id."
+      },
+      {
+        "offset": "11",
+        "name": "X",
+        "type": "uint",
+        "size": "4",
+        "description": "Left edge on the screen."
+      },
+      {
+        "offset": "15",
+        "name": "Y",
+        "type": "uint",
+        "size": "4",
+        "description": "Top edge on the screen."
+      },
+      {
+        "offset": "19",
+        "name": "Layout compressed length",
+        "type": "uint",
+        "size": "4",
+        "description": "Compressed layout bytes plus 4."
+      },
+      {
+        "offset": "23",
+        "name": "Layout length",
+        "type": "uint",
+        "size": "4",
+        "description": "Plain layout bytes, NUL included."
+      },
+      {
+        "offset": "27",
+        "name": "Layout and strings",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "The zlib layout; then a uint string count, a uint compressed table length plus 4 (0 with no strings), a uint plain table length and the zlib table (each string as ushort length and UTF-16 big-endian text)."
+      }
+    ],
+    "notes": "Opens a gump on clients from 5.0.0, compressed.",
+    "handler": "GumpService: opens a gump on a client from 5.0.0."
+  },
+  "0xB1:incoming": {
+    "category": "Gumps",
+    "tags": [
+      "Gumps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the gump answered."
+      },
+      {
+        "offset": "7",
+        "name": "Type id",
+        "type": "uint",
+        "size": "4",
+        "description": "Type id of the gump answered."
+      },
+      {
+        "offset": "11",
+        "name": "Button",
+        "type": "uint",
+        "size": "4",
+        "description": "Button pressed; 0 when the gump was closed."
+      },
+      {
+        "offset": "15",
+        "name": "Switch count",
+        "type": "uint",
+        "size": "4",
+        "description": "Checkboxes and radios that are on."
+      },
+      {
+        "offset": "19",
+        "name": "Switches and texts",
+        "type": "loop",
+        "size": "variable",
+        "description": "Switch ids (uint each); then a uint text count and each text entry as ushort id, ushort length in characters and UTF-16 big-endian text."
+      }
+    ],
+    "notes": "The answer is dropped when the gump was not sent, or offers no such button, switch or text entry, or a text is longer than 239 characters.",
+    "handler": "GumpResponsePacketHandler: hands the answer to GumpService, which checks it and calls the gump."
+  },
+  "0xBF/0x04:outgoing": {
+    "category": "Gumps",
+    "tags": [
+      "Gumps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "ushort",
+        "size": "2",
+        "description": "Value 0x04"
+      },
+      {
+        "offset": "5",
+        "name": "Type id",
+        "type": "uint",
+        "size": "4",
+        "description": "Type id of the gump to close."
+      },
+      {
+        "offset": "9",
+        "name": "Button",
+        "type": "uint",
+        "size": "4",
+        "description": "Button the client answers with; 0."
+      }
+    ],
+    "notes": "Extended command subcommand 0x04 closes a gump.",
+    "handler": "GumpService: closes a gump replaced by one with the same id, or closed by the server."
   }
 }

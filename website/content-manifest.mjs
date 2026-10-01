@@ -67,6 +67,7 @@ export const contentEntries = [
 
   // Extend with C#: plugins and the subsystems they plug into.
   { source: 'docs/plugins.md', slug: 'server/plugins', title: 'Writing a plugin', group: 'Extend with C#', subgroup: 'Plugins' },
+  { source: 'docs/gumps.md', slug: 'server/gumps', title: 'Gumps', group: 'Extend with C#', subgroup: 'Plugins' },
   { source: 'docs/lua-modules.md', slug: 'server/lua-modules', title: 'Writing a Lua module', group: 'Extend with C#', subgroup: 'Plugins' },
   { source: 'docs/metric-providers.md', slug: 'server/metric-providers', title: 'Registering a metric provider', group: 'Extend with C#', subgroup: 'Plugins' },
   { source: 'docs/persistence.md', slug: 'server/persistence', title: 'Entities and data access', group: 'Extend with C#', subgroup: 'Persistence' },
