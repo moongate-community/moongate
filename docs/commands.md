@@ -39,6 +39,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`fame`](commands/fame.md) | `fame <0..32000>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`karma`](commands/karma.md) | `karma <-32000..32000>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`weather`](commands/weather.md) | `weather [none\|rain\|snow\|storm]` | No | Yes | GameMaster | Game |
+| [`season`](commands/season.md) | `season [spring\|summer\|fall\|winter\|desolation\|auto]` | No | Yes | GameMaster | Game |
 | [`spawns`](commands/spawns.md) | `spawns` | No | Yes | GameMaster | Game |
 | [`gump`](commands/gump.md) | `gump <id> [name=value ...]` | No | Yes | GameMaster | Game |
 | [`music`](commands/music.md) | `music [track]` | No | Yes | GameMaster | Game |
@@ -50,7 +51,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 
 - **Everyone:** `help`, `echo`, `time`.
 - **Game masters:** `character`, `spawn`, `remove`, `where`, `fame`, `karma`, `globallight`,
-  `weather`, `music`, `spawns`, `gump`, `lock`, `unlock`, `key`.
+  `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`.
 - **Administrators:** `account`, `save`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, plus everything a
   game master uses.

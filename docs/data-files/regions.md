@@ -28,6 +28,7 @@ housing = false
 | `go_location` | Where a "go to region" command takes a character, a `Point3D`. | none |
 | `entrance` | The entrance of the town or dungeon, a `Point3D`. | none |
 | `music` | The music track, a `MusicType` name such as `Britain1`, played to the players who enter the region; without it, its nearest parent's music plays, else the map's `music`. | none |
+| `season` | The season the client shows in the region (`spring`, `summer`, `fall`, `winter`, `desolation`), such as winter in an ice dungeon; it never rotates. Without it, its nearest parent's season applies, else the map's. | none |
 | `weather` | The profile of `weather.toml`. | `none` |
 | `rune_name` | The name of a rune marked here. | none |
 | `guarded` | Whether guards protect the region. | `false` |
