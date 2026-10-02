@@ -87,14 +87,19 @@ directory `data/messages/<language>/` and merges them all into one set of messag
 
 ```text
 data/messages/
-  eng.toml            # shipped texts
+  eng.toml            # shipped: the standard texts, from UOX3
   eng/
+    moongate.toml     # shipped: Moongate's own texts, numbers from 30000
     shard.toml        # your own texts
     quests.toml
   ita.toml
   ita/
+    moongate.toml
     shard.toml
 ```
+
+The server ships two files per language: `<language>.toml` with the standard texts and
+`<language>/moongate.toml` with [Moongate's own messages](#moongates-own-messages).
 
 - The file and the directory can both exist, or only one of them.
 - Every file has the same format: a `[messages]` table of `number = "text"`.
@@ -105,8 +110,8 @@ data/messages/
 - A number can be in one file only. The same number in two files of one language stops
   the server and the error names both files.
 
-Keep your shard's texts in `data/messages/eng/` so that an update of the shipped
-`eng.toml` does not overwrite them.
+Keep your shard's texts in files of your own in `data/messages/eng/` so that an update
+of the shipped `eng.toml` and `eng/moongate.toml` does not overwrite them.
 
 ## Read a message from code
 
@@ -183,7 +188,8 @@ other data services. `definitions.lua` declares it for editor completion, with
 
 ## Moongate's own messages
 
-Numbers from 30000 are Moongate's, not UOX3's, all translated in every shipped language:
+Numbers from 30000 are Moongate's, not UOX3's, all translated in every shipped language.
+They live in `data/messages/<language>/moongate.toml`, apart from the standard texts:
 
 | Id | Text | Used by |
 | --- | --- | --- |
@@ -199,14 +205,15 @@ abbreviated ("kam."), since one text with `{0}` cannot follow their plural forms
 
 ## Add or change a text
 
-1. Add the message to `data/messages/eng.toml`, or to a file in `data/messages/eng/`,
-   with a number that is not used yet.
+1. Add the message with a number that is not used yet: a text of Moongate's code to
+   `data/messages/eng/moongate.toml`, a text of your shard to a file of your own in
+   `data/messages/eng/`.
 2. Add the translation with the same number to the other files. A language without it
    shows the English text.
 3. Use the same values, in the same order, in every language.
 4. Run `dotnet test --filter RepositoryDataFiles`: it loads every shipped language
    with the real loader.
 
-To add a language, copy `eng.toml` to `data/messages/<code>.toml`, translate the texts
-and set `language = "<code>"`. The code may contain only ASCII letters. A directory
-`data/messages/<code>/` of toml files works as well.
+To add a language, copy `eng.toml` to `data/messages/<code>.toml` and
+`eng/moongate.toml` to `data/messages/<code>/moongate.toml`, translate the texts and set
+`language = "<code>"`. The code may contain only ASCII letters.

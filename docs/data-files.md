@@ -45,7 +45,7 @@ it.
 | <span id="bodies"></span><span id="validation-at-startup-9"></span>[`bodies.toml`](data-files/bodies.md) | `BodyContent` | containers | No |
 | <span id="weather"></span><span id="validation-at-startup-10"></span>[`weather.toml`](data-files/weather.md) | `WeatherContent` | bodies | No |
 | <span id="regions"></span><span id="areas"></span><span id="parents-and-overlaps"></span><span id="travel-zones"></span><span id="validation-at-startup-11"></span><span id="add-a-region"></span>[`regions/<map>.toml`](data-files/regions.md) | `RegionContent` | weather (every profile must exist), maps | No |
-| <span id="messages"></span>[`messages/<lang>.toml`](data-files/messages.md) | `MessageContent` | regions | Yes, through `ILocalizationService` |
+| <span id="messages"></span>[`messages/<lang>.toml`, `messages/<lang>/*.toml`](data-files/messages.md) | `MessageContent` | regions | Yes, through `ILocalizationService` |
 | <span id="names"></span><span id="validation-at-startup-6"></span>[`names.toml`](data-files/names.md) | `NameList` | messages | Yes, through `INameService` |
 | <span id="starting-items"></span><span id="validation-at-startup-7"></span>[`starting_items.toml`](data-files/starting-items.md) | `StartingItemSet` | names (after the item templates of `templates/items/`, which every item must name) | Yes, through `IStartingItemsService` |
 | [`motd.toml`](motd.md) | `MotdLine` | after mobile templates and plugin variable registration | Yes, on every character entry; optional file |

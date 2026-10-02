@@ -71,6 +71,8 @@ public sealed class MessagesLoaderTests
      InlineData("0 = \"Sali a bordo della barca.\"", "7 = \"Sali a bordo della barca.\""),
      InlineData("0 = \"Sali a bordo della barca.\"", "zero = \"Sali a bordo della barca.\""),
      InlineData("0 = \"Sali a bordo della barca.\"", "0 = \"Sali a bordo {della barca.\""),
+     InlineData("0 = \"Sali a bordo della barca.\"", "0 = \"Sali a bordo di {16}.\""),
+     InlineData("1 = \"{0} è stato ucciso da {1}!\"", "1 = \"{0} è stato ucciso da {2}!\""),
      InlineData("0 = \"Sali a bordo della barca.\"", "0 = \"\"")]
     public async Task LoadDataAsync_InvalidTranslation_ThrowsInvalidDataException(string from, string to)
     {
