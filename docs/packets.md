@@ -459,7 +459,7 @@ It returns `false` if the original session disconnected before the action ran.
 An async handler must not mutate a session directly after an `await`.
 
 Only one async packet may be in flight for a session. Packets the session sends
-meanwhile wait, up to 32 (`PacketDispatchService.MaxPendingPerSession`), and are
+meanwhile wait, up to 1024 (`PacketDispatchService.MaxPendingPerSession`), and are
 dispatched in arrival order when it finishes; one more is rejected and the client
 disconnected. The executor accepts at most 64 operations at once and runs at most
 four handlers concurrently.

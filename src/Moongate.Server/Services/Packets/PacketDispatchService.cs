@@ -19,8 +19,10 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
 {
     /// <summary>
     ///     How many packets a session may send while one of its async handlers runs; they wait and run after it, in order.
+    ///     A client entering a crowded place asks for the name of every mobile it sees (one 0x09 each) while the
+    ///     enter-world handler still runs, so the limit must hold a few hundred; beyond it the session is closed.
     /// </summary>
-    public const int MaxPendingPerSession = 32;
+    public const int MaxPendingPerSession = 1024;
 
     private readonly PacketRegistry _packets;
     private readonly Lock _gate = new();
