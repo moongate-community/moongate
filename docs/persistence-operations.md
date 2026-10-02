@@ -108,6 +108,25 @@ enabled = true
 interval_seconds = 300
 ```
 
+### A save does not stop the game
+
+Players keep walking, talking and fighting while the world is saved: no "the world is saving,
+please wait", no frozen screen. A save runs in three steps, and only the first one holds the game
+loop:
+
+1. **Capture, on the loop.** Each live entity is copied into a detached snapshot, in memory. On a
+   development world of 173,000 entities (144,000 items, 29,000 NPCs) this takes about 0.1 seconds,
+   once every five minutes.
+2. **Fingerprint, in the background.** Each snapshot gets a fingerprint, compared with the one of
+   the last committed save; about a second for the same world, while the game goes on.
+3. **Write, in the background.** Only the entities that changed are written to PostgreSQL, in one
+   transaction per database. With the world quiet that is a few hundred rows instead of 173,000;
+   every twelfth save (once an hour) writes everything again, about 14 seconds on that world, still
+   in the background.
+
+A save that fails rolls back as a whole and is retried in full by the next one; see
+[Live world snapshots](persistence.md#live-world-snapshots) for the rules.
+
 `enabled = false` disables the periodic request while keeping explicit and final
 saves available. Concurrent requests join the active save; cancellation stops only
 that caller's wait. An eligible shutdown runs a final capture after accepted work

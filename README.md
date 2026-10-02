@@ -23,6 +23,11 @@ Moongate is an open-source Ultima Online server emulator written in C# on .NET 1
 It combines Lua scripting, PostgreSQL persistence and Redis-backed login-to-game
 handoff, with reusable libraries for building server tools and services.
 
+World saves never stop the game: the game loop pauses only to copy the world into memory, about a
+tenth of a second for 173,000 entities, and the save writes to PostgreSQL in the background, only
+the entities that changed since the last save. See
+[A save does not stop the game](docs/persistence-operations.md#a-save-does-not-stop-the-game).
+
 Moongate is multi-shard: one login server lists any number of game servers (up to
 128), each running its own world with its own database, and players pick one from
 the client's server list. `standalone` mode runs the login and a single shard in

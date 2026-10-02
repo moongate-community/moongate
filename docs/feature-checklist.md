@@ -317,6 +317,9 @@ Systems most emulators do not have:
 - Login server and game realms as separate processes, discovered through Redis, with one-use
   handoff tickets.
 - PostgreSQL persistence with versioned migrations and a separate migration runner.
+- World saves that never stop the game: about 0.1 s on the game loop to copy 173,000 entities, then
+  only the changed rows written in the background; see
+  [A save does not stop the game](persistence-operations.md#a-save-does-not-stop-the-game).
 - A gRPC administration API with TLS.
 - Plugins that add services, commands, Lua modules, metrics, entities and their own settings.
 - Docker images and a multi-realm example.
