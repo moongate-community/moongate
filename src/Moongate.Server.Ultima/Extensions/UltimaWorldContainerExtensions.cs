@@ -94,6 +94,7 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<NpcModule>();
         container.AddScriptModule<ItemModule>();
         container.AddScriptModule<WorldModule>();
+        container.AddScriptModule<MobileModule>();
         container.AddScriptModule<GumpModule>();
         container.AddScriptModule<BankModule>();
         // No module function takes it: registered so on_speech can compare its keywords with names.

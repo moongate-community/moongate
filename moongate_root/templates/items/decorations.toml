@@ -11,8 +11,10 @@
 #   item_id    fallback graphic (a candle, a metal door)
 #   movable    false: players cannot pick decoration up
 #   decays     false: decoration stays on the ground
-#   script_id  the item script of the doors (scripts/items/door.lua) and of the
-#              lights (scripts/items/light.lua)
+#   script_id  the item script of the doors (scripts/items/door.lua), of the
+#              lights (scripts/items/light.lua) and of the teleporters
+#              (scripts/items/teleporter.lua)
+#   visibility game_master for the teleporters: players never see them
 # ==============================================================================
 
 [[item]]
@@ -40,3 +42,13 @@ rarity = "common"
 movable = false
 decays = false
 script_id = "light"
+
+[[item]]
+id = "decoration_teleporter"
+base_id = "base_item"
+item_id = 0x1BC3
+rarity = "common"
+movable = false
+decays = false
+script_id = "teleporter"
+visibility = "game_master"
