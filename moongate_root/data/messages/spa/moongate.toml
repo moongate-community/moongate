@@ -27,7 +27,7 @@
 30006 = "Peso: 1 piedra"
 30007 = "Peso: {0} piedras"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30101) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103).
 30008 = "Objetivo cancelado."
 30009 = "Ya hay un comando en ejecución."
 30010 = "Comando desconocido: {0}"
@@ -122,3 +122,5 @@
 30099 = "Muestra la estación donde estás y la de tu mapa o, con una estación o auto, fija la de tu mapa hasta el reinicio."
 30100 = "Lunas: Trammel {0}, Felucca {1}."
 30101 = "La caja del banco contiene {0} objetos."
+30102 = "Consola bloqueada. Pulsa '{0}' para desbloquearla."
+30103 = "Vuelve a bloquear la entrada de la consola, como al inicio: console lock."

@@ -197,6 +197,7 @@ All server-managed paths below are relative to `--root-directory`:
 | `data/` | Shard data files copied by `mgboot`, read at game and standalone startup; see [Shard data files](data-files.md) |
 | `templates/items/`, `templates/loots/`, `templates/mobiles/` | [Templates](templates.md) copied by `mgboot`, loaded at game and standalone startup |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
+| `logs/errors/<id>.md` | The report of each exception the server logged, ready to paste into a GitHub issue |
 | `plugins/` | One assembly bundle per plugin directory |
 | `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting.md#mobile-scripts) `mobiles/<script_id>.lua`, the [item scripts](scripting.md#item-scripts) `items/<script_id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
 | `moongate.pid` | Current process identifier |
@@ -214,6 +215,24 @@ Console logs show time, level, source and message. File logs roll daily and at
 10 MiB, keeping up to 30 files. For metrics see [Diagnostics](diagnostics.md);
 for schema operations and world saves see
 [PostgreSQL persistence](persistence.md).
+
+## When something fails
+
+The console shows an exception as one line, its message and its report, never the stack:
+
+```text
+12:04:31.552 ERR BankService                  | Opening the bank failed: the bank box is missing - details: /srv/moongate/logs/errors/7f3a9c21aa.md (paste it into a GitHub issue)
+```
+
+The report holds the Moongate version, the system, the .NET runtime, the time, the source, the
+message and the whole exception, with its inner exceptions and stacks, in Markdown. Open it and
+paste it into a [GitHub issue](https://github.com/moongate-community/moongate/issues/new). Its
+name hashes the exception, so the same one logged again, say by a timer, reuses its report, which
+describes the first time it was seen. After 500 reports no new one is written, so exceptions whose
+messages vary cannot fill the disk; delete the old ones to make room. In Docker the path is the
+one inside the container, under the mounted root. A wrapper such as an `AggregateException` shows
+the message of what it wraps. With `--log-to-file false` no report is written and the console
+shows the message alone. The `.clef` logs keep the full exception of every event.
 
 ## Common startup problems
 

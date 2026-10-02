@@ -27,7 +27,6 @@ using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.Gumps;
-using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Packets.Characters;
@@ -84,7 +83,7 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
-        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30099));
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30103));
     }
 
     [Theory, InlineData(0x09), InlineData(0xBF), InlineData(0xD6)]
