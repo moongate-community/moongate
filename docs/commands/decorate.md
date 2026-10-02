@@ -21,8 +21,9 @@ lit or unlit as in the data and protected, so only staff light or douse them wit
 [light script](../scripting.md). Teleporters get the `decoration_teleporter` template: a player
 who walks onto one stands on its destination at once ([teleporter script](../scripting.md)), and
 only staff sees them. Besides those of the town and dungeon files, each map folder has the
-teleporters of ModernUO's `[TelGen` (`teleporters.toml`, about 1,480); a cell keeps one teleporter
-within 12 of height, the first placed. A teleporter to another map is placed but does nothing yet. One whose `map_dest` names no map is skipped. Spawners, mark
+teleporters of ModernUO's `[TelGen` (`teleporters.toml`, 1,478 in all); a cell keeps one teleporter
+within 12 of height, the first placed, so the 230 that a town or dungeon file already lists are
+reported as already there. Seven of Ter Mur lie outside its map in ModernUO's data and are skipped. A teleporter to another map is placed but does nothing yet. One whose `map_dest` names no map is skipped. Spawners, mark
 containers, public moongates, addons and the teleporters that ask for a word, a skill or a quest
 are skipped for now: they need their own logic.
 

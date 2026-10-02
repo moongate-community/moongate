@@ -254,6 +254,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
             () =>
             {
                 var seen = new HashSet<(MapType, Point3D, int)>();
+                // The teleporters this file already keeps: the ground does not show them yet.
+                var teleporters = new List<(MapType Map, Point3D Location)>();
 
                 foreach (var candidate in candidates)
                 {
@@ -263,13 +265,21 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     {
                         Count(skipped, OutsideTheMap, 1);
                     }
-                    else if (!seen.Add((map, location, block.ItemId!.Value)) || IsThere(map, location, block))
+                    else if (!seen.Add((map, location, block.ItemId!.Value)) ||
+                             IsThere(map, location, block) ||
+                             block.Type == TeleporterType &&
+                             teleporters.Any(other => other.Map == map && SharesSpot(other.Location, location)))
                     {
                         present++;
                     }
                     else
                     {
                         free.Add(candidate);
+
+                        if (block.Type == TeleporterType)
+                        {
+                            teleporters.Add((map, location));
+                        }
                     }
                 }
             }
@@ -358,10 +368,12 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
     private static bool SharesSpot(ItemEntity teleporter, Point3D location)
     {
-        return teleporter.GroundLocation is { } spot &&
-               spot.X == location.X &&
-               spot.Y == location.Y &&
-               Math.Abs(spot.Z - location.Z) <= TeleporterHeight;
+        return teleporter.GroundLocation is { } spot && SharesSpot(spot, location);
+    }
+
+    private static bool SharesSpot(Point3D spot, Point3D location)
+    {
+        return spot.X == location.X && spot.Y == location.Y && Math.Abs(spot.Z - location.Z) <= TeleporterHeight;
     }
 
     private static bool StandsInDoorway(ItemEntity door, Point3D location)
