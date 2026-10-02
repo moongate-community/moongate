@@ -436,6 +436,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 3, max: 3));
         await _fixture.Network.ExecuteOnLoopAsync(() => _timers.Fire(TimerId()));
 
+        // The spawns run off the loop: stopping before the first one began would cancel all three.
+        await _npcs.FirstSpawn.Task.WaitAsync(TimeSpan.FromSeconds(10));
         await _service.StopAsync();
 
         Assert.Single(_npcs.Spawns);
