@@ -20,6 +20,7 @@ public sealed class TargetModuleTests : IAsyncLifetime
 {
     private readonly StubTargetService _targets = new();
     private readonly FakeScriptEngine _engine = new() { CurrentScript = "items/bandage.lua" };
+    private readonly StubGameLoop _loop = new() { DeferTryPost = true };
 
     private BroadcastFixture _fixture = null!;
 
@@ -73,6 +74,19 @@ public sealed class TargetModuleTests : IAsyncLifetime
         Assert.Equal("canceled", picked["kind"].Read<string>());
     }
 
+    [Fact]
+    public void AnAnswerThatComesWhileAScriptRuns_WaitsForTheNextTurnOfTheLoop()
+    {
+        // As when a script asks for a second cursor: the first one is canceled inside that script.
+        _engine.IsRunningScript = true;
+        _targets.Result = TargetResult.Canceled(TargetCancelType.Overridden);
+
+        Run("target.pick(2, function(picked) end)");
+
+        Assert.Empty(_engine.FunctionCalls);
+        Assert.Equal(1, _loop.PostedWorkItems);
+    }
+
     [Theory,
      InlineData("return target.pick(999, function() end)"),
      InlineData("return target.pick_location(-1, function() end)"),
@@ -102,7 +116,7 @@ public sealed class TargetModuleTests : IAsyncLifetime
         state.OpenBasicLibrary();
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(
             state,
-            new TargetModule(_targets, _fixture.Sessions, new Lazy<IScriptEngine>(() => _engine))
+            new TargetModule(_targets, _fixture.Sessions, new Lazy<IScriptEngine>(() => _engine), _loop)
         );
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));

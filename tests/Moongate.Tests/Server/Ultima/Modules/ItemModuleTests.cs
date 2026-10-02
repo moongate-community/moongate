@@ -39,7 +39,11 @@ public sealed class ItemModuleTests : IAsyncLifetime
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
             new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) },
-            new ItemTemplate { Id = "bag", ItemId = new Serial(0x0E76) }
+            new ItemTemplate { Id = "bag", ItemId = new Serial(0x0E76) },
+            // The graphic does not stack by its tiledata, the template says it does.
+            new ItemTemplate { Id = "arrows", ItemId = new Serial(0x0F3F), Stackable = true },
+            // And the reverse.
+            new ItemTemplate { Id = "relic", ItemId = new Serial(0x0EED), Stackable = false }
         )
     );
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
@@ -392,7 +396,9 @@ public sealed class ItemModuleTests : IAsyncLifetime
      InlineData("return item.set_amount(0x40000003, 0)"),
      InlineData("return item.set_amount(0x40000003, 60001)"),
      InlineData("return item.set_amount(0x40000003, 5)"),
-     InlineData("return item.set_name(12, 'x')")]
+     InlineData("return item.set_name(12, 'x')"),
+     // Worn.
+     InlineData("return item.set_name(0x40000004, 'x')")]
     public void Setters_OnWhatCannotChange_AreFalse(string chunk)
     {
         Assert.False(Run(chunk)[0].Read<bool>());
@@ -407,6 +413,48 @@ public sealed class ItemModuleTests : IAsyncLifetime
 
         Assert.True(result[0].Read<bool>());
         Assert.Equal(250, result[1].Read<int>());
+    }
+
+    [Fact]
+    public void SetAmount_FollowsTheTemplate_NotOnlyTheGraphic()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+        _serials.Serials.Enqueue(new Serial(0x40000101));
+
+        var result = Run(
+            "local arrows = item.give(2, 'arrows', 10) local relic = item.give(2, 'relic') " +
+            "return item.set_amount(arrows, 50), item.amount(arrows), item.set_amount(relic, 5), item.amount(relic)"
+        );
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(50, result[1].Read<int>());
+        Assert.False(result[2].Read<bool>());
+        Assert.Equal(1, result[3].Read<int>());
+    }
+
+    [Fact]
+    public void MoveInto_OutOfAPlayersBackpackIntoAGroundChest_LeavesItForThatPlayersSave()
+    {
+        var chest = new ItemEntity { Id = new Serial(0x40000060), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
+        chest.PlaceOnGround(MapType.Trammel, new Point3D(1601, 1600, 0));
+        _items.Add([chest]);
+
+        Assert.True(Run("return item.move_into(0x40000002, 0x40000060)")[0].Read<bool>());
+
+        Assert.Equal((Serial?)chest.Id, _potions.ContainerId);
+        Assert.Equal([_potions], _items.TakeReleasedOf(new Serial(2)));
+    }
+
+    [Fact]
+    public void MoveInto_FromOneMobileToAnother_IsRefused()
+    {
+        var other = new ItemEntity { Id = new Serial(0x40000070), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        other.Equip(new Serial(3), LayerType.Backpack);
+        _items.Add([other]);
+
+        Assert.False(Run("return item.move_into(0x40000002, 3)")[0].Read<bool>());
+
+        Assert.Equal((Serial?)_backpack.Id, _potions.ContainerId);
     }
 
     [Fact]
@@ -482,7 +530,8 @@ public sealed class ItemModuleTests : IAsyncLifetime
             _sectors,
             new FakeItemFactoryService(_templates, _tiles),
             _serials,
-            tiles: _tiles
+            tiles: _tiles,
+            templates: _templates
         );
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 

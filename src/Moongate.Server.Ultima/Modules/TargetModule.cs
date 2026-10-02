@@ -6,6 +6,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Targeting;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -23,12 +24,14 @@ public sealed class TargetModule
     private readonly ITargetService _targets;
     private readonly ISessionService _sessions;
     private readonly Lazy<IScriptEngine> _engine;
+    private readonly IGameLoopService _loop;
 
-    public TargetModule(ITargetService targets, ISessionService sessions, Lazy<IScriptEngine> engine)
+    public TargetModule(ITargetService targets, ISessionService sessions, Lazy<IScriptEngine> engine, IGameLoopService loop)
     {
         _targets = targets;
         _sessions = sessions;
         _engine = engine;
+        _loop = loop;
     }
 
     /// <summary>
@@ -81,11 +84,24 @@ public sealed class TargetModule
         }
 
         var function = callback.Read<LuaFunction>();
-        // The function belongs with the script that asked: reloading it ends what it left waiting.
         var owner = _engine.Value.CurrentScript ?? AnonymousOwner;
-        _targets.Begin(session, cursor, TargetFlagsType.Neutral, (_, result) => _engine.Value.CallFunction(owner, function, ToLua(result)));
+        _targets.Begin(session, cursor, TargetFlagsType.Neutral, (_, result) => Answer(owner, function, result));
 
         return true;
+    }
+
+    // A cursor is canceled from inside a running script when that script asks for another or cancels it: the function
+    // cannot run nested in it, so it runs on the next turn of the game loop.
+    private void Answer(string owner, LuaFunction function, TargetResult result)
+    {
+        if (_engine.Value.IsRunningScript)
+        {
+            _loop.TryPost(new LoopActionWorkItem(() => _engine.Value.CallFunction(owner, function, ToLua(result))));
+
+            return;
+        }
+
+        _engine.Value.CallFunction(owner, function, ToLua(result));
     }
 
     private static LuaTable ToLua(TargetResult result)

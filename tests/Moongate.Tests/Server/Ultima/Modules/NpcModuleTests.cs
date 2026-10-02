@@ -15,6 +15,7 @@ using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -290,8 +291,22 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void Step_OntoACellWithNoItem_TellsNobody()
+    {
+        Run("npc.step(256, 'North')");
+
+        Assert.Empty(_moveOver.Steps);
+        Assert.Equal(0, _loop.PostedWorkItems);
+    }
+
+    [Fact]
     public void Step_ThatMoves_TellsTheItemsOfTheNewCell_ABlockedOneDoesNot()
     {
+        var items = TestItems.Create(_sectors);
+        var pad = new ItemEntity { Id = new Serial(0x40000010), TemplateId = "decoration_teleporter", ItemId = 0x1BC3, Amount = 1 };
+        items.Add([pad]);
+        items.PlaceOnGround(pad, MapType.Trammel, new Point3D(1600, 1599, 0));
+
         Run("npc.step(256, 'North')");
         _movement.Allow = false;
         Run("npc.step(256, 'North')");

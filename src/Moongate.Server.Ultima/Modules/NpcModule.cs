@@ -125,7 +125,10 @@ public sealed class NpcModule
         }
 
         // On the next turn of the loop: the items' scripts cannot run inside the NPC's own, which called this.
-        if (npc.Location != oldLocation && _moveOver is not null)
+        // Only for a cell that holds an item: most steps post nothing.
+        if (npc.Location != oldLocation &&
+            _moveOver is not null &&
+            _sectors?.GetItemsInRange(npc.Map, npc.Location, 0).Count > 0)
         {
             _loop?.TryPost(new LoopActionWorkItem(() => _moveOver.SteppedOn(npc)));
         }
@@ -156,7 +159,6 @@ public sealed class NpcModule
         }
 
         var function = callback.Type == LuaValueType.Function ? callback.Read<LuaFunction>() : null;
-        // The callback belongs with the script that asked: reloading it ends what it left waiting.
         var owner = _engine?.Value.CurrentScript ?? "npc.spawn";
         _ = SpawnAsync(template, map, new Point3D(x, y, z), function, owner);
 

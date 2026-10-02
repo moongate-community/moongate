@@ -48,6 +48,7 @@ public sealed class ItemModule
     private readonly IItemSerialPool? _serials;
     private readonly IContainerLayoutService? _layouts;
     private readonly ITileDataService? _tiles;
+    private readonly IItemTemplateService? _templates;
 
     public ItemModule(
         IItemService items,
@@ -61,9 +62,11 @@ public sealed class ItemModule
         IItemFactoryService? factory = null,
         IItemSerialPool? serials = null,
         IContainerLayoutService? layouts = null,
-        ITileDataService? tiles = null
+        ITileDataService? tiles = null,
+        IItemTemplateService? templates = null
     )
     {
+        _templates = templates;
         _factory = factory;
         _serials = serials;
         _layouts = layouts;
@@ -284,10 +287,10 @@ public sealed class ItemModule
     ///     Gives the item a name of its own, or with nil takes it back to its template's; <c>item.set_name(serial, "a
     ///     rusty key")</c>. The players who see the item see the new name.
     /// </summary>
-    [ScriptFunction(helpText: "Sets the item's own name (cut to 128 characters), nil gives it back its template's; false for an unknown or held item.")]
+    [ScriptFunction(helpText: "Sets the item's own name (cut to 128 characters), nil gives it back its template's; false for a worn or held item.")]
     public bool SetName(long serial, string? name = null)
     {
-        if (!TryGetItem(serial, out var item) || IsHeld(item))
+        if (!TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
         {
             return false;
         }
@@ -382,7 +385,7 @@ public sealed class ItemModule
     ///     Moves the item into a container, or into the backpack of a mobile; <c>item.move_into(serial, bag)</c>,
     ///     <c>item.move_into(serial, user)</c>. Those who saw it where it was lose it and the new owner sees it.
     /// </summary>
-    [ScriptFunction(helpText: "Moves the item into a container, or into a mobile's backpack; false for a worn or held item, a target that is not a container, or a container put into itself or into what it holds.")]
+    [ScriptFunction(helpText: "Moves the item into a container, or into a mobile's backpack; false for a worn or held item, a target that is not a container, a container put into itself or into what it holds, or an item one mobile carries moved to another mobile.")]
     public bool MoveInto(long serial, long container)
     {
         if (!TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item) || TargetContainer(container) is not { } target)
@@ -399,6 +402,16 @@ public sealed class ItemModule
             }
         }
 
+        // From one mobile to another is a trade, which the saves do not follow yet: the old owner's row could bring
+        // the item back.
+        var previousOwner = _items.GetOwner(item);
+        var newOwner = _items.GetOwner(target);
+
+        if (previousOwner is not null && newOwner is not null && previousOwner != newOwner)
+        {
+            return false;
+        }
+
         if (item.GroundLocation is not null)
         {
             _view.ItemDisappeared(item);
@@ -409,6 +422,13 @@ public sealed class ItemModule
         }
 
         _items.MoveToContainer(item, target.Id, _layouts?.RandomGridPosition(target.ItemId) ?? new Point2D(44, 65));
+
+        // Its row still says the old owner carries it: that owner's leave saves where it lies now.
+        if (previousOwner is { } owner && newOwner is null)
+        {
+            _items.Release(item, owner);
+        }
+
         Refresh(item);
 
         return true;
@@ -600,9 +620,20 @@ public sealed class ItemModule
         return item.ContainerId is { } container && _items.TryGet(container, out var holder) ? holder : null;
     }
 
+    // As the item factory: the template's word, else the tiledata of the graphic.
     private bool IsStackable(ItemEntity item)
     {
-        return _tiles is not null && _tiles.TryGetItem(item.ItemId, out var tile) && (tile.Flags & TileFlagType.Generic) != 0;
+        if (_tiles is null)
+        {
+            return false;
+        }
+
+        if (_templates is not null && _templates.TryGet(item.TemplateId, out var template))
+        {
+            return template.EffectiveStackable(_tiles);
+        }
+
+        return _tiles.TryGetItem(item.ItemId, out var tile) && (tile.Flags & TileFlagType.Generic) != 0;
     }
 
     private bool TryGetItem(long serial, [NotNullWhen(true)] out ItemEntity? item)

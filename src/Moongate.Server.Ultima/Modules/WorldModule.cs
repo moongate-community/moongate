@@ -164,13 +164,23 @@ public sealed class WorldModule
     ///     Gets whether nothing stands between two places of a map, as for a spell or an arrow;
     ///     <c>world.line_of_sight(MapType.Trammel, 1496, 1628, 10, 1500, 1630, 10)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Whether the place x2, y2, z2 is in sight of x1, y1, z1 on the map; false for a z outside -128 to 127.")]
+    [ScriptFunction(helpText: "Whether the place x2, y2, z2 is in sight of x1, y1, z1 on the map; false beyond the range a line of sight is checked at, on a map that is not loaded or for a z outside -128 to 127.")]
     public bool LineOfSight(MapType map, int x1, int y1, int z1, int x2, int y2, int z2)
     {
-        return _sight is not null &&
-               z1 is >= sbyte.MinValue and <= sbyte.MaxValue &&
-               z2 is >= sbyte.MinValue and <= sbyte.MaxValue &&
-               _sight.HasLineOfSight(map, new Point3D(x1, y1, z1), new Point3D(x2, y2, z2));
+        if (_sight is null || z1 is < sbyte.MinValue or > sbyte.MaxValue || z2 is < sbyte.MinValue or > sbyte.MaxValue)
+        {
+            return false;
+        }
+
+        try
+        {
+            return _sight.HasLineOfSight(map, new Point3D(x1, y1, z1), new Point3D(x2, y2, z2));
+        }
+        catch (KeyNotFoundException)
+        {
+            // The map is not loaded.
+            return false;
+        }
     }
 
     /// <summary>
