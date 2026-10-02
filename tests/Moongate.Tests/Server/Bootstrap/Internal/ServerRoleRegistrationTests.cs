@@ -19,6 +19,7 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Network;
+using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
 using Moongate.Server.Ultima;
@@ -83,7 +84,7 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
-        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30103));
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30108));
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Standalone)]
@@ -195,6 +196,12 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         Assert.True(container.IsRegistered<PingServerService>());
+        Assert.True(container.IsRegistered<ISqlBackupService>());
+        Assert.IsType<SqlBackupService>(container.Resolve<ISqlBackupService>());
+        Assert.Contains(
+            container.Resolve<CommandRegistry>().Registrations.Values,
+            registration => registration.Definition.DescriptionMessage == 30108
+        );
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IGameLoopService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<ISessionService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IWorldSaveService>());
