@@ -196,6 +196,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                 EnsureReady();
                 var started = Stopwatch.GetTimestamp();
                 var savedCount = 0;
+                var writtenCount = 0;
 
                 foreach (var group in _sources.GroupBy(source => GetTarget(source.EntityType)).OrderBy(group => group.Key))
                 {
@@ -279,10 +280,13 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                                 }
 
                                 savedCount += targetCount;
+                                var targetWritten = group.Sum(source => source.Written);
+                                writtenCount += targetWritten;
                                 _logger.Information(
-                                    "PostgreSQL snapshot committed for {Target}: {EntityCount} entities in {ElapsedMilliseconds} ms",
+                                    "PostgreSQL snapshot committed for {Target}: {EntityCount} entities, {WrittenCount} written, in {ElapsedMilliseconds} ms",
                                     group.Key,
                                     targetCount,
+                                    targetWritten,
                                     Stopwatch.GetElapsedTime(targetStarted).TotalMilliseconds
                                 );
                             },
@@ -293,8 +297,9 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
 
                 cancellationToken.ThrowIfCancellationRequested();
                 _logger.Information(
-                    "PostgreSQL world save completed: {EntityCount} entities in {ElapsedMilliseconds} ms",
+                    "PostgreSQL world save completed: {EntityCount} entities, {WrittenCount} written, in {ElapsedMilliseconds} ms",
                     savedCount,
+                    writtenCount,
                     Stopwatch.GetElapsedTime(started).TotalMilliseconds
                 );
 

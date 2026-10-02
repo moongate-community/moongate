@@ -637,4 +637,70 @@ public sealed class PersistenceSaveTests
         Assert.Empty(deletions.Committed);
         Assert.Single(await store.GetAllAsync());
     }
+
+    [Fact]
+    public async Task SaveAllAsync_AnUnchangedEntity_IsNotWrittenAgain_AChangedOneIs()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        var live = new CharacterEntity { Id = new(1), Name = "Aria" };
+        var store = owner.RegisterEntity<CharacterEntity>(() => [live], e => new() { Id = e.Id, Name = e.Name });
+        owner.RegisterEntity<InventoryEntity>();
+        await owner.InitializeAsync();
+        await owner.SaveAllAsync();
+
+        // A row changed behind the save stays: the live entity did not change, so the save skips it.
+        await store.UpsertAsync(new() { Id = new(1), Name = "outside" });
+        await owner.SaveAllAsync();
+        Assert.Equal("outside", (await store.GetByIdAsync(new(1)))!.Name);
+
+        live.Name = "Bran";
+        await owner.SaveAllAsync();
+        Assert.Equal("Bran", (await store.GetByIdAsync(new(1)))!.Name);
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_AfterAFailedSave_WritesWhatTheFailedSaveDidNot()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        var live = new CharacterEntity { Id = new(1), Name = "Aria" };
+        var failing = false;
+        var store = owner.RegisterEntity<CharacterEntity>(() => [live], e => new() { Id = e.Id, Name = e.Name });
+        owner.RegisterEntity<InventoryEntity>(
+            () => failing ? throw new InvalidOperationException("capture failed") : [],
+            e => new() { Id = e.Id }
+        );
+        await owner.InitializeAsync();
+        await owner.SaveAllAsync();
+
+        live.Name = "Bran";
+        failing = true;
+        await Assert.ThrowsAnyAsync<Exception>(() => owner.SaveAllAsync());
+        failing = false;
+        await owner.SaveAllAsync();
+
+        Assert.Equal("Bran", (await store.GetByIdAsync(new(1)))!.Name);
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_AnEntityThatLeftAndCameBack_IsWrittenAgain()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        var live = new CharacterEntity { Id = new(1), Name = "Aria" };
+        var present = true;
+        var store = owner.RegisterEntity<CharacterEntity>(() => present ? [live] : [], e => new() { Id = e.Id, Name = e.Name });
+        owner.RegisterEntity<InventoryEntity>();
+        await owner.InitializeAsync();
+        await owner.SaveAllAsync();
+
+        present = false;
+        await owner.SaveAllAsync();
+        await store.UpsertAsync(new() { Id = new(1), Name = "outside" });
+        present = true;
+        await owner.SaveAllAsync();
+
+        Assert.Equal("Aria", (await store.GetByIdAsync(new(1)))!.Name);
+    }
 }

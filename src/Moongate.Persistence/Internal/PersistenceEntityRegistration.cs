@@ -2,6 +2,7 @@ using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Interfaces.Internal;
+using Moongate.Persistence.Snapshots;
 
 namespace Moongate.Persistence.Internal;
 
@@ -13,7 +14,14 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
     private readonly IPersistenceDeletionSource? _deletions;
     private IReadOnlyCollection<Serial> _captured = [];
 
+    // The fingerprints of the last committed save, and those of the save in progress, adopted on its commit: a failed
+    // save leaves the old ones, so its entities are written again.
+    private Dictionary<Serial, UInt128> _saved = [];
+    private Dictionary<Serial, UInt128>? _pending;
+
     public Type EntityType => typeof(T);
+
+    public int Written { get; private set; }
 
     public PersistenceEntityRegistration(
         Func<IEnumerable<T>> source,
@@ -60,9 +68,28 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
         entityCount = values.Count;
         var deletions = (_deletions?.Capture() ?? []).Where(id => !ids.Contains(id)).ToArray();
         _captured = deletions;
+        _pending = null;
+        Written = 0;
 
         return async (transaction, cancellationToken) =>
         {
+            // Off the loop: only the snapshots that changed since the last committed save are written. An entity no
+            // longer captured drops out of the fingerprints, so it is written again if it comes back.
+            var saved = _saved;
+            var pending = new Dictionary<Serial, UInt128>(values.Count);
+            var changed = new List<T>();
+
+            foreach (var value in values)
+            {
+                var fingerprint = SnapshotFingerprint.Of(value);
+                pending[value.Id] = fingerprint;
+
+                if (!saved.TryGetValue(value.Id, out var previous) || previous != fingerprint)
+                {
+                    changed.Add(value);
+                }
+            }
+
             // Deletions first: a deleted row must not hold a unique value (such as a worn layer) a saved row now takes.
             var data = transaction.GetDataAccess<T>();
 
@@ -71,15 +98,24 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
                 await data.DeleteAsync(id, cancellationToken).ConfigureAwait(false);
             }
 
-            foreach (var batch in values.Chunk(SnapshotBatchSize))
+            foreach (var batch in changed.Chunk(SnapshotBatchSize))
             {
                 await transaction.UpsertSnapshotsAsync(batch, cancellationToken).ConfigureAwait(false);
             }
+
+            _pending = pending;
+            Written = changed.Count;
         };
     }
 
     public void Committed()
     {
+        if (_pending is { } pending)
+        {
+            _saved = pending;
+            _pending = null;
+        }
+
         var captured = _captured;
         _captured = [];
 
