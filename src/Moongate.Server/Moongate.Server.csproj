@@ -84,10 +84,10 @@
     <!-- mgctl applies the migrations: keep it, with its own PostgreSQL driver, in a separate process and output directory. -->
     <Target Name="CopyDevelopmentMgctl" AfterTargets="Build">
         <ItemGroup>
-            <_MgctlFiles Include="../Moongate.Ctl/bin/$(Configuration)/$(TargetFramework)/*"/>
+            <_MgctlFiles Include="../Moongate.Ctl/bin/$(Configuration)/$(TargetFramework)/**/*"/>
         </ItemGroup>
         <Copy SourceFiles="@(_MgctlFiles)"
-              DestinationFiles="@(_MgctlFiles->'$(OutDir)mgctl/%(Filename)%(Extension)')"
+              DestinationFiles="@(_MgctlFiles->'$(OutDir)mgctl/%(RecursiveDir)%(Filename)%(Extension)')"
               SkipUnchangedFiles="true"/>
     </Target>
     <ItemGroup>

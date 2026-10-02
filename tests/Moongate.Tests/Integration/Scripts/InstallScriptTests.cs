@@ -37,9 +37,9 @@ public class InstallScriptTests
     public async Task Install_AnOlderReleaseWithMgboot_LinksIt()
     {
         using var install = new ScriptedInstall();
-        install.Publish("0.6.0", "linux-x64", "server", true, "mgboot");
+        install.Publish("0.11.0", "linux-x64", "server", true, "mgboot");
 
-        var result = await install.RunAsync("0.6.0", "linux-x64");
+        var result = await install.RunAsync("0.11.0", "linux-x64");
 
         Assert.True(result.ExitCode == 0, result.Output);
         var command = Path.Combine(install.BinDirectory, "mgboot");
@@ -51,11 +51,11 @@ public class InstallScriptTests
     public async Task Install_UpgradeFromMgbootToMgctl_ReplacesTheLink()
     {
         using var install = new ScriptedInstall();
-        install.Publish("0.6.0", "linux-x64", "old server", true, "mgboot");
-        install.Publish("0.7.0", "linux-x64", "new server", true);
-        Assert.Equal(0, (await install.RunAsync("0.6.0", "linux-x64")).ExitCode);
+        install.Publish("0.11.0", "linux-x64", "old server", true, "mgboot");
+        install.Publish("0.12.0", "linux-x64", "new server", true);
+        Assert.Equal(0, (await install.RunAsync("0.11.0", "linux-x64")).ExitCode);
 
-        var result = await install.RunAsync("0.7.0", "linux-x64");
+        var result = await install.RunAsync("0.12.0", "linux-x64");
 
         Assert.True(result.ExitCode == 0, result.Output);
         Assert.Null(new FileInfo(Path.Combine(install.BinDirectory, "mgboot")).LinkTarget);
@@ -64,6 +64,24 @@ public class InstallScriptTests
             File.ResolveLinkTarget(Path.Combine(install.BinDirectory, "mgctl"), true)!.FullName
         );
         Assert.Contains("mgctl init /srv/moongate", result.Output);
+    }
+
+    [ShellFact]
+    public async Task Install_DowngradeFromMgctlToMgboot_ReplacesTheLink()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.12.0", "linux-x64", "new server", true);
+        install.Publish("0.11.0", "linux-x64", "old server", true, "mgboot");
+        Assert.Equal(0, (await install.RunAsync("0.12.0", "linux-x64")).ExitCode);
+
+        var result = await install.RunAsync("0.11.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Null(new FileInfo(Path.Combine(install.BinDirectory, "mgctl")).LinkTarget);
+        Assert.Equal(
+            Path.Combine(install.InstallDirectory, "mgboot"),
+            File.ResolveLinkTarget(Path.Combine(install.BinDirectory, "mgboot"), true)!.FullName
+        );
     }
 
     [ShellFact]

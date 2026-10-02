@@ -10,7 +10,7 @@ using Npgsql;
 namespace Moongate.MigrationRunner.Internal;
 
 /// <summary>
-///     The real logic, testable in-process: no CLI parsing (Program.cs's Cli class and
+///     The real logic, testable in-process: no CLI parsing (mgctl's MigrateCommands and
 ///     ConsoleAppFramework own that), output written to the given writers rather than
 ///     <see cref="Console" /> directly, and the exit code returned rather than set on
 ///     <see cref="Environment.ExitCode" />.

@@ -38,7 +38,7 @@ Use the interface address reachable by the private panel backend. Both `listen_a
 
 The endpoint uses standard server TLS over HTTP/2. It does not use mTLS, peer certificates or the Redis game-handoff secret. Obtain a server PFX from your private CA with a private key, server-authentication usage and DNS names matching the endpoints clients use. Put it at the configured path, readable only by the Moongate service account. Distribute the **public CA certificate**, not the server private key, to backend clients. Clients must validate both the trust chain and hostname.
 
-A relative certificate path resolves against `MOONGATE_ROOT`; environment variables and `~` are supported. A passwordless PFX uses `certificate_password = ""`. Otherwise supply the password through an environment reference populated from your secret store. Normal server startup does not generate certificates; use `mgctl --generate-admin-certificate` explicitly. Missing/unreadable/expired certificates, missing environment variables or an occupied port fail enabled startup with a redacted error. Disabled endpoints neither load certificates nor resolve password variables.
+A relative certificate path resolves against `MOONGATE_ROOT`; environment variables and `~` are supported. A passwordless PFX uses `certificate_password = ""`. Otherwise supply the password through an environment reference populated from your secret store. Normal server startup does not generate certificates; use `mgctl init <root> --generate-admin-certificate` explicitly. Missing/unreadable/expired certificates, missing environment variables or an occupied port fail enabled startup with a redacted error. Disabled endpoints neither load certificates nor resolve password variables.
 
 For local development only:
 

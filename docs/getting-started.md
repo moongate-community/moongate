@@ -50,8 +50,8 @@ dotnet build Moongate.slnx -c Release
 use the documentation published for that version.
 
 Once the root is configured, `scripts/run_server.sh` does the build and the start in
-one step: it publishes a Release build of the server, `mgctl` and the migration runner
-into `dist/moongate`, runs `mgctl` on the root to add the shipped files it lacks, and
+one step: it publishes a Release build of the server and `mgctl`
+into `dist/moongate`, runs `mgctl init` on the root to add the shipped files it lacks, and
 starts the server on it:
 
 ```sh

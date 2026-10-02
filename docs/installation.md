@@ -58,7 +58,7 @@ want to keep belongs in there, which is why the server root goes somewhere else.
 ## Remove
 
 ```sh
-sudo rm -rf /opt/moongate /usr/local/bin/moongate /usr/local/bin/mgctl
+sudo rm -rf /opt/moongate /usr/local/bin/moongate /usr/local/bin/mgctl /usr/local/bin/mgboot
 ```
 
 Your server root is untouched by both the installer and this line.

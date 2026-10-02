@@ -15,7 +15,7 @@ executables, `migration-runner/Moongate.MigrationRunner` and `mg-uoxconv`; there
 
 `mgctl --help` lists the commands and `mgctl <command> --help` the options of one.
 
-# Prepare a server root
+## Prepare a server root
 
 `mgctl init` prepares a Moongate data directory without starting the server or connecting
 to PostgreSQL. It is step 1 of [the first-start sequence](getting-started.md#first-start).
@@ -34,8 +34,10 @@ mgctl init "/srv/my realm"
 mgctl init --help
 ```
 
-`mgctl <root>`, without `init`, is the older spelling and still works, unless the root is
-a relative path named `init`, `migrate` or `convert`.
+`mgctl <root>`, without `init`, is the older spelling and still works for a root written as
+a path (`/srv/moongate`, `./data`) or naming a directory that exists; a bare new name such
+as `mgctl data` is refused, so a mistyped command never becomes a root. A command line
+that names no command, such as `mgctl migrate` alone, exits with code 2.
 
 On Windows, use `mgctl.exe init C:\MoongateData` from the extracted distribution.
 Keep `mgctl` and `Moongate.Server` from the same release together.
@@ -162,8 +164,9 @@ docker run --rm --entrypoint /app/mgctl \
   ghcr.io/moongate-community/moongate:latest init /data
 ```
 
-Initialization
-exits after preparing the mounted root; it opens no TCP listener.
+Images up to 0.11.0 have `/app/mgboot` instead: use `--entrypoint /app/mgboot` and pass
+only `/data`. Initialization exits after preparing the mounted root; it opens no TCP
+listener.
 
 ## Build from source
 

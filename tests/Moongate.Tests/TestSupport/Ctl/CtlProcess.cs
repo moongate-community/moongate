@@ -6,17 +6,31 @@ internal static class CtlProcess
 {
     public static Task<(int ExitCode, string Output)> RunAsync(params string[] arguments)
     {
-        return RunFromAsync(Path.Combine(AppContext.BaseDirectory, "mgctl"), arguments);
+        return RunAsync(Path.Combine(AppContext.BaseDirectory, "mgctl"), null, arguments);
+    }
+
+    /// <summary>
+    ///     Runs mgctl with <paramref name="workingDirectory" /> as its current directory, where a relative root lands.
+    /// </summary>
+    public static Task<(int ExitCode, string Output)> RunInAsync(string workingDirectory, params string[] arguments)
+    {
+        return RunAsync(Path.Combine(AppContext.BaseDirectory, "mgctl"), workingDirectory, arguments);
     }
 
     /// <summary>
     ///     Runs the mgctl of <paramref name="directory" />, a copy of the built one, without MOONGATE_ROOT, as a
     ///     distribution unpacked there would.
     /// </summary>
-    public static async Task<(int ExitCode, string Output)> RunFromAsync(string directory, params string[] arguments)
+    public static Task<(int ExitCode, string Output)> RunFromAsync(string directory, params string[] arguments)
+    {
+        return RunAsync(directory, null, arguments);
+    }
+
+    private static async Task<(int ExitCode, string Output)> RunAsync(string directory, string? workingDirectory, string[] arguments)
     {
         var start = new ProcessStartInfo("dotnet")
         {
+            WorkingDirectory = workingDirectory ?? "",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false

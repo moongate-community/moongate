@@ -1,12 +1,14 @@
 using ConsoleAppFramework;
 using Moongate.Ctl.Internal;
 
-// "mgctl <root>" is the older spelling of "mgctl init <root>".
-string[] commands = ["init", "migrate", "convert"];
+var arguments = CommandLine.Read(args, out var error);
 
-if (args.Length > 0 && !args[0].StartsWith('-') && !commands.Contains(args[0]))
+if (arguments is null)
 {
-    args = ["init", ..args];
+    Console.Error.WriteLine($"mgctl: {error}");
+    Console.Error.WriteLine("Run mgctl --help for the commands.");
+
+    return 2;
 }
 
 var app = ConsoleApp.Create();
@@ -17,10 +19,7 @@ app.Add("convert uox", ConvertCommands.Uox);
 app.Add("convert modernuo-spawns", ConvertCommands.ModernUoSpawns);
 app.Add("convert modernuo-signs", ConvertCommands.ModernUoSigns);
 app.Add("convert modernuo-teleporters", ConvertCommands.ModernUoTeleporters);
-await app.RunAsync(args);
+await app.RunAsync(arguments);
 
 // The framework shows help for an empty command line; retain mgctl's usage-error exit code.
-if (args.Length == 0)
-{
-    Environment.ExitCode = 2;
-}
+return arguments.Length == 0 ? 2 : Environment.ExitCode;

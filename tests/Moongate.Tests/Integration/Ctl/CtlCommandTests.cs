@@ -39,7 +39,37 @@ public sealed class CtlCommandTests
     }
 
     [Fact]
-    public async Task Run_ConvertWithoutItsOptions_ShowsTheCommandsHelp()
+    public async Task Run_OptionsBeforeTheRoot_PrepareItAsMgbootDid()
+    {
+        using var directory = new TemporaryDirectory();
+        var root = Path.Combine(directory.Path, "root");
+
+        var result = await CtlProcess.RunAsync("--generate-admin-certificate", root);
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.True(File.Exists(Path.Combine(root, "certificates/admin.crt")));
+    }
+
+    [Theory]
+    [InlineData("needs one of: status, apply", "migrate")]
+    [InlineData("needs one of: status, apply", "migrate", "aply", "--target", "world")]
+    [InlineData("needs one of: uox, modernuo-spawns", "convert")]
+    [InlineData("needs a root directory", "init")]
+    [InlineData("unknown command 'help'", "help")]
+    [InlineData("unknown command 'status'", "status")]
+    public async Task Run_ALineThatNamesNoCommand_FailsWithAUsageError_AndPreparesNothing(string expected, params string[] arguments)
+    {
+        using var directory = new TemporaryDirectory();
+
+        var result = await CtlProcess.RunInAsync(directory.Path, arguments);
+
+        Assert.Equal(2, result.ExitCode);
+        Assert.Contains(expected, result.Output);
+        Assert.Empty(Directory.EnumerateFileSystemEntries(directory.Path));
+    }
+
+    [Fact]
+    public async Task Run_ConvertHelp_ShowsTheOptionsOfTheCommand()
     {
         var result = await CtlProcess.RunAsync("convert", "modernuo-teleporters", "--help");
 

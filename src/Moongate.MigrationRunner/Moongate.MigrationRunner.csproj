@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
+        <!-- Run only inside mgctl: no XML documentation beside it in a distribution. -->
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="dbup-postgresql" Version="7.0.1"/>
