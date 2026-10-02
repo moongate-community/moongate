@@ -347,6 +347,43 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void Teleported_WithinView_IsShownAgainNotAsAStep()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        ClearSent();
+        var old = aria.Location;
+        Assert.True(_mobiles.MoveTo(aria, new Point3D(1504, 1628, 0)));
+
+        _view.Teleported(aria, old);
+
+        Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(_sender.Sent)).Serial);
+        Assert.Equal([BorisSession], _sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void Teleported_FarAway_LeavesTheOldViewersAndMeetsTheNewOnes()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var cara = Enter(4, 5692, 569, 30);
+        var gold = Ground(0x40000050, 5691, 570);
+        ClearSent();
+        var old = aria.Location;
+        Assert.True(_mobiles.MoveTo(aria, new Point3D(5690, 569, 0)));
+
+        _view.Teleported(aria, old);
+
+        var sent = _sender.Sent.Select((packet, index) => (_sender.SentSessionIds[index], packet)).ToList();
+        Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial);
+        Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(sent, to => to.Item1 == 30).packet).Serial);
+        var own = sent.Where(to => to.Item1 == AriaSession).Select(to => to.packet).ToList();
+        Assert.Equal(cara.Id, Assert.IsType<MobileIncomingPacket>(own[0]).Serial);
+        Assert.Equal(gold.Id, Assert.IsType<WorldItemSaPacket>(own[1]).Serial);
+        Assert.Equal(2, own.Count);
+    }
+
+    [Fact]
     public void AHiddenItem_IsShownOnlyToTheAccountsItsVisibilityAllows()
     {
         var view = ViewWithTemplates(new ItemTemplate { Id = "teleporter", Visibility = AccountType.GameMaster });

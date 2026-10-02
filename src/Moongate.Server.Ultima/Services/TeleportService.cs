@@ -43,10 +43,12 @@ public sealed class TeleportService : ITeleportService
 
         if (_sessions.TryGetByCharacterId(mobile.Id, out var session))
         {
-            // The client starts its step sequence again when it gets 0x20; a step it sent before is refused.
+            // The client starts its step sequence again when it gets 0x20; a step it sent before is refused, and the next
+            // one is due at once, as ModernUO.
             if (session.Get(MovementSessionKeys.State) is { } state)
             {
                 state.ExpectedSequence = 0;
+                state.NextStepAt = 0;
             }
 
             _sender.TrySend(
@@ -63,7 +65,7 @@ public sealed class TeleportService : ITeleportService
         }
 
         // After 0x20: the client must know where it stands before it is shown what is around.
-        _view.Moved(mobile, oldLocation, false);
+        _view.Teleported(mobile, oldLocation);
 
         return true;
     }

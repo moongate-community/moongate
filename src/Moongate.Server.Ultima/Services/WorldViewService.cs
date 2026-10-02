@@ -98,6 +98,16 @@ public sealed class WorldViewService : IWorldViewService
 
     public void Moved(MobileEntity mobile, Point3D oldLocation, bool running)
     {
+        Relocated(mobile, oldLocation, running, false);
+    }
+
+    public void Teleported(MobileEntity mobile, Point3D oldLocation)
+    {
+        Relocated(mobile, oldLocation, false, true);
+    }
+
+    private void Relocated(MobileEntity mobile, Point3D oldLocation, bool running, bool teleported)
+    {
         // Players that saw the old tile but not the new one lose the mover.
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, oldLocation, ViewRange))
         {
@@ -125,7 +135,7 @@ public sealed class WorldViewService : IWorldViewService
 
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
-                if (sawIt)
+                if (sawIt && !teleported)
                 {
                     _sender.TrySend(viewer.SessionId, moving ??= Moving(mobile, running));
                 }

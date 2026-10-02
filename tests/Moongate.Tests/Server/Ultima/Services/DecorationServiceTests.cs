@@ -209,6 +209,18 @@ public sealed class DecorationServiceTests
     }
 
     [Fact]
+    public async Task DecorateAsync_ATeleporterToAnUnknownMap_IsSkipped()
+    {
+        var block = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0), ["map_dest"] = "Tokunoo" });
+
+        var result = await Service(File("trammel", block)).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(0, 0, 1, 1), result);
+        Assert.Equal(1, Assert.Single(_progress.Reports).SkippedByType["Teleporter"]);
+        Assert.Empty(_items.Items);
+    }
+
+    [Fact]
     public async Task DecorateAsync_ATeleporterAlreadyThere_IsNotPlacedAgain()
     {
         var file = File("trammel", Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) }));

@@ -231,7 +231,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
         foreach (var block in file.Blocks)
         {
-            if (block.ItemId is null || IsSkipped(block.Type))
+            if (block.ItemId is null || IsSkipped(block.Type) || HasUnknownMap(block))
             {
                 Count(skipped, block.Type, block.Locations.Count * file.Maps.Count);
 
@@ -317,6 +317,14 @@ public sealed class DecorationService : IDecorationService, IDisposable
         return type is "Spawner" or "MarkContainer" or "PublicMoongate" ||
                type != TeleporterType && type.EndsWith("Teleporter", StringComparison.Ordinal) ||
                type.EndsWith("Addon", StringComparison.Ordinal);
+    }
+
+    // A teleporter to a map that does not exist would send its players to that spot of its own map.
+    private static bool HasUnknownMap(DecorationBlock block)
+    {
+        return block.Type == TeleporterType &&
+               block.Props.GetValueOrDefault("map_dest") is { } name &&
+               !(name is string text && EnumNameUtils.TryParse<MapType>(text, out _));
     }
 
     private static bool IsDoor(string type)

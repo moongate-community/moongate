@@ -28,6 +28,13 @@ public interface IWorldViewService
     void Moved(MobileEntity mobile, Point3D oldLocation, bool running);
 
     /// <summary>
+    ///     Tells the players in range that the mobile, now at its current location, jumped there from
+    ///     <paramref name="oldLocation" /> on the same map: as <see cref="Moved" />, but those who still see it are shown it
+    ///     again (0x78) instead of a step (0x77), as ModernUO does for a teleport.
+    /// </summary>
+    void Teleported(MobileEntity mobile, Point3D oldLocation);
+
+    /// <summary>
     ///     Removes the mobile from the screens in range, registered or not, and forgets its session; call it while the
     ///     mobile is still in the sector grid.
     /// </summary>

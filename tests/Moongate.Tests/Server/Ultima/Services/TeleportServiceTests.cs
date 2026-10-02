@@ -57,18 +57,18 @@ public sealed class TeleportServiceTests : IAsyncLifetime
 
         _teleports.Teleport(_aria, new Point3D(5690, 569, 25));
 
-        Assert.Equal(["Moved 2 1600,1600,0"], _view.Calls);
+        Assert.Equal(["Teleported 2 1600,1600,0"], _view.Calls);
     }
 
     [Fact]
-    public async Task Teleport_APlayer_StartsItsStepSequenceAgain()
+    public async Task Teleport_APlayer_StartsItsStepSequenceAndStepTimerAgain()
     {
-        var state = new MovementState { ExpectedSequence = 42 };
+        var state = new MovementState { ExpectedSequence = 42, NextStepAt = 999 };
         await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(MovementSessionKeys.State, state));
 
         _teleports.Teleport(_aria, new Point3D(5690, 569, 25));
 
-        Assert.Equal(0, state.ExpectedSequence);
+        Assert.Equal((0, 0L), (state.ExpectedSequence, state.NextStepAt));
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         Assert.True(_teleports.Teleport(orc, new Point3D(5690, 569, 25)));
 
         Assert.Empty(_fixture.Sender.Sent);
-        Assert.Equal(["Moved 9 1601,1600,0"], _view.Calls);
+        Assert.Equal(["Teleported 9 1601,1600,0"], _view.Calls);
     }
 
     [Fact]
