@@ -22,6 +22,11 @@ jobs:
       contents: read
       packages: write
     steps:
+      # The container jobs of the same runner write the workspace as root; this job runs as the runner's own user and
+      # could not clean it for the checkout.
+      - name: Take the workspace back from the container jobs
+        run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" alpine chown -R "$(id -u):$(id -g)" /workspace
+
       - name: Checkout
         uses: actions/checkout@v7
 
