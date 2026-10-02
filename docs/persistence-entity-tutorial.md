@@ -257,7 +257,7 @@ versioned SQL migration with the plugin.
    the entity. Stop the target realm and apply using a schema-role connection:
 
    ```sh
-   ./migration-runner/Moongate.MigrationRunner apply \
+   ./mgctl migrate apply \
      --root-directory /srv/moongate/realm-1 --target world
    ```
 

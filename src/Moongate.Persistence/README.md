@@ -100,7 +100,7 @@ percent-encoded credentials, IPv6 hosts and query options such as `sslmode` and
 `connect_timeout`. Native Npgsql connection strings are also supported.
 
 Normal deployments keep automatic synchronization disabled. Generate and review versioned SQL, then apply it with the
-separate `Moongate.MigrationRunner` executable. Configure `PostgreSqlPersistenceOptions.MigrationCatalogFactory` for
+`mgctl migrate apply` command. Configure `PostgreSqlPersistenceOptions.MigrationCatalogFactory` for
 migration readiness checks in a custom host; Moongate.Server wires this automatically. `SynchronizeSchemaAsync` remains a
 development-only convenience and does not record history.
 
@@ -113,17 +113,20 @@ and is never retried after an uncertain commit result.
 A zero `Id` on `UpsertAsync` is assigned from a migration-managed PostgreSQL sequence
 and written back through the entity's public `Id` setter. Nonzero IDs are preserved.
 Sequences are per table, shared by processes, and bounded to the nonzero `uint` range;
-they do not allocate UO mobile/item ranges. The runtime role needs sequence `USAGE`.
+they do not allocate UO mobile/item ranges. The runtime role needs sequence `USAGE`, and `SELECT` for the data
+export to hold their values.
 Failed inserts restore zero; a later transaction rollback retains an assigned ID.
 Reservations are never reclaimed. New entities need no sequence names in their services.
 
 `SaveAllAsync` requires already-assigned nonzero IDs; first persist new entities with
 `UpsertAsync`. It captures registered live sources and commits one independent transaction per database target. Snapshot
 functions must deep-copy nested mutable state. An absent entity is retained; deletion is always explicit. Only the
-snapshots whose fingerprint (SHA-256 of their JSON) changed since the last committed save are written.
+snapshots whose fingerprint (the first 128 bits of the SHA-256 of their JSON) changed since the last committed save are
+written; the first save and every 12th one write everything.
 
 FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported renames, and write explicit reviewed SQL for
-semantic data transformations. Downgrades are operator-managed. This package does not create database backups.
+semantic data transformations. Downgrades are operator-managed. `IPersistenceDataExporter.ExportDataAsync` writes a
+database's data as a `COPY` script psql can restore; scheduling and rotating the files is the server's job.
 
 Custom objects and `List<T>` can use `[JsonMap, Column(DbType = "jsonb", IsNullable = true)]`
 from `FreeSql.DataAnnotations`. This package includes and enables `FreeSql.Extensions.JsonMap`

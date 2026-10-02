@@ -1,6 +1,6 @@
 using Moongate.Server.Core.Interfaces.Services;
 
-namespace Moongate.Tests.TestSupport.Bootstrap;
+namespace Moongate.Tests.TestSupport.Ctlstrap;
 
 public sealed class ShutdownWorldSaveService : IWorldSaveService
 {

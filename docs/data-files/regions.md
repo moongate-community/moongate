@@ -73,9 +73,10 @@ there are no height limits and a `bounds` table otherwise.
 
 ## Parents and overlaps
 
-A `parent` only records that a region is part of another, such as a building inside
-Britain. Rules are not inherited when the file is read: every region writes out all
-its rules, already combined with its parents', so each region can be read on its own.
+A `parent` records that a region is part of another, such as a building inside
+Britain. Only `music` and `season` are inherited when the file is read: a region
+without one takes its nearest parent's. Every region writes out its other rules,
+already combined with its parents', so each region can be read on its own.
 
 Where regions overlap, the one with the highest `priority` gives the name, music,
 guards, housing and logout rules. Travel works differently: a travel spell is
@@ -106,7 +107,9 @@ teleport_in = true
 teleport_out = true
 ```
 
-No region system reads these files yet: the rules are loaded and validated only.
+The server reads a region's type, music, season and weather for the players inside it.
+No system reads the guard, housing, logout and travel rules yet: they are loaded and
+validated only.
 
 ## Validation at startup
 

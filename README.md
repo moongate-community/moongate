@@ -37,9 +37,10 @@ one process. See [Docker login and realms](docs/docker-login-realms.md).
 
 **Under active development; the world is not a game yet.** Characters are
 created, enter the world, walk and run, see each other and talk, and move items in
-their backpack and on the ground. The world is decorated, with doors that open,
-locked doors and their keys, and lights; days and nights pass, dungeons are dark,
-and each region has its weather, music and season. Spawn regions fill the world with NPCs, on land
+their backpack and on the ground. The world is decorated, with doors that open
+(those of the towns are read from the map), locked doors and their keys, shop signs,
+lights and teleporters; days and nights pass, dungeons are dark,
+and each region has its weather, music and season. Scripts play graphic effects. Spawn regions fill the world with NPCs, on land
 and water, and respawn them; game masters also spawn and remove NPCs by hand. NPCs
 near a player run their Lua mobile script, and items react to Lua item scripts.
 There is no combat, pathfinding AI, death or skill gain yet.
@@ -65,7 +66,7 @@ include the .NET runtime; building from source requires the **.NET 10 SDK**.
 curl -fsSL https://moongate.sh/install.sh | sh
 ```
 
-Installs the latest release into `/opt/moongate` and makes `moongate` and `mgboot`
+Installs the latest release into `/opt/moongate` and makes `moongate` and `mgctl`
 available on your path. Supports Linux x64 and ARM64 with glibc. Keep your server
 root outside the installation directory so upgrades preserve your configuration
 and data. See [Install on Linux](docs/installation.md) for options, upgrades and removal.
@@ -116,7 +117,8 @@ APIs, reload commands and configuration, and the
 
 | Area | Guides |
 | --- | --- |
-| Configuration and operation | [Server configuration](docs/server-configuration.md), [diagnostics](docs/diagnostics.md) |
+| Configuration and operation | [Server configuration](docs/server-configuration.md), [commands](docs/commands.md), [diagnostics](docs/diagnostics.md) |
+| Clients | [Enhanced Client](docs/enhanced-client.md) |
 | Storage | [PostgreSQL persistence and world saves](docs/persistence.md) |
 | Protocol and execution | [Packets and handlers](docs/packets.md), [game loop and timers](docs/game-loop-and-timers.md) |
 | Client data | [Client files, movement and line-of-sight queries](docs/world-queries.md) |
@@ -128,7 +130,8 @@ APIs, reload commands and configuration, and the
 | --- | --- |
 | Add server behavior | [Plugins](docs/plugins.md), [Lua modules in C#](docs/lua-modules.md) |
 | Add diagnostics | [Metric providers](docs/metric-providers.md) |
-| Define shard content | [Shard data files](docs/data-files.md), [TOML templates](docs/templates.md) |
+| Define shard content | [Shard data files](docs/data-files.md), [TOML templates](docs/templates.md), [NPC spawns](docs/spawns.md) |
+| Script the game | [Lua scripts](docs/scripting.md), [gumps](docs/gumps.md), [bank](docs/bank.md) |
 | Customize data formats | [TOML value types](docs/toml-types.md) |
 | Translate server messages | [Localization](docs/localization.md) |
 

@@ -20,7 +20,7 @@ weather = "temperate"
 | `name` | The name shown in logs and commands. |
 | `size` | Width and height in tiles, a `Point2D`. |
 | `rules` | The name of the rule set of the map. |
-| `season` | The season of packet 0xBC: `spring`, `summer`, `fall`, `winter` or `desolation`; the starting point of the rotation, see [Seasons](#seasons). |
+| `season` | The season of packet 0xBC: `spring`, `summer`, `fall`, `winter` or `desolation`; the starting point of the rotation, see [Seasons](#seasons). Defaults to `spring`. |
 | `weather` | The profile of `weather.toml` used where no region covers a place. Defaults to `none`. |
 | `music` | The music track, a `MusicType` name such as `Britain1`, played where no region with music covers a place. Left out, the music stops there; no shipped map sets one, so outside the regions it is silent, as in ModernUO. |
 
@@ -63,9 +63,10 @@ A player sees the season of its region when the region sets one (`season` in
    a real day at the default game minute). A `desolation` map, Felucca as shipped, never rotates. No
    other emulator rotates the seasons, so it is off by default.
 
-The season is sent (0xBC) at login, when a player walks into a region with another season, and
-within a minute of a rotation, and at once on `.season`; the light and the weather follow it,
-since the client resets them.
+The season is sent (0xBC) at login, when a player walks into a region or is teleported to a map
+with another season, within a minute of a rotation, and at once on `.season`. It is sent only
+when it differs from the last one the client got; the light and the weather follow it, since
+the client resets them.
 
 ## See also
 

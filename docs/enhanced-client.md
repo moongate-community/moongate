@@ -56,6 +56,8 @@ Built for the EC and covered by automated tests, but not yet seen with a real cl
 | Speech | `0xAD` is read leniently: an odd language code, a missing terminator or a badly encoded character no longer disconnect the client. |
 | Containers | The EC shows a container as a grid. Every item has its own slot (0 to 124), kept in the database; a drop takes the slot the client asks for, or the next free one. See [Packets](packets.md). |
 | Profile request | `0xB8`, sent by the EC after entering the world, is accepted and ignored: no profile is shown. |
+| Login burst | The packets the EC sends while the server is still loading the character wait, up to 1024 for a session, instead of disconnecting the client. |
+| Particle effects | An effect with a particle id goes to the EC as `0xC7`; every other client gets the plain `0xC0`. See [Packets](packets.md). |
 
 ## What is missing
 
@@ -74,11 +76,16 @@ says what it was:
 Rejected packet from session 2, opcode 0xAD, name UnicodeSpeechRequestPacket, 20 bytes: AD0014...
 Opcode 0xB8 is not registered as an incoming packet; 11 bytes buffered after opcode.
 Rejected login packet from session 1, opcode 0xD9
+Session 2 sent more than 1024 packets while a handler was running
 ```
 
-- `Rejected packet` on the game server: the packet is known but its content was refused. The
-  line shows the first 64 bytes.
+- `Rejected packet` on the game server: the packet is known but its content was refused, or it
+  has no handler. The line shows the first 64 bytes.
+- `sent more than 1024 packets while a handler was running`, followed by a `Rejected packet`:
+  the content was fine, but too many packets were waiting behind a handler that reads the
+  database.
 - `is not registered as an incoming packet`: the opcode is unknown to the server.
-- `Rejected login packet`: the login server has no handler for that opcode.
+- `Rejected login packet`: the login server has no handler for that opcode, or refused the
+  packet's content.
 
 Open an issue with the line: the bytes are what is needed to add the packet.

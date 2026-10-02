@@ -16,7 +16,8 @@ it prints `Decoration canceled.` and places nothing (without that file it does n
 [decoration files](../templates.md#decorations) of `templates/decorations/`, file by file, as
 fixed items that never decay; the next world save keeps them. Doors and gates get the
 `decoration_door` template, whose [door script](../scripting.md) opens and closes them, and
-adjacent doors of the same kind open together. Lights get the `decoration_light` template,
+two doors of the same kind side by side, at the same height and hung on opposite sides, open
+together. Lights get the `decoration_light` template,
 lit or unlit as in the data and protected, so only staff light or douse them with the
 [light script](../scripting.md). Teleporters get the `decoration_teleporter` template: a player
 who walks onto one stands on its destination at once ([teleporter script](../scripting.md)), and
@@ -30,23 +31,30 @@ template: a player who says its word within its range stands on its destination
 files: after them, `.decorate` places a gate with the `decoration_public_moongate` template on
 every destination of [`moongates.toml`](../data-files/moongates.md) whose map is loaded, reported
 as `<map>/moongates`. Spawners, mark
-containers, addons and the teleporters that ask for a skill or a quest
-are skipped for now: they need their own logic.
+containers, addons and every other kind of teleporter (those that ask for a
+skill, belong to a quest or want a double click) are skipped for now: they need their own logic.
 
-The shop and world signs are decoration files too (`signs.toml` in each folder); a sign shows its
+The shop and world signs are decoration files too (`signs.toml` in the `britannia`, `felucca`,
+`trammel`, `ilshenar`, `malas` and `tokuno` folders); a sign shows its
 text when the mouse is on it. After the files come the doors of the towns, which no file lists:
 as ModernUO's `[DoorGen`, the map's statics are read for door frames, and a dark wood door goes
-between two frames two tiles apart, a linked double door when they are three apart. A doorway that
+between two frames two tiles apart, a linked double door when they are three apart. The two
+frames must be within 1 of height of each other. A doorway that
 is walled up or has no floor gets none, and neither does one where a door of a file already
-stands. Trammel, Felucca, Ilshenar and Malas are read, when loaded, a small piece per game-loop
+stands: the items on the ground count like the statics, so a wall a decoration file placed closes
+the doorway too. When one half of a double door does not fit, neither is placed. A few doorways
+are left open on purpose, as in ModernUO. Trammel and Felucca are read inside the 16 rectangles
+ModernUO scans, Ilshenar and Malas whole; they are read, when loaded, a small piece per game-loop
 turn, so the game goes on meanwhile (about four seconds in all); each is reported as the file
 `<map>/generated_doors`.
 
-Each file is reported when it is done, in game as a system message and in the server log:
+Each file is reported when it is done, in game as a system message:
 
 ```text
 Decorating britannia/britain: 1180 placed, 3 already there, 5 skipped (SkillTeleporter 1, Spawner 4).
 ```
+
+The server log has the same numbers, with the skipped kinds as a list of names and counts.
 
 The console and the in-game caller then get the totals:
 `Decoration done: <placed> placed, <present> already there, <skipped> skipped in <files> files.`

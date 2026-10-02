@@ -235,9 +235,12 @@ main() {
         fail "could not make ${STAGING_DIR}/Moongate.Server executable"
     fi
 
-    if [ -f "${STAGING_DIR}/mgboot" ] && ! $SUDO chmod 0755 "${STAGING_DIR}/mgboot"; then
-        fail "could not make ${STAGING_DIR}/mgboot executable"
-    fi
+    # The tool beside the server is mgctl; releases before it was renamed carry mgboot.
+    for tool in mgctl mgboot; do
+        if [ -f "${STAGING_DIR}/${tool}" ] && ! $SUDO chmod 0755 "${STAGING_DIR}/${tool}"; then
+            fail "could not make ${STAGING_DIR}/${tool} executable"
+        fi
+    done
 
     if [ -e "$INSTALL_DIR" ] && ! $SUDO mv "$INSTALL_DIR" "$old_dir"; then
         fail "could not move the current installation aside; ${INSTALL_DIR} is untouched"
@@ -271,14 +274,22 @@ main() {
 
     echo "  link       ${BIN_DIR}/moongate"
 
-    if [ -f "${INSTALL_DIR}/mgboot" ]; then
-        $SUDO rm -f "${BIN_DIR}/mgboot" || fail "could not replace ${BIN_DIR}/mgboot"
-        $SUDO ln -s "${INSTALL_DIR}/mgboot" "${BIN_DIR}/mgboot" || fail "could not link ${BIN_DIR}/mgboot"
-        echo "  link       ${BIN_DIR}/mgboot"
-        echo "  prepare    mgboot /srv/moongate"
-    elif [ -L "${BIN_DIR}/mgboot" ] && [ "$(readlink "${BIN_DIR}/mgboot")" = "${INSTALL_DIR}/mgboot" ]; then
-        $SUDO rm -f "${BIN_DIR}/mgboot" || fail "could not remove obsolete ${BIN_DIR}/mgboot link"
-    fi
+    # Link the tool this release has and drop the link of the one it lacks.
+    for tool in mgctl mgboot; do
+        if [ -f "${INSTALL_DIR}/${tool}" ]; then
+            $SUDO rm -f "${BIN_DIR}/${tool}" || fail "could not replace ${BIN_DIR}/${tool}"
+            $SUDO ln -s "${INSTALL_DIR}/${tool}" "${BIN_DIR}/${tool}" || fail "could not link ${BIN_DIR}/${tool}"
+            echo "  link       ${BIN_DIR}/${tool}"
+
+            if [ "$tool" = mgctl ]; then
+                echo "  prepare    mgctl init /srv/moongate"
+            else
+                echo "  prepare    mgboot /srv/moongate"
+            fi
+        elif [ -L "${BIN_DIR}/${tool}" ] && [ "$(readlink "${BIN_DIR}/${tool}")" = "${INSTALL_DIR}/${tool}" ]; then
+            $SUDO rm -f "${BIN_DIR}/${tool}" || fail "could not remove obsolete ${BIN_DIR}/${tool} link"
+        fi
+    done
 
     cat <<'NEXT'
 

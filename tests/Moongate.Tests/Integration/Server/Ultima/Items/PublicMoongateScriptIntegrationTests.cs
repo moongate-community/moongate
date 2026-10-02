@@ -20,6 +20,7 @@ using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.Gumps;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -119,7 +120,7 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ISectorService>(_fixture.Sectors);
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(items, _fixture.Mobiles));
         _container.RegisterInstance<ITeleportService>(
-            new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors)
+            new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService())
         );
         _container.RegisterInstance<IPublicMoongateService>(_moongates);
         _container.RegisterInstance<IGumpService>(_gumps);

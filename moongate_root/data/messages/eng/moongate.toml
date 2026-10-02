@@ -115,7 +115,7 @@
 30092 = "Filling {0} spawn regions: {1} NPCs to spawn. The spawn messages show the progress."
 30093 = "Fills every spawn region to its max at the next spawn check."
 30094 = "Game time here: {0}."
-30095 = "Shows the game time where you stand."
+30095 = "Shows the game time and the moons where you stand."
 30096 = "{0} could not play."
 30097 = "Season here: {0}; {1}: {2}."
 30098 = "Season of {0}: {1}."

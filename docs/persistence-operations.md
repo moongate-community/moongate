@@ -85,7 +85,8 @@ server configuration.
 
 The schema role owns the entity schemas and performs DDL. The runtime role needs
 database `CONNECT`, entity-schema `USAGE`, `SELECT`, `INSERT`, `UPDATE` and
-`DELETE` on entity tables, and `USAGE` on the entity sequences. Configure default
+`DELETE` on entity tables, and `USAGE` and `SELECT` on the entity sequences (`SELECT` lets a
+[backup](#database-backups) read their values). Configure default
 privileges for later plugin tables. For `moongate_migrations`, the runtime role
 needs only schema `USAGE` and `SELECT` on `moongate_migrations.history`; never grant
 it history writes. Set these grants as the owner after the first apply, or
@@ -176,6 +177,9 @@ runtime role can read is included, also the tables of plugins. A table it cannot
 and named in a comment at the top of the file and in a log warning. This covers a table in a schema
 the role may not use. When a skipped table references an exported one, the file and the log also
 warn that the table must be emptied before the restore, or PostgreSQL refuses the `TRUNCATE`.
+A sequence the role cannot read (`USAGE` without `SELECT`) is left out in the same way, named in
+the comment and in a log warning; after a restore it keeps the value the migrations gave it, so
+grant `SELECT` on the sequences.
 
 The migration history (`moongate_migrations`) is never in the file: it describes the schema of the
 database it is in, and the restore procedure rebuilds it.
@@ -188,7 +192,7 @@ by the user that runs the server.
 Restore with the Moongate version that wrote the backup.
 
 1. Stop the server.
-2. Create an empty database and apply the migrations of that version with [`mgboot`](mgboot.md).
+2. Create an empty database and apply the migrations of that version with [`mgctl`](mgctl.md).
 3. Run the file with a role that owns the tables:
 
    ```bash

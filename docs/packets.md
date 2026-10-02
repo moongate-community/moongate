@@ -32,13 +32,14 @@ Directions are relative to the server. This is the default table, not the whole 
 
 The Ultima plugin adds these packets in game and standalone modes, with
 `RegisterIncomingPacket` for the incoming ones (see
-[Host integration](#host-integration)):
+[Host integration](#host-integration)). `0xD9` is the exception: it is registered in every
+mode, since the Enhanced Client sends it to the login server too:
 
 | Opcode | Class | Direction | Length | Handler |
 | --- | --- | --- | --- | --- |
 | `0x8D` | `CreateCharacterEnhancedPacket` | Incoming | Variable | `CreateCharacterEnhancedPacketHandler`: creates and saves the character and starting items, then brings it into the world |
 | `0xA9` | `CharacterListPacket` | Outgoing | Variable, minimum 6 | — |
-| `0xD9` | `ClientHardwareInfoPacket` | Incoming | Fixed 268 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0xD9` | `ClientHardwareInfoPacket` | Incoming | Fixed 268 | Game: `IgnoredPacketHandler<T>`; Login: `LoginRoleIgnoredPacketHandler<T>`. Recognised and ignored for now (Debug log) |
 | `0xF8` | `CreateCharacterPacket` | Incoming | Fixed 106 | `CreateCharacterPacketHandler`: creates and saves the character and starting items, then brings it into the world |
 | `0x5D` | `PlayCharacterPacket` | Incoming | Fixed 73 | `PlayCharacterPacketHandler`: brings the chosen character into the world |
 | `0x83` | `DeleteCharacterPacket` | Incoming | Fixed 39 | `DeleteCharacterPacketHandler`: marks the character for deletion |
@@ -78,11 +79,38 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x54` | `PlaySoundPacket` | Outgoing | Fixed 12 | — |
 | `0xC0` | `HuedEffectPacket` | Outgoing | Fixed 36 | — |
 | `0xC7` | `ParticleEffectPacket` | Outgoing | Fixed 49 | — |
+| `0x1B` | `LoginConfirmPacket` | Outgoing | Fixed 37 | — |
+| `0xBF` | `MapChangePacket` | Outgoing | Variable, 6 (subcommand `0x08`) | — |
+| `0xBC` | `SeasonChangePacket` | Outgoing | Fixed 3 | — |
+| `0x4F` | `GlobalLightLevelPacket` | Outgoing | Fixed 2 | — |
+| `0x4E` | `PersonalLightLevelPacket` | Outgoing | Fixed 6 | — |
+| `0x20` | `MobileUpdatePacket` | Outgoing | Fixed 19 | — |
+| `0x78` | `MobileIncomingPacket` | Outgoing | Variable, minimum 23 | — |
+| `0x11` | `MobileStatusPacket` | Outgoing | Variable, 91 (version 5) | — |
+| `0x72` | `WarModePacket` | Outgoing | Fixed 5 | — |
+| `0x5B` | `CurrentTimePacket` | Outgoing | Fixed 4 | — |
+| `0x65` | `WeatherPacket` | Outgoing | Fixed 4 | — |
+| `0x6D` | `PlayMusicPacket` | Outgoing | Fixed 3 | — |
+| `0x86` | `CharacterListUpdatePacket` | Outgoing | Variable, minimum 4 | — |
+| `0x85` | `CharacterDeleteResultPacket` | Outgoing | Fixed 2 | — |
+| `0xB0` | `GumpPacket` | Outgoing | Variable, minimum 23 | — |
+| `0xDD` | `CompressedGumpPacket` | Outgoing | Variable, minimum 35 | — |
+| `0xB1` | `GumpResponsePacket` | Incoming | Variable, minimum 23 | `GumpResponsePacketHandler`: hands the checked answer to the gump the player was sent |
+| `0xBF` | `CloseGumpPacket` | Outgoing | Variable, 13 (subcommand `0x04`) | — |
 
 Normal speech (`say`) reaches the speaker and other player characters within 15
 tiles on the same map. Whisper, yell, emote, global chat and the separate chat
 window are not supported yet. A leading `.` invokes the existing command system
 privately; `..` escapes one dot. Empty or over-128-character speech is ignored.
+
+`0xAD` is read leniently, as in the other emulators, since a refused packet disconnects the
+client: a missing terminator is accepted, a badly encoded character becomes U+FFFD, and a
+language code that is not three ASCII letters is read as English. Only a truncated keyword list
+is refused.
+
+A gump goes out as `0xDD` (compressed) to clients from 5.0.0a and as `0xB0` to older ones; the
+answer comes back as `0xB1`, and the server closes a gump with `0xBF` subcommand `0x04`. See
+[Gumps](gumps.md).
 
 A graphic effect goes out as `0xC0` (36 bytes): the kind (0 moving, 1 lightning, 2 fixed at a
 point, 3 fixed on an object), the two serials, the graphic, both points, speed, duration, the
@@ -267,7 +295,8 @@ ModernUO and UOX3:
 
 - an item's name: the client's cliloc for its graphic (1020000 + graphic, 1078872 + graphic
   from `0x4000`), which the client shows in its own language, or the item's or template's
-  name as text; a stack uses 1050039 with the amount;
+  name as text; an item without a name of its own that has the `label_number` prop shows that
+  cliloc instead (a sign); a stack uses 1050039 with the amount;
 - in the server language, from the message files (`ILocalizationService`, as UOX3):
   blessed or newbied (9055 "[Blessed]") or cursed (30005), the item's loot type else the
   template's; the weight of the whole stack (30006 / 30007); the rarity (30000–30004),
@@ -287,7 +316,7 @@ item put on (`0x2E`), each item of an opened container (`0x3C`), and a container
 (`0x25`) after a split, a merge, a placement or a bounce; the client asks again when a revision
 changes. The character's own `0x78` at world entry is not followed yet: the client asks for
 tooltips it does not have when the cursor is over them. A tooltip depends only on a few fields of its
-object (for an item: template, graphic, amount, name, rarity, loot type, movable; for a mobile:
+object (for an item: template, graphic, amount, name, rarity, loot type, movable, `label_number`; for a mobile:
 name and title), so it is cached by them: equal objects share one tooltip, and a change gives
 another key, so nothing is ever invalidated. The cache keeps up to 10000 tooltips and starts
 over when full. A single click (`0x09`) shows the first line, the name, over the

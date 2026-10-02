@@ -29,9 +29,9 @@ The sequence uses three executables. Each installation method ships them:
 
 | Command | Installed release | Source checkout |
 | --- | --- | --- |
-| Prepare a root | `mgboot` (releases after 0.6.0) | `dotnet run --project src/Moongate.Server -- --initialize-root` |
+| Prepare a root | `mgctl init` (`mgboot` in releases 0.7 to 0.11) | `dotnet run --project src/Moongate.Server -- --initialize-root` |
 | Server | `moongate` | `dotnet run --project src/Moongate.Server -c Release --` |
-| Migration runner | `/opt/moongate/migration-runner/Moongate.MigrationRunner` | `dotnet run --project src/Moongate.MigrationRunner -- ... --migrations-directory ./migrations` |
+| Migrations | `mgctl migrate` | `dotnet run --project src/Moongate.Ctl -- migrate ... --migrations-directory ./migrations` |
 
 The steps below use the installed names. Substitute the source-checkout form, keeping
 everything after `--`. For the container image the same steps run through
@@ -50,8 +50,8 @@ dotnet build Moongate.slnx -c Release
 use the documentation published for that version.
 
 Once the root is configured, `scripts/run_server.sh` does the build and the start in
-one step: it publishes a Release build of the server, `mgboot` and the migration runner
-into `dist/moongate`, runs `mgboot` on the root to add the shipped files it lacks, and
+one step: it publishes a Release build of the server and `mgctl`
+into `dist/moongate`, runs `mgctl init` on the root to add the shipped files it lacks, and
 starts the server on it:
 
 ```sh
@@ -60,7 +60,13 @@ scripts/run_server.sh --root-directory "$HOME/moongate"
 
 `--skip-build` starts the build already in `dist/moongate`, `--build-only` publishes
 without starting, and every other option goes to the server as it is, for example
-`--log-level Debug`.
+`--pid-file-name game.pid`.
+
+Without `--root-directory` the script uses `MOONGATE_ROOT`. Each build deletes
+`dist/moongate` first, so keep nothing of your own in it. The script exports
+`MOONGATE_ROOT` for a configuration that names its paths through `${MOONGATE_ROOT}`;
+a `MOONGATE_ROOT` already set is kept as it is, also when `--root-directory` names
+another root, so unset it or pass the same path.
 
 ## First start
 
@@ -68,20 +74,20 @@ without starting, and every other option goes to the server as it is, for exampl
 
    ```sh
    sudo mkdir -p /srv/moongate && sudo chown "$USER" /srv/moongate
-   mgboot /srv/moongate
+   mgctl init /srv/moongate
    ```
 
    This writes `config/moongate.toml` with the defaults, creates `logs/` and
    `plugins/`, copies the release's core SQL into `migrations/`, its shard data files
    into `data/`, its templates into `templates/` and its example scripts into
    `scripts/`. It needs no
-   database and no client files. [Prepare a root with mgboot](mgboot.md) describes
+   database and no client files. [Prepare a root with mgctl](mgctl.md) describes
    what happens on a root that already exists.
 
    To also enable optional administration with a self-signed TLS certificate, use:
 
    ```sh
-   mgboot /srv/moongate --generate-admin-certificate \
+   mgctl init /srv/moongate --generate-admin-certificate \
      --admin-certificate-hosts "login.example.test"
    ```
 
@@ -89,10 +95,11 @@ without starting, and every other option goes to the server as it is, for exampl
    omit `--admin-certificate-hosts` for localhost only. This creates
    `certificates/admin.pfx` and public `certificates/admin.crt`, and explicitly
    updates four `[admin_api]` settings. The default bind stays `127.0.0.1:2590`.
-   See [certificate setup](mgboot.md#generate-an-administration-certificate) for
+   See [certificate setup](mgctl.md#generate-an-administration-certificate) for
    client trust, private-network access and reuse of an existing identity.
 
-   `mgboot` ships in releases after 0.6.0. On 0.6.0, start the server once instead:
+   `mgctl` ships in releases after 0.11.0; releases 0.7 to 0.11 have `mgboot <root>`
+   instead. On 0.6.0, start the server once instead:
    it writes the configuration and exits. Nothing else is needed, because on 0.6.0
    both the server and the migration runner read the core SQL from
    `/opt/moongate/migrations`, beside the executable:
@@ -149,8 +156,8 @@ without starting, and every other option goes to the server as it is, for exampl
    refuses to start while files are pending, so apply them first:
 
    ```sh
-   /opt/moongate/migration-runner/Moongate.MigrationRunner apply --root-directory /srv/moongate --target auth
-   /opt/moongate/migration-runner/Moongate.MigrationRunner apply --root-directory /srv/moongate --target world
+   mgctl migrate apply --root-directory /srv/moongate --target auth
+   mgctl migrate apply --root-directory /srv/moongate --target world
    ```
 
    `--target auth` uses `[persistence.accounts]`, `--target world` uses
@@ -192,10 +199,10 @@ All server-managed paths below are relative to `--root-directory`:
 | Path | Purpose |
 | --- | --- |
 | `config/moongate.toml` | Created if missing; normal startup preserves it, while explicit certificate setup updates four `[admin_api]` settings |
-| `certificates/admin.pfx`, `certificates/admin.crt` | Optional `mgboot` administration TLS identity: private server PFX and public PEM for client trust |
-| `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgboot` (releases after 0.6.0); plugins ship their own under `plugins/` |
-| `data/` | Shard data files copied by `mgboot`, read at game and standalone startup; see [Shard data files](data-files.md) |
-| `templates/items/`, `templates/loots/`, `templates/mobiles/` | [Templates](templates.md) copied by `mgboot`, loaded at game and standalone startup |
+| `certificates/admin.pfx`, `certificates/admin.crt` | Optional `mgctl` administration TLS identity: private server PFX and public PEM for client trust |
+| `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgctl init`; plugins ship their own under `plugins/` |
+| `data/` | Shard data files copied by `mgctl`, read at game and standalone startup; see [Shard data files](data-files.md) |
+| `templates/items/`, `templates/loots/`, `templates/mobiles/` | [Templates](templates.md) copied by `mgctl`, loaded at game and standalone startup |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `logs/errors/<id>.md` | The report of each exception the server logged, ready to paste into a GitHub issue |
 | `plugins/` | One assembly bundle per plugin directory |
@@ -224,15 +231,14 @@ The console shows an exception as one line, its message and its report, never th
 12:04:31.552 ERR BankService                  | Opening the bank failed: the bank box is missing - details: /srv/moongate/logs/errors/7f3a9c21aa.md (paste it into a GitHub issue)
 ```
 
-The report holds the Moongate version, the system, the .NET runtime, the time, the source, the
-message and the whole exception, with its inner exceptions and stacks, in Markdown. Open it and
+The report holds the Moongate version and codename, the system, the .NET runtime, the time, the
+source, the level, the message and the whole exception, with its inner exceptions and stacks, in Markdown. Open it and
 paste it into a [GitHub issue](https://github.com/moongate-community/moongate/issues/new). Its
 name hashes the exception, so the same one logged again, say by a timer, reuses its report, which
 describes the first time it was seen. After 500 reports no new one is written, so exceptions whose
 messages vary cannot fill the disk; delete the old ones to make room. In Docker the path is the
 one inside the container, under the mounted root. A wrapper such as an `AggregateException` shows
-the message of what it wraps. With `--log-to-file false` no report is written and the console
-shows the message alone. The `.clef` logs keep the full exception of every event.
+the message of what it wraps. The `.clef` logs keep the full exception of every event.
 
 ## Common startup problems
 
@@ -251,6 +257,6 @@ shows the message alone. The `.clef` logs keep the full exception of every event
 | PostgreSQL schema changes required | An entity needs DDL that no migration provides. Generate and review a versioned SQL file with `--persistence-schema generate`, then apply it with the runner while the server is stopped |
 | Port binding failure | Check `network.listen_address`, port availability and interface addresses |
 | Another instance detected | Check the PID and running process; use a separate root for another server |
-| `... file ... not found` for a data file, such as `maps.toml` | The root has no `data/`. Run `mgboot` on the root again: it adds the missing files and keeps the others |
+| `... file ... not found` for a data file, such as `maps.toml` | The root has no `data/`. Run `mgctl` on the root again: it adds the missing files and keeps the others |
 | `InvalidDataException` naming a data file | Fix the entry the message names; see the validation rules in [Shard data files](data-files.md) |
 | Script startup error | Fix `scripts/init.lua`; inspect the script filename and line in the log |

@@ -1,24 +1,27 @@
 # Migrate from UOX3
 
-`mg-uoxconv` converts [UOX3](https://github.com/UOX3DevTeam/UOX3) `.dfn` item
+`mgctl convert uox` converts [UOX3](https://github.com/UOX3DevTeam/UOX3) `.dfn` item
 definitions and loot lists into Moongate's `ItemTemplate` and `LootTemplate` TOML, and
-UOX3 NPCs and name lists into `MobileTemplate` TOML and `names.toml`.
+UOX3 NPCs, NPC lists, spawn regions and name lists into `MobileTemplate`, NPC list and
+spawn TOML and `names.toml`. Three more commands convert ModernUO's
+[signs](#signs-of-modernuo), [teleporters](#teleporters-of-modernuo) and
+[spawners](#spawns-of-modernuo).
 The shapes it writes are described in [Loading TOML templates](templates.md#the-template-shapes);
-no loader reads them yet, so the output is content prepared for that loader.
+the server loads them at startup from `templates/`.
 
 ## Run it
 
 From a source checkout:
 
 ```sh
-dotnet run --project src/Moongate.UoxItemConverter -- \
+dotnet run --project src/Moongate.Ctl -- convert uox \
   --source <file-or-directory> --destination <dir> [--loot-destination <dir>] \
   [--mobile-source <dfndata> --mobile-destination <dir> --names-destination <file>] \
   [--starting-items-destination <file>] [--scripts-source <js-dir>] \
   [--npc-lists-destination <dir> --spawns-destination <dir>]
 ```
 
-Docker images after 0.6.0 bundle the same tool at `/app/mg-uoxconv`; see
+Release archives and Docker images ship the same tool as `mgctl` (`/app/mgctl` in the image); see
 [UOX3 content conversion](docker.md#uox3-content-conversion) for a `docker run`
 example when there is no local .NET SDK.
 
@@ -226,7 +229,7 @@ the [shipped file](data-files/starting-items.md) does.
 The shop and world signs come from ModernUO's `signs.cfg`, the file its `[SignGen` places:
 
 ```sh
-dotnet run --project src/Moongate.UoxItemConverter -- modernuo-signs \
+dotnet run --project src/Moongate.Ctl -- convert modernuo-signs \
   --source <ModernUO>/Distribution/Data/signs.cfg --destination moongate_root/templates/decorations
 ```
 
@@ -242,7 +245,7 @@ The world and dungeon teleporters come from ModernUO's `teleporters.json`, the f
 places:
 
 ```sh
-dotnet run --project src/Moongate.UoxItemConverter -- modernuo-teleporters \
+dotnet run --project src/Moongate.Ctl -- convert modernuo-teleporters \
   --source <ModernUO>/Distribution/Data/teleporters.json --destination moongate_root/templates/decorations
 ```
 
@@ -260,7 +263,7 @@ UOX3 has no spawns for Malas, Tokuno and TerMur. The `modernuo-spawns` command t
 [ModernUO](https://github.com/modernuo/ModernUO)'s spawners:
 
 ```sh
-dotnet run --project src/Moongate.UoxItemConverter -- modernuo-spawns \
+dotnet run --project src/Moongate.Ctl -- convert modernuo-spawns \
   --source <ModernUO>/Distribution/Data/Spawns --maps malas,tokuno,termur \
   --mobiles moongate_root/templates/mobiles --destination moongate_root/templates/spawns
 ```

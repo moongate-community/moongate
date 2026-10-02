@@ -13,20 +13,16 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
     private readonly string _runnerDirectory;
     private readonly ILogger _logger = Log.ForContext<DevelopmentMigrationRunner>();
 
-    private string ExecutablePath
-        => Path.Combine(
-            _runnerDirectory,
-            OperatingSystem.IsWindows() ? "Moongate.MigrationRunner.exe" : "Moongate.MigrationRunner"
-        );
+    private string ExecutablePath => Path.Combine(_runnerDirectory, OperatingSystem.IsWindows() ? "mgctl.exe" : "mgctl");
 
-    private string AssemblyPath => Path.Combine(_runnerDirectory, "Moongate.MigrationRunner.dll");
+    private string AssemblyPath => Path.Combine(_runnerDirectory, "mgctl.dll");
 
     public DevelopmentMigrationRunner(string root, string migrations, string? plugins, string? runnerDirectory = null)
     {
         _root = Path.GetFullPath(root);
         _migrations = Path.GetFullPath(migrations);
         _plugins = plugins is null ? null : Path.GetFullPath(plugins);
-        _runnerDirectory = runnerDirectory ?? Path.Combine(AppContext.BaseDirectory, "migration-runner");
+        _runnerDirectory = runnerDirectory ?? DefaultRunnerDirectory();
     }
 
     public void ValidateAvailable()
@@ -34,9 +30,17 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
         if (!File.Exists(ExecutablePath) && !File.Exists(AssemblyPath))
         {
             throw new InvalidOperationException(
-                $"The isolated migration runner is missing from '{_runnerDirectory}'. Build or restore the migration-runner bundle."
+                $"mgctl, which applies the migrations, is missing from '{_runnerDirectory}'. Keep it beside the Moongate.Server executable from the same distribution."
             );
         }
+    }
+
+    // A build keeps mgctl and its own PostgreSQL driver in the mgctl folder; a distribution has it beside the server.
+    private static string DefaultRunnerDirectory()
+    {
+        var bundled = Path.Combine(AppContext.BaseDirectory, "mgctl");
+
+        return Directory.Exists(bundled) ? bundled : AppContext.BaseDirectory;
     }
 
     public async Task ApplyAsync(PersistenceDatabaseTarget target, CancellationToken cancellationToken)
@@ -59,7 +63,7 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
 
         foreach (var argument in new[]
                  {
-                     "apply", "--target", target == PersistenceDatabaseTarget.Accounts ? "auth" : "world",
+                     "migrate", "apply", "--target", target == PersistenceDatabaseTarget.Accounts ? "auth" : "world",
                      "--root-directory", _root, "--migrations-directory", _migrations
                  })
         {

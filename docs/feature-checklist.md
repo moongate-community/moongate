@@ -6,9 +6,9 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**230 systems:** ✅ 64 done, 🟡 30 partly done, ❌ 136 not built yet.
+**229 systems:** ✅ 64 done, 🟡 32 partly done, ❌ 133 not built yet.
 
-**Coverage: 28%** of the systems done, **34%** counting a partly done system as half.
+**Coverage: 28%** of the systems done, **35%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -58,7 +58,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Virtues | ❌ | |
 | Status bar | ✅ | Name, stats, hit points, mana, stamina, gold, weight |
 | Extended status (resistances, luck, caps, stat locks) | ❌ | |
-| Staff privileges (move anything, see hidden, invulnerable) | ❌ | |
+| Staff privileges (move anything, see hidden, invulnerable) | 🟡 | Hidden ground items are shown only to staff, and `.go` takes a game master anywhere; no move anything or invulnerability |
 | Gargoyle flying | ❌ | |
 | Movement cost and stamina use by weight | ❌ | |
 | Polymorph and incognito | ❌ | |
@@ -164,7 +164,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Containers on the ground, weight and item limits | ❌ | |
 | Tooltips and single-click names | ✅ | |
 | Items on the ground and their decay | ✅ | |
-| Scripted items | ✅ | Lua item scripts: use, equip, pick up, drop, create, darkness |
+| Scripted items | ✅ | Lua item scripts: use, equip, unequip, pick up, drop, create, darkness, a player stepping on them, speech nearby |
 | Loot tables | ✅ | Rolled into every spawned NPC's backpack |
 | Doors | ✅ | Open and close; linked double doors |
 | Locks and keys | ✅ | Locked doors open for a player carrying their key |
@@ -218,7 +218,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Custom house design | ❌ | |
 | Sector sleep | ✅ | NPCs away from players cost nothing |
 | World import and export | ❌ | |
-| Parallel and incremental world saves | 🟡 | Periodic saves in a background transaction |
+| Parallel and incremental world saves | 🟡 | Only the snapshots that changed are written, in one background transaction; not parallel |
 
 ## Social
 
@@ -260,8 +260,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Jails | ❌ | Jail regions are dim, nothing more |
 | Who list | ❌ | |
 | Web status pages | ❌ | |
-| Backups | ❌ | |
-| Bug reports | ❌ | |
+| Bug reports | 🟡 | Exception reports ready for a GitHub issue; no in-game report |
 | Logging | ✅ | Structured logs with levels |
 | Packet logging per client | ❌ | The `--log-packets` option is parsed but unused |
 | Command log | ❌ | |
@@ -275,8 +274,8 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | --- | --- | --- |
 | Script engine | ✅ | Sandboxed Lua 5.2 with an instruction budget |
 | Scripts bound to templates | ✅ | `script_id` on item and mobile templates |
-| Script events | 🟡 | NPC and item events; no combat, skill, login or region events |
-| Script API | 🟡 | `npc`, `item`, `world`, `gump`, `dice`, `localization`, `timer`, `events`; no character or inventory API |
+| Script events | 🟡 | NPC, item and character events, and `player_say`; no combat, skill or region events |
+| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `dice`, `localization`, `timer`, `events`, `engine`, `log`; no stats, skills or inventory API |
 | Script timers | ✅ | |
 | Commands from plugins | ✅ | In C#; not from Lua |
 | Data-driven content | ✅ | TOML templates and data files, validated at startup |
@@ -318,7 +317,8 @@ Systems most emulators do not have:
 
 - Login server and game realms as separate processes, discovered through Redis, with one-use
   handoff tickets.
-- PostgreSQL persistence with versioned migrations and a separate migration runner.
+- PostgreSQL persistence with versioned migrations, applied by `mgctl migrate` while the server is
+  stopped.
 - World saves that never stop the game: about 0.1 s on the game loop to copy 173,000 entities, then
   only the changed rows written in the background; see
   [A save does not stop the game](persistence-operations.md#a-save-does-not-stop-the-game).

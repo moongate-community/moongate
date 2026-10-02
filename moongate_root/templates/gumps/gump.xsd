@@ -229,7 +229,8 @@
         <xs:annotation>
           <xs:documentation>
             Filled when the gump opens by the function name of its script, &lt;id&gt;.&lt;name&gt;(g, player, args),
-            with the controls it adds to g, moved to x, y; the pages it makes follow the gump's.
+            with the controls it adds to g, moved to x, y. A gump with page elements and a slot is refused: the
+            slot makes the pages.
           </xs:documentation>
         </xs:annotation>
         <xs:complexType>

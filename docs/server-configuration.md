@@ -16,7 +16,7 @@ TOML keys use `snake_case`. Keep `mode` before the first table header.
 The server owns `mode` and the sections `[shard]`, `[network]`, `[redis]`,
 `[persistence]`, `[realm_directory]`, `[world_save]`, `[sql_backup]`, `[diagnostics]` and
 `[scripting]`. Plugins own the others: `[ultima]` belongs to the Ultima plugin and
-`[admin_api]` to the Administration plugin. A new root written by `mgboot` holds the server's
+`[admin_api]` to the Administration plugin. A new root written by `mgctl` holds the server's
 sections (and `[admin_api]` when it sets up a certificate); at the first start each
 plugin appends its missing section,
 with the defaults, to the end of the file. See
@@ -206,6 +206,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.characters.deletion_delay_hours` | At least 1; default 24. When a player deletes a character (packet `0x83`) it is only marked: it leaves the character list, gives up its slot and no longer counts toward `max_per_account`, and staff can restore it with `character restore` (into the first free slot). After this many hours it becomes eligible for removal; the job that removes it is not built yet. |
 | `ultima.npcs.think_interval_ms` | From 50 to 60000; default 500, ModernUO's passive speed. How often an NPC near a player thinks. Only NPCs within the 5×5 sectors around a player have a think timer; the others sleep and cost nothing. See [NPC tick](game-loop-and-timers.md#npc-tick). |
 | `ultima.npcs.sense_range` | From 1 to 24; default 8. How near, in cells along X or Y, another mobile must come for an NPC's mobile script to sense it with `on_mobile_in_range`. See [Mobile scripts](scripting.md#mobile-scripts). |
+| `ultima.spawns.initial_fill` | Default `true`. The first spawn of each spawn region after the start fills it to its `max` at once, so an empty world is full in about 10 minutes; `false` keeps UOX3's way, where the first spawn also brings only `call` NPCs. Used in game and standalone modes. See [NPC spawns](spawns.md#how-spawning-works). |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
 `[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the
@@ -254,7 +255,7 @@ dotnet run --project src/Moongate.Server -c Release -- \
 | `--log-to-file` | `true` | File logging is enabled; the generated parser only accepts this as a presence flag |
 | `--log-packets` | `false` | Sets the argument to true; currently no packet-tracing consumer |
 | `--show-header` | `true` | Shows the startup banner; presence flag |
-| `--persistence-schema <mode>` | `None` | `preview` prints draft PostgreSQL DDL; `generate` writes a draft file. The old `apply` mode directs you to `Moongate.MigrationRunner` |
+| `--persistence-schema <mode>` | `None` | `preview` prints draft PostgreSQL DDL; `generate` writes a draft file. The old `apply` mode directs you to `mgctl migrate apply` |
 | `--migration-target <target>` | Unset | Required by `generate`: `auth` or `world` |
 | `--migration-output <path>` | Unset | Required by `generate`: new `NNNN_description.sql` file; refuses overwrite |
 | `--initialize-root` | `false` | Prepare config/directories/bundled migrations offline, without starting the server |
@@ -283,14 +284,13 @@ ownership, logs and troubleshooting, [PostgreSQL persistence](persistence.md) fo
 connection, schema and world-save semantics, and
 [Lua scripting](scripting.md) for budgets and sandbox boundaries.
 
-Versioned SQL is applied by the isolated `migration-runner/Moongate.MigrationRunner`
-executable using `status|apply --target auth|world`. In released artifacts its default
-root is the parent server directory; `--root-directory` and `MOONGATE_ROOT` override
+Versioned SQL is applied by `mgctl migrate status|apply --target auth|world`, a process
+of its own. In released artifacts its default root is its own directory, the server's; `--root-directory` and `MOONGATE_ROOT` override
 it. See [Generate, review and apply](persistence-migrations.md#generate-review-and-apply).
 
 ## Administration endpoint
 
-`[admin_api]` configures the embedded gRPC plugin. It is disabled by default and uses server TLS on port 2590 when enabled. Certificate paths resolve relative to the root; password environment references are resolved only for enabled endpoints. Use [mgboot certificate setup](mgboot.md#generate-an-administration-certificate) to generate a passwordless PFX and enable the endpoint offline. See [Administration API](admin-api.md) for roles, permissions, first-admin provisioning and all limits.
+`[admin_api]` configures the embedded gRPC plugin. It is disabled by default and uses server TLS on port 2590 when enabled. Certificate paths resolve relative to the root; password environment references are resolved only for enabled endpoints. Use [mgctl certificate setup](mgctl.md#generate-an-administration-certificate) to generate a passwordless PFX and enable the endpoint offline. See [Administration API](admin-api.md) for roles, permissions, first-admin provisioning and all limits.
 
 ## UO client encryption
 

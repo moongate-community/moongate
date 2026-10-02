@@ -2,12 +2,12 @@
 
 The world fills itself with NPCs from spawn regions, as UOX3's `[REGIONSPAWN]`: every region keeps
 up to its `max` NPCs alive, spawning a few at a time, and spawns new ones when some are removed or
-killed. The shipped data is UOX3's, converted by [`mg-uoxconv`](uox3-migration.md): 2778 regions on
+killed. The shipped data is UOX3's, converted by [`mgctl convert uox`](uox3-migration.md): 2778 regions on
 Felucca, Trammel and Ilshenar, for up to about 25,000 NPCs, picking from 446 NPC lists. UOX3 has no
 spawns for New Haven, so `spawns/trammel/town_new_haven.toml` adds its 57 spawn points from
 ModernUO: the vendors, the bankers, the townsfolk and the town animals, 99 NPCs in all. Malas,
 Tokuno and TerMur, which UOX3 has no spawns for either, take theirs from ModernUO's spawners through
-[`mg-uoxconv modernuo-spawns`](uox3-migration.md#spawns-of-modernuo): 1,206 regions, about 4,200
+[`mgctl convert modernuo-spawns`](uox3-migration.md#spawns-of-modernuo): 1,206 regions, about 4,200
 NPCs, in the `modernuo_*.toml` files of their folders; the spawners whose creatures have no template
 yet are left out.
 
@@ -20,10 +20,16 @@ yet are left out.
 | `templates/mobiles/` | The [mobile templates](templates.md) the lists and regions name |
 
 Both load at startup, after the mobile templates. A mistake stops the server with the file and the
-reason: an unknown mobile template or list, a list without entries or looping through its nested
-lists, a region with nothing to spawn, a `max` or `call` below 1, `min_minutes` above
-`max_minutes`, a region without an area, reversed corners, a duplicate id, or a folder that is not a
-map.
+reason:
+
+- a list or a region without an `id`, or a duplicate id;
+- an unknown mobile template or list;
+- a list without entries or looping through its nested lists;
+- a list entry with both `mobile_id` and `npc_list_id`, with neither, or with a `weight` below 1;
+- a region with nothing to spawn, or without an area;
+- a `max` or `call` below 1, `min_minutes` below 0 or above `max_minutes`;
+- reversed corners in `areas` or `exclude`;
+- a folder that is not a map, or whose name is not in lower case.
 
 ## NPC lists
 
@@ -59,6 +65,9 @@ only_outside = false                  # true: never under a roof
 A region picks each NPC from one pool: its `mobile_ids`, weight 1 each, and the entries of its
 `npc_list_ids` with their weights.
 
+The shipped files also carry `map = "..."`, written by the converters. The server takes the map
+from the folder and ignores the key, so a `map` that disagrees with its folder changes nothing.
+
 ## How spawning works
 
 1. **The check.** Every 10 seconds (the `npc_spawn` timer) each region whose time has come and
@@ -67,8 +76,9 @@ A region picks each NPC from one pool: its `mobile_ids`, weight 1 each, and the 
    again.
 2. **Gradual fill.** At startup the first spawn of each region comes at a random time within its
    `min_minutes`, at most 10 minutes, and fills the region to its `max` at once: an empty world is
-   full about 10 minutes after the start, without every NPC arriving in the same moment. Later spawns
-   follow `call` and the times again. `[ultima.spawns] initial_fill = false` keeps UOX3's way, where
+   full about 10 minutes after the start, without every NPC arriving in the same moment. A region
+   that finds a spot for only some of its NPCs counts as filled, and brings the rest by `call`.
+   Later spawns follow `call` and the times again. `[ultima.spawns] initial_fill = false` keeps UOX3's way, where
    the first spawn also brings only `call` NPCs, and a region with a `call` of 1 can take hours to
    fill. The NPCs are saved with the world, so after a restart the regions are already full.
 3. **The spot.** For each NPC the region picks the template first, then tries up to 100 random
@@ -109,7 +119,7 @@ when its area is a single cell, and walks it back when it is outside.
 - Game masters and administrators in the world get one message after each check that spawned
   something: `Spawn: The Hammer And Anvil (Felucca): 1 NPCs` for one region, or
   `Spawn: 12 NPCs in 9 regions: Yew Woods 3, ... and 4 more` naming at most five, followed by how
-  full the world is: `- world 3120/24805 (12%)`, the live NPCs of every region against their
+  full the world is: `- world 3120/29064 (10%)`, the live NPCs of every region against their
   `max`. The same line goes to the server log at Information level, so the gradual fill can be
   followed there; the detail of each spawn is at Debug level.
 - [`.spawns`](commands/spawns.md) lists the regions where you stand, with their live NPCs, their
