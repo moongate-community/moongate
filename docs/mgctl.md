@@ -1,7 +1,7 @@
 # mgctl, the Moongate tool
 
-`mgctl` is the one tool that ships beside `Moongate.Server`, in release archives and Docker
-images; the Linux installer links it as the `mgctl` command. Releases 0.7 to 0.11 named it
+`mgctl` is the one tool that ships beside `mgserver`, the server, in release archives and Docker
+images; the Linux installer links it as the `mgctl` command. Releases up to 0.11 named the server `Moongate.Server`. Releases 0.7 to 0.11 named the tool
 `mgboot`, which only prepared the root, and shipped the migrations and the converter as two more
 executables, `migration-runner/Moongate.MigrationRunner` and `mg-uoxconv`; there, read
 `mgboot <root>` for `mgctl init <root>`.
@@ -64,7 +64,7 @@ as `mgctl data` is refused, so a mistyped command never becomes a root. A comman
 that names no command, such as `mgctl migrate` alone, exits with code 2.
 
 On Windows, use `mgctl.exe init C:\MoongateData` from the extracted distribution.
-Keep `mgctl` and `Moongate.Server` from the same release together.
+Keep `mgctl` and `mgserver` from the same release together.
 When preparing a root, `mgctl` shows the same Moongate banner, version and codename
 as the server, followed by `Root setup`. Help and version output omit the banner.
 
@@ -145,7 +145,7 @@ The root does not need database access or Ultima Online client files to be prepa
 Data files, templates and scripts are copied only when missing, so a file you edited
 stays as it is. Run `mgctl init` again after upgrading to add the files a new release
 introduces; a file that exists in the root is never replaced, so compare it with the
-one beside the new `Moongate.Server` binary (`data/`, `templates/`, `scripts/`) to pick
+one beside the new `mgserver` binary (`data/`, `templates/`, `scripts/`) to pick
 up upstream changes. Nothing is removed either: a template a release renamed or moved
 stays in the root beside its new copy, and the server stops at startup on the
 duplicate id, so delete the stale file. A shipped file you deleted comes back on the

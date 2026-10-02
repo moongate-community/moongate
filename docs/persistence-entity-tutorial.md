@@ -242,7 +242,7 @@ versioned SQL migration with the plugin.
 2. Generate a draft for World, choosing the next component sequence:
 
    ```sh
-   Moongate.Server --root-directory /srv/moongate/reference \
+   mgserver --root-directory /srv/moongate/reference \
      --persistence-schema generate --migration-target world \
      --migration-output ./MyPlugin/migrations/world/0001_create_characters.sql
    ```

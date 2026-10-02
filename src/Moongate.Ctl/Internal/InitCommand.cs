@@ -7,7 +7,7 @@ namespace Moongate.Ctl.Internal;
 internal static class InitCommand
 {
     /// <summary>
-    ///     Prepare a server root offline using the matching Moongate.Server distribution.
+    ///     Prepare a server root offline using the matching mgserver distribution.
     /// </summary>
     /// <param name="rootDirectory">
     ///     Root directory to initialize.
@@ -40,7 +40,7 @@ internal static class InitCommand
         var server = Environment.GetEnvironmentVariable("MOONGATE_SERVER_EXECUTABLE") ??
                      Path.Combine(
                          AppContext.BaseDirectory,
-                         OperatingSystem.IsWindows() ? "Moongate.Server.exe" : "Moongate.Server"
+                         OperatingSystem.IsWindows() ? "mgserver.exe" : "mgserver"
                      );
 
         try
@@ -48,7 +48,7 @@ internal static class InitCommand
             if (!File.Exists(server))
             {
                 throw new FileNotFoundException(
-                    "Keep mgctl beside the Moongate.Server executable from the same distribution.",
+                    "Keep mgctl beside the mgserver executable from the same distribution.",
                     server
                 );
             }

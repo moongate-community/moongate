@@ -23,7 +23,7 @@ address. The local realm advertises `network.game_port` unless
 | `PacketDispatchService` / `GameLoopService` | Typed handlers, ordered game work and loop-owned state mutation |
 
 Transport and outgoing sends can run without `ISessionService` or `IGameLoopService`.
-The implementations remain in the executable `Moongate.Server`; their public contracts
+The implementations remain in the executable `mgserver` (the `Moongate.Server` project); their public contracts
 and event data live in the `Moongate.Server.Core` library.
 
 ## Compose a raw listener
