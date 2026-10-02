@@ -2,9 +2,12 @@
 
 `mgctl convert uox` converts [UOX3](https://github.com/UOX3DevTeam/UOX3) `.dfn` item
 definitions and loot lists into Moongate's `ItemTemplate` and `LootTemplate` TOML, and
-UOX3 NPCs and name lists into `MobileTemplate` TOML and `names.toml`.
+UOX3 NPCs, NPC lists, spawn regions and name lists into `MobileTemplate`, NPC list and
+spawn TOML and `names.toml`. Three more commands convert ModernUO's
+[signs](#signs-of-modernuo), [teleporters](#teleporters-of-modernuo) and
+[spawners](#spawns-of-modernuo).
 The shapes it writes are described in [Loading TOML templates](templates.md#the-template-shapes);
-no loader reads them yet, so the output is content prepared for that loader.
+the server loads them at startup from `templates/`.
 
 ## Run it
 

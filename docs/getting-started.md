@@ -60,7 +60,13 @@ scripts/run_server.sh --root-directory "$HOME/moongate"
 
 `--skip-build` starts the build already in `dist/moongate`, `--build-only` publishes
 without starting, and every other option goes to the server as it is, for example
-`--log-level Debug`.
+`--pid-file-name game.pid`.
+
+Without `--root-directory` the script uses `MOONGATE_ROOT`. Each build deletes
+`dist/moongate` first, so keep nothing of your own in it. The script exports
+`MOONGATE_ROOT` for a configuration that names its paths through `${MOONGATE_ROOT}`;
+a `MOONGATE_ROOT` already set is kept as it is, also when `--root-directory` names
+another root, so unset it or pass the same path.
 
 ## First start
 
@@ -225,15 +231,14 @@ The console shows an exception as one line, its message and its report, never th
 12:04:31.552 ERR BankService                  | Opening the bank failed: the bank box is missing - details: /srv/moongate/logs/errors/7f3a9c21aa.md (paste it into a GitHub issue)
 ```
 
-The report holds the Moongate version, the system, the .NET runtime, the time, the source, the
-message and the whole exception, with its inner exceptions and stacks, in Markdown. Open it and
+The report holds the Moongate version and codename, the system, the .NET runtime, the time, the
+source, the level, the message and the whole exception, with its inner exceptions and stacks, in Markdown. Open it and
 paste it into a [GitHub issue](https://github.com/moongate-community/moongate/issues/new). Its
 name hashes the exception, so the same one logged again, say by a timer, reuses its report, which
 describes the first time it was seen. After 500 reports no new one is written, so exceptions whose
 messages vary cannot fill the disk; delete the old ones to make room. In Docker the path is the
 one inside the container, under the mounted root. A wrapper such as an `AggregateException` shows
-the message of what it wraps. With `--log-to-file false` no report is written and the console
-shows the message alone. The `.clef` logs keep the full exception of every event.
+the message of what it wraps. The `.clef` logs keep the full exception of every event.
 
 ## Common startup problems
 

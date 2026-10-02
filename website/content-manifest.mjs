@@ -69,6 +69,7 @@ export const contentEntries = [
   { source: 'docs/data-files/races.md', slug: 'server/data-files/races', title: 'Races', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/banned-names.md', slug: 'server/data-files/banned-names', title: 'Banned names', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/names.md', slug: 'server/data-files/names', title: 'Names', group: 'Scripting and content', subgroup: 'Data files' },
+  { source: 'docs/data-files/titles.md', slug: 'server/data-files/titles', title: 'Fame and karma titles', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/starting-items.md', slug: 'server/data-files/starting-items', title: 'Starting items', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/containers.md', slug: 'server/data-files/containers', title: 'Containers', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/bodies.md', slug: 'server/data-files/bodies', title: 'Bodies', group: 'Scripting and content', subgroup: 'Data files' },

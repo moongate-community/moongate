@@ -76,7 +76,7 @@ exists but fails compilation/execution aborts server startup.
 | `item.location(serial)`, `item.move_to(serial, x, y, z)` | Where a ground item lies, `{ x, y, z, map }`, and moving it on its map: the players around the old spot lose it and those around the new one see it; `nil`/`false` for an item not on the ground, a spot outside the map or a `z` outside -128 to 127; moving restarts a decaying item's decay |
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
 | `mobile.teleport(serial, x, y, z, map?)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map, or of `map` (a `MapType`, or its name such as `"Tokuno"`) when given: a player's client is told of the map change (0xBF 0x08) and where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a `z` outside -128 to 127 |
-| `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells |
+| `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells; `false` for a sound out of range or a mobile not in the world |
 | `effect.at(map, x, y, z, graphic, options)` | Plays an effect graphic that stays at a point of a map, such as the smoke of a teleport: `effect.at(MapType.Trammel, 1600, 1628, 5, EffectGraphicType.Smoke)`; see [Effects](#effects) |
 | `effect.on(serial, graphic, options)` | Plays an effect graphic on a mobile, which it follows, or on an item lying on the ground; `false` for something not in the world |
 | `effect.moving(from, to, graphic, options)` | Plays an effect graphic flying from one mobile or ground item to another on the same map, such as a fireball; `false` when one is not in the world or they are on two maps |
@@ -87,13 +87,13 @@ exists but fails compilation/execution aborts server startup.
 | `world.is_staff(player)` | Whether the player is a game master or an administrator in the world; `false` for an NPC or a player not in the world |
 | `world.carries(mobile, key, value)` | Whether the mobile wears or carries, in its containers at any depth, an item whose prop `key` is `value`, such as the key of a door: `world.carries(user, "key.value", 1234)` |
 | `bank.open(player)`, `bank.is_open(player)` | Opens the player's bank box, made the first time, open while the player stands still; and whether it is open. `false` for an NPC or a player not in the world; see [Bank](bank.md) |
-| `gump.open(player, id, args)`, `gump.close(player, id)` | Opens the gump `templates/gumps/<id>.xml` on the player, its `${name}` filled from `args`, and closes it; its script `scripts/gumps/<id>.lua` gets the answer. `false` for an unknown player or gump. See [Gumps](gumps.md) |
-| `gump.create(id, x, y)`, `gump.send(player, g, args)` | Builds a gump in Lua (`g:text{...}`, `g:button{...}`, `g:paginate(...)`, ...) and opens it; a button's `on_click` may be a function. See [Gumps built in Lua](gumps.md#gumps-built-in-lua) |
+| `gump.open(player, id, args)`, `gump.close(player, id)` | Opens the gump `templates/gumps/<id>.xml` on the player, its `${name}` filled from `args`, and closes it; its script `scripts/gumps/<id>.lua` gets the answer. `false` for an unknown player, and from `gump.open` for an unknown gump. Called from a script, the gump opens or closes on the next turn of the game loop, so `gump.close` gives `true` even for a gump that is not open. See [Gumps](gumps.md) |
+| `gump.create(id, x, y)`, `gump.send(player, g, args)` | Builds a gump in Lua (`g:text{...}`, `g:button{...}`, `g:paginate(...)`, ...) and opens it, from a script on the next turn of the game loop; `false` for an unknown player. A button's `on_click` may be a function. See [Gumps built in Lua](gumps.md#gumps-built-in-lua) |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `world`, `gump` and `bank` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
+The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -107,8 +107,9 @@ the timer prevents later starts; it does not cancel an already-started coroutine
 For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
-Apart from the `npc`, `item` and `world` modules of the [mobile](#mobile-scripts) and [item scripts](#item-scripts),
-there are no character or inventory APIs yet ([Implementation status](implementation-status.md)). To expose application
+The `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` modules serve the [mobile](#mobile-scripts) and
+[item scripts](#item-scripts); there are no APIs for a character's stats, skills or inventory yet
+([Implementation status](implementation-status.md)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Events
@@ -342,8 +343,8 @@ teleports the player to the props `teleport.x`, `teleport.y` and `teleport.z` wi
 `mobile.teleport`, shows a puff of smoke where the player left (prop `source_effect`) and
 arrived (prop `dest_effect`), then plays the prop `sound_id` there when the teleporter has one. The prop
 `active = false` turns a teleporter off. A teleporter with the prop `teleport.map`, a `MapType`
-number, takes the player to that map: the client changes map, then gets the season, the light,
-the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
+number, takes the player to that map: the client changes map, then gets the season when it differs
+from the one it shows, the light, the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
 the accounts its visibility allows, so players walk onto a teleporter they never see.
 
 `scripts/items/keyword_teleport.lua` is the script of the `decoration_keyword_teleporter`
@@ -376,7 +377,7 @@ generated `definitions.lua` lists them all), and any other art id works too.
 | `render` | An `EffectRenderModeType`: `Normal`, `Darken`, `Lighten`, `LightenTransparent`, `Translucent`, `TranslucentColor`, `Negative`, `NegativeTransparent` |
 | `fixed_direction`, `explodes` | For a moving effect: keep the graphic's direction, and explode on arrival |
 | `particle`, `explode_particle`, `explode_sound` | Particle effect ids and the arrival sound; only the Enhanced Client shows particles |
-| `layer` | An `EffectLayerType`, the body part the particles are shown at: `Head`, `RightHand`, `LeftHand`, `Waist`, `LeftFoot`, `RightFoot`, `CenterFeet` |
+| `layer` | An `EffectLayerType`, the body part the particles are shown at: `Head`, `RightHand`, `LeftHand`, `Waist`, `LeftFoot`, `RightFoot`, `CenterFeet`, or `None`, the default |
 
 ```lua
 -- A fireball from the caster to the target, exploding there.
@@ -389,7 +390,8 @@ effect.on(who, EffectGraphicType.SparkleHeal, { speed = 9, duration = 32, partic
 A function returns `false` and plays nothing for a value out of range, an option of the wrong
 type (`speed = "9"`, `explodes = 1`), an option it does not know, and an effect with neither a
 graphic nor a particle. An argument of the wrong type raises an error, as for every module. A classic client draws no particles: it gets the graphic, and
-nothing for an effect made of particles only. Effects are not sequenced: chain them with
+nothing for an effect made of particles only; a moving effect with the graphic `1`, ModernUO's
+placeholder, counts as one. A lightning bolt has no graphic and is always sent. Effects are not sequenced: chain them with
 `timer` calls.
 
 ## Reload and ownership

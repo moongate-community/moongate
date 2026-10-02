@@ -2,7 +2,8 @@
 
 This tutorial builds three gumps step by step: a two-step registration that asks a name and then
 greets it, and a list that the script fills and pages. The finished files ship with the server, so
-you can open them right away and compare them with your own:
+you can open them right away and compare them with your own (they are named `tutorial_*` instead
+of `my_*`):
 
 - `templates/gumps/tutorial_name.xml`, `templates/gumps/tutorial_greeting.xml` and
   `scripts/gumps/tutorial_greeting.lua`;
@@ -28,7 +29,7 @@ Create `templates/gumps/my_name.xml`:
 </gump>
 ```
 
-- The `id` is the file's name and the name of its script.
+- The `id` should be the file's name; it is the name of the gump's script and of its table.
 - `xsi:noNamespaceSchemaLocation="gump.xsd"` gives your editor completion and checks: an unknown
   element or a missing attribute is underlined as you type.
 - `bind="name"` puts what the player types into the argument `name`. The field starts with
@@ -44,7 +45,7 @@ Create `templates/gumps/my_greeting.xml`:
 <gump id="my_greeting" x="120" y="120"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
   <background x="0" y="0" gump="9200" width="320" height="150" />
-  <html x="20" y="18" width="280" height="60">Hello, &lt;basefont color=#FFD700&gt;${name}&lt;/basefont&gt;!</html>
+  <html x="20" y="18" width="280" height="60">Hello, &lt;basefont color=#FFD700&gt;${name}&lt;/basefont&gt;! Welcome to the shard.</html>
   <button x="20" y="100" up="4014" down="4015" open="my_name" />
   <text x="55" y="101">Back</text>
   <button x="180" y="100" up="4005" down="4007" on_click="done" />
@@ -70,6 +71,7 @@ end
 
 -- The gump went away without a button: "player", "replaced", "server" or "disconnect".
 function my_greeting.on_close(player, args, reason)
+    log.info("The greeting was closed: {Reason}", reason)
 end
 ```
 
@@ -118,8 +120,10 @@ to the builder `g` appears at the slot, its coordinates counted from the slot. C
 ```lua
 my_list = {}
 
-local cities = { "Britain", "Cove", "Jhelom", "Magincia", "Minoc", "Moonglow", "Nujel'm",
-                 "Ocllo", "Serpent's Hold", "Skara Brae", "Trinsic", "Vesper", "Yew" }
+local cities = {
+    "Britain", "Buccaneer's Den", "Cove", "Jhelom", "Magincia", "Minoc", "Moonglow",
+    "Nujel'm", "Ocllo", "Serpent's Hold", "Skara Brae", "Trinsic", "Vesper", "Yew"
+}
 
 function my_list.rows(g, player, args)
     g:pager{ previous = { x = 0, y = 200 }, next = { x = 220, y = 200 } }

@@ -31,7 +31,8 @@ With `xsi:noNamespaceSchemaLocation="gump.xsd"`, VS Code (with an XML extension)
 complete the elements and attributes and flag mistakes as you type. The server checks every file
 against the same schema at startup: a mistake stops it with the file, the line and the reason.
 
-`<gump>` takes `id` (lower case, the same as the file and script), `x` and `y`, and `closable`,
+`<gump>` takes `id` (lower case; it should match the file name, and the script is found by the
+id, not by the file name), `x` and `y`, and `closable`,
 `movable`, `disposable` and `resizable` (true unless set to false). Its controls show on every page;
 the controls inside each `<page>` show on pages 1, 2, ... in order.
 
@@ -39,15 +40,15 @@ the controls inside each `<page>` show on pages 1, 2, ... in order.
 | --- | --- |
 | `background` | A resizable background (`gump`, `width`, `height`) |
 | `alpha_region` | A see-through region |
-| `image`, `image_tiled` | A gump image, with an optional `hue`, or repeated over a box |
+| `image`, `image_tiled` | A gump image (`gump`), with an optional `hue`, or repeated over a box |
 | `item` | An item graphic (`item`, optional `hue`) |
-| `text` | A line of text (`hue`) |
-| `label_cropped` | Text cut to a box |
-| `html` | HTML text in a box (`background`, `scrollbar`), or a client message (`cliloc`, `color`, `args`) |
-| `button` | A button: `on_click` (a function of the script), `id` (to `on_button`), `page` (turns the page) or `open` (opens another gump) |
-| `checkbox` | A checkbox (`switch` id, `checked`, `bind`) |
-| `group` with `radio` | Radio buttons of which one can be on (`switch`, `checked`, `bind`) |
-| `text_entry` | A text field (`entry` id, `max_length` up to 239, `bind`; its inner text is the starting text) |
+| `text` | A line of text (`hue`, `message`) |
+| `label_cropped` | Text cut to a box (`hue`, `message`) |
+| `html` | HTML text in a box (`background`, `scrollbar`, `message`), or a client message (`cliloc`, `color`, `args`) |
+| `button` | A button with its two images (`up`, `down`, both required): `on_click` (a function of the script), `id` (to `on_button`), `page` (turns the page) or `open` (opens another gump) |
+| `checkbox` | A checkbox with its two images (`off`, `on`, both required; `switch` id, `checked`, `bind`) |
+| `group` with `radio` | Radio buttons of which one can be on (`off`, `on`, both required; `switch`, `checked`, `bind`) |
+| `text_entry` | A text field (`entry` id, `hue`, `max_length` up to 239, `bind`; its inner text is the starting text) |
 | `tooltip` | The tooltip of the control before it (`cliloc`, `args`) |
 | `item_property` | The tooltip of a real item (`serial`) |
 | `slot` | Where the script adds controls when the gump opens (`name`, `x`, `y`); see [Slots](#slots) |
@@ -66,6 +67,23 @@ The client only reads client messages in `html` and `tooltip`: the schema refuse
 `text`. Use client messages for the standard texts the client already has (CONTINUE 1011011,
 CANCEL 1011012, ...) and server messages for your own texts, which the shard can translate. Both in
 one gump can mix two languages until per-player languages exist.
+
+### What the server refuses
+
+Besides what the schema says, the server stops at startup, with the file and the line, for:
+
+- a `button` without exactly one of `on_click`, `id`, `page` or `open`;
+- an `html` with both `cliloc` and `message`, or with `cliloc` and a text of its own;
+- an `html` with `color` but no `cliloc`;
+- a `text`, `label_cropped` or `html` with both `message` and a text of its own;
+- the same button `id`, the same `switch` (checkboxes and radios together) or the same `entry`
+  twice in a gump;
+- a `page` button that turns to a page the gump does not have;
+- a `<slot>` in a gump with `<page>` elements;
+- an `open` that names a gump that does not exist;
+- the same gump `id` in two files.
+
+`gump.send` checks a gump built in Lua by the same rules.
 
 ### Placeholders
 
@@ -99,7 +117,9 @@ checks at startup that the gump an `open` names exists. A script decides by itse
 slot, coordinates counted from the slot. Pages the function makes (`g:page()`, `g:paginate`) are
 added as the gump's pages, so a slot cannot be in a gump with `<page>` elements: the server refuses
 it at startup. A missing slot function leaves the slot empty with a warning; one that fails or calls
-`wait()` keeps the gump from opening. What the slot adds is checked like a gump file.
+`wait()` keeps the gump from opening. What the slot adds is checked like a gump file. Only
+`gump.open` from a script fills the slots: a gump opened [from C#](#from-c) keeps them empty, with
+a warning in the log.
 
 ## Gumps built in Lua
 
@@ -130,8 +150,12 @@ gump.send(player, g, {})
 | `g:button{}`, `g:checkbox{}`, `g:radio{}`, `g:tooltip{}`, `g:item_property{}` | The element; `on_click` may be a function |
 | `g:group()` | A radio group: the radios after it belong to it |
 | `g:page()` | A new page: what follows shows on it |
-| `g:pager{ previous = {...}, next = {...} }` | Where `g:paginate` puts its buttons (`x`, `y`, `up`, `down`) |
+| `g:pager{ previous = {...}, next = {...} }` | Where `g:paginate` puts its buttons (`x`, `y`, `up`, `down`); call it before `g:paginate` |
 | `g:paginate(index, per_page)` | A new page every `per_page` items, with the buttons between pages; returns the item's row on its page, from 0 |
+
+`g:paginate` reads the pager when it runs, so `g:pager` comes first. Without it, or for a value
+it leaves out, the next button is at (260, 340) with the images 4005 and 4007, and the previous
+one at (20, 340) with 4014 and 4015.
 
 Every method but `g:paginate` returns `g`, so calls can be chained. A button whose `on_click` is a
 function calls it with `(player, response, args)`; the function sees the variables around it, such
@@ -202,11 +226,17 @@ A plugin opens the gumps of `templates/gumps` with `IGumpTemplateService`:
 templates.Open(session, "release_pet", new Dictionary<string, string> { ["pet_name"] = "Fido" },
     (session, answer) => { /* answer.Click is the on_click name, answer.Response the answer */ });
 
-// Off the loop, waiting for the choice (null when closed):
+// Off the loop, waiting for the on_click name (null when closed, or for an id button):
 var choice = await templates.AskAsync(session, "decorate_confirm", new Dictionary<string, string>());
 ```
 
 `.decorate` asks this way with `templates/gumps/decorate_confirm.xml`.
+
+The answer also carries `answer.Open`, the gump an `open` button names (null for any other
+button), and `answer.Bound`, the values of the controls with `bind` by name. `AskAsync` follows
+`open` buttons by itself, adding the bound values to the arguments; with `Open` the callback has
+to open the next gump. `Open` returns `false` when the session is gone. A `<slot>` stays empty in
+a gump opened from C#: only `gump.open` from a script calls the slot functions.
 
 A layout built in code goes through `IGumpService`, with one entry per command:
 
