@@ -183,12 +183,34 @@ public sealed class RepositoryDataFilesTests
     {
         var directories = new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data"]);
         var own = Tomlyn.TomlSerializer.Deserialize<Tomlyn.Model.TomlTable>(
-            await File.ReadAllTextAsync(Path.Combine(directories["data"], "messages", language + ".toml"))
+            await File.ReadAllTextAsync(Path.Combine(directories["data"], "messages", language, "moongate.toml"))
         )!;
         var messages = (Tomlyn.Model.TomlTable)own["messages"];
 
         // Every language carries its own text, not the English fallback.
         Assert.All(Enumerable.Range(30008, 47), id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}"));
+    }
+
+    [Theory,
+     InlineData("eng"), InlineData("ita"), InlineData("ger"), InlineData("fre"),
+     InlineData("spa"), InlineData("por"), InlineData("pol"), InlineData("cze")]
+    public async Task ShippedMessageFiles_KeepMoongateTextsApartFromTheStandardOnes(string language)
+    {
+        var messagesDirectory = Path.Combine(FindRepositoryRoot(), "moongate_root", "data", "messages");
+        var standard = await ReadMessageIdsAsync(Path.Combine(messagesDirectory, language + ".toml"));
+        var moongate = await ReadMessageIdsAsync(Path.Combine(messagesDirectory, language, "moongate.toml"));
+
+        Assert.NotEmpty(standard);
+        Assert.NotEmpty(moongate);
+        Assert.All(standard, id => Assert.True(id < 30000, $"{language}.toml holds the Moongate text {id}"));
+        Assert.All(moongate, id => Assert.True(id >= 30000, $"{language}/moongate.toml holds the standard text {id}"));
+    }
+
+    private static async Task<List<int>> ReadMessageIdsAsync(string path)
+    {
+        var file = Tomlyn.TomlSerializer.Deserialize<Tomlyn.Model.TomlTable>(await File.ReadAllTextAsync(path))!;
+
+        return ((Tomlyn.Model.TomlTable)file["messages"]).Keys.Select(int.Parse).ToList();
     }
 
     private static string FindRepositoryRoot()
