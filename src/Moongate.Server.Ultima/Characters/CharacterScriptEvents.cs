@@ -94,4 +94,25 @@ public static class CharacterScriptEvents
             ["text"] = evt.Text
         };
     }
+
+    /// <summary>
+    ///     The fields of <c>player_region_changed</c>: the character's serial and name, the names of the region it left
+    ///     and of the one it is in (nil outside every region), and where it stands.
+    /// </summary>
+    public static IReadOnlyDictionary<string, object?> PlayerRegionChanged(PlayerRegionChangedEvent evt)
+    {
+        var player = evt.Player;
+
+        return new Dictionary<string, object?>
+        {
+            ["serial"] = (long)player.Id.Value,
+            ["name"] = player.Name,
+            ["previous"] = evt.Previous?.Name,
+            ["current"] = evt.Current?.Name,
+            ["map"] = player.Map,
+            ["x"] = player.X,
+            ["y"] = player.Y,
+            ["z"] = player.Z
+        };
+    }
 }

@@ -72,6 +72,7 @@ public static class UltimaWorldContainerExtensions
             "character_entered_world",
             CharacterScriptEvents.CharacterEnteredWorld
         );
+        container.AddScriptEvent<PlayerRegionChangedEvent>("player_region_changed", CharacterScriptEvents.PlayerRegionChanged);
         container.AddScriptEvent<PlayerSaidEvent>("player_say", CharacterScriptEvents.PlayerSay);
         container.AddScriptEvent<CharacterLeftWorldEvent>(
             "character_left_world",
@@ -141,6 +142,7 @@ public static class UltimaWorldContainerExtensions
         // The weather follows the players' regions: RegionService tells it, as its region change listener.
         container.AddMoongateService<IWeatherService, WeatherService>(11);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IWeatherService>(), Reuse.Singleton);
+        container.Register<IRegionChangeListener, RegionEventPublisher>(Reuse.Singleton);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<ILightService>(), Reuse.Singleton);
         // The music follows the players' regions too.
         container.AddMoongateService<IMusicService, MusicService>(11);

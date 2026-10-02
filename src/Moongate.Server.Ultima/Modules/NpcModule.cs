@@ -37,6 +37,7 @@ public sealed class NpcModule
     private readonly Lazy<IScriptEngine>? _engine;
     private readonly IGameLoopService? _loop;
     private readonly ISectorService? _sectors;
+    private readonly IMoveOverService? _moveOver;
     private readonly ILogger _logger = Log.ForContext<NpcModule>();
 
     public NpcModule(
@@ -47,9 +48,11 @@ public sealed class NpcModule
         INpcService? npcs = null,
         Lazy<IScriptEngine>? engine = null,
         IGameLoopService? loop = null,
-        ISectorService? sectors = null
+        ISectorService? sectors = null,
+        IMoveOverService? moveOver = null
     )
     {
+        _moveOver = moveOver;
         _npcs = npcs;
         _engine = engine;
         _loop = loop;
@@ -119,6 +122,12 @@ public sealed class NpcModule
         if (npc.Location != oldLocation || npc.Direction != oldDirection)
         {
             _view.Moved(npc, oldLocation, running);
+        }
+
+        // On the next turn of the loop: the items' scripts cannot run inside the NPC's own, which called this.
+        if (npc.Location != oldLocation && _moveOver is not null)
+        {
+            _loop?.TryPost(new LoopActionWorkItem(() => _moveOver.SteppedOn(npc)));
         }
 
         return result == MoveResultType.Moved;

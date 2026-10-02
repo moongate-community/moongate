@@ -604,6 +604,30 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
     }
 
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData(true, true)]
+    [InlineData("true", true)]
+    public async Task TheShippedTeleporterScript_AnNpc_TravelsOnlyThroughATeleporterForCreatures(object? creatures, bool travels)
+    {
+        var props = new Dictionary<string, object?> { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L };
+
+        if (creatures is not null)
+        {
+            props["creatures"] = creatures;
+        }
+
+        var teleporter = PlaceTeleporter(props);
+        var scripts = await StartTeleporterScriptAsync();
+        var orc = new MobileEntity { Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+        _fixture.Mobiles.EnterWorld(orc);
+
+        scripts.Run(teleporter, "on_npc_move_over", 0x100L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(travels ? new Point3D(5690, 569, 25) : new Point3D(1600, 1600, 0), orc.Location);
+    }
+
     [Fact]
     public async Task TheShippedTeleporterScript_ToItsOwnMap_Teleports()
     {

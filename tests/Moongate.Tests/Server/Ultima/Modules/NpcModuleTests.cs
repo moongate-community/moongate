@@ -31,6 +31,7 @@ public sealed class NpcModuleTests
     private readonly RecordingWorldViewService _view = new();
     private readonly MobileService _mobiles;
     private readonly StubNpcService _npcs = new();
+    private readonly RecordingMoveOverService _moveOver = new();
     private readonly FakeScriptEngine _engine = new() { CurrentScript = "mobiles/summoner.lua" };
     private readonly StubGameLoop _loop = new();
     private readonly SectorService _sectors = TestSectors.Create();
@@ -289,6 +290,16 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void Step_ThatMoves_TellsTheItemsOfTheNewCell_ABlockedOneDoesNot()
+    {
+        Run("npc.step(256, 'North')");
+        _movement.Allow = false;
+        Run("npc.step(256, 'North')");
+
+        Assert.Equal([new Point3D(1600, 1599, 0)], _moveOver.Steps);
+    }
+
+    [Fact]
     public void Spawn_AsksForTheNpc_AndGivesItsSerialToTheCallback()
     {
         var result = Run("return npc.spawn('orc', 'Trammel', 1500, 1600, 10, function(serial) end)");
@@ -375,7 +386,7 @@ public sealed class NpcModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view, _templates, _npcs, new Lazy<IScriptEngine>(() => _engine), _loop, _sectors));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view, _templates, _npcs, new Lazy<IScriptEngine>(() => _engine), _loop, _sectors, _moveOver));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }
