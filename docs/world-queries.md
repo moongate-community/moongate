@@ -176,7 +176,12 @@ A search runs to its end inside the call, on the game loop. Measured on the Tram
 7.0 client around Britain: a path of 4 steps took 0.1 ms, one of 36 steps 1.3 ms, one of 48
 steps 6.6 ms, and a search that found nothing took 11 to 12 ms, the 1,000 places of the cap.
 So a caller must not search again on every tick for a goal that was not reached: wait before
-trying again, as ModernUO's two seconds.
+trying again, as ModernUO's two seconds. `INpcPathService` does that for NPCs: it keeps the
+path each one walks and gives its next step (`Next`, then `Stepped` once the step was tried).
+It searches only with no steps left or a changed goal, two seconds after the NPC's last
+search at the soonest, ten when that search did not reach the same goal, and for ten NPCs a
+second in the whole server; an NPC that may not search steps straight towards its goal. The Lua function
+[`npc.walk_to`](scripting.md#walking-a-path) is built on it.
 
 What the movement service does not see a path does not either: items on the ground, closed
 doors among them, and other mobiles do not block it. A tile on the way has one height in a

@@ -29,6 +29,7 @@ public sealed class NpcService : INpcService
     private readonly IGameLoopService _loop;
     private readonly INpcScriptService? _scripts;
     private readonly IItemScriptService? _itemScripts;
+    private readonly INpcPathService? _paths;
 
     public NpcService(
         IMobileFactoryService factory,
@@ -39,9 +40,11 @@ public sealed class NpcService : INpcService
         IDataAccess<ItemEntity> itemData,
         IGameLoopService loop,
         INpcScriptService? scripts = null,
-        IItemScriptService? itemScripts = null
+        IItemScriptService? itemScripts = null,
+        INpcPathService? paths = null
     )
     {
+        _paths = paths;
         _factory = factory;
         _mobiles = mobiles;
         _items = items;
@@ -131,6 +134,7 @@ public sealed class NpcService : INpcService
                 _view.Left(npc);
                 _items.Remove(_items.GetOwnedBy(npc.Id).Select(item => item.Id));
                 removed = _mobiles.Delete(npc.Id);
+                _paths?.Forget(npc.Id);
             },
             cancellationToken
         );
