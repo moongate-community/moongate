@@ -297,9 +297,40 @@ public sealed class NpcModule
     [ScriptFunction(helpText: "The tiles between the NPC and x, y, the larger of the two differences; nil for an unknown NPC.")]
     public int? DistanceTo(long serial, int x, int y)
     {
-        return TryGetNpc(serial, out var npc)
-            ? Math.Max(Math.Abs(npc.Location.X - x), Math.Abs(npc.Location.Y - y))
-            : null;
+        return TryGetNpc(serial, out var npc) ? Distance(npc.Location, new Point3D(x, y, 0)) : null;
+    }
+
+    /// <summary>
+    ///     Gets the mobiles around the NPC, itself left out, nearest first, as a list of serials: the other NPCs, or
+    ///     with <paramref name="kind" /> the players or everyone; <c>for _, other in ipairs(npc.nearby(serial, 8)) do ...
+    ///     end</c>, <c>npc.nearby(serial, 8, "players")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The serials of the mobiles within range tiles (0 to 32) of the NPC, itself left out, nearest first: the other NPCs, or with kind 'players' the players, with 'all' everyone. Empty for an unknown NPC or a range out of bounds.")]
+    public LuaTable Nearby(long serial, int range, string kind = "npcs")
+    {
+        if (kind is not ("npcs" or "players" or "all"))
+        {
+            throw new ArgumentException($"expected 'npcs', 'players' or 'all', got '{kind}'", nameof(kind));
+        }
+
+        var table = new LuaTable();
+
+        if (_sectors is null || range is < 0 or > WorldModule.MaximumRange || !TryGetNpc(serial, out var npc))
+        {
+            return table;
+        }
+
+        var index = 1;
+
+        foreach (var other in _sectors.GetMobilesInRange(npc.Map, npc.Location, range)
+                                      .Where(other => other.Id != npc.Id && (kind == "all" || other.IsNpc == (kind == "npcs")))
+                                      .OrderBy(other => Distance(npc.Location, other.Location))
+                                      .ThenBy(other => other.Id.Value))
+        {
+            table[index++] = (long)other.Id.Value;
+        }
+
+        return table;
     }
 
     /// <summary>
@@ -441,6 +472,12 @@ public sealed class NpcModule
         {
             _logger.Warning(exception, "npc.spawn of {Template} at {Map} {Location} failed", template, map, location);
         }
+    }
+
+    // The tiles between two places, as the view range counts them.
+    private static int Distance(Point3D from, Point3D to)
+    {
+        return Math.Max(Math.Abs(from.X - to.X), Math.Abs(from.Y - to.Y));
     }
 
     // As its template says: a water mobile swims, an amphibious one walks and swims.

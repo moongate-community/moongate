@@ -405,6 +405,48 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void Nearby_ListsTheOtherNpcsAround_NearestFirst()
+    {
+        var far = new MobileEntity { Id = new Serial(0x102), Name = "a far orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1606, 1600, 0) };
+        var elsewhere = new MobileEntity { Id = new Serial(0x103), Name = "an orc elsewhere", TemplateId = "orc", Map = MapType.Felucca, Location = new Point3D(1601, 1600, 0) };
+        _mobiles.EnterWorld(far);
+        _mobiles.EnterWorld(elsewhere);
+
+        var result = Run("local near = npc.nearby(256, 8) return #near, near[1], near[2]");
+
+        // The quiet orc two tiles away, then the far one; not itself, not the player beside it, not the other map.
+        Assert.Equal([2, 0x101, 0x102], result.Select(value => value.Read<long>()));
+    }
+
+    [Fact]
+    public void Nearby_CanListThePlayersOrEveryone()
+    {
+        var result = Run(
+            "local players = npc.nearby(256, 8, 'players') local all = npc.nearby(256, 8, 'all') return #players, players[1], #all, all[1], all[2]"
+        );
+
+        Assert.Equal([1, 2, 2, 2, 0x101], result.Select(value => value.Read<long>()));
+    }
+
+    [Theory,
+     InlineData("return #npc.nearby(256, 1)", 0),
+     InlineData("return #npc.nearby(256, 2)", 1),
+     InlineData("return #npc.nearby(256, -1)", 0),
+     InlineData("return #npc.nearby(256, 33)", 0),
+     InlineData("return #npc.nearby(2, 8)", 0),
+     InlineData("return #npc.nearby(999, 8)", 0)]
+    public void Nearby_CountsWithinTheRange_AndIsEmptyForABadRangeOrAnUnknownNpc(string chunk, int expected)
+    {
+        Assert.Equal(expected, Run(chunk)[0].Read<int>());
+    }
+
+    [Fact]
+    public void Nearby_WithAnUnknownKind_IsAnArgumentError()
+    {
+        Assert.ThrowsAny<Exception>(() => Run("return npc.nearby(256, 8, 'monsters')"));
+    }
+
+    [Fact]
     public void Spawn_AsksForTheNpc_AndGivesItsSerialToTheCallback()
     {
         var result = Run("return npc.spawn('orc', 'Trammel', 1500, 1600, 10, function(serial) end)");
