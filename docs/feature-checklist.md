@@ -2,7 +2,8 @@
 
 The systems a complete Ultima Online server emulator usually offers, and where Moongate stands on
 each. It complements the [Implementation status](implementation-status.md), which describes what
-works today in more detail.
+works today in more detail. The [Roadmap](roadmap.md) says in which order the missing systems are
+built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
