@@ -1,7 +1,7 @@
 # Server commands
 
 Moongate accepts commands through its interactive server console. Press `*` to
-unlock the prompt after startup. In game, type a command with a leading dot,
+unlock the prompt after startup; [`console lock`](commands/console.md) locks it again. In game, type a command with a leading dot,
 such as `.help`. Commands are separated on whitespace; quoted arguments and
 passwords containing spaces are not supported.
 
@@ -24,6 +24,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`help`](commands/help.md) | `help [command]` | Yes | Yes | Regular | Every role |
 | [`echo`, `e`](commands/echo.md) | `echo <text>` | Yes | Yes | Regular | Every role |
 | [`time`](commands/time.md) | `time` | No | Yes | Regular | Game |
+| [`console`](commands/console.md) | `console lock` | Yes | No | — | Every role |
 | [`script`](commands/script.md) | `script reload <file>` / `script metrics` | Yes | No | — | Game |
 | [`account`](commands/account.md) | `account create <username> <password> [level]` / `account api-access <username> <on\|off>` | Yes | Yes | Administrator | Login |
 | [`character`](commands/character.md) | `character pending [account-serial]` / `character restore <character-serial>` | Yes | Yes | GameMaster | Game |
@@ -55,7 +56,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 - **Administrators:** `account`, `save`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, plus everything a
   game master uses.
-- **Console only:** `script`.
+- **Console only:** `console`, `script`.
 
 Commands that ask for a target open the client's target cursor after checking their
 arguments; pressing Escape prints `Target canceled.` and changes nothing. The texts they
