@@ -63,6 +63,18 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         _view = view;
     }
 
+    public bool CanEnter(GameSession session)
+    {
+        // A second character on the same session would replace the first and leave it in the world for ever.
+        return !session.CharacterId.IsValid &&
+               !_sessions.GetAll()
+                         .Any(
+                             other => other.SessionId != session.SessionId &&
+                                      other.AccountId == session.AccountId &&
+                                      other.CharacterId.IsValid
+                         );
+    }
+
     public async Task EnterAsync(
         PacketContext context,
         Serial accountId,
@@ -75,13 +87,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         await context.RunOnGameLoopAsync(
                 session =>
                 {
-                    // As ModernUO: one character per account in the world at a time.
-                    if (_sessions.GetAll()
-                        .Any(
-                            other => other.SessionId != session.SessionId &&
-                                     other.AccountId == accountId &&
-                                     other.CharacterId.IsValid
-                        ))
+                    if (!CanEnter(session))
                     {
                         return;
                     }

@@ -64,6 +64,23 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
     }
 
     [Fact]
+    public async Task HandleAsync_AccountAlreadyInTheWorld_RefusesBeforeCreating()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var characters = new RecordingCharacterService();
+        var enter = new RecordingCharacterEnterWorldService { Allowed = false };
+
+        await new CreateCharacterEnhancedPacketHandler(characters, enter).HandleAsync(context, Packet(), CancellationToken.None);
+
+        // Nothing is saved for a client that cannot enter: no slot is used up.
+        Assert.Equal(0, characters.CreateCalls);
+        Assert.Empty(enter.Entered);
+        Assert.Equal(PopupMessageType.CharacterInWorld, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
+        Assert.False(fixture.Client.IsConnected);
+    }
+
+    [Fact]
     public async Task HandleAsync_Refused_DoesNotEnterTheWorld()
     {
         await using var fixture = await SessionFixture.CreateAsync();

@@ -266,6 +266,22 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     }
 
     [Fact]
+    public async Task HandleAsync_TheSessionAlreadyPlaysACharacter_RefusesWithCharacterInWorld()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, session, sender) = await Context(fixture, new Serial(42));
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, new Serial(7)));
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+
+        // A second entry would replace the session's character and leave the first one in the world for ever.
+        Assert.Equal(PopupMessageType.CharacterInWorld, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
+        Assert.Equal(new Serial(7), session.CharacterId);
+        Assert.False(_mobiles.IsInWorld(new Serial(2)));
+        Assert.Empty(_entered);
+    }
+
+    [Fact]
     public async Task HandleAsync_AnotherCharacterOfTheAccountInTheWorld_RefusesWithCharacterInWorld()
     {
         await using var fixture = await SessionFixture.CreateAsync();

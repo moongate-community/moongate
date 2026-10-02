@@ -26,12 +26,29 @@ internal static class CharacterCreationReply
     )
     {
         var accountId = Serial.Zero;
-        await context.RunOnGameLoopAsync(session => accountId = session.AccountId, cancellationToken);
+        var canEnter = false;
+        await context.RunOnGameLoopAsync(
+            session =>
+            {
+                accountId = session.AccountId;
+                canEnter = enter.CanEnter(session);
+            },
+            cancellationToken
+        );
 
         if (!accountId.IsValid)
         {
             logger.Warning("Character creation from session {SessionId} without an account", context.SessionId);
             await context.SendAndDisconnectAsync(new PopupMessagePacket(PopupMessageType.CouldNotAttach), cancellationToken);
+
+            return;
+        }
+
+        if (!canEnter)
+        {
+            // Before the save: a client that cannot enter the world must not use up a slot.
+            logger.Information("Account {AccountId} already has a character in the world", accountId);
+            await context.SendAndDisconnectAsync(new PopupMessagePacket(PopupMessageType.CharacterInWorld), cancellationToken);
 
             return;
         }
@@ -77,7 +94,7 @@ internal static class CharacterCreationReply
             character.Location
         );
 
-        // The starting items the character wears, and everything inside them.
+        // The starting items the character wears, and everything inside them; every starting item is one or the other.
         var equipment = result.Items.Where(item => item.MobileId == character.Id).ToList();
         var contents = result.Items.Where(item => item.MobileId != character.Id).ToList();
         await enter.EnterAsync(context, accountId, new(character, equipment, contents), cancellationToken);

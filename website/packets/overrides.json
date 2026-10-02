@@ -1623,7 +1623,7 @@
       }
     ],
     "notes": "Enhanced Client creation request. Only the current 146-byte layout is parsed.",
-    "handler": "CreateCharacterEnhancedPacketHandler: creates and saves the character and starting items"
+    "handler": "CreateCharacterEnhancedPacketHandler: creates and saves the character and starting items, then brings it into the world"
   },
   "0x91:incoming": {
     "category": "Login",
@@ -2297,7 +2297,7 @@
       }
     ],
     "notes": "ClassicUO character creation request. Raw choices are validated before saving.",
-    "handler": "CreateCharacterPacketHandler: creates and saves the character and starting items"
+    "handler": "CreateCharacterPacketHandler: creates and saves the character and starting items, then brings it into the world"
   },
   "0xFB:incoming": {
     "category": "World",

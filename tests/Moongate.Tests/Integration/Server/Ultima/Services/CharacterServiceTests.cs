@@ -442,6 +442,36 @@ public sealed class CharacterServiceTests : IAsyncLifetime
         );
     }
 
+    [Fact]
+    public async Task CreateAsync_ReturnsTheSameCharacterAndItemsALaterLoadFinds()
+    {
+        // A created character enters the world with what CreateAsync returns, not with a load from the database.
+        var service = CreateService(maxPerAccount: 5);
+        var created = await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
+        var character = created.Character!;
+
+        var play = await service.GetForPlayAsync(Account, 0);
+
+        Assert.Equal(
+            (character.Id, character.Name, character.Body, character.Map, character.Location, character.SkinHue),
+            (play!.Character.Id, play.Character.Name, play.Character.Body, play.Character.Map, play.Character.Location,
+                play.Character.SkinHue)
+        );
+        Assert.Equal(
+            created.Items.Where(item => item.MobileId == character.Id)
+                   .Select(item => (item.Id, item.ItemId, item.Layer, item.Hue))
+                   .Order(),
+            play.Equipment.Select(item => (item.Id, item.ItemId, item.Layer, item.Hue)).Order()
+        );
+        Assert.Equal(
+            created.Items.Where(item => item.MobileId != character.Id)
+                   .Select(item => (item.Id, item.ItemId, item.ContainerId, item.Amount))
+                   .Order(),
+            play.Contents.Select(item => (item.Id, item.ItemId, item.ContainerId, item.Amount)).Order()
+        );
+        Assert.All(created.Items, item => Assert.True(item.MobileId is not null || item.ContainerId is not null));
+    }
+
     [Theory, InlineData(1), InlineData(5), InlineData(-1)]
     public async Task GetForPlayAsync_EmptyOrOutOfRangePosition_IsNull(int index)
     {
