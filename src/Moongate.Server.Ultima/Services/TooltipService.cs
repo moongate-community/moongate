@@ -121,16 +121,35 @@ public sealed class TooltipService : ITooltipService
         ArgumentNullException.ThrowIfNull(item);
 
         var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own) ? own : (LootType?)null;
-        var key = new ItemTooltipKey(item.TemplateId, item.ItemId, item.Amount, item.Name, item.Rarity, lootType, item.Movable);
+        var labelNumber = item.TryGetProp<int>(ItemPropKeys.LabelNumber, out var label) ? label : (int?)null;
+        var key = new ItemTooltipKey(
+            item.TemplateId,
+            item.ItemId,
+            item.Amount,
+            item.Name,
+            item.Rarity,
+            lootType,
+            item.Movable,
+            labelNumber
+        );
 
-        return Cached(_itemTooltips, key, () => BuildItem(item, lootType));
+        return Cached(_itemTooltips, key, () => BuildItem(item, lootType, labelNumber));
     }
 
-    private PropertyList BuildItem(ItemEntity item, LootType? ownLootType)
+    private PropertyList BuildItem(ItemEntity item, LootType? ownLootType, int? labelNumber)
     {
         var list = new PropertyList();
         _templates.TryGet(item.TemplateId, out var template);
-        AddName(list, item, Argument(item.Name ?? template?.Name));
+
+        // The item's own name, then its label number (ModernUO's LocalizedSign), then the template's name.
+        if (item.Name is null && labelNumber is { } cliloc)
+        {
+            list.Add(cliloc);
+        }
+        else
+        {
+            AddName(list, item, Argument(item.Name ?? template?.Name));
+        }
 
         var lootType = ownLootType ?? template?.EffectiveLootType() ?? LootType.Regular;
 

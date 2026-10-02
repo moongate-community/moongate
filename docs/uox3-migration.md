@@ -221,6 +221,21 @@ and are not converted. Set `ultima.starting_items.best_skills` in the server
 configuration, and give the `STARTGOLD` coins with a gold entry in the common set, as
 the [shipped file](data-files/starting-items.md) does.
 
+## Signs of ModernUO
+
+The shop and world signs come from ModernUO's `signs.cfg`, the file its `[SignGen` places:
+
+```sh
+dotnet run --project src/Moongate.UoxItemConverter -- modernuo-signs \
+  --source <ModernUO>/Distribution/Data/signs.cfg --destination moongate_root/templates/decorations
+```
+
+It writes one `signs.toml` per [decoration folder](templates.md#decorations) (`britannia` for the
+signs of both Trammel and Felucca), replacing that of a previous run: a text of the client becomes
+a `LocalizedSign` with `label_number`, a written one a `Sign` with `name`, and the signs of Luna and
+Umbra keep the hue of their town. A line that is not a sign stops the run and names itself.
+[`.decorate`](commands/decorate.md) places them.
+
 ## Spawns of ModernUO
 
 UOX3 has no spawns for Malas, Tokuno and TerMur. The `modernuo-spawns` command takes them from

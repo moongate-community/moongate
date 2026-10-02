@@ -21,6 +21,15 @@ lit or unlit as in the data and protected, so only staff light or douse them wit
 [light script](../scripting.md). Teleporters, spawners, mark containers, public
 moongates and addons are skipped for now: they need their own logic.
 
+The shop and world signs are decoration files too (`signs.toml` in each folder); a sign shows its
+text when the mouse is on it. After the files come the doors of the towns, which no file lists:
+as ModernUO's `[DoorGen`, the map's statics are read for door frames, and a dark wood door goes
+between two frames two tiles apart, a linked double door when they are three apart. A doorway that
+is walled up or has no floor gets none, and neither does one where a door of a file already
+stands. Trammel, Felucca, Ilshenar and Malas are read, when loaded, a small piece per game-loop
+turn, so the game goes on meanwhile (about four seconds in all); each is reported as the file
+`<map>/generated_doors`.
+
 Each file is reported when it is done, in game as a system message and in the server log:
 
 ```text
@@ -29,8 +38,8 @@ Decorating britannia/britain: 1180 placed, 3 already there, 12 skipped (Teleport
 
 The console and the in-game caller then get the totals:
 `Decoration done: <placed> placed, <present> already there, <skipped> skipped in <files> files.`
-An item with the same graphic already on the spot is kept, so running `decorate` again only
-places what is missing. The files are read at each run: an edited file needs no restart. A
+An item with the same graphic already on the spot is kept, and so is any door in a doorway, so
+running `decorate` again only places what is missing. The files are read at each run: an edited file needs no restart. A
 failure, such as a folder that is not a map, prints `The decoration failed. Check the server
 logs.` and the reason goes to the log; the files done before it stay placed.
 

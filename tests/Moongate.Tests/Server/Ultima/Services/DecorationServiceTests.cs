@@ -4,6 +4,7 @@ using Moongate.Server.Ultima.Data.Decorations;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Decorations;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Decorations;
 using Moongate.Tests.TestSupport.Ultima.Items;
@@ -22,6 +23,7 @@ public sealed class DecorationServiceTests
     private readonly FakeItemFactoryService _factory;
     private readonly RecordingWorldViewService _view = new();
     private readonly RecordingProgress<DecorationFileResult> _progress = new();
+    private readonly StubDoorGeneratorService _doors = new();
 
     public DecorationServiceTests()
     {
@@ -261,7 +263,7 @@ public sealed class DecorationServiceTests
     public async Task DecorateAsync_WhileAnotherRuns_IsRefused()
     {
         var loader = new StubDecorationsLoader(File("trammel", Block("Static", 0x0063))) { Gate = new() };
-        var service = new DecorationService(loader, _factory, _items, _sectors, _view, new StubGameLoop());
+        var service = new DecorationService(loader, _doors, _factory, _items, _sectors, _view, new StubGameLoop());
 
         var first = service.DecorateAsync(_progress);
         Assert.True(service.IsRunning);
@@ -286,9 +288,108 @@ public sealed class DecorationServiceTests
         Assert.Equal(["trammel", "felucca"], _progress.Reports.Select(report => report.Folder));
     }
 
+    [Fact]
+    public async Task DecorateAsync_AfterTheFiles_PlacesTheDoorsTheMapCallsFor_AsDarkWoodDoors()
+    {
+        _doors.With(
+            MapType.Felucca,
+            new GeneratedDoor(new(200, 300, 5), DoorFacingType.WestCW),
+            new GeneratedDoor(new(400, 500, 0), DoorFacingType.SouthCW)
+        );
+
+        var result = await Service(File("trammel", Block("Static", 0x0063))).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(3, 0, 0, 2), result);
+        Assert.Equal([("trammel", "town"), ("felucca", "generated_doors")], _progress.Reports.Select(report => (report.Folder, report.Name)));
+
+        var west = Assert.Single(_items.Items, item => item.GroundLocation == new Point3D(200, 300, 5));
+        Assert.Equal(("decoration_door", 0x06A5, MapType.Felucca), (west.TemplateId, west.ItemId, west.Map!.Value));
+        Assert.Equal(
+            new Dictionary<string, object?> { ["facing"] = "west_cw", ["decoration_type"] = "DarkWoodDoor" },
+            west.Props
+        );
+        Assert.Equal(0x06AD, Assert.Single(_items.Items, item => item.GroundLocation == new Point3D(400, 500, 0)).ItemId);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ADoorTheScanFindsTwice_IsPlacedOnce_AndNotCountedAsAlreadyThere()
+    {
+        // ModernUO's regions overlap around Britain: a frame there is scanned twice.
+        var door = new GeneratedDoor(new(200, 300, 5), DoorFacingType.WestCW);
+        _doors.With(MapType.Felucca, door, door);
+
+        Assert.Equal(new DecorationResult(1, 0, 0, 1), await Service().DecorateAsync(_progress));
+    }
+
+    [Fact]
+    public async Task DecorateAsync_AMapWithoutDoorChunks_ReportsNoDoorFile()
+    {
+        var result = await Service(File("trammel", Block("Static", 0x0063))).DecorateAsync(_progress);
+
+        Assert.Equal(1, result.Files);
+        Assert.Single(_progress.Reports);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_AGeneratedDoubleDoor_IsLinked_ButTwoSingleDoorsSideBySideAreNot()
+    {
+        _doors.With(
+            MapType.Felucca,
+            new GeneratedDoor(new(200, 300, 0), DoorFacingType.WestCW),
+            new GeneratedDoor(new(201, 300, 0), DoorFacingType.EastCCW),
+            new GeneratedDoor(new(400, 500, 0), DoorFacingType.WestCW),
+            new GeneratedDoor(new(400, 501, 0), DoorFacingType.WestCW)
+        );
+
+        await Service().DecorateAsync(_progress);
+
+        var byXy = _items.Items.ToDictionary(item => (item.X!.Value, item.Y!.Value));
+        Assert.Equal((long)byXy[(201, 300)].Id.Value, byXy[(200, 300)].Props!["door.link"]);
+        Assert.Equal((long)byXy[(200, 300)].Id.Value, byXy[(201, 300)].Props!["door.link"]);
+        Assert.False(byXy[(400, 500)].Props!.ContainsKey("door.link"));
+        Assert.False(byXy[(400, 501)].Props!.ContainsKey("door.link"));
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ADoorOfAFileOnTheSpot_KeepsTheGeneratedDoorAway()
+    {
+        _doors.With(MapType.Trammel, new GeneratedDoor(new(1500, 1600, 9), DoorFacingType.WestCW));
+        var metal = Block("MetalDoor", 0x0675, props: new() { ["facing"] = "west_cw" });
+
+        var result = await Service(File("trammel", metal)).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(1, 1, 0, 2), result);
+        Assert.Equal(0x0675, Assert.Single(_items.Items).ItemId);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_RunAgain_KeepsTheGeneratedDoors_AlsoWhileOneIsOpen()
+    {
+        _doors.With(
+            MapType.Felucca,
+            new GeneratedDoor(new(200, 300, 0), DoorFacingType.WestCW),
+            new GeneratedDoor(new(400, 500, 0), DoorFacingType.SouthCW)
+        );
+        var service = Service();
+        await service.DecorateAsync(_progress);
+
+        var door = _items.Items.Single(item => item.X == 200);
+        _sectors.RemoveItem(door);
+        door.ItemId = 0x06A6;
+        door.PlaceOnGround(MapType.Felucca, new Point3D(199, 301, 0));
+        door.Props!["door.open"] = true;
+        door.Props["door.x"] = 200L;
+        door.Props["door.y"] = 300L;
+        door.Props["door.z"] = 0L;
+        _sectors.AddItem(door);
+
+        Assert.Equal(new DecorationResult(0, 2, 0, 1), await service.DecorateAsync(_progress));
+        Assert.Equal(2, _items.Items.Count);
+    }
+
     private DecorationService Service(params DecorationFile[] files)
     {
-        return new(new StubDecorationsLoader(files), _factory, _items, _sectors, _view, new StubGameLoop());
+        return new(new StubDecorationsLoader(files), _doors, _factory, _items, _sectors, _view, new StubGameLoop());
     }
 
     private static DecorationFile File(string folder, params DecorationBlock[] blocks)
