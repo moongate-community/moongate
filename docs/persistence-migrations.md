@@ -156,7 +156,8 @@ would remove a comment (`IS NULL` or `IS ''`).
 Test against representative data. Apply the reviewed files, confirm `status`
 reports no pending changes and `preview` reports no schema changes, then start the
 new server. Downgrades and nontransactional maintenance are operator-managed.
-There is no automatic reverse migration and no database backup facility.
+There is no automatic reverse migration; take a
+[SQL backup](persistence-operations.md#database-backups) before applying.
 
 ## The core auth catalog
 
@@ -172,7 +173,12 @@ catalog has `0001_mobiles.sql`, `0002_items.sql`, `0003_world_column_comments.sq
 its `ck_items_rarity` check, and `0005_mobile_npc_fields.sql`, which adds the NPC columns
 of `world.mobiles` (template id, title, notoriety, hits, mana, stamina, fame, karma,
 armor, resistances, props; existing rows get 0 or null) and its `ck_mobiles_notoriety`
-check. Their table and sequence DDL comes
+check. `0006_mobile_slot.sql` adds the character-list `slot` with its check and a unique index
+on account and slot, `0007_mobile_deletion.sql` the `deletion_requested_at` column,
+`0008_mobile_slot_int.sql` widens `slot` to `INT4`, `0009_mobile_direction.sql` adds `direction`
+(existing mobiles face south) with its check, `0010_item_ground_index.sql` the partial index on
+the items lying on the ground, and `0011_item_grid_index.sql` the `grid_index` column of the
+Enhanced Client's container grid, numbering the items already in a container. Their table and sequence DDL comes
 from the development generator; the foreign keys, CHECK constraints and partial indexes
 are written by hand, since the generator produces only columns and sequences, and the
 startup schema check accepts them. The sample plugin ships

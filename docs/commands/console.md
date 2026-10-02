@@ -17,8 +17,14 @@ unlocked it stays open; `console lock` locks it again and says which key unlocks
 Console locked. Press '*' to unlock.
 ```
 
-While it is locked, the first key pressed shows the same reminder. Anything other than
-`console lock` shows the usage.
+While it is locked, the first key pressed that is not `*` logs a warning, once until the next
+unlock:
+
+```text
+Console input is locked. Press '*' to unlock.
+```
+
+Anything other than `console lock` shows the usage.
 
 ## See also
 

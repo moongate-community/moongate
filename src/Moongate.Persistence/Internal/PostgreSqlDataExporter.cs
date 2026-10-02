@@ -34,11 +34,12 @@ internal static class PostgreSqlDataExporter
         "WHERE contype = 'f' AND conrelid <> confrelid";
 
     private const string SequencesSql =
-        "SELECT n.nspname, c.relname FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace " +
-        "WHERE c.relkind = 'S' AND " + UserSchemas + " AND " +
+        "SELECT n.nspname, c.relname, " +
         // The CASE keeps the privilege check off the rows that are not sequences, whatever order the filters run in.
-        "CASE WHEN c.relkind = 'S' THEN pg_catalog.has_sequence_privilege(c.oid, 'SELECT') ELSE false END " +
-        "ORDER BY n.nspname, c.relname";
+        "CASE WHEN c.relkind = 'S' THEN pg_catalog.has_schema_privilege(n.oid, 'USAGE') AND " +
+        "pg_catalog.has_sequence_privilege(c.oid, 'SELECT') ELSE false END " +
+        "FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace " +
+        "WHERE c.relkind = 'S' AND " + UserSchemas + " ORDER BY n.nspname, c.relname";
 
     private static readonly ILogger _logger = Log.ForContext(typeof(PostgreSqlDataExporter));
 
@@ -64,7 +65,8 @@ internal static class PostgreSqlDataExporter
         var readable = await ReadTablesAsync(connection, skipped, cancellationToken).ConfigureAwait(false);
         var references = await ReadReferencesAsync(connection, cancellationToken).ConfigureAwait(false);
         var tables = Sort(readable, references);
-        var sequences = await ReadSequencesAsync(connection, cancellationToken).ConfigureAwait(false);
+        var skippedSequences = new List<string>();
+        var sequences = await ReadSequencesAsync(connection, skippedSequences, cancellationToken).ConfigureAwait(false);
         var blocking = FindBlockingReferences(readable, skipped, references);
 
         if (skipped.Count > 0)
@@ -77,6 +79,17 @@ internal static class PostgreSqlDataExporter
             );
         }
 
+        if (skippedSequences.Count > 0)
+        {
+            // Without its value in the file, a restore leaves the sequence where the migrations start it.
+            _logger.Warning(
+                "SQL export of {Database} skips {Count} sequences the runtime role cannot read: {Sequences}",
+                connection.Database,
+                skippedSequences.Count,
+                skippedSequences
+            );
+        }
+
         foreach (var warning in blocking)
         {
             _logger.Warning("SQL export of {Database}: {Warning}", connection.Database, warning);
@@ -86,7 +99,7 @@ internal static class PostgreSqlDataExporter
 
         await using (writer.ConfigureAwait(false))
         {
-            await WriteHeaderAsync(writer, connection.Database, createdAt, skipped, blocking).ConfigureAwait(false);
+            await WriteHeaderAsync(writer, connection.Database, createdAt, skipped, skippedSequences, blocking).ConfigureAwait(false);
 
             // The header reaches the stream first: the snapshot was taken by the catalog queries above.
             await writer.FlushAsync(cancellationToken).ConfigureAwait(false);
@@ -256,6 +269,7 @@ internal static class PostgreSqlDataExporter
 
     private static async Task<List<string>> ReadSequencesAsync(
         NpgsqlConnection connection,
+        List<string> skipped,
         CancellationToken cancellationToken
     )
     {
@@ -266,7 +280,10 @@ internal static class PostgreSqlDataExporter
         {
             while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                names.Add(PostgreSqlExportTable.Quote(reader.GetString(0)) + "." + PostgreSqlExportTable.Quote(reader.GetString(1)));
+                var name = PostgreSqlExportTable.Quote(reader.GetString(0)) + "." + PostgreSqlExportTable.Quote(reader.GetString(1));
+
+                // A sequence the role cannot read has no known value: writing one would reset it on restore.
+                (reader.GetBoolean(2) ? names : skipped).Add(name);
             }
         }
 
@@ -293,6 +310,7 @@ internal static class PostgreSqlDataExporter
         string? database,
         DateTimeOffset createdAt,
         List<PostgreSqlExportTable> skipped,
+        List<string> skippedSequences,
         List<string> warnings
     )
     {
@@ -314,6 +332,11 @@ internal static class PostgreSqlDataExporter
         foreach (var table in skipped)
         {
             await writer.WriteLineAsync($"-- Skipped (this role cannot read it): {table.QuotedName}").ConfigureAwait(false);
+        }
+
+        foreach (var sequence in skippedSequences)
+        {
+            await writer.WriteLineAsync($"-- Skipped (this role cannot read it): sequence {sequence}").ConfigureAwait(false);
         }
 
         foreach (var warning in warnings)

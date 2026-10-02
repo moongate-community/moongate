@@ -30,21 +30,28 @@ server does today and what it does not. It describes the current source tree; th
 - Open the paperdoll, dress and undress (two-handed weapons included).
 - Read tooltips and names of what is in view.
 - Open doors, and locked doors when carrying their key; light and douse lights.
-- See day and night pass, dark dungeons, and the weather of each region (rain, snow, storms).
+- See day and night pass, dark dungeons, and the weather, the season and the music of each region
+  (rain, snow, storms).
+- Step on a teleporter, or say the word of one that answers a word, and arrive elsewhere, also on
+  another map.
+- Read the game time and the moon phases where they stand: `.time`.
 - Meet NPCs that wander around their home, greet and answer.
+- Open the bank box at a banker by saying *bank*, in any client language.
 
 ## What a game master can do
 
-- Place the world decoration once: `.decorate`.
 - Spawn and remove single NPCs: `.spawn`, `.remove`.
-- Open the bank box at a banker by saying *bank*, in any client language.
 - See the spawn regions where they stand: `.spawns`; get a message when regions spawn.
+- Go to any spot of any map: `.go`.
 - Lock and unlock doors and make their keys: `.lock`, `.unlock`, `.key`.
 - Force the light, the weather or the season, try a music track: `.globallight`, `.weather`,
   `.season`, `.music`.
 - Try any gump on themselves: `.gump`.
 - Set fame and karma, inspect what a target cursor picks: `.fame`, `.karma`, `.where`.
-- Save, broadcast, shut down, manage accounts and characters.
+- Restore a character waiting to be deleted: `.character`.
+
+An administrator also places the decoration, fills the spawn regions again (`.initial_spawn`),
+saves, takes a SQL backup (`.sql_backup`), broadcasts, shuts down and manages accounts.
 
 See all of them in [Commands](commands.md).
 
@@ -81,42 +88,51 @@ See all of them in [Commands](commands.md).
   checks yet. See [World queries](world-queries.md).
 - **Map sectors:** players, NPCs and ground items are seen within the view range; NPCs away from
   every player sleep.
-- **Light:** a game clock with day and night by map and longitude; dark dungeons and dim jails.
+- **Light:** a game clock with day and night by map and longitude, and the phases of the two moons;
+  dark dungeons and dim jails.
 - **Regions, weather, music and seasons:** the region of every player is followed; each region has
   UOX3's weather, rolled every game hour (dry indoors), its music track and, if set, its season; the
   maps' seasons can rotate with the game days.
 - **Decoration:** ModernUO's world decoration (and ServUO's New Haven) placed by `.decorate`: doors
-  (those of the towns read from the map's door frames), locks and keys, shop signs, lights; the town lamp posts light up at night.
-- **NPC spawns:** UOX3's spawn regions fill the world gradually and respawn NPCs, on land and on
-  water. See [NPC spawns](spawns.md).
+  (those of the towns read from the map's door frames), locks and keys, shop signs, lights, and
+  teleporters, both the ones a player steps on and the ones that answer a word; the town lamp posts
+  light up at night.
+- **Effects:** graphic effects at a spot, on a mobile or a ground item, flying from one to another,
+  and lightning, from scripts with the `effect` module; particles for the Enhanced Client.
+- **NPC spawns:** spawn regions on every map, from UOX3's data and ModernUO's for New Haven, Malas,
+  Tokuno and TerMur. Each region fills to its maximum at its first spawn after the start, then
+  respawns NPCs gradually, on land and on water. See [NPC spawns](spawns.md).
 
 ### Scripting
 
 - Sandboxed Lua 5.2 with an instruction budget, `wait`, timers, events, hot reload and editor
   definitions. See [Writing Lua scripts](scripting.md).
 - Modules: `engine`, `log`, `timer`, `events`, and in the Ultima plugin `dice`, `localization`,
-  `npc`, `item`, `world` and `gump`.
+  `npc`, `item`, `world`, `mobile`, `gump`, `bank` and `effect`.
 - Gumps: XML layouts checked by `gump.xsd`, a Lua script per gump for the answers, slots and whole
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
-  `door.lua`, `light.lua`, `wander.lua`, `potion.lua`, and the cats Orione and Vega.
-- Not yet: character and inventory APIs.
+  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `wander.lua`,
+  `banker.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
+  and `gumps/tutorial_list.lua`.
+- Not yet: APIs for stats, skills and inventory.
 
 ### Data and templates
 
 - Shard data in `data/` (maps, starting cities, skills, professions, races, names, containers,
   bodies, regions, weather, messages), validated at startup. See [Data files](data-files.md).
 - Templates in `templates/`: items, loot, mobiles, NPC lists, spawn regions and decoration, with
-  `base_id` inheritance. See [Loading TOML templates](templates.md).
+  `base_id` inheritance, and the XML gumps of `templates/gumps`. See
+  [Loading TOML templates](templates.md) and [Gumps](gumps.md).
 - Client files read from `ultima.ultima_path`: tile data, maps (MUL or UOP) and multis.
 - Messages in 8 languages, ported from UOX3; a language can be split into several toml
   files. See [Localization](localization.md).
 
 ### Persistence
 
-- Two PostgreSQL databases (accounts and world) with transactions, versioned SQL migrations and a
-  separate migration runner.
+- Two PostgreSQL databases (accounts and world) with transactions and versioned SQL migrations,
+  applied by `mgctl migrate`.
 - Characters, their items, ground items and NPCs are kept in memory and written by the periodic
   world save; characters are also saved when they leave.
 - Not yet: a restore command; restoring a [SQL backup](persistence-operations.md#database-backups) is a manual `psql` step.
@@ -124,6 +140,8 @@ See all of them in [Commands](commands.md).
 ### Administration and tools
 
 - Console and in-game [commands](commands.md), translated in every shipped language.
+- A logged exception is one line on the console and a Markdown report under `logs/errors`, ready
+  for a GitHub issue; see [When something fails](getting-started.md#when-something-fails).
 - Optional gRPC [administration API](admin-api.md) with TLS: accounts and server info. No web panel
   or character operations yet.
 - Plugins under `plugins/` register services, commands, Lua modules, metrics, entities, SQL and

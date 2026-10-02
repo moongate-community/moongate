@@ -19,9 +19,9 @@ Filling 4041 spawn regions: 29000 NPCs to spawn. The spawn messages show the pro
 
 The NPCs arrive at the next check of the `npc_spawn` timer, within 10 seconds, each region bringing
 what it misses to its `max`, whatever its `call` and `[ultima.spawns] initial_fill`. The staff spawn
-messages and the server log then show how full the world is. A region that finds no spot for some
-NPCs tries again a minute later and keeps filling until it is full; after that it goes back to its
-`call` and its times. Use it on a new world, or after removing many NPCs, instead of waiting for the
+messages and the server log then show how full the world is. A region that finds no spot at all
+tries again a minute later, still filling. A region that placed only some of its NPCs is done
+filling: it brings the rest by its `call` at its usual times. Use it on a new world, or after removing many NPCs, instead of waiting for the
 gradual fill. See [NPC spawns](../spawns.md).
 
 ## See also

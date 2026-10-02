@@ -110,7 +110,7 @@ public static class UltimaCommandsContainerExtensions
         );
         container.RegisterCommand<TimeCommand>(
             "time",
-            "Shows the game time where you stand.",
+            "Shows the game time and the moons where you stand.",
             CommandSourceType.InGame,
             AccountType.Regular,
             CommandMessages.TimeDescription

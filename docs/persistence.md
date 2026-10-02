@@ -187,7 +187,8 @@ Console.WriteLine(account.Id); // Assigned on this same instance.
   a reviewed migration can add a check constraint, as `world.items` does. Supply
   gameplay serials explicitly when domain rules require shared identity.
 - Sequence creation belongs to schema migrations, never to `UpsertAsync`. The
-  runtime role needs `USAGE` on the sequences as well as the table permissions.
+  runtime role needs `USAGE` and `SELECT` on the sequences as well as the table permissions;
+  `SELECT` lets a [SQL backup](persistence-operations.md#database-backups) read their values.
 
 A failed insert restores the entity's ID to zero. After a successful insert inside
 a transaction, a later rollback keeps the assigned ID on the object; retrying

@@ -218,6 +218,7 @@ public sealed class PostgreSqlDataExporterTests
             );
             // A sequence the role cannot read has no known value: writing one would reset it on restore.
             Assert.DoesNotContain("setval", script);
+            Assert.Contains("-- Skipped (this role cannot read it): sequence \"world\".\"serials\"", script);
         }
         finally
         {

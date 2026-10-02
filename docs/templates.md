@@ -421,8 +421,9 @@ id = "jungle"
 entries = [{ mobile_id = "gorilla", weight = 20 }, { npc_list_id = "all_trolls", weight = 7 }]
 ```
 
-`templates/spawns/<map>/` holds the spawn regions, converted from UOX3's `[REGIONSPAWN n]` blocks;
-the folder is the map. A spawn picks from one pool, as UOX3: its `mobile_ids` (weight 1 each) and
+`templates/spawns/<map>/` holds the spawn regions, converted from UOX3's `[REGIONSPAWN n]` blocks,
+plus ModernUO's spawners (`modernuo_*.toml` and `trammel/town_new_haven.toml`); the folder is the
+map, and a `map` key in a region is ignored. A spawn picks from one pool, as UOX3: its `mobile_ids` (weight 1 each) and
 the entries of its `npc_list_ids` with their weights:
 
 ```toml
@@ -439,7 +440,7 @@ areas = [{ x1 = 1422, y1 = 1547, x2 = 1426, y2 = 1550 }]   # both corners includ
 exclude = []                          # parts of the areas where nothing spawns
 only_outside = false                  # true: never under a roof
 # pref_z = 18                         # how high above the ground a spot may be
-# z = 36                              # a fixed height instead
+# z = 36                              # the highest a spot may be, instead of ground + pref_z
 ```
 
 Both load at startup, after the mobile templates, and a mistake in them stops the server. How the
@@ -485,11 +486,12 @@ block's graphic, `hue` and `name`; its other settings stay in the item's props, 
 block's or the kind's) and `protected` unless the block says `unprotected`; the graphic already
 says whether it is lit. A door block with `locked = true` in its props places doors that only
 staff open. An item with a `label_number` prop, such as a `LocalizedSign`, shows that text of the
-client as its name. A teleporter's `point_dest = [x, y, z]` becomes the props `teleport.x`,
+client as its name, unless the item has a name of its own. A teleporter's `point_dest = [x, y, z]` becomes the props `teleport.x`,
 `teleport.y` and `teleport.z`, and its `map_dest` the prop `teleport.map`, a `MapType` number.
 A `KeywordTeleporter` takes the template `decoration_keyword_teleporter`, with
 `script_id = "keyword_teleport"`, and keeps its `substring`, `keyword`, `range` and `delay` as props.
-Spawners, mark containers, public moongates, addons and the teleporters that ask for a
-skill or a quest (`SkillTeleporter`, `QuestTeleporter`) are not placed yet. The doors of the towns are in no file:
+Spawners, mark containers, public moongates, addons and every other kind whose name ends in
+`Teleporter`, those that ask for a skill, a quest or a double click (`SkillTeleporter`,
+`InteractionTeleporter`, ...), are not placed yet. The doors of the towns are in no file:
 `.decorate` reads them from the map's door frames.
 

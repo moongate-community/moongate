@@ -27,7 +27,8 @@ close it. When several bankers hear the same word, the bank shows once.
 
 - Its owner lifts, drops and uses what is inside only while it is open: a closed bank refuses the
   lift, bounces what is dropped into it and opens nothing.
-- Nobody else reaches it; game masters and administrators always do.
+- Nobody else reaches it; game masters and administrators reach their own even while it is
+  closed.
 - The bank box itself never leaves the bank layer, and `world.carries` does not look in it: a key
   in the bank does not open a door.
 
@@ -37,6 +38,16 @@ Withdrawing, the balance and bank checks are not built yet.
 
 ```lua
 -- scripts/mobiles/banker.lua
+local function has_keyword(keywords, wanted)
+    for _, keyword in ipairs(keywords or {}) do
+        if keyword == wanted then
+            return true
+        end
+    end
+
+    return false
+end
+
 function banker.on_speech(serial, speaker, text, keywords)
     if has_keyword(keywords, SpeechKeywordType.Bank) or text:lower():find("bank", 1, true) then
         bank.open(speaker)

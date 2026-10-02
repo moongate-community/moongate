@@ -140,6 +140,26 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedBankers_AllHaveTheBankerScript()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var loader = new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots));
+
+        var bankers = (await loader.LoadDataAsync()).Entities
+            .Where(template => template.Id.EndsWith("banker", StringComparison.Ordinal))
+            .ToDictionary(template => template.Id, template => template.ScriptId);
+
+        Assert.Equal(
+            ["banker", "f_banker", "f_gypsybanker", "gypsybanker", "m_banker", "m_gypsybanker"],
+            bankers.Keys.Order(StringComparer.Ordinal)
+        );
+        Assert.All(bankers.Values, script => Assert.Equal("banker", script));
+    }
+
+    [Fact]
     public async Task ShippedNpcListsAndSpawns_LoadAgainstTheShippedMobiles()
     {
         var directories = Directories();

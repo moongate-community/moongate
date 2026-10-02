@@ -6,7 +6,7 @@
 --   ModernUO's banker does. The client turns the word into the speech keyword
 --   SpeechKeywordType.Bank in any language ("banca", "Bank", ...); the plain
 --   word is read too, for a client that sends no keywords. The templates
---   banker, m_banker and f_banker use it.
+--   banker, m_banker and f_banker and their gypsybanker variants use it.
 --
 -- Functions:
 --   on_speech(serial, speaker, text, keywords)  a player speaks within 15
