@@ -79,6 +79,24 @@ public sealed class MoongateTcpServerTests
     }
 
     [Fact]
+    public async Task StopAsync_WhileAccepting_ReportsNoTransportFailure()
+    {
+        // A stop closes the listener under a pending accept: an expected end, not a failure to report.
+        for (var run = 0; run < 20; run++)
+        {
+            await using var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));
+            var failures = 0;
+            server.OnException += (_, _) => Interlocked.Increment(ref failures);
+            await server.StartAsync(CancellationToken.None);
+            await Task.Delay(5);
+
+            await server.StopAsync(CancellationToken.None);
+
+            Assert.Equal(0, failures);
+        }
+    }
+
+    [Fact]
     public async Task DisposeAsync_IsTerminal()
     {
         var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));

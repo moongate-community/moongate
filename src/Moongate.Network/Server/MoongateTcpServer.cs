@@ -734,12 +734,14 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
             return;
         }
 
-        _serverSocket?.Dispose();
-
+        // Cancel first: an accept ended by the closed listener while the token is still live reads as a transport
+        // failure (SocketError.OperationAborted).
         if (_listenerCancellationTokenSource is { } lifetime)
         {
             await lifetime.CancelAsync().ConfigureAwait(false);
         }
+
+        _serverSocket?.Dispose();
 
         await _acceptLoopTask.ConfigureAwait(false);
         AcceptedConnectionSetup[] setups;
