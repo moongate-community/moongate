@@ -254,7 +254,7 @@ main() {
     elif [ -f "${WORK_DIR}/moongate-${rid}/Moongate.Server" ]; then
         server=Moongate.Server
     else
-        fail "the archive does not contain moongate-${rid}/mgserver"
+        fail "the archive does not contain moongate-${rid}/mgserver or moongate-${rid}/Moongate.Server"
     fi
 
     STAGING_DIR="${INSTALL_DIR}.new.$$"

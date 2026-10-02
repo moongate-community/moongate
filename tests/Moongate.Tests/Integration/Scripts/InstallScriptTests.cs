@@ -169,7 +169,8 @@ public class InstallScriptTests
         var result = await install.RunAsync("0.12.0", "linux-x64");
 
         Assert.NotEqual(0, result.ExitCode);
-        Assert.Contains("mgserver", result.Output);
+        Assert.Contains("mgserver or", result.Output);
+        Assert.Contains("Moongate.Server", result.Output);
         Assert.False(Directory.Exists(install.InstallDirectory));
     }
 
