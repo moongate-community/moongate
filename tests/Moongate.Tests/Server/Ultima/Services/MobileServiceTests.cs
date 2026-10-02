@@ -154,7 +154,7 @@ public sealed class MobileServiceTests
         mobiles.EnterWorld(aria);
         senses.Calls.Clear();
 
-        var moved = mobiles.MoveTo(aria, new Point3D(5690, 569, 25));
+        var moved = mobiles.MoveTo(aria, MapType.Trammel, new Point3D(5690, 569, 25));
 
         Assert.True(moved);
         Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
@@ -182,7 +182,7 @@ public sealed class MobileServiceTests
         };
         mobiles.EnterWorld(aria);
 
-        mobiles.MoveTo(aria, new Point3D(5690, 569, 25));
+        mobiles.MoveTo(aria, MapType.Trammel, new Point3D(5690, 569, 25));
 
         Assert.Equal("Wrong", regions.Current(aria.Id)?.Name);
     }
@@ -199,10 +199,53 @@ public sealed class MobileServiceTests
         mobiles.EnterWorld(aria);
         senses.Calls.Clear();
 
-        Assert.False(mobiles.MoveTo(aria, new Point3D(x, y, 0)));
+        Assert.False(mobiles.MoveTo(aria, MapType.Trammel, new Point3D(x, y, 0)));
 
         Assert.Equal(new Point3D(1496, 1628, 10), aria.Location);
         Assert.Empty(senses.Calls);
+    }
+
+    [Fact]
+    public void MoveTo_AnotherMap_ChangesTheMapSectorsRegionAndTellsTheSensesItAppeared()
+    {
+        var senses = new RecordingNpcSenseService();
+        var sectors = TestSectors.Create();
+        var regions = new RegionService(
+            new StubDataLoaderService().With(
+                new RegionContent
+                {
+                    Map = MapType.Felucca, Name = "Wrong", Areas = [new RegionAreaContent { X1 = 1500, Y1 = 1500, X2 = 1700, Y2 = 1700 }]
+                }
+            )
+        );
+        var mobiles = new MobileService(new StubMovementService(), sectors, senses, regions);
+        var aria = new MobileEntity
+        {
+            Id = new Serial(2), AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0)
+        };
+        mobiles.EnterWorld(aria);
+        senses.Calls.Clear();
+
+        // The same spot on the other map: only the map changes.
+        Assert.True(mobiles.MoveTo(aria, MapType.Felucca, new Point3D(1600, 1600, 0)));
+
+        Assert.Equal((MapType.Felucca, new Point3D(1600, 1600, 0)), (aria.Map, aria.Location));
+        Assert.Equal(["Appeared 2"], senses.Calls);
+        Assert.Contains(aria, sectors.GetMobilesInRange(MapType.Felucca, aria.Location, 0));
+        Assert.Empty(sectors.GetMobilesInRange(MapType.Trammel, aria.Location, 0));
+        Assert.Equal("Wrong", regions.Current(aria.Id)?.Name);
+    }
+
+    [Fact]
+    public void MoveTo_AMapThatIsNotLoaded_IsRefused()
+    {
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
+        var aria = Aria();
+        mobiles.EnterWorld(aria);
+
+        Assert.False(mobiles.MoveTo(aria, MapType.Tokuno, new Point3D(100, 100, 0)));
+
+        Assert.Equal((MapType.Trammel, new Point3D(1496, 1628, 10)), (aria.Map, aria.Location));
     }
 
     [Fact]
@@ -211,7 +254,7 @@ public sealed class MobileServiceTests
         var sectors = TestSectors.Create();
         var aria = Aria();
 
-        Assert.False(new MobileService(new StubMovementService(), sectors).MoveTo(aria, new Point3D(100, 100, 0)));
+        Assert.False(new MobileService(new StubMovementService(), sectors).MoveTo(aria, MapType.Trammel, new Point3D(100, 100, 0)));
 
         Assert.Equal(new Point3D(1496, 1628, 10), aria.Location);
         Assert.Empty(sectors.GetMobilesInRange(MapType.Trammel, new Point3D(100, 100, 0), 0));

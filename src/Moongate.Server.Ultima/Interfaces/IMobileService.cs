@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
@@ -84,14 +85,15 @@ public interface IMobileService : IPersistenceDeletionSource
     );
 
     /// <summary>
-    ///     Puts the mobile on <paramref name="location" /> of its own map, however far, as a teleporter does; its facing
-    ///     stays. False, with nothing changed, for a mobile that is not in the world or a spot outside the map.
+    ///     Puts the mobile on <paramref name="location" /> of <paramref name="map" />, its own or another, however far, as
+    ///     a teleporter does; its facing stays. False, with nothing changed, for a mobile that is not in the world, a map
+    ///     that is not loaded or a spot outside it.
     /// </summary>
     /// <remarks>
     ///     The sectors, the NPC senses and the players' regions follow it; nothing is sent:
     ///     <see cref="ITeleportService" /> tells the clients.
     /// </remarks>
-    bool MoveTo(MobileEntity mobile, Point3D location);
+    bool MoveTo(MobileEntity mobile, MapType map, Point3D location);
 
     /// <summary>
     ///     Gets whether the mobile is in the world.

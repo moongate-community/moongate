@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
@@ -28,11 +29,13 @@ public interface IWorldViewService
     void Moved(MobileEntity mobile, Point3D oldLocation, bool running);
 
     /// <summary>
-    ///     Tells the players in range that the mobile, now at its current location, jumped there from
-    ///     <paramref name="oldLocation" /> on the same map: as <see cref="Moved" />, but those who still see it are shown it
-    ///     again (0x78) instead of a step (0x77), as ModernUO does for a teleport.
+    ///     Tells the players in range that the mobile, now at its current map and location, jumped there from
+    ///     <paramref name="oldLocation" /> of <paramref name="oldMap" />. On the same map: as <see cref="Moved" />, but
+    ///     those who still see it are shown it again (0x78) instead of a step (0x77), as ModernUO does for a teleport.
+    ///     From another map: the players around the old spot lose it, and on the new map it is shown everyone and every
+    ///     ground item in range and shown to the players there, as when it entered the world.
     /// </summary>
-    void Teleported(MobileEntity mobile, Point3D oldLocation);
+    void Teleported(MobileEntity mobile, MapType oldMap, Point3D oldLocation);
 
     /// <summary>
     ///     Removes the mobile from the screens in range, registered or not, and forgets its session; call it while the

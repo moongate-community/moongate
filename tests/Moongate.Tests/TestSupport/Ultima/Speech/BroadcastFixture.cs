@@ -18,6 +18,7 @@ public sealed class BroadcastFixture : IAsyncDisposable
 
     public SessionFixture Network { get; }
     public SessionService Sessions { get; }
+    public SectorService Sectors { get; } = TestSectors.Create();
     public MobileService Mobiles { get; }
     public StubPacketSendService Sender { get; } = new();
 
@@ -25,7 +26,7 @@ public sealed class BroadcastFixture : IAsyncDisposable
     {
         Network = network;
         Sessions = new(network.Loop);
-        Mobiles = new(new StubMovementService(), TestSectors.Create());
+        Mobiles = new(new StubMovementService(), Sectors);
     }
 
     public static async Task<BroadcastFixture> CreateAsync()

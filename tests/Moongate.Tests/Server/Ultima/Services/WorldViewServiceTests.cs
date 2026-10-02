@@ -353,9 +353,9 @@ public sealed class WorldViewServiceTests
         Enter(3, 1500, 1628, BorisSession);
         ClearSent();
         var old = aria.Location;
-        Assert.True(_mobiles.MoveTo(aria, new Point3D(1504, 1628, 0)));
+        Assert.True(_mobiles.MoveTo(aria, MapType.Trammel, new Point3D(1504, 1628, 0)));
 
-        _view.Teleported(aria, old);
+        _view.Teleported(aria, MapType.Trammel, old);
 
         Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(_sender.Sent)).Serial);
         Assert.Equal([BorisSession], _sender.SentSessionIds);
@@ -370,9 +370,37 @@ public sealed class WorldViewServiceTests
         var gold = Ground(0x40000050, 5691, 570);
         ClearSent();
         var old = aria.Location;
-        Assert.True(_mobiles.MoveTo(aria, new Point3D(5690, 569, 0)));
+        Assert.True(_mobiles.MoveTo(aria, MapType.Trammel, new Point3D(5690, 569, 0)));
 
-        _view.Teleported(aria, old);
+        _view.Teleported(aria, MapType.Trammel, old);
+
+        var sent = _sender.Sent.Select((packet, index) => (_sender.SentSessionIds[index], packet)).ToList();
+        Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial);
+        Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(sent, to => to.Item1 == 30).packet).Serial);
+        var own = sent.Where(to => to.Item1 == AriaSession).Select(to => to.packet).ToList();
+        Assert.Equal(cara.Id, Assert.IsType<MobileIncomingPacket>(own[0]).Serial);
+        Assert.Equal(gold.Id, Assert.IsType<WorldItemSaPacket>(own[1]).Serial);
+        Assert.Equal(2, own.Count);
+    }
+
+    [Fact]
+    public void Teleported_ToAnotherMap_LeavesTheOldMapAndIsShownEverythingAroundOnTheNewOne()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        // Boris stays on Trammel, on the very spot Aria lands on in Felucca.
+        Enter(3, 1500, 1628, BorisSession);
+        var cara = Mobile(4, 1502, 1628);
+        cara.Map = MapType.Felucca;
+        _mobiles.EnterWorld(cara);
+        _view.Entered(cara, 30, null);
+        var gold = new ItemEntity { Id = new Serial(0x40000050), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        _items.Add([gold]);
+        _items.PlaceOnGround(gold, MapType.Felucca, new Point3D(1501, 1629, 0));
+        ClearSent();
+        var old = aria.Location;
+        Assert.True(_mobiles.MoveTo(aria, MapType.Felucca, new Point3D(1500, 1628, 0)));
+
+        _view.Teleported(aria, MapType.Trammel, old);
 
         var sent = _sender.Sent.Select((packet, index) => (_sender.SentSessionIds[index], packet)).ToList();
         Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial);

@@ -30,8 +30,8 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         _aria = aria;
         _aria.Body = 0x0190;
         _aria.Direction = DirectionType.South;
-        Assert.True(_fixture.Mobiles.MoveTo(_aria, new Point3D(1600, 1600, 0)));
-        _teleports = new(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender);
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1600, 1600, 0)));
+        _teleports = new(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors);
     }
 
     public async Task DisposeAsync()
@@ -42,7 +42,7 @@ public sealed class TeleportServiceTests : IAsyncLifetime
     [Fact]
     public void Teleport_APlayer_MovesItAndTellsItsClientWhereItStands()
     {
-        Assert.True(_teleports.Teleport(_aria, new Point3D(5690, 569, 25)));
+        Assert.True(_teleports.Teleport(_aria, MapType.Trammel, new Point3D(5690, 569, 25)));
 
         Assert.Equal(new Point3D(5690, 569, 25), _aria.Location);
         var update = Assert.IsType<MobileUpdatePacket>(Assert.Single(_fixture.Sender.Sent));
@@ -55,9 +55,9 @@ public sealed class TeleportServiceTests : IAsyncLifetime
     {
         _view.OnCall = _ => Assert.Single(_fixture.Sender.Sent);
 
-        _teleports.Teleport(_aria, new Point3D(5690, 569, 25));
+        _teleports.Teleport(_aria, MapType.Trammel, new Point3D(5690, 569, 25));
 
-        Assert.Equal(["Teleported 2 1600,1600,0"], _view.Calls);
+        Assert.Equal(["Teleported 2 Trammel 1600,1600,0"], _view.Calls);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         var state = new MovementState { ExpectedSequence = 42, NextStepAt = 999 };
         await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(MovementSessionKeys.State, state));
 
-        _teleports.Teleport(_aria, new Point3D(5690, 569, 25));
+        _teleports.Teleport(_aria, MapType.Trammel, new Point3D(5690, 569, 25));
 
         Assert.Equal((0, 0L), (state.ExpectedSequence, state.NextStepAt));
     }
@@ -77,16 +77,37 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         var orc = new MobileEntity { Id = new Serial(9), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
         _fixture.Mobiles.EnterWorld(orc);
 
-        Assert.True(_teleports.Teleport(orc, new Point3D(5690, 569, 25)));
+        Assert.True(_teleports.Teleport(orc, MapType.Trammel, new Point3D(5690, 569, 25)));
 
         Assert.Empty(_fixture.Sender.Sent);
-        Assert.Equal(["Teleported 9 1601,1600,0"], _view.Calls);
+        Assert.Equal(["Teleported 9 Trammel 1601,1600,0"], _view.Calls);
+    }
+
+    [Fact]
+    public void Teleport_ToAnotherMap_SendsTheMapChangeBeforeTheNewPosition()
+    {
+        Assert.True(_teleports.Teleport(_aria, MapType.Felucca, new Point3D(5690, 569, 25)));
+
+        Assert.Equal((MapType.Felucca, new Point3D(5690, 569, 25)), (_aria.Map, _aria.Location));
+        Assert.Equal([typeof(MapChangePacket), typeof(MobileUpdatePacket)], _fixture.Sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal(MapType.Felucca, ((MapChangePacket)_fixture.Sender.Sent[0]).Map);
+        Assert.Equal(["Teleported 2 Trammel 1600,1600,0"], _view.Calls);
+    }
+
+    [Fact]
+    public void Teleport_ToAMapThatIsNotLoaded_ChangesAndSendsNothing()
+    {
+        Assert.False(_teleports.Teleport(_aria, MapType.Tokuno, new Point3D(100, 100, 0)));
+
+        Assert.Equal(MapType.Trammel, _aria.Map);
+        Assert.Empty(_fixture.Sender.Sent);
+        Assert.Empty(_view.Calls);
     }
 
     [Fact]
     public void Teleport_OutsideTheMap_ChangesAndSendsNothing()
     {
-        Assert.False(_teleports.Teleport(_aria, new Point3D(-5, 10, 0)));
+        Assert.False(_teleports.Teleport(_aria, MapType.Trammel, new Point3D(-5, 10, 0)));
 
         Assert.Equal(new Point3D(1600, 1600, 0), _aria.Location);
         Assert.Empty(_fixture.Sender.Sent);

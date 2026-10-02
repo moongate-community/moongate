@@ -9,8 +9,8 @@
 -- Props it reads:
 --   teleport.x, teleport.y, teleport.z   the destination; a teleporter without
 --                                        all three does nothing
---   teleport.map   the destination map (a MapType number); a teleporter to
---                  another map does nothing yet
+--   teleport.map   the destination map (a MapType number) when it is another
+--                  one; without it the player stays on its map
 --   active         false turns the teleporter off
 --   sound_id       a sound played at the destination after the teleport
 --
@@ -34,14 +34,8 @@ function teleporter.on_move_over(serial, who)
         return
     end
 
-    local map = item.get_prop(serial, "teleport.map")
-    local here = item.location(serial)
-
-    if map and (not here or map ~= here.map) then
-        return
-    end
-
-    if mobile.teleport(who, x, y, z) then
+    -- A nil map keeps the mobile on its own.
+    if mobile.teleport(who, x, y, z, item.get_prop(serial, "teleport.map")) then
         local sound = item.get_prop(serial, "sound_id")
 
         if sound then
