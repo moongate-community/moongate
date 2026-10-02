@@ -34,6 +34,8 @@ public sealed partial class SqlBackupService : ISqlBackupService, IDisposable
 
     private Task? _schedule;
 
+    private Task<SqlBackupResult>? _active;
+
     private int _running;
 
     private bool _stopped;
@@ -52,23 +54,18 @@ public sealed partial class SqlBackupService : ISqlBackupService, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<SqlBackupResult> BackupAsync(CancellationToken cancellationToken = default)
+    public Task<SqlBackupResult> BackupAsync(CancellationToken cancellationToken = default)
     {
         if (Interlocked.CompareExchange(ref _running, 1, 0) != 0)
         {
-            return new() { AlreadyRunning = true };
+            return Task.FromResult(new SqlBackupResult { AlreadyRunning = true });
         }
 
-        try
-        {
-            using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _stopping.Token);
+        // Kept so a stop can wait for a backup that a command started.
+        var run = RunGuardedAsync(cancellationToken);
+        _active = run;
 
-            return await BackupCoreAsync(linked.Token).ConfigureAwait(false);
-        }
-        finally
-        {
-            Volatile.Write(ref _running, 0);
-        }
+        return run;
     }
 
     /// <inheritdoc />
@@ -110,6 +107,21 @@ public sealed partial class SqlBackupService : ISqlBackupService, IDisposable
         {
             await _schedule.ConfigureAwait(false);
         }
+
+        var active = _active;
+
+        if (active is not null)
+        {
+            try
+            {
+                await active.ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                // The backup was canceled by this stop or failed for its caller, who gets the exception; here it
+                // only matters that it has ended and removed its temporary file.
+            }
+        }
     }
 
     /// <summary>
@@ -120,7 +132,7 @@ public sealed partial class SqlBackupService : ISqlBackupService, IDisposable
         return target == PersistenceDatabaseTarget.Accounts ? "auth" : "world";
     }
 
-    [GeneratedRegex(@"^(auth|world)_\d{8}_\d{6}\.sql(\.tmp)?$", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"^(auth|world)_\d{8}_\d{6}(_\d+)?\.sql(\.tmp)?$", RegexOptions.CultureInvariant)]
     private static partial Regex BackupFileName();
 
     private async Task<SqlBackupResult> BackupCoreAsync(CancellationToken cancellationToken)
@@ -148,7 +160,7 @@ public sealed partial class SqlBackupService : ISqlBackupService, IDisposable
         foreach (var target in _exporter.ConfiguredTargets.Order())
         {
             var prefix = PrefixOf(target);
-            var path = Path.Combine(_options.Directory, $"{prefix}_{stamp}.sql");
+            var path = FreePath(prefix, stamp);
             var temporary = path + TemporarySuffix;
 
             try
@@ -167,7 +179,7 @@ public sealed partial class SqlBackupService : ISqlBackupService, IDisposable
                     await _exporter.ExportDataAsync(target, stream, cancellationToken).ConfigureAwait(false);
                 }
 
-                File.Move(temporary, path, true);
+                File.Move(temporary, path, false);
                 var file = new SqlBackupFile { Database = prefix, Path = path, Size = new FileInfo(path).Length };
                 files.Add(file);
                 _logger.Information("SQL backup wrote {Path} ({Size} bytes)", file.Path, file.Size);
@@ -188,6 +200,33 @@ public sealed partial class SqlBackupService : ISqlBackupService, IDisposable
         }
 
         return new() { Files = files, Failures = failures };
+    }
+
+    // A second backup in the same second gets a numbered name, so it never replaces the first one.
+    private string FreePath(string prefix, string stamp)
+    {
+        var path = Path.Combine(_options.Directory, $"{prefix}_{stamp}.sql");
+
+        for (var copy = 2; File.Exists(path); copy++)
+        {
+            path = Path.Combine(_options.Directory, $"{prefix}_{stamp}_{copy}.sql");
+        }
+
+        return path;
+    }
+
+    private async Task<SqlBackupResult> RunGuardedAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _stopping.Token);
+
+            return await BackupCoreAsync(linked.Token).ConfigureAwait(false);
+        }
+        finally
+        {
+            Volatile.Write(ref _running, 0);
+        }
     }
 
     private void DeleteLeftovers()

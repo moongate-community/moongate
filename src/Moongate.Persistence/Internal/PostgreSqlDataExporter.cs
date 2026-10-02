@@ -20,7 +20,8 @@ internal static class PostgreSqlDataExporter
         "n.nspname <> 'information_schema' AND n.nspname <> 'moongate_migrations' AND n.nspname NOT LIKE 'pg\\_%'";
 
     private const string TablesSql =
-        "SELECT c.oid::int8, n.nspname, c.relname, pg_catalog.has_table_privilege(c.oid, 'SELECT') " +
+        "SELECT c.oid::int8, n.nspname, c.relname, " +
+        "pg_catalog.has_schema_privilege(n.oid, 'USAGE') AND pg_catalog.has_table_privilege(c.oid, 'SELECT') " +
         "FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace " +
         "WHERE c.relkind = 'r' AND " + UserSchemas + " ORDER BY n.nspname, c.relname";
 
@@ -39,7 +40,7 @@ internal static class PostgreSqlDataExporter
         "CASE WHEN c.relkind = 'S' THEN pg_catalog.has_sequence_privilege(c.oid, 'SELECT') ELSE false END " +
         "ORDER BY n.nspname, c.relname";
 
-    private static readonly ILogger Logger = Log.ForContext(typeof(PostgreSqlDataExporter));
+    private static readonly ILogger _logger = Log.ForContext(typeof(PostgreSqlDataExporter));
 
     public static async Task ExportAsync(
         string connectionString,
@@ -59,27 +60,33 @@ internal static class PostgreSqlDataExporter
             await readOnly.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        var skipped = new List<string>();
+        var skipped = new List<PostgreSqlExportTable>();
         var readable = await ReadTablesAsync(connection, skipped, cancellationToken).ConfigureAwait(false);
         var references = await ReadReferencesAsync(connection, cancellationToken).ConfigureAwait(false);
         var tables = Sort(readable, references);
         var sequences = await ReadSequencesAsync(connection, cancellationToken).ConfigureAwait(false);
+        var blocking = FindBlockingReferences(readable, skipped, references);
 
         if (skipped.Count > 0)
         {
-            Logger.Warning(
+            _logger.Warning(
                 "SQL export of {Database} skips {Count} tables the runtime role cannot read: {Tables}",
                 connection.Database,
                 skipped.Count,
-                skipped
+                skipped.Select(table => table.QuotedName)
             );
+        }
+
+        foreach (var warning in blocking)
+        {
+            _logger.Warning("SQL export of {Database}: {Warning}", connection.Database, warning);
         }
 
         var writer = new StreamWriter(output, new UTF8Encoding(false), 1 << 16, true) { NewLine = "\n" };
 
         await using (writer.ConfigureAwait(false))
         {
-            await WriteHeaderAsync(writer, connection.Database, createdAt, skipped).ConfigureAwait(false);
+            await WriteHeaderAsync(writer, connection.Database, createdAt, skipped, blocking).ConfigureAwait(false);
 
             // The header reaches the stream first: the snapshot was taken by the catalog queries above.
             await writer.FlushAsync(cancellationToken).ConfigureAwait(false);
@@ -153,9 +160,38 @@ internal static class PostgreSqlDataExporter
         return sorted;
     }
 
+    /// <summary>
+    ///     Names every skipped table that references an exported one: the restore's TRUNCATE is refused while such a
+    ///     table still holds rows.
+    /// </summary>
+    private static List<string> FindBlockingReferences(
+        List<PostgreSqlExportTable> exported,
+        List<PostgreSqlExportTable> skipped,
+        List<(long Table, long Referenced)> references
+    )
+    {
+        var warnings = new List<string>();
+
+        foreach (var table in skipped)
+        {
+            foreach (var target in exported)
+            {
+                if (references.Contains((table.Oid, target.Oid)))
+                {
+                    warnings.Add(
+                        $"skipped {table.QuotedName} references {target.QuotedName}: " +
+                        "empty it before the restore, or the TRUNCATE fails."
+                    );
+                }
+            }
+        }
+
+        return warnings;
+    }
+
     private static async Task<List<PostgreSqlExportTable>> ReadTablesAsync(
         NpgsqlConnection connection,
-        List<string> skipped,
+        List<PostgreSqlExportTable> skipped,
         CancellationToken cancellationToken
     )
     {
@@ -176,7 +212,7 @@ internal static class PostgreSqlDataExporter
 
                 if (!reader.GetBoolean(3))
                 {
-                    skipped.Add(table.QuotedName);
+                    skipped.Add(table);
 
                     continue;
                 }
@@ -256,7 +292,8 @@ internal static class PostgreSqlDataExporter
         StreamWriter writer,
         string? database,
         DateTimeOffset createdAt,
-        List<string> skipped
+        List<PostgreSqlExportTable> skipped,
+        List<string> warnings
     )
     {
         var version = typeof(PostgreSqlDataExporter).Assembly
@@ -276,7 +313,12 @@ internal static class PostgreSqlDataExporter
 
         foreach (var table in skipped)
         {
-            await writer.WriteLineAsync($"-- Skipped (no SELECT privilege): {table}").ConfigureAwait(false);
+            await writer.WriteLineAsync($"-- Skipped (this role cannot read it): {table.QuotedName}").ConfigureAwait(false);
+        }
+
+        foreach (var warning in warnings)
+        {
+            await writer.WriteLineAsync($"-- Warning: {warning}").ConfigureAwait(false);
         }
 
         await writer.WriteLineAsync().ConfigureAwait(false);

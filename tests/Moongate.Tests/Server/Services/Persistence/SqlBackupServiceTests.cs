@@ -139,6 +139,51 @@ public sealed class SqlBackupServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task BackupAsync_TwiceInTheSameSecond_KeepsBothFiles()
+    {
+        var service = Create(new RecordingDataExporter(PersistenceDatabaseTarget.Realm));
+
+        await service.BackupAsync();
+        var second = await service.BackupAsync();
+
+        Assert.Equal(["world_20261002_113000.sql", "world_20261002_113000_2.sql"], FileNames());
+        Assert.EndsWith("world_20261002_113000_2.sql", Assert.Single(second.Files).Path);
+    }
+
+    [Fact]
+    public async Task BackupAsync_TwiceInTheSameSecond_RotatesTheFirstOneAwayWhenOnlyOneIsKept()
+    {
+        var service = Create(new RecordingDataExporter(PersistenceDatabaseTarget.Realm), keep: 1);
+
+        await service.BackupAsync();
+        await service.BackupAsync();
+
+        Assert.Equal(["world_20261002_113000_2.sql"], FileNames());
+    }
+
+    [Fact]
+    public async Task StopAsync_WaitsForABackupInFlight_SoNoTemporaryFileIsLeftBehind()
+    {
+        var exporter = new RecordingDataExporter(PersistenceDatabaseTarget.Realm)
+        {
+            Gate = new(TaskCreationOptions.RunContinuationsAsynchronously),
+            SlowToCancel = true
+        };
+        var service = Create(exporter);
+        var backup = service.BackupAsync();
+
+        var stop = service.StopAsync();
+        await Task.Delay(100);
+        Assert.False(stop.IsCompleted);
+
+        exporter.Gate.SetResult();
+        await stop.WaitAsync(Timeout);
+
+        Assert.True(backup.IsCanceled);
+        Assert.Empty(FileNames());
+    }
+
+    [Fact]
     public async Task BackupAsync_WhileAnotherBackupRuns_IsRefused()
     {
         var exporter = new RecordingDataExporter(PersistenceDatabaseTarget.Realm)

@@ -211,9 +211,49 @@ public sealed class PostgreSqlDataExporterTests
 
             Assert.Contains("COPY \"world\".\"mobiles\"", script);
             Assert.DoesNotContain("COPY \"world\".\"items\"", script);
-            Assert.Contains("-- Skipped (no SELECT privilege): \"world\".\"items\"", script);
+            Assert.Contains("-- Skipped (this role cannot read it): \"world\".\"items\"", script);
+            Assert.Contains(
+                "-- Warning: skipped \"world\".\"items\" references \"world\".\"mobiles\": empty it before the restore, or the TRUNCATE fails.",
+                script
+            );
             // A sequence the role cannot read has no known value: writing one would reset it on restore.
             Assert.DoesNotContain("setval", script);
+        }
+        finally
+        {
+            await database.ExecuteAsync($"DROP OWNED BY {role}; DROP ROLE {role};");
+        }
+    }
+
+    [Fact]
+    public async Task ExportAsync_ATableInASchemaTheRoleCannotUse_IsSkippedInsteadOfFailingTheExport()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        var role = $"moongate_test_ro_{Guid.NewGuid():N}";
+        await database.ExecuteAsync(Schema);
+        await database.ExecuteAsync(Rows);
+        await database.ExecuteAsync(
+            $"""
+             CREATE TABLE kept (id int PRIMARY KEY);
+             CREATE ROLE {role} LOGIN PASSWORD 'export-test';
+             GRANT SELECT ON kept TO {role};
+             GRANT SELECT ON world.mobiles TO {role};
+             """
+        );
+
+        try
+        {
+            var limited = new NpgsqlConnectionStringBuilder(database.ConnectionString)
+            {
+                Username = role,
+                Password = "export-test"
+            };
+
+            var script = await ExportAsync(limited.ConnectionString);
+
+            Assert.Contains("COPY \"public\".\"kept\"", script);
+            Assert.DoesNotContain("COPY \"world\".\"mobiles\"", script);
+            Assert.Contains("-- Skipped (this role cannot read it): \"world\".\"mobiles\"", script);
         }
         finally
         {

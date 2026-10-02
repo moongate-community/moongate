@@ -18,6 +18,11 @@ public sealed class RecordingDataExporter : IPersistenceDataExporter
     /// </summary>
     public TaskCompletionSource? Gate { get; set; }
 
+    /// <summary>
+    ///     When true, a waiting export does not end when it is canceled, as a database call in flight may not.
+    /// </summary>
+    public bool SlowToCancel { get; set; }
+
     public IReadOnlyCollection<PersistenceDatabaseTarget> ConfiguredTargets { get; }
 
     public RecordingDataExporter(params PersistenceDatabaseTarget[] targets)
@@ -35,7 +40,8 @@ public sealed class RecordingDataExporter : IPersistenceDataExporter
 
         if (Gate is not null)
         {
-            await Gate.Task.WaitAsync(cancellationToken);
+            await (SlowToCancel ? Gate.Task : Gate.Task.WaitAsync(cancellationToken));
+            cancellationToken.ThrowIfCancellationRequested();
         }
 
         await output.WriteAsync(Encoding.UTF8.GetBytes($"-- {target}\n"), cancellationToken);

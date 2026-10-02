@@ -146,7 +146,8 @@ exports of the databases a process owns:
 | `login` | `auth_<date>.sql` |
 | `game` | `world_<date>.sql` |
 
-`<date>` is the UTC time of the backup, `yyyyMMdd_HHmmss`. The files go to `backups` under the
+`<date>` is the UTC time of the backup, `yyyyMMdd_HHmmss`; a second backup in the same second gets
+`_2` after the date. The files go to `backups` under the
 server root, and only the newest five of each database are kept. All of this is set in
 [`[sql_backup]`](server-configuration.md).
 
@@ -172,7 +173,9 @@ Files in the directory that Moongate did not write are never deleted.
 Data only: a `TRUNCATE` of the tables, one `COPY ... FROM stdin` block for each table, and the
 current value of each sequence, all in one transaction. The file holds no schema. Every table the
 runtime role can read is included, also the tables of plugins. A table it cannot read is skipped
-and named in a comment at the top of the file and in a log warning.
+and named in a comment at the top of the file and in a log warning. This covers a table in a schema
+the role may not use. When a skipped table references an exported one, the file and the log also
+warn that the table must be emptied before the restore, or PostgreSQL refuses the `TRUNCATE`.
 
 The migration history (`moongate_migrations`) is never in the file: it describes the schema of the
 database it is in, and the restore procedure rebuilds it.
