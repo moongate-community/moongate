@@ -7,6 +7,9 @@ using Moongate.Scripting.Internal;
 using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
@@ -27,6 +30,18 @@ public sealed class ItemModuleTests : IAsyncLifetime
     private readonly RecordingSpeechService _speech = new();
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly ItemService _items;
+    private readonly StubItemSerialPool _serials = new();
+    private readonly FakeTileDataService _tiles = new FakeTileDataService()
+                                                 .Item(0x0EED, TileFlagType.Generic, 0)
+                                                 .Item(0x0E75, TileFlagType.Container, 0)
+                                                 .Item(0x0E76, TileFlagType.Container, 0);
+    private readonly ItemTemplateService _templates = new(
+        new StubDataLoaderService().With(
+            new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
+            new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) },
+            new ItemTemplate { Id = "bag", ItemId = new Serial(0x0E76) }
+        )
+    );
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
     private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", Name = "a potion", ItemId = 0x0F0E, Amount = 3 };
     private readonly ItemEntity _ground = new() { Id = new Serial(0x40000003), TemplateId = "potion", ItemId = 0x0F0E, Amount = 2 };
@@ -284,11 +299,191 @@ public sealed class ItemModuleTests : IAsyncLifetime
         await _fixture.DisposeAsync();
     }
 
+    [Fact]
+    public void Give_PutsANewItemInTheBackpack_AndShowsItToItsOwner()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+
+        var result = Run("return item.give(2, 'gold', 100)");
+
+        Assert.Equal(0x40000100, result[0].Read<long>());
+        Assert.True(_items.TryGet(new Serial(0x40000100), out var gold));
+        Assert.Equal(("gold", 100, (Serial?)_backpack.Id), (gold.TemplateId, gold.Amount, gold.ContainerId));
+        Assert.Equal(gold.Id, Assert.Single(_fixture.Sender.Sent.OfType<ContainerItemUpdatePacket>()).Item.Serial);
+        // Not on the slot of the potions already there.
+        Assert.NotEqual(_potions.GridIndex, gold.GridIndex);
+    }
+
+    [Theory,
+     InlineData("return item.give(2, 'nothing')"),
+     InlineData("return item.give(999, 'gold')"),
+     InlineData("return item.give(3, 'gold')"),
+     InlineData("return item.give(2, 'sword', 5)"),
+     InlineData("return item.give(2, 'gold', 0)"),
+     InlineData("return item.create('nothing', 'Trammel', 1600, 1600, 0)"),
+     InlineData("return item.create('gold', 'Trammel', -1, 1600, 0)"),
+     InlineData("return item.create('gold', 'Trammel', 1600, 1600, 200)")]
+    public void GiveAndCreate_WhatCannotBeMade_IsNil_AndUsesNoSerial(string chunk)
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+
+        Assert.Equal(LuaValue.Nil, Run(chunk)[0]);
+
+        Assert.Single(_serials.Serials);
+        Assert.False(_items.TryGet(new Serial(0x40000100), out _));
+    }
+
+    [Fact]
+    public void Give_WithNoSerialLeft_IsNil()
+    {
+        Assert.Equal(LuaValue.Nil, Run("return item.give(2, 'gold')")[0]);
+    }
+
+    [Fact]
+    public void Create_PutsANewItemOnTheGround_AndShowsItAround()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+
+        var result = Run("return item.create('gold', 'Trammel', 1500, 1600, 10, 50)");
+
+        Assert.Equal(0x40000100, result[0].Read<long>());
+        Assert.True(_items.TryGet(new Serial(0x40000100), out var gold));
+        Assert.Equal((50, (Point3D?)new Point3D(1500, 1600, 10), (MapType?)MapType.Trammel), (gold.Amount, gold.GroundLocation, gold.Map));
+        Assert.Equal(["Appeared 1073742080"], _view.Calls);
+        Assert.Contains(gold, _sectors.GetItemsInRange(MapType.Trammel, new Point3D(1500, 1600, 10), 0));
+    }
+
+    [Fact]
+    public void TemplateHueAndContainer_DescribeTheItem()
+    {
+        var result = Run("return item.template(0x40000002), item.hue(0x40000002), item.container(0x40000002), item.container(0x40000003), item.template(12)");
+
+        Assert.Equal("potion", result[0].Read<string>());
+        Assert.Equal(0, result[1].Read<int>());
+        Assert.Equal(_backpack.Id.Value, result[2].Read<uint>());
+        Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[3], result[4]));
+    }
+
+    [Fact]
+    public void SetNameAndSetHue_ChangeTheItem_AndShowIt()
+    {
+        var result = Run("return item.set_name(0x40000003, 'a strange brew'), item.set_hue(0x40000003, 0x26), item.name(0x40000003)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.True(result[1].Read<bool>());
+        Assert.Equal("a strange brew", result[2].Read<string>());
+        Assert.Equal(("a strange brew", new Hue(0x26)), (_ground.Name, _ground.Hue));
+        Assert.Equal(2, _view.Calls.Count(call => call.StartsWith("Appeared", StringComparison.Ordinal)));
+    }
+
+    [Fact]
+    public void SetName_WithNil_GivesBackTheTemplatesName()
+    {
+        Run("item.set_name(0x40000002)");
+
+        Assert.Null(_potions.Name);
+    }
+
+    [Theory,
+     InlineData("return item.set_hue(0x40000004, 5)"),
+     InlineData("return item.set_hue(0x40000003, 70000)"),
+     InlineData("return item.set_hue(12, 5)"),
+     InlineData("return item.set_amount(0x40000004, 2)"),
+     InlineData("return item.set_amount(0x40000003, 0)"),
+     InlineData("return item.set_amount(0x40000003, 60001)"),
+     InlineData("return item.set_amount(0x40000003, 5)"),
+     InlineData("return item.set_name(12, 'x')")]
+    public void Setters_OnWhatCannotChange_AreFalse(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+    }
+
+    [Fact]
+    public void SetAmount_OfAStack_SetsIt()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+
+        var result = Run("local gold = item.give(2, 'gold', 10) return item.set_amount(gold, 250), item.amount(gold)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(250, result[1].Read<int>());
+    }
+
+    [Fact]
+    public void Contents_ListsWhatLiesDirectlyInTheContainer()
+    {
+        var result = Run("local inside = item.contents(0x40000001) return #inside, inside[1], #item.contents(0x40000002), #item.contents(12)");
+
+        Assert.Equal([1, 0x40000002, 0, 0], result.Select(value => value.Read<long>()));
+    }
+
+    [Fact]
+    public void MoveInto_AGroundItemIntoABackpack_TakesItOffTheGround_AndShowsItToTheOwner()
+    {
+        var result = Run("return item.move_into(0x40000003, 2)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal((Serial?)_backpack.Id, _ground.ContainerId);
+        Assert.Null(_ground.GroundLocation);
+        Assert.Equal(["Disappeared 1073741827"], _view.Calls);
+        Assert.Equal(_ground.Id, Assert.Single(_fixture.Sender.Sent.OfType<ContainerItemUpdatePacket>()).Item.Serial);
+    }
+
+    [Fact]
+    public void MoveInto_AContainerItem_MovesIt()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+
+        var result = Run("local bag = item.give(2, 'bag') return item.move_into(0x40000002, bag), item.container(0x40000002) == bag");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.True(result[1].Read<bool>());
+    }
+
+    [Theory,
+     // Worn.
+     InlineData("return item.move_into(0x40000004, 2)"),
+     // Not a container.
+     InlineData("return item.move_into(0x40000003, 0x40000002)"),
+     // Into itself.
+     InlineData("return item.move_into(0x40000001, 0x40000001)"),
+     InlineData("return item.move_into(0x40000003, 999)"),
+     InlineData("return item.move_into(12, 2)")]
+    public void MoveInto_WhatCannotMove_IsFalse(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+    }
+
+    [Fact]
+    public void MoveInto_AContainerIntoWhatItHolds_IsFalse()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+        _serials.Serials.Enqueue(new Serial(0x40000101));
+
+        var result = Run(
+            "local outer = item.give(2, 'bag') local inner = item.give(2, 'bag') item.move_into(inner, outer) return item.move_into(outer, inner)"
+        );
+
+        Assert.False(result[0].Read<bool>());
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
-        var module = new ItemModule(_items, _fixture.Sessions, _fixture.Sender, _view, TestTooltips.Create(_items, _fixture.Mobiles), _fixture.Mobiles, _speech, _sectors);
+        var module = new ItemModule(
+            _items,
+            _fixture.Sessions,
+            _fixture.Sender,
+            _view,
+            TestTooltips.Create(_items, _fixture.Mobiles),
+            _fixture.Mobiles,
+            _speech,
+            _sectors,
+            new FakeItemFactoryService(_templates, _tiles),
+            _serials,
+            tiles: _tiles
+        );
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
