@@ -76,11 +76,11 @@ internal static class MigrationCommand
         {
             var root = (rootDirectory ??
                         Environment.GetEnvironmentVariable("MOONGATE_ROOT") ??
-                        Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..")))
+                        Path.GetFullPath(AppContext.BaseDirectory))
                 .ResolvePathAndEnvs();
             string? configuredMigrations = null;
             var migrations =
-                (migrationsDirectory ?? Path.Combine(AppContext.BaseDirectory, "..", "migrations")).ResolvePathAndEnvs();
+                (migrationsDirectory ?? Path.Combine(AppContext.BaseDirectory, "migrations")).ResolvePathAndEnvs();
             string connectionString;
 
             try

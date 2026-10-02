@@ -4,7 +4,16 @@ namespace Moongate.Tests.TestSupport.Boot;
 
 internal static class BootProcess
 {
-    public static async Task<(int ExitCode, string Output)> RunAsync(params string[] arguments)
+    public static Task<(int ExitCode, string Output)> RunAsync(params string[] arguments)
+    {
+        return RunFromAsync(Path.Combine(AppContext.BaseDirectory, "mgboot"), arguments);
+    }
+
+    /// <summary>
+    ///     Runs the mgboot of <paramref name="directory" />, a copy of the built one, without MOONGATE_ROOT, as a
+    ///     distribution unpacked there would.
+    /// </summary>
+    public static async Task<(int ExitCode, string Output)> RunFromAsync(string directory, params string[] arguments)
     {
         var start = new ProcessStartInfo("dotnet")
         {
@@ -12,7 +21,8 @@ internal static class BootProcess
             RedirectStandardError = true,
             UseShellExecute = false
         };
-        start.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "mgboot.dll"));
+        start.ArgumentList.Add(Path.Combine(directory, "mgboot.dll"));
+        start.Environment.Remove("MOONGATE_ROOT");
 
         foreach (var argument in arguments)
         {

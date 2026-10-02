@@ -1,15 +1,12 @@
-using ConsoleAppFramework;
 using Moongate.Ultima.Types;
 using Moongate.UoxItemConverter.Internal;
 
-var app = ConsoleApp.Create();
-app.Add("", Cli.Run);
-app.Add("modernuo-spawns", Cli.ModernUoSpawns);
-app.Add("modernuo-signs", Cli.ModernUoSigns);
-app.Add("modernuo-teleporters", Cli.ModernUoTeleporters);
-app.Run(args);
+namespace Moongate.Boot.Internal;
 
-internal static class Cli
+/// <summary>
+///     The <c>mgboot convert</c> commands: UOX3 and ModernUO content into Moongate TOML.
+/// </summary>
+internal static class ConvertCommands
 {
     /// <summary>
     ///     Converts UOX3 .dfn definitions into Moongate TOML: item templates and loot tables, and, with the mobile
@@ -50,7 +47,7 @@ internal static class Cli
     ///     UOX3's js folder, holding jse_fileassociations.scp and jse_objectassociations.scp: the items whose UOX3 script
     ///     has a Moongate Lua script (item/lights.js is light) get its script_id.
     /// </param>
-    public static int Run(
+    public static int Uox(
         string source,
         string destination,
         string? lootDestination = null,
