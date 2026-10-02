@@ -38,13 +38,13 @@ public sealed class DataLoaderService : IDataLoaderService
             _logger.Debug(
                 "Data loader for {EntityType} completed in {ElapsedMilliseconds} ms",
                 registration.EntityType.Name,
-                Stopwatch.GetElapsedTime(startTime)
+                Stopwatch.GetElapsedTime(startTime).TotalMilliseconds
             );
         }
 
         _logger.Information(
             "All data loaders completed in {ElapsedMilliseconds} ms",
-            Stopwatch.GetElapsedTime(globalLoaderTime)
+            Stopwatch.GetElapsedTime(globalLoaderTime).TotalMilliseconds
         );
     }
 
