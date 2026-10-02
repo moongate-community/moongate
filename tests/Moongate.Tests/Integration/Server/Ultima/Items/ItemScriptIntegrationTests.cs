@@ -19,9 +19,11 @@ using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Effects;
 using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -42,6 +44,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly List<LuaScriptEngineService> _engines = [];
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly RecordingSpeechService _speech = new();
+    private readonly RecordingEffectService _effects = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly ItemService _items;
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
@@ -77,6 +80,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<WorldModule>();
         _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender));
         _container.AddScriptModule<MobileModule>();
+        _container.RegisterInstance<IEffectService>(_effects);
+        _container.AddScriptModule<EffectModule>();
+        _container.RegisterScriptEnum<EffectGraphicType>();
         _container.RegisterInstance(TestLocalization.With((398, "C'è una serratura."), (405, "Using your key, you open the door.")));
         _container.AddScriptModule<LocalizationModule>();
         _container.Resolve<IMoongateEventBus>()
@@ -391,6 +397,48 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal(start, aria.Location);
         Assert.Empty(_speech.Sounds);
+    }
+
+    [Theory,
+     InlineData("true", "true", true, true),
+     InlineData("true", null, true, false),
+     InlineData(null, "true", false, true),
+     InlineData(null, null, false, false)]
+    public async Task TheShippedTeleporterScript_ShowsTheSmokeWhereItsPropsAskForIt(
+        string? sourceEffect,
+        string? destEffect,
+        bool atSource,
+        bool atDestination
+    )
+    {
+        // The decoration files carry these flags as text; as ModernUO, the smoke stays where the mobile left and arrived.
+        var teleporter = PlaceTeleporter(
+            new()
+            {
+                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["source_effect"] = sourceEffect,
+                ["dest_effect"] = destEffect
+            }
+        );
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        var source = aria.Location;
+        var expected = new List<Point3D>();
+
+        if (atSource)
+        {
+            expected.Add(source);
+        }
+
+        if (atDestination)
+        {
+            expected.Add(new Point3D(5690, 569, 25));
+        }
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(expected, _effects.At.Select(effect => effect.Location));
+        Assert.All(_effects.At, effect => Assert.Equal((aria.Map, (int)EffectGraphicType.Smoke), (effect.Map, effect.Options.Graphic)));
     }
 
     [Fact]

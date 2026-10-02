@@ -6,9 +6,9 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**230 systems:** ✅ 63 done, 🟡 30 partly done, ❌ 137 not built yet.
+**230 systems:** ✅ 64 done, 🟡 30 partly done, ❌ 136 not built yet.
 
-**Coverage: 27%** of the systems done, **34%** counting a partly done system as half.
+**Coverage: 28%** of the systems done, **34%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -307,7 +307,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Weight and overloading | 🟡 | Items have their weight; nothing overloads |
 | Timed effects (buffs and debuffs) | ❌ | |
 | Text prompts and input | ❌ | |
-| Visual effects: moving, lightning, particles | ❌ | |
+| Visual effects: moving, lightning, particles | ✅ | From scripts with the `effect` module; particles for the Enhanced Client |
 | Sounds and music | ✅ | Sounds from scripts, thunder and region music |
 | Client language | ❌ | One server language for everyone |
 | Store and other modern client panels | ❌ | |
