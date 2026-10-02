@@ -312,6 +312,16 @@ public sealed class DecorationServiceTests
     }
 
     [Fact]
+    public async Task DecorateAsync_ADoorTheScanFindsTwice_IsPlacedOnce_AndNotCountedAsAlreadyThere()
+    {
+        // ModernUO's regions overlap around Britain: a frame there is scanned twice.
+        var door = new GeneratedDoor(new(200, 300, 5), DoorFacingType.WestCW);
+        _doors.With(MapType.Felucca, door, door);
+
+        Assert.Equal(new DecorationResult(1, 0, 0, 1), await Service().DecorateAsync(_progress));
+    }
+
+    [Fact]
     public async Task DecorateAsync_AMapWithoutDoorChunks_ReportsNoDoorFile()
     {
         var result = await Service(File("trammel", Block("Static", 0x0063))).DecorateAsync(_progress);

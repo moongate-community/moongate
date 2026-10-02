@@ -9,7 +9,8 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     A port of ModernUO's <c>DoorGenerator</c> over the map's terrain and statics: the same regions, door frames and
-///     doorways left open. Unlike ModernUO's <c>Map.CanFit</c> it does not look at world items.
+///     doorways left open, and the items on the ground count as in ModernUO's <c>Map.CanFit</c>: a doorway a
+///     decoration file walled up, or one that already has its door, gets none.
 /// </summary>
 public sealed class DoorGeneratorService : IDoorGeneratorService
 {
@@ -32,9 +33,11 @@ public sealed class DoorGeneratorService : IDoorGeneratorService
 
     private readonly IMapService _maps;
     private readonly ITileDataService _tiles;
+    private readonly ISectorService _sectors;
 
-    public DoorGeneratorService(IMapService maps, ITileDataService tiles)
+    public DoorGeneratorService(IMapService maps, ITileDataService tiles, ISectorService sectors)
     {
+        _sectors = sectors;
         _maps = maps;
         _tiles = tiles;
     }
@@ -199,8 +202,8 @@ public sealed class DoorGeneratorService : IDoorGeneratorService
         return CanFit(map, x, y, z);
     }
 
-    // ModernUO Map.CanFit(x, y, z, 16, false, false) over land and statics: nothing solid in the door's space, and a
-    // surface right under it.
+    // ModernUO Map.CanFit(x, y, z, 16, false, false): nothing solid in the door's space, static or item, and a surface
+    // right under it.
     private bool CanFit(MapType map, int x, int y, int z)
     {
         if (!_maps.Contains(map, x, y))
@@ -225,21 +228,45 @@ public sealed class DoorGeneratorService : IDoorGeneratorService
 
         foreach (var tile in _maps.GetStatics(map, x, y))
         {
-            var item = _tiles.GetItem(tile.Id);
-            var surface = (item.Flags & TileFlagType.Surface) != 0;
-            var impassable = (item.Flags & TileFlagType.Impassable) != 0;
-
-            if ((surface || impassable) && tile.Z + item.StandHeight > z && z + DoorHeight > tile.Z)
+            if (Blocks(tile.Id, tile.Z, z, ref hasSurface))
             {
                 return false;
             }
+        }
 
-            if (surface && !impassable && z == tile.Z + item.StandHeight)
+        foreach (var item in _sectors.GetItemsInRange(map, new(x, y, z), 0))
+        {
+            if (item.GroundLocation is { } spot && Blocks(item.ItemId, spot.Z, z, ref hasSurface))
             {
-                hasSurface = true;
+                return false;
             }
         }
 
         return hasSurface;
+    }
+
+    // Whether a static or an item with this graphic at tileZ stands in the door's space; one it can stand on sets
+    // hasSurface. A graphic the tile data does not know is ignored.
+    private bool Blocks(int graphic, int tileZ, int z, ref bool hasSurface)
+    {
+        if (!_tiles.TryGetItem(graphic, out var tile))
+        {
+            return false;
+        }
+
+        var surface = (tile.Flags & TileFlagType.Surface) != 0;
+        var impassable = (tile.Flags & TileFlagType.Impassable) != 0;
+
+        if ((surface || impassable) && tileZ + tile.StandHeight > z && z + DoorHeight > tileZ)
+        {
+            return true;
+        }
+
+        if (surface && !impassable && z == tileZ + tile.StandHeight)
+        {
+            hasSurface = true;
+        }
+
+        return false;
     }
 }

@@ -191,7 +191,9 @@ public sealed class DecorationService : IDecorationService, IDisposable
             await OnLoopAsync(() => doors.AddRange(_doors.Scan(map, chunk)));
         }
 
-        var blocks = doors.GroupBy(door => door.Facing)
+        // ModernUO's regions overlap: a frame in both is found twice.
+        var blocks = doors.Distinct()
+                          .GroupBy(door => door.Facing)
                           .OrderBy(group => group.Key)
                           .Select(
                               group => new DecorationBlock

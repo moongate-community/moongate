@@ -1,8 +1,10 @@
 using Moongate.Core.Geometry;
 using Moongate.Server.Ultima.Data.Decorations;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Decorations;
 using Moongate.Tests.TestSupport.Ultima.Maps;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Ultima.Types;
 
@@ -23,6 +25,44 @@ public sealed class DoorGeneratorServiceTests
     private readonly FakeMapService _map = new(64, 64);
     private readonly FakeTileDataService _tiles = new FakeTileDataService().Item(Wall, TileFlagType.Impassable, 20)
                                                                            .Item(Floor, TileFlagType.Surface, 0);
+
+    private readonly SectorService _sectors = TestSectors.Create();
+
+    [Fact]
+    public void Scan_ADoorwayWalledUpByAnItem_GivesNoDoor()
+    {
+        // A decoration file closes some doorways with a wall item, which ModernUO's CanFit sees.
+        _map.AddStatic(10, 10, WestFrame, 0).AddStatic(12, 10, EastFrame, 0);
+        Place(Wall, 11, 10, 0);
+
+        Assert.Empty(Scan());
+    }
+
+    [Fact]
+    public void Scan_ADoubleDoorwayWithAnItemInOneHalf_GivesNoDoorAtAll()
+    {
+        _map.AddStatic(10, 10, WestFrame, 0).AddStatic(13, 10, EastFrame, 0);
+        Place(Wall, 12, 10, 0);
+
+        Assert.Empty(Scan());
+    }
+
+    [Fact]
+    public void Scan_AnItemOnAnotherFloorOrWithoutSubstance_DoesNotCloseTheDoorway()
+    {
+        _map.AddStatic(10, 10, WestFrame, 0).AddStatic(12, 10, EastFrame, 0);
+        Place(Wall, 11, 10, 40);
+        Place(0x0EED, 11, 10, 0);
+
+        Assert.Single(Scan());
+    }
+
+    private void Place(int graphic, int x, int y, int z)
+    {
+        var item = new ItemEntity { Id = new((uint)(0x40000000 + _sectors.GetItemsInRange(MapType.Felucca, new(x, y, z), 64).Count + 1)), TemplateId = "decoration", ItemId = graphic, Amount = 1 };
+        item.PlaceOnGround(MapType.Felucca, new(x, y, z));
+        _sectors.AddItem(item);
+    }
 
     [Fact]
     public void Scan_AWestAndAnEastFrameTwoCellsApart_GiveOneDoorBetweenThem()
@@ -131,7 +171,7 @@ public sealed class DoorGeneratorServiceTests
     {
         var map = new FakeMapService(1400, 1700);
         map.AddStatic(1342, 1743, WestFrame, 0).AddStatic(1344, 1743, EastFrame, 0);
-        var generator = new DoorGeneratorService(map, _tiles);
+        var generator = new DoorGeneratorService(map, _tiles, _sectors);
 
         Assert.Empty(generator.Scan(MapType.Felucca, new(1340, 1740, 8, 8)));
     }
@@ -139,7 +179,7 @@ public sealed class DoorGeneratorServiceTests
     [Fact]
     public void ChunksOf_ALoadedMap_CoverItsDoorRegionsInsideTheMap_InSmallPieces()
     {
-        var generator = new DoorGeneratorService(new FakeMapService(1000, 1000), _tiles);
+        var generator = new DoorGeneratorService(new FakeMapService(1000, 1000), _tiles, _sectors);
 
         var chunks = generator.ChunksOf(MapType.Felucca);
 
@@ -155,7 +195,7 @@ public sealed class DoorGeneratorServiceTests
     [Fact]
     public void ChunksOf_AMapThatIsNotLoaded_OrHasNoDoorRegions_IsEmpty()
     {
-        var generator = new DoorGeneratorService(_map, _tiles);
+        var generator = new DoorGeneratorService(_map, _tiles, _sectors);
 
         Assert.Empty(generator.ChunksOf(MapType.Trammel));
         Assert.Empty(generator.ChunksOf(MapType.Tokuno));
@@ -163,6 +203,6 @@ public sealed class DoorGeneratorServiceTests
 
     private IReadOnlyList<GeneratedDoor> Scan(Rectangle2D? chunk = null)
     {
-        return new DoorGeneratorService(_map, _tiles).Scan(MapType.Felucca, chunk ?? Area);
+        return new DoorGeneratorService(_map, _tiles, _sectors).Scan(MapType.Felucca, chunk ?? Area);
     }
 }

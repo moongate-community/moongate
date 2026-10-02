@@ -19,7 +19,7 @@ public interface IDoorGeneratorService
 
     /// <summary>
     ///     Gets the doors of the frames inside <paramref name="chunk" />; the opposite frame and the door may lie outside
-    ///     it. A doorway that is walled up or has no floor gets none, and a double door only when both halves fit. Call it
+    ///     it. A doorway that is walled up, by the map or by an item on the ground, or has no floor gets none, and a double door only when both halves fit. Call it
     ///     from the game loop: it reads the map.
     /// </summary>
     IReadOnlyList<GeneratedDoor> Scan(MapType map, Rectangle2D chunk);
