@@ -4,7 +4,7 @@ This is the one first-start sequence for Moongate. It applies whether you instal
 the release with [the Linux installer](installation.md), run the
 [container image](docker.md), or build from source. Moongate is under active
 development: characters enter the world, walk and see each other, and NPCs and
-items run Lua scripts, but combat, pathfinding AI and most gameplay are not
+items run Lua scripts, but combat, a built-in NPC AI and most gameplay are not
 implemented yet. See [Implementation status](implementation-status.md).
 
 A server start needs a root, readable client files, the active role's PostgreSQL

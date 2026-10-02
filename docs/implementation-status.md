@@ -24,7 +24,8 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 ## What a player can do
 
 - Log in, pick a realm, create a character (with its starting items) and enter the world.
-- Walk and run, with the server checking the terrain, the statics and the speed.
+- Walk and run, with the server checking the terrain, the statics, the items in the way (a closed
+  door, a crate, a wall) and the speed.
 - See the other players within 18 tiles, and talk to them.
 - Open the backpack, move items in it, split and merge stacks, drop items on the ground and pick
   them up; items left on the ground decay.
@@ -36,14 +37,15 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - Step on a teleporter, or say the word of one that answers a word, and arrive elsewhere, also on
   another map; step into a moongate.
 - Read the game time and the moon phases where they stand: `.time`.
-- Meet NPCs that wander around their home, greet and answer.
+- Meet NPCs that wander around their home, greet and answer, and, when their script says so, walk to a
+  place or follow someone around what stands in the way.
 - Open the bank box at a banker by saying *bank*, in any client language.
 
 ## What a game master can do
 
 - Spawn and remove single NPCs: `.spawn`, `.remove`.
 - See the spawn regions where they stand: `.spawns`; get a message when regions spawn.
-- Go to any spot of any map: `.go`.
+- Go to any spot of any map: `.go`; walk through doors.
 - Lock and unlock doors and make their keys: `.lock`, `.unlock`, `.key`.
 - Force the light, the weather or the season, try a music track: `.globallight`, `.weather`,
   `.season`, `.music`.

@@ -71,7 +71,7 @@ written. Today the Lua surface has 5 events, 4 mobile functions and 9 item funct
 
 | Step | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- |
-| 3.1 | **Pathfinding** and movement that checks items and mobiles | AI cannot chase without it | |
+| 3.1 | **Pathfinding** and movement that checks items and mobiles. Done: the A* path search, `npc.walk_to`, and items that block; mobiles do not block yet | AI cannot chase without it | |
 | 3.2 | **NPC AI**: melee, archer, mage, animal, fleeing; NPC memory of who attacked | The 29,000 spawned NPCs become content | UOX3 NPC tags dropped today (`NPCAI`, `FLEEAT`, `SPATTACK`), ModernUO `npc-speeds.json` |
 | 3.3 | **Loot on corpses**, carving, fame and karma gain | Reward for the fight | UOX3 `carve.dfn` (102 tables) |
 | 3.4 | **Notoriety**: criminal and murderer flags, name colours, murder counts | Makes PvP rule-bound | |
