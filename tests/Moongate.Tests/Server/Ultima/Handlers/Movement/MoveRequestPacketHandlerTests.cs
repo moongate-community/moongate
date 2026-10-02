@@ -9,6 +9,8 @@ using Moongate.Server.Ultima.Handlers.Movement;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.Support.Timing;
@@ -89,6 +91,20 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         await StepAsync(DirectionType.South, 9);
 
         Assert.Empty(_moveOver.Steps);
+    }
+
+    [Theory]
+    [InlineData(AccountType.Regular, MovementAbilityType.Walk)]
+    [InlineData(AccountType.GameMaster, MovementAbilityType.Walk | MovementAbilityType.PassDoors)]
+    [InlineData(AccountType.Administrator, MovementAbilityType.Walk | MovementAbilityType.PassDoors)]
+    public async Task Handle_AStep_OnlyStaffWalksThroughDoors(AccountType account, MovementAbilityType expected)
+    {
+        await EnterAsync();
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, account));
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.Equal(expected, Assert.Single(_movement.Abilities));
     }
 
     [Fact]

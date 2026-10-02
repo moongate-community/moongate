@@ -14,5 +14,10 @@ public enum MovementAbilityType : byte
     /// <summary>
     ///     Water tiles, flagged <c>Wet</c>.
     /// </summary>
-    Swim = 2
+    Swim = 2,
+
+    /// <summary>
+    ///     Doors lying on the ground do not block, as for ModernUO's staff body and ghosts.
+    /// </summary>
+    PassDoors = 4
 }

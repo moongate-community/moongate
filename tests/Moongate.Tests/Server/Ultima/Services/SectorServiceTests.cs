@@ -125,6 +125,35 @@ public sealed class SectorServiceTests
     }
 
     [Fact]
+    public void GetItemsAt_GivesTheItemsOfThatCellOnly_AndFollowsThemWhenTheyMove()
+    {
+        var sectors = TestSectors.Create();
+        var door = new ItemEntity { Id = new Serial(0x40000010), TemplateId = "door", ItemId = 0x0675, Amount = 1 };
+        var sign = new ItemEntity { Id = new Serial(0x40000011), TemplateId = "sign", ItemId = 0x0BD2, Amount = 1 };
+        door.PlaceOnGround(MapType.Trammel, new Point3D(1496, 1628, 0));
+        sign.PlaceOnGround(MapType.Trammel, new Point3D(1496, 1628, 20));
+        sectors.AddItem(door);
+        sectors.AddItem(sign);
+
+        Assert.Equal([door, sign], sectors.GetItemsAt(MapType.Trammel, 1496, 1628));
+        Assert.Empty(sectors.GetItemsAt(MapType.Trammel, 1497, 1628));
+        Assert.Empty(sectors.GetItemsAt(MapType.Felucca, 1496, 1628));
+
+        // The door swings open onto the next cell.
+        door.PlaceOnGround(MapType.Trammel, new Point3D(1497, 1627, 0));
+        sectors.AddItem(door);
+
+        Assert.Equal([sign], sectors.GetItemsAt(MapType.Trammel, 1496, 1628));
+        Assert.Equal([door], sectors.GetItemsAt(MapType.Trammel, 1497, 1627));
+
+        sectors.RemoveItem(door);
+        sectors.RemoveItem(sign);
+
+        Assert.Empty(sectors.GetItemsAt(MapType.Trammel, 1497, 1627));
+        Assert.Empty(sectors.GetItemsAt(MapType.Trammel, 1496, 1628));
+    }
+
+    [Fact]
     public void GetItemsInRange_FindsAGroundItem()
     {
         var sectors = TestSectors.Create();

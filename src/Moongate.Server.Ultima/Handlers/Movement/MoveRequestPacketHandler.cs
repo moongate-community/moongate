@@ -1,6 +1,7 @@
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Internal.Movement;
 using Moongate.Server.Ultima.Data.Movement;
 using Moongate.Server.Ultima.Entities.World;
@@ -16,7 +17,7 @@ namespace Moongate.Server.Ultima.Handlers.Movement;
 /// <summary>
 ///     Moves the session's character one step (0x02): checks the sequence and the speed, then turns or steps it through
 ///     <see cref="IMobileService" /> and answers 0x22, or 0x21 with the real position; the players in range see the step or
-///     the turn through <see cref="IWorldViewService" />; the scripted items of the new cell are told of the step through
+///     the turn through <see cref="IWorldViewService" />; a game master or an administrator walks through doors; the scripted items of the new cell are told of the step through
 ///     <see cref="IMoveOverService" />.
 /// </summary>
 /// <remarks>
@@ -83,7 +84,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
 
         if (packet.Direction != mobile.Direction)
         {
-            _mobiles.TryMove(mobile, packet.Direction);
+            _mobiles.TryMove(mobile, packet.Direction, AbilityOf(session));
             Accept(session, state, mobile, packet.Sequence);
             _view.Moved(mobile, oldLocation, packet.Running);
 
@@ -92,7 +93,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
 
         var now = NowMs();
 
-        if (now + CreditMs < state.NextStepAt || _mobiles.TryMove(mobile, packet.Direction) != MoveResultType.Moved)
+        if (now + CreditMs < state.NextStepAt || _mobiles.TryMove(mobile, packet.Direction, AbilityOf(session)) != MoveResultType.Moved)
         {
             Reject(session, state, mobile, packet.Sequence);
 
@@ -106,6 +107,14 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         _view.Moved(mobile, oldLocation, packet.Running);
         // Last: a teleporter on the new cell moves the character again and restarts its sequence.
         _moveOver?.SteppedOn(mobile);
+    }
+
+    // Staff walks through doors, as ModernUO's game master body does.
+    private static MovementAbilityType AbilityOf(GameSession session)
+    {
+        return session.AccountType >= AccountType.GameMaster
+            ? MovementAbilityType.Walk | MovementAbilityType.PassDoors
+            : MovementAbilityType.Walk;
     }
 
     private void Accept(GameSession session, MovementState state, MobileEntity mobile, byte sequence)

@@ -4,6 +4,11 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Movement;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Movement;
+using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Tests.TestSupport.Ultima.Maps;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Ultima.Types;
 
@@ -311,6 +316,40 @@ public sealed class PathfindingServiceTests
 
         Assert.All(movement.Abilities, ability => Assert.Equal(MovementAbilityType.Swim, ability));
         Assert.NotEmpty(movement.Abilities);
+    }
+
+    [Fact]
+    public void FindPath_OverTheRealMovement_GoesAroundAClosedDoor_AndThroughItForWhoPassesDoors()
+    {
+        // A wall of crates across a 16x16 map with a closed door in it and a gap at its far end.
+        var map = new FakeMapService(16, 16);
+        var tiles = new FakeTileDataService()
+                    .Item(0x0E3D, TileFlagType.Impassable, 10)
+                    .Item(0x0675, TileFlagType.Impassable | TileFlagType.Door, 20);
+        var sectors = TestSectors.Create();
+        uint serial = 0x40000001;
+
+        for (var y = 0; y <= 13; y++)
+        {
+            var item = new ItemEntity { Id = new Serial(serial++), TemplateId = "thing", ItemId = y == 5 ? 0x0675 : 0x0E3D, Amount = 1 };
+            item.PlaceOnGround(MapType.Felucca, new Point3D(8, y, 0));
+            sectors.AddItem(item);
+        }
+
+        var paths = new PathfindingService(new MovementService(map, tiles, sectors), _world);
+
+        var walker = paths.FindPath(MapType.Felucca, new Point3D(6, 5, 0), new Point3D(10, 5, 0));
+        var staff = paths.FindPath(
+            MapType.Felucca,
+            new Point3D(6, 5, 0),
+            new Point3D(10, 5, 0),
+            MovementAbilityType.Walk | MovementAbilityType.PassDoors
+        );
+
+        Assert.Equal(PathResultType.Found, walker.Kind);
+        // Down to the gap at y 14 and back up.
+        Assert.True(walker.Steps.Count > 15, $"{walker.Steps.Count} steps");
+        Assert.Equal(Enumerable.Repeat(DirectionType.East, 4), staff.Steps);
     }
 
     private PathResult Find(Point3D from, Point3D to, bool allowPartial = false)
