@@ -10,7 +10,8 @@ namespace Moongate.Server.Ultima.Packets.World;
 
 /// <summary>
 ///     The items inside a container (0x3C), each at its position in the gump; clients from 6.0.1.7 also read a grid
-///     byte, the slot the Enhanced Client shows the item in. The items are copied when the packet is built, so later changes to them are not sent.
+///     byte, the slot the Enhanced Client shows the item in. The items are copied when the packet is built, so later
+///     changes to them are not sent.
 /// </summary>
 [PacketHandler(0x3C, PacketSizing.Variable, MinimumLength = HeaderLength)]
 public sealed class ContainerContentPacket : BasePacket<ContainerContentPacket>, IOutgoingPacket

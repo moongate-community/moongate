@@ -147,8 +147,9 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
         var worn = (await _items.QueryAsync(item => item.MobileId == mobile.Id)).Select(item => item.TemplateId).Order().ToList();
         Assert.Equal(mobile.Gender == GenderType.Male ? ["backpack", "helm", "pants"] : ["backpack", "helm", "skirt"], worn);
         Assert.Equal(worn.Count - 1, spawned.Equipment.Count);
-        var packed = (await _items.QueryAsync(item => item.ContainerId == spawned.Backpack.Id)).Select(item => item.TemplateId).Order();
-        Assert.Equal(["second_helm", "torch_on_wall"], packed);
+        var packedItems = await _items.QueryAsync(item => item.ContainerId == spawned.Backpack.Id);
+        Assert.Equal(["second_helm", "torch_on_wall"], packedItems.Select(item => item.TemplateId).Order());
+        Assert.Equal([(short?)0, (short?)1], packedItems.Select(item => item.GridIndex).Order());
     }
 
     [Fact]

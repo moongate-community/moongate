@@ -277,6 +277,14 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         _sectors.AddItem(rest);
         Index(rest);
 
+        // In a container the rest keeps the stack's grid slot and the lifted part takes a free one, as ServUO: when it
+        // bounces back, the two stacks must not share a slot.
+        if (item.ContainerId is { } container)
+        {
+            var others = GetContents(container).Where(other => !ReferenceEquals(other, item));
+            item.GridIndex = ContainerSlotUtils.FirstFree(others);
+        }
+
         // The rest stays where the stack lies, with the stack's decay time.
         if (rest.GroundLocation is not null)
         {

@@ -61,6 +61,11 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
         var stored = await _items.QueryAsync(item => item.MobileId == _mobile.Id || item.ContainerId == backpack.Id);
         Assert.Equal(given.Count, stored.Count);
 
+        // Each item in the backpack has its own grid slot, or the Enhanced Client shows one item of them all.
+        var slots = stored.Where(item => item.ContainerId == backpack.Id).Select(item => item.GridIndex).ToList();
+        Assert.True(slots.Count > 1);
+        Assert.Equal(Enumerable.Range(0, slots.Count).Select(slot => (short?)slot), slots.Order());
+
         var shirt = stored.Single(item => item.TemplateId == "shirt");
         Assert.Equal((LayerType.Shirt, (ushort)0x20), (shirt.Layer!.Value, shirt.Hue.Value));
 

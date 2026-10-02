@@ -11,6 +11,7 @@ FROM (
 ) AS numbered
 WHERE item.id = numbered.id AND item.grid_index IS NULL;
 
+ALTER TABLE world.items DROP CONSTRAINT IF EXISTS ck_items_grid_index;
 ALTER TABLE world.items
     ADD CONSTRAINT ck_items_grid_index CHECK (
         (container_id IS NULL) = (grid_index IS NULL) AND (grid_index IS NULL OR grid_index BETWEEN 0 AND 124)

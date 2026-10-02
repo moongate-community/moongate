@@ -67,7 +67,8 @@ public interface IItemService : IPersistenceDeletionSource
     IReadOnlyList<ItemEntity> GetWorn(Serial mobile);
 
     /// <summary>
-    ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump.
+    ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump, in the
+    ///     grid slot <paramref name="gridIndex" /> when it is free and otherwise in the next free one.
     /// </summary>
     void MoveToContainer(ItemEntity item, Serial container, Point2D position, int gridIndex = 0);
 

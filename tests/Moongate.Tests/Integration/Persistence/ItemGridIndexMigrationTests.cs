@@ -3,6 +3,7 @@ using Npgsql;
 
 namespace Moongate.Tests.Integration.Persistence;
 
+[Collection(PostgresTestCollection.Name)]
 public sealed class ItemGridIndexMigrationTests
 {
     private const string GridIndexMigration = "0011_item_grid_index.sql";

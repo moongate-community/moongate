@@ -10,8 +10,8 @@ namespace Moongate.Server.Ultima.Packets.General;
 
 /// <summary>
 ///     The player drops the item they hold (0x08, 15 bytes as clients from 6.0.1.7 send it): the item, the position,
-///     the grid slot the Enhanced Client asks for (0 from the classic client), and the container or item it was dropped on (0xFFFFFFFF for the ground).
-///     A position of -1, -1 means it was dropped on the container's icon.
+///     the grid slot the Enhanced Client asks for (0 from the classic client), and the container or item it was
+///     dropped on (0xFFFFFFFF for the ground). A position of -1, -1 means it was dropped on the container's icon.
 /// </summary>
 [PacketHandler(0x08, PacketSizing.Fixed, Length = 15, Description = "Drop request")]
 public sealed class DropRequestPacket : BaseFixedPacket<DropRequestPacket>, IIncomingPacket<DropRequestPacket>

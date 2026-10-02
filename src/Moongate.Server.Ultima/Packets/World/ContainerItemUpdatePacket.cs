@@ -31,7 +31,16 @@ public sealed class ContainerItemUpdatePacket : BasePacket<ContainerItemUpdatePa
     {
         ArgumentNullException.ThrowIfNull(item);
 
-        Item = new(item.Id, item.ItemId, item.Amount, item.GridX ?? 0, item.GridY ?? 0, (byte)(item.GridIndex ?? 0), item.ContainerId ?? default, item.Hue);
+        Item = new(
+            item.Id,
+            item.ItemId,
+            item.Amount,
+            item.GridX ?? 0,
+            item.GridY ?? 0,
+            (byte)(item.GridIndex ?? 0),
+            item.ContainerId ?? default,
+            item.Hue
+        );
         GridBytes = gridBytes;
         Length = gridBytes ? GridLength : ShortLength;
     }

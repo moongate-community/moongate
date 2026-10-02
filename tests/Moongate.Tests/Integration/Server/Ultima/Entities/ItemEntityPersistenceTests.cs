@@ -65,7 +65,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     {
         var mobile = await NewMobileAsync();
         var backpack = Item(0x40000001, i => i.Equip(mobile.Id, LayerType.Backpack));
-        var coin = Item(0x40000002, i => i.PutInContainer(backpack.Id, new Point2D(44, 65)));
+        var coin = Item(0x40000002, i => i.PutInContainer(backpack.Id, new Point2D(44, 65), 9));
         var wand = Item(0x40000003, i => i.PlaceOnGround(MapType.Trammel, new Point3D(1602, 1591, 20)));
         wand.SetProp(ItemPropKeys.Charges, 12);
         wand.SetProp(ItemPropKeys.Quality, ItemQualityType.Exceptional);
@@ -83,6 +83,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var loadedPack = (await _items.GetByIdAsync(backpack.Id))!;
 
         Assert.Equal((backpack.Id, new Point2D(44, 65), 250), (loadedCoin.ContainerId!.Value, loadedCoin.GridLocation!.Value, loadedCoin.Amount));
+        Assert.Equal(((short?)9, (short?)null, (short?)null), (loadedCoin.GridIndex, loadedWand.GridIndex, loadedPack.GridIndex));
         Assert.Equal((MapType.Trammel, new Point3D(1602, 1591, 20)), (loadedWand.Map!.Value, loadedWand.GroundLocation!.Value));
         Assert.Equal(12, loadedWand.GetProp<int>(ItemPropKeys.Charges));
         Assert.Equal(ItemQualityType.Exceptional, loadedWand.GetProp(ItemPropKeys.Quality, ItemQualityType.Regular));

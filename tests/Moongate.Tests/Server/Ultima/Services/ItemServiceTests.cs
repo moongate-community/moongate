@@ -173,6 +173,21 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void Split_InAContainer_KeepsTheRestInTheSlotAndGivesTheHeldPartAnother()
+    {
+        // The held part bounces back into the same container when the drop fails: two stacks, two slots.
+        var items = Service();
+        _coin.Amount = 100;
+        var slot = _coin.GridIndex;
+
+        var rest = items.Split(_coin, 30, new Serial(0x40000100));
+
+        Assert.Equal(slot, rest.GridIndex);
+        Assert.NotEqual(slot, _coin.GridIndex);
+        Assert.NotNull(_coin.GridIndex);
+    }
+
+    [Fact]
     public void Absorb_ForgetsTheItemAndQueuesItsDeletionForItsOwner()
     {
         var items = Service();
