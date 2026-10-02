@@ -73,6 +73,7 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<CharacterLeaveWorldService>(50);
         container.RegisterMapping<ISessionClosedListener, CharacterLeaveWorldService>();
         container.RegisterMapping<ICharacterLeaveWorldService, CharacterLeaveWorldService>();
+        container.Register<ICharacterEnterWorldService, CharacterEnterWorldService>(Reuse.Singleton);
         container.Register<ITargetService, TargetService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, ITargetService>();
         container.Register<IGumpService, GumpService>(Reuse.Singleton);

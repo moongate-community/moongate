@@ -36,10 +36,10 @@ The Ultima plugin adds these packets in game and standalone modes, with
 
 | Opcode | Class | Direction | Length | Handler |
 | --- | --- | --- | --- | --- |
-| `0x8D` | `CreateCharacterEnhancedPacket` | Incoming | Variable | `CreateCharacterEnhancedPacketHandler`: creates and saves the character and starting items |
+| `0x8D` | `CreateCharacterEnhancedPacket` | Incoming | Variable | `CreateCharacterEnhancedPacketHandler`: creates and saves the character and starting items, then brings it into the world |
 | `0xA9` | `CharacterListPacket` | Outgoing | Variable, minimum 6 | — |
 | `0xD9` | `ClientHardwareInfoPacket` | Incoming | Fixed 268 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0xF8` | `CreateCharacterPacket` | Incoming | Fixed 106 | `CreateCharacterPacketHandler`: creates and saves the character and starting items |
+| `0xF8` | `CreateCharacterPacket` | Incoming | Fixed 106 | `CreateCharacterPacketHandler`: creates and saves the character and starting items, then brings it into the world |
 | `0x5D` | `PlayCharacterPacket` | Incoming | Fixed 73 | `PlayCharacterPacketHandler`: brings the chosen character into the world |
 | `0x83` | `DeleteCharacterPacket` | Incoming | Fixed 39 | `DeleteCharacterPacketHandler`: marks the character for deletion |
 | `0x02` | `MoveRequestPacket` | Incoming | Fixed 7 | `MoveRequestPacketHandler`: turns or steps the character, answered with `0x22` or `0x21` |

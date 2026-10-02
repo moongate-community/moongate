@@ -1,73 +1,35 @@
 using Moongate.Core.Primitives;
-using Moongate.Core.Types.Geometry;
-using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Types.Login;
-using Moongate.Server.Core.Data.Sessions;
-using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Packets;
-using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Ultima.Data.Characters;
-using Moongate.Server.Ultima.Data.Events;
-using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Interfaces;
-using Moongate.Server.Ultima.Interfaces.Loaders;
-using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Packets.Characters;
-using Moongate.Server.Ultima.Packets.World;
-using Moongate.Server.Ultima.Types.Mobiles;
-using Moongate.Ultima.Primitives;
-using Moongate.Ultima.Types;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Handlers.Characters;
 
 /// <summary>
-///     Brings the character the client chose (0x5D) into the world: it sends the enter-world sequence the other
-///     emulators send (ModernUO's order), marks the character in the world and publishes
-///     <see cref="CharacterEnteredWorldEvent" /> after the login completes.
+///     Loads the character the client chose (0x5D) and brings it into the world through
+///     <see cref="ICharacterEnterWorldService" />.
 /// </summary>
 public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharacterPacket>
 {
     private readonly ILogger _logger = Log.ForContext<PlayCharacterPacketHandler>();
     private readonly ICharacterService _characters;
-    private readonly IMobileService _mobiles;
-    private readonly IItemService _items;
     private readonly ICharacterLeaveWorldService _leaves;
-    private readonly IDataLoaderService _data;
-    private readonly IMoongateEventBus _events;
-    private readonly ISessionService _sessions;
-    private readonly IMotdService _motd;
-    private readonly ILightService? _light;
-    private readonly ISeasonService? _seasons;
-    private readonly IWorldViewService _view;
+    private readonly ICharacterEnterWorldService _enter;
 
     public PlayCharacterPacketHandler(
         ICharacterService characters,
-        IMobileService mobiles,
-        IItemService items,
         ICharacterLeaveWorldService leaves,
-        IDataLoaderService data,
-        IMoongateEventBus events,
-        ISessionService sessions,
-        IWorldViewService view,
-        IMotdService motd,
-        ILightService? light = null,
-        ISeasonService? seasons = null
+        ICharacterEnterWorldService enter
     )
     {
-        _light = light;
-        _seasons = seasons;
         _characters = characters;
-        _mobiles = mobiles;
-        _items = items;
         _leaves = leaves;
-        _data = data;
-        _events = events;
-        _sessions = sessions;
-        _motd = motd;
-        _view = view;
+        _enter = enter;
     }
 
     public async ValueTask HandleAsync(
@@ -115,104 +77,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
             return;
         }
 
-        var character = play.Character;
-        var admitted = false;
-        await context.RunOnGameLoopAsync(
-                session =>
-                {
-                    // As ModernUO: one character per account in the world at a time.
-                    if (_sessions.GetAll()
-                        .Any(
-                            other => other.SessionId != session.SessionId &&
-                                     other.AccountId == accountId &&
-                                     other.CharacterId.IsValid
-                        ))
-                    {
-                        return;
-                    }
-
-                    // Together on the loop: a session retirement then always finds the character live.
-                    session.Set(SessionKeys.CharacterId, character.Id);
-                    _mobiles.EnterWorld(character);
-                    _items.Add(play.Equipment.Concat(play.Contents));
-                    admitted = true;
-                },
-                cancellationToken
-            );
-
-        if (!admitted)
-        {
-            _logger.Information("Account {AccountId} already has a character in the world", accountId);
-            await RefuseAsync(context, PopupMessageType.CharacterInWorld, cancellationToken);
-
-            return;
-        }
-
-        foreach (var outgoing in EnterWorldSequence(play))
-        {
-            context.TrySend(outgoing);
-        }
-
-        // After the sequence: the client must know where it stands before it is shown the others.
-        if (!await context.RunOnGameLoopAsync(
-                session => _view.Entered(character, session.SessionId, session.ClientVersion),
-                cancellationToken
-            ))
-        {
-            // The session closed during the sequence: its leave already ran, so the login never completed.
-            _logger.Information("Session {SessionId} closed while {Character} entered the world", context.SessionId, character);
-
-            return;
-        }
-
-        _logger.Information(
-            "Session {SessionId}: account {AccountId} entered the world with {Character}",
-            context.SessionId,
-            accountId,
-            character
-        );
-
-        await _motd.SendAsync(context, character, cancellationToken);
-
-        // As in every emulator, the login hook runs once the client knows the login is complete.
-        await _events.PublishAsync(new CharacterEnteredWorldEvent(character), CancellationToken.None);
-    }
-
-    private IEnumerable<IOutgoingPacket> EnterWorldSequence(CharacterForPlay play)
-    {
-        var character = play.Character;
-        var map = _data.GetEntities<MapContent>().FirstOrDefault(content => content.Map == character.Map);
-        var body = new Body((ushort)character.Body);
-        var flags = _mobiles.GetFlags(character);
-        var direction = character.Direction;
-
-        yield return new LoginConfirmPacket(
-            character.Id,
-            body,
-            character.Location,
-            direction,
-            map?.Size.X ?? 7168,
-            map?.Size.Y ?? 4096
-        );
-        yield return new MapChangePacket(character.Map);
-        yield return new SeasonChangePacket(_seasons?.SeasonOnLogin(character) ?? map?.Season ?? SeasonType.Summer, false);
-        yield return new GlobalLightLevelPacket(_light?.LevelOnLogin(character) ?? 0);
-        yield return new PersonalLightLevelPacket(character.Id, 0);
-        yield return new MobileUpdatePacket(character.Id, body, character.SkinHue, flags, character.Location, direction);
-        yield return new MobileIncomingPacket(
-            character.Id,
-            body,
-            character.Location,
-            direction,
-            character.SkinHue,
-            flags,
-            character.Notoriety ?? NotorietyType.Innocent,
-            _mobiles.GetEquipment(character, play.Equipment)
-        );
-        yield return new MobileStatusPacket(_mobiles.GetStatus(character));
-        yield return new WarModePacket(false);
-        yield return new LoginCompletePacket();
-        yield return new CurrentTimePacket(TimeOnly.FromDateTime(DateTime.UtcNow));
+        await _enter.EnterAsync(context, accountId, play, cancellationToken);
     }
 
     private static async Task RefuseAsync(PacketContext context, PopupMessageType popup, CancellationToken cancellationToken)
