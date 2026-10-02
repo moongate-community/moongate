@@ -22,6 +22,7 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Server.Services.GameLoop;
+using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
@@ -49,6 +50,8 @@ internal static class ServerRoleRegistration
         );
         container.RegisterDelegate<RedisConfig>(resolver => resolver.Resolve<MoongateServerConfig>().Redis, Reuse.Singleton);
         container.AddMoongateService<RedisConnectionService>(-1000);
+        container.RegisterInstance(config.Network.ToPingServerOptions());
+        container.AddMoongateService<PingServerService>();
         container.RegisterDelegate<RedisRealmDirectoryService>(
             resolver => new(
                 resolver.Resolve<RedisConnectionService>(),

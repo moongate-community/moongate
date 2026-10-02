@@ -6,7 +6,7 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**228 systems:** ✅ 61 done, 🟡 29 partly done, ❌ 138 not built yet.
+**229 systems:** ✅ 62 done, 🟡 29 partly done, ❌ 138 not built yet.
 
 **Coverage: 27%** of the systems done, **33%** counting a partly done system as half.
 
@@ -21,6 +21,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Character select, create and delete | ✅ | Deletion is delayed and can be restored by staff |
 | Message of the day | ✅ | Configurable and extensible |
 | Client versions and encryption | ✅ | POL-compatible encryption policies; Enhanced Client not tested |
+| UDP ping server | ✅ | Echoes pings on UDP 12000, as ModernUO does |
 | Keepalive and idle clients | ✅ | |
 | IP bans and firewall | ❌ | |
 | Account bans and kicks | ❌ | |
