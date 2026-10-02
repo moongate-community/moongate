@@ -103,6 +103,7 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<ItemModule>();
         container.AddScriptModule<WorldModule>();
         container.AddScriptModule<MobileModule>();
+        container.AddScriptModule<TargetModule>();
         container.AddScriptModule<GumpModule>();
         container.AddScriptModule<BankModule>();
         container.AddScriptModule<EffectModule>();
