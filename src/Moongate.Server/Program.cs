@@ -19,6 +19,7 @@ using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Helpers;
 using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Console;
+using Moongate.Server.Services.Logging;
 using Moongate.Server.Services.Console.Internal.Logging;
 using Moongate.Server.Services.Diagnostics;
 using Moongate.Server.Services.Diagnostics.Providers;
@@ -28,7 +29,6 @@ using Moongate.Server.Types.Persistence;
 using Moongate.Server.Ultima;
 using Serilog;
 using Serilog.Formatting.Compact;
-using Serilog.Templates;
 using Serilog.Templates.Themes;
 
 await ConsoleApp.RunAsync(
@@ -165,17 +165,21 @@ await ConsoleApp.RunAsync(
             .MinimumLevel
             .Verbose()
             .WriteTo
-            .Console(
-                new ExpressionTemplate(
-                    "{@t:HH:mm:ss.fff} {@l:u3} " +
-                    "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
-                    " | {@m}\n{@x}",
-                    theme: TemplateTheme.Code
-                )
-            )
+            .Console(ConsoleLogTemplate.Create(TemplateTheme.Code))
             .CreateLogger();
 
+        // An exception shows its message on the console and gets a report to paste into a GitHub issue.
         var loggingConfiguration = new LoggerConfiguration()
+            .Enrich
+            .With(
+                new ExceptionReportEnricher(
+                    new ExceptionReportWriter(
+                        Path.Combine(directoriesConfig["logs"], "errors"),
+                        VersionUtils.GetVersion(typeof(Program).Assembly),
+                        VersionUtils.GetCodename(typeof(Program).Assembly)
+                    )
+                )
+            )
             .WriteTo
             .Sink(new PromptAwareConsoleSink(consolePrompt, consoleLogger));
 
