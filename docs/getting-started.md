@@ -48,6 +48,18 @@ dotnet build Moongate.slnx -c Release
 `develop` includes unreleased work. To reproduce a release, check out its tag and
 use the documentation published for that version.
 
+Once the root is configured, `scripts/run_server.sh` does the build and the start in
+one step: it publishes a Release build of the server, `mgboot` and the migration runner
+into `dist/moongate`, runs `mgboot` on the root to add the shipped files it lacks, and
+starts the server on it:
+
+```sh
+scripts/run_server.sh --root-directory "$HOME/moongate"
+```
+
+`--skip-build` starts the build already in `dist/moongate`, `--build-only` publishes
+without starting, and everything after `--` goes to the server.
+
 ## First start
 
 1. **Prepare the root.** Give the server a directory of its own:
