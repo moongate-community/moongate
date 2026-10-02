@@ -34,6 +34,11 @@ public sealed class DecorationServiceTests
                 new ItemTemplate { Id = "decoration", ItemId = new Serial(0x0A28), Movable = false, Decays = false },
                 new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door" },
                 new ItemTemplate { Id = "decoration_teleporter", ItemId = new Serial(0x1BC3), Movable = false, Decays = false, ScriptId = "teleporter" },
+                new ItemTemplate
+                {
+                    Id = "decoration_keyword_teleporter", ItemId = new Serial(0x1BC3), Movable = false, Decays = false,
+                    ScriptId = "keyword_teleport"
+                },
                 new ItemTemplate { Id = "decoration_light", ItemId = new Serial(0x0A28), Movable = false, Decays = false, ScriptId = "light" }
             )
         );
@@ -146,7 +151,7 @@ public sealed class DecorationServiceTests
     {
         var file = File(
             "trammel",
-            Block("KeywordTeleporter", 0x1BC3),
+            Block("SkillTeleporter", 0x1BC3),
             Block("Spawner", 0x1F13),
             Block("MarkContainer", 0x0E80),
             Block("PublicMoongate", 0x0F6C),
@@ -162,7 +167,7 @@ public sealed class DecorationServiceTests
         Assert.Equal(
             new Dictionary<string, int>
             {
-                ["KeywordTeleporter"] = 1, ["Spawner"] = 1, ["MarkContainer"] = 1, ["PublicMoongate"] = 1,
+                ["SkillTeleporter"] = 1, ["Spawner"] = 1, ["MarkContainer"] = 1, ["PublicMoongate"] = 1,
                 ["AnvilEastAddon"] = 1
             },
             report.SkippedByType
@@ -191,6 +196,43 @@ public sealed class DecorationServiceTests
             new Dictionary<string, object?>
             {
                 ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["sound_id"] = 0x1FEL
+            },
+            teleporter.Props
+        );
+    }
+
+    [Fact]
+    public async Task DecorateAsync_PlacesAKeywordTeleporter_WithItsWordItsRangeAndItsDestination()
+    {
+        // As the shrines' mantras: the teleporter that answers "om om om" said on its cell.
+        var block = Block(
+            "KeywordTeleporter",
+            0x1BC3,
+            new Dictionary<string, object>
+            {
+                ["substring"] = "om om om", ["range"] = 0L, ["point_dest"] = new Point3D(1595, 2489, 20),
+                ["source_effect"] = "true", ["dest_effect"] = "true", ["sound_id"] = 0x1FEL, ["delay"] = "0:0:1"
+            },
+            new Point3D(1600, 2489, 12)
+        );
+        var file = File("trammel", block);
+
+        var result = await Service(file).DecorateAsync(_progress);
+        var again = await Service(file).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(1, 0, 0, 1), result);
+        Assert.Equal(new DecorationResult(0, 1, 0, 1), again);
+        var teleporter = Assert.Single(_items.Items);
+        Assert.Equal(
+            ("decoration_keyword_teleporter", 0x1BC3, (Point3D?)new Point3D(1600, 2489, 12)),
+            (teleporter.TemplateId, teleporter.ItemId, teleporter.GroundLocation)
+        );
+        Assert.Equal(
+            new Dictionary<string, object?>
+            {
+                ["substring"] = "om om om", ["range"] = 0L, ["teleport.x"] = 1595L, ["teleport.y"] = 2489L,
+                ["teleport.z"] = 20L, ["source_effect"] = "true", ["dest_effect"] = "true", ["sound_id"] = 0x1FEL,
+                ["delay"] = "0:0:1"
             },
             teleporter.Props
         );

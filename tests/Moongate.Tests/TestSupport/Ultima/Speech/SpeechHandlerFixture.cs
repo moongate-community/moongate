@@ -46,6 +46,8 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
     public SpeechRequestPacketHandler Handler { get; }
     public RecordingNpcSpeechListener Listener { get; } = new();
 
+    public RecordingItemSpeechListener ItemListener { get; } = new();
+
     /// <summary>
     ///     Gets what the handler published on the event bus for the speech of players.
     /// </summary>
@@ -85,7 +87,7 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
                 return Task.CompletedTask;
             }
         );
-        Handler = new(Commands, Sessions, Mobiles, Sender, localization, Listener, events);
+        Handler = new(Commands, Sessions, Mobiles, Sender, localization, Listener, events, ItemListener);
     }
 
     public static async Task<SpeechHandlerFixture> CreateAsync(ILogger? commandLogger = null, ILocalizationService? localization = null)

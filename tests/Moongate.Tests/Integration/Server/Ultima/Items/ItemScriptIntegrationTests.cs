@@ -1,3 +1,4 @@
+using Lua;
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -443,6 +444,92 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheShippedKeywordTeleporterScript_TheWordSaidOnItsCell_TeleportsWithSmokeAndSound()
+    {
+        var teleporter = PlaceKeywordTeleporter(Mantra());
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(1600, 1600);
+
+        scripts.Run(teleporter, "on_speech", 2L, "I say Om Om Om here", new LuaTable());
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
+        Assert.Equal([new Point3D(1600, 1600, 0), new Point3D(1595, 2489, 20)], _effects.At.Select(effect => effect.Location));
+        Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Theory,
+     InlineData("hello there", 1600, 1600, null),
+     InlineData("om om om", 1601, 1600, null),
+     InlineData("om om om", 1600, 1600, false)]
+    public async Task TheShippedKeywordTeleporterScript_AnotherWordOutOfRangeOrOff_DoesNothing(
+        string text,
+        int x,
+        int y,
+        bool? active
+    )
+    {
+        var props = Mantra();
+        props["active"] = active;
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(x, y);
+
+        scripts.Run(teleporter, "on_speech", 2L, text, new LuaTable());
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(x, y, 0), aria.Location);
+        Assert.Empty(_effects.At);
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public async Task TheShippedKeywordTeleporterScript_WithinItsRange_AnswersTheSpeechKeywordToo()
+    {
+        var props = Mantra();
+        props["range"] = 2L;
+        props["keyword"] = 0x3BL;
+        props["substring"] = null;
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(1602, 1598);
+        var keywords = new LuaTable();
+        keywords[1] = 0x3B;
+
+        scripts.Run(teleporter, "on_speech", 2L, "anything", keywords);
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
+    }
+
+    [Fact]
+    public async Task TheShippedKeywordTeleporterScript_WithADelay_TeleportsWhenItEndsIfThePlayerIsStillThere()
+    {
+        var props = Mantra();
+        props["delay"] = "0:0:1";
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(1600, 1600);
+
+        scripts.Run(teleporter, "on_speech", 2L, "om om om", new LuaTable());
+        var first = Assert.Single(_timers.Timers);
+        Assert.Equal((TimeSpan.FromSeconds(1), new Point3D(1600, 1600, 0)), (first.Interval, aria.Location));
+
+        // The player walked away before the second ended: as ModernUO, nothing happens.
+        aria.Location = new Point3D(1610, 1600, 0);
+        _timers.Fire(first.Id);
+        Assert.Equal(new Point3D(1610, 1600, 0), aria.Location);
+
+        aria.Location = new Point3D(1600, 1600, 0);
+        scripts.Run(teleporter, "on_speech", 2L, "om om om", new LuaTable());
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
+    }
+
+    [Fact]
     public async Task TheShippedTeleporterScript_ToItsOwnMap_Teleports()
     {
         var teleporter = PlaceTeleporter(
@@ -591,16 +678,57 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         return teleporter;
     }
 
-    private async Task<ItemScriptService> StartTeleporterScriptAsync()
+    private static Dictionary<string, object?> Mantra()
     {
-        _scripts.Write("items/teleporter.lua", File.ReadAllText(ShippedScript("items/teleporter.lua")));
+        return new()
+        {
+            ["substring"] = "om om om", ["range"] = 0L, ["teleport.x"] = 1595L, ["teleport.y"] = 2489L,
+            ["teleport.z"] = 20L, ["source_effect"] = "true", ["dest_effect"] = "true", ["sound_id"] = 0x1FEL
+        };
+    }
+
+    private MobileEntity AriaAt(int x, int y)
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.Map = MapType.Trammel;
+        aria.Location = new Point3D(x, y, 0);
+
+        return aria;
+    }
+
+    private ItemEntity PlaceKeywordTeleporter(Dictionary<string, object?> props)
+    {
+        var teleporter = new ItemEntity
+        {
+            Id = new Serial(0x40000031), TemplateId = "decoration_keyword_teleporter", ItemId = 0x1BC3, Amount = 1,
+            Props = props
+        };
+        teleporter.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 12));
+        _items.Add([teleporter]);
+
+        return teleporter;
+    }
+
+    private Task<ItemScriptService> StartKeywordTeleporterScriptAsync()
+    {
+        return StartItemScriptAsync("keyword_teleport", "decoration_keyword_teleporter");
+    }
+
+    private Task<ItemScriptService> StartTeleporterScriptAsync()
+    {
+        return StartItemScriptAsync("teleporter", "decoration_teleporter");
+    }
+
+    private async Task<ItemScriptService> StartItemScriptAsync(string script, string template)
+    {
+        _scripts.Write($"items/{script}.lua", File.ReadAllText(ShippedScript($"items/{script}.lua")));
         var engine = NewEngine();
         _engines.Add(engine);
         await engine.StartAsync();
         var scripts = new ItemScriptService(
             engine,
             new ItemTemplateService(
-                new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_teleporter", ScriptId = "teleporter" })
+                new StubDataLoaderService().With(new ItemTemplate { Id = template, ScriptId = script })
             ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }

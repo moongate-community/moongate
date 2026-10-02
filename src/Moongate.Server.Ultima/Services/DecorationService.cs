@@ -28,6 +28,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
     public const string LightTemplate = "decoration_light";
     public const string TeleporterTemplate = "decoration_teleporter";
     public const string TeleporterType = "Teleporter";
+    public const string KeywordTeleporterTemplate = "decoration_keyword_teleporter";
+    public const string KeywordTeleporterType = "KeywordTeleporter";
     public const string TeleportXProp = "teleport.x";
     public const string TeleportYProp = "teleport.y";
     public const string TeleportZProp = "teleport.z";
@@ -267,7 +269,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     }
                     else if (!seen.Add((map, location, block.ItemId!.Value)) ||
                              IsThere(map, location, block) ||
-                             block.Type == TeleporterType &&
+                             IsTeleporter(block.Type) &&
                              teleporters.Any(other => other.Map == map && SharesSpot(other.Location, location)))
                     {
                         present++;
@@ -276,7 +278,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     {
                         free.Add(candidate);
 
-                        if (block.Type == TeleporterType)
+                        if (IsTeleporter(block.Type))
                         {
                             teleporters.Add((map, location));
                         }
@@ -324,20 +326,31 @@ public sealed class DecorationService : IDecorationService, IDisposable
     }
 
     // Kinds whose behaviour is not written yet: a plain item in their place would look or act wrong. The plain
-    // teleporter is written (teleporter.lua); those that ask for a word, a skill or a quest are not.
+    // teleporter (teleporter.lua) and the one that answers a word (keyword_teleport.lua) are written; those that ask
+    // for a skill or a quest are not.
     private static bool IsSkipped(string type)
     {
         return type is "Spawner" or "MarkContainer" or "PublicMoongate" ||
-               type != TeleporterType && type.EndsWith("Teleporter", StringComparison.Ordinal) ||
+               !IsTeleporter(type) && type.EndsWith("Teleporter", StringComparison.Ordinal) ||
                type.EndsWith("Addon", StringComparison.Ordinal);
     }
 
     // A teleporter to a map that does not exist would send its players to that spot of its own map.
     private static bool HasUnknownMap(DecorationBlock block)
     {
-        return block.Type == TeleporterType &&
+        return IsTeleporter(block.Type) &&
                block.Props.GetValueOrDefault("map_dest") is { } name &&
                !(name is string text && EnumNameUtils.TryParse<MapType>(text, out _));
+    }
+
+    private static bool IsTeleporter(string type)
+    {
+        return type is TeleporterType or KeywordTeleporterType;
+    }
+
+    private static string TeleporterTemplateOf(string type)
+    {
+        return type == KeywordTeleporterType ? KeywordTeleporterTemplate : TeleporterTemplate;
     }
 
     private static bool IsDoor(string type)
@@ -355,12 +368,13 @@ public sealed class DecorationService : IDecorationService, IDisposable
         var graphic = block.ItemId!.Value;
         var isLight = LightKinds.ContainsKey(block.Type);
         var isDoor = IsDoor(block.Type);
-        var isTeleporter = block.Type == TeleporterType;
+        var isTeleporter = IsTeleporter(block.Type);
+        var teleporterTemplate = TeleporterTemplateOf(block.Type);
 
         return _sectors.GetItemsInRange(map, location, 1)
                        .Any(item => item.ItemId == graphic && item.GroundLocation == location ||
                                     isDoor && item.TemplateId == DoorTemplate && StandsInDoorway(item, location) ||
-                                    isTeleporter && item.TemplateId == TeleporterTemplate && SharesSpot(item, location) ||
+                                    isTeleporter && item.TemplateId == teleporterTemplate && SharesSpot(item, location) ||
                                     item.ItemId == graphic + 1 && IsOpenFrom(item, location) ||
                                     isLight && item.GroundLocation == location && item.TemplateId == LightTemplate &&
                                     Equals(item.Props?.GetValueOrDefault(TypeProp), block.Type));
@@ -405,9 +419,11 @@ public sealed class DecorationService : IDecorationService, IDisposable
     {
         var door = IsDoor(block.Type);
         var isLight = LightKinds.TryGetValue(block.Type, out var defaultLight);
-        var teleporter = block.Type == TeleporterType;
+        var teleporter = IsTeleporter(block.Type);
         var item = _factory.Create(
-            door ? DoorTemplate : isLight ? LightTemplate : teleporter ? TeleporterTemplate : DecorationTemplate
+            door ? DoorTemplate :
+            isLight ? LightTemplate :
+            teleporter ? TeleporterTemplateOf(block.Type) : DecorationTemplate
         );
         var props = new Dictionary<string, object?>(StringComparer.Ordinal);
         item.ItemId = block.ItemId!.Value;
@@ -424,7 +440,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     item.Name = name;
 
                     break;
-                // What teleporter.lua reads: the destination, and its map as a MapType number.
+                // What the teleporter scripts read: the destination, and its map as a MapType number.
                 case ("point_dest", Point3D destination) when teleporter:
                     props[TeleportXProp] = (long)destination.X;
                     props[TeleportYProp] = (long)destination.Y;

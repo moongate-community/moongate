@@ -42,6 +42,7 @@ public sealed class SpeechRequestPacketHandler :
     private readonly ILocalizationService? _localization;
     private readonly INpcSpeechListener? _npcs;
     private readonly IMoongateEventBus? _events;
+    private readonly IItemSpeechListener? _items;
 
     public SpeechRequestPacketHandler(
         ICommandSystemService commands,
@@ -50,9 +51,11 @@ public sealed class SpeechRequestPacketHandler :
         IPacketSendService sender,
         ILocalizationService? localization = null,
         INpcSpeechListener? npcs = null,
-        IMoongateEventBus? events = null
+        IMoongateEventBus? events = null,
+        IItemSpeechListener? items = null
     )
     {
+        _items = items;
         _events = events;
         _localization = localization;
         _npcs = npcs;
@@ -143,6 +146,7 @@ public sealed class SpeechRequestPacketHandler :
                 }
 
                 _npcs?.Heard(speaker, text, speech.Keywords);
+                _items?.Heard(speaker, text, speech.Keywords);
                 said = speaker;
             },
             cancellationToken
