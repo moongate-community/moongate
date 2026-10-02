@@ -364,12 +364,14 @@ destination that the command [`moongate`](commands/moongate.md) puts at a game m
 ModernUO's `Moongate`. On `on_move_over`, and on `on_use` from the next cell, it waits one second
 with `timer.after`, then takes the player, if it still stands there, to the props `teleport.x`,
 `teleport.y` and `teleport.z`, on the map of the prop `teleport.map` (a `MapType` number or its
-name; the player's own map without it), and plays `0x1FE`. A gate without the three numbers
-tells the player "This moongate does not seem to go anywhere." (message 30114). When the gate
+name; the player's own map without it), and plays `0x1FE`. A gate without the three
+numbers, with a map that does not exist or is not loaded, or with a spot outside the map tells the
+player "This moongate does not seem to go anywhere." (message 30114). Touching the gate again
+during the second starts nothing. When the gate
 stands in a guarded region and the destination does not (`world.is_guarded`), it asks first: a
 gump with OKAY and CANCEL and the sound `0x20E`; OKAY from more than a cell away tells "That is
-too far away." (message 393) with `mobile.message`. ModernUO's rules about criminals, young
-players, murderers, pets and dispelling the gate are not there yet.
+too far away." (message 393) with `mobile.message`. ModernUO's rules about sigils, young
+players, murderers, casting, pets and dispelling the gate are not there yet.
 
 `scripts/items/keyword_teleport.lua` is the script of the `decoration_keyword_teleporter`
 template that `.decorate` gives to ModernUO's `KeywordTeleporter`, such as the mantra of a

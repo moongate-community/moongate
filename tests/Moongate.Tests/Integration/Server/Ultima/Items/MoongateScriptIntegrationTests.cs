@@ -180,7 +180,7 @@ public sealed class MoongateScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_gumps.Opened);
     }
 
-    [Theory, InlineData(0L), InlineData("Felucca"), InlineData("0")]
+    [Theory, InlineData(0L), InlineData("Felucca"), InlineData("felucca"), InlineData("0")]
     public void AGateWithAMap_TakesThePlayerToThatMap(object map)
     {
         _gate.Props!["teleport.map"] = map;
@@ -257,9 +257,53 @@ public sealed class MoongateScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void AGateWithAMapThatDoesNotExist_SaysItGoesNowhere()
+    public void AGateWithACoordinateThatIsNotWhole_SaysItGoesNowhere()
     {
-        _gate.Props!["teleport.map"] = "Atlantis";
+        _gate.Props!["teleport.x"] = "12.5";
+
+        _itemScripts.Run(_gate, "on_move_over", 2L);
+        FireTimer();
+
+        Assert.Empty(_errors);
+        Assert.Equal(Wilderness, _aria.Location);
+        Assert.Equal((_aria, Nowhere), Assert.Single(_speech.Told));
+    }
+
+    [Fact]
+    public void AGateToAMapThatIsNotLoaded_SaysItGoesNowhere()
+    {
+        _gate.Props!["teleport.map"] = (long)MapType.Tokuno;
+
+        _itemScripts.Run(_gate, "on_move_over", 2L);
+        FireTimer();
+
+        Assert.Empty(_errors);
+        Assert.Equal((MapType.Trammel, Wilderness), (_aria.Map, _aria.Location));
+        Assert.Equal((_aria, Nowhere), Assert.Single(_speech.Told));
+        Assert.Empty(_speech.Sounds);
+    }
+
+    [Fact]
+    public void TouchingTheGateAgainDuringTheDelay_StartsNothing_AndTheGateWorksAgainAfterwards()
+    {
+        _aria.Location = new Point3D(Wilderness.X + 1, Wilderness.Y, Wilderness.Z);
+        _itemScripts.Run(_gate, "on_use", 2L);
+        _itemScripts.Run(_gate, "on_use", 2L);
+        _aria.Location = new Point3D(Wilderness.X + 3, Wilderness.Y, Wilderness.Z);
+        FireTimer();
+
+        _aria.Location = Wilderness;
+        _itemScripts.Run(_gate, "on_move_over", 2L);
+        FireTimer();
+
+        Assert.Empty(_errors);
+        Assert.Equal(Covetous, _aria.Location);
+    }
+
+    [Theory, InlineData("Atlantis"), InlineData(9L), InlineData(true)]
+    public void AGateWithAMapThatDoesNotExist_SaysItGoesNowhere(object map)
+    {
+        _gate.Props!["teleport.map"] = map;
 
         _itemScripts.Run(_gate, "on_move_over", 2L);
         FireTimer();

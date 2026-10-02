@@ -56,12 +56,46 @@ local function near(serial, who, range)
     return at
 end
 
+-- Who touched a gate and has not travelled yet: touching again meanwhile starts nothing.
+local pending = {}
+
+-- A whole number, as a prop set by hand may hold it as text; nil otherwise.
+local function whole(value)
+    local number = tonumber(value)
+
+    if number and number == math.floor(number) then
+        return number
+    end
+
+    return nil
+end
+
+-- The maps a gate may lead to; MapType cannot be walked with pairs.
+local map_names = { "Felucca", "Trammel", "Ilshenar", "Malas", "Tokuno", "TerMur" }
+
+-- The MapType of a number or of a name in any case, as a prop set by hand may hold it; nil for a map that does
+-- not exist.
+local function map_of(value)
+    local number = whole(value)
+    local name = type(value) == "string" and value:lower() or nil
+
+    for _, known in ipairs(map_names) do
+        local id = MapType[known]
+
+        if id ~= nil and (id == number or known:lower() == name) then
+            return id
+        end
+    end
+
+    return nil
+end
+
 -- The destination as { x, y, z, map }, the map being the player's own when the gate names none; nil for a gate
 -- that goes nowhere.
 local function destination_of(serial, at)
-    local x = tonumber(item.get_prop(serial, "teleport.x"))
-    local y = tonumber(item.get_prop(serial, "teleport.y"))
-    local z = tonumber(item.get_prop(serial, "teleport.z"))
+    local x = whole(item.get_prop(serial, "teleport.x"))
+    local y = whole(item.get_prop(serial, "teleport.y"))
+    local z = whole(item.get_prop(serial, "teleport.z"))
 
     if not (x and y and z) then
         return nil
@@ -71,21 +105,23 @@ local function destination_of(serial, at)
 
     if map == nil then
         map = at.map
-    elseif type(map) == "string" then
-        -- A prop set by hand may hold the name.
-        map = tonumber(map) or MapType[map]
+    else
+        map = map_of(map)
     end
 
-    if type(map) ~= "number" then
+    if not map then
         return nil
     end
 
     return { x = x, y = y, z = z, map = map }
 end
 
+-- A map that is not loaded or a spot outside it refuses the player.
 local function travel(who, destination)
     if mobile.teleport(who, destination.x, destination.y, destination.z, destination.map) then
         mobile.play_sound(who, arrival_sound)
+    else
+        mobile.message(who, localization.get(nowhere_message))
     end
 end
 
@@ -151,7 +187,13 @@ local function arrive(serial, who, range)
 end
 
 local function touch(serial, who, range)
+    if pending[who] then
+        return
+    end
+
+    pending[who] = true
     timer.after(delay, function()
+        pending[who] = nil
         arrive(serial, who, range)
     end)
 end
