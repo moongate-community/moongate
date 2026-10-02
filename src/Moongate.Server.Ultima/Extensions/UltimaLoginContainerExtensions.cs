@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services;
 
 namespace Moongate.Server.Ultima.Extensions;
@@ -39,6 +40,9 @@ public static class UltimaLoginContainerExtensions
         container.RegisterLoginPacketHandler<ClientVersionPacket, LoginRoleClientVersionPacketHandler>();
         container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
         container.RegisterLoginPacketHandler<ServerSelectPacket, LoginRoleServerSelectPacketHandler>();
+
+        // The Enhanced Client sends its hardware information right after the account login, before the server list.
+        container.RegisterLoginPacketHandler<ClientHardwareInfoPacket, LoginRoleIgnoredPacketHandler<ClientHardwareInfoPacket>>();
 
         return container;
     }

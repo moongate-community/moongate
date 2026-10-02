@@ -53,7 +53,8 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterPacketHandler<EquipRequestPacket, EquipRequestPacketHandler>();
 
         // Sent by the client around and after entering the world; recognised so it is not disconnected.
-        RegisterIgnoredPacket<ClientHardwareInfoPacket>(container);
+        // The packet itself is registered by the plugin for both roles: the login server receives it too.
+        container.RegisterPacketHandler<ClientHardwareInfoPacket, IgnoredPacketHandler<ClientHardwareInfoPacket>>();
         container.RegisterIncomingPacket<LookRequestPacket>();
         container.RegisterPacketHandler<LookRequestPacket, LookRequestPacketHandler>();
         RegisterIgnoredPacket<MobileQueryPacket>(container);

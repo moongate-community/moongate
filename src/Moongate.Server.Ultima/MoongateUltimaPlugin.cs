@@ -3,9 +3,11 @@ using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Data.Plugins;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Plugins;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Packets.General;
 
 namespace Moongate.Server.Ultima;
 
@@ -27,6 +29,9 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         RegisterTomlConverters();
 
         var mode = container.IsRegistered<ServerMode>() ? container.Resolve<ServerMode>() : ServerMode.Standalone;
+
+        // Sent on the login connection by the Enhanced Client and on the game connection by every client.
+        container.RegisterIncomingPacket<ClientHardwareInfoPacket>();
 
         if ((mode & ServerMode.Login) != 0)
         {

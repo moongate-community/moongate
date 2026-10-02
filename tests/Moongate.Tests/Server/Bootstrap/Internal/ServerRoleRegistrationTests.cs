@@ -86,6 +86,28 @@ public sealed class ServerRoleRegistrationTests
         Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30103));
     }
 
+    [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Standalone)]
+    public void Register_TheLoginRole_AcceptsTheHardwareInfoTheEnhancedClientSendsAtLogin(ServerMode mode)
+    {
+        // The Enhanced Client sends 0xD9 right after the account login: without a login handler it is disconnected.
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = mode };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: mode));
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        Assert.True(container.Resolve<PacketRegistry>().TryGetDescriptor(0xD9, PacketDirection.Incoming, out _));
+        Assert.Contains(typeof(ClientHardwareInfoPacket), container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys);
+    }
+
     [Theory, InlineData(0x09), InlineData(0xBF), InlineData(0xD6)]
     public void Register_TheTooltipRequests_AreIncomingPacketsTheFramerKnows(int opCode)
     {
