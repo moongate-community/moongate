@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services.Diagnostics;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Effects;
 using Moongate.Server.Ultima.Types.Speech;
 
 namespace Moongate.Server.Ultima.Extensions;
@@ -87,6 +88,7 @@ public static class UltimaWorldContainerExtensions
         container.RegisterMapping<ISessionClosedListener, IBankService>();
         container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
+        container.Register<IEffectService, EffectService>(Reuse.Singleton);
         container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
         container.Register<IMovementService, MovementService>(Reuse.Singleton);
         container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
@@ -98,8 +100,12 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<MobileModule>();
         container.AddScriptModule<GumpModule>();
         container.AddScriptModule<BankModule>();
+        container.AddScriptModule<EffectModule>();
         // No module function takes it: registered so on_speech can compare its keywords with names.
         container.RegisterScriptEnum<SpeechKeywordType>();
+        container.RegisterScriptEnum<EffectGraphicType>();
+        container.RegisterScriptEnum<EffectRenderModeType>();
+        container.RegisterScriptEnum<EffectLayerType>();
 
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
         container.AddLiveWorldMobiles();

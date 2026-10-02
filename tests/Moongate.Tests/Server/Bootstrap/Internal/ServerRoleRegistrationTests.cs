@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Types.Effects;
 using Moongate.Server.Ultima.Types.Speech;
 using DryIoc;
 using Moongate.Core.Directories;
@@ -223,6 +224,9 @@ public sealed class ServerRoleRegistrationTests
             Assert.NotNull(container.Resolve<WorldModule>());
             Assert.Contains(typeof(SpeechKeywordType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
             Assert.Contains("player_say", container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(e => e.Name));
+            Assert.IsType<EffectService>(container.Resolve<IEffectService>());
+            Assert.NotNull(container.Resolve<EffectModule>());
+            Assert.Contains(typeof(EffectGraphicType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
             Assert.IsType<BankService>(container.Resolve<IBankService>());
             Assert.IsType<CharacterEnterWorldService>(container.Resolve<ICharacterEnterWorldService>());
             Assert.NotNull(container.Resolve<BankModule>());
