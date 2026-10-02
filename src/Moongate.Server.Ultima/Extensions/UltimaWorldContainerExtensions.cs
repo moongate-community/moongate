@@ -46,6 +46,7 @@ public static class UltimaWorldContainerExtensions
         container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
         container.RegisterDelegate<INpcScriptService>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
         container.Register<INpcSpeechListener, NpcHearingService>(Reuse.Singleton);
+        container.Register<IItemSpeechListener, ItemHearingService>(Reuse.Singleton);
         container.Register<INpcSenseService, NpcSenseService>(Reuse.Singleton);
         // After the script engine (70), as the mobile scripts.
         container.AddMoongateService<IItemScriptService, ItemScriptService>(LuaScriptEngineService.StartupPriority + 5);

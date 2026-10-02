@@ -487,7 +487,9 @@ says whether it is lit. A door block with `locked = true` in its props places do
 staff open. An item with a `label_number` prop, such as a `LocalizedSign`, shows that text of the
 client as its name. A teleporter's `point_dest = [x, y, z]` becomes the props `teleport.x`,
 `teleport.y` and `teleport.z`, and its `map_dest` the prop `teleport.map`, a `MapType` number.
-Spawners, mark containers, public moongates, addons and the teleporters that ask for a word, a
-skill or a quest (`KeywordTeleporter`, `SkillTeleporter` and the like) are not placed yet. The doors of the towns are in no file:
+A `KeywordTeleporter` takes the template `decoration_keyword_teleporter`, with
+`script_id = "keyword_teleport"`, and keeps its `substring`, `keyword`, `range` and `delay` as props.
+Spawners, mark containers, public moongates, addons and the teleporters that ask for a
+skill or a quest (`SkillTeleporter`, `QuestTeleporter`) are not placed yet. The doors of the towns are in no file:
 `.decorate` reads them from the map's door frames.
 

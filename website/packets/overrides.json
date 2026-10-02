@@ -1804,7 +1804,7 @@
       }
     ],
     "notes": "Recognized by the Ultima plugin; packet handler status follows the current server registration.",
-    "handler": "SpeechRequestPacketHandler: speech to the players in range and dot commands; the keyword ids of encoded speech reach the on_speech of the NPCs."
+    "handler": "SpeechRequestPacketHandler: speech to the players in range and dot commands; the keyword ids of encoded speech reach the on_speech of the NPCs and of the scripted items."
   },
   "0xB5:incoming": {
     "category": "Chat",

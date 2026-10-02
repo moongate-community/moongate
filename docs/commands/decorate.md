@@ -23,8 +23,11 @@ who walks onto one stands on its destination at once ([teleporter script](../scr
 only staff sees them. Besides those of the town and dungeon files, each map folder has the
 teleporters of ModernUO's `[TelGen` (`teleporters.toml`, 1,478 in all); a cell keeps one teleporter
 within 12 of height, the first placed, so the 230 that a town or dungeon file already lists are
-reported as already there. Seven of Ter Mur lie outside its map in ModernUO's data and are skipped. A teleporter to another map takes the player there when that map is loaded, and does nothing otherwise. One whose `map_dest` names no map is skipped. Spawners, mark
-containers, public moongates, addons and the teleporters that ask for a word, a skill or a quest
+reported as already there. Seven of Ter Mur lie outside its map in ModernUO's data and are skipped. A teleporter to another map takes the player there when that map is loaded, and does nothing otherwise. One whose `map_dest` names no map is skipped. A
+`KeywordTeleporter`, such as the mantra of a shrine, gets the `decoration_keyword_teleporter`
+template: a player who says its word within its range stands on its destination
+([keyword teleporter script](../scripting.md)). Spawners, mark
+containers, public moongates, addons and the teleporters that ask for a skill or a quest
 are skipped for now: they need their own logic.
 
 The shop and world signs are decoration files too (`signs.toml` in each folder); a sign shows its
@@ -39,7 +42,7 @@ turn, so the game goes on meanwhile (about four seconds in all); each is reporte
 Each file is reported when it is done, in game as a system message and in the server log:
 
 ```text
-Decorating britannia/britain: 1180 placed, 3 already there, 12 skipped (KeywordTeleporter 8, Spawner 4).
+Decorating britannia/britain: 1180 placed, 3 already there, 5 skipped (SkillTeleporter 1, Spawner 4).
 ```
 
 The console and the in-game caller then get the totals:

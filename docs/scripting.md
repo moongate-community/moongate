@@ -282,6 +282,7 @@ script_id = "potion"
 | --- | --- |
 | `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Items inside a container lying on the ground cannot be used yet: the player reads "That is too far away.". A missing `on_use`, or one that raises an error, lets the default action follow. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled; after the wait the item may have moved, so check it again, for example `item.owner(serial) == user`. |
 | `on_move_over(serial, mobile)` | A player stepped onto the cell of the item, lying on the ground at the player's height, up to 14 above its feet, or below them and tall enough to reach them (ModernUO's rule). It runs after the step was acknowledged and shown to the players around; NPCs do not trigger it yet. Once a script moved the player off the cell, the other items of the cell are not run. Arriving by teleport does not trigger it, so two teleporters that point at each other do not loop. |
+| `on_speech(serial, speaker, text, keywords)` | A player said `text` within 15 cells of the item, lying on the ground (commands are not heard). `speaker` is the player's serial; `keywords` the speech keywords the client found, an array of numbers. Every scripted ground item in range is asked, after the NPCs, so a script checks its own range and words. It may call `wait`. |
 | `on_equip(serial, wearer)` | The item went onto a layer of the mobile `wearer`, dropped on the paperdoll. A worn item lifted and bounced back never left its layer, and items loaded or spawned already dressed raise nothing. It cannot refuse the item. |
 | `on_unequip(serial, wearer)` | The item left the layer of `wearer`: dropped in a container or on the ground, or merged into a stack (the item is gone then, so `item.*` gives `nil`). Logging out, removing an NPC or deleting a mobile with its items raise nothing. |
 | `on_pickup(serial, picker)` | The player `picker` lifts the item from a container, the paperdoll or the ground; lifting part of a stack lifts this item, and the rest left behind is not new. While it is held, `item.consume` and `item.delete` refuse it. A held item ends in `on_drop`, in `on_equip` when it is worn by a new wearer, or in nothing: when it bounces back, is worn again on the layer it came from, or its player logs out holding it. |
@@ -344,6 +345,14 @@ arrived (prop `dest_effect`), then plays the prop `sound_id` there when the tele
 number, takes the player to that map: the client changes map, then gets the season, the light,
 the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
 the accounts its visibility allows, so players walk onto a teleporter they never see.
+
+`scripts/items/keyword_teleport.lua` is the script of the `decoration_keyword_teleporter`
+template that `.decorate` gives to ModernUO's `KeywordTeleporter`, such as the mantra of a
+shrine: on `on_speech` it teleports the player who says the prop `substring` (found anywhere in
+the text, in any case) or whose client sends the speech keyword of the prop `keyword`, standing
+within `range` cells (0, the default, is the teleporter's own cell). With a `delay`
+(`"0:0:1"`, or a number of seconds) the teleport happens later, if the player still stands in
+range. The destination, the smoke, the sound and `active` are those of the plain teleporter.
 
 LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
 `{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,

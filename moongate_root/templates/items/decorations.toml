@@ -12,8 +12,9 @@
 #   movable    false: players cannot pick decoration up
 #   decays     false: decoration stays on the ground
 #   script_id  the item script of the doors (scripts/items/door.lua), of the
-#              lights (scripts/items/light.lua) and of the teleporters
-#              (scripts/items/teleporter.lua)
+#              lights (scripts/items/light.lua), of the teleporters
+#              (scripts/items/teleporter.lua) and of those that answer a word
+#              (scripts/items/keyword_teleport.lua)
 #   visibility game_master for the teleporters: players never see them
 # ==============================================================================
 
@@ -51,4 +52,14 @@ rarity = "common"
 movable = false
 decays = false
 script_id = "teleporter"
+visibility = "game_master"
+
+[[item]]
+id = "decoration_keyword_teleporter"
+base_id = "base_item"
+item_id = 0x1BC3
+rarity = "common"
+movable = false
+decays = false
+script_id = "keyword_teleport"
 visibility = "game_master"
