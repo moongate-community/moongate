@@ -6,7 +6,7 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**230 systems:** ✅ 63 done, 🟡 29 partly done, ❌ 138 not built yet.
+**230 systems:** ✅ 63 done, 🟡 30 partly done, ❌ 137 not built yet.
 
 **Coverage: 27%** of the systems done, **34%** counting a partly done system as half.
 
@@ -173,7 +173,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Books | ❌ | |
 | Maps and treasure maps | ❌ | |
 | Runes, recall and gates | ❌ | |
-| Moongates and teleporters | ❌ | |
+| Moongates and teleporters | 🟡 | Walk-on teleporters on the same map, placed by `.decorate`; no map change, no public moongates |
 | Dyes and dye tubs | ❌ | |
 | Secure trade | ❌ | |
 | Corpses | ❌ | |

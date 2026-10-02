@@ -474,14 +474,18 @@ setting per location in the order of `locations`.
 [`.decorate`](commands/decorate.md) places them with the templates of
 `templates/items/decorations.toml`: `decoration`, fixed and never decaying, for most kinds;
 `decoration_door`, the same with `script_id = "door"`, for the kinds whose name contains `Door`
-or `Gate`; and `decoration_light`, with `script_id = "light"`, for ModernUO's light kinds
-(candles, candelabras, lanterns, lamp posts, sconces, torches, braziers). Each item takes the
+or `Gate`; `decoration_light`, with `script_id = "light"`, for ModernUO's light kinds
+(candles, candelabras, lanterns, lamp posts, sconces, torches, braziers); and
+`decoration_teleporter`, with `script_id = "teleporter"` and `visibility = "game_master"`, for
+the kind `Teleporter`. Each item takes the
 block's graphic, `hue` and `name`; its other settings stay in the item's props, with
 `decoration_type` = the kind for a door or a light. A light also gets its `light` shape (the
 block's or the kind's) and `protected` unless the block says `unprotected`; the graphic already
 says whether it is lit. A door block with `locked = true` in its props places doors that only
 staff open. An item with a `label_number` prop, such as a `LocalizedSign`, shows that text of the
-client as its name. Teleporters, spawners, mark
-containers, public moongates and addons are not placed yet. The doors of the towns are in no file:
+client as its name. A teleporter's `point_dest = [x, y, z]` becomes the props `teleport.x`,
+`teleport.y` and `teleport.z`, and its `map_dest` the prop `teleport.map`, a `MapType` number.
+Spawners, mark containers, public moongates, addons and the teleporters that ask for a word, a
+skill or a quest (`KeywordTeleporter`, `SkillTeleporter` and the like) are not placed yet. The doors of the towns are in no file:
 `.decorate` reads them from the map's door frames.
 
