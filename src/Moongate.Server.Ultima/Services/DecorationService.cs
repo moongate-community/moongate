@@ -26,6 +26,12 @@ public sealed class DecorationService : IDecorationService, IDisposable
     public const string DecorationTemplate = "decoration";
     public const string DoorTemplate = "decoration_door";
     public const string LightTemplate = "decoration_light";
+    public const string TeleporterTemplate = "decoration_teleporter";
+    public const string TeleporterType = "Teleporter";
+    public const string TeleportXProp = "teleport.x";
+    public const string TeleportYProp = "teleport.y";
+    public const string TeleportZProp = "teleport.z";
+    public const string TeleportMapProp = "teleport.map";
     public const string LightProp = "light";
     public const string ProtectedProp = "protected";
     public const string TypeProp = "decoration_type";
@@ -304,11 +310,12 @@ public sealed class DecorationService : IDecorationService, IDisposable
         return new(file.Folder, file.Name, items.Count, present, skipped);
     }
 
-    // Kinds whose behaviour is not written yet: a plain item in their place would look or act wrong.
+    // Kinds whose behaviour is not written yet: a plain item in their place would look or act wrong. The plain
+    // teleporter is written (teleporter.lua); those that ask for a word, a skill or a quest are not.
     private static bool IsSkipped(string type)
     {
         return type is "Spawner" or "MarkContainer" or "PublicMoongate" ||
-               type.EndsWith("Teleporter", StringComparison.Ordinal) ||
+               type != TeleporterType && type.EndsWith("Teleporter", StringComparison.Ordinal) ||
                type.EndsWith("Addon", StringComparison.Ordinal);
     }
 
@@ -364,7 +371,10 @@ public sealed class DecorationService : IDecorationService, IDisposable
     {
         var door = IsDoor(block.Type);
         var isLight = LightKinds.TryGetValue(block.Type, out var defaultLight);
-        var item = _factory.Create(door ? DoorTemplate : isLight ? LightTemplate : DecorationTemplate);
+        var teleporter = block.Type == TeleporterType;
+        var item = _factory.Create(
+            door ? DoorTemplate : isLight ? LightTemplate : teleporter ? TeleporterTemplate : DecorationTemplate
+        );
         var props = new Dictionary<string, object?>(StringComparer.Ordinal);
         item.ItemId = block.ItemId!.Value;
 
@@ -379,6 +389,20 @@ public sealed class DecorationService : IDecorationService, IDisposable
                 case ("name", string name):
                     item.Name = name;
 
+                    break;
+                // What teleporter.lua reads: the destination, and its map as a MapType number.
+                case ("point_dest", Point3D destination) when teleporter:
+                    props[TeleportXProp] = (long)destination.X;
+                    props[TeleportYProp] = (long)destination.Y;
+                    props[TeleportZProp] = (long)destination.Z;
+
+                    break;
+                case ("map_dest", string mapName) when teleporter && EnumNameUtils.TryParse<MapType>(mapName, out var mapDest):
+                    props[TeleportMapProp] = (long)mapDest;
+
+                    break;
+                // An item's props keep no points.
+                case (_, Point3D):
                     break;
                 default:
                     props[key] = value;

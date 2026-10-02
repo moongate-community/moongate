@@ -33,6 +33,7 @@ public sealed class DecorationServiceTests
             new StubDataLoaderService().With(
                 new ItemTemplate { Id = "decoration", ItemId = new Serial(0x0A28), Movable = false, Decays = false },
                 new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door" },
+                new ItemTemplate { Id = "decoration_teleporter", ItemId = new Serial(0x1BC3), Movable = false, Decays = false, ScriptId = "teleporter" },
                 new ItemTemplate { Id = "decoration_light", ItemId = new Serial(0x0A28), Movable = false, Decays = false, ScriptId = "light" }
             )
         );
@@ -145,7 +146,6 @@ public sealed class DecorationServiceTests
     {
         var file = File(
             "trammel",
-            Block("Teleporter", 0x1BC3),
             Block("KeywordTeleporter", 0x1BC3),
             Block("Spawner", 0x1F13),
             Block("MarkContainer", 0x0E80),
@@ -156,17 +156,77 @@ public sealed class DecorationServiceTests
 
         var result = await Service(file).DecorateAsync(_progress);
 
-        Assert.Equal(new DecorationResult(2, 0, 6, 1), result);
+        Assert.Equal(new DecorationResult(2, 0, 5, 1), result);
         var report = Assert.Single(_progress.Reports);
-        Assert.Equal(("trammel", "town", 2, 0, 6), (report.Folder, report.Name, report.Placed, report.Present, report.Skipped));
+        Assert.Equal(("trammel", "town", 2, 0, 5), (report.Folder, report.Name, report.Placed, report.Present, report.Skipped));
         Assert.Equal(
             new Dictionary<string, int>
             {
-                ["Teleporter"] = 1, ["KeywordTeleporter"] = 1, ["Spawner"] = 1, ["MarkContainer"] = 1, ["PublicMoongate"] = 1,
+                ["KeywordTeleporter"] = 1, ["Spawner"] = 1, ["MarkContainer"] = 1, ["PublicMoongate"] = 1,
                 ["AnvilEastAddon"] = 1
             },
             report.SkippedByType
         );
+    }
+
+    [Fact]
+    public async Task DecorateAsync_PlacesATeleporter_WithItsDestinationAsProps()
+    {
+        var block = Block(
+            "Teleporter",
+            0x1BC3,
+            new Dictionary<string, object> { ["point_dest"] = new Point3D(5690, 569, 25), ["sound_id"] = 0x1FEL },
+            new Point3D(5827, 593, 0)
+        );
+
+        var result = await Service(File("trammel", block)).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(1, 0, 0, 1), result);
+        var teleporter = Assert.Single(_items.Items);
+        Assert.Equal(
+            ("decoration_teleporter", 0x1BC3, (Point3D?)new Point3D(5827, 593, 0)),
+            (teleporter.TemplateId, teleporter.ItemId, teleporter.GroundLocation)
+        );
+        Assert.Equal(
+            new Dictionary<string, object?>
+            {
+                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["sound_id"] = 0x1FEL
+            },
+            teleporter.Props
+        );
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ATeleporterToAnotherMap_KeepsTheMapAsItsNumber()
+    {
+        var block = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0), ["map_dest"] = "Tokuno" });
+
+        await Service(File("trammel", block)).DecorateAsync(_progress);
+
+        var props = Assert.Single(_items.Items).Props!;
+        Assert.Equal((long)MapType.Tokuno, props["teleport.map"]);
+        Assert.False(props.ContainsKey("map_dest"));
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ATeleporterAlreadyThere_IsNotPlacedAgain()
+    {
+        var file = File("trammel", Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) }));
+        await Service(file).DecorateAsync(_progress);
+
+        var again = await Service(file).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(0, 1, 0, 1), again);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_APointOnAnotherKind_IsNotKept()
+    {
+        var block = Block("Static", 0x0063, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) });
+
+        await Service(File("trammel", block)).DecorateAsync(_progress);
+
+        Assert.Null(Assert.Single(_items.Items).Props);
     }
 
     [Fact]
@@ -280,7 +340,7 @@ public sealed class DecorationServiceTests
     {
         var result = await Service(
                          File("trammel", Block("Static", 0x0063)),
-                         File("felucca", Block("Static", 0x0063), Block("Teleporter", 0x1BC3))
+                         File("felucca", Block("Static", 0x0063), Block("Spawner", 0x1F13))
                      )
                      .DecorateAsync(_progress);
 

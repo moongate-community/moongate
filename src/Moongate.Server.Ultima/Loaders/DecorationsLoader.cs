@@ -103,6 +103,11 @@ public sealed class DecorationsLoader : IDecorationsLoader
                 {
                     props[key] = value;
                 }
+                else if (value is TomlArray { Count: 3 } xyz && xyz.All(part => part is long))
+                {
+                    // A point, such as a teleporter's point_dest.
+                    props[key] = new Point3D((int)(long)xyz[0]!, (int)(long)xyz[1]!, (int)(long)xyz[2]!);
+                }
             }
         }
 
