@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Network.Packets.Data.Clients;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 
@@ -16,7 +17,7 @@ public sealed class RecordingWorldViewService : IWorldViewService
 
     public Action<string>? OnCall { get; set; }
 
-    public void Entered(MobileEntity mobile, long sessionId, ClientVersion? version)
+    public void Entered(MobileEntity mobile, long sessionId, ClientVersion? version, AccountType account = AccountType.Regular)
     {
         Record($"Entered {mobile.Id.Value} {sessionId}");
     }

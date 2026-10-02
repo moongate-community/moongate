@@ -3,7 +3,9 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
@@ -11,6 +13,7 @@ using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
@@ -27,6 +30,7 @@ public sealed class WorldViewServiceTests
 
     private readonly StubPacketSendService _sender = new();
     private readonly WorldConfig _world = new();
+    private readonly SectorService _sectors;
     private readonly MobileService _mobiles;
     private readonly ItemService _items;
     private readonly CapturingLogSink _log = new();
@@ -34,12 +38,12 @@ public sealed class WorldViewServiceTests
 
     public WorldViewServiceTests()
     {
-        var sectors = TestSectors.Create(_world);
-        _items = TestItems.Create(sectors);
-        _mobiles = new(new StubMovementService(), sectors);
+        _sectors = TestSectors.Create(_world);
+        _items = TestItems.Create(_sectors);
+        _mobiles = new(new StubMovementService(), _sectors);
         // The tooltip revisions (0xDC) are checked on their own below.
         _view = new(
-            sectors,
+            _sectors,
             _mobiles,
             _items,
             _sender.Ignore<PropertyListInfoPacket>(),
@@ -343,6 +347,61 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void AHiddenItem_IsShownOnlyToTheAccountsItsVisibilityAllows()
+    {
+        var view = ViewWithTemplates(new ItemTemplate { Id = "teleporter", Visibility = AccountType.GameMaster });
+        var hidden = Ground(0x40000060, 1498, 1628, "teleporter");
+        var aria = Mobile(2, 1496, 1628);
+        var boris = Mobile(3, 1500, 1628);
+        _mobiles.EnterWorld(aria);
+        _mobiles.EnterWorld(boris);
+
+        view.Entered(aria, AriaSession, null);
+        view.Entered(boris, BorisSession, null, AccountType.GameMaster);
+        view.ItemAppeared(hidden);
+        view.ShowItemTo(aria, hidden);
+        view.ShowItemTo(boris, hidden);
+
+        var shown = _sender.Sent.Select((packet, index) => (packet, _sender.SentSessionIds[index]))
+                           .Where(sent => sent.packet is WorldItemSaPacket)
+                           .Select(sent => sent.Item2);
+        Assert.Equal([BorisSession, BorisSession, BorisSession], shown);
+    }
+
+    [Fact]
+    public void Moved_IntoRangeOfAHiddenItem_DoesNotShowItToAPlayer()
+    {
+        var view = ViewWithTemplates(new ItemTemplate { Id = "teleporter", Visibility = AccountType.GameMaster });
+        Ground(0x40000060, 1500, 1628, "teleporter");
+        var aria = Mobile(2, 1481, 1628);
+        _mobiles.EnterWorld(aria);
+        view.Entered(aria, AriaSession, null);
+        ClearSent();
+        var old = aria.Location;
+        _mobiles.TryMove(aria, DirectionType.East);
+
+        view.Moved(aria, old, false);
+
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public void AnItemsOwnVisibility_WinsOverItsTemplates()
+    {
+        var view = ViewWithTemplates(new ItemTemplate { Id = "teleporter", Visibility = AccountType.GameMaster });
+        var shownToAll = Ground(0x40000060, 1498, 1628, "teleporter");
+        shownToAll.Visibility = AccountType.Regular;
+        var hidden = Ground(0x40000061, 1498, 1629);
+        hidden.Visibility = AccountType.Administrator;
+        var aria = Mobile(2, 1496, 1628);
+        _mobiles.EnterWorld(aria);
+
+        view.Entered(aria, AriaSession, null, AccountType.GameMaster);
+
+        Assert.Equal(shownToAll.Id, Assert.Single(_sender.Sent.OfType<WorldItemSaPacket>()).Serial);
+    }
+
+    [Fact]
     public void ItemAppeared_ShowsItToEveryoneInRange()
     {
         Enter(2, 1496, 1628, AriaSession);
@@ -464,13 +523,26 @@ public sealed class WorldViewServiceTests
         Assert.Equal([2, 0], _sender.Sent.OfType<WorldItemSaPacket>().Select(packet => packet.Light));
     }
 
-    private ItemEntity Ground(uint serial, int x, int y)
+    private ItemEntity Ground(uint serial, int x, int y, string template = "gold")
     {
-        var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        var item = new ItemEntity { Id = new Serial(serial), TemplateId = template, ItemId = 0x0EED, Amount = 1 };
         _items.Add([item]);
         _items.PlaceOnGround(item, MapType.Trammel, new Point3D(x, y, 0));
 
         return item;
+    }
+
+    private WorldViewService ViewWithTemplates(params ItemTemplate[] templates)
+    {
+        return new(
+            _sectors,
+            _mobiles,
+            _items,
+            _sender.Ignore<PropertyListInfoPacket>(),
+            TestTooltips.Create(_items, _mobiles),
+            _world,
+            templates: new ItemTemplateService(new StubDataLoaderService().With(templates))
+        );
     }
 
     private ItemEntity Worn(uint serial, MobileEntity wearer)
