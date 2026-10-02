@@ -170,30 +170,43 @@ internal static class CompletionScripts
     {
         var text = new StringBuilder();
         text.AppendLine("# fish completion for mgctl; load it with: mgctl completion fish | source");
+        text.AppendLine();
+        text.AppendLine("# Whether the words after mgctl start with the given ones: a root or a value named like a command");
+        text.AppendLine("# further on the line does not count.");
+        text.AppendLine("function __mgctl_is");
+        text.AppendLine("    set -l tokens (commandline -opc)");
+        text.AppendLine("    test (count $tokens) -gt (count $argv); or return 1");
+        text.AppendLine();
+        text.AppendLine("    for index in (seq (count $argv))");
+        text.AppendLine("        test \"$tokens[(math $index + 1)]\" = \"$argv[$index]\"; or return 1");
+        text.AppendLine("    end");
+        text.AppendLine("end");
+        text.AppendLine();
+        text.AppendLine("# Whether the line holds exactly this many words after mgctl before the one being typed.");
+        text.AppendLine("function __mgctl_words");
+        text.AppendLine("    test (count (commandline -opc)) -eq (math $argv[1] + 1)");
+        text.AppendLine("end");
+        text.AppendLine();
         text.AppendLine("complete -c mgctl -f");
 
         foreach (var word in FirstWords(commands))
         {
-            text.AppendLine($"complete -c mgctl -n '__fish_use_subcommand' -a {word} -d '{Quoted(FirstWordHelp(commands, word))}'");
+            text.AppendLine($"complete -c mgctl -n '__mgctl_words 0' -a {word} -d '{Quoted(FirstWordHelp(commands, word))}'");
         }
 
         foreach (var group in Groups(commands))
         {
-            var seconds = string.Join(' ', group.Select(SecondWord));
-
             foreach (var command in group)
             {
                 text.AppendLine(
-                    $"complete -c mgctl -n '__fish_seen_subcommand_from {group.Key}; and not __fish_seen_subcommand_from {seconds}' -a {SecondWord(command)} -d '{Quoted(command.Help)}'"
+                    $"complete -c mgctl -n '__mgctl_is {group.Key}; and __mgctl_words 1' -a {SecondWord(command)} -d '{Quoted(command.Help)}'"
                 );
             }
         }
 
         foreach (var command in commands)
         {
-            var condition = command.Path.Contains(' ')
-                ? $"__fish_seen_subcommand_from {command.Path.Split(' ')[0]}; and __fish_seen_subcommand_from {SecondWord(command)}"
-                : $"__fish_seen_subcommand_from {command.Path}";
+            var condition = $"__mgctl_is {command.Path}";
 
             foreach (var option in command.Options)
             {

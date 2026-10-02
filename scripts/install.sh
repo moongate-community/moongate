@@ -69,7 +69,8 @@ has() {
 }
 
 # Writes mgctl's completion script for a shell into the directory that shell reads, when the
-# directory exists. Never fatal: the server and mgctl are installed without it.
+# directory exists, and removes the one of an earlier release when this one has none. Never
+# fatal: the server and mgctl are installed without it.
 install_completion() {
     shell=$1
     directory=$2
@@ -77,11 +78,16 @@ install_completion() {
 
     [ -n "$directory" ] && [ -d "$directory" ] || return 0
 
-    if "${INSTALL_DIR}/mgctl" completion "$shell" >"${WORK_DIR}/completion" 2>/dev/null &&
-        [ -s "${WORK_DIR}/completion" ] &&
-        $SUDO cp "${WORK_DIR}/completion" "${directory}/${name}" 2>/dev/null; then
-        $SUDO chmod 0644 "${directory}/${name}" 2>/dev/null || true
-        echo "  completion ${directory}/${name}"
+    if [ -f "${INSTALL_DIR}/mgctl" ] &&
+        "${INSTALL_DIR}/mgctl" completion "$shell" >"${WORK_DIR}/completion" 2>/dev/null &&
+        [ -s "${WORK_DIR}/completion" ]; then
+        if $SUDO cp "${WORK_DIR}/completion" "${directory}/${name}" 2>/dev/null; then
+            $SUDO chmod 0644 "${directory}/${name}" 2>/dev/null || true
+            echo "  completion ${directory}/${name}"
+        fi
+    else
+        # This release has no completion: the script of another release would offer its commands.
+        $SUDO rm -f "${directory}/${name}" 2>/dev/null || true
     fi
 }
 
@@ -321,14 +327,12 @@ main() {
         fi
     done
 
-    if [ -f "${INSTALL_DIR}/mgctl" ]; then
-        install_completion bash \
-            "${MOONGATE_BASH_COMPLETION_DIR:-/usr/share/bash-completion/completions}" mgctl
-        install_completion zsh \
-            "${MOONGATE_ZSH_COMPLETION_DIR:-$(first_directory /usr/local/share/zsh/site-functions /usr/share/zsh/site-functions)}" _mgctl
-        install_completion fish \
-            "${MOONGATE_FISH_COMPLETION_DIR:-/usr/share/fish/vendor_completions.d}" mgctl.fish
-    fi
+    install_completion bash \
+        "${MOONGATE_BASH_COMPLETION_DIR:-/usr/share/bash-completion/completions}" mgctl
+    install_completion zsh \
+        "${MOONGATE_ZSH_COMPLETION_DIR:-$(first_directory /usr/local/share/zsh/site-functions /usr/share/zsh/vendor-completions /usr/share/zsh/site-functions)}" _mgctl
+    install_completion fish \
+        "${MOONGATE_FISH_COMPLETION_DIR:-/usr/share/fish/vendor_completions.d}" mgctl.fish
 
     cat <<'NEXT'
 

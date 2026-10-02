@@ -9,8 +9,6 @@ namespace Moongate.Ctl.Internal;
 /// </summary>
 internal static class CompletionCatalog
 {
-    public static readonly string[] Shells = ["bash", "zsh", "fish"];
-
     private static readonly CompletionOption[] MigrateOptions =
     [
         new("--target", "The database, auth or world", CompletionValueType.Choice, "auth", "world"),
@@ -18,6 +16,8 @@ internal static class CompletionCatalog
         new("--migrations-directory", "Core migrations directory", CompletionValueType.Directory),
         new("--plugins-directory", "Plugins directory also scanned for migrations", CompletionValueType.Directory)
     ];
+
+    public static string[] Shells { get; } = ["bash", "zsh", "fish"];
 
     public static IReadOnlyList<CompletionCommand> Commands { get; } =
     [

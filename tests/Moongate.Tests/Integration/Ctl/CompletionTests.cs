@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Moongate.Tests.TestSupport.Ctl;
 using Moongate.Tests.TestSupport.Directories;
@@ -79,7 +78,7 @@ public sealed class CompletionTests
 
         Assert.Equal(["auth", "world"], await CompleteAsync("mgctl", "migrate", "apply", "--target", ""));
         Assert.Equal(["world"], await CompleteAsync("mgctl", "migrate", "status", "--target", "w"));
-        // A directory only, and one with a space stays one word.
+        // A directory only; one with a space is one reply (bash quotes it when it inserts it).
         Assert.Equal(
             [Path.Combine(directory.Path, "my root")],
             await CompleteAsync("mgctl", "migrate", "apply", "--root-directory", directory.Path + "/")
@@ -100,7 +99,7 @@ public sealed class CompletionTests
         var script = Path.Combine(directory.Path, "_mgctl");
         File.WriteAllText(script, (await CtlProcess.RunAsync("completion", "zsh")).Output);
 
-        var result = await RunAsync("zsh", "-n", script);
+        var result = await ToolProcess.RunAsync("zsh", "-n", script);
 
         Assert.True(result.ExitCode == 0, result.Output);
     }
@@ -115,26 +114,9 @@ public sealed class CompletionTests
         var driver =
             $"source '{script}'; COMP_WORDS=({line}); COMP_CWORD={words.Length - 1}; _mgctl; " +
             "[ ${#COMPREPLY[@]} -eq 0 ] || printf '%s\\n' \"${COMPREPLY[@]}\"";
-        var result = await RunAsync("bash", "-c", driver);
+        var result = await ToolProcess.RunAsync("bash", "-c", driver);
         Assert.True(result.ExitCode == 0, result.Output);
 
         return result.Output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Order(StringComparer.Ordinal).ToList();
-    }
-
-    private static async Task<(int ExitCode, string Output)> RunAsync(string tool, params string[] arguments)
-    {
-        var start = new ProcessStartInfo(tool) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
-
-        foreach (var argument in arguments)
-        {
-            start.ArgumentList.Add(argument);
-        }
-
-        using var process = Process.Start(start)!;
-        var stdout = process.StandardOutput.ReadToEndAsync();
-        var stderr = process.StandardError.ReadToEndAsync();
-        await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(30));
-
-        return (process.ExitCode, await stdout + await stderr);
     }
 }

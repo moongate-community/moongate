@@ -8,7 +8,7 @@ namespace Moongate.Ctl.Internal;
 internal static class CompletionCommands
 {
     /// <summary>
-    ///     Prints the completion script of a shell; try it with: source &lt;(mgctl completion bash).
+    ///     Prints the script that completes mgctl with TAB in a shell.
     /// </summary>
     /// <param name="shell">
     ///     bash, zsh or fish.
