@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Targeting;
+using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Commands;
@@ -110,6 +111,8 @@ public sealed class KeyCommand : ICommandExecutor
         await OnLoopAsync(
             () =>
             {
+                // On the loop, where the backpack's contents are known: the key takes a free grid slot.
+                key.GridIndex = ContainerSlotUtils.FirstFree(_items.GetContents(container));
                 _items.Add([key]);
                 _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(key, session.UsesContainerGrid()));
                 _sender.TrySend(session.SessionId, _tooltips.Info(key));

@@ -124,6 +124,12 @@ default entry when the graphic has none), then `0x3C` with its direct contents, 
 Clients before 7.0.9.0 get the 7-byte `0x24`, and before 6.0.1.7 a `0x3C` without the grid byte;
 an unknown version gets the modern formats.
 
+The grid byte of `0x3C` and `0x25` is the item's slot (0 to 124) in the grid the Enhanced Client
+shows a container as; the classic client ignores it and uses the gump position. Every item gets a
+free slot when it enters a container, and keeps it in the database (`grid_index`). A drop (`0x08`)
+carries the slot the Enhanced Client asks for: the item takes it when it is free, otherwise the
+next free one. A container with more than 125 items shares slots.
+
 A double click on a mobile opens its paperdoll (`0x88`) when its body is human in
 `data/bodies.toml` (a monster has none) and it is on the character's map within
 `ultima.world.view_range` along X and Y; the character's own paperdoll button sends its serial

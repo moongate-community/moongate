@@ -7,6 +7,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -163,12 +164,15 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         return _items.Values.Where(item => GetOwner(item) == mobile).ToList();
     }
 
-    public void MoveToContainer(ItemEntity item, Serial container, Point2D position)
+    public void MoveToContainer(ItemEntity item, Serial container, Point2D position, int gridIndex = 0)
     {
         var wearer = item.MobileId;
         _sectors.RemoveItem(item);
         Unindex(item);
-        item.PutInContainer(container, position);
+
+        // Without the item itself: moved inside its own container it may keep its slot.
+        var others = GetContents(container).Where(other => !ReferenceEquals(other, item));
+        item.PutInContainer(container, position, ContainerSlotUtils.FirstFree(others, gridIndex));
         _decay?.Stop(item);
         WearerChanged(item, wearer);
     }

@@ -269,7 +269,7 @@ one place, and the database checks it:
 | Place | Columns | Set with |
 | --- | --- | --- |
 | On the ground | `map`, `x`, `y`, `z` | `PlaceOnGround(map, location)` |
-| In a container item | `container_id`, `grid_x`, `grid_y` | `PutInContainer(containerId, gridLocation)`; read back as `GridLocation` |
+| In a container item | `container_id`, `grid_x`, `grid_y`, `grid_index` | `PutInContainer(containerId, gridLocation, gridIndex)`; read back as `GridLocation` and `GridIndex`, the slot (0 to 124) in the Enhanced Client's grid |
 | Worn by a mobile | `mobile_id`, `layer` | `Equip(mobileId, layer)` |
 
 Items lying on the ground live in `IItemService` and the sector grid while the server runs:

@@ -22,6 +22,19 @@ public sealed class ContainerContentPacketTests
     }
 
     [Fact]
+    public void Encode_WithGridBytes_WritesTheSlotOfEachItem()
+    {
+        // The Enhanced Client lays the items out by this byte: the same value for all would show one item.
+        var first = Coins();
+        var second = new ItemEntity { Id = new(0x40000013), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        second.PutInContainer(Backpack, new Point2D(44, 65), 9);
+
+        var bytes = PacketCodec.Encode(new ContainerContentPacket([first, second], true));
+
+        Assert.Equal((0x00, 0x09), (bytes[5 + 13], bytes[5 + 20 + 13]));
+    }
+
+    [Fact]
     public void Encode_WithoutGridBytes_LeavesThemOut()
     {
         var packet = new ContainerContentPacket([Coins()], false);

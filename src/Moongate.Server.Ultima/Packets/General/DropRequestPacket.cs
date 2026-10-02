@@ -10,7 +10,7 @@ namespace Moongate.Server.Ultima.Packets.General;
 
 /// <summary>
 ///     The player drops the item they hold (0x08, 15 bytes as clients from 6.0.1.7 send it): the item, the position,
-///     a grid byte the server does not read, and the container or item it was dropped on (0xFFFFFFFF for the ground).
+///     the grid slot the Enhanced Client asks for (0 from the classic client), and the container or item it was dropped on (0xFFFFFFFF for the ground).
 ///     A position of -1, -1 means it was dropped on the container's icon.
 /// </summary>
 [PacketHandler(0x08, PacketSizing.Fixed, Length = 15, Description = "Drop request")]
@@ -23,6 +23,8 @@ public sealed class DropRequestPacket : BaseFixedPacket<DropRequestPacket>, IInc
     public required short Y { get; init; }
 
     public required sbyte Z { get; init; }
+
+    public required byte GridIndex { get; init; }
 
     public required Serial Destination { get; init; }
 
@@ -41,7 +43,7 @@ public sealed class DropRequestPacket : BaseFixedPacket<DropRequestPacket>, IInc
             !reader.TryReadUInt16BigEndian(out var x) ||
             !reader.TryReadUInt16BigEndian(out var y) ||
             !reader.TryReadByte(out var z) ||
-            !reader.TryReadByte(out _) ||
+            !reader.TryReadByte(out var gridIndex) ||
             !reader.TryReadUInt32BigEndian(out var destination))
         {
             return false;
@@ -50,6 +52,7 @@ public sealed class DropRequestPacket : BaseFixedPacket<DropRequestPacket>, IInc
         packet = new()
         {
             Item = new(item), X = unchecked((short)x), Y = unchecked((short)y), Z = unchecked((sbyte)z),
+            GridIndex = gridIndex,
             Destination = new(destination)
         };
 

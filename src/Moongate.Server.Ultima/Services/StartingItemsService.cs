@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Services;
@@ -113,7 +114,7 @@ public class StartingItemsService : IStartingItemsService
 
         foreach (var entry in entries)
         {
-            foreach (var item in CreateEntry(entry, request, backpack, usedLayers))
+            foreach (var item in CreateEntry(entry, request, backpack, usedLayers, given))
             {
                 await _factory.SaveAsync(transaction, item, cancellationToken);
                 given.Add(item);
@@ -151,7 +152,8 @@ public class StartingItemsService : IStartingItemsService
         StartingItemEntry entry,
         StartingItemsRequest request,
         ItemEntity backpack,
-        HashSet<LayerType> usedLayers
+        HashSet<LayerType> usedLayers,
+        IReadOnlyList<ItemEntity> given
     )
     {
         var templateId = entry.Items[BuiltInRng.Next(entry.Items.Count)];
@@ -171,7 +173,7 @@ public class StartingItemsService : IStartingItemsService
             }
             else
             {
-                PutInBackpack(item, backpack);
+                PutInBackpack(item, backpack, given);
             }
 
             yield return item;
@@ -199,8 +201,13 @@ public class StartingItemsService : IStartingItemsService
         }
     }
 
-    private void PutInBackpack(ItemEntity item, ItemEntity backpack)
+    // The items given so far tell which grid slots of the backpack are taken.
+    private void PutInBackpack(ItemEntity item, ItemEntity backpack, IReadOnlyList<ItemEntity> given)
     {
-        item.PutInContainer(backpack.Id, _layout.RandomGridPosition(backpack.ItemId));
+        item.PutInContainer(
+            backpack.Id,
+            _layout.RandomGridPosition(backpack.ItemId),
+            ContainerSlotUtils.FirstFree(given.Where(other => other.ContainerId == backpack.Id))
+        );
     }
 }

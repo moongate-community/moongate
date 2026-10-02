@@ -119,6 +119,40 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void MoveToContainer_GivesTheItemAFreeSlot()
+    {
+        var items = Service();
+
+        items.MoveToContainer(_dagger, _bag.Id, new Point2D(12, 34));
+
+        Assert.NotEqual(_coin.GridIndex, _dagger.GridIndex);
+    }
+
+    [Fact]
+    public void MoveToContainer_ToTheSlotTheClientAsksFor_KeepsItWhenFreeAndMovesOnWhenTaken()
+    {
+        var items = Service();
+        var taken = _coin.GridIndex!.Value;
+
+        items.MoveToContainer(_dagger, _bag.Id, new Point2D(12, 34), 9);
+        Assert.Equal((short)9, _dagger.GridIndex);
+
+        items.MoveToContainer(_dagger, _bag.Id, new Point2D(12, 34), taken);
+        Assert.Equal((short)(taken + 1), _dagger.GridIndex);
+    }
+
+    [Fact]
+    public void MoveToContainer_WithinTheSameContainer_MayKeepItsOwnSlot()
+    {
+        var items = Service();
+        var own = _coin.GridIndex!.Value;
+
+        items.MoveToContainer(_coin, _bag.Id, new Point2D(50, 50), own);
+
+        Assert.Equal(own, _coin.GridIndex);
+    }
+
+    [Fact]
     public void Split_LeavesTheRestAsANewLiveItemWhereTheStackWas()
     {
         var items = Service();

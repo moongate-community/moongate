@@ -31,7 +31,7 @@ public sealed class ContainerItemUpdatePacket : BasePacket<ContainerItemUpdatePa
     {
         ArgumentNullException.ThrowIfNull(item);
 
-        Item = new(item.Id, item.ItemId, item.Amount, item.GridX ?? 0, item.GridY ?? 0, item.ContainerId ?? default, item.Hue);
+        Item = new(item.Id, item.ItemId, item.Amount, item.GridX ?? 0, item.GridY ?? 0, (byte)(item.GridIndex ?? 0), item.ContainerId ?? default, item.Hue);
         GridBytes = gridBytes;
         Length = gridBytes ? GridLength : ShortLength;
     }
@@ -49,7 +49,7 @@ public sealed class ContainerItemUpdatePacket : BasePacket<ContainerItemUpdatePa
 
         if (GridBytes)
         {
-            writer.WriteByte(0); // Grid index: the client places the item itself.
+            writer.WriteByte(Item.GridIndex); // The slot in the Enhanced Client's grid.
         }
 
         writer.WriteSerial(Item.Container);
