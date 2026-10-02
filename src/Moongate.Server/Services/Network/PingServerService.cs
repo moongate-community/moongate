@@ -26,6 +26,8 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
 
     private readonly List<Task> _loops = [];
 
+    private bool _stopped;
+
     internal IReadOnlyList<IPEndPoint> LocalEndpoints => _sockets.Select(socket => (IPEndPoint)socket.LocalEndPoint!).ToArray();
 
     public PingServerService(PingServerOptions options)
@@ -51,18 +53,32 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
             catch (SocketException exception)
             {
                 socket.Dispose();
-                _logger.Warning(
-                    "Ping server cannot listen on {Endpoint}: {Reason}",
-                    endpoint,
-                    exception.SocketErrorCode
-                );
+                _logger.Debug("Ping server cannot listen on {Endpoint}: {Reason}", endpoint, exception.SocketErrorCode);
 
                 continue;
             }
 
+            // Read here and not in the loop: a stop right after the start disposes the socket before the loop runs.
+            var local = (IPEndPoint)socket.LocalEndPoint!;
             _sockets.Add(socket);
-            _loops.Add(Task.Run(() => EchoAsync(socket, _stopping.Token)));
-            _logger.Information("Ping server listening on {Endpoint} (UDP)", socket.LocalEndPoint);
+            _loops.Add(Task.Run(() => EchoAsync(socket, local, _stopping.Token)));
+            _logger.Debug("Ping server listening on {Endpoint} (UDP)", local);
+        }
+
+        var failed = _options.Endpoints.Count - _sockets.Count;
+
+        if (failed > 0)
+        {
+            _logger.Warning(
+                "Ping server cannot listen on {Failed} of {Total} UDP endpoints; is the port in use?",
+                failed,
+                _options.Endpoints.Count
+            );
+        }
+
+        if (_sockets.Count > 0)
+        {
+            _logger.Information("Ping server listening on {Count} UDP endpoints", _sockets.Count);
         }
 
         return Task.CompletedTask;
@@ -70,6 +86,12 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
 
     public async Task StopAsync()
     {
+        if (_stopped)
+        {
+            return;
+        }
+
+        _stopped = true;
         await _stopping.CancelAsync().ConfigureAwait(false);
 
         foreach (var socket in _sockets)
@@ -82,7 +104,7 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
         _loops.Clear();
     }
 
-    private async Task EchoAsync(Socket socket, CancellationToken cancellationToken)
+    private async Task EchoAsync(Socket socket, IPEndPoint local, CancellationToken cancellationToken)
     {
         // One byte more than the limit, so a datagram over it is seen as such instead of being cut to the limit.
         var buffer = new byte[_options.MaxDatagramSize + 1];
@@ -95,7 +117,7 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
                 var received = await socket.ReceiveFromAsync(buffer, SocketFlags.None, sender, cancellationToken)
                                            .ConfigureAwait(false);
 
-                if (received > _options.MaxDatagramSize)
+                if (!IsAnswered(received, GetPort(sender), local.Port, _options.MaxDatagramSize))
                 {
                     continue;
                 }
@@ -115,7 +137,30 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
             {
                 // An oversized datagram on Windows or an unreachable sender: this ping is lost, the next ones are not.
             }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Ping server stopped answering on {Endpoint}", local);
+
+                return;
+            }
         }
+    }
+
+    /// <summary>
+    ///     Tells whether a datagram gets its echo: not when it is over the size limit, and not when it comes from the
+    ///     ping port itself, which is another ping server's echo and would bounce between the two forever.
+    /// </summary>
+    internal static bool IsAnswered(int size, int senderPort, int localPort, int maxDatagramSize)
+    {
+        return size <= maxDatagramSize && senderPort != localPort;
+    }
+
+    // The port sits in network byte order after the two bytes of the address family, for IPv4 and IPv6 alike.
+    private static int GetPort(SocketAddress address)
+    {
+        var bytes = address.Buffer.Span;
+
+        return (bytes[2] << 8) | bytes[3];
     }
 
     public void Dispose()

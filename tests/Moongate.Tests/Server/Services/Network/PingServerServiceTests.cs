@@ -61,6 +61,27 @@ public sealed class PingServerServiceTests
         }
     }
 
+    [Theory,
+     InlineData(0, 40000, true),
+     InlineData(64, 40000, true),
+     InlineData(65, 40000, false),
+     InlineData(4, 12000, false)]
+    public void IsAnswered_DropsADatagramOverTheLimitOrFromAnotherPingServer(int size, int senderPort, bool expected)
+    {
+        // A datagram from the ping port of another host is an echo: answering it would bounce it back and forth forever.
+        Assert.Equal(expected, PingServerService.IsAnswered(size, senderPort, localPort: 12000, maxDatagramSize: 64));
+    }
+
+    [Fact]
+    public async Task StopAsync_Twice_DoesNotThrow()
+    {
+        var service = CreateService();
+        await service.StartAsync();
+
+        await service.StopAsync();
+        await service.StopAsync();
+    }
+
     [Fact]
     public async Task StartAsync_Disabled_BindsNothing()
     {
