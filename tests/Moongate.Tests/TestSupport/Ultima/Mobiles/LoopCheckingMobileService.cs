@@ -6,6 +6,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Ultima.Types;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
 
@@ -67,9 +68,9 @@ public sealed class LoopCheckingMobileService : IMobileService
         return _inner.TryMove(mobile, direction, ability);
     }
 
-    public bool MoveTo(MobileEntity mobile, Point3D location)
+    public bool MoveTo(MobileEntity mobile, MapType map, Point3D location)
     {
-        return _inner.MoveTo(mobile, location);
+        return _inner.MoveTo(mobile, map, location);
     }
 
     public bool IsInWorld(Serial mobile)

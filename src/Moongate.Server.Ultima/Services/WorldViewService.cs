@@ -66,6 +66,12 @@ public sealed class WorldViewService : IWorldViewService
     {
         var own = new Viewer(sessionId, version, account);
         _sessions[mobile.Id] = own;
+        ShowAround(mobile, own);
+    }
+
+    // Shows the mobile to the players in range and, when it is a player, everyone and every ground item in range to it.
+    private void ShowAround(MobileEntity mobile, Viewer? own)
+    {
         MobileIncomingPacket? incoming = null;
         var sent = new SentCounts();
 
@@ -76,13 +82,21 @@ public sealed class WorldViewService : IWorldViewService
                 continue;
             }
 
-            SendMobile(sessionId, other, Incoming(other));
-            sent.Add(other);
+            if (own is not null)
+            {
+                SendMobile(own.SessionId, other, Incoming(other));
+                sent.Add(other);
+            }
 
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
                 SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
             }
+        }
+
+        if (own is null)
+        {
+            return;
         }
 
         foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
@@ -101,9 +115,48 @@ public sealed class WorldViewService : IWorldViewService
         Relocated(mobile, oldLocation, running, false);
     }
 
-    public void Teleported(MobileEntity mobile, Point3D oldLocation)
+    public void Teleported(MobileEntity mobile, MapType oldMap, Point3D oldLocation)
     {
-        Relocated(mobile, oldLocation, false, true);
+        if (oldMap == mobile.Map)
+        {
+            Relocated(mobile, oldLocation, false, true);
+
+            return;
+        }
+
+        var remove = new RemoveEntityPacket(mobile.Id);
+        var own = _sessions.GetValueOrDefault(mobile.Id);
+
+        // As ModernUO's ClearScreen: the mover's client is told to drop what it saw on the old map, whose coordinates
+        // may be in range on the new one too.
+        foreach (var other in _sectors.GetMobilesInRange(oldMap, oldLocation, ViewRange))
+        {
+            if (other.Id == mobile.Id)
+            {
+                continue;
+            }
+
+            if (_sessions.TryGetValue(other.Id, out var viewer))
+            {
+                _sender.TrySend(viewer.SessionId, remove);
+            }
+
+            if (own is not null)
+            {
+                _sender.TrySend(own.SessionId, new RemoveEntityPacket(other.Id));
+            }
+        }
+
+        if (own is not null)
+        {
+            foreach (var item in _sectors.GetItemsInRange(oldMap, oldLocation, ViewRange))
+            {
+                _sender.TrySend(own.SessionId, new RemoveEntityPacket(item.Id));
+            }
+        }
+
+        // The mover is shown the new surroundings from nothing.
+        ShowAround(mobile, own);
     }
 
     private void Relocated(MobileEntity mobile, Point3D oldLocation, bool running, bool teleported)

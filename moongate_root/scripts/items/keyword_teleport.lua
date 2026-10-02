@@ -20,8 +20,8 @@
 --                  must still be in range then
 --   teleport.x, teleport.y, teleport.z   the destination; a teleporter without
 --                                        all three does nothing
---   teleport.map   the destination map (a MapType number); a teleporter to
---                  another map does nothing yet
+--   teleport.map   the destination map (a MapType number); without it the
+--                  player stays on its own map
 --   active         false turns the teleporter off
 --   source_effect  true shows a puff of smoke where the player left
 --   dest_effect    true shows a puff of smoke where the player arrived
@@ -111,19 +111,16 @@ local function teleport(serial, who)
         return
     end
 
+    -- A nil map keeps the player on its own.
     local map = item.get_prop(serial, "teleport.map")
-
-    if map and map ~= from.map then
-        return
-    end
 
     if is_on(item.get_prop(serial, "source_effect")) then
         effect.at(from.map, from.x, from.y, from.z, EffectGraphicType.Smoke)
     end
 
-    if mobile.teleport(who, x, y, z) then
+    if mobile.teleport(who, x, y, z, map) then
         if is_on(item.get_prop(serial, "dest_effect")) then
-            effect.at(from.map, x, y, z, EffectGraphicType.Smoke)
+            effect.at(map or from.map, x, y, z, EffectGraphicType.Smoke)
         end
 
         local sound = tonumber(item.get_prop(serial, "sound_id"))
