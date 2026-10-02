@@ -78,7 +78,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
-        _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender));
+        _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors));
         _container.AddScriptModule<MobileModule>();
         _container.RegisterInstance<IEffectService>(_effects);
         _container.AddScriptModule<EffectModule>();
@@ -366,9 +366,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     [InlineData(false, 5690L, null)]
     // No destination.
     [InlineData(null, null, null)]
-    // To another map: not yet.
+    // To a map that is not loaded.
     [InlineData(null, 5690L, 4L)]
-    public async Task TheShippedTeleporterScript_OffWithoutADestinationOrToAnotherMap_DoesNothing(bool? active, long? x, long? map)
+    public async Task TheShippedTeleporterScript_OffWithoutADestinationOrToAMapNotLoaded_DoesNothing(bool? active, long? x, long? map)
     {
         var props = new Dictionary<string, object?> { ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["sound_id"] = 0x1FEL };
 
@@ -440,6 +440,27 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
         Assert.Equal(expected, _effects.At.Select(effect => effect.Location));
         Assert.All(_effects.At, effect => Assert.Equal((aria.Map, (int)EffectGraphicType.Smoke), (effect.Map, effect.Options.Graphic)));
+    }
+
+    [Fact]
+    public async Task TheShippedTeleporterScript_ToAnotherMap_ChangesTheMap_AndSoundsThere()
+    {
+        var teleporter = PlaceTeleporter(
+            new()
+            {
+                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["teleport.map"] = (long)MapType.Felucca,
+                ["sound_id"] = 0x1FEL
+            }
+        );
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((MapType.Felucca, new Point3D(5690, 569, 25)), (aria.Map, aria.Location));
+        Assert.Equal(MapType.Felucca, Assert.Single(_fixture.Sender.Sent.OfType<MapChangePacket>()).Map);
+        Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
     }
 
     [Fact]

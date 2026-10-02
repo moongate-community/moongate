@@ -5,6 +5,7 @@ using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Modules;
 
@@ -28,16 +29,29 @@ public sealed class MobileModule
     }
 
     /// <summary>
-    ///     Teleports the mobile to <paramref name="x" />, <paramref name="y" />, <paramref name="z" /> of its own map;
-    ///     <c>mobile.teleport(who, 5690, 569, 25)</c>. A player's client is told where it stands; the players around the old
-    ///     spot lose the mobile and those around the new one see it.
+    ///     Teleports the mobile to <paramref name="x" />, <paramref name="y" />, <paramref name="z" /> of its own map, or
+    ///     of <paramref name="map" /> when given; <c>mobile.teleport(who, 5690, 569, 25)</c>,
+    ///     <c>mobile.teleport(who, 259, 785, 64, MapType.Tokuno)</c>. A player's client is told where it stands, after the
+    ///     map change when there is one; the players around the old spot lose the mobile and those around the new one
+    ///     see it.
     /// </summary>
-    [ScriptFunction(helpText: "Teleports the mobile to x, y, z on its map; false for a mobile not in the world, a spot outside the map or a z outside -128 to 127.")]
-    public bool Teleport(long serial, int x, int y, int z)
+    [ScriptFunction(helpText: "Teleports the mobile to x, y, z on its map, or on the given map (a MapType); false for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a z outside -128 to 127.")]
+    public bool Teleport(long serial, int x, int y, int z, double? map = null)
     {
-        return z is >= sbyte.MinValue and <= sbyte.MaxValue &&
-               TryGetMobile(serial, out var mobile) &&
-               _teleports.Teleport(mobile, new Point3D(x, y, z));
+        if (z is < sbyte.MinValue or > sbyte.MaxValue || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        if (map is not { } number)
+        {
+            return _teleports.Teleport(mobile, mobile.Map, new Point3D(x, y, z));
+        }
+
+        return Math.Floor(number) == number &&
+               number is >= byte.MinValue and <= byte.MaxValue &&
+               Enum.IsDefined((MapType)(byte)number) &&
+               _teleports.Teleport(mobile, (MapType)(byte)number, new Point3D(x, y, z));
     }
 
     /// <summary>

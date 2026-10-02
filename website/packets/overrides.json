@@ -2027,8 +2027,8 @@
         "description": "Map identifier."
       }
     ],
-    "notes": "Extended command subcommand 0x08 changes the client map.",
-    "handler": "PlayCharacterPacketHandler: sends the selected map during world entry."
+    "notes": "Extended command subcommand 0x08 changes the client map: sent on world entry and before the new position of a player teleported to another map.",
+    "handler": "PlayCharacterPacketHandler: sends the selected map during world entry. TeleportService: sends the new map to a player teleported across maps."
   },
   "0xBF:incoming": {
     "category": "World",

@@ -160,17 +160,29 @@ public sealed class MobileService : IMobileService
         return MoveResultType.Moved;
     }
 
-    public bool MoveTo(MobileEntity mobile, Point3D location)
+    public bool MoveTo(MobileEntity mobile, MapType map, Point3D location)
     {
-        if (!_inWorld.ContainsKey(mobile.Id) || !_sectors.IsInside(mobile.Map, location.X, location.Y))
+        if (!_inWorld.ContainsKey(mobile.Id) || !_sectors.IsInside(map, location.X, location.Y))
         {
             return false;
         }
 
+        var oldMap = mobile.Map;
         var oldLocation = mobile.Location;
+        mobile.Map = map;
         mobile.Location = location;
         _sectors.Move(mobile);
-        _senses?.Moved(mobile, oldLocation);
+
+        // On another map nobody around saw the mobile before, whatever its old coordinates.
+        if (map == oldMap)
+        {
+            _senses?.Moved(mobile, oldLocation);
+        }
+        else
+        {
+            _senses?.Appeared(mobile);
+        }
+
         _regions?.Moved(mobile);
 
         return true;

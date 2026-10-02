@@ -37,7 +37,27 @@ public sealed class MobileModuleTests
         var result = Run("return mobile.teleport(2, 5690, 569, 25)");
 
         Assert.True(result[0].Read<bool>());
-        Assert.Equal((_aria, new Point3D(5690, 569, 25)), Assert.Single(_teleports.Teleports));
+        Assert.Equal((_aria, MapType.Felucca, new Point3D(5690, 569, 25)), Assert.Single(_teleports.Teleports));
+    }
+
+    [Fact]
+    public void Teleport_WithAMap_AsksForTheTeleportToThatMap()
+    {
+        var result = Run("return mobile.teleport(2, 100, 200, 5, 4)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal((_aria, MapType.Tokuno, new Point3D(100, 200, 5)), Assert.Single(_teleports.Teleports));
+    }
+
+    [Theory,
+     InlineData("return mobile.teleport(2, 100, 200, 5, 6)"),
+     InlineData("return mobile.teleport(2, 100, 200, 5, -1)"),
+     InlineData("return mobile.teleport(2, 100, 200, 5, 1.5)")]
+    public void Teleport_ToAMapThatDoesNotExist_IsFalseAndAsksNothing(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+
+        Assert.Empty(_teleports.Teleports);
     }
 
     [Fact]
