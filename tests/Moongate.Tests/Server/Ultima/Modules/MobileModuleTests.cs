@@ -50,9 +50,30 @@ public sealed class MobileModuleTests
     }
 
     [Theory,
+     InlineData("return mobile.teleport(2, 100, 200, 5, 'Tokuno')"),
+     InlineData("return mobile.teleport(2, 100, 200, 5, 'tokuno')")]
+    public void Teleport_WithAMapName_AsksForTheTeleportToThatMap(string chunk)
+    {
+        Assert.True(Run(chunk)[0].Read<bool>());
+
+        Assert.Equal((_aria, MapType.Tokuno, new Point3D(100, 200, 5)), Assert.Single(_teleports.Teleports));
+    }
+
+    [Fact]
+    public void Teleport_WithANilMap_StaysOnTheMobilesMap()
+    {
+        Assert.True(Run("return mobile.teleport(2, 100, 200, 5, nil)")[0].Read<bool>());
+
+        Assert.Equal((_aria, MapType.Felucca, new Point3D(100, 200, 5)), Assert.Single(_teleports.Teleports));
+    }
+
+    [Theory,
      InlineData("return mobile.teleport(2, 100, 200, 5, 6)"),
      InlineData("return mobile.teleport(2, 100, 200, 5, -1)"),
-     InlineData("return mobile.teleport(2, 100, 200, 5, 1.5)")]
+     InlineData("return mobile.teleport(2, 100, 200, 5, 1.5)"),
+     InlineData("return mobile.teleport(2, 100, 200, 5, 'Atlantis')"),
+     InlineData("return mobile.teleport(2, 100, 200, 5, '4')"),
+     InlineData("return mobile.teleport(2, 100, 200, 5, true)")]
     public void Teleport_ToAMapThatDoesNotExist_IsFalseAndAsksNothing(string chunk)
     {
         Assert.False(Run(chunk)[0].Read<bool>());

@@ -63,14 +63,14 @@ locations = [[6014, 3787, 21]]
 comment = "teleporter"
 type = "Teleporter"
 item_id = 0x1BC3
-props = { point_dest = [5402, 1289, 0] }
+props = { point_dest = [5399, 1289, 0] }
 locations = [[5878, 3817, -2]]
 
 [[decoration]]
 comment = "teleporter"
 type = "Teleporter"
 item_id = 0x1BC3
-props = { point_dest = [5402, 1290, 0] }
+props = { point_dest = [5399, 1290, 0] }
 locations = [[5878, 3818, -2]]
 
 [[decoration]]

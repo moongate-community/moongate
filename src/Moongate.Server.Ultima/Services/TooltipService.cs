@@ -4,6 +4,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Tooltips;
 using Moongate.Server.Ultima.Data.Items;
@@ -85,7 +86,12 @@ public sealed class TooltipService : ITooltipService
         return new(mobile.Id, Build(mobile).Hash);
     }
 
-    public bool TryBuildFor(Serial viewer, Serial target, [NotNullWhen(true)] out PropertyList? list)
+    public bool TryBuildFor(
+        Serial viewer,
+        Serial target,
+        [NotNullWhen(true)] out PropertyList? list,
+        AccountType account = AccountType.Regular
+    )
     {
         list = null;
 
@@ -106,7 +112,7 @@ public sealed class TooltipService : ITooltipService
             return true;
         }
 
-        if (!_items.TryGet(target, out var item) || !IsVisibleTo(character, item))
+        if (!_items.TryGet(target, out var item) || !IsVisibleTo(character, item, account))
         {
             return false;
         }
@@ -210,7 +216,7 @@ public sealed class TooltipService : ITooltipService
 
     // Carried or worn by the viewer, worn by a mobile it sees (not its bank box), or lying on the ground in view; never
     // inside someone else's containers.
-    private bool IsVisibleTo(MobileEntity viewer, ItemEntity item)
+    private bool IsVisibleTo(MobileEntity viewer, ItemEntity item, AccountType account)
     {
         if (_items.GetOwner(item) is { } owner)
         {
@@ -224,7 +230,16 @@ public sealed class TooltipService : ITooltipService
         return item.Map is { } map &&
                item.GroundLocation is { } spot &&
                _items.IsLyingOnGround(item) &&
-               InView(viewer, map, spot);
+               InView(viewer, map, spot) &&
+               account >= VisibilityOf(item);
+    }
+
+    // The item's own visibility, else its template's; everyone sees an item with neither.
+    private AccountType VisibilityOf(ItemEntity item)
+    {
+        return item.Visibility ??
+               (_templates.TryGet(item.TemplateId, out var template) ? template.Visibility : null) ??
+               AccountType.Regular;
     }
 
     private bool InView(MobileEntity viewer, MapType map, Point3D location)

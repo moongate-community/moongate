@@ -40,14 +40,23 @@ internal static class ModernUoTeleporterConverter
 
         try
         {
-            using var document = JsonDocument.Parse(File.ReadAllText(source));
+            // As ModernUO's own reader: comments and trailing commas are fine.
+            using var document = JsonDocument.Parse(
+                File.ReadAllText(source),
+                new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true }
+            );
             var index = 0;
 
             foreach (var entry in document.RootElement.EnumerateArray())
             {
                 index++;
 
-                if (!TryReadPlace(entry, "src", out var from) || !TryReadPlace(entry, "dst", out var to))
+                JsonElement back = default;
+                var hasBack = entry.ValueKind == JsonValueKind.Object && entry.TryGetProperty("back", out back);
+
+                if (!TryReadPlace(entry, "src", out var from) ||
+                    !TryReadPlace(entry, "dst", out var to) ||
+                    hasBack && back.ValueKind is not (JsonValueKind.True or JsonValueKind.False))
                 {
                     error.WriteLine($"{source}: entry {index} is not a teleporter: {entry.GetRawText()}");
 
@@ -56,7 +65,7 @@ internal static class ModernUoTeleporterConverter
 
                 Add(teleporters[from.Map], from, to);
 
-                if (entry.TryGetProperty("back", out var back) && back.ValueKind == JsonValueKind.True)
+                if (hasBack && back.ValueKind == JsonValueKind.True)
                 {
                     Add(teleporters[to.Map], to, from);
                 }
@@ -65,6 +74,14 @@ internal static class ModernUoTeleporterConverter
         catch (Exception exception) when (exception is JsonException or InvalidOperationException)
         {
             error.WriteLine($"{source}: not valid JSON, or not a list of teleporters: {exception.Message}");
+
+            return 2;
+        }
+
+        // An empty list would only delete the files of an earlier run.
+        if (teleporters.All(list => list.Count == 0))
+        {
+            error.WriteLine($"{source}: no teleporters in it.");
 
             return 2;
         }
@@ -124,10 +141,15 @@ internal static class ModernUoTeleporterConverter
 
         var map = Array.FindIndex(Maps, known => known.Map == mapName.GetString());
 
+        var x = 0;
+        var y = 0;
+        var z = 0;
+
         if (map < 0 ||
-            !location[0].TryGetInt32(out var x) ||
-            !location[1].TryGetInt32(out var y) ||
-            !location[2].TryGetInt32(out var z))
+            location.EnumerateArray().Any(part => part.ValueKind != JsonValueKind.Number) ||
+            !location[0].TryGetInt32(out x) ||
+            !location[1].TryGetInt32(out y) ||
+            !location[2].TryGetInt32(out z))
         {
             return false;
         }

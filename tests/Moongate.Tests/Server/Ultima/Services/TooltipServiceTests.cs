@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Messages;
@@ -33,7 +34,8 @@ public sealed class TooltipServiceTests
                        new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Name = "robe of the magi", Weight = 2m },
                        new ItemTemplate { Id = "blessed_ring", ItemId = new Serial(0x108A), LootType = LootType.Blessed },
                        new ItemTemplate { Id = "feather", ItemId = new Serial(0x1BD1), Weight = 0.1m },
-                       new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false }
+                       new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false },
+                       new ItemTemplate { Id = "teleporter", ItemId = new Serial(0x1BC3), Visibility = AccountType.GameMaster }
                    )
                    .With(
                        new MessageContent { Id = 9055, Text = "[Benedetto]" },
@@ -332,6 +334,22 @@ public sealed class TooltipServiceTests
 
         Assert.False(_tooltips.TryBuildFor(Aria, box.Id, out _));
         Assert.True(_tooltips.TryBuildFor(Bran, box.Id, out _));
+    }
+
+    [Fact]
+    public void TryBuildFor_AHiddenGroundItem_IsBuiltOnlyForTheAccountsThatSeeIt()
+    {
+        var hidden = new ItemEntity { Id = new(0x40000006), TemplateId = "teleporter", ItemId = 0x1BC3, Amount = 1 };
+        _items.Add([hidden]);
+        _items.PlaceOnGround(hidden, MapType.Trammel, new Point3D(1005, 1000, 0));
+
+        Assert.False(_tooltips.TryBuildFor(Aria, hidden.Id, out _));
+        Assert.False(_tooltips.TryBuildFor(Aria, hidden.Id, out _, AccountType.Regular));
+        Assert.True(_tooltips.TryBuildFor(Aria, hidden.Id, out _, AccountType.GameMaster));
+
+        hidden.Visibility = AccountType.Administrator;
+
+        Assert.False(_tooltips.TryBuildFor(Aria, hidden.Id, out _, AccountType.GameMaster));
     }
 
     [Fact]

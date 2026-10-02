@@ -35,23 +35,26 @@ public sealed class MobileModule
     ///     map change when there is one; the players around the old spot lose the mobile and those around the new one
     ///     see it.
     /// </summary>
-    [ScriptFunction(helpText: "Teleports the mobile to x, y, z on its map, or on the given map (a MapType); false for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a z outside -128 to 127.")]
-    public bool Teleport(long serial, int x, int y, int z, double? map = null)
+    [ScriptFunction(helpText: "Teleports the mobile to x, y, z on its map, or on the given map (a MapType or its name); false for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a z outside -128 to 127.")]
+    public bool Teleport(long serial, int x, int y, int z, object? map = null)
     {
         if (z is < sbyte.MinValue or > sbyte.MaxValue || !TryGetMobile(serial, out var mobile))
         {
             return false;
         }
 
-        if (map is not { } number)
+        // A MapType as scripts see it, a number, or its name, as a prop set by hand may hold it.
+        MapType? destination = map switch
         {
-            return _teleports.Teleport(mobile, mobile.Map, new Point3D(x, y, z));
-        }
+            null => mobile.Map,
+            double number when Math.Floor(number) == number &&
+                               number is >= byte.MinValue and <= byte.MaxValue &&
+                               Enum.IsDefined((MapType)(byte)number) => (MapType)(byte)number,
+            string name when !name.Any(char.IsDigit) && Enum.TryParse<MapType>(name, true, out var named) => named,
+            _ => null
+        };
 
-        return Math.Floor(number) == number &&
-               number is >= byte.MinValue and <= byte.MaxValue &&
-               Enum.IsDefined((MapType)(byte)number) &&
-               _teleports.Teleport(mobile, (MapType)(byte)number, new Point3D(x, y, z));
+        return destination is { } target && _teleports.Teleport(mobile, target, new Point3D(x, y, z));
     }
 
     /// <summary>

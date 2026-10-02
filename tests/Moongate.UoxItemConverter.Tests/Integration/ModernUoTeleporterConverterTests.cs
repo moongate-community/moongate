@@ -136,6 +136,9 @@ public sealed class ModernUoTeleporterConverterTests : IDisposable
     [InlineData("""[{ "src": { "map": "Atlantis", "loc": [1, 2, 3] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""", "entry 1")]
     [InlineData("""[{ "src": { "map": "Trammel", "loc": [1, 2] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""", "entry 1")]
     [InlineData("""[{ "src": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""", "entry 1")]
+    [InlineData("""[{ "src": { "map": "Trammel", "loc": [1, 2, 3] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": "true" }]""", "entry 1")]
+    [InlineData("""[{ "src": { "map": "Trammel", "loc": [1, "2", 3] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""", "entry 1")]
+    [InlineData("[]", "no teleporters")]
     [InlineData("this is not json", "not valid JSON")]
     public void Run_ABadFile_FailsNamingTheProblem_AndWritesNothing(string json, string expected)
     {
@@ -145,6 +148,45 @@ public sealed class ModernUoTeleporterConverterTests : IDisposable
 
         Assert.Contains(expected, _error.ToString());
         Assert.False(Directory.Exists(Destination));
+    }
+
+    [Fact]
+    public void Run_ABadEntryAfterGoodOnes_KeepsTheFilesOfAnEarlierRun()
+    {
+        Write(Entry("Trammel", 10, 10, 0, "Trammel", 50, 60, 5));
+        Assert.True(Run() == 0, CombinedOutput);
+        Write(Entry("Trammel", 20, 20, 0, "Trammel", 50, 60, 5), Entry("Atlantis", 1, 1, 0, "Trammel", 2, 2, 0));
+
+        Assert.Equal(2, Run());
+
+        Assert.Contains("entry 2", _error.ToString());
+        Assert.Equal([[10L, 10L, 0L]], Locations(Assert.Single(Read("trammel"))));
+    }
+
+    [Fact]
+    public void Run_CommentsAndTrailingCommas_AreRead_AsModernUoReadsThem()
+    {
+        File.WriteAllText(Source, "[\n// the first\n" + Entry("Trammel", 10, 10, 0, "Trammel", 50, 60, 5) + ",\n]");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Single(Read("trammel"));
+    }
+
+    [Fact]
+    public void Run_BackOnASpotThatHasATeleporter_ReplacesIt()
+    {
+        Write(
+            Entry("Trammel", 50, 60, 5, "Trammel", 1, 1, 0),
+            Entry("Trammel", 10, 10, 0, "Trammel", 50, 60, 5, true)
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var blocks = Read("trammel");
+        Assert.Equal(2, blocks.Count);
+        var back = Assert.Single(blocks, block => Locations(block)[0][0] == 50L);
+        Assert.Equal([10L, 10L, 0L], ((TomlArray)((TomlTable)back["props"])["point_dest"]).Cast<long>());
     }
 
     [Fact]

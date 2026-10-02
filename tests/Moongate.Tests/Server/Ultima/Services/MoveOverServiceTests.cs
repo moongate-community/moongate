@@ -1,8 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
-using Moongate.Scripting.Data.Scripts;
 using Moongate.Server.Ultima.Entities.World;
-using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -88,37 +86,5 @@ public sealed class MoveOverServiceTests
         var item = new ItemEntity { Id = new Serial(serial), TemplateId = template, ItemId = graphic, Amount = 1 };
         _items.Add([item]);
         _items.PlaceOnGround(item, MapType.Trammel, new Point3D(x, y, z));
-    }
-
-    // Moves the mobile on every run, as a teleporter's script does.
-    private sealed class MovingItemScriptService : IItemScriptService
-    {
-        private readonly MobileEntity _mobile;
-        private readonly Point3D _destination;
-
-        public int Runs { get; private set; }
-
-        public MovingItemScriptService(MobileEntity mobile, Point3D destination)
-        {
-            _mobile = mobile;
-            _destination = destination;
-        }
-
-        public bool HasScript(ItemEntity item)
-        {
-            return true;
-        }
-
-        public ScriptResult Run(ItemEntity item, string function, params object?[] args)
-        {
-            Runs++;
-            _mobile.Location = _destination;
-
-            return ScriptResult.Completed([]);
-        }
-
-        public void Queue(ItemEntity item, string function, params object?[] args)
-        {
-        }
     }
 }
