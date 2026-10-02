@@ -135,10 +135,36 @@ public sealed class MobileModuleTests
         Assert.Empty(_speech.Sounds);
     }
 
+    [Fact]
+    public void Message_TellsThePlayer()
+    {
+        var result = Run("return mobile.message(2, 'That is too far away.')");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal((_aria, "That is too far away."), Assert.Single(_speech.Told));
+    }
+
+    [Fact]
+    public void Message_ALongText_IsCut()
+    {
+        Run("return mobile.message(2, string.rep('a', 300))");
+
+        Assert.Equal(128, Assert.Single(_speech.Told).Text.Length);
+    }
+
+    [Theory, InlineData("return mobile.message(999, 'hello')"), InlineData("return mobile.message(2, '  ')")]
+    public void Message_AnUnknownMobileOrAnEmptyText_IsFalseAndTellsNobody(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+
+        Assert.Empty(_speech.Told);
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
+        state.OpenStringLibrary();
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));

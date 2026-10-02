@@ -14,7 +14,7 @@ namespace Moongate.Server.Ultima.Modules;
 ///     the teleporter that moves whoever walks onto it; <c>mobile.teleport(who, x, y, z)</c>. A serial that is not a
 ///     mobile in the world gives <c>false</c> or <c>nil</c>, never an error.
 /// </summary>
-[ScriptModule("mobile", "Acts on a mobile in the world, a player or an NPC: teleports it, reads where it is, plays a sound on it.")]
+[ScriptModule("mobile", "Acts on a mobile in the world, a player or an NPC: teleports it, reads where it is, plays a sound on it, tells a player something.")]
 public sealed class MobileModule
 {
     private readonly IMobileService _mobiles;
@@ -92,6 +92,21 @@ public sealed class MobileModule
         _speech.PlaySound(mobile, sound);
 
         return true;
+    }
+
+    /// <summary>
+    ///     Sends <paramref name="text" /> to the player as a system message, in the lower left of its screen;
+    ///     <c>mobile.message(who, "That is too far away.")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "A system message read only by that player; false for an empty text, an NPC or a player not in the world.")]
+    public bool Message(long serial, string text)
+    {
+        if (string.IsNullOrWhiteSpace(text) || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        return _speech.Tell(mobile, text.Length > ItemModule.MaximumTextLength ? text[..ItemModule.MaximumTextLength] : text);
     }
 
     private bool TryGetMobile(long serial, [NotNullWhen(true)] out MobileEntity? mobile)

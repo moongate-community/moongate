@@ -28,3 +28,4 @@ not three numbers and at most a map name prints the usage.
 
 - [All commands](../commands.md)
 - [`where`](where.md)
+- [`moongate`](moongate.md)

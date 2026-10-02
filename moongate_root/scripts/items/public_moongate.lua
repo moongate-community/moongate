@@ -51,7 +51,7 @@ local function travel(serial, who, facet, destination)
     local at = near(serial, who)
 
     if not at then
-        item.message(serial, who, localization.get(too_far_message))
+        mobile.message(who, localization.get(too_far_message))
 
         return
     end

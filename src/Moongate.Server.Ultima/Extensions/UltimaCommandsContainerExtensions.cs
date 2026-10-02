@@ -157,6 +157,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.GoDescription
         );
+        container.RegisterCommand<MoongateCommand>(
+            "moongate",
+            "Puts at your feet a moongate to a place of your map or of another: moongate <x>,<y>,<z> [map].",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.MoongateDescription
+        );
         container.RegisterCommand<WhereCommand>(
             "where",
             "Shows what you target: its serial, or the map and location of a spot.",

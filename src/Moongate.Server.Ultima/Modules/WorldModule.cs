@@ -15,16 +15,24 @@ namespace Moongate.Server.Ultima.Modules;
 ///     The <c>world</c> Lua module: what a script can ask about the world around its NPC or item, such as whether a door's
 ///     doorway is free.
 /// </summary>
-[ScriptModule("world", "Asks about the world: who stands where, what time it is, the moons.")]
+[ScriptModule("world", "Asks about the world: who stands where, whether a place is guarded, what time it is, the moons.")]
 public sealed class WorldModule
 {
     private readonly ISectorService _sectors;
     private readonly IClockService _clock;
     private readonly ISessionService _sessions;
     private readonly IItemService _items;
+    private readonly IRegionService _regions;
 
-    public WorldModule(ISectorService sectors, IClockService clock, ISessionService sessions, IItemService items)
+    public WorldModule(
+        ISectorService sectors,
+        IClockService clock,
+        ISessionService sessions,
+        IItemService items,
+        IRegionService regions
+    )
     {
+        _regions = regions;
         _sectors = sectors;
         _clock = clock;
         _sessions = sessions;
@@ -73,6 +81,16 @@ public sealed class WorldModule
     public bool IsOccupied(MapType map, int x, int y)
     {
         return _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0).Count > 0;
+    }
+
+    /// <summary>
+    ///     Gets whether guards protect the place <paramref name="x" />, <paramref name="y" />, <paramref name="z" /> of
+    ///     <paramref name="map" />, such as a town; <c>world.is_guarded(MapType.Trammel, 1496, 1628, 10)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the region of the place x, y, z of the map is guarded; false outside every region or for a z outside -128 to 127.")]
+    public bool IsGuarded(MapType map, int x, int y, int z)
+    {
+        return z is >= sbyte.MinValue and <= sbyte.MaxValue && _regions.Find(map, new Point3D(x, y, z))?.Guarded == true;
     }
 
     /// <summary>

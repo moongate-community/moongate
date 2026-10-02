@@ -58,5 +58,6 @@ The server stops at startup when:
 
 ## See also
 
+- [`moongate`](../commands/moongate.md): the command that makes a gate with a single destination.
 - [Data files overview](../data-files.md): file locations, loading order and shared value formats.
 - [Check your changes](../data-files.md#check-your-changes): validate edited data before restarting.

@@ -13,6 +13,7 @@ using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
@@ -77,6 +78,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ISpeechService>(_speech);
         _container.RegisterInstance<ISectorService>(_sectors);
         _container.RegisterInstance<IClockService>(new StubClockService());
+        _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();

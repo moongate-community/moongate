@@ -3,8 +3,9 @@
 #
 # What it is for:
 #   The German texts that are Moongate's own (numbers from 30000): tooltips,
-#   command replies and command descriptions. The server merges this file
-#   with messages/ger.toml, which holds the standard texts.
+#   command replies, command descriptions and texts of the item scripts. The
+#   server merges this file with messages/ger.toml, which holds the standard
+#   texts.
 #
 # Format:
 #   <number> = "text"
@@ -27,7 +28,7 @@
 30006 = "Gewicht: 1 Stein"
 30007 = "Gewicht: {0} Steine"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102, 30104-30107, 30109) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103, 30108, 30110).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102, 30104-30107, 30109, 30111-30112) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103, 30108, 30110, 30113).
 30008 = "Ziel abgebrochen."
 30009 = "Ein Befehl wird bereits ausgeführt."
 30010 = "Unbekannter Befehl: {0}"
@@ -131,3 +132,9 @@
 30108 = "Speichert die Welt und schreibt dann eine SQL-Sicherung der Datenbanken dieses Servers."
 30109 = "Du kannst dort nicht hin: {0} ist nicht geladen oder der Ort liegt außerhalb der Karte."
 30110 = "Bringt dich an einen Ort deiner Karte oder einer anderen: go <x>,<y>,<z> [Karte]."
+30111 = "Ein Mondtor nach {0} ({1}, {2}, {3}) steht zu deinen Füßen."
+30112 = "Kein Mondtor kann dorthin führen: {0} ist nicht geladen oder der Ort liegt außerhalb der Karte."
+30113 = "Stellt zu deinen Füßen ein Mondtor zu einem Ort deiner Karte oder einer anderen: moongate <x>,<y>,<z> [Karte]."
+
+# Moongate: texts of the item scripts.
+30114 = "Dieses Mondtor scheint nirgendwohin zu führen."
