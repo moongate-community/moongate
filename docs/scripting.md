@@ -309,23 +309,36 @@ function guard.on_think(serial)
 end
 ```
 
-The path is found with the server's [path search](world-queries.md#pathfinding) the first
-time and kept for the NPC, so the later calls only take the next step. It is searched again
-when the place changes or a step is blocked, and two seconds after the last search at the
-soonest: until then a place that changed is walked towards on the old path, and a blocked
-NPC answers `"blocked"`. A place that cannot be reached is walked towards as far as a path
-leads, then the answer is `"no_path"`, and the way is looked for again only ten seconds later:
-a search that finds nothing is the costly kind. To follow someone, pass where it stands on every tick
-and a `range` of 1 to stop beside it:
+| Answer | Means |
+| --- | --- |
+| `"moving"` | The NPC took a step |
+| `"arrived"` | It stands within `range` tiles of the place (default 0), at its height; it is not checked that nothing stands between them |
+| `"blocked"` | The step was refused, or the NPC waits to look for another way |
+| `"no_path"` | The last search did not reach the place: nothing leads there, or only somewhere near |
+| `nil` | The serial is not an NPC, `range` is negative or `z` is outside -128 to 127 |
+
+The path is found with the server's [path search](world-queries.md#pathfinding) and kept for
+the NPC, so most calls only take the next step. A search runs when the NPC has no steps left
+or the place changed, and only:
+
+- two seconds after the NPC's last search, as ModernUO; ten seconds when that search did not
+  reach the same place from where the NPC stands, since such a search is the costly kind;
+- for ten NPCs a second in the whole server; the others wait their turn.
+
+While it may not search, an NPC goes on along the path it has, or with none steps straight
+towards the place, so one that chases something keeps moving. A place that cannot be reached
+is walked towards as far as a path leads. To follow someone, pass where it stands on every
+tick and a `range` of 1 to stop beside it:
 
 ```lua
 local where = mobile.location(target)
 npc.walk_to(serial, where.x, where.y, where.z, 1, true)
 ```
 
-Without `z` the place is the ground of the cell nearest the NPC's own height. Start and goal
-must be within `ultima.world.pathfinding_range` tiles (38); farther is `"no_path"`. Closed
-doors and other mobiles do not block a path yet.
+`running` only changes how the step looks: an NPC takes one step per `on_think`, two a second.
+Without `z` the place is the highest ground of the cell not above the NPC's head, else the
+highest there. Start and goal must be within `ultima.world.pathfinding_range` tiles (38);
+farther is `"no_path"`. Closed doors and other mobiles do not block a path yet.
 
 ## Item scripts
 

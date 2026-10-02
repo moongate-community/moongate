@@ -29,8 +29,8 @@ public sealed class NpcModule
 
     private const DirectionType DirectionMask = (DirectionType)0x07;
 
-    // How far above the NPC the ground of a place it walks to is looked for: one storey.
-    private const int GroundSearchHeight = 20;
+    // A mover's height: the ground of a place it walks to is first looked for no higher than its head.
+    private const int MoverHeight = 16;
 
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
@@ -130,15 +130,15 @@ public sealed class NpcModule
     ///     path is searched the first time and kept: it is searched again only when the place changes or a step is
     ///     blocked, and two seconds after the last search at the soonest.
     /// </summary>
-    [ScriptFunction(helpText: "One step along a path to x, y (z defaults to the ground there), a run when running is true: 'arrived' within range tiles of it, 'moving' after a step, 'blocked' while it waits to look for another way, 'no_path' when none was found; nil for an unknown NPC or a z outside -128 to 127.")]
-    public string? WalkTo(long serial, int x, int y, int? z = null, int range = 0, bool running = false)
+    [ScriptFunction(helpText: "One step along a path to x, y (z defaults to the ground there), a run when running is true: 'arrived' within range tiles of it, 'moving' after a step, 'blocked' when the step was refused or it waits to look for another way, 'no_path' when the last search did not reach the place; nil for an unknown NPC, a negative range or a z outside -128 to 127.")]
+    public string? WalkTo(long serial, int x, int y, int? z = null, int? range = null, bool running = false)
     {
-        if (_paths is null || range < 0 || !TryGetNpc(serial, out var npc) || GoalOf(npc, x, y, z) is not { } goal)
+        if (_paths is null || range is < 0 || !TryGetNpc(serial, out var npc) || GoalOf(npc, x, y, z) is not { } goal)
         {
             return null;
         }
 
-        var step = _paths.Next(npc, goal, range, AbilityOf(npc));
+        var step = _paths.Next(npc, goal, range ?? 0, AbilityOf(npc));
 
         switch (step.Kind)
         {
@@ -257,7 +257,6 @@ public sealed class NpcModule
             return false;
         }
 
-        _paths?.Forget(npc.Id);
         _ = _npcs.RemoveAsync(npc.Id)
                  .ContinueWith(
                      task => _logger.Warning(task.Exception, "npc.delete of {Serial} failed", serial),
@@ -398,7 +397,8 @@ public sealed class NpcModule
         return true;
     }
 
-    // The place a script names: at the height it gives, else on the ground of the cell nearest the NPC's own height.
+    // The place a script names: at the height it gives, else on the ground of the cell, of the NPC's own storey when
+    // there is one.
     private Point3D? GoalOf(MobileEntity npc, int x, int y, int? z)
     {
         if (z is { } given)
@@ -410,7 +410,10 @@ public sealed class NpcModule
 
         try
         {
-            if (_movement is not null && _movement.TryGetSpawnZ(npc.Map, x, y, npc.Location.Z + GroundSearchHeight, out var found))
+            // The NPC's own storey first: the highest ground not above its head. Else the highest there, as up a hill.
+            if (_movement is not null &&
+                (_movement.TryGetSpawnZ(npc.Map, x, y, npc.Location.Z + MoverHeight, out var found) ||
+                 _movement.TryGetSpawnZ(npc.Map, x, y, sbyte.MaxValue, out found)))
             {
                 ground = found;
             }

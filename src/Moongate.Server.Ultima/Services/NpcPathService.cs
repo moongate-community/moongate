@@ -9,17 +9,24 @@ using Moongate.Server.Ultima.Types.Movement;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Keeps one <see cref="NpcPath" /> per walking NPC and searches a new one only when it must: with none left, a
-///     changed goal or a blocked step, and two seconds after the last search at the soonest, ten after one that found
-///     nothing. Until then a changed goal is walked towards on the old path, as ModernUO.
+///     Keeps one <see cref="NpcPath" /> per walking NPC and searches a new one only when it must: with no steps left or a
+///     changed goal, two seconds after the NPC's last search at the soonest, ten when that search did not reach the same
+///     goal, and for a few NPCs a second in the whole server. An NPC that may not search steps straight towards its
+///     goal, as ModernUO, so one that chases a moving target keeps moving.
 /// </summary>
 public sealed class NpcPathService : INpcPathService
 {
+    /// <summary>
+    ///     How many searches run in a second for all the NPCs together: a search that finds nothing takes about 12 ms.
+    /// </summary>
+    public const int SearchesPerSecond = 10;
+
     private const long RepathDelayMs = 2000;
 
-    // A search that finds nothing is the costly one, a whole search: it is tried again later than the others.
-    private const long FailedDelayMs = 10_000;
+    // A search that does not reach its goal is the costly one, a whole search: the same goal is tried again later.
+    private const long UnreachedDelayMs = 10_000;
     private const long IdleMs = 60_000;
+    private const long BudgetWindowMs = 1000;
 
     // Above this many paths, those of NPCs that stopped asking are dropped.
     private const int PruneAbove = 512;
@@ -30,6 +37,8 @@ public sealed class NpcPathService : INpcPathService
     private readonly Dictionary<Serial, NpcPath> _paths = [];
     private readonly IPathfindingService _finder;
     private readonly TimeProvider _time;
+    private long _windowStartedAt = long.MinValue;
+    private int _searchesInWindow;
 
     public NpcPathService(IPathfindingService finder, TimeProvider time)
     {
@@ -57,14 +66,27 @@ public sealed class NpcPathService : INpcPathService
         path.LastUsedAt = now;
 
         // Moved by something else, such as a teleporter: the steps left start from where it no longer stands.
-        if (path.Expected != npc.Location || path.Map != npc.Map)
+        var moved = path.Expected != npc.Location || path.Map != npc.Map;
+
+        if (moved)
         {
             path.Steps.Clear();
+            path.Expected = npc.Location;
+            path.Map = npc.Map;
         }
 
-        if ((path.Steps.Count == 0 || path.Goal != goal) && now >= path.NextSearchAt)
+        // What the last search said holds only for its goal, and only from where the NPC then was.
+        var sameSearch = path.Searched && path.Goal == goal && !moved;
+
+        if (moved)
+        {
+            path.Unreached = false;
+        }
+
+        if ((path.Steps.Count == 0 || path.Goal != goal) && MaySearch(path, sameSearch, now))
         {
             Search(npc, path, goal, ability, now);
+            sameSearch = true;
         }
 
         if (path.Steps.Count > 0)
@@ -72,7 +94,21 @@ public sealed class NpcPathService : INpcPathService
             return new(NpcWalkType.Moving, path.Steps.Peek());
         }
 
-        return new(path.Failed ? NpcWalkType.NoPath : NpcWalkType.Blocked);
+        // The last search of this very goal led nowhere, or a straight step was just refused: wait.
+        if (sameSearch && path.Unreached)
+        {
+            return new(NpcWalkType.NoPath);
+        }
+
+        if (path.StraightRefused)
+        {
+            return new(NpcWalkType.Blocked);
+        }
+
+        // No path it may follow or search yet: straight towards the goal, as ModernUO's follower.
+        path.Straight = true;
+
+        return new(NpcWalkType.Moving, npc.Location.GetDirectionTo(new Point3D(goal.X, goal.Y, npc.Location.Z)));
     }
 
     public void Stepped(MobileEntity npc, bool moved)
@@ -82,16 +118,24 @@ public sealed class NpcPathService : INpcPathService
             return;
         }
 
-        if (moved && path.Steps.Count > 0)
+        var straight = path.Straight;
+        path.Straight = false;
+
+        if (moved)
         {
-            path.Steps.Dequeue();
+            if (!straight && path.Steps.Count > 0)
+            {
+                path.Steps.Dequeue();
+            }
+
             path.Expected = npc.Location;
+            path.StraightRefused = false;
 
             return;
         }
 
         path.Steps.Clear();
-        path.Failed = false;
+        path.StraightRefused = true;
     }
 
     public void Forget(Serial npc)
@@ -106,21 +150,40 @@ public sealed class NpcPathService : INpcPathService
                Math.Abs(location.Z - goal.Z) <= MoverHeight;
     }
 
+    private bool MaySearch(NpcPath path, bool sameSearch, long now)
+    {
+        if (path.Searched && now < path.SearchedAt + (sameSearch && path.Unreached ? UnreachedDelayMs : RepathDelayMs))
+        {
+            return false;
+        }
+
+        if (now - _windowStartedAt >= BudgetWindowMs || _windowStartedAt == long.MinValue)
+        {
+            _windowStartedAt = now;
+            _searchesInWindow = 0;
+        }
+
+        return _searchesInWindow < SearchesPerSecond;
+    }
+
     private void Search(MobileEntity npc, NpcPath path, Point3D goal, MovementAbilityType ability, long now)
     {
+        _searchesInWindow++;
         var found = _finder.FindPath(npc.Map, npc.Location, goal, ability, true);
         path.Map = npc.Map;
         path.Goal = goal;
         path.Expected = npc.Location;
+        path.Searched = true;
+        path.SearchedAt = now;
+        path.Unreached = found.Kind != PathResultType.Found;
+        path.Straight = false;
+        path.StraightRefused = false;
         path.Steps.Clear();
 
         foreach (var step in found.Steps)
         {
             path.Steps.Enqueue(step);
         }
-
-        path.Failed = path.Steps.Count == 0;
-        path.NextSearchAt = now + (path.Failed ? FailedDelayMs : RepathDelayMs);
     }
 
     private void Prune(long now)

@@ -150,11 +150,107 @@ public sealed class NpcPathServiceTests
     {
         _finder.Result = new(PathResultType.Partial, [DirectionType.East], default);
         Take();
-        _time.Advance(TimeSpan.FromSeconds(2));
+        _time.Advance(TimeSpan.FromSeconds(10));
         _finder.Result = new(PathResultType.NotFound, [], default);
 
         Assert.Equal(NpcWalkType.NoPath, Next().Kind);
         Assert.Equal(2, _finder.Searches.Count);
+    }
+
+    [Fact]
+    public void Next_ANewGoalAfterOneThatWasNotFound_IsSearchedAfterTwoSeconds_NotTen()
+    {
+        Assert.Equal(NpcWalkType.NoPath, Next().Kind);
+        var other = new Point3D(1600, 1604, 0);
+        _finder.Finds(DirectionType.South);
+        _time.Advance(TimeSpan.FromSeconds(2));
+
+        var step = _paths.Next(_orc, other, 0, MovementAbilityType.Walk);
+
+        Assert.Equal(new NpcPathStep(NpcWalkType.Moving, DirectionType.South), step);
+        Assert.Equal(other, _finder.Searches[^1].To);
+    }
+
+    [Fact]
+    public void Next_ANewGoalWhileItMayNotSearch_IsWalkedStraightTowards_NotCalledNoPath()
+    {
+        Assert.Equal(NpcWalkType.NoPath, Next().Kind);
+
+        var step = _paths.Next(_orc, new Point3D(1600, 1604, 0), 0, MovementAbilityType.Walk);
+
+        Assert.Equal(new NpcPathStep(NpcWalkType.Moving, DirectionType.South), step);
+        Assert.Single(_finder.Searches);
+    }
+
+    [Fact]
+    public void Next_WithAShortPathSpentAndTheGoalMovedOn_StepsStraightTowardsIt()
+    {
+        // A chase: the target stays one step ahead and the path to where it stood is one step long.
+        _finder.Finds(DirectionType.East);
+        Take();
+        var ahead = new Point3D(1606, 1600, 0);
+
+        var step = _paths.Next(_orc, ahead, 0, MovementAbilityType.Walk);
+
+        Assert.Equal(new NpcPathStep(NpcWalkType.Moving, DirectionType.East), step);
+        Assert.Single(_finder.Searches);
+    }
+
+    [Fact]
+    public void Next_AfterAStraightStepWasRefused_WaitsBlocked_ThenSearches()
+    {
+        _finder.Finds(DirectionType.East);
+        Take();
+        var ahead = new Point3D(1606, 1600, 0);
+        _paths.Next(_orc, ahead, 0, MovementAbilityType.Walk);
+
+        _paths.Stepped(_orc, false);
+
+        Assert.Equal(NpcWalkType.Blocked, _paths.Next(_orc, ahead, 0, MovementAbilityType.Walk).Kind);
+        _time.Advance(TimeSpan.FromSeconds(2));
+        _finder.Finds(DirectionType.NorthEast);
+        Assert.Equal(new NpcPathStep(NpcWalkType.Moving, DirectionType.NorthEast), _paths.Next(_orc, ahead, 0, MovementAbilityType.Walk));
+    }
+
+    [Fact]
+    public void Next_AfterAPartialPath_SearchesTheSameGoalAgainOnlyAfterTenSeconds()
+    {
+        _finder.Result = new(PathResultType.Partial, [DirectionType.East], default);
+        Take();
+        _finder.Result = new(PathResultType.Partial, [DirectionType.East], default);
+
+        _time.Advance(TimeSpan.FromMilliseconds(9999));
+        Assert.Equal(NpcWalkType.NoPath, Next().Kind);
+        Assert.Single(_finder.Searches);
+
+        _time.Advance(TimeSpan.FromMilliseconds(1));
+        Assert.Equal(NpcWalkType.Moving, Next().Kind);
+        Assert.Equal(2, _finder.Searches.Count);
+    }
+
+    [Fact]
+    public void Next_SearchesForAFewNpcsASecond_TheOthersWait()
+    {
+        _finder.Finds(DirectionType.East);
+        var asked = 0;
+
+        for (var serial = 0x200u; serial < 0x220u; serial++)
+        {
+            var npc = new MobileEntity { Id = new Serial(serial), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+
+            // A goal straight to the north of a path that leads east: the direction tells a search from a straight step.
+            if (_paths.Next(npc, new Point3D(1600, 1500, 0), 0, MovementAbilityType.Walk).Direction == DirectionType.East)
+            {
+                asked++;
+            }
+        }
+
+        Assert.Equal(NpcPathService.SearchesPerSecond, asked);
+        Assert.Equal(NpcPathService.SearchesPerSecond, _finder.Searches.Count);
+
+        _time.Advance(TimeSpan.FromSeconds(1));
+        var late = new MobileEntity { Id = new Serial(0x300), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+        Assert.Equal(DirectionType.East, _paths.Next(late, new Point3D(1600, 1500, 0), 0, MovementAbilityType.Walk).Direction);
     }
 
     [Fact]

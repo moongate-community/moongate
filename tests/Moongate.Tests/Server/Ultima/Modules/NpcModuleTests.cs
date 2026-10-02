@@ -336,7 +336,7 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
-    public void WalkTo_WithoutAHeight_AimsAtTheGroundOfThePlace()
+    public void WalkTo_WithoutAHeight_AimsAtTheGroundOfThePlace_OnTheNpcsStoreyFirst()
     {
         _movement.SpawnZ = (_, _) => 7;
         _finder.Finds(DirectionType.North);
@@ -344,6 +344,17 @@ public sealed class NpcModuleTests
         Run("npc.walk_to(256, 1600, 1598)");
 
         Assert.Equal(new Point3D(1600, 1598, 7), Assert.Single(_finder.Searches).To);
+        // Asked no higher than the NPC's head: a floor above it is not the place.
+        Assert.Equal(16, _movement.SpawnCeilings[0]);
+    }
+
+    [Fact]
+    public void WalkTo_WithANilHeightAndARange_Works()
+    {
+        _finder.Finds(DirectionType.North);
+
+        Assert.Equal("moving", Run("return npc.walk_to(256, 1600, 1590, nil, 1, true)")[0].Read<string>());
+        Assert.Equal("moving", Run("return npc.walk_to(256, 1600, 1590, nil, nil, true)")[0].Read<string>());
     }
 
     [Fact]
@@ -367,6 +378,7 @@ public sealed class NpcModuleTests
         // Still blocked while it waits to search again.
         Assert.Equal("blocked", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
         Assert.Equal(2, _finder.Searches.Count);
+        Assert.Equal(new Point3D(1600, 1600, 0), _orc.Location);
     }
 
     [Theory,
