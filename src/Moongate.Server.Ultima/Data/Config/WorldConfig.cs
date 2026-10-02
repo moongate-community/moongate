@@ -53,8 +53,14 @@ public sealed class WorldConfig
     /// </summary>
     public int DaysPerSeason { get; set; } = 12;
 
+    /// <summary>
+    ///     Gets or sets how far apart the two ends of a path search may be along X or Y, in tiles; 38 as ModernUO.
+    /// </summary>
     public int PathfindingRange { get; set; } = 38;
 
+    /// <summary>
+    ///     Gets or sets how many places a path search expands before it gives up; 1000 as ModernUO.
+    /// </summary>
     public int PathfindingMaxNodes { get; set; } = 1000;
 
     /// <summary>

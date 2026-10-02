@@ -68,14 +68,83 @@ public sealed class PathfindingServiceTests
     }
 
     [Fact]
-    public void FindPath_IsTheShortest_NotTheFirstFound()
+    public void FindPath_IsTheShortest_NotTheOneThatLooksNearest()
     {
-        // The gap above is nearer the start, the gap below nearer the straight line: the shorter way is below.
-        _movement.Wall(102, 90, 102, 99).Wall(102, 101, 102, 110);
+        // A wall with two gaps: one four tiles north of the straight line, one twelve tiles south. A dead-end pocket
+        // right in front of the goal draws a search that only looks at the distance.
+        _movement.Wall(104, 85, 104, 95).Wall(104, 97, 104, 111).Wall(104, 113, 104, 120);
+        _movement.Wall(101, 99, 103, 99).Wall(101, 101, 103, 101);
+
+        var path = Find(new Point3D(98, 100, 0), new Point3D(108, 100, 0));
+
+        Assert.Equal(PathResultType.Found, path.Kind);
+        var cells = Cells(new Point3D(98, 100, 0), path.Steps);
+        Assert.Contains(new Point3D(104, 96, 0), cells);
+        // Four diagonals and two straight steps to the gap, which a diagonal cannot enter or leave past the wall's
+        // ends: one step out of it, three diagonals and one step down.
+        Assert.Equal(4 * 10 + 7 * 14, Cost(path.Steps));
+    }
+
+    [Fact]
+    public void FindPath_ACheaperWayFoundLater_ReplacesTheFirst()
+    {
+        // The tile east of the start is first reached around a pillar's corner; the straight step is checked after it.
+        _movement.Walls.Add((100, 99));
+
+        var path = Find(new Point3D(100, 100, 0), new Point3D(102, 98, 0));
+
+        Assert.Equal(PathResultType.Found, path.Kind);
+        Assert.Equal(10 + 14 + 10, Cost(path.Steps));
+    }
+
+    [Fact]
+    public void FindPath_UsesTheRoomBehindTheStart()
+    {
+        // Walled on three sides: the only way out is west, away from the goal, then around.
+        _movement.Wall(101, 97, 101, 103).Wall(98, 97, 101, 97).Wall(98, 103, 101, 103);
 
         var path = Find(new Point3D(100, 100, 0), new Point3D(104, 100, 0));
 
-        Assert.Equal(Enumerable.Repeat(DirectionType.East, 4), path.Steps);
+        Assert.Equal(PathResultType.Found, path.Kind);
+        Assert.Contains(Cells(new Point3D(100, 100, 0), path.Steps), cell => cell.X < 98);
+    }
+
+    [Fact]
+    public void FindPath_AGoalOnAnUpperFloor_IsReachedByItsStairs_NotStoppedUnderIt()
+    {
+        // A balcony over the goal's tile, with walkable ground under it, reached by a solid ramp that climbs two units a
+        // tile along x 109, from the ground at y 110 up to y 100.
+        _movement.Floors[(110, 100)] = 20;
+
+        for (var step = 0; step <= 10; step++)
+        {
+            _movement.Heights[(109, 100 + step)] = 20 - 2 * step;
+        }
+
+        var path = Find(new Point3D(100, 100, 0), new Point3D(110, 100, 20));
+
+        Assert.Equal(PathResultType.Found, path.Kind);
+        Assert.Equal(new Point3D(110, 100, 20), path.End);
+        Assert.Equal(new Point3D(110, 100, 20), Cells(new Point3D(100, 100, 0), path.Steps)[^1]);
+    }
+
+    [Fact]
+    public void FindPath_NearTheEdgeOfTheMap_StaysOnIt()
+    {
+        var path = Find(new Point3D(1, 2, 0), new Point3D(5, 0, 0));
+
+        Assert.Equal(PathResultType.Found, path.Kind);
+        Assert.Equal(new Point3D(5, 0, 0), Walk(new Point3D(1, 2, 0), path.Steps));
+    }
+
+    [Theory]
+    [InlineData(3, PathResultType.NotFound)]
+    [InlineData(4, PathResultType.Found)]
+    public void FindPath_ReachesAGoalFoundJustAsTheLimitIsMet(int limit, PathResultType expected)
+    {
+        _world.PathfindingMaxNodes = limit;
+
+        Assert.Equal(expected, Find(new Point3D(100, 100, 0), new Point3D(104, 100, 0)).Kind);
     }
 
     [Fact]
@@ -247,6 +316,11 @@ public sealed class PathfindingServiceTests
     private PathResult Find(Point3D from, Point3D to, bool allowPartial = false)
     {
         return _paths.FindPath(MapType.Trammel, from, to, MovementAbilityType.Walk, allowPartial);
+    }
+
+    private static int Cost(IReadOnlyList<DirectionType> steps)
+    {
+        return steps.Sum(step => ((byte)step & 1) == 0 ? 10 : 14);
     }
 
     private Point3D Walk(Point3D from, IReadOnlyList<DirectionType> steps)
