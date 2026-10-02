@@ -1,0 +1,612 @@
+# ==============================================================================
+# Moongate - templates/decorations/termur/teleporters.toml
+#
+# What it is for:
+#   The world and dungeon teleporters placed on TerMur. Each block is one
+#   destination, with a teleporter at every location it lists.
+#
+# Fields:
+#   type       Teleporter
+#   item_id    the graphic, seen by staff only
+#   props      point_dest, [x, y, z] of the destination; map_dest, its map when
+#              it is another one
+#   locations  [x, y, z] of every teleporter of the block
+# ==============================================================================
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [7149, 756, 25], map_dest = "Felucca" }
+locations = [[974, 419, -21]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [7150, 756, 26], map_dest = "Felucca" }
+locations = [[975, 419, -21]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [7151, 756, 25], map_dest = "Felucca" }
+locations = [[976, 419, -21]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [7152, 756, 25], map_dest = "Felucca" }
+locations = [[977, 419, -21]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [996, 3842, -41] }
+locations = [[33, 241, 7]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [997, 3842, -41] }
+locations = [[34, 241, 7]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [998, 3842, -41] }
+locations = [[35, 241, 7]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [999, 3842, -41] }
+locations = [[36, 241, 7]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1000, 3842, -41] }
+locations = [[37, 241, 7]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [79, 353, 5] }
+locations = [[40, 366, 105]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [79, 551, 5] }
+locations = [[40, 564, 105]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [79, 759, 5] }
+locations = [[40, 772, 105]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [81, 399, 105] }
+locations = [[45, 366, 85]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [81, 597, 105] }
+locations = [[45, 564, 85]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [81, 805, 105] }
+locations = [[45, 772, 85]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [80, 338, 85] }
+locations = [[52, 343, 65]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [79, 379, 5] }
+locations = [[52, 389, 65]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [80, 536, 85] }
+locations = [[52, 541, 65]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [79, 577, 5] }
+locations = [[52, 587, 65]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [80, 744, 85] }
+locations = [[52, 749, 65]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [79, 785, 5] }
+locations = [[52, 795, 65]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [40, 366, 105] }
+locations = [[79, 353, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [52, 389, 65] }
+locations = [[79, 379, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [40, 564, 105] }
+locations = [[79, 551, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [52, 587, 65] }
+locations = [[79, 577, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [40, 772, 105] }
+locations = [[79, 759, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [52, 795, 65] }
+locations = [[79, 785, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [52, 343, 64] }
+locations = [[80, 338, 85]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [52, 541, 64] }
+locations = [[80, 536, 85]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [52, 749, 64] }
+locations = [[80, 744, 85]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [45, 366, 85] }
+locations = [[81, 399, 105]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [45, 564, 85] }
+locations = [[81, 597, 105]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [45, 772, 85] }
+locations = [[81, 805, 105]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [310, 159, 85] }
+locations = [[317, 136, 65]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [346, 192, 105] }
+locations = [[317, 182, 65]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [349, 138, 60] }
+locations = [[344, 146, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [349, 180, 60] }
+locations = [[344, 172, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [345, 128, 100] }
+locations = [[345, 131, 85]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [850, 272, -11] }
+locations = [[442, 152, -38]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [850, 273, -11] }
+locations = [[442, 153, -38]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [850, 286, -11] }
+locations = [[442, 166, -38]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [850, 287, -11] }
+locations = [[442, 167, -38]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [6992, 1367, -15], map_dest = "Felucca" }
+locations = [
+    [511, 584, 11],
+    [512, 584, 11],
+]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [6993, 1367, -15], map_dest = "Felucca" }
+locations = [
+    [513, 584, 11],
+    [514, 584, 11],
+]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1125, 1076, -117] }
+locations = [[519, 919, 39]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1126, 1076, -117] }
+locations = [[520, 919, 39]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1126, 1075, -117] }
+locations = [
+    [521, 919, 39],
+    [522, 919, 36],
+]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [644, 3857, -43] }
+locations = [[594, 3846, -31]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [594, 3846, -31] }
+locations = [[644, 3857, -43]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [434, 152, 0] }
+locations = [[841, 272, 30]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [434, 153, 0] }
+locations = [[841, 273, 30]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [433, 167, 0] }
+locations = [[841, 287, 30]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [433, 166, 0] }
+locations = [[843, 286, 22]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [33, 240, 5] }
+locations = [[996, 3841, -41]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [34, 240, 5] }
+locations = [[997, 3841, -41]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [35, 240, 5] }
+locations = [[998, 3841, -41]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [36, 240, 5] }
+locations = [[999, 3841, -41]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [37, 240, 5] }
+locations = [[1000, 3841, -41]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1012, 1071, -32] }
+locations = [[1006, 1110, -42]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1010, 1144, -65] }
+locations = [[1006, 1127, -42]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1006, 1127, -42] }
+locations = [[1010, 1144, -65]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1006, 1110, -42] }
+locations = [[1012, 1071, -32]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1238, 1151, -42] }
+locations = [[1042, 1047, -33]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1080, 977, -21] }
+locations = [
+    [1079, 882, 0],
+    [1079, 883, 0],
+    [1079, 884, 0],
+    [1079, 885, 0],
+]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1081, 883, -5] }
+locations = [
+    [1080, 974, -20],
+    [1080, 975, -20],
+    [1081, 974, -20],
+    [1081, 975, -20],
+]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [520, 920, 39] }
+locations = [[1125, 1076, -117]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [4194, 3261, 5], map_dest = "Trammel" }
+locations = [
+    [1125, 1215, 5],
+    [1126, 1215, 5],
+    [1127, 1215, 5],
+    [1128, 1215, 5],
+]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [521, 920, 39] }
+locations = [[1126, 1076, 15]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [4195, 3261, 5], map_dest = "Trammel" }
+locations = [
+    [1129, 1215, 5],
+    [1130, 1215, 5],
+    [1131, 1215, 5],
+]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1147, 1089, -42] }
+locations = [[1162, 1120, -42]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1187, 1127, -42] }
+locations = [[1180, 885, 0]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1183, 1182, -47] }
+locations = [[1183, 1180, -45]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1183, 1180, -45] }
+locations = [[1183, 1182, -47]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1183, 1189, -44] }
+locations = [[1183, 1187, -45]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1183, 1187, -45] }
+locations = [[1183, 1189, -44]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1186, 1177, -45] }
+locations = [[1184, 1177, -47]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1184, 1177, -47] }
+locations = [[1186, 1177, -45]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1184, 1183, -43] }
+locations = [[1186, 1183, -40]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1180, 884, 0] }
+locations = [[1187, 1126, -42]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1187, 1175, -45] }
+locations = [[1187, 1173, -47]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1187, 1173, -47] }
+locations = [[1187, 1175, -45]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1190, 1183, -40] }
+locations = [[1190, 1185, -40]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1190, 1186, -41] }
+locations = [[1192, 1186, -40]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1195, 1189, -56] }
+locations = [[1197, 1189, -58]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1196, 1187, -45] }
+locations = [[1198, 1187, -45]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1200, 1190, -64] }
+locations = [[1200, 1187, -66]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1201, 1186, -68] }
+locations = [[1201, 1189, -71]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1202, 1185, -45] }
+locations = [[1202, 1183, -45]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1201, 1190, -73] }
+locations = [[1203, 1190, -74]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1204, 1181, -45] }
+locations = [[1206, 1181, -47]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1140, 951, -42] }
+locations = [[1238, 1151, -42]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1128, 1213, -2] }
+locations = [[4194, 3260, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1129, 1213, -2] }
+locations = [[4195, 3260, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [511, 585, 9] }
+locations = [
+    [7149, 756, 25],
+    [7150, 756, 25],
+    [7151, 756, 25],
+    [7152, 756, 25],
+    [7153, 756, 25],
+]

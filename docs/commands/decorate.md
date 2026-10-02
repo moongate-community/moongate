@@ -20,7 +20,9 @@ adjacent doors of the same kind open together. Lights get the `decoration_light`
 lit or unlit as in the data and protected, so only staff light or douse them with the
 [light script](../scripting.md). Teleporters get the `decoration_teleporter` template: a player
 who walks onto one stands on its destination at once ([teleporter script](../scripting.md)), and
-only staff sees them. A teleporter to another map is placed but does nothing yet. One whose `map_dest` names no map is skipped. Spawners, mark
+only staff sees them. Besides those of the town and dungeon files, each map folder has the
+teleporters of ModernUO's `[TelGen` (`teleporters.toml`, about 1,480); a cell keeps one teleporter
+within 12 of height, the first placed. A teleporter to another map is placed but does nothing yet. One whose `map_dest` names no map is skipped. Spawners, mark
 containers, public moongates, addons and the teleporters that ask for a word, a skill or a quest
 are skipped for now: they need their own logic.
 

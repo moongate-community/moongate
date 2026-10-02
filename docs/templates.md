@@ -448,13 +448,15 @@ regions spawn at runtime, water mobiles included, is in [NPC spawns](spawns.md).
 ## Decorations
 
 `templates/decorations/` holds the world decoration the client's map files do not: doors, signs,
-lights, furniture, teleporters and the like, about 41,200 placements in 109 files. It was
+lights, furniture, teleporters and the like, about 42,600 placements in 115 files. It was
 converted once from ModernUO's `Data/Decoration`, plus ServUO's New Haven (`trammel/newhaven.toml`,
 `havenisland.toml`, `havenmine.toml`, which ModernUO lacks) and the shop and world signs of
 ModernUO's `signs.cfg` (`signs.toml`, written by
-[`mg-uoxconv modernuo-signs`](uox3-migration.md#signs-of-modernuo)), one TOML file per source file, in one folder
+[`mg-uoxconv modernuo-signs`](uox3-migration.md#signs-of-modernuo)) and the world and dungeon
+teleporters of its `teleporters.json` (`teleporters.toml`, written by
+[`mg-uoxconv modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
-`tokuno/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
+`tokuno/`, `termur/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
 `_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename it without the `_`
 to place its decoration. Files starting with `_` inside a loaded folder (the dungeons, such as
 `britannia/_covetous.toml`) are loaded.

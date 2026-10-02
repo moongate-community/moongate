@@ -1,0 +1,36 @@
+# ==============================================================================
+# Moongate - templates/decorations/tokuno/teleporters.toml
+#
+# What it is for:
+#   The world and dungeon teleporters placed on Tokuno. Each block is one
+#   destination, with a teleporter at every location it lists.
+#
+# Fields:
+#   type       Teleporter
+#   item_id    the graphic, seen by staff only
+#   props      point_dest, [x, y, z] of the destination; map_dest, its map when
+#              it is another one
+#   locations  [x, y, z] of every teleporter of the block
+# ==============================================================================
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5, 128, -1], map_dest = "Malas" }
+locations = [
+    [257, 783, 63],
+    [258, 783, 63],
+    [259, 783, 63],
+    [260, 783, 63],
+]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [67, 337, -1], map_dest = "Malas" }
+locations = [
+    [987, 196, 15],
+    [988, 194, 15],
+    [988, 195, 15],
+    [988, 197, 18],
+]

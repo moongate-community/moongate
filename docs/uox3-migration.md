@@ -236,6 +236,24 @@ a `LocalizedSign` with `label_number`, a written one a `Sign` with `name`, and t
 Umbra keep the hue of their town. A line that is not a sign stops the run and names itself.
 [`.decorate`](commands/decorate.md) places them.
 
+## Teleporters of ModernUO
+
+The world and dungeon teleporters come from ModernUO's `teleporters.json`, the file its `[TelGen`
+places:
+
+```sh
+dotnet run --project src/Moongate.UoxItemConverter -- modernuo-teleporters \
+  --source <ModernUO>/Distribution/Data/teleporters.json --destination moongate_root/templates/decorations
+```
+
+It writes one `teleporters.toml` per map folder of the
+[decorations](templates.md#decorations) (`felucca`, `trammel`, `ilshenar`, `malas`, `tokuno`,
+`termur`), replacing that of a previous run: one `Teleporter` block per destination, with
+`map_dest` when the destination is on another map. An entry with `back` also gets the teleporter
+from its destination to its source, and a later entry replaces an earlier one on the same cell
+within 12 of height, as `[TelGen` does. An entry that is not a teleporter stops the run and names
+itself, and nothing is written. [`.decorate`](commands/decorate.md) places them.
+
 ## Spawns of ModernUO
 
 UOX3 has no spawns for Malas, Tokuno and TerMur. The `modernuo-spawns` command takes them from

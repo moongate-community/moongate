@@ -81,7 +81,7 @@ public sealed class DecorationsLoaderTests
         var files = await new DecorationsLoader(new DirectoriesConfig(RepositoryRoot(), ["templates"])).LoadAsync();
 
         Assert.DoesNotContain(files, file => file.Folder.StartsWith('_'));
-        Assert.Equal(32804, files.Sum(file => file.Blocks.Sum(block => block.Locations.Count)));
+        Assert.Equal(34282, files.Sum(file => file.Blocks.Sum(block => block.Locations.Count)));
     }
 
     private static DecorationsLoader CreateLoader(TemporaryDirectory root)
