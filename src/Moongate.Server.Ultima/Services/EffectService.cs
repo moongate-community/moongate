@@ -18,6 +18,11 @@ namespace Moongate.Server.Ultima.Services;
 /// </summary>
 public sealed class EffectService : IEffectService
 {
+    private const int PlaceholderGraphic = 1;
+
+    // What ModernUO writes as the explode particle of an effect that stays.
+    private const int FixedExplodeParticle = 1;
+
     private readonly ISessionService _sessions;
     private readonly IMobileService _mobiles;
     private readonly IPacketSendService _sender;
@@ -93,7 +98,7 @@ public sealed class EffectService : IEffectService
             Hue = options.Hue,
             RenderMode = options.RenderMode,
             Particle = options.Particle,
-            ExplodeParticle = 1,
+            ExplodeParticle = FixedExplodeParticle,
             ParticleSerial = target,
             Layer = options.Layer
         };
@@ -124,7 +129,7 @@ public sealed class EffectService : IEffectService
                     sent++;
                 }
             }
-            else if (effect.Graphic != 0 || effect.Kind == EffectKindType.Lightning)
+            else if (HasGraphic(effect))
             {
                 hued ??= new(effect);
 
@@ -141,8 +146,21 @@ public sealed class EffectService : IEffectService
     private bool Sees(MobileEntity viewer, MapType map, Point3D from, Point3D? to)
     {
         return viewer.Map == map &&
-               (viewer.Location.InRange(from, _world.ViewRange) ||
-                to is { } destination && viewer.Location.InRange(destination, _world.ViewRange));
+               (InView(viewer.Location, from) || to is { } destination && InView(viewer.Location, destination));
+    }
+
+    // The client shows a square around the player, so the reach is one too, as for the mobiles and items it is sent.
+    private bool InView(Point3D viewer, Point3D point)
+    {
+        return Math.Abs(viewer.X - point.X) <= _world.ViewRange && Math.Abs(viewer.Y - point.Y) <= _world.ViewRange;
+    }
+
+    // The bolt has no graphic and is always drawn. A moving effect needs a real art id: ModernUO scripts pass 1 as the
+    // placeholder of a moving effect made of particles only.
+    private static bool HasGraphic(GraphicEffect effect)
+    {
+        return effect.Kind == EffectKindType.Lightning ||
+               effect.Graphic > (effect.Kind == EffectKindType.Moving ? PlaceholderGraphic : 0);
     }
 
     // As ModernUO's particle support in its Detect mode: the classic client draws no particles.

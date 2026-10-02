@@ -44,6 +44,53 @@ public sealed class EffectServiceTests
     }
 
     [Fact]
+    public async Task PlayAt_ReachesAViewerOnTheDiagonal_AsTheClientViewIsASquare()
+    {
+        // 13 cells east and 13 south is inside the 18-cell view of the client, although 18.4 cells away in a line.
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        await fixture.AddAsync(2);
+        await fixture.AddAsync(3);
+        Place(fixture, 2, 118, 118);
+        Place(fixture, 3, 119, 100);
+        var sent = 0;
+
+        await fixture.Network.ExecuteOnLoopAsync(() => sent = Service(fixture).PlayAt(MapType.Trammel, Spot, Smoke));
+
+        Assert.Equal(1, sent);
+    }
+
+    [Fact]
+    public async Task AnEffectWithoutParticles_GoesAsItsGraphicToTheEnhancedClientToo()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var enhanced = await fixture.AddAsync(2);
+        SetVersion(enhanced, "67.0.117.0");
+        Place(fixture, 2, 105, 100);
+
+        await fixture.Network.ExecuteOnLoopAsync(() => Service(fixture).PlayAt(MapType.Trammel, Spot, Smoke));
+
+        Assert.IsType<HuedEffectPacket>(Assert.Single(fixture.Sender.Sent));
+    }
+
+    [Fact]
+    public async Task PlayMoving_APlaceholderGraphic_IsNotSentToAClassicClient()
+    {
+        // As ModernUO: scripts pass 1 as the graphic of a moving effect made of particles only.
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var classic = await fixture.AddAsync(2);
+        SetVersion(classic, "7.0.117.0");
+        Place(fixture, 2, 105, 100);
+        var sent = 0;
+
+        await fixture.Network.ExecuteOnLoopAsync(
+            () => sent = Service(fixture)
+                .PlayMoving(MapType.Trammel, new Serial(2), Spot, Serial.Zero, Spot, new EffectOptions { Graphic = 1, Particle = 9502 })
+        );
+
+        Assert.Equal(0, sent);
+    }
+
+    [Fact]
     public async Task PlayOn_StaysOnTheObject()
     {
         await using var fixture = await BroadcastFixture.CreateAsync();

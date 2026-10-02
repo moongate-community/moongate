@@ -48,14 +48,19 @@ function teleporter.on_move_over(serial, who)
         return
     end
 
+    -- As ModernUO: the smoke where the mobile leaves is shown before the move, to those who watch it go.
     local from = mobile.location(who)
 
-    if mobile.teleport(who, x, y, z) then
-        if from and is_on(item.get_prop(serial, "source_effect")) then
-            effect.at(from.map, from.x, from.y, from.z, EffectGraphicType.Smoke)
-        end
+    if not from then
+        return
+    end
 
-        if from and is_on(item.get_prop(serial, "dest_effect")) then
+    if is_on(item.get_prop(serial, "source_effect")) then
+        effect.at(from.map, from.x, from.y, from.z, EffectGraphicType.Smoke)
+    end
+
+    if mobile.teleport(who, x, y, z) then
+        if is_on(item.get_prop(serial, "dest_effect")) then
             effect.at(from.map, x, y, z, EffectGraphicType.Smoke)
         end
 

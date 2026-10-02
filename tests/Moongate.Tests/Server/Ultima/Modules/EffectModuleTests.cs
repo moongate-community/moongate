@@ -88,6 +88,11 @@ public sealed class EffectModuleTests
      InlineData("return effect.at(1, 1600, 1628, 5, 0x3728, { speed = 300 })"),
      InlineData("return effect.at(1, 1600, 1628, 5, 0x3728, { render = 9 })"),
      InlineData("return effect.at(1, 1600, 1628, 5, 0x3728, { layer = 6 })"),
+     InlineData("return effect.at(1, 1600, 1628, 5, 0x3728, { speed = '9' })"),
+     InlineData("return effect.at(1, 1600, 1628, 5, 0x3728, { speed = 9.5 })"),
+     InlineData("return effect.at(1, 1600, 1628, 5, 0x3728, { explodes = 1 })"),
+     InlineData("return effect.at(1, 1600, 1628, 5, 0x3728, { fixed_direction = 'true' })"),
+     InlineData("return effect.at(1, 1600, 1628, 5, 0x3728, { spede = 3 })"),
      InlineData("return effect.at(1, 1600, 1628, 5, 0)")]
     public void At_AValueOutOfRange_IsFalseAndPlaysNothing(string chunk)
     {

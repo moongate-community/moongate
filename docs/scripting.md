@@ -357,7 +357,7 @@ The graphic is an art id: `EffectGraphicType` names the animations the emulators
 `SparkleBless`, `SparkleCurse`, `Fizzle`, `SmallBolt`, `Glow`, the four fields and others; the
 generated `definitions.lua` lists them all), and any other art id works too.
 
-Each function takes an optional table of options:
+`effect.at`, `effect.on` and `effect.moving` take an optional table of options:
 
 | Option | Meaning |
 | --- | --- |
@@ -376,8 +376,9 @@ effect.moving(caster, target, EffectGraphicType.LargeFireball, { speed = 7, dura
 effect.on(who, EffectGraphicType.SparkleHeal, { speed = 9, duration = 32, particle = 5005, layer = EffectLayerType.Waist })
 ```
 
-A function returns `false` and plays nothing for a value out of range, and for an effect with
-neither a graphic nor a particle. A classic client draws no particles: it gets the graphic, and
+A function returns `false` and plays nothing for a value out of range, an option of the wrong
+type (`speed = "9"`, `explodes = 1`), an option it does not know, and an effect with neither a
+graphic nor a particle. An argument of the wrong type raises an error, as for every module. A classic client draws no particles: it gets the graphic, and
 nothing for an effect made of particles only. Effects are not sequenced: chain them with
 `timer` calls.
 

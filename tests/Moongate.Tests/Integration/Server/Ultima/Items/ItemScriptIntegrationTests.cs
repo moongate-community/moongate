@@ -437,6 +437,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         scripts.Run(teleporter, "on_move_over", 2L);
 
         Assert.Empty(_errors);
+        Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
         Assert.Equal(expected, _effects.At.Select(effect => effect.Location));
         Assert.All(_effects.At, effect => Assert.Equal((aria.Map, (int)EffectGraphicType.Smoke), (effect.Map, effect.Options.Graphic)));
     }

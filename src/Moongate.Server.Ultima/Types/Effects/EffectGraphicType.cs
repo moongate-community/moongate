@@ -1,8 +1,8 @@
 namespace Moongate.Server.Ultima.Types.Effects;
 
 /// <summary>
-///     The animated graphics the emulators use for effects: the first art id of each animation, named after the client
-///     tile data and after what the other emulators use it for. Any other art id works as an effect graphic too.
+///     The animated graphics the emulators use for effects, with the art ids ModernUO passes, named after the client
+///     tile data and after what the other emulators use them for. Any other art id works as an effect graphic too.
 /// </summary>
 public enum EffectGraphicType
 {
@@ -66,7 +66,7 @@ public enum EffectGraphicType
     /// <summary>Small bolt; the Energy Bolt spell.</summary>
     SmallBolt = 0x379F,
 
-    /// <summary>Field of blades; the Blade Spirits spell.</summary>
+    /// <summary>Field of blades.</summary>
     FieldOfBlades = 0x37A0,
 
     /// <summary>Glow.</summary>
@@ -78,8 +78,8 @@ public enum EffectGraphicType
     /// <summary>Glow, third animation.</summary>
     GlowBurst = 0x37C4,
 
-    /// <summary>Death vortex, second animation; the Energy Vortex spell.</summary>
-    EnergyVortex = 0x37CC,
+    /// <summary>Death vortex, second animation.</summary>
+    DeathVortexLarge = 0x37CC,
 
     /// <summary>Energy.</summary>
     Energy = 0x3818,
@@ -88,10 +88,10 @@ public enum EffectGraphicType
     PoisonFieldEastWest = 0x3915,
 
     /// <summary>Field of poison running north to south.</summary>
-    PoisonFieldNorthSouth = 0x3920,
+    PoisonFieldNorthSouth = 0x3922,
 
     /// <summary>Field of energy running east to west.</summary>
-    EnergyFieldEastWest = 0x3947,
+    EnergyFieldEastWest = 0x3946,
 
     /// <summary>Field of energy running north to south.</summary>
     EnergyFieldNorthSouth = 0x3956,

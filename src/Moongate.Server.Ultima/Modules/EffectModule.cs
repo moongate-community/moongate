@@ -15,12 +15,19 @@ namespace Moongate.Server.Ultima.Modules;
 ///     or a lightning bolt; <c>effect.at(map, x, y, z, EffectGraphicType.Smoke)</c>. An effect takes an optional table of
 ///     options: <c>speed</c>, <c>duration</c>, <c>hue</c>, <c>render</c> (an <c>EffectRenderModeType</c>),
 ///     <c>fixed_direction</c>, <c>explodes</c>, and for the Enhanced Client <c>particle</c>, <c>explode_particle</c>,
-///     <c>explode_sound</c> and <c>layer</c> (an <c>EffectLayerType</c>). A value out of range gives <c>false</c>, never
-///     an error.
+///     <c>explode_sound</c> and <c>layer</c> (an <c>EffectLayerType</c>). A value out of range, an option of the wrong
+///     type or an unknown option gives <c>false</c> and plays nothing; an argument of the wrong type raises an error,
+///     as for every module.
 /// </summary>
 [ScriptModule("effect", "Plays graphic effects for the players around: at a point, on a mobile or an item, flying between two, or a lightning bolt.")]
 public sealed class EffectModule
 {
+    private static readonly HashSet<string> OptionNames =
+    [
+        "speed", "duration", "hue", "render", "fixed_direction", "explodes", "particle", "explode_particle",
+        "explode_sound", "layer"
+    ];
+
     private readonly IEffectService _effects;
     private readonly IMobileService _mobiles;
     private readonly IItemService _items;
@@ -53,7 +60,8 @@ public sealed class EffectModule
     }
 
     /// <summary>
-    ///     Plays an animation on a mobile or on an item lying on the ground; <c>effect.on(who, EffectGraphicType.SparkleHeal)</c>.
+    ///     Plays an animation on a mobile or on an item lying on the ground;
+    ///     <c>effect.on(who, EffectGraphicType.SparkleHeal)</c>.
     /// </summary>
     [ScriptFunction(helpText: "Plays an effect graphic on a mobile or a ground item; false for something not in the world or a value out of range.")]
     public bool On(long serial, int graphic, LuaTable? options = null)
@@ -144,6 +152,7 @@ public sealed class EffectModule
         var defaults = new EffectOptions();
 
         if (graphic is < 0 or > ushort.MaxValue ||
+            !HasOnlyKnownKeys(table) ||
             !TryReadNumber(table, "speed", defaults.Speed, byte.MaxValue, out var speed) ||
             !TryReadNumber(table, "duration", defaults.Duration, byte.MaxValue, out var duration) ||
             !TryReadNumber(table, "hue", 0, ushort.MaxValue, out var hue) ||
@@ -152,6 +161,8 @@ public sealed class EffectModule
             !TryReadNumber(table, "explode_particle", 0, ushort.MaxValue, out var explodeParticle) ||
             !TryReadNumber(table, "explode_sound", 0, ushort.MaxValue, out var explodeSound) ||
             !TryReadNumber(table, "layer", (int)EffectLayerType.None, byte.MaxValue, out var layer) ||
+            !TryReadFlag(table, "fixed_direction", out var fixedDirection) ||
+            !TryReadFlag(table, "explodes", out var explodes) ||
             !Enum.IsDefined((EffectRenderModeType)render) ||
             !Enum.IsDefined((EffectLayerType)layer) ||
             graphic == 0 && particle == 0)
@@ -166,13 +177,32 @@ public sealed class EffectModule
             Duration = (byte)duration,
             Hue = new Hue((ushort)hue),
             RenderMode = (EffectRenderModeType)render,
-            FixedDirection = ReadFlag(table, "fixed_direction"),
-            Explodes = ReadFlag(table, "explodes"),
+            FixedDirection = fixedDirection,
+            Explodes = explodes,
             Particle = particle,
             ExplodeParticle = explodeParticle,
             ExplodeSound = explodeSound,
             Layer = (EffectLayerType)layer
         };
+
+        return true;
+    }
+
+    // A misspelled option would otherwise be ignored in silence: the effect is refused instead.
+    private static bool HasOnlyKnownKeys(LuaTable? table)
+    {
+        if (table is null)
+        {
+            return true;
+        }
+
+        foreach (var (key, _) in table)
+        {
+            if (!key.TryRead<string>(out var name) || !OptionNames.Contains(name))
+            {
+                return false;
+            }
+        }
 
         return true;
     }
@@ -187,7 +217,11 @@ public sealed class EffectModule
             return true;
         }
 
-        if (!table[key].TryRead<double>(out var number) || number < 0 || number > maximum || number != Math.Floor(number))
+        if (table[key].Type != LuaValueType.Number ||
+            !table[key].TryRead<double>(out var number) ||
+            number < 0 ||
+            number > maximum ||
+            number != Math.Floor(number))
         {
             return false;
         }
@@ -197,8 +231,16 @@ public sealed class EffectModule
         return true;
     }
 
-    private static bool ReadFlag(LuaTable? table, string key)
+    // A missing key is false; anything but true or false refuses the effect.
+    private static bool TryReadFlag(LuaTable? table, string key, out bool value)
     {
-        return table is not null && table[key].TryRead<bool>(out var flag) && flag;
+        value = false;
+
+        if (table is null || table[key].Type == LuaValueType.Nil)
+        {
+            return true;
+        }
+
+        return table[key].Type == LuaValueType.Boolean && table[key].TryRead(out value);
     }
 }
