@@ -10,12 +10,15 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     Keeps one <see cref="NpcPath" /> per walking NPC and searches a new one only when it must: with none left, a
-///     changed goal or a blocked step, and two seconds after the last search at the soonest. Until then a changed goal is
-///     walked towards on the old path, as ModernUO.
+///     changed goal or a blocked step, and two seconds after the last search at the soonest, ten after one that found
+///     nothing. Until then a changed goal is walked towards on the old path, as ModernUO.
 /// </summary>
 public sealed class NpcPathService : INpcPathService
 {
     private const long RepathDelayMs = 2000;
+
+    // A search that finds nothing is the costly one, a whole search: it is tried again later than the others.
+    private const long FailedDelayMs = 10_000;
     private const long IdleMs = 60_000;
 
     // Above this many paths, those of NPCs that stopped asking are dropped.
@@ -109,7 +112,6 @@ public sealed class NpcPathService : INpcPathService
         path.Map = npc.Map;
         path.Goal = goal;
         path.Expected = npc.Location;
-        path.NextSearchAt = now + RepathDelayMs;
         path.Steps.Clear();
 
         foreach (var step in found.Steps)
@@ -118,6 +120,7 @@ public sealed class NpcPathService : INpcPathService
         }
 
         path.Failed = path.Steps.Count == 0;
+        path.NextSearchAt = now + (path.Failed ? FailedDelayMs : RepathDelayMs);
     }
 
     private void Prune(long now)

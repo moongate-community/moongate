@@ -10,7 +10,7 @@ namespace Moongate.Server.Ultima.Interfaces;
 ///     Keeps the path each NPC is walking, so a script can ask for the next step on every tick without searching every
 ///     time: a path is searched with <see cref="IPathfindingService" /> when the NPC has none, when its goal changed or
 ///     when a step was blocked, and never more than once every two seconds for an NPC, as ModernUO's
-///     <c>PathFollower</c>.
+///     <c>PathFollower</c>; after a search that found nothing, the costly kind, only ten seconds later.
 /// </summary>
 /// <remarks>
 ///     Game loop only. The caller takes the step and reports it with <see cref="Stepped" />.

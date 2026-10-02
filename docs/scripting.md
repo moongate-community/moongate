@@ -314,7 +314,8 @@ time and kept for the NPC, so the later calls only take the next step. It is sea
 when the place changes or a step is blocked, and two seconds after the last search at the
 soonest: until then a place that changed is walked towards on the old path, and a blocked
 NPC answers `"blocked"`. A place that cannot be reached is walked towards as far as a path
-leads, then the answer is `"no_path"`. To follow someone, pass where it stands on every tick
+leads, then the answer is `"no_path"`, and the way is looked for again only ten seconds later:
+a search that finds nothing is the costly kind. To follow someone, pass where it stands on every tick
 and a `range` of 1 to stop beside it:
 
 ```lua

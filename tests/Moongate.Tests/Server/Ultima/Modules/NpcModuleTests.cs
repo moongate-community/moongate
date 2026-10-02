@@ -359,7 +359,7 @@ public sealed class NpcModuleTests
     {
         Assert.Equal("no_path", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
 
-        _time.Advance(TimeSpan.FromSeconds(2));
+        _time.Advance(TimeSpan.FromSeconds(10));
         _finder.Finds(DirectionType.North);
         _movement.Allow = false;
 

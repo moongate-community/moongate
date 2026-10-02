@@ -179,7 +179,7 @@ So a caller must not search again on every tick for a goal that was not reached:
 trying again, as ModernUO's two seconds. `INpcPathService` does that for NPCs: it keeps the
 path each one walks and gives its next step (`Next`, then `Stepped` once the step was tried),
 searching again only with no steps left, a changed goal or a blocked step, and two seconds
-after the last search at the soonest. The Lua function
+after the last search at the soonest, ten after one that found nothing. The Lua function
 [`npc.walk_to`](scripting.md#walking-a-path) is built on it.
 
 What the movement service does not see a path does not either: items on the ground, closed

@@ -83,10 +83,10 @@ public sealed class NpcPathServiceTests
     }
 
     [Fact]
-    public void Next_WhenNoPathIsFound_SaysSo_AndSearchesAgainOnlyAfterTwoSeconds()
+    public void Next_WhenNoPathIsFound_SaysSo_AndSearchesAgainOnlyAfterTenSeconds()
     {
         Assert.Equal(NpcWalkType.NoPath, Next().Kind);
-        _time.Advance(TimeSpan.FromMilliseconds(1999));
+        _time.Advance(TimeSpan.FromMilliseconds(9999));
         Assert.Equal(NpcWalkType.NoPath, Next().Kind);
         Assert.Single(_finder.Searches);
 
