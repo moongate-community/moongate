@@ -59,7 +59,8 @@ See all of them in [Commands](commands.md).
 - Region rules: guards and housing. Regions drive the weather, the dungeon light, the music and the season.
 - Spawner items (the [spawn regions](spawns.md) do the respawning).
 - Per-player language, database backup and restore, a web administration panel.
-- Old Kingdom Reborn AES/E3 encryption; the Enhanced Client has not been tested.
+- Old Kingdom Reborn AES/E3 encryption. The Enhanced Client logs in, creates a character, enters the world and
+  walks; the rest is partial: see [Enhanced Client](enhanced-client.md).
 
 ## By area
 

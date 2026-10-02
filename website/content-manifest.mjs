@@ -16,6 +16,7 @@ export const contentEntries = [
   { source: 'docs/docker.md', slug: 'server/docker', title: 'Run with Docker', group: 'Run a shard' },
   { source: 'docs/docker-login-realms.md', slug: 'server/docker-login-realms', title: 'Docker login and realms', group: 'Run a shard' },
   { source: 'docs/server-configuration.md', slug: 'server/configuration', title: 'Configuration', group: 'Run a shard' },
+  { source: 'docs/enhanced-client.md', slug: 'server/enhanced-client', title: 'Enhanced Client', group: 'Run a shard' },
   { source: 'docs/commands.md', slug: 'server/commands', title: 'Overview', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/help.md', slug: 'server/commands/help', title: 'help', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/echo.md', slug: 'server/commands/echo', title: 'echo', group: 'Run a shard', subgroup: 'Commands' },
