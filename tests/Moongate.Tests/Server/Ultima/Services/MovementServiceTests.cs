@@ -1,5 +1,8 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Types.Geometry;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Tests.TestSupport.Ultima.Maps;
@@ -11,7 +14,15 @@ namespace Moongate.Tests.Server.Ultima.Services;
 public sealed class MovementServiceTests
 {
     private readonly FakeMapService _map = new(16, 16);
+    private const int Door = 0x0675;
+    private const int Crate = 0x0E3D;
+    private const int Coins = 0x0EED;
+    private const int Step2 = 0x0721;
+    private const int Platform = 0x0519;
+
     private readonly FakeTileDataService _tiles = new();
+    private readonly SectorService _sectors = TestSectors.Create();
+    private uint _nextSerial = 0x40000001;
 
     [Fact]
     public void GetAverageZ_FlatLand_ReturnsItsZ()
@@ -380,8 +391,124 @@ public sealed class MovementServiceTests
         Assert.False(CreateService().TryGetSwimZ(MapType.Trammel, 4, 4, out _));
     }
 
+    [Fact]
+    public void CheckMovement_AClosedDoorOnTheCell_Blocks_AndFreesItOnceSwungAside()
+    {
+        var door = Ground(Door, 6, 5, 0);
+
+        Assert.False(Step(new(5, 5, 0), DirectionType.East, out _));
+
+        // Open: the door stands on the next cell, as door.lua moves it.
+        door.PlaceOnGround(MapType.Felucca, new Point3D(7, 4, 0));
+        _sectors.AddItem(door);
+
+        Assert.True(Step(new(5, 5, 0), DirectionType.East, out var z));
+        Assert.Equal(0, z);
+    }
+
+    [Fact]
+    public void CheckMovement_PassDoors_WalksThroughADoor_NotThroughAWall()
+    {
+        Ground(Door, 6, 5, 0);
+        Ground(Crate, 5, 6, 0);
+
+        Assert.True(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.East, MovementAbilityType.Walk | MovementAbilityType.PassDoors, out _));
+        Assert.False(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.South, MovementAbilityType.Walk | MovementAbilityType.PassDoors, out _));
+    }
+
+    [Fact]
+    public void CheckMovement_AnImpassableItem_Blocks_EvenWhenItCanBeMoved()
+    {
+        var crate = Ground(Crate, 6, 5, 0);
+        crate.Movable = true;
+
+        Assert.False(Step(new(5, 5, 0), DirectionType.East, out _));
+    }
+
+    [Fact]
+    public void CheckMovement_AnItemAboveTheMoversHead_DoesNotBlock()
+    {
+        // A hanging sign, 20 above the floor.
+        Ground(Crate, 6, 5, 20);
+
+        Assert.True(Step(new(5, 5, 0), DirectionType.East, out _));
+    }
+
+    [Fact]
+    public void CheckMovement_AnItemThatIsNeitherImpassableNorASurface_DoesNotBlock()
+    {
+        Ground(Coins, 6, 5, 0);
+
+        Assert.True(Step(new(5, 5, 0), DirectionType.East, out var z));
+        Assert.Equal(0, z);
+    }
+
+    [Fact]
+    public void CheckMovement_ADiagonalPastADoor_IsBlocked()
+    {
+        Ground(Door, 6, 5, 0);
+
+        Assert.False(Step(new(5, 5, 0), DirectionType.SouthEast, out _));
+    }
+
+    [Fact]
+    public void CheckMovement_AFixedSurfaceItem_IsSteppedOnto()
+    {
+        Ground(Step2, 6, 5, 0).Movable = false;
+
+        Assert.True(Step(new(5, 5, 0), DirectionType.East, out var z));
+        Assert.Equal(2, z);
+    }
+
+    [Fact]
+    public void CheckMovement_ASurfaceItemThatCanBeMoved_IsNotAFloor()
+    {
+        Ground(Step2, 6, 5, 0).Movable = true;
+
+        // Not stood on, and in the way of the ground under it.
+        Assert.False(Step(new(5, 5, 0), DirectionType.East, out _));
+    }
+
+    [Fact]
+    public void CheckMovement_FromAPlatformOfItems_GoesOnAtItsHeight()
+    {
+        Ground(Platform, 5, 5, 10).Movable = false;
+        Ground(Platform, 6, 5, 10).Movable = false;
+
+        Assert.True(Step(new(5, 5, 10), DirectionType.East, out var z));
+        Assert.Equal(10, z);
+    }
+
+    [Fact]
+    public void CheckMovement_WithoutSectors_SeesNoItem()
+    {
+        Ground(Door, 6, 5, 0);
+
+        Assert.True(new MovementService(_map, _tiles).CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.East, MovementAbilityType.Walk, out _));
+    }
+
+    private bool Step(Point3D from, DirectionType direction, out int newZ)
+    {
+        return CreateService().CheckMovement(MapType.Felucca, from, direction, MovementAbilityType.Walk, out newZ);
+    }
+
+    private ItemEntity Ground(int graphic, int x, int y, int z)
+    {
+        var item = new ItemEntity { Id = new Serial(_nextSerial++), TemplateId = "thing", ItemId = graphic, Amount = 1 };
+        item.PlaceOnGround(MapType.Felucca, new Point3D(x, y, z));
+        _sectors.AddItem(item);
+
+        return item;
+    }
+
     private MovementService CreateService()
     {
-        return new(_map, _tiles);
+        _tiles.Item(Door, TileFlagType.Impassable | TileFlagType.Door, 20)
+              .Item(Crate, TileFlagType.Impassable, 10)
+              .Item(Coins, TileFlagType.Generic, 0)
+              .Item(Step2, TileFlagType.Surface, 2)
+              .Item(Platform, TileFlagType.Surface, 0);
+
+        return new(_map, _tiles, _sectors);
     }
 }

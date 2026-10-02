@@ -6,12 +6,14 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
-///     Decides whether a mover can take one step and at which height it lands, from the map terrain, the statics and
-///     the tile flags, with the same rules as ModernUO and the client.
+///     Decides whether a mover can take one step and at which height it lands, from the map terrain, the statics, the
+///     items lying on the ground and the tile flags, with the same rules as ModernUO and the client.
 /// </summary>
 /// <remarks>
 ///     A mover is 16 units tall and can climb 2 units in one step; a bridge, such as a stair, counts half its height.
-///     World items, mobiles and placed multis are not considered yet. Call it from the game loop, as
+///     An impassable item on the ground blocks as a static does, a closed door among them, unless the mover has
+///     <see cref="MovementAbilityType.PassDoors" /> and the item is a door; a surface item that cannot be picked up can
+///     be stood on. Mobiles and placed multis are not considered yet. Call it from the game loop, as
 ///     <see cref="IMapService" />.
 /// </remarks>
 public interface IMovementService

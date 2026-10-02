@@ -107,7 +107,14 @@ if (movementService.CheckMovement(MapType.Felucca, from, DirectionType.East,
 ```
 
 - `MovementAbilityType.Walk` moves over land, statics and surfaces that are not
-  water; `Swim` enters water; `Walk | Swim` does both.
+  water; `Swim` enters water; `Walk | Swim` does both. `PassDoors`, added to either,
+  walks through doors: game masters and administrators have it.
+- The items lying on the ground of a cell count as its statics do, by the tile data
+  of their graphic: an impassable one in the mover's way blocks the step, such as a
+  closed door, a crate or a wall placed by `.decorate`; a surface one that cannot be
+  picked up, such as a floor or a stair placed there, can be stood on. An open door
+  has swung onto the next cell, so its doorway is free and that cell is not. An item
+  above the mover's head or under its feet does not block.
 - Only the low three bits of the direction count, so `DirectionType.Running` is
   ignored.
 - A step that leaves the map, or starts outside it, returns false with `newZ` equal
@@ -183,8 +190,9 @@ search at the soonest, ten when that search did not reach the same goal, and for
 second in the whole server; an NPC that may not search steps straight towards its goal. The Lua function
 [`npc.walk_to`](scripting.md#walking-a-path) is built on it.
 
-What the movement service does not see a path does not either: items on the ground, closed
-doors among them, and other mobiles do not block it. A tile on the way has one height in a
+A path sees what the movement sees: a closed door, a crate or any impassable item on the
+ground blocks it, and it goes around; an NPC does not open doors. Other mobiles do not block
+a path, since the movement does not consider them. A tile on the way has one height in a
 search, the one of the shortest way to it, so a path cannot pass both over and under the same
 tile, such as across a bridge and then beneath it. The goal's own tile is different: it is
 only entered at the goal's height, so a goal on a balcony is reached by its stairs and not
@@ -196,6 +204,8 @@ stand on, such as a wall, always costs a whole search.
 
 ## Not included yet
 
-World items, mobiles and placed multis are not part of the movement and line of sight
-checks, because the world does not hold them yet. See
+Mobiles and placed multis are not part of the movement and line of sight checks, and
+items on the ground are part of the movement only: a line of sight still passes through
+a closed door. Where an NPC or a dropped item is placed (`TryGetSpawnZ`, `TryGetDropZ`)
+looks at the land and the statics, not at the items on the ground. See
 [Implementation status](implementation-status.md).

@@ -1,6 +1,10 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Data.Internal.Movement;
+using Moongate.Server.Ultima.Data.Tiles;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Movement;
@@ -9,8 +13,9 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     A port of ModernUO's <c>MovementImpl.CheckMovement</c> and <c>Map.GetAverageZ</c> over terrain and statics,
-///     without world items, mobiles, multis, doors or special cases.
+///     A port of ModernUO's <c>MovementImpl.CheckMovement</c> and <c>Map.GetAverageZ</c> over terrain, statics and the
+///     items lying on the ground: an impassable item in the mover's way blocks, a closed door among them, and a surface
+///     item that cannot be picked up can be stood on. Mobiles, multis and ModernUO's special cases are not considered.
 /// </summary>
 public class MovementService : IMovementService
 {
@@ -19,11 +24,23 @@ public class MovementService : IMovementService
 
     private readonly IMapService _mapService;
     private readonly ITileDataService _tileDataService;
+    private readonly ISectorService? _sectors;
+    private readonly IItemTemplateService? _templates;
 
-    public MovementService(IMapService mapService, ITileDataService tileDataService)
+    // What stands on the cell being checked, statics then ground items; reused, the game loop checks one cell at a time.
+    private readonly List<CellTile> _cell = [];
+
+    public MovementService(
+        IMapService mapService,
+        ITileDataService tileDataService,
+        ISectorService? sectors = null,
+        IItemTemplateService? templates = null
+    )
     {
         _mapService = mapService;
         _tileDataService = tileDataService;
+        _sectors = sectors;
+        _templates = templates;
     }
 
     public int GetAverageZ(MapType map, int x, int y)
@@ -249,9 +266,15 @@ public class MovementService : IMovementService
             isSet = true;
         }
 
-        foreach (var tile in _mapService.GetStatics(map, from.X, from.Y))
+        foreach (var tile in TilesAt(map, from.X, from.Y))
         {
-            var item = _tileDataService.GetItem(tile.Id);
+            // Nobody stands on an item that can be picked up.
+            if (!tile.Fixed)
+            {
+                continue;
+            }
+
+            var item = tile.Tile;
             var calcTop = tile.Z + item.StandHeight;
             var surface = (item.Flags & TileFlagType.Surface) != 0;
             var wet = (item.Flags & TileFlagType.Wet) != 0;
@@ -307,7 +330,8 @@ public class MovementService : IMovementService
         var land = _mapService.GetLand(map, x, y);
         var landBlocks = LandBlocks(land, canSwim, cantWalk);
         var considerLand = !LandHeights.IsIgnored(land.Id);
-        var statics = _mapService.GetStatics(map, x, y);
+        var ignoreDoors = (ability & MovementAbilityType.PassDoors) != 0;
+        var tiles = TilesAt(map, x, y);
 
         LandHeights.Get(_mapService, map, x, y, out var landZ, out var landCenter, out _);
 
@@ -316,15 +340,18 @@ public class MovementService : IMovementService
         var checkTop = startZ + PersonHeight;
         int testTop;
 
-        foreach (var tile in statics)
+        // By index: IsOk reads the same list while this loop runs.
+        for (var index = 0; index < tiles.Count; index++)
         {
-            var item = _tileDataService.GetItem(tile.Id);
+            var tile = tiles[index];
+            var item = tile.Tile;
             var notWater = (item.Flags & TileFlagType.Wet) == 0;
             var surface = (item.Flags & TileFlagType.Surface) != 0;
             var impassable = (item.Flags & TileFlagType.Impassable) != 0;
 
-            // To move we must satisfy: a passable surface and the mover walks, or water and the mover swims.
-            if ((!surface || impassable) && (!canSwim || notWater) || cantWalk && notWater)
+            // To move we must satisfy: a passable surface and the mover walks, or water and the mover swims; and an
+            // item that can be picked up is no floor.
+            if (!tile.Fixed || (!surface || impassable) && (!canSwim || notWater) || cantWalk && notWater)
             {
                 continue;
             }
@@ -366,7 +393,7 @@ public class MovementService : IMovementService
                 continue;
             }
 
-            if (IsOk(statics, ourZ, testTop))
+            if (IsOk(tiles, ourZ, testTop, ignoreDoors))
             {
                 newZ = ourZ;
                 moveIsOk = true;
@@ -397,7 +424,7 @@ public class MovementService : IMovementService
             }
         }
 
-        if (shouldCheck && IsOk(statics, landCenter, testTop))
+        if (shouldCheck && IsOk(tiles, landCenter, testTop, ignoreDoors))
         {
             newZ = landCenter;
             moveIsOk = true;
@@ -411,7 +438,37 @@ public class MovementService : IMovementService
         return (flags & (TileFlagType.Wet | TileFlagType.Impassable)) == (TileFlagType.Wet | TileFlagType.Impassable);
     }
 
-    // ModernUO MovementImpl.IsOk: no impassable or surface static overlaps the space from ourZ to ourTop.
+    // ModernUO MovementImpl.IsOk: no impassable or surface static or ground item overlaps the space from ourZ to
+    // ourTop; a door does not count for a mover that passes doors.
+    private static bool IsOk(List<CellTile> tiles, int ourZ, int ourTop, bool ignoreDoors)
+    {
+        foreach (var tile in tiles)
+        {
+            var item = tile.Tile;
+
+            if ((item.Flags & (TileFlagType.Impassable | TileFlagType.Surface)) == 0)
+            {
+                continue;
+            }
+
+            if (ignoreDoors && tile.IsItem && IsDoor(item))
+            {
+                continue;
+            }
+
+            var checkZ = tile.Z;
+            var checkTop = checkZ + item.StandHeight;
+
+            if (checkTop > ourZ && ourTop > checkZ)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // The same over the statics alone, for where something is placed rather than walked.
     private bool IsOk(IReadOnlyList<MapStaticTile> statics, int ourZ, int ourTop)
     {
         foreach (var tile in statics)
@@ -433,6 +490,51 @@ public class MovementService : IMovementService
         }
 
         return true;
+    }
+
+    // As ModernUO: the tiledata Door flag, and the few door graphics that lack it.
+    private static bool IsDoor(ItemTile tile)
+    {
+        return (tile.Flags & TileFlagType.Door) != 0 || tile.Id is 0x0692 or 0x0846 or 0x0873 or 0x06F5 or 0x06F6;
+    }
+
+    // The statics of the cell, then the items lying on its ground.
+    private List<CellTile> TilesAt(MapType map, int x, int y)
+    {
+        _cell.Clear();
+
+        foreach (var tile in _mapService.GetStatics(map, x, y))
+        {
+            _cell.Add(new(_tileDataService.GetItem(tile.Id), tile.Z, false, true));
+        }
+
+        if (_sectors is null)
+        {
+            return _cell;
+        }
+
+        foreach (var item in _sectors.GetItemsAt(map, x, y))
+        {
+            if (item.GroundLocation is { } spot && _tileDataService.TryGetItem(item.ItemId, out var data))
+            {
+                _cell.Add(new(data, spot.Z, true, IsFixed(item)));
+            }
+        }
+
+        return _cell;
+    }
+
+    // The item's own word, else its template's; an item of neither can be picked up.
+    private bool IsFixed(ItemEntity item)
+    {
+        if (item.Movable is { } movable)
+        {
+            return !movable;
+        }
+
+        return _templates is not null &&
+               _templates.TryGet(item.TemplateId, out var template) &&
+               !template.EffectiveMovable(_tileDataService);
     }
 
     // Impassable land blocks, except water for a swimmer; a mover that cannot walk is blocked by any other land.
