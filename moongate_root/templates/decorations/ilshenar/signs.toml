@@ -1,0 +1,179 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/signs.toml
+#
+# What it is for:
+#   The shop and world signs placed on Ilshenar. Each block is one sign
+#   placed at every location it lists.
+#
+# Fields:
+#   type       LocalizedSign for a text of the client (label_number), Sign for a
+#              written name
+#   item_id    the graphic
+#   props      label_number, the cliloc of the text, or name; hue when the sign
+#              has one
+#   locations  [x, y, z] of every sign of the block
+# ==============================================================================
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0B95
+props = { name = "Librum" }
+locations = [
+    [860, 654, -39],
+    [877, 654, -39],
+    [861, 632, -34],
+    [865, 632, -34],
+    [873, 632, -34],
+    [877, 632, -34],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BA5
+props = { name = "Skis-In-Lem" }
+locations = [
+    [882, 616, -34],
+    [886, 616, -34],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BA8
+props = { name = "Atri-Ben-In-Ailem" }
+locations = [
+    [780, 638, 1],
+    [780, 646, 1],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BAB
+props = { name = "In-Mani-Lem" }
+locations = [
+    [858, 592, -33],
+    [862, 592, -33],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BAE
+props = { name = "Ter-Ort-Lem" }
+locations = [[837, 582, 1]]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BB3
+props = { name = "Ter-Zu" }
+locations = [
+    [836, 703, 1],
+    [845, 703, 1],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BBF
+props = { name = "Aglo-In-Lem" }
+locations = [
+    [817, 694, -38],
+    [822, 694, -38],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BBF
+props = { name = "Agra-Char-In-Lem" }
+locations = [
+    [819, 592, -34],
+    [823, 592, -34],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BC0
+props = { name = "Agra-Char-In-Lem" }
+locations = [
+    [814, 596, -34],
+    [814, 600, -34],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BC0
+props = { name = "Aglo-In-Lem" }
+locations = [
+    [814, 685, -34],
+    [814, 689, -34],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BC1
+props = { name = "Klar-Lap-In-Lem" }
+locations = [
+    [858, 694, -39],
+    [863, 694, -39],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BC7
+props = { name = "Zhel-In-Lem" }
+locations = [
+    [788, 655, 1],
+    [796, 655, 1],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BCB
+props = { name = "Ben-In-Lem" }
+locations = [
+    [830, 678, -39],
+    [835, 678, -39],
+    [831, 608, -34],
+    [835, 608, -34],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BD1
+props = { name = "Lap-In-Lem" }
+locations = [
+    [788, 630, 1],
+    [796, 630, 1],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0BD1
+props = { name = "Ter-An-Eks-Por" }
+locations = [
+    [881, 670, -39],
+    [886, 670, -39],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0C0B
+props = { name = "Atri-Aur" }
+locations = [
+    [845, 678, -39],
+    [850, 678, -39],
+    [846, 608, -34],
+    [850, 608, -34],
+]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0C44
+props = { name = "Lap-In-Lem" }
+locations = [
+    [868, 684, -39],
+    [868, 689, -39],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1016183 }
+locations = [[787, 1137, -13]]

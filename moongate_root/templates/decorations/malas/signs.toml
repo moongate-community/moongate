@@ -1,0 +1,153 @@
+# ==============================================================================
+# Moongate - templates/decorations/malas/signs.toml
+#
+# What it is for:
+#   The shop and world signs placed on Malas. Each block is one sign
+#   placed at every location it lists.
+#
+# Fields:
+#   type       LocalizedSign for a text of the client (label_number), Sign for a
+#              written name
+#   item_id    the graphic
+#   props      label_number, the cliloc of the text, or name; hue when the sign
+#              has one
+#   locations  [x, y, z] of every sign of the block
+# ==============================================================================
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0B
+props = { label_number = 1061816, hue = 0x047E }
+locations = [[996, 517, -50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC7
+props = { label_number = 1061813, hue = 0x047E }
+locations = [[981, 511, -50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA5
+props = { label_number = 1061814, hue = 0x047E }
+locations = [[981, 526, -50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1061818, hue = 0x047E }
+locations = [[1000, 523, -50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB0
+props = { label_number = 1061817, hue = 0x047E }
+locations = [[1001, 518, -50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCC
+props = { label_number = 1061815, hue = 0x047E }
+locations = [[994, 509, -50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1061819, hue = 0x047E }
+locations = [[1005, 522, -30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB8
+props = { label_number = 1061820 }
+locations = [[1021, 505, -70]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC7
+props = { label_number = 1061800, hue = 0x044E }
+locations = [[1997, 1369, -87]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB8
+props = { label_number = 1061804, hue = 0x044E }
+locations = [[1994, 1326, -91]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCC
+props = { label_number = 1061809, hue = 0x044E }
+locations = [[2014, 1338, -76]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA3
+props = { label_number = 1061810, hue = 0x044E }
+locations = [[2023, 1347, -90]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1061807, hue = 0x044E }
+locations = [[2030, 1348, -89]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAD
+props = { label_number = 1061799, hue = 0x044E }
+locations = [[2038, 1385, -88]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC1
+props = { label_number = 1061802, hue = 0x044E }
+locations = [[2055, 1390, -90]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0B
+props = { label_number = 1061803, hue = 0x044E }
+locations = [[2056, 1338, -85]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1061808, hue = 0x044E }
+locations = [[2047, 1312, -90]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB0
+props = { label_number = 1061805, hue = 0x044E }
+locations = [[2069, 1298, -81]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA6
+props = { label_number = 1061801, hue = 0x044E }
+locations = [[2075, 1339, -82]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAC
+props = { label_number = 1061806, hue = 0x044E }
+locations = [[2085, 1379, -90]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1061616 }
+locations = [[1067, 1431, -88]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1061835 }
+locations = [[962, 641, -90]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA3
+props = { label_number = 1061836 }
+locations = [[962, 633, -90]]

@@ -5,6 +5,7 @@ using Moongate.UoxItemConverter.Internal;
 var app = ConsoleApp.Create();
 app.Add("", Cli.Run);
 app.Add("modernuo-spawns", Cli.ModernUoSpawns);
+app.Add("modernuo-signs", Cli.ModernUoSigns);
 app.Run(args);
 
 internal static class Cli
@@ -119,5 +120,20 @@ internal static class Cli
             Console.Out,
             Console.Error
         );
+    }
+
+    /// <summary>
+    ///     Converts ModernUO's shop and world signs (signs.cfg) into decoration files, one signs.toml per folder of
+    ///     templates/decorations, which .decorate places.
+    /// </summary>
+    /// <param name="source">
+    ///     ModernUO's Distribution/Data/signs.cfg file.
+    /// </param>
+    /// <param name="destination">
+    ///     The decorations folder (templates/decorations); each folder gets a signs.toml, replacing that of a previous run.
+    /// </param>
+    public static int ModernUoSigns(string source, string destination)
+    {
+        return ModernUoSignConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
     }
 }

@@ -1,0 +1,2178 @@
+# ==============================================================================
+# Moongate - templates/decorations/britannia/signs.toml
+#
+# What it is for:
+#   The shop and world signs placed on Trammel and Felucca. Each block is one sign
+#   placed at every location it lists.
+#
+# Fields:
+#   type       LocalizedSign for a text of the client (label_number), Sign for a
+#              written name
+#   item_id    the graphic
+#   props      label_number, the cliloc of the text, or name; hue when the sign
+#              has one
+#   locations  [x, y, z] of every sign of the block
+# ==============================================================================
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD8
+props = { label_number = 1016093 }
+locations = [[373, 904, -1]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1016315 }
+locations = [[2769, 976, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC8
+props = { label_number = 1016095 }
+locations = [[2634, 2088, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAF
+props = { label_number = 1016417 }
+locations = [[2632, 2102, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016082 }
+locations = [[2666, 2096, 5]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016216 }
+locations = [[2664, 2192, 4]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAC
+props = { label_number = 1016138 }
+locations = [[2706, 2152, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1016345 }
+locations = [[2714, 2104, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1016346 }
+locations = [[2688, 2232, -4]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCF
+props = { label_number = 1016083 }
+locations = [[2712, 2178, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCB
+props = { label_number = 1016217 }
+locations = [[2744, 2248, -4]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0C
+props = { label_number = 1023083 }
+locations = [
+    [2732, 2192, 0],
+    [2890, 3479, 15],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCB
+props = { label_number = 1016274 }
+locations = [[2840, 873, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA5
+props = { label_number = 1016361 }
+locations = [[2840, 878, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016421 }
+locations = [[2840, 801, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BED
+props = { label_number = 1016342 }
+locations = [[2864, 731, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC8
+props = { label_number = 1016316 }
+locations = [[2857, 856, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCD
+props = { label_number = 1016347 }
+locations = [[2860, 801, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016091 }
+locations = [
+    [2848, 929, 0],
+    [624, 2112, 0],
+    [2968, 3367, 15],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C03
+props = { label_number = 1016293 }
+locations = [[2856, 910, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0B
+props = { label_number = 1016333 }
+locations = [[2896, 673, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016286 }
+locations = [[2894, 664, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC1
+props = { label_number = 1016356 }
+locations = [[2888, 721, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCA
+props = { label_number = 1016296 }
+locations = [[2905, 720, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BDB
+props = { label_number = 1016335 }
+locations = [[2904, 737, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA7
+props = { label_number = 1016308 }
+locations = [[2904, 794, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BEA
+props = { label_number = 1016294 }
+locations = [[2919, 680, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016325 }
+locations = [[2912, 680, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB0
+props = { label_number = 1016312 }
+locations = [[2913, 808, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAB
+props = { label_number = 1016142 }
+locations = [[2928, 852, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1016328 }
+locations = [[2916, 905, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA6
+props = { label_number = 1016361 }
+locations = [[2969, 624, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C44
+props = { label_number = 1016288 }
+locations = [[2958, 712, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB1
+props = { label_number = 1016414 }
+locations = [[2952, 929, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCC
+props = { label_number = 1016275 }
+locations = [[2977, 640, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1016416 }
+locations = [[2976, 875, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BF1
+props = { label_number = 1016305 }
+locations = [[2976, 817, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC5
+props = { label_number = 1016326 }
+locations = [[3000, 833, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB2
+props = { label_number = 1016327 }
+locations = [[2993, 824, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA4
+props = { label_number = 1016373 }
+locations = [[2995, 768, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA9
+props = { label_number = 1016289 }
+locations = [[3000, 777, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016120 }
+locations = [[3024, 777, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA5
+props = { label_number = 1016256 }
+locations = [[2888, 3502, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAA
+props = { label_number = 1016244 }
+locations = [[2909, 3496, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB7
+props = { label_number = 1016249 }
+locations = [
+    [2912, 3517, 10],
+    [3043, 3463, 25],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA8
+props = { label_number = 1016390 }
+locations = [[2931, 3512, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1016285 }
+locations = [[2976, 3406, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAC
+props = { label_number = 1016246 }
+locations = [[2994, 3440, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016247 }
+locations = [[3005, 3360, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA4
+props = { label_number = 1016220 }
+locations = [[2977, 3360, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016248 }
+locations = [[3024, 3430, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCB
+props = { label_number = 1016268 }
+locations = [[3016, 3386, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC6
+props = { label_number = 1016077 }
+locations = [[3009, 3360, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BED
+props = { label_number = 1016245 }
+locations = [[3054, 3408, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBE
+props = { label_number = 1016255 }
+locations = [[3053, 3376, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016199 }
+locations = [[3561, 1174, 9]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA9
+props = { label_number = 1016204 }
+locations = [[3554, 1175, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBE
+props = { label_number = 1016203 }
+locations = [[3551, 1194, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016205 }
+locations = [[3551, 1178, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC8
+props = { label_number = 1016202 }
+locations = [[3551, 1186, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC7
+props = { label_number = 1016224 }
+locations = [[3554, 1199, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB5
+props = { label_number = 1016239 }
+locations = [[3704, 1213, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBC
+props = { label_number = 1016057 }
+locations = [[3743, 1207, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB1
+props = { label_number = 1022993 }
+locations = [
+    [3720, 1224, 0],
+    [1480, 1746, 0],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1016232 }
+locations = [[3740, 1314, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAB
+props = { label_number = 1016099 }
+locations = [[3720, 1380, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016198 }
+locations = [[3732, 1394, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0D
+props = { label_number = 1016201 }
+locations = [[3753, 1240, 14]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC4
+props = { label_number = 1016357 }
+locations = [[3748, 1256, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA5
+props = { label_number = 1016271 }
+locations = [[3784, 1264, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1016192 }
+locations = [[3784, 1231, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016091 }
+locations = [
+    [3776, 1196, 0],
+    [3720, 2184, 20],
+    [4477, 1130, 0],
+    [616, 984, 0],
+    [617, 2144, 0],
+    [1425, 3704, 0],
+    [1505, 1528, 40],
+    [1634, 1673, 26],
+    [1896, 2842, 20],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC2
+props = { label_number = 1016153 }
+locations = [[3778, 1176, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BED
+props = { label_number = 1016171 }
+locations = [[3673, 2138, 24]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC1
+props = { label_number = 1016300 }
+locations = [[3673, 2184, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA5
+props = { label_number = 1016263 }
+locations = [[3672, 2232, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB6
+props = { label_number = 1016307 }
+locations = [[3669, 2261, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1016362 }
+locations = [[3704, 2167, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA4
+props = { label_number = 1016284 }
+locations = [[3681, 2176, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAC
+props = { label_number = 1016139 }
+locations = [[3685, 2231, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BF4
+props = { label_number = 1016121 }
+locations = [[3682, 2261, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0C
+props = { label_number = 1016051 }
+locations = [[3728, 2160, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAD
+props = { label_number = 1016173 }
+locations = [[3712, 2215, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1016128 }
+locations = [[3736, 2230, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C09
+props = { label_number = 1016178 }
+locations = [[3712, 2242, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA4
+props = { label_number = 1016049 }
+locations = [[3753, 2232, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BE8
+props = { label_number = 1016107 }
+locations = [[4548, 873, 37]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB0
+props = { label_number = 1016502 }
+locations = [[4414, 1096, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA4
+props = { label_number = 1016165 }
+locations = [[4390, 1072, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAC
+props = { label_number = 1016185 }
+locations = [[4396, 1088, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016331 }
+locations = [[4400, 1115, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA9
+props = { label_number = 1016497 }
+locations = [[4400, 1132, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1016354 }
+locations = [[4407, 1168, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC6
+props = { label_number = 1016146 }
+locations = [[4419, 1136, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC5
+props = { label_number = 1016186 }
+locations = [[4424, 1108, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCB
+props = { label_number = 1016506 }
+locations = [[4424, 1062, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC0
+props = { label_number = 1016241 }
+locations = [[4436, 1168, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016111 }
+locations = [
+    [4478, 1092, 0],
+    [1391, 3832, 0],
+    [3019, 768, 0],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA6
+props = { label_number = 1016238 }
+locations = [[4459, 1072, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016188 }
+locations = [[4451, 1096, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0C
+props = { label_number = 1016116 }
+locations = [[4469, 1176, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1016187 }
+locations = [[4483, 1072, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC9
+props = { label_number = 1016184 }
+locations = [[4528, 1069, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016076 }
+locations = [[4537, 1376, 23]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016076 }
+locations = [[4518, 1402, 21]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016324 }
+locations = [[4308, 1012, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BEB
+props = { label_number = 1016149 }
+locations = [[4632, 1200, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016367 }
+locations = [[520, 986, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016434 }
+locations = [[547, 832, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAB
+props = { label_number = 1016143 }
+locations = [[544, 970, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA9
+props = { label_number = 1016436 }
+locations = [[544, 1008, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA3
+props = { label_number = 1016317 }
+locations = [[557, 1000, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCE
+props = { label_number = 1016364 }
+locations = [[563, 976, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAF
+props = { label_number = 1016067 }
+locations = [[576, 1009, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016106 }
+locations = [[636, 856, 5]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016432 }
+locations = [[624, 886, 2]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1016355 }
+locations = [[568, 2177, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0C
+props = { label_number = 1016055 }
+locations = [[595, 2152, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BEF
+props = { label_number = 1016229 }
+locations = [[576, 2145, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016189 }
+locations = [[592, 2170, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD0
+props = { label_number = 1016060 }
+locations = [[578, 2128, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAA
+props = { label_number = 1016069 }
+locations = [[582, 2192, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCE
+props = { label_number = 1016066 }
+locations = [[593, 2216, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCB
+props = { label_number = 1016266 }
+locations = [[592, 2225, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCD
+props = { label_number = 1016066 }
+locations = [[600, 2209, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA9
+props = { label_number = 1016069 }
+locations = [[592, 2185, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCF
+props = { label_number = 1016258 }
+locations = [[576, 2209, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB0
+props = { label_number = 1016084 }
+locations = [[633, 2168, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCF
+props = { label_number = 1016111 }
+locations = [[616, 2154, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD0
+props = { label_number = 1016111 }
+locations = [[610, 2168, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB5
+props = { label_number = 1016267 }
+locations = [[608, 2273, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1016299 }
+locations = [[616, 2232, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAC
+props = { label_number = 1016141 }
+locations = [[621, 2224, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC7
+props = { label_number = 1016208 }
+locations = [[632, 2185, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016168 }
+locations = [[609, 2184, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC0
+props = { label_number = 1016127 }
+locations = [[648, 2168, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016191 }
+locations = [[656, 2144, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA6
+props = { label_number = 1016251 }
+locations = [[648, 2192, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAD
+props = { label_number = 1016277 }
+locations = [[5305, 94, 19]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1016278 }
+locations = [[5204, 4060, 37]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCC
+props = { label_number = 1016365 }
+locations = [[5217, 4019, 48]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC8
+props = { label_number = 1016439 }
+locations = [[5228, 4008, 37]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0C
+props = { label_number = 1016430 }
+locations = [[5270, 3988, 36]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAD
+props = { label_number = 1016148 }
+locations = [[5291, 3982, 37]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB8
+props = { label_number = 1016262 }
+locations = [
+    [5304, 3997, 37],
+    [1386, 1664, 30],
+    [2521, 379, 23],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0C
+props = { label_number = 1016431 }
+locations = [[5674, 3139, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC1
+props = { label_number = 1016264 }
+locations = [[5671, 3148, 21]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB7
+props = { label_number = 1016261 }
+locations = [[5678, 3286, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAF
+props = { label_number = 1016290 }
+locations = [[5703, 3210, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC5
+props = { label_number = 1016348 }
+locations = [[5720, 3205, 19]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAA
+props = { label_number = 1016360 }
+locations = [[5698, 3289, 24]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA4
+props = { label_number = 1016193 }
+locations = [[5744, 3209, 16]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAB
+props = { label_number = 1016313 }
+locations = [
+    [5740, 3216, 6],
+    [2248, 1227, 0],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016403 }
+locations = [[5730, 3204, 19]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA8
+props = { label_number = 1016391 }
+locations = [[5729, 3250, 26]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCB
+props = { label_number = 1016036 }
+locations = [[5740, 3267, 13]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1016318 }
+locations = [[5774, 3175, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB2
+props = { label_number = 1016215 }
+locations = [[5804, 3282, 16]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016349 }
+locations = [[5802, 3287, 13]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB7
+props = { label_number = 1016260 }
+locations = [[1306, 1761, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C04
+props = { label_number = 1023075 }
+locations = [[1342, 1744, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC0
+props = { label_number = 1016322 }
+locations = [[1370, 1584, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BED
+props = { label_number = 1016072 }
+locations = [[1360, 1776, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C01
+props = { label_number = 1016369 }
+locations = [[1432, 1656, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB0
+props = { label_number = 1016353 }
+locations = [[1433, 1600, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016071 }
+locations = [[1420, 1595, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BEE
+props = { label_number = 1016332 }
+locations = [[1425, 1584, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1F29
+props = { label_number = 1016221 }
+locations = [[1421, 1638, 50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1F29
+props = { label_number = 1016503 }
+locations = [
+    [1470, 1643, 34],
+    [1480, 1643, 34],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1F29
+props = { label_number = 1016499 }
+locations = [[1570, 1526, 46]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1F29
+props = { label_number = 1016505 }
+locations = [[1539, 1527, 45]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129A
+props = { label_number = 1016419 }
+locations = [
+    [1459, 1622, 35],
+    [1489, 1627, 34],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129C
+props = { label_number = 1016419 }
+locations = [[1428, 1622, 32]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129D
+props = { label_number = 1016504 }
+locations = [
+    [1428, 1622, 37],
+    [1424, 1701, 18],
+    [1422, 1672, 25],
+    [1435, 1570, 45],
+    [1432, 1538, 47],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC7
+props = { label_number = 1016311 }
+locations = [[1428, 1546, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0C
+props = { label_number = 1016302 }
+locations = [[1436, 1693, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB5
+props = { label_number = 1016340 }
+locations = [[1424, 1747, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1016291 }
+locations = [[1432, 1730, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC0
+props = { label_number = 1016145 }
+locations = [[1446, 1654, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA3
+props = { label_number = 1016126 }
+locations = [[1460, 1610, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0E
+props = { label_number = 1016320 }
+locations = [
+    [1454, 1600, 20],
+    [1441, 1584, 20],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCF
+props = { label_number = 1016280 }
+locations = [[1440, 1611, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBC
+props = { label_number = 1016163 }
+locations = [[1454, 1561, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC1
+props = { label_number = 1016222 }
+locations = [[1458, 1683, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA6
+props = { label_number = 1016323 }
+locations = [[1470, 1696, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCC
+props = { label_number = 1016073 }
+locations = [[1468, 1676, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAA
+props = { label_number = 1016295 }
+locations = [[1449, 1728, 1]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BFE
+props = { label_number = 1016046 }
+locations = [[1444, 1670, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1016338 }
+locations = [[1474, 1520, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAB
+props = { label_number = 1016137 }
+locations = [[1480, 1610, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1016269 }
+locations = [[1501, 1627, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016265 }
+locations = [[1489, 1587, 32]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016359 }
+locations = [[1488, 1572, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCE
+props = { label_number = 1016225 }
+locations = [[1472, 1584, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0A
+props = { label_number = 1016178 }
+locations = [[1477, 1600, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1016281 }
+locations = [[1502, 1689, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0B96
+props = { label_number = 1016304 }
+locations = [[1493, 1724, 5]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC5
+props = { label_number = 1016110 }
+locations = [[1508, 1662, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016074 }
+locations = [[1505, 1576, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB8
+props = { label_number = 1016287 }
+locations = [[1516, 1553, 36]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0B
+props = { label_number = 1016155 }
+locations = [[1328, 3771, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1016334 }
+locations = [
+    [1368, 3829, 0],
+    [1376, 3814, 0],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA5
+props = { label_number = 1016038 }
+locations = [[1360, 3786, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016098 }
+locations = [[1368, 3752, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC0
+props = { label_number = 1016098 }
+locations = [[1362, 3768, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD9
+props = { label_number = 1016080 }
+locations = [[1368, 3713, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA3
+props = { label_number = 1016049 }
+locations = [[1368, 3733, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016111 }
+locations = [[1400, 3825, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0B95
+props = { label_number = 1016158 }
+locations = [[1400, 3769, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC8
+props = { label_number = 1016117 }
+locations = [[1385, 3712, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB0
+props = { label_number = 1016122 }
+locations = [[1425, 3824, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA8
+props = { label_number = 1016123 }
+locations = [[1411, 3808, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCC
+props = { label_number = 1016194 }
+locations = [[1434, 3800, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC4
+props = { label_number = 1016314 }
+locations = [[1433, 3776, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAC
+props = { label_number = 1016157 }
+locations = [[1409, 3792, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC7
+props = { label_number = 1016420 }
+locations = [[1424, 3859, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016159 }
+locations = [[1427, 3993, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB6
+props = { label_number = 1016237 }
+locations = [[1449, 3752, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016242 }
+locations = [
+    [1448, 3721, 0],
+    [1448, 3721, 0],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BF3
+props = { label_number = 1016206 }
+locations = [[1440, 3746, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD5
+props = { label_number = 1016133 }
+locations = [[1440, 3864, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC0
+props = { label_number = 1016154 }
+locations = [[1449, 3864, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016154 }
+locations = [[1464, 3849, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC2
+props = { label_number = 1016343 }
+locations = [[1443, 3993, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA9
+props = { label_number = 1016114 }
+locations = [[1464, 4024, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA6
+props = { label_number = 1016038 }
+locations = [[1458, 4008, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0D
+props = { label_number = 1016214 }
+locations = [[1441, 4010, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC0
+props = { label_number = 1016085 }
+locations = [[1472, 3872, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA6
+props = { label_number = 1016350 }
+locations = [[1555, 1665, 37]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC4
+props = { label_number = 1016374 }
+locations = [[1549, 1776, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C05
+props = { label_number = 1016089 }
+locations = [[1592, 1562, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016151 }
+locations = [[1590, 1665, 22]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD0
+props = { label_number = 1016236 }
+locations = [[1575, 1721, 46]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016045 }
+locations = [[1640, 1688, 32]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016156 }
+locations = [[1376, 3752, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB0
+props = { label_number = 1016067 }
+locations = [[561, 1016, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC4
+props = { label_number = 1016298 }
+locations = [[2970, 3432, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016272 }
+locations = [[2863, 989, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BEA
+props = { label_number = 1023050 }
+locations = [[4686, 1423, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC4
+props = { label_number = 1016119 }
+locations = [[3011, 3464, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA8
+props = { label_number = 1016368 }
+locations = [[3712, 2136, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1F29
+props = { label_number = 1016104 }
+locations = [[1614, 1636, 40]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1F28
+props = { label_number = 1016088 }
+locations = [[1400, 1622, 50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1F28
+props = { label_number = 1016047 }
+locations = [[1400, 1630, 50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1F28
+props = { label_number = 1016250 }
+locations = [[1495, 1643, 35]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1F28
+props = { label_number = 1016226 }
+locations = [[1495, 1640, 35]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129C
+props = { label_number = 1016500 }
+locations = [
+    [1584, 1527, 56],
+    [1432, 1538, 42],
+    [1519, 1525, 55],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129D
+props = { label_number = 1016233 }
+locations = [
+    [1584, 1527, 52],
+    [1546, 1624, 23],
+    [1566, 1678, 35],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129C
+props = { label_number = 1016233 }
+locations = [[1546, 1624, 27]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1297
+props = { label_number = 1016233 }
+locations = [
+    [1565, 1584, 43],
+    [1559, 1695, 45],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129E
+props = { label_number = 1016233 }
+locations = [
+    [1532, 1705, 35],
+    [1599, 1571, 36],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1299
+props = { label_number = 1016233 }
+locations = [
+    [1537, 1668, 35],
+    [1599, 1571, 33],
+    [1572, 1600, 29],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129A
+props = { label_number = 1016233 }
+locations = [[1561, 1670, 36]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129D
+props = { label_number = 1016059 }
+locations = [
+    [1595, 1678, 22],
+    [1664, 1592, 15],
+    [1676, 1625, 10],
+    [1667, 1559, 38],
+    [1664, 1574, 20],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1297
+props = { label_number = 1016059 }
+locations = [
+    [1595, 1678, 25],
+    [1640, 1680, 33],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129A
+props = { label_number = 1016059 }
+locations = [[1617, 1679, 35]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129C
+props = { label_number = 1016059 }
+locations = [[1562, 1720, 50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129E
+props = { label_number = 1016059 }
+locations = [[1558, 1753, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129A
+props = { label_number = 1016310 }
+locations = [[1552, 1728, 37]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129D
+props = { label_number = 1016310 }
+locations = [
+    [1552, 1728, 34],
+    [1532, 1705, 33],
+    [1485, 1709, 15],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1299
+props = { label_number = 1016310 }
+locations = [[1488, 1731, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129C
+props = { label_number = 1016310 }
+locations = [
+    [1468, 1732, 15],
+    [1441, 1732, 19],
+    [1415, 1736, 25],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1299
+props = { label_number = 1016504 }
+locations = [[1415, 1736, 31]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129E
+props = { label_number = 1016504 }
+locations = [[1439, 1585, 35]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129D
+props = { label_number = 1016500 }
+locations = [[1498, 1536, 46]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129A
+props = { label_number = 1016396 }
+locations = [[1362, 1756, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129C
+props = { label_number = 1016393 }
+locations = [
+    [1362, 1756, 23],
+    [1314, 1749, 26],
+    [1262, 1742, 9],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1299
+props = { label_number = 1016393 }
+locations = [
+    [1375, 1811, 18],
+    [1392, 1892, 9],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x1297
+props = { label_number = 1016393 }
+locations = [[1355, 1835, 16]]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x1F28
+props = { name = "Only a mind at peace can approach the shrine" }
+locations = [[1580, 2484, 4]]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x1F28
+props = { name = "A calm mind may travel where others may not tread" }
+locations = [[1604, 2484, 7]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129A
+props = { label_number = 1016401 }
+locations = [[1262, 1742, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129E
+props = { label_number = 1016398 }
+locations = [
+    [1262, 1742, 12],
+    [1375, 1811, 14],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129C
+props = { label_number = 1016402 }
+locations = [[1392, 1892, 13]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129D
+props = { label_number = 1016398 }
+locations = [
+    [1392, 1892, 18],
+    [1355, 1835, 16],
+    [1362, 1756, 27],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x129C
+props = { label_number = 1016394 }
+locations = [[1643, 1521, 50]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016292 }
+locations = [[1557, 1613, 21]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1016377 }
+locations = [[1600, 1589, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC4
+props = { label_number = 1016352 }
+locations = [[1610, 1592, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD0
+props = { label_number = 1016376 }
+locations = [[1619, 1769, 70]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCC
+props = { label_number = 1016223 }
+locations = [[1602, 1720, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC2
+props = { label_number = 1016018 }
+locations = [[1660, 1648, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1016352 }
+locations = [[1632, 1586, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0B
+props = { label_number = 1016050 }
+locations = [[1819, 2825, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD0
+props = { label_number = 1016152 }
+locations = [[1850, 2777, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1016371 }
+locations = [[1841, 2744, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB7
+props = { label_number = 1016408 }
+locations = [[1828, 2743, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAD
+props = { label_number = 1016107 }
+locations = [[1852, 2709, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C02
+props = { label_number = 1016392 }
+locations = [
+    [1855, 2688, 0],
+    [1844, 2688, 0],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCC
+props = { label_number = 1016078 }
+locations = [[1851, 2800, -8]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA4
+props = { label_number = 1016048 }
+locations = [[1881, 2814, 6]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC0
+props = { label_number = 1016252 }
+locations = [[1899, 2664, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0B
+props = { label_number = 1016407 }
+locations = [[1904, 2686, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1016406 }
+locations = [[1912, 2713, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAC
+props = { label_number = 1016405 }
+locations = [[1914, 2813, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC2
+props = { label_number = 1016344 }
+locations = [[1901, 2814, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC8
+props = { label_number = 1016147 }
+locations = [[1933, 2776, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C03
+props = { label_number = 1016079 }
+locations = [[1942, 2736, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCF
+props = { label_number = 1016179 }
+locations = [[1939, 2701, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD0
+props = { label_number = 1016058 }
+locations = [
+    [1938, 2694, 20],
+    [1947, 2691, 30],
+    [1959, 2695, 20],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1016319 }
+locations = [[1942, 2791, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0B96
+props = { label_number = 1016212 }
+locations = [[2002, 2728, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB8
+props = { label_number = 1016118 }
+locations = [[2005, 2813, -1]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA6
+props = { label_number = 1016037 }
+locations = [[1986, 2846, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCF
+props = { label_number = 1016404 }
+locations = [[1997, 2864, 10]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA9
+props = { label_number = 1016372 }
+locations = [[2000, 2888, 5]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1016351 }
+locations = [[2030, 2813, 9]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BF3
+props = { label_number = 1016259 }
+locations = [[2037, 2843, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCF
+props = { label_number = 1016112 }
+locations = [[2221, 1193, 4]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBF
+props = { label_number = 1016375 }
+locations = [[2224, 1165, 0]]
+
+[[decoration]]
+type = "Sign"
+item_id = 0x0C0B
+props = { name = "Bank of Cove" }
+locations = [[2232, 1199, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD0
+props = { label_number = 1016181 }
+locations = [[2428, 536, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BED
+props = { label_number = 1016329 }
+locations = [[2459, 492, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCC
+props = { label_number = 1016341 }
+locations = [[2459, 432, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAA
+props = { label_number = 1016358 }
+locations = [[2442, 416, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BBB
+props = { label_number = 1016336 }
+locations = [[2432, 555, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA8
+props = { label_number = 1016124 }
+locations = [[2472, 458, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C04
+props = { label_number = 1016337 }
+locations = [[2482, 440, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC4
+props = { label_number = 1016279 }
+locations = [[2474, 405, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC0
+props = { label_number = 1016422 }
+locations = [[2525, 578, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB0
+props = { label_number = 1016339 }
+locations = [[2510, 482, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD4
+props = { label_number = 1016309 }
+locations = [[2500, 440, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1016363 }
+locations = [[2523, 536, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAC
+props = { label_number = 1016313 }
+locations = [[2576, 603, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0C
+props = { label_number = 1016052 }
+locations = [[2505, 560, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCC
+props = { label_number = 1016366 }
+locations = [[2534, 560, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC8
+props = { label_number = 1016306 }
+locations = [[2470, 569, 5]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C04
+props = { label_number = 1016409 }
+locations = [[2016, 2753, 30]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCE
+props = { label_number = 1016129 }
+locations = [[618, 1152, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB6
+props = { label_number = 1016130 }
+locations = [[626, 1040, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0C0B
+props = { label_number = 1016053 }
+locations = [[3768, 1313, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD0
+props = { label_number = 1016164 }
+locations = [[5351, 64, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAB
+props = { label_number = 1016425 }
+locations = [[5267, 131, 20]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0B95
+props = { label_number = 1016240 }
+locations = [[5250, 184, 22]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0B96
+props = { label_number = 1016321 }
+locations = [[5236, 155, 15]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1016427 }
+locations = [[5222, 183, 8]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC6
+props = { label_number = 1016170 }
+locations = [[5217, 124, 0]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BA6
+props = { label_number = 1016426 }
+locations = [[5200, 98, 5]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB3
+props = { label_number = 1016243 }
+locations = [[5168, 35, 22]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCB
+props = { label_number = 1016169 }
+locations = [[5158, 107, 5]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAE
+props = { label_number = 1016424 }
+locations = [[5152, 77, 28]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BF0
+props = { label_number = 1016229 }
+locations = [[745, 2160, 0]]
