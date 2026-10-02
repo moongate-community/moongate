@@ -3,6 +3,12 @@ using Lua;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Core.Geometry;
+using Moongate.Scripting.Interfaces;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Ultima.Types;
+using Serilog;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules.Internal;
@@ -27,14 +33,27 @@ public sealed class NpcModule
     private readonly ISpeechService _speech;
     private readonly IWorldViewService _view;
     private readonly IMobileTemplateService _templates;
+    private readonly INpcService? _npcs;
+    private readonly Lazy<IScriptEngine>? _engine;
+    private readonly IGameLoopService? _loop;
+    private readonly ISectorService? _sectors;
+    private readonly ILogger _logger = Log.ForContext<NpcModule>();
 
     public NpcModule(
         IMobileService mobiles,
         ISpeechService speech,
         IWorldViewService view,
-        IMobileTemplateService templates
+        IMobileTemplateService templates,
+        INpcService? npcs = null,
+        Lazy<IScriptEngine>? engine = null,
+        IGameLoopService? loop = null,
+        ISectorService? sectors = null
     )
     {
+        _npcs = npcs;
+        _engine = engine;
+        _loop = loop;
+        _sectors = sectors;
         _mobiles = mobiles;
         _speech = speech;
         _view = view;
@@ -103,6 +122,92 @@ public sealed class NpcModule
         }
 
         return result == MoveResultType.Moved;
+    }
+
+    /// <summary>
+    ///     Brings a new NPC of a template into the world; <c>npc.spawn("orc", MapType.Trammel, 1500, 1600, 10,
+    ///     function(serial) npc.say(serial, "Grr") end)</c>. The NPC is saved first, so it appears a moment later: its
+    ///     script's <c>on_spawn</c> runs then, and so does <paramref name="callback" />, with its serial.
+    /// </summary>
+    [ScriptFunction(helpText: "Spawns an NPC of a mobile template at x, y, z of the map, a moment later; the optional function gets its serial. False for an unknown template, a spot outside the map or a z outside -128 to 127.")]
+    public bool Spawn(string template, MapType map, int x, int y, int z, LuaValue callback = default)
+    {
+        if (callback.Type is not (LuaValueType.Nil or LuaValueType.Function))
+        {
+            throw new ArgumentException($"expected a function, got {callback.TypeToString()}", nameof(callback));
+        }
+
+        if (_npcs is null ||
+            z is < sbyte.MinValue or > sbyte.MaxValue ||
+            string.IsNullOrWhiteSpace(template) ||
+            !_templates.TryGet(template, out _) ||
+            _sectors?.IsInside(map, x, y) == false)
+        {
+            return false;
+        }
+
+        var function = callback.Type == LuaValueType.Function ? callback.Read<LuaFunction>() : null;
+        // The callback belongs with the script that asked: reloading it ends what it left waiting.
+        var owner = _engine?.Value.CurrentScript ?? "npc.spawn";
+        _ = SpawnAsync(template, map, new Point3D(x, y, z), function, owner);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Takes the NPC out of the world for good, with what it carries; <c>npc.delete(serial)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Deletes the NPC and what it carries, on the next turn of the game loop; false for a serial that is not an NPC in the world.")]
+    public bool Delete(long serial)
+    {
+        if (_npcs is null || !TryGetNpc(serial, out var npc))
+        {
+            return false;
+        }
+
+        _ = _npcs.RemoveAsync(npc.Id)
+                 .ContinueWith(
+                     task => _logger.Warning(task.Exception, "npc.delete of {Serial} failed", serial),
+                     CancellationToken.None,
+                     TaskContinuationOptions.OnlyOnFaulted,
+                     TaskScheduler.Default
+                 );
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Turns the NPC towards a place without stepping; <c>npc.face(serial, there.x, there.y)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Turns the NPC towards x, y, seen by the players in range; false for an unknown NPC or its own cell.")]
+    public bool Face(long serial, int x, int y)
+    {
+        if (!TryGetNpc(serial, out var npc) || npc.Location.X == x && npc.Location.Y == y)
+        {
+            return false;
+        }
+
+        var direction = npc.Location.GetDirectionTo(new Point3D(x, y, npc.Location.Z)) & DirectionMask;
+
+        if (direction != npc.Direction)
+        {
+            npc.Direction = direction;
+            _view.Moved(npc, npc.Location, false);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Gets how many tiles lie between the NPC and a place, as the view range counts them;
+    ///     <c>npc.distance_to(serial, there.x, there.y) <= 2</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The tiles between the NPC and x, y, the larger of the two differences; nil for an unknown NPC.")]
+    public int? DistanceTo(long serial, int x, int y)
+    {
+        return TryGetNpc(serial, out var npc)
+            ? Math.Max(Math.Abs(npc.Location.X - x), Math.Abs(npc.Location.Y - y))
+            : null;
     }
 
     /// <summary>
@@ -198,6 +303,23 @@ public sealed class NpcModule
         npc.SetProp(key, prop);
 
         return true;
+    }
+
+    private async Task SpawnAsync(string template, MapType map, Point3D location, LuaFunction? callback, string owner)
+    {
+        try
+        {
+            var npc = await _npcs!.SpawnAsync(template, map, location);
+
+            if (callback is not null && _engine is not null && _loop is not null)
+            {
+                _loop.TryPost(new LoopActionWorkItem(() => _engine.Value.CallFunction(owner, callback, (long)npc.Id.Value)));
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.Warning(exception, "npc.spawn of {Template} at {Map} {Location} failed", template, map, location);
+        }
     }
 
     // As its template says: a water mobile swims, an amphibious one walks and swims.
