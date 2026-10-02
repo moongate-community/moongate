@@ -17,5 +17,11 @@ internal interface IPersistenceEntityRegistration
     /// </summary>
     Func<PersistenceTransaction, CancellationToken, Task> Capture(out int entityCount);
 
+    /// <summary>
+    ///     Gets how many rows the last write upserted: the captured entities whose snapshot changed since the last
+    ///     committed save.
+    /// </summary>
+    int Written { get; }
+
     void Committed();
 }

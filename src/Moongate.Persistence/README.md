@@ -119,7 +119,8 @@ Reservations are never reclaimed. New entities need no sequence names in their s
 
 `SaveAllAsync` requires already-assigned nonzero IDs; first persist new entities with
 `UpsertAsync`. It captures registered live sources and commits one independent transaction per database target. Snapshot
-functions must deep-copy nested mutable state. An absent entity is retained; deletion is always explicit.
+functions must deep-copy nested mutable state. An absent entity is retained; deletion is always explicit. Only the
+snapshots whose fingerprint (SHA-256 of their JSON) changed since the last committed save are written.
 
 FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported renames, and write explicit reviewed SQL for
 semantic data transformations. Downgrades are operator-managed. This package does not create database backups.

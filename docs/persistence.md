@@ -222,6 +222,20 @@ captured entities; absence from a snapshot is not deletion. Issue an explicit
 container.AddPersistenceWorld<Item>(() => world.Items.Values, item => item.Snapshot(), world);
 ```
 
+A save writes only the captured entities whose snapshot changed since the last committed save. Each
+snapshot gets a fingerprint, the first 128 bits of the SHA-256 of its JSON, worked out off the loop;
+the entities whose fingerprint differs, or that the last committed save did not capture, are
+upserted, and the others are skipped. The fingerprints are kept only once the transaction commits,
+so after a failed save the next one writes those entities again. An entity that leaves the source,
+such as a character logging out, loses its fingerprint and is written in full when it comes back.
+The first save after a start writes everything, and so does every twelfth save after it (once an
+hour at the default five-minute interval): a row changed behind the world save, such as by a
+character leaving while a save runs, is put right by then. The fingerprint covers every property
+with a setter, a private one included, and the values of the structs they hold, such as
+`Serial.Value`; getter-only properties, computed from the others, are left out. NaN and the
+infinities fingerprint like any number. The log says how many entities were captured and how many
+were written.
+
 `IPersistenceDeletionSource.Capture()` runs on the loop with the snapshot and returns the
 identities the source removed; the save deletes them in the same transaction as its upserts, then
 calls `Committed()` with exactly those. A failed save does not call it, so they stay pending.
