@@ -10,7 +10,15 @@ internal static class CommandLine
     {
         ["init"] = [],
         ["migrate"] = ["status", "apply"],
-        ["convert"] = ["uox", "modernuo-spawns", "modernuo-signs", "modernuo-teleporters"]
+        ["convert"] = ["uox", "modernuo-spawns", "modernuo-signs", "modernuo-teleporters"],
+        ["completion"] = []
+    };
+
+    // What a command of one word needs after it.
+    private static readonly Dictionary<string, string> Arguments = new(StringComparer.Ordinal)
+    {
+        ["init"] = "a root directory",
+        ["completion"] = "a shell: bash, zsh or fish"
     };
 
     /// <summary>
@@ -31,7 +39,7 @@ internal static class CommandLine
             {
                 if (args.Length == 1)
                 {
-                    error = $"'{args[0]}' needs a root directory.";
+                    error = $"'{args[0]}' needs {Arguments[args[0]]}.";
 
                     return null;
                 }

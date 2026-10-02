@@ -58,11 +58,41 @@ Installs the latest Moongate release for this machine.
   MOONGATE_BASE_URL      release download base URL
   MOONGATE_INSTALL_DIR   install directory (default: /opt/moongate)
   MOONGATE_BIN_DIR       symlink directory (default: /usr/local/bin)
+  MOONGATE_BASH_COMPLETION_DIR, MOONGATE_ZSH_COMPLETION_DIR, MOONGATE_FISH_COMPLETION_DIR
+                         where mgctl's TAB completion goes (default: the shell's own
+                         directory, when it exists)
 USAGE
 }
 
 has() {
     command -v "$1" >/dev/null 2>&1
+}
+
+# Writes mgctl's completion script for a shell into the directory that shell reads, when the
+# directory exists. Never fatal: the server and mgctl are installed without it.
+install_completion() {
+    shell=$1
+    directory=$2
+    name=$3
+
+    [ -n "$directory" ] && [ -d "$directory" ] || return 0
+
+    if "${INSTALL_DIR}/mgctl" completion "$shell" >"${WORK_DIR}/completion" 2>/dev/null &&
+        [ -s "${WORK_DIR}/completion" ] &&
+        $SUDO cp "${WORK_DIR}/completion" "${directory}/${name}" 2>/dev/null; then
+        $SUDO chmod 0644 "${directory}/${name}" 2>/dev/null || true
+        echo "  completion ${directory}/${name}"
+    fi
+}
+
+# The first of the directories that exists, or nothing.
+first_directory() {
+    for candidate in "$@"; do
+        if [ -d "$candidate" ]; then
+            echo "$candidate"
+            return 0
+        fi
+    done
 }
 
 select_tools() {
@@ -290,6 +320,15 @@ main() {
             $SUDO rm -f "${BIN_DIR}/${tool}" || fail "could not remove obsolete ${BIN_DIR}/${tool} link"
         fi
     done
+
+    if [ -f "${INSTALL_DIR}/mgctl" ]; then
+        install_completion bash \
+            "${MOONGATE_BASH_COMPLETION_DIR:-/usr/share/bash-completion/completions}" mgctl
+        install_completion zsh \
+            "${MOONGATE_ZSH_COMPLETION_DIR:-$(first_directory /usr/local/share/zsh/site-functions /usr/share/zsh/site-functions)}" _mgctl
+        install_completion fish \
+            "${MOONGATE_FISH_COMPLETION_DIR:-/usr/share/fish/vendor_completions.d}" mgctl.fish
+    fi
 
     cat <<'NEXT'
 

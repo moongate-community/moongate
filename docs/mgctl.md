@@ -13,7 +13,29 @@ executables, `migration-runner/Moongate.MigrationRunner` and `mg-uoxconv`; there
 | `mgctl convert uox ...` | Converts UOX3 `.dfn` content into TOML; see [Migrate from UOX3](uox3-migration.md) |
 | `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters ...` | Converts ModernUO's spawners, signs and teleporters; see [Migrate from UOX3](uox3-migration.md#spawns-of-modernuo) |
 
+| `mgctl completion bash\|zsh\|fish` | Prints the script that completes mgctl with TAB; see [TAB completion](#tab-completion) |
+
 `mgctl --help` lists the commands and `mgctl <command> --help` the options of one.
+
+## TAB completion
+
+`mgctl completion <shell>` prints a completion script for bash, zsh or fish. With it, TAB
+completes the commands (`mgctl mi` → `migrate`), the second word of `migrate` and `convert`,
+the options of the command and what follows them: directories after `--root-directory` and
+the like, files after `--source`, `auth` or `world` after `--target`, and a directory for
+the root of `init`.
+
+The [Linux installer](installation.md) puts the scripts where the shells look for them, so
+a new shell completes mgctl with nothing to do. Elsewhere, load it yourself:
+
+```sh
+source <(mgctl completion bash)      # bash: add the line to ~/.bashrc
+source <(mgctl completion zsh)       # zsh: add the line to ~/.zshrc, after compinit
+mgctl completion fish | source       # fish: or save it as ~/.config/fish/completions/mgctl.fish
+```
+
+The fish script is generated from the same list of commands as the other two but, unlike
+them, is not exercised by the tests.
 
 ## Prepare a server root
 
