@@ -145,12 +145,14 @@ supported renames and review its DDL. Write explicit SQL for backfills, value
 splits, unit conversions, data merges and new invariants. Data-only files follow
 the same numbering and history rules, and block normal startup until applied.
 
-FreeSql also compares comments: the XML doc (`/// <summary>`) of an entity and of its
-properties becomes the table and column comment, word for word, and a difference
-stops startup like any other schema change. Editing the docs of a persisted entity
-therefore needs a migration with `COMMENT ON` statements, as
-`migrations/world/0003_world_column_comments.sql` does. Every build configuration
-generates the XML docs, so a Debug test run sees the same schema as a Release server.
+Table and column comments are left out of the comparison. FreeSql takes them from the XML
+docs (`/// <summary>`) of an entity and of its properties, and the published single-file
+server cannot read those files, so it would see every comment as gone. The reviewed SQL
+writes the comments the database keeps, as `migrations/world/0003_world_column_comments.sql`
+does; editing the docs of a persisted entity needs no migration, and a `COMMENT ON`
+statement in a reviewed file is how a comment changes. With automatic generation on, a
+draft still carries the new comments a build with its XML docs sees, and never one that
+would remove a comment (`IS NULL` or `IS ''`).
 
 Test against representative data. Apply the reviewed files, confirm `status`
 reports no pending changes and `preview` reports no schema changes, then start the

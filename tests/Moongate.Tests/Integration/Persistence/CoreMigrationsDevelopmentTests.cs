@@ -30,7 +30,31 @@ public sealed class CoreMigrationsDevelopmentTests
         );
     }
 
-    private static async Task AssertNothingGeneratedAsync(string target, string shipped, PersistenceDatabaseTarget database, params Type[] entities)
+    [Fact]
+    public async Task ACommentTheModelDoesNotHave_IsNeitherDroppedNorReviewed()
+    {
+        await AssertNothingGeneratedAsync(
+            "world",
+            "WorldMigrations",
+            PersistenceDatabaseTarget.Realm,
+            "COMMENT ON COLUMN world.items.x IS 'only in the database'",
+            typeof(MobileEntity),
+            typeof(ItemEntity)
+        );
+    }
+
+    private static Task AssertNothingGeneratedAsync(string target, string shipped, PersistenceDatabaseTarget database, params Type[] entities)
+    {
+        return AssertNothingGeneratedAsync(target, shipped, database, null, entities);
+    }
+
+    private static async Task AssertNothingGeneratedAsync(
+        string target,
+        string shipped,
+        PersistenceDatabaseTarget database,
+        string? afterwards,
+        params Type[] entities
+    )
     {
         await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
@@ -47,6 +71,14 @@ public sealed class CoreMigrationsDevelopmentTests
         await using (var coordinator = fixture.Create(database, entities))
         {
             await coordinator.InitializeAsync();
+        }
+
+        if (afterwards is not null)
+        {
+            await db.ExecuteAsync(afterwards);
+
+            await using var again = fixture.Create(database, entities);
+            await again.InitializeAsync();
         }
 
         Assert.Equal(shippedFiles, Directory.GetFiles(catalog, "*.sql").Select(Path.GetFileName).Order().ToArray());

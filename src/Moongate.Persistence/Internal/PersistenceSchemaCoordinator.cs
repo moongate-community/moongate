@@ -188,7 +188,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
 
         try
         {
-            var ddl = await comparison.WaitAsync(cancellationToken).ConfigureAwait(false);
+            // Comments are documentation, and a single-file build cannot read the XML docs they come from.
+            var ddl = SchemaComments.Strip(await comparison.WaitAsync(cancellationToken).ConfigureAwait(false));
             var sequences = await PersistenceSerialSequence.CompareAsync(database, module.EntityTypes, cancellationToken)
                 .ConfigureAwait(false);
 

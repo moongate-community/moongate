@@ -239,6 +239,12 @@ internal static class DevelopmentSchemaAssessor
                 continue;
             }
 
+            // A model without its XML docs (a single-file build) sees no comments: never drop the database's.
+            if (SchemaComments.IsRemoval(tokens))
+            {
+                continue;
+            }
+
             // Comments do not change data, but accept only a literal value and a fixed ON COLUMN/TABLE shape.
             if (tokens.Count >= 7 &&
                 tokens[0] == "COMMENT" &&
