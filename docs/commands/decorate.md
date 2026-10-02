@@ -18,8 +18,11 @@ fixed items that never decay; the next world save keeps them. Doors and gates ge
 `decoration_door` template, whose [door script](../scripting.md) opens and closes them, and
 adjacent doors of the same kind open together. Lights get the `decoration_light` template,
 lit or unlit as in the data and protected, so only staff light or douse them with the
-[light script](../scripting.md). Teleporters, spawners, mark containers, public
-moongates and addons are skipped for now: they need their own logic.
+[light script](../scripting.md). Teleporters get the `decoration_teleporter` template: a player
+who walks onto one stands on its destination at once ([teleporter script](../scripting.md)), and
+only staff sees them. A teleporter to another map is placed but does nothing yet. One whose `map_dest` names no map is skipped. Spawners, mark
+containers, public moongates, addons and the teleporters that ask for a word, a skill or a quest
+are skipped for now: they need their own logic.
 
 The shop and world signs are decoration files too (`signs.toml` in each folder); a sign shows its
 text when the mouse is on it. After the files come the doors of the towns, which no file lists:
@@ -33,7 +36,7 @@ turn, so the game goes on meanwhile (about four seconds in all); each is reporte
 Each file is reported when it is done, in game as a system message and in the server log:
 
 ```text
-Decorating britannia/britain: 1180 placed, 3 already there, 12 skipped (Teleporter 8, Spawner 4).
+Decorating britannia/britain: 1180 placed, 3 already there, 12 skipped (KeywordTeleporter 8, Spawner 4).
 ```
 
 The console and the in-game caller then get the totals:

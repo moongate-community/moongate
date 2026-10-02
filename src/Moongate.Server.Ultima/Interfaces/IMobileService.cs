@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Persistence.Interfaces;
@@ -81,6 +82,16 @@ public interface IMobileService : IPersistenceDeletionSource
         DirectionType direction,
         MovementAbilityType ability = MovementAbilityType.Walk
     );
+
+    /// <summary>
+    ///     Puts the mobile on <paramref name="location" /> of its own map, however far, as a teleporter does; its facing
+    ///     stays. False, with nothing changed, for a mobile that is not in the world or a spot outside the map.
+    /// </summary>
+    /// <remarks>
+    ///     The sectors, the NPC senses and the players' regions follow it; nothing is sent:
+    ///     <see cref="ITeleportService" /> tells the clients.
+    /// </remarks>
+    bool MoveTo(MobileEntity mobile, Point3D location);
 
     /// <summary>
     ///     Gets whether the mobile is in the world.

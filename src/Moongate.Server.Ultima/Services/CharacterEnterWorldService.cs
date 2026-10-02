@@ -116,7 +116,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
 
         // After the sequence: the client must know where it stands before it is shown the others.
         if (!await context.RunOnGameLoopAsync(
-                session => _view.Entered(character, session.SessionId, session.ClientVersion),
+                session => _view.Entered(character, session.SessionId, session.ClientVersion, session.AccountType),
                 cancellationToken
             ))
         {

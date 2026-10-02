@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Mobiles;
@@ -157,6 +158,22 @@ public sealed class MobileService : IMobileService
         _regions?.Moved(mobile);
 
         return MoveResultType.Moved;
+    }
+
+    public bool MoveTo(MobileEntity mobile, Point3D location)
+    {
+        if (!_inWorld.ContainsKey(mobile.Id) || !_sectors.IsInside(mobile.Map, location.X, location.Y))
+        {
+            return false;
+        }
+
+        var oldLocation = mobile.Location;
+        mobile.Location = location;
+        _sectors.Move(mobile);
+        _senses?.Moved(mobile, oldLocation);
+        _regions?.Moved(mobile);
+
+        return true;
     }
 
     public bool IsInWorld(Serial mobile)

@@ -17,6 +17,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
+using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Localization;
@@ -74,6 +75,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
+        _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender));
+        _container.AddScriptModule<MobileModule>();
         _container.RegisterInstance(TestLocalization.With((398, "C'è una serratura."), (405, "Using your key, you open the door.")));
         _container.AddScriptModule<LocalizationModule>();
         _container.Resolve<IMoongateEventBus>()
@@ -336,6 +339,76 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheShippedTeleporterScript_MovesWhoeverStepsOnIt_AndSoundsAtTheDestination()
+    {
+        var teleporter = PlaceTeleporter(
+            new() { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["sound_id"] = 0x1FEL }
+        );
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
+        Assert.Single(_fixture.Sender.Sent.OfType<MobileUpdatePacket>());
+        Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
+    }
+
+    [Theory]
+    // Turned off.
+    [InlineData(false, 5690L, null)]
+    // No destination.
+    [InlineData(null, null, null)]
+    // To another map: not yet.
+    [InlineData(null, 5690L, 4L)]
+    public async Task TheShippedTeleporterScript_OffWithoutADestinationOrToAnotherMap_DoesNothing(bool? active, long? x, long? map)
+    {
+        var props = new Dictionary<string, object?> { ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["sound_id"] = 0x1FEL };
+
+        if (active is not null)
+        {
+            props["active"] = active;
+        }
+
+        if (x is not null)
+        {
+            props["teleport.x"] = x;
+        }
+
+        if (map is not null)
+        {
+            props["teleport.map"] = map;
+        }
+
+        var teleporter = PlaceTeleporter(props);
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        var start = aria.Location;
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(start, aria.Location);
+        Assert.Empty(_speech.Sounds);
+    }
+
+    [Fact]
+    public async Task TheShippedTeleporterScript_ToItsOwnMap_Teleports()
+    {
+        var teleporter = PlaceTeleporter(
+            new() { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["teleport.map"] = (long)MapType.Trammel }
+        );
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
+    }
+
+    [Fact]
     public async Task TheShippedLightScript_LightsACandleWithItsShape_AndDousesIt()
     {
         var candle = PlaceLight(0x0A28, null);
@@ -449,6 +522,37 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         var scripts = new ItemScriptService(
             engine,
             new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_light", ScriptId = "light" })),
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
+        await scripts.StartAsync();
+
+        return scripts;
+    }
+
+    private ItemEntity PlaceTeleporter(Dictionary<string, object?> props)
+    {
+        var teleporter = new ItemEntity
+        {
+            Id = new Serial(0x40000030), TemplateId = "decoration_teleporter", ItemId = 0x1BC3, Amount = 1, Props = props
+        };
+        teleporter.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+        _items.Add([teleporter]);
+
+        return teleporter;
+    }
+
+    private async Task<ItemScriptService> StartTeleporterScriptAsync()
+    {
+        _scripts.Write("items/teleporter.lua", File.ReadAllText(ShippedScript("items/teleporter.lua")));
+        var engine = NewEngine();
+        _engines.Add(engine);
+        await engine.StartAsync();
+        var scripts = new ItemScriptService(
+            engine,
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_teleporter", ScriptId = "teleporter" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );

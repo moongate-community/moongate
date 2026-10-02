@@ -520,8 +520,8 @@
         "description": "World Z."
       }
     ],
-    "notes": "Updates the player mobile after world entry.",
-    "handler": "PlayCharacterPacketHandler: sends the player mobile update during world entry."
+    "notes": "Updates the player mobile after world entry, and tells a teleported player where it stands.",
+    "handler": "PlayCharacterPacketHandler: sends the player mobile update during world entry. TeleportService: sends it to a teleported player, whose step sequence starts again."
   },
   "0x21:outgoing": {
     "category": "Movement",

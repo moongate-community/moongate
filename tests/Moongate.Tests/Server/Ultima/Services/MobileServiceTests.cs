@@ -142,6 +142,82 @@ public sealed class MobileServiceTests
     }
 
     [Fact]
+    public void MoveTo_AFarSpot_MovesTheMobileInTheSectorsAndTellsTheSenses()
+    {
+        var senses = new RecordingNpcSenseService();
+        var sectors = TestSectors.Create();
+        var mobiles = new MobileService(new StubMovementService(), sectors, senses);
+        var aria = new MobileEntity
+        {
+            Id = new Serial(2), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0), Direction = DirectionType.North
+        };
+        mobiles.EnterWorld(aria);
+        senses.Calls.Clear();
+
+        var moved = mobiles.MoveTo(aria, new Point3D(5690, 569, 25));
+
+        Assert.True(moved);
+        Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
+        Assert.Equal(DirectionType.North, aria.Direction);
+        Assert.Equal(["Moved 2 1600,1600,0"], senses.Calls);
+        Assert.Contains(aria, sectors.GetMobilesInRange(MapType.Trammel, new Point3D(5690, 569, 25), 0));
+        Assert.Empty(sectors.GetMobilesInRange(MapType.Trammel, new Point3D(1600, 1600, 0), 0));
+    }
+
+    [Fact]
+    public void MoveTo_KeepsThePlayersRegion()
+    {
+        var regions = new RegionService(
+            new StubDataLoaderService().With(
+                new RegionContent
+                {
+                    Map = MapType.Trammel, Name = "Wrong", Areas = [new RegionAreaContent { X1 = 5600, Y1 = 500, X2 = 5900, Y2 = 700 }]
+                }
+            )
+        );
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create(), regions: regions);
+        var aria = new MobileEntity
+        {
+            Id = new Serial(2), AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0)
+        };
+        mobiles.EnterWorld(aria);
+
+        mobiles.MoveTo(aria, new Point3D(5690, 569, 25));
+
+        Assert.Equal("Wrong", regions.Current(aria.Id)?.Name);
+    }
+
+    [Theory]
+    [InlineData(-1, 100)]
+    [InlineData(100, 4096)]
+    [InlineData(7168, 100)]
+    public void MoveTo_ASpotOutsideTheMap_IsRefused(int x, int y)
+    {
+        var senses = new RecordingNpcSenseService();
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create(), senses);
+        var aria = Aria();
+        mobiles.EnterWorld(aria);
+        senses.Calls.Clear();
+
+        Assert.False(mobiles.MoveTo(aria, new Point3D(x, y, 0)));
+
+        Assert.Equal(new Point3D(1496, 1628, 10), aria.Location);
+        Assert.Empty(senses.Calls);
+    }
+
+    [Fact]
+    public void MoveTo_AMobileNotInTheWorld_IsRefused()
+    {
+        var sectors = TestSectors.Create();
+        var aria = Aria();
+
+        Assert.False(new MobileService(new StubMovementService(), sectors).MoveTo(aria, new Point3D(100, 100, 0)));
+
+        Assert.Equal(new Point3D(1496, 1628, 10), aria.Location);
+        Assert.Empty(sectors.GetMobilesInRange(MapType.Trammel, new Point3D(100, 100, 0), 0));
+    }
+
+    [Fact]
     public void TryMove_ADifferentDirection_OnlyTurns()
     {
         var movement = new StubMovementService();

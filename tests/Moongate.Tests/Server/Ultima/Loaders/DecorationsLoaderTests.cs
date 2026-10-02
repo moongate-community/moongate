@@ -10,7 +10,7 @@ public sealed class DecorationsLoaderTests
 {
     private const string Door =
         "[[decoration]]\ncomment = \"metal door\"\ntype = \"MetalDoor\"\nitem_id = 0x0675\n" +
-        "props = { facing = \"west_cw\", hue = 5, locked = true, point_dest = [1, 2, 3] }\n" +
+        "props = { facing = \"west_cw\", hue = 5, locked = true, point_dest = [1, 2, 3], keys = [1, 2] }\n" +
         "locations = [[1411, 1621, 30], [1411, 1622, -5]]\n";
 
     [Fact]
@@ -33,7 +33,7 @@ public sealed class DecorationsLoaderTests
     }
 
     [Fact]
-    public async Task LoadAsync_ReadsTheBlocks_KeepingOnlyScalarProps()
+    public async Task LoadAsync_ReadsTheBlocks_KeepingTheScalarPropsAndThePoints()
     {
         using var root = new TemporaryDirectory();
         root.CreateFile("templates/decorations/trammel/doors.toml", Door + "\n[[decoration]]\ntype = \"AnvilEastAddon\"\nlocations = [[1, 2, 3]]\n");
@@ -43,7 +43,10 @@ public sealed class DecorationsLoaderTests
         var door = blocks[0];
         Assert.Equal(("MetalDoor", "metal door", (int?)0x0675), (door.Type, door.Comment, door.ItemId));
         Assert.Equal(
-            new Dictionary<string, object> { ["facing"] = "west_cw", ["hue"] = 5L, ["locked"] = true },
+            new Dictionary<string, object>
+            {
+                ["facing"] = "west_cw", ["hue"] = 5L, ["locked"] = true, ["point_dest"] = new Point3D(1, 2, 3)
+            },
             door.Props
         );
         Assert.Equal([new Point3D(1411, 1621, 30), new Point3D(1411, 1622, -5)], door.Locations);

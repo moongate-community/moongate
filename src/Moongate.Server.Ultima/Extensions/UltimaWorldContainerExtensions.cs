@@ -53,6 +53,8 @@ public static class UltimaWorldContainerExtensions
         container.Register<ISectorService, SectorService>(Reuse.Singleton);
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
         container.Register<IWorldViewService, WorldViewService>(Reuse.Singleton);
+        container.Register<ITeleportService, TeleportService>(Reuse.Singleton);
+        container.Register<IMoveOverService, MoveOverService>(Reuse.Singleton);
         container.Register<IWorldTransactionService, WorldTransactionService>(Reuse.Singleton);
         container.Register<ICharacterPresence, SessionCharacterPresence>(Reuse.Singleton);
         container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
@@ -92,6 +94,7 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<NpcModule>();
         container.AddScriptModule<ItemModule>();
         container.AddScriptModule<WorldModule>();
+        container.AddScriptModule<MobileModule>();
         container.AddScriptModule<GumpModule>();
         container.AddScriptModule<BankModule>();
         // No module function takes it: registered so on_speech can compare its keywords with names.

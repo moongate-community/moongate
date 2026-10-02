@@ -16,7 +16,8 @@ namespace Moongate.Server.Ultima.Handlers.Movement;
 /// <summary>
 ///     Moves the session's character one step (0x02): checks the sequence and the speed, then turns or steps it through
 ///     <see cref="IMobileService" /> and answers 0x22, or 0x21 with the real position; the players in range see the step or
-///     the turn through <see cref="IWorldViewService" />.
+///     the turn through <see cref="IWorldViewService" />; the scripted items of the new cell are told of the step through
+///     <see cref="IMoveOverService" />.
 /// </summary>
 /// <remarks>
 ///     Each step books the next one 400 ms later walking, 200 ms running; a step may come up to 200 ms early, which
@@ -35,16 +36,19 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private readonly IPacketSendService _sender;
     private readonly TimeProvider _time;
     private readonly IBankService? _bank;
+    private readonly IMoveOverService? _moveOver;
 
     public MoveRequestPacketHandler(
         IMobileService mobiles,
         IWorldViewService view,
         IPacketSendService sender,
         TimeProvider time,
-        IBankService? bank = null
+        IBankService? bank = null,
+        IMoveOverService? moveOver = null
     )
     {
         _bank = bank;
+        _moveOver = moveOver;
         _mobiles = mobiles;
         _view = view;
         _sender = sender;
@@ -100,6 +104,8 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         _bank?.Close(mobile);
         Accept(session, state, mobile, packet.Sequence);
         _view.Moved(mobile, oldLocation, packet.Running);
+        // Last: a teleporter on the new cell moves the character again and restarts its sequence.
+        _moveOver?.SteppedOn(mobile);
     }
 
     private void Accept(GameSession session, MovementState state, MobileEntity mobile, byte sequence)
