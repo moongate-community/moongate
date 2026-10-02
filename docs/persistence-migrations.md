@@ -66,8 +66,8 @@ A fresh empty database produces initial table creation, not an incremental chang
 Load the same entity and plugin registrations as the version being developed:
 
 ```sh
-Moongate.Server --root-directory /srv/moongate/reference --persistence-schema preview
-Moongate.Server --root-directory /srv/moongate/reference \
+mgserver --root-directory /srv/moongate/reference --persistence-schema preview
+mgserver --root-directory /srv/moongate/reference \
   --persistence-schema generate --migration-target world \
   --migration-output ./migrations/world/0001_create_characters.sql
 ```
@@ -107,9 +107,9 @@ dotnet run --project src/Moongate.Ctl -- migrate status \
   --migrations-directory ./migrations
 ```
 
-Since 0.6.0, `Moongate.Server --persistence-schema apply` is not supported: it
+Since 0.6.0, `mgserver --persistence-schema apply` is not supported: it
 directs you to the runner. For framework-dependent server output use
-`dotnet Moongate.Server.dll ...`.
+`dotnet mgserver.dll ...`.
 
 ## Rules for applied files
 

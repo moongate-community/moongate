@@ -77,7 +77,8 @@ internal sealed class ScriptedInstall : IDisposable
 
     /// <summary>
     ///     Writes a release archive and its checksum, with the given text standing in for the server binary; with
-    ///     <paramref name="includeMgctl" />, also the tool beside it, named mgboot before it became mgctl.
+    ///     <paramref name="includeMgctl" />, also the tool beside it, named mgboot before it became mgctl. The server
+    ///     binary was named Moongate.Server before it became mgserver.
     /// </summary>
     public void Publish(
         string version,
@@ -85,12 +86,13 @@ internal sealed class ScriptedInstall : IDisposable
         string binaryContent,
         bool includeMgctl = false,
         string tool = "mgctl",
-        string toolContent = "boot payload"
+        string toolContent = "boot payload",
+        string server = "mgserver"
     )
     {
         var bundle = Path.Combine(_root, "staging-" + Guid.NewGuid().ToString("N"), "moongate-" + rid);
         Directory.CreateDirectory(bundle);
-        File.WriteAllText(Path.Combine(bundle, "Moongate.Server"), binaryContent);
+        File.WriteAllText(Path.Combine(bundle, server), binaryContent);
 
         if (includeMgctl)
         {

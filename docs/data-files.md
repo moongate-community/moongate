@@ -9,8 +9,8 @@ stops the server at startup with an error that says what is wrong. The
 [MOTD](motd.md) is optional: a missing file logs a warning and sends no welcome
 message.
 
-The files ship beside the `Moongate.Server` binary, in `data/`; the repository copy
-is `moongate_root/data/`. `mgctl` (or `Moongate.Server --initialize-root`) copies
+The files ship beside the `mgserver` binary, in `data/`; the repository copy
+is `moongate_root/data/`. `mgctl` (or `mgserver --initialize-root`) copies
 every missing file into `<root>/data` and never replaces one that exists, so a file
 you edited survives an upgrade. After an upgrade, run `mgctl init` again to add new
 files and compare your edited files with the shipped ones to pick up upstream

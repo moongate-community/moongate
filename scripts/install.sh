@@ -248,8 +248,13 @@ main() {
         fail "the archive could not be extracted"
     fi
 
-    if [ ! -f "${WORK_DIR}/moongate-${rid}/Moongate.Server" ]; then
-        fail "the archive does not contain moongate-${rid}/Moongate.Server"
+    # The server is mgserver; releases before it was renamed carry Moongate.Server.
+    if [ -f "${WORK_DIR}/moongate-${rid}/mgserver" ]; then
+        server=mgserver
+    elif [ -f "${WORK_DIR}/moongate-${rid}/Moongate.Server" ]; then
+        server=Moongate.Server
+    else
+        fail "the archive does not contain moongate-${rid}/mgserver"
     fi
 
     STAGING_DIR="${INSTALL_DIR}.new.$$"
@@ -267,8 +272,8 @@ main() {
         fail "could not stage the new files in ${STAGING_DIR}"
     fi
 
-    if ! $SUDO chmod 0755 "${STAGING_DIR}/Moongate.Server"; then
-        fail "could not make ${STAGING_DIR}/Moongate.Server executable"
+    if ! $SUDO chmod 0755 "${STAGING_DIR}/${server}"; then
+        fail "could not make ${STAGING_DIR}/${server} executable"
     fi
 
     # The tool beside the server is mgctl; releases before it was renamed carry mgboot.
@@ -304,7 +309,7 @@ main() {
         fail "could not replace ${BIN_DIR}/moongate"
     fi
 
-    if ! $SUDO ln -s "${INSTALL_DIR}/Moongate.Server" "${BIN_DIR}/moongate"; then
+    if ! $SUDO ln -s "${INSTALL_DIR}/${server}" "${BIN_DIR}/moongate"; then
         fail "could not link ${BIN_DIR}/moongate"
     fi
 
