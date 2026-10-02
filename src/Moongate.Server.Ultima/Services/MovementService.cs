@@ -21,6 +21,7 @@ public class MovementService : IMovementService
 {
     private const int PersonHeight = 16;
     private const int StepHeight = 2;
+    private const int CannotLiftWeight = 255;
 
     private readonly IMapService _mapService;
     private readonly ITileDataService _tileDataService;
@@ -266,14 +267,9 @@ public class MovementService : IMovementService
             isSet = true;
         }
 
+        // As ModernUO, whatever is under the mover counts here, an item that can be picked up too.
         foreach (var tile in TilesAt(map, from.X, from.Y))
         {
-            // Nobody stands on an item that can be picked up.
-            if (!tile.Fixed)
-            {
-                continue;
-            }
-
             var item = tile.Tile;
             var calcTop = tile.Z + item.StandHeight;
             var surface = (item.Flags & TileFlagType.Surface) != 0;
@@ -513,28 +509,36 @@ public class MovementService : IMovementService
             return _cell;
         }
 
-        foreach (var item in _sectors.GetItemsAt(map, x, y))
+        // By index: enumerating the list through its interface would allocate on every cell with an item.
+        var items = _sectors.GetItemsAt(map, x, y);
+
+        for (var index = 0; index < items.Count; index++)
         {
+            var item = items[index];
+
             if (item.GroundLocation is { } spot && _tileDataService.TryGetItem(item.ItemId, out var data))
             {
-                _cell.Add(new(data, spot.Z, true, IsFixed(item)));
+                _cell.Add(new(data, spot.Z, true, IsFixed(item, data)));
             }
         }
 
         return _cell;
     }
 
-    // The item's own word, else its template's; an item of neither can be picked up.
-    private bool IsFixed(ItemEntity item)
+    // The item's own word, else its template's, else its graphic's: a tiledata weight of 255 cannot be lifted.
+    private bool IsFixed(ItemEntity item, ItemTile data)
     {
         if (item.Movable is { } movable)
         {
             return !movable;
         }
 
-        return _templates is not null &&
-               _templates.TryGet(item.TemplateId, out var template) &&
-               !template.EffectiveMovable(_tileDataService);
+        if (_templates is not null && _templates.TryGet(item.TemplateId, out var template))
+        {
+            return !template.EffectiveMovable(_tileDataService);
+        }
+
+        return data.Weight == CannotLiftWeight;
     }
 
     // Impassable land blocks, except water for a swimmer; a mover that cannot walk is blocked by any other land.

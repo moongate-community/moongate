@@ -207,7 +207,8 @@ public sealed class SectorService : ISectorService
 
     public IReadOnlyList<ItemEntity> GetItemsAt(MapType map, int x, int y)
     {
-        return _itemsAt.TryGetValue((map, x, y), out var items) ? items : [];
+        // The shared empty array for a cell with nothing on it: the movement asks thousands of times in one path search.
+        return _itemsAt.TryGetValue((map, x, y), out var items) ? items : Array.Empty<ItemEntity>();
     }
 
     public bool ContainsItem(ItemEntity item)

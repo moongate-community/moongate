@@ -339,7 +339,7 @@ npc.walk_to(serial, where.x, where.y, where.z, 1, true)
 Without `z` the place is the highest ground of the cell not above the NPC's head, else the
 highest there. Start and goal must be within `ultima.world.pathfinding_range` tiles (38);
 farther is `"no_path"`. A closed door blocks the way, and an NPC does not open it: it goes
-around, or answers `"no_path"`. Other mobiles do not block a path.
+around, or walks up to it and then answers `"no_path"`. Other mobiles do not block a path.
 
 ## Item scripts
 
