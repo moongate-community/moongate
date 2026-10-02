@@ -8,6 +8,7 @@ using Moongate.Scripting.Internal;
 using Moongate.Scripting.Utils;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Scripting.Interfaces;
+using Moongate.Tests.Support.Timing;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
@@ -33,6 +34,9 @@ public sealed class NpcModuleTests
     private readonly MobileService _mobiles;
     private readonly StubNpcService _npcs = new();
     private readonly RecordingMoveOverService _moveOver = new();
+    private readonly StubPathfindingService _finder = new();
+    private readonly ManualTimeProvider _time = new();
+    private readonly NpcPathService _paths;
     private readonly FakeScriptEngine _engine = new() { CurrentScript = "mobiles/summoner.lua" };
     private readonly StubGameLoop _loop = new();
     private readonly SectorService _sectors = TestSectors.Create();
@@ -66,6 +70,7 @@ public sealed class NpcModuleTests
     public NpcModuleTests()
     {
         _mobiles = new(_movement, _sectors);
+        _paths = new(_finder, _time);
         _mobiles.EnterWorld(_orc);
         _mobiles.EnterWorld(_player);
         _mobiles.EnterWorld(_silentOrc);
@@ -315,6 +320,79 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void WalkTo_TakesOneStepOfThePathPerCall_AndSaysWhenItArrived()
+    {
+        _finder.Finds(DirectionType.North, DirectionType.North);
+
+        var result = Run(
+            "return npc.walk_to(256, 1600, 1598, 0), npc.walk_to(256, 1600, 1598, 0), npc.walk_to(256, 1600, 1598, 0)"
+        );
+
+        Assert.Equal(["moving", "moving", "arrived"], result.Select(value => value.Read<string>()));
+        Assert.Equal(new Point3D(1600, 1598, 0), _orc.Location);
+        // One search for the whole way, and the players around saw both steps.
+        Assert.Single(_finder.Searches);
+        Assert.Equal(["Moved 256 1600,1600,0", "Moved 256 1600,1599,0"], _view.Calls);
+    }
+
+    [Fact]
+    public void WalkTo_WithoutAHeight_AimsAtTheGroundOfThePlace()
+    {
+        _movement.SpawnZ = (_, _) => 7;
+        _finder.Finds(DirectionType.North);
+
+        Run("npc.walk_to(256, 1600, 1598)");
+
+        Assert.Equal(new Point3D(1600, 1598, 7), Assert.Single(_finder.Searches).To);
+    }
+
+    [Fact]
+    public void WalkTo_WithARange_ArrivesNextToThePlace()
+    {
+        Assert.Equal("arrived", Run("return npc.walk_to(256, 1601, 1601, 0, 1)")[0].Read<string>());
+
+        Assert.Empty(_finder.Searches);
+    }
+
+    [Fact]
+    public void WalkTo_WithNoPath_SaysSo_AndABlockedStepIsBlocked()
+    {
+        Assert.Equal("no_path", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
+
+        _time.Advance(TimeSpan.FromSeconds(2));
+        _finder.Finds(DirectionType.North);
+        _movement.Allow = false;
+
+        Assert.Equal("blocked", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
+        // Still blocked while it waits to search again.
+        Assert.Equal("blocked", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
+        Assert.Equal(2, _finder.Searches.Count);
+    }
+
+    [Theory,
+     InlineData("return npc.walk_to(2, 1600, 1598)"),
+     InlineData("return npc.walk_to(999, 1600, 1598)"),
+     InlineData("return npc.walk_to(256, 1600, 1598, 300)"),
+     InlineData("return npc.walk_to(256, 1600, 1598, 0, -1)"),
+     InlineData("return npc.find_path(2, 1600, 1598)"),
+     InlineData("return npc.find_path(256, 1600, 1598)")]
+    public void WalkToAndFindPath_ForAPlayerABadPlaceOrNoPath_AreNil(string chunk)
+    {
+        Assert.Equal(LuaValue.Nil, Run(chunk)[0]);
+    }
+
+    [Fact]
+    public void FindPath_GivesTheStepsAsDirections()
+    {
+        _finder.Finds(DirectionType.North, DirectionType.NorthEast);
+
+        var result = Run("local steps = npc.find_path(256, 1601, 1598, 0, true) return #steps, steps[1], steps[2]");
+
+        Assert.Equal([2, (int)DirectionType.North, (int)DirectionType.NorthEast], result.Select(value => value.Read<int>()));
+        Assert.True(Assert.Single(_finder.Searches).AllowPartial);
+    }
+
+    [Fact]
     public void Spawn_AsksForTheNpc_AndGivesItsSerialToTheCallback()
     {
         var result = Run("return npc.spawn('orc', 'Trammel', 1500, 1600, 10, function(serial) end)");
@@ -401,7 +479,7 @@ public sealed class NpcModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view, _templates, _npcs, new Lazy<IScriptEngine>(() => _engine), _loop, _sectors, _moveOver));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view, _templates, _npcs, new Lazy<IScriptEngine>(() => _engine), _loop, _sectors, _moveOver, _paths, _finder, _movement));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

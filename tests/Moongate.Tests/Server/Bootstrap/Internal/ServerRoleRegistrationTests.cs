@@ -220,6 +220,7 @@ public sealed class ServerRoleRegistrationTests
             Assert.IsType<SectorService>(container.Resolve<ISectorService>());
             Assert.IsType<SpeechService>(container.Resolve<ISpeechService>());
             Assert.IsType<PathfindingService>(container.Resolve<IPathfindingService>());
+            Assert.IsType<NpcPathService>(container.Resolve<INpcPathService>());
             Assert.NotNull(container.Resolve<NpcModule>());
             Assert.NotNull(container.Resolve<ItemModule>());
             Assert.NotNull(container.Resolve<WorldModule>());

@@ -99,6 +99,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<IMovementService, MovementService>(Reuse.Singleton);
         container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
         container.Register<IPathfindingService, PathfindingService>(Reuse.Singleton);
+        container.Register<INpcPathService, NpcPathService>(Reuse.Singleton);
         container.AddScriptModule<DiceModule>();
         container.AddScriptModule<LocalizationModule>();
         container.AddScriptModule<NpcModule>();

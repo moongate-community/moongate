@@ -29,6 +29,9 @@ public sealed class NpcModule
 
     private const DirectionType DirectionMask = (DirectionType)0x07;
 
+    // How far above the NPC the ground of a place it walks to is looked for: one storey.
+    private const int GroundSearchHeight = 20;
+
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
     private readonly IWorldViewService _view;
@@ -38,6 +41,9 @@ public sealed class NpcModule
     private readonly IGameLoopService? _loop;
     private readonly ISectorService? _sectors;
     private readonly IMoveOverService? _moveOver;
+    private readonly INpcPathService? _paths;
+    private readonly IPathfindingService? _finder;
+    private readonly IMovementService? _movement;
     private readonly ILogger _logger = Log.ForContext<NpcModule>();
 
     public NpcModule(
@@ -49,9 +55,15 @@ public sealed class NpcModule
         Lazy<IScriptEngine>? engine = null,
         IGameLoopService? loop = null,
         ISectorService? sectors = null,
-        IMoveOverService? moveOver = null
+        IMoveOverService? moveOver = null,
+        INpcPathService? paths = null,
+        IPathfindingService? finder = null,
+        IMovementService? movement = null
     )
     {
+        _paths = paths;
+        _finder = finder;
+        _movement = movement;
         _moveOver = moveOver;
         _npcs = npcs;
         _engine = engine;
@@ -109,6 +121,75 @@ public sealed class NpcModule
             return false;
         }
 
+        return Take(npc, direction, running);
+    }
+
+    /// <summary>
+    ///     Takes one step towards a place along a path that avoids what stands in the way, and says how it goes; call it
+    ///     from <c>on_think</c> on every tick: <c>if npc.walk_to(serial, 1434, 1699) == "arrived" then ... end</c>. The
+    ///     path is searched the first time and kept: it is searched again only when the place changes or a step is
+    ///     blocked, and two seconds after the last search at the soonest.
+    /// </summary>
+    [ScriptFunction(helpText: "One step along a path to x, y (z defaults to the ground there), a run when running is true: 'arrived' within range tiles of it, 'moving' after a step, 'blocked' while it waits to look for another way, 'no_path' when none was found; nil for an unknown NPC or a z outside -128 to 127.")]
+    public string? WalkTo(long serial, int x, int y, int? z = null, int range = 0, bool running = false)
+    {
+        if (_paths is null || range < 0 || !TryGetNpc(serial, out var npc) || GoalOf(npc, x, y, z) is not { } goal)
+        {
+            return null;
+        }
+
+        var step = _paths.Next(npc, goal, range, AbilityOf(npc));
+
+        switch (step.Kind)
+        {
+            case NpcWalkType.Arrived:
+                return "arrived";
+            case NpcWalkType.NoPath:
+                return "no_path";
+            case NpcWalkType.Blocked:
+                return "blocked";
+        }
+
+        var moved = Take(npc, step.Direction, running);
+        _paths.Stepped(npc, moved);
+
+        return moved ? "moving" : "blocked";
+    }
+
+    /// <summary>
+    ///     Finds the steps from the NPC to a place, for a script that walks them itself with <c>npc.step</c>;
+    ///     <c>for _, direction in ipairs(npc.find_path(serial, 1434, 1699) or {}) do ... end</c>. Each call searches:
+    ///     keep the list, do not ask on every tick.
+    /// </summary>
+    [ScriptFunction(helpText: "The steps from the NPC to x, y (z defaults to the ground there) as a list of DirectionType; with partial true, the steps to the closest place when it cannot be reached. Nil when there is no path, the place is too far or the NPC is unknown.")]
+    public LuaTable? FindPath(long serial, int x, int y, int? z = null, bool partial = false)
+    {
+        if (_finder is null || !TryGetNpc(serial, out var npc) || GoalOf(npc, x, y, z) is not { } goal)
+        {
+            return null;
+        }
+
+        var path = _finder.FindPath(npc.Map, npc.Location, goal, AbilityOf(npc), partial);
+
+        if (path.Kind is not (PathResultType.Found or PathResultType.Partial))
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        var index = 1;
+
+        foreach (var direction in path.Steps)
+        {
+            table[index++] = (int)direction;
+        }
+
+        return table;
+    }
+
+    // One step, a turn first when needed, shown to the players around; true when the NPC moved.
+    private bool Take(MobileEntity npc, DirectionType direction, bool running)
+    {
         var oldLocation = npc.Location;
         var oldDirection = npc.Direction;
         var ability = AbilityOf(npc);
@@ -176,6 +257,7 @@ public sealed class NpcModule
             return false;
         }
 
+        _paths?.Forget(npc.Id);
         _ = _npcs.RemoveAsync(npc.Id)
                  .ContinueWith(
                      task => _logger.Warning(task.Exception, "npc.delete of {Serial} failed", serial),
@@ -314,6 +396,31 @@ public sealed class NpcModule
         npc.SetProp(key, prop);
 
         return true;
+    }
+
+    // The place a script names: at the height it gives, else on the ground of the cell nearest the NPC's own height.
+    private Point3D? GoalOf(MobileEntity npc, int x, int y, int? z)
+    {
+        if (z is { } given)
+        {
+            return given is >= sbyte.MinValue and <= sbyte.MaxValue ? new Point3D(x, y, given) : null;
+        }
+
+        var ground = npc.Location.Z;
+
+        try
+        {
+            if (_movement is not null && _movement.TryGetSpawnZ(npc.Map, x, y, npc.Location.Z + GroundSearchHeight, out var found))
+            {
+                ground = found;
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            // The map is not loaded: the search will find nothing.
+        }
+
+        return new Point3D(x, y, ground);
     }
 
     private async Task SpawnAsync(string template, MapType map, Point3D location, LuaFunction? callback, string owner)

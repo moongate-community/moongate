@@ -139,7 +139,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
-| Pathfinding, following and fleeing | 🟡 | A* path search for C# code; NPCs do not follow a path yet |
+| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`. No fleeing, and doors and mobiles do not block a path |
 | Pets and followers: commands, loyalty, bonding | ❌ | |
 | Mounts | ❌ | |
 | Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |

@@ -71,6 +71,8 @@ exists but fails compilation/execution aborts server startup.
 | `npc.spawn(template, map, x, y, z, fn?)` | Brings a new NPC of a mobile template into the world. The NPC is saved first, so it appears a moment later: its `on_spawn` runs then, and so does `fn(serial)` when given. `false` for an unknown template, a spot outside the map or a `z` outside -128 to 127 |
 | `npc.delete(serial)` | Deletes the NPC and what it carries, on the next turn of the game loop; `false` for a serial that is not an NPC in the world |
 | `npc.face(serial, x, y)`, `npc.distance_to(serial, x, y)` | Turns the NPC towards a place without stepping, seen by the players in range; and the tiles between the NPC and a place, the larger of the two differences, as the view range counts them |
+| `npc.walk_to(serial, x, y, z?, range?, running?)` | One step along a path to a place that goes around what stands in the way; call it on every `on_think`. It answers `"moving"` after a step, `"arrived"` once within `range` tiles of the place (default 0), `"blocked"` while it waits to look for another way, `"no_path"` when none was found; `nil` for a serial that is not an NPC. See [Walking a path](#walking-a-path) |
+| `npc.find_path(serial, x, y, z?, partial?)` | The steps from the NPC to a place, as a list of `DirectionType`, for a script that walks them itself with `npc.step`; with `partial`, the steps to the closest place when it cannot be reached. `nil` when there is no path or the place is too far. Each call searches: keep the list |
 | `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
 | `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` for a worn item, an `amount` below 1, fewer units left, or an item a player holds on the cursor |
 | `item.get_prop(serial, key)`, `item.set_prop(serial, key, value)` | The same for an item, saved with it by the world save or its owner's save |
@@ -289,6 +291,40 @@ so the NPCs use the new functions from their next think; state kept in `local`
 tables of the old file starts again, and the waits its handlers left are cancelled,
 because a script's calls belong to `mobiles/<script_id>.lua`. When the server stops,
 the scripts are no longer called, before the script engine stops.
+
+### Walking a path
+
+`npc.walk_to` lets an NPC reach a place around walls, water and cliffs. The script calls it
+on every tick and the NPC takes one step each time:
+
+```lua
+guard = {}
+
+function guard.on_think(serial)
+    local state = npc.walk_to(serial, 1434, 1699)
+
+    if state == "arrived" then
+        npc.say(serial, "All quiet at the bank.")
+    end
+end
+```
+
+The path is found with the server's [path search](world-queries.md#pathfinding) the first
+time and kept for the NPC, so the later calls only take the next step. It is searched again
+when the place changes or a step is blocked, and two seconds after the last search at the
+soonest: until then a place that changed is walked towards on the old path, and a blocked
+NPC answers `"blocked"`. A place that cannot be reached is walked towards as far as a path
+leads, then the answer is `"no_path"`. To follow someone, pass where it stands on every tick
+and a `range` of 1 to stop beside it:
+
+```lua
+local where = mobile.location(target)
+npc.walk_to(serial, where.x, where.y, where.z, 1, true)
+```
+
+Without `z` the place is the ground of the cell nearest the NPC's own height. Start and goal
+must be within `ultima.world.pathfinding_range` tiles (38); farther is `"no_path"`. Closed
+doors and other mobiles do not block a path yet.
 
 ## Item scripts
 
