@@ -30,8 +30,17 @@ public sealed class DevelopmentMigrationFixture : IDisposable
         PersistenceDatabaseTarget target = PersistenceDatabaseTarget.Realm
     )
     {
+        return Create(target, entity);
+    }
+
+    internal PersistenceSchemaCoordinator Create(PersistenceDatabaseTarget target, params Type[] entities)
+    {
         var registry = new PersistenceModuleRegistry();
-        registry.RegisterEntity(entity, target);
+
+        foreach (var entity in entities)
+        {
+            registry.RegisterEntity(entity, target);
+        }
 
         return new(Config.Persistence.ToOptions(Migrations, Plugins, rootDirectory: Root), registry);
     }
