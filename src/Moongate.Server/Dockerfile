@@ -10,6 +10,8 @@ WORKDIR /app
 VOLUME ["/data"]
 EXPOSE 2593
 EXPOSE 2595/tcp
+# UDP ping server; see network.ping_port.
+EXPOSE 12000/udp
 # Optional private administration endpoint; disabled by default.
 EXPOSE 2590/tcp
 

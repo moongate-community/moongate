@@ -18,7 +18,8 @@ one-use handoff tickets. The steps below prepare these dependencies.
 - A reachable PostgreSQL server on which you can create databases. The examples in
   this repository use PostgreSQL 16.
 - A reachable Redis 7+ server with authentication and `maxmemory-policy noeviction`. Keep it on a private network.
-- Two free TCP ports in standalone mode: login defaults to 2593 and game to 2595.
+- Two free TCP ports in standalone mode: login defaults to 2593 and game to 2595. The
+  UDP ping server uses port 12000 when it is free.
 - For a source build: Git and the .NET 10 SDK selected by `global.json`. Node.js is
   only needed to work on the documentation website.
 

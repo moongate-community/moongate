@@ -32,7 +32,8 @@ shard_name = "Moongate"
 login_port = 2593
 game_port = 2595
 listen_address = "0.0.0.0"
-enable_ping_server = true # Reserved: currently not consumed by the host.
+enable_ping_server = true # Answers UDP pings on ping_port.
+ping_port = 12000
 
 [network.encryption]
 mode = "Disabled"
@@ -155,7 +156,8 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `network.login_port` | Login TCP listener port; default 2593. Used in login and standalone modes. |
 | `network.game_port` | Game TCP listener port; default 2595. Used in game and standalone modes. Standalone rejects equal login and game ports. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create an endpoint for each active role on every address, including IPv6 addresses; it is not a single wildcard listener. Standalone therefore starts two listeners per address. Use a specific IP to restrict binding. |
-| `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
+| `network.enable_ping_server` | Default true. Starts the UDP ping server in every mode: it sends each datagram of at most 64 bytes back to its sender, so a client can measure the latency of the shard; a larger datagram gets no answer, and neither does one that comes from the ping port itself (the echo of another ping server). It binds `network.ping_port` on the addresses of `network.listen_address`. An address or port that cannot be bound is logged as a warning and the server still starts. It does not affect the UO ping packet handler on the game connection. |
+| `network.ping_port` | UDP port of the ping server; default 12000, the port ModernUO uses. Must be between 1 and 65535 when the ping server is enabled. |
 | `network.encryption.mode` | `Disabled` (default), `Optional` or `Required`; applies to both UO listeners. See [UO client encryption](#uo-client-encryption). |
 | `network.encryption.client_version` | Raw POL wire version used to derive login keys and select the game cipher family. Required for `Optional` and `Required`; ignored when `Disabled`. Default empty. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. It must contain `tiledata.mul`, the map and statics files of every map in `data/maps.toml`, and `MultiCollection.uop` or `multi.idx` with `multi.mul`; the server stops at startup when one is missing. |

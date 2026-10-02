@@ -172,6 +172,7 @@ public sealed class ServerRoleRegistrationTests
         ServerRoleRegistration.Register(container, config, directories);
         new MoongateUltimaPlugin().Register(container);
 
+        Assert.True(container.IsRegistered<PingServerService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IGameLoopService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<ISessionService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IWorldSaveService>());
