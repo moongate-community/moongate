@@ -323,7 +323,11 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         );
 
         _motd.Sender = sender;
-        return new(characters, mobiles ?? _mobiles, _items, _leaves, loaders, bus, _sessions, _view, _motd, light, seasons);
+        return new(
+            characters,
+            _leaves,
+            new CharacterEnterWorldService(mobiles ?? _mobiles, _items, loaders, bus, _sessions, _view, _motd, light, seasons)
+        );
     }
 
     private static CharacterForPlay Aria(int hair = 0x203C, int beard = 0)

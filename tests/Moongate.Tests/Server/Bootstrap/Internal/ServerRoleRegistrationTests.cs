@@ -216,6 +216,7 @@ public sealed class ServerRoleRegistrationTests
             Assert.NotNull(container.Resolve<WorldModule>());
             Assert.Contains(typeof(SpeechKeywordType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
             Assert.IsType<BankService>(container.Resolve<IBankService>());
+            Assert.IsType<CharacterEnterWorldService>(container.Resolve<ICharacterEnterWorldService>());
             Assert.NotNull(container.Resolve<BankModule>());
             Assert.Equal(
                 [container.Resolve<IWeatherService>(), container.Resolve<ILightService>(), container.Resolve<IMusicService>(), container.Resolve<ISeasonService>()],

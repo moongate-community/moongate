@@ -11,14 +11,15 @@ namespace Moongate.Server.Ultima.Handlers.Characters;
 
 /// <summary>
 ///     What both create-character handlers do once they have a request: read the session's account, create the
-///     character, and answer a refusal with a popup and a disconnect. A created character gets no reply yet: entering
-///     the world comes later.
+///     character, and answer a refusal with a popup and a disconnect. A created character enters the world at once,
+///     as in the other emulators.
 /// </summary>
 internal static class CharacterCreationReply
 {
     public static async ValueTask HandleAsync(
         PacketContext context,
         ICharacterService characters,
+        ICharacterEnterWorldService enter,
         CharacterCreationRequest request,
         ILogger logger,
         CancellationToken cancellationToken
@@ -75,6 +76,11 @@ internal static class CharacterCreationReply
             character.Map,
             character.Location
         );
+
+        // The starting items the character wears, and everything inside them.
+        var equipment = result.Items.Where(item => item.MobileId == character.Id).ToList();
+        var contents = result.Items.Where(item => item.MobileId != character.Id).ToList();
+        await enter.EnterAsync(context, accountId, new(character, equipment, contents), cancellationToken);
     }
 
     private static PopupMessageType ToPopup(CharacterCreationRefusalType refusal)
