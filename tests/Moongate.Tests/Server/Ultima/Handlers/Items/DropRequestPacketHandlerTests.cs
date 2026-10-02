@@ -88,6 +88,18 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_IntoTheBackpackAtAGridSlot_KeepsTheSlotTheClientAskedFor()
+    {
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 80, 70, _backpack.Id, 9);
+
+        // The Enhanced Client shows the item in this slot, and is told so in the update it gets back.
+        Assert.Equal((short)9, _coins.GridIndex);
+        Assert.Equal((byte)9, _sender.Sent.OfType<ContainerItemUpdatePacket>().Last().Item.GridIndex);
+    }
+
+    [Fact]
     public async Task Handle_OutsideTheGumpBounds_IsBroughtInside()
     {
         await HoldingAsync(_coins);
@@ -544,7 +556,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         await _fixture.ExecuteOnLoopAsync(() => _session.Set(ItemSessionKeys.Held, new(item.Id)));
     }
 
-    private Task DropAsync(Serial item, short x, short y, Serial destination)
+    private Task DropAsync(Serial item, short x, short y, Serial destination, byte gridIndex = 0)
     {
         var layouts = new ContainerLayoutService(
             new StubDataLoaderService().With(
@@ -556,7 +568,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
             )
         );
         var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank);
-        var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, Destination = destination };
+        var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, GridIndex = gridIndex, Destination = destination };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));
     }

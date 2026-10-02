@@ -20,7 +20,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Login and server list | ✅ | Separate login server and game realms, or one standalone process |
 | Character select, create and delete | ✅ | Deletion is delayed and can be restored by staff |
 | Message of the day | ✅ | Configurable and extensible |
-| Client versions and encryption | ✅ | POL-compatible encryption policies; Enhanced Client not tested |
+| Client versions and encryption | ✅ | POL-compatible encryption policies; the Enhanced Client logs in, creates a character and enters the world, the rest is being tested |
 | UDP ping server | ✅ | Echoes pings on UDP 12000, as ModernUO does |
 | Keepalive and idle clients | ✅ | |
 | IP bans and firewall | ❌ | |

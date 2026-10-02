@@ -167,7 +167,7 @@
         "name": "Grid index",
         "type": "byte",
         "size": "1",
-        "description": "Grid position"
+        "description": "The slot the Enhanced Client asks for in the container's grid; 0 from the classic client."
       },
       {
         "offset": "11",
@@ -846,7 +846,7 @@
         "name": "Grid index",
         "type": "byte",
         "size": "1",
-        "description": "Present in newer client format"
+        "description": "The item's slot (0 to 124) in the grid the Enhanced Client shows; newer client format only."
       },
       {
         "offset": "15",
@@ -952,7 +952,7 @@
         "description": "Repeated container item entries."
       }
     ],
-    "notes": "Each item uses 19 bytes, or 20 with the grid byte for newer clients.",
+    "notes": "Each item uses 19 bytes, or 20 with the grid byte for newer clients: the item's slot (0 to 124) in the grid the Enhanced Client shows.",
     "handler": "UseRequestPacketHandler and BankService: send the opened container contents."
   },
   "0x4E:outgoing": {

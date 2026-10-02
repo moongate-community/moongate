@@ -16,6 +16,7 @@ using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -291,7 +292,11 @@ public class MobileFactoryService : IMobileFactoryService
         CancellationToken cancellationToken
     )
     {
-        item.PutInContainer(backpack.Id, _layout.RandomGridPosition(backpack.ItemId));
+        item.PutInContainer(
+            backpack.Id,
+            _layout.RandomGridPosition(backpack.ItemId),
+            ContainerSlotUtils.FirstFree(backpackItems)
+        );
         await _itemFactory.SaveAsync(transaction, item, cancellationToken);
         backpackItems.Add(item);
     }

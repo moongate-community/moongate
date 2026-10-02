@@ -119,6 +119,40 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void MoveToContainer_GivesTheItemAFreeSlot()
+    {
+        var items = Service();
+
+        items.MoveToContainer(_dagger, _bag.Id, new Point2D(12, 34));
+
+        Assert.NotEqual(_coin.GridIndex, _dagger.GridIndex);
+    }
+
+    [Fact]
+    public void MoveToContainer_ToTheSlotTheClientAsksFor_KeepsItWhenFreeAndMovesOnWhenTaken()
+    {
+        var items = Service();
+        var taken = _coin.GridIndex!.Value;
+
+        items.MoveToContainer(_dagger, _bag.Id, new Point2D(12, 34), 9);
+        Assert.Equal((short)9, _dagger.GridIndex);
+
+        items.MoveToContainer(_dagger, _bag.Id, new Point2D(12, 34), taken);
+        Assert.Equal((short)(taken + 1), _dagger.GridIndex);
+    }
+
+    [Fact]
+    public void MoveToContainer_WithinTheSameContainer_MayKeepItsOwnSlot()
+    {
+        var items = Service();
+        var own = _coin.GridIndex!.Value;
+
+        items.MoveToContainer(_coin, _bag.Id, new Point2D(50, 50), own);
+
+        Assert.Equal(own, _coin.GridIndex);
+    }
+
+    [Fact]
     public void Split_LeavesTheRestAsANewLiveItemWhereTheStackWas()
     {
         var items = Service();
@@ -136,6 +170,21 @@ public sealed class ItemServiceTests
         );
         Assert.True(items.TryGet(rest.Id, out var live));
         Assert.Same(rest, live);
+    }
+
+    [Fact]
+    public void Split_InAContainer_KeepsTheRestInTheSlotAndGivesTheHeldPartAnother()
+    {
+        // The held part bounces back into the same container when the drop fails: two stacks, two slots.
+        var items = Service();
+        _coin.Amount = 100;
+        var slot = _coin.GridIndex;
+
+        var rest = items.Split(_coin, 30, new Serial(0x40000100));
+
+        Assert.Equal(slot, rest.GridIndex);
+        Assert.NotEqual(slot, _coin.GridIndex);
+        Assert.NotNull(_coin.GridIndex);
     }
 
     [Fact]

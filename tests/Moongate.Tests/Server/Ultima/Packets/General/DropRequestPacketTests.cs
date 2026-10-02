@@ -17,6 +17,14 @@ public sealed class DropRequestPacketTests
     }
 
     [Fact]
+    public void TryParse_ReadsTheGridSlotTheClientAsksFor()
+    {
+        Assert.True(DropRequestPacket.TryParse(Convert.FromHexString("08" + "40000012" + "002C" + "0041" + "00" + "09" + "40000001"), out var packet));
+
+        Assert.Equal(9, packet.GridIndex);
+    }
+
+    [Fact]
     public void TryParse_ADropOnTheContainerIcon_HasMinusOneCoordinates()
     {
         Assert.True(DropRequestPacket.TryParse(Convert.FromHexString("08" + "40000012" + "FFFF" + "FFFF" + "00" + "00" + "40000001"), out var packet));

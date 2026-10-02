@@ -10,7 +10,8 @@ namespace Moongate.Server.Ultima.Packets.World;
 
 /// <summary>
 ///     The items inside a container (0x3C), each at its position in the gump; clients from 6.0.1.7 also read a grid
-///     byte. The items are copied when the packet is built, so later changes to them are not sent.
+///     byte, the slot the Enhanced Client shows the item in. The items are copied when the packet is built, so later
+///     changes to them are not sent.
 /// </summary>
 [PacketHandler(0x3C, PacketSizing.Variable, MinimumLength = HeaderLength)]
 public sealed class ContainerContentPacket : BasePacket<ContainerContentPacket>, IOutgoingPacket
@@ -36,6 +37,7 @@ public sealed class ContainerContentPacket : BasePacket<ContainerContentPacket>,
                              item.Amount,
                              item.GridX ?? 0,
                              item.GridY ?? 0,
+                             (byte)(item.GridIndex ?? 0),
                              item.ContainerId ?? default,
                              item.Hue
                          )
@@ -63,7 +65,7 @@ public sealed class ContainerContentPacket : BasePacket<ContainerContentPacket>,
 
             if (GridBytes)
             {
-                writer.WriteByte(0); // Grid index: the client places the item itself.
+                writer.WriteByte(item.GridIndex); // The slot in the Enhanced Client's grid.
             }
 
             writer.WriteSerial(item.Container);

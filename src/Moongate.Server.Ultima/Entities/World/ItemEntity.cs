@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.Internal;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Io;
 using Moongate.Ultima.Types;
 
@@ -78,6 +79,11 @@ public class ItemEntity : IMoongateEntity
     public short? GridY { get; set; }
 
     /// <summary>
+    ///     The slot (0 to 124) in the grid the Enhanced Client shows a container as; the classic client ignores it.
+    /// </summary>
+    public short? GridIndex { get; set; }
+
+    /// <summary>
     ///     The mobile wearing this item.
     /// </summary>
     [Column(MapType = typeof(long?), IsNullable = true)]
@@ -134,16 +140,20 @@ public class ItemEntity : IMoongateEntity
     }
 
     /// <summary>
-    ///     Puts the item inside the container item <paramref name="containerId" />, at a position in its gump.
+    ///     Puts the item inside the container item <paramref name="containerId" />, at a position in its gump and in
+    ///     the grid slot <paramref name="gridIndex" />.
     /// </summary>
     /// <exception cref="ArgumentException">
     ///     <paramref name="containerId" /> is not an item serial, or is this item.
     /// </exception>
     /// <exception cref="ArgumentOutOfRangeException">
-    ///     A coordinate of <paramref name="gridLocation" /> does not fit the 16-bit grid columns.
+    ///     A coordinate of <paramref name="gridLocation" /> does not fit the 16-bit grid columns, or
+    ///     <paramref name="gridIndex" /> is beyond the last slot.
     /// </exception>
-    public void PutInContainer(Serial containerId, Point2D gridLocation)
+    public void PutInContainer(Serial containerId, Point2D gridLocation, byte gridIndex = 0)
     {
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(gridIndex, ContainerSlotUtils.SlotCount);
+
         if (!containerId.IsItem || containerId == Id)
         {
             throw new ArgumentException($"{containerId} is not another item that can hold this one.", nameof(containerId));
@@ -162,6 +172,7 @@ public class ItemEntity : IMoongateEntity
         ContainerId = containerId;
         GridX = (short)gridLocation.X;
         GridY = (short)gridLocation.Y;
+        GridIndex = gridIndex;
     }
 
     /// <summary>
@@ -266,6 +277,7 @@ public class ItemEntity : IMoongateEntity
         ContainerId = null;
         GridX = null;
         GridY = null;
+        GridIndex = null;
         MobileId = null;
         Layer = null;
     }

@@ -223,7 +223,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
         if (IsContainer(target))
         {
-            return TryPut(item, target, AtPosition(target, packet.X, packet.Y));
+            return TryPut(item, target, AtPosition(target, packet.X, packet.Y), packet.GridIndex);
         }
 
         // Dropped on a carried item: into that item's container, where that item lies.
@@ -232,7 +232,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return false;
         }
 
-        return TryPut(item, container, target.GridLocation!.Value);
+        return TryPut(item, container, target.GridLocation!.Value, packet.GridIndex);
     }
 
     // What lies in a bank box is reached only while the bank is open.
@@ -241,14 +241,15 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         return _bank is null || !_mobiles.TryGet(session.CharacterId, out var character) || _bank.CanAccess(session, character, target);
     }
 
-    private bool TryPut(ItemEntity item, ItemEntity container, Point2D position)
+    private bool TryPut(ItemEntity item, ItemEntity container, Point2D position, int gridIndex)
     {
         if (Encloses(item, container))
         {
             return false;
         }
 
-        _items.MoveToContainer(item, container.Id, position);
+        // The slot the Enhanced Client asked for, or the next free one; the classic client sends 0.
+        _items.MoveToContainer(item, container.Id, position, gridIndex);
 
         return true;
     }
