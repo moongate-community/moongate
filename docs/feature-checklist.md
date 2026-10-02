@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 64 done, 🟡 36 partly done, ❌ 168 not built yet.
+**268 systems:** ✅ 64 done, 🟡 37 partly done, ❌ 167 not built yet.
 
 **Coverage: 24%** of the systems done, **31%** counting a partly done system as half.
 
@@ -139,7 +139,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
-| Pathfinding, following and fleeing | ❌ | |
+| Pathfinding, following and fleeing | 🟡 | A* path search for C# code; NPCs do not follow a path yet |
 | Pets and followers: commands, loyalty, bonding | ❌ | |
 | Mounts | ❌ | |
 | Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |

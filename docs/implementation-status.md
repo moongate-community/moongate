@@ -14,7 +14,7 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 | Characters | ✅ Works | Create, delete and restore, enter the world, walk and run |
 | Other players | ✅ Works | See each other, talk |
 | Items | 🟡 Partial | Backpack, paperdoll, ground, tooltips; no ground containers |
-| NPCs | 🟡 Partial | Spawn regions, Lua scripts, wandering; no combat or pathfinding |
+| NPCs | 🟡 Partial | Spawn regions, Lua scripts, wandering; no combat, and no path following |
 | World | 🟡 Partial | Decoration, doors and keys, teleporters and public moongates (also across maps), day and night, weather, seasons; no houses |
 | Combat, death, skill gain | ❌ Not yet | |
 | Lua scripting | ✅ Works | NPC and item scripts, sandboxed |
@@ -59,7 +59,8 @@ See all of them in [Commands](commands.md).
 ## Not built yet
 
 - Combat, death, corpses and skill gain.
-- Pathfinding AI: NPCs only run their Lua script (`on_think`, `on_speech`, `on_spawn`,
+- Pathfinding AI: an A* [path search](world-queries.md#pathfinding) exists for C# code, but NPCs do not
+  follow a path yet: they only run their Lua script (`on_think`, `on_speech`, `on_spawn`,
   `on_mobile_in_range`).
 - Recall and gate travel, and mounts.
 - Houses and boats (placement, and multis in movement and line of sight).
