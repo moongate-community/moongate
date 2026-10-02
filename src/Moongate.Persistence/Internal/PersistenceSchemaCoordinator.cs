@@ -105,7 +105,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
 
                     throw new InvalidOperationException(
                         $"PostgreSQL schema changes are required for persistence modules: {modules}. " +
-                        "Generate and review a SQL migration, then apply it with Moongate.MigrationRunner."
+                        "Generate and review a SQL migration, then apply it with mgctl migrate apply."
                     );
                 }
             }
@@ -388,7 +388,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             if (pending.Count > 0)
             {
                 throw new InvalidOperationException(
-                    $"Pending PostgreSQL migrations for {target}: {string.Join(", ", pending.Select(script => script.Name))}. Run Moongate.MigrationRunner apply before starting the server."
+                    $"Pending PostgreSQL migrations for {target}: {string.Join(", ", pending.Select(script => script.Name))}. Run mgctl migrate apply before starting the server."
                 );
             }
         }

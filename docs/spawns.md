@@ -2,12 +2,12 @@
 
 The world fills itself with NPCs from spawn regions, as UOX3's `[REGIONSPAWN]`: every region keeps
 up to its `max` NPCs alive, spawning a few at a time, and spawns new ones when some are removed or
-killed. The shipped data is UOX3's, converted by [`mg-uoxconv`](uox3-migration.md): 2778 regions on
+killed. The shipped data is UOX3's, converted by [`mgctl convert uox`](uox3-migration.md): 2778 regions on
 Felucca, Trammel and Ilshenar, for up to about 25,000 NPCs, picking from 446 NPC lists. UOX3 has no
 spawns for New Haven, so `spawns/trammel/town_new_haven.toml` adds its 57 spawn points from
 ModernUO: the vendors, the bankers, the townsfolk and the town animals, 99 NPCs in all. Malas,
 Tokuno and TerMur, which UOX3 has no spawns for either, take theirs from ModernUO's spawners through
-[`mg-uoxconv modernuo-spawns`](uox3-migration.md#spawns-of-modernuo): 1,206 regions, about 4,200
+[`mgctl convert modernuo-spawns`](uox3-migration.md#spawns-of-modernuo): 1,206 regions, about 4,200
 NPCs, in the `modernuo_*.toml` files of their folders; the spawners whose creatures have no template
 yet are left out.
 

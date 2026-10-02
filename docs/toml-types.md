@@ -40,7 +40,7 @@ These classes register converters:
 | Who | Converters |
 | --- | --- |
 | `MoongateUltimaPlugin.Register` | `Serial`, `Point2D`, `Point3D`, `HueSpec`, `Rectangle2D`, and the `EnumValueSpec` and `RangeValueSpec` factories |
-| `Moongate.UoxItemConverter` | the same, except `Rectangle2D` |
+| `mgctl convert` (`Moongate.UoxItemConverter`) | the same, except `Rectangle2D` |
 | Tests | none globally; each test passes its own options with the converter it checks |
 
 A registered converter also covers the nullable form of its type: `go_location` in

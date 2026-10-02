@@ -100,7 +100,7 @@ percent-encoded credentials, IPv6 hosts and query options such as `sslmode` and
 `connect_timeout`. Native Npgsql connection strings are also supported.
 
 Normal deployments keep automatic synchronization disabled. Generate and review versioned SQL, then apply it with the
-separate `Moongate.MigrationRunner` executable. Configure `PostgreSqlPersistenceOptions.MigrationCatalogFactory` for
+`mgctl migrate apply` command. Configure `PostgreSqlPersistenceOptions.MigrationCatalogFactory` for
 migration readiness checks in a custom host; Moongate.Server wires this automatically. `SynchronizeSchemaAsync` remains a
 development-only convenience and does not record history.
 

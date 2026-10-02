@@ -55,15 +55,9 @@ jobs:
           -c Release -r ${{ matrix.rid }}
           -o dist/moongate-${{ matrix.rid }}
 
-      - name: Publish migration runner ${{ matrix.rid }}
+      - name: Publish mgctl ${{ matrix.rid }}
         run: >
-          dotnet publish src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj
-          -c Release -r ${{ matrix.rid }}
-          -o dist/moongate-${{ matrix.rid }}/migration-runner
-
-      - name: Publish mgboot ${{ matrix.rid }}
-        run: >
-          dotnet publish src/Moongate.Boot/Moongate.Boot.csproj
+          dotnet publish src/Moongate.Ctl/Moongate.Ctl.csproj
           -c Release -r ${{ matrix.rid }}
           -o dist/moongate-${{ matrix.rid }}
 

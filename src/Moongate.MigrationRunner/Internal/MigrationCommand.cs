@@ -10,7 +10,7 @@ using Npgsql;
 namespace Moongate.MigrationRunner.Internal;
 
 /// <summary>
-///     The real logic, testable in-process: no CLI parsing (Program.cs's Cli class and
+///     The real logic, testable in-process: no CLI parsing (mgctl's MigrateCommands and
 ///     ConsoleAppFramework own that), output written to the given writers rather than
 ///     <see cref="Console" /> directly, and the exit code returned rather than set on
 ///     <see cref="Environment.ExitCode" />.
@@ -76,11 +76,11 @@ internal static class MigrationCommand
         {
             var root = (rootDirectory ??
                         Environment.GetEnvironmentVariable("MOONGATE_ROOT") ??
-                        Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..")))
+                        Path.GetFullPath(AppContext.BaseDirectory))
                 .ResolvePathAndEnvs();
             string? configuredMigrations = null;
             var migrations =
-                (migrationsDirectory ?? Path.Combine(AppContext.BaseDirectory, "..", "migrations")).ResolvePathAndEnvs();
+                (migrationsDirectory ?? Path.Combine(AppContext.BaseDirectory, "migrations")).ResolvePathAndEnvs();
             string connectionString;
 
             try

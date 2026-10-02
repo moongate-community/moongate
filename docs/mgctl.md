@@ -1,33 +1,53 @@
-# Prepare a server root with mgboot
+# mgctl, the Moongate tool
 
-`mgboot` prepares a Moongate data directory without starting the server or connecting
-to PostgreSQL. It ships beside `Moongate.Server` in release archives and Docker
-images after 0.6.0, and the Linux installer links it as the `mgboot` command. It is
-step 1 of [the first-start sequence](getting-started.md#first-start).
+`mgctl` is the one tool that ships beside `Moongate.Server`, in release archives and Docker
+images; the Linux installer links it as the `mgctl` command. Releases 0.7 to 0.11 named it
+`mgboot`, which only prepared the root, and shipped the migrations and the converter as two more
+executables, `migration-runner/Moongate.MigrationRunner` and `mg-uoxconv`; there, read
+`mgboot <root>` for `mgctl init <root>`.
+
+| Command | What it does |
+| --- | --- |
+| `mgctl init <root>` | Prepares a server root; this page. `mgctl <root>` does the same |
+| `mgctl migrate status\|apply --target auth\|world` | Lists or applies the versioned SQL; see [Persistence migrations](persistence-migrations.md) |
+| `mgctl convert uox ...` | Converts UOX3 `.dfn` content into TOML; see [Migrate from UOX3](uox3-migration.md) |
+| `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters ...` | Converts ModernUO's spawners, signs and teleporters; see [Migrate from UOX3](uox3-migration.md#spawns-of-modernuo) |
+
+`mgctl --help` lists the commands and `mgctl <command> --help` the options of one.
+
+## Prepare a server root
+
+`mgctl init` prepares a Moongate data directory without starting the server or connecting
+to PostgreSQL. It is step 1 of [the first-start sequence](getting-started.md#first-start).
 
 ## Usage
 
 ```sh
-mgboot /absolute/path/to/moongate-data
+mgctl init /absolute/path/to/moongate-data
 ```
 
 The root directory is the single required positional argument. Relative paths are
 resolved from the current working directory. Quote paths containing spaces:
 
 ```sh
-mgboot "/srv/my realm"
-mgboot --help
+mgctl init "/srv/my realm"
+mgctl init --help
 ```
 
-On Windows, use `mgboot.exe C:\MoongateData` from the extracted distribution.
-Keep `mgboot` and `Moongate.Server` from the same release together.
-When preparing a root, `mgboot` shows the same Moongate banner, version and codename
+`mgctl <root>`, without `init`, is the older spelling and still works for a root written as
+a path (`/srv/moongate`, `./data`) or naming a directory that exists; a bare new name such
+as `mgctl data` is refused, so a mistyped command never becomes a root. A command line
+that names no command, such as `mgctl migrate` alone, exits with code 2.
+
+On Windows, use `mgctl.exe init C:\MoongateData` from the extracted distribution.
+Keep `mgctl` and `Moongate.Server` from the same release together.
+When preparing a root, `mgctl` shows the same Moongate banner, version and codename
 as the server, followed by `Root setup`. Help and version output omit the banner.
 
 ## Generate an administration certificate
 
 ```sh
-mgboot /srv/moongate --generate-admin-certificate \
+mgctl init /srv/moongate --generate-admin-certificate \
   --admin-certificate-hosts "login.example.test,192.0.2.10"
 ```
 
@@ -88,18 +108,18 @@ Distribute only `admin.crt`; clients must verify trust and hostname.
 | `data/` | The shard data files included in the distribution: maps, regions, races, skills, messages and the rest; see [Shard data files](data-files.md) |
 | `templates/` | The item, loot and mobile templates included in the distribution; see [Templates](templates.md) |
 | `scripts/` | The example [mobile](scripting.md#mobile-scripts) and [item scripts](scripting.md#item-scripts) included in the distribution, `mobiles/wander.lua` and `items/potion.lua`; the engine writes `definitions.lua` and `.luarc.json` here at startup |
-| `.mgboot.lock` | Retained file used to prevent simultaneous initialization |
+| `.mgctl.lock` | Retained file used to prevent simultaneous initialization |
 
 The new config sets `persistence.migrations_directory` to the absolute `migrations`
 path inside this root. Normal server startup also defaults to `<root>/migrations`
-when that setting is absent; keeping the explicit path makes the standalone
-migration runner use the same catalog. Other values remain the server defaults: automatic migration
+when that setting is absent; keeping the explicit path makes
+`mgctl migrate` use the same catalog. Other values remain the server defaults: automatic migration
 generation and automatic schema synchronization are disabled. Runtime Redis
 credentials must be supplied before starting the server.
 The root does not need database access or Ultima Online client files to be prepared.
 
 Data files, templates and scripts are copied only when missing, so a file you edited
-stays as it is. Run `mgboot` again after upgrading to add the files a new release
+stays as it is. Run `mgctl init` again after upgrading to add the files a new release
 introduces; a file that exists in the root is never replaced, so compare it with the
 one beside the new `Moongate.Server` binary (`data/`, `templates/`, `scripts/`) to pick
 up upstream changes. Nothing is removed either: a template a release renamed or moved
@@ -129,23 +149,24 @@ update the absolute path in a newly generated config accordingly.
 
 Continue with [Start a Moongate server](getting-started.md#first-start): edit the
 generated configuration, create the PostgreSQL databases, apply the bundled SQL with
-the migration runner and start the server. For development, you can instead enable
+`mgctl migrate apply` and start the server. For development, you can instead enable
 `persistence.auto_generate_migrations` after preparing the databases; see the
 [entity tutorial](persistence-entity-tutorial.md).
 
 ## Docker
 
-For an image built from source with mgboot support:
+For a release image:
 
 ```sh
 docker volume create moongate-data
-docker run --rm --entrypoint /app/mgboot \
+docker run --rm --entrypoint /app/mgctl \
   --mount type=volume,source=moongate-data,target=/data \
-  ghcr.io/moongate-community/moongate:latest /data
+  ghcr.io/moongate-community/moongate:latest init /data
 ```
 
-Choose a release containing mgboot or your locally built image. Initialization
-exits after preparing the mounted root; it opens no TCP listener.
+Images up to 0.11.0 have `/app/mgboot` instead: use `--entrypoint /app/mgboot` and pass
+only `/data`. Initialization exits after preparing the mounted root; it opens no TCP
+listener.
 
 ## Build from source
 
@@ -153,8 +174,8 @@ Publish the server and tool into the same directory:
 
 ```sh
 dotnet publish src/Moongate.Server -c Release -r linux-x64 -o dist/moongate
-dotnet publish src/Moongate.Boot -c Release -r linux-x64 -o dist/moongate
-./dist/moongate/mgboot /absolute/path/to/moongate-data
+dotnet publish src/Moongate.Ctl -c Release -r linux-x64 -o dist/moongate
+./dist/moongate/mgctl init /absolute/path/to/moongate-data
 ```
 
 Change the runtime identifier for your platform. The server also exposes the same

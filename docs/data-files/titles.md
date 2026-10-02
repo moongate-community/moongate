@@ -2,7 +2,7 @@
 
 `data/titles.toml` defines the English title prefix derived from a mobile's
 current fame and karma. The repository copy is
-`moongate_root/data/titles.toml`; `mgboot` installs it in the server root's
+`moongate_root/data/titles.toml`; `mgctl` installs it in the server root's
 `data/` directory when missing. The game server loads it at startup. Restart
 the server after changing the file.
 

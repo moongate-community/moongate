@@ -29,7 +29,7 @@ original Moongate logo, XML documentation, and a companion symbol package.
 | [Moongate.Server.Core](../src/Moongate.Server.Core/README.md) | Server and plugin contracts, events, and registrations | Core, Network, Network.Packets |
 | [Moongate.Ultima](../src/Moongate.Ultima/README.md) | UO client data readers and rendering utilities | None |
 
-`Moongate.Server`, `Moongate.Boot`, `Moongate.MigrationRunner`, and `Moongate.UoxItemConverter` are
+`Moongate.Server`, `Moongate.Ctl` and the two libraries it runs, `Moongate.MigrationRunner` and `Moongate.UoxItemConverter`, are
 executables distributed through release artifacts and container images. They do not produce library
 packages. `Moongate.Server.Admin` and `Moongate.Server.Ultima` are embedded modules shipped with the server, also non-packable. Tests and plugin fixtures are excluded from packing.
 

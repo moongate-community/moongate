@@ -19,9 +19,9 @@ On 0.6.0, both the server and the migration runner read the core SQL from the
 `--migrations-directory`. There is nothing to configure.
 
 From the release after 0.6.0, the server reads `<root>/migrations` unless
-`persistence.migrations_directory` selects another directory, and `mgboot` copies
+`persistence.migrations_directory` selects another directory, and `mgctl` copies
 the release's core SQL there and writes that absolute path into a new
-configuration; see [Prepare a root with mgboot](mgboot.md). The runner uses
+configuration; see [mgctl](mgctl.md#prepare-a-server-root). The runner uses
 `--migrations-directory` if given, then the configured `migrations_directory`, then
 the directory beside the server executable. Keep `migrations_directory` explicit so
 the server and the runner read the same catalog.
@@ -85,25 +85,24 @@ file with the entity change. Deploy the same reviewed files to every affected
 database. Stop its runtime processes and use the runner:
 
 ```sh
-./migration-runner/Moongate.MigrationRunner status \
+./mgctl migrate status \
   --root-directory /srv/moongate/realm-1 --target world
-./migration-runner/Moongate.MigrationRunner apply \
+./mgctl migrate apply \
   --root-directory /srv/moongate/realm-1 --target world
 ```
 
 The runner reads that root's `config/moongate.toml` and `plugins/`. `--target auth`
 selects `[persistence.accounts]`; `--target world` selects `[persistence.realm]`.
 Only the selected connection is resolved. `MOONGATE_ROOT` is an alternative to
-`--root-directory`; without either, the shipped runner uses its parent server
-directory as the data root. Released archives and Docker images ship the runner in
-`migration-runner/`, isolated from FreeSql's Npgsql driver; it never loads plugin
-DLLs. Both commands return exit code 0 on success and 1 on failure; `status`
+`--root-directory`; without either, `mgctl` uses its own directory, the server's, as
+the data root. `mgctl` is a process of its own, with its own PostgreSQL driver, isolated
+from FreeSql's Npgsql driver; it never loads plugin DLLs. Both commands return exit code 0 on success and 1 on failure; `status`
 reports pending files without applying them.
 
 From a source checkout, provide the catalog path explicitly:
 
 ```sh
-dotnet run --project src/Moongate.MigrationRunner -- status \
+dotnet run --project src/Moongate.Ctl -- migrate status \
   --root-directory /srv/moongate/reference --target world \
   --migrations-directory ./migrations
 ```
@@ -263,6 +262,7 @@ use the shipped auth catalog instead of generating the account table, copy all i
 files before the first start. Never overwrite already-applied files or reuse their
 numbers in an existing catalog.
 
-The development source build copies the runner and its dependencies into a separate
-`migration-runner/` output folder. A missing runner or an unwritable migration
+The development source build copies `mgctl` and its dependencies into a separate
+`mgctl/` output folder, and the server runs `mgctl migrate apply` from there; a
+distribution has `mgctl` beside the server. A missing `mgctl` or an unwritable migration
 directory prevents startup before generation can be reported successful.

@@ -5,15 +5,15 @@ usage() {
     cat <<'USAGE'
 Usage: scripts/run_server.sh [--root-directory <path>] [--skip-build] [--build-only] [server options]
 
-Publishes a Release build of the server, mgboot and the migration runner into a
-clean dist/moongate, prepares the root with mgboot and starts the server on it.
+Publishes a Release build of the server and mgctl into a
+clean dist/moongate, prepares the root with mgctl and starts the server on it.
 
   --root-directory <path>  Server root. Defaults to MOONGATE_ROOT.
   --skip-build             Start the build already in dist/moongate.
   --build-only             Publish into dist/moongate and stop; needs no root.
   -h, --help               Show this help.
 
-mgboot adds the shipped data, template and script files the root lacks and
+mgctl adds the shipped data, template and script files the root lacks and
 keeps the ones already there. Every other option goes to Moongate.Server as it is.
 
 Examples:
@@ -64,13 +64,11 @@ if [[ "$skip_build" == false ]]; then
     rm -rf -- "$dist_directory"
     dotnet publish "$repository_root/src/Moongate.Server/Moongate.Server.csproj" \
         -c Release -o "$dist_directory" --nologo -v quiet
-    dotnet publish "$repository_root/src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj" \
-        -c Release -o "$dist_directory/migration-runner" --nologo -v quiet
-    dotnet publish "$repository_root/src/Moongate.Boot/Moongate.Boot.csproj" \
+    dotnet publish "$repository_root/src/Moongate.Ctl/Moongate.Ctl.csproj" \
         -c Release -o "$dist_directory" --nologo -v quiet
 fi
 
-for binary in Moongate.Server mgboot; do
+for binary in Moongate.Server mgctl; do
     if [[ ! -x "$dist_directory/$binary" ]]; then
         printf '%s not found in %s; run without --skip-build.\n' "$binary" "$dist_directory" >&2
         exit 1
@@ -85,6 +83,6 @@ fi
 # A configuration may name its paths through ${MOONGATE_ROOT}, such as migrations_directory.
 export MOONGATE_ROOT=${MOONGATE_ROOT:-$root_directory}
 
-"$dist_directory/mgboot" "$root_directory"
+"$dist_directory/mgctl" init "$root_directory"
 
 exec "$dist_directory/Moongate.Server" --root-directory "$root_directory" "${server_options[@]}"
