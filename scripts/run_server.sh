@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
     cat <<'USAGE'
-Usage: scripts/run_server.sh [--root-directory <path>] [--skip-build] [--build-only] [-- server options]
+Usage: scripts/run_server.sh [--root-directory <path>] [--skip-build] [--build-only] [server options]
 
 Publishes a Release build of the server, mgboot and the migration runner into
 dist/moongate, prepares the root with mgboot and starts the server on it.
@@ -14,12 +14,12 @@ dist/moongate, prepares the root with mgboot and starts the server on it.
   -h, --help               Show this help.
 
 mgboot adds the shipped data, template and script files the root lacks and
-keeps the ones already there. Everything after -- goes to Moongate.Server.
+keeps the ones already there. Every other option goes to Moongate.Server as it is.
 
 Examples:
   scripts/run_server.sh --root-directory "$HOME/moongate"
   scripts/run_server.sh --root-directory "$HOME/moongate" --skip-build
-  scripts/run_server.sh --root-directory "$HOME/moongate" -- --log-level Debug --log-packets
+  scripts/run_server.sh --root-directory "$HOME/moongate" --log-level Debug --log-packets
   scripts/run_server.sh --build-only
 USAGE
 }
@@ -40,8 +40,8 @@ while [[ $# -gt 0 ]]; do
         --skip-build) skip_build=true; shift ;;
         --build-only) build_only=true; shift ;;
         -h|--help) usage; exit 0 ;;
-        --) shift; server_options=("$@"); break ;;
-        *) printf 'Unknown option: %s\n' "$1" >&2; usage >&2; exit 2 ;;
+        --) shift; server_options+=("$@"); break ;;
+        *) server_options+=("$1"); shift ;;
     esac
 done
 

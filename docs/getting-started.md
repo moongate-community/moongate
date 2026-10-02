@@ -58,7 +58,8 @@ scripts/run_server.sh --root-directory "$HOME/moongate"
 ```
 
 `--skip-build` starts the build already in `dist/moongate`, `--build-only` publishes
-without starting, and everything after `--` goes to the server.
+without starting, and every other option goes to the server as it is, for example
+`--log-level Debug`.
 
 ## First start
 
