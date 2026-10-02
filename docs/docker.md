@@ -94,7 +94,7 @@ Mount that same volume for the server and migration runner. Stop the affected ru
 
 ## Ports, storage and updates
 
-The current image declares UO client ports 2593 and 2595. `EXPOSE` does not publish a host port; configure `ports` for the login and each game listener that clients must reach. Keep Redis and PostgreSQL on a private network. Each running Moongate process needs its own `/data` volume; each realm needs its own Realm database. Do not share one root or Realm database between running game processes.
+The current image declares UO client ports 2593 and 2595, and UDP port 12000 for the ping server. Publish `12000/udp` only for the process whose address the clients ping; two processes behind one host address cannot both use it. `EXPOSE` does not publish a host port; configure `ports` for the login and each game listener that clients must reach. Keep Redis and PostgreSQL on a private network. Each running Moongate process needs its own `/data` volume; each realm needs its own Realm database. Do not share one root or Realm database between running game processes.
 
 After pulling a newer image, run `mgboot` on the volume again, as above: it adds the data files and core SQL the new release introduces and keeps the files already in the root. The Compose example does this in its entrypoint on every start.
 

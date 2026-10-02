@@ -42,9 +42,7 @@ internal static class UoNetworkOptionsFactory
         var mode = encryption.Mode;
         var profile = mode == NetworkEncryptionMode.Disabled ? null : UoEncryptionProfile.Parse(encryption.ClientVersion);
         var configuredMiddlewares = middlewares?.ToArray();
-        var addresses = config.Network.ListenAddress == "0.0.0.0"
-            ? NetworkUtils.GetLocalIpAddresses().ToArray()
-            : new[] { IPAddress.Parse(config.Network.ListenAddress) };
+        var addresses = config.Network.ResolveListenAddresses();
 
         return new()
         {

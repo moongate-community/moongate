@@ -133,6 +133,6 @@ See all of them in [Commands](commands.md).
 
 ## Settings with no effect yet
 
-`network.enable_ping_server` and the `--log-level` and `--log-packets` command-line options are
-parsed and validated but nothing uses them yet; see the
+The `--log-level` and `--log-packets` command-line options are parsed and validated but nothing
+uses them yet; see the
 [configuration reference](server-configuration.md#settings-and-validation).
