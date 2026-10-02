@@ -132,8 +132,7 @@ These do not depend on the gameplay phases and are done when an operator needs t
 
 After phase 7. Each of these needs most of what comes before.
 
-- **Quests**: an engine for quests and escorts. Not on the checklist today; about 35,000 lines in
-  ModernUO.
+- **Quests**: an engine for quests and escorts; about 35,000 lines in ModernUO.
 - **Champion spawns, treasure maps, dungeon chests that refill, camps.**
 - **Virtues and factions.**
 - **The modern ruleset**: item properties and resistances, random magic loot, special moves,
