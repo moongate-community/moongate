@@ -48,6 +48,9 @@ public sealed class DecorationService : IDecorationService, IDisposable
     // How far apart in height two doors still stand in the same doorway.
     private const int DoorHeight = 16;
 
+    // How far apart in height two teleporters on a cell still count as one, as ModernUO's [TelGen.
+    private const int TeleporterHeight = 12;
+
     // ModernUO's BaseLight kinds and the light shape each gives by default.
     private static readonly Dictionary<string, LightType> LightKinds = new(StringComparer.Ordinal)
     {
@@ -251,6 +254,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
             () =>
             {
                 var seen = new HashSet<(MapType, Point3D, int)>();
+                // The teleporters this file already keeps: the ground does not show them yet.
+                var teleporters = new List<(MapType Map, Point3D Location)>();
 
                 foreach (var candidate in candidates)
                 {
@@ -260,13 +265,21 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     {
                         Count(skipped, OutsideTheMap, 1);
                     }
-                    else if (!seen.Add((map, location, block.ItemId!.Value)) || IsThere(map, location, block))
+                    else if (!seen.Add((map, location, block.ItemId!.Value)) ||
+                             IsThere(map, location, block) ||
+                             block.Type == TeleporterType &&
+                             teleporters.Any(other => other.Map == map && SharesSpot(other.Location, location)))
                     {
                         present++;
                     }
                     else
                     {
                         free.Add(candidate);
+
+                        if (block.Type == TeleporterType)
+                        {
+                            teleporters.Add((map, location));
+                        }
                     }
                 }
             }
@@ -336,18 +349,31 @@ public sealed class DecorationService : IDecorationService, IDisposable
     // spot kept by door.lua.
     // A light lit or doused since is still the same kind on the same spot.
     // A doorway holds one door: another kind already in it, closed or opened from it, keeps a new one away.
+    // A cell holds one teleporter within reach of a mobile's step, as ModernUO's [TelGen keeps one.
     private bool IsThere(MapType map, Point3D location, DecorationBlock block)
     {
         var graphic = block.ItemId!.Value;
         var isLight = LightKinds.ContainsKey(block.Type);
         var isDoor = IsDoor(block.Type);
+        var isTeleporter = block.Type == TeleporterType;
 
         return _sectors.GetItemsInRange(map, location, 1)
                        .Any(item => item.ItemId == graphic && item.GroundLocation == location ||
                                     isDoor && item.TemplateId == DoorTemplate && StandsInDoorway(item, location) ||
+                                    isTeleporter && item.TemplateId == TeleporterTemplate && SharesSpot(item, location) ||
                                     item.ItemId == graphic + 1 && IsOpenFrom(item, location) ||
                                     isLight && item.GroundLocation == location && item.TemplateId == LightTemplate &&
                                     Equals(item.Props?.GetValueOrDefault(TypeProp), block.Type));
+    }
+
+    private static bool SharesSpot(ItemEntity teleporter, Point3D location)
+    {
+        return teleporter.GroundLocation is { } spot && SharesSpot(spot, location);
+    }
+
+    private static bool SharesSpot(Point3D spot, Point3D location)
+    {
+        return spot.X == location.X && spot.Y == location.Y && Math.Abs(spot.Z - location.Z) <= TeleporterHeight;
     }
 
     private static bool StandsInDoorway(ItemEntity door, Point3D location)

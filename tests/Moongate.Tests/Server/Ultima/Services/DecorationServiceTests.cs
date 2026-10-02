@@ -231,6 +231,56 @@ public sealed class DecorationServiceTests
         Assert.Equal(new DecorationResult(0, 1, 0, 1), again);
     }
 
+    [Theory]
+    // As ModernUO's [TelGen: one teleporter per cell within 12 of height.
+    [InlineData(12, 1)]
+    [InlineData(-12, 1)]
+    [InlineData(13, 2)]
+    public async Task DecorateAsync_ASecondTeleporterOnTheSameSpot_IsNotPlaced(int height, int expected)
+    {
+        var first = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) });
+        var second = Block(
+            "Teleporter",
+            0x1BC3,
+            new Dictionary<string, object> { ["point_dest"] = new Point3D(300, 400, 0) },
+            new Point3D(1500, 1600, 10 + height)
+        );
+
+        await Service(File("trammel", first), File("trammel", second)).DecorateAsync(_progress);
+
+        Assert.Equal(expected, _items.Items.Count);
+        Assert.Equal(100L, _items.Items.First().Props!["teleport.x"]);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_TwoTeleportersOfOneFileOnTheSameSpot_PlaceOnlyTheFirst()
+    {
+        var first = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) });
+        var second = Block(
+            "Teleporter",
+            0x1BC3,
+            new Dictionary<string, object> { ["point_dest"] = new Point3D(300, 400, 0) },
+            new Point3D(1500, 1600, 15),
+            new Point3D(1500, 1601, 15)
+        );
+
+        var result = await Service(File("britannia", first, second)).DecorateAsync(_progress);
+
+        // On each of the two maps: the first, and the second's teleporter on the next cell.
+        Assert.Equal(new DecorationResult(4, 2, 0, 1), result);
+        Assert.Equal(2, _items.Items.Count(item => Equals(item.Props!["teleport.x"], 100L)));
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ATeleporterToTerMur_KeepsTheMap()
+    {
+        var block = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0), ["map_dest"] = "TerMur" });
+
+        await Service(File("trammel", block)).DecorateAsync(_progress);
+
+        Assert.Equal((long)MapType.TerMur, Assert.Single(_items.Items).Props!["teleport.map"]);
+    }
+
     [Fact]
     public async Task DecorateAsync_APointOnAnotherKind_IsNotKept()
     {

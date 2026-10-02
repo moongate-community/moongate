@@ -6,6 +6,7 @@ var app = ConsoleApp.Create();
 app.Add("", Cli.Run);
 app.Add("modernuo-spawns", Cli.ModernUoSpawns);
 app.Add("modernuo-signs", Cli.ModernUoSigns);
+app.Add("modernuo-teleporters", Cli.ModernUoTeleporters);
 app.Run(args);
 
 internal static class Cli
@@ -135,5 +136,21 @@ internal static class Cli
     public static int ModernUoSigns(string source, string destination)
     {
         return ModernUoSignConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+    }
+
+    /// <summary>
+    ///     Converts ModernUO's world and dungeon teleporters (teleporters.json) into decoration files, one
+    ///     teleporters.toml per map folder of templates/decorations, which .decorate places.
+    /// </summary>
+    /// <param name="source">
+    ///     ModernUO's Distribution/Data/teleporters.json file.
+    /// </param>
+    /// <param name="destination">
+    ///     The decorations folder (templates/decorations); each map folder gets a teleporters.toml, replacing that of a
+    ///     previous run.
+    /// </param>
+    public static int ModernUoTeleporters(string source, string destination)
+    {
+        return ModernUoTeleporterConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
     }
 }
