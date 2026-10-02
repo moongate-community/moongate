@@ -129,6 +129,52 @@ public class InstallScriptTests
     }
 
     [ShellFact]
+    public async Task Install_AnOlderReleaseWithMoongateServer_LinksTheCommandToIt()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.11.0", "linux-x64", "old payload", server: "Moongate.Server");
+
+        var result = await install.RunAsync("0.11.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var binary = Path.Combine(install.InstallDirectory, "Moongate.Server");
+        Assert.Equal(binary, File.ResolveLinkTarget(Path.Combine(install.BinDirectory, "moongate"), true)!.FullName);
+        Assert.True(File.GetUnixFileMode(binary).HasFlag(UnixFileMode.UserExecute));
+    }
+
+    [ShellFact]
+    public async Task Install_UpgradeFromMoongateServerToMgserver_MovesTheCommand()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.11.0", "linux-x64", "old payload", server: "Moongate.Server");
+        install.Publish("0.12.0", "linux-x64", "new payload");
+        Assert.Equal(0, (await install.RunAsync("0.11.0", "linux-x64")).ExitCode);
+
+        var result = await install.RunAsync("0.12.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Equal(
+            Path.Combine(install.InstallDirectory, "mgserver"),
+            File.ResolveLinkTarget(Path.Combine(install.BinDirectory, "moongate"), true)!.FullName
+        );
+        Assert.False(File.Exists(Path.Combine(install.InstallDirectory, "Moongate.Server")));
+    }
+
+    [ShellFact]
+    public async Task Install_AnArchiveWithoutAServer_FailsNamingBothNames()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.12.0", "linux-x64", "payload", server: "something-else");
+
+        var result = await install.RunAsync("0.12.0", "linux-x64");
+
+        Assert.NotEqual(0, result.ExitCode);
+        Assert.Contains("mgserver or", result.Output);
+        Assert.Contains("Moongate.Server", result.Output);
+        Assert.False(Directory.Exists(install.InstallDirectory));
+    }
+
+    [ShellFact]
     public async Task ACleanInstall_PlacesTheArchiveContents_AndLinksTheCommand()
     {
         using var install = new ScriptedInstall();
@@ -137,7 +183,7 @@ public class InstallScriptTests
         var result = await install.RunAsync("0.4.0", "linux-x64");
 
         Assert.True(result.ExitCode == 0, result.Output);
-        var binary = Path.Combine(install.InstallDirectory, "Moongate.Server");
+        var binary = Path.Combine(install.InstallDirectory, "mgserver");
         Assert.Equal("first payload", await File.ReadAllTextAsync(binary));
         Assert.True(File.Exists(Path.Combine(install.InstallDirectory, "LICENSE")));
         var command = Path.Combine(install.BinDirectory, "moongate");
@@ -199,7 +245,7 @@ public class InstallScriptTests
         Assert.True(result.ExitCode == 0, result.Output);
         Assert.Equal(
             "second payload",
-            await File.ReadAllTextAsync(Path.Combine(install.InstallDirectory, "Moongate.Server"))
+            await File.ReadAllTextAsync(Path.Combine(install.InstallDirectory, "mgserver"))
         );
         var siblings = Directory.GetDirectories(Path.GetDirectoryName(install.InstallDirectory)!);
         Assert.DoesNotContain(siblings, directory => directory.Contains(".new.") || directory.Contains(".old."));

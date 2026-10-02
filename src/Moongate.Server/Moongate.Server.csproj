@@ -2,6 +2,9 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <!-- The executable is mgserver, beside mgctl; the namespaces stay Moongate.Server. -->
+        <AssemblyName>mgserver</AssemblyName>
+        <RootNamespace>Moongate.Server</RootNamespace>
         <!-- The shard host ships as a published executable and a container image,
              never as a library on nuget.org. -->
         <IsPackable>false</IsPackable>

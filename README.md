@@ -48,7 +48,8 @@ There is no combat, pathfinding AI, death or skill gain yet.
 The networking and packet pipeline, Lua runtime, persistence infrastructure,
 shard data loading, and client-file readers with movement and line-of-sight
 queries are in place. See [Implementation status](docs/implementation-status.md)
-for supported behavior and remaining work.
+for supported behavior and remaining work, and the [Roadmap](docs/roadmap.md)
+for the order in which the missing systems are built.
 
 ## Getting started
 

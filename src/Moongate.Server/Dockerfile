@@ -69,10 +69,10 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=mgctl-publish /app/mgctl/mgctl ./mgctl
 COPY --from=sample-plugin-publish /app/sample-plugin /opt/moongate/sample-plugin
-ENTRYPOINT ["./Moongate.Server"]
+ENTRYPOINT ["./mgserver"]
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=mgctl-publish /app/mgctl/mgctl ./mgctl
-ENTRYPOINT ["./Moongate.Server"]
+ENTRYPOINT ["./mgserver"]

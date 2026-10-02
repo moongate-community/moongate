@@ -14,7 +14,7 @@ clean dist/moongate, prepares the root with mgctl and starts the server on it.
   -h, --help               Show this help.
 
 mgctl adds the shipped data, template and script files the root lacks and
-keeps the ones already there. Every other option goes to Moongate.Server as it is.
+keeps the ones already there. Every other option goes to mgserver as it is.
 
 Examples:
   scripts/run_server.sh --root-directory "$HOME/moongate"
@@ -68,7 +68,7 @@ if [[ "$skip_build" == false ]]; then
         -c Release -o "$dist_directory" --nologo -v quiet
 fi
 
-for binary in Moongate.Server mgctl; do
+for binary in mgserver mgctl; do
     if [[ ! -x "$dist_directory/$binary" ]]; then
         printf '%s not found in %s; run without --skip-build.\n' "$binary" "$dist_directory" >&2
         exit 1
@@ -85,4 +85,4 @@ export MOONGATE_ROOT=${MOONGATE_ROOT:-$root_directory}
 
 "$dist_directory/mgctl" init "$root_directory"
 
-exec "$dist_directory/Moongate.Server" --root-directory "$root_directory" "${server_options[@]}"
+exec "$dist_directory/mgserver" --root-directory "$root_directory" "${server_options[@]}"

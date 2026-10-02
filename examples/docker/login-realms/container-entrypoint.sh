@@ -103,4 +103,4 @@ fi
 # Add the shard data files a new image ships, keeping the ones already in the volume.
 /app/mgctl init /data > /dev/null
 
-exec /app/Moongate.Server "$@"
+exec /app/mgserver "$@"

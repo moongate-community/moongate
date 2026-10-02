@@ -45,7 +45,7 @@ internal static class CtlProcess
 
         start.Environment["MOONGATE_SERVER_EXECUTABLE"] = Path.Combine(
             AppContext.BaseDirectory,
-            OperatingSystem.IsWindows() ? "Moongate.Server.exe" : "Moongate.Server"
+            OperatingSystem.IsWindows() ? "mgserver.exe" : "mgserver"
         );
         using var process = Process.Start(start)!;
         var stdout = process.StandardOutput.ReadToEndAsync();

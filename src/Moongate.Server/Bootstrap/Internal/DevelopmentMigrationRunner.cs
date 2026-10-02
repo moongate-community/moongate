@@ -30,7 +30,7 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
         if (!File.Exists(ExecutablePath) && !File.Exists(AssemblyPath))
         {
             throw new InvalidOperationException(
-                $"mgctl, which applies the migrations, is missing from '{_runnerDirectory}'. Keep it beside the Moongate.Server executable from the same distribution."
+                $"mgctl, which applies the migrations, is missing from '{_runnerDirectory}'. Keep it beside the mgserver executable from the same distribution."
             );
         }
     }

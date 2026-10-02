@@ -101,7 +101,7 @@ percent-encoded credentials, IPv6 hosts and query options such as `sslmode` and
 
 Normal deployments keep automatic synchronization disabled. Generate and review versioned SQL, then apply it with the
 `mgctl migrate apply` command. Configure `PostgreSqlPersistenceOptions.MigrationCatalogFactory` for
-migration readiness checks in a custom host; Moongate.Server wires this automatically. `SynchronizeSchemaAsync` remains a
+migration readiness checks in a custom host; `mgserver` (the Moongate.Server project) wires this automatically. `SynchronizeSchemaAsync` remains a
 development-only convenience and does not record history.
 
 ## Behavior and scope

@@ -10,6 +10,7 @@ export const contentEntries = [
   { source: 'docs/getting-started.md', slug: 'start/getting-started', title: 'First start', group: 'Start here' },
   { source: 'docs/implementation-status.md', slug: 'start/implementation-status', title: 'Implementation status', group: 'Start here' },
   { source: 'docs/feature-checklist.md', slug: 'start/feature-checklist', title: 'Feature checklist', group: 'Start here' },
+  { source: 'docs/roadmap.md', slug: 'start/roadmap', title: 'Roadmap', group: 'Start here' },
   { source: 'CHANGELOG.md', slug: 'start/changelog', title: 'Changelog', group: 'Start here' },
 
   // Run a shard: the operator's pages.
