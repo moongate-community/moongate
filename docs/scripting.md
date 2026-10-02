@@ -75,7 +75,7 @@ exists but fails compilation/execution aborts server startup.
 | `item.set_light(serial, type)` | The light shape a light source gives, by `LightType` name such as `circle150`, `circle300` or `west_big`; `nil` clears it. The players who see the item are shown it again; the client draws the light only for a lit graphic. `false` for an unknown shape or a worn or held item |
 | `item.location(serial)`, `item.move_to(serial, x, y, z)` | Where a ground item lies, `{ x, y, z, map }`, and moving it on its map: the players around the old spot lose it and those around the new one see it; `nil`/`false` for an item not on the ground, a spot outside the map or a `z` outside -128 to 127; moving restarts a decaying item's decay |
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
-| `mobile.teleport(serial, x, y, z)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map: a player's client is told where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a spot outside the map or a `z` outside -128 to 127 |
+| `mobile.teleport(serial, x, y, z, map?)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map, or of `map` (a `MapType`) when given: a player's client is told of the map change (0xBF 0x08) and where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a `z` outside -128 to 127 |
 | `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells |
 | `world.is_occupied(map, x, y)` | Whether a player or an NPC stands on the tile, at any height, such as a door's doorway; `map` is a `MapType` |
 | `world.moon(moon, x)` | The phase of `MapType.Trammel` or `MapType.Felucca` seen from the column `x`, a `MoonPhaseType` (`NewMoon`, `WaxingCrescent`, `FirstQuarter`, `WaxingGibbous`, `FullMoon`, `WaningGibbous`, `LastQuarter`, `WaningCrescent`): `world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon`. Felucca turns every 10 game minutes, Trammel every 30 |
@@ -335,8 +335,9 @@ switches its graphic silently.
 [`.decorate`](commands/decorate.md) gives to ModernUO's `Teleporter`: on `on_move_over` it
 teleports the player to the props `teleport.x`, `teleport.y` and `teleport.z` with
 `mobile.teleport`, then plays the prop `sound_id` there when the teleporter has one. The prop
-`active = false` turns a teleporter off. A teleporter whose prop `teleport.map` is another map
-does nothing yet. The template has `visibility = "game_master"`: a ground item is sent only to
+`active = false` turns a teleporter off. A teleporter with the prop `teleport.map`, a `MapType`
+number, takes the player to that map: the client changes map, then gets the season, the light,
+the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
 the accounts its visibility allows, so players walk onto a teleporter they never see.
 
 LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or

@@ -14,7 +14,7 @@ server does today and what it does not. It describes the current source tree; th
 | Other players | ✅ Works | See each other, talk |
 | Items | 🟡 Partial | Backpack, paperdoll, ground, tooltips; no ground containers |
 | NPCs | 🟡 Partial | Spawn regions, Lua scripts, wandering; no combat or pathfinding |
-| World | 🟡 Partial | Decoration, doors and keys, teleporters on the same map, day and night, weather, seasons; no map changes or houses |
+| World | 🟡 Partial | Decoration, doors and keys, teleporters (also across maps), day and night, weather, seasons; no houses |
 | Combat, death, skill gain | ❌ Not yet | |
 | Lua scripting | ✅ Works | NPC and item scripts, sandboxed |
 | Persistence | ✅ Works | PostgreSQL, world saves, migrations, rotating SQL backups |
@@ -53,7 +53,7 @@ See all of them in [Commands](commands.md).
 - Combat, death, corpses and skill gain.
 - Pathfinding AI: NPCs only run their Lua script (`on_think`, `on_speech`, `on_spawn`,
   `on_mobile_in_range`).
-- Teleporters across maps, public moongates, map changes and mounts.
+- Public moongates, recall and gate travel, and mounts.
 - Houses and boats (placement, and multis in movement and line of sight).
 - Containers on the ground, dressing other characters, strength requirements.
 - Region rules: guards and housing. Regions drive the weather, the dungeon light, the music and the season.
