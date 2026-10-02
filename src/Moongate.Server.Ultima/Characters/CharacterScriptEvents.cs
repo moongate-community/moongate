@@ -81,4 +81,17 @@ public static class CharacterScriptEvents
             ["z"] = character.Z
         };
     }
+
+    /// <summary>
+    ///     The fields of <c>player_say</c>: the speaker's serial and name, and the text as the others heard it.
+    /// </summary>
+    public static IReadOnlyDictionary<string, object?> PlayerSay(PlayerSaidEvent evt)
+    {
+        return new Dictionary<string, object?>
+        {
+            ["serial"] = (long)evt.Speaker.Id.Value,
+            ["name"] = evt.Speaker.Name,
+            ["text"] = evt.Text
+        };
+    }
 }
