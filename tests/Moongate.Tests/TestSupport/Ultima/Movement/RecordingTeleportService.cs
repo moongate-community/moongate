@@ -14,9 +14,15 @@ public sealed class RecordingTeleportService : ITeleportService
 
     public bool Result { get; set; } = true;
 
+    /// <summary>
+    ///     Gets the thread the last teleport was asked on.
+    /// </summary>
+    public int TeleportedOnThread { get; private set; }
+
     public bool Teleport(MobileEntity mobile, MapType map, Point3D location)
     {
         Teleports.Add((mobile, map, location));
+        TeleportedOnThread = System.Environment.CurrentManagedThreadId;
 
         return Result;
     }

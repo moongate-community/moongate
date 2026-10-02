@@ -27,7 +27,7 @@
 30006 = "Peso: 1 piedra"
 30007 = "Peso: {0} piedras"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102, 30104-30107) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103, 30108).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102, 30104-30107, 30109) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103, 30108, 30110).
 30008 = "Objetivo cancelado."
 30009 = "Ya hay un comando en ejecución."
 30010 = "Comando desconocido: {0}"
@@ -129,3 +129,5 @@
 30106 = "Ya hay una copia de seguridad SQL en curso."
 30107 = "La copia de seguridad SQL de {0} ha fallado: {1}."
 30108 = "Guarda el mundo y luego escribe una copia de seguridad SQL de las bases de datos de este servidor."
+30109 = "No puedes ir allí: {0} no está cargado o el lugar está fuera del mapa."
+30110 = "Te lleva a un lugar de tu mapa o de otro: go <x>,<y>,<z> [mapa]."
