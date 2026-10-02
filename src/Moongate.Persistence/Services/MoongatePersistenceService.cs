@@ -17,7 +17,7 @@ namespace Moongate.Persistence.Services;
 /// <summary>
 ///     Owns registered PostgreSQL databases, schema readiness, transactions and world snapshots.
 /// </summary>
-public sealed class MoongatePersistenceService : IAsyncDisposable
+public sealed class MoongatePersistenceService : IPersistenceDataExporter, IAsyncDisposable
 {
     private readonly ILogger _logger = Log.ForContext<MoongatePersistenceService>();
     private readonly HashSet<PersistenceDatabaseTarget> _registeredTargets = [];
@@ -25,6 +25,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
     private readonly PersistenceModuleRegistry _registry = new();
     private readonly PersistenceSchemaCoordinator _schema;
     private readonly PersistenceLifetime _lifetime = new();
+    private readonly PostgreSqlPersistenceOptions _options;
 
     private readonly Dictionary<PersistenceDatabaseTarget, PersistenceMutationGate> _gates = new()
     {
@@ -38,12 +39,16 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
     private bool _frozen;
     private int _entityCount;
 
+    /// <inheritdoc />
+    public IReadOnlyCollection<PersistenceDatabaseTarget> ConfiguredTargets => _options.ConfiguredTargets;
+
     /// <summary>
     ///     Constructs an I/O-free persistence owner. Register all entities and modules before initialization.
     /// </summary>
     public MoongatePersistenceService(PostgreSqlPersistenceOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
+        _options = options;
         _schema = new(options, _registry, _logger);
     }
 
@@ -119,6 +124,27 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                 var database = _schema.GetDatabase(target);
                 await _gates[target]
                     .RunAsync(token => ExecuteCoreAsync(database, operation, token), cancellationToken)
+                    .ConfigureAwait(false);
+
+                return true;
+            }
+        );
+    }
+
+    /// <inheritdoc />
+    public Task ExportDataAsync(
+        PersistenceDatabaseTarget target,
+        Stream output,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return RunOwnedAsync(async () =>
+            {
+                ArgumentNullException.ThrowIfNull(output);
+                EnsureReady();
+                var connectionString = _schema.GetRuntimeConnectionString(target);
+                await PostgreSqlDataExporter
+                    .ExportAsync(connectionString, output, DateTimeOffset.UtcNow, cancellationToken)
                     .ConfigureAwait(false);
 
                 return true;

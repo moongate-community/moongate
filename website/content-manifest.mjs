@@ -25,6 +25,7 @@ export const contentEntries = [
   { source: 'docs/commands/account.md', slug: 'server/commands/account', title: 'account', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/character.md', slug: 'server/commands/character', title: 'character', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/save.md', slug: 'server/commands/save', title: 'save', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/sql_backup.md', slug: 'server/commands/sql-backup', title: 'sql_backup', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/broadcast.md', slug: 'server/commands/broadcast', title: 'broadcast', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/shutdown.md', slug: 'server/commands/shutdown', title: 'shutdown', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/decorate.md', slug: 'server/commands/decorate', title: 'decorate', group: 'Run a shard', subgroup: 'Commands' },

@@ -29,6 +29,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`account`](commands/account.md) | `account create <username> <password> [level]` / `account api-access <username> <on\|off>` | Yes | Yes | Administrator | Login |
 | [`character`](commands/character.md) | `character pending [account-serial]` / `character restore <character-serial>` | Yes | Yes | GameMaster | Game |
 | [`save`](commands/save.md) | `save` | Yes | Yes | Administrator | Game |
+| [`sql_backup`](commands/sql_backup.md) | `sql_backup` | Yes | Yes | Administrator | Every role |
 | [`broadcast`](commands/broadcast.md) | `broadcast <text>` | Yes | Yes | Administrator | Game |
 | [`shutdown`](commands/shutdown.md) | `shutdown [seconds]` | Yes | Yes | Administrator | Game |
 | [`decorate`](commands/decorate.md) | `decorate` | Yes | Yes | Administrator | Game |
@@ -53,7 +54,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 - **Everyone:** `help`, `echo`, `time`.
 - **Game masters:** `character`, `spawn`, `remove`, `where`, `fame`, `karma`, `globallight`,
   `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`.
-- **Administrators:** `account`, `save`, `broadcast`, `shutdown`, `decorate`,
+- **Administrators:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, plus everything a
   game master uses.
 - **Console only:** `console`, `script`.

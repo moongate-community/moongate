@@ -17,7 +17,7 @@ server does today and what it does not. It describes the current source tree; th
 | World | 🟡 Partial | Decoration, doors and keys, day and night, weather, seasons; no teleporters or houses |
 | Combat, death, skill gain | ❌ Not yet | |
 | Lua scripting | ✅ Works | NPC and item scripts, sandboxed |
-| Persistence | ✅ Works | PostgreSQL, world saves, migrations; no backup tool |
+| Persistence | ✅ Works | PostgreSQL, world saves, migrations, rotating SQL backups |
 | Administration | 🟡 Partial | Console and in-game commands, gRPC API; no web panel |
 
 ## What a player can do
@@ -58,7 +58,7 @@ See all of them in [Commands](commands.md).
 - Containers on the ground, dressing other characters, strength requirements.
 - Region rules: guards and housing. Regions drive the weather, the dungeon light, the music and the season.
 - Spawner items (the [spawn regions](spawns.md) do the respawning).
-- Per-player language, database backup and restore, a web administration panel.
+- Per-player language, a restore command for the SQL backups, a web administration panel.
 - Old Kingdom Reborn AES/E3 encryption. The Enhanced Client logs in, creates a character, enters the world and
   walks; the rest is partial: see [Enhanced Client](enhanced-client.md).
 
@@ -119,7 +119,7 @@ See all of them in [Commands](commands.md).
   separate migration runner.
 - Characters, their items, ground items and NPCs are kept in memory and written by the periodic
   world save; characters are also saved when they leave.
-- Not yet: backup and restore.
+- Not yet: a restore command; restoring a [SQL backup](persistence-operations.md#database-backups) is a manual `psql` step.
 
 ### Administration and tools
 

@@ -47,6 +47,19 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             : throw new InvalidOperationException($"Persistence target '{target}' is not active.");
     }
 
+    /// <summary>
+    ///     Gets the runtime connection of a configured target, also when no entity or migration made it active.
+    /// </summary>
+    public string GetRuntimeConnectionString(PersistenceDatabaseTarget target)
+    {
+        ThrowIfDisposed();
+        Prepare();
+
+        return _databases.TryGetValue(target, out var database)
+            ? database.RuntimeConnectionString
+            : _options.GetRequiredDatabase(target).ResolveRuntimeConnectionString();
+    }
+
     public IPersistenceModule GetOwner(Type entityType)
     {
         ThrowIfDisposed();

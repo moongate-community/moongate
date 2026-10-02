@@ -137,7 +137,70 @@ failure blocks later saves until the host is restarted; see
 
 ## Database backups
 
-A world save is an application snapshot, not a database backup. Moongate does not
-create, restore, retain or coordinate PostgreSQL backups, and has no automatic
-reverse migration. Backup policy belongs to the operator and is independent for
-Accounts and for each realm.
+A world save is an application snapshot, not a database backup. For backups Moongate writes SQL
+exports of the databases a process owns:
+
+| Server mode | Files |
+| --- | --- |
+| `standalone` | `auth_<date>.sql` and `world_<date>.sql` |
+| `login` | `auth_<date>.sql` |
+| `game` | `world_<date>.sql` |
+
+`<date>` is the UTC time of the backup, `yyyyMMdd_HHmmss`. The files go to `backups` under the
+server root, and only the newest five of each database are kept. All of this is set in
+[`[sql_backup]`](server-configuration.md).
+
+A backup runs on the schedule when `sql_backup.enabled` is true, and at once with the
+[`sql_backup`](commands/sql_backup.md) command.
+
+### What a backup does
+
+1. With the game role, it saves the world and waits for the save to finish. If the save fails, no
+   file is written.
+2. It exports each database in one read-only transaction, so a file is one consistent picture even
+   when another save commits meanwhile.
+3. It writes the file as `.tmp` and renames it when complete: a `.sql` file is always whole.
+4. It deletes the oldest files of that database beyond `keep`.
+
+The export runs off the game loop. Only the world save before it touches the loop.
+
+A database that fails is logged and does not stop the other one; its older files are left alone.
+Files in the directory that Moongate did not write are never deleted.
+
+### What is in a file
+
+Data only: a `TRUNCATE` of the tables, one `COPY ... FROM stdin` block for each table, and the
+current value of each sequence, all in one transaction. The file holds no schema. Every table the
+runtime role can read is included, also the tables of plugins. A table it cannot read is skipped
+and named in a comment at the top of the file and in a log warning.
+
+The migration history (`moongate_migrations`) is never in the file: it describes the schema of the
+database it is in, and the restore procedure rebuilds it.
+
+A file of `auth` holds the password hashes of the accounts. Keep the backup directory readable only
+by the user that runs the server.
+
+### Restore
+
+Restore with the Moongate version that wrote the backup.
+
+1. Stop the server.
+2. Create an empty database and apply the migrations of that version with [`mgboot`](mgboot.md).
+3. Run the file with a role that owns the tables:
+
+   ```bash
+   psql "postgres://moongate:<password>@localhost:5432/world" -v ON_ERROR_STOP=1 -f world_20261002_113000.sql
+   ```
+
+4. Start the server. To move to a newer version, upgrade after the restore: the newer migrations
+   then run on the restored data as in any upgrade.
+
+The file runs in one transaction: if it fails, the database is left as it was. Restore `auth` and
+`world` from the same backup run, so characters and accounts match.
+
+### What it does not do
+
+The files are not compressed, not copied anywhere else and not restored by the server. Moongate has
+no automatic reverse migration, so a file does not load onto an older schema, and a newer schema
+may have columns the file cannot fill. For point-in-time recovery or off-site copies, use PostgreSQL's own tools
+next to this.

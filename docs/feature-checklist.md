@@ -6,9 +6,9 @@ works today in more detail.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**229 systems:** ✅ 62 done, 🟡 29 partly done, ❌ 138 not built yet.
+**230 systems:** ✅ 63 done, 🟡 29 partly done, ❌ 138 not built yet.
 
-**Coverage: 27%** of the systems done, **33%** counting a partly done system as half.
+**Coverage: 27%** of the systems done, **34%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -249,6 +249,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | --- | --- | --- |
 | Commands with access levels | ✅ | From the console and in game; see [Commands](commands.md) |
 | World save | ✅ | Periodic and on shutdown, with `.save` |
+| Database backup | ✅ | Rotating SQL exports on a schedule and with `.sql_backup`; restore with psql |
 | Console | ✅ | |
 | Server configuration | ✅ | `moongate.toml`, validated at startup |
 | Account administration | 🟡 | Console and administration API; no bans |

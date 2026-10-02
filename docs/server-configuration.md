@@ -14,7 +14,7 @@ The welcome text shown when a character enters the world lives in a separate
 TOML keys use `snake_case`. Keep `mode` before the first table header.
 
 The server owns `mode` and the sections `[shard]`, `[network]`, `[redis]`,
-`[persistence]`, `[realm_directory]`, `[world_save]`, `[diagnostics]` and
+`[persistence]`, `[realm_directory]`, `[world_save]`, `[sql_backup]`, `[diagnostics]` and
 `[scripting]`. Plugins own the others: `[ultima]` belongs to the Ultima plugin and
 `[admin_api]` to the Administration plugin. A new root written by `mgboot` holds the server's
 sections (and `[admin_api]` when it sets up a certificate); at the first start each
@@ -119,6 +119,12 @@ max_realms = 128
 enabled = true # Enables periodic saves; manual/final saves remain available.
 interval_seconds = 300
 
+[sql_backup]
+enabled = false # Scheduled SQL backups; the sql_backup command works either way.
+interval_minutes = 1440
+directory = "backups" # Relative to the server root.
+keep = 5 # Copies kept for each database.
+
 [diagnostics]
 enabled = true
 interval_seconds = 5
@@ -173,6 +179,10 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `realm_directory.heartbeat_interval_seconds`, `lease_duration_seconds`, `max_realms` | Defaults 5, 15 and 128. Lease duration must exceed two heartbeats; the Redis-backed directory caps realms at 128. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |
+| `sql_backup.enabled` | Runs a SQL backup on the schedule when true. The `sql_backup` command works either way. See [Database backups](persistence-operations.md#database-backups). |
+| `sql_backup.interval_minutes` | Minutes between two scheduled backups, from 1 to 71582; default 1440. The first one runs a full interval after startup. Validated even when disabled. |
+| `sql_backup.directory` | Where the files go; default `backups`. A relative path is resolved against the server root; environment variables are expanded. |
+| `sql_backup.keep` | Files kept for each database, 1 or more; default 5. |
 | `diagnostics.enabled` | Starts the periodic diagnostic collector when true. |
 | `diagnostics.interval_seconds` | Positive integer seconds; must fit the timer range (at most 4,294,967 seconds). |
 | `diagnostics.log_metrics` | Logs periodic collected metrics when true. |

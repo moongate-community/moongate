@@ -64,6 +64,10 @@ public static class CommandMessages
     public const int TimeMoons = 30100;
     public const int BankContents = 30101;
     public const int ConsoleLocked = 30102;
+    public const int SqlBackupStarted = 30104;
+    public const int SqlBackupFileWritten = 30105;
+    public const int SqlBackupRunning = 30106;
+    public const int SqlBackupFailed = 30107;
     public const int SeasonHere = 30097;
     public const int SeasonSet = 30098;
     public const int SpawnRegionHere = 30077;
@@ -110,4 +114,5 @@ public static class CommandMessages
     public const int TimeDescription = 30095;
     public const int SeasonDescription = 30099;
     public const int ConsoleDescription = 30103;
+    public const int SqlBackupDescription = 30108;
 }
