@@ -150,6 +150,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.KeyDescription
         );
+        container.RegisterCommand<GoCommand>(
+            "go",
+            "Takes you to a place of your map or of another: go <x>,<y>,<z> [map].",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.GoDescription
+        );
         container.RegisterCommand<WhereCommand>(
             "where",
             "Shows what you target: its serial, or the map and location of a spot.",

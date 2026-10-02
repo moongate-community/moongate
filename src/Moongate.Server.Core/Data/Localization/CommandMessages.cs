@@ -115,4 +115,6 @@ public static class CommandMessages
     public const int SeasonDescription = 30099;
     public const int ConsoleDescription = 30103;
     public const int SqlBackupDescription = 30108;
+    public const int GoRefused = 30109;
+    public const int GoDescription = 30110;
 }

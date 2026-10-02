@@ -85,7 +85,7 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
-        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30108));
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30110));
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Standalone)]
