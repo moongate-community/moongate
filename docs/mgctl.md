@@ -12,8 +12,32 @@ executables, `migration-runner/Moongate.MigrationRunner` and `mg-uoxconv`; there
 | `mgctl migrate status\|apply --target auth\|world` | Lists or applies the versioned SQL; see [Persistence migrations](persistence-migrations.md) |
 | `mgctl convert uox ...` | Converts UOX3 `.dfn` content into TOML; see [Migrate from UOX3](uox3-migration.md) |
 | `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters ...` | Converts ModernUO's spawners, signs and teleporters; see [Migrate from UOX3](uox3-migration.md#spawns-of-modernuo) |
+| `mgctl completion bash\|zsh\|fish` | Prints the script that completes mgctl with TAB; see [TAB completion](#tab-completion) |
 
 `mgctl --help` lists the commands and `mgctl <command> --help` the options of one.
+
+## TAB completion
+
+`mgctl completion <shell>` prints a completion script for bash, zsh or fish. With it, TAB
+completes the commands (`mgctl mi` → `migrate`), the second word of `migrate` and `convert`,
+the options of the command and what follows them: directories after `--root-directory` and
+the like, files after `--source`, `auth` or `world` after `--target`, and a directory for
+the root of `init`.
+
+The [Linux installer](installation.md) puts the scripts where the shells look for them, so
+a new shell completes mgctl with nothing to do. Elsewhere, load it yourself:
+
+```sh
+eval "$(mgctl completion bash)"      # bash: add the line to ~/.bashrc
+source <(mgctl completion zsh)       # zsh: add the line to ~/.zshrc, after compinit
+mgctl completion fish | source       # fish: or save it as ~/.config/fish/completions/mgctl.fish
+```
+
+The bash line uses `eval` because the bash 3.2 of macOS loads nothing from
+`source <(...)`; there, a path with a space is completed without its quoting.
+
+The fish script is generated from the same list of commands as the other two but, unlike
+them, is not exercised by the tests.
 
 ## Prepare a server root
 

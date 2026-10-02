@@ -85,6 +85,50 @@ public class InstallScriptTests
     }
 
     [ShellFact]
+    public async Task Install_WithMgctl_InstallsItsCompletionsWhereTheShellsLook()
+    {
+        using var install = new ScriptedInstall();
+        // A stand-in mgctl that prints what it was asked for.
+        install.Publish("0.12.0", "linux-x64", "server", true, toolContent: "#!/bin/sh\necho \"script of $1 $2\"\n");
+
+        var result = await install.RunAsync("0.12.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Equal("script of completion bash\n", File.ReadAllText(Path.Combine(install.CompletionDirectory, "bash", "mgctl")));
+        Assert.Equal("script of completion zsh\n", File.ReadAllText(Path.Combine(install.CompletionDirectory, "zsh", "_mgctl")));
+        Assert.Equal("script of completion fish\n", File.ReadAllText(Path.Combine(install.CompletionDirectory, "fish", "mgctl.fish")));
+        Assert.Contains("  completion ", result.Output);
+    }
+
+    [ShellFact]
+    public async Task Install_DowngradeToAReleaseWithoutCompletions_RemovesTheScripts()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.12.0", "linux-x64", "new server", true, toolContent: "#!/bin/sh\necho \"script of $1 $2\"\n");
+        install.Publish("0.11.0", "linux-x64", "old server", true, "mgboot");
+        Assert.Equal(0, (await install.RunAsync("0.12.0", "linux-x64")).ExitCode);
+        Assert.NotEmpty(Directory.EnumerateFiles(install.CompletionDirectory, "*", SearchOption.AllDirectories));
+
+        var result = await install.RunAsync("0.11.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Empty(Directory.EnumerateFiles(install.CompletionDirectory, "*", SearchOption.AllDirectories));
+    }
+
+    [ShellFact]
+    public async Task Install_AMgctlWithoutCompletions_StillInstalls_AndWritesNoScript()
+    {
+        using var install = new ScriptedInstall();
+        // Not a program: asking it for a script fails.
+        install.Publish("0.12.0", "linux-x64", "server", true);
+
+        var result = await install.RunAsync("0.12.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Empty(Directory.EnumerateFiles(install.CompletionDirectory, "*", SearchOption.AllDirectories));
+    }
+
+    [ShellFact]
     public async Task ACleanInstall_PlacesTheArchiveContents_AndLinksTheCommand()
     {
         using var install = new ScriptedInstall();

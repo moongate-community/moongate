@@ -17,6 +17,7 @@ against the checksum published beside it, and puts it in place:
 | `/opt/moongate/` | The archive's contents: the server binary, the core SQL in `migrations/`, the shard data in `data/`, the templates in `templates/`, the example scripts in `scripts/`, [`mgctl`](mgctl.md) (`mgboot`, with the migration runner in `migration-runner/`, in releases 0.7 to 0.11), `LICENSE`, `THIRD-PARTY-NOTICES.md` and the debug symbols |
 | `/usr/local/bin/moongate` | A symlink to `/opt/moongate/Moongate.Server` |
 | `/usr/local/bin/mgctl` | A symlink to `/opt/moongate/mgctl`, when the release contains it |
+| `/usr/share/bash-completion/completions/mgctl`, `/usr/local/share/zsh/site-functions/_mgctl` (or, without that directory, `/usr/share/zsh/vendor-completions/_mgctl` or `/usr/share/zsh/site-functions/_mgctl`), `/usr/share/fish/vendor_completions.d/mgctl.fish` | mgctl's [TAB completion](mgctl.md#tab-completion), one file per shell whose directory exists; a script that cannot be written is skipped without failing the install |
 
 Both locations need root. Run the line as root, or leave it to `sudo`, which the script
 uses itself when it is not running as root. Nothing else is created: no service, no system user
@@ -59,13 +60,16 @@ want to keep belongs in there, which is why the server root goes somewhere else.
 
 ```sh
 sudo rm -rf /opt/moongate /usr/local/bin/moongate /usr/local/bin/mgctl /usr/local/bin/mgboot
+sudo rm -f /usr/share/bash-completion/completions/mgctl /usr/local/share/zsh/site-functions/_mgctl \
+  /usr/share/zsh/vendor-completions/_mgctl /usr/share/zsh/site-functions/_mgctl \
+  /usr/share/fish/vendor_completions.d/mgctl.fish
 ```
 
 Your server root is untouched by both the installer and this line.
 
 ## Options
 
-The script reads five environment variables:
+The script reads these environment variables:
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
@@ -74,8 +78,9 @@ The script reads five environment variables:
 | `MOONGATE_BASE_URL` | the GitHub release downloads | A mirror holding the same file names |
 | `MOONGATE_INSTALL_DIR` | `/opt/moongate` | Where the archive's contents go |
 | `MOONGATE_BIN_DIR` | `/usr/local/bin` | Where the `moongate` symlink goes |
+| `MOONGATE_BASH_COMPLETION_DIR`, `MOONGATE_ZSH_COMPLETION_DIR`, `MOONGATE_FISH_COMPLETION_DIR` | the shell's own directory | Where mgctl's TAB completion goes; an install without root skips the system directories, so point these at ones you own, such as `~/.local/share/bash-completion/completions` |
 
-Pointing the last two at paths you own installs without root:
+Pointing `MOONGATE_INSTALL_DIR` and `MOONGATE_BIN_DIR` at paths you own installs without root:
 
 ```sh
 curl -fsSL https://moongate.sh/install.sh |
