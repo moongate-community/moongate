@@ -1,0 +1,100 @@
+# ==============================================================================
+# Moongate - templates/decorations/tokuno/signs.toml
+#
+# What it is for:
+#   The shop and world signs placed on Tokuno. Each block is one sign
+#   placed at every location it lists.
+#
+# Fields:
+#   type       LocalizedSign for a text of the client (label_number), Sign for a
+#              written name
+#   item_id    the graphic
+#   props      label_number, the cliloc of the text, or name; hue when the sign
+#              has one
+#   locations  [x, y, z] of every sign of the block
+# ==============================================================================
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB4
+props = { label_number = 1063398 }
+locations = [[677, 1220, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC4
+props = { label_number = 1063399 }
+locations = [[694, 1229, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0B96
+props = { label_number = 1063400 }
+locations = [
+    [675, 1280, 32],
+    [680, 1280, 32],
+]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAD
+props = { label_number = 1063401 }
+locations = [[707, 1300, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC2
+props = { label_number = 1063402 }
+locations = [[718, 1301, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x139B
+props = { label_number = 1063403 }
+locations = [[736, 1281, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1063404 }
+locations = [[768, 1298, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BCD
+props = { label_number = 1063405 }
+locations = [[789, 1302, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BB8
+props = { label_number = 1063406 }
+locations = [[790, 1284, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BC8
+props = { label_number = 1063407 }
+locations = [[764, 1255, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BAC
+props = { label_number = 1063408 }
+locations = [[780, 1227, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD0
+props = { label_number = 1063409 }
+locations = [[729, 1229, 25]]
+
+[[decoration]]
+type = "LocalizedSign"
+item_id = 0x0BD1
+props = { label_number = 1063410 }
+locations = [
+    [710, 1251, 25],
+    [710, 1257, 25],
+    [710, 1270, 25],
+]

@@ -109,6 +109,40 @@ public sealed class TooltipServiceTests
     }
 
     [Fact]
+    public void Build_ALabelNumber_IsTheNameOfTheItem()
+    {
+        // ModernUO's LocalizedSign: the sign reads the text of the client.
+        var sign = Item("unknown", 0x0BD8);
+        sign.SetProp("label_number", 1016093L);
+
+        var lines = _tooltips.Build(sign).Entries;
+
+        Assert.Equal((1016093, ""), (lines[0].Cliloc, lines[0].Arguments));
+    }
+
+    [Fact]
+    public void Build_AnItemsOwnName_WinsOverItsLabelNumber()
+    {
+        var sign = Item("unknown", 0x0BD8);
+        sign.SetProp("label_number", 1016093L);
+        sign.Name = "The Blue Boar";
+
+        Assert.Equal("The Blue Boar", _tooltips.Build(sign).Entries[0].Arguments);
+    }
+
+    [Fact]
+    public void Build_TwoSignsWithDifferentLabelNumbers_DoNotShareATooltip()
+    {
+        var first = Item("unknown", 0x0BD8);
+        first.SetProp("label_number", 1016093L);
+        var second = Item("unknown", 0x0BD8);
+        second.SetProp("label_number", 1016094L);
+
+        Assert.Equal(1016093, _tooltips.Build(first).Entries[0].Cliloc);
+        Assert.Equal(1016094, _tooltips.Build(second).Entries[0].Cliloc);
+    }
+
+    [Fact]
     public void Build_AddsTheWeightOfTheWholeStack()
     {
         var robe = Item("robe", 0x1F03);

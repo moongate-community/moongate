@@ -344,5 +344,6 @@ transport details.
 The feature provides POL protocol interoperability, not TLS or authenticated
 transport. It does not implement the old Kingdom Reborn AES/E3 negotiation.
 Automated tests compare against original POL C++ vectors and exercise real TCP
-framing and compression; successful interactive login and gameplay with a specific
-Enhanced Client build still require a client-side test.
+framing and compression. An interactive login was made with Enhanced Client 4.0.117
+(`67.0.117.0`); another build still requires a client-side test. See
+[Enhanced Client](enhanced-client.md) for what works after the login.

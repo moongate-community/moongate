@@ -20,7 +20,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Login and server list | ✅ | Separate login server and game realms, or one standalone process |
 | Character select, create and delete | ✅ | Deletion is delayed and can be restored by staff |
 | Message of the day | ✅ | Configurable and extensible |
-| Client versions and encryption | ✅ | POL-compatible encryption policies; the Enhanced Client logs in, creates a character and enters the world, the rest is being tested |
+| Client versions and encryption | ✅ | POL-compatible encryption policies; the [Enhanced Client](enhanced-client.md) logs in, creates a character and enters the world, the rest is partial |
 | UDP ping server | ✅ | Echoes pings on UDP 12000, as ModernUO does |
 | Keepalive and idle clients | ✅ | |
 | IP bans and firewall | ❌ | |
@@ -206,7 +206,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Region music | ✅ | The region's track, else the map's; `.music` |
 | Guarded towns and region rules | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |
-| World decoration | ✅ | Placed by `.decorate` |
+| World decoration | ✅ | Placed by `.decorate`, with the shop signs and the town doors read from the map |
 | Spawn regions | ✅ | On every map: UOX3's data, ModernUO's for New Haven, Malas, Tokuno and TerMur; fast first fill, `.initial_spawn`, respawn, land and water; see [NPC spawns](spawns.md) |
 | Spawner items | ❌ | |
 | Housing | ❌ | |

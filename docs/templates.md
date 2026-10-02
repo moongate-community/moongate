@@ -448,9 +448,11 @@ regions spawn at runtime, water mobiles included, is in [NPC spawns](spawns.md).
 ## Decorations
 
 `templates/decorations/` holds the world decoration the client's map files do not: doors, signs,
-lights, furniture, teleporters and the like, about 40,600 placements in 103 files. It was
+lights, furniture, teleporters and the like, about 41,200 placements in 109 files. It was
 converted once from ModernUO's `Data/Decoration`, plus ServUO's New Haven (`trammel/newhaven.toml`,
-`havenisland.toml`, `havenmine.toml`, which ModernUO lacks), one TOML file per source file, in one folder
+`havenisland.toml`, `havenmine.toml`, which ModernUO lacks) and the shop and world signs of
+ModernUO's `signs.cfg` (`signs.toml`, written by
+[`mg-uoxconv modernuo-signs`](uox3-migration.md#signs-of-modernuo)), one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
 `tokuno/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
 `_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename it without the `_`
@@ -478,6 +480,8 @@ block's graphic, `hue` and `name`; its other settings stay in the item's props, 
 `decoration_type` = the kind for a door or a light. A light also gets its `light` shape (the
 block's or the kind's) and `protected` unless the block says `unprotected`; the graphic already
 says whether it is lit. A door block with `locked = true` in its props places doors that only
-staff open. Teleporters, spawners, mark
-containers, public moongates and addons are not placed yet.
+staff open. An item with a `label_number` prop, such as a `LocalizedSign`, shows that text of the
+client as its name. Teleporters, spawners, mark
+containers, public moongates and addons are not placed yet. The doors of the towns are in no file:
+`.decorate` reads them from the map's door frames.
 
