@@ -53,6 +53,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<ISectorService, SectorService>(Reuse.Singleton);
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
         container.Register<IWorldViewService, WorldViewService>(Reuse.Singleton);
+        container.Register<ITeleportService, TeleportService>(Reuse.Singleton);
         container.Register<IWorldTransactionService, WorldTransactionService>(Reuse.Singleton);
         container.Register<ICharacterPresence, SessionCharacterPresence>(Reuse.Singleton);
         container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
