@@ -213,10 +213,10 @@ public sealed class SqlBackupServiceTests : IDisposable
             Assert.Empty(exporter.Calls);
 
             _time.Advance(TimeSpan.FromMinutes(10));
-            await WaitForAsync(() => FileNames().Length == 1);
+            await WaitForAsync(() => FinishedFiles() == 1);
 
             _time.Advance(TimeSpan.FromMinutes(10));
-            await WaitForAsync(() => FileNames().Length == 2);
+            await WaitForAsync(() => FinishedFiles() == 2);
             Assert.Equal(["world_20261002_114000.sql", "world_20261002_115000.sql"], FileNames());
         }
         finally
@@ -255,7 +255,7 @@ public sealed class SqlBackupServiceTests : IDisposable
             exporter.Failing.Clear();
 
             _time.Advance(TimeSpan.FromMinutes(10));
-            await WaitForAsync(() => FileNames().Length == 1);
+            await WaitForAsync(() => FinishedFiles() == 1);
         }
         finally
         {
@@ -296,6 +296,12 @@ public sealed class SqlBackupServiceTests : IDisposable
         return Directory.Exists(Backups)
             ? Directory.EnumerateFiles(Backups).Select(Path.GetFileName).Order(StringComparer.Ordinal).ToArray()!
             : [];
+    }
+
+    // A file still being written has the temporary suffix: only whole files count.
+    private int FinishedFiles()
+    {
+        return FileNames().Count(name => name.EndsWith(".sql", StringComparison.Ordinal));
     }
 
     private void Seed(params string[] names)

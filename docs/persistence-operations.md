@@ -172,21 +172,28 @@ Files in the directory that Moongate did not write are never deleted.
 Data only: a `TRUNCATE` of the tables, one `COPY ... FROM stdin` block for each table, and the
 current value of each sequence, all in one transaction. The file holds no schema. Every table the
 runtime role can read is included, also the tables of plugins. A table it cannot read is skipped
-and named in a comment at the top of the file and in a log warning; with
-[separate DDL and runtime roles](#separate-ddl-and-runtime-roles) this is usually the migration
-history table, which the restore procedure rebuilds.
+and named in a comment at the top of the file and in a log warning.
+
+The migration history (`moongate_migrations`) is never in the file: it describes the schema of the
+database it is in, and the restore procedure rebuilds it.
+
+A file of `auth` holds the password hashes of the accounts. Keep the backup directory readable only
+by the user that runs the server.
 
 ### Restore
 
+Restore with the Moongate version that wrote the backup.
+
 1. Stop the server.
-2. Create an empty database and apply the migrations with [`mgboot`](mgboot.md).
+2. Create an empty database and apply the migrations of that version with [`mgboot`](mgboot.md).
 3. Run the file with a role that owns the tables:
 
    ```bash
    psql "postgres://moongate:<password>@localhost:5432/world" -v ON_ERROR_STOP=1 -f world_20261002_113000.sql
    ```
 
-4. Start the server.
+4. Start the server. To move to a newer version, upgrade after the restore: the newer migrations
+   then run on the restored data as in any upgrade.
 
 The file runs in one transaction: if it fails, the database is left as it was. Restore `auth` and
 `world` from the same backup run, so characters and accounts match.
@@ -194,6 +201,6 @@ The file runs in one transaction: if it fails, the database is left as it was. R
 ### What it does not do
 
 The files are not compressed, not copied anywhere else and not restored by the server. Moongate has
-no automatic reverse migration: restore a file onto the schema version that wrote it, then let the
-newer migrations run. For point-in-time recovery or off-site copies, use PostgreSQL's own tools
+no automatic reverse migration, so a file does not load onto an older schema, and a newer schema
+may have columns the file cannot fill. For point-in-time recovery or off-site copies, use PostgreSQL's own tools
 next to this.

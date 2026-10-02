@@ -15,7 +15,9 @@ namespace Moongate.Persistence.Internal;
 /// </summary>
 internal static class PostgreSqlDataExporter
 {
-    private const string UserSchemas = "n.nspname <> 'information_schema' AND n.nspname NOT LIKE 'pg\\_%'";
+    // The migration journal is left out: it describes the schema of the database it is in, not the shard's data.
+    private const string UserSchemas =
+        "n.nspname <> 'information_schema' AND n.nspname <> 'moongate_migrations' AND n.nspname NOT LIKE 'pg\\_%'";
 
     private const string TablesSql =
         "SELECT c.oid::int8, n.nspname, c.relname, pg_catalog.has_table_privilege(c.oid, 'SELECT') " +
@@ -31,10 +33,11 @@ internal static class PostgreSqlDataExporter
         "WHERE contype = 'f' AND conrelid <> confrelid";
 
     private const string SequencesSql =
-        "SELECT schemaname, sequencename, start_value, last_value FROM pg_catalog.pg_sequences n " +
-        "WHERE n.schemaname <> 'information_schema' AND n.schemaname NOT LIKE 'pg\\_%' " +
-        "AND pg_catalog.has_sequence_privilege(pg_catalog.format('%I.%I', n.schemaname, n.sequencename), 'USAGE,SELECT') " +
-        "ORDER BY schemaname, sequencename";
+        "SELECT n.nspname, c.relname FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace " +
+        "WHERE c.relkind = 'S' AND " + UserSchemas + " AND " +
+        // The CASE keeps the privilege check off the rows that are not sequences, whatever order the filters run in.
+        "CASE WHEN c.relkind = 'S' THEN pg_catalog.has_sequence_privilege(c.oid, 'SELECT') ELSE false END " +
+        "ORDER BY n.nspname, c.relname";
 
     private static readonly ILogger Logger = Log.ForContext(typeof(PostgreSqlDataExporter));
 
@@ -220,18 +223,30 @@ internal static class PostgreSqlDataExporter
         CancellationToken cancellationToken
     )
     {
-        var statements = new List<string>();
-        await using var command = new NpgsqlCommand(SequencesSql, connection);
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        var names = new List<string>();
 
-        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        await using (var command = new NpgsqlCommand(SequencesSql, connection))
+        await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
         {
-            var name = PostgreSqlExportTable.Quote(reader.GetString(0)) + "." + PostgreSqlExportTable.Quote(reader.GetString(1));
-            var called = !await reader.IsDBNullAsync(3, cancellationToken).ConfigureAwait(false);
-            var value = reader.GetInt64(called ? 3 : 2).ToString(CultureInfo.InvariantCulture);
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                names.Add(PostgreSqlExportTable.Quote(reader.GetString(0)) + "." + PostgreSqlExportTable.Quote(reader.GetString(1)));
+            }
+        }
+
+        var statements = new List<string>(names.Count);
+
+        foreach (var name in names)
+        {
+            // The sequence itself tells its state; pg_sequences shows no value for one restarted and not used since.
+            await using var command = new NpgsqlCommand($"SELECT last_value, is_called FROM {name}", connection);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+            var value = reader.GetInt64(0).ToString(CultureInfo.InvariantCulture);
+            var called = reader.GetBoolean(1) ? "true" : "false";
             var literal = name.Replace("'", "''", StringComparison.Ordinal);
 
-            statements.Add($"SELECT pg_catalog.setval('{literal}', {value}, {(called ? "true" : "false")});");
+            statements.Add($"SELECT pg_catalog.setval('{literal}', {value}, {called});");
         }
 
         return statements;

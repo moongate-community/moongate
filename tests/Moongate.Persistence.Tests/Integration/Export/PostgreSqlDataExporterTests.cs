@@ -83,6 +83,42 @@ public sealed class PostgreSqlDataExporterTests
     }
 
     [Fact]
+    public async Task ExportAsync_ASequenceRestartedAndNotUsedSince_ComesBackToItsRestartValue()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await database.ExecuteAsync(Schema);
+        await database.ExecuteAsync("ALTER SEQUENCE world.serials RESTART WITH 5000;");
+
+        var script = await ExportAsync(database.ConnectionString);
+        await database.ExecuteAsync("ALTER SEQUENCE world.serials RESTART WITH 1;");
+        await SqlDumpReplayer.ReplayAsync(database.ConnectionString, script);
+
+        Assert.Equal(5000L, await database.ScalarAsync<long>("SELECT nextval('world.serials')"));
+    }
+
+    [Fact]
+    public async Task ExportAsync_TheMigrationJournal_IsLeftOut()
+    {
+        // The journal says which migrations ran on this database: restoring an older one over a migrated
+        // database would make the next start run migrations the schema already has.
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await database.ExecuteAsync(
+            """
+            CREATE SCHEMA moongate_migrations;
+            CREATE TABLE moongate_migrations.history (version int PRIMARY KEY);
+            CREATE SEQUENCE moongate_migrations.ids;
+            INSERT INTO moongate_migrations.history VALUES (7);
+            CREATE TABLE kept (id int PRIMARY KEY);
+            """
+        );
+
+        var script = await ExportAsync(database.ConnectionString);
+
+        Assert.DoesNotContain("moongate_migrations", script);
+        Assert.Contains("COPY \"public\".\"kept\"", script);
+    }
+
+    [Fact]
     public async Task ExportAsync_AReferencedTable_IsWrittenBeforeTheTableThatReferencesIt()
     {
         await using var database = await _postgres.CreateDatabaseAsync();
