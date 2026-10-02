@@ -299,11 +299,17 @@ public sealed class PostgreSqlDataExporterTests
     public async Task ExportAsync_NeverWritesTheConnectionPassword()
     {
         await using var database = await _postgres.CreateDatabaseAsync();
-        var password = new NpgsqlConnectionStringBuilder(database.ConnectionString).Password!;
+        var connection = new NpgsqlConnectionStringBuilder(database.ConnectionString);
 
-        var script = await ExportAsync(database.ConnectionString);
+        // A server that asks for no password, as the one of the CI, ignores the one it is given.
+        if (string.IsNullOrEmpty(connection.Password))
+        {
+            connection.Password = "a-password-nobody-should-read";
+        }
 
-        Assert.DoesNotContain(password, script);
+        var script = await ExportAsync(connection.ConnectionString);
+
+        Assert.DoesNotContain(connection.Password, script);
     }
 
     [Fact]
