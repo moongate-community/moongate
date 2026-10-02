@@ -150,6 +150,8 @@ services:
       - handoff-secret
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_1_PORT:-2595}:2595"
+      # UDP ping server. One process per host address can answer it; login and game-2 turn theirs off.
+      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${PING_PORT:-12000}:12000/udp"
     configs:
       - source: game-1-config
         target: /data/config/moongate.toml

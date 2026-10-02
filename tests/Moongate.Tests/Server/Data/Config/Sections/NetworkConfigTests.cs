@@ -18,7 +18,7 @@ public sealed class NetworkConfigTests
         Assert.Throws<InvalidOperationException>(() => config.Validate());
     }
 
-    [Theory, InlineData(-1), InlineData(65536)]
+    [Theory, InlineData(-1), InlineData(0), InlineData(65536)]
     public void Validate_PingPortOutOfRange_Throws(int port)
     {
         var config = new NetworkConfig { PingPort = port };

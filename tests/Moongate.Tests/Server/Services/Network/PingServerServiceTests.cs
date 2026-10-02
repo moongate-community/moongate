@@ -73,6 +73,48 @@ public sealed class PingServerServiceTests
     }
 
     [Fact]
+    public async Task StartAsync_AnIPv6Datagram_ComesBackUnchanged()
+    {
+        if (!Socket.OSSupportsIPv6)
+        {
+            return;
+        }
+
+        var service = new PingServerService(new PingServerOptions { Endpoints = [new IPEndPoint(IPAddress.IPv6Loopback, 0)] });
+        await service.StartAsync();
+
+        try
+        {
+            // A host with IPv6 turned off for loopback binds nothing; there is nothing to ping then.
+            if (service.LocalEndpoints.Count == 0)
+            {
+                return;
+            }
+
+            using var client = new UdpClient(AddressFamily.InterNetworkV6);
+            byte[] ping = [0x0A, 0x0B, 0x0C];
+            await client.SendAsync(ping, service.LocalEndpoints[0]);
+
+            Assert.Equal(ping, (await client.ReceiveAsync().WaitAsync(AnswerTimeout)).Buffer);
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Theory,
+     InlineData(SocketError.MessageSize, false),
+     InlineData(SocketError.ConnectionReset, false),
+     InlineData(SocketError.NetworkDown, true),
+     InlineData(SocketError.NoBufferSpaceAvailable, true)]
+    public void NeedsPause_OnlyForErrorsThatCanRepeatAtOnce(SocketError error, bool expected)
+    {
+        // A lost ping (too large, sender gone) must not slow the next ones; a failing socket must not spin the loop.
+        Assert.Equal(expected, PingServerService.NeedsPause(error));
+    }
+
+    [Fact]
     public async Task StopAsync_Twice_DoesNotThrow()
     {
         var service = CreateService();

@@ -16,6 +16,8 @@ namespace Moongate.Server.Services.Network;
 /// </remarks>
 public sealed class PingServerService : IMoongateStartupService, IDisposable
 {
+    private static readonly TimeSpan ErrorPause = TimeSpan.FromMilliseconds(100);
+
     private readonly ILogger _logger = Log.ForContext<PingServerService>();
 
     private readonly PingServerOptions _options;
@@ -133,9 +135,13 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
             {
                 return;
             }
-            catch (SocketException)
+            catch (SocketException exception)
             {
                 // An oversized datagram on Windows or an unreachable sender: this ping is lost, the next ones are not.
+                if (NeedsPause(exception.SocketErrorCode))
+                {
+                    await Task.Delay(ErrorPause, CancellationToken.None).ConfigureAwait(false);
+                }
             }
             catch (Exception exception)
             {
@@ -153,6 +159,15 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
     internal static bool IsAnswered(int size, int senderPort, int localPort, int maxDatagramSize)
     {
         return size <= maxDatagramSize && senderPort != localPort;
+    }
+
+    /// <summary>
+    ///     Tells whether the loop waits before the next receive: yes for an error that can come back at once and spin
+    ///     the loop, no for one that only means this ping is lost.
+    /// </summary>
+    internal static bool NeedsPause(SocketError error)
+    {
+        return error is not (SocketError.MessageSize or SocketError.ConnectionReset);
     }
 
     // The port sits in network byte order after the two bytes of the address family, for IPv4 and IPv6 alike.

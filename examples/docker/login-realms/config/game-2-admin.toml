@@ -6,6 +6,7 @@ shard_name = "Moongate Realm 2"
 [network]
 listen_address = "0.0.0.0"
 game_port = 2595
+enable_ping_server = false
 
 [ultima]
 ultima_path = "/uo"

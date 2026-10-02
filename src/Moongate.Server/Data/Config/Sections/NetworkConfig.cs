@@ -60,9 +60,9 @@ public class NetworkConfig
             throw new InvalidOperationException("network.game_port must be between 0 and 65535.");
         }
 
-        if (EnablePingServer && PingPort is < 0 or > 65535)
+        if (EnablePingServer && PingPort is < 1 or > 65535)
         {
-            throw new InvalidOperationException("network.ping_port must be between 0 and 65535.");
+            throw new InvalidOperationException("network.ping_port must be between 1 and 65535.");
         }
 
         if (mode == ServerMode.Standalone && LoginPort == GamePort && LoginPort != 0)

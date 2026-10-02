@@ -161,6 +161,7 @@ public sealed class ConfigHelperTests
         Assert.Equal((long)defaults.Network.GamePort, network["game_port"]);
         Assert.Equal(defaults.Network.ListenAddress, network["listen_address"]);
         Assert.Equal(defaults.Network.EnablePingServer, network["enable_ping_server"]);
+        Assert.Equal((long)defaults.Network.PingPort, network["ping_port"]);
         Assert.Equal(defaults.Diagnostics.Enabled, diagnostics["enabled"]);
         Assert.Equal((long)defaults.Diagnostics.IntervalSeconds, diagnostics["interval_seconds"]);
         Assert.Equal(defaults.Diagnostics.LogMetrics, diagnostics["log_metrics"]);
