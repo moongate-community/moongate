@@ -3,6 +3,14 @@
 ## [0.12.0](https://github.com/moongate-community/moongate/compare/v0.11.0...v0.12.0) (2026-10-02)
 
 
+### Upgrade notes
+
+- One new world migration, `0011_item_grid_index.sql`: run `mgctl migrate apply --root-directory <root> --target world` before starting the server.
+- The tools are now one: `mgboot <root>` is `mgctl init <root>`, the migration runner is `mgctl migrate` and `mg-uoxconv` is `mgctl convert`. The server executable is named `mgserver`; the Linux installer keeps the `moongate` command.
+- New optional settings start with their defaults: `[sql_backup]` (off), `network.enable_ping_server` and `network.ping_port` (a UDP ping server on port 12000, on by default).
+- Run `mgctl init` again on an existing root to add the new data (`moongates.toml`, the messages of each language as a directory), templates (teleporters, signs, gumps, the bank box, the moongate) and scripts; existing files are preserved. Then run `.decorate` once as an administrator to place the teleporters, the signs, the town doors and the public moongates.
+- New in the world: gumps from XML and Lua, teleporters and moongates, the bank, seasons, moon phases, region music and graphic effects. Combat, pathfinding AI, death and skill gain are not yet available.
+
 ### Features
 
 * automatic rotating SQL backups and the sql_backup command ([23608e2](https://github.com/moongate-community/moongate/commit/23608e2e3278e2847f9ba870464a7f2de319a858))
