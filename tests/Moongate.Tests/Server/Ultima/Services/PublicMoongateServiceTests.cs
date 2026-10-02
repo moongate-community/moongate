@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Server.Ultima.Data.Moongates;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Maps;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
@@ -19,6 +20,20 @@ public sealed class PublicMoongateServiceTests
         var service = Service(Facet(MapType.Trammel, Britain()), Facet(MapType.Malas, Britain()), Facet(MapType.Felucca, Britain()));
 
         Assert.Equal([MapType.Trammel, MapType.Felucca], service.GetFacets().Select(facet => facet.Map));
+    }
+
+    [Fact]
+    public void GetFacets_AMapWhoseFilesAreNotOpen_IsLeftOut()
+    {
+        // The fake map service opens Felucca only.
+        var service = new PublicMoongateService(
+            new StubDataLoaderService().With(Facet(MapType.Trammel, Britain()), Facet(MapType.Felucca, Britain())),
+            TestSectors.Create(),
+            _movement,
+            new FakeMapService(16, 16)
+        );
+
+        Assert.Equal([MapType.Felucca], service.GetFacets().Select(facet => facet.Map));
     }
 
     [Fact]

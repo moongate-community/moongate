@@ -9,8 +9,9 @@ using Serilog;
 namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
-///     Loads the public moongates of <c>data/moongates.toml</c>. A map listed twice, a facet without destinations, a
-///     missing client text, a spot outside the 16-bit coordinates or a hue that is not one stops the server at startup.
+///     Loads the public moongates of <c>data/moongates.toml</c>. A facet without a map or with one listed twice, a
+///     facet without destinations, a missing client text or location, a spot outside the 16-bit coordinates or a hue
+///     that is not one stops the server at startup.
 /// </summary>
 public class MoongatesLoader : IDataLoader<MoongateFacet>
 {
@@ -43,9 +44,14 @@ public class MoongatesLoader : IDataLoader<MoongateFacet>
 
         foreach (var facet in facets)
         {
-            if (!Enum.IsDefined(facet.Map) || !maps.Add(facet.Map))
+            if (!Enum.IsDefined(facet.Map))
             {
-                throw new InvalidDataException($"{moongatesFilePath}: the map {facet.Map} is unknown or has two [[facet]] entries.");
+                throw new InvalidDataException($"{moongatesFilePath}: a [[facet]] has no map.");
+            }
+
+            if (!maps.Add(facet.Map))
+            {
+                throw new InvalidDataException($"{moongatesFilePath}: the map {facet.Map} has two [[facet]] entries.");
             }
 
             if (facet.Cliloc <= 0 || facet.SelectedCliloc <= 0)
@@ -77,8 +83,10 @@ public class MoongatesLoader : IDataLoader<MoongateFacet>
     {
         var location = destination.Location;
 
+        // No gate stands on the corner of the map: a location of zeros is one left out.
         if (string.IsNullOrWhiteSpace(destination.Name) ||
             destination.Cliloc <= 0 ||
+            location == default ||
             location.X is < 0 or > ushort.MaxValue ||
             location.Y is < 0 or > ushort.MaxValue ||
             location.Z is < sbyte.MinValue or > sbyte.MaxValue ||

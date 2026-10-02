@@ -100,7 +100,8 @@ local function open(serial, who)
     end
 
     local pages = pages_of(facets, at.map)
-    local g = gump.create("public_moongate", 100, 100)
+    -- Not the name of this script: a gump answers to the script table of its own id.
+    local g = gump.create("moongate_destinations", 100, 100)
     g:background{ x = 0, y = 0, gump = 5054, width = 380, height = 280 }
     g:html{ x = 5, y = 5, width = 200, height = 20, cliloc = title_cliloc }
     g:button{ x = 10, y = 235, up = 4005, down = 4007, on_click = function() end }
@@ -131,8 +132,9 @@ local function open(serial, who)
         end
     end
 
-    gump.send(who, g, {})
-    mobile.play_sound(who, open_sound)
+    if gump.send(who, g, {}) then
+        mobile.play_sound(who, open_sound)
+    end
 end
 
 -- Called when a player steps onto the gate.

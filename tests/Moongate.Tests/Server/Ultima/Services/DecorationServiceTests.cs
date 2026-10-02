@@ -267,6 +267,16 @@ public sealed class DecorationServiceTests
     }
 
     [Fact]
+    public async Task DecorateAsync_APublicMoongateOfADecorationFile_GetsTheMoongateTemplate()
+    {
+        // As the gate of the Star Room: a way out, with no destination of its own in moongates.toml.
+        var result = await Service(File("felucca", Block("PublicMoongate", 0x0F6C, new Point3D(5153, 1760, 0)))).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(1, 0, 0, 1), result);
+        Assert.Equal("decoration_public_moongate", Assert.Single(_items.Items).TemplateId);
+    }
+
+    [Fact]
     public async Task DecorateAsync_PlacesAGateOnEveryMoongateDestination_Once()
     {
         // As ModernUO's [MoonGen: the gate stands where its travellers arrive. Umbra's has its own hue.

@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Server.Ultima.Data.Moongates;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
 
@@ -14,11 +15,19 @@ public sealed class PublicMoongateService : IPublicMoongateService
     private readonly IDataLoaderService _data;
     private readonly ISectorService _sectors;
     private readonly IMovementService _movement;
+    private readonly IMapService? _maps;
+    private readonly ILogger _logger = Log.ForContext<PublicMoongateService>();
 
     private IReadOnlyList<MoongateFacet>? _facets;
 
-    public PublicMoongateService(IDataLoaderService data, ISectorService sectors, IMovementService movement)
+    public PublicMoongateService(
+        IDataLoaderService data,
+        ISectorService sectors,
+        IMovementService movement,
+        IMapService? maps = null
+    )
     {
+        _maps = maps;
         _data = data;
         _sectors = sectors;
         _movement = movement;
@@ -35,11 +44,30 @@ public sealed class PublicMoongateService : IPublicMoongateService
 
         foreach (var facet in _data.GetEntities<MoongateFacet>())
         {
-            // A spot outside the grid: the map is not loaded, or the data names a place it does not have.
-            var destinations = facet.Destination
-                                    .Where(destination => _sectors.IsInside(facet.Map, destination.Location.X, destination.Location.Y))
-                                    .Select(destination => Resolve(facet, destination))
-                                    .ToList();
+            // A map whose files are not open has no gates, and its heights cannot be read.
+            if (_maps is not null && !_maps.Maps.Contains(facet.Map))
+            {
+                continue;
+            }
+
+            var destinations = new List<MoongateDestination>();
+
+            foreach (var destination in facet.Destination)
+            {
+                if (_sectors.IsInside(facet.Map, destination.Location.X, destination.Location.Y))
+                {
+                    destinations.Add(Resolve(facet, destination));
+                }
+                else
+                {
+                    _logger.Warning(
+                        "Moongate {Name} of {Map} at {Location} is outside the map and is left out",
+                        destination.Name,
+                        facet.Map,
+                        destination.Location
+                    );
+                }
+            }
 
             if (destinations.Count > 0)
             {

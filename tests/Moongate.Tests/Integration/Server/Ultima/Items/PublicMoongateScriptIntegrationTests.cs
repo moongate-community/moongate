@@ -65,6 +65,7 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
     private LuaScriptEngineService _engine = null!;
     private ItemScriptService _itemScripts = null!;
     private MobileEntity _aria = null!;
+    private ItemService _items = null!;
 
     public async Task InitializeAsync()
     {
@@ -73,7 +74,8 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out _aria!));
         _aria.Map = MapType.Trammel;
         _aria.Location = TrammelBritain;
-        var items = TestItems.Create(_fixture.Sectors);
+        _items = TestItems.Create(_fixture.Sectors);
+        var items = _items;
         _gate.PlaceOnGround(MapType.Trammel, TrammelBritain);
         items.Add([_gate]);
         _moongates.Facets.Add(
@@ -170,7 +172,7 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         var gump = Assert.Single(_gumps.Opened).Gump;
-        Assert.Equal("public_moongate", gump.Id);
+        Assert.Equal("moongate_destinations", gump.Id);
         var layout = gump.Layout.Build().Layout;
         // The title, both map names and every city, as client texts.
         Assert.All(
@@ -243,6 +245,43 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
             "You have moved too far away to use this.",
             Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>()).Text
         );
+    }
+
+    [Fact]
+    public void OnAMapWithoutMoongates_TheFirstFacetOpensFirst()
+    {
+        // The player's map has no page of its own: the pages follow the file, Felucca first.
+        _moongates.Facets.RemoveAt(1);
+
+        _itemScripts.Run(_gate, "on_move_over", 2L);
+        Answer(2);
+
+        Assert.Empty(_errors);
+        Assert.Equal((MapType.Felucca, TrammelBritain), (_aria.Map, _aria.Location));
+    }
+
+    [Fact]
+    public void ChoosingAfterTheGateIsGone_TeleportsNobody()
+    {
+        _itemScripts.Run(_gate, "on_move_over", 2L);
+        _items.Remove([_gate.Id]);
+
+        Answer(MoonglowButton);
+
+        Assert.Empty(_errors);
+        Assert.Equal(TrammelBritain, _aria.Location);
+    }
+
+    [Fact]
+    public void AGumpThatCouldNotBeSent_MakesNoSound()
+    {
+        _fixture.Sessions.Remove(_session.SessionId);
+
+        _itemScripts.Run(_gate, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Empty(_gumps.Opened);
+        Assert.Empty(_speech.Sounds);
     }
 
     [Fact]

@@ -17,6 +17,9 @@ public class MoongateDestination
     /// </summary>
     public int Cliloc { get; set; }
 
+    /// <summary>
+    ///     Where the gate stands and travellers arrive.
+    /// </summary>
     public Point3D Location { get; set; }
 
     /// <summary>

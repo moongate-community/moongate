@@ -71,7 +71,8 @@ public sealed class MoongatesLoaderTests
     }
 
     [Theory,
-     InlineData("map = \"malas\"", "map = \"atlantis\""),
+     InlineData("map = \"malas\"", ""),
+     InlineData("location = \"(1015, 527, -65)\"", ""),
      InlineData("cliloc = 1060643", "cliloc = 0"),
      InlineData("selected_cliloc = 1062039", "selected_cliloc = 0"),
      InlineData("name = \"Luna\"", "name = \"\""),
@@ -83,6 +84,17 @@ public sealed class MoongatesLoaderTests
     {
         using var root = new TemporaryDirectory();
         root.CreateFile("data/moongates.toml", Malas.Replace(from, to));
+
+        var exception = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+
+        Assert.Contains("moongates.toml", exception.Message);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_AnUnknownMapName_Throws()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/moongates.toml", Malas.Replace("map = \"malas\"", "map = \"atlantis\""));
 
         await Assert.ThrowsAnyAsync<Exception>(() => CreateLoader(root).LoadDataAsync());
     }

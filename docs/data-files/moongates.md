@@ -41,7 +41,7 @@ The shipped file holds ModernUO's 34 destinations: 9 in Trammel, 9 in Felucca, 9
 them in the language of the client.
 
 A map the server does not load is left out, with its gates: its page is not in the gump and
-`.decorate` places nothing there. A destination outside its map is left out too. An empty file
+`.decorate` places nothing there. A destination outside its map is left out too, with a warning in the log. An empty file
 means a shard without public moongates.
 
 Scripts read the list with `moongates.facets()`; see [Scripting](../scripting.md).
@@ -51,9 +51,9 @@ Scripts read the list with `moongates.facets()`; see [Scripting](../scripting.md
 The server stops at startup when:
 
 - the file does not exist;
-- a `map` is unknown or has two `[[facet]]` entries;
+- a `[[facet]]` has no `map`, an unknown one, or one that another `[[facet]]` has;
 - a facet lacks `cliloc` or `selected_cliloc`, or has no `[[facet.destination]]`;
-- a destination lacks `name` or `cliloc`, its `location` has `x` or `y` outside 0 to 65535 or `z`
+- a destination lacks `name`, `cliloc` or `location`, its `location` has `x` or `y` outside 0 to 65535 or `z`
   outside -128 to 127, or its `hue` is outside 0 to 65535.
 
 ## See also

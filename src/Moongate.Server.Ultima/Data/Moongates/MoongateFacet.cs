@@ -7,7 +7,10 @@ namespace Moongate.Server.Ultima.Data.Moongates;
 /// </summary>
 public class MoongateFacet
 {
-    public MapType Map { get; set; }
+    /// <summary>
+    ///     The map; the starting value is none, so a facet without <c>map</c> is refused instead of read as Felucca.
+    /// </summary>
+    public MapType Map { get; set; } = (MapType)byte.MaxValue;
 
     /// <summary>
     ///     The client text of the map's name in the gump.
