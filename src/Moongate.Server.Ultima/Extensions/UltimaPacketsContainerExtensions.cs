@@ -67,6 +67,7 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterPacketHandler<QueryPropertiesPacket, QueryPropertiesPacketHandler>();
         RegisterIgnoredPacket<AttackRequestPacket>(container);
         RegisterIgnoredPacket<TextCommandPacket>(container);
+        RegisterIgnoredPacket<ProfileRequestPacket>(container);
         RegisterIgnoredPacket<ResynchronizeRequestPacket>(container);
         RegisterIgnoredPacket<OpenChatWindowPacket>(container);
         RegisterIgnoredPacket<ClientTypePacket>(container);

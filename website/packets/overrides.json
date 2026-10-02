@@ -1831,6 +1831,52 @@
     "notes": "Recognized and ignored for now.",
     "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
   },
+  "0xB8:incoming": {
+    "category": "Characters",
+    "tags": [
+      "Characters",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Mode",
+        "type": "byte",
+        "size": "1",
+        "description": "0 asks to show the profile, 1 sends an edited one."
+      },
+      {
+        "offset": "4",
+        "name": "Character serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The character whose profile is asked for or edited."
+      },
+      {
+        "offset": "8",
+        "name": "Edited profile",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Only in mode 1: a command type, the text length and the UTF-16BE text."
+      }
+    ],
+    "notes": "The Enhanced Client sends it for its own character right after entering the world. Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
   "0xB9:outgoing": {
     "category": "Login",
     "tags": [
