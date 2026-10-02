@@ -12,6 +12,9 @@ using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services.Diagnostics;
 using Moongate.Server.Ultima.Services;
+using Moongate.Core.Types.Geometry;
+using Moongate.Server.Ultima.Types.Weather;
+using Moongate.Ultima.Types;
 using Moongate.Server.Ultima.Types.Effects;
 using Moongate.Server.Ultima.Types.Speech;
 
@@ -106,6 +109,9 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<MoongatesModule>();
         // No module function takes it: registered so on_speech can compare its keywords with names.
         container.RegisterScriptEnum<SpeechKeywordType>();
+        container.RegisterScriptEnum<DirectionType>();
+        container.RegisterScriptEnum<SeasonType>();
+        container.RegisterScriptEnum<WeatherKindType>();
         container.RegisterScriptEnum<EffectGraphicType>();
         container.RegisterScriptEnum<EffectRenderModeType>();
         container.RegisterScriptEnum<EffectLayerType>();
