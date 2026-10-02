@@ -17,6 +17,12 @@ public sealed class GridMovementService : IMovementService
 
     public Dictionary<(int X, int Y), int> Heights { get; } = [];
 
+    /// <summary>
+    ///     Gets the cells with a floor above their ground, such as a balcony: a step lands on it when it comes from
+    ///     within <see cref="MaxClimb" /> of its height, and on the ground otherwise.
+    /// </summary>
+    public Dictionary<(int X, int Y), int> Floors { get; } = [];
+
     public int MaxClimb { get; set; } = 2;
 
     public bool ThrowMapNotLoaded { get; set; }
@@ -100,16 +106,27 @@ public sealed class GridMovementService : IMovementService
             }
         }
 
-        newZ = Heights.GetValueOrDefault((forward.X, forward.Y));
+        newZ = Landing(forward, from.Z)!.Value;
 
         return true;
     }
 
     private bool Open(Point3D cell, int fromZ)
     {
-        return cell.X >= 0 &&
-               cell.Y >= 0 &&
-               !Walls.Contains((cell.X, cell.Y)) &&
-               Heights.GetValueOrDefault((cell.X, cell.Y)) - fromZ <= MaxClimb;
+        return cell.X >= 0 && cell.Y >= 0 && !Walls.Contains((cell.X, cell.Y)) && Landing(cell, fromZ) is not null;
+    }
+
+    // Where a step from a height lands on a cell: its upper floor when level with it, else its ground when not too
+    // high; null when neither can be stepped onto.
+    private int? Landing(Point3D cell, int fromZ)
+    {
+        if (Floors.TryGetValue((cell.X, cell.Y), out var floor) && Math.Abs(floor - fromZ) <= MaxClimb)
+        {
+            return floor;
+        }
+
+        var ground = Heights.GetValueOrDefault((cell.X, cell.Y));
+
+        return ground - fromZ <= MaxClimb ? ground : null;
     }
 }

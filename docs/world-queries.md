@@ -148,7 +148,8 @@ mover can walk between two places with A*, and gives a `PathResult`:
 ```csharp
 var path = pathfinding.FindPath(npc.Map, npc.Location, target.Location, MovementAbilityType.Walk, true);
 
-if (path.Kind is PathResultType.Found or PathResultType.Partial)
+// A path to where the NPC already stands is found with no steps.
+if (path.Kind is PathResultType.Found or PathResultType.Partial && path.Steps.Count > 0)
 {
     mobiles.TryMove(npc, path.Steps[0]);
 }
@@ -178,9 +179,15 @@ So a caller must not search again on every tick for a goal that was not reached:
 trying again, as ModernUO's two seconds.
 
 What the movement service does not see a path does not either: items on the ground, closed
-doors among them, and other mobiles do not block it. A tile has one height in a search, the
-one of the first shortest way to it, so a path cannot pass both over and under the same tile,
-such as across a bridge and then beneath it.
+doors among them, and other mobiles do not block it. A tile on the way has one height in a
+search, the one of the shortest way to it, so a path cannot pass both over and under the same
+tile, such as across a bridge and then beneath it. The goal's own tile is different: it is
+only entered at the goal's height, so a goal on a balcony is reached by its stairs and not
+stopped at on the ground under it.
+
+Follow a partial path to its end before searching again: a search from each new tile can
+choose another closest place, and the mover would walk back and forth. A goal nobody can
+stand on, such as a wall, always costs a whole search.
 
 ## Not included yet
 

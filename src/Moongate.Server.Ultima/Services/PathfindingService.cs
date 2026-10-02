@@ -97,7 +97,8 @@ public sealed class PathfindingService : IPathfindingService
                 var y = originY + node / side;
                 var z = _height[node];
 
-                if (x == to.X && y == to.Y && Math.Abs(z - to.Z) <= MoverHeight)
+                // Its tile is only ever entered at its height: see below.
+                if (x == to.X && y == to.Y)
                 {
                     return Build(PathResultType.Found, node, new Point3D(x, y, z));
                 }
@@ -130,16 +131,19 @@ public sealed class PathfindingService : IPathfindingService
                     }
 
                     var neighbour = column + row * side;
+                    var cost = _cost[node] + ((direction & 1) == 0 ? StraightCost : DiagonalCost);
 
+                    // Asked of the movement last: it is the costly part.
                     if (_state[neighbour] == Closed ||
+                        _state[neighbour] == Open && cost >= _cost[neighbour] ||
                         !_movement.CheckMovement(map, here, (DirectionType)direction, ability, out var landing))
                     {
                         continue;
                     }
 
-                    var cost = _cost[node] + ((direction & 1) == 0 ? StraightCost : DiagonalCost);
-
-                    if (_state[neighbour] == Open && cost >= _cost[neighbour])
+                    // The goal's tile at another height, such as the ground under a balcony, is not the goal: left
+                    // unseen, so the way that lands at the goal's height can still take it.
+                    if (next.X == to.X && next.Y == to.Y && Math.Abs(landing - to.Z) > MoverHeight)
                     {
                         continue;
                     }
