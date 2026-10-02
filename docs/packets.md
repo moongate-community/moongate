@@ -76,11 +76,21 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0xDC` | `PropertyListInfoPacket` | Outgoing | Fixed 9 | — |
 | `0xC1` | `LocalizedMessagePacket` | Outgoing | Variable | — |
 | `0x54` | `PlaySoundPacket` | Outgoing | Fixed 12 | — |
+| `0xC0` | `HuedEffectPacket` | Outgoing | Fixed 36 | — |
+| `0xC7` | `ParticleEffectPacket` | Outgoing | Fixed 49 | — |
 
 Normal speech (`say`) reaches the speaker and other player characters within 15
 tiles on the same map. Whisper, yell, emote, global chat and the separate chat
 window are not supported yet. A leading `.` invokes the existing command system
 privately; `..` escapes one dot. Empty or over-128-character speech is ignored.
+
+A graphic effect goes out as `0xC0` (36 bytes): the kind (0 moving, 1 lightning, 2 fixed at a
+point, 3 fixed on an object), the two serials, the graphic, both points, speed, duration, the
+two flags, the hue and the render mode. The plain `0x70` is never sent, as in ModernUO. An
+effect with a particle id goes to the Enhanced Client as `0xC7` (49 bytes), the same body
+followed by the particle fields; every other client gets the `0xC0`, or nothing when the effect
+has no graphic. `EffectService` sends them to the players of the map within the view range of
+the effect, and for a moving effect also within range of its destination, once each.
 
 When a character enters the world the server sends, in this order (ModernUO's, checked against
 ServUO, UOX3, POL and Source-X): `0x1B` login confirm, `0xBF` subcommand `0x08` map, `0xBC`

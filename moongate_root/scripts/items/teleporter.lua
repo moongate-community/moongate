@@ -12,6 +12,8 @@
 --   teleport.map   the destination map (a MapType number) when it is another
 --                  one; without it the player stays on its map
 --   active         false turns the teleporter off
+--   source_effect  true shows a puff of smoke where the mobile left
+--   dest_effect    true shows a puff of smoke where the mobile arrived
 --   sound_id       a sound played at the destination after the teleport
 --
 -- Functions:
@@ -19,6 +21,11 @@
 -- ==============================================================================
 
 teleporter = {}
+
+-- The decoration files carry the flags as text.
+local function is_on(value)
+    return value == true or value == "true"
+end
 
 -- Called when a player steps onto the teleporter.
 function teleporter.on_move_over(serial, who)
@@ -35,7 +42,24 @@ function teleporter.on_move_over(serial, who)
     end
 
     -- A nil map keeps the mobile on its own.
-    if mobile.teleport(who, x, y, z, item.get_prop(serial, "teleport.map")) then
+    local map = item.get_prop(serial, "teleport.map")
+
+    -- As ModernUO: the smoke where the mobile leaves is shown before the move, to those who watch it go.
+    local from = mobile.location(who)
+
+    if not from then
+        return
+    end
+
+    if is_on(item.get_prop(serial, "source_effect")) then
+        effect.at(from.map, from.x, from.y, from.z, EffectGraphicType.Smoke)
+    end
+
+    if mobile.teleport(who, x, y, z, map) then
+        if is_on(item.get_prop(serial, "dest_effect")) then
+            effect.at(map or from.map, x, y, z, EffectGraphicType.Smoke)
+        end
+
         local sound = item.get_prop(serial, "sound_id")
 
         if sound then

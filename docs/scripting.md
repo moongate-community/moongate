@@ -77,6 +77,10 @@ exists but fails compilation/execution aborts server startup.
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
 | `mobile.teleport(serial, x, y, z, map?)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map, or of `map` (a `MapType`) when given: a player's client is told of the map change (0xBF 0x08) and where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a `z` outside -128 to 127 |
 | `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells |
+| `effect.at(map, x, y, z, graphic, options)` | Plays an effect graphic that stays at a point of a map, such as the smoke of a teleport: `effect.at(MapType.Trammel, 1600, 1628, 5, EffectGraphicType.Smoke)`; see [Effects](#effects) |
+| `effect.on(serial, graphic, options)` | Plays an effect graphic on a mobile, which it follows, or on an item lying on the ground; `false` for something not in the world |
+| `effect.moving(from, to, graphic, options)` | Plays an effect graphic flying from one mobile or ground item to another on the same map, such as a fireball; `false` when one is not in the world or they are on two maps |
+| `effect.lightning(serial, hue)` | Strikes a mobile or a ground item with a lightning bolt; the hue is optional |
 | `world.is_occupied(map, x, y)` | Whether a player or an NPC stands on the tile, at any height, such as a door's doorway; `map` is a `MapType` |
 | `world.moon(moon, x)` | The phase of `MapType.Trammel` or `MapType.Felucca` seen from the column `x`, a `MoonPhaseType` (`NewMoon`, `WaxingCrescent`, `FirstQuarter`, `WaxingGibbous`, `FullMoon`, `WaningGibbous`, `LastQuarter`, `WaningCrescent`): `world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon`. Felucca turns every 10 game minutes, Trammel every 30 |
 | `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
@@ -334,7 +338,8 @@ switches its graphic silently.
 `scripts/items/teleporter.lua` is the script of the `decoration_teleporter` template that
 [`.decorate`](commands/decorate.md) gives to ModernUO's `Teleporter`: on `on_move_over` it
 teleports the player to the props `teleport.x`, `teleport.y` and `teleport.z` with
-`mobile.teleport`, then plays the prop `sound_id` there when the teleporter has one. The prop
+`mobile.teleport`, shows a puff of smoke where the player left (prop `source_effect`) and
+arrived (prop `dest_effect`), then plays the prop `sound_id` there when the teleporter has one. The prop
 `active = false` turns a teleporter off. A teleporter with the prop `teleport.map`, a `MapType`
 number, takes the player to that map: the client changes map, then gets the season, the light,
 the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
@@ -343,6 +348,40 @@ the accounts its visibility allows, so players walk onto a teleporter they never
 LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
 `{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,
 as `light.lua` does with `add(0x0A27, 0x0B1D, "circle225")`.
+
+## Effects
+
+The `effect` module shows graphic effects to the players of the map within the view range
+(`ultima.world.view_range`); a moving effect also reaches those in range of where it arrives.
+The graphic is an art id: `EffectGraphicType` names the animations the emulators use
+(`Smoke`, `LargeFireball`, `SmallFireball`, `FireColumn`, `Explosion`, `SparkleHeal`,
+`SparkleBless`, `SparkleCurse`, `Fizzle`, `SmallBolt`, `Glow`, the four fields and others; the
+generated `definitions.lua` lists them all), and any other art id works too.
+
+`effect.at`, `effect.on` and `effect.moving` take an optional table of options:
+
+| Option | Meaning |
+| --- | --- |
+| `speed`, `duration` | 0 to 255 each; both default to 10 |
+| `hue` | Hue of the graphic, 0 to 65535 |
+| `render` | An `EffectRenderModeType`: `Normal`, `Darken`, `Lighten`, `LightenTransparent`, `Translucent`, `TranslucentColor`, `Negative`, `NegativeTransparent` |
+| `fixed_direction`, `explodes` | For a moving effect: keep the graphic's direction, and explode on arrival |
+| `particle`, `explode_particle`, `explode_sound` | Particle effect ids and the arrival sound; only the Enhanced Client shows particles |
+| `layer` | An `EffectLayerType`, the body part the particles are shown at: `Head`, `RightHand`, `LeftHand`, `Waist`, `LeftFoot`, `RightFoot`, `CenterFeet` |
+
+```lua
+-- A fireball from the caster to the target, exploding there.
+effect.moving(caster, target, EffectGraphicType.LargeFireball, { speed = 7, duration = 0, explodes = true })
+
+-- The healing sparkle on a mobile; the Enhanced Client also gets particles at the waist.
+effect.on(who, EffectGraphicType.SparkleHeal, { speed = 9, duration = 32, particle = 5005, layer = EffectLayerType.Waist })
+```
+
+A function returns `false` and plays nothing for a value out of range, an option of the wrong
+type (`speed = "9"`, `explodes = 1`), an option it does not know, and an effect with neither a
+graphic nor a particle. An argument of the wrong type raises an error, as for every module. A classic client draws no particles: it gets the graphic, and
+nothing for an effect made of particles only. Effects are not sequenced: chain them with
+`timer` calls.
 
 ## Reload and ownership
 

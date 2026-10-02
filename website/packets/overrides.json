@@ -3171,6 +3171,322 @@
     "notes": "Plays a sound once at a location.",
     "handler": "SpeechService: npc.play_sound of a mobile script, to the players within 15 cells."
   },
+  "0xC0:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Kind",
+        "type": "enum",
+        "size": "1",
+        "description": "0 moving, 1 lightning, 2 fixed at a point, 3 fixed on an object."
+      },
+      {
+        "offset": "2",
+        "name": "Source serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The object the effect starts from or stays on; 0 for a point."
+      },
+      {
+        "offset": "6",
+        "name": "Target serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The object a moving effect flies to; 0 otherwise."
+      },
+      {
+        "offset": "10",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Art id of the animation; 0 for lightning or particles only."
+      },
+      {
+        "offset": "12",
+        "name": "From X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "14",
+        "name": "From Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "16",
+        "name": "From Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "17",
+        "name": "To X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "19",
+        "name": "To Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "21",
+        "name": "To Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "22",
+        "name": "Speed",
+        "type": "byte",
+        "size": "1",
+        "description": "How fast the animation plays or moves."
+      },
+      {
+        "offset": "23",
+        "name": "Duration",
+        "type": "byte",
+        "size": "1",
+        "description": "How long the animation lasts."
+      },
+      {
+        "offset": "24",
+        "name": "Unused",
+        "type": "ushort",
+        "size": "2",
+        "description": "Always 0."
+      },
+      {
+        "offset": "26",
+        "name": "Fixed direction",
+        "type": "bool",
+        "size": "1",
+        "description": "1 keeps the graphic's direction; always 1 for an effect that stays."
+      },
+      {
+        "offset": "27",
+        "name": "Explodes",
+        "type": "bool",
+        "size": "1",
+        "description": "1 makes a moving effect explode when it arrives."
+      },
+      {
+        "offset": "28",
+        "name": "Hue",
+        "type": "uint",
+        "size": "4",
+        "description": "Hue of the graphic; 0 for none."
+      },
+      {
+        "offset": "32",
+        "name": "Render mode",
+        "type": "enum",
+        "size": "4",
+        "description": "0 normal, 1 darken, 2 lighten, 3 lighten transparent, 4 translucent, 5 translucent colour, 6 negative, 7 negative transparent."
+      }
+    ],
+    "notes": "Plays a graphic effect: a moving one, a lightning bolt, or an animation that stays at a point or on an object. Sent for every effect that has a graphic; the plain 0x70 is never sent.",
+    "handler": "EffectService: the effect module of scripts, to the players of the map within the view range of the effect; a moving effect also reaches those in range of its destination."
+  },
+  "0xC7:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Kind",
+        "type": "enum",
+        "size": "1",
+        "description": "0 moving, 1 lightning, 2 fixed at a point, 3 fixed on an object."
+      },
+      {
+        "offset": "2",
+        "name": "Source serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The object the effect starts from or stays on; 0 for a point."
+      },
+      {
+        "offset": "6",
+        "name": "Target serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The object a moving effect flies to; 0 otherwise."
+      },
+      {
+        "offset": "10",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Art id of the animation; 0 for lightning or particles only."
+      },
+      {
+        "offset": "12",
+        "name": "From X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "14",
+        "name": "From Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "16",
+        "name": "From Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "17",
+        "name": "To X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "19",
+        "name": "To Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "21",
+        "name": "To Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "22",
+        "name": "Speed",
+        "type": "byte",
+        "size": "1",
+        "description": "How fast the animation plays or moves."
+      },
+      {
+        "offset": "23",
+        "name": "Duration",
+        "type": "byte",
+        "size": "1",
+        "description": "How long the animation lasts."
+      },
+      {
+        "offset": "24",
+        "name": "Unused",
+        "type": "ushort",
+        "size": "2",
+        "description": "Always 0."
+      },
+      {
+        "offset": "26",
+        "name": "Fixed direction",
+        "type": "bool",
+        "size": "1",
+        "description": "1 keeps the graphic's direction; always 1 for an effect that stays."
+      },
+      {
+        "offset": "27",
+        "name": "Explodes",
+        "type": "bool",
+        "size": "1",
+        "description": "1 makes a moving effect explode when it arrives."
+      },
+      {
+        "offset": "28",
+        "name": "Hue",
+        "type": "uint",
+        "size": "4",
+        "description": "Hue of the graphic; 0 for none."
+      },
+      {
+        "offset": "32",
+        "name": "Render mode",
+        "type": "enum",
+        "size": "4",
+        "description": "0 normal, 1 darken, 2 lighten, 3 lighten transparent, 4 translucent, 5 translucent colour, 6 negative, 7 negative transparent."
+      },
+      {
+        "offset": "36",
+        "name": "Particle",
+        "type": "ushort",
+        "size": "2",
+        "description": "Particle effect id."
+      },
+      {
+        "offset": "38",
+        "name": "Explode particle",
+        "type": "ushort",
+        "size": "2",
+        "description": "Particle effect played when a moving effect arrives; 1 for an effect that stays."
+      },
+      {
+        "offset": "40",
+        "name": "Explode sound",
+        "type": "ushort",
+        "size": "2",
+        "description": "Sound played when a moving effect arrives."
+      },
+      {
+        "offset": "42",
+        "name": "Particle serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The object the particles belong to; 0 for a moving effect or a point."
+      },
+      {
+        "offset": "46",
+        "name": "Layer",
+        "type": "enum",
+        "size": "1",
+        "description": "Body part the particles are shown at: 0 head, 1 right hand, 2 left hand, 3 waist, 4 left foot, 5 right foot, 7 centre of the feet, 255 none."
+      },
+      {
+        "offset": "47",
+        "name": "Unused",
+        "type": "ushort",
+        "size": "2",
+        "description": "Always 0."
+      }
+    ],
+    "notes": "The hued effect (0xC0) followed by the particle fields. Sent only to the Enhanced Client, for an effect that has a particle id; every other client gets 0xC0, or nothing when the effect has no graphic.",
+    "handler": "EffectService: the effect module of scripts, to the Enhanced Clients in range."
+  },
   "0xB0:outgoing": {
     "category": "Gumps",
     "tags": [
