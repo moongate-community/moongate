@@ -18,6 +18,8 @@ public sealed class GameServerService : IGameServerService
     private readonly ISessionService _sessions;
     private readonly IPacketDispatchService _dispatcher;
     private readonly IPacketSendService _sender;
+    private const int RejectedBytesLogged = 64;
+
     private readonly ILogger _logger = Log.ForContext<GameServerService>();
     private readonly BootstrapLifecycleTasks _lifecycle = new();
     private readonly Lock _lifecycleGate = new();
@@ -133,11 +135,14 @@ public sealed class GameServerService : IGameServerService
         var packetName = _packets.TryGetDescriptor(opCode, out var descriptor)
             ? descriptor.PacketType.Name
             : "Unknown";
+        // The first bytes tell why: a new client version often sends a known packet in a shape the parser refuses.
         _logger.Warning(
-            "Rejected packet from session {SessionId}, opcode {OpCode}, name {PacketName}",
+            "Rejected packet from session {SessionId}, opcode 0x{OpCode:X2}, name {PacketName}, {Length} bytes: {Bytes}",
             args.Connection.SessionId,
             opCode,
-            packetName
+            packetName,
+            args.Data.Length,
+            Convert.ToHexString(args.Data.Span[..Math.Min(args.Data.Length, RejectedBytesLogged)])
         );
         TrackCleanup(() => _connections.DisconnectAsync(args.Connection.SessionId));
     }
