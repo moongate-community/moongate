@@ -57,7 +57,7 @@ public sealed class EntityFingerprintCoverageTests
         var data = new TheoryData<string>();
 
         foreach (var property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                          .Where(property => property.CanWrite && property.SetMethod!.IsPublic))
+                                          .Where(property => property.SetMethod is not null))
         {
             data.Add(property.Name);
         }

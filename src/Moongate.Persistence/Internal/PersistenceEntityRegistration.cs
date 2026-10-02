@@ -8,6 +8,13 @@ namespace Moongate.Persistence.Internal;
 
 internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegistration where T : class, IMoongateEntity
 {
+    /// <summary>
+    ///     Every this many saves, every captured entity is written whatever its fingerprint: a row changed behind the
+    ///     world save, such as by a character leaving during a save, is put right within an hour at the default
+    ///     five-minute interval.
+    /// </summary>
+    public const int FullWriteEvery = 12;
+
     private const int SnapshotBatchSize = 256;
     private readonly Func<IEnumerable<T>> _source;
     private readonly Func<T, T> _snapshot;
@@ -18,6 +25,7 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
     // save leaves the old ones, so its entities are written again.
     private Dictionary<Serial, UInt128> _saved = [];
     private Dictionary<Serial, UInt128>? _pending;
+    private int _saves;
 
     public Type EntityType => typeof(T);
 
@@ -70,6 +78,8 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
         _captured = deletions;
         _pending = null;
         Written = 0;
+        // The first save and every FullWriteEvery-th one after it write everything.
+        var full = _saves++ % FullWriteEvery == 0;
 
         return async (transaction, cancellationToken) =>
         {
@@ -84,7 +94,7 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
                 var fingerprint = SnapshotFingerprint.Of(value);
                 pending[value.Id] = fingerprint;
 
-                if (!saved.TryGetValue(value.Id, out var previous) || previous != fingerprint)
+                if (full || !saved.TryGetValue(value.Id, out var previous) || previous != fingerprint)
                 {
                     changed.Add(value);
                 }

@@ -228,11 +228,13 @@ the entities whose fingerprint differs, or that the last committed save did not 
 upserted, and the others are skipped. The fingerprints are kept only once the transaction commits,
 so after a failed save the next one writes those entities again. An entity that leaves the source,
 such as a character logging out, loses its fingerprint and is written in full when it comes back.
-The first save after a start writes everything. The fingerprint covers the snapshot's settable
-properties, and the read-only values of the structs they hold, such as `Serial.Value`; computed
-read-only properties of the entity are left out. A snapshot must therefore carry every saved
-column in a settable property, and a row changed behind the save stays until its entity changes.
-The log says how many entities were captured and how many were written.
+The first save after a start writes everything, and so does every twelfth save after it (once an
+hour at the default five-minute interval): a row changed behind the world save, such as by a
+character leaving while a save runs, is put right by then. The fingerprint covers every property
+with a setter, a private one included, and the values of the structs they hold, such as
+`Serial.Value`; getter-only properties, computed from the others, are left out. NaN and the
+infinities fingerprint like any number. The log says how many entities were captured and how many
+were written.
 
 `IPersistenceDeletionSource.Capture()` runs on the loop with the snapshot and returns the
 identities the source removed; the save deletes them in the same transaction as its upserts, then

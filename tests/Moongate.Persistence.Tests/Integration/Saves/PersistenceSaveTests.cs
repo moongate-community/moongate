@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Internal;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Tests.TestSupport.Persistence;
 using Moongate.Persistence.Types.Persistence;
@@ -699,6 +700,31 @@ public sealed class PersistenceSaveTests
         await owner.SaveAllAsync();
         await store.UpsertAsync(new() { Id = new(1), Name = "outside" });
         present = true;
+        await owner.SaveAllAsync();
+
+        Assert.Equal("Aria", (await store.GetByIdAsync(new(1)))!.Name);
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_EveryFullWriteEverySaves_WritesEverythingAgain()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        var live = new CharacterEntity { Id = new(1), Name = "Aria" };
+        var store = owner.RegisterEntity<CharacterEntity>(() => [live], e => new() { Id = e.Id, Name = e.Name });
+        owner.RegisterEntity<InventoryEntity>();
+        await owner.InitializeAsync();
+        await owner.SaveAllAsync();
+        await store.UpsertAsync(new() { Id = new(1), Name = "outside" });
+
+        for (var save = 1; save < PersistenceEntityRegistration<CharacterEntity>.FullWriteEvery; save++)
+        {
+            await owner.SaveAllAsync();
+        }
+
+        Assert.Equal("outside", (await store.GetByIdAsync(new(1)))!.Name);
+
+        // A row changed behind the save, such as by a leave racing a save, is put right by the next full write.
         await owner.SaveAllAsync();
 
         Assert.Equal("Aria", (await store.GetByIdAsync(new(1)))!.Name);

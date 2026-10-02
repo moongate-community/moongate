@@ -1,6 +1,8 @@
 using System.Buffers.Binary;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
 namespace Moongate.Persistence.Snapshots;
@@ -14,6 +16,8 @@ public static class SnapshotFingerprint
     private static readonly JsonSerializerOptions Options = new()
     {
         IncludeFields = true,
+        // NaN and the infinities are rare prop values, but they must not stop a save.
+        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
         TypeInfoResolver = new DefaultJsonTypeInfoResolver { Modifiers = { LeaveOutComputedProperties } }
     };
 
@@ -27,8 +31,8 @@ public static class SnapshotFingerprint
         return BinaryPrimitives.ReadUInt128LittleEndian(SHA256.HashData(json));
     }
 
-    // A class's read-only properties are computed from the others (and may throw on a partial state); a struct's are
-    // its value, such as Serial.Value, and stay.
+    // A class's getter-only properties are computed from the others (and may throw on a partial state); one with a
+    // setter, even a private one, may be a saved column and stays. A struct's are its value, such as Serial.Value.
     private static void LeaveOutComputedProperties(JsonTypeInfo info)
     {
         if (info.Kind != JsonTypeInfoKind.Object || info.Type.IsValueType)
@@ -38,7 +42,7 @@ public static class SnapshotFingerprint
 
         for (var index = info.Properties.Count - 1; index >= 0; index--)
         {
-            if (info.Properties[index].Set is null)
+            if (info.Properties[index].AttributeProvider is PropertyInfo { SetMethod: null })
             {
                 info.Properties.RemoveAt(index);
             }
