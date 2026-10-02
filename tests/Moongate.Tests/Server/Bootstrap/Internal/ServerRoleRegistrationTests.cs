@@ -27,7 +27,6 @@ using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.Gumps;
-using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Packets.Characters;

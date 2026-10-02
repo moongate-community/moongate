@@ -37,6 +37,31 @@ public sealed class ExceptionReportEnricherTests : IDisposable
         Assert.False(logEvent.Properties.ContainsKey("ReportFile"));
     }
 
+    [Theory, InlineData(true), InlineData(false)]
+    public void AWrapperException_ShowsTheMessageOfWhatItWraps(bool aggregate)
+    {
+        var cause = new InvalidOperationException("the real cause");
+        Exception wrapper = aggregate ? new AggregateException(cause) : new System.Reflection.TargetInvocationException(cause);
+
+        using (var logger = Logger())
+        {
+            logger.Error(wrapper, "Failed");
+        }
+
+        Assert.Equal("the real cause", ((ScalarValue)Assert.Single(_sink.Events).Properties["ExceptionMessage"]).Value);
+    }
+
+    [Fact]
+    public void AnExceptionWithoutAMessage_ShowsItsType()
+    {
+        using (var logger = Logger())
+        {
+            logger.Error(new BlankException(), "Failed");
+        }
+
+        Assert.Equal(nameof(BlankException), ((ScalarValue)Assert.Single(_sink.Events).Properties["ExceptionMessage"]).Value);
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_directory))
@@ -51,5 +76,10 @@ public sealed class ExceptionReportEnricherTests : IDisposable
                .Enrich.With(new ExceptionReportEnricher(new ExceptionReportWriter(_directory, "0.11.0", "Lilly")))
                .WriteTo.Sink(_sink)
                .CreateLogger();
+    }
+
+    private sealed class BlankException : Exception
+    {
+        public override string Message => "";
     }
 }

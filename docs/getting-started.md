@@ -226,8 +226,12 @@ The console shows an exception as one line, its message and its report, never th
 The report holds the Moongate version, the system, the .NET runtime, the time, the source, the
 message and the whole exception, with its inner exceptions and stacks, in Markdown. Open it and
 paste it into a [GitHub issue](https://github.com/moongate-community/moongate/issues/new). Its
-name hashes the exception, so the same one logged again, say by a timer, reuses its report. The
-`.clef` logs keep the full exception of every event.
+name hashes the exception, so the same one logged again, say by a timer, reuses its report, which
+describes the first time it was seen. After 500 reports no new one is written, so exceptions whose
+messages vary cannot fill the disk; delete the old ones to make room. In Docker the path is the
+one inside the container, under the mounted root. A wrapper such as an `AggregateException` shows
+the message of what it wraps. With `--log-to-file false` no report is written and the console
+shows the message alone. The `.clef` logs keep the full exception of every event.
 
 ## Common startup problems
 

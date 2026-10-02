@@ -20,7 +20,6 @@ using Moongate.Server.Helpers;
 using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Logging;
-using Moongate.Server.Services.Console.Internal.Logging;
 using Moongate.Server.Services.Diagnostics;
 using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Server.Services.Events;
@@ -28,8 +27,6 @@ using Moongate.Server.Services.Plugins;
 using Moongate.Server.Types.Persistence;
 using Moongate.Server.Ultima;
 using Serilog;
-using Serilog.Formatting.Compact;
-using Serilog.Templates.Themes;
 
 await ConsoleApp.RunAsync(
     args,
@@ -159,49 +156,14 @@ await ConsoleApp.RunAsync(
 
         var consolePrompt = new ConsolePromptService();
 
-        var consoleLogger = new LoggerConfiguration()
-
-            // pass-through: the outer logger owns level policy
-            .MinimumLevel
-            .Verbose()
-            .WriteTo
-            .Console(ConsoleLogTemplate.Create(TemplateTheme.Code))
-            .CreateLogger();
-
         // An exception shows its message on the console and gets a report to paste into a GitHub issue.
-        var loggingConfiguration = new LoggerConfiguration()
-            .Enrich
-            .With(
-                new ExceptionReportEnricher(
-                    new ExceptionReportWriter(
-                        Path.Combine(directoriesConfig["logs"], "errors"),
-                        VersionUtils.GetVersion(typeof(Program).Assembly),
-                        VersionUtils.GetCodename(typeof(Program).Assembly)
-                    )
-                )
-            )
-            .WriteTo
-            .Sink(new PromptAwareConsoleSink(consolePrompt, consoleLogger));
-
-        if (logToFile)
-        {
-            // .clef is the conventional extension for this format, and log shippers
-            // recognise it without being told what the file holds.
-            var logFilePath = Path.Combine(directoriesConfig["logs"], "moongate-.clef");
-
-            loggingConfiguration = loggingConfiguration.WriteTo.File(
-                // One JSON object per line, keeping the message template and its
-                // properties separate so a log reader can group events by template.
-                new CompactJsonFormatter(),
-                logFilePath,
-                rollingInterval: RollingInterval.Day,
-                rollOnFileSizeLimit: true,
-                fileSizeLimitBytes: 10 * 1024 * 1024, // 10 MB
-                retainedFileCountLimit: 30
-            );
-        }
-
-        Log.Logger = loggingConfiguration.CreateLogger();
+        Log.Logger = ServerLoggerFactory.Create(
+            consolePrompt,
+            directoriesConfig["logs"],
+            logToFile,
+            VersionUtils.GetVersion(typeof(Program).Assembly),
+            VersionUtils.GetCodename(typeof(Program).Assembly)
+        );
 
         var configPath = Path.Combine(directoriesConfig["config"], "moongate.toml");
         var serverConfig = ConfigHelper.Load(configPath);

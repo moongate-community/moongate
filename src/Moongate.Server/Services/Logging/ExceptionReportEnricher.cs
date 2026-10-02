@@ -1,3 +1,4 @@
+using System.Reflection;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -12,9 +13,10 @@ internal sealed class ExceptionReportEnricher : ILogEventEnricher
     public const string ExceptionMessageProperty = "ExceptionMessage";
     public const string ReportFileProperty = "ReportFile";
 
-    private readonly ExceptionReportWriter _writer;
+    private readonly ExceptionReportWriter? _writer;
 
-    public ExceptionReportEnricher(ExceptionReportWriter writer)
+    /// <param name="writer">The report writer; null writes no report, and the console shows the message only.</param>
+    public ExceptionReportEnricher(ExceptionReportWriter? writer)
     {
         _writer = writer;
     }
@@ -26,11 +28,21 @@ internal sealed class ExceptionReportEnricher : ILogEventEnricher
             return;
         }
 
-        logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty(ExceptionMessageProperty, exception.Message));
+        logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty(ExceptionMessageProperty, MessageOf(exception)));
 
-        if (_writer.Write(logEvent) is { } report)
+        if (_writer?.Write(logEvent) is { } report)
         {
             logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty(ReportFileProperty, report));
         }
+    }
+
+    // A wrapper says nothing of its own, so the cause speaks; a blank message gives the type instead.
+    private static string MessageOf(Exception exception)
+    {
+        var shown = exception is AggregateException or TargetInvocationException && exception.InnerException is not null
+            ? exception.GetBaseException()
+            : exception;
+
+        return string.IsNullOrWhiteSpace(shown.Message) ? shown.GetType().Name : shown.Message;
     }
 }

@@ -15,7 +15,7 @@ internal static class ConsoleLogTemplate
             "{@t:HH:mm:ss.fff} {@l:u3} " +
             "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
             " | {@m}" +
-            "{#if ExceptionMessage is not null}: {ExceptionMessage}{#end}" +
+            "{#if ExceptionMessage is not null}: {ExceptionMessage}{#else if @x is not null}: {@x}{#end}" +
             "{#if ReportFile is not null} - details: {ReportFile} (paste it into a GitHub issue){#end}\n",
             theme: theme
         );

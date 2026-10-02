@@ -68,6 +68,32 @@ public sealed class ExceptionReportWriterTests : IDisposable
         Assert.Null(Writer().Write(Event("Failed", Thrown(new InvalidOperationException("x")))));
     }
 
+    [Fact]
+    public void Write_PastTheReportCap_WritesNoMore()
+    {
+        var writer = new ExceptionReportWriter(_directory, "0.11.0", "Lilly", 2);
+
+        var first = writer.Write(Event("One", Thrown(new InvalidOperationException("one"))));
+        var second = writer.Write(Event("Two", Thrown(new InvalidOperationException("two"))));
+        var third = writer.Write(Event("Three", Thrown(new InvalidOperationException("three"))));
+
+        Assert.NotNull(first);
+        Assert.NotNull(second);
+        Assert.Null(third);
+        Assert.Equal(2, Directory.GetFiles(_directory).Length);
+        // A report written before the cap is still reused.
+        Assert.Equal(first, writer.Write(Event("One again", Thrown(new InvalidOperationException("one")))));
+    }
+
+    [Fact]
+    public void Write_AnExceptionHoldingBackticks_KeepsItInOneCodeBlock()
+    {
+        var path = Writer().Write(Event("Failed", Thrown(new InvalidOperationException("a ``` b"))));
+
+        var report = File.ReadAllText(path!);
+        Assert.Contains("````text", report, StringComparison.Ordinal);
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_directory))

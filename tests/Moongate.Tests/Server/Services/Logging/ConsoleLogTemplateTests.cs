@@ -37,6 +37,14 @@ public sealed class ConsoleLogTemplateTests
         Assert.EndsWith("Moongate                     | All fine\n", line, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void AnExceptionWithoutItsProperties_StillShowsTheException()
+    {
+        var line = Render("Failed", new InvalidOperationException("enricher missing"));
+
+        Assert.Contains("enricher missing", line, StringComparison.Ordinal);
+    }
+
     private static string Render(string template, Exception? exception, params (string Name, object Value)[] properties)
     {
         var logEvent = new LogEvent(
