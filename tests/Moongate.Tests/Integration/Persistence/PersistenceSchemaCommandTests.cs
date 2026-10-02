@@ -39,7 +39,7 @@ public sealed class PersistenceSchemaCommandTests
                 CancellationToken.None
             )
         );
-        Assert.Contains("mgboot migrate apply", error.Message);
+        Assert.Contains("mgctl migrate apply", error.Message);
         Assert.False(await fixture.Database.ScalarAsync<bool>("SELECT to_regclass('host_test.items') IS NOT NULL"));
     }
 

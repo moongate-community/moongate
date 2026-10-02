@@ -1,10 +1,10 @@
 using Moongate.MigrationRunner.Internal;
 using Moongate.Persistence.Migrations.Types.Migrations;
 
-namespace Moongate.Boot.Internal;
+namespace Moongate.Ctl.Internal;
 
 /// <summary>
-///     The <c>mgboot migrate</c> commands: the versioned SQL migrations of the auth and world databases.
+///     The <c>mgctl migrate</c> commands: the versioned SQL migrations of the auth and world databases.
 /// </summary>
 internal static class MigrateCommands
 {
@@ -15,7 +15,7 @@ internal static class MigrateCommands
     ///     auth (the shared account database) or world (an independent world database).
     /// </param>
     /// <param name="rootDirectory">
-    ///     Root directory holding config/moongate.toml. Defaults to MOONGATE_ROOT, then mgboot's own
+    ///     Root directory holding config/moongate.toml. Defaults to MOONGATE_ROOT, then mgctl's own
     ///     directory.
     /// </param>
     /// <param name="migrationsDirectory">
@@ -51,7 +51,7 @@ internal static class MigrateCommands
     ///     auth (the shared account database) or world (an independent world database).
     /// </param>
     /// <param name="rootDirectory">
-    ///     Root directory holding config/moongate.toml. Defaults to MOONGATE_ROOT, then mgboot's own
+    ///     Root directory holding config/moongate.toml. Defaults to MOONGATE_ROOT, then mgctl's own
     ///     directory.
     /// </param>
     /// <param name="migrationsDirectory">

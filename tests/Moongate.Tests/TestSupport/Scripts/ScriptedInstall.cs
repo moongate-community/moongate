@@ -65,17 +65,18 @@ internal sealed class ScriptedInstall : IDisposable
     }
 
     /// <summary>
-    ///     Writes a release archive and its checksum, with the given text standing in for the server binary.
+    ///     Writes a release archive and its checksum, with the given text standing in for the server binary; with
+    ///     <paramref name="includeMgctl" />, also the tool beside it, named mgboot before it became mgctl.
     /// </summary>
-    public void Publish(string version, string rid, string binaryContent, bool includeMgboot = false)
+    public void Publish(string version, string rid, string binaryContent, bool includeMgctl = false, string tool = "mgctl")
     {
         var bundle = Path.Combine(_root, "staging-" + Guid.NewGuid().ToString("N"), "moongate-" + rid);
         Directory.CreateDirectory(bundle);
         File.WriteAllText(Path.Combine(bundle, "Moongate.Server"), binaryContent);
 
-        if (includeMgboot)
+        if (includeMgctl)
         {
-            File.WriteAllText(Path.Combine(bundle, "mgboot"), "boot payload");
+            File.WriteAllText(Path.Combine(bundle, tool), "boot payload");
         }
 
         File.WriteAllText(Path.Combine(bundle, "LICENSE"), "GNU AFFERO GENERAL PUBLIC LICENSE");

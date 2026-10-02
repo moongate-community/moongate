@@ -27,7 +27,7 @@
         <Project Path="tests/Moongate.UoxItemConverter.Tests/Moongate.UoxItemConverter.Tests.csproj"/>
     </Folder>
     <Folder Name="/tools/">
-        <Project Path="src/Moongate.Boot/Moongate.Boot.csproj"/>
+        <Project Path="src/Moongate.Ctl/Moongate.Ctl.csproj"/>
         <Project Path="src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj"/>
         <Project Path="src/Moongate.UoxItemConverter/Moongate.UoxItemConverter.csproj"/>
     </Folder>

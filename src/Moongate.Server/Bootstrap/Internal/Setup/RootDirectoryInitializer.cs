@@ -55,7 +55,7 @@ internal static class RootDirectoryInitializer
 
         // Keep the lock file: unlinking it could give a concurrent initializer a different lock inode.
         using var initializationLock = new FileStream(
-            Path.Combine(root, ".mgboot.lock"),
+            Path.Combine(root, ".mgctl.lock"),
             FileMode.OpenOrCreate,
             FileAccess.ReadWrite,
             FileShare.None

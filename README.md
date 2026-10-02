@@ -65,7 +65,7 @@ include the .NET runtime; building from source requires the **.NET 10 SDK**.
 curl -fsSL https://moongate.sh/install.sh | sh
 ```
 
-Installs the latest release into `/opt/moongate` and makes `moongate` and `mgboot`
+Installs the latest release into `/opt/moongate` and makes `moongate` and `mgctl`
 available on your path. Supports Linux x64 and ARM64 with glibc. Keep your server
 root outside the installation directory so upgrades preserve your configuration
 and data. See [Install on Linux](docs/installation.md) for options, upgrades and removal.

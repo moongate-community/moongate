@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <AssemblyName>mgboot</AssemblyName>
+        <AssemblyName>mgctl</AssemblyName>
         <IsPackable>false</IsPackable>
         <PublishSingleFile>true</PublishSingleFile>
         <PublishSelfContained>true</PublishSelfContained>

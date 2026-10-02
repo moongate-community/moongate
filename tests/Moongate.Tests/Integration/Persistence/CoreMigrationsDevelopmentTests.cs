@@ -6,7 +6,7 @@ using Moongate.Tests.TestSupport.Persistence;
 namespace Moongate.Tests.Integration.Persistence;
 
 /// <summary>
-///     A development root holds the shipped SQL (mgboot copies it) with automatic generation on: once that SQL is
+///     A development root holds the shipped SQL (mgctl copies it) with automatic generation on: once that SQL is
 ///     applied, the entities must match it, or every start writes a draft that needs review and stops.
 /// </summary>
 [Collection(PostgresTestCollection.Name)]

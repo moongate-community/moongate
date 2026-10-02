@@ -33,7 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../../src/Moongate.Boot/Moongate.Boot.csproj" ReferenceOutputAssembly="false" Private="false"/>
+        <ProjectReference Include="../../src/Moongate.Ctl/Moongate.Ctl.csproj" ReferenceOutputAssembly="false" Private="false"/>
         <ProjectReference Include="../../src/Moongate.Persistence/Moongate.Persistence.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Scripting\Moongate.Scripting.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj"/>
@@ -67,10 +67,10 @@
 
     <Target Name="CopyPluginFixtures" AfterTargets="Build">
         <ItemGroup>
-            <_DevelopmentMgbootFiles Include="../../src/Moongate.Server/bin/$(Configuration)/net10.0/mgboot/*"/>
+            <_DevelopmentMgctlFiles Include="../../src/Moongate.Server/bin/$(Configuration)/net10.0/mgctl/*"/>
         </ItemGroup>
-        <Copy SourceFiles="@(_DevelopmentMgbootFiles)"
-              DestinationFiles="@(_DevelopmentMgbootFiles->'$(OutDir)mgboot/%(Filename)%(Extension)')"
+        <Copy SourceFiles="@(_DevelopmentMgctlFiles)"
+              DestinationFiles="@(_DevelopmentMgctlFiles->'$(OutDir)mgctl/%(Filename)%(Extension)')"
               SkipUnchangedFiles="true"/>
         <ItemGroup>
             <_FoundationPluginFiles Include="../Fixtures/Plugins/FoundationPlugin/bin/$(Configuration)/net10.0/**/*"/>

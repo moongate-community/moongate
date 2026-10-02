@@ -23,7 +23,7 @@ unzip /path/to/moongate-admin-protos-VERSION.zip -d admin-protos
 PYTHONPATH=generated .venv/bin/python client.py
 ```
 
-Supply `MOONGATE_ADMIN_ENDPOINT=https://host:2590`, `MOONGATE_ADMIN_USERNAME`, and `MOONGATE_ADMIN_PASSWORD` through your secret store/environment. Set `MOONGATE_ADMIN_CA` to the public PEM trust file for a private CA. With [mgboot certificate setup](../../docs/mgboot.md#generate-an-administration-certificate), use a local copy of the server's public `certificates/admin.crt`; keep `admin.pfx` on the server and use a hostname or IP included in the certificate. Optionally set `MOONGATE_ADMIN_GAME_ENDPOINT` to verify shared sessions on a Game host; its certificate must also be trusted.
+Supply `MOONGATE_ADMIN_ENDPOINT=https://host:2590`, `MOONGATE_ADMIN_USERNAME`, and `MOONGATE_ADMIN_PASSWORD` through your secret store/environment. Set `MOONGATE_ADMIN_CA` to the public PEM trust file for a private CA. With [mgctl certificate setup](../../docs/mgctl.md#generate-an-administration-certificate), use a local copy of the server's public `certificates/admin.crt`; keep `admin.pfx` on the server and use a hostname or IP included in the certificate. Optionally set `MOONGATE_ADMIN_GAME_ENDPOINT` to verify shared sessions on a Game host; its certificate must also be trusted.
 
 The client logs in, creates a test account, finds it with bounded paging, queries server information and logs out. It checks that the token is rejected afterward. The test account remains; its random password and the administration token are never printed. TLS validates hostname and trust chain; there are no automatic mutation retries.
 

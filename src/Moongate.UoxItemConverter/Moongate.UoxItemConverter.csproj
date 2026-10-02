@@ -5,6 +5,6 @@
     <ItemGroup>
         <ProjectReference Include="../Moongate.Server.Ultima/Moongate.Server.Ultima.csproj"/>
         <InternalsVisibleTo Include="Moongate.UoxItemConverter.Tests"/>
-        <InternalsVisibleTo Include="mgboot"/>
+        <InternalsVisibleTo Include="mgctl"/>
     </ItemGroup>
 </Project>

@@ -1,10 +1,10 @@
 using Moongate.Ultima.Types;
 using Moongate.UoxItemConverter.Internal;
 
-namespace Moongate.Boot.Internal;
+namespace Moongate.Ctl.Internal;
 
 /// <summary>
-///     The <c>mgboot convert</c> commands: UOX3 and ModernUO content into Moongate TOML.
+///     The <c>mgctl convert</c> commands: UOX3 and ModernUO content into Moongate TOML.
 /// </summary>
 internal static class ConvertCommands
 {

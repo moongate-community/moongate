@@ -11,7 +11,7 @@ using Moongate.Server.Services.Timing;
 using Moongate.Tests.Support.Events;
 using Moongate.Tests.Support.Server;
 using Moongate.Tests.Support.Server.Interfaces;
-using Moongate.Tests.TestSupport.Bootstrap;
+using Moongate.Tests.TestSupport.Ctlstrap;
 
 namespace Moongate.Tests.Server.Bootstrap;
 

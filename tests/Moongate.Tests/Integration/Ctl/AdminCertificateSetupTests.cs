@@ -5,7 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using Moongate.Server.Bootstrap.Internal.Setup;
 using Moongate.Tests.TestSupport.Directories;
 
-namespace Moongate.Tests.Integration.Boot;
+namespace Moongate.Tests.Integration.Ctl;
 
 public sealed class AdminCertificateSetupTests
 {

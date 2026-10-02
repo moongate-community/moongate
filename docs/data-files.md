@@ -10,11 +10,11 @@ stops the server at startup with an error that says what is wrong. The
 message.
 
 The files ship beside the `Moongate.Server` binary, in `data/`; the repository copy
-is `moongate_root/data/`. `mgboot` (or `Moongate.Server --initialize-root`) copies
+is `moongate_root/data/`. `mgctl` (or `Moongate.Server --initialize-root`) copies
 every missing file into `<root>/data` and never replaces one that exists, so a file
-you edited survives an upgrade. After an upgrade, run `mgboot` again to add new
+you edited survives an upgrade. After an upgrade, run `mgctl init` again to add new
 files and compare your edited files with the shipped ones to pick up upstream
-changes. See [What it creates](mgboot.md#what-it-creates).
+changes. See [What it creates](mgctl.md#what-it-creates).
 
 C# code reads the loaded entries through `IDataLoaderService`:
 
@@ -94,5 +94,5 @@ at startup. A broken file stops the start, and the log shows the error.
 - [Loading TOML templates](templates.md): the `IDataLoader<T>` contract, how
   loaders are registered and run, and the TOML converters.
 - [Localization](localization.md): the message files and `ILocalizationService`.
-- [Prepare a server root with mgboot](mgboot.md): how the data files get into a
+- [Prepare a server root with mgctl](mgctl.md): how the data files get into a
   root.

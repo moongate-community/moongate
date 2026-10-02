@@ -1,7 +1,7 @@
 # Starting items
 
 `starting_items.toml` holds the items a new character gets. The shipped file is written
-by [`mg-uoxconv`](../uox3-migration.md#starting-items) from UOX3's `newbie.dfn`.
+by [`mgctl convert uox`](../uox3-migration.md#starting-items) from UOX3's `newbie.dfn`.
 `IStartingItemsService.GiveAsync` applies it to a new character.
 
 A character gets every `[[set]]` with `common = true`, plus every set whose filters it
@@ -54,7 +54,7 @@ character gets nothing:
 The starting gold is an ordinary entry: the shipped file gives 1000 coins with an
 entry of the common set. Change its `amount` (at most 65535) to give more or less,
 or remove the entry to give none. A root prepared before this change keeps its own
-`starting_items.toml`, which `mgboot` does not overwrite: add this entry to its common
+`starting_items.toml`, which `mgctl` does not overwrite: add this entry to its common
 set, or new characters start without gold:
 
 ```toml

@@ -13,9 +13,9 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
     private readonly string _runnerDirectory;
     private readonly ILogger _logger = Log.ForContext<DevelopmentMigrationRunner>();
 
-    private string ExecutablePath => Path.Combine(_runnerDirectory, OperatingSystem.IsWindows() ? "mgboot.exe" : "mgboot");
+    private string ExecutablePath => Path.Combine(_runnerDirectory, OperatingSystem.IsWindows() ? "mgctl.exe" : "mgctl");
 
-    private string AssemblyPath => Path.Combine(_runnerDirectory, "mgboot.dll");
+    private string AssemblyPath => Path.Combine(_runnerDirectory, "mgctl.dll");
 
     public DevelopmentMigrationRunner(string root, string migrations, string? plugins, string? runnerDirectory = null)
     {
@@ -30,15 +30,15 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
         if (!File.Exists(ExecutablePath) && !File.Exists(AssemblyPath))
         {
             throw new InvalidOperationException(
-                $"mgboot, which applies the migrations, is missing from '{_runnerDirectory}'. Keep it beside the Moongate.Server executable from the same distribution."
+                $"mgctl, which applies the migrations, is missing from '{_runnerDirectory}'. Keep it beside the Moongate.Server executable from the same distribution."
             );
         }
     }
 
-    // A build keeps mgboot and its own PostgreSQL driver in the mgboot folder; a distribution has it beside the server.
+    // A build keeps mgctl and its own PostgreSQL driver in the mgctl folder; a distribution has it beside the server.
     private static string DefaultRunnerDirectory()
     {
-        var bundled = Path.Combine(AppContext.BaseDirectory, "mgboot");
+        var bundled = Path.Combine(AppContext.BaseDirectory, "mgctl");
 
         return Directory.Exists(bundled) ? bundled : AppContext.BaseDirectory;
     }

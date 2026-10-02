@@ -188,7 +188,7 @@ by the user that runs the server.
 Restore with the Moongate version that wrote the backup.
 
 1. Stop the server.
-2. Create an empty database and apply the migrations of that version with [`mgboot`](mgboot.md).
+2. Create an empty database and apply the migrations of that version with [`mgctl`](mgctl.md).
 3. Run the file with a role that owns the tables:
 
    ```bash

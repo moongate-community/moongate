@@ -6,7 +6,7 @@ export const contentEntries = [
   { source: 'README.md', slug: 'start/overview', title: 'Overview', group: 'Start here' },
   { source: 'docs/ai-usage.md', slug: 'start/ai-usage', title: 'How I use AI', group: 'Start here' },
   { source: 'docs/installation.md', slug: 'start/install', title: 'Install on Linux', group: 'Start here' },
-  { source: 'docs/mgboot.md', slug: 'start/mgboot', title: 'Prepare a root with mgboot', group: 'Start here' },
+  { source: 'docs/mgctl.md', slug: 'start/mgctl', title: 'mgctl, the Moongate tool', group: 'Start here' },
   { source: 'docs/getting-started.md', slug: 'start/getting-started', title: 'First start', group: 'Start here' },
   { source: 'docs/implementation-status.md', slug: 'start/implementation-status', title: 'Implementation status', group: 'Start here' },
   { source: 'docs/feature-checklist.md', slug: 'start/feature-checklist', title: 'Feature checklist', group: 'Start here' },

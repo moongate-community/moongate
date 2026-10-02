@@ -47,7 +47,7 @@ export MOONGATE_REDIS_PASSWORD="$(bw get password moongate-redis)"
 export MOONGATE_HANDOFF_SECRET="$(bw get password moongate-handoff)"
 ```
 
-Compose mounts these values as secrets. The server entrypoint constructs `MOONGATE_REDIS_CONNECTION_STRING=redis:6379,password=...` and exports `MOONGATE_HANDOFF_SECRET` only in the runtime process environment. The mounted TOMLs contain references to those variable names, not their values. Redis reads its password from its own secret mount into a private in-memory config file. The PostgreSQL connection URIs are likewise assembled in memory from role-specific secrets. Before starting the server, the entrypoint runs `mgboot` on the volume, which adds any [shard data file](data-files.md) the image ships and the volume lacks, keeping the ones already there.
+Compose mounts these values as secrets. The server entrypoint constructs `MOONGATE_REDIS_CONNECTION_STRING=redis:6379,password=...` and exports `MOONGATE_HANDOFF_SECRET` only in the runtime process environment. The mounted TOMLs contain references to those variable names, not their values. Redis reads its password from its own secret mount into a private in-memory config file. The PostgreSQL connection URIs are likewise assembled in memory from role-specific secrets. Before starting the server, the entrypoint runs `mgctl` on the volume, which adds any [shard data file](data-files.md) the image ships and the volume lacks, keeping the ones already there.
 
 Validate without printing the rendered Compose model, then build:
 

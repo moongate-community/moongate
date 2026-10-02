@@ -2,9 +2,9 @@ using System.Diagnostics;
 using ConsoleAppFramework;
 using Moongate.Core.Utils;
 
-namespace Moongate.Boot.Internal;
+namespace Moongate.Ctl.Internal;
 
-internal static class BootCommand
+internal static class InitCommand
 {
     /// <summary>
     ///     Prepare a server root offline using the matching Moongate.Server distribution.
@@ -31,7 +31,7 @@ internal static class BootCommand
         if (string.IsNullOrWhiteSpace(rootDirectory) || adminCertificateHosts is not null && !generateAdminCertificate)
         {
             Console.Error.WriteLine(
-                "mgboot: a root directory is required; --admin-certificate-hosts requires --generate-admin-certificate."
+                "mgctl: a root directory is required; --admin-certificate-hosts requires --generate-admin-certificate."
             );
 
             return 2;
@@ -48,12 +48,12 @@ internal static class BootCommand
             if (!File.Exists(server))
             {
                 throw new FileNotFoundException(
-                    "Keep mgboot beside the Moongate.Server executable from the same distribution.",
+                    "Keep mgctl beside the Moongate.Server executable from the same distribution.",
                     server
                 );
             }
 
-            var assembly = typeof(BootCommand).Assembly;
+            var assembly = typeof(InitCommand).Assembly;
             var header = ResourceUtils.GetEmbeddedResourceString(assembly, "Assets/header.txt")
                 .Replace("{Version}", VersionUtils.GetVersion(assembly), StringComparison.Ordinal)
                 .Replace("{Codename}", VersionUtils.GetCodename(assembly), StringComparison.Ordinal);
@@ -99,7 +99,7 @@ internal static class BootCommand
         }
         catch (Exception exception)
         {
-            Console.Error.WriteLine($"mgboot: {exception.Message}");
+            Console.Error.WriteLine($"mgctl: {exception.Message}");
 
             return 1;
         }

@@ -1,19 +1,19 @@
 using Moongate.Server.Admin.Data.Config;
-using Moongate.Tests.TestSupport.Boot;
+using Moongate.Tests.TestSupport.Ctl;
 using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
 using Moongate.Tests.TestSupport.Persistence;
 using Tomlyn;
 using Tomlyn.Model;
 
-namespace Moongate.Tests.Integration.Boot;
+namespace Moongate.Tests.Integration.Ctl;
 
-public sealed class BootCommandTests
+public sealed class CtlCommandTests
 {
     [Theory, InlineData("--help"), InlineData("-h")]
     public async Task Run_Help_ListsEveryCommand(string flag)
     {
-        var result = await BootProcess.RunAsync(flag);
+        var result = await CtlProcess.RunAsync(flag);
 
         Assert.Equal(0, result.ExitCode);
 
@@ -31,7 +31,7 @@ public sealed class BootCommandTests
     public async Task Run_InitWithARoot_PreparesIt_AsTheRootAloneDoes()
     {
         using var directory = new TemporaryDirectory();
-        var result = await BootProcess.RunAsync("init", directory.Path);
+        var result = await CtlProcess.RunAsync("init", directory.Path);
 
         Assert.True(result.ExitCode == 0, result.Output);
         Assert.Contains("Root setup", result.Output);
@@ -41,7 +41,7 @@ public sealed class BootCommandTests
     [Fact]
     public async Task Run_ConvertWithoutItsOptions_ShowsTheCommandsHelp()
     {
-        var result = await BootProcess.RunAsync("convert", "modernuo-teleporters", "--help");
+        var result = await CtlProcess.RunAsync("convert", "modernuo-teleporters", "--help");
 
         Assert.Equal(0, result.ExitCode);
         Assert.Contains("--source", result.Output);
@@ -56,14 +56,14 @@ public sealed class BootCommandTests
         File.WriteAllText(source, "2 2979 3632 2537 0 The Shakin' Bakery\n");
         var destination = Path.Combine(directory.Path, "decorations");
 
-        var result = await BootProcess.RunAsync("convert", "modernuo-signs", "--source", source, "--destination", destination);
+        var result = await CtlProcess.RunAsync("convert", "modernuo-signs", "--source", source, "--destination", destination);
 
         Assert.True(result.ExitCode == 0, result.Output);
         Assert.Contains("The Shakin' Bakery", File.ReadAllText(Path.Combine(destination, "trammel", "signs.toml")));
     }
 
     [Fact]
-    public async Task Run_MigrateStatus_WithoutARoot_UsesTheConfigurationAndPluginsBesideMgboot()
+    public async Task Run_MigrateStatus_WithoutARoot_UsesTheConfigurationAndPluginsBesideMgctl()
     {
         await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var directory = new TemporaryDirectory();
@@ -72,13 +72,13 @@ public sealed class BootCommandTests
             Path.Combine(directory.Path, "config/moongate.toml"),
             "[persistence.realm]\nconnection_string = '" + db.ConnectionString + "'\n"
         );
-        // A distribution has its migrations beside mgboot.
+        // A distribution has its migrations beside mgctl.
         Directory.CreateDirectory(Path.Combine(directory.Path, "migrations"));
         Directory.CreateDirectory(Path.Combine(directory.Path, "plugins/p/migrations/world"));
         File.WriteAllText(Path.Combine(directory.Path, "plugins/p/migrations/manifest.json"), "{\"id\":\"sample\"}");
         File.WriteAllText(Path.Combine(directory.Path, "plugins/p/migrations/world/0001_data.sql"), "SELECT 1;");
 
-        foreach (var file in Directory.EnumerateFiles(Path.Combine(AppContext.BaseDirectory, "mgboot")))
+        foreach (var file in Directory.EnumerateFiles(Path.Combine(AppContext.BaseDirectory, "mgctl")))
         {
             if (Path.GetExtension(file) is ".dll" or ".json")
             {
@@ -86,7 +86,7 @@ public sealed class BootCommandTests
             }
         }
 
-        var result = await BootProcess.RunFromAsync(directory.Path, "migrate", "status", "--target", "world");
+        var result = await CtlProcess.RunFromAsync(directory.Path, "migrate", "status", "--target", "world");
 
         Assert.True(result.ExitCode == 0, result.Output);
         Assert.Contains("sample/0001_data.sql", result.Output);
@@ -95,7 +95,7 @@ public sealed class BootCommandTests
     [Theory, InlineData("--help"), InlineData("-h")]
     public async Task Run_InitHelp_DescribesCertificateOptions(string flag)
     {
-        var result = await BootProcess.RunAsync("init", flag);
+        var result = await CtlProcess.RunAsync("init", flag);
         Assert.Equal(0, result.ExitCode);
         Assert.Contains("--generate-admin-certificate", result.Output);
         Assert.Contains("--admin-certificate-hosts", result.Output);
@@ -105,7 +105,7 @@ public sealed class BootCommandTests
     [Fact]
     public async Task Run_Version_OmitsHeader()
     {
-        var result = await BootProcess.RunAsync("--version");
+        var result = await CtlProcess.RunAsync("--version");
 
         Assert.Equal(0, result.ExitCode);
         Assert.Matches(@"^\d+\.\d+\.\d+\s*$", result.Output);
@@ -116,7 +116,7 @@ public sealed class BootCommandTests
     public async Task Run_Default_ShowsMoongateHeaderBeforePreparingRoot()
     {
         using var directory = new TemporaryDirectory();
-        var result = await BootProcess.RunAsync(directory.Path);
+        var result = await CtlProcess.RunAsync(directory.Path);
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(".       .     _.--.", result.Output);
@@ -131,7 +131,7 @@ public sealed class BootCommandTests
     {
         using var directory = new TemporaryDirectory();
         var root = Path.Combine(directory.Path, "server root");
-        var result = await BootProcess.RunAsync(
+        var result = await CtlProcess.RunAsync(
             root,
             "--generate-admin-certificate",
             "--admin-certificate-hosts",
@@ -150,9 +150,9 @@ public sealed class BootCommandTests
     public async Task Run_Default_PreparesRootWithoutEnablingApi()
     {
         using var directory = new TemporaryDirectory();
-        var result = await BootProcess.RunAsync(directory.Path);
+        var result = await CtlProcess.RunAsync(directory.Path);
         Assert.True(result.ExitCode == 0, result.Output);
-        // The Administration plugin appends [admin_api] at the first server start; mgboot writes none by default.
+        // The Administration plugin appends [admin_api] at the first server start; mgctl writes none by default.
         var document = TomlSerializer.Deserialize<TomlTable>(
             File.ReadAllText(Path.Combine(directory.Path, "config/moongate.toml"))
         )!;
@@ -166,7 +166,7 @@ public sealed class BootCommandTests
         using var directory = new TemporaryDirectory();
         Directory.CreateDirectory(Path.Combine(directory.Path, "migrations/auth"));
         File.WriteAllText(Path.Combine(directory.Path, "migrations/auth/0001_conflicting.sql"), "SELECT 42;");
-        var result = await BootProcess.RunAsync(directory.Path);
+        var result = await CtlProcess.RunAsync(directory.Path);
         Assert.Equal(1, result.ExitCode);
         Assert.Contains("conflicts with bundled", result.Output);
     }
@@ -177,7 +177,7 @@ public sealed class BootCommandTests
     {
         using var directory = new TemporaryDirectory();
         var root = Path.Combine(directory.Path, "root");
-        var result = await BootProcess.RunAsync([root, .. arguments]);
+        var result = await CtlProcess.RunAsync([root, .. arguments]);
         Assert.NotEqual(0, result.ExitCode);
         Assert.False(Directory.Exists(root));
     }
@@ -185,7 +185,7 @@ public sealed class BootCommandTests
     [Fact]
     public async Task Run_MissingRoot_Fails()
     {
-        var result = await BootProcess.RunAsync();
+        var result = await CtlProcess.RunAsync();
         Assert.NotEqual(0, result.ExitCode);
     }
 }
