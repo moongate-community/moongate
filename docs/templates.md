@@ -489,7 +489,10 @@ client as its name. A teleporter's `point_dest = [x, y, z]` becomes the props `t
 `teleport.y` and `teleport.z`, and its `map_dest` the prop `teleport.map`, a `MapType` number.
 A `KeywordTeleporter` takes the template `decoration_keyword_teleporter`, with
 `script_id = "keyword_teleport"`, and keeps its `substring`, `keyword`, `range` and `delay` as props.
-Spawners, mark containers, public moongates, addons and the teleporters that ask for a
+A `PublicMoongate` takes the template `decoration_public_moongate`, with
+`script_id = "public_moongate"`; `.decorate` also places one on every destination of
+[`moongates.toml`](data-files/moongates.md).
+Spawners, mark containers, addons and the teleporters that ask for a
 skill or a quest (`SkillTeleporter`, `QuestTeleporter`) are not placed yet. The doors of the towns are in no file:
 `.decorate` reads them from the map's door frames.
 

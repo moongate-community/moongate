@@ -173,7 +173,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Books | ❌ | |
 | Maps and treasure maps | ❌ | |
 | Runes, recall and gates | ❌ | |
-| Moongates and teleporters | 🟡 | Walk-on teleporters and those that answer a word, also across maps, placed by `.decorate` with ModernUO's world and dungeon ones; no public moongates |
+| Moongates and teleporters | 🟡 | Walk-on teleporters and those that answer a word, also across maps, placed by `.decorate` with ModernUO's world and dungeon ones; public moongates with a destination gump; no Gate Travel |
 | Dyes and dye tubs | ❌ | |
 | Secure trade | ❌ | |
 | Corpses | ❌ | |

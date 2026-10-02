@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
+using Moongate.Server.Ultima.Data.Moongates;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
@@ -51,6 +52,7 @@ public sealed class RepositoryDataFilesTests
         container.AddUltimaDataLoader<RegionsLoader, RegionContent>(9);
         container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
         container.AddUltimaDataLoader<NamesLoader, NameList>(11);
+        container.AddUltimaDataLoader<MoongatesLoader, MoongateFacet>(12);
         container.RegisterInstance(new LocalizationConfig { Language = "ita" });
         container.Register<IDataLoaderService, DataLoaderService>(Reuse.Singleton);
         var service = container.Resolve<IDataLoaderService>();
@@ -59,6 +61,12 @@ public sealed class RepositoryDataFilesTests
 
         Assert.Equal(6, service.GetEntities<MapContent>().Count);
         Assert.Equal(10, service.GetEntities<StartingCityContent>().Count);
+        var moongates = service.GetEntities<MoongateFacet>();
+        Assert.Equal(
+            [MapType.Trammel, MapType.Felucca, MapType.Ilshenar, MapType.Malas, MapType.Tokuno, MapType.TerMur],
+            moongates.Select(facet => facet.Map)
+        );
+        Assert.Equal([9, 9, 9, 2, 3, 2], moongates.Select(facet => facet.Destination.Count));
         Assert.Equal(58, service.GetEntities<SkillContent>().Count);
         Assert.Equal(7, service.GetEntities<ProfessionContent>().Count);
         Assert.Equal(3, service.GetEntities<RaceContent>().Count);

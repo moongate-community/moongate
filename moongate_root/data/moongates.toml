@@ -1,0 +1,232 @@
+# ==============================================================================
+# Moongate - moongates.toml
+#
+# What it is for:
+#   The public moongates: the gates between the cities of every map. ".decorate"
+#   places a gate on each destination, and a player who walks onto one or double
+#   clicks it picks where to go from a gump with one page per map. A map the
+#   server does not load is left out, with its gates.
+#
+# Fields:
+#   [[facet]]              one per map
+#   map                    felucca, trammel, ilshenar, malas, tokuno or termur
+#   cliloc                 the client text of the map's name in the gump
+#   selected_cliloc        the same name as the gump shows it for the open page
+#   [[facet.destination]]  the cities of the map, in the order the gump lists them
+#   name                   the city, for the logs; players see the cliloc
+#   cliloc                 the client text of the city's name
+#   location               where the gate stands and travellers arrive, "(x, y, z)"
+#   hue                    the hue of the gate; none when left out
+#   average_z              true takes the height from the map instead of the z of
+#                          the location, for a spot whose height differs between
+#                          client versions
+# ==============================================================================
+
+# Trammel
+[[facet]]
+map = "trammel"
+cliloc = 1012000
+selected_cliloc = 1012012
+
+[[facet.destination]]
+name = "Moonglow"
+cliloc = 1012003
+location = "(4467, 1283, 5)"
+
+[[facet.destination]]
+name = "Britain"
+cliloc = 1012004
+location = "(1336, 1997, 5)"
+
+[[facet.destination]]
+name = "Jhelom"
+cliloc = 1012005
+location = "(1499, 3771, 5)"
+
+[[facet.destination]]
+name = "Yew"
+cliloc = 1012006
+location = "(771, 752, 5)"
+
+[[facet.destination]]
+name = "Minoc"
+cliloc = 1012007
+location = "(2701, 692, 5)"
+
+[[facet.destination]]
+name = "Trinsic"
+cliloc = 1012008
+location = "(1828, 2948, -20)"
+
+[[facet.destination]]
+name = "Skara Brae"
+cliloc = 1012009
+location = "(643, 2067, 5)"
+
+[[facet.destination]]
+name = "Magincia"
+cliloc = 1012010
+location = "(3563, 2139, 0)"
+average_z = true
+
+[[facet.destination]]
+name = "New Haven"
+cliloc = 1078098
+location = "(3450, 2677, 25)"
+
+# Felucca
+[[facet]]
+map = "felucca"
+cliloc = 1012001
+selected_cliloc = 1012013
+
+[[facet.destination]]
+name = "Moonglow"
+cliloc = 1012003
+location = "(4467, 1283, 5)"
+
+[[facet.destination]]
+name = "Britain"
+cliloc = 1012004
+location = "(1336, 1997, 5)"
+
+[[facet.destination]]
+name = "Jhelom"
+cliloc = 1012005
+location = "(1499, 3771, 5)"
+
+[[facet.destination]]
+name = "Yew"
+cliloc = 1012006
+location = "(771, 752, 5)"
+
+[[facet.destination]]
+name = "Minoc"
+cliloc = 1012007
+location = "(2701, 692, 5)"
+
+[[facet.destination]]
+name = "Trinsic"
+cliloc = 1012008
+location = "(1828, 2948, -20)"
+
+[[facet.destination]]
+name = "Skara Brae"
+cliloc = 1012009
+location = "(643, 2067, 5)"
+
+[[facet.destination]]
+name = "Magincia"
+cliloc = 1012010
+location = "(3563, 2139, 0)"
+average_z = true
+
+[[facet.destination]]
+name = "Buccaneer's Den"
+cliloc = 1019001
+location = "(2711, 2234, 0)"
+
+# Ilshenar
+[[facet]]
+map = "ilshenar"
+cliloc = 1012002
+selected_cliloc = 1012014
+
+[[facet.destination]]
+name = "Compassion"
+cliloc = 1012015
+location = "(1215, 467, -13)"
+
+[[facet.destination]]
+name = "Honesty"
+cliloc = 1012016
+location = "(722, 1366, -60)"
+
+[[facet.destination]]
+name = "Honor"
+cliloc = 1012017
+location = "(744, 724, -28)"
+
+[[facet.destination]]
+name = "Humility"
+cliloc = 1012018
+location = "(281, 1016, 0)"
+
+[[facet.destination]]
+name = "Justice"
+cliloc = 1012019
+location = "(987, 1011, -32)"
+
+[[facet.destination]]
+name = "Sacrifice"
+cliloc = 1012020
+location = "(1174, 1286, -30)"
+
+[[facet.destination]]
+name = "Spirituality"
+cliloc = 1012021
+location = "(1532, 1340, -3)"
+
+[[facet.destination]]
+name = "Valor"
+cliloc = 1012022
+location = "(528, 216, -45)"
+
+[[facet.destination]]
+name = "Chaos"
+cliloc = 1019000
+location = "(1721, 218, 96)"
+
+# Malas
+[[facet]]
+map = "malas"
+cliloc = 1060643
+selected_cliloc = 1062039
+
+[[facet.destination]]
+name = "Luna"
+cliloc = 1060641
+location = "(1015, 527, -65)"
+
+[[facet.destination]]
+name = "Umbra"
+cliloc = 1060642
+location = "(1997, 1386, -85)"
+hue = 0x0497
+
+# Tokuno
+[[facet]]
+map = "tokuno"
+cliloc = 1063258
+selected_cliloc = 1063415
+
+[[facet.destination]]
+name = "Isamu-Jima"
+cliloc = 1063412
+location = "(1169, 998, 41)"
+
+[[facet.destination]]
+name = "Makoto-Jima"
+cliloc = 1063413
+location = "(802, 1204, 25)"
+
+[[facet.destination]]
+name = "Homare-Jima"
+cliloc = 1063414
+location = "(270, 628, 15)"
+
+# Ter Mur
+[[facet]]
+map = "termur"
+cliloc = 1113602
+selected_cliloc = 1113604
+
+[[facet.destination]]
+name = "Royal City"
+cliloc = 1113603
+location = "(850, 3525, -38)"
+
+[[facet.destination]]
+name = "Valley of Eodon"
+cliloc = 1156262
+location = "(719, 1863, 40)"

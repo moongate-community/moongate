@@ -4,6 +4,7 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Decorations;
+using Moongate.Server.Ultima.Data.Moongates;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -30,6 +31,9 @@ public sealed class DecorationService : IDecorationService, IDisposable
     public const string TeleporterType = "Teleporter";
     public const string KeywordTeleporterTemplate = "decoration_keyword_teleporter";
     public const string KeywordTeleporterType = "KeywordTeleporter";
+    public const string PublicMoongateTemplate = "decoration_public_moongate";
+    public const string PublicMoongateType = "PublicMoongate";
+    public const string MoongatesFile = "moongates";
     public const string TeleportXProp = "teleport.x";
     public const string TeleportYProp = "teleport.y";
     public const string TeleportZProp = "teleport.z";
@@ -46,6 +50,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
     // ModernUO's DarkWoodDoor: the closed graphic of a facing is this plus twice the facing.
     private const int GeneratedDoorGraphic = 0x06A5;
+    private const int PublicMoongateGraphic = 0x0F6C;
 
     // How far apart in height two doors still stand in the same doorway.
     private const int DoorHeight = 16;
@@ -74,6 +79,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
     private readonly ISectorService _sectors;
     private readonly IWorldViewService _view;
     private readonly IGameLoopService _loop;
+    private readonly IPublicMoongateService? _moongates;
     private readonly SemaphoreSlim _running = new(1, 1);
 
     public bool IsRunning => _running.CurrentCount == 0;
@@ -85,9 +91,11 @@ public sealed class DecorationService : IDecorationService, IDisposable
         IItemService items,
         ISectorService sectors,
         IWorldViewService view,
-        IGameLoopService loop
+        IGameLoopService loop,
+        IPublicMoongateService? moongates = null
     )
     {
+        _moongates = moongates;
         _loader = loader;
         _doors = doors;
         _factory = factory;
@@ -129,8 +137,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
         var skipped = 0;
         var count = 0;
 
-        // The generated doors come last: a door of a file on the same spot wins.
-        await foreach (var file in WithGeneratedDoorsAsync(files, cancellationToken))
+        // The generated doors and the public moongates come last: an item of a file on the same spot wins.
+        await foreach (var file in WithGeneratedFilesAsync(files, cancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -163,7 +171,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
         return new(placed, present, skipped, count);
     }
 
-    private async IAsyncEnumerable<DecorationFile> WithGeneratedDoorsAsync(
+    private async IAsyncEnumerable<DecorationFile> WithGeneratedFilesAsync(
         IReadOnlyList<DecorationFile> files,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
@@ -180,6 +188,38 @@ public sealed class DecorationService : IDecorationService, IDisposable
                 yield return doors;
             }
         }
+
+        IReadOnlyList<MoongateFacet> facets = [];
+        await OnLoopAsync(() => facets = _moongates?.GetFacets() ?? []);
+
+        foreach (var facet in facets)
+        {
+            yield return MoongatesOf(facet);
+        }
+    }
+
+    // The gates of a map's public moongates, as a decoration file: one on each destination, as ModernUO's [MoonGen.
+    private static DecorationFile MoongatesOf(MoongateFacet facet)
+    {
+        return new()
+        {
+            Folder = EnumNameUtils.Format(facet.Map),
+            Name = MoongatesFile,
+            Maps = [facet.Map],
+            Blocks = facet.Destination
+                          .Select(
+                              destination => new DecorationBlock
+                              {
+                                  Type = PublicMoongateType,
+                                  ItemId = PublicMoongateGraphic,
+                                  Props = destination.Hue == 0
+                                      ? new Dictionary<string, object>(StringComparer.Ordinal)
+                                      : new Dictionary<string, object>(StringComparer.Ordinal) { ["hue"] = (long)destination.Hue },
+                                  Locations = [destination.Location]
+                              }
+                          )
+                          .ToList()
+        };
     }
 
     // The doors the door frames of a map call for, as a decoration file; null for a map that is not scanned. The map is
@@ -328,11 +368,11 @@ public sealed class DecorationService : IDecorationService, IDisposable
     }
 
     // Kinds whose behaviour is not written yet: a plain item in their place would look or act wrong. The plain
-    // teleporter (teleporter.lua) and the one that answers a word (keyword_teleport.lua) are written; those that ask
-    // for a skill or a quest are not.
+    // teleporter (teleporter.lua), the one that answers a word (keyword_teleport.lua) and the public moongate
+    // (public_moongate.lua) are written; the teleporters that ask for a skill or a quest are not.
     private static bool IsSkipped(string type)
     {
-        return type is "Spawner" or "MarkContainer" or "PublicMoongate" ||
+        return type is "Spawner" or "MarkContainer" ||
                !IsTeleporter(type) && type.EndsWith("Teleporter", StringComparison.Ordinal) ||
                type.EndsWith("Addon", StringComparison.Ordinal);
     }
@@ -425,7 +465,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
         var item = _factory.Create(
             door ? DoorTemplate :
             isLight ? LightTemplate :
-            teleporter ? TeleporterTemplateOf(block.Type) : DecorationTemplate
+            teleporter ? TeleporterTemplateOf(block.Type) :
+            block.Type == PublicMoongateType ? PublicMoongateTemplate : DecorationTemplate
         );
         var props = new Dictionary<string, object?>(StringComparer.Ordinal);
         item.ItemId = block.ItemId!.Value;

@@ -81,6 +81,7 @@ exists but fails compilation/execution aborts server startup.
 | `effect.on(serial, graphic, options)` | Plays an effect graphic on a mobile, which it follows, or on an item lying on the ground; `false` for something not in the world |
 | `effect.moving(from, to, graphic, options)` | Plays an effect graphic flying from one mobile or ground item to another on the same map, such as a fireball; `false` when one is not in the world or they are on two maps |
 | `effect.lightning(serial, hue)` | Strikes a mobile or a ground item with a lightning bolt; the hue is optional |
+| `moongates.facets()` | The public moongates of the loaded maps, from [`moongates.toml`](data-files/moongates.md): an array of `{ map, cliloc, selected_cliloc, destinations }`, each destination `{ name, cliloc, x, y, z }` |
 | `world.is_occupied(map, x, y)` | Whether a player or an NPC stands on the tile, at any height, such as a door's doorway; `map` is a `MapType` |
 | `world.moon(moon, x)` | The phase of `MapType.Trammel` or `MapType.Felucca` seen from the column `x`, a `MoonPhaseType` (`NewMoon`, `WaxingCrescent`, `FirstQuarter`, `WaxingGibbous`, `FullMoon`, `WaningGibbous`, `LastQuarter`, `WaningCrescent`): `world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon`. Felucca turns every 10 game minutes, Trammel every 30 |
 | `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
@@ -345,6 +346,15 @@ arrived (prop `dest_effect`), then plays the prop `sound_id` there when the tele
 number, takes the player to that map: the client changes map, then gets the season, the light,
 the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
 the accounts its visibility allows, so players walk onto a teleporter they never see.
+
+`scripts/items/public_moongate.lua` is the script of the `decoration_public_moongate` template
+that `.decorate` puts on every destination of [`moongates.toml`](data-files/moongates.md), as
+ModernUO's `PublicMoongate`: on `on_move_over`, and on `on_use` from the next cell, it builds a
+gump with `gump.create`, one page per map of `moongates.facets()` and one button per city, the
+page of the player's own map first, and plays the sound `0x20E`. A button teleports the player
+with `mobile.teleport`, to another map too, and plays `0x1FE` there. A player who walked more
+than a cell away while the gump was open is told so and stays; choosing the city of the gate
+itself does nothing.
 
 `scripts/items/keyword_teleport.lua` is the script of the `decoration_keyword_teleporter`
 template that `.decorate` gives to ModernUO's `KeywordTeleporter`, such as the mantra of a
