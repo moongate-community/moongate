@@ -32,6 +32,10 @@ public sealed class SectorService : ISectorService
     private readonly Dictionary<Serial, Sector> _sectorOf = [];
     private readonly Dictionary<Serial, Sector> _itemSectorOf = [];
 
+    // The ground items by cell, and the cell each one is filed under: the movement asks for a cell on every step.
+    private readonly Dictionary<(MapType Map, int X, int Y), List<ItemEntity>> _itemsAt = [];
+    private readonly Dictionary<Serial, (MapType Map, int X, int Y)> _itemCellOf = [];
+
     public SectorService(IDataLoaderService data, WorldConfig world, INpcTickService ticks)
     {
         _data = data;
@@ -171,6 +175,16 @@ public sealed class SectorService : ISectorService
         RemoveItem(item);
         sector.Items.Add(item);
         _itemSectorOf[item.Id] = sector;
+
+        var cell = (map, location.X, location.Y);
+
+        if (!_itemsAt.TryGetValue(cell, out var items))
+        {
+            items = _itemsAt[cell] = [];
+        }
+
+        items.Add(item);
+        _itemCellOf[item.Id] = cell;
     }
 
     public void RemoveItem(ItemEntity item)
@@ -179,6 +193,21 @@ public sealed class SectorService : ISectorService
         {
             sector.Items.RemoveAll(other => other.Id == item.Id);
         }
+
+        if (_itemCellOf.Remove(item.Id, out var cell) && _itemsAt.TryGetValue(cell, out var items))
+        {
+            items.RemoveAll(other => other.Id == item.Id);
+
+            if (items.Count == 0)
+            {
+                _itemsAt.Remove(cell);
+            }
+        }
+    }
+
+    public IReadOnlyList<ItemEntity> GetItemsAt(MapType map, int x, int y)
+    {
+        return _itemsAt.TryGetValue((map, x, y), out var items) ? items : [];
     }
 
     public bool ContainsItem(ItemEntity item)
