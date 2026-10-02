@@ -239,6 +239,28 @@ public sealed class DecorationServiceTests
     }
 
     [Fact]
+    public async Task DecorateAsync_AWalkOnAndAKeywordTeleporterOnOneCell_AreBothPlaced_Once()
+    {
+        // They do not compete: walking onto a keyword teleporter does nothing. A cell keeps one of each kind.
+        var destination = new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) };
+        var file = File(
+            "trammel",
+            Block("Teleporter", 0x1BC3, destination, new Point3D(1600, 2489, 0)),
+            Block("KeywordTeleporter", 0x1BC3, new Dictionary<string, object>(destination) { ["substring"] = "om" }, new Point3D(1600, 2489, 5))
+        );
+
+        var first = await Service(file).DecorateAsync(_progress);
+        var second = await Service(file).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(2, 0, 0, 1), first);
+        Assert.Equal(new DecorationResult(0, 2, 0, 1), second);
+        Assert.Equal(
+            ["decoration_keyword_teleporter", "decoration_teleporter"],
+            _items.Items.Select(item => item.TemplateId).Order()
+        );
+    }
+
+    [Fact]
     public async Task DecorateAsync_ATeleporterToAnotherMap_KeepsTheMapAsItsNumber()
     {
         var block = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0), ["map_dest"] = "Tokuno" });

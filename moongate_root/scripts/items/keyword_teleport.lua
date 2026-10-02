@@ -39,19 +39,22 @@ local function is_on(value)
     return value == true or value == "true"
 end
 
--- "0:0:1" is one second; a number is seconds already.
+-- "0:0:1" is one second and "0:1:1.5" a minute and a second and a half; a number, or a number written as text, is
+-- seconds already. Anything else is no delay.
 local function seconds(delay)
-    if type(delay) == "number" then
-        return delay
+    local number = tonumber(delay)
+
+    if number then
+        return math.max(number, 0)
     end
 
     if type(delay) ~= "string" then
         return 0
     end
 
-    local _, _, hours, minutes, secs = delay:find("^(%d+):(%d+):(%d+)")
+    local _, _, hours, minutes, secs = delay:find("^(%d+):(%d+):([%d%.]+)$")
 
-    if not hours then
+    if not hours or not tonumber(secs) then
         return 0
     end
 
@@ -67,7 +70,7 @@ local function in_range(serial, who)
         return nil
     end
 
-    local range = item.get_prop(serial, "range") or 0
+    local range = tonumber(item.get_prop(serial, "range")) or 0
 
     if math.abs(at.x - here.x) > range or math.abs(at.y - here.y) > range then
         return nil
@@ -123,9 +126,9 @@ local function teleport(serial, who)
             effect.at(from.map, x, y, z, EffectGraphicType.Smoke)
         end
 
-        local sound = item.get_prop(serial, "sound_id")
+        local sound = tonumber(item.get_prop(serial, "sound_id"))
 
-        if sound then
+        if sound and sound > 0 then
             mobile.play_sound(who, sound)
         end
     end

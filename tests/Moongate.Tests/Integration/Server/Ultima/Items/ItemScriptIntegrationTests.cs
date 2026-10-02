@@ -503,6 +503,41 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
     }
 
+    [Theory,
+     InlineData("0:0:2", 2.0),
+     InlineData("00:01:01.5", 61.5),
+     InlineData("3", 3.0),
+     InlineData(1.5, 1.5)]
+    public async Task TheShippedKeywordTeleporterScript_ReadsADelayAsATimeOrAsSeconds(object delay, double seconds)
+    {
+        var props = Mantra();
+        props["delay"] = delay;
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        AriaAt(1600, 1600);
+
+        scripts.Run(teleporter, "on_speech", 2L, "om om om", new LuaTable());
+
+        Assert.Empty(_errors);
+        Assert.Equal(TimeSpan.FromSeconds(seconds), Assert.Single(_timers.Timers).Interval);
+    }
+
+    [Fact]
+    public async Task TheShippedKeywordTeleporterScript_ARangeWrittenAsText_IsStillARange()
+    {
+        // A prop edited by hand: without the conversion every line spoken nearby raised a Lua error.
+        var props = Mantra();
+        props["range"] = "2";
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(1602, 1600);
+
+        scripts.Run(teleporter, "on_speech", 2L, "om om om", new LuaTable());
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
+    }
+
     [Fact]
     public async Task TheShippedKeywordTeleporterScript_WithADelay_TeleportsWhenItEndsIfThePlayerIsStillThere()
     {

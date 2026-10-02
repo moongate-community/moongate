@@ -257,7 +257,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
             {
                 var seen = new HashSet<(MapType, Point3D, int)>();
                 // The teleporters this file already keeps: the ground does not show them yet.
-                var teleporters = new List<(MapType Map, Point3D Location)>();
+                var teleporters = new List<(string Type, MapType Map, Point3D Location)>();
 
                 foreach (var candidate in candidates)
                 {
@@ -270,7 +270,9 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     else if (!seen.Add((map, location, block.ItemId!.Value)) ||
                              IsThere(map, location, block) ||
                              IsTeleporter(block.Type) &&
-                             teleporters.Any(other => other.Map == map && SharesSpot(other.Location, location)))
+                             teleporters.Any(
+                                 other => other.Type == block.Type && other.Map == map && SharesSpot(other.Location, location)
+                             ))
                     {
                         present++;
                     }
@@ -280,7 +282,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
                         if (IsTeleporter(block.Type))
                         {
-                            teleporters.Add((map, location));
+                            teleporters.Add((block.Type, map, location));
                         }
                     }
                 }
