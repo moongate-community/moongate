@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
@@ -7,6 +8,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Types.Decorations;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -15,7 +17,9 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     Places the decoration files as ModernUO's <c>[Decorate</c> does, file by file: the items are built and saved off
-///     the game loop in one transaction per file, which gives them their serials, then enter the world on the loop.
+///     the game loop in one transaction per file, which gives them their serials, then enter the world on the loop. The
+///     doors of the towns, which ModernUO's <c>[DoorGen</c> reads from the map's door frames, follow the files as one more
+///     file per map.
 /// </summary>
 public sealed class DecorationService : IDecorationService, IDisposable
 {
@@ -28,6 +32,15 @@ public sealed class DecorationService : IDecorationService, IDisposable
     public const string LinkProp = "door.link";
     public const string OutsideTheMap = "outside the map";
     public const string OpenProp = "door.open";
+    public const string FacingProp = "facing";
+    public const string GeneratedDoorType = "DarkWoodDoor";
+    public const string GeneratedDoorsFile = "generated_doors";
+
+    // ModernUO's DarkWoodDoor: the closed graphic of a facing is this plus twice the facing.
+    private const int GeneratedDoorGraphic = 0x06A5;
+
+    // How far apart in height two doors still stand in the same doorway.
+    private const int DoorHeight = 16;
 
     // ModernUO's BaseLight kinds and the light shape each gives by default.
     private static readonly Dictionary<string, LightType> LightKinds = new(StringComparer.Ordinal)
@@ -44,6 +57,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
     private readonly ILogger _logger = Log.ForContext<DecorationService>();
     private readonly IDecorationsLoader _loader;
+    private readonly IDoorGeneratorService _doors;
     private readonly IItemFactoryService _factory;
     private readonly IItemService _items;
     private readonly ISectorService _sectors;
@@ -55,6 +69,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
     public DecorationService(
         IDecorationsLoader loader,
+        IDoorGeneratorService doors,
         IItemFactoryService factory,
         IItemService items,
         ISectorService sectors,
@@ -63,6 +78,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
     )
     {
         _loader = loader;
+        _doors = doors;
         _factory = factory;
         _items = items;
         _sectors = sectors;
@@ -100,12 +116,15 @@ public sealed class DecorationService : IDecorationService, IDisposable
         var placed = 0;
         var present = 0;
         var skipped = 0;
+        var count = 0;
 
-        foreach (var file in files)
+        // The generated doors come last: a door of a file on the same spot wins.
+        await foreach (var file in WithGeneratedDoorsAsync(files, cancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             var result = await DecorateFileAsync(file, cancellationToken);
+            count++;
             placed += result.Placed;
             present += result.Present;
             skipped += result.Skipped;
@@ -127,10 +146,74 @@ public sealed class DecorationService : IDecorationService, IDisposable
             placed,
             present,
             skipped,
-            files.Count
+            count
         );
 
-        return new(placed, present, skipped, files.Count);
+        return new(placed, present, skipped, count);
+    }
+
+    private async IAsyncEnumerable<DecorationFile> WithGeneratedDoorsAsync(
+        IReadOnlyList<DecorationFile> files,
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
+    {
+        foreach (var file in files)
+        {
+            yield return file;
+        }
+
+        foreach (var map in Enum.GetValues<MapType>())
+        {
+            if (await GenerateDoorsAsync(map, cancellationToken) is { } doors)
+            {
+                yield return doors;
+            }
+        }
+    }
+
+    // The doors the door frames of a map call for, as a decoration file; null for a map that is not scanned. The map is
+    // read on the loop, a chunk per work item.
+    private async Task<DecorationFile?> GenerateDoorsAsync(MapType map, CancellationToken cancellationToken)
+    {
+        IReadOnlyList<Rectangle2D> chunks = [];
+        await OnLoopAsync(() => chunks = _doors.ChunksOf(map));
+
+        if (chunks.Count == 0)
+        {
+            return null;
+        }
+
+        var doors = new List<GeneratedDoor>();
+
+        foreach (var chunk in chunks)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await OnLoopAsync(() => doors.AddRange(_doors.Scan(map, chunk)));
+        }
+
+        var blocks = doors.GroupBy(door => door.Facing)
+                          .OrderBy(group => group.Key)
+                          .Select(
+                              group => new DecorationBlock
+                              {
+                                  Type = GeneratedDoorType,
+                                  ItemId = GeneratedDoorGraphic + 2 * (int)group.Key,
+                                  Props = new Dictionary<string, object>(StringComparer.Ordinal)
+                                  {
+                                      [FacingProp] = EnumNameUtils.Format(group.Key)
+                                  },
+                                  Locations = group.Select(door => door.Location).ToList()
+                              }
+                          )
+                          .ToList();
+
+        return new()
+        {
+            Folder = EnumNameUtils.Format(map),
+            Name = GeneratedDoorsFile,
+            Maps = [map],
+            Blocks = blocks
+        };
     }
 
     private async Task<DecorationFileResult> DecorateFileAsync(DecorationFile file, CancellationToken cancellationToken)
@@ -235,16 +318,35 @@ public sealed class DecorationService : IDecorationService, IDisposable
     // The same graphic on the spot, or a door opened from it: one graphic further and up to a tile aside, its closed
     // spot kept by door.lua.
     // A light lit or doused since is still the same kind on the same spot.
+    // A doorway holds one door: another kind already in it, closed or opened from it, keeps a new one away.
     private bool IsThere(MapType map, Point3D location, DecorationBlock block)
     {
         var graphic = block.ItemId!.Value;
         var isLight = LightKinds.ContainsKey(block.Type);
+        var isDoor = IsDoor(block.Type);
 
         return _sectors.GetItemsInRange(map, location, 1)
                        .Any(item => item.ItemId == graphic && item.GroundLocation == location ||
+                                    isDoor && item.TemplateId == DoorTemplate && StandsInDoorway(item, location) ||
                                     item.ItemId == graphic + 1 && IsOpenFrom(item, location) ||
                                     isLight && item.GroundLocation == location && item.TemplateId == LightTemplate &&
                                     Equals(item.Props?.GetValueOrDefault(TypeProp), block.Type));
+    }
+
+    private static bool StandsInDoorway(ItemEntity door, Point3D location)
+    {
+        var closed = door.Props is { } props && props.GetValueOrDefault(OpenProp) is true
+            ? props.GetValueOrDefault("door.x") is long x &&
+              props.GetValueOrDefault("door.y") is long y &&
+              props.GetValueOrDefault("door.z") is long z
+                ? new Point3D((int)x, (int)y, (int)z)
+                : (Point3D?)null
+            : door.GroundLocation;
+
+        return closed is { } spot &&
+               spot.X == location.X &&
+               spot.Y == location.Y &&
+               Math.Abs(spot.Z - location.Z) < DoorHeight;
     }
 
     private static bool IsOpenFrom(ItemEntity item, Point3D location)
@@ -312,7 +414,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
         props.Remove("unlit");
     }
 
-    // Pairs each door with an unpaired door of the same kind next to it, as ModernUO's double doors.
+    // Pairs each door with an unpaired door of the same kind next to it, as ModernUO's double doors: its halves hang on
+    // opposite sides, so two doors with the same facing are two doorways side by side.
     private static List<ItemEntity> LinkDoors(List<ItemEntity> items)
     {
         var doors = items.Where(item => item.TemplateId == DoorTemplate).ToList();
@@ -346,7 +449,9 @@ public sealed class DecorationService : IDecorationService, IDisposable
         return door.Map == other.Map &&
                door.Z == other.Z &&
                dx + dy == 1 &&
-               Equals(door.Props![TypeProp], other.Props![TypeProp]);
+               Equals(door.Props![TypeProp], other.Props![TypeProp]) &&
+               !(door.Props.GetValueOrDefault(FacingProp) is { } facing &&
+                 Equals(facing, other.Props.GetValueOrDefault(FacingProp)));
     }
 
     private static void Count(Dictionary<string, int> skipped, string type, int count)

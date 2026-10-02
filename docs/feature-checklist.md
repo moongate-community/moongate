@@ -206,7 +206,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Region music | ✅ | The region's track, else the map's; `.music` |
 | Guarded towns and region rules | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |
-| World decoration | ✅ | Placed by `.decorate` |
+| World decoration | ✅ | Placed by `.decorate`, with the shop signs and the town doors read from the map |
 | Spawn regions | ✅ | On every map: UOX3's data, ModernUO's for New Haven, Malas, Tokuno and TerMur; fast first fill, `.initial_spawn`, respawn, land and water; see [NPC spawns](spawns.md) |
 | Spawner items | ❌ | |
 | Housing | ❌ | |

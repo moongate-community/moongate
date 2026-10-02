@@ -84,8 +84,8 @@ See all of them in [Commands](commands.md).
 - **Regions, weather, music and seasons:** the region of every player is followed; each region has
   UOX3's weather, rolled every game hour (dry indoors), its music track and, if set, its season; the
   maps' seasons can rotate with the game days.
-- **Decoration:** ModernUO's world decoration (and ServUO's New Haven) placed by `.decorate`: doors,
-  locks and keys, signs, lights; the town lamp posts light up at night.
+- **Decoration:** ModernUO's world decoration (and ServUO's New Haven) placed by `.decorate`: doors
+  (those of the towns read from the map's door frames), locks and keys, shop signs, lights; the town lamp posts light up at night.
 - **NPC spawns:** UOX3's spawn regions fill the world gradually and respawn NPCs, on land and on
   water. See [NPC spawns](spawns.md).
 
