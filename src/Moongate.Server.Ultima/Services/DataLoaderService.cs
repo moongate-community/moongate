@@ -24,6 +24,8 @@ public sealed class DataLoaderService : IDataLoaderService
     {
         var registrations = _resolver.Resolve<List<DataLoaderRegistration>>(IfUnresolved.ReturnDefault) ?? [];
 
+        var globalLoaderTime = Stopwatch.GetTimestamp();
+
         foreach (var registration in registrations.OrderBy(registration => registration.Priority))
         {
             _logger.Debug(
@@ -39,6 +41,11 @@ public sealed class DataLoaderService : IDataLoaderService
                 Stopwatch.GetElapsedTime(startTime)
             );
         }
+
+        _logger.Information(
+            "All data loaders completed in {ElapsedMilliseconds} ms",
+            Stopwatch.GetElapsedTime(globalLoaderTime)
+        );
     }
 
     /// <inheritdoc />
