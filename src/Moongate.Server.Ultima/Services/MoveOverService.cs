@@ -4,11 +4,13 @@ using Moongate.Server.Ultima.Interfaces;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Runs the <c>on_move_over</c> of the scripted items a mobile steps on, through <see cref="IItemScriptService" />.
+///     Runs the <c>on_move_over</c> of the scripted items a player steps on, and their <c>on_npc_move_over</c> for an
+///     NPC, through <see cref="IItemScriptService" />.
 /// </summary>
 public sealed class MoveOverService : IMoveOverService
 {
     public const string MoveOverFunction = "on_move_over";
+    public const string NpcMoveOverFunction = "on_npc_move_over";
 
     // ModernUO's Mobile.Move: an item counts while the mobile's feet plus this are above it.
     private const int MobileReach = 15;
@@ -37,7 +39,7 @@ public sealed class MoveOverService : IMoveOverService
                 continue;
             }
 
-            _scripts.Run(item, MoveOverFunction, (long)mobile.Id.Value);
+            _scripts.Run(item, mobile.IsNpc ? NpcMoveOverFunction : MoveOverFunction, (long)mobile.Id.Value);
 
             if (mobile.Map != map || mobile.Location != cell)
             {

@@ -12,6 +12,9 @@ using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services.Diagnostics;
 using Moongate.Server.Ultima.Services;
+using Moongate.Core.Types.Geometry;
+using Moongate.Server.Ultima.Types.Weather;
+using Moongate.Ultima.Types;
 using Moongate.Server.Ultima.Types.Effects;
 using Moongate.Server.Ultima.Types.Speech;
 
@@ -69,6 +72,7 @@ public static class UltimaWorldContainerExtensions
             "character_entered_world",
             CharacterScriptEvents.CharacterEnteredWorld
         );
+        container.AddScriptEvent<PlayerRegionChangedEvent>("player_region_changed", CharacterScriptEvents.PlayerRegionChanged);
         container.AddScriptEvent<PlayerSaidEvent>("player_say", CharacterScriptEvents.PlayerSay);
         container.AddScriptEvent<CharacterLeftWorldEvent>(
             "character_left_world",
@@ -100,12 +104,16 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<ItemModule>();
         container.AddScriptModule<WorldModule>();
         container.AddScriptModule<MobileModule>();
+        container.AddScriptModule<TargetModule>();
         container.AddScriptModule<GumpModule>();
         container.AddScriptModule<BankModule>();
         container.AddScriptModule<EffectModule>();
         container.AddScriptModule<MoongatesModule>();
         // No module function takes it: registered so on_speech can compare its keywords with names.
         container.RegisterScriptEnum<SpeechKeywordType>();
+        container.RegisterScriptEnum<DirectionType>();
+        container.RegisterScriptEnum<SeasonType>();
+        container.RegisterScriptEnum<WeatherKindType>();
         container.RegisterScriptEnum<EffectGraphicType>();
         container.RegisterScriptEnum<EffectRenderModeType>();
         container.RegisterScriptEnum<EffectLayerType>();
@@ -142,6 +150,8 @@ public static class UltimaWorldContainerExtensions
         // the weather: the listeners run in this order, so those already follow the new region when it resends them.
         container.AddMoongateService<ISeasonService, SeasonService>(11);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<ISeasonService>(), Reuse.Singleton);
+        // Last: the scripts hear of the change once the light, the weather and the season of the place were sent.
+        container.Register<IRegionChangeListener, RegionEventPublisher>(Reuse.Singleton);
         container.AddMoongateService<IEquipmentService, EquipmentService>();
         container.AddMoongateService<ITooltipService, TooltipService>();
         // As the ground items: the NPCs are live before the game server takes players.

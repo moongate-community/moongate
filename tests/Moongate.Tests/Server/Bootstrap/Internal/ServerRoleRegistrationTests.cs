@@ -222,6 +222,9 @@ public sealed class ServerRoleRegistrationTests
             Assert.NotNull(container.Resolve<NpcModule>());
             Assert.NotNull(container.Resolve<ItemModule>());
             Assert.NotNull(container.Resolve<WorldModule>());
+            Assert.NotNull(container.Resolve<MobileModule>());
+            Assert.NotNull(container.Resolve<TargetModule>());
+            Assert.Contains("player_region_changed", container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(e => e.Name));
             Assert.Contains(typeof(SpeechKeywordType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
             Assert.Contains("player_say", container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(e => e.Name));
             Assert.IsType<EffectService>(container.Resolve<IEffectService>());
@@ -233,10 +236,13 @@ public sealed class ServerRoleRegistrationTests
             Assert.IsType<BankService>(container.Resolve<IBankService>());
             Assert.IsType<CharacterEnterWorldService>(container.Resolve<ICharacterEnterWorldService>());
             Assert.NotNull(container.Resolve<BankModule>());
+            // The scripts hear of a region change last, after the light, the weather, the music and the season.
+            var listeners = container.Resolve<IEnumerable<IRegionChangeListener>>().ToList();
             Assert.Equal(
                 [container.Resolve<IWeatherService>(), container.Resolve<ILightService>(), container.Resolve<IMusicService>(), container.Resolve<ISeasonService>()],
-                container.Resolve<IEnumerable<IRegionChangeListener>>()
+                listeners.Take(4)
             );
+            Assert.IsType<RegionEventPublisher>(Assert.Single(listeners.Skip(4)));
             Assert.NotNull(container.Resolve<IMobileService>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcScriptService>());
