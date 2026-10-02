@@ -17,7 +17,7 @@ namespace Moongate.Server.Ultima.Services;
 ///     Places the decoration files as ModernUO's <c>[Decorate</c> does, file by file: the items are built and saved off
 ///     the game loop in one transaction per file, which gives them their serials, then enter the world on the loop.
 /// </summary>
-public sealed class DecorationService : IDecorationService
+public sealed class DecorationService : IDecorationService, IDisposable
 {
     public const string DecorationTemplate = "decoration";
     public const string DoorTemplate = "decoration_door";
@@ -76,7 +76,7 @@ public sealed class DecorationService : IDecorationService
     )
     {
         // Two runs would both find the spots free before either adds its items.
-        if (!_running.Wait(0))
+        if (!_running.Wait(0, CancellationToken.None))
         {
             throw new InvalidOperationException("A decoration is already running.");
         }
@@ -359,5 +359,10 @@ public sealed class DecorationService : IDecorationService
         var work = new LoopActionWorkItem(action);
         await _loop.PostAsync(work, CancellationToken.None);
         await work.Completion;
+    }
+
+    public void Dispose()
+    {
+        _running.Dispose();
     }
 }

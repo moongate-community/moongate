@@ -25,7 +25,7 @@ namespace Moongate.Server.Ultima.Services;
 ///     ones carrying its id in the prop <c>spawn.region</c>, counted at every check: an NPC removed or killed frees its
 ///     slot. After a check that spawned something, the game masters and administrators get one summary message.
 /// </summary>
-public sealed class SpawnRegionService : ISpawnRegionService
+public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 {
     public const string TimerName = "npc_spawn";
     public const string RegionProp = "spawn.region";
@@ -495,5 +495,10 @@ public sealed class SpawnRegionService : ISpawnRegionService
         var work = new LoopActionWorkItem(action);
         await _loop.PostAsync(work, CancellationToken.None);
         await work.Completion;
+    }
+
+    public void Dispose()
+    {
+        _stopping.Dispose();
     }
 }

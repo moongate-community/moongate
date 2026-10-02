@@ -46,11 +46,11 @@ public sealed class CompressedGumpPacket : BasePacket<CompressedGumpPacket>, IOu
         _stringCount = gump.Strings.Count;
 
         var strings = new MemoryStream();
+        Span<byte> length = stackalloc byte[2];
 
         foreach (var text in gump.Strings)
         {
             var bytes = Encoding.BigEndianUnicode.GetBytes(text);
-            Span<byte> length = stackalloc byte[2];
             BinaryPrimitives.WriteUInt16BigEndian(length, (ushort)(bytes.Length / 2));
             strings.Write(length);
             strings.Write(bytes);

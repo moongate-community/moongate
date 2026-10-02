@@ -271,7 +271,7 @@ public sealed class CharacterService : ICharacterService
         var (strength, dexterity, intelligence, skills) = StatsAndSkills(request, race.Race);
         var (hairStyle, hairHue) = CharacterCreationRules.ValidateHair(race, gender, request.HairStyle, request.HairHue);
         var (beardStyle, beardHue) = CharacterCreationRules.ValidateBeard(race, gender, request.BeardStyle, request.BeardHue);
-        var bannedNames = _data.GetEntities<BannedNamesContent>().FirstOrDefault() ?? new BannedNamesContent();
+        var bannedNames = _data.GetEntities<BannedNamesContent>() is [var first, ..] ? first : new BannedNamesContent();
 
         return new()
         {
