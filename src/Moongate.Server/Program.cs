@@ -244,6 +244,11 @@ await ConsoleApp.RunAsync(
                             AccountType.Regular,
                             CommandMessages.HelpDescriptionText
                         )
+                        .RegisterCommand<ConsoleCommand>(
+                            "console",
+                            "Locks the console input again, as at startup: console lock.",
+                            descriptionMessage: CommandMessages.ConsoleDescription
+                        )
                         .AddMoongateService<IConsolePromptService>(consolePrompt)
                         .AddMoongateService<IConsoleInputService, ConsoleInputService>(1000);
 
