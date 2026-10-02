@@ -5,8 +5,8 @@ usage() {
     cat <<'USAGE'
 Usage: scripts/run_server.sh [--root-directory <path>] [--skip-build] [--build-only] [server options]
 
-Publishes a Release build of the server, mgboot and the migration runner into
-dist/moongate, prepares the root with mgboot and starts the server on it.
+Publishes a Release build of the server, mgboot and the migration runner into a
+clean dist/moongate, prepares the root with mgboot and starts the server on it.
 
   --root-directory <path>  Server root. Defaults to MOONGATE_ROOT.
   --skip-build             Start the build already in dist/moongate.
@@ -60,6 +60,8 @@ dist_directory="$repository_root/dist/moongate"
 
 if [[ "$skip_build" == false ]]; then
     printf 'Publishing the Release build into %s\n' "$dist_directory"
+    # A clean output: an incremental publish over an old one can leave files out, such as the bundled migrations.
+    rm -rf -- "$dist_directory"
     dotnet publish "$repository_root/src/Moongate.Server/Moongate.Server.csproj" \
         -c Release -o "$dist_directory" --nologo -v quiet
     dotnet publish "$repository_root/src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj" \
