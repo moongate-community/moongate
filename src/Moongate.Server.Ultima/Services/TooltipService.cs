@@ -4,6 +4,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Tooltips;
 using Moongate.Server.Ultima.Data.Items;
@@ -85,7 +86,12 @@ public sealed class TooltipService : ITooltipService
         return new(mobile.Id, Build(mobile).Hash);
     }
 
-    public bool TryBuildFor(Serial viewer, Serial target, [NotNullWhen(true)] out PropertyList? list)
+    public bool TryBuildFor(
+        Serial viewer,
+        Serial target,
+        [NotNullWhen(true)] out PropertyList? list,
+        AccountType account = AccountType.Regular
+    )
     {
         list = null;
 
@@ -106,7 +112,7 @@ public sealed class TooltipService : ITooltipService
             return true;
         }
 
-        if (!_items.TryGet(target, out var item) || !IsVisibleTo(character, item))
+        if (!_items.TryGet(target, out var item) || !IsVisibleTo(character, item, account))
         {
             return false;
         }
@@ -121,16 +127,35 @@ public sealed class TooltipService : ITooltipService
         ArgumentNullException.ThrowIfNull(item);
 
         var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own) ? own : (LootType?)null;
-        var key = new ItemTooltipKey(item.TemplateId, item.ItemId, item.Amount, item.Name, item.Rarity, lootType, item.Movable);
+        var labelNumber = item.TryGetProp<int>(ItemPropKeys.LabelNumber, out var label) ? label : (int?)null;
+        var key = new ItemTooltipKey(
+            item.TemplateId,
+            item.ItemId,
+            item.Amount,
+            item.Name,
+            item.Rarity,
+            lootType,
+            item.Movable,
+            labelNumber
+        );
 
-        return Cached(_itemTooltips, key, () => BuildItem(item, lootType));
+        return Cached(_itemTooltips, key, () => BuildItem(item, lootType, labelNumber));
     }
 
-    private PropertyList BuildItem(ItemEntity item, LootType? ownLootType)
+    private PropertyList BuildItem(ItemEntity item, LootType? ownLootType, int? labelNumber)
     {
         var list = new PropertyList();
         _templates.TryGet(item.TemplateId, out var template);
-        AddName(list, item, Argument(item.Name ?? template?.Name));
+
+        // The item's own name, then its label number (ModernUO's LocalizedSign), then the template's name.
+        if (item.Name is null && labelNumber is { } cliloc)
+        {
+            list.Add(cliloc);
+        }
+        else
+        {
+            AddName(list, item, Argument(item.Name ?? template?.Name));
+        }
 
         var lootType = ownLootType ?? template?.EffectiveLootType() ?? LootType.Regular;
 
@@ -189,20 +214,32 @@ public sealed class TooltipService : ITooltipService
         return list;
     }
 
-    // Carried or worn by the viewer, worn by a mobile it sees, or lying on the ground in view; never inside someone
-    // else's containers.
-    private bool IsVisibleTo(MobileEntity viewer, ItemEntity item)
+    // Carried or worn by the viewer, worn by a mobile it sees (not its bank box), or lying on the ground in view; never
+    // inside someone else's containers.
+    private bool IsVisibleTo(MobileEntity viewer, ItemEntity item, AccountType account)
     {
         if (_items.GetOwner(item) is { } owner)
         {
             return owner == viewer.Id ||
-                   (item.MobileId == owner && _mobiles.TryGet(owner, out var wearer) && InView(viewer, wearer.Map, wearer.Location));
+                   (item.MobileId == owner &&
+                    item.Layer != LayerType.Bank &&
+                    _mobiles.TryGet(owner, out var wearer) &&
+                    InView(viewer, wearer.Map, wearer.Location));
         }
 
         return item.Map is { } map &&
                item.GroundLocation is { } spot &&
                _items.IsLyingOnGround(item) &&
-               InView(viewer, map, spot);
+               InView(viewer, map, spot) &&
+               account >= VisibilityOf(item);
+    }
+
+    // The item's own visibility, else its template's; everyone sees an item with neither.
+    private AccountType VisibilityOf(ItemEntity item)
+    {
+        return item.Visibility ??
+               (_templates.TryGet(item.TemplateId, out var template) ? template.Visibility : null) ??
+               AccountType.Regular;
     }
 
     private bool InView(MobileEntity viewer, MapType map, Point3D location)

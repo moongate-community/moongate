@@ -26,7 +26,7 @@ public sealed class QueryPropertiesPacketHandler : IPacketHandler<QueryPropertie
     {
         foreach (var serial in packet.Serials)
         {
-            if (_tooltips.TryBuildFor(session.CharacterId, serial, out var list))
+            if (_tooltips.TryBuildFor(session.CharacterId, serial, out var list, session.AccountType))
             {
                 _sender.TrySend(session.SessionId, new PropertyListPacket(serial, list));
             }

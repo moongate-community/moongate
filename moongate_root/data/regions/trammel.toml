@@ -21,6 +21,8 @@
 #   go_location     where a "go to region" command takes a character, "(x, y, z)"
 #   entrance        the entrance of the town or dungeon, "(x, y, z)"
 #   music           the music played in the region (see the music list)
+#   season          the season shown in the region: spring, summer, fall, winter
+#                   or desolation; never rotates (left out: the parent's, else the map's)
 #   weather         the weather profile of weather.toml the region uses
 #   rune_name       the name of a rune marked here
 #   guarded         whether guards protect the region

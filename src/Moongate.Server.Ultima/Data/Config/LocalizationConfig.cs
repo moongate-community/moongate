@@ -7,7 +7,7 @@ public sealed class LocalizationConfig
 {
     /// <summary>
     ///     Gets or sets the language code, such as <c>eng</c> or <c>ita</c>: the server reads
-    ///     <c>data/messages/&lt;language&gt;.toml</c>.
+    ///     <c>data/messages/&lt;language&gt;.toml</c> and the toml files of <c>data/messages/&lt;language&gt;/</c>.
     /// </summary>
     public string Language { get; set; } = "eng";
 

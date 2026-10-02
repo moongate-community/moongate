@@ -66,7 +66,7 @@ internal static class PersistenceSchemaCommand
         if (mode == PersistenceSchemaMode.Apply)
         {
             throw new InvalidOperationException(
-                "Direct schema apply has been replaced. Review versioned SQL and run Moongate.MigrationRunner apply --target auth|world."
+                "Direct schema apply has been replaced. Review versioned SQL and run mgctl migrate apply --target auth|world."
             );
         }
 
@@ -138,7 +138,7 @@ internal static class PersistenceSchemaCommand
             }
 
             await output.WriteLineAsync(
-                $"Draft written to {path}. Review and commit it before running Moongate.MigrationRunner apply."
+                $"Draft written to {path}. Review and commit it before running mgctl migrate apply."
             );
 
             return;

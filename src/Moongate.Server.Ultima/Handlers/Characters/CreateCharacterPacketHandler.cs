@@ -14,10 +14,12 @@ public sealed class CreateCharacterPacketHandler : IAsyncPacketHandler<CreateCha
 {
     private readonly ILogger _logger = Log.ForContext<CreateCharacterPacketHandler>();
     private readonly ICharacterService _characters;
+    private readonly ICharacterEnterWorldService _enter;
 
-    public CreateCharacterPacketHandler(ICharacterService characters)
+    public CreateCharacterPacketHandler(ICharacterService characters, ICharacterEnterWorldService enter)
     {
         _characters = characters;
+        _enter = enter;
     }
 
     public ValueTask HandleAsync(PacketContext context, CreateCharacterPacket packet, CancellationToken cancellationToken)
@@ -43,6 +45,6 @@ public sealed class CreateCharacterPacketHandler : IAsyncPacketHandler<CreateCha
             PantsHue = packet.PantsHue
         };
 
-        return CharacterCreationReply.HandleAsync(context, _characters, request, _logger, cancellationToken);
+        return CharacterCreationReply.HandleAsync(context, _characters, _enter, request, _logger, cancellationToken);
     }
 }

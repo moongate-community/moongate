@@ -14,7 +14,7 @@ public sealed class RepositoryDecorationFilesTests
 {
     private static readonly string[] Folders =
     [
-        "britannia", "trammel", "felucca", "ilshenar", "malas", "tokuno", "_ruined_magincia_tram", "_ruined_magincia_fel",
+        "britannia", "trammel", "felucca", "ilshenar", "malas", "tokuno", "termur", "_ruined_magincia_tram", "_ruined_magincia_fel",
         "_bounty_boards"
     ];
 
@@ -24,8 +24,8 @@ public sealed class RepositoryDecorationFilesTests
         var root = DecorationsRoot();
 
         Assert.Equal(Folders.Order(), Directory.GetDirectories(root).Select(Path.GetFileName).Order());
-        Assert.Equal(103, Directory.GetFiles(root, "*.toml", SearchOption.AllDirectories).Length);
-        Assert.Equal(40655, Blocks().Sum(block => ((TomlArray)block["locations"]).Count));
+        Assert.Equal(115, Directory.GetFiles(root, "*.toml", SearchOption.AllDirectories).Length);
+        Assert.Equal(42642, Blocks().Sum(block => ((TomlArray)block["locations"]).Count));
     }
 
     [Fact]

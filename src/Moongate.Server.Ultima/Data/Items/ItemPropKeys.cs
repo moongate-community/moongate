@@ -16,6 +16,11 @@ public static class ItemPropKeys
     public const string Charges = "charges";
 
     /// <summary>
+    ///     The cliloc that names the item instead of its graphic's, as a sign with a text of the client.
+    /// </summary>
+    public const string LabelNumber = "label_number";
+
+    /// <summary>
     ///     The current durability of a weapon or armour.
     /// </summary>
     public const string Durability = "durability";

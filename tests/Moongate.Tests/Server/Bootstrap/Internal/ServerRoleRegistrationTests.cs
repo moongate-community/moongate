@@ -1,3 +1,5 @@
+using Moongate.Server.Ultima.Types.Effects;
+using Moongate.Server.Ultima.Types.Speech;
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.Incoming.Login;
@@ -18,6 +20,7 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Network;
+using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
 using Moongate.Server.Ultima;
@@ -25,6 +28,7 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
+using Moongate.Server.Ultima.Packets.Gumps;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Packets.Characters;
@@ -81,10 +85,32 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
-        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30079));
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30113));
     }
 
-    [Theory, InlineData(0x09), InlineData(0xBF), InlineData(0xD6)]
+    [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Standalone)]
+    public void Register_TheLoginRole_AcceptsTheHardwareInfoTheEnhancedClientSendsAtLogin(ServerMode mode)
+    {
+        // The Enhanced Client sends 0xD9 right after the account login: without a login handler it is disconnected.
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = mode };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: mode));
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        Assert.True(container.Resolve<PacketRegistry>().TryGetDescriptor(0xD9, PacketDirection.Incoming, out _));
+        Assert.Contains(typeof(ClientHardwareInfoPacket), container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys);
+    }
+
+    [Theory, InlineData(0x09), InlineData(0xB8), InlineData(0xBF), InlineData(0xD6)]
     public void Register_TheTooltipRequests_AreIncomingPacketsTheFramerKnows(int opCode)
     {
         // A packet with a handler but no incoming registration closes the connection when the client sends it.
@@ -130,6 +156,27 @@ public sealed class ServerRoleRegistrationTests
         Assert.Empty(twice);
     }
 
+    [Fact]
+    public void Register_TheGumpModule_ResolvesWithItsScriptsLate()
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Standalone));
+        container.RegisterMoongateEventBus();
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        Assert.NotNull(container.Resolve<GumpModule>());
+    }
+
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
     public void Register_SelectsRoleServicesAndPluginRegistrations(ServerMode mode)
     {
@@ -149,6 +196,13 @@ public sealed class ServerRoleRegistrationTests
         ServerRoleRegistration.Register(container, config, directories);
         new MoongateUltimaPlugin().Register(container);
 
+        Assert.True(container.IsRegistered<PingServerService>());
+        Assert.True(container.IsRegistered<ISqlBackupService>());
+        Assert.IsType<SqlBackupService>(container.Resolve<ISqlBackupService>());
+        Assert.Contains(
+            container.Resolve<CommandRegistry>().Registrations.Values,
+            registration => registration.Definition.DescriptionMessage == 30108
+        );
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IGameLoopService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<ISessionService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IWorldSaveService>());
@@ -168,8 +222,19 @@ public sealed class ServerRoleRegistrationTests
             Assert.NotNull(container.Resolve<NpcModule>());
             Assert.NotNull(container.Resolve<ItemModule>());
             Assert.NotNull(container.Resolve<WorldModule>());
+            Assert.Contains(typeof(SpeechKeywordType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
+            Assert.Contains("player_say", container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(e => e.Name));
+            Assert.IsType<EffectService>(container.Resolve<IEffectService>());
+            Assert.IsType<PublicMoongateService>(container.Resolve<IPublicMoongateService>());
+            Assert.NotNull(container.Resolve<MoongatesModule>());
+            Assert.IsType<ItemHearingService>(container.Resolve<IItemSpeechListener>());
+            Assert.NotNull(container.Resolve<EffectModule>());
+            Assert.Contains(typeof(EffectGraphicType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
+            Assert.IsType<BankService>(container.Resolve<IBankService>());
+            Assert.IsType<CharacterEnterWorldService>(container.Resolve<ICharacterEnterWorldService>());
+            Assert.NotNull(container.Resolve<BankModule>());
             Assert.Equal(
-                [container.Resolve<IWeatherService>(), container.Resolve<ILightService>()],
+                [container.Resolve<IWeatherService>(), container.Resolve<ILightService>(), container.Resolve<IMusicService>(), container.Resolve<ISeasonService>()],
                 container.Resolve<IEnumerable<IRegionChangeListener>>()
             );
             Assert.NotNull(container.Resolve<IMobileService>());
@@ -238,16 +303,18 @@ public sealed class ServerRoleRegistrationTests
                     typeof(ClientHardwareInfoPacket), typeof(AttackRequestPacket), typeof(LiftRequestPacket),
                     typeof(DropRequestPacket), typeof(TextCommandPacket), typeof(EquipRequestPacket),
                     typeof(ResynchronizeRequestPacket), typeof(UnicodeSpeechRequestPacket), typeof(OpenChatWindowPacket),
-                    typeof(ClientTypePacket), typeof(PublicHouseContentPacket)
+                    typeof(ClientTypePacket), typeof(PublicHouseContentPacket), typeof(GumpResponsePacket)
                 ],
                 packet => Assert.Contains(packet, container.Resolve<PacketHandlerRegistry>().Registrations.Keys)
             );
             // The host registers the event bus; this test container does not.
             container.RegisterMoongateEventBus();
             var listeners = container.ResolveMany<ISessionClosedListener>().ToList();
-            Assert.Equal(2, listeners.Count);
+            Assert.Equal(4, listeners.Count);
+            Assert.Contains(listeners, listener => listener is BankService);
             Assert.Contains(listeners, listener => listener is CharacterLeaveWorldService);
             Assert.Contains(listeners, listener => listener is TargetService);
+            Assert.Contains(listeners, listener => listener is GumpService);
             Assert.Contains(
                 "character_left_world",
                 container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(registration => registration.Name)

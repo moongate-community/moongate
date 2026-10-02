@@ -20,6 +20,20 @@ public sealed class WorldMigrationsTests
     }
 
     [Fact]
+    public async Task ACommentThatDiffersFromTheModel_DoesNotStopStartup()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        host.Container.AddPersistenceWorld<MobileEntity>().AddPersistenceWorld<ItemEntity>();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+
+        // A single-file build cannot read the XML docs the model takes its comments from: it sees none.
+        await host.Database.ExecuteAsync("COMMENT ON COLUMN world.items.template_id IS 'edited'");
+        await host.Database.ExecuteAsync("COMMENT ON COLUMN world.items.x IS 'only in the database'");
+
+        await host.Owner.InitializeAsync();
+    }
+
+    [Fact]
     public async Task ANotorietyOutsideTheEnum_IsRejectedByTheDatabase()
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);

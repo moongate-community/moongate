@@ -16,10 +16,12 @@ public sealed class CreateCharacterEnhancedPacketHandler : IAsyncPacketHandler<C
 {
     private readonly ILogger _logger = Log.ForContext<CreateCharacterEnhancedPacketHandler>();
     private readonly ICharacterService _characters;
+    private readonly ICharacterEnterWorldService _enter;
 
-    public CreateCharacterEnhancedPacketHandler(ICharacterService characters)
+    public CreateCharacterEnhancedPacketHandler(ICharacterService characters, ICharacterEnterWorldService enter)
     {
         _characters = characters;
+        _enter = enter;
     }
 
     public ValueTask HandleAsync(
@@ -50,6 +52,6 @@ public sealed class CreateCharacterEnhancedPacketHandler : IAsyncPacketHandler<C
             PantsHue = new Hue(0)
         };
 
-        return CharacterCreationReply.HandleAsync(context, _characters, request, _logger, cancellationToken);
+        return CharacterCreationReply.HandleAsync(context, _characters, _enter, request, _logger, cancellationToken);
     }
 }

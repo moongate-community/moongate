@@ -34,6 +34,7 @@ items = ["0x1eff_fancy_dress"]
 
 [[mobile]]
 id = "f_banker"
+script_id = "banker"
 base_id = "basehuman"
 name_list = "female"
 title = "the Banker"
@@ -1349,6 +1350,7 @@ items = ["armorswampdragon"]
 
 [[mobile]]
 id = "f_gypsybanker"
+script_id = "banker"
 base_id = "basehuman"
 name_list = "female"
 title = "the Gypsy Banker"

@@ -5,6 +5,8 @@ using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Persistence.Interfaces;
+using Moongate.Persistence.Services;
 using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Modules;
@@ -17,11 +19,14 @@ using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Persistence;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Server.Services.GameLoop;
+using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
@@ -49,6 +54,21 @@ internal static class ServerRoleRegistration
         );
         container.RegisterDelegate<RedisConfig>(resolver => resolver.Resolve<MoongateServerConfig>().Redis, Reuse.Singleton);
         container.AddMoongateService<RedisConnectionService>(-1000);
+        container.RegisterInstance(config.Network.ToPingServerOptions());
+        container.AddMoongateService<PingServerService>();
+        container.RegisterInstance(config.SqlBackup.ToOptions(directories.Root));
+        container.RegisterDelegate<IPersistenceDataExporter>(
+            resolver => resolver.Resolve<MoongatePersistenceService>(),
+            Reuse.Singleton
+        );
+        container.AddMoongateService<ISqlBackupService, SqlBackupService>()
+            .RegisterCommand<SqlBackupCommand>(
+                "sql_backup",
+                "Saves the world, then writes a SQL backup of the databases this server owns.",
+                CommandSourceType.Console | CommandSourceType.InGame,
+                AccountType.Administrator,
+                CommandMessages.SqlBackupDescription
+            );
         container.RegisterDelegate<RedisRealmDirectoryService>(
             resolver => new(
                 resolver.Resolve<RedisConnectionService>(),

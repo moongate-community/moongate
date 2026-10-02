@@ -13,9 +13,12 @@
 #   size        width and height in tiles, as "(width, height)"
 #   rules       the rule set applied on the map
 #   season      the season sent with packet 0xBC: spring, summer, fall, winter or
-#               desolation
+#               desolation; with [ultima.world] season_rotation it is where the
+#               rotation starts (desolation never rotates)
 #   weather     the weather profile of weather.toml used where no region covers
 #               a place
+#   music       the music track (a MusicType name such as britain1) played where
+#               no region with music covers a place; left out, the music stops
 # ==============================================================================
 
 [[map]]

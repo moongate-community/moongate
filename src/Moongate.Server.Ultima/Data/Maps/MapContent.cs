@@ -22,4 +22,9 @@ public class MapContent
     /// </summary>
     public string Weather { get; set; } = "none";
 
+    /// <summary>
+    ///     Gets or sets the music played where no region with music covers a place; none stops the music.
+    /// </summary>
+    public MusicType? Music { get; set; }
+
 }

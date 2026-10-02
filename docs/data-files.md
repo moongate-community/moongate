@@ -9,12 +9,12 @@ stops the server at startup with an error that says what is wrong. The
 [MOTD](motd.md) is optional: a missing file logs a warning and sends no welcome
 message.
 
-The files ship beside the `Moongate.Server` binary, in `data/`; the repository copy
-is `moongate_root/data/`. `mgboot` (or `Moongate.Server --initialize-root`) copies
+The files ship beside the `mgserver` binary, in `data/`; the repository copy
+is `moongate_root/data/`. `mgctl` (or `mgserver --initialize-root`) copies
 every missing file into `<root>/data` and never replaces one that exists, so a file
-you edited survives an upgrade. After an upgrade, run `mgboot` again to add new
+you edited survives an upgrade. After an upgrade, run `mgctl init` again to add new
 files and compare your edited files with the shipped ones to pick up upstream
-changes. See [What it creates](mgboot.md#what-it-creates).
+changes. See [What it creates](mgctl.md#what-it-creates).
 
 C# code reads the loaded entries through `IDataLoaderService`:
 
@@ -37,15 +37,16 @@ it.
 | --- | --- | --- | --- |
 | <span id="maps"></span><span id="validation-at-startup"></span><span id="read-the-map-from-code"></span>[`maps.toml`](data-files/maps.md) | `MapContent` | first; its `weather` is checked by the regions loader | Yes, `IMapService` opens the client files of each map |
 | <span id="starting-cities"></span><span id="validation-at-startup-1"></span>[`starting_cities.toml`](data-files/starting-cities.md) | `StartingCityContent` | maps | Yes, in the character list |
+| <span id="moongates"></span>[`moongates.toml`](data-files/moongates.md) | `MoongateFacet` | maps | Yes, by `.decorate` and the moongate script |
 | <span id="skills"></span><span id="validation-at-startup-2"></span>[`skills.toml`](data-files/skills.md) | `SkillContent` | starting cities | No |
 | <span id="professions"></span><span id="validation-at-startup-3"></span>[`professions.toml`](data-files/professions.md) | `ProfessionContent` | skills (every starting skill must exist) | Yes, character creation |
 | <span id="races"></span><span id="validation-at-startup-4"></span>[`races.toml`](data-files/races.md) | `RaceContent` | professions | Yes, character creation and mobile appearance |
 | <span id="banned-names"></span><span id="validation-at-startup-5"></span>[`banned_names.toml`](data-files/banned-names.md) | `BannedNamesContent` | races | Yes, character name validation |
 | <span id="containers"></span><span id="validation-at-startup-8"></span>[`containers.toml`](data-files/containers.md) | `ContainerContent` | banned names | Yes, backpack item placement |
 | <span id="bodies"></span><span id="validation-at-startup-9"></span>[`bodies.toml`](data-files/bodies.md) | `BodyContent` | containers | No |
-| <span id="weather"></span><span id="validation-at-startup-10"></span>[`weather.toml`](data-files/weather.md) | `WeatherContent` | bodies | No |
-| <span id="regions"></span><span id="areas"></span><span id="parents-and-overlaps"></span><span id="travel-zones"></span><span id="validation-at-startup-11"></span><span id="add-a-region"></span>[`regions/<map>.toml`](data-files/regions.md) | `RegionContent` | weather (every profile must exist), maps | No |
-| <span id="messages"></span>[`messages/<lang>.toml`](data-files/messages.md) | `MessageContent` | regions | Yes, through `ILocalizationService` |
+| <span id="weather"></span><span id="validation-at-startup-10"></span>[`weather.toml`](data-files/weather.md) | `WeatherContent` | bodies | Yes, `IWeatherService` rolls each profile's weather and sends it to the players |
+| <span id="regions"></span><span id="areas"></span><span id="parents-and-overlaps"></span><span id="travel-zones"></span><span id="validation-at-startup-11"></span><span id="add-a-region"></span>[`regions/<map>.toml`](data-files/regions.md) | `RegionContent` | weather (every profile must exist), maps | Yes, `IRegionService` keeps each player's region for its music, weather, season and light; the guard, housing and travel rules are not read yet |
+| <span id="messages"></span>[`messages/<lang>.toml`, `messages/<lang>/*.toml`](data-files/messages.md) | `MessageContent` | regions | Yes, through `ILocalizationService` |
 | <span id="names"></span><span id="validation-at-startup-6"></span>[`names.toml`](data-files/names.md) | `NameList` | messages | Yes, through `INameService` |
 | <span id="starting-items"></span><span id="validation-at-startup-7"></span>[`starting_items.toml`](data-files/starting-items.md) | `StartingItemSet` | names (after the item templates of `templates/items/`, which every item must name) | Yes, through `IStartingItemsService` |
 | [`motd.toml`](motd.md) | `MotdLine` | after mobile templates and plugin variable registration | Yes, on every character entry; optional file |
@@ -94,5 +95,5 @@ at startup. A broken file stops the start, and the log shows the error.
 - [Loading TOML templates](templates.md): the `IDataLoader<T>` contract, how
   loaders are registered and run, and the TOML converters.
 - [Localization](localization.md): the message files and `ILocalizationService`.
-- [Prepare a server root with mgboot](mgboot.md): how the data files get into a
+- [Prepare a server root with mgctl](mgctl.md): how the data files get into a
   root.

@@ -1,40 +1,158 @@
 # Implementation status
 
-Moongate is under active development. This page is the one place that says what
-the server does today and what it does not, so the other guides can describe a
-mechanism without repeating the caveat. It describes the current source tree;
-the [changelog](../CHANGELOG.md) records what each published release added.
+Moongate is under active development: **the world is not a game yet**. This page says what the
+server does today and what it does not. It describes the current source tree; the
+[changelog](../CHANGELOG.md) records what each release added, and the
+[feature checklist](feature-checklist.md) goes system by system through what UO emulators usually offer.
+The [roadmap](roadmap.md) gives the order in which the missing systems are built.
 
-**In one sentence:** the transport, packet pipeline, scripting, persistence, shard data,
-client-file readers with movement and line-of-sight checks, and Redis-backed realm
-discovery and login-to-game handoff are in place; account
-authentication reaches a game session, which lists the account's characters; a new character
-is created and saved with its starting items, and a deleted character is only marked and can be restored by staff (nothing removes it yet);
-choosing a character brings it into the world, standing and dressed, it walks and runs, its backpack opens and its items can be moved inside it, its paperdoll opens and it dresses and undresses from it, players within 18 tiles see each other log in, walk, turn and log out, and items can be dropped on the ground, seen by the players nearby and picked up again, and decay there after their template's time; game masters spawn NPCs with `.spawn` and remove them with `.remove`, and players nearby see them; the UOX3 spawn regions fill the world with NPCs gradually and respawn them, on land and water ([NPC spawns](spawns.md)); the world has its decoration (`.decorate`): doors open and close from Lua, locked doors open only for a player carrying their key (`.lock`, `.unlock`, `.key`), lights can be lit and doused, and the town lamp posts light up at night; the light follows a day/night cycle by map and longitude, dungeons are dark and jails dim; each region has its weather (rain, snow, storms with thunder, dry indoors); NPCs near a player get a think timer on the game loop, while the others sleep, and a mobile template's Lua script (`script_id`) makes them act on each think, when spawned and when a mobile comes near, and answer what players say nearby (`npc.say`, `npc.step`); an item template's Lua script (`script_id`) handles a double click with `on_use`, being worn and taken off with `on_equip`/`on_unequip`, lifted and put down with `on_pickup`/`on_drop`, created with `on_create`, and the `item` module.
+## At a glance
 
-| Area | Works today | Not built yet |
+| Area | State | In short |
 | --- | --- | --- |
-| Transport | Framed TCP listener and client, per-connection pipelines, connection and session registries, graceful shutdown | |
-| UO client encryption | Configurable POL-compatible login and game encryption with `Disabled`, `Optional` and `Required` policies, per-connection stream state and startup diagnostics; [configuration](server-configuration.md#uo-client-encryption) | Old Kingdom Reborn AES/E3 negotiation; interactive Enhanced Client interoperability has not been verified |
-| Packets | Wire table, typed packet definitions and game-loop/async handlers; plugins add incoming packets with `RegisterIncomingPacket`; `0x80` login, `0xA8` list, `0xA0` selection, `0x8C` redirect, raw game seed, `0x91` handoff, then Huffman-compressed `0xB9` features and `0xA9` character list (the account's characters in their slots, starting cities); `0xF8` and `0x8D` create and save a character (refusals answered with popup `0x53`); `0x83` marks a character for deletion (answered with `0x86` or `0x85`); `0x5D` brings the character into the world (0x1B, 0xBF/0x08, 0xBC, 0x4F, 0x4E, 0x20, 0x78, 0x11, 0x72, 0x55, 0x5B); one character per account in the world (a second is refused with `0x53`); `0x02` walks and runs with sequence and speed checks (answered with `0x22` or `0x21`), and a character leaves the world and is saved when its session closes; players in range see each other through 16×16 map sectors (`0x78` on login and when coming into range, `0x77` for steps and turns, `0x1D` when leaving range or the world); `0x06` opens a container the character carries (`0x24` and `0x3C`), or the paperdoll (`0x88`) of the character or of a human-bodied mobile in view; `0x07` and `0x08` move items inside the character's containers, off its paperdoll and on the ground within 2 tiles, splitting and merging stacks (`0x25`, `0x27`, `0x1A`/`0xF3` to the players in range), and `0x13` puts the held item on the character (layer free, two hands: `two_handed_weapon`) with `0x2E` to the players in range, or bounces it back; `0x6C` target cursor with typed results (`ITargetService`, `.where`); NPCs spawned with `.spawn <template>` and removed with `.remove` (`INpcService`) are shown with `0x78` to the players in range; `0xC8` is answered with the configured view range (`ultima.world.view_range`); `0x4F` sends the light of the time of day and of the region (dark dungeons, dim jails, `.globallight`), and light sources carry their light shape in `0x1A`/`0xF3`; `0x65` sends the weather of the player's region, with thunder (`0x54`) in storms; AOS tooltips: `0xD6` and `0xBF`/`0x10` are answered with `0xD6` (name, amount, blessed or cursed, weight, rarity; mobiles name and title) for what the character sees, `0xDC` follows what is shown, and a single click (`0x09`) shows the name with `0xC1`; the packets the client sends around and after entering (0x05, 0x12, 0x22, 0x34, 0x72, 0xAD, 0xB5, 0xD9, 0xE1, 0xFB) are recognised and ignored; packets sent while an async handler runs wait and run after it | Combat and pathfinding AI (NPCs run their Lua mobile script: `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, with `npc.say`/`step`/`location`/`name`), teleports and map changes, opening containers on the ground, dressing other characters from their paperdoll, strength requirements, mounts, region rules (guards, housing, music) |
-| Login and realms | `mode` selects separate login/game services or combined standalone. Redis leases advertise live realms; login filters by account level and issues one-use handoff tickets | |
-| Game loop | Single owner thread, bounded queues, timer wheel, admission and completion semantics | |
-| Scripting | Sandboxed Lua 5.2, deterministic instruction budget, `engine`, `log`, `timer`, `events` modules, `wait`, reload, editor definitions; C# modules from plugins; in the Ultima plugin `dice`, `localization`, `npc`, `item` and `world` modules (props kept across restarts, item graphics, moves, sounds and light, the time of day, staff and occupancy checks), and mobile and item scripts bound from templates by `script_id`; the shipped `door.lua`, `light.lua` and `wander.lua` | World, character and inventory APIs beyond `npc` and `item` |
-| Persistence | Entity registration on two databases, async reads and writes, transactions, automatic Serial assignment, world saves, versioned SQL with a separate runner, development migration generation; world `mobiles` and `items` tables with location checks and cascading deletes; the characters in the world and the items they carry are saved from memory by the world save and when they leave; the items on the ground, with their contents, and the NPCs, with their items, are loaded at startup and saved by the world save; a removed mobile is deleted by the next world save | No database backup or restore |
-| Accounts | `AccountEntity` in Accounts; `IAccountService` creates, lists and verifies login; console `account create`; game accepts a valid handoff without Accounts database access | |
-| Shared transient state | Private Redis with expiring, fenced realm leases and one-use handoff tickets; startup checks connectivity and rejects new handoffs during outages | General cache use and other cross-process features |
-| Shard data | Maps, starting cities, skills, professions, races, banned names, containers, bodies, weather and regions loaded from `data/` with startup validation; shipped with the server and copied by `mgboot`; maps, starting cities, professions, races, banned names, container layouts, messages, name lists, starting-item sets and body types (who has a paperdoll) have runtime consumers; [guide](data-files.md) | Skill gain, other body-category gameplay and region-rule enforcement are not implemented; regions drive the weather and the dungeon light only |
-| Client files | `ultima.ultima_path` checked at startup, client version logged, `tiledata.mul` loaded into `TileData` (land and item flags, heights, weights, names) and read through `ITileDataService`; map terrain and statics of every `maps.toml` map (MUL or UOP) read through `IMapService` with a block cache; every multi layout (houses, boats) from `MultiCollection.uop`, or `multi.idx` with `multi.mul`, read through `IMultiService`; one step's walkability and landing Z through `IMovementService` (terrain and statics, as ModernUO); line of sight through `ILineOfSightService` (POL's integer line walk, ModernUO's rules, `ultima.line_of_sight.max_distance`); [guide](world-queries.md) | Items and mobiles in the movement check, items, mobiles and multis in line of sight, house placement |
-| Templates | `ItemTemplate` and `LootTemplate` shapes, `EnumValueSpec`, `RangeValueSpec`, TOML converters, loader contract; item templates of `templates/items/` loaded with `base_id` resolved (`IItemTemplateService`); items created from them and saved with a real serial (`IItemFactoryService`); starting items given through `IStartingItemsService`; mobile templates of `templates/mobiles/` loaded (`IMobileTemplateService`); NPCs spawned dressed with a real serial through `IMobileFactoryService`, with before-spawn, moved-to-world and after-spawn events; loot tables loaded and rolled, with gold and spare equipment, into every spawned NPC's backpack (`ILootService`); mobile templates say where their mobiles move (`movement`: land, water, both); NPC lists and spawn regions of `templates/npc_lists/` and `templates/spawns/` ([NPC spawns](spawns.md)); world decoration of `templates/decorations/`, placed by `.decorate` | No death or corpses; no combat AI; no spawner items (the spawn regions of [NPC spawns](spawns.md) respawn NPCs); starting items are given when a character is created (`ICharacterService`) |
-| World | Game clock and day/night light by map and longitude, darkness in dungeons and dim jails (`ILightService`); region lookup and region changes (`IRegionService`); UOX3 region weather rolled each game hour (`IWeatherService`); ground items decay after their template's time; decoration placed by `.decorate`, with doors, locks and keys, lights and lamp posts lit at night; spawn regions that fill and respawn NPCs, on land and water (`ISpawnRegionService`); [commands](commands.md) for game masters | Teleporters and public moongates, spawner items, house and boat placement, seasons |
-| Localization | `ultima.localization.language`, message files in 8 languages ported from UOX3 with English fallback, startup validation, `ILocalizationService` and the `localization` Lua module; [guide](localization.md) | Per-player language; tooltips show the rarity messages, nothing else sends these messages yet |
-| Administration | Embedded optional gRPC plugin, private server TLS, Redis sessions, account login/list/create/revoke and server info; [guide](admin-api.md) | Panel backend/UI and character operations |
-| Plugins | Assemblies under `plugins/` registering services, commands, Lua modules, metric providers, entities, SQL and their own `moongate.toml` section (`AddConfig`) | |
-| Diagnostics | Periodic process metrics, plugin metric providers, snapshot events | |
-| Tools | Migration runner (0.6.0); `mgboot` root preparation with optional [administration TLS certificate setup](mgboot.md#generate-an-administration-certificate), and `mg-uoxconv` after 0.6.0 | |
-| Docker | Source-built [one login and two game instances example](docker-login-realms.md) with role-local PostgreSQL credentials, private Redis and a lease smoke test | |
+| Login, realms and accounts | ✅ Works | Login server, game realms, handoff between them |
+| Characters | ✅ Works | Create, delete and restore, enter the world, walk and run |
+| Other players | ✅ Works | See each other, talk |
+| Items | 🟡 Partial | Backpack, paperdoll, ground, tooltips; no ground containers |
+| NPCs | 🟡 Partial | Spawn regions, Lua scripts, wandering; no combat or pathfinding |
+| World | 🟡 Partial | Decoration, doors and keys, teleporters and public moongates (also across maps), day and night, weather, seasons; no houses |
+| Combat, death, skill gain | ❌ Not yet | |
+| Lua scripting | ✅ Works | NPC and item scripts, sandboxed |
+| Persistence | ✅ Works | PostgreSQL, world saves, migrations, rotating SQL backups |
+| Administration | 🟡 Partial | Console and in-game commands, gRPC API; no web panel |
 
-Settings that exist only as a contract: `network.enable_ping_server`, and
-the `--log-level` and `--log-packets` command-line options are parsed and validated
-but have no runtime consumer; see the
+## What a player can do
+
+- Log in, pick a realm, create a character (with its starting items) and enter the world.
+- Walk and run, with the server checking the terrain, the statics and the speed.
+- See the other players within 18 tiles, and talk to them.
+- Open the backpack, move items in it, split and merge stacks, drop items on the ground and pick
+  them up; items left on the ground decay.
+- Open the paperdoll, dress and undress (two-handed weapons included).
+- Read tooltips and names of what is in view.
+- Open doors, and locked doors when carrying their key; light and douse lights.
+- See day and night pass, dark dungeons, and the weather, the season and the music of each region
+  (rain, snow, storms).
+- Step on a teleporter, or say the word of one that answers a word, and arrive elsewhere, also on
+  another map; step into a moongate.
+- Read the game time and the moon phases where they stand: `.time`.
+- Meet NPCs that wander around their home, greet and answer.
+- Open the bank box at a banker by saying *bank*, in any client language.
+
+## What a game master can do
+
+- Spawn and remove single NPCs: `.spawn`, `.remove`.
+- See the spawn regions where they stand: `.spawns`; get a message when regions spawn.
+- Go to any spot of any map: `.go`.
+- Lock and unlock doors and make their keys: `.lock`, `.unlock`, `.key`.
+- Force the light, the weather or the season, try a music track: `.globallight`, `.weather`,
+  `.season`, `.music`.
+- Try any gump on themselves: `.gump`.
+- Set fame and karma, inspect what a target cursor picks: `.fame`, `.karma`, `.where`.
+- Restore a character waiting to be deleted: `.character`.
+
+An administrator also places the decoration, fills the spawn regions again (`.initial_spawn`),
+saves, takes a SQL backup (`.sql_backup`), broadcasts, shuts down and manages accounts.
+
+See all of them in [Commands](commands.md).
+
+## Not built yet
+
+- Combat, death, corpses and skill gain.
+- Pathfinding AI: NPCs only run their Lua script (`on_think`, `on_speech`, `on_spawn`,
+  `on_mobile_in_range`).
+- Recall and gate travel, and mounts.
+- Houses and boats (placement, and multis in movement and line of sight).
+- Containers on the ground, dressing other characters, strength requirements.
+- Region rules: guards and housing. Regions drive the weather, the dungeon light, the music and the season.
+- Spawner items (the [spawn regions](spawns.md) do the respawning).
+- Per-player language, a restore command for the SQL backups, a web administration panel.
+- Old Kingdom Reborn AES/E3 encryption. The Enhanced Client logs in, creates a character, enters the world and
+  walks; the rest is partial: see [Enhanced Client](enhanced-client.md).
+
+## By area
+
+### Network and login
+
+- Framed TCP with per-connection pipelines, session registries and graceful shutdown.
+- POL-compatible client encryption with `Disabled`, `Optional` and `Required` policies
+  ([configuration](server-configuration.md#uo-client-encryption)).
+- `mode` runs separate login and game servers or one standalone process. Game realms advertise
+  themselves through Redis leases; the login filters them by account level and hands the player
+  over with a one-use ticket.
+- The packets the server handles and sends are listed in the [packet reference](packets.md).
+
+### World
+
+- **Movement and sight:** walkability and landing height from the terrain and the statics (as
+  ModernUO), line of sight (as POL and ModernUO). Items, mobiles and multis are not part of these
+  checks yet. See [World queries](world-queries.md).
+- **Map sectors:** players, NPCs and ground items are seen within the view range; NPCs away from
+  every player sleep.
+- **Light:** a game clock with day and night by map and longitude, and the phases of the two moons;
+  dark dungeons and dim jails.
+- **Regions, weather, music and seasons:** the region of every player is followed; each region has
+  UOX3's weather, rolled every game hour (dry indoors), its music track and, if set, its season; the
+  maps' seasons can rotate with the game days.
+- **Decoration:** ModernUO's world decoration (and ServUO's New Haven) placed by `.decorate`: doors
+  (those of the towns read from the map's door frames), locks and keys, shop signs, lights, and
+  teleporters, both the ones a player steps on and the ones that answer a word; the town lamp posts
+  light up at night.
+- **Effects:** graphic effects at a spot, on a mobile or a ground item, flying from one to another,
+  and lightning, from scripts with the `effect` module; particles for the Enhanced Client.
+- **NPC spawns:** spawn regions on every map, from UOX3's data and ModernUO's for New Haven, Malas,
+  Tokuno and TerMur. Each region fills to its maximum at its first spawn after the start, then
+  respawns NPCs gradually, on land and on water. See [NPC spawns](spawns.md).
+
+### Scripting
+
+- Sandboxed Lua 5.2 with an instruction budget, `wait`, timers, events, hot reload and editor
+  definitions. See [Writing Lua scripts](scripting.md).
+- Modules: `engine`, `log`, `timer`, `events`, and in the Ultima plugin `dice`, `localization`,
+  `npc`, `item`, `world`, `mobile`, `gump`, `bank` and `effect`.
+- Gumps: XML layouts checked by `gump.xsd`, a Lua script per gump for the answers, slots and whole
+  gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
+  [Your first gump](gump-tutorial.md).
+- Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
+  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `wander.lua`,
+  `banker.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
+  and `gumps/tutorial_list.lua`.
+- Not yet: APIs for stats, skills and inventory.
+
+### Data and templates
+
+- Shard data in `data/` (maps, starting cities, skills, professions, races, names, containers,
+  bodies, regions, weather, messages), validated at startup. See [Data files](data-files.md).
+- Templates in `templates/`: items, loot, mobiles, NPC lists, spawn regions and decoration, with
+  `base_id` inheritance, and the XML gumps of `templates/gumps`. See
+  [Loading TOML templates](templates.md) and [Gumps](gumps.md).
+- Client files read from `ultima.ultima_path`: tile data, maps (MUL or UOP) and multis.
+- Messages in 8 languages, ported from UOX3; a language can be split into several toml
+  files. See [Localization](localization.md).
+
+### Persistence
+
+- Two PostgreSQL databases (accounts and world) with transactions and versioned SQL migrations,
+  applied by `mgctl migrate`.
+- Characters, their items, ground items and NPCs are kept in memory and written by the periodic
+  world save; characters are also saved when they leave.
+- Not yet: a restore command; restoring a [SQL backup](persistence-operations.md#database-backups) is a manual `psql` step.
+
+### Administration and tools
+
+- Console and in-game [commands](commands.md), translated in every shipped language.
+- A logged exception is one line on the console and a Markdown report under `logs/errors`, ready
+  for a GitHub issue; see [When something fails](getting-started.md#when-something-fails).
+- Optional gRPC [administration API](admin-api.md) with TLS: accounts and server info. No web panel
+  or character operations yet.
+- Plugins under `plugins/` register services, commands, Lua modules, metrics, entities, SQL and
+  their own config section. See [Writing a plugin](plugins.md).
+- Tools: [`mgctl`](mgctl.md) prepares the server root, applies the database migrations and converts
+  UOX3 and ModernUO content. A [Docker example](docker-login-realms.md) runs one login and
+  two game servers.
+
+## Settings with no effect yet
+
+The `--log-level` and `--log-packets` command-line options are parsed and validated but nothing
+uses them yet; see the
 [configuration reference](server-configuration.md#settings-and-validation).

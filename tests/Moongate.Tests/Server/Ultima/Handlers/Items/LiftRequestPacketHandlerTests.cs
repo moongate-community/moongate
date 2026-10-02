@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
@@ -43,6 +44,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _shirt = new() { Id = new(0x40000008), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
     private readonly ItemEntity _otherShirt = new() { Id = new(0x40000009), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
     private readonly StubItemSerialPool _pool = new();
+    private readonly StubBankService _bank = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0);
 
     private SessionFixture _fixture = null!;
@@ -96,6 +98,32 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         Assert.Null(_session.Get(ItemSessionKeys.Held));
         Assert.Equal(5, torches.Amount);
         Assert.Single(_items.GetWorn(Aria), item => item.Layer == LayerType.TwoHanded);
+    }
+
+    [Fact]
+    public async Task Handle_AnItemInAClosedBank_IsRefusedAndShownBack()
+    {
+        await StartAsync(Aria);
+        _bank.Locked.Add(_dagger.Id);
+
+        await LiftAsync(_dagger.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        AssertRefused(LiftRejectReasonType.CannotLift, _dagger);
+    }
+
+    [Fact]
+    public async Task Handle_TheBankBox_IsRefusedAndShownBackOnTheCharacter()
+    {
+        var box = Item(0x4000000A, 1);
+        box.Equip(Aria, LayerType.Bank);
+        _items.Add([box]);
+        await StartAsync(Aria);
+
+        await LiftAsync(box.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal([typeof(LiftRejectPacket), typeof(WornItemPacket)], _sender.Sent.Select(packet => packet.GetType()));
     }
 
     [Fact]
@@ -371,7 +399,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private Task LiftAsync(Serial item, int amount)
     {
-        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts);
+        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new LiftRequestPacket { Item = item, Amount = amount }));
     }

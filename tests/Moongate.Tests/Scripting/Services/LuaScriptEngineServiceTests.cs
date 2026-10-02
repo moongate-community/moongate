@@ -1,3 +1,4 @@
+using Lua;
 using DryIoc;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Events;
@@ -69,6 +70,21 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
 
         Assert.Equal(ScriptResultKind.Completed, result.Kind);
         Assert.Equal([5d], result.Values);
+    }
+
+    [Fact]
+    public async Task CallFunction_CallsAFunctionValueAScriptHandedOver()
+    {
+        _scripts.Write("init.lua", "function make(factor) return function(a) return a * factor end end");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var made = engine.Call("make", 3).Values[0];
+        var function = made as LuaFunction ?? ((LuaValue)made!).Read<LuaFunction>();
+
+        var result = engine.CallFunction("init.lua", function, 7);
+
+        Assert.Equal(ScriptResultKind.Completed, result.Kind);
+        Assert.Equal([21d], result.Values);
     }
 
     [Theory,

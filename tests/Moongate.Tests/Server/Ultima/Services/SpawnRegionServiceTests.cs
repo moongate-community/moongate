@@ -5,6 +5,7 @@ using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
 using Moongate.Server.Ultima.Entities.World;
@@ -35,9 +36,55 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     private SpawnRegionService _service = null!;
     private uint _nextSerial = 0x1000;
 
+    // Most tests follow the spawn rules after the first fill.
+    private bool _initialFill;
+
     public async Task InitializeAsync()
     {
         _fixture = await BroadcastFixture.CreateAsync();
+    }
+
+    [Fact]
+    public async Task TheFirstSpawnAfterTheStart_FillsTheRegionToItsMax_ThenItGoesByCall()
+    {
+        _initialFill = true;
+        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 1, max: 5, minMinutes: 5, maxMinutes: 5));
+        await AddLiveAsync("forest");
+
+        await TickAsync();
+        Assert.Equal(4, _npcs.Spawns.Count);
+
+        _clock.Advance(TimeSpan.FromMinutes(5));
+        await TickAsync();
+        Assert.Equal(5, _npcs.Spawns.Count);
+    }
+
+    [Fact]
+    public async Task FillAll_FillsEveryRegionToItsMaxAtTheNextCheck_AndTellsWhatIsMissing()
+    {
+        // 600 seconds: the regions' own first spawn is far away.
+        await StartAsync(
+            new ScriptedRandom(600),
+            Spawn("forest", call: 1, max: 5, minMinutes: 30, maxMinutes: 30),
+            Spawn("glade", call: 1, max: 3, minMinutes: 30, maxMinutes: 30)
+        );
+        await AddLiveAsync("forest");
+
+        var (regions, missing) = await _service.FillAllAsync();
+        await TickAsync();
+
+        Assert.Equal((2, 7), (regions, missing));
+        Assert.Equal(7, _npcs.Spawns.Count);
+    }
+
+    [Fact]
+    public async Task WithoutTheInitialFill_TheFirstSpawnGoesByCall()
+    {
+        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 1, max: 5));
+
+        await TickAsync();
+
+        Assert.Single(_npcs.Spawns);
     }
 
     [Fact]
@@ -235,7 +282,21 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
 
         await TickAsync();
 
-        Assert.Equal([(staff, "Spawn: Yew Woods (Felucca): 2 NPCs")], Notices());
+        Assert.Equal([(staff, "Spawn: Yew Woods (Felucca): 2 NPCs - world 0/2 (0%)")], Notices());
+    }
+
+    [Fact]
+    public async Task TheStaff_HearHowFullTheWorldIs()
+    {
+        var staff = await AddPlayerAsync(1, AccountType.GameMaster);
+        await StartAsync(new ScriptedRandom(0), Spawn("forest", name: "Yew Woods", call: 1, max: 4), Spawn("glade", max: 4));
+        await AddLiveAsync("forest");
+        await AddLiveAsync("glade");
+        await AddLiveAsync("glade");
+
+        await TickAsync();
+
+        Assert.Equal((staff, "Spawn: 2 NPCs in 2 regions: Yew Woods 1, glade 1 - world 3/8 (37%)"), Assert.Single(Notices()));
     }
 
     [Fact]
@@ -247,7 +308,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
 
         await TickAsync();
 
-        Assert.Equal("Spawn: 8 NPCs in 7 regions: R7 2, R1 1, R2 1, R3 1, R4 1 and 2 more", Assert.Single(Notices()).Text);
+        Assert.Equal("Spawn: 8 NPCs in 7 regions: R7 2, R1 1, R2 1, R3 1, R4 1 and 2 more - world 0/14 (0%)", Assert.Single(Notices()).Text);
     }
 
     [Fact]
@@ -375,6 +436,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 3, max: 3));
         await _fixture.Network.ExecuteOnLoopAsync(() => _timers.Fire(TimerId()));
 
+        // The spawns run off the loop: stopping before the first one began would cancel all three.
+        await _npcs.FirstSpawn.Task.WaitAsync(TimeSpan.FromSeconds(10));
         await _service.StopAsync();
 
         Assert.Single(_npcs.Spawns);
@@ -472,6 +535,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         [
             (CommandMessages.SpawnedInOneRegion, "Spawn: {0} ({1}): {2} NPCs"),
             (CommandMessages.SpawnedInRegions, "Spawn: {0} NPCs in {1} regions: {2}"),
+            (CommandMessages.SpawnedWorldProgress, "{0} - world {1}/{2} ({3}%)"),
             (CommandMessages.SpawnedAndMore, "{0} and {1} more")
         ];
         var localization = TestLocalization.With(
@@ -489,7 +553,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
             _timers,
             _fixture.Network.Loop,
             _clock,
-            random
+            random,
+            new SpawnsConfig { InitialFill = _initialFill }
         );
         await _service.StartAsync();
     }

@@ -87,12 +87,47 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.WeatherDescription
         );
+        container.RegisterCommand<GumpCommand>(
+            "gump",
+            "Opens a gump of templates/gumps on you to try it; name=value pairs fill its placeholders.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.GumpDescription
+        );
+        container.RegisterCommand<InitialSpawnCommand>(
+            "initial_spawn",
+            "Fills every spawn region to its max at the next spawn check.",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Administrator,
+            CommandMessages.InitialSpawnDescription
+        );
         container.RegisterCommand<SpawnsCommand>(
             "spawns",
             "Lists the spawn regions where you stand, with their live NPCs and the minutes to their next spawn.",
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.SpawnsDescription
+        );
+        container.RegisterCommand<TimeCommand>(
+            "time",
+            "Shows the game time and the moons where you stand.",
+            CommandSourceType.InGame,
+            AccountType.Regular,
+            CommandMessages.TimeDescription
+        );
+        container.RegisterCommand<SeasonCommand>(
+            "season",
+            "Shows the season where you stand and your map's or, with a season or auto, sets your map's until the restart.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.SeasonDescription
+        );
+        container.RegisterCommand<MusicCommand>(
+            "music",
+            "Shows the music where you stand or, with a track name, plays it to you until your next region change.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.MusicDescription
         );
         container.RegisterCommand<LockCommand>(
             "lock",
@@ -114,6 +149,20 @@ public static class UltimaCommandsContainerExtensions
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.KeyDescription
+        );
+        container.RegisterCommand<GoCommand>(
+            "go",
+            "Takes you to a place of your map or of another: go <x>,<y>,<z> [map].",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.GoDescription
+        );
+        container.RegisterCommand<MoongateCommand>(
+            "moongate",
+            "Puts at your feet a moongate to a place of your map or of another: moongate <x>,<y>,<z> [map].",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.MoongateDescription
         );
         container.RegisterCommand<WhereCommand>(
             "where",

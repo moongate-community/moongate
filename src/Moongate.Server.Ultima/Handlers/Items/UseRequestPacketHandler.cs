@@ -45,6 +45,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     private readonly ITooltipService _tooltips;
     private readonly IFameKarmaTitleService _titles;
     private readonly IItemScriptService? _scripts;
+    private readonly IBankService? _bank;
 
     public UseRequestPacketHandler(
         IItemService items,
@@ -56,9 +57,11 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         IPacketSendService sender,
         ITooltipService tooltips,
         IFameKarmaTitleService titles,
-        IItemScriptService? scripts = null
+        IItemScriptService? scripts = null,
+        IBankService? bank = null
     )
     {
+        _bank = bank;
         _tooltips = tooltips;
         _titles = titles;
         _scripts = scripts;
@@ -90,6 +93,16 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         if (!session.CharacterId.IsValid || !_items.TryGet(packet.Target, out var item))
         {
             _logger.Debug("Session {SessionId} used {Target}, which is not a live item", session.SessionId, packet.Target);
+
+            return;
+        }
+
+        // What lies in a bank box, and the box itself, is used only while the bank is open.
+        if (_bank is not null &&
+            _mobiles.TryGet(session.CharacterId, out var user) &&
+            !_bank.CanAccess(session, user, item))
+        {
+            _logger.Debug("Session {SessionId} used {Item}, in a bank that is not open", session.SessionId, item);
 
             return;
         }

@@ -29,7 +29,7 @@ Console.WriteLine(MigrationTarget.World);
 loading plugin DLLs. `MigrationHistory.ReadAsync` uses a caller-owned
 `DbCommand` factory; it never creates database objects or executes migrations.
 
-Use the separate `Moongate.MigrationRunner` executable to apply reviewed SQL
+Use `mgctl migrate apply` to apply reviewed SQL
 with DbUp. See the [persistence guide](https://moongate.sh/server/persistence/).
 
 Licensed under AGPL-3.0-or-later. See the

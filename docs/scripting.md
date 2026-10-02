@@ -75,15 +75,28 @@ exists but fails compilation/execution aborts server startup.
 | `item.set_light(serial, type)` | The light shape a light source gives, by `LightType` name such as `circle150`, `circle300` or `west_big`; `nil` clears it. The players who see the item are shown it again; the client draws the light only for a lit graphic. `false` for an unknown shape or a worn or held item |
 | `item.location(serial)`, `item.move_to(serial, x, y, z)` | Where a ground item lies, `{ x, y, z, map }`, and moving it on its map: the players around the old spot lose it and those around the new one see it; `nil`/`false` for an item not on the ground, a spot outside the map or a `z` outside -128 to 127; moving restarts a decaying item's decay |
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
+| `mobile.teleport(serial, x, y, z, map?)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map, or of `map` (a `MapType`, or its name such as `"Tokuno"`) when given: a player's client is told of the map change (0xBF 0x08) and where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a `z` outside -128 to 127 |
+| `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells; `false` for a sound out of range or a mobile not in the world |
+| `mobile.message(serial, text)` | A system message, in the lower left of the screen, read only by that player: `mobile.message(who, "That is too far away.")`; cut at 128 characters; `false` for an empty text, an NPC or a player not in the world |
+| `effect.at(map, x, y, z, graphic, options)` | Plays an effect graphic that stays at a point of a map, such as the smoke of a teleport: `effect.at(MapType.Trammel, 1600, 1628, 5, EffectGraphicType.Smoke)`; see [Effects](#effects) |
+| `effect.on(serial, graphic, options)` | Plays an effect graphic on a mobile, which it follows, or on an item lying on the ground; `false` for something not in the world |
+| `effect.moving(from, to, graphic, options)` | Plays an effect graphic flying from one mobile or ground item to another on the same map, such as a fireball; `false` when one is not in the world or they are on two maps |
+| `effect.lightning(serial, hue)` | Strikes a mobile or a ground item with a lightning bolt; the hue is optional |
+| `moongates.facets()` | The public moongates of the loaded maps, from [`moongates.toml`](data-files/moongates.md): an array of `{ map, cliloc, selected_cliloc, destinations }`, each destination `{ name, cliloc, x, y, z }` |
 | `world.is_occupied(map, x, y)` | Whether a player or an NPC stands on the tile, at any height, such as a door's doorway; `map` is a `MapType` |
+| `world.is_guarded(map, x, y, z)` | Whether guards protect the region of the place, such as a town: `world.is_guarded(MapType.Trammel, 1496, 1628, 10)`; `false` outside every region |
+| `world.moon(moon, x)` | The phase of `MapType.Trammel` or `MapType.Felucca` seen from the column `x`, a `MoonPhaseType` (`NewMoon`, `WaxingCrescent`, `FirstQuarter`, `WaxingGibbous`, `FullMoon`, `WaningGibbous`, `LastQuarter`, `WaningCrescent`): `world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon`. Felucca turns every 10 game minutes, Trammel every 30 |
 | `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
 | `world.is_staff(player)` | Whether the player is a game master or an administrator in the world; `false` for an NPC or a player not in the world |
 | `world.carries(mobile, key, value)` | Whether the mobile wears or carries, in its containers at any depth, an item whose prop `key` is `value`, such as the key of a door: `world.carries(user, "key.value", 1234)` |
+| `bank.open(player)`, `bank.is_open(player)` | Opens the player's bank box, made the first time, open while the player stands still; and whether it is open. `false` for an NPC or a player not in the world; see [Bank](bank.md) |
+| `gump.open(player, id, args)`, `gump.close(player, id)` | Opens the gump `templates/gumps/<id>.xml` on the player, its `${name}` filled from `args`, and closes it; its script `scripts/gumps/<id>.lua` gets the answer. `false` for an unknown player, and from `gump.open` for an unknown gump. Called from a script, the gump opens or closes on the next turn of the game loop, so `gump.close` gives `true` even for a gump that is not open. See [Gumps](gumps.md) |
+| `gump.create(id, x, y)`, `gump.send(player, g, args)` | Builds a gump in Lua (`g:text{...}`, `g:button{...}`, `g:paginate(...)`, ...) and opens it, from a script on the next turn of the game loop; `false` for an unknown player. A button's `on_click` may be a function. See [Gumps built in Lua](gumps.md#gumps-built-in-lua) |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization`, `npc`, `item` and `world` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
+The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -97,8 +110,9 @@ the timer prevents later starts; it does not cancel an already-started coroutine
 For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
-Apart from the `npc` and `item` modules of the [mobile](#mobile-scripts) and [item scripts](#item-scripts), there
-are no world, character or inventory APIs yet ([Implementation status](implementation-status.md)). To expose application
+The `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` modules serve the [mobile](#mobile-scripts) and
+[item scripts](#item-scripts); there are no APIs for a character's stats, skills or inventory yet
+([Implementation status](implementation-status.md)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Events
@@ -133,6 +147,7 @@ events.off(handle) -- returns false when the handle is unknown
 | `character_created` | `serial`, `account_id`, `name`, `race` and `gender` (numbers of `RaceType` and `GenderType`), `map`, `x`, `y`, `z`. Raised after a new character and its starting items are saved. |
 | `character_deletion_requested` | `serial`, `account_id`, `name`. Raised after a player asks to delete a character; it stays restorable until removed. |
 | `character_entered_world` | `serial`, `account_id`, `name`, `map`, `x`, `y`, `z`. Raised after a character entered the world and the client's login completed. |
+| `player_say` | `serial`, `name`, `text`. Raised after a player's character said something and the players and NPCs around heard it; `text` is what they heard. A command (text starting with a dot) raises nothing. |
 | `character_left_world` | `serial`, `account_id`, `name`, `map`, `x`, `y`, `z`. Raised after a character left the world because its session closed, once its save was attempted. |
 
 ### Publishing an event from C#
@@ -173,7 +188,7 @@ The table may define these functions; each one is optional:
 | Function | When |
 | --- | --- |
 | `on_think(serial)` | On every think of the NPC: every `ultima.npcs.think_interval_ms` (500 ms by default) while a player is within the 5×5 sectors around it; see [NPC tick](game-loop-and-timers.md#npc-tick). A think is instantaneous, as ModernUO's: it must not call `wait` (the server warns once per script), so keep the timing in the script, for example by counting thinks. |
-| `on_speech(serial, speaker, text)` | When a player says `text` within 15 cells (commands are not heard). `speaker` is the player's serial. It may call `wait`. |
+| `on_speech(serial, speaker, text, keywords)` | When a player says `text` within 15 cells (commands are not heard). `speaker` is the player's serial; `keywords` the speech keywords the client found, an array of numbers whatever its language, such as `SpeechKeywordType.Bank`. It may call `wait`. |
 | `on_spawn(serial)` | Once, right after the NPC is spawned (`.spawn`), in the world with its items and shown, before any other function of its script. Not when the saved NPCs are loaded at startup. It may call `wait`. |
 | `on_mobile_in_range(serial, other)` | Each time another mobile, player or NPC, comes within `ultima.npcs.sense_range` cells (8 by default, a square along X and Y) by a step or by entering the world. Once per arrival: it fires again only after the mobile has left the range and come back. Both ways: an NPC walking toward a mobile senses it too. NPCs loaded together at startup do not sense each other until one moves out of range and back. `other` is its serial; `npc.name(other)` gives `nil` for a player. It may call `wait`. |
 
@@ -187,7 +202,7 @@ is not an NPC in the world, such as a removed NPC or a player, gives `false` or
 `nil`, never an error: a handler that waited may outlive its NPC, and a script can
 never voice or move a player.
 
-The distribution's `scripts/mobiles/wander.lua`, copied into the root by `mgboot`:
+The distribution's `scripts/mobiles/wander.lua`, copied into the root by `mgctl`:
 
 ```lua
 wander = {}
@@ -270,6 +285,8 @@ script_id = "potion"
 | Function | When |
 | --- | --- |
 | `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Items inside a container lying on the ground cannot be used yet: the player reads "That is too far away.". A missing `on_use`, or one that raises an error, lets the default action follow. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled; after the wait the item may have moved, so check it again, for example `item.owner(serial) == user`. |
+| `on_move_over(serial, mobile)` | A player stepped onto the cell of the item, lying on the ground at the player's height, up to 14 above its feet, or below them and tall enough to reach them (ModernUO's rule). It runs after the step was acknowledged and shown to the players around; NPCs do not trigger it yet. Once a script moved the player off the cell, the other items of the cell are not run. Arriving by teleport does not trigger it, so two teleporters that point at each other do not loop. |
+| `on_speech(serial, speaker, text, keywords)` | A player said `text` within 15 cells of the item, lying on the ground (commands are not heard). `speaker` is the player's serial; `keywords` the speech keywords the client found, an array of numbers. Every scripted ground item in range is asked, after the NPCs, so a script checks its own range and words. It may call `wait`. |
 | `on_equip(serial, wearer)` | The item went onto a layer of the mobile `wearer`, dropped on the paperdoll. A worn item lifted and bounced back never left its layer, and items loaded or spawned already dressed raise nothing. It cannot refuse the item. |
 | `on_unequip(serial, wearer)` | The item left the layer of `wearer`: dropped in a container or on the ground, or merged into a stack (the item is gone then, so `item.*` gives `nil`). Logging out, removing an NPC or deleting a mobile with its items raise nothing. |
 | `on_pickup(serial, picker)` | The player `picker` lifts the item from a container, the paperdoll or the ground; lifting part of a stack lifts this item, and the rest left behind is not new. While it is held, `item.consume` and `item.delete` refuse it. A held item ends in `on_drop`, in `on_equip` when it is worn by a new wearer, or in nothing: when it bounces back, is worn again on the layer it came from, or its player logs out holding it. |
@@ -281,7 +298,7 @@ caused them, on the next turn of the game loop, once the players have seen it: a
 may then delete or consume the item. They are notifications: none can refuse the move.
 
 The script acts on its item with the `item` module, passing its serial; `user` is
-the serial of the player. The distribution's `scripts/items/potion.lua`, copied into the root by `mgboot`; no
+the serial of the player. The distribution's `scripts/items/potion.lua`, copied into the root by `mgctl`; no
 template uses it yet:
 
 ```lua
@@ -323,9 +340,85 @@ light and douse themselves: every 30 seconds the server calls `on_darkness(seria
 lamp post whose spot turned dark or light (`ultima.world.lamp_post_light`), and `light.lua`
 switches its graphic silently.
 
+`scripts/items/teleporter.lua` is the script of the `decoration_teleporter` template that
+[`.decorate`](commands/decorate.md) gives to ModernUO's `Teleporter`: on `on_move_over` it
+teleports the player to the props `teleport.x`, `teleport.y` and `teleport.z` with
+`mobile.teleport`, shows a puff of smoke where the player left (prop `source_effect`) and
+arrived (prop `dest_effect`), then plays the prop `sound_id` there when the teleporter has one. The prop
+`active = false` turns a teleporter off. A teleporter with the prop `teleport.map`, a `MapType`
+number, takes the player to that map: the client changes map, then gets the season when it differs
+from the one it shows, the light, the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
+the accounts its visibility allows, so players walk onto a teleporter they never see.
+
+`scripts/items/public_moongate.lua` is the script of the `decoration_public_moongate` template
+that `.decorate` puts on every destination of [`moongates.toml`](data-files/moongates.md), as
+ModernUO's `PublicMoongate`: on `on_move_over`, and on `on_use` from the next cell, it builds a
+gump with `gump.create`, one page per map of `moongates.facets()` and one button per city, the
+page of the player's own map first, and plays the sound `0x20E`. A button teleports the player
+with `mobile.teleport`, to another map too, and plays `0x1FE` there. A player who walked more
+than a cell away while the gump was open is told so and stays; choosing the city of the gate
+itself does nothing.
+
+`scripts/items/moongate.lua` is the script of the `moongate` template, the gate with one
+destination that the command [`moongate`](commands/moongate.md) puts at a game master's feet, as
+ModernUO's `Moongate`. On `on_move_over`, and on `on_use` from the next cell, it waits one second
+with `timer.after`, then takes the player, if it still stands there, to the props `teleport.x`,
+`teleport.y` and `teleport.z`, on the map of the prop `teleport.map` (a `MapType` number or its
+name; the player's own map without it), and plays `0x1FE`. A gate without the three
+numbers, with a map that does not exist or is not loaded, or with a spot outside the map tells the
+player "This moongate does not seem to go anywhere." (message 30114). Touching the gate again
+during the second starts nothing. When the gate
+stands in a guarded region and the destination does not (`world.is_guarded`), it asks first: a
+gump with OKAY and CANCEL and the sound `0x20E`; OKAY from more than a cell away tells "That is
+too far away." (message 393) with `mobile.message`. ModernUO's rules about sigils, young
+players, murderers, casting, pets and dispelling the gate are not there yet.
+
+`scripts/items/keyword_teleport.lua` is the script of the `decoration_keyword_teleporter`
+template that `.decorate` gives to ModernUO's `KeywordTeleporter`, such as the mantra of a
+shrine: on `on_speech` it teleports the player who says the prop `substring` (found anywhere in
+the text, in any case) or whose client sends the speech keyword of the prop `keyword`, standing
+within `range` cells (0, the default, is the teleporter's own cell). With a `delay`
+(`"0:0:1"`, or a number of seconds) the teleport happens later, if the player still stands in
+range. The destination, the smoke, the sound and `active` are those of the plain teleporter.
+
 LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
 `{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,
 as `light.lua` does with `add(0x0A27, 0x0B1D, "circle225")`.
+
+## Effects
+
+The `effect` module shows graphic effects to the players of the map within the view range
+(`ultima.world.view_range`); a moving effect also reaches those in range of where it arrives.
+The graphic is an art id: `EffectGraphicType` names the animations the emulators use
+(`Smoke`, `LargeFireball`, `SmallFireball`, `FireColumn`, `Explosion`, `SparkleHeal`,
+`SparkleBless`, `SparkleCurse`, `Fizzle`, `SmallBolt`, `Glow`, the four fields and others; the
+generated `definitions.lua` lists them all), and any other art id works too.
+
+`effect.at`, `effect.on` and `effect.moving` take an optional table of options:
+
+| Option | Meaning |
+| --- | --- |
+| `speed`, `duration` | 0 to 255 each; both default to 10 |
+| `hue` | Hue of the graphic, 0 to 65535 |
+| `render` | An `EffectRenderModeType`: `Normal`, `Darken`, `Lighten`, `LightenTransparent`, `Translucent`, `TranslucentColor`, `Negative`, `NegativeTransparent` |
+| `fixed_direction`, `explodes` | For a moving effect: keep the graphic's direction, and explode on arrival |
+| `particle`, `explode_particle`, `explode_sound` | Particle effect ids and the arrival sound; only the Enhanced Client shows particles |
+| `layer` | An `EffectLayerType`, the body part the particles are shown at: `Head`, `RightHand`, `LeftHand`, `Waist`, `LeftFoot`, `RightFoot`, `CenterFeet`, or `None`, the default |
+
+```lua
+-- A fireball from the caster to the target, exploding there.
+effect.moving(caster, target, EffectGraphicType.LargeFireball, { speed = 7, duration = 0, explodes = true })
+
+-- The healing sparkle on a mobile; the Enhanced Client also gets particles at the waist.
+effect.on(who, EffectGraphicType.SparkleHeal, { speed = 9, duration = 32, particle = 5005, layer = EffectLayerType.Waist })
+```
+
+A function returns `false` and plays nothing for a value out of range, an option of the wrong
+type (`speed = "9"`, `explodes = 1`), an option it does not know, and an effect with neither a
+graphic nor a particle. An argument of the wrong type raises an error, as for every module. A classic client draws no particles: it gets the graphic, and
+nothing for an effect made of particles only; a moving effect with the graphic `1`, ModernUO's
+placeholder, counts as one. A lightning bolt has no graphic and is always sent. Effects are not sequenced: chain them with
+`timer` calls.
 
 ## Reload and ownership
 

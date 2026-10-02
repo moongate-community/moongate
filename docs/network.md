@@ -212,8 +212,9 @@ the transport closes the connection. This is structural validation, not
 authenticated encryption: a wrong profile can theoretically produce a valid packet.
 The listener uses one configured profile, without automatic client-version
 detection or fallback to other profiles. POL vector and loopback tests cover the
-implemented streams, fragmentation, coalescing and connection isolation; they do
-not establish live Enhanced Client interoperability, which has not been tested.
+implemented streams, fragmentation, coalescing and connection isolation. A live
+Enhanced Client 4.0.117 logs in with the `67.0.117.0` profile; see
+[Enhanced Client](enhanced-client.md) for what works beyond the login.
 
 Golden vectors under `tests/Moongate.Network.Packets.Tests/TestSupport/Encryption`
 come from the original POL C++ algorithms. To regenerate them from a POL checkout:

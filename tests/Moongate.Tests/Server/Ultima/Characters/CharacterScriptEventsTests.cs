@@ -65,6 +65,19 @@ public sealed class CharacterScriptEventsTests
     }
 
     [Fact]
+    public void PlayerSay_MapsSerialNameAndText()
+    {
+        var character = new MobileEntity { Id = new(0x0002), AccountId = new Serial(42), Name = "Aria" };
+
+        var fields = CharacterScriptEvents.PlayerSay(new PlayerSaidEvent(character, "hello there"));
+
+        Assert.Equal(
+            new Dictionary<string, object?> { ["serial"] = 2L, ["name"] = "Aria", ["text"] = "hello there" },
+            fields
+        );
+    }
+
+    [Fact]
     public void CharacterLeftWorld_MapsSerialAccountNameAndLocation()
     {
         var character = new MobileEntity

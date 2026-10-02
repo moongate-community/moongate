@@ -15,7 +15,9 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -33,6 +35,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     private readonly RecordingTimerService _timers = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingWorldViewService _view = new();
+    private readonly StubBankService _bank = new();
     private readonly List<ScriptErrorEvent> _errors = [];
     private readonly List<LuaScriptEngineService> _engines = [];
     private readonly SectorService _sectors = TestSectors.Create();
@@ -71,6 +74,9 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         _container.RegisterInstance<IMobileTemplateService>(_templates);
         _container.AddScriptModule<NpcModule>();
         _container.AddScriptModule<DiceModule>();
+        _container.RegisterInstance<IBankService>(_bank);
+        _container.AddScriptModule<BankModule>();
+        _container.RegisterScriptEnum<SpeechKeywordType>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
                 {
@@ -283,6 +289,27 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.Empty(_errors);
         Assert.Equal(["Meow! That's 5 hellos.", "Meow! That's 6 hellos."], _speech.Said.Select(said => said.Text));
         Assert.Equal(6L, _cat.GetProp<long>("vega.greeted"));
+    }
+
+    [Fact]
+    public async Task TheShippedBankerScript_OpensTheBankOnTheBankKeywordInAnyLanguage_OrTheWordBank()
+    {
+        _scripts.Write("mobiles/banker.lua", File.ReadAllText(ShippedScript("mobiles/banker.lua")));
+        var templates = new MobileTemplateService(
+            new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "banker" })
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        await scripts.StartAsync();
+        var hearing = new NpcHearingService(scripts, _sectors);
+
+        hearing.Heard(_aria, "apri la banca", [(int)SpeechKeywordType.Bank]);
+        hearing.Heard(_aria, "Bank, please");
+        hearing.Heard(_aria, "hello", [(int)SpeechKeywordType.Balance]);
+
+        Assert.Empty(_errors);
+        Assert.Equal([_aria, _aria], _bank.Opened);
     }
 
     public void Dispose()

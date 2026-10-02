@@ -18,3 +18,4 @@ the region has a name: `Trammel (1496, 1628, 10) in Britain`.
 
 - [All commands](../commands.md)
 - [`spawn`](spawn.md)
+- [`go`](go.md)

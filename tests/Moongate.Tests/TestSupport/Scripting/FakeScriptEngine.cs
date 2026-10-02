@@ -1,3 +1,4 @@
+using Lua;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Interfaces;
 
@@ -53,6 +54,19 @@ public sealed class FakeScriptEngine : IScriptEngine
     }
 
     /// <inheritdoc />
+    public List<(string Owner, LuaFunction Function, object?[] Args)> FunctionCalls { get; } = [];
+
+    public bool IsRunningScript { get; set; }
+
+    public string? CurrentScript { get; set; }
+
+    public ScriptResult CallFunction(string owner, LuaFunction function, params object?[] args)
+    {
+        FunctionCalls.Add((owner, function, args));
+
+        return MemberResult;
+    }
+
     public ScriptExecutionMetrics GetMetrics()
     {
         return Metrics ?? new ScriptExecutionMetrics(Loaded.Count, 0, 0, 0, 0, 0, 0, 0, 0);

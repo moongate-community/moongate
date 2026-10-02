@@ -9,20 +9,20 @@ namespace Moongate.Tests.Integration.Scripts;
 public class InstallScriptTests
 {
     [ShellFact]
-    public async Task Install_WithMgboot_LinksExecutableBesideServer()
+    public async Task Install_WithMgctl_LinksExecutableBesideServer()
     {
         using var install = new ScriptedInstall();
         install.Publish("0.6.0", "linux-x64", "server", true);
         var result = await install.RunAsync("0.6.0", "linux-x64");
         Assert.True(result.ExitCode == 0, result.Output);
-        var command = Path.Combine(install.BinDirectory, "mgboot");
-        Assert.Equal(Path.Combine(install.InstallDirectory, "mgboot"), File.ResolveLinkTarget(command, true)!.FullName);
+        var command = Path.Combine(install.BinDirectory, "mgctl");
+        Assert.Equal(Path.Combine(install.InstallDirectory, "mgctl"), File.ResolveLinkTarget(command, true)!.FullName);
         Assert.True(File.GetUnixFileMode(command).HasFlag(UnixFileMode.UserExecute));
         Assert.Equal("boot payload", await File.ReadAllTextAsync(command));
     }
 
     [ShellFact]
-    public async Task Install_DowngradeWithoutMgboot_RemovesOwnedSymlink()
+    public async Task Install_DowngradeWithoutMgctl_RemovesOwnedSymlink()
     {
         using var install = new ScriptedInstall();
         install.Publish("0.6.0", "linux-x64", "new server", true);
@@ -30,7 +30,148 @@ public class InstallScriptTests
         Assert.Equal(0, (await install.RunAsync("0.6.0", "linux-x64")).ExitCode);
         var result = await install.RunAsync("0.5.0", "linux-x64");
         Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Null(new FileInfo(Path.Combine(install.BinDirectory, "mgctl")).LinkTarget);
+    }
+
+    [ShellFact]
+    public async Task Install_AnOlderReleaseWithMgboot_LinksIt()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.11.0", "linux-x64", "server", true, "mgboot");
+
+        var result = await install.RunAsync("0.11.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var command = Path.Combine(install.BinDirectory, "mgboot");
+        Assert.Equal(Path.Combine(install.InstallDirectory, "mgboot"), File.ResolveLinkTarget(command, true)!.FullName);
+        Assert.Contains("mgboot /srv/moongate", result.Output);
+    }
+
+    [ShellFact]
+    public async Task Install_UpgradeFromMgbootToMgctl_ReplacesTheLink()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.11.0", "linux-x64", "old server", true, "mgboot");
+        install.Publish("0.12.0", "linux-x64", "new server", true);
+        Assert.Equal(0, (await install.RunAsync("0.11.0", "linux-x64")).ExitCode);
+
+        var result = await install.RunAsync("0.12.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
         Assert.Null(new FileInfo(Path.Combine(install.BinDirectory, "mgboot")).LinkTarget);
+        Assert.Equal(
+            Path.Combine(install.InstallDirectory, "mgctl"),
+            File.ResolveLinkTarget(Path.Combine(install.BinDirectory, "mgctl"), true)!.FullName
+        );
+        Assert.Contains("mgctl init /srv/moongate", result.Output);
+    }
+
+    [ShellFact]
+    public async Task Install_DowngradeFromMgctlToMgboot_ReplacesTheLink()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.12.0", "linux-x64", "new server", true);
+        install.Publish("0.11.0", "linux-x64", "old server", true, "mgboot");
+        Assert.Equal(0, (await install.RunAsync("0.12.0", "linux-x64")).ExitCode);
+
+        var result = await install.RunAsync("0.11.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Null(new FileInfo(Path.Combine(install.BinDirectory, "mgctl")).LinkTarget);
+        Assert.Equal(
+            Path.Combine(install.InstallDirectory, "mgboot"),
+            File.ResolveLinkTarget(Path.Combine(install.BinDirectory, "mgboot"), true)!.FullName
+        );
+    }
+
+    [ShellFact]
+    public async Task Install_WithMgctl_InstallsItsCompletionsWhereTheShellsLook()
+    {
+        using var install = new ScriptedInstall();
+        // A stand-in mgctl that prints what it was asked for.
+        install.Publish("0.12.0", "linux-x64", "server", true, toolContent: "#!/bin/sh\necho \"script of $1 $2\"\n");
+
+        var result = await install.RunAsync("0.12.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Equal("script of completion bash\n", File.ReadAllText(Path.Combine(install.CompletionDirectory, "bash", "mgctl")));
+        Assert.Equal("script of completion zsh\n", File.ReadAllText(Path.Combine(install.CompletionDirectory, "zsh", "_mgctl")));
+        Assert.Equal("script of completion fish\n", File.ReadAllText(Path.Combine(install.CompletionDirectory, "fish", "mgctl.fish")));
+        Assert.Contains("  completion ", result.Output);
+    }
+
+    [ShellFact]
+    public async Task Install_DowngradeToAReleaseWithoutCompletions_RemovesTheScripts()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.12.0", "linux-x64", "new server", true, toolContent: "#!/bin/sh\necho \"script of $1 $2\"\n");
+        install.Publish("0.11.0", "linux-x64", "old server", true, "mgboot");
+        Assert.Equal(0, (await install.RunAsync("0.12.0", "linux-x64")).ExitCode);
+        Assert.NotEmpty(Directory.EnumerateFiles(install.CompletionDirectory, "*", SearchOption.AllDirectories));
+
+        var result = await install.RunAsync("0.11.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Empty(Directory.EnumerateFiles(install.CompletionDirectory, "*", SearchOption.AllDirectories));
+    }
+
+    [ShellFact]
+    public async Task Install_AMgctlWithoutCompletions_StillInstalls_AndWritesNoScript()
+    {
+        using var install = new ScriptedInstall();
+        // Not a program: asking it for a script fails.
+        install.Publish("0.12.0", "linux-x64", "server", true);
+
+        var result = await install.RunAsync("0.12.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Empty(Directory.EnumerateFiles(install.CompletionDirectory, "*", SearchOption.AllDirectories));
+    }
+
+    [ShellFact]
+    public async Task Install_AnOlderReleaseWithMoongateServer_LinksTheCommandToIt()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.11.0", "linux-x64", "old payload", server: "Moongate.Server");
+
+        var result = await install.RunAsync("0.11.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var binary = Path.Combine(install.InstallDirectory, "Moongate.Server");
+        Assert.Equal(binary, File.ResolveLinkTarget(Path.Combine(install.BinDirectory, "moongate"), true)!.FullName);
+        Assert.True(File.GetUnixFileMode(binary).HasFlag(UnixFileMode.UserExecute));
+    }
+
+    [ShellFact]
+    public async Task Install_UpgradeFromMoongateServerToMgserver_MovesTheCommand()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.11.0", "linux-x64", "old payload", server: "Moongate.Server");
+        install.Publish("0.12.0", "linux-x64", "new payload");
+        Assert.Equal(0, (await install.RunAsync("0.11.0", "linux-x64")).ExitCode);
+
+        var result = await install.RunAsync("0.12.0", "linux-x64");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Equal(
+            Path.Combine(install.InstallDirectory, "mgserver"),
+            File.ResolveLinkTarget(Path.Combine(install.BinDirectory, "moongate"), true)!.FullName
+        );
+        Assert.False(File.Exists(Path.Combine(install.InstallDirectory, "Moongate.Server")));
+    }
+
+    [ShellFact]
+    public async Task Install_AnArchiveWithoutAServer_FailsNamingBothNames()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.12.0", "linux-x64", "payload", server: "something-else");
+
+        var result = await install.RunAsync("0.12.0", "linux-x64");
+
+        Assert.NotEqual(0, result.ExitCode);
+        Assert.Contains("mgserver or", result.Output);
+        Assert.Contains("Moongate.Server", result.Output);
+        Assert.False(Directory.Exists(install.InstallDirectory));
     }
 
     [ShellFact]
@@ -42,7 +183,7 @@ public class InstallScriptTests
         var result = await install.RunAsync("0.4.0", "linux-x64");
 
         Assert.True(result.ExitCode == 0, result.Output);
-        var binary = Path.Combine(install.InstallDirectory, "Moongate.Server");
+        var binary = Path.Combine(install.InstallDirectory, "mgserver");
         Assert.Equal("first payload", await File.ReadAllTextAsync(binary));
         Assert.True(File.Exists(Path.Combine(install.InstallDirectory, "LICENSE")));
         var command = Path.Combine(install.BinDirectory, "moongate");
@@ -104,7 +245,7 @@ public class InstallScriptTests
         Assert.True(result.ExitCode == 0, result.Output);
         Assert.Equal(
             "second payload",
-            await File.ReadAllTextAsync(Path.Combine(install.InstallDirectory, "Moongate.Server"))
+            await File.ReadAllTextAsync(Path.Combine(install.InstallDirectory, "mgserver"))
         );
         var siblings = Directory.GetDirectories(Path.GetDirectoryName(install.InstallDirectory)!);
         Assert.DoesNotContain(siblings, directory => directory.Contains(".new.") || directory.Contains(".old."));

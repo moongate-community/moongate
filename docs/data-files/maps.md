@@ -20,8 +20,9 @@ weather = "temperate"
 | `name` | The name shown in logs and commands. |
 | `size` | Width and height in tiles, a `Point2D`. |
 | `rules` | The name of the rule set of the map. |
-| `season` | The season of packet 0xBC: `spring`, `summer`, `fall`, `winter` or `desolation`. |
+| `season` | The season of packet 0xBC: `spring`, `summer`, `fall`, `winter` or `desolation`; the starting point of the rotation, see [Seasons](#seasons). Defaults to `spring`. |
 | `weather` | The profile of `weather.toml` used where no region covers a place. Defaults to `none`. |
+| `music` | The music track, a `MusicType` name such as `Britain1`, played where no region with music covers a place. Left out, the music stops there; no shipped map sets one, so outside the regions it is silent, as in ModernUO. |
 
 The shipped file lists the six maps; Felucca and Trammel use `temperate`, the others
 `none`.
@@ -46,6 +47,26 @@ The server stops when:
 `IMapService` reads the terrain and statics of these maps, and `IMovementService` and
 `ILineOfSightService` answer movement and sight questions on them; see
 [Client files and world queries](../world-queries.md).
+
+## Seasons
+
+The client draws the season itself: green trees and flowers in spring, the usual look in summer,
+autumn colours in fall, leafless trees and snow in winter, dead trees and grey land in desolation.
+Nothing else changes: the weather stays the region's.
+
+A player sees the season of its region when the region sets one (`season` in
+[`data/regions`](regions.md)), else its map's. The map's season is:
+
+1. the one a game master set with [`.season`](../commands/season.md), until the restart;
+2. else `season` here. With `[ultima.world] season_rotation = true` it rotates spring, summer, fall,
+   winter, starting from that season and changing every `days_per_season` game days (12 by default,
+   a real day at the default game minute). A `desolation` map, Felucca as shipped, never rotates. No
+   other emulator rotates the seasons, so it is off by default.
+
+The season is sent (0xBC) at login, when a player walks into a region or is teleported to a map
+with another season, within a minute of a rotation, and at once on `.season`. It is sent only
+when it differs from the last one the client got; the light and the weather follow it, since
+the client resets them.
 
 ## See also
 

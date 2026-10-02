@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
@@ -51,6 +52,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _otherBackpack = Item(0x40000006, BackpackGraphic);
     private readonly ItemEntity _pile = Item(0x40000007, CoinGraphic);
     private readonly ItemEntity _shirt = Item(0x40000008, 0x1517);
+    private readonly StubBankService _bank = new();
     private readonly RecordingItemScriptService _scripts = new();
 
     private SessionFixture _fixture = null!;
@@ -83,6 +85,18 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         await DropAsync(_coins.Id, 80, 70, _backpack.Id);
 
         AssertAt(_coins, _backpack.Id, new Point2D(80, 70));
+    }
+
+    [Fact]
+    public async Task Handle_IntoTheBackpackAtAGridSlot_KeepsTheSlotTheClientAskedFor()
+    {
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 80, 70, _backpack.Id, 9);
+
+        // The Enhanced Client shows the item in this slot, and is told so in the update it gets back.
+        Assert.Equal((short)9, _coins.GridIndex);
+        Assert.Equal((byte)9, _sender.Sent.OfType<ContainerItemUpdatePacket>().Last().Item.GridIndex);
     }
 
     [Fact]
@@ -438,6 +452,29 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_IntoAClosedBank_Bounces()
+    {
+        await HoldingAsync(_coins);
+        _bank.Locked.Add(_bag.Id);
+
+        await DropAsync(_coins.Id, 60, 70, _bag.Id);
+
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+    }
+
+    [Fact]
+    public async Task Handle_OntoAStackInAClosedBank_Bounces()
+    {
+        await HoldingAsync(_coins);
+        _bank.Locked.Add(_pile.Id);
+
+        await DropAsync(_coins.Id, 0, 0, _pile.Id);
+
+        Assert.Equal(70, _pile.Amount);
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+    }
+
+    [Fact]
     public async Task Handle_IntoAnotherCharactersContainer_Bounces()
     {
         await HoldingAsync(_coins);
@@ -519,7 +556,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         await _fixture.ExecuteOnLoopAsync(() => _session.Set(ItemSessionKeys.Held, new(item.Id)));
     }
 
-    private Task DropAsync(Serial item, short x, short y, Serial destination)
+    private Task DropAsync(Serial item, short x, short y, Serial destination, byte gridIndex = 0)
     {
         var layouts = new ContainerLayoutService(
             new StubDataLoaderService().With(
@@ -530,8 +567,8 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
                 }
             )
         );
-        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts);
-        var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, Destination = destination };
+        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank);
+        var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, GridIndex = gridIndex, Destination = destination };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));
     }

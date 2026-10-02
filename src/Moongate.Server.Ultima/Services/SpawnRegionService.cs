@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Spawns;
 using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
@@ -24,7 +25,7 @@ namespace Moongate.Server.Ultima.Services;
 ///     ones carrying its id in the prop <c>spawn.region</c>, counted at every check: an NPC removed or killed frees its
 ///     slot. After a check that spawned something, the game masters and administrators get one summary message.
 /// </summary>
-public sealed class SpawnRegionService : ISpawnRegionService
+public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 {
     public const string TimerName = "npc_spawn";
     public const string RegionProp = "spawn.region";
@@ -54,6 +55,7 @@ public sealed class SpawnRegionService : ISpawnRegionService
     private readonly IGameLoopService _loop;
     private readonly TimeProvider _time;
     private readonly Random _random;
+    private readonly SpawnsConfig _config;
 
     private string? _timer;
 
@@ -74,9 +76,11 @@ public sealed class SpawnRegionService : ISpawnRegionService
         ITimerService timers,
         IGameLoopService loop,
         TimeProvider time,
-        Random? random = null
+        Random? random = null,
+        SpawnsConfig? config = null
     )
     {
+        _config = config ?? new();
         _data = data;
         _map = map;
         _movement = movement;
@@ -184,6 +188,30 @@ public sealed class SpawnRegionService : ISpawnRegionService
         return here;
     }
 
+    public async Task<(int Regions, int Missing)> FillAllAsync()
+    {
+        var regions = 0;
+        var missing = 0;
+        await OnLoopAsync(
+            () =>
+            {
+                var now = _time.GetUtcNow();
+                var live = CountLive();
+
+                foreach (var region in _regions)
+                {
+                    region.FillNow = true;
+                    region.NextSpawn = now;
+                    missing += Math.Max(0, region.Template.Max - live.GetValueOrDefault(region.Template.Id));
+                }
+
+                regions = _regions.Count;
+            }
+        );
+
+        return (regions, missing);
+    }
+
     // On the game loop. The spawns themselves run off it, as INpcService asks; no check starts before they are done.
     private void Check()
     {
@@ -224,7 +252,10 @@ public sealed class SpawnRegionService : ISpawnRegionService
 
         try
         {
-            var count = Math.Min(template.Call, template.Max - live.GetValueOrDefault(template.Id));
+            var room = template.Max - live.GetValueOrDefault(template.Id);
+
+            // The first spawn after the start fills the region; later ones bring call NPCs at a time.
+            var count = region.FillNow || _config.InitialFill && !region.Filled ? room : Math.Min(template.Call, room);
             var found = 0;
 
             // A pick with no spot, such as a sea creature in a region with little water, leaves the others to spawn.
@@ -241,6 +272,12 @@ public sealed class SpawnRegionService : ISpawnRegionService
             }
 
             var missed = count > 0 && found == 0;
+
+            if (!missed)
+            {
+                region.Filled = true;
+                region.FillNow = false;
+            }
             region.Retrying = missed;
 
             region.NextSpawn = missed
@@ -371,8 +408,15 @@ public sealed class SpawnRegionService : ISpawnRegionService
         try
         {
             var notice = Notice(spawned);
-            _logger.Debug("{Notice}", notice);
-            await OnLoopAsync(() => TellStaff(notice));
+            await OnLoopAsync(
+                () =>
+                {
+                    // The live NPCs are counted on the game loop, where the world changes.
+                    var full = WithProgress(notice);
+                    _logger.Information("{Notice}", full);
+                    TellStaff(full);
+                }
+            );
         }
         catch (Exception exception)
         {
@@ -416,6 +460,17 @@ public sealed class SpawnRegionService : ISpawnRegionService
         return _localization.Get(CommandMessages.SpawnedInRegions, spawned.Sum(entry => entry.Count), spawned.Count, named);
     }
 
+    // How full the world is: the live NPCs of the regions against their maxes, as the gradual fill goes.
+    private string WithProgress(string notice)
+    {
+        var live = CountLive();
+        var alive = _regions.Sum(region => Math.Min(live.GetValueOrDefault(region.Template.Id), region.Template.Max));
+        var max = _regions.Sum(region => region.Template.Max);
+        var percent = max == 0 ? 100 : alive * 100 / max;
+
+        return _localization.Get(CommandMessages.SpawnedWorldProgress, notice, alive, max, percent);
+    }
+
     private static string NameOf(SpawnTemplate template)
     {
         return template.Name ?? template.Id;
@@ -440,5 +495,10 @@ public sealed class SpawnRegionService : ISpawnRegionService
         var work = new LoopActionWorkItem(action);
         await _loop.PostAsync(work, CancellationToken.None);
         await work.Completion;
+    }
+
+    public void Dispose()
+    {
+        _stopping.Dispose();
     }
 }

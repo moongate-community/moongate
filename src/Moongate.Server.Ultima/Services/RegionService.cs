@@ -21,7 +21,7 @@ public sealed class RegionService : IRegionService
 
     private readonly IDataLoaderService _data;
     private readonly Lazy<Dictionary<(MapType Map, int X, int Y), RegionContent[]>> _cells;
-    private readonly ConcurrentDictionary<Serial, RegionContent?> _players = new();
+    private readonly ConcurrentDictionary<Serial, (MapType Map, RegionContent? Region)> _players = new();
     // Resolved on the first change: the listeners depend on services that depend on this one.
     private readonly Lazy<IEnumerable<IRegionChangeListener>>? _listeners;
     private readonly ILogger _logger;
@@ -59,7 +59,7 @@ public sealed class RegionService : IRegionService
 
     public RegionContent? Current(Serial mobile)
     {
-        return _players.GetValueOrDefault(mobile);
+        return _players.GetValueOrDefault(mobile).Region;
     }
 
     public void Entered(MobileEntity mobile)
@@ -70,26 +70,28 @@ public sealed class RegionService : IRegionService
         }
 
         var region = Find(mobile.Map, mobile.Location);
-        _players[mobile.Id] = region;
+        _players[mobile.Id] = (mobile.Map, region);
         _logger.Debug("{Name} is in {Region:l}", mobile.Name, NameOf(region));
         Notify(mobile, null, region);
     }
 
     public void Moved(MobileEntity mobile)
     {
-        if (!_players.TryGetValue(mobile.Id, out var previous))
+        if (!_players.TryGetValue(mobile.Id, out var tracked))
         {
             return;
         }
 
+        var previous = tracked.Region;
         var region = Find(mobile.Map, mobile.Location);
 
-        if (ReferenceEquals(region, previous))
+        // Outside any region a map change still changes the map's rules, such as its music.
+        if (ReferenceEquals(region, previous) && mobile.Map == tracked.Map)
         {
             return;
         }
 
-        _players[mobile.Id] = region;
+        _players[mobile.Id] = (mobile.Map, region);
         _logger.Debug("{Name} left {Previous:l} for {Region:l}", mobile.Name, NameOf(previous), NameOf(region));
         Notify(mobile, previous, region);
     }

@@ -1,9 +1,11 @@
 using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
+using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Services.Motd;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Ultima.Types;
@@ -138,6 +140,26 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedBankers_AllHaveTheBankerScript()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var loader = new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots));
+
+        var bankers = (await loader.LoadDataAsync()).Entities
+            .Where(template => template.Id.EndsWith("banker", StringComparison.Ordinal))
+            .ToDictionary(template => template.Id, template => template.ScriptId);
+
+        Assert.Equal(
+            ["banker", "f_banker", "f_gypsybanker", "gypsybanker", "m_banker", "m_gypsybanker"],
+            bankers.Keys.Order(StringComparer.Ordinal)
+        );
+        Assert.All(bankers.Values, script => Assert.Equal("banker", script));
+    }
+
+    [Fact]
     public async Task ShippedNpcListsAndSpawns_LoadAgainstTheShippedMobiles()
     {
         var directories = Directories();
@@ -152,10 +174,20 @@ public sealed class RepositoryTemplateFilesTests
                      .Entities.ToDictionary(spawn => spawn.Id);
 
         Assert.Equal(446, lists.Length);
-        Assert.Equal(2778, spawns.Count);
+        Assert.Equal(4041, spawns.Count);
         var shop = spawns["felucca_0"];
         Assert.Equal(("The Hammer And Anvil", MapType.Felucca, 480), (shop.Name, shop.Map, shop.MinMinutes));
         Assert.Equal(["weaponsmith"], shop.MobileIds);
+    }
+
+    [Fact]
+    public async Task ShippedGumps_LoadAndTheDecorationConfirmationOffersConfirmAndCancel()
+    {
+        var gumps = (await new GumpsLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(gump => gump.Id);
+
+        var rendered = GumpXmlRenderer.Render(gumps[DecorateCommand.ConfirmGump], new Dictionary<string, string>(), null);
+
+        Assert.Equal(["cancel", DecorateCommand.ConfirmClick], rendered.Clicks.Values.Order());
     }
 
     [Fact]

@@ -27,7 +27,7 @@ public sealed class LookRequestPacketHandler : IPacketHandler<LookRequestPacket>
 
     public void Handle(GameSession session, LookRequestPacket packet)
     {
-        if (!_tooltips.TryBuildFor(session.CharacterId, packet.Target, out var list) || list.Entries.Count == 0)
+        if (!_tooltips.TryBuildFor(session.CharacterId, packet.Target, out var list, session.AccountType) || list.Entries.Count == 0)
         {
             return;
         }

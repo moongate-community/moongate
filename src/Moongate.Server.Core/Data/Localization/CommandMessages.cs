@@ -58,10 +58,32 @@ public static class CommandMessages
     public const int SpawnedInOneRegion = 30074;
     public const int SpawnedInRegions = 30075;
     public const int SpawnedAndMore = 30076;
+    public const int SpawnedWorldProgress = 30088;
+    public const int InitialSpawnStarted = 30092;
+    public const int TimeHere = 30094;
+    public const int TimeMoons = 30100;
+    public const int BankContents = 30101;
+    public const int ConsoleLocked = 30102;
+    public const int SqlBackupStarted = 30104;
+    public const int SqlBackupFileWritten = 30105;
+    public const int SqlBackupRunning = 30106;
+    public const int SqlBackupFailed = 30107;
+    public const int SeasonHere = 30097;
+    public const int SeasonSet = 30098;
     public const int SpawnRegionHere = 30077;
     public const int NoSpawnRegionHere = 30078;
     public const int SpawnRegionRetrying = 30080;
     public const int SpawnNeedsWater = 30081;
+
+    // The decoration confirmation: the answer to a cancel, and the gump's title and text.
+    public const int DecorationCanceled = 30082;
+    public const int DecorationConfirmTitle = 30083;
+    public const int DecorationConfirmText = 30084;
+    public const int GumpNotFound = 30085;
+    public const int GumpNotOpened = 30087;
+    public const int MusicHere = 30089;
+    public const int MusicPlaying = 30090;
+    public const int MusicNotPlayed = 30096;
 
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;
@@ -86,4 +108,16 @@ public static class CommandMessages
     public const int UnlockDescription = 30070;
     public const int KeyDescription = 30073;
     public const int SpawnsDescription = 30079;
+    public const int GumpDescription = 30086;
+    public const int MusicDescription = 30091;
+    public const int InitialSpawnDescription = 30093;
+    public const int TimeDescription = 30095;
+    public const int SeasonDescription = 30099;
+    public const int ConsoleDescription = 30103;
+    public const int SqlBackupDescription = 30108;
+    public const int GoRefused = 30109;
+    public const int GoDescription = 30110;
+    public const int MoongateCreated = 30111;
+    public const int MoongateRefused = 30112;
+    public const int MoongateDescription = 30113;
 }

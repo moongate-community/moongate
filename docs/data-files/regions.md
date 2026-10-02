@@ -27,7 +27,8 @@ housing = false
 | `areas` | The rectangles of the region. | required |
 | `go_location` | Where a "go to region" command takes a character, a `Point3D`. | none |
 | `entrance` | The entrance of the town or dungeon, a `Point3D`. | none |
-| `music` | The music track, a `MusicType` name such as `Britain1`. | none |
+| `music` | The music track, a `MusicType` name such as `Britain1`, played to the players who enter the region; without it, its nearest parent's music plays, else the map's `music`. | none |
+| `season` | The season the client shows in the region (`spring`, `summer`, `fall`, `winter`, `desolation`), such as winter in an ice dungeon; it never rotates. Without it, its nearest parent's season applies, else the map's. | none |
 | `weather` | The profile of `weather.toml`. | `none` |
 | `rune_name` | The name of a rune marked here. | none |
 | `guarded` | Whether guards protect the region. | `false` |
@@ -72,9 +73,10 @@ there are no height limits and a `bounds` table otherwise.
 
 ## Parents and overlaps
 
-A `parent` only records that a region is part of another, such as a building inside
-Britain. Rules are not inherited when the file is read: every region writes out all
-its rules, already combined with its parents', so each region can be read on its own.
+A `parent` records that a region is part of another, such as a building inside
+Britain. Only `music` and `season` are inherited when the file is read: a region
+without one takes its nearest parent's. Every region writes out its other rules,
+already combined with its parents', so each region can be read on its own.
 
 Where regions overlap, the one with the highest `priority` gives the name, music,
 guards, housing and logout rules. Travel works differently: a travel spell is
@@ -105,7 +107,9 @@ teleport_in = true
 teleport_out = true
 ```
 
-No region system reads these files yet: the rules are loaded and validated only.
+The server reads a region's type, music, season and weather for the players inside it.
+No system reads the guard, housing, logout and travel rules yet: they are loaded and
+validated only.
 
 ## Validation at startup
 

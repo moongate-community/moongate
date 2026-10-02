@@ -6,6 +6,7 @@ using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Decorations;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Tests.Support.Sessions;
+using Moongate.Tests.TestSupport.Ultima.Gumps;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Decorations;
@@ -38,6 +39,55 @@ public sealed class DecorateCommandTests : IAsyncDisposable
             "Decoration done: 1190 placed, 3 already there, 12 skipped in 2 files.",
             Assert.Single(context.Output).Text
         );
+    }
+
+    [Fact]
+    public async Task InGame_WithTheConfirmationGump_DecoratesWhenConfirmed()
+    {
+        var gumps = new StubGumpTemplateService { Answer = "confirm" };
+        gumps.Ids.Add(DecorateCommand.ConfirmGump);
+
+        var context = await RunInGameAsync(gumps: gumps);
+
+        Assert.Equal([DecorateCommand.ConfirmGump], gumps.Asked);
+        Assert.Equal(1, _decorations.Calls);
+        Assert.StartsWith("Decoration done", Assert.Single(context.Output).Text);
+    }
+
+    [Fact]
+    public async Task InGame_ADecorationStartedWhileAsking_IsNotStartedAgain()
+    {
+        var gumps = new StubGumpTemplateService { Answer = "confirm", WhileAsking = () => _decorations.IsRunning = true };
+        gumps.Ids.Add(DecorateCommand.ConfirmGump);
+
+        var context = await RunInGameAsync(gumps: gumps);
+
+        Assert.Equal(0, _decorations.Calls);
+        Assert.Equal("A decoration is already running.", Assert.Single(context.Output).Text);
+    }
+
+    [Fact]
+    public async Task ADecorationStartedByAnotherAtTheSameMoment_SaysItIsRunning()
+    {
+        var decorations = new StubDecorationService { Failure = new InvalidOperationException("A decoration is already running.") };
+        decorations.BeforeRun = () => decorations.IsRunning = true;
+        var context = new CommandContext("decorate", "decorate", [], CommandSourceType.Console, null);
+
+        await new DecorateCommand(decorations, _sender).ExecuteAsync(context);
+
+        Assert.Equal((CommandOutputLevel.Error, "A decoration is already running."), (Assert.Single(context.Output).Level, context.Output[0].Text));
+    }
+
+    [Theory, InlineData("cancel"), InlineData(null)]
+    public async Task InGame_WithTheConfirmationGump_CancelledPlacesNothing(string? answer)
+    {
+        var gumps = new StubGumpTemplateService { Answer = answer };
+        gumps.Ids.Add(DecorateCommand.ConfirmGump);
+
+        var context = await RunInGameAsync(gumps: gumps);
+
+        Assert.Equal(0, _decorations.Calls);
+        Assert.Equal("Decoration canceled.", Assert.Single(context.Output).Text);
     }
 
     [Fact]
@@ -105,13 +155,16 @@ public sealed class DecorateCommandTests : IAsyncDisposable
         Assert.StartsWith("Decorazione finita: 1190 piazzati", Assert.Single(context.Output).Text);
     }
 
-    private async Task<CommandContext> RunInGameAsync(ILocalizationService? localization = null)
+    private async Task<CommandContext> RunInGameAsync(
+        ILocalizationService? localization = null,
+        StubGumpTemplateService? gumps = null
+    )
     {
         _fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         var context = new CommandContext(".decorate", "decorate", [], CommandSourceType.InGame, session);
 
-        await new DecorateCommand(_decorations, _sender, localization).ExecuteAsync(context);
+        await new DecorateCommand(_decorations, _sender, localization, gumps).ExecuteAsync(context);
 
         return context;
     }

@@ -38,6 +38,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "m_banker"
+script_id = "banker"
 base_id = "basehuman"
 name_list = "male"
 title = "the Banker"
@@ -1388,6 +1389,7 @@ items = ["armorswampdragon"]
 
 [[mobile]]
 id = "m_gypsybanker"
+script_id = "banker"
 base_id = "basehuman"
 name_list = "male"
 title = "the Gypsy Banker"

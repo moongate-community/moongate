@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using Moongate.Core.Directories;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data;
@@ -10,9 +11,11 @@ using Serilog;
 namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
-///     Loads the texts of <c>data/messages/eng.toml</c> and replaces them with those of the configured language's file.
-///     A number that is not a message id, a text that is not a valid composite format, a translation that needs more
-///     values than the English text or a translated id missing from English stops the server at startup.
+///     Loads the English texts and replaces them with those of the configured language. A language's texts are
+///     <c>data/messages/&lt;language&gt;.toml</c> plus every toml file in <c>data/messages/&lt;language&gt;/</c>, merged.
+///     A number that is not a message id, a text that is not a valid composite format, the same id in two files of a
+///     language, a translation that needs more values than the English text or a translated id missing from English
+///     stops the server at startup.
 /// </summary>
 public class MessagesLoader : IDataLoader<MessageContent>
 {
@@ -20,7 +23,7 @@ public class MessagesLoader : IDataLoader<MessageContent>
 
     private const int MaxValues = 16;
 
-    private static readonly object[] SampleValues = Enumerable.Repeat<object>(0, MaxValues).ToArray();
+    private static readonly EnumerationOptions TomlFiles = new() { MatchCasing = MatchCasing.CaseInsensitive };
 
     private readonly DirectoriesConfig _directoriesConfig;
 
@@ -38,11 +41,14 @@ public class MessagesLoader : IDataLoader<MessageContent>
 
     public Task InitializeAsync(CancellationToken cancellationToken = default)
     {
-        foreach (var path in new[] { GetPath(EnglishLanguage), GetPath(language) })
+        foreach (var languageCode in new[] { EnglishLanguage, language })
         {
-            if (!File.Exists(path))
+            if (GetPaths(languageCode).Count == 0)
             {
-                throw new FileNotFoundException($"Messages file {Path.GetFileName(path)} not found", path);
+                throw new FileNotFoundException(
+                    $"Messages of {languageCode} not found: neither {languageCode}.toml nor a toml file in {languageCode}/",
+                    GetPath(languageCode)
+                );
             }
         }
 
@@ -51,57 +57,109 @@ public class MessagesLoader : IDataLoader<MessageContent>
 
     public async Task<DataLoaderResult<MessageContent>> LoadDataAsync(CancellationToken cancellationToken = default)
     {
-        var english = await ReadAsync(GetPath(EnglishLanguage), cancellationToken);
+        var english = await ReadLanguageAsync(EnglishLanguage, cancellationToken);
 
         if (english.Count == 0)
         {
-            throw new InvalidDataException($"{GetPath(EnglishLanguage)} has no [messages] entries.");
+            throw new InvalidDataException(
+                $"The {EnglishLanguage} messages have no [messages] entries: {string.Join(", ", GetPaths(EnglishLanguage))}."
+            );
         }
 
-        var messages = new Dictionary<int, string>(english);
         var translated = new Dictionary<int, string>();
 
         if (language != EnglishLanguage)
         {
-            var path = GetPath(language);
-            translated = await ReadAsync(path, cancellationToken);
-
-            foreach (var (id, text) in translated)
+            foreach (var (id, (text, path)) in await ReadLanguageAsync(language, cancellationToken))
             {
-                if (!english.TryGetValue(id, out var englishText))
+                if (!english.TryGetValue(id, out var englishMessage))
                 {
-                    throw new InvalidDataException($"{path}: message {id} is not in {EnglishLanguage}.toml.");
+                    throw new InvalidDataException($"{path}: message {id} is not in the {EnglishLanguage} messages.");
                 }
 
-                if (CountValues(text) > CountValues(englishText))
+                if (CountValues(text) > CountValues(englishMessage.Text))
                 {
                     throw new InvalidDataException(
-                        $"{path}: message {id} needs more values than the English text '{englishText}'."
+                        $"{path}: message {id} needs more values than the English text '{englishMessage.Text}'."
                     );
                 }
 
-                messages[id] = text;
+                translated[id] = text;
             }
         }
 
         _logger.Information(
             "Found {Count} messages in {Language}, {Fallback} of them in English",
-            messages.Count,
+            english.Count,
             language,
-            language == EnglishLanguage ? 0 : messages.Count - translated.Count
+            language == EnglishLanguage ? 0 : english.Count - translated.Count
         );
 
         return new DataLoaderResult<MessageContent>()
         {
-            Entities = messages.OrderBy(message => message.Key)
-                               .Select(message => new MessageContent { Id = message.Key, Text = message.Value })
-                               .ToList()
+            Entities = english.OrderBy(message => message.Key)
+                              .Select(
+                                  message => new MessageContent
+                                  {
+                                      Id = message.Key,
+                                      Text = translated.GetValueOrDefault(message.Key, message.Value.Text)
+                                  }
+                              )
+                              .ToList()
         };
     }
 
     private string GetPath(string languageCode)
     {
         return Path.Join(_directoriesConfig["data"], "messages", $"{languageCode}.toml");
+    }
+
+    /// <summary>
+    ///     Returns the language's file when it exists, then the toml files of the language's directory in name order.
+    /// </summary>
+    private List<string> GetPaths(string languageCode)
+    {
+        var paths = new List<string>();
+        var file = GetPath(languageCode);
+        var directory = Path.Join(_directoriesConfig["data"], "messages", languageCode);
+
+        if (File.Exists(file))
+        {
+            paths.Add(file);
+        }
+
+        if (Directory.Exists(directory))
+        {
+            paths.AddRange(Directory.EnumerateFiles(directory, "*.toml", TomlFiles).Order(StringComparer.Ordinal));
+        }
+
+        return paths;
+    }
+
+    /// <summary>
+    ///     Reads every file of the language into one set, each text with the file it comes from.
+    /// </summary>
+    private async Task<Dictionary<int, (string Text, string Path)>> ReadLanguageAsync(
+        string languageCode,
+        CancellationToken cancellationToken
+    )
+    {
+        var messages = new Dictionary<int, (string Text, string Path)>();
+
+        foreach (var path in GetPaths(languageCode))
+        {
+            foreach (var (id, text) in await ReadAsync(path, cancellationToken))
+            {
+                if (messages.TryGetValue(id, out var existing))
+                {
+                    throw new InvalidDataException($"{path}: message {id} is already in {existing.Path}.");
+                }
+
+                messages[id] = (text, path);
+            }
+        }
+
+        return messages;
     }
 
     private static async Task<Dictionary<int, string>> ReadAsync(string path, CancellationToken cancellationToken)
@@ -123,7 +181,10 @@ public class MessagesLoader : IDataLoader<MessageContent>
                 );
             }
 
-            messages[id] = text;
+            if (!messages.TryAdd(id, text))
+            {
+                throw new InvalidDataException($"{path}: message {id} is written more than once.");
+            }
         }
 
         return messages;
@@ -134,19 +195,15 @@ public class MessagesLoader : IDataLoader<MessageContent>
     /// </summary>
     private static int CountValues(string text)
     {
-        for (var count = 0; count <= MaxValues; count++)
+        try
         {
-            try
-            {
-                _ = string.Format(CultureInfo.InvariantCulture, text, SampleValues[..count]);
+            var count = CompositeFormat.Parse(text).MinimumArgumentCount;
 
-                return count;
-            }
-            catch (FormatException)
-            {
-            }
+            return count <= MaxValues ? count : -1;
         }
-
-        return -1;
+        catch (FormatException)
+        {
+            return -1;
+        }
     }
 }

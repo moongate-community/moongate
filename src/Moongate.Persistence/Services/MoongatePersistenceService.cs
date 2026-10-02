@@ -17,7 +17,7 @@ namespace Moongate.Persistence.Services;
 /// <summary>
 ///     Owns registered PostgreSQL databases, schema readiness, transactions and world snapshots.
 /// </summary>
-public sealed class MoongatePersistenceService : IAsyncDisposable
+public sealed class MoongatePersistenceService : IPersistenceDataExporter, IAsyncDisposable
 {
     private readonly ILogger _logger = Log.ForContext<MoongatePersistenceService>();
     private readonly HashSet<PersistenceDatabaseTarget> _registeredTargets = [];
@@ -25,6 +25,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
     private readonly PersistenceModuleRegistry _registry = new();
     private readonly PersistenceSchemaCoordinator _schema;
     private readonly PersistenceLifetime _lifetime = new();
+    private readonly PostgreSqlPersistenceOptions _options;
 
     private readonly Dictionary<PersistenceDatabaseTarget, PersistenceMutationGate> _gates = new()
     {
@@ -38,12 +39,16 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
     private bool _frozen;
     private int _entityCount;
 
+    /// <inheritdoc />
+    public IReadOnlyCollection<PersistenceDatabaseTarget> ConfiguredTargets => _options.ConfiguredTargets;
+
     /// <summary>
     ///     Constructs an I/O-free persistence owner. Register all entities and modules before initialization.
     /// </summary>
     public MoongatePersistenceService(PostgreSqlPersistenceOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
+        _options = options;
         _schema = new(options, _registry, _logger);
     }
 
@@ -126,6 +131,27 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         );
     }
 
+    /// <inheritdoc />
+    public Task ExportDataAsync(
+        PersistenceDatabaseTarget target,
+        Stream output,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return RunOwnedAsync(async () =>
+            {
+                ArgumentNullException.ThrowIfNull(output);
+                EnsureReady();
+                var connectionString = _schema.GetRuntimeConnectionString(target);
+                await PostgreSqlDataExporter
+                    .ExportAsync(connectionString, output, DateTimeOffset.UtcNow, cancellationToken)
+                    .ConfigureAwait(false);
+
+                return true;
+            }
+        );
+    }
+
     /// <summary>
     ///     Checks every configured runtime database, validates registrations and prepares schemas according to the configured
     ///     policy.
@@ -196,6 +222,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                 EnsureReady();
                 var started = Stopwatch.GetTimestamp();
                 var savedCount = 0;
+                var writtenCount = 0;
 
                 foreach (var group in _sources.GroupBy(source => GetTarget(source.EntityType)).OrderBy(group => group.Key))
                 {
@@ -279,10 +306,13 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                                 }
 
                                 savedCount += targetCount;
+                                var targetWritten = group.Sum(source => source.Written);
+                                writtenCount += targetWritten;
                                 _logger.Information(
-                                    "PostgreSQL snapshot committed for {Target}: {EntityCount} entities in {ElapsedMilliseconds} ms",
+                                    "PostgreSQL snapshot committed for {Target}: {EntityCount} entities, {WrittenCount} written, in {ElapsedMilliseconds} ms",
                                     group.Key,
                                     targetCount,
+                                    targetWritten,
                                     Stopwatch.GetElapsedTime(targetStarted).TotalMilliseconds
                                 );
                             },
@@ -293,8 +323,9 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
 
                 cancellationToken.ThrowIfCancellationRequested();
                 _logger.Information(
-                    "PostgreSQL world save completed: {EntityCount} entities in {ElapsedMilliseconds} ms",
+                    "PostgreSQL world save completed: {EntityCount} entities, {WrittenCount} written, in {ElapsedMilliseconds} ms",
                     savedCount,
+                    writtenCount,
                     Stopwatch.GetElapsedTime(started).TotalMilliseconds
                 );
 

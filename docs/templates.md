@@ -3,7 +3,7 @@
 Shard content that a designer authors by hand, such as item and mobile definitions,
 is a set of TOML files under `templates/` in the server root, read once when the
 shard starts. The distribution's templates are copied there by
-[`mgboot`](mgboot.md). This page covers the loader contract in `Moongate.Server.Ultima` and
+[`mgctl`](mgctl.md). This page covers the loader contract in `Moongate.Server.Ultima` and
 the TOML value types in `Moongate.Core` that make templates pleasant to write by
 hand; [TOML value types](toml-types.md) is the reference for their text forms. It
 assumes [writing a plugin](plugins.md), since a loader is registered from `Register`
@@ -390,7 +390,7 @@ gender = "female"
 ```
 
 The shipped `templates/mobiles/` holds UOX3's NPCs, converted by
-[`mg-uoxconv`](uox3-migration.md#mobiles-and-name-lists). They are loaded at game and
+[`mgctl convert uox`](uox3-migration.md#mobiles-and-name-lists). They are loaded at game and
 standalone startup (`IMobileTemplateService`).
 
 `LootTemplate` and `LootEntry` are the same kind of shape:
@@ -421,8 +421,9 @@ id = "jungle"
 entries = [{ mobile_id = "gorilla", weight = 20 }, { npc_list_id = "all_trolls", weight = 7 }]
 ```
 
-`templates/spawns/<map>/` holds the spawn regions, converted from UOX3's `[REGIONSPAWN n]` blocks;
-the folder is the map. A spawn picks from one pool, as UOX3: its `mobile_ids` (weight 1 each) and
+`templates/spawns/<map>/` holds the spawn regions, converted from UOX3's `[REGIONSPAWN n]` blocks,
+plus ModernUO's spawners (`modernuo_*.toml` and `trammel/town_new_haven.toml`); the folder is the
+map, and a `map` key in a region is ignored. A spawn picks from one pool, as UOX3: its `mobile_ids` (weight 1 each) and
 the entries of its `npc_list_ids` with their weights:
 
 ```toml
@@ -439,7 +440,7 @@ areas = [{ x1 = 1422, y1 = 1547, x2 = 1426, y2 = 1550 }]   # both corners includ
 exclude = []                          # parts of the areas where nothing spawns
 only_outside = false                  # true: never under a roof
 # pref_z = 18                         # how high above the ground a spot may be
-# z = 36                              # a fixed height instead
+# z = 36                              # the highest a spot may be, instead of ground + pref_z
 ```
 
 Both load at startup, after the mobile templates, and a mistake in them stops the server. How the
@@ -448,11 +449,15 @@ regions spawn at runtime, water mobiles included, is in [NPC spawns](spawns.md).
 ## Decorations
 
 `templates/decorations/` holds the world decoration the client's map files do not: doors, signs,
-lights, furniture, teleporters and the like, about 40,600 placements in 103 files. It was
+lights, furniture, teleporters and the like, about 42,600 placements in 115 files. It was
 converted once from ModernUO's `Data/Decoration`, plus ServUO's New Haven (`trammel/newhaven.toml`,
-`havenisland.toml`, `havenmine.toml`, which ModernUO lacks), one TOML file per source file, in one folder
+`havenisland.toml`, `havenmine.toml`, which ModernUO lacks) and the shop and world signs of
+ModernUO's `signs.cfg` (`signs.toml`, written by
+[`mgctl convert modernuo-signs`](uox3-migration.md#signs-of-modernuo)) and the world and dungeon
+teleporters of its `teleporters.json` (`teleporters.toml`, written by
+[`mgctl convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
-`tokuno/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
+`tokuno/`, `termur/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
 `_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename it without the `_`
 to place its decoration. Files starting with `_` inside a loaded folder (the dungeons, such as
 `britannia/_covetous.toml`) are loaded.
@@ -472,12 +477,24 @@ setting per location in the order of `locations`.
 [`.decorate`](commands/decorate.md) places them with the templates of
 `templates/items/decorations.toml`: `decoration`, fixed and never decaying, for most kinds;
 `decoration_door`, the same with `script_id = "door"`, for the kinds whose name contains `Door`
-or `Gate`; and `decoration_light`, with `script_id = "light"`, for ModernUO's light kinds
-(candles, candelabras, lanterns, lamp posts, sconces, torches, braziers). Each item takes the
+or `Gate`; `decoration_light`, with `script_id = "light"`, for ModernUO's light kinds
+(candles, candelabras, lanterns, lamp posts, sconces, torches, braziers); and
+`decoration_teleporter`, with `script_id = "teleporter"` and `visibility = "game_master"`, for
+the kind `Teleporter`. Each item takes the
 block's graphic, `hue` and `name`; its other settings stay in the item's props, with
 `decoration_type` = the kind for a door or a light. A light also gets its `light` shape (the
 block's or the kind's) and `protected` unless the block says `unprotected`; the graphic already
 says whether it is lit. A door block with `locked = true` in its props places doors that only
-staff open. Teleporters, spawners, mark
-containers, public moongates and addons are not placed yet.
+staff open. An item with a `label_number` prop, such as a `LocalizedSign`, shows that text of the
+client as its name, unless the item has a name of its own. A teleporter's `point_dest = [x, y, z]` becomes the props `teleport.x`,
+`teleport.y` and `teleport.z`, and its `map_dest` the prop `teleport.map`, a `MapType` number.
+A `KeywordTeleporter` takes the template `decoration_keyword_teleporter`, with
+`script_id = "keyword_teleport"`, and keeps its `substring`, `keyword`, `range` and `delay` as props.
+A `PublicMoongate` takes the template `decoration_public_moongate`, with
+`script_id = "public_moongate"`; `.decorate` also places one on every destination of
+[`moongates.toml`](data-files/moongates.md).
+Spawners, mark containers, addons and every other kind whose name ends in
+`Teleporter`, those that ask for a skill, a quest or a double click (`SkillTeleporter`,
+`InteractionTeleporter`, ...), are not placed yet. The doors of the towns are in no file:
+`.decorate` reads them from the map's door frames.
 

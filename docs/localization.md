@@ -18,7 +18,8 @@ Set the language code in the `[ultima.localization]` section:
 language = "ita"
 ```
 
-The code names the file `data/messages/<language>.toml`; the default is `eng`. The
+The code names the file `data/messages/<language>.toml` and the directory
+`data/messages/<language>/`; the default is `eng`. The
 server ships these languages:
 
 | Code | Language |
@@ -57,26 +58,61 @@ the UOX3 printf placeholders (`%s`, `%i`, `%d`) turned into `{0}`, `{1}`, ...
 
 ### English fallback
 
-`eng.toml` is the reference and must always exist. The server loads it first, then
+English is the reference and must always exist. The server loads it first, then
 replaces each text with the one in the chosen language. A message missing from the
 chosen language stays in English, so a partial translation still works. The log
 reports how many messages fell back:
 
 ```text
-Found 5462 messages in ita, 3 of them in English
+Found 5577 messages in ita, 3 of them in English
 ```
 
 ### Validation at startup
 
 `MessagesLoader` stops the server at startup when:
 
-- `eng.toml` or the chosen language's file does not exist;
-- `eng.toml` has no messages;
+- English or the chosen language has neither its file nor a toml file in its directory;
+- English has no messages;
 - a key is not a number;
 - a text is empty or is not a valid composite format, such as a lone `{`;
+- a text needs more than 16 values;
 - a translation needs more values than the English text, which would fail when the
   code passes the English number of values;
-- a translation has a number that `eng.toml` does not have.
+- a translation has a number that English does not have;
+- the same number is in two files of one language, or twice in one file (`1` and `01`).
+
+### Split a language into several files
+
+Besides `data/messages/<language>.toml`, the server reads every `*.toml` file in the
+directory `data/messages/<language>/` and merges them all into one set of messages:
+
+```text
+data/messages/
+  eng.toml            # shipped: the standard texts, from UOX3
+  eng/
+    moongate.toml     # shipped: Moongate's own texts, numbers from 30000
+    shard.toml        # your own texts
+    quests.toml
+  ita.toml
+  ita/
+    moongate.toml
+    shard.toml
+```
+
+The server ships two files per language: `<language>.toml` with the standard texts and
+`<language>/moongate.toml` with [Moongate's own messages](#moongates-own-messages).
+
+- The file and the directory can both exist, or only one of them.
+- Every file has the same format: a `[messages]` table of `number = "text"`.
+- The files of the directory are read in name order. Subdirectories and files that do
+  not end in `.toml` are ignored.
+- Write the directory name in lower case: on Linux `ENG/shard.toml` is not read. The
+  case of the file name and of the `.toml` extension does not matter.
+- A number can be in one file only. The same number in two files of one language stops
+  the server and the error names both files.
+
+Keep your shard's texts in files of your own in `data/messages/eng/` so that an update
+of the shipped `eng.toml` and `eng/moongate.toml` does not overwrite them.
 
 ## Read a message from code
 
@@ -153,15 +189,19 @@ other data services. `definitions.lua` declares it for editor completion, with
 
 ## Moongate's own messages
 
-Numbers from 30000 are Moongate's, not UOX3's, all translated in every shipped language:
+Numbers from 30000 are Moongate's, not UOX3's, all translated in every shipped language.
+They live in `data/messages/<language>/moongate.toml`, apart from the standard texts:
 
 | Id | Text | Used by |
 | --- | --- | --- |
 | 30000–30004 | Common, Uncommon, Rare, Epic, Legendary | Tooltip rarity |
 | 30005 | [Cursed] | Tooltip loot type |
 | 30006, 30007 | Weight: 1 stone, Weight: {0} stones | Tooltip weight |
-| 30008–30038, 30050–30052 | Target canceled., Unknown command: {0}, Usage: {0}, The world has been saved in {0} seconds., {0} now has {1} fame., ... | Command replies and broadcasts (`CommandMessages`) |
-| 30039–30049, 30053–30054 | One per built-in command | Command descriptions in `help` |
+| 30008–30038, 30050–30052 and most of 30055–30112 | Target canceled., Unknown command: {0}, Usage: {0}, The world has been saved in {0} seconds., {0} now has {1} fame., ... | Command replies and broadcasts (`CommandMessages`) |
+| 30039–30049, 30053–30054 and the rest up to 30113 | One per built-in command | Command descriptions in `help` |
+| 30114 | This moongate does not seem to go anywhere. | Texts of the item scripts, read with `localization.get` |
+
+The header of the command texts in `eng/moongate.toml` lists the ids of both sets.
 
 Tooltips also use UOX3's 9055 "[Blessed]", and `.account` its 555 "An account by that
 name already exists!". Polish and Czech write the plural weight
@@ -169,12 +209,15 @@ abbreviated ("kam."), since one text with `{0}` cannot follow their plural forms
 
 ## Add or change a text
 
-1. Add the message to `data/messages/eng.toml` with a number that is not used yet.
+1. Add the message with a number that is not used yet: a text of Moongate's code to
+   `data/messages/eng/moongate.toml`, a text of your shard to a file of your own in
+   `data/messages/eng/`.
 2. Add the translation with the same number to the other files. A language without it
    shows the English text.
 3. Use the same values, in the same order, in every language.
 4. Run `dotnet test --filter RepositoryDataFiles`: it loads every shipped language
    with the real loader.
 
-To add a language, copy `eng.toml` to `data/messages/<code>.toml`, translate the texts
-and set `language = "<code>"`. The code may contain only ASCII letters.
+To add a language, copy `eng.toml` to `data/messages/<code>.toml` and
+`eng/moongate.toml` to `data/messages/<code>/moongate.toml`, translate the texts and set
+`language = "<code>"`. The code may contain only ASCII letters.

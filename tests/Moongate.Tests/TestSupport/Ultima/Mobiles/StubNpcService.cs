@@ -27,6 +27,11 @@ public sealed class StubNpcService : INpcService
     /// </summary>
     public TaskCompletionSource? Gate { get; set; }
 
+    /// <summary>
+    ///     Completes when the first spawn has been asked for, so a test can wait for a spawn that runs on another thread.
+    /// </summary>
+    public TaskCompletionSource FirstSpawn { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     public Task StartAsync()
     {
         return Task.CompletedTask;
@@ -46,6 +51,7 @@ public sealed class StubNpcService : INpcService
     )
     {
         Spawns.Add((templateId, map, location));
+        FirstSpawn.TrySetResult();
         Spawned.Map = map;
         Spawned.Location = location;
 

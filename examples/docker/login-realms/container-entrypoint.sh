@@ -97,10 +97,10 @@ fi
 
 if [ "${1:-}" = "migrations" ]; then
     shift
-    exec /app/migration-runner/Moongate.MigrationRunner "$@"
+    exec /app/mgctl migrate "$@"
 fi
 
 # Add the shard data files a new image ships, keeping the ones already in the volume.
-/app/mgboot /data > /dev/null
+/app/mgctl init /data > /dev/null
 
-exec /app/Moongate.Server "$@"
+exec /app/mgserver "$@"

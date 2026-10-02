@@ -47,6 +47,19 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             : throw new InvalidOperationException($"Persistence target '{target}' is not active.");
     }
 
+    /// <summary>
+    ///     Gets the runtime connection of a configured target, also when no entity or migration made it active.
+    /// </summary>
+    public string GetRuntimeConnectionString(PersistenceDatabaseTarget target)
+    {
+        ThrowIfDisposed();
+        Prepare();
+
+        return _databases.TryGetValue(target, out var database)
+            ? database.RuntimeConnectionString
+            : _options.GetRequiredDatabase(target).ResolveRuntimeConnectionString();
+    }
+
     public IPersistenceModule GetOwner(Type entityType)
     {
         ThrowIfDisposed();
@@ -92,7 +105,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
 
                     throw new InvalidOperationException(
                         $"PostgreSQL schema changes are required for persistence modules: {modules}. " +
-                        "Generate and review a SQL migration, then apply it with Moongate.MigrationRunner."
+                        "Generate and review a SQL migration, then apply it with mgctl migrate apply."
                     );
                 }
             }
@@ -188,7 +201,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
 
         try
         {
-            var ddl = await comparison.WaitAsync(cancellationToken).ConfigureAwait(false);
+            // Comments are documentation, and a single-file build cannot read the XML docs they come from.
+            var ddl = SchemaComments.Strip(await comparison.WaitAsync(cancellationToken).ConfigureAwait(false));
             var sequences = await PersistenceSerialSequence.CompareAsync(database, module.EntityTypes, cancellationToken)
                 .ConfigureAwait(false);
 
@@ -374,7 +388,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             if (pending.Count > 0)
             {
                 throw new InvalidOperationException(
-                    $"Pending PostgreSQL migrations for {target}: {string.Join(", ", pending.Select(script => script.Name))}. Run Moongate.MigrationRunner apply before starting the server."
+                    $"Pending PostgreSQL migrations for {target}: {string.Join(", ", pending.Select(script => script.Name))}. Run mgctl migrate apply before starting the server."
                 );
             }
         }

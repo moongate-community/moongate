@@ -6,6 +6,7 @@ shard_name = "Moongate Login"
 [network]
 listen_address = "0.0.0.0"
 login_port = 2593
+enable_ping_server = false
 
 [ultima]
 ultima_path = "/uo"

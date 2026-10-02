@@ -4,6 +4,7 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.World;
 using Moongate.Server.Ultima.Entities.World;
@@ -12,6 +13,7 @@ using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Primitives;
+using Moongate.Ultima.Types;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -33,6 +35,7 @@ public sealed class WorldViewService : IWorldViewService
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
     private readonly WorldConfig _world;
+    private readonly IItemTemplateService? _templates;
     private readonly ILogger _logger;
 
     // Read on every use: the configured range of the live world (ultima.world.view_range).
@@ -45,10 +48,12 @@ public sealed class WorldViewService : IWorldViewService
         IPacketSendService sender,
         ITooltipService tooltips,
         WorldConfig world,
-        ILogger? logger = null
+        ILogger? logger = null,
+        IItemTemplateService? templates = null
     )
     {
         _logger = logger ?? Log.ForContext<WorldViewService>();
+        _templates = templates;
         _tooltips = tooltips;
         _sectors = sectors;
         _mobiles = mobiles;
@@ -57,9 +62,16 @@ public sealed class WorldViewService : IWorldViewService
         _world = world;
     }
 
-    public void Entered(MobileEntity mobile, long sessionId, ClientVersion? version)
+    public void Entered(MobileEntity mobile, long sessionId, ClientVersion? version, AccountType account = AccountType.Regular)
     {
-        _sessions[mobile.Id] = new(sessionId, version);
+        var own = new Viewer(sessionId, version, account);
+        _sessions[mobile.Id] = own;
+        ShowAround(mobile, own);
+    }
+
+    // Shows the mobile to the players in range and, when it is a player, everyone and every ground item in range to it.
+    private void ShowAround(MobileEntity mobile, Viewer? own)
+    {
         MobileIncomingPacket? incoming = null;
         var sent = new SentCounts();
 
@@ -70,8 +82,11 @@ public sealed class WorldViewService : IWorldViewService
                 continue;
             }
 
-            SendMobile(sessionId, other, Incoming(other));
-            sent.Add(other);
+            if (own is not null)
+            {
+                SendMobile(own.SessionId, other, Incoming(other));
+                sent.Add(other);
+            }
 
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
@@ -79,16 +94,72 @@ public sealed class WorldViewService : IWorldViewService
             }
         }
 
+        if (own is null)
+        {
+            return;
+        }
+
         foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
         {
-            SendItem(sessionId, item, version);
-            sent.Items++;
+            if (SendItem(own, item))
+            {
+                sent.Items++;
+            }
         }
 
         LogSectorEntry(mobile, sent);
     }
 
     public void Moved(MobileEntity mobile, Point3D oldLocation, bool running)
+    {
+        Relocated(mobile, oldLocation, running, false);
+    }
+
+    public void Teleported(MobileEntity mobile, MapType oldMap, Point3D oldLocation)
+    {
+        if (oldMap == mobile.Map)
+        {
+            Relocated(mobile, oldLocation, false, true);
+
+            return;
+        }
+
+        var remove = new RemoveEntityPacket(mobile.Id);
+        var own = _sessions.GetValueOrDefault(mobile.Id);
+
+        // As ModernUO's ClearScreen: the mover's client is told to drop what it saw on the old map, whose coordinates
+        // may be in range on the new one too.
+        foreach (var other in _sectors.GetMobilesInRange(oldMap, oldLocation, ViewRange))
+        {
+            if (other.Id == mobile.Id)
+            {
+                continue;
+            }
+
+            if (_sessions.TryGetValue(other.Id, out var viewer))
+            {
+                _sender.TrySend(viewer.SessionId, remove);
+            }
+
+            if (own is not null)
+            {
+                _sender.TrySend(own.SessionId, new RemoveEntityPacket(other.Id));
+            }
+        }
+
+        if (own is not null)
+        {
+            foreach (var item in _sectors.GetItemsInRange(oldMap, oldLocation, ViewRange))
+            {
+                _sender.TrySend(own.SessionId, new RemoveEntityPacket(item.Id));
+            }
+        }
+
+        // The mover is shown the new surroundings from nothing.
+        ShowAround(mobile, own);
+    }
+
+    private void Relocated(MobileEntity mobile, Point3D oldLocation, bool running, bool teleported)
     {
         // Players that saw the old tile but not the new one lose the mover.
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, oldLocation, ViewRange))
@@ -117,7 +188,7 @@ public sealed class WorldViewService : IWorldViewService
 
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
-                if (sawIt)
+                if (sawIt && !teleported)
                 {
                     _sender.TrySend(viewer.SessionId, moving ??= Moving(mobile, running));
                 }
@@ -142,9 +213,8 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
         {
-            if (item.GroundLocation is { } spot && !InRange(spot, oldLocation))
+            if (item.GroundLocation is { } spot && !InRange(spot, oldLocation) && SendItem(own!, item))
             {
-                SendItem(own!.SessionId, item, own.Version);
                 sent.Items++;
             }
         }
@@ -194,7 +264,7 @@ public sealed class WorldViewService : IWorldViewService
         {
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
-                SendItem(viewer.SessionId, item, viewer.Version);
+                SendItem(viewer, item);
             }
         }
     }
@@ -203,7 +273,7 @@ public sealed class WorldViewService : IWorldViewService
     {
         if (item.GroundLocation is not null && _sessions.TryGetValue(viewer.Id, out var session))
         {
-            SendItem(session.SessionId, item, session.Version);
+            SendItem(session, item);
         }
     }
 
@@ -303,16 +373,38 @@ public sealed class WorldViewService : IWorldViewService
         _sender.TrySend(sessionId, incoming);
         _sender.TrySend(sessionId, _tooltips.Info(mobile));
 
-        foreach (var item in _items.GetWorn(mobile.Id))
+        // Not the bank box: the others never see it.
+        foreach (var item in _items.GetWorn(mobile.Id).Where(item => item.Layer != LayerType.Bank))
         {
             _sender.TrySend(sessionId, _tooltips.Info(item));
         }
     }
 
-    private void SendItem(long sessionId, ItemEntity item, ClientVersion? version)
+    // False, with nothing sent, for an item hidden from the viewer's account, such as a teleporter from a player.
+    private bool SendItem(Viewer viewer, ItemEntity item)
     {
-        _sender.TrySend(sessionId, WorldItem(item, version));
-        _sender.TrySend(sessionId, _tooltips.Info(item));
+        if (viewer.Account < VisibilityOf(item))
+        {
+            return false;
+        }
+
+        _sender.TrySend(viewer.SessionId, WorldItem(item, viewer.Version));
+        _sender.TrySend(viewer.SessionId, _tooltips.Info(item));
+
+        return true;
+    }
+
+    // The item's own visibility, else its template's; everyone sees an item with neither.
+    private AccountType VisibilityOf(ItemEntity item)
+    {
+        if (item.Visibility is { } own)
+        {
+            return own;
+        }
+
+        return _templates is not null && _templates.TryGet(item.TemplateId, out var template)
+            ? template.Visibility ?? AccountType.Regular
+            : AccountType.Regular;
     }
 
     private MobileIncomingPacket Incoming(MobileEntity mobile)

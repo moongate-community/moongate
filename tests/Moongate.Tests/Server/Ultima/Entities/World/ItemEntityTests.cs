@@ -73,6 +73,38 @@ public sealed class ItemEntityTests
     }
 
     [Fact]
+    public void PutInContainer_KeepsTheGridIndex_AndLeavingTheContainerClearsIt()
+    {
+        var item = new ItemEntity { Id = new(0x40000002) };
+
+        item.PutInContainer(Backpack, new Point2D(44, 65), 7);
+
+        Assert.Equal((short)7, item.GridIndex);
+
+        item.PlaceOnGround(MapType.Felucca, new Point3D(1, 2, 3));
+
+        Assert.Null(item.GridIndex);
+    }
+
+    [Fact]
+    public void PutInContainer_WithoutAnIndex_TakesTheFirstSlot()
+    {
+        var item = new ItemEntity { Id = new(0x40000002) };
+
+        item.PutInContainer(Backpack, new Point2D(44, 65));
+
+        Assert.Equal((short)0, item.GridIndex);
+    }
+
+    [Fact]
+    public void PutInContainer_AnIndexBeyondTheGrid_Throws()
+    {
+        var item = new ItemEntity { Id = new(0x40000002) };
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => item.PutInContainer(Backpack, new Point2D(44, 65), 125));
+    }
+
+    [Fact]
     public void PutInContainer_SetsOnlyTheContainerGroup()
     {
         var item = new ItemEntity { Id = new(0x40000002) };

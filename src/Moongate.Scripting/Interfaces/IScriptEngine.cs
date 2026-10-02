@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Lua;
 using Moongate.Scripting.Data.Scripts;
 
 namespace Moongate.Scripting.Interfaces;
@@ -50,6 +51,23 @@ public interface IScriptEngine
     ///     exist; otherwise the result as <see cref="Call" /> gives it.
     /// </returns>
     ScriptResult CallMember(string owner, string table, string function, params object?[] args);
+
+    /// <summary>
+    ///     Calls a function value a script handed to the host, such as a button callback kept by a module; it runs like
+    ///     <see cref="Call" />, its coroutine belonging to <paramref name="owner" />, the script file it belongs with.
+    /// </summary>
+    ScriptResult CallFunction(string owner, LuaFunction function, params object?[] args);
+
+    /// <summary>
+    ///     Gets whether a script is running now, such as a module function called from Lua: a call from the host would
+    ///     nest a coroutine and fail, so the host posts such work to the game loop instead.
+    /// </summary>
+    bool IsRunningScript { get; }
+
+    /// <summary>
+    ///     Gets the script file running now, null outside any script.
+    /// </summary>
+    string? CurrentScript { get; }
 
     /// <summary>
     ///     Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread;

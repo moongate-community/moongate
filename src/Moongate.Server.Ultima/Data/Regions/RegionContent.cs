@@ -51,6 +51,12 @@ public class RegionContent
     public MusicType? Music { get; set; }
 
     /// <summary>
+    ///     The season the client shows inside the region, such as winter in an ice dungeon; null keeps the map's. A
+    ///     region season never rotates.
+    /// </summary>
+    public SeasonType? Season { get; set; }
+
+    /// <summary>
     ///     The name of the weather profile of <c>weather.toml</c> the region uses.
     /// </summary>
     public string Weather { get; set; } = "none";

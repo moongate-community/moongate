@@ -18,6 +18,8 @@ Each server has its own `/data` volume. PostgreSQL has a separate persistent vol
 
 `game-1` uses the Dockerfile's `sample-plugin` stage. Its plugin registers `sample_greeter.notes` in Realm 1; the schema jobs exercise the same plugin and reviewed SQL. `game-2` uses the ordinary image. Login has no Realm database credential, and games have no Accounts credential. All three share one Redis credential and a separate handoff secret; these servers are therefore one private trust domain. No peer certificate or per-realm ACL is needed.
 
+The UDP ping server answers on host port 12000 (`PING_PORT`) from `game-1` only: the three servers share one host address, and one process per address can own the port, so `login` and `game-2` set `enable_ping_server = false`.
+
 Inside the containers, login listens on port 2593 and each game listens on 2595. Compose maps game 2 to host port 2596, which its `realm_directory.advertised_port` also declares. The default advertised IPv4 address is `127.0.0.1` for a client on the Docker host. For remote clients, set `advertised_address` in both game TOMLs to a host-reachable IPv4 address and publish the client ports on that host address. Set the same address in `game-1-admin.toml` and `game-2-admin.toml` if you use the administration override. The `0xA8` list has IPv4 addresses but no ports; `0x8C` supplies the selected realm's port.
 
 ## Prepare configuration and secrets
@@ -45,7 +47,7 @@ export MOONGATE_REDIS_PASSWORD="$(bw get password moongate-redis)"
 export MOONGATE_HANDOFF_SECRET="$(bw get password moongate-handoff)"
 ```
 
-Compose mounts these values as secrets. The server entrypoint constructs `MOONGATE_REDIS_CONNECTION_STRING=redis:6379,password=...` and exports `MOONGATE_HANDOFF_SECRET` only in the runtime process environment. The mounted TOMLs contain references to those variable names, not their values. Redis reads its password from its own secret mount into a private in-memory config file. The PostgreSQL connection URIs are likewise assembled in memory from role-specific secrets. Before starting the server, the entrypoint runs `mgboot` on the volume, which adds any [shard data file](data-files.md) the image ships and the volume lacks, keeping the ones already there.
+Compose mounts these values as secrets. The server entrypoint constructs `MOONGATE_REDIS_CONNECTION_STRING=redis:6379,password=...` and exports `MOONGATE_HANDOFF_SECRET` only in the runtime process environment. The mounted TOMLs contain references to those variable names, not their values. Redis reads its password from its own secret mount into a private in-memory config file. The PostgreSQL connection URIs are likewise assembled in memory from role-specific secrets. Before starting the server, the entrypoint runs `mgctl` on the volume, which adds any [shard data file](data-files.md) the image ships and the volume lacks, keeping the ones already there.
 
 Validate without printing the rendered Compose model, then build:
 

@@ -13,6 +13,17 @@ public sealed class StubSpawnRegionService : ISpawnRegionService
 
     public List<(MapType Map, int X, int Y)> Asked { get; } = [];
 
+    public (int Regions, int Missing) Fill { get; set; }
+
+    public int FillAllCalls { get; private set; }
+
+    public Task<(int Regions, int Missing)> FillAllAsync()
+    {
+        FillAllCalls++;
+
+        return Task.FromResult(Fill);
+    }
+
     public Task StartAsync()
     {
         return Task.CompletedTask;

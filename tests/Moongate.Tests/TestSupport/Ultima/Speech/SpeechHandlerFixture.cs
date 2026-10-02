@@ -7,12 +7,14 @@ using Moongate.Server.Commands;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Sessions;
+using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Packets.General;
@@ -44,6 +46,13 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
     public SpeechRequestPacketHandler Handler { get; }
     public RecordingNpcSpeechListener Listener { get; } = new();
 
+    public RecordingItemSpeechListener ItemListener { get; } = new();
+
+    /// <summary>
+    ///     Gets what the handler published on the event bus for the speech of players.
+    /// </summary>
+    public List<PlayerSaidEvent> Said { get; } = [];
+
     private SpeechHandlerFixture(SessionFixture network, ILogger? commandLogger, ILocalizationService? localization)
     {
         _network = network;
@@ -68,7 +77,17 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
         Commands = commandLogger is null
             ? new(_container.Resolve<CommandRegistry>(), _container)
             : new(_container.Resolve<CommandRegistry>(), _container, commandLogger);
-        Handler = new(Commands, Sessions, Mobiles, Sender, localization, Listener);
+        _container.RegisterMoongateEventBus();
+        var events = _container.Resolve<IMoongateEventBus>();
+        events.Subscribe<PlayerSaidEvent>(
+            (said, _) =>
+            {
+                Said.Add(said);
+
+                return Task.CompletedTask;
+            }
+        );
+        Handler = new(Commands, Sessions, Mobiles, Sender, localization, Listener, events, ItemListener);
     }
 
     public static async Task<SpeechHandlerFixture> CreateAsync(ILogger? commandLogger = null, ILocalizationService? localization = null)

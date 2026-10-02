@@ -8,10 +8,13 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
+using Moongate.Server.Ultima.Types.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
@@ -23,6 +26,19 @@ public sealed class WorldModuleTests : IAsyncLifetime
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly StubClockService _clock = new() { Time = new GameTime(21, 5) };
     private readonly ItemService _items = TestItems.Create();
+    private readonly RegionService _regions = new(
+        new StubDataLoaderService().With(
+            new RegionContent
+            {
+                Map = MapType.Trammel, Name = "Britain", Guarded = true,
+                Areas = [new RegionAreaContent { X1 = 1400, Y1 = 1500, X2 = 1700, Y2 = 1800 }]
+            },
+            new RegionContent
+            {
+                Map = MapType.Trammel, Name = "Covetous", Areas = [new RegionAreaContent { X1 = 2400, Y1 = 400, X2 = 2600, Y2 = 600 }]
+            }
+        )
+    );
     private BroadcastFixture _fixture = null!;
 
     public WorldModuleTests()
@@ -50,7 +66,15 @@ public sealed class WorldModuleTests : IAsyncLifetime
             Props = new() { ["key.value"] = 1234L }
         };
         key.PutInContainer(pouch.Id, new Point2D(44, 65));
-        _items.Add([backpack, pouch, key]);
+        var bank = new ItemEntity { Id = new Serial(0x40000004), TemplateId = "bank_box", ItemId = 0x0E7C, Amount = 1 };
+        bank.Equip(new Serial(2), LayerType.Bank);
+        var banked = new ItemEntity
+        {
+            Id = new Serial(0x40000005), TemplateId = "0x1010_iron_key", ItemId = 0x1010, Amount = 1,
+            Props = new() { ["key.value"] = 777L }
+        };
+        banked.PutInContainer(bank.Id, new Point2D(44, 65));
+        _items.Add([backpack, pouch, key, bank, banked]);
         var gm = await _fixture.AddAsync(3);
         await _fixture.Network.ExecuteOnLoopAsync(() => gm.Set(SessionKeys.AccountType, AccountType.GameMaster));
     }
@@ -73,8 +97,9 @@ public sealed class WorldModuleTests : IAsyncLifetime
      InlineData("return world.carries(2, 'key.value', 1234)", true),
      InlineData("return world.carries(2, 'key.value', 999)", false),
      InlineData("return world.carries(3, 'key.value', 1234)", false),
-     InlineData("return world.carries(2, 'door.open', true)", false)]
-    public void Carries_LooksThroughEverythingThePlayerWearsAndCarries(string chunk, bool expected)
+     InlineData("return world.carries(2, 'door.open', true)", false),
+     InlineData("return world.carries(2, 'key.value', 777)", false)]
+    public void Carries_LooksThroughEverythingThePlayerWearsAndCarries_ButTheBank(string chunk, bool expected)
     {
         Assert.Equal(expected, Run(chunk)[0].Read<bool>());
     }
@@ -97,13 +122,33 @@ public sealed class WorldModuleTests : IAsyncLifetime
         Assert.Equal((21, 5), (result[0].Read<int>(), result[1].Read<int>()));
     }
 
+    [Fact]
+    public void Moon_GivesThePhaseOfTheMoon_AsAMoonPhaseType()
+    {
+        var result = Run("return world.moon(MapType.Trammel, 1600) == MoonPhaseType.FullMoon");
+
+        Assert.True(result[0].Read<bool>());
+    }
+
+    [Theory,
+     InlineData("return world.is_guarded(MapType.Trammel, 1496, 1628, 10)", true),
+     InlineData("return world.is_guarded(MapType.Felucca, 1496, 1628, 10)", false),
+     InlineData("return world.is_guarded(MapType.Trammel, 1000, 1000, 0)", false),
+     InlineData("return world.is_guarded(MapType.Trammel, 2500, 500, 0)", false),
+     InlineData("return world.is_guarded(MapType.Trammel, 1496, 1628, 300)", false)]
+    public void IsGuarded_TellsWhetherTheRegionOfThePlaceHasGuards(string chunk, bool expected)
+    {
+        Assert.Equal(expected, Run(chunk)[0].Read<bool>());
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
-        binder.Bind(state, new WorldModule(_sectors, _clock, _fixture.Sessions, _items));
+        binder.Bind(state, new WorldModule(_sectors, _clock, _fixture.Sessions, _items, _regions));
         binder.BindEnum(state, typeof(MapType));
+        binder.BindEnum(state, typeof(MoonPhaseType));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

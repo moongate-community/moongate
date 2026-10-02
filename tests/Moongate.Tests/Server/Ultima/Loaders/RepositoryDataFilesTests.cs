@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
+using Moongate.Server.Ultima.Data.Moongates;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
@@ -51,6 +52,7 @@ public sealed class RepositoryDataFilesTests
         container.AddUltimaDataLoader<RegionsLoader, RegionContent>(9);
         container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
         container.AddUltimaDataLoader<NamesLoader, NameList>(11);
+        container.AddUltimaDataLoader<MoongatesLoader, MoongateFacet>(12);
         container.RegisterInstance(new LocalizationConfig { Language = "ita" });
         container.Register<IDataLoaderService, DataLoaderService>(Reuse.Singleton);
         var service = container.Resolve<IDataLoaderService>();
@@ -59,6 +61,12 @@ public sealed class RepositoryDataFilesTests
 
         Assert.Equal(6, service.GetEntities<MapContent>().Count);
         Assert.Equal(10, service.GetEntities<StartingCityContent>().Count);
+        var moongates = service.GetEntities<MoongateFacet>();
+        Assert.Equal(
+            [MapType.Trammel, MapType.Felucca, MapType.Ilshenar, MapType.Malas, MapType.Tokuno, MapType.TerMur],
+            moongates.Select(facet => facet.Map)
+        );
+        Assert.Equal([9, 9, 9, 2, 3, 2], moongates.Select(facet => facet.Destination.Count));
         Assert.Equal(58, service.GetEntities<SkillContent>().Count);
         Assert.Equal(7, service.GetEntities<ProfessionContent>().Count);
         Assert.Equal(3, service.GetEntities<RaceContent>().Count);
@@ -74,7 +82,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5544, messages.Count);
+        Assert.Equal(5577, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
@@ -136,7 +144,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5544, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5577, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     [Theory,
@@ -183,12 +191,34 @@ public sealed class RepositoryDataFilesTests
     {
         var directories = new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data"]);
         var own = Tomlyn.TomlSerializer.Deserialize<Tomlyn.Model.TomlTable>(
-            await File.ReadAllTextAsync(Path.Combine(directories["data"], "messages", language + ".toml"))
+            await File.ReadAllTextAsync(Path.Combine(directories["data"], "messages", language, "moongate.toml"))
         )!;
         var messages = (Tomlyn.Model.TomlTable)own["messages"];
 
         // Every language carries its own text, not the English fallback.
         Assert.All(Enumerable.Range(30008, 47), id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}"));
+    }
+
+    [Theory,
+     InlineData("eng"), InlineData("ita"), InlineData("ger"), InlineData("fre"),
+     InlineData("spa"), InlineData("por"), InlineData("pol"), InlineData("cze")]
+    public async Task ShippedMessageFiles_KeepMoongateTextsApartFromTheStandardOnes(string language)
+    {
+        var messagesDirectory = Path.Combine(FindRepositoryRoot(), "moongate_root", "data", "messages");
+        var standard = await ReadMessageIdsAsync(Path.Combine(messagesDirectory, language + ".toml"));
+        var moongate = await ReadMessageIdsAsync(Path.Combine(messagesDirectory, language, "moongate.toml"));
+
+        Assert.NotEmpty(standard);
+        Assert.NotEmpty(moongate);
+        Assert.All(standard, id => Assert.True(id < 30000, $"{language}.toml holds the Moongate text {id}"));
+        Assert.All(moongate, id => Assert.True(id >= 30000, $"{language}/moongate.toml holds the standard text {id}"));
+    }
+
+    private static async Task<List<int>> ReadMessageIdsAsync(string path)
+    {
+        var file = Tomlyn.TomlSerializer.Deserialize<Tomlyn.Model.TomlTable>(await File.ReadAllTextAsync(path))!;
+
+        return ((Tomlyn.Model.TomlTable)file["messages"]).Keys.Select(int.Parse).ToList();
     }
 
     private static string FindRepositoryRoot()

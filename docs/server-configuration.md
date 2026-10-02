@@ -14,9 +14,9 @@ The welcome text shown when a character enters the world lives in a separate
 TOML keys use `snake_case`. Keep `mode` before the first table header.
 
 The server owns `mode` and the sections `[shard]`, `[network]`, `[redis]`,
-`[persistence]`, `[realm_directory]`, `[world_save]`, `[diagnostics]` and
+`[persistence]`, `[realm_directory]`, `[world_save]`, `[sql_backup]`, `[diagnostics]` and
 `[scripting]`. Plugins own the others: `[ultima]` belongs to the Ultima plugin and
-`[admin_api]` to the Administration plugin. A new root written by `mgboot` holds the server's
+`[admin_api]` to the Administration plugin. A new root written by `mgctl` holds the server's
 sections (and `[admin_api]` when it sets up a certificate); at the first start each
 plugin appends its missing section,
 with the defaults, to the end of the file. See
@@ -32,7 +32,8 @@ shard_name = "Moongate"
 login_port = 2593
 game_port = 2595
 listen_address = "0.0.0.0"
-enable_ping_server = true # Reserved: currently not consumed by the host.
+enable_ping_server = true # Answers UDP pings on ping_port.
+ping_port = 12000
 
 [network.encryption]
 mode = "Disabled"
@@ -60,7 +61,7 @@ certificate_password = ""
 ultima_path = "ChangeMe" # Replace with your client data directory.
 
 [ultima.localization]
-language = "eng" # Reads <root>/data/messages/eng.toml.
+language = "eng" # Reads <root>/data/messages/eng.toml and eng/*.toml.
 
 [ultima.line_of_sight]
 max_distance = 25 # Farthest cells along X or Y a point can see.
@@ -73,6 +74,8 @@ night_light = 12 # Light level of the night, from 0 (brightest) to 31.
 dungeon_light = 26 # Light level inside a dungeon region, from 0 (brightest) to 31.
 jail_light = 9 # Light level inside a jail region, from 0 (brightest) to 31.
 lamp_post_light = 6 # Light level from which the town lamp posts are lit, from 0 to 31.
+season_rotation = false # true: the maps change season every days_per_season game days.
+days_per_season = 12 # Game days a season lasts when they rotate, from 1 to 365.
 
 [ultima.items]
 backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.
@@ -88,6 +91,9 @@ deletion_delay_hours = 24             # Hours before a deleted character may be 
 [ultima.npcs]
 think_interval_ms = 500               # Milliseconds between two thinks of an NPC near a player.
 sense_range = 8                       # Cells within which an NPC's script senses another mobile.
+
+[ultima.spawns]
+initial_fill = true                   # The first spawn of each region after the start fills it to its max.
 
 [persistence]
 auto_sync_schema = false
@@ -112,6 +118,12 @@ max_realms = 128
 [world_save]
 enabled = true # Enables periodic saves; manual/final saves remain available.
 interval_seconds = 300
+
+[sql_backup]
+enabled = false # Scheduled SQL backups; the sql_backup command works either way.
+interval_minutes = 1440
+directory = "backups" # Relative to the server root.
+keep = 5 # Copies kept for each database.
 
 [diagnostics]
 enabled = true
@@ -150,7 +162,8 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `network.login_port` | Login TCP listener port; default 2593. Used in login and standalone modes. |
 | `network.game_port` | Game TCP listener port; default 2595. Used in game and standalone modes. Standalone rejects equal login and game ports. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create an endpoint for each active role on every address, including IPv6 addresses; it is not a single wildcard listener. Standalone therefore starts two listeners per address. Use a specific IP to restrict binding. |
-| `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
+| `network.enable_ping_server` | Default true. Starts the UDP ping server in every mode: it sends each datagram of at most 64 bytes back to its sender, so a client can measure the latency of the shard; a larger datagram gets no answer, and neither does one that comes from the ping port itself (the echo of another ping server). It binds `network.ping_port` on the addresses of `network.listen_address`. An address or port that cannot be bound is logged as a warning and the server still starts. It does not affect the UO ping packet handler on the game connection. |
+| `network.ping_port` | UDP port of the ping server; default 12000, the port ModernUO uses. Must be between 1 and 65535 when the ping server is enabled. |
 | `network.encryption.mode` | `Disabled` (default), `Optional` or `Required`; applies to both UO listeners. See [UO client encryption](#uo-client-encryption). |
 | `network.encryption.client_version` | Raw POL wire version used to derive login keys and select the game cipher family. Required for `Optional` and `Required`; ignored when `Disabled`. Default empty. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. It must contain `tiledata.mul`, the map and statics files of every map in `data/maps.toml`, and `MultiCollection.uop` or `multi.idx` with `multi.mul`; the server stops at startup when one is missing. |
@@ -166,6 +179,10 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `realm_directory.heartbeat_interval_seconds`, `lease_duration_seconds`, `max_realms` | Defaults 5, 15 and 128. Lease duration must exceed two heartbeats; the Redis-backed directory caps realms at 128. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |
+| `sql_backup.enabled` | Runs a SQL backup on the schedule when true. The `sql_backup` command works either way. See [Database backups](persistence-operations.md#database-backups). |
+| `sql_backup.interval_minutes` | Minutes between two scheduled backups, from 1 to 71582; default 1440. The first one runs a full interval after startup. Validated even when disabled. |
+| `sql_backup.directory` | Where the files go; default `backups`. A relative path is resolved against the server root; environment variables are expanded. |
+| `sql_backup.keep` | Files kept for each database, 1 or more; default 5. |
 | `diagnostics.enabled` | Starts the periodic diagnostic collector when true. |
 | `diagnostics.interval_seconds` | Positive integer seconds; must fit the timer range (at most 4,294,967 seconds). |
 | `diagnostics.log_metrics` | Logs periodic collected metrics when true. |
@@ -175,19 +192,21 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.hook_interval` | Positive instruction-check interval, no greater than either instruction budget. |
 | `scripting.write_definitions` | Generates `definitions.lua` and `.luarc.json` for editor support. |
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
-| `ultima.localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
+| `ultima.localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml` and the directory `data/messages/<language>/` of toml files; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. The English texts must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
 | `ultima.line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
 | `ultima.world.view_range` | From 5 to 24; default 18, as ModernUO and POL. How far players see mobiles and ground items along X or Y; the client's `0xC8` request is answered with it. Used in game and standalone modes. |
 | `ultima.world.seconds_per_uo_minute` | From 1 to 3600; default 5, as ModernUO: a game day lasts 2 real hours. The time of day is counted from ModernUO's world start and needs no save; each map runs 320 game minutes after the previous one (Felucca, Trammel, Ilshenar, Malas, Tokuno, Ter Mur), and the time moves one minute later every 16 tiles east. |
 | `ultima.world.day_light`, `ultima.world.night_light` | From 0 (brightest) to 31; defaults 0 and 12, as ModernUO. Night from 00:00 to 03:59, brightening until 06:00, day until 21:59, darkening until midnight. Players are sent their light at login and, when it changes, every 5 seconds; `.globallight` overrides it for everyone. |
 | `ultima.world.dungeon_light`, `ultima.world.jail_light` | From 0 (brightest) to 31; defaults 26 and 9, as ModernUO. The light inside a region of type `dungeon` or `jail`, whatever the time of day; sent as soon as a player walks in or out. `.globallight` still wins, so a game master can see. |
 | `ultima.world.lamp_post_light` | From 0 to 31; default 6. Every 30 seconds the town lamp posts placed by `.decorate` (kinds `LampPost1` to `LampPost3`) are lit where the light of the time of day (or `.globallight`) is at least this level, and doused where it is below; with the default night of 12 that is about 23:00 to 05:00, game time. Regions do not count. |
+| `ultima.world.season_rotation`, `ultima.world.days_per_season` | `false` and 12 (1 to 365). When on, every map whose `maps.toml` season is not `desolation` goes spring, summer, fall, winter from that season, changing every `days_per_season` game days of its clock; a region with its own `season` keeps it. Players get the new season within a minute. See [Seasons](data-files/maps.md#seasons). |
 | `ultima.items.backpack_template`, `ultima.items.gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Used for the backpack of new characters and spawned NPCs and for the gold of spawned NPCs; the starting gold of new characters is an item of the common set in [`starting_items.toml`](data-files/starting-items.md). Both must exist in `templates/items/`, and the gold template must stack, or the game server stops at startup. See [Starting items](data-files/starting-items.md). |
 | `ultima.starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |
 | `ultima.characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |
 | `ultima.characters.deletion_delay_hours` | At least 1; default 24. When a player deletes a character (packet `0x83`) it is only marked: it leaves the character list, gives up its slot and no longer counts toward `max_per_account`, and staff can restore it with `character restore` (into the first free slot). After this many hours it becomes eligible for removal; the job that removes it is not built yet. |
 | `ultima.npcs.think_interval_ms` | From 50 to 60000; default 500, ModernUO's passive speed. How often an NPC near a player thinks. Only NPCs within the 5×5 sectors around a player have a think timer; the others sleep and cost nothing. See [NPC tick](game-loop-and-timers.md#npc-tick). |
 | `ultima.npcs.sense_range` | From 1 to 24; default 8. How near, in cells along X or Y, another mobile must come for an NPC's mobile script to sense it with `on_mobile_in_range`. See [Mobile scripts](scripting.md#mobile-scripts). |
+| `ultima.spawns.initial_fill` | Default `true`. The first spawn of each spawn region after the start fills it to its `max` at once, so an empty world is full in about 10 minutes; `false` keeps UOX3's way, where the first spawn also brings only `call` NPCs. Used in game and standalone modes. See [NPC spawns](spawns.md#how-spawning-works). |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
 `[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the
@@ -236,7 +255,7 @@ dotnet run --project src/Moongate.Server -c Release -- \
 | `--log-to-file` | `true` | File logging is enabled; the generated parser only accepts this as a presence flag |
 | `--log-packets` | `false` | Sets the argument to true; currently no packet-tracing consumer |
 | `--show-header` | `true` | Shows the startup banner; presence flag |
-| `--persistence-schema <mode>` | `None` | `preview` prints draft PostgreSQL DDL; `generate` writes a draft file. The old `apply` mode directs you to `Moongate.MigrationRunner` |
+| `--persistence-schema <mode>` | `None` | `preview` prints draft PostgreSQL DDL; `generate` writes a draft file. The old `apply` mode directs you to `mgctl migrate apply` |
 | `--migration-target <target>` | Unset | Required by `generate`: `auth` or `world` |
 | `--migration-output <path>` | Unset | Required by `generate`: new `NNNN_description.sql` file; refuses overwrite |
 | `--initialize-root` | `false` | Prepare config/directories/bundled migrations offline, without starting the server |
@@ -265,14 +284,13 @@ ownership, logs and troubleshooting, [PostgreSQL persistence](persistence.md) fo
 connection, schema and world-save semantics, and
 [Lua scripting](scripting.md) for budgets and sandbox boundaries.
 
-Versioned SQL is applied by the isolated `migration-runner/Moongate.MigrationRunner`
-executable using `status|apply --target auth|world`. In released artifacts its default
-root is the parent server directory; `--root-directory` and `MOONGATE_ROOT` override
+Versioned SQL is applied by `mgctl migrate status|apply --target auth|world`, a process
+of its own. In released artifacts its default root is its own directory, the server's; `--root-directory` and `MOONGATE_ROOT` override
 it. See [Generate, review and apply](persistence-migrations.md#generate-review-and-apply).
 
 ## Administration endpoint
 
-`[admin_api]` configures the embedded gRPC plugin. It is disabled by default and uses server TLS on port 2590 when enabled. Certificate paths resolve relative to the root; password environment references are resolved only for enabled endpoints. Use [mgboot certificate setup](mgboot.md#generate-an-administration-certificate) to generate a passwordless PFX and enable the endpoint offline. See [Administration API](admin-api.md) for roles, permissions, first-admin provisioning and all limits.
+`[admin_api]` configures the embedded gRPC plugin. It is disabled by default and uses server TLS on port 2590 when enabled. Certificate paths resolve relative to the root; password environment references are resolved only for enabled endpoints. Use [mgctl certificate setup](mgctl.md#generate-an-administration-certificate) to generate a passwordless PFX and enable the endpoint offline. See [Administration API](admin-api.md) for roles, permissions, first-admin provisioning and all limits.
 
 ## UO client encryption
 
@@ -326,5 +344,6 @@ transport details.
 The feature provides POL protocol interoperability, not TLS or authenticated
 transport. It does not implement the old Kingdom Reborn AES/E3 negotiation.
 Automated tests compare against original POL C++ vectors and exercise real TCP
-framing and compression; successful interactive login and gameplay with a specific
-Enhanced Client build still require a client-side test.
+framing and compression. An interactive login was made with Enhanced Client 4.0.117
+(`67.0.117.0`); another build still requires a client-side test. See
+[Enhanced Client](enhanced-client.md) for what works after the login.

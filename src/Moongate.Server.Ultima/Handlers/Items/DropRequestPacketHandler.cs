@@ -43,6 +43,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
     private readonly IItemScriptService? _scripts;
+    private readonly IBankService? _bank;
 
     public DropRequestPacketHandler(
         IItemService items,
@@ -52,9 +53,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         IContainerLayoutService layouts,
         IPacketSendService sender,
         ITooltipService tooltips,
-        IItemScriptService? scripts = null
+        IItemScriptService? scripts = null,
+        IBankService? bank = null
     )
     {
+        _bank = bank;
         _tooltips = tooltips;
         _scripts = scripts;
         _items = items;
@@ -162,6 +165,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             stack.Id == item.Id ||
             stack.ContainerId is null ||
             _items.GetOwner(stack) != session.CharacterId ||
+            !CanAccess(session, stack) ||
             !IsSameKind(stack, item) ||
             (long)stack.Amount + item.Amount > MaxStack ||
             !IsStackable(stack))
@@ -211,14 +215,15 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     {
         if (!packet.Destination.IsItem ||
             !_items.TryGet(packet.Destination, out var target) ||
-            _items.GetOwner(target) != session.CharacterId)
+            _items.GetOwner(target) != session.CharacterId ||
+            !CanAccess(session, target))
         {
             return false;
         }
 
         if (IsContainer(target))
         {
-            return TryPut(item, target, AtPosition(target, packet.X, packet.Y));
+            return TryPut(item, target, AtPosition(target, packet.X, packet.Y), packet.GridIndex);
         }
 
         // Dropped on a carried item: into that item's container, where that item lies.
@@ -227,17 +232,24 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return false;
         }
 
-        return TryPut(item, container, target.GridLocation!.Value);
+        return TryPut(item, container, target.GridLocation!.Value, packet.GridIndex);
     }
 
-    private bool TryPut(ItemEntity item, ItemEntity container, Point2D position)
+    // What lies in a bank box is reached only while the bank is open.
+    private bool CanAccess(GameSession session, ItemEntity target)
+    {
+        return _bank is null || !_mobiles.TryGet(session.CharacterId, out var character) || _bank.CanAccess(session, character, target);
+    }
+
+    private bool TryPut(ItemEntity item, ItemEntity container, Point2D position, int gridIndex)
     {
         if (Encloses(item, container))
         {
             return false;
         }
 
-        _items.MoveToContainer(item, container.Id, position);
+        // The slot the Enhanced Client asked for, or the next free one; the classic client sends 0.
+        _items.MoveToContainer(item, container.Id, position, gridIndex);
 
         return true;
     }

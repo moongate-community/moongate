@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Mobiles;
@@ -159,6 +160,34 @@ public sealed class MobileService : IMobileService
         return MoveResultType.Moved;
     }
 
+    public bool MoveTo(MobileEntity mobile, MapType map, Point3D location)
+    {
+        if (!_inWorld.ContainsKey(mobile.Id) || !_sectors.IsInside(map, location.X, location.Y))
+        {
+            return false;
+        }
+
+        var oldMap = mobile.Map;
+        var oldLocation = mobile.Location;
+        mobile.Map = map;
+        mobile.Location = location;
+        _sectors.Move(mobile);
+
+        // On another map nobody around saw the mobile before, whatever its old coordinates.
+        if (map == oldMap)
+        {
+            _senses?.Moved(mobile, oldLocation);
+        }
+        else
+        {
+            _senses?.Appeared(mobile);
+        }
+
+        _regions?.Moved(mobile);
+
+        return true;
+    }
+
     public bool IsInWorld(Serial mobile)
     {
         return _inWorld.ContainsKey(mobile);
@@ -198,8 +227,9 @@ public sealed class MobileService : IMobileService
 
     public List<MobileEquipmentEntry> GetEquipment(MobileEntity mobile, IEnumerable<ItemEntity> worn)
     {
+        // The bank box is worn but never drawn: ModernUO leaves it out too.
         var entries = worn
-            .Where(item => item.Layer is not null)
+            .Where(item => item.Layer is not null and not LayerType.Bank)
             .GroupBy(item => item.Layer!.Value)
             .Select(group => group.First())
             .Select(item => new MobileEquipmentEntry(item.Id, item.ItemId, item.Layer!.Value, item.Hue))

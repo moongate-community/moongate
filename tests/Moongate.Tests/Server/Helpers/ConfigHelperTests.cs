@@ -161,6 +161,7 @@ public sealed class ConfigHelperTests
         Assert.Equal((long)defaults.Network.GamePort, network["game_port"]);
         Assert.Equal(defaults.Network.ListenAddress, network["listen_address"]);
         Assert.Equal(defaults.Network.EnablePingServer, network["enable_ping_server"]);
+        Assert.Equal((long)defaults.Network.PingPort, network["ping_port"]);
         Assert.Equal(defaults.Diagnostics.Enabled, diagnostics["enabled"]);
         Assert.Equal((long)defaults.Diagnostics.IntervalSeconds, diagnostics["interval_seconds"]);
         Assert.Equal(defaults.Diagnostics.LogMetrics, diagnostics["log_metrics"]);
@@ -320,6 +321,7 @@ public sealed class ConfigHelperTests
         Assert.Equal(42L, Assert.IsType<TomlTable>(document.Table["some_plugin"])["answer"]);
         Assert.False(document.TryReserve("network"));
         Assert.False(document.TryReserve("world_save"));
+        Assert.False(document.TryReserve("sql_backup"));
         Assert.False(document.TryReserve("mode"));
         Assert.True(document.TryReserve("some_plugin"));
     }
@@ -368,5 +370,60 @@ public sealed class ConfigHelperTests
     {
         var config = new MoongateServerConfig { WorldSave = null! };
         Assert.Throws<InvalidOperationException>(config.Validate);
+    }
+
+    [Fact]
+    public void Load_SqlBackupDefaults_WriteSnakeCaseAndMapToOptions()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = Path.Combine(directory.Path, "moongate.toml");
+        var config = ConfigHelper.Load(path);
+        var backup =
+            Assert.IsType<TomlTable>(TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!["sql_backup"]);
+        Assert.Equal(false, backup["enabled"]);
+        Assert.Equal(1440L, backup["interval_minutes"]);
+        Assert.Equal("backups", backup["directory"]);
+        Assert.Equal(5L, backup["keep"]);
+        Assert.False(config.SqlBackup.ToOptions(directory.Path).Enabled);
+    }
+
+    [Fact]
+    public void Load_SqlBackupOverrides_MapsConfiguredValues()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile(
+            "moongate.toml",
+            """
+            [sql_backup]
+            enabled = true
+            interval_minutes = 90
+            directory = "dumps"
+            keep = 2
+            """
+        );
+        var options = ConfigHelper.Load(path).SqlBackup.ToOptions(directory.Path);
+        Assert.True(options.Enabled);
+        Assert.Equal(TimeSpan.FromMinutes(90), options.Interval);
+        Assert.Equal(Path.Combine(Path.GetFullPath(directory.Path), "dumps"), options.Directory);
+        Assert.Equal(2, options.Keep);
+    }
+
+    [Fact]
+    public void Load_SqlBackupWithKeepZero_RejectsBeforeServerStartup()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", "[sql_backup]\nenabled = false\nkeep = 0\n");
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => ConfigHelper.Load(path));
+    }
+
+    [Fact]
+    public void Validate_NullSqlBackupSection_RejectsBeforeServerStartup()
+    {
+        var config = new MoongateServerConfig { SqlBackup = null! };
+
+        var failure = Assert.Throws<InvalidOperationException>(config.Validate);
+
+        Assert.Contains("sql_backup", failure.Message);
     }
 }

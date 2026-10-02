@@ -11,6 +11,7 @@ public sealed record ContainerItemEntry(
     int Amount,
     int GridX,
     int GridY,
+    byte GridIndex,
     Serial Container,
     Hue Hue
 );

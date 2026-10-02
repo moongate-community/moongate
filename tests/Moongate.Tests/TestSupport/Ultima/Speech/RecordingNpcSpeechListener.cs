@@ -10,8 +10,11 @@ public sealed class RecordingNpcSpeechListener : INpcSpeechListener
 {
     public List<(MobileEntity Speaker, string Text)> Heard { get; } = [];
 
-    void INpcSpeechListener.Heard(MobileEntity speaker, string text)
+    public List<IReadOnlyList<int>> Keywords { get; } = [];
+
+    void INpcSpeechListener.Heard(MobileEntity speaker, string text, IReadOnlyList<int>? keywords)
     {
         Heard.Add((speaker, text));
+        Keywords.Add(keywords ?? []);
     }
 }

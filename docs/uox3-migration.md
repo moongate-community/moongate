@@ -1,24 +1,27 @@
 # Migrate from UOX3
 
-`mg-uoxconv` converts [UOX3](https://github.com/UOX3DevTeam/UOX3) `.dfn` item
+`mgctl convert uox` converts [UOX3](https://github.com/UOX3DevTeam/UOX3) `.dfn` item
 definitions and loot lists into Moongate's `ItemTemplate` and `LootTemplate` TOML, and
-UOX3 NPCs and name lists into `MobileTemplate` TOML and `names.toml`.
+UOX3 NPCs, NPC lists, spawn regions and name lists into `MobileTemplate`, NPC list and
+spawn TOML and `names.toml`. Three more commands convert ModernUO's
+[signs](#signs-of-modernuo), [teleporters](#teleporters-of-modernuo) and
+[spawners](#spawns-of-modernuo).
 The shapes it writes are described in [Loading TOML templates](templates.md#the-template-shapes);
-no loader reads them yet, so the output is content prepared for that loader.
+the server loads them at startup from `templates/`.
 
 ## Run it
 
 From a source checkout:
 
 ```sh
-dotnet run --project src/Moongate.UoxItemConverter -- \
+dotnet run --project src/Moongate.Ctl -- convert uox \
   --source <file-or-directory> --destination <dir> [--loot-destination <dir>] \
   [--mobile-source <dfndata> --mobile-destination <dir> --names-destination <file>] \
   [--starting-items-destination <file>] [--scripts-source <js-dir>] \
   [--npc-lists-destination <dir> --spawns-destination <dir>]
 ```
 
-Docker images after 0.6.0 bundle the same tool at `/app/mg-uoxconv`; see
+Release archives and Docker images ship the same tool as `mgctl` (`/app/mgctl` in the image); see
 [UOX3 content conversion](docker.md#uox3-content-conversion) for a `docker run`
 example when there is no local .NET SDK.
 
@@ -220,6 +223,80 @@ dropped and counted. The file is read back and every item must exist. UOX3's own
 and are not converted. Set `ultima.starting_items.best_skills` in the server
 configuration, and give the `STARTGOLD` coins with a gold entry in the common set, as
 the [shipped file](data-files/starting-items.md) does.
+
+## Signs of ModernUO
+
+The shop and world signs come from ModernUO's `signs.cfg`, the file its `[SignGen` places:
+
+```sh
+dotnet run --project src/Moongate.Ctl -- convert modernuo-signs \
+  --source <ModernUO>/Distribution/Data/signs.cfg --destination moongate_root/templates/decorations
+```
+
+It writes one `signs.toml` per [decoration folder](templates.md#decorations) (`britannia` for the
+signs of both Trammel and Felucca), replacing that of a previous run: a text of the client becomes
+a `LocalizedSign` with `label_number`, a written one a `Sign` with `name`, and the signs of Luna and
+Umbra keep the hue of their town. A line that is not a sign stops the run and names itself.
+[`.decorate`](commands/decorate.md) places them.
+
+## Teleporters of ModernUO
+
+The world and dungeon teleporters come from ModernUO's `teleporters.json`, the file its `[TelGen`
+places:
+
+```sh
+dotnet run --project src/Moongate.Ctl -- convert modernuo-teleporters \
+  --source <ModernUO>/Distribution/Data/teleporters.json --destination moongate_root/templates/decorations
+```
+
+It writes one `teleporters.toml` per map folder of the
+[decorations](templates.md#decorations) (`felucca`, `trammel`, `ilshenar`, `malas`, `tokuno`,
+`termur`), replacing that of a previous run: one `Teleporter` block per destination, with
+`map_dest` when the destination is on another map. An entry with `back` also gets the teleporter
+from its destination to its source, and a later entry replaces an earlier one on the same cell
+within 12 of height, as `[TelGen` does. An entry that is not a teleporter stops the run and names
+itself, and nothing is written. [`.decorate`](commands/decorate.md) places them.
+
+## Spawns of ModernUO
+
+UOX3 has no spawns for Malas, Tokuno and TerMur. The `modernuo-spawns` command takes them from
+[ModernUO](https://github.com/modernuo/ModernUO)'s spawners:
+
+```sh
+dotnet run --project src/Moongate.Ctl -- convert modernuo-spawns \
+  --source <ModernUO>/Distribution/Data/Spawns --maps malas,tokuno,termur \
+  --mobiles moongate_root/templates/mobiles --destination moongate_root/templates/spawns
+```
+
+It reads the `shared` and `post-uoml` eras of each map (the world of a modern client) and writes
+the spawn regions into `<map>/modernuo_<file>.toml`, such as `malas/modernuo_doom.toml`, replacing
+the `modernuo_` files of that map a previous run wrote; the other files of the folder are left
+alone, and a map with nothing to write keeps its files. A region's id names the era, the file and
+the spawner's index in it (`malas_modernuo_post_uoml_south_12`), so it stays the same when a later
+run, with more templates, resolves more mobiles. Use it for maps UOX3 does not cover: on Felucca or
+Trammel it would add ModernUO's spawns on top of UOX3's. A spawner becomes:
+
+- `mobile_ids`: its entries, each ModernUO class found among the `--mobiles` templates. The command
+  tries an alias of its table first (`Minter` is `banker`, `GreatHart` is `hart`, guildmasters are
+  their trade's vendor), then the class in snake case (`GreatHart` is `great_hart`), then the class
+  with the ids' underscores ignored, then UOX3's short name of an elemental (`DullCopperElemental`
+  is `dullcopperele`). A class with no template is counted as `unknown mobile <Class>`, and a
+  spawner with none left is skipped.
+- `max`: its `count`. An entry whose `maxCount` is below the count, such as a single wandering
+  healer among the beasts, becomes a region of its own with that cap (its id ends with the
+  mobile); the other entries share one region with the rest of the count, less the share of the
+  entries no template matches.
+- `min_minutes` and `max_minutes`: its delays, a minute at least; `call` 1.
+- `areas`: its `spawnBounds` when it has them, else the square of its home range around its spot,
+  the spot alone when it has none, as in ModernUO.
+- `z`: the top of its `spawnBounds`, else 16 above the spot, so a spawner in a cave does not spawn
+  on the land over it. ModernUO looks at any height, so a wide outdoor spawner here keeps to the
+  ground about its own level. Its `walkingRange` is left out: the NPCs' Lua script decides how
+  they wander.
+
+An unknown map name exits `2`, as do a missing `--source` and a `--mobiles` folder without
+templates, which would otherwise replace the shipped files with nothing. The shipped Malas, Tokuno and TerMur
+spawns come from this command; the classes it reports unknown are the NPCs still to write.
 
 ## Verifying the output
 

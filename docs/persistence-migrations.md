@@ -19,9 +19,9 @@ On 0.6.0, both the server and the migration runner read the core SQL from the
 `--migrations-directory`. There is nothing to configure.
 
 From the release after 0.6.0, the server reads `<root>/migrations` unless
-`persistence.migrations_directory` selects another directory, and `mgboot` copies
+`persistence.migrations_directory` selects another directory, and `mgctl` copies
 the release's core SQL there and writes that absolute path into a new
-configuration; see [Prepare a root with mgboot](mgboot.md). The runner uses
+configuration; see [mgctl](mgctl.md#prepare-a-server-root). The runner uses
 `--migrations-directory` if given, then the configured `migrations_directory`, then
 the directory beside the server executable. Keep `migrations_directory` explicit so
 the server and the runner read the same catalog.
@@ -66,8 +66,8 @@ A fresh empty database produces initial table creation, not an incremental chang
 Load the same entity and plugin registrations as the version being developed:
 
 ```sh
-Moongate.Server --root-directory /srv/moongate/reference --persistence-schema preview
-Moongate.Server --root-directory /srv/moongate/reference \
+mgserver --root-directory /srv/moongate/reference --persistence-schema preview
+mgserver --root-directory /srv/moongate/reference \
   --persistence-schema generate --migration-target world \
   --migration-output ./migrations/world/0001_create_characters.sql
 ```
@@ -85,32 +85,31 @@ file with the entity change. Deploy the same reviewed files to every affected
 database. Stop its runtime processes and use the runner:
 
 ```sh
-./migration-runner/Moongate.MigrationRunner status \
+./mgctl migrate status \
   --root-directory /srv/moongate/realm-1 --target world
-./migration-runner/Moongate.MigrationRunner apply \
+./mgctl migrate apply \
   --root-directory /srv/moongate/realm-1 --target world
 ```
 
 The runner reads that root's `config/moongate.toml` and `plugins/`. `--target auth`
 selects `[persistence.accounts]`; `--target world` selects `[persistence.realm]`.
 Only the selected connection is resolved. `MOONGATE_ROOT` is an alternative to
-`--root-directory`; without either, the shipped runner uses its parent server
-directory as the data root. Released archives and Docker images ship the runner in
-`migration-runner/`, isolated from FreeSql's Npgsql driver; it never loads plugin
-DLLs. Both commands return exit code 0 on success and 1 on failure; `status`
+`--root-directory`; without either, `mgctl` uses its own directory, the server's, as
+the data root. `mgctl` is a process of its own, with its own PostgreSQL driver, isolated
+from FreeSql's Npgsql driver; it never loads plugin DLLs. Both commands return exit code 0 on success and 1 on failure; `status`
 reports pending files without applying them.
 
 From a source checkout, provide the catalog path explicitly:
 
 ```sh
-dotnet run --project src/Moongate.MigrationRunner -- status \
+dotnet run --project src/Moongate.Ctl -- migrate status \
   --root-directory /srv/moongate/reference --target world \
   --migrations-directory ./migrations
 ```
 
-Since 0.6.0, `Moongate.Server --persistence-schema apply` is not supported: it
+Since 0.6.0, `mgserver --persistence-schema apply` is not supported: it
 directs you to the runner. For framework-dependent server output use
-`dotnet Moongate.Server.dll ...`.
+`dotnet mgserver.dll ...`.
 
 ## Rules for applied files
 
@@ -145,17 +144,20 @@ supported renames and review its DDL. Write explicit SQL for backfills, value
 splits, unit conversions, data merges and new invariants. Data-only files follow
 the same numbering and history rules, and block normal startup until applied.
 
-FreeSql also compares comments: the XML doc (`/// <summary>`) of an entity and of its
-properties becomes the table and column comment, word for word, and a difference
-stops startup like any other schema change. Editing the docs of a persisted entity
-therefore needs a migration with `COMMENT ON` statements, as
-`migrations/world/0003_world_column_comments.sql` does. Every build configuration
-generates the XML docs, so a Debug test run sees the same schema as a Release server.
+Table and column comments are left out of the comparison. FreeSql takes them from the XML
+docs (`/// <summary>`) of an entity and of its properties, and the published single-file
+server cannot read those files, so it would see every comment as gone. The reviewed SQL
+writes the comments the database keeps, as `migrations/world/0003_world_column_comments.sql`
+does; editing the docs of a persisted entity needs no migration, and a `COMMENT ON`
+statement in a reviewed file is how a comment changes. With automatic generation on, a
+draft still carries the new comments a build with its XML docs sees, and never one that
+would remove a comment (`IS NULL` or `IS ''`).
 
 Test against representative data. Apply the reviewed files, confirm `status`
 reports no pending changes and `preview` reports no schema changes, then start the
 new server. Downgrades and nontransactional maintenance are operator-managed.
-There is no automatic reverse migration and no database backup facility.
+There is no automatic reverse migration; take a
+[SQL backup](persistence-operations.md#database-backups) before applying.
 
 ## The core auth catalog
 
@@ -171,7 +173,12 @@ catalog has `0001_mobiles.sql`, `0002_items.sql`, `0003_world_column_comments.sq
 its `ck_items_rarity` check, and `0005_mobile_npc_fields.sql`, which adds the NPC columns
 of `world.mobiles` (template id, title, notoriety, hits, mana, stamina, fame, karma,
 armor, resistances, props; existing rows get 0 or null) and its `ck_mobiles_notoriety`
-check. Their table and sequence DDL comes
+check. `0006_mobile_slot.sql` adds the character-list `slot` with its check and a unique index
+on account and slot, `0007_mobile_deletion.sql` the `deletion_requested_at` column,
+`0008_mobile_slot_int.sql` widens `slot` to `INT4`, `0009_mobile_direction.sql` adds `direction`
+(existing mobiles face south) with its check, `0010_item_ground_index.sql` the partial index on
+the items lying on the ground, and `0011_item_grid_index.sql` the `grid_index` column of the
+Enhanced Client's container grid, numbering the items already in a container. Their table and sequence DDL comes
 from the development generator; the foreign keys, CHECK constraints and partial indexes
 are written by hand, since the generator produces only columns and sequences, and the
 startup schema check accepts them. The sample plugin ships
@@ -261,6 +268,7 @@ use the shipped auth catalog instead of generating the account table, copy all i
 files before the first start. Never overwrite already-applied files or reuse their
 numbers in an existing catalog.
 
-The development source build copies the runner and its dependencies into a separate
-`migration-runner/` output folder. A missing runner or an unwritable migration
+The development source build copies `mgctl` and its dependencies into a separate
+`mgctl/` output folder, and the server runs `mgctl migrate apply` from there; a
+distribution has `mgctl` beside the server. A missing `mgctl` or an unwritable migration
 directory prevents startup before generation can be reported successful.

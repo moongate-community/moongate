@@ -14,9 +14,10 @@ against the checksum published beside it, and puts it in place:
 
 | Path | Contents |
 | --- | --- |
-| `/opt/moongate/` | The archive's contents: the server binary, the core SQL in `migrations/`, the shard data in `data/`, the templates in `templates/`, the example scripts in `scripts/`, the migration runner in `migration-runner/`, `mgboot` (releases after 0.6.0), `LICENSE`, `THIRD-PARTY-NOTICES.md` and the debug symbols |
-| `/usr/local/bin/moongate` | A symlink to `/opt/moongate/Moongate.Server` |
-| `/usr/local/bin/mgboot` | A symlink to `/opt/moongate/mgboot`, when the release contains it |
+| `/opt/moongate/` | The archive's contents: the server binary, the core SQL in `migrations/`, the shard data in `data/`, the templates in `templates/`, the example scripts in `scripts/`, [`mgctl`](mgctl.md) (`mgboot`, with the migration runner in `migration-runner/`, in releases 0.7 to 0.11), `LICENSE`, `THIRD-PARTY-NOTICES.md` and the debug symbols |
+| `/usr/local/bin/moongate` | A symlink to `/opt/moongate/mgserver`, the server (`Moongate.Server` in releases up to 0.11) |
+| `/usr/local/bin/mgctl` | A symlink to `/opt/moongate/mgctl`, when the release contains it |
+| `/usr/share/bash-completion/completions/mgctl`, `/usr/local/share/zsh/site-functions/_mgctl` (or, without that directory, `/usr/share/zsh/vendor-completions/_mgctl` or `/usr/share/zsh/site-functions/_mgctl`), `/usr/share/fish/vendor_completions.d/mgctl.fish` | mgctl's [TAB completion](mgctl.md#tab-completion), one file per shell whose directory exists; a script that cannot be written is skipped without failing the install |
 
 Both locations need root. Run the line as root, or leave it to `sudo`, which the script
 uses itself when it is not running as root. Nothing else is created: no service, no system user
@@ -37,13 +38,13 @@ root of its own and prepare it:
 
 ```sh
 sudo mkdir -p /srv/moongate && sudo chown "$USER" /srv/moongate
-mgboot /srv/moongate
+mgctl init /srv/moongate
 ```
 
-`mgboot` ships in releases after 0.6.0; on 0.6.0 the first-start guide shows the
+`mgctl` ships in releases after 0.11.0 (`mgboot /srv/moongate` in releases 0.7 to 0.11); on 0.6.0 the first-start guide shows the
 equivalent manual steps. Then follow [Start a Moongate server](getting-started.md#first-start): edit the
 generated `config/moongate.toml`, create the two PostgreSQL databases, apply the
-core migrations with `/opt/moongate/migration-runner/Moongate.MigrationRunner`,
+core migrations with `mgctl migrate apply`,
 and start with `moongate --root-directory /srv/moongate`.
 
 ## Upgrade
@@ -58,14 +59,17 @@ want to keep belongs in there, which is why the server root goes somewhere else.
 ## Remove
 
 ```sh
-sudo rm -rf /opt/moongate /usr/local/bin/moongate /usr/local/bin/mgboot
+sudo rm -rf /opt/moongate /usr/local/bin/moongate /usr/local/bin/mgctl /usr/local/bin/mgboot
+sudo rm -f /usr/share/bash-completion/completions/mgctl /usr/local/share/zsh/site-functions/_mgctl \
+  /usr/share/zsh/vendor-completions/_mgctl /usr/share/zsh/site-functions/_mgctl \
+  /usr/share/fish/vendor_completions.d/mgctl.fish
 ```
 
 Your server root is untouched by both the installer and this line.
 
 ## Options
 
-The script reads five environment variables:
+The script reads these environment variables:
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
@@ -74,8 +78,9 @@ The script reads five environment variables:
 | `MOONGATE_BASE_URL` | the GitHub release downloads | A mirror holding the same file names |
 | `MOONGATE_INSTALL_DIR` | `/opt/moongate` | Where the archive's contents go |
 | `MOONGATE_BIN_DIR` | `/usr/local/bin` | Where the `moongate` symlink goes |
+| `MOONGATE_BASH_COMPLETION_DIR`, `MOONGATE_ZSH_COMPLETION_DIR`, `MOONGATE_FISH_COMPLETION_DIR` | the shell's own directory | Where mgctl's TAB completion goes; an install without root skips the system directories, so point these at ones you own, such as `~/.local/share/bash-completion/completions` |
 
-Pointing the last two at paths you own installs without root:
+Pointing `MOONGATE_INSTALL_DIR` and `MOONGATE_BIN_DIR` at paths you own installs without root:
 
 ```sh
 curl -fsSL https://moongate.sh/install.sh |
@@ -115,7 +120,7 @@ nothing was installed; the symlink messages below it come after the files are al
 | `could not resolve the latest release; set MOONGATE_VERSION` | The releases page did not redirect to a version tag; pin one with `MOONGATE_VERSION` |
 | `release v... has no asset for ...`, `release v... has no checksum for ...` | That version has no archive, or no checksum file, for this architecture, or the download itself failed; `linux-arm64` exists from 0.4.1 onwards |
 | `checksum mismatch for ...` | The download does not match the published checksum; nothing was installed |
-| `the archive could not be extracted`, `the archive does not contain moongate-.../Moongate.Server` | The downloaded archive is damaged or has an unexpected layout |
+| `the archive could not be extracted`, `the archive does not contain moongate-.../mgserver or moongate-.../Moongate.Server` | The downloaded archive is damaged or has an unexpected layout |
 | `could not clear a leftover staging directory beside ...`, `could not create ...`, `could not stage the new files in ...`, `could not make ... executable`, `could not move the current installation aside; ... is untouched`, `could not install into ...` | The filesystem refused a step of the installation, for instance a full disk. Nothing new is installed, an upgrade keeps the previous installation, and the message says where it is |
-| `could not replace .../moongate`, `could not link .../moongate` | The new files are in place under `/opt/moongate`, but the `moongate` symlink could not be replaced. Fix the bin directory and run the line again, or make the link yourself with `sudo ln -sfn /opt/moongate/Moongate.Server /usr/local/bin/moongate` |
-| `could not replace .../mgboot`, `could not link .../mgboot`, `could not remove obsolete .../mgboot link` | The server files are in place; only the `mgboot` symlink could not be updated or removed. Fix the bin directory and run the line again, or link it yourself with `sudo ln -sfn /opt/moongate/mgboot /usr/local/bin/mgboot` |
+| `could not replace .../moongate`, `could not link .../moongate` | The new files are in place under `/opt/moongate`, but the `moongate` symlink could not be replaced. Fix the bin directory and run the line again, or make the link yourself with `sudo ln -sfn /opt/moongate/mgserver /usr/local/bin/moongate` |
+| `could not replace .../mgctl`, `could not link .../mgctl`, `could not remove obsolete .../mgctl link` | The server files are in place; only the `mgctl` symlink could not be updated or removed. Fix the bin directory and run the line again, or link it yourself with `sudo ln -sfn /opt/moongate/mgctl /usr/local/bin/mgctl` |

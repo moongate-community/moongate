@@ -14,7 +14,12 @@ public sealed class StubDecorationService : IDecorationService
 
     public int Calls { get; private set; }
 
-    public bool IsRunning { get; init; }
+    public bool IsRunning { get; set; }
+
+    /// <summary>
+    ///     Gets or sets what happens when a decoration is asked for, before anything else, such as another one starting.
+    /// </summary>
+    public Action? BeforeRun { get; set; }
 
     public StubDecorationService(params DecorationFileResult[] files)
     {
@@ -27,6 +32,7 @@ public sealed class StubDecorationService : IDecorationService
     )
     {
         Calls++;
+        BeforeRun?.Invoke();
 
         if (Failure is not null)
         {

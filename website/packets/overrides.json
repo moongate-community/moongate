@@ -167,7 +167,7 @@
         "name": "Grid index",
         "type": "byte",
         "size": "1",
-        "description": "Grid position"
+        "description": "The slot the Enhanced Client asks for in the container's grid; 0 from the classic client."
       },
       {
         "offset": "11",
@@ -177,8 +177,8 @@
         "description": "Target object."
       }
     ],
-    "notes": "Drops a held item into a carried container; invalid destinations bounce it back.",
-    "handler": "DropRequestPacketHandler: drops the held item into a carried container"
+    "notes": "Drops a held item into a carried container, onto a stack of the same kind, or on the ground within 2 tiles (destination 0xFFFFFFFF); invalid destinations bounce it back.",
+    "handler": "DropRequestPacketHandler: drops the held item into a carried container, onto a carried or ground stack of the same kind, or on the ground within 2 tiles"
   },
   "0x09:incoming": {
     "category": "World",
@@ -277,7 +277,7 @@
       }
     ],
     "notes": "Version 5 status payload; fields after the basic header depend on the status version.",
-    "handler": "PlayCharacterPacketHandler: sends the player status in the world-entry sequence."
+    "handler": "CharacterEnterWorldService: sends the player status in the world-entry sequence."
   },
   "0x12:incoming": {
     "category": "Chat",
@@ -422,7 +422,7 @@
       }
     ],
     "notes": "First world-entry packet; initializes the player position and map bounds.",
-    "handler": "PlayCharacterPacketHandler: starts the world-entry packet sequence."
+    "handler": "CharacterEnterWorldService: starts the world-entry packet sequence."
   },
   "0x1D:outgoing": {
     "category": "World",
@@ -520,8 +520,8 @@
         "description": "World Z."
       }
     ],
-    "notes": "Updates the player mobile after world entry.",
-    "handler": "PlayCharacterPacketHandler: sends the player mobile update during world entry."
+    "notes": "Updates the player mobile after world entry, and tells a teleported player where it stands.",
+    "handler": "CharacterEnterWorldService: sends the player mobile update during world entry. TeleportService: sends it to a teleported player, whose step sequence starts again."
   },
   "0x21:outgoing": {
     "category": "Movement",
@@ -670,7 +670,7 @@
       }
     ],
     "notes": "Sets the weather the client shows: the profile of the player's region, or dry inside a building.",
-    "handler": "WeatherService: sent at login, on a region change and when the player's weather changes; resent every minute."
+    "handler": "WeatherService: sent at login, on a region change and when the player's weather changes; resent every minute, every game hour and after a season packet (0xBC)."
   },
   "0x77:outgoing": {
     "category": "World",
@@ -790,7 +790,7 @@
       }
     ],
     "notes": "Seven bytes for older clients; nine bytes from client 7.0.9.0. This version-dependent packet has no on-wire length header.",
-    "handler": "UseRequestPacketHandler: opens the carried container gump."
+    "handler": "UseRequestPacketHandler: opens the carried container gump; BankService: opens the bank box."
   },
   "0x25:outgoing": {
     "category": "Items",
@@ -846,7 +846,7 @@
         "name": "Grid index",
         "type": "byte",
         "size": "1",
-        "description": "Present in newer client format"
+        "description": "The item's slot (0 to 124) in the grid the Enhanced Client shows; newer client format only."
       },
       {
         "offset": "15",
@@ -952,8 +952,8 @@
         "description": "Repeated container item entries."
       }
     ],
-    "notes": "Each item uses 19 bytes, or 20 with the grid byte for newer clients.",
-    "handler": "UseRequestPacketHandler: sends the opened container contents."
+    "notes": "Each item uses 19 bytes, or 20 with the grid byte for newer clients: the item's slot (0 to 124) in the grid the Enhanced Client shows.",
+    "handler": "UseRequestPacketHandler and BankService: send the opened container contents."
   },
   "0x4E:outgoing": {
     "category": "World",
@@ -985,7 +985,7 @@
       }
     ],
     "notes": "Sets the light level for one mobile.",
-    "handler": "PlayCharacterPacketHandler: sends personal light during world entry."
+    "handler": "CharacterEnterWorldService: sends personal light during world entry."
   },
   "0x4F:outgoing": {
     "category": "World",
@@ -1010,7 +1010,7 @@
       }
     ],
     "notes": "Sets ambient world light: the day and night cycle, dungeons and jails, or .globallight.",
-    "handler": "PlayCharacterPacketHandler sends it during world entry; LightService resends it when the player's light changes."
+    "handler": "CharacterEnterWorldService sends it during world entry; LightService resends it when the player's light changes."
   },
   "0x53:outgoing": {
     "category": "Login",
@@ -1053,7 +1053,7 @@
       }
     ],
     "notes": "Marks completion of login and world entry.",
-    "handler": "PlayCharacterPacketHandler: ends the world-entry sequence."
+    "handler": "CharacterEnterWorldService: ends the login part of the world-entry sequence; only 0x5B follows."
   },
   "0x5B:outgoing": {
     "category": "World",
@@ -1091,8 +1091,8 @@
         "description": "Second."
       }
     ],
-    "notes": "Sets the in-game clock on world entry.",
-    "handler": "PlayCharacterPacketHandler: sends the in-game time during world entry."
+    "notes": "Sent last in the world-entry sequence with the real UTC time of the server, not the game time.",
+    "handler": "CharacterEnterWorldService: sends the real UTC time at the end of world entry."
   },
   "0x5D:incoming": {
     "category": "Characters",
@@ -1202,7 +1202,7 @@
       }
     ],
     "notes": "Tells the client its current war mode.",
-    "handler": "PlayCharacterPacketHandler: sends peace mode during world entry."
+    "handler": "CharacterEnterWorldService: sends peace mode during world entry."
   },
   "0x73:both": {
     "category": "Login",
@@ -1315,7 +1315,7 @@
       }
     ],
     "notes": "Introduces the mobile and its worn items; ends with a zero serial.",
-    "handler": "PlayCharacterPacketHandler: sends the player and worn items during world entry."
+    "handler": "CharacterEnterWorldService: sends the player and worn items during world entry."
   },
   "0x80:incoming": {
     "category": "Login",
@@ -1539,91 +1539,112 @@
       },
       {
         "offset": "3",
+        "name": "Unknown pattern",
+        "type": "byte[]",
+        "size": "4",
+        "description": "Four bytes the server does not read"
+      },
+      {
+        "offset": "7",
         "name": "Character slot",
         "type": "uint",
         "size": "4",
         "description": "Requested slot"
       },
       {
-        "offset": "7",
+        "offset": "11",
         "name": "Name",
         "type": "ascii",
         "size": "30",
         "description": "Character name"
       },
       {
-        "offset": "67",
+        "offset": "41",
+        "name": "Unused",
+        "type": "byte[]",
+        "size": "30",
+        "description": "Thirty bytes the server does not read"
+      },
+      {
+        "offset": "71",
         "name": "Profession",
         "type": "byte",
         "size": "1",
         "description": "Profession choice"
       },
       {
-        "offset": "68",
+        "offset": "72",
         "name": "Starting city",
         "type": "byte",
         "size": "1",
         "description": "City index"
       },
       {
-        "offset": "69",
+        "offset": "73",
         "name": "Gender",
         "type": "enum",
         "size": "1",
         "description": "Gender choice"
       },
       {
-        "offset": "70",
+        "offset": "74",
         "name": "Race",
         "type": "enum",
         "size": "1",
-        "description": "Race choice"
+        "description": "Race choice, sent one higher (1 for human)"
       },
       {
-        "offset": "71",
+        "offset": "75",
         "name": "Strength",
         "type": "byte",
         "size": "1",
         "description": "Chosen strength"
       },
       {
-        "offset": "72",
+        "offset": "76",
         "name": "Dexterity",
         "type": "byte",
         "size": "1",
         "description": "Chosen dexterity"
       },
       {
-        "offset": "73",
+        "offset": "77",
         "name": "Intelligence",
         "type": "byte",
         "size": "1",
         "description": "Chosen intelligence"
       },
       {
-        "offset": "74",
+        "offset": "78",
         "name": "Skin hue",
         "type": "ushort",
         "size": "2",
         "description": "Appearance hue"
       },
       {
-        "offset": "84",
+        "offset": "80",
+        "name": "Unused",
+        "type": "byte[]",
+        "size": "8",
+        "description": "Eight bytes the server does not read"
+      },
+      {
+        "offset": "88",
         "name": "Skills",
         "type": "loop",
         "size": "8",
         "description": "Four skill and value pairs"
       },
       {
-        "offset": "92",
+        "offset": "96",
         "name": "Appearance",
         "type": "byte[]",
-        "size": "54",
-        "description": "Hair and clothing choices."
+        "size": "50",
+        "description": "Hair, shirt, face and beard hues and styles, with unread bytes between them."
       }
     ],
     "notes": "Enhanced Client creation request. Only the current 146-byte layout is parsed.",
-    "handler": "CreateCharacterEnhancedPacketHandler: creates and saves the character and starting items"
+    "handler": "CreateCharacterEnhancedPacketHandler: creates and saves the character and starting items, then brings it into the world"
   },
   "0x91:incoming": {
     "category": "Login",
@@ -1775,9 +1796,9 @@
     "handler": "GameLoginPacketHandler: sends saved characters and starting cities."
   },
   "0xAD:incoming": {
-    "category": "Chat",
+    "category": "Speech",
     "tags": [
-      "Chat",
+      "Speech",
       "Ultima plugin"
     ],
     "fields": [
@@ -1797,14 +1818,42 @@
       },
       {
         "offset": "3",
-        "name": "Speech payload",
+        "name": "Type",
+        "type": "byte",
+        "size": "1",
+        "description": "Speech type; the bits 0xC0 mark encoded speech with keywords"
+      },
+      {
+        "offset": "4",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Text hue"
+      },
+      {
+        "offset": "6",
+        "name": "Font",
+        "type": "ushort",
+        "size": "2",
+        "description": "Font"
+      },
+      {
+        "offset": "8",
+        "name": "Language",
+        "type": "ascii",
+        "size": "4",
+        "description": "Three letters and a zero; anything else is read as ENU"
+      },
+      {
+        "offset": "12",
+        "name": "Keywords and text",
         "type": "byte[]",
         "size": "variable",
-        "description": "Speech mode and Unicode text."
+        "description": "Plain speech: big-endian UTF-16 text, zero terminated. Encoded speech: a 12-bit keyword count, the 12-bit keyword ids, then UTF-8 text, zero terminated."
       }
     ],
-    "notes": "Recognized by the Ultima plugin; packet handler status follows the current server registration.",
-    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+    "notes": "Speech typed by the player in Unicode, sent by every client. It is read leniently, since a refused packet disconnects the client: a missing terminator is accepted, a badly encoded character becomes U+FFFD and an odd language code becomes ENU. Only a truncated keyword list or more than 50 keywords is refused.",
+    "handler": "SpeechRequestPacketHandler: speech to the players in range and dot commands; the keyword ids of encoded speech reach the on_speech of the NPCs and of the scripted items."
   },
   "0xB5:incoming": {
     "category": "Chat",
@@ -1829,6 +1878,52 @@
       }
     ],
     "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0xB8:incoming": {
+    "category": "Characters",
+    "tags": [
+      "Characters",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Mode",
+        "type": "byte",
+        "size": "1",
+        "description": "0 asks to show the profile, 1 sends an edited one."
+      },
+      {
+        "offset": "4",
+        "name": "Character serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The character whose profile is asked for or edited."
+      },
+      {
+        "offset": "8",
+        "name": "Edited profile",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Only in mode 1: a command type, the text length and the UTF-16BE text."
+      }
+    ],
+    "notes": "The Enhanced Client sends it for its own character right after entering the world. Recognized and ignored for now.",
     "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
   },
   "0xB9:outgoing": {
@@ -1885,8 +1980,8 @@
         "description": "Whether the client plays the season sound."
       }
     ],
-    "notes": "Sets the displayed season.",
-    "handler": "PlayCharacterPacketHandler: sends the season during world entry."
+    "notes": "Sets the displayed season. The client resets its light and stops its weather on it, so 0x4F and 0x65 follow.",
+    "handler": "CharacterEnterWorldService at world entry; SeasonService on a region change or a map change to another season, a rotation and .season, followed by 0x4F light and 0x65 weather. It is sent only when the season differs from the last one sent."
   },
   "0xBD:incoming": {
     "category": "Login",
@@ -1981,8 +2076,8 @@
         "description": "Map identifier."
       }
     ],
-    "notes": "Extended command subcommand 0x08 changes the client map.",
-    "handler": "PlayCharacterPacketHandler: sends the selected map during world entry."
+    "notes": "Extended command subcommand 0x08 changes the client map: sent on world entry and before the new position of a player teleported to another map.",
+    "handler": "CharacterEnterWorldService: sends the selected map during world entry. TeleportService: sends the new map to a player teleported across maps."
   },
   "0xBF:incoming": {
     "category": "World",
@@ -2123,8 +2218,8 @@
         "description": "CPU memory display and video data."
       }
     ],
-    "notes": "Recognized and ignored for now; hardware data is not stored.",
-    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+    "notes": "Recognized and ignored for now, in every server mode; hardware data is not stored. The Enhanced Client sends it at login.",
+    "handler": "Game: IgnoredPacketHandler<T>; Login: LoginRoleIgnoredPacketHandler<T>. Both recognise and ignore it for now (Debug log)"
   },
   "0xE1:incoming": {
     "category": "Login",
@@ -2297,7 +2392,7 @@
       }
     ],
     "notes": "ClassicUO character creation request. Raw choices are validated before saving.",
-    "handler": "CreateCharacterPacketHandler: creates and saves the character and starting items"
+    "handler": "CreateCharacterPacketHandler: creates and saves the character and starting items, then brings it into the world"
   },
   "0xFB:incoming": {
     "category": "World",
@@ -2890,7 +2985,7 @@
       }
     ],
     "notes": "Shows an item worn by a mobile.",
-    "handler": "EquipRequestPacketHandler and the world view: sent when an item goes on."
+    "handler": "EquipRequestPacketHandler and the world view: sent when an item goes on; BankService: the bank box before it opens."
   },
   "0xD6:outgoing": {
     "category": "World",
@@ -3124,5 +3219,593 @@
     ],
     "notes": "Plays a sound once at a location.",
     "handler": "SpeechService: npc.play_sound of a mobile script, to the players within 15 cells."
+  },
+  "0xC0:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Kind",
+        "type": "enum",
+        "size": "1",
+        "description": "0 moving, 1 lightning, 2 fixed at a point, 3 fixed on an object."
+      },
+      {
+        "offset": "2",
+        "name": "Source serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The object the effect starts from or stays on; 0 for a point."
+      },
+      {
+        "offset": "6",
+        "name": "Target serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The object a moving effect flies to; 0 otherwise."
+      },
+      {
+        "offset": "10",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Art id of the animation; 0 for lightning or particles only."
+      },
+      {
+        "offset": "12",
+        "name": "From X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "14",
+        "name": "From Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "16",
+        "name": "From Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "17",
+        "name": "To X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "19",
+        "name": "To Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "21",
+        "name": "To Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "22",
+        "name": "Speed",
+        "type": "byte",
+        "size": "1",
+        "description": "How fast the animation plays or moves."
+      },
+      {
+        "offset": "23",
+        "name": "Duration",
+        "type": "byte",
+        "size": "1",
+        "description": "How long the animation lasts."
+      },
+      {
+        "offset": "24",
+        "name": "Unused",
+        "type": "ushort",
+        "size": "2",
+        "description": "Always 0."
+      },
+      {
+        "offset": "26",
+        "name": "Fixed direction",
+        "type": "bool",
+        "size": "1",
+        "description": "1 keeps the graphic's direction; always 1 for an effect that stays."
+      },
+      {
+        "offset": "27",
+        "name": "Explodes",
+        "type": "bool",
+        "size": "1",
+        "description": "1 makes a moving effect explode when it arrives."
+      },
+      {
+        "offset": "28",
+        "name": "Hue",
+        "type": "uint",
+        "size": "4",
+        "description": "Hue of the graphic; 0 for none."
+      },
+      {
+        "offset": "32",
+        "name": "Render mode",
+        "type": "enum",
+        "size": "4",
+        "description": "0 normal, 1 darken, 2 lighten, 3 lighten transparent, 4 translucent, 5 translucent colour, 6 negative, 7 negative transparent."
+      }
+    ],
+    "notes": "Plays a graphic effect: a moving one, a lightning bolt, or an animation that stays at a point or on an object. Sent for every effect that has a graphic and for every lightning bolt, which has none; a moving effect with graphic 1, the placeholder of ModernUO scripts, counts as having no graphic. The plain 0x70 is never sent.",
+    "handler": "EffectService: the effect module of scripts, to the players of the map within the view range of the effect; a moving effect also reaches those in range of its destination."
+  },
+  "0xC7:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Kind",
+        "type": "enum",
+        "size": "1",
+        "description": "0 moving, 1 lightning, 2 fixed at a point, 3 fixed on an object."
+      },
+      {
+        "offset": "2",
+        "name": "Source serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The object the effect starts from or stays on; 0 for a point."
+      },
+      {
+        "offset": "6",
+        "name": "Target serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The object a moving effect flies to; 0 otherwise."
+      },
+      {
+        "offset": "10",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Art id of the animation; 0 for lightning or particles only."
+      },
+      {
+        "offset": "12",
+        "name": "From X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "14",
+        "name": "From Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "16",
+        "name": "From Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Where the effect starts."
+      },
+      {
+        "offset": "17",
+        "name": "To X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "19",
+        "name": "To Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "21",
+        "name": "To Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Where a moving effect ends; the same point otherwise."
+      },
+      {
+        "offset": "22",
+        "name": "Speed",
+        "type": "byte",
+        "size": "1",
+        "description": "How fast the animation plays or moves."
+      },
+      {
+        "offset": "23",
+        "name": "Duration",
+        "type": "byte",
+        "size": "1",
+        "description": "How long the animation lasts."
+      },
+      {
+        "offset": "24",
+        "name": "Unused",
+        "type": "ushort",
+        "size": "2",
+        "description": "Always 0."
+      },
+      {
+        "offset": "26",
+        "name": "Fixed direction",
+        "type": "bool",
+        "size": "1",
+        "description": "1 keeps the graphic's direction; always 1 for an effect that stays."
+      },
+      {
+        "offset": "27",
+        "name": "Explodes",
+        "type": "bool",
+        "size": "1",
+        "description": "1 makes a moving effect explode when it arrives."
+      },
+      {
+        "offset": "28",
+        "name": "Hue",
+        "type": "uint",
+        "size": "4",
+        "description": "Hue of the graphic; 0 for none."
+      },
+      {
+        "offset": "32",
+        "name": "Render mode",
+        "type": "enum",
+        "size": "4",
+        "description": "0 normal, 1 darken, 2 lighten, 3 lighten transparent, 4 translucent, 5 translucent colour, 6 negative, 7 negative transparent."
+      },
+      {
+        "offset": "36",
+        "name": "Particle",
+        "type": "ushort",
+        "size": "2",
+        "description": "Particle effect id."
+      },
+      {
+        "offset": "38",
+        "name": "Explode particle",
+        "type": "ushort",
+        "size": "2",
+        "description": "Particle effect played when a moving effect arrives; 1 for an effect that stays."
+      },
+      {
+        "offset": "40",
+        "name": "Explode sound",
+        "type": "ushort",
+        "size": "2",
+        "description": "Sound played when a moving effect arrives."
+      },
+      {
+        "offset": "42",
+        "name": "Particle serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The object the particles belong to; 0 for a moving effect or a point."
+      },
+      {
+        "offset": "46",
+        "name": "Layer",
+        "type": "enum",
+        "size": "1",
+        "description": "Body part the particles are shown at: 0 head, 1 right hand, 2 left hand, 3 waist, 4 left foot, 5 right foot, 7 centre of the feet, 255 none."
+      },
+      {
+        "offset": "47",
+        "name": "Unused",
+        "type": "ushort",
+        "size": "2",
+        "description": "Always 0."
+      }
+    ],
+    "notes": "The hued effect (0xC0) followed by the particle fields. Sent only to the Enhanced Client, for an effect that has a particle id; every other client gets 0xC0, or nothing when the effect has no graphic.",
+    "handler": "EffectService: the effect module of scripts, to the Enhanced Clients in range."
+  },
+  "0xB0:outgoing": {
+    "category": "Gumps",
+    "tags": [
+      "Gumps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Gump serial, unique per gump sent."
+      },
+      {
+        "offset": "7",
+        "name": "Type id",
+        "type": "uint",
+        "size": "4",
+        "description": "Gump type id: FNV-1a of the gump id."
+      },
+      {
+        "offset": "11",
+        "name": "X",
+        "type": "uint",
+        "size": "4",
+        "description": "Left edge on the screen."
+      },
+      {
+        "offset": "15",
+        "name": "Y",
+        "type": "uint",
+        "size": "4",
+        "description": "Top edge on the screen."
+      },
+      {
+        "offset": "19",
+        "name": "Layout length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Bytes of the layout, NUL included."
+      },
+      {
+        "offset": "21",
+        "name": "Layout and strings",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "The layout commands (such as { resizepic 0 0 9200 300 400 }) and their NUL; then a ushort string count and each string as a ushort length in characters and UTF-16 big-endian text."
+      }
+    ],
+    "notes": "Opens a gump on clients before 5.0.0a. The layout refers to the strings by index.",
+    "handler": "GumpService: opens a gump when the client is older than 5.0.0a."
+  },
+  "0xDD:outgoing": {
+    "category": "Gumps",
+    "tags": [
+      "Gumps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Gump serial, unique per gump sent."
+      },
+      {
+        "offset": "7",
+        "name": "Type id",
+        "type": "uint",
+        "size": "4",
+        "description": "Gump type id: FNV-1a of the gump id."
+      },
+      {
+        "offset": "11",
+        "name": "X",
+        "type": "uint",
+        "size": "4",
+        "description": "Left edge on the screen."
+      },
+      {
+        "offset": "15",
+        "name": "Y",
+        "type": "uint",
+        "size": "4",
+        "description": "Top edge on the screen."
+      },
+      {
+        "offset": "19",
+        "name": "Layout compressed length",
+        "type": "uint",
+        "size": "4",
+        "description": "Compressed layout bytes plus 4."
+      },
+      {
+        "offset": "23",
+        "name": "Layout length",
+        "type": "uint",
+        "size": "4",
+        "description": "Plain layout bytes, NUL included."
+      },
+      {
+        "offset": "27",
+        "name": "Layout and strings",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "The zlib layout; then a uint string count, a uint compressed table length plus 4 (0 with no strings), a uint plain table length and the zlib table (each string as ushort length and UTF-16 big-endian text)."
+      }
+    ],
+    "notes": "Opens a gump on clients from 5.0.0a, compressed.",
+    "handler": "GumpService: opens a gump on a client from 5.0.0a."
+  },
+  "0xB1:incoming": {
+    "category": "Gumps",
+    "tags": [
+      "Gumps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the gump answered."
+      },
+      {
+        "offset": "7",
+        "name": "Type id",
+        "type": "uint",
+        "size": "4",
+        "description": "Type id of the gump answered."
+      },
+      {
+        "offset": "11",
+        "name": "Button",
+        "type": "uint",
+        "size": "4",
+        "description": "Button pressed; 0 when the gump was closed."
+      },
+      {
+        "offset": "15",
+        "name": "Switch count",
+        "type": "uint",
+        "size": "4",
+        "description": "Checkboxes and radios that are on."
+      },
+      {
+        "offset": "19",
+        "name": "Switches and texts",
+        "type": "loop",
+        "size": "variable",
+        "description": "Switch ids (uint each); then a uint text count and each text entry as ushort id, ushort length in characters and UTF-16 big-endian text."
+      }
+    ],
+    "notes": "The answer is dropped when the gump was not sent, or offers no such button, switch or text entry, or a text is longer than 239 characters.",
+    "handler": "GumpResponsePacketHandler: hands the answer to GumpService, which checks it and calls the gump."
+  },
+  "0xBF/0x04:outgoing": {
+    "category": "Gumps",
+    "tags": [
+      "Gumps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "ushort",
+        "size": "2",
+        "description": "Value 0x04"
+      },
+      {
+        "offset": "5",
+        "name": "Type id",
+        "type": "uint",
+        "size": "4",
+        "description": "Type id of the gump to close."
+      },
+      {
+        "offset": "9",
+        "name": "Button",
+        "type": "uint",
+        "size": "4",
+        "description": "Button the client answers with; 0."
+      }
+    ],
+    "notes": "Extended command subcommand 0x04 closes a gump.",
+    "handler": "GumpService: closes a gump replaced by one with the same id, or closed by the server."
+  },
+  "0x6D:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Music",
+        "type": "ushort",
+        "size": "2",
+        "description": "The track (MusicType); 0x1FFF stops the music."
+      }
+    ],
+    "notes": "Plays a music track on the client.",
+    "handler": "MusicService: the track of the player's region, else its map's, when it changes; .music plays one."
   }
 }

@@ -1,0 +1,118 @@
+using System.Diagnostics.CodeAnalysis;
+using Lua;
+using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
+using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Ultima.Types;
+
+namespace Moongate.Server.Ultima.Modules;
+
+/// <summary>
+///     The <c>mobile</c> Lua module: what a script does to a mobile in the world, a player or an NPC, by serial, such as
+///     the teleporter that moves whoever walks onto it; <c>mobile.teleport(who, x, y, z)</c>. A serial that is not a
+///     mobile in the world gives <c>false</c> or <c>nil</c>, never an error.
+/// </summary>
+[ScriptModule("mobile", "Acts on a mobile in the world, a player or an NPC: teleports it, reads where it is, plays a sound on it, tells a player something.")]
+public sealed class MobileModule
+{
+    private readonly IMobileService _mobiles;
+    private readonly ITeleportService _teleports;
+    private readonly ISpeechService _speech;
+
+    public MobileModule(IMobileService mobiles, ITeleportService teleports, ISpeechService speech)
+    {
+        _mobiles = mobiles;
+        _teleports = teleports;
+        _speech = speech;
+    }
+
+    /// <summary>
+    ///     Teleports the mobile to <paramref name="x" />, <paramref name="y" />, <paramref name="z" /> of its own map, or
+    ///     of <paramref name="map" /> when given; <c>mobile.teleport(who, 5690, 569, 25)</c>,
+    ///     <c>mobile.teleport(who, 259, 785, 64, MapType.Tokuno)</c>. A player's client is told where it stands, after the
+    ///     map change when there is one; the players around the old spot lose the mobile and those around the new one
+    ///     see it.
+    /// </summary>
+    [ScriptFunction(helpText: "Teleports the mobile to x, y, z on its map, or on the given map (a MapType or its name); false for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a z outside -128 to 127.")]
+    public bool Teleport(long serial, int x, int y, int z, object? map = null)
+    {
+        if (z is < sbyte.MinValue or > sbyte.MaxValue || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        // A MapType as scripts see it, a number, or its name, as a prop set by hand may hold it.
+        MapType? destination = map switch
+        {
+            null => mobile.Map,
+            double number when Math.Floor(number) == number &&
+                               number is >= byte.MinValue and <= byte.MaxValue &&
+                               Enum.IsDefined((MapType)(byte)number) => (MapType)(byte)number,
+            string name when !name.Any(char.IsDigit) && Enum.TryParse<MapType>(name, true, out var named) => named,
+            _ => null
+        };
+
+        return destination is { } target && _teleports.Teleport(mobile, target, new Point3D(x, y, z));
+    }
+
+    /// <summary>
+    ///     Gets where the mobile stands as <c>{ x, y, z, map }</c>; <c>mobile.location(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Where the mobile stands, as a table { x, y, z, map }; nil for a mobile not in the world.")]
+    public LuaTable? Location(long serial)
+    {
+        if (!TryGetMobile(serial, out var mobile))
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        table["x"] = mobile.Location.X;
+        table["y"] = mobile.Location.Y;
+        table["z"] = mobile.Location.Z;
+        table["map"] = (int)mobile.Map;
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Plays <paramref name="sound" /> where the mobile stands for the players within 15 cells;
+    ///     <c>mobile.play_sound(who, 0x1FE)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) where the mobile stands; false for a mobile not in the world or an unknown sound.")]
+    public bool PlaySound(long serial, int sound)
+    {
+        if (sound is < 0 or > ushort.MaxValue || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        _speech.PlaySound(mobile, sound);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Sends <paramref name="text" /> to the player as a system message, in the lower left of its screen;
+    ///     <c>mobile.message(who, "That is too far away.")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "A system message read only by that player; false for an empty text, an NPC or a player not in the world.")]
+    public bool Message(long serial, string text)
+    {
+        if (string.IsNullOrWhiteSpace(text) || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        return _speech.Tell(mobile, text.Length > ItemModule.MaximumTextLength ? text[..ItemModule.MaximumTextLength] : text);
+    }
+
+    private bool TryGetMobile(long serial, [NotNullWhen(true)] out MobileEntity? mobile)
+    {
+        mobile = null;
+
+        return serial is > 0 and <= uint.MaxValue && _mobiles.TryGet(new Serial((uint)serial), out mobile);
+    }
+}

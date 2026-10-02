@@ -242,7 +242,7 @@ versioned SQL migration with the plugin.
 2. Generate a draft for World, choosing the next component sequence:
 
    ```sh
-   Moongate.Server --root-directory /srv/moongate/reference \
+   mgserver --root-directory /srv/moongate/reference \
      --persistence-schema generate --migration-target world \
      --migration-output ./MyPlugin/migrations/world/0001_create_characters.sql
    ```
@@ -257,7 +257,7 @@ versioned SQL migration with the plugin.
    the entity. Stop the target realm and apply using a schema-role connection:
 
    ```sh
-   ./migration-runner/Moongate.MigrationRunner apply \
+   ./mgctl migrate apply \
      --root-directory /srv/moongate/realm-1 --target world
    ```
 

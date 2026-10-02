@@ -1,3 +1,5 @@
+using System.Text;
+using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Tests.TestSupport.Persistence;
 using Moongate.Persistence.Types.Persistence;
@@ -165,5 +167,63 @@ public sealed class MoongatePersistenceServiceTests
         current = database.ConnectionString;
         await owner.InitializeAsync();
         await owner.SaveAllAsync();
+    }
+
+    [Fact]
+    public async Task ExportDataAsync_AfterInitialization_WritesTheScriptOfThatTarget()
+    {
+        await using var auth = await _postgres.CreateDatabaseAsync();
+        await using var world = await _postgres.CreateDatabaseAsync();
+        await world.ExecuteAsync("CREATE TABLE things (id int PRIMARY KEY); INSERT INTO things VALUES (42);");
+        await using var owner = new MoongatePersistenceService(
+            new(
+                [
+                    new(PersistenceDatabaseTarget.Accounts, auth.ConnectionString),
+                    new(PersistenceDatabaseTarget.Realm, world.ConnectionString)
+                ]
+            )
+        );
+        await owner.InitializeAsync();
+        IPersistenceDataExporter exporter = owner;
+        await using var output = new MemoryStream();
+
+        await exporter.ExportDataAsync(PersistenceDatabaseTarget.Realm, output);
+
+        var script = Encoding.UTF8.GetString(output.ToArray());
+        Assert.Contains("COPY \"public\".\"things\" (\"id\") FROM stdin;\n42\n\\.\n", script);
+        Assert.Equal(
+            [PersistenceDatabaseTarget.Accounts, PersistenceDatabaseTarget.Realm],
+            exporter.ConfiguredTargets.Order()
+        );
+    }
+
+    [Fact]
+    public async Task ExportDataAsync_BeforeInitialization_IsRejected()
+    {
+        await using var world = await _postgres.CreateDatabaseAsync();
+        await using var owner = new MoongatePersistenceService(
+            new([new(PersistenceDatabaseTarget.Realm, world.ConnectionString)])
+        );
+        await using var output = new MemoryStream();
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => owner.ExportDataAsync(PersistenceDatabaseTarget.Realm, output)
+        );
+        Assert.Equal(0, output.Length);
+    }
+
+    [Fact]
+    public async Task ExportDataAsync_ATargetThatIsNotConfigured_IsRejected()
+    {
+        await using var world = await _postgres.CreateDatabaseAsync();
+        await using var owner = new MoongatePersistenceService(
+            new([new(PersistenceDatabaseTarget.Realm, world.ConnectionString)])
+        );
+        await owner.InitializeAsync();
+        await using var output = new MemoryStream();
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => owner.ExportDataAsync(PersistenceDatabaseTarget.Accounts, output)
+        );
     }
 }

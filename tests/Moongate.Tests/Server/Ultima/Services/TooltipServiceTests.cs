@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Messages;
@@ -33,7 +34,8 @@ public sealed class TooltipServiceTests
                        new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Name = "robe of the magi", Weight = 2m },
                        new ItemTemplate { Id = "blessed_ring", ItemId = new Serial(0x108A), LootType = LootType.Blessed },
                        new ItemTemplate { Id = "feather", ItemId = new Serial(0x1BD1), Weight = 0.1m },
-                       new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false }
+                       new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false },
+                       new ItemTemplate { Id = "teleporter", ItemId = new Serial(0x1BC3), Visibility = AccountType.GameMaster }
                    )
                    .With(
                        new MessageContent { Id = 9055, Text = "[Benedetto]" },
@@ -106,6 +108,40 @@ public sealed class TooltipServiceTests
         robe.Name = "Aria's robe";
 
         Assert.Equal("Aria's robe", _tooltips.Build(robe).Entries[0].Arguments);
+    }
+
+    [Fact]
+    public void Build_ALabelNumber_IsTheNameOfTheItem()
+    {
+        // ModernUO's LocalizedSign: the sign reads the text of the client.
+        var sign = Item("unknown", 0x0BD8);
+        sign.SetProp("label_number", 1016093L);
+
+        var lines = _tooltips.Build(sign).Entries;
+
+        Assert.Equal((1016093, ""), (lines[0].Cliloc, lines[0].Arguments));
+    }
+
+    [Fact]
+    public void Build_AnItemsOwnName_WinsOverItsLabelNumber()
+    {
+        var sign = Item("unknown", 0x0BD8);
+        sign.SetProp("label_number", 1016093L);
+        sign.Name = "The Blue Boar";
+
+        Assert.Equal("The Blue Boar", _tooltips.Build(sign).Entries[0].Arguments);
+    }
+
+    [Fact]
+    public void Build_TwoSignsWithDifferentLabelNumbers_DoNotShareATooltip()
+    {
+        var first = Item("unknown", 0x0BD8);
+        first.SetProp("label_number", 1016093L);
+        var second = Item("unknown", 0x0BD8);
+        second.SetProp("label_number", 1016094L);
+
+        Assert.Equal(1016093, _tooltips.Build(first).Entries[0].Cliloc);
+        Assert.Equal(1016094, _tooltips.Build(second).Entries[0].Cliloc);
     }
 
     [Fact]
@@ -289,6 +325,31 @@ public sealed class TooltipServiceTests
         var shirt = Placed(0x40000003, item => item.Equip(Bran, LayerType.Shirt));
 
         Assert.True(_tooltips.TryBuildFor(Aria, shirt.Id, out _));
+    }
+
+    [Fact]
+    public void TryBuildFor_TheBankBoxOfAnotherMobile_IsRefused_ButItsOwnersIsBuilt()
+    {
+        var box = Placed(0x40000006, item => item.Equip(Bran, LayerType.Bank));
+
+        Assert.False(_tooltips.TryBuildFor(Aria, box.Id, out _));
+        Assert.True(_tooltips.TryBuildFor(Bran, box.Id, out _));
+    }
+
+    [Fact]
+    public void TryBuildFor_AHiddenGroundItem_IsBuiltOnlyForTheAccountsThatSeeIt()
+    {
+        var hidden = new ItemEntity { Id = new(0x40000006), TemplateId = "teleporter", ItemId = 0x1BC3, Amount = 1 };
+        _items.Add([hidden]);
+        _items.PlaceOnGround(hidden, MapType.Trammel, new Point3D(1005, 1000, 0));
+
+        Assert.False(_tooltips.TryBuildFor(Aria, hidden.Id, out _));
+        Assert.False(_tooltips.TryBuildFor(Aria, hidden.Id, out _, AccountType.Regular));
+        Assert.True(_tooltips.TryBuildFor(Aria, hidden.Id, out _, AccountType.GameMaster));
+
+        hidden.Visibility = AccountType.Administrator;
+
+        Assert.False(_tooltips.TryBuildFor(Aria, hidden.Id, out _, AccountType.GameMaster));
     }
 
     [Fact]

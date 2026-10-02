@@ -27,5 +27,7 @@ public class AccountEntity : IMoongateEntity
 
     public bool IsLocked { get; set; }
 
+    // As auth/0004_account_admin_api_access.sql declares it: an account the SQL adds gets false.
+    [Column(IsNullable = false, DbType = "boolean NOT NULL DEFAULT false")]
     public bool CanAccessApi { get; set; }
 }

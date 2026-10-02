@@ -6,12 +6,14 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Events;
-using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
-using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Services.Diagnostics;
+using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Effects;
+using Moongate.Server.Ultima.Types.Speech;
 
 namespace Moongate.Server.Ultima.Extensions;
 
@@ -32,6 +34,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
         container.Register<IDecorationsLoader, DecorationsLoader>(Reuse.Singleton);
+        container.Register<IDoorGeneratorService, DoorGeneratorService>(Reuse.Singleton);
         container.Register<IDecorationService, DecorationService>(Reuse.Singleton);
         container.Register<IClockService, ClockService>(Reuse.Singleton);
         container.Register<IRegionService, RegionService>(Reuse.Singleton);
@@ -43,13 +46,17 @@ public static class UltimaWorldContainerExtensions
         container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
         container.RegisterDelegate<INpcScriptService>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
         container.Register<INpcSpeechListener, NpcHearingService>(Reuse.Singleton);
+        container.Register<IItemSpeechListener, ItemHearingService>(Reuse.Singleton);
         container.Register<INpcSenseService, NpcSenseService>(Reuse.Singleton);
         // After the script engine (70), as the mobile scripts.
         container.AddMoongateService<IItemScriptService, ItemScriptService>(LuaScriptEngineService.StartupPriority + 5);
+        container.AddMoongateService<IGumpScriptService, GumpScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.AddMetricProvider<NpcTickMetricsProvider>();
         container.Register<ISectorService, SectorService>(Reuse.Singleton);
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
         container.Register<IWorldViewService, WorldViewService>(Reuse.Singleton);
+        container.Register<ITeleportService, TeleportService>(Reuse.Singleton);
+        container.Register<IMoveOverService, MoveOverService>(Reuse.Singleton);
         container.Register<IWorldTransactionService, WorldTransactionService>(Reuse.Singleton);
         container.Register<ICharacterPresence, SessionCharacterPresence>(Reuse.Singleton);
         container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
@@ -62,6 +69,7 @@ public static class UltimaWorldContainerExtensions
             "character_entered_world",
             CharacterScriptEvents.CharacterEnteredWorld
         );
+        container.AddScriptEvent<PlayerSaidEvent>("player_say", CharacterScriptEvents.PlayerSay);
         container.AddScriptEvent<CharacterLeftWorldEvent>(
             "character_left_world",
             CharacterScriptEvents.CharacterLeftWorld
@@ -71,10 +79,18 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<CharacterLeaveWorldService>(50);
         container.RegisterMapping<ISessionClosedListener, CharacterLeaveWorldService>();
         container.RegisterMapping<ICharacterLeaveWorldService, CharacterLeaveWorldService>();
+        container.Register<ICharacterEnterWorldService, CharacterEnterWorldService>(Reuse.Singleton);
         container.Register<ITargetService, TargetService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, ITargetService>();
+        container.Register<IGumpService, GumpService>(Reuse.Singleton);
+        container.RegisterMapping<ISessionClosedListener, IGumpService>();
+        container.Register<IGumpTemplateService, GumpTemplateService>(Reuse.Singleton);
+        container.Register<IBankService, BankService>(Reuse.Singleton);
+        container.RegisterMapping<ISessionClosedListener, IBankService>();
         container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
+        container.Register<IEffectService, EffectService>(Reuse.Singleton);
+        container.Register<IPublicMoongateService, PublicMoongateService>(Reuse.Singleton);
         container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
         container.Register<IMovementService, MovementService>(Reuse.Singleton);
         container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
@@ -83,6 +99,16 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<NpcModule>();
         container.AddScriptModule<ItemModule>();
         container.AddScriptModule<WorldModule>();
+        container.AddScriptModule<MobileModule>();
+        container.AddScriptModule<GumpModule>();
+        container.AddScriptModule<BankModule>();
+        container.AddScriptModule<EffectModule>();
+        container.AddScriptModule<MoongatesModule>();
+        // No module function takes it: registered so on_speech can compare its keywords with names.
+        container.RegisterScriptEnum<SpeechKeywordType>();
+        container.RegisterScriptEnum<EffectGraphicType>();
+        container.RegisterScriptEnum<EffectRenderModeType>();
+        container.RegisterScriptEnum<EffectLayerType>();
 
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
         container.AddLiveWorldMobiles();
@@ -109,6 +135,13 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<IWeatherService, WeatherService>(11);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IWeatherService>(), Reuse.Singleton);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<ILightService>(), Reuse.Singleton);
+        // The music follows the players' regions too.
+        container.AddMoongateService<IMusicService, MusicService>(11);
+        container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IMusicService>(), Reuse.Singleton);
+        // The seasons too; after a new season they send the light and the weather again. Keep it after the light and
+        // the weather: the listeners run in this order, so those already follow the new region when it resends them.
+        container.AddMoongateService<ISeasonService, SeasonService>(11);
+        container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<ISeasonService>(), Reuse.Singleton);
         container.AddMoongateService<IEquipmentService, EquipmentService>();
         container.AddMoongateService<ITooltipService, TooltipService>();
         // As the ground items: the NPCs are live before the game server takes players.

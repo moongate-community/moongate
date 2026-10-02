@@ -28,6 +28,11 @@ internal sealed class ScriptedInstall : IDisposable
     public string BinDirectory { get; }
 
     /// <summary>
+    ///     Gets the directory holding the bash, zsh and fish folders the script installs the completions into.
+    /// </summary>
+    public string CompletionDirectory { get; }
+
+    /// <summary>
     ///     Creates the temporary release, install and bin directories this run uses.
     /// </summary>
     public ScriptedInstall()
@@ -36,8 +41,14 @@ internal sealed class ScriptedInstall : IDisposable
         ReleaseDirectory = Path.Combine(_root, "releases");
         InstallDirectory = Path.Combine(_root, "opt", "moongate");
         BinDirectory = Path.Combine(_root, "bin");
+        CompletionDirectory = Path.Combine(_root, "completions");
         Directory.CreateDirectory(ReleaseDirectory);
         Directory.CreateDirectory(BinDirectory);
+
+        foreach (var shell in new[] { "bash", "zsh", "fish" })
+        {
+            Directory.CreateDirectory(Path.Combine(CompletionDirectory, shell));
+        }
     }
 
     /// <summary>
@@ -65,17 +76,27 @@ internal sealed class ScriptedInstall : IDisposable
     }
 
     /// <summary>
-    ///     Writes a release archive and its checksum, with the given text standing in for the server binary.
+    ///     Writes a release archive and its checksum, with the given text standing in for the server binary; with
+    ///     <paramref name="includeMgctl" />, also the tool beside it, named mgboot before it became mgctl. The server
+    ///     binary was named Moongate.Server before it became mgserver.
     /// </summary>
-    public void Publish(string version, string rid, string binaryContent, bool includeMgboot = false)
+    public void Publish(
+        string version,
+        string rid,
+        string binaryContent,
+        bool includeMgctl = false,
+        string tool = "mgctl",
+        string toolContent = "boot payload",
+        string server = "mgserver"
+    )
     {
         var bundle = Path.Combine(_root, "staging-" + Guid.NewGuid().ToString("N"), "moongate-" + rid);
         Directory.CreateDirectory(bundle);
-        File.WriteAllText(Path.Combine(bundle, "Moongate.Server"), binaryContent);
+        File.WriteAllText(Path.Combine(bundle, server), binaryContent);
 
-        if (includeMgboot)
+        if (includeMgctl)
         {
-            File.WriteAllText(Path.Combine(bundle, "mgboot"), "boot payload");
+            File.WriteAllText(Path.Combine(bundle, tool), toolContent);
         }
 
         File.WriteAllText(Path.Combine(bundle, "LICENSE"), "GNU AFFERO GENERAL PUBLIC LICENSE");
@@ -115,6 +136,9 @@ internal sealed class ScriptedInstall : IDisposable
             new Uri(ReleaseDirectory + Path.DirectorySeparatorChar).AbsoluteUri.TrimEnd('/');
         start.Environment["MOONGATE_INSTALL_DIR"] = InstallDirectory;
         start.Environment["MOONGATE_BIN_DIR"] = BinDirectory;
+        start.Environment["MOONGATE_BASH_COMPLETION_DIR"] = Path.Combine(CompletionDirectory, "bash");
+        start.Environment["MOONGATE_ZSH_COMPLETION_DIR"] = Path.Combine(CompletionDirectory, "zsh");
+        start.Environment["MOONGATE_FISH_COMPLETION_DIR"] = Path.Combine(CompletionDirectory, "fish");
         using var process = Process.Start(start) ?? throw new InvalidOperationException("sh did not start");
         process.StandardInput.Close();
         var standardOutput = process.StandardOutput.ReadToEndAsync();

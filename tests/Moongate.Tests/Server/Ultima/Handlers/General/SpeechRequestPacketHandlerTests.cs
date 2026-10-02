@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Types.Speech;
@@ -59,6 +60,61 @@ public sealed class SpeechRequestPacketHandlerTests
         await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("..dot"), CancellationToken.None);
 
         Assert.Equal([("Alice", "hello"), ("Alice", ".dot")], fixture.Listener.Heard.Select(entry => (entry.Speaker.Name, entry.Text)));
+    }
+
+    [Fact]
+    public async Task Handle_Say_TellsTheItemsWhatThePlayerSaid_ButNotACommand()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("om om om"), CancellationToken.None);
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".help"), CancellationToken.None);
+        await fixture.Handler.WaitForCommandsAsync();
+
+        Assert.Equal([("Alice", "om om om")], fixture.ItemListener.Heard.Select(entry => (entry.Speaker.Name, entry.Text)));
+    }
+
+    [Fact]
+    public async Task Handle_Say_PublishesWhatThePlayerSaid()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello"), CancellationToken.None);
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("..dot"), CancellationToken.None);
+
+        Assert.Equal(
+            [(new Serial(1), "hello"), (new Serial(1), ".dot")],
+            fixture.Said.Select(said => (said.Speaker.Id, said.Text))
+        );
+    }
+
+    [Fact]
+    public async Task Handle_ACommandOrASessionWithoutACharacter_PublishesNothing()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello"), CancellationToken.None);
+        await fixture.EnterSpeakerAsync();
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".help"), CancellationToken.None);
+        await fixture.Handler.WaitForCommandsAsync();
+
+        Assert.Empty(fixture.Said);
+    }
+
+    [Fact]
+    public async Task Handle_Say_PassesTheClientsKeywordsToTheNpcs()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+        Assert.True(
+            UnicodeSpeechRequestPacket.TryParse(Convert.FromHexString("AD00168003B20003454E5500002001002062616E6B00"), out var packet)
+        );
+
+        await fixture.Handler.HandleAsync(fixture.Context(), packet, CancellationToken.None);
+
+        Assert.Equal([0x001, 0x002], Assert.Single(fixture.Listener.Keywords));
     }
 
     [Fact]

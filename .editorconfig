@@ -295,6 +295,12 @@ resharper_enforce_if_statement_braces_highlighting = hint
 resharper_enforce_lock_statement_braces_highlighting = hint
 resharper_enforce_using_statement_braces_highlighting = hint
 resharper_enforce_while_statement_braces_highlighting = hint
+# Visual Basic keywords (Call, Function, Get, Next) are fine names in a C# code base.
+dotnet_diagnostic.CA1716.severity = none
+
+# xUnit test classes release their disposables in IAsyncLifetime.DisposeAsync, which CA1001 does not see.
+[tests/**.cs]
+dotnet_diagnostic.CA1001.severity = none
 
 [*.{sln,csproj,bat}]
 end_of_line = crlf

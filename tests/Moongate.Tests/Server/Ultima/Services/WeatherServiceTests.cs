@@ -123,6 +123,19 @@ public sealed class WeatherServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Resend_SendsTheSameWeatherAgain_OnlyToAFollowedPlayer()
+    {
+        _weather.RegionChanged(_aria, null, null);
+        await LoginAsync();
+
+        _weather.Resend(_aria);
+        _weather.Left(_aria.Id);
+        _weather.Resend(_aria);
+
+        Assert.Equal([(WeatherKindType.Rain, 1L), (WeatherKindType.Rain, 1L)], Sent());
+    }
+
+    [Fact]
     public async Task Left_StopsSendingToThePlayer()
     {
         _weather.RegionChanged(_aria, null, null);

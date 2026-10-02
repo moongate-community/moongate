@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
@@ -52,6 +53,7 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _pouch = Item(0x40000006, PouchGraphic);
 
     private readonly RecordingItemScriptService _scripts = new();
+    private readonly StubBankService _bank = new();
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -298,6 +300,30 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_ABagInAClosedBank_DoesNotOpen()
+    {
+        _bank.Locked.Add(_bag.Id);
+        await StartAsync(Aria);
+
+        await UseAsync(_bag.Id);
+
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_AScriptedItemInAClosedBank_RunsNothing()
+    {
+        _scripts.Scripted.Add("dagger");
+        _bank.Locked.Add(_dagger.Id);
+        await StartAsync(Aria);
+
+        await UseAsync(_dagger.Id);
+
+        Assert.Empty(_scripts.Calls);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
     public async Task Handle_ABagInsideTheBackpack_Opens()
     {
         await StartAsync(Aria);
@@ -419,7 +445,7 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             new BodyContent { Body = new(401), Type = BodyType.Human },
             new BodyContent { Body = new(17), Type = BodyType.Monster }
         );
-        var handler = new UseRequestPacketHandler(_items, _mobiles, bodies, new WorldConfig(), _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), Titles(), _scripts);
+        var handler = new UseRequestPacketHandler(_items, _mobiles, bodies, new WorldConfig(), _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), Titles(), _scripts, _bank);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));
     }

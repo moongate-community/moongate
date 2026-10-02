@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Regenerates THIRD-PARTY-NOTICES.md from the separate dependency graphs of the
-# shard host and migration runner, preserving both versions of shared packages.
+# shard host and mgctl, preserving both versions of shared packages.
 #
 # Build-only packages such as analyzers and source generators appear in the list
 # too. Naming a package that is never distributed costs nothing, while leaving one
@@ -21,7 +21,7 @@ dotnet nuget-license \
     --output Markdown \
     --file-output "$table"
 dotnet nuget-license \
-    --input src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj \
+    --input src/Moongate.Ctl/Moongate.Ctl.csproj \
     --include-transitive \
     --output Markdown \
     --file-output "$runner_table"
@@ -42,9 +42,9 @@ dotnet nuget-license \
     # Keep generated table separators consistent with the Markdown formatter.
     sed '/^|[- |]*|$/s/ /-/g' "$table"
     echo
-    echo "## Separate migration runner"
+    echo "## mgctl"
     echo
-    echo "The \`migration-runner/\` executable has its own dependency graph. Versions"
+    echo "The \`mgctl\` executable, which prepares the root, applies the migrations and converts content, has its own dependency graph. Versions"
     echo "listed here belong to that executable and do not replace server dependencies."
     echo
     sed '/^|[- |]*|$/s/ /-/g' "$runner_table"

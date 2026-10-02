@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Tooltips;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.World;
@@ -27,9 +28,15 @@ public interface ITooltipService
     ///     Builds the tooltip of <paramref name="target" /> when <paramref name="viewer" />, a mobile in the world, can
     ///     see it: an item it carries or wears, an item worn by a mobile in view range, an item on the ground in view
     ///     range, or a mobile in view range on its map. False for anything else, so a client cannot read what it does
-    ///     not see.
+    ///     not see: a hidden ground item, such as a teleporter, is built only for an <paramref name="account" /> that
+    ///     sees it.
     /// </summary>
-    bool TryBuildFor(Serial viewer, Serial target, [NotNullWhen(true)] out PropertyList? list);
+    bool TryBuildFor(
+        Serial viewer,
+        Serial target,
+        [NotNullWhen(true)] out PropertyList? list,
+        AccountType account = AccountType.Regular
+    );
 
     /// <summary>
     ///     The 0xDC that tells a client the item's current tooltip revision; sent after anything that shows the item.

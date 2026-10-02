@@ -1,3 +1,4 @@
+using Lua;
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -12,15 +13,20 @@ using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
+using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Effects;
 using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -41,6 +47,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly List<LuaScriptEngineService> _engines = [];
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly RecordingSpeechService _speech = new();
+    private readonly RecordingEffectService _effects = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly ItemService _items;
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
@@ -71,9 +78,15 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ISpeechService>(_speech);
         _container.RegisterInstance<ISectorService>(_sectors);
         _container.RegisterInstance<IClockService>(new StubClockService());
+        _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
+        _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService()));
+        _container.AddScriptModule<MobileModule>();
+        _container.RegisterInstance<IEffectService>(_effects);
+        _container.AddScriptModule<EffectModule>();
+        _container.RegisterScriptEnum<EffectGraphicType>();
         _container.RegisterInstance(TestLocalization.With((398, "C'è una serratura."), (405, "Using your key, you open the door.")));
         _container.AddScriptModule<LocalizationModule>();
         _container.Resolve<IMoongateEventBus>()
@@ -336,6 +349,277 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheShippedTeleporterScript_MovesWhoeverStepsOnIt_AndSoundsAtTheDestination()
+    {
+        var teleporter = PlaceTeleporter(
+            new() { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["sound_id"] = 0x1FEL }
+        );
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
+        Assert.Single(_fixture.Sender.Sent.OfType<MobileUpdatePacket>());
+        Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
+    }
+
+    [Theory]
+    // Turned off.
+    [InlineData(false, 5690L, null)]
+    // No destination.
+    [InlineData(null, null, null)]
+    // To a map that is not loaded.
+    [InlineData(null, 5690L, 4L)]
+    public async Task TheShippedTeleporterScript_OffWithoutADestinationOrToAMapNotLoaded_DoesNothing(bool? active, long? x, long? map)
+    {
+        var props = new Dictionary<string, object?> { ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["sound_id"] = 0x1FEL };
+
+        if (active is not null)
+        {
+            props["active"] = active;
+        }
+
+        if (x is not null)
+        {
+            props["teleport.x"] = x;
+        }
+
+        if (map is not null)
+        {
+            props["teleport.map"] = map;
+        }
+
+        var teleporter = PlaceTeleporter(props);
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        var start = aria.Location;
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(start, aria.Location);
+        Assert.Empty(_speech.Sounds);
+    }
+
+    [Theory,
+     InlineData("true", "true", true, true),
+     InlineData("true", null, true, false),
+     InlineData(null, "true", false, true),
+     InlineData(null, null, false, false)]
+    public async Task TheShippedTeleporterScript_ShowsTheSmokeWhereItsPropsAskForIt(
+        string? sourceEffect,
+        string? destEffect,
+        bool atSource,
+        bool atDestination
+    )
+    {
+        // The decoration files carry these flags as text; as ModernUO, the smoke stays where the mobile left and arrived.
+        var teleporter = PlaceTeleporter(
+            new()
+            {
+                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["source_effect"] = sourceEffect,
+                ["dest_effect"] = destEffect
+            }
+        );
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        var source = aria.Location;
+        var expected = new List<Point3D>();
+
+        if (atSource)
+        {
+            expected.Add(source);
+        }
+
+        if (atDestination)
+        {
+            expected.Add(new Point3D(5690, 569, 25));
+        }
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
+        Assert.Equal(expected, _effects.At.Select(effect => effect.Location));
+        Assert.All(_effects.At, effect => Assert.Equal((aria.Map, (int)EffectGraphicType.Smoke), (effect.Map, effect.Options.Graphic)));
+    }
+
+    [Fact]
+    public async Task TheShippedKeywordTeleporterScript_TheWordSaidOnItsCell_TeleportsWithSmokeAndSound()
+    {
+        var teleporter = PlaceKeywordTeleporter(Mantra());
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(1600, 1600);
+
+        scripts.Run(teleporter, "on_speech", 2L, "I say Om Om Om here", new LuaTable());
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
+        Assert.Equal([new Point3D(1600, 1600, 0), new Point3D(1595, 2489, 20)], _effects.At.Select(effect => effect.Location));
+        Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Theory,
+     InlineData("hello there", 1600, 1600, null),
+     InlineData("om om om", 1601, 1600, null),
+     InlineData("om om om", 1600, 1600, false)]
+    public async Task TheShippedKeywordTeleporterScript_AnotherWordOutOfRangeOrOff_DoesNothing(
+        string text,
+        int x,
+        int y,
+        bool? active
+    )
+    {
+        var props = Mantra();
+        props["active"] = active;
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(x, y);
+
+        scripts.Run(teleporter, "on_speech", 2L, text, new LuaTable());
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(x, y, 0), aria.Location);
+        Assert.Empty(_effects.At);
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public async Task TheShippedKeywordTeleporterScript_ToAnotherMap_ChangesTheMap_WithTheSmokeThere()
+    {
+        var props = Mantra();
+        props["teleport.map"] = (long)MapType.Felucca;
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(1600, 1600);
+
+        scripts.Run(teleporter, "on_speech", 2L, "om om om", new LuaTable());
+
+        Assert.Empty(_errors);
+        Assert.Equal((MapType.Felucca, new Point3D(1595, 2489, 20)), (aria.Map, aria.Location));
+        Assert.Equal([MapType.Trammel, MapType.Felucca], _effects.At.Select(effect => effect.Map));
+    }
+
+    [Fact]
+    public async Task TheShippedKeywordTeleporterScript_WithinItsRange_AnswersTheSpeechKeywordToo()
+    {
+        var props = Mantra();
+        props["range"] = 2L;
+        props["keyword"] = 0x3BL;
+        props["substring"] = null;
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(1602, 1598);
+        var keywords = new LuaTable();
+        keywords[1] = 0x3B;
+
+        scripts.Run(teleporter, "on_speech", 2L, "anything", keywords);
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
+    }
+
+    [Theory,
+     InlineData("0:0:2", 2.0),
+     InlineData("00:01:01.5", 61.5),
+     InlineData("3", 3.0),
+     InlineData(1.5, 1.5)]
+    public async Task TheShippedKeywordTeleporterScript_ReadsADelayAsATimeOrAsSeconds(object delay, double seconds)
+    {
+        var props = Mantra();
+        props["delay"] = delay;
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        AriaAt(1600, 1600);
+
+        scripts.Run(teleporter, "on_speech", 2L, "om om om", new LuaTable());
+
+        Assert.Empty(_errors);
+        Assert.Equal(TimeSpan.FromSeconds(seconds), Assert.Single(_timers.Timers).Interval);
+    }
+
+    [Fact]
+    public async Task TheShippedKeywordTeleporterScript_ARangeWrittenAsText_IsStillARange()
+    {
+        // A prop edited by hand: without the conversion every line spoken nearby raised a Lua error.
+        var props = Mantra();
+        props["range"] = "2";
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(1602, 1600);
+
+        scripts.Run(teleporter, "on_speech", 2L, "om om om", new LuaTable());
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
+    }
+
+    [Fact]
+    public async Task TheShippedKeywordTeleporterScript_WithADelay_TeleportsWhenItEndsIfThePlayerIsStillThere()
+    {
+        var props = Mantra();
+        props["delay"] = "0:0:1";
+        var teleporter = PlaceKeywordTeleporter(props);
+        var scripts = await StartKeywordTeleporterScriptAsync();
+        var aria = AriaAt(1600, 1600);
+
+        scripts.Run(teleporter, "on_speech", 2L, "om om om", new LuaTable());
+        var first = Assert.Single(_timers.Timers);
+        Assert.Equal((TimeSpan.FromSeconds(1), new Point3D(1600, 1600, 0)), (first.Interval, aria.Location));
+
+        // The player walked away before the second ended: as ModernUO, nothing happens.
+        aria.Location = new Point3D(1610, 1600, 0);
+        _timers.Fire(first.Id);
+        Assert.Equal(new Point3D(1610, 1600, 0), aria.Location);
+
+        aria.Location = new Point3D(1600, 1600, 0);
+        scripts.Run(teleporter, "on_speech", 2L, "om om om", new LuaTable());
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
+    }
+
+    [Fact]
+    public async Task TheShippedTeleporterScript_ToAnotherMap_ChangesTheMap_AndSoundsThere()
+    {
+        var teleporter = PlaceTeleporter(
+            new()
+            {
+                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["teleport.map"] = (long)MapType.Felucca,
+                ["sound_id"] = 0x1FEL
+            }
+        );
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((MapType.Felucca, new Point3D(5690, 569, 25)), (aria.Map, aria.Location));
+        Assert.Equal(MapType.Felucca, Assert.Single(_fixture.Sender.Sent.OfType<MapChangePacket>()).Map);
+        Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
+    }
+
+    [Fact]
+    public async Task TheShippedTeleporterScript_ToItsOwnMap_Teleports()
+    {
+        var teleporter = PlaceTeleporter(
+            new() { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["teleport.map"] = (long)MapType.Trammel }
+        );
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
+    }
+
+    [Fact]
     public async Task TheShippedLightScript_LightsACandleWithItsShape_AndDousesIt()
     {
         var candle = PlaceLight(0x0A28, null);
@@ -449,6 +733,78 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         var scripts = new ItemScriptService(
             engine,
             new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_light", ScriptId = "light" })),
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
+        await scripts.StartAsync();
+
+        return scripts;
+    }
+
+    private ItemEntity PlaceTeleporter(Dictionary<string, object?> props)
+    {
+        var teleporter = new ItemEntity
+        {
+            Id = new Serial(0x40000030), TemplateId = "decoration_teleporter", ItemId = 0x1BC3, Amount = 1, Props = props
+        };
+        teleporter.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+        _items.Add([teleporter]);
+
+        return teleporter;
+    }
+
+    private static Dictionary<string, object?> Mantra()
+    {
+        return new()
+        {
+            ["substring"] = "om om om", ["range"] = 0L, ["teleport.x"] = 1595L, ["teleport.y"] = 2489L,
+            ["teleport.z"] = 20L, ["source_effect"] = "true", ["dest_effect"] = "true", ["sound_id"] = 0x1FEL
+        };
+    }
+
+    private MobileEntity AriaAt(int x, int y)
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.Map = MapType.Trammel;
+        aria.Location = new Point3D(x, y, 0);
+
+        return aria;
+    }
+
+    private ItemEntity PlaceKeywordTeleporter(Dictionary<string, object?> props)
+    {
+        var teleporter = new ItemEntity
+        {
+            Id = new Serial(0x40000031), TemplateId = "decoration_keyword_teleporter", ItemId = 0x1BC3, Amount = 1,
+            Props = props
+        };
+        teleporter.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 12));
+        _items.Add([teleporter]);
+
+        return teleporter;
+    }
+
+    private Task<ItemScriptService> StartKeywordTeleporterScriptAsync()
+    {
+        return StartItemScriptAsync("keyword_teleport", "decoration_keyword_teleporter");
+    }
+
+    private Task<ItemScriptService> StartTeleporterScriptAsync()
+    {
+        return StartItemScriptAsync("teleporter", "decoration_teleporter");
+    }
+
+    private async Task<ItemScriptService> StartItemScriptAsync(string script, string template)
+    {
+        _scripts.Write($"items/{script}.lua", File.ReadAllText(ShippedScript($"items/{script}.lua")));
+        var engine = NewEngine();
+        _engines.Add(engine);
+        await engine.StartAsync();
+        var scripts = new ItemScriptService(
+            engine,
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = template, ScriptId = script })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );

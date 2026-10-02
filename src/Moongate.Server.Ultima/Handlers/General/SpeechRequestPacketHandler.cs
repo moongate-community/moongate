@@ -3,11 +3,14 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Commands;
+using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Speech;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Speech;
@@ -38,6 +41,8 @@ public sealed class SpeechRequestPacketHandler :
     private readonly IPacketSendService _sender;
     private readonly ILocalizationService? _localization;
     private readonly INpcSpeechListener? _npcs;
+    private readonly IMoongateEventBus? _events;
+    private readonly IItemSpeechListener? _items;
 
     public SpeechRequestPacketHandler(
         ICommandSystemService commands,
@@ -45,9 +50,13 @@ public sealed class SpeechRequestPacketHandler :
         IMobileService mobiles,
         IPacketSendService sender,
         ILocalizationService? localization = null,
-        INpcSpeechListener? npcs = null
+        INpcSpeechListener? npcs = null,
+        IMoongateEventBus? events = null,
+        IItemSpeechListener? items = null
     )
     {
+        _items = items;
+        _events = events;
         _localization = localization;
         _npcs = npcs;
         _commands = commands;
@@ -97,6 +106,7 @@ public sealed class SpeechRequestPacketHandler :
         }
 
         GameSession? invoker = null;
+        MobileEntity? said = null;
         var available = await context.RunOnGameLoopAsync(
             session =>
             {
@@ -135,10 +145,18 @@ public sealed class SpeechRequestPacketHandler :
                     }
                 }
 
-                _npcs?.Heard(speaker, text);
+                _npcs?.Heard(speaker, text, speech.Keywords);
+                _items?.Heard(speaker, text, speech.Keywords);
+                said = speaker;
             },
             cancellationToken
         );
+
+        // Off the loop, after everyone around heard it: scripts are told last (the player_say event).
+        if (said is not null && _events is not null)
+        {
+            await _events.PublishAsync(new PlayerSaidEvent(said, text), CancellationToken.None);
+        }
 
         if (!available || !command || invoker is null)
         {

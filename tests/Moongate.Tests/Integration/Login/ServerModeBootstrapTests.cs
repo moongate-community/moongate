@@ -23,7 +23,7 @@ public sealed class ServerModeBootstrapTests
         var config = new MoongateServerConfig
         {
             Mode = ServerMode.Login,
-            Network = new() { ListenAddress = "127.0.0.1", LoginPort = 0 },
+            Network = new() { ListenAddress = "127.0.0.1", LoginPort = 0, PingPort = 0 },
             Redis = new()
             {
                 ConnectionString = RedisTestServer.ConnectionString,
@@ -42,6 +42,7 @@ public sealed class ServerModeBootstrapTests
             await bootstrap.StartAsync().WaitAsync(TimeSpan.FromSeconds(10));
             var login = Assert.IsType<NetworkService>(container.Resolve<ILoginNetworkService>());
             Assert.Single(login.Listeners);
+            Assert.Single(container.Resolve<PingServerService>().LocalEndpoints);
             Assert.False(container.IsRegistered<INetworkService>());
             Assert.False(container.IsRegistered<IGameLoopService>());
             Assert.False(container.IsRegistered<ISessionService>());

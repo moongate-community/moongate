@@ -6,7 +6,7 @@ Moongate publishes Linux images to [GitHub Container Registry](https://github.co
 docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 ```
 
-The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships `mgboot`, the migration runner, the core SQL, the [shard data files](data-files.md), the [templates](templates.md), the example [scripts](scripting.md) and `mg-uoxconv`. The `sample-plugin` build target adds the sample plugin bundle.
+The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships [`mgctl`](mgctl.md), which prepares the root, applies the migrations and converts UOX3 and ModernUO content, the core SQL, the [shard data files](data-files.md), the [templates](templates.md) and the example [scripts](scripting.md). The `sample-plugin` build target adds the sample plugin bundle.
 
 ## Build cache
 
@@ -79,12 +79,12 @@ Prepare a root before starting (this also copies the shard data files, templates
 
 ```sh
 docker volume create moongate-data
-docker run --rm --entrypoint /app/mgboot -v moongate-data:/data moongate:local /data
+docker run --rm --entrypoint /app/mgctl -v moongate-data:/data moongate:local /data
 ```
 
 For optional administration TLS in this root, append `--generate-admin-certificate`
 after `/data`, with `--admin-certificate-hosts` naming the DNS/IP used by clients.
-See [mgboot certificate setup](mgboot.md#generate-an-administration-certificate)
+See [mgctl certificate setup](mgctl.md#generate-an-administration-certificate)
 for the generated files and client trust. The default bind remains loopback;
 configure a private interface before connecting from another container. The
 multi-process Compose override instead uses its mounted TOMLs and operator-provided
@@ -94,9 +94,9 @@ Mount that same volume for the server and migration runner. Stop the affected ru
 
 ## Ports, storage and updates
 
-The current image declares UO client ports 2593 and 2595. `EXPOSE` does not publish a host port; configure `ports` for the login and each game listener that clients must reach. Keep Redis and PostgreSQL on a private network. Each running Moongate process needs its own `/data` volume; each realm needs its own Realm database. Do not share one root or Realm database between running game processes.
+The current image declares UO client ports 2593 and 2595, and UDP port 12000 for the ping server. Publish `12000/udp` only for the process whose address the clients ping; two processes behind one host address cannot both use it. `EXPOSE` does not publish a host port; configure `ports` for the login and each game listener that clients must reach. Keep Redis and PostgreSQL on a private network. Each running Moongate process needs its own `/data` volume; each realm needs its own Realm database. Do not share one root or Realm database between running game processes.
 
-After pulling a newer image, run `mgboot` on the volume again, as above: it adds the data files and core SQL the new release introduces and keeps the files already in the root. The Compose example does this in its entrypoint on every start.
+After pulling a newer image, run `mgctl` on the volume again, as above: it adds the data files and core SQL the new release introduces and keeps the files already in the root. The Compose example does this in its entrypoint on every start.
 
 `docker compose down` preserves named volumes. Adding `--volumes` deletes server roots and PostgreSQL data; use it only for a disposable environment. World saves are not PostgreSQL backups. Stop services normally so the final world save can complete.
 
@@ -104,15 +104,15 @@ To update an instance, read the target release's changelog, stop it, follow your
 
 ## UOX3 content conversion
 
-The image includes `/app/mg-uoxconv` for converting UOX3 `.dfn` files to TOML. Bind the source read-only and an output directory writable by the invoking user:
+The image's `/app/mgctl` converts UOX3 `.dfn` files to TOML with `convert uox`. Bind the source read-only and an output directory writable by the invoking user:
 
 ```sh
-docker run --rm --entrypoint /app/mg-uoxconv \
+docker run --rm --entrypoint /app/mgctl \
   --user "$(id -u):$(id -g)" \
   -v /path/to/uox3/dfndata/items:/uox-source:ro \
   -v /path/to/templates:/uox-out \
   moongate:local \
-  --source /uox-source --destination /uox-out/items --loot-destination /uox-out/loots
+  convert uox --source /uox-source --destination /uox-out/items --loot-destination /uox-out/loots
 ```
 
 See [Migrate from UOX3](uox3-migration.md) for what the converter does and its current limits.

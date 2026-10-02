@@ -18,6 +18,15 @@ public sealed class ContainerItemUpdatePacketTests
     }
 
     [Fact]
+    public void Encode_WithTheGridByte_WritesTheSlotOfTheItem()
+    {
+        var coins = Coins();
+        coins.PutInContainer(coins.ContainerId!.Value, coins.GridLocation!.Value, 9);
+
+        Assert.Equal(0x09, PacketCodec.Encode(new ContainerItemUpdatePacket(coins, true))[14]);
+    }
+
+    [Fact]
     public void Encode_WithoutTheGridByte_IsTwentyBytes()
     {
         Assert.Equal(

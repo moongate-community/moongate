@@ -34,7 +34,7 @@ public sealed class ExtendedCommandPacketHandler : IPacketHandler<ExtendedComman
         {
             var serial = new Serial(BinaryPrimitives.ReadUInt32BigEndian(packet.Payload));
 
-            if (_tooltips.TryBuildFor(session.CharacterId, serial, out var list))
+            if (_tooltips.TryBuildFor(session.CharacterId, serial, out var list, session.AccountType))
             {
                 _sender.TrySend(session.SessionId, new PropertyListPacket(serial, list));
             }

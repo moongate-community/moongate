@@ -51,6 +51,12 @@ public interface IItemService : IPersistenceDeletionSource
     Serial? GetOwner(ItemEntity item);
 
     /// <summary>
+    ///     Gets the worn item the item is, or is in at any depth, such as the backpack or the bank box; null for an item
+    ///     on the ground or inside a container that is not live.
+    /// </summary>
+    ItemEntity? GetWornRoot(ItemEntity item);
+
+    /// <summary>
     ///     Gets the live items the mobile wears and everything inside them, at any depth.
     /// </summary>
     IReadOnlyList<ItemEntity> GetOwnedBy(Serial mobile);
@@ -61,9 +67,10 @@ public interface IItemService : IPersistenceDeletionSource
     IReadOnlyList<ItemEntity> GetWorn(Serial mobile);
 
     /// <summary>
-    ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump.
+    ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump, in the
+    ///     grid slot <paramref name="gridIndex" /> when it is free and otherwise in the next free one.
     /// </summary>
-    void MoveToContainer(ItemEntity item, Serial container, Point2D position);
+    void MoveToContainer(ItemEntity item, Serial container, Point2D position, int gridIndex = 0);
 
     /// <summary>
     ///     Lays the live item on the ground of the map, in the sector grid.

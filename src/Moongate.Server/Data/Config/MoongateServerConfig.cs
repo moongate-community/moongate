@@ -22,6 +22,8 @@ public class MoongateServerConfig
 
     public WorldSaveConfig WorldSave { get; set; } = new();
 
+    public SqlBackupConfig SqlBackup { get; set; } = new();
+
     public DiagnosticConfig Diagnostics { get; set; } = new();
 
     public ScriptingConfig Scripting { get; set; } = new();
@@ -70,6 +72,13 @@ public class MoongateServerConfig
         }
 
         WorldSave.Validate();
+
+        if (SqlBackup is null)
+        {
+            throw new InvalidOperationException("The sql_backup configuration section cannot be null.");
+        }
+
+        SqlBackup.Validate();
 
         if (Diagnostics is null)
         {
