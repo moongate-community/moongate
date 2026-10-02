@@ -93,4 +93,29 @@ public sealed class WorldConfigTests
 
         Assert.Contains("world.lamp_post_light", exception.Message);
     }
+
+    [Fact]
+    public void PathfindingLimits_DefaultToModernUos()
+    {
+        var world = new WorldConfig();
+
+        Assert.Equal((38, 1000), (world.PathfindingRange, world.PathfindingMaxNodes));
+        world.Validate();
+    }
+
+    [Theory, InlineData(7), InlineData(65)]
+    public void Validate_PathfindingRangeOutOf8To64_Throws(int range)
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => new WorldConfig { PathfindingRange = range }.Validate());
+
+        Assert.Contains("ultima.world.pathfinding_range", exception.Message);
+    }
+
+    [Theory, InlineData(49), InlineData(20001)]
+    public void Validate_PathfindingMaxNodesOutOf50To20000_Throws(int nodes)
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => new WorldConfig { PathfindingMaxNodes = nodes }.Validate());
+
+        Assert.Contains("ultima.world.pathfinding_max_nodes", exception.Message);
+    }
 }

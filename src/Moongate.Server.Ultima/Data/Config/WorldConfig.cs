@@ -54,9 +54,19 @@ public sealed class WorldConfig
     public int DaysPerSeason { get; set; } = 12;
 
     /// <summary>
+    ///     Gets or sets how far apart the two ends of a path search may be along X or Y, in tiles; 38 as ModernUO.
+    /// </summary>
+    public int PathfindingRange { get; set; } = 38;
+
+    /// <summary>
+    ///     Gets or sets how many places a path search expands before it gives up; 1000 as ModernUO.
+    /// </summary>
+    public int PathfindingMaxNodes { get; set; } = 1000;
+
+    /// <summary>
     ///     Validates the section before server services begin startup: the range must be one the client supports, from
     ///     5 to 24, as ModernUO and POL allow; a game minute from 1 to 3600 seconds; the light levels from 0 to 31; a season
-    ///     from 1 to 365 game days.
+    ///     from 1 to 365 game days; a path search from 8 to 64 tiles and from 50 to 20000 places.
     /// </summary>
     public void Validate()
     {
@@ -100,6 +110,20 @@ public sealed class WorldConfig
         if (DaysPerSeason is < 1 or > 365)
         {
             throw new InvalidOperationException($"ultima.world.days_per_season must be from 1 to 365, found {DaysPerSeason}.");
+        }
+
+        if (PathfindingRange is < 8 or > 64)
+        {
+            throw new InvalidOperationException(
+                $"ultima.world.pathfinding_range must be from 8 to 64, found {PathfindingRange}."
+            );
+        }
+
+        if (PathfindingMaxNodes is < 50 or > 20000)
+        {
+            throw new InvalidOperationException(
+                $"ultima.world.pathfinding_max_nodes must be from 50 to 20000, found {PathfindingMaxNodes}."
+            );
         }
     }
 }

@@ -3,8 +3,9 @@
 The game server reads the Ultima Online client files it needs for gameplay: the tile
 properties (`tiledata.mul`), the maps with their statics, and the multi layouts of
 houses and boats. On top of them it answers two questions every game system asks:
-can a mover take this step, and can this point see that one. C# code reaches all of
-this through five services of `Moongate.Server.Ultima`, registered by the Ultima
+can a mover take this step, and can this point see that one; and a third built on the
+first: which way does a mover walk from here to there. C# code reaches all of
+this through six services of `Moongate.Server.Ultima`, registered by the Ultima
 plugin in game and standalone modes.
 
 | Service | Answers | Call from |
@@ -14,6 +15,7 @@ plugin in game and standalone modes.
 | `IMultiService` | The components of a house, boat or other multi | Any thread |
 | `IMovementService` | Whether a step is allowed and the Z it lands at | The game loop |
 | `ILineOfSightService` | Whether one point sees another | The game loop |
+| `IPathfindingService` | The steps a mover walks between two places | The game loop |
 
 The map readers share their buffers and one file handle per map, so the map,
 movement and line of sight services belong on the game loop. Tile data and multis are
@@ -131,6 +133,61 @@ var visible = lineOfSightService.HasLineOfSight(MapType.Felucca,
 - A map that is not loaded throws `KeyNotFoundException`.
 - The service allocates nothing: each cell's statics are read once, even when the
   line crosses it several times.
+
+## Pathfinding
+
+`IPathfindingService.FindPath(map, from, to, ability, allowPartial)` finds the shortest way a
+mover can walk between two places with A*, and gives a `PathResult`:
+
+| Field | Holds |
+| --- | --- |
+| `Kind` | `Found`, `Partial`, `NotFound` or `TooFar` |
+| `Steps` | The directions to walk from the start, one per step; empty when there is no path |
+| `End` | Where the steps lead: the goal, the closest place for a partial path, or the start |
+
+```csharp
+var path = pathfinding.FindPath(npc.Map, npc.Location, target.Location, MovementAbilityType.Walk, true);
+
+// A path to where the NPC already stands is found with no steps.
+if (path.Kind is PathResultType.Found or PathResultType.Partial && path.Steps.Count > 0)
+{
+    mobiles.TryMove(npc, path.Steps[0]);
+}
+```
+
+Every step of a path is one `IMovementService.CheckMovement` allows, from the height the step
+before it landed at, so a path is made of steps the mover can really take: a diagonal needs
+both tiles beside it, and a swimmer (`MovementAbilityType.Swim`) gets a path through water. A
+straight step costs 10 and a diagonal 14, as ModernUO, UOX3 and Sphere, and the octile
+distance to the goal guides the search, so the path found is the shortest inside what it looked
+at. The goal is reached when a step lands on its tile within a mover's height (16) of it.
+
+Two settings bound a search:
+
+| Key | Default | Bounds |
+| --- | --- | --- |
+| `ultima.world.pathfinding_range` | 38, as ModernUO | How far apart start and goal may be along X or Y; farther is `TooFar` with nothing searched. The search looks at a square of this size plus one, placed so that both lie in it |
+| `ultima.world.pathfinding_max_nodes` | 1000, as ModernUO | How many places a search expands before it gives up with `NotFound` |
+
+With `allowPartial`, a goal that cannot be reached gives the path to the place closest to it
+among those the search expanded (`Partial`), unless none is closer than the start.
+
+A search runs to its end inside the call, on the game loop. Measured on the Trammel of the
+7.0 client around Britain: a path of 4 steps took 0.1 ms, one of 36 steps 1.3 ms, one of 48
+steps 6.6 ms, and a search that found nothing took 11 to 12 ms, the 1,000 places of the cap.
+So a caller must not search again on every tick for a goal that was not reached: wait before
+trying again, as ModernUO's two seconds.
+
+What the movement service does not see a path does not either: items on the ground, closed
+doors among them, and other mobiles do not block it. A tile on the way has one height in a
+search, the one of the shortest way to it, so a path cannot pass both over and under the same
+tile, such as across a bridge and then beneath it. The goal's own tile is different: it is
+only entered at the goal's height, so a goal on a balcony is reached by its stairs and not
+stopped at on the ground under it.
+
+Follow a partial path to its end before searching again: a search from each new tile can
+choose another closest place, and the mover would walk back and forth. A goal nobody can
+stand on, such as a wall, always costs a whole search.
 
 ## Not included yet
 
