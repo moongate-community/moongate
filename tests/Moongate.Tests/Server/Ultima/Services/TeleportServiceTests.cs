@@ -6,6 +6,10 @@ using Moongate.Server.Ultima.Data.Internal.Movement;
 using Moongate.Server.Ultima.Data.Movement;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Tests.TestSupport.Ultima.Regions;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -92,6 +96,40 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         Assert.Equal([typeof(MapChangePacket), typeof(MobileUpdatePacket)], _fixture.Sender.Sent.Select(packet => packet.GetType()));
         Assert.Equal(MapType.Felucca, ((MapChangePacket)_fixture.Sender.Sent[0]).Map);
         Assert.Equal(["Teleported 2 Trammel 1600,1600,0"], _view.Calls);
+    }
+
+    [Fact]
+    public void Teleport_ToAnotherMap_SendsTheMapChangeBeforeTheRegionListenersSendTheirs()
+    {
+        // The season, the light and the weather are sent by the listeners of the region change.
+        var listener = new RecordingRegionChangeListener();
+        var regions = new RegionService(new StubDataLoaderService(), new Lazy<IEnumerable<IRegionChangeListener>>(() => [listener]));
+        var mobiles = new MobileService(new StubMovementService(), _fixture.Sectors, regions: regions);
+        var aria = new MobileEntity
+        {
+            Id = new Serial(2), AccountId = new Serial(0x42), Name = "Aria", Map = MapType.Trammel,
+            Location = new Point3D(1600, 1600, 0)
+        };
+        mobiles.EnterWorld(aria);
+        listener.Changes.Clear();
+        listener.OnChange = () => Assert.IsType<MapChangePacket>(Assert.Single(_fixture.Sender.Sent));
+
+        Assert.True(new TeleportService(mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors)
+            .Teleport(aria, MapType.Felucca, new Point3D(5690, 569, 25)));
+
+        Assert.Equal(["Aria: - -> -"], listener.Changes);
+    }
+
+    [Fact]
+    public void Teleport_AnNpcToAnotherMap_SendsNoMapChange()
+    {
+        var orc = new MobileEntity { Id = new Serial(9), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
+        _fixture.Mobiles.EnterWorld(orc);
+
+        Assert.True(_teleports.Teleport(orc, MapType.Felucca, new Point3D(5690, 569, 25)));
+
+        Assert.Empty(_fixture.Sender.Sent);
+        Assert.Equal(["Teleported 9 Trammel 1601,1600,0"], _view.Calls);
     }
 
     [Fact]

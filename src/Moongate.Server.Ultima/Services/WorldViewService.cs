@@ -125,17 +125,38 @@ public sealed class WorldViewService : IWorldViewService
         }
 
         var remove = new RemoveEntityPacket(mobile.Id);
+        var own = _sessions.GetValueOrDefault(mobile.Id);
 
+        // As ModernUO's ClearScreen: the mover's client is told to drop what it saw on the old map, whose coordinates
+        // may be in range on the new one too.
         foreach (var other in _sectors.GetMobilesInRange(oldMap, oldLocation, ViewRange))
         {
-            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer))
+            if (other.Id == mobile.Id)
+            {
+                continue;
+            }
+
+            if (_sessions.TryGetValue(other.Id, out var viewer))
             {
                 _sender.TrySend(viewer.SessionId, remove);
             }
+
+            if (own is not null)
+            {
+                _sender.TrySend(own.SessionId, new RemoveEntityPacket(other.Id));
+            }
         }
 
-        // The mover's client dropped everything with the map change: it is shown the new surroundings from nothing.
-        ShowAround(mobile, _sessions.GetValueOrDefault(mobile.Id));
+        if (own is not null)
+        {
+            foreach (var item in _sectors.GetItemsInRange(oldMap, oldLocation, ViewRange))
+            {
+                _sender.TrySend(own.SessionId, new RemoveEntityPacket(item.Id));
+            }
+        }
+
+        // The mover is shown the new surroundings from nothing.
+        ShowAround(mobile, own);
     }
 
     private void Relocated(MobileEntity mobile, Point3D oldLocation, bool running, bool teleported)

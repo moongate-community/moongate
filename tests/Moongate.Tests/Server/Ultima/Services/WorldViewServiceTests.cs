@@ -388,7 +388,8 @@ public sealed class WorldViewServiceTests
     {
         var aria = Enter(2, 1496, 1628, AriaSession);
         // Boris stays on Trammel, on the very spot Aria lands on in Felucca.
-        Enter(3, 1500, 1628, BorisSession);
+        var boris = Enter(3, 1500, 1628, BorisSession);
+        var silver = Ground(0x40000051, 1497, 1628);
         var cara = Mobile(4, 1502, 1628);
         cara.Map = MapType.Felucca;
         _mobiles.EnterWorld(cara);
@@ -405,10 +406,32 @@ public sealed class WorldViewServiceTests
         var sent = _sender.Sent.Select((packet, index) => (_sender.SentSessionIds[index], packet)).ToList();
         Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial);
         Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(sent, to => to.Item1 == 30).packet).Serial);
+        // As ModernUO's ClearScreen: the mover's client is told to drop what it saw on the old map.
         var own = sent.Where(to => to.Item1 == AriaSession).Select(to => to.packet).ToList();
-        Assert.Equal(cara.Id, Assert.IsType<MobileIncomingPacket>(own[0]).Serial);
-        Assert.Equal(gold.Id, Assert.IsType<WorldItemSaPacket>(own[1]).Serial);
-        Assert.Equal(2, own.Count);
+        Assert.Equal([boris.Id, silver.Id], own.Take(2).Select(packet => Assert.IsType<RemoveEntityPacket>(packet).Serial));
+        Assert.Equal(cara.Id, Assert.IsType<MobileIncomingPacket>(own[2]).Serial);
+        Assert.Equal(gold.Id, Assert.IsType<WorldItemSaPacket>(own[3]).Serial);
+        Assert.Equal(4, own.Count);
+    }
+
+    [Fact]
+    public void Teleported_AnNpcToAnotherMap_IsShownToThePlayersThere_AndSentNothing()
+    {
+        var orc = Mobile(9, 1496, 1628);
+        _mobiles.EnterWorld(orc);
+        Enter(3, 1500, 1628, BorisSession);
+        var cara = Mobile(4, 1502, 1628);
+        cara.Map = MapType.Felucca;
+        _mobiles.EnterWorld(cara);
+        _view.Entered(cara, 30, null);
+        ClearSent();
+        var old = orc.Location;
+        Assert.True(_mobiles.MoveTo(orc, MapType.Felucca, new Point3D(1500, 1628, 0)));
+
+        _view.Teleported(orc, MapType.Trammel, old);
+
+        Assert.Equal([typeof(RemoveEntityPacket), typeof(MobileIncomingPacket)], _sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal([BorisSession, 30L], _sender.SentSessionIds);
     }
 
     [Fact]

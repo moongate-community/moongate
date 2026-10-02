@@ -32,8 +32,9 @@ public interface IWorldViewService
     ///     Tells the players in range that the mobile, now at its current map and location, jumped there from
     ///     <paramref name="oldLocation" /> of <paramref name="oldMap" />. On the same map: as <see cref="Moved" />, but
     ///     those who still see it are shown it again (0x78) instead of a step (0x77), as ModernUO does for a teleport.
-    ///     From another map: the players around the old spot lose it, and on the new map it is shown everyone and every
-    ///     ground item in range and shown to the players there, as when it entered the world.
+    ///     From another map: the players around the old spot lose it and it loses them and the ground items there
+    ///     (0x1D), and on the new map it is shown everyone and every ground item in range and shown to the players
+    ///     there, as when it entered the world.
     /// </summary>
     void Teleported(MobileEntity mobile, MapType oldMap, Point3D oldLocation);
 
