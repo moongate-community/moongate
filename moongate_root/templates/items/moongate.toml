@@ -1,0 +1,26 @@
+# ==============================================================================
+# Moongate - templates/items/moongate.toml
+#
+# What it is for:
+#   The plain moongate: a gate with one destination, kept in its props
+#   (teleport.x, teleport.y, teleport.z and teleport.map). The command
+#   moongate puts one at a game master's feet. The gates of the cities, with
+#   their list of destinations, are decoration_public_moongate.
+#
+# Fields:
+#   base_id     inherits base_item
+#   item_id     the blue moongate (0x0F6C)
+#   movable     false: players cannot pick it up
+#   decays      false: it stays on the ground
+#   script_id   scripts/items/moongate.lua
+# ==============================================================================
+
+[[item]]
+id = "moongate"
+base_id = "base_item"
+item_id = 0x0F6C
+name = "moongate"
+rarity = "common"
+movable = false
+decays = false
+script_id = "moongate"

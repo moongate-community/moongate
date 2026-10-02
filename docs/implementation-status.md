@@ -34,7 +34,7 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - See day and night pass, dark dungeons, and the weather, the season and the music of each region
   (rain, snow, storms).
 - Step on a teleporter, or say the word of one that answers a word, and arrive elsewhere, also on
-  another map.
+  another map; step into a moongate.
 - Read the game time and the moon phases where they stand: `.time`.
 - Meet NPCs that wander around their home, greet and answer.
 - Open the bank box at a banker by saying *bank*, in any client language.
@@ -114,7 +114,7 @@ See all of them in [Commands](commands.md).
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
-  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `wander.lua`,
+  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `wander.lua`,
   `banker.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
   and `gumps/tutorial_list.lua`.
 - Not yet: APIs for stats, skills and inventory.

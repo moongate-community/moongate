@@ -117,4 +117,7 @@ public static class CommandMessages
     public const int SqlBackupDescription = 30108;
     public const int GoRefused = 30109;
     public const int GoDescription = 30110;
+    public const int MoongateCreated = 30111;
+    public const int MoongateRefused = 30112;
+    public const int MoongateDescription = 30113;
 }

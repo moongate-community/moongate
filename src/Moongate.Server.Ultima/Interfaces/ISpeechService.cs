@@ -29,4 +29,11 @@ public interface ISpeechService
     /// </summary>
     /// <returns>How many players it was sent to.</returns>
     int PlaySound(MapType map, Point3D location, int sound);
+
+    /// <summary>
+    ///     Sends <paramref name="text" /> as a system message (0xAE) to the player <paramref name="player" /> only, in
+    ///     the lower left of its screen.
+    /// </summary>
+    /// <returns>Whether it was sent: false for an NPC or a player whose client is gone.</returns>
+    bool Tell(MobileEntity player, string text);
 }

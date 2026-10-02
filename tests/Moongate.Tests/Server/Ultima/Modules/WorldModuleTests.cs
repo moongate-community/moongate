@@ -8,11 +8,13 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Types.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
@@ -24,6 +26,19 @@ public sealed class WorldModuleTests : IAsyncLifetime
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly StubClockService _clock = new() { Time = new GameTime(21, 5) };
     private readonly ItemService _items = TestItems.Create();
+    private readonly RegionService _regions = new(
+        new StubDataLoaderService().With(
+            new RegionContent
+            {
+                Map = MapType.Trammel, Name = "Britain", Guarded = true,
+                Areas = [new RegionAreaContent { X1 = 1400, Y1 = 1500, X2 = 1700, Y2 = 1800 }]
+            },
+            new RegionContent
+            {
+                Map = MapType.Trammel, Name = "Covetous", Areas = [new RegionAreaContent { X1 = 2400, Y1 = 400, X2 = 2600, Y2 = 600 }]
+            }
+        )
+    );
     private BroadcastFixture _fixture = null!;
 
     public WorldModuleTests()
@@ -115,12 +130,23 @@ public sealed class WorldModuleTests : IAsyncLifetime
         Assert.True(result[0].Read<bool>());
     }
 
+    [Theory,
+     InlineData("return world.is_guarded(MapType.Trammel, 1496, 1628, 10)", true),
+     InlineData("return world.is_guarded(MapType.Felucca, 1496, 1628, 10)", false),
+     InlineData("return world.is_guarded(MapType.Trammel, 1000, 1000, 0)", false),
+     InlineData("return world.is_guarded(MapType.Trammel, 2500, 500, 0)", false),
+     InlineData("return world.is_guarded(MapType.Trammel, 1496, 1628, 300)", false)]
+    public void IsGuarded_TellsWhetherTheRegionOfThePlaceHasGuards(string chunk, bool expected)
+    {
+        Assert.Equal(expected, Run(chunk)[0].Read<bool>());
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
-        binder.Bind(state, new WorldModule(_sectors, _clock, _fixture.Sessions, _items));
+        binder.Bind(state, new WorldModule(_sectors, _clock, _fixture.Sessions, _items, _regions));
         binder.BindEnum(state, typeof(MapType));
         binder.BindEnum(state, typeof(MoonPhaseType));
 

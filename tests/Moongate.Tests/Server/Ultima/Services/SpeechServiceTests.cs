@@ -40,6 +40,39 @@ public sealed class SpeechServiceTests
     }
 
     [Fact]
+    public async Task Tell_SendsASystemMessageToThatPlayerOnly()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var aria = await fixture.AddAsync(2);
+        await fixture.AddAsync(3);
+        Assert.True(fixture.Mobiles.TryGet(new Serial(2), out var mobile));
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+        var told = false;
+
+        await fixture.Network.ExecuteOnLoopAsync(() => told = speech.Tell(mobile!, "That is too far away."));
+
+        Assert.True(told);
+        Assert.Equal([aria.SessionId], fixture.Sender.SentSessionIds);
+        var message = Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent));
+        Assert.Equal(("That is too far away.", SpeechType.System), (message.Text, message.Type));
+    }
+
+    [Fact]
+    public async Task Tell_AnNpc_IsFalseAndSendsNothing()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        await fixture.AddAsync(2);
+        var orc = new MobileEntity { Id = new Serial(0x100), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(100, 100, 0) };
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+        var told = true;
+
+        await fixture.Network.ExecuteOnLoopAsync(() => told = speech.Tell(orc, "Grr"));
+
+        Assert.False(told);
+        Assert.Empty(fixture.Sender.Sent);
+    }
+
+    [Fact]
     public async Task PlaySound_ReachesThePlayersWithin15CellsOnTheSameMapOnly()
     {
         await using var fixture = await BroadcastFixture.CreateAsync();

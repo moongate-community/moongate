@@ -16,7 +16,6 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
-using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
@@ -242,10 +241,7 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal(new Point3D(1340, 1997, 5), _aria.Location);
         Assert.Empty(_speech.Sounds);
-        Assert.Equal(
-            "You have moved too far away to use this.",
-            Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>()).Text
-        );
+        Assert.Equal((_aria, "You have moved too far away to use this."), Assert.Single(_speech.Told));
     }
 
     [Fact]

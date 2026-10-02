@@ -3,8 +3,9 @@
 #
 # What it is for:
 #   The French texts that are Moongate's own (numbers from 30000): tooltips,
-#   command replies and command descriptions. The server merges this file
-#   with messages/fre.toml, which holds the standard texts.
+#   command replies, command descriptions and texts of the item scripts. The
+#   server merges this file with messages/fre.toml, which holds the standard
+#   texts.
 #
 # Format:
 #   <number> = "text"
@@ -27,7 +28,7 @@
 30006 = "Poids : 1 pierre"
 30007 = "Poids : {0} pierres"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102, 30104-30107, 30109) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103, 30108, 30110).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102, 30104-30107, 30109, 30111-30112) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103, 30108, 30110, 30113).
 30008 = "Cible annulée."
 30009 = "Une commande est déjà en cours."
 30010 = "Commande inconnue : {0}"
@@ -131,3 +132,9 @@
 30108 = "Sauvegarde le monde, puis écrit une sauvegarde SQL des bases de données de ce serveur."
 30109 = "Vous ne pouvez pas aller là : {0} n'est pas chargée ou l'endroit est hors de la carte."
 30110 = "Vous emmène à un endroit de votre carte ou d'une autre : go <x>,<y>,<z> [carte]."
+30111 = "Un moongate vers {0} ({1}, {2}, {3}) est à vos pieds."
+30112 = "Aucun moongate ne peut mener là : {0} n'est pas chargée ou l'endroit est hors de la carte."
+30113 = "Place à vos pieds un moongate vers un endroit de votre carte ou d'une autre : moongate <x>,<y>,<z> [carte]."
+
+# Moongate: texts of the item scripts.
+30114 = "Ce moongate ne semble mener nulle part."

@@ -77,12 +77,14 @@ exists but fails compilation/execution aborts server startup.
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
 | `mobile.teleport(serial, x, y, z, map?)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map, or of `map` (a `MapType`, or its name such as `"Tokuno"`) when given: a player's client is told of the map change (0xBF 0x08) and where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a `z` outside -128 to 127 |
 | `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells; `false` for a sound out of range or a mobile not in the world |
+| `mobile.message(serial, text)` | A system message, in the lower left of the screen, read only by that player: `mobile.message(who, "That is too far away.")`; cut at 128 characters; `false` for an empty text, an NPC or a player not in the world |
 | `effect.at(map, x, y, z, graphic, options)` | Plays an effect graphic that stays at a point of a map, such as the smoke of a teleport: `effect.at(MapType.Trammel, 1600, 1628, 5, EffectGraphicType.Smoke)`; see [Effects](#effects) |
 | `effect.on(serial, graphic, options)` | Plays an effect graphic on a mobile, which it follows, or on an item lying on the ground; `false` for something not in the world |
 | `effect.moving(from, to, graphic, options)` | Plays an effect graphic flying from one mobile or ground item to another on the same map, such as a fireball; `false` when one is not in the world or they are on two maps |
 | `effect.lightning(serial, hue)` | Strikes a mobile or a ground item with a lightning bolt; the hue is optional |
 | `moongates.facets()` | The public moongates of the loaded maps, from [`moongates.toml`](data-files/moongates.md): an array of `{ map, cliloc, selected_cliloc, destinations }`, each destination `{ name, cliloc, x, y, z }` |
 | `world.is_occupied(map, x, y)` | Whether a player or an NPC stands on the tile, at any height, such as a door's doorway; `map` is a `MapType` |
+| `world.is_guarded(map, x, y, z)` | Whether guards protect the region of the place, such as a town: `world.is_guarded(MapType.Trammel, 1496, 1628, 10)`; `false` outside every region |
 | `world.moon(moon, x)` | The phase of `MapType.Trammel` or `MapType.Felucca` seen from the column `x`, a `MoonPhaseType` (`NewMoon`, `WaxingCrescent`, `FirstQuarter`, `WaxingGibbous`, `FullMoon`, `WaningGibbous`, `LastQuarter`, `WaningCrescent`): `world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon`. Felucca turns every 10 game minutes, Trammel every 30 |
 | `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
 | `world.is_staff(player)` | Whether the player is a game master or an administrator in the world; `false` for an NPC or a player not in the world |
@@ -356,6 +358,20 @@ page of the player's own map first, and plays the sound `0x20E`. A button telepo
 with `mobile.teleport`, to another map too, and plays `0x1FE` there. A player who walked more
 than a cell away while the gump was open is told so and stays; choosing the city of the gate
 itself does nothing.
+
+`scripts/items/moongate.lua` is the script of the `moongate` template, the gate with one
+destination that the command [`moongate`](commands/moongate.md) puts at a game master's feet, as
+ModernUO's `Moongate`. On `on_move_over`, and on `on_use` from the next cell, it waits one second
+with `timer.after`, then takes the player, if it still stands there, to the props `teleport.x`,
+`teleport.y` and `teleport.z`, on the map of the prop `teleport.map` (a `MapType` number or its
+name; the player's own map without it), and plays `0x1FE`. A gate without the three
+numbers, with a map that does not exist or is not loaded, or with a spot outside the map tells the
+player "This moongate does not seem to go anywhere." (message 30114). Touching the gate again
+during the second starts nothing. When the gate
+stands in a guarded region and the destination does not (`world.is_guarded`), it asks first: a
+gump with OKAY and CANCEL and the sound `0x20E`; OKAY from more than a cell away tells "That is
+too far away." (message 393) with `mobile.message`. ModernUO's rules about sigils, young
+players, murderers, casting, pets and dispelling the gate are not there yet.
 
 `scripts/items/keyword_teleport.lua` is the script of the `decoration_keyword_teleporter`
 template that `.decorate` gives to ModernUO's `KeywordTeleporter`, such as the mantra of a

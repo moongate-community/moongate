@@ -57,6 +57,12 @@ public sealed class SpeechService : ISpeechService
         return SendAround(map, location, new PlaySoundPacket(sound, location));
     }
 
+    public bool Tell(MobileEntity player, string text)
+    {
+        return _sessions.TryGetByCharacterId(player.Id, out var session) &&
+               SpeechMessageHelper.TrySend(_sender, session, SpeechMessageHelper.CreateSystem(text, SpeechHue));
+    }
+
     private int SendAround(MapType map, Point3D location, IOutgoingPacket packet)
     {
         var sent = 0;

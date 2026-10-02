@@ -3,8 +3,9 @@
 #
 # What it is for:
 #   The Italian texts that are Moongate's own (numbers from 30000): tooltips,
-#   command replies and command descriptions. The server merges this file
-#   with messages/ita.toml, which holds the standard texts.
+#   command replies, command descriptions and texts of the item scripts. The
+#   server merges this file with messages/ita.toml, which holds the standard
+#   texts.
 #
 # Format:
 #   <number> = "text"
@@ -27,7 +28,7 @@
 30006 = "Peso: 1 pietra"
 30007 = "Peso: {0} pietre"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102, 30104-30107, 30109) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103, 30108, 30110).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102, 30104-30107, 30109, 30111-30112) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103, 30108, 30110, 30113).
 30008 = "Bersaglio annullato."
 30009 = "Un comando è già in esecuzione."
 30010 = "Comando sconosciuto: {0}"
@@ -131,3 +132,9 @@
 30108 = "Salva il mondo, poi scrive un backup SQL dei database di questo server."
 30109 = "Non puoi andare lì: {0} non è caricata o il punto è fuori dalla mappa."
 30110 = "Ti porta in un punto della tua mappa o di un'altra: go <x>,<y>,<z> [mappa]."
+30111 = "Un moongate per {0} ({1}, {2}, {3}) è ai tuoi piedi."
+30112 = "Nessun moongate può portare lì: {0} non è caricata o il punto è fuori dalla mappa."
+30113 = "Mette ai tuoi piedi un moongate verso un punto della tua mappa o di un'altra: moongate <x>,<y>,<z> [mappa]."
+
+# Moongate: texts of the item scripts.
+30114 = "Questo moongate non sembra portare da nessuna parte."
