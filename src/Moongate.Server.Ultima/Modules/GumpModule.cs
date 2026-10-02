@@ -120,9 +120,10 @@ public sealed partial class GumpModule
 
     /// <summary>
     ///     Closes the player's gump <paramref name="id" />; its script gets <c>on_close</c> with <c>server</c>;
-    ///     <c>gump.close(player, "release_pet")</c>.
+    ///     <c>gump.close(player, "release_pet")</c>. Called from a script, the gump closes on the next turn of the game
+    ///     loop and the answer is true whether it is open or not.
     /// </summary>
-    [ScriptFunction(helpText: "Closes the player's gump; false for an unknown player or a gump that is not open.")]
+    [ScriptFunction(helpText: "Closes the player's gump, from a script on the next turn of the game loop; false for an unknown player.")]
     public bool Close(long player, string id)
     {
         return TryGetSession(player, out var session) && RunOrPost(() => _gumps.Close(session, id));

@@ -3,7 +3,7 @@
 #
 # What it is for:
 #   The French texts the server sends to players. The server reads the file
-#   named by `language` in the [localization] section of moongate.toml; a
+#   named by `language` in the [ultima.localization] section of moongate.toml; a
 #   message missing here falls back to eng.toml.
 #   Moongate's own texts (numbers from 30000) are in fre/moongate.toml.
 #

@@ -21,15 +21,18 @@ public sealed class TeleportService : ITeleportService
     private readonly ISessionService _sessions;
     private readonly IPacketSendService _sender;
     private readonly ISectorService _sectors;
+    private readonly IBankService _bank;
 
     public TeleportService(
         IMobileService mobiles,
         IWorldViewService view,
         ISessionService sessions,
         IPacketSendService sender,
-        ISectorService sectors
+        ISectorService sectors,
+        IBankService bank
     )
     {
+        _bank = bank;
         _sectors = sectors;
         _mobiles = mobiles;
         _view = view;
@@ -59,6 +62,9 @@ public sealed class TeleportService : ITeleportService
         {
             return false;
         }
+
+        // The bank is open on a spot: a teleport leaves it, even one that ends where it began.
+        _bank.Close(mobile);
 
         if (hasSession)
         {

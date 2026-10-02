@@ -1389,6 +1389,7 @@ items = ["armorswampdragon"]
 
 [[mobile]]
 id = "m_gypsybanker"
+script_id = "banker"
 base_id = "basehuman"
 name_list = "male"
 title = "the Gypsy Banker"

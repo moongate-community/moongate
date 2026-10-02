@@ -22,6 +22,7 @@ using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Effects;
 using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Effects;
@@ -79,7 +80,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
-        _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors));
+        _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService()));
         _container.AddScriptModule<MobileModule>();
         _container.RegisterInstance<IEffectService>(_effects);
         _container.AddScriptModule<EffectModule>();

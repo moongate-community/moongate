@@ -11,6 +11,7 @@ using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
@@ -20,6 +21,7 @@ namespace Moongate.Tests.Server.Ultima.Services;
 public sealed class TeleportServiceTests : IAsyncLifetime
 {
     private readonly RecordingWorldViewService _view = new();
+    private readonly StubBankService _bank = new();
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
@@ -35,7 +37,7 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         _aria.Body = 0x0190;
         _aria.Direction = DirectionType.South;
         Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1600, 1600, 0)));
-        _teleports = new(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors);
+        _teleports = new(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, _bank);
     }
 
     public async Task DisposeAsync()
@@ -114,7 +116,7 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         listener.Changes.Clear();
         listener.OnChange = () => Assert.IsType<MapChangePacket>(Assert.Single(_fixture.Sender.Sent));
 
-        Assert.True(new TeleportService(mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors)
+        Assert.True(new TeleportService(mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, _bank)
             .Teleport(aria, MapType.Felucca, new Point3D(5690, 569, 25)));
 
         Assert.Equal(["Aria: - -> -"], listener.Changes);
@@ -130,6 +132,39 @@ public sealed class TeleportServiceTests : IAsyncLifetime
 
         Assert.Empty(_fixture.Sender.Sent);
         Assert.Equal(["Teleported 9 Trammel 1601,1600,0"], _view.Calls);
+    }
+
+    [Fact]
+    public void Teleport_OnItsMap_ClosesTheMobilesBank()
+    {
+        Assert.True(_teleports.Teleport(_aria, MapType.Trammel, new Point3D(5690, 569, 25)));
+
+        Assert.Equal([_aria], _bank.Closed);
+    }
+
+    [Fact]
+    public void Teleport_ToTheSpotItStandsOn_ClosesTheMobilesBank()
+    {
+        // The bank is open on a spot: without this a teleport back to it, with no step between, finds it open.
+        Assert.True(_teleports.Teleport(_aria, MapType.Trammel, new Point3D(1600, 1600, 0)));
+
+        Assert.Equal([_aria], _bank.Closed);
+    }
+
+    [Fact]
+    public void Teleport_ToAnotherMap_ClosesTheMobilesBank()
+    {
+        Assert.True(_teleports.Teleport(_aria, MapType.Felucca, new Point3D(5690, 569, 25)));
+
+        Assert.Equal([_aria], _bank.Closed);
+    }
+
+    [Fact]
+    public void Teleport_ThatDoesNotHappen_LeavesTheBankAsItIs()
+    {
+        Assert.False(_teleports.Teleport(_aria, MapType.Trammel, new Point3D(-5, 10, 0)));
+
+        Assert.Empty(_bank.Closed);
     }
 
     [Fact]
