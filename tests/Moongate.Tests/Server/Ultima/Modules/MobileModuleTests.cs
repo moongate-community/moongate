@@ -5,6 +5,11 @@ using Moongate.Core.Primitives;
 using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
 using Moongate.Scripting.Utils;
+using Moongate.Core.Types.Geometry;
+using Moongate.Server.Ultima.Data.Regions;
+using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
@@ -20,6 +25,22 @@ public sealed class MobileModuleTests
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
+    private readonly ItemService _items = TestItems.Create();
+    private readonly StubMusicService _music = new();
+    private readonly RecordingLightService _light = new();
+    private readonly RegionService _regions = new(
+        new StubDataLoaderService().With(
+            new RegionContent
+            {
+                Map = MapType.Felucca, Name = "Britain", Areas = [new RegionAreaContent { X1 = 1400, Y1 = 1500, X2 = 1700, Y2 = 1800 }]
+            }
+        )
+    );
+    private readonly MobileEntity _orc = new()
+    {
+        Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Felucca, Location = new Point3D(3000, 3000, 0),
+        Body = 17, Strength = 96, Hits = 50, HitsMax = 58, Direction = DirectionType.West
+    };
     private readonly MobileEntity _aria = new()
     {
         Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca,
@@ -29,6 +50,94 @@ public sealed class MobileModuleTests
     public MobileModuleTests()
     {
         _mobiles.EnterWorld(_aria);
+        _mobiles.EnterWorld(_orc);
+        var backpack = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        backpack.Equip(_aria.Id, LayerType.Backpack);
+        _items.Add([backpack]);
+    }
+
+    [Fact]
+    public void NameIsPlayerAndDirection_DescribeTheMobile()
+    {
+        var result = Run(
+            "return mobile.name(2), mobile.is_player(2), mobile.is_player(256), mobile.direction(256), mobile.name(999), mobile.is_player(999), mobile.direction(999)"
+        );
+
+        Assert.Equal("Aria", result[0].Read<string>());
+        Assert.True(result[1].Read<bool>());
+        Assert.False(result[2].Read<bool>());
+        Assert.Equal((int)DirectionType.West, result[3].Read<int>());
+        Assert.Equal(LuaValue.Nil, result[4]);
+        Assert.False(result[5].Read<bool>());
+        Assert.Equal(LuaValue.Nil, result[6]);
+    }
+
+    [Fact]
+    public void Stats_GivesTheMobilesNumbers()
+    {
+        var result = Run("local stats = mobile.stats(256) return stats.body, stats.strength, stats.hits, stats.hits_max, mobile.stats(999)");
+
+        Assert.Equal([17, 96, 50, 58], result[..4].Select(value => value.Read<int>()));
+        Assert.Equal(LuaValue.Nil, result[4]);
+    }
+
+    [Fact]
+    public void BackpackRegionAndLight_ComeFromTheWorld()
+    {
+        var result = Run(
+            "return mobile.backpack(2), mobile.backpack(256), mobile.region(2), mobile.region(256), mobile.light(2), mobile.light(999)"
+        );
+
+        Assert.Equal(0x40000001, result[0].Read<long>());
+        Assert.Equal(LuaValue.Nil, result[1]);
+        Assert.Equal("Britain", result[2].Read<string>());
+        Assert.Equal(LuaValue.Nil, result[3]);
+        Assert.Equal(_light.LevelFor(_aria), result[4].Read<int>());
+        Assert.Equal(LuaValue.Nil, result[5]);
+    }
+
+    [Fact]
+    public void PlayMusic_PlaysItToAPlayerOnly()
+    {
+        var result = Run("return mobile.play_music(2, 'Britain1'), mobile.play_music(256, 'Britain1'), mobile.play_music(999, 'Britain1')");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.False(result[1].Read<bool>());
+        Assert.False(result[2].Read<bool>());
+    }
+
+    [Fact]
+    public void Props_AreKeptOnPlayersAndNpcs()
+    {
+        var result = Run(
+            "return mobile.set_prop(2, 'quest.step', 2), mobile.get_prop(2, 'quest.step'), mobile.set_prop(256, 'angry', true), " +
+            "mobile.get_prop(256, 'angry'), mobile.get_prop(2, 'nothing')"
+        );
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(2, result[1].Read<int>());
+        Assert.True(result[2].Read<bool>());
+        Assert.True(result[3].Read<bool>());
+        Assert.Equal(LuaValue.Nil, result[4]);
+        Assert.Equal(2L, _aria.Props!["quest.step"]);
+    }
+
+    [Fact]
+    public void SetProp_WithNil_RemovesIt()
+    {
+        var result = Run("mobile.set_prop(2, 'quest.step', 2) return mobile.set_prop(2, 'quest.step'), mobile.get_prop(2, 'quest.step')");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(LuaValue.Nil, result[1]);
+    }
+
+    [Theory,
+     InlineData("return mobile.set_prop(999, 'a', 1)"),
+     InlineData("return mobile.set_prop(2, ' ', 1)"),
+     InlineData("return mobile.set_prop(2, 'a', {})")]
+    public void SetProp_WhatCannotBeKept_IsFalse(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
     }
 
     [Fact]
@@ -165,7 +274,7 @@ public sealed class MobileModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

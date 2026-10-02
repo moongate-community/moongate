@@ -7,11 +7,15 @@ using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
 using Moongate.Scripting.Utils;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Scripting.Interfaces;
+using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -27,6 +31,11 @@ public sealed class NpcModuleTests
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly MobileService _mobiles;
+    private readonly StubNpcService _npcs = new();
+    private readonly RecordingMoveOverService _moveOver = new();
+    private readonly FakeScriptEngine _engine = new() { CurrentScript = "mobiles/summoner.lua" };
+    private readonly StubGameLoop _loop = new();
+    private readonly SectorService _sectors = TestSectors.Create();
     private readonly MobileEntity _orc = new()
     {
         Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
@@ -56,7 +65,7 @@ public sealed class NpcModuleTests
 
     public NpcModuleTests()
     {
-        _mobiles = new(_movement, TestSectors.Create());
+        _mobiles = new(_movement, _sectors);
         _mobiles.EnterWorld(_orc);
         _mobiles.EnterWorld(_player);
         _mobiles.EnterWorld(_silentOrc);
@@ -281,12 +290,118 @@ public sealed class NpcModuleTests
         Assert.Equal("an orc", Run("return npc.name(256)")[0].Read<string>());
     }
 
+    [Fact]
+    public void Step_OntoACellWithNoItem_TellsNobody()
+    {
+        Run("npc.step(256, 'North')");
+
+        Assert.Empty(_moveOver.Steps);
+        Assert.Equal(0, _loop.PostedWorkItems);
+    }
+
+    [Fact]
+    public void Step_ThatMoves_TellsTheItemsOfTheNewCell_ABlockedOneDoesNot()
+    {
+        var items = TestItems.Create(_sectors);
+        var pad = new ItemEntity { Id = new Serial(0x40000010), TemplateId = "decoration_teleporter", ItemId = 0x1BC3, Amount = 1 };
+        items.Add([pad]);
+        items.PlaceOnGround(pad, MapType.Trammel, new Point3D(1600, 1599, 0));
+
+        Run("npc.step(256, 'North')");
+        _movement.Allow = false;
+        Run("npc.step(256, 'North')");
+
+        Assert.Equal([new Point3D(1600, 1599, 0)], _moveOver.Steps);
+    }
+
+    [Fact]
+    public void Spawn_AsksForTheNpc_AndGivesItsSerialToTheCallback()
+    {
+        var result = Run("return npc.spawn('orc', 'Trammel', 1500, 1600, 10, function(serial) end)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(("orc", MapType.Trammel, new Point3D(1500, 1600, 10)), Assert.Single(_npcs.Spawns));
+        var call = Assert.Single(_engine.FunctionCalls);
+        Assert.Equal(("mobiles/summoner.lua", (object)0x100L), (call.Owner, Assert.Single(call.Args)));
+    }
+
+    [Fact]
+    public void Spawn_WithoutACallback_OnlySpawns()
+    {
+        Assert.True(Run("return npc.spawn('orc', 'Trammel', 1500, 1600, 10)")[0].Read<bool>());
+
+        Assert.Single(_npcs.Spawns);
+        Assert.Empty(_engine.FunctionCalls);
+    }
+
+    [Fact]
+    public void Spawn_ThatFails_CallsNothingAndRaisesNothing()
+    {
+        _npcs.SpawnFailure = new InvalidOperationException("no database");
+
+        Assert.True(Run("return npc.spawn('orc', 'Trammel', 1500, 1600, 10, function(serial) end)")[0].Read<bool>());
+
+        Assert.Empty(_engine.FunctionCalls);
+    }
+
+    [Theory,
+     InlineData("return npc.spawn('dragon', 'Trammel', 1500, 1600, 10)"),
+     InlineData("return npc.spawn('orc', 'Trammel', -1, 1600, 10)"),
+     InlineData("return npc.spawn('orc', 'Tokuno', 100, 100, 0)"),
+     InlineData("return npc.spawn('orc', 'Trammel', 1500, 1600, 200)")]
+    public void Spawn_WhatCannotBeSpawned_IsFalseAndAsksNothing(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+
+        Assert.Empty(_npcs.Spawns);
+    }
+
+    [Fact]
+    public void Spawn_WithACallbackThatIsNotAFunction_IsAnArgumentError()
+    {
+        Assert.ThrowsAny<Exception>(() => Run("return npc.spawn('orc', 'Trammel', 1500, 1600, 10, 5)"));
+    }
+
+    [Fact]
+    public void Delete_RemovesAnNpc_NeverAPlayer()
+    {
+        var result = Run("return npc.delete(256), npc.delete(2), npc.delete(999)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.False(result[1].Read<bool>());
+        Assert.False(result[2].Read<bool>());
+        Assert.Equal([_orc.Id], _npcs.Removals);
+    }
+
+    [Fact]
+    public void Face_TurnsTheNpcTowardsThePlace_AndShowsTheTurn()
+    {
+        var result = Run("return npc.face(256, 1605, 1600), npc.face(256, 1605, 1600), npc.face(256, 1600, 1600), npc.face(2, 1605, 1600)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.True(result[1].Read<bool>());
+        Assert.False(result[2].Read<bool>());
+        Assert.False(result[3].Read<bool>());
+        Assert.Equal(DirectionType.East, _orc.Direction);
+        // Once: already facing east the second time.
+        Assert.Equal(["Moved 256 1600,1600,0"], _view.Calls);
+    }
+
+    [Fact]
+    public void DistanceTo_CountsTilesAsTheViewRangeDoes()
+    {
+        var result = Run("return npc.distance_to(256, 1603, 1595), npc.distance_to(256, 1600, 1600), npc.distance_to(999, 1, 1)");
+
+        Assert.Equal((5, 0), (result[0].Read<int>(), result[1].Read<int>()));
+        Assert.Equal(LuaValue.Nil, result[2]);
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view, _templates));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view, _templates, _npcs, new Lazy<IScriptEngine>(() => _engine), _loop, _sectors, _moveOver));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }
