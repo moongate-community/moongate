@@ -158,4 +158,7 @@ jobs:
       - name: Verify the third-party notices are current
         run: |
           ./scripts/third-party-notices.sh
+          # The checkout marks the workspace as safe only for its own steps; without it git does not see a
+          # repository owned by another user and the diff fails whatever the file holds.
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git diff --exit-code -- THIRD-PARTY-NOTICES.md
