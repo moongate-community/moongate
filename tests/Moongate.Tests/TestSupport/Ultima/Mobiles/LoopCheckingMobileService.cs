@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Server.Core.Interfaces.Services;
@@ -64,6 +65,11 @@ public sealed class LoopCheckingMobileService : IMobileService
     )
     {
         return _inner.TryMove(mobile, direction, ability);
+    }
+
+    public bool MoveTo(MobileEntity mobile, Point3D location)
+    {
+        return _inner.MoveTo(mobile, location);
     }
 
     public bool IsInWorld(Serial mobile)
