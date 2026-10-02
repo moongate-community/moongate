@@ -27,8 +27,11 @@ within 12 of height, the first placed, so the 230 that a town or dungeon file al
 reported as already there. Seven of Ter Mur lie outside its map in ModernUO's data and are skipped. A teleporter to another map takes the player there when that map is loaded, and does nothing otherwise. One whose `map_dest` names no map is skipped. A
 `KeywordTeleporter`, such as the mantra of a shrine, gets the `decoration_keyword_teleporter`
 template: a player who says its word within its range stands on its destination
-([keyword teleporter script](../scripting.md)). Spawners, mark
-containers, public moongates, addons and every other kind of teleporter (those that ask for a
+([keyword teleporter script](../scripting.md)). The public moongates are not in the decoration
+files: after them, `.decorate` places a gate with the `decoration_public_moongate` template on
+every destination of [`moongates.toml`](../data-files/moongates.md) whose map is loaded, reported
+as `<map>/moongates`. Spawners, mark
+containers, addons and every other kind of teleporter (those that ask for a
 skill, belong to a quest or want a double click) are skipped for now: they need their own logic.
 
 The shop and world signs are decoration files too (`signs.toml` in the `britannia`, `felucca`,

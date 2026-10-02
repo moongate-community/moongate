@@ -225,6 +225,8 @@ public sealed class ServerRoleRegistrationTests
             Assert.Contains(typeof(SpeechKeywordType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
             Assert.Contains("player_say", container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(e => e.Name));
             Assert.IsType<EffectService>(container.Resolve<IEffectService>());
+            Assert.IsType<PublicMoongateService>(container.Resolve<IPublicMoongateService>());
+            Assert.NotNull(container.Resolve<MoongatesModule>());
             Assert.IsType<ItemHearingService>(container.Resolve<IItemSpeechListener>());
             Assert.NotNull(container.Resolve<EffectModule>());
             Assert.Contains(typeof(EffectGraphicType), container.Resolve<IScriptModuleRegistry>().EnumTypes);

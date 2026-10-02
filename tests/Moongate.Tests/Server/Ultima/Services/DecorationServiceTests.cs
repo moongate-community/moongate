@@ -1,6 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Decorations;
+using Moongate.Server.Ultima.Data.Moongates;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
@@ -9,6 +10,7 @@ using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Decorations;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -33,6 +35,11 @@ public sealed class DecorationServiceTests
             new StubDataLoaderService().With(
                 new ItemTemplate { Id = "decoration", ItemId = new Serial(0x0A28), Movable = false, Decays = false },
                 new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door" },
+                new ItemTemplate
+                {
+                    Id = "decoration_public_moongate", ItemId = new Serial(0x0F6C), Movable = false, Decays = false,
+                    ScriptId = "public_moongate"
+                },
                 new ItemTemplate { Id = "decoration_teleporter", ItemId = new Serial(0x1BC3), Movable = false, Decays = false, ScriptId = "teleporter" },
                 new ItemTemplate
                 {
@@ -154,20 +161,19 @@ public sealed class DecorationServiceTests
             Block("SkillTeleporter", 0x1BC3),
             Block("Spawner", 0x1F13),
             Block("MarkContainer", 0x0E80),
-            Block("PublicMoongate", 0x0F6C),
             Block("AnvilEastAddon", null),
             Block("Static", 0x0063, new Point3D(1500, 1600, 10), new Point3D(1501, 1600, 10))
         );
 
         var result = await Service(file).DecorateAsync(_progress);
 
-        Assert.Equal(new DecorationResult(2, 0, 5, 1), result);
+        Assert.Equal(new DecorationResult(2, 0, 4, 1), result);
         var report = Assert.Single(_progress.Reports);
-        Assert.Equal(("trammel", "town", 2, 0, 5), (report.Folder, report.Name, report.Placed, report.Present, report.Skipped));
+        Assert.Equal(("trammel", "town", 2, 0, 4), (report.Folder, report.Name, report.Placed, report.Present, report.Skipped));
         Assert.Equal(
             new Dictionary<string, int>
             {
-                ["SkillTeleporter"] = 1, ["Spawner"] = 1, ["MarkContainer"] = 1, ["PublicMoongate"] = 1,
+                ["SkillTeleporter"] = 1, ["Spawner"] = 1, ["MarkContainer"] = 1,
                 ["AnvilEastAddon"] = 1
             },
             report.SkippedByType
@@ -257,6 +263,61 @@ public sealed class DecorationServiceTests
         Assert.Equal(
             ["decoration_keyword_teleporter", "decoration_teleporter"],
             _items.Items.Select(item => item.TemplateId).Order()
+        );
+    }
+
+    [Fact]
+    public async Task DecorateAsync_APublicMoongateOfADecorationFile_GetsTheMoongateTemplate()
+    {
+        // As the gate of the Star Room: a way out, with no destination of its own in moongates.toml.
+        var result = await Service(File("felucca", Block("PublicMoongate", 0x0F6C, new Point3D(5153, 1760, 0)))).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(1, 0, 0, 1), result);
+        Assert.Equal("decoration_public_moongate", Assert.Single(_items.Items).TemplateId);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_PlacesAGateOnEveryMoongateDestination_Once()
+    {
+        // As ModernUO's [MoonGen: the gate stands where its travellers arrive. Umbra's has its own hue.
+        var moongates = new PublicMoongateService(
+            new StubDataLoaderService().With(
+                new MoongateFacet
+                {
+                    Map = MapType.Trammel, Cliloc = 1012000, SelectedCliloc = 1012012,
+                    Destination =
+                    [
+                        new() { Name = "Britain", Cliloc = 1012004, Location = new Point3D(1336, 1997, 5) },
+                        new() { Name = "Umbra", Cliloc = 1060642, Location = new Point3D(1997, 1386, -85), Hue = 0x497 }
+                    ]
+                }
+            ),
+            _sectors,
+            new StubMovementService()
+        );
+        var service = new DecorationService(
+            new StubDecorationsLoader(),
+            _doors,
+            _factory,
+            _items,
+            _sectors,
+            _view,
+            new StubGameLoop(),
+            moongates
+        );
+
+        var first = await service.DecorateAsync(_progress);
+        var second = await service.DecorateAsync(_progress);
+
+        Assert.Equal((2, 0), (first.Placed, first.Present));
+        Assert.Equal((0, 2), (second.Placed, second.Present));
+        Assert.Equal(("trammel", "moongates"), (_progress.Reports[0].Folder, _progress.Reports[0].Name));
+        Assert.Equal(
+            [
+                ("decoration_public_moongate", 0x0F6C, (Point3D?)new Point3D(1336, 1997, 5), (ushort)0),
+                ("decoration_public_moongate", 0x0F6C, new Point3D(1997, 1386, -85), (ushort)0x497)
+            ],
+            _items.Items.Select(item => (item.TemplateId, item.ItemId, item.GroundLocation, item.Hue.Value))
         );
     }
 

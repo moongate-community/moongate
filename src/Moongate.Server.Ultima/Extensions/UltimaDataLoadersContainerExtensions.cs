@@ -4,6 +4,7 @@ using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
+using Moongate.Server.Ultima.Data.Moongates;
 using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Professions;
@@ -53,6 +54,7 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<NpcListsLoader, NpcListTemplate>(18);
         container.AddUltimaDataLoader<SpawnsLoader, SpawnTemplate>(19);
         container.AddUltimaDataLoader<GumpsLoader, GumpTemplate>(20);
+        container.AddUltimaDataLoader<MoongatesLoader, MoongateFacet>(21);
 
         return container;
     }
