@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using Moongate.Core.Directories;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data;
@@ -23,8 +24,6 @@ public class MessagesLoader : IDataLoader<MessageContent>
     private const int MaxValues = 16;
 
     private static readonly EnumerationOptions TomlFiles = new() { MatchCasing = MatchCasing.CaseInsensitive };
-
-    private static readonly object[] SampleValues = Enumerable.Repeat<object>(0, MaxValues).ToArray();
 
     private readonly DirectoriesConfig _directoriesConfig;
 
@@ -196,19 +195,15 @@ public class MessagesLoader : IDataLoader<MessageContent>
     /// </summary>
     private static int CountValues(string text)
     {
-        for (var count = 0; count <= MaxValues; count++)
+        try
         {
-            try
-            {
-                _ = string.Format(CultureInfo.InvariantCulture, text, SampleValues[..count]);
+            var count = CompositeFormat.Parse(text).MinimumArgumentCount;
 
-                return count;
-            }
-            catch (FormatException)
-            {
-            }
+            return count <= MaxValues ? count : -1;
         }
-
-        return -1;
+        catch (FormatException)
+        {
+            return -1;
+        }
     }
 }
