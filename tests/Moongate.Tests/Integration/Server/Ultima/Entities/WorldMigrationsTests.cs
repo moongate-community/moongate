@@ -42,8 +42,8 @@ public sealed class WorldMigrationsTests
         var exception = await Record.ExceptionAsync(() => host.Database.ExecuteAsync(
             "INSERT INTO world.mobiles (id, name, gender, race, body, skin_hue, strength, dexterity, intelligence, hair_style, " +
             "hair_hue, beard_style, beard_hue, created_at, x, y, z, map, hits, hits_max, mana, mana_max, stamina, stamina_max, " +
-            "fame, karma, armor, resist_physical, resist_fire, resist_cold, resist_poison, resist_energy, direction, notoriety) " +
-            "VALUES (5, 'a', 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 9)"
+            "fame, karma, armor, resist_physical, resist_fire, resist_cold, resist_poison, resist_energy, direction, notoriety, hidden, frozen) " +
+            "VALUES (5, 'a', 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 9, false, false)"
         ));
 
         Assert.IsType<PostgresException>(exception);
@@ -59,8 +59,8 @@ public sealed class WorldMigrationsTests
         var exception = await Record.ExceptionAsync(() => host.Database.ExecuteAsync(
             "INSERT INTO world.mobiles (id, name, gender, race, body, skin_hue, strength, dexterity, intelligence, hair_style, " +
             "hair_hue, beard_style, beard_hue, created_at, x, y, z, map, hits, hits_max, mana, mana_max, stamina, stamina_max, " +
-            "fame, karma, armor, resist_physical, resist_fire, resist_cold, resist_poison, resist_energy, direction) " +
-            "VALUES (5, 'a', 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 132)"
+            "fame, karma, armor, resist_physical, resist_fire, resist_cold, resist_poison, resist_energy, direction, hidden, frozen) " +
+            "VALUES (5, 'a', 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 132, false, false)"
         ));
 
         Assert.IsType<PostgresException>(exception);

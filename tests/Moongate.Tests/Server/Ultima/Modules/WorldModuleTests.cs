@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Speech;
@@ -29,6 +30,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
 {
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly SettableClock _time = new();
+    private readonly WorldPropsService _props = new(new RecordingDataAccess<WorldStateEntity>());
     private readonly StubClockService _clock = new() { Time = new GameTime(21, 5) };
     private readonly ItemService _items = TestItems.Create();
     private readonly RegionService _regions = new(
@@ -241,6 +243,36 @@ public sealed class WorldModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Props_AreKeptForTheWholeShard_ReplacedAndRemoved()
+    {
+        var result = Run(
+            """
+            local set = world.set_prop("event.day", 12) and world.set_prop("motto", "hail") and world.set_prop("open", true)
+            world.set_prop("motto", nil)
+            return set, world.get_prop("event.day"), world.get_prop("open"), world.get_prop("motto"), world.get_prop("never")
+            """
+        );
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(12, result[1].Read<int>());
+        Assert.True(result[2].Read<bool>());
+        Assert.Equal([LuaValueType.Nil, LuaValueType.Nil], result[3..].Select(value => value.Type));
+        Assert.Equal(12L, _props.Get("event.day"));
+    }
+
+    [Theory]
+    [InlineData("world.set_prop('', 1)")]
+    [InlineData("world.set_prop('   ', 1)")]
+    [InlineData("world.set_prop('list', {})")]
+    [InlineData("world.set_prop('fn', function() end)")]
+    public void SetProp_ABlankKeyOrAValueThatCannotBeKept_IsFalse(string call)
+    {
+        Assert.False(Run("return " + call)[0].Read<bool>());
+
+        Assert.Null(_props.State.Props);
+    }
+
+    [Fact]
     public void Now_IsTheSecondsSince1970_OfTheServerClock()
     {
         _time.Now = new DateTimeOffset(2026, 10, 3, 12, 0, 5, TimeSpan.Zero);
@@ -255,7 +287,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
         binder.Bind(
             state,
-            new WorldModule(_sectors, _clock, _fixture.Sessions, _items, _regions, _sight, _movement, _weather, _seasons, _broadcast, _fixture.Mobiles, _time)
+            new WorldModule(_sectors, _clock, _fixture.Sessions, _items, _regions, _sight, _movement, _weather, _seasons, _broadcast, _fixture.Mobiles, _time, _props)
         );
         binder.BindEnum(state, typeof(MapType));
         binder.BindEnum(state, typeof(MoonPhaseType));

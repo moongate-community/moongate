@@ -24,6 +24,7 @@ public sealed class WorldModule
     private readonly ISectorService _sectors;
     private readonly IClockService _clock;
     private readonly TimeProvider _time;
+    private readonly IWorldPropsService? _props;
     private readonly ISessionService _sessions;
     private readonly IItemService _items;
     private readonly IRegionService _regions;
@@ -47,9 +48,11 @@ public sealed class WorldModule
         ISeasonService? seasons = null,
         IBroadcastService? broadcast = null,
         IMobileService? mobiles = null,
-        TimeProvider? time = null
+        TimeProvider? time = null,
+        IWorldPropsService? props = null
     )
     {
+        _props = props;
         _time = time ?? TimeProvider.System;
         _sight = sight;
         _movement = movement;
@@ -84,6 +87,44 @@ public sealed class WorldModule
                                  Equals(prop, wanted) &&
                                  _items.GetWornRoot(item)?.Layer != LayerType.Bank
                      );
+    }
+
+    /// <summary>
+    ///     Gets a value the shard as a whole keeps across restarts; <c>world.get_prop("event.day")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "A value the whole shard keeps across restarts: a string, a number or a bool; nil when there is none.")]
+    public object? GetProp(string key)
+    {
+        return _props?.Get(key);
+    }
+
+    /// <summary>
+    ///     Keeps a value for the whole shard, saved with the world, or removes it for <c>nil</c>;
+    ///     <c>world.set_prop("event.day", 12)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Keeps a string, a number or a bool for the whole shard across restarts, nil removes it; false for a table, a function or a blank key.")]
+    public bool SetProp(string key, object? value = null)
+    {
+        if (_props is null || string.IsNullOrWhiteSpace(key))
+        {
+            return false;
+        }
+
+        if (value is null)
+        {
+            _props.Set(key, null);
+
+            return true;
+        }
+
+        if (!ScriptPropValue.TryFromLua(value, out var prop))
+        {
+            return false;
+        }
+
+        _props.Set(key, prop);
+
+        return true;
     }
 
     /// <summary>

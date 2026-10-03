@@ -126,6 +126,7 @@ public static class UltimaWorldContainerExtensions
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
         container.AddLiveWorldMobiles();
         container.AddLiveWorldItems();
+        container.AddLiveWorldState();
 
         container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
         // After the loaders: the maps come from data/maps.toml.
@@ -139,6 +140,7 @@ public static class UltimaWorldContainerExtensions
         // After the data loaders and the maps (the sector grid needs them), before the game server takes players and
         // the world save (40): the items on the ground are live before anyone can see them.
         container.AddMoongateService<IItemService, ItemService>(10);
+        container.AddMoongateService<IWorldPropsService, WorldPropsService>(10);
         container.Register<IItemDecayQueue, ItemDecayQueue>(Reuse.Singleton);
         // After the items (10): the ground items it deletes are loaded by then.
         container.AddMoongateService<ItemDecayService>(11);
