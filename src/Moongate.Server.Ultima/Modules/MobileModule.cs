@@ -47,6 +47,16 @@ public sealed class MobileModule
     }
 
     /// <summary>
+    ///     Gets the id of the template an NPC was made from, such as to tell a baker from a blacksmith;
+    ///     <c>mobile.template(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The id of the mobile template an NPC was made from; nil for a player or a mobile not in the world.")]
+    public string? Template(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) && !string.IsNullOrEmpty(mobile.TemplateId) ? mobile.TemplateId : null;
+    }
+
+    /// <summary>
     ///     Gets the mobile's name; <c>mobile.name(who)</c>.
     /// </summary>
     [ScriptFunction(helpText: "The mobile's name; nil for a mobile not in the world.")]

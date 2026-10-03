@@ -146,7 +146,8 @@ up to 633 chests. The four templates, `treasure_chest_level_1` to `treasure_ches
 Most rolls of a table give nothing, so a chest holds a few of these. A player within two tiles
 opens a chest with a double click and takes what is inside; nothing can be put into it. A chest
 cannot be picked up, by all but the staff, and decays 45 minutes after it was made, opened or not,
-with what is left inside; the region then makes a new one 5 to 10 minutes later. Chests have no lock and no trap yet, each level has one
+with what is left inside; the region then makes a new one 5 to 10 minutes later. The containers of the towns work another way: they stay and
+[fill up when opened](scripting.md#item-scripts). Chests have no lock and no trap yet, each level has one
 look, and the time to decay is fixed, where ModernUO picks 15 to 74 minutes.
 
 ## Water and amphibious NPCs

@@ -14,8 +14,9 @@
 #   script_id  the item script of the doors (scripts/items/door.lua), of the
 #              lights (scripts/items/light.lua), of the teleporters
 #              (scripts/items/teleporter.lua), of those that answer a word
-#              (scripts/items/keyword_teleport.lua) and of the public
-#              moongates (scripts/items/public_moongate.lua)
+#              (scripts/items/keyword_teleport.lua), of the public
+#              moongates (scripts/items/public_moongate.lua) and of the
+#              containers that fill up (scripts/items/fillable.lua)
 #   visibility game_master for the teleporters: players never see them
 # ==============================================================================
 
@@ -44,6 +45,15 @@ rarity = "common"
 movable = false
 decays = false
 script_id = "light"
+
+[[item]]
+id = "decoration_fillable"
+base_id = "base_item"
+item_id = 0x0E3C
+rarity = "common"
+movable = false
+decays = false
+script_id = "fillable"
 
 [[item]]
 id = "decoration_teleporter"

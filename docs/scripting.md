@@ -82,6 +82,7 @@ exists but fails compilation/execution aborts server startup.
 | `item.location(serial)`, `item.move_to(serial, x, y, z)` | Where a ground item lies, `{ x, y, z, map }`, and moving it on its map: the players around the old spot lose it and those around the new one see it; `nil`/`false` for an item not on the ground, a spot outside the map or a `z` outside -128 to 127; moving restarts a decaying item's decay |
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
 | `item.give(mobile, template, amount?)` | Makes a new item from an item template in the mobile's backpack and gives its serial; the owner sees it at once and its next save keeps it. `nil` for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack) or when the server has no serial ready: it keeps 64 in reserve and refills them in the background, so a script that makes more than that in one go gets `nil` for the rest and must try again later |
+| `item.add_loot(container, table)` | Rolls a loot table of `templates/loots` once and puts what it gives into a container, or into the backpack of a mobile; returns how many items it added, `0` for a roll that gives nothing, an unknown table or something that is no container; fewer than the roll gave when the container is full (125 items) or the server has no item serial at hand for a moment |
 | `item.create(template, map, x, y, z, amount?)` | Makes a new item from an item template on the ground and gives its serial; the players around see it. `nil` as `item.give`, and for a spot outside the map or a `z` outside -128 to 127 |
 | `item.template(serial)`, `item.hue(serial)` | The id of the item's template and its hue (0 for the colours of its art); `nil` for an unknown item |
 | `item.set_name(serial, name?)`, `item.set_hue(serial, hue)`, `item.set_amount(serial, amount)` | Give the item a name of its own (`nil` takes it back to its template's), a hue (0 to 65535) or, for a stack, an amount (1 to 60000); the players who see the item see it change. `false` for a held or worn item, or one that does not stack (amount above 1), as its template or its graphic says |
@@ -90,6 +91,7 @@ exists but fails compilation/execution aborts server startup.
 | `mobile.teleport(serial, x, y, z, map?)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map, or of `map` (a `MapType`, or its name such as `"Tokuno"`) when given: a player's client is told of the map change (0xBF 0x08) and where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a `z` outside -128 to 127 |
 | `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells; `false` for a sound out of range or a mobile not in the world |
 | `mobile.message(serial, text)` | A system message, in the lower left of the screen, read only by that player: `mobile.message(who, "That is too far away.")`; cut at 128 characters; `false` for an empty text, an NPC or a player not in the world |
+| `mobile.template(serial)` | The id of the mobile template an NPC was made from, such as `"f_baker"`; `nil` for a player or a mobile not in the world |
 | `mobile.name(serial)`, `mobile.is_player(serial)`, `mobile.direction(serial)` | The mobile's name, whether it is a player's character, and the `DirectionType` it faces; `nil`, `false` and `nil` for a mobile not in the world |
 | `mobile.stats(serial)` | The mobile's numbers as a table: `body`, `strength`, `dexterity`, `intelligence`, `hits`, `hits_max`, `mana`, `mana_max`, `stamina`, `stamina_max`, `fame`, `karma`. Read only |
 | `mobile.backpack(serial)`, `mobile.region(serial)`, `mobile.light(serial)` | The serial of the backpack the mobile wears (look into it with `item.contents`), the name of the region it stands in (`nil` outside every region) and the light level there, 0 (day) to 30 (dark) |
@@ -107,6 +109,7 @@ exists but fails compilation/execution aborts server startup.
 | `world.is_guarded(map, x, y, z)` | Whether guards protect the region of the place, such as a town: `world.is_guarded(MapType.Trammel, 1496, 1628, 10)`; `false` outside every region |
 | `world.moon(moon, x)` | The phase of `MapType.Trammel` or `MapType.Felucca` seen from the column `x`, a `MoonPhaseType` (`NewMoon`, `WaxingCrescent`, `FirstQuarter`, `WaxingGibbous`, `FullMoon`, `WaningGibbous`, `LastQuarter`, `WaningCrescent`): `world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon`. Felucca turns every 10 game minutes, Trammel every 30 |
 | `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
+| `world.now()` | The real time as whole seconds since 1970 (UTC). Keep `world.now() + 3600` in a prop to do something an hour from now, also after a restart, as the town containers do with their next refill |
 | `world.is_staff(player)` | Whether the player is a game master or an administrator in the world; `false` for an NPC or a player not in the world |
 | `world.carries(mobile, key, value)` | Whether the mobile wears or carries, in its containers at any depth, an item whose prop `key` is `value`, such as the key of a door: `world.carries(user, "key.value", 1234)` |
 | `world.region(map, x, y, z)` | The name of the region of a place; `nil` outside every region |
@@ -458,6 +461,19 @@ the text, in any case) or whose client sends the speech keyword of the prop `key
 within `range` cells (0, the default, is the teleporter's own cell). With a `delay`
 (`"0:0:1"`, or a number of seconds) the teleport happens later, if the player still stands in
 range. The destination, the smoke, the sound and `active` are those of the plain teleporter.
+
+`scripts/items/fillable.lua` is the script of the `decoration_fillable` template that `.decorate`
+gives to the town containers, ModernUO's `FillableContainer`: the crates, boxes, chests and barrels
+of the shops and the bookcases of the libraries. On `on_use`, before the container opens, a
+container whose time has come (prop `fill.next`, as `world.now()` counts) and that holds two items
+or fewer gets up to twice what it misses to hold three, each one a roll of the loot table of its
+kind with `item.add_loot`; a bookcase fills up to five books. It then waits 60 to 90 minutes; a fill that could add nothing is tried again at the next opening.
+Nothing runs while nobody opens the container, and the times survive a restart. The kind is the
+prop `content_type`, such as `baker` for the table `fillable_baker` of
+`templates/loots/fillable_containers.toml`; without it the container takes the kind of the nearest
+vendor within 20 tiles, told by `mobile.template`, and keeps it. With no vendor around it stays
+empty and looks again at the next opening. ModernUO starts the wait when an item is taken out, and
+locks and traps the container: those are not there yet.
 
 LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
 `{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,
