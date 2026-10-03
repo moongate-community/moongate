@@ -128,7 +128,7 @@ The item is made with what its template puts inside: its `gold` in piles and eac
 the prop `spawn.region` and counts for the region while it lies on the ground: when it decays, is
 deleted or is taken from the ground, its slot is free and the region spawns a new one at its next
 time. The staff messages and the world progress are about NPCs only; `.spawns` lists a region of
-items with its live items (the text still says NPCs), and `.initial_spawn` fills it too.
+items with its live items, and `.initial_spawn` fills it too.
 
 The shipped `treasure_chests.toml` of Felucca, Trammel and Ilshenar hold the dungeon chests of
 ModernUO's spawners, written by
