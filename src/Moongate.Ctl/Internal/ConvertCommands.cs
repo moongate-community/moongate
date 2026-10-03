@@ -165,4 +165,20 @@ internal static class ConvertCommands
     {
         return ModernUoLocationConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
     }
+
+    /// <summary>
+    ///     Converts the treasure chests of ModernUO's spawners into spawn regions of items, one treasure_chests.toml per
+    ///     map folder of templates/spawns.
+    /// </summary>
+    /// <param name="source">
+    ///     ModernUO's Distribution/Data/Spawns folder.
+    /// </param>
+    /// <param name="destination">
+    ///     The spawns folder (templates/spawns); each map folder gets a treasure_chests.toml, replacing that of a
+    ///     previous run.
+    /// </param>
+    public static int ModernUoChests(string source, string destination)
+    {
+        return ModernUoChestConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+    }
 }
