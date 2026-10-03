@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 64 done, 🟡 41 partly done, ❌ 163 not built yet.
+**268 systems:** ✅ 64 done, 🟡 42 partly done, ❌ 162 not built yet.
 
 **Coverage: 24%** of the systems done, **32%** counting a partly done system as half.
 
@@ -75,7 +75,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| War mode, melee and swing timing | ❌ | |
+| War mode, melee and swing timing | 🟡 | War mode is switched and shown; nothing is fought yet |
 | Archery | ❌ | |
 | Weapons and armour: damage, armour, durability, resistances | ❌ | NPC templates carry damage and armour; item templates do not yet |
 | Parrying | ❌ | |

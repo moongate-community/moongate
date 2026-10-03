@@ -28,7 +28,7 @@ A priority is closed when its steps are ✅ in the tables below.
 
 | Priority | What | Steps | Why at this place |
 | --- | --- | --- | --- |
-| 1 | **Finish what Lua needs** | 0.1, 0.5, 0.6, then what is left of 0.3 and 0.4 | Most of phase 0 is half done. Every rule below is written against it, so a gap here is paid again in each system |
+| 1 | **Finish what Lua needs** | 0.5, 0.6, then what is left of 0.3 and 0.4 (0.1 is done) | Most of phase 0 is half done. Every rule below is written against it, so a gap here is paid again in each system |
 | 2 | **Skills and regeneration** | 1.1, 1.2 | The skill check is called by combat, magic, crafting, lockpicking and taming: nothing else unlocks as much |
 | 3 | **What combat reads** | 1.3, 1.6, and the weight of 1.4 | Timed effects, the combat fields of the items, weight |
 | 4 | **Combat and death** | 2.1 to 2.6 | The core loop: the 29,000 spawned NPCs are scenery until it exists |
@@ -78,7 +78,7 @@ written. The [scripting page](scripting.md#available-host-functions) lists what 
 
 | Step | State | What | Why it comes here |
 | --- | --- | --- | --- |
-| 0.1 | 🟡 | **Mobile state in Lua**: stats, skills, hits, mana, stamina, flags (hidden, frozen, dead, war mode), hue, body, name; props on players; global props. Done: reading and changing the stats, the skills, the name, the body and the hue; props on players and NPCs. Left: flags, global props | Every rule reads or changes them |
+| 0.1 | ✅ | **Mobile state in Lua**: stats, skills, hits, mana, stamina, flags (hidden, frozen, war mode), hue, body, name; props on players; global props. The dead flag comes with death (2.3) | Every rule reads or changes them |
 | 0.2 | ✅ | **World queries**: mobiles and items near a point, in sight; online players; region, height and line of sight lookups | Every AI, spell and area effect needs them |
 | 0.3 | 🟡 | **Item API**: create (on the ground, in a backpack, in a container), move into a container, equip, list the content, find by type, set hue and name. Left: equip, find by type | Loot, crafting, vendors, quests |
 | 0.4 | 🟡 | **Player input and output**: system message, text over any object, cliloc messages, the target cursor, a text prompt. Left: the text prompt | Every skill and spell starts with a target |
