@@ -411,6 +411,38 @@ public sealed class MobileModuleTests
         Assert.Empty(_state.Looks);
     }
 
+    [Fact]
+    public void Flags_TellWhatTheMobileIs()
+    {
+        _orc.Hidden = true;
+        _orc.WarMode = true;
+
+        var result = Run("local f = mobile.flags(0x100) return f.hidden, f.frozen, f.war_mode, mobile.flags(0x999)");
+
+        Assert.Equal([true, false, true], result[..3].Select(value => value.Read<bool>()));
+        Assert.Equal(LuaValueType.Nil, result[3].Type);
+    }
+
+    [Fact]
+    public void SetHiddenFrozenAndWarMode_HandOverWhatIsAsked()
+    {
+        var result = Run(
+            "return mobile.set_hidden(0x100, true), mobile.set_frozen(0x100, true), mobile.set_war_mode(0x100, true), mobile.set_hidden(0x100, false)"
+        );
+
+        Assert.Equal([true, true, true, true], result.Select(value => value.Read<bool>()));
+        Assert.Equal(["hidden 256 True", "frozen 256 True", "war 256 True", "hidden 256 False"], _state.Flags);
+    }
+
+    [Fact]
+    public void SetHiddenFrozenAndWarMode_OfAnUnknownMobile_AreFalse()
+    {
+        var result = Run("return mobile.set_hidden(0x999, true), mobile.set_frozen(0x999, true), mobile.set_war_mode(0x999, true)");
+
+        Assert.Equal([false, false, false], result.Select(value => value.Read<bool>()));
+        Assert.Empty(_state.Flags);
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();

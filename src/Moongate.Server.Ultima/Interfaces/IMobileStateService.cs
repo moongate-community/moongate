@@ -73,8 +73,25 @@ public interface IMobileStateService
     bool SetLooks(MobileEntity mobile, int? body, int? hue);
 
     /// <summary>
+    ///     Hides or reveals the mobile: hidden, it leaves the screens of the players around, who get it back when it is
+    ///     revealed; the staff sees it either way.
+    /// </summary>
+    void SetHidden(MobileEntity mobile, bool hidden);
+
+    /// <summary>
+    ///     Freezes or frees the mobile: frozen, it neither steps nor turns.
+    /// </summary>
+    void SetFrozen(MobileEntity mobile, bool frozen);
+
+    /// <summary>
+    ///     Puts the mobile in war or peace mode; its player's client is told, also when nothing changed, as it waits
+    ///     for the answer to its own request.
+    /// </summary>
+    void SetWarMode(MobileEntity mobile, bool warMode);
+
+    /// <summary>
     ///     Sends the status of <paramref name="target" /> to the session: all of it for the session's own character,
-    ///     else the name and the health bar only.
+    ///     else the name and the health bar only. Nothing is sent of a hidden mobile to a player who does not see it.
     /// </summary>
     void SendStatus(GameSession session, MobileEntity target);
 

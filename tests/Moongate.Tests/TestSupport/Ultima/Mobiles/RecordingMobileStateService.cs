@@ -62,6 +62,26 @@ public sealed class RecordingMobileStateService : IMobileStateService
         return Result;
     }
 
+    public List<string> Flags { get; } = [];
+
+    public void SetHidden(MobileEntity mobile, bool hidden)
+    {
+        Flags.Add($"hidden {mobile.Id.Value} {hidden}");
+        mobile.Hidden = hidden;
+    }
+
+    public void SetFrozen(MobileEntity mobile, bool frozen)
+    {
+        Flags.Add($"frozen {mobile.Id.Value} {frozen}");
+        mobile.Frozen = frozen;
+    }
+
+    public void SetWarMode(MobileEntity mobile, bool warMode)
+    {
+        Flags.Add($"war {mobile.Id.Value} {warMode}");
+        mobile.WarMode = warMode;
+    }
+
     public void SendStatus(GameSession session, MobileEntity target)
     {
     }

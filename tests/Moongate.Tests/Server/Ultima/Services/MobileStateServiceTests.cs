@@ -1,6 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Movement;
 using Moongate.Server.Ultima.Data.Movement;
@@ -301,6 +302,81 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
 
         Assert.Equal((400, (ushort)0), (_aria.Body, _aria.SkinHue.Value));
         Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public void SetHidden_HidesAndReveals_AndTellsTheViewOnceForEachChange()
+    {
+        _service.SetHidden(_aria, true);
+        _service.SetHidden(_aria, true);
+        Assert.True(_aria.Hidden);
+
+        _service.SetHidden(_aria, false);
+
+        Assert.False(_aria.Hidden);
+        Assert.Equal([$"HiddenChanged {Aria}", $"HiddenChanged {Aria}"], _view.Calls);
+    }
+
+    [Fact]
+    public void SetFrozen_FreezesAndFrees_AndTellsTheViewOnceForEachChange()
+    {
+        _service.SetFrozen(_aria, true);
+        _service.SetFrozen(_aria, true);
+        Assert.True(_aria.Frozen);
+
+        _service.SetFrozen(_aria, false);
+
+        Assert.Equal([$"FlagsChanged {Aria}", $"FlagsChanged {Aria}"], _view.Calls);
+    }
+
+    // The client waits for the answer to its request also when the mode is the one it already had.
+    [Fact]
+    public void SetWarMode_AlwaysAnswersThePlayer_AndTellsTheViewOnlyOfAChange()
+    {
+        _service.SetWarMode(_aria, true);
+        _service.SetWarMode(_aria, true);
+
+        Assert.True(_aria.WarMode);
+        Assert.Equal([true, true], _fixture.Sender.Sent.Cast<WarModePacket>().Select(packet => packet.WarMode));
+        Assert.Equal([Aria, Aria], _fixture.Sender.SentSessionIds);
+        Assert.Equal([$"FlagsChanged {Aria}"], _view.Calls);
+    }
+
+    [Fact]
+    public void SetStats_OfAHiddenMobile_DoesNotShowItsHealthBarToThePlayersAround()
+    {
+        _aria.Hidden = true;
+
+        Assert.True(_service.SetStats(_aria, new() { Hits = 30 }));
+
+        Assert.Equal([Aria], _fixture.Sender.SentSessionIds);
+    }
+
+    [Fact]
+    public async Task SetStats_OfAHiddenMobile_ShowsItsHealthBarToTheStaffAround()
+    {
+        _aria.Hidden = true;
+        Assert.True(_fixture.Sessions.TryGetByCharacterId(new Serial((uint)Boris), out var boris));
+        await _fixture.Network.ExecuteOnLoopAsync(() => boris.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        Assert.True(_service.SetStats(_aria, new() { Hits = 30 }));
+
+        Assert.Equal([Aria, Boris], _fixture.Sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void SendStatus_OfAHiddenMobile_IsNotForAPlayer()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Boris), out var boris));
+        boris.Hidden = true;
+        _aria.Hidden = true;
+
+        _service.SendStatus(_ariaSession, boris);
+        Assert.Empty(_fixture.Sender.Sent);
+
+        // Its own player still gets it.
+        _service.SendStatus(_ariaSession, _aria);
+        Assert.Single(_fixture.Sender.Sent);
     }
 
     [Fact]

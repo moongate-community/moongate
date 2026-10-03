@@ -51,6 +51,19 @@ public interface IWorldViewService
     void MobileAppeared(MobileEntity mobile);
 
     /// <summary>
+    ///     Tells the mobile's own player and the players who see it that its flags changed, such as war mode or
+    ///     frozen (0x77): the figure stays where it is.
+    /// </summary>
+    void MobileFlagsChanged(MobileEntity mobile);
+
+    /// <summary>
+    ///     Call it after <see cref="MobileEntity.Hidden" /> changed: a hidden mobile leaves the screens of the players
+    ///     in range (0x1D) and one revealed is shown to them again (0x78); the staff, who sees it either way, and the
+    ///     mobile's own player get its new flags (0x77).
+    /// </summary>
+    void MobileHiddenChanged(MobileEntity mobile);
+
+    /// <summary>
     ///     Shows a ground item to the players in range whose account sees it (0x1A before client 7.0.0.0, 0xF3 after);
     ///     also after its amount changed.
     /// </summary>
