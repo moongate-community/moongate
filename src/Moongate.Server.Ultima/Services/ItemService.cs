@@ -112,6 +112,30 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         }
     }
 
+    public IReadOnlyList<ItemEntity> AddLoaded(IEnumerable<ItemEntity> items)
+    {
+        var fresh = new List<ItemEntity>();
+        var stale = new List<ItemEntity>();
+
+        foreach (var item in items)
+        {
+            (_items.ContainsKey(item.Id) || _tombstones.ContainsKey(item.Id) ? stale : fresh).Add(item);
+        }
+
+        if (stale.Count > 0)
+        {
+            _logger.Warning(
+                "{Count} loaded items are left out, live elsewhere or merged since their owner's last save: {Items}",
+                stale.Count,
+                stale.Select(item => item.Id).ToList()
+            );
+        }
+
+        Add(fresh);
+
+        return fresh;
+    }
+
     public bool TryGet(Serial serial, [NotNullWhen(true)] out ItemEntity? item)
     {
         return _items.TryGetValue(serial, out item);

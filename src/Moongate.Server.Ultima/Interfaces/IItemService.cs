@@ -30,6 +30,16 @@ public interface IItemService : IPersistenceDeletionSource
     void Add(IEnumerable<ItemEntity> items);
 
     /// <summary>
+    ///     Adds the items loaded for a character entering the world, as its last save left them, leaving out those the
+    ///     world has moved on from since: an item already live, which someone else carries or which lies on the ground,
+    ///     and an item queued for deletion, merged into a stack.
+    /// </summary>
+    /// <returns>
+    ///     The items added.
+    /// </returns>
+    IReadOnlyList<ItemEntity> AddLoaded(IEnumerable<ItemEntity> items);
+
+    /// <summary>
     ///     Gets the live item with the serial.
     /// </summary>
     bool TryGet(Serial serial, [NotNullWhen(true)] out ItemEntity? item);

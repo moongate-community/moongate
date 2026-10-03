@@ -57,6 +57,40 @@ public sealed class ItemServiceTests
         Assert.Equal(4, items.Items.Count);
     }
 
+    // A character's rows are as its last save left them: an item another player took since, or one merged into a
+    // stack since, must not come back with the character.
+    [Fact]
+    public void AddLoaded_LeavesOutWhatIsAlreadyLive_AndWhatIsQueuedForDeletion()
+    {
+        var items = Service();
+        items.Absorb(_coin);
+        var staleDagger = Item(_dagger.Id.Value);
+        staleDagger.PutInContainer(new Serial(0x40000900), new Point2D(1, 1));
+        var staleCoin = Item(_coin.Id.Value);
+        staleCoin.PutInContainer(new Serial(0x40000900), new Point2D(2, 2));
+        var fresh = Item(0x40000901);
+        fresh.PutInContainer(new Serial(0x40000900), new Point2D(3, 3));
+
+        var added = items.AddLoaded([staleDagger, staleCoin, fresh]);
+
+        Assert.Equal([fresh], added);
+        Assert.True(items.TryGet(_dagger.Id, out var live));
+        Assert.Same(_dagger, live);
+        Assert.Equal([_bag, _dagger], items.GetContents(_backpack.Id));
+        Assert.False(items.TryGet(_coin.Id, out _));
+        Assert.Equal([_coin.Id], items.TombstonesOf(Aria));
+        Assert.Equal([fresh], items.GetContents(new Serial(0x40000900)));
+    }
+
+    [Fact]
+    public void AddLoaded_WithNothingStale_AddsEverything()
+    {
+        var items = TestItems.Create();
+
+        Assert.Equal(6, items.AddLoaded([_backpack, _bag, _coin, _dagger, _shirt, _ground]).Count);
+        Assert.Equal(6, items.Items.Count);
+    }
+
     [Fact]
     public void GetContents_OfAnUnknownContainerOrAnEmptyOne_IsEmpty()
     {
