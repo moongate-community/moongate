@@ -131,10 +131,13 @@
 30107 = "Záloha SQL databáze {0} selhala: {1}."
 30108 = "Uloží svět a poté zapíše zálohu SQL databází tohoto serveru."
 30109 = "Tam jít nemůžeš: {0} není načtena nebo místo leží mimo mapu."
-30110 = "Přenese tě na místo tvé mapy nebo jiné: go <x>,<y>,<z> [mapa]."
+30110 = "Přenese tě na místo: samotné go vypíše pojmenovaná, go <místo> přenese na jedno z nich, go <x>,<y>,<z> [mapa] na bod."
 30111 = "Moongate do {0} ({1}, {2}, {3}) stojí u tvých nohou."
 30112 = "Žádný moongate tam vést nemůže: {0} není načtena nebo místo leží mimo mapu."
 30113 = "Postaví k tvým nohám moongate na místo tvé mapy nebo jiné: moongate <x>,<y>,<z> [mapa]."
+30115 = "Žádné místo se nejmenuje {0}; samotné go je vypíše."
+30116 = "{0} míst se jmenuje {1}; přidej slova kategorie, například go covetous entrance:"
+30117 = "... a {0} dalších."
 
 # Moongate: texts of the item scripts.
 30114 = "Tento moongate zřejmě nikam nevede."

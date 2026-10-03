@@ -120,4 +120,7 @@ public static class CommandMessages
     public const int MoongateCreated = 30111;
     public const int MoongateRefused = 30112;
     public const int MoongateDescription = 30113;
+    public const int GoNoPlace = 30115;
+    public const int GoSeveralPlaces = 30116;
+    public const int GoMorePlaces = 30117;
 }

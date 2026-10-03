@@ -112,6 +112,7 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<BankModule>();
         container.AddScriptModule<EffectModule>();
         container.AddScriptModule<MoongatesModule>();
+        container.AddScriptModule<LocationsModule>();
         // No module function takes it: registered so on_speech can compare its keywords with names.
         container.RegisterScriptEnum<SpeechKeywordType>();
         container.RegisterScriptEnum<DirectionType>();

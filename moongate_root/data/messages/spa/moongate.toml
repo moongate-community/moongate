@@ -131,10 +131,13 @@
 30107 = "La copia de seguridad SQL de {0} ha fallado: {1}."
 30108 = "Guarda el mundo y luego escribe una copia de seguridad SQL de las bases de datos de este servidor."
 30109 = "No puedes ir allí: {0} no está cargado o el lugar está fuera del mapa."
-30110 = "Te lleva a un lugar de tu mapa o de otro: go <x>,<y>,<z> [mapa]."
+30110 = "Te lleva a un lugar: go solo lista los que tienen nombre, go <lugar> va a uno, go <x>,<y>,<z> [mapa] a un punto."
 30111 = "Un moongate hacia {0} ({1}, {2}, {3}) está a tus pies."
 30112 = "Ningún moongate puede llevar allí: {0} no está cargado o el lugar está fuera del mapa."
 30113 = "Pone a tus pies un moongate hacia un lugar de tu mapa o de otro: moongate <x>,<y>,<z> [mapa]."
+30115 = "Ningún lugar se llama {0}; go solo los lista."
+30116 = "{0} lugares se llaman {1}; añade palabras de la categoría, como go covetous entrance:"
+30117 = "... y {0} más."
 
 # Moongate: texts of the item scripts.
 30114 = "Este moongate no parece llevar a ninguna parte."
