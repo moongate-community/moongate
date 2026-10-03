@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Speech;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -24,6 +25,8 @@ namespace Moongate.Server.Ultima.Services;
 ///     comes within its min time (at most 10 minutes), so the world fills gradually. The live NPCs of a region are the
 ///     ones carrying its id in the prop <c>spawn.region</c>, counted at every check: an NPC removed or killed frees its
 ///     slot. After a check that spawned something, the game masters and administrators get one summary message.
+///     A region of items works the same way with the items lying on the ground that carry its id, such as a treasure
+///     chest until it decays; the staff is not told of them and the world progress is of NPCs only.
 /// </summary>
 public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 {
@@ -56,6 +59,8 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
     private readonly TimeProvider _time;
     private readonly Random _random;
     private readonly SpawnsConfig _config;
+    private readonly IItemSpawnService? _itemSpawns;
+    private readonly IItemService? _items;
 
     private string? _timer;
 
@@ -77,10 +82,14 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         IGameLoopService loop,
         TimeProvider time,
         Random? random = null,
-        SpawnsConfig? config = null
+        SpawnsConfig? config = null,
+        IItemSpawnService? itemSpawns = null,
+        IItemService? items = null
     )
     {
         _config = config ?? new();
+        _itemSpawns = itemSpawns;
+        _items = items;
         _data = data;
         _map = map;
         _movement = movement;
@@ -124,7 +133,7 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
                 new()
                 {
                     Template = spawn,
-                    Pool = new(spawn, lists),
+                    Pool = spawn.ItemIds.Count > 0 ? null : new(spawn, lists),
                     NextSpawn = now + TimeSpan.FromSeconds(_random.Next(0, window + 1))
                 }
             );
@@ -132,9 +141,10 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 
         _timer = _timers.RegisterTimer(TimerName, CheckInterval, Check, CheckInterval, true);
         _logger.Information(
-            "Spawning {Regions} regions for up to {Npcs} NPCs ({Skipped} on maps not loaded)",
+            "Spawning {Regions} regions for up to {Npcs} NPCs and {Items} items ({Skipped} on maps not loaded)",
             _regions.Count,
-            _regions.Sum(region => region.Template.Max),
+            _regions.Where(region => !region.OfItems).Sum(region => region.Template.Max),
+            _regions.Where(region => region.OfItems).Sum(region => region.Template.Max),
             skipped
         );
 
@@ -261,12 +271,12 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
             // A pick with no spot, such as a sea creature in a region with little water, leaves the others to spawn.
             for (var i = 0; i < count; i++)
             {
-                var templateId = region.Pool.Pick(_random);
+                var templateId = region.Pool?.Pick(_random) ?? template.ItemIds[_random.Next(0, template.ItemIds.Count)];
                 var movement = _movements.GetValueOrDefault(templateId, MobileMovementType.Land);
 
                 if (TryFindSpot(template, movement, out var location, out var area))
                 {
-                    planned.Add(new(template, templateId, location, area));
+                    planned.Add(new(template, templateId, location, area, region.OfItems));
                     found++;
                 }
             }
@@ -301,6 +311,20 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
             if (mobile.IsNpc && mobile.TryGetProp<string>(RegionProp, out var region))
             {
                 live[region] = live.GetValueOrDefault(region) + 1;
+            }
+        }
+
+        // The ids of the regions are unique, so NPCs and items share the counts.
+        if (_items is not null && _regions.Any(region => region.OfItems))
+        {
+            foreach (var item in _items.Items)
+            {
+                if (item.Props is not null &&
+                    item.Location == ItemLocationType.Ground &&
+                    item.TryGetProp<string>(RegionProp, out var region))
+                {
+                    live[region] = live.GetValueOrDefault(region) + 1;
+                }
             }
         }
 
@@ -358,7 +382,7 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
     {
         var spawned = new List<(SpawnTemplate Template, int Count)>();
 
-        foreach (var (template, templateId, location, area) in planned)
+        foreach (var (template, templateId, location, area, ofItems) in planned)
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -367,6 +391,13 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 
             try
             {
+                if (ofItems)
+                {
+                    await SpawnItemAsync(template, templateId, location, cancellationToken);
+
+                    continue;
+                }
+
                 // The home goes into the first save, so a spawned NPC is always counted.
                 var npc = await _npcs.SpawnAsync(templateId, template.Map, location, HomeOf(template, area), cancellationToken);
                 var index = spawned.FindIndex(entry => entry.Template == template);
@@ -424,6 +455,31 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         }
     }
 
+    private async Task SpawnItemAsync(SpawnTemplate template, string templateId, Point3D location, CancellationToken cancellationToken)
+    {
+        if (_itemSpawns is null)
+        {
+            return;
+        }
+
+        var item = await _itemSpawns.SpawnAsync(
+            templateId,
+            template.Map,
+            location,
+            new Dictionary<string, object?> { [RegionProp] = template.Id },
+            cancellationToken
+        );
+        _logger.Debug(
+            "Spawn {Region} ({Name}): item {Template} {Serial} at {Location} on {Map}",
+            template.Id,
+            template.Name,
+            templateId,
+            item.Id,
+            location,
+            template.Map
+        );
+    }
+
     private static Dictionary<string, object?> HomeOf(SpawnTemplate template, SpawnArea area)
     {
         return new()
@@ -464,8 +520,9 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
     private string WithProgress(string notice)
     {
         var live = CountLive();
-        var alive = _regions.Sum(region => Math.Min(live.GetValueOrDefault(region.Template.Id), region.Template.Max));
-        var max = _regions.Sum(region => region.Template.Max);
+        var npcs = _regions.Where(region => !region.OfItems).ToList();
+        var alive = npcs.Sum(region => Math.Min(live.GetValueOrDefault(region.Template.Id), region.Template.Max));
+        var max = npcs.Sum(region => region.Template.Max);
         var percent = max == 0 ? 100 : alive * 100 / max;
 
         return _localization.Get(CommandMessages.SpawnedWorldProgress, notice, alive, max, percent);

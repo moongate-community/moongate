@@ -15,6 +15,7 @@ using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Random;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Maps;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
@@ -30,6 +31,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     private readonly FakeMapService _map = new(200, 200);
     private readonly StubMovementService _movement = new() { LandingZ = 5 };
     private readonly StubNpcService _npcs = new();
+    private readonly StubItemSpawnService _itemSpawns = new();
+    private readonly ItemService _items = TestItems.Create();
     private readonly SettableClock _clock = new();
 
     private BroadcastFixture _fixture = null!;
@@ -489,6 +492,145 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         await _fixture.DisposeAsync();
     }
 
+    [Fact]
+    public async Task AnItemRegion_SpawnsItsItemOnTheGround_AndNoNpc()
+    {
+        await StartAsync(new ScriptedRandom(0), Chests("crypt", x: 30, y: 40));
+
+        await TickAsync();
+
+        Assert.Equal([("treasure_chest", MapType.Felucca, new Point3D(30, 40, 0))], _itemSpawns.Spawns);
+        Assert.Empty(_npcs.Spawns);
+    }
+
+    [Fact]
+    public async Task AnItemRegion_MarksItsItemsWithItsId_AndStopsAtItsMax()
+    {
+        _itemSpawns.Items = _items;
+        await StartAsync(new ScriptedRandom(0), Chests("crypt", max: 2));
+
+        await TickAsync();
+        await TickAsync();
+        await TickAsync();
+
+        Assert.Equal(2, _itemSpawns.Spawns.Count);
+        Assert.All(
+            _items.Items,
+            item =>
+            {
+                Assert.True(item.TryGetProp<string>(SpawnRegionService.RegionProp, out var region));
+                Assert.Equal("crypt", region);
+            }
+        );
+    }
+
+    [Fact]
+    public async Task AnItemOfARegionThatDecayed_FreesItsSlot()
+    {
+        _itemSpawns.Items = _items;
+        await StartAsync(new ScriptedRandom(0), Chests("crypt"));
+        await TickAsync();
+        await TickAsync();
+        Assert.Single(_itemSpawns.Spawns);
+
+        await _fixture.Network.ExecuteOnLoopAsync(() => _items.Remove(_items.Items.Select(item => item.Id).ToList()));
+        await TickAsync();
+
+        Assert.Equal(2, _itemSpawns.Spawns.Count);
+    }
+
+    // An item taken from the ground is no longer the region's: a new one comes.
+    [Fact]
+    public async Task AnItemOfARegionThatLeftTheGround_FreesItsSlot()
+    {
+        _itemSpawns.Items = _items;
+        await StartAsync(new ScriptedRandom(0), Chests("crypt"));
+        await TickAsync();
+        var bag = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
+        bag.PlaceOnGround(MapType.Felucca, new Point3D(1, 1, 0));
+
+        await _fixture.Network.ExecuteOnLoopAsync(
+            () =>
+            {
+                _items.Add([bag]);
+                _items.Items.Single(item => item.TemplateId == "treasure_chest").PutInContainer(bag.Id, new Point2D(1, 1));
+            }
+        );
+        await TickAsync();
+
+        Assert.Equal(2, _itemSpawns.Spawns.Count);
+    }
+
+    [Fact]
+    public async Task AnNpcAndAnItemRegion_DoNotCountEachOther()
+    {
+        _itemSpawns.Items = _items;
+        await StartAsync(new ScriptedRandom(0), Chests("crypt"), Spawn("forest"));
+
+        await TickAsync();
+
+        Assert.Single(_itemSpawns.Spawns);
+        Assert.Single(_npcs.Spawns);
+    }
+
+    [Fact]
+    public async Task AnItemRegion_TellsTheStaffNothing_AndIsNoPartOfTheWorldProgress()
+    {
+        var staff = await AddPlayerAsync(7, AccountType.GameMaster);
+        await StartAsync(new ScriptedRandom(0), Chests("crypt", max: 3), Spawn("forest", name: "Yew Woods", max: 2));
+
+        await TickAsync();
+
+        Assert.Equal([(staff, "Spawn: Yew Woods (Felucca): 1 NPCs - world 0/2 (0%)")], Notices());
+    }
+
+    [Fact]
+    public async Task OnlyItemsSpawned_NoNoticeIsSent()
+    {
+        await AddPlayerAsync(7, AccountType.GameMaster);
+        await StartAsync(new ScriptedRandom(0), Chests("crypt"));
+
+        await TickAsync();
+
+        Assert.Single(_itemSpawns.Spawns);
+        Assert.Empty(Notices());
+    }
+
+    [Fact]
+    public async Task AnItemThatCannotBeSpawned_LeavesTheOthersToSpawn()
+    {
+        _itemSpawns.SpawnFailure = new IOException("The database is gone.");
+        await StartAsync(new ScriptedRandom(0), Chests("crypt"), Spawn("forest"));
+
+        await TickAsync();
+
+        Assert.Single(_npcs.Spawns);
+    }
+
+    [Fact]
+    public async Task RegionsAt_CountsTheLiveItemsOfAnItemRegion()
+    {
+        _itemSpawns.Items = _items;
+        await StartAsync(new ScriptedRandom(0), Chests("crypt", max: 2, x: 30, y: 40));
+        await TickAsync();
+
+        var status = Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 30, 40));
+
+        Assert.Equal(("crypt", 1, 2), (status.Id, status.Live, status.Max));
+    }
+
+    private static SpawnTemplate Chests(string id, int max = 1, int x = 10, int y = 10)
+    {
+        return new()
+        {
+            Id = id,
+            Map = MapType.Felucca,
+            ItemIds = ["treasure_chest"],
+            Max = max,
+            Areas = [new() { X1 = x, Y1 = y, X2 = x, Y2 = y }]
+        };
+    }
+
     private static SpawnTemplate Spawn(
         string id,
         string? name = null,
@@ -554,7 +696,9 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
             _fixture.Network.Loop,
             _clock,
             random,
-            new SpawnsConfig { InitialFill = _initialFill }
+            new SpawnsConfig { InitialFill = _initialFill },
+            _itemSpawns,
+            _items
         );
         await _service.StartAsync();
     }
