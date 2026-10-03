@@ -1,0 +1,3365 @@
+# ==============================================================================
+# Moongate - locations.toml
+#
+# What it is for:
+#   The named places staff travels to: ".go" opens a gump that lists them by
+#   map and category, and ".go <name>" goes to one. A place of a map the
+#   server does not load is left out.
+#
+# Fields:
+#   [[location]]  one per place, in the order the gump lists them
+#   map           felucca, trammel, ilshenar, malas, tokuno or termur
+#   category      where the gump files it: the categories from the map down,
+#                 joined by "/", such as "Dungeons/Covetous"; empty for a
+#                 place listed under the map itself
+#   name          the name shown, such as "Entrance"
+#   location      where the traveller arrives, "(x, y, z)"
+# ==============================================================================
+
+[[location]]
+map = "felucca"
+category = "Factions"
+name = "Council of Mages"
+location = "(3750, 2241, 20)"
+
+[[location]]
+map = "felucca"
+category = "Factions"
+name = "Minax"
+location = "(1172, 2593, 0)"
+
+[[location]]
+map = "felucca"
+category = "Factions"
+name = "Shadowlords"
+location = "(969, 768, 0)"
+
+[[location]]
+map = "felucca"
+category = "Factions"
+name = "True Britannians"
+location = "(1419, 1622, 20)"
+
+[[location]]
+map = "felucca"
+category = "Factions/Towns"
+name = "Britain"
+location = "(1592, 1680, 10)"
+
+[[location]]
+map = "felucca"
+category = "Factions/Towns"
+name = "Magincia"
+location = "(3714, 2235, 20)"
+
+[[location]]
+map = "felucca"
+category = "Factions/Towns"
+name = "Minoc"
+location = "(2471, 439, 15)"
+
+[[location]]
+map = "felucca"
+category = "Factions/Towns"
+name = "Moonglow"
+location = "(4436, 1083, 0)"
+
+[[location]]
+map = "felucca"
+category = "Factions/Towns"
+name = "Skara Brae"
+location = "(576, 2200, 0)"
+
+[[location]]
+map = "felucca"
+category = "Factions/Towns"
+name = "Trinsic"
+location = "(1914, 2717, 20)"
+
+[[location]]
+map = "felucca"
+category = "Factions/Towns"
+name = "Vesper"
+location = "(2982, 818, 0)"
+
+[[location]]
+map = "felucca"
+category = "Factions/Towns"
+name = "Yew"
+location = "(548, 979, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Blighted Grove"
+name = "Entrance"
+location = "(586, 1643, -5)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Covetous"
+name = "Entrance"
+location = "(2499, 919, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Covetous"
+name = "Level 1"
+location = "(5456, 1863, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Covetous"
+name = "Level 2"
+location = "(5614, 1997, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Covetous"
+name = "Level 3"
+location = "(5579, 1924, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Covetous"
+name = "Lake Cave"
+location = "(5467, 1805, 7)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Covetous"
+name = "Torture Chambers"
+location = "(5552, 1807, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Deceit"
+name = "Entrance"
+location = "(4111, 432, 5)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Deceit"
+name = "Level 1"
+location = "(5188, 638, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Deceit"
+name = "Level 2"
+location = "(5305, 533, 2)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Deceit"
+name = "Level 3"
+location = "(5137, 650, 5)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Deceit"
+name = "Level 4"
+location = "(5306, 652, 2)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Despise"
+name = "Entrance"
+location = "(1298, 1080, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Despise"
+name = "Entryway"
+location = "(5587, 631, 30)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Despise"
+name = "Level 1"
+location = "(5501, 570, 59)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Despise"
+name = "Level 2"
+location = "(5519, 673, 20)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Despise"
+name = "Level 3"
+location = "(5407, 859, 45)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Destard"
+name = "Entrance"
+location = "(1176, 2637, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Destard"
+name = "Level 1"
+location = "(5243, 1006, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Destard"
+name = "Level 2"
+location = "(5143, 801, 4)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Destard"
+name = "Level 3"
+location = "(5137, 986, 5)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Hythloth"
+name = "Entrance"
+location = "(4721, 3822, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Hythloth"
+name = "Level 1"
+location = "(5905, 20, 46)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Hythloth"
+name = "Level 2"
+location = "(5976, 169, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Hythloth"
+name = "Level 3"
+location = "(6083, 145, -20)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Hythloth"
+name = "Level 4"
+location = "(6059, 89, 24)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Shame"
+name = "Entrance"
+location = "(514, 1561, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Shame"
+name = "Level 1"
+location = "(5395, 126, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Shame"
+name = "Level 2"
+location = "(5515, 11, 5)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Shame"
+name = "Level 3"
+location = "(5514, 148, 25)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Shame"
+name = "Level 4"
+location = "(5875, 20, -5)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Wrong"
+name = "Entrance"
+location = "(2043, 238, 10)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Wrong"
+name = "Level 1"
+location = "(5825, 630, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Wrong"
+name = "Level 2"
+location = "(5690, 569, 25)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Wrong"
+name = "Level 3"
+location = "(5703, 639, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Miscellaneous"
+name = "Hyloth Fire Pit"
+location = "(4596, 3630, 30)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Miscellaneous"
+name = "Yew-Britain Brigand Camp"
+location = "(885, 1682, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Miscellaneous"
+name = "Yew Fort of the Damned"
+location = "(972, 768, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Terathan Keep"
+name = "Entrance"
+location = "(5451, 3143, -60)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Terathan Keep"
+name = "Level 1"
+location = "(5342, 1601, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Terathan Keep"
+name = "Champion Room"
+location = "(5205, 1585, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Terathan Keep"
+name = "Starroom"
+location = "(5139, 1767, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Fire"
+name = "Entrance"
+location = "(5760, 2908, 15)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Fire"
+name = "Brit Entrance"
+location = "(2923, 3407, 8)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Fire"
+name = "Level 1"
+location = "(5790, 1416, 40)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Fire"
+name = "Level 2"
+location = "(5702, 1316, 1)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Ice"
+name = "Entrance"
+location = "(5210, 2322, 30)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Ice"
+name = "Brit Entrance"
+location = "(1999, 81, 4)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Ice"
+name = "Level 1"
+location = "(5875, 150, 15)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Ice"
+name = "Ratman Room"
+location = "(5834, 327, 18)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Ice"
+name = "Ice Demon Lair"
+location = "(5700, 305, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Orc Cave"
+name = "Entrance"
+location = "(1019, 1431, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Orc Cave"
+name = "Level 1"
+location = "(5137, 2014, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Orc Cave"
+name = "Level 2"
+location = "(5332, 1376, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Orc Cave"
+name = "Level 3"
+location = "(5272, 2036, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Painted Caves"
+name = "Entrance"
+location = "(1716, 2993, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Palace of Paroxysmus"
+name = "Entrance"
+location = "(5576, 3018, 25)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Prism of Light"
+name = "Entrance"
+location = "(3784, 1097, 14)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Sanctuary"
+name = "Entrance"
+location = "(764, 1646, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives"
+name = "Central Area"
+location = "(5774, 1896, 20)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area A"
+name = "Entrance"
+location = "(729, 1451, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area A"
+name = "Level 1"
+location = "(5658, 1795, 3)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area A"
+name = "Level 2"
+location = "(5726, 1891, 1)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area B"
+name = "Entrance"
+location = "(2607, 763, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area B"
+name = "Level 1"
+location = "(5921, 1797, 1)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area B"
+name = "Level 2"
+location = "(5875, 1866, 2)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area C"
+name = "Entrance"
+location = "(1689, 2789, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area C"
+name = "Level 1"
+location = "(5659, 2022, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area C"
+name = "Level 2"
+location = "(5708, 1955, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area D"
+name = "Entrance"
+location = "(1723, 814, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area D"
+name = "Level 1"
+location = "(5916, 2019, 3)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area D"
+name = "Level 2"
+location = "(5813, 2012, -1)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Solen Hives/Area E"
+name = "Entrance"
+location = "(5732, 1858, 0)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Khaldun"
+name = "Entrance 1"
+location = "(6009, 3775, 19)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Khaldun"
+name = "Entrance 2"
+location = "(5882, 3819, -1)"
+
+[[location]]
+map = "felucca"
+category = "Dungeons/Khaldun"
+name = "Level 1"
+location = "(5571, 1302, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal"
+name = "Green Acres"
+location = "(5445, 1153, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal/Jail Cells"
+name = "Cell 1"
+location = "(5276, 1164, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal/Jail Cells"
+name = "Cell 2"
+location = "(5286, 1164, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal/Jail Cells"
+name = "Cell 3"
+location = "(5296, 1164, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal/Jail Cells"
+name = "Cell 4"
+location = "(5306, 1164, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal/Jail Cells"
+name = "Cell 5"
+location = "(5276, 1174, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal/Jail Cells"
+name = "Cell 6"
+location = "(5286, 1174, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal/Jail Cells"
+name = "Cell 7"
+location = "(5286, 1174, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal/Jail Cells"
+name = "Cell 8"
+location = "(5306, 1174, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal/Jail Cells"
+name = "Cell 9"
+location = "(5283, 1184, 0)"
+
+[[location]]
+map = "felucca"
+category = "Internal/Jail Cells"
+name = "Cell 10"
+location = "(5304, 1184, 0)"
+
+[[location]]
+map = "felucca"
+category = "Shrines"
+name = "Chaos"
+location = "(1456, 854, 0)"
+
+[[location]]
+map = "felucca"
+category = "Shrines"
+name = "Compassion"
+location = "(1856, 872, -1)"
+
+[[location]]
+map = "felucca"
+category = "Shrines"
+name = "Honesty"
+location = "(4217, 564, 36)"
+
+[[location]]
+map = "felucca"
+category = "Shrines"
+name = "Honor"
+location = "(1730, 3528, 3)"
+
+[[location]]
+map = "felucca"
+category = "Shrines"
+name = "Humility"
+location = "(4276, 3699, 0)"
+
+[[location]]
+map = "felucca"
+category = "Shrines"
+name = "Justice"
+location = "(1301, 639, 16)"
+
+[[location]]
+map = "felucca"
+category = "Shrines"
+name = "Sacrifice"
+location = "(3355, 299, 9)"
+
+[[location]]
+map = "felucca"
+category = "Shrines"
+name = "Spirituality"
+location = "(1589, 2485, 5)"
+
+[[location]]
+map = "felucca"
+category = "Shrines"
+name = "Valor"
+location = "(2496, 3932, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Britain"
+name = "Blackthorn Castle"
+location = "(1533, 1415, 56)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Britain"
+name = "Blackthorn Entrance"
+location = "(1523, 1456, 15)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Britain"
+name = "British Castle"
+location = "(1323, 1624, 55)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Britain"
+name = "British Entrance"
+location = "(1401, 1625, 28)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Britain"
+name = "Cemetery"
+location = "(1384, 1497, 10)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Britain"
+name = "Center"
+location = "(1475, 1645, 20)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Britain"
+name = "Farmlands"
+location = "(1228, 1705, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Britain"
+name = "Park"
+location = "(1614, 1641, 35)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Britain"
+name = "Suburbs"
+location = "(1662, 1572, 5)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Buccaneers Den"
+name = "Bathhouse"
+location = "(2667, 2084, 5)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Buccaneers Den"
+name = "Docks"
+location = "(2736, 2166, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Buccaneers Den"
+name = "Tunnels"
+location = "(2667, 2069, -20)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Cove"
+name = "Cemetery"
+location = "(2443, 1123, 5)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Cove"
+name = "Gates"
+location = "(2285, 1209, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Cove"
+name = "Guard Post"
+location = "(2218, 1116, 19)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Cove"
+name = "Orc Fort"
+location = "(2171, 1332, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Jhelom"
+name = "Cemetery"
+location = "(1296, 3719, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Jhelom"
+name = "East Docks"
+location = "(1492, 3696, -3)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Jhelom"
+name = "Fighting Pit"
+location = "(1398, 3742, -21)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Jhelom"
+name = "Main Island"
+location = "(1414, 3816, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Jhelom"
+name = "Medium Island"
+location = "(1124, 3623, 5)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Jhelom"
+name = "Small Island"
+location = "(1466, 4015, 5)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Magincia"
+name = "Bank"
+location = "(3730, 2161, 20)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Magincia"
+name = "Docks"
+location = "(3675, 2259, 20)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Magincia"
+name = "Park"
+location = "(3719, 2063, 25)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Magincia"
+name = "Parliament"
+location = "(3792, 2248, 20)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Minoc"
+name = "Bridge"
+location = "(2539, 501, 30)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Minoc"
+name = "Gypsy Camp"
+location = "(2540, 651, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Minoc"
+name = "Mining Camp"
+location = "(2583, 528, 15)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Minoc"
+name = "North"
+location = "(2475, 417, 15)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Minoc"
+name = "South"
+location = "(2526, 583, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Moonglow"
+name = "Cemetery"
+location = "(4546, 1338, 8)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Moonglow"
+name = "Center"
+location = "(4442, 1122, 5)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Moonglow"
+name = "Docks"
+location = "(4406, 1045, -2)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Moonglow"
+name = "Telescope"
+location = "(4707, 1124, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Moonglow"
+name = "Zoo"
+location = "(4549, 1378, 8)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Nujel'm"
+name = "Cemetery"
+location = "(3536, 1156, 20)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Nujel'm"
+name = "Chess Board"
+location = "(3728, 1360, 5)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Nujel'm"
+name = "Docks"
+location = "(3803, 1279, 5)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Nujel'm"
+name = "East"
+location = "(3755, 1227, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Nujel'm"
+name = "North"
+location = "(3668, 1116, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Nujel'm"
+name = "Palace"
+location = "(3698, 1279, 20)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Nujel'm"
+name = "West"
+location = "(3572, 1211, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Ocllo"
+name = "Docks"
+location = "(3650, 2653, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Ocllo"
+name = "Farmlands"
+location = "(3722, 2647, 20)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Ocllo"
+name = "North"
+location = "(3650, 2516, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Serpents Hold"
+name = "North"
+location = "(3023, 3417, 15)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Serpents Hold"
+name = "South"
+location = "(2906, 3505, 10)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Serpents Hold"
+name = "Guard Post"
+location = "(3011, 3526, 15)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Skara Brae"
+name = "East"
+location = "(811, 2243, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Skara Brae"
+name = "East Docks"
+location = "(716, 2233, -3)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Skara Brae"
+name = "North"
+location = "(746, 2165, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Skara Brae"
+name = "South"
+location = "(899, 2381, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Skara Brae"
+name = "West"
+location = "(601, 2171, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Skara Brae"
+name = "West Docks"
+location = "(639, 2236, -3)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Trinsic"
+name = "Center"
+location = "(1927, 2779, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Trinsic"
+name = "East Docks"
+location = "(2071, 2855, -3)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Trinsic"
+name = "Island Park"
+location = "(2108, 2793, 2)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Trinsic"
+name = "North"
+location = "(1894, 2666, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Trinsic"
+name = "South"
+location = "(1891, 2850, 20)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Trinsic"
+name = "South Gate"
+location = "(2000, 2930, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Trinsic"
+name = "West Gate"
+location = "(1832, 2779, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Vesper"
+name = "Cemetery"
+location = "(2786, 867, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Vesper"
+name = "Center"
+location = "(2882, 788, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Vesper"
+name = "Docks"
+location = "(3013, 828, -3)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Vesper"
+name = "East"
+location = "(2760, 981, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Vesper"
+name = "North"
+location = "(2907, 603, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Wind"
+name = "Caves"
+location = "(5166, 244, 15)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Wind"
+name = "East"
+location = "(5336, 88, 15)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Wind"
+name = "Entrance"
+location = "(1362, 896, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Wind"
+name = "Park"
+location = "(5211, 22, 15)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Wind"
+name = "South"
+location = "(5223, 189, 5)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Wind"
+name = "West"
+location = "(5180, 90, 25)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Yew"
+name = "Cemetery"
+location = "(724, 1138, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Yew"
+name = "Center"
+location = "(535, 992, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Yew"
+name = "Courts and Prisons"
+location = "(354, 836, 20)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Yew"
+name = "Empath Abbey"
+location = "(635, 860, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Yew"
+name = "Hidden Cave"
+location = "(313, 787, -24)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Yew"
+name = "Orc Fort"
+location = "(633, 1499, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Delucia"
+name = "Watch Tower"
+location = "(5276, 3945, 37)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Delucia"
+name = "Center"
+location = "(5228, 3978, 37)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Delucia"
+name = "Orc Fort"
+location = "(5210, 3636, 3)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Papua"
+name = "The Just Inn"
+location = "(5769, 3176, 0)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Papua"
+name = "Center"
+location = "(5730, 3208, -4)"
+
+[[location]]
+map = "felucca"
+category = "Towns/Papua"
+name = "Docks"
+location = "(5825, 3256, 2)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Blighted Grove"
+name = "Entrance"
+location = "(586, 1643, -5)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Covetous"
+name = "Entrance"
+location = "(2499, 919, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Covetous"
+name = "Level 1"
+location = "(5456, 1863, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Covetous"
+name = "Level 2"
+location = "(5614, 1997, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Covetous"
+name = "Level 3"
+location = "(5579, 1924, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Covetous"
+name = "Lake Cave"
+location = "(5467, 1805, 7)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Covetous"
+name = "Torture Chambers"
+location = "(5552, 1807, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Deceit"
+name = "Entrance"
+location = "(4111, 432, 5)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Deceit"
+name = "Level 1"
+location = "(5188, 638, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Deceit"
+name = "Level 2"
+location = "(5305, 533, 2)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Deceit"
+name = "Level 3"
+location = "(5137, 650, 5)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Deceit"
+name = "Level 4"
+location = "(5306, 652, 2)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Despise"
+name = "Entrance"
+location = "(1298, 1080, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Despise"
+name = "Entryway"
+location = "(5587, 631, 30)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Despise"
+name = "Level 1"
+location = "(5501, 570, 59)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Despise"
+name = "Level 2"
+location = "(5519, 673, 20)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Despise"
+name = "Level 3"
+location = "(5407, 859, 45)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Destard"
+name = "Entrance"
+location = "(1176, 2637, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Destard"
+name = "Level 1"
+location = "(5243, 1006, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Destard"
+name = "Level 2"
+location = "(5143, 801, 4)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Destard"
+name = "Level 3"
+location = "(5137, 986, 5)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Hythloth"
+name = "Entrance"
+location = "(4721, 3822, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Hythloth"
+name = "Level 1"
+location = "(5905, 20, 46)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Hythloth"
+name = "Level 2"
+location = "(5976, 169, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Hythloth"
+name = "Level 3"
+location = "(6083, 145, -20)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Hythloth"
+name = "Level 4"
+location = "(6059, 89, 24)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Shame"
+name = "Entrance"
+location = "(514, 1561, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Shame"
+name = "Level 1"
+location = "(5395, 126, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Shame"
+name = "Level 2"
+location = "(5515, 11, 5)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Shame"
+name = "Level 3"
+location = "(5514, 148, 25)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Shame"
+name = "Level 4"
+location = "(5875, 20, -5)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Wrong"
+name = "Entrance"
+location = "(2043, 238, 10)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Wrong"
+name = "Level 1"
+location = "(5825, 630, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Wrong"
+name = "Level 2"
+location = "(5690, 569, 25)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Wrong"
+name = "Level 3"
+location = "(5703, 639, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Miscellaneous"
+name = "Hyloth Fire Pit"
+location = "(4596, 3630, 30)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Miscellaneous"
+name = "Yew-Britain Brigand Camp"
+location = "(885, 1682, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Miscellaneous"
+name = "Yew Fort of the Damned"
+location = "(972, 768, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Terathan Keep"
+name = "Entrance"
+location = "(5451, 3143, -60)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Terathan Keep"
+name = "Level 1"
+location = "(5342, 1601, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Terathan Keep"
+name = "Champion Room"
+location = "(5205, 1585, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Terathan Keep"
+name = "Starroom"
+location = "(5139, 1767, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Fire"
+name = "Entrance"
+location = "(5760, 2908, 15)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Fire"
+name = "Brit Entrance"
+location = "(2923, 3407, 8)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Fire"
+name = "Level 1"
+location = "(5790, 1416, 40)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Fire"
+name = "Level 2"
+location = "(5702, 1316, 1)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Ice"
+name = "Entrance"
+location = "(5210, 2322, 30)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Ice"
+name = "Brit Entrance"
+location = "(1999, 81, 4)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Ice"
+name = "Level 1"
+location = "(5875, 150, 15)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Ice"
+name = "Ratman Room"
+location = "(5834, 327, 18)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Ice"
+name = "Ice Demon Lair"
+location = "(5700, 305, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Orc Cave"
+name = "Entrance"
+location = "(1019, 1431, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Orc Cave"
+name = "Level 1"
+location = "(5137, 2014, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Orc Cave"
+name = "Level 2"
+location = "(5332, 1376, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Orc Cave"
+name = "Level 3"
+location = "(5272, 2036, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Painted Caves"
+name = "Entrance"
+location = "(1716, 2993, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Palace of Paroxysmus"
+name = "Entrance"
+location = "(5576, 3018, 25)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Prism of Light"
+name = "Entrance"
+location = "(3784, 1097, 14)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Sanctuary"
+name = "Entrance"
+location = "(764, 1646, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives"
+name = "Central Area"
+location = "(5774, 1896, 20)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area A"
+name = "Entrance"
+location = "(729, 1451, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area A"
+name = "Level 1"
+location = "(5658, 1795, 3)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area A"
+name = "Level 2"
+location = "(5726, 1891, 1)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area B"
+name = "Entrance"
+location = "(2607, 763, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area B"
+name = "Level 1"
+location = "(5921, 1797, 1)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area B"
+name = "Level 2"
+location = "(5875, 1866, 2)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area C"
+name = "Entrance"
+location = "(1689, 2789, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area C"
+name = "Level 1"
+location = "(5659, 2022, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area C"
+name = "Level 2"
+location = "(5708, 1955, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area D"
+name = "Entrance"
+location = "(1723, 814, 0)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area D"
+name = "Level 1"
+location = "(5916, 2019, 3)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area D"
+name = "Level 2"
+location = "(5813, 2012, -1)"
+
+[[location]]
+map = "trammel"
+category = "Dungeons/Solen Hives/Area E"
+name = "Entrance"
+location = "(5732, 1858, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal"
+name = "Green Acres"
+location = "(5445, 1153, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal/Jail Cells"
+name = "Cell 1"
+location = "(5276, 1164, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal/Jail Cells"
+name = "Cell 2"
+location = "(5286, 1164, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal/Jail Cells"
+name = "Cell 3"
+location = "(5296, 1164, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal/Jail Cells"
+name = "Cell 4"
+location = "(5306, 1164, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal/Jail Cells"
+name = "Cell 5"
+location = "(5276, 1174, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal/Jail Cells"
+name = "Cell 6"
+location = "(5286, 1174, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal/Jail Cells"
+name = "Cell 7"
+location = "(5286, 1174, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal/Jail Cells"
+name = "Cell 8"
+location = "(5306, 1174, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal/Jail Cells"
+name = "Cell 9"
+location = "(5283, 1184, 0)"
+
+[[location]]
+map = "trammel"
+category = "Internal/Jail Cells"
+name = "Cell 10"
+location = "(5304, 1184, 0)"
+
+[[location]]
+map = "trammel"
+category = "Shrines"
+name = "Chaos"
+location = "(1456, 854, 0)"
+
+[[location]]
+map = "trammel"
+category = "Shrines"
+name = "Compassion"
+location = "(1856, 872, -1)"
+
+[[location]]
+map = "trammel"
+category = "Shrines"
+name = "Honesty"
+location = "(4217, 564, 36)"
+
+[[location]]
+map = "trammel"
+category = "Shrines"
+name = "Honor"
+location = "(1730, 3528, 3)"
+
+[[location]]
+map = "trammel"
+category = "Shrines"
+name = "Humility"
+location = "(4276, 3699, 0)"
+
+[[location]]
+map = "trammel"
+category = "Shrines"
+name = "Justice"
+location = "(1301, 639, 16)"
+
+[[location]]
+map = "trammel"
+category = "Shrines"
+name = "Sacrifice"
+location = "(3355, 299, 9)"
+
+[[location]]
+map = "trammel"
+category = "Shrines"
+name = "Spirituality"
+location = "(1589, 2485, 5)"
+
+[[location]]
+map = "trammel"
+category = "Shrines"
+name = "Valor"
+location = "(2496, 3932, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Britain"
+name = "Blackthorn Castle"
+location = "(1533, 1415, 56)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Britain"
+name = "Blackthorn Entrance"
+location = "(1523, 1456, 15)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Britain"
+name = "British Castle"
+location = "(1323, 1624, 55)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Britain"
+name = "British Entrance"
+location = "(1401, 1625, 28)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Britain"
+name = "Cemetery"
+location = "(1384, 1497, 10)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Britain"
+name = "Center"
+location = "(1475, 1645, 20)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Britain"
+name = "Farmlands"
+location = "(1228, 1705, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Britain"
+name = "Park"
+location = "(1614, 1641, 35)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Britain"
+name = "Suburbs"
+location = "(1662, 1572, 5)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Buccaneers Den"
+name = "Bathhouse"
+location = "(2667, 2084, 5)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Buccaneers Den"
+name = "Docks"
+location = "(2736, 2166, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Buccaneers Den"
+name = "Tunnels"
+location = "(2667, 2069, -20)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Cove"
+name = "Cemetery"
+location = "(2443, 1123, 5)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Cove"
+name = "Gates"
+location = "(2285, 1209, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Cove"
+name = "Guard Post"
+location = "(2218, 1116, 19)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Cove"
+name = "Orc Fort"
+location = "(2171, 1332, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Heartwood"
+name = "Entrance"
+location = "(6986, 340, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Jhelom"
+name = "Cemetery"
+location = "(1296, 3719, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Jhelom"
+name = "East Docks"
+location = "(1492, 3696, -3)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Jhelom"
+name = "Fighting Pit"
+location = "(1398, 3742, -21)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Jhelom"
+name = "Main Island"
+location = "(1414, 3816, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Jhelom"
+name = "Medium Island"
+location = "(1124, 3623, 5)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Jhelom"
+name = "Small Island"
+location = "(1466, 4015, 5)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Magincia"
+name = "Bank"
+location = "(3730, 2161, 20)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Magincia"
+name = "Docks"
+location = "(3675, 2259, 20)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Magincia"
+name = "Park"
+location = "(3719, 2063, 25)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Magincia"
+name = "Parliament"
+location = "(3792, 2248, 20)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Minoc"
+name = "Bridge"
+location = "(2539, 501, 30)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Minoc"
+name = "Gypsy Camp"
+location = "(2540, 651, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Minoc"
+name = "Mining Camp"
+location = "(2583, 528, 15)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Minoc"
+name = "North"
+location = "(2475, 417, 15)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Minoc"
+name = "South"
+location = "(2526, 583, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Moonglow"
+name = "Cemetery"
+location = "(4546, 1338, 8)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Moonglow"
+name = "Center"
+location = "(4442, 1122, 5)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Moonglow"
+name = "Docks"
+location = "(4406, 1045, -2)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Moonglow"
+name = "Telescope"
+location = "(4707, 1124, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Moonglow"
+name = "Zoo"
+location = "(4549, 1378, 8)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Nujel'm"
+name = "Cemetery"
+location = "(3536, 1156, 20)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Nujel'm"
+name = "Chess Board"
+location = "(3728, 1360, 5)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Nujel'm"
+name = "Docks"
+location = "(3803, 1279, 5)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Nujel'm"
+name = "East"
+location = "(3755, 1227, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Nujel'm"
+name = "North"
+location = "(3668, 1116, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Nujel'm"
+name = "Palace"
+location = "(3698, 1279, 20)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Nujel'm"
+name = "West"
+location = "(3572, 1211, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Haven"
+name = "Old Haven"
+location = "(3650, 2592, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Haven"
+name = "Old Haven North"
+location = "(3650, 2516, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Haven"
+name = "New Haven"
+location = "(3506, 2570, 14)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Haven"
+name = "New Haven North"
+location = "(3502, 2475, 34)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Haven"
+name = "Farmlands"
+location = "(3722, 2647, 20)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Serpents Hold"
+name = "North"
+location = "(3023, 3417, 15)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Serpents Hold"
+name = "South"
+location = "(2906, 3505, 10)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Serpents Hold"
+name = "Guard Post"
+location = "(3011, 3526, 15)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Skara Brae"
+name = "East"
+location = "(811, 2243, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Skara Brae"
+name = "East Docks"
+location = "(716, 2233, -3)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Skara Brae"
+name = "North"
+location = "(746, 2165, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Skara Brae"
+name = "South"
+location = "(899, 2381, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Skara Brae"
+name = "West"
+location = "(601, 2171, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Skara Brae"
+name = "West Docks"
+location = "(639, 2236, -3)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Trinsic"
+name = "Center"
+location = "(1927, 2779, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Trinsic"
+name = "East Docks"
+location = "(2071, 2855, -3)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Trinsic"
+name = "Island Park"
+location = "(2108, 2793, 2)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Trinsic"
+name = "North"
+location = "(1894, 2666, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Trinsic"
+name = "South"
+location = "(1891, 2850, 20)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Trinsic"
+name = "South Gate"
+location = "(2000, 2930, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Trinsic"
+name = "West Gate"
+location = "(1832, 2779, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Vesper"
+name = "Cemetery"
+location = "(2786, 867, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Vesper"
+name = "Center"
+location = "(2882, 788, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Vesper"
+name = "Docks"
+location = "(3013, 828, -3)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Vesper"
+name = "East"
+location = "(2760, 981, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Vesper"
+name = "North"
+location = "(2907, 603, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Wind"
+name = "Caves"
+location = "(5166, 244, 15)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Wind"
+name = "East"
+location = "(5336, 88, 15)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Wind"
+name = "Entrance"
+location = "(1362, 896, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Wind"
+name = "Park"
+location = "(5211, 22, 15)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Wind"
+name = "South"
+location = "(5223, 189, 5)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Wind"
+name = "West"
+location = "(5180, 90, 25)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Yew"
+name = "Cemetery"
+location = "(724, 1138, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Yew"
+name = "Center"
+location = "(535, 992, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Yew"
+name = "Courts and Prisons"
+location = "(354, 836, 20)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Yew"
+name = "Empath Abbey"
+location = "(635, 860, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Yew"
+name = "Hidden Cave"
+location = "(313, 787, -24)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Yew"
+name = "Orc Fort"
+location = "(633, 1499, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Delucia"
+name = "Watch Tower"
+location = "(5276, 3945, 37)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Delucia"
+name = "Center"
+location = "(5228, 3978, 37)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Delucia"
+name = "Orc Fort"
+location = "(5210, 3636, 3)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Papua"
+name = "The Just Inn"
+location = "(5769, 3176, 0)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Papua"
+name = "Center"
+location = "(5730, 3208, -4)"
+
+[[location]]
+map = "trammel"
+category = "Towns/Papua"
+name = "Docks"
+location = "(5825, 3256, 2)"
+
+[[location]]
+map = "ilshenar"
+category = "Cities/Ancient Citadel"
+name = "Entrance"
+location = "(1518, 568, -14)"
+
+[[location]]
+map = "ilshenar"
+category = "Cities/Gargoyle City"
+name = "Bank"
+location = "(852, 602, -40)"
+
+[[location]]
+map = "ilshenar"
+category = "Cities/Gargoyle City"
+name = "Central Area"
+location = "(836, 641, -20)"
+
+[[location]]
+map = "ilshenar"
+category = "Cities/Lakeshire"
+name = "Central Area"
+location = "(1203, 1124, -25)"
+
+[[location]]
+map = "ilshenar"
+category = "Cities/Mistas"
+name = "Central Area"
+location = "(820, 1073, -30)"
+
+[[location]]
+map = "ilshenar"
+category = "Cities/Montor"
+name = "Central Area"
+location = "(1643, 310, 48)"
+
+[[location]]
+map = "ilshenar"
+category = "Cities/Req Volon"
+name = "Central Area"
+location = "(1362, 1073, -13)"
+
+[[location]]
+map = "ilshenar"
+category = "Cities/Savage Camp"
+name = "Central Area"
+location = "(1251, 743, -80)"
+
+[[location]]
+map = "ilshenar"
+category = "Cities/Terort Skitas"
+name = "Entrance"
+location = "(567, 437, 21)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Ankh"
+name = "Entrance"
+location = "(576, 1150, -100)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Ankh"
+name = "Level 1"
+location = "(155, 1482, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Ankh"
+name = "Kirin passage"
+location = "(11, 874, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Ankh"
+name = "Serpentine Passage"
+location = "(396, 1578, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Blood"
+name = "Entrance"
+location = "(1747, 1228, -1)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Blood"
+name = "Level 1"
+location = "(2114, 834, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Exodus"
+name = "Entrance"
+location = "(835, 777, -80)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Exodus"
+name = "Level 1"
+location = "(1974, 115, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Rock"
+name = "Entrance"
+location = "(1788, 573, 70)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Rock"
+name = "Level 1"
+location = "(2188, 318, -7)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Rock"
+name = "Level 2"
+location = "(2188, 28, -27)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Sorcerers"
+name = "Entrance"
+location = "(548, 462, -53)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Sorcerers"
+name = "Level 1"
+location = "(428, 109, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Sorcerers"
+name = "Level 2"
+location = "(240, 23, -18)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Sorcerers"
+name = "Level 3"
+location = "(272, 136, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Sorcerers"
+name = "Level 4"
+location = "(132, 124, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Sorcerers"
+name = "Level 5"
+location = "(236, 121, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Spectre"
+name = "Entrance"
+location = "(1363, 1033, -8)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Spectre"
+name = "Level 1"
+location = "(1982, 1103, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Wisp"
+name = "Entrance"
+location = "(651, 1302, -58)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Wisp"
+name = "Level 1"
+location = "(627, 1525, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Wisp"
+name = "Level 2"
+location = "(718, 1492, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Wisp"
+name = "Level 3"
+location = "(832, 1551, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Wisp"
+name = "Level 4"
+location = "(960, 1428, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Wisp"
+name = "Level 5"
+location = "(942, 1465, -33)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Wisp"
+name = "Level 6"
+location = "(866, 1434, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Wisp"
+name = "Level 7"
+location = "(807, 1548, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Dungeons/Wisp"
+name = "Level 8"
+location = "(754, 1479, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Ancient Lair"
+name = "Entrance"
+location = "(940, 504, -30)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Ancient Lair"
+name = "Level 1"
+location = "(85, 746, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Lizard Passage"
+name = "Entrance"
+location = "(314, 1334, -36)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Lizard Passage"
+name = "Level 1"
+location = "(329, 1589, -18)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Lizard Passage"
+name = "Level 2"
+location = "(227, 1337, -18)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Mushroom Cave"
+name = "Entrance"
+location = "(1459, 1329, -24)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Rat Cave"
+name = "Entrance"
+location = "(1034, 1153, -23)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Rat Cave"
+name = "Level 1"
+location = "(1348, 1510, -3)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Rat Cave"
+name = "Level 2"
+location = "(1247, 1511, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Spider Cave"
+name = "Entrance"
+location = "(1421, 913, -19)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Spider Cave"
+name = "Level 1"
+location = "(1786, 991, -28)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Spider Cave"
+name = "Level 2"
+location = "(1517, 877, 10)"
+
+[[location]]
+map = "ilshenar"
+category = "Caves/Spider Cave"
+name = "Ethereal Keep"
+location = "(1365, 1102, -26)"
+
+[[location]]
+map = "ilshenar"
+category = "Shrines"
+name = "Compassion"
+location = "(1217, 469, -13)"
+
+[[location]]
+map = "ilshenar"
+category = "Shrines"
+name = "Honesty"
+location = "(720, 1356, -60)"
+
+[[location]]
+map = "ilshenar"
+category = "Shrines"
+name = "Honor"
+location = "(748, 728, -29)"
+
+[[location]]
+map = "ilshenar"
+category = "Shrines"
+name = "Humility"
+location = "(287, 1016, 0)"
+
+[[location]]
+map = "ilshenar"
+category = "Shrines"
+name = "Justice"
+location = "(987, 1007, -35)"
+
+[[location]]
+map = "ilshenar"
+category = "Shrines"
+name = "Sacrifice"
+location = "(1175, 1287, -30)"
+
+[[location]]
+map = "ilshenar"
+category = "Shrines"
+name = "Spirituality"
+location = "(1532, 1341, -3)"
+
+[[location]]
+map = "ilshenar"
+category = "Shrines"
+name = "Valor"
+location = "(527, 218, -44)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Luna Moongate"
+location = "(1015, 527, -65)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Luna Bank"
+location = "(991, 519, -50)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Clothier's Colors"
+location = "(976, 527, -50)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Grand Arena"
+location = "(961, 638, -90)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Hardwoods and More"
+location = "(1002, 512, -50)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Paladin's Stopover"
+location = "(1005, 519, -30)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Proud Bridle"
+location = "(1023, 503, -70)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Open Market"
+location = "(992, 512, -50)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Sage's Refuge"
+location = "(1002, 527, -50)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Shining Blades"
+location = "(976, 512, -50)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Shrine of Wisdom"
+location = "(976, 510, -30)"
+
+[[location]]
+map = "malas"
+category = "Towns/Luna"
+name = "Vault of Secrets"
+location = "(1072, 457, -90)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Umbra Moongate"
+location = "(1998, 1387, -85)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Umbra Bridge"
+location = "(1941, 1321, -88)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Armoury of Souls"
+location = "(1984, 1367, -80)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Bloodletter's Guild"
+location = "(2084, 1372, -75)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Critter Pens"
+location = "(1992, 1326, -90)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Darkweave"
+location = "(2079, 1338, -81)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Ghast Refectory"
+location = "(2017, 1354, -90)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Gravedigger's Apparatus"
+location = "(2016, 1328, -80)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Lich's Hoard"
+location = "(2051, 1398, -90)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Necromancer Ampitheater"
+location = "(2024, 1383, -80)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Skeleton Swill"
+location = "(2030, 1350, -90)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Wailing Banshee Inn"
+location = "(2039, 1317, -84)"
+
+[[location]]
+map = "malas"
+category = "Towns/Umbra"
+name = "Warped Woodworks"
+location = "(2066, 1288, -80)"
+
+[[location]]
+map = "malas"
+category = "Dungeons/Doom"
+name = "Entrance"
+location = "(2367, 1268, -85)"
+
+[[location]]
+map = "malas"
+category = "Dungeons/Doom"
+name = "Tunnel"
+location = "(2352, 1267, -110)"
+
+[[location]]
+map = "malas"
+category = "Dungeons/Doom"
+name = "Inside"
+location = "(381, 133, 33)"
+
+[[location]]
+map = "malas"
+category = "Dungeons/Doom"
+name = "Gauntlet"
+location = "(433, 331, -2)"
+
+[[location]]
+map = "malas"
+category = "Dungeons/Doom"
+name = "Guardian's Room"
+location = "(365, 15, -1)"
+
+[[location]]
+map = "malas"
+category = "Dungeons/Doom"
+name = "Lamp Room"
+location = "(470, 95, -1)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Broken Mountains"
+location = "(1111, 1461, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Corrupted Forest"
+location = "(2172, 1144, -87)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Crumbling Continent"
+location = "(736, 1180, -95)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Crystal Fens"
+location = "(1388, 616, -85)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Divide of the Abyss"
+location = "(1545, 877, -85)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Dry Highlands"
+location = "(2128, 1668, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Forgotten Pyramid"
+location = "(1825, 1799, -50)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Gravewater Lake"
+location = "(1596, 1656, -115)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Grimswind Ruins"
+location = "(2192, 330, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Northern Crags"
+location = "(1580, 384, -50)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Orc Fortress"
+location = "(1340, 1226, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Points of Interest"
+name = "Hanse's Hostel"
+location = "(1065, 1435, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Caves and Mines"
+name = "Mine 1"
+location = "(2082, 574, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Caves and Mines"
+name = "Mine 2"
+location = "(2157, 456, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Caves and Mines"
+name = "Mine 3"
+location = "(1811, 359, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Caves and Mines"
+name = "Mine 4"
+location = "(1790, 475, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Caves and Mines"
+name = "Mine 5"
+location = "(1628, 432, -86)"
+
+[[location]]
+map = "malas"
+category = "Sites/Caves and Mines"
+name = "Mine 6"
+location = "(1658, 304, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Caves and Mines"
+name = "Mine 7"
+location = "(1071, 247, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Caves and Mines"
+name = "Mine 8"
+location = "(1095, 197, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Caves and Mines"
+name = "Mine 9"
+location = "(1195, 511, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Orc Forts"
+name = "Fort 1"
+location = "(912, 193, -79)"
+
+[[location]]
+map = "malas"
+category = "Sites/Orc Forts"
+name = "Fort 2"
+location = "(1666, 362, -50)"
+
+[[location]]
+map = "malas"
+category = "Sites/Orc Forts"
+name = "Fort 3"
+location = "(1364, 599, -86)"
+
+[[location]]
+map = "malas"
+category = "Sites/Orc Forts"
+name = "Fort 4"
+location = "(1205, 705, -88)"
+
+[[location]]
+map = "malas"
+category = "Sites/Orc Forts"
+name = "Fort 5"
+location = "(1257, 1331, -90)"
+
+[[location]]
+map = "malas"
+category = "Sites/Orc Forts"
+name = "Fort 6"
+location = "(1598, 1825, -110)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Towns/Zento"
+name = "Zento Moongate"
+location = "(802, 1204, 25)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Towns/Zento"
+name = "Zento Bank"
+location = "(735, 1255, 30)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Dungeons/Fan Dancer's Dojo"
+name = "Entrance"
+location = "(977, 218, 23)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Dungeons/Yomotsu Mines"
+name = "Entrance"
+location = "(259, 785, 64)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Makoto-Jima"
+name = "Moongate"
+location = "(802, 1204, 25)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Makoto-Jima"
+name = "Shrine"
+location = "(718, 1161, 25)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Makoto-Jima"
+name = "The Waste"
+location = "(724, 943, 42)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Isamu-Jima"
+name = "Moongate"
+location = "(1169, 998, 41)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Isamu-Jima"
+name = "Shrine"
+location = "(1047, 512, 15)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Isamu-Jima"
+name = "Lotus Lakes"
+location = "(1066, 817, 20)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Isamu-Jima"
+name = "Mount Sho"
+location = "(1159, 696, 70)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Isamu-Jima"
+name = "Dragon Valley"
+location = "(948, 432, 8)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Isamu-Jima"
+name = "Winter Spur"
+location = "(926, 162, 34)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Homare-Jima"
+name = "Moongate"
+location = "(270, 628, 15)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Homare-Jima"
+name = "Shrine"
+location = "(295, 712, 55)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Homare-Jima"
+name = "Field of Echoes"
+location = "(160, 654, 36)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Homare-Jima"
+name = "Crane Marsh"
+location = "(232, 1107, 10)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Homare-Jima"
+name = "Bushido Dojo"
+location = "(334, 407, 32)"
+
+[[location]]
+map = "tokuno"
+category = "Tokuno Islands/Sites/Homare-Jima"
+name = "Kitsune Woods"
+location = "(523, 520, 32)"
+
+[[location]]
+map = "termur"
+category = "Towns/Royal City"
+name = "Royal City Moongate"
+location = "(855, 3526, -43)"
+
+[[location]]
+map = "termur"
+category = "Towns/Holy City"
+name = "Holy City Moongate"
+location = "(928, 3989, -40)"
+
+[[location]]
+map = "termur"
+category = "Towns/Dugan"
+name = "Dugan"
+location = "(1107, 1131, -52)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Tomb of Kings"
+name = "Entrance"
+location = "(997, 3843, -41)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Tomb of Kings"
+name = "Gate to Stygian Abyss"
+location = "(38, 29, 0)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Exit to Tomb of Kings"
+location = "(946, 71, 72)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Exit to Underworld"
+location = "(521, 921, 36)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Abyssal Lair Entrance"
+location = "(985, 366, -11)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Cavern of the Discarded"
+location = "(912, 501, -12)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Clan Scratch"
+location = "(959, 548, -14)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Crimson Veins"
+location = "(974, 164, -11)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Enslaved Goblins"
+location = "(581, 815, -45)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Fairy Dragon Lair"
+location = "(888, 277, 3)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Fire Temple Ruins"
+location = "(519, 765, -92)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Hydra"
+location = "(793, 753, 53)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Lands of the Lich"
+location = "(538, 656, 8)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Lava Caldera"
+location = "(587, 895, -73)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Medusa's Lair"
+location = "(818, 755, 50)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Passage of Tears"
+location = "(685, 579, -15)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Secret Garden"
+location = "(462, 719, 22)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Serpent Lair"
+location = "(711, 720, -11)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Silver Sapling"
+location = "(341, 619, 26)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Stygian Dragon Lair Entrance"
+location = "(851, 279, -12)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Stygian Abyss"
+name = "Sutek the Mage"
+location = "(924, 595, -14)"
+
+[[location]]
+map = "termur"
+category = "Dungeons/Underworld"
+name = "Entrance"
+location = "(1128, 1211, -2)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Atoll Bend"
+location = "(1118, 3408, -42)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Chicken Chase"
+location = "(560, 3412, 37)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "City Residential"
+location = "(952, 3531, -43)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Coral Desert"
+location = "(1047, 2980, 62)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Fishermans Reach"
+location = "(631, 3035, 36)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Gated Isle"
+location = "(703, 3934, -31)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "High Plain"
+location = "(863, 2931, 38)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Holy City Island"
+location = "(996, 3905, -42)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Kepetch Waste"
+location = "(447, 3188, 20)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Lava Lake"
+location = "(407, 3010, -24)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Lavapit Pyramid"
+location = "(740, 3691, -43)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Lost Settlement"
+location = "(526, 3822, -44)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Northern Steppes"
+location = "(822, 3063, 61)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Raptor Island"
+location = "(816, 3778, -42)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Royal Park"
+location = "(711, 3255, 38)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Shrine of Singularity"
+location = "(995, 3814, -23)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Slith Valley"
+location = "(1078, 3331, -42)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Spider Island"
+location = "(1115, 3730, -42)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Spiders Guarde"
+location = "(1109, 3606, -45)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Talon Point"
+location = "(676, 3831, -39)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Treefellow Course"
+location = "(570, 2936, 39)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Void Isle"
+location = "(440, 3577, 38)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Walled Circus"
+location = "(370, 3273, 0)"
+
+[[location]]
+map = "termur"
+category = "Sites/Regions"
+name = "Waterfall Point"
+location = "(661, 2894, 39)"

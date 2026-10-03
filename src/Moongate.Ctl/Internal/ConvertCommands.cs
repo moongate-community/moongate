@@ -150,4 +150,19 @@ internal static class ConvertCommands
     {
         return ModernUoTeleporterConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
     }
+
+    /// <summary>
+    ///     Converts the named places of ModernUO's go gump (Data/Locations) into the data file locations.toml, which
+    ///     .go lists and travels to.
+    /// </summary>
+    /// <param name="source">
+    ///     ModernUO's Distribution/Data/Locations folder.
+    /// </param>
+    /// <param name="destination">
+    ///     The file to write (data/locations.toml), replacing that of a previous run.
+    /// </param>
+    public static int ModernUoLocations(string source, string destination)
+    {
+        return ModernUoLocationConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+    }
 }

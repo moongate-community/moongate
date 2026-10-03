@@ -75,6 +75,14 @@ internal static class CompletionCatalog
             ]
         ),
         new(
+            "convert modernuo-locations",
+            "Convert the named places of ModernUO into locations.toml",
+            [
+                new("--source", "The Distribution/Data/Locations folder of ModernUO", CompletionValueType.Directory),
+                new("--destination", "The locations.toml file to write", CompletionValueType.File)
+            ]
+        ),
+        new(
             "completion",
             "Print the completion script of a shell",
             [],
