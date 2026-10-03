@@ -4012,5 +4012,111 @@
     ],
     "notes": "The skills of the player's own character. The fields from Skill to Cap repeat for every skill of the whole list.",
     "handler": "MobileStateService: the whole list answers a mobile query, one skill follows a change made by a script."
+  },
+  "0xC2:outgoing": {
+    "category": "Prompts",
+    "tags": [
+      "Prompts",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Always 21."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The character asked."
+      },
+      {
+        "offset": "7",
+        "name": "Prompt id",
+        "type": "int",
+        "size": "4",
+        "description": "Id the response must carry"
+      },
+      {
+        "offset": "11",
+        "name": "Unused",
+        "type": "byte[]",
+        "size": "10",
+        "description": "Zero."
+      }
+    ],
+    "notes": "Asks the player for a line of text, typed in the journal line.",
+    "handler": "PromptService: sent when a prompt begins."
+  },
+  "0xC2:incoming": {
+    "category": "Prompts",
+    "tags": [
+      "Prompts",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Length of the whole packet."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The serial the prompt was sent with."
+      },
+      {
+        "offset": "7",
+        "name": "Prompt id",
+        "type": "int",
+        "size": "4",
+        "description": "Id of the prompt answered"
+      },
+      {
+        "offset": "11",
+        "name": "Type",
+        "type": "int",
+        "size": "4",
+        "description": "0 escaped, 1 answered"
+      },
+      {
+        "offset": "15",
+        "name": "Language",
+        "type": "char[]",
+        "size": "4",
+        "description": "Language code of the client, such as ENU"
+      },
+      {
+        "offset": "19",
+        "name": "Text",
+        "type": "utf16le",
+        "size": "*",
+        "description": "The text typed, little-endian UTF-16"
+      }
+    ],
+    "notes": "The player's answer to a text prompt.",
+    "handler": "TextPromptResponsePacketHandler: completes the player's pending prompt; over 128 characters or another id is ignored."
   }
 }

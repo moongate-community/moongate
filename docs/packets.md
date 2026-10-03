@@ -77,6 +77,8 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0xD6` | `PropertyListPacket` | Outgoing | Variable | — |
 | `0xDC` | `PropertyListInfoPacket` | Outgoing | Fixed 9 | — |
 | `0xC1` | `LocalizedMessagePacket` | Outgoing | Variable | — |
+| `0xC2` | `TextPromptPacket` | Outgoing | Variable (21) | — |
+| `0xC2` | `TextPromptResponsePacket` | Incoming | Variable | `TextPromptResponsePacketHandler`: completes the player's pending text prompt |
 | `0x54` | `PlaySoundPacket` | Outgoing | Fixed 12 | — |
 | `0xC0` | `HuedEffectPacket` | Outgoing | Fixed 36 | — |
 | `0xC7` | `ParticleEffectPacket` | Outgoing | Fixed 49 | — |
@@ -242,6 +244,13 @@ at startup and saved by the world save. A ground item decays after its template'
 unless `decay_minutes` says otherwise, counted from when it landed on the ground and restarted
 each time it is put down again; a decayed container takes its contents with it (see
 [Templates](templates.md)). A container on the ground cannot be opened yet.
+
+`IPromptService` asks a player for a line of text with the Unicode prompt (`0xC2`) and hands what it
+typed to a callback on the game loop. A player has one prompt at a time: a new one ends the old with
+no text, and so do `Cancel` and a closing session. The client has no packet that closes its prompt, so
+a late answer is ignored: ids count up per session and an answer with another id does nothing. As
+ModernUO, type 0 is the player's escape and a text over 128 characters is ignored; the text is read up
+to its terminator, without control characters, and trimmed.
 
 `ITargetService` shows a player the target cursor (`0x6C`) and hands the pick to a callback on the
 game loop, or to a command awaiting `RequestAsync`. A player has one target at a time: a new one

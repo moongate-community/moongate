@@ -28,7 +28,7 @@ A priority is closed when its steps are ✅ in the tables below.
 
 | Priority | What | Steps | Why at this place |
 | --- | --- | --- | --- |
-| 1 | **Finish what Lua needs** | 0.5, 0.6, then what is left of 0.3 and 0.4 (0.1 is done) | Most of phase 0 is half done. Every rule below is written against it, so a gap here is paid again in each system |
+| 1 | **Finish what Lua needs** (done) | 0.1, 0.3 and 0.4 are done; 0.5 and 0.6 are done for items, and what is left of them comes with skills, combat and timed effects | Every rule below is written against it, so a gap here is paid again in each system |
 | 2 | **Skills and regeneration** | 1.1, 1.2 | The skill check is called by combat, magic, crafting, lockpicking and taming: nothing else unlocks as much |
 | 3 | **What combat reads** | 1.3, 1.6, and the weight of 1.4 | Timed effects, the combat fields of the items, weight |
 | 4 | **Combat and death** | 2.1 to 2.6 | The core loop: the 29,000 spawned NPCs are scenery until it exists |
@@ -80,10 +80,10 @@ written. The [scripting page](scripting.md#available-host-functions) lists what 
 | --- | --- | --- | --- |
 | 0.1 | ✅ | **Mobile state in Lua**: stats, skills, hits, mana, stamina, flags (hidden, frozen, war mode), hue, body, name; props on players; global props. The dead flag comes with death (2.3) | Every rule reads or changes them |
 | 0.2 | ✅ | **World queries**: mobiles and items near a point, in sight; online players; region, height and line of sight lookups | Every AI, spell and area effect needs them |
-| 0.3 | 🟡 | **Item API**: create (on the ground, in a backpack, in a container), move into a container, equip, list the content, find by type, set hue and name. Left: equip, find by type | Loot, crafting, vendors, quests |
-| 0.4 | 🟡 | **Player input and output**: system message, text over any object, cliloc messages, the target cursor, a text prompt. Left: the text prompt | Every skill and spell starts with a target |
+| 0.3 | ✅ | **Item API**: create (on the ground, in a backpack, in a container), move into a container, equip, list the content, find by type, set hue and name | Loot, crafting, vendors, quests |
+| 0.4 | ✅ | **Player input and output**: system message, text over any object, cliloc messages, the target cursor, a text prompt | Every skill and spell starts with a target |
 | 0.5 | 🟡 | **Events that can refuse**: a handler stops or changes the default action. Done for items: `on_use`, `can_pick_up`, `can_drop`, `can_equip`, `can_insert`. Left: `check_skill`, `on_damage`, which come with skills and combat | Lets a script own a rule |
-| 0.6 | ❌ | **Timers kept by the object** and saved with the world. Today a script keeps a time in a prop, as the town containers do | A door's auto-close timer is lost on a restart today; timed effects need the same mechanism |
+| 0.6 | 🟡 | **Timers kept by the object** and saved with the world. Done for items (`item.start_timer`, `on_timer`; the doors close with it). Left: timers on mobiles, which come with timed effects (1.3) | Timed effects need the same mechanism |
 | 0.7 | 🟡 | **Region events**: enter and leave. Done for players (`player_region_changed`); not for NPCs | Guards, magic rules, music scripts, quests |
 
 ## Phase 1: a character that lives

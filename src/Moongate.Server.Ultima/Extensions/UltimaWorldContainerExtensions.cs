@@ -145,6 +145,9 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<IItemService, ItemService>(10);
         container.AddMoongateService<IWorldPropsService, WorldPropsService>(10);
         container.Register<IItemDecayQueue, ItemDecayQueue>(Reuse.Singleton);
+        container.Register<IItemTimerQueue, ItemTimerQueue>(Reuse.Singleton);
+        // After the item scripts are loaded: a timer that is due runs its script.
+        container.AddMoongateService<IItemTimerService, ItemTimerService>(LuaScriptEngineService.StartupPriority + 6);
         // After the items (10): the ground items it deletes are loaded by then.
         container.AddMoongateService<ItemDecayService>(11);
         // The light cycle's timer, like the decay's: the players it lights come after the game server starts.

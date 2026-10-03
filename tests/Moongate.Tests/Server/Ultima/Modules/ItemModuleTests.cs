@@ -15,6 +15,8 @@ using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
@@ -51,6 +53,8 @@ public sealed class ItemModuleTests : IAsyncLifetime
     private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", Name = "a potion", ItemId = 0x0F0E, Amount = 3 };
     private readonly ItemEntity _ground = new() { Id = new Serial(0x40000003), TemplateId = "potion", ItemId = 0x0F0E, Amount = 2 };
     private readonly ItemEntity _sword = new() { Id = new Serial(0x40000004), TemplateId = "sword", ItemId = 0x0F5E, Amount = 1 };
+
+    private readonly SettableClock _clock = new();
 
     private BroadcastFixture _fixture = null!;
     private MobileEntity _owner = null!;
@@ -722,6 +726,43 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Equal([2, 0x40000002, 0x40000091, 2, 1, 0x40000004, 0, 0, 0, 0], result.Select(value => value.Read<int>()));
     }
 
+    [Fact]
+    public void StartTimer_KeepsATimerOnTheItem_ThatCanBeReadAndStopped()
+    {
+        var result = Run(
+            "return item.start_timer(0x40000003, 'close', 20), item.timer(0x40000003, 'close'), item.timer(0x40000003, 'open'), " +
+            "item.stop_timer(0x40000003, 'close'), item.stop_timer(0x40000003, 'close'), item.timer(0x40000003, 'close')"
+        );
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(20d, result[1].Read<double>());
+        Assert.Equal(LuaValue.Nil, result[2]);
+        Assert.Equal((true, false), (result[3].Read<bool>(), result[4].Read<bool>()));
+        Assert.Equal(LuaValue.Nil, result[5]);
+    }
+
+    [Fact]
+    public void StartTimer_KeepsItsDueTimeAsAPropOfTheItem()
+    {
+        Run("item.start_timer(0x40000003, 'close', 1.5)");
+
+        Assert.Equal(_clock.Now.ToUnixTimeMilliseconds() + 1500, _ground.GetProp<long>("timer.close"));
+    }
+
+    [Theory,
+     InlineData("item.start_timer(12, 'close', 20)"),
+     InlineData("item.start_timer(0x40000003, '', 20)"),
+     InlineData("item.start_timer(0x40000003, 'close', 0)"),
+     InlineData("item.start_timer(0x40000003, 'close', -3)"),
+     InlineData("item.start_timer(0x40000003, 'close', 1/0)"),
+     InlineData("item.start_timer(0x40000003, 'close', 1e12)"),
+     InlineData("item.stop_timer(12, 'close')")]
+    public void TimerFunctions_WithWhatCannotBe_AreFalse(string call)
+    {
+        Assert.False(Run("return " + call)[0].Read<bool>());
+        Assert.Null(_ground.Props);
+    }
+
     private static ItemEntity Shirt(uint serial)
     {
         return new() { Id = new Serial(serial), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
@@ -747,6 +788,13 @@ public sealed class ItemModuleTests : IAsyncLifetime
             tiles: _tiles,
             templates: _templates,
             equipment: new EquipmentService(_templates, _tiles, _items),
+            timers: new ItemTimerService(
+                new RecordingTimerService(),
+                new ItemTimerQueue(_clock),
+                _items,
+                new RecordingItemScriptService(),
+                _clock
+            ),
             loot: new LootService(
                 new StubDataLoaderService().With(
                     // What does not stack comes as that many items.

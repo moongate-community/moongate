@@ -7,7 +7,8 @@
 --   to the next one, it swings aside by its facing and plays its opening sound;
 --   its linked door opens with it. Double clicking an open door closes both,
 --   when nobody stands in either doorway. An open door closes by itself after
---   20 seconds, then retries every 10 seconds while the doorway is taken.
+--   20 seconds, then retries every 10 seconds while the doorway is taken; the
+--   timer is kept by the door, so it also closes after a restart.
 --   A locked closed door opens only for a player carrying a key with its
 --   key.value (anywhere in the backpack) and for game masters and
 --   administrators, as in ModernUO; it stays locked. Anyone else reads
@@ -47,8 +48,8 @@ local OFFSETS = {
 local AUTO_CLOSE_SECONDS = 20
 local RETRY_SECONDS = 10
 
--- The pending auto-close timer of each open door, by serial.
-local pending = {}
+-- The timer an open door keeps until it closes by itself: saved with the door, so it still closes after a restart.
+local CLOSE_TIMER = "close"
 
 -- The opening and closing sounds of a kind.
 local function sounds(serial)
@@ -92,10 +93,7 @@ local function is_open(serial)
 end
 
 local function cancel_auto_close(serial)
-    if pending[serial] then
-        timer.cancel(pending[serial])
-        pending[serial] = nil
-    end
+    item.stop_timer(serial, CLOSE_TIMER)
 end
 
 -- Where an open door goes back to: the spot it kept, or its offset back for a door opened before it kept one.
@@ -189,13 +187,14 @@ local function close(serial)
 end
 
 local function schedule_auto_close(serial, seconds)
-    pending[serial] = timer.after(seconds, function()
-        pending[serial] = nil
+    item.start_timer(serial, CLOSE_TIMER, seconds)
+end
 
-        if is_open(serial) and not close(serial) then
-            schedule_auto_close(serial, RETRY_SECONDS)
-        end
-    end)
+-- Called when a timer of the door is due: it closes, or tries again while someone stands in a doorway.
+function door.on_timer(serial, name)
+    if name == CLOSE_TIMER and is_open(serial) and not close(serial) then
+        schedule_auto_close(serial, RETRY_SECONDS)
+    end
 end
 
 -- UOX3's messages, in the server's language.

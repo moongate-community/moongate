@@ -6,6 +6,7 @@ using Moongate.Core.Utils;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
@@ -51,6 +52,7 @@ public sealed class ItemModule
     private readonly IItemTemplateService? _templates;
     private readonly ILootService? _loot;
     private readonly IEquipmentService? _equipment;
+    private readonly IItemTimerService? _timers;
 
     public ItemModule(
         IItemService items,
@@ -67,9 +69,11 @@ public sealed class ItemModule
         ITileDataService? tiles = null,
         IItemTemplateService? templates = null,
         ILootService? loot = null,
-        IEquipmentService? equipment = null
+        IEquipmentService? equipment = null,
+        IItemTimerService? timers = null
     )
     {
+        _timers = timers;
         _equipment = equipment;
         _loot = loot;
         _templates = templates;
@@ -573,6 +577,39 @@ public sealed class ItemModule
         }
 
         return table;
+    }
+
+    /// <summary>
+    ///     Starts a timer the item keeps, or starts it again from now; <c>item.start_timer(serial, "close", 20)</c>. When
+    ///     its time comes the item's script runs <c>on_timer(serial, name)</c>. It is saved with the item, so it also
+    ///     runs after a restart.
+    /// </summary>
+    [ScriptFunction(helpText: "Starts, or starts again, a timer of the item that runs on_timer(serial, name) of its script after that many seconds, also after a restart; false for an unknown item, a blank name or one over 32 characters, or seconds not above 0 or over a year.")]
+    public bool StartTimer(long serial, string name, double seconds)
+    {
+        return _timers is not null &&
+               TryGetItem(serial, out var item) &&
+               double.IsFinite(seconds) &&
+               seconds <= ItemTimerService.MaximumDelay.TotalSeconds &&
+               _timers.Start(item, name, TimeSpan.FromSeconds(Math.Max(0, seconds)));
+    }
+
+    /// <summary>
+    ///     Stops a timer of the item; <c>item.stop_timer(serial, "close")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Stops a timer of the item; false for an unknown item or when it has no timer of that name.")]
+    public bool StopTimer(long serial, string name)
+    {
+        return _timers is not null && TryGetItem(serial, out var item) && _timers.Stop(item, name);
+    }
+
+    /// <summary>
+    ///     Gets the seconds a timer of the item still has to run; <c>item.timer(serial, "close")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The seconds a timer of the item still has to run, 0 when it is due; nil for an unknown item or when it has no timer of that name.")]
+    public double? Timer(long serial, string name)
+    {
+        return _timers is not null && TryGetItem(serial, out var item) ? _timers.Remaining(item, name)?.TotalSeconds : null;
     }
 
     /// <summary>

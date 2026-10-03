@@ -27,6 +27,7 @@ using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -55,7 +56,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
     private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3 };
 
+    private readonly SettableClock _time = new();
+
     private BroadcastFixture _fixture = null!;
+    private ItemTimerService _itemTimers = null!;
 
     public ItemScriptIntegrationTests()
     {
@@ -82,6 +86,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IClockService>(_clock);
         _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
+        _itemTimers = new(_timers, new ItemTimerQueue(_time), _items, new RecordingItemScriptService(), _time);
+        _container.RegisterInstance<IItemTimerService>(_itemTimers);
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
         _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService()));
@@ -359,21 +365,24 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         var door = PlaceDoor(new Serial(0x40000010), "DarkWoodGate", 0x0839, "south_cw", new Point3D(1600, 1600, 0));
         var scripts = await StartDoorScriptAsync();
         scripts.Run(door, "on_use", 2L);
-        var first = Assert.Single(_timers.Timers);
-        Assert.Equal(TimeSpan.FromSeconds(20), first.Interval);
+        // The timer is a prop of the door, so the world save keeps it and a restart does not lose it.
+        Assert.Equal(TimeSpan.FromSeconds(20), _itemTimers.Remaining(door, "close"));
         var orc = new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
         _sectors.Add(orc);
 
-        _timers.Fire(first.Id);
-        var retry = Assert.Single(_timers.Timers);
-        Assert.Equal((TimeSpan.FromSeconds(10), 0x083A), (retry.Interval, door.ItemId));
+        // What the timer service does when the time has come.
+        _itemTimers.Stop(door, "close");
+        scripts.Run(door, "on_timer", "close");
+        Assert.Equal((TimeSpan.FromSeconds(10), 0x083A), (_itemTimers.Remaining(door, "close"), door.ItemId));
 
         _sectors.Remove(orc);
-        _timers.Fire(retry.Id);
+        _itemTimers.Stop(door, "close");
+        scripts.Run(door, "on_timer", "close");
 
         Assert.Empty(_errors);
         Assert.Equal((0x0839, new Point3D(1600, 1600, 0)), (door.ItemId, door.GroundLocation!.Value));
         Assert.Equal([0xEB, 0xF2], _speech.PlacedSounds.Select(sound => sound.Sound));
+        Assert.Null(_itemTimers.Remaining(door, "close"));
         Assert.Empty(_timers.Timers);
     }
 
