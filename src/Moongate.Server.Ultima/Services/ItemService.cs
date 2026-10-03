@@ -32,6 +32,11 @@ public sealed class ItemService : IItemService, IMoongateStartupService
     private readonly ConcurrentDictionary<Serial, Serial?> _tombstones = new();
     private readonly ConcurrentDictionary<Serial, Serial> _released = new();
     private readonly ConcurrentDictionary<Serial, ConcurrentDictionary<Serial, ItemEntity>> _worn = new();
+
+    // The items directly inside each container, and the container each item is filed under: taken from here when the
+    // item moves, whatever the item itself says by then.
+    private readonly ConcurrentDictionary<Serial, ConcurrentDictionary<Serial, ItemEntity>> _contents = new();
+    private readonly ConcurrentDictionary<Serial, Serial> _filedIn = new();
     private readonly ILogger _logger = Log.ForContext<ItemService>();
     private readonly ISectorService _sectors;
     private readonly IMovementService _movement;
@@ -122,7 +127,10 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public IReadOnlyList<ItemEntity> GetContents(Serial container)
     {
-        return _items.Values.Where(item => item.ContainerId == container).OrderBy(item => item.Id.Value).ToList();
+        // An item changed outside the service may still be filed here: what no longer says so is left out.
+        return _contents.TryGetValue(container, out var inside)
+            ? inside.Values.Where(item => item.ContainerId == container).OrderBy(item => item.Id.Value).ToList()
+            : [];
     }
 
     public Serial? GetOwner(ItemEntity item)
@@ -197,6 +205,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         // Without the item itself: moved inside its own container it may keep its slot.
         var others = GetContents(container).Where(other => !ReferenceEquals(other, item));
         item.PutInContainer(container, position, ContainerSlotUtils.FirstFree(others, gridIndex));
+        Index(item);
         _decay?.Stop(item);
         WearerChanged(item, wearer);
     }
@@ -426,12 +435,19 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         }
     }
 
-    // Worn items by wearer: a mobile shown to others (0x78) must not scan every item of the world.
+    // Worn items by wearer and contents by container: a mobile shown to others (0x78) or a container opened must not
+    // scan every item of the world.
     private void Index(ItemEntity item)
     {
         if (item.MobileId is { } wearer)
         {
             _worn.GetOrAdd(wearer, _ => new())[item.Id] = item;
+        }
+
+        if (item.ContainerId is { } container)
+        {
+            _contents.GetOrAdd(container, _ => new())[item.Id] = item;
+            _filedIn[item.Id] = container;
         }
     }
 
@@ -440,6 +456,17 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         if (item.MobileId is { } wearer && _worn.TryGetValue(wearer, out var worn))
         {
             worn.TryRemove(item.Id, out _);
+        }
+
+        if (_filedIn.TryRemove(item.Id, out var container) && _contents.TryGetValue(container, out var inside))
+        {
+            inside.TryRemove(item.Id, out _);
+
+            // An emptied container keeps no list: the world has many more items than containers in use.
+            if (inside.IsEmpty)
+            {
+                _contents.TryRemove(new KeyValuePair<Serial, ConcurrentDictionary<Serial, ItemEntity>>(container, inside));
+            }
         }
     }
 }
