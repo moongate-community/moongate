@@ -49,6 +49,7 @@ public sealed class ItemModule
     private readonly IContainerLayoutService? _layouts;
     private readonly ITileDataService? _tiles;
     private readonly IItemTemplateService? _templates;
+    private readonly ILootService? _loot;
 
     public ItemModule(
         IItemService items,
@@ -63,9 +64,11 @@ public sealed class ItemModule
         IItemSerialPool? serials = null,
         IContainerLayoutService? layouts = null,
         ITileDataService? tiles = null,
-        IItemTemplateService? templates = null
+        IItemTemplateService? templates = null,
+        ILootService? loot = null
     )
     {
+        _loot = loot;
         _templates = templates;
         _factory = factory;
         _serials = serials;
@@ -102,6 +105,53 @@ public sealed class ItemModule
         Refresh(item);
 
         return item.Id.Value;
+    }
+
+    /// <summary>
+    ///     Rolls a loot table of <c>templates/loots</c> once and puts what it gives into a container, or into the
+    ///     backpack of a mobile; <c>item.add_loot(chest, "fillable_baker")</c>. A roll may give nothing.
+    /// </summary>
+    [ScriptFunction(helpText: "Rolls a loot table once into a container, or into the backpack of a mobile, and gives how many items it added; 0 for a roll that gives nothing, an unknown table or something that is no container.")]
+    public int AddLoot(long container, string table)
+    {
+        if (_loot is null ||
+            _serials is null ||
+            string.IsNullOrWhiteSpace(table) ||
+            !_loot.TryGet(table, out _) ||
+            TargetContainer(container) is not { } target)
+        {
+            return 0;
+        }
+
+        var contents = _items.GetContents(target.Id).ToList();
+        var added = 0;
+
+        foreach (var item in _loot.Roll(table))
+        {
+            // The pool is small: what it cannot name is left out.
+            if (contents.Count >= ContainerSlotUtils.SlotCount || !_serials.TryTake(out var serial))
+            {
+                break;
+            }
+
+            item.Id = serial;
+            item.PutInContainer(
+                target.Id,
+                _layouts?.RandomGridPosition(target.ItemId) ?? new Point2D(44, 65),
+                ContainerSlotUtils.FirstFree(contents)
+            );
+            _items.Add([item]);
+            contents.Add(item);
+            added++;
+
+            // A carried container shows its new item; one on the ground shows its contents when it is opened.
+            if (OwnerSession(item) is not null)
+            {
+                Refresh(item);
+            }
+        }
+
+        return added;
     }
 
     /// <summary>

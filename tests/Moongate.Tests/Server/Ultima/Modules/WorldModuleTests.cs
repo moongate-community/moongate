@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Server.Core.Types.Accounts;
@@ -27,6 +28,7 @@ namespace Moongate.Tests.Server.Ultima.Modules;
 public sealed class WorldModuleTests : IAsyncLifetime
 {
     private readonly SectorService _sectors = TestSectors.Create();
+    private readonly SettableClock _time = new();
     private readonly StubClockService _clock = new() { Time = new GameTime(21, 5) };
     private readonly ItemService _items = TestItems.Create();
     private readonly RegionService _regions = new(
@@ -238,6 +240,14 @@ public sealed class WorldModuleTests : IAsyncLifetime
         Assert.Equal(128, Assert.Single(_broadcast.Messages).Length);
     }
 
+    [Fact]
+    public void Now_IsTheSecondsSince1970_OfTheServerClock()
+    {
+        _time.Now = new DateTimeOffset(2026, 10, 3, 12, 0, 5, TimeSpan.Zero);
+
+        Assert.Equal(1_791_028_805, Run("return world.now()")[0].Read<long>());
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
@@ -245,7 +255,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
         binder.Bind(
             state,
-            new WorldModule(_sectors, _clock, _fixture.Sessions, _items, _regions, _sight, _movement, _weather, _seasons, _broadcast, _fixture.Mobiles)
+            new WorldModule(_sectors, _clock, _fixture.Sessions, _items, _regions, _sight, _movement, _weather, _seasons, _broadcast, _fixture.Mobiles, _time)
         );
         binder.BindEnum(state, typeof(MapType));
         binder.BindEnum(state, typeof(MoonPhaseType));

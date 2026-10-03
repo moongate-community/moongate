@@ -23,6 +23,7 @@ public sealed class WorldModule
 
     private readonly ISectorService _sectors;
     private readonly IClockService _clock;
+    private readonly TimeProvider _time;
     private readonly ISessionService _sessions;
     private readonly IItemService _items;
     private readonly IRegionService _regions;
@@ -45,9 +46,11 @@ public sealed class WorldModule
         IWeatherService? weather = null,
         ISeasonService? seasons = null,
         IBroadcastService? broadcast = null,
-        IMobileService? mobiles = null
+        IMobileService? mobiles = null,
+        TimeProvider? time = null
     )
     {
+        _time = time ?? TimeProvider.System;
         _sight = sight;
         _movement = movement;
         _weather = weather;
@@ -81,6 +84,16 @@ public sealed class WorldModule
                                  Equals(prop, wanted) &&
                                  _items.GetWornRoot(item)?.Layer != LayerType.Bank
                      );
+    }
+
+    /// <summary>
+    ///     Gets the real time as the seconds since 1970 (UTC), to keep in a prop when something happens next, such as a
+    ///     container's next refill; <c>world.now()</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The real time as whole seconds since 1970 (UTC): keep world.now() + 3600 in a prop to do something an hour from now, also after a restart.")]
+    public long Now()
+    {
+        return _time.GetUtcNow().ToUnixTimeSeconds();
     }
 
     /// <summary>

@@ -269,6 +269,15 @@ public sealed class MobileModuleTests
         Assert.Empty(_speech.Told);
     }
 
+    [Fact]
+    public void Template_IsTheIdOfTheMobilesTemplate_AndNilForAPlayerOrAnUnknownMobile()
+    {
+        var result = Run("return mobile.template(0x100), mobile.template(" + _aria.Id.Value + "), mobile.template(0x999)");
+
+        Assert.Equal("orc", result[0].Read<string>());
+        Assert.Equal([LuaValueType.Nil, LuaValueType.Nil], result[1..].Select(value => value.Type));
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();

@@ -458,6 +458,79 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AddLoot_RollsTheTableIntoAContainerOnTheGround_EachItemOnASlotOfItsOwn()
+    {
+        var chest = GroundChest();
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+        _serials.Serials.Enqueue(new Serial(0x40000101));
+
+        var result = Run("return item.add_loot(0x40000060, \"two_things\")");
+
+        Assert.Equal(2, result[0].Read<int>());
+        var contents = _items.GetContents(chest.Id);
+        Assert.Equal(["sword", "sword"], contents.Select(item => item.TemplateId));
+        Assert.Equal([new Serial(0x40000100), new Serial(0x40000101)], contents.Select(item => item.Id).Order());
+        Assert.Equal(2, contents.Select(item => item.GridIndex).Distinct().Count());
+        // Nobody is told: a chest shows its contents when it is opened.
+        Assert.Empty(_view.Calls);
+        Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public void AddLoot_IntoABackpack_ShowsTheItemsToTheOwner()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+        _serials.Serials.Enqueue(new Serial(0x40000101));
+
+        Assert.Equal(2, Run("return item.add_loot(2, \"two_things\")")[0].Read<int>());
+
+        Assert.Equal(2, _fixture.Sender.Sent.OfType<ContainerItemUpdatePacket>().Count());
+    }
+
+    [Fact]
+    public void AddLoot_ARollThatGivesNothing_AddsNothing()
+    {
+        GroundChest();
+
+        Assert.Equal(0, Run("return item.add_loot(0x40000060, \"nothing\")")[0].Read<int>());
+    }
+
+    [Fact]
+    public void AddLoot_WithNoSerialLeft_AddsWhatItCan()
+    {
+        var chest = GroundChest();
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+
+        Assert.Equal(1, Run("return item.add_loot(0x40000060, \"two_things\")")[0].Read<int>());
+
+        Assert.Single(_items.GetContents(chest.Id));
+    }
+
+    [Theory]
+    [InlineData("item.add_loot(0x40000060, \"missing\")")]
+    [InlineData("item.add_loot(0x40000004, \"two_things\")")]
+    [InlineData("item.add_loot(99, \"two_things\")")]
+    [InlineData("item.add_loot(0x40000060, \"\")")]
+    public void AddLoot_AnUnknownTableOrSomethingThatIsNoContainer_AddsNothing(string call)
+    {
+        GroundChest();
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+
+        Assert.Equal(0, Run("return " + call)[0].Read<int>());
+
+        Assert.Single(_serials.Serials);
+    }
+
+    private ItemEntity GroundChest()
+    {
+        var chest = new ItemEntity { Id = new Serial(0x40000060), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
+        chest.PlaceOnGround(MapType.Trammel, new Point3D(1601, 1600, 0));
+        _items.Add([chest]);
+
+        return chest;
+    }
+
+    [Fact]
     public void Contents_ListsWhatLiesDirectlyInTheContainer()
     {
         var result = Run("local inside = item.contents(0x40000001) return #inside, inside[1], #item.contents(0x40000002), #item.contents(12)");
@@ -519,6 +592,7 @@ public sealed class ItemModuleTests : IAsyncLifetime
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
+        var factory = new FakeItemFactoryService(_templates, _tiles);
         var module = new ItemModule(
             _items,
             _fixture.Sessions,
@@ -528,10 +602,20 @@ public sealed class ItemModuleTests : IAsyncLifetime
             _fixture.Mobiles,
             _speech,
             _sectors,
-            new FakeItemFactoryService(_templates, _tiles),
+            factory,
             _serials,
             tiles: _tiles,
-            templates: _templates
+            templates: _templates,
+            loot: new LootService(
+                new StubDataLoaderService().With(
+                    // What does not stack comes as that many items.
+                    new LootTemplate { Id = "two_things", Entries = [new() { ItemId = "sword", Amount = RangeValueSpec<int>.FromValue(2) }] },
+                    new LootTemplate { Id = "nothing", Entries = [new()] }
+                ),
+                factory,
+                _templates,
+                _tiles
+            )
         );
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
