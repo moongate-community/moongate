@@ -198,7 +198,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Games (chess, checkers, backgammon) | ❌ | |
 | Plants and farming | ❌ | |
 | Dungeon traps and puzzles | ❌ | |
-| Dungeon and town chests that refill | 🟡 | The dungeon treasure chests of ModernUO, levels 1 to 4: a spawn region makes one with gold and loot, it decays and a new one comes; no lock or trap, no town containers |
+| Dungeon and town chests that refill | 🟡 | The dungeon treasure chests of ModernUO, levels 1 to 4: a spawn region makes one with gold and loot, it decays and a new one comes. The town crates, chests, barrels and bookcases fill up when opened, every 60 to 90 minutes, from the 35 tables of ModernUO. No lock or trap |
 | Messages in a bottle and fished-up treasure | ❌ | |
 | Item attributes: blessed, cursed, newbie, insured | 🟡 | Blessed and cursed in tooltips; no rules behind them |
 | Deeds and redeeding | ❌ | |

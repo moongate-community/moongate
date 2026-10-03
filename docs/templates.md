@@ -491,6 +491,11 @@ client as its name, unless the item has a name of its own. A teleporter's `point
 `teleport.y` and `teleport.z`, and its `map_dest` the prop `teleport.map`, a `MapType` number.
 A `KeywordTeleporter` takes the template `decoration_keyword_teleporter`, with
 `script_id = "keyword_teleport"`, and keeps its `substring`, `keyword`, `range` and `delay` as props.
+A `Fillable...` kind (crate, box, chest, barrel) or a `LibraryBookcase` takes the template
+`decoration_fillable`, with `script_id = "fillable"`: a
+[container that fills up](scripting.md#item-scripts) when it is opened. Its `content_type`
+(`Inn`, `ThiefGuild`) is kept as the name of its table (`inn`, `thief_guild`), a bookcase is a
+`library`, and one placed as plain decoration by an earlier run becomes fillable where it stands.
 A `PublicMoongate` takes the template `decoration_public_moongate`, with
 `script_id = "public_moongate"` and the light `circle300` in its props unless the data gives
 another; `.decorate` also places one on every destination of
