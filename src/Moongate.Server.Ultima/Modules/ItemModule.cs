@@ -108,14 +108,16 @@ public sealed class ItemModule
     }
 
     /// <summary>
-    ///     Rolls a loot table of <c>templates/loots</c> once and puts what it gives into a container, or into the
-    ///     backpack of a mobile; <c>item.add_loot(chest, "fillable_baker")</c>. A roll may give nothing.
+    ///     Rolls a loot table of <c>templates/loots</c> once, or <paramref name="rolls" /> times, and puts what it gives
+    ///     into a container, or into the backpack of a mobile; <c>item.add_loot(chest, "fillable_baker")</c>,
+    ///     <c>item.add_loot(chest, "fillable_baker", 4)</c>. A roll may give nothing.
     /// </summary>
-    [ScriptFunction(helpText: "Rolls a loot table once into a container, or into the backpack of a mobile, and gives how many items it added; 0 for a roll that gives nothing, an unknown table or something that is no container.")]
-    public int AddLoot(long container, string table)
+    [ScriptFunction(helpText: "Rolls a loot table once, or rolls times, into a container, or into the backpack of a mobile, and gives how many items it added; 0 for rolls that give nothing, an unknown table or something that is no container.")]
+    public int AddLoot(long container, string table, int rolls = 1)
     {
         if (_loot is null ||
             _serials is null ||
+            rolls < 1 ||
             string.IsNullOrWhiteSpace(table) ||
             !_loot.TryGet(table, out _) ||
             TargetContainer(container) is not { } target)
@@ -126,7 +128,8 @@ public sealed class ItemModule
         var contents = _items.GetContents(target.Id).ToList();
         var added = 0;
 
-        foreach (var item in _loot.Roll(table))
+        // The contents are read once for all the rolls.
+        foreach (var item in Enumerable.Range(0, rolls).SelectMany(_ => _loot.Roll(table)))
         {
             // The pool is small: what it cannot name is left out.
             if (contents.Count >= ContainerSlotUtils.SlotCount || !_serials.TryTake(out var serial))

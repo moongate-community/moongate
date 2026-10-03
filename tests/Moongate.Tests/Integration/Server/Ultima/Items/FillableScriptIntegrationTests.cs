@@ -65,6 +65,7 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
     private ItemService _items = null!;
     private uint _nextItem = 0x40000010;
     private uint _nextNpc = 0x100;
+    private uint _nextLoot = 0x40001000;
 
     public async Task InitializeAsync()
     {
@@ -72,10 +73,7 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
         await _fixture.AddAsync(Player);
         _items = TestItems.Create(_fixture.Sectors);
 
-        for (var serial = 0x40001000u; serial < 0x40001040u; serial++)
-        {
-            _serials.Serials.Enqueue(new Serial(serial));
-        }
+        Refill();
 
         _scripts.Write(
             "items/fillable.lua",
@@ -234,19 +232,44 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
-    // Up to (1 + 2 - items) * 2, as ModernUO: none to six for an empty one, none to two for one with two items.
+    // Up to (1 + 2 - items) * 2, as ModernUO: none to six for an empty one, none to two for one with two items. Over
+    // many crates the share is never passed and is not always nothing.
     [Theory]
     [InlineData(0, 6)]
     [InlineData(2, 2)]
     public void ACrateWithFewItems_GetsUpToItsShare(int held, int most)
     {
+        var added = new List<int>();
+
+        for (var index = 0; index < 20; index++)
+        {
+            var crate = Container("baker");
+            Put(crate, held);
+
+            Open(crate);
+
+            added.Add(_items.GetContents(crate.Id).Count(item => item.TemplateId == "bread"));
+            Assert.InRange(NextFill(crate), Now() + Hour, Now() + Hour + Hour / 2);
+            Refill();
+        }
+
+        Assert.InRange(added.Max(), 1, most);
+        Assert.Empty(_errors);
+    }
+
+    // As ModernUO, what counts is how many things lie inside, not how many piles.
+    [Fact]
+    public void ACrateWithOnePileOfThreeThings_IsFullEnough()
+    {
         var crate = Container("baker");
-        Put(crate, held);
+        var arrows = new ItemEntity { Id = new Serial(_nextItem++), TemplateId = "hammer", ItemId = 0x13E3, Amount = 3 };
+        arrows.PutInContainer(crate.Id, new Point2D(10, 10));
+        _items.Add([arrows]);
 
         Open(crate);
 
-        Assert.InRange(_items.GetContents(crate.Id).Count(item => item.TemplateId == "bread"), 0, most);
-        Assert.InRange(NextFill(crate), Now() + Hour, Now() + Hour + Hour / 2);
+        Assert.Equal([arrows], _items.GetContents(crate.Id));
+        Assert.False(crate.TryGetProp<long>("fill.next", out _));
         Assert.Empty(_errors);
     }
 
@@ -260,17 +283,27 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
         await AddNpcAsync("f_blacksmith", 1510, 1600);
         await AddNpcAsync(template, 1503, 1602);
         await AddNpcAsync("orc", 1500, 1601);
+        var found = new List<string>();
+
+        // Several crates on the spot: one alone may get nothing.
+        for (var index = 0; index < 10; index++)
+        {
+            var other = Container(null);
+            Open(other);
+            found.AddRange(_items.GetContents(other.Id).Select(item => item.TemplateId));
+        }
 
         Open(crate);
 
         Assert.True(crate.TryGetProp<string>("content_type", out var kind));
         Assert.Equal("baker", kind);
-        Assert.All(_items.GetContents(crate.Id), item => Assert.Equal("bread", item.TemplateId));
+        Assert.NotEmpty(found);
+        Assert.All(found, template => Assert.Equal("bread", template));
         Assert.Empty(_errors);
     }
 
     [Fact]
-    public async Task ACrateWithNoVendorWithinTwentyTiles_StaysEmpty_AndLooksAgainAtTheNextOpening()
+    public async Task ACrateWithNoVendorWithinTwentyTiles_StaysEmpty_AndLooksAgainFiveMinutesLater()
     {
         var crate = Container(null);
         await AddNpcAsync("baker", 1521, 1600);
@@ -279,7 +312,20 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
         Open(crate);
 
         Assert.Empty(_items.GetContents(crate.Id));
-        Assert.Null(crate.Props);
+        Assert.False(crate.TryGetProp<string>("content_type", out _));
+        // Not at every double click: looking for the vendors around costs.
+        Assert.Equal(Now() + 300, NextFill(crate));
+
+        // A baker comes to stand by; four minutes later the crate still waits, six minutes later it sees him.
+        await AddNpcAsync("baker", 1501, 1600);
+        _clock.Advance(TimeSpan.FromMinutes(4));
+        Open(crate);
+        Assert.False(crate.TryGetProp<string>("content_type", out _));
+
+        _clock.Advance(TimeSpan.FromMinutes(2));
+        Open(crate);
+        Assert.True(crate.TryGetProp<string>("content_type", out var kind));
+        Assert.Equal("baker", kind);
         Assert.Empty(_errors);
     }
 
@@ -339,6 +385,17 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
             var item = new ItemEntity { Id = new Serial(_nextItem++), TemplateId = "hammer", ItemId = 0x13E3, Amount = 1 };
             item.PutInContainer(container.Id, new Point2D(10, 10), (byte)index);
             _items.Add([item]);
+        }
+    }
+
+    // The pool of the test holds 64 serials.
+    private void Refill()
+    {
+        _serials.Serials.Clear();
+
+        for (var serial = 0; serial < 64; serial++)
+        {
+            _serials.Serials.Enqueue(new Serial(_nextLoot++));
         }
     }
 

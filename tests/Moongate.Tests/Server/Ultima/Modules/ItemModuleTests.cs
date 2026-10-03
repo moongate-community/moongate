@@ -477,6 +477,32 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AddLoot_WithANumberOfRolls_RollsTheTableThatManyTimes()
+    {
+        var chest = GroundChest();
+
+        for (var serial = 0x40000100u; serial < 0x40000106u; serial++)
+        {
+            _serials.Serials.Enqueue(new Serial(serial));
+        }
+
+        Assert.Equal(6, Run("return item.add_loot(0x40000060, \"two_things\", 3)")[0].Read<int>());
+
+        var contents = _items.GetContents(chest.Id);
+        Assert.Equal(6, contents.Count);
+        Assert.Equal(6, contents.Select(item => item.GridIndex).Distinct().Count());
+    }
+
+    [Theory, InlineData(0), InlineData(-1)]
+    public void AddLoot_WithNoRolls_AddsNothing(int rolls)
+    {
+        GroundChest();
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+
+        Assert.Equal(0, Run($"return item.add_loot(0x40000060, \"two_things\", {rolls})")[0].Read<int>());
+    }
+
+    [Fact]
     public void AddLoot_IntoABackpack_ShowsTheItemsToTheOwner()
     {
         _serials.Serials.Enqueue(new Serial(0x40000100));

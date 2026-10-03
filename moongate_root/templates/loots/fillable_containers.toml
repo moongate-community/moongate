@@ -148,6 +148,11 @@ comment = "TinkerTools"
 
 [[loot.entries]]
 weight = 1
+item_id = "0x12b3_mallet_and_chisel"
+comment = "MalletAndChisel"
+
+[[loot.entries]]
+weight = 1
 item_id = "0x1224_statue"
 comment = "StatueEast2"
 
@@ -683,7 +688,7 @@ comment = "Loot.WeaponTypes"
 
 [[loot.entries]]
 weight = 3
-loot_template_id = "lowlevelarmor"
+loot_template_id = "randomshields"
 comment = "Loot.ShieldTypes"
 
 [[loot.entries]]
@@ -708,7 +713,7 @@ comment = "Loot.WeaponTypes"
 
 [[loot.entries]]
 weight = 3
-loot_template_id = "lowlevelarmor"
+loot_template_id = "randomshields"
 comment = "Loot.ShieldTypes"
 
 [[loot.entries]]
@@ -1792,6 +1797,11 @@ comment = "Springs"
 weight = 5
 item_id = "0x1eb8_tool_kit"
 comment = "TinkerTools"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1024_arrow_shafts"
+comment = "DecoArrowShafts"
 
 [[loot.entries]]
 weight = 4

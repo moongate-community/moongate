@@ -14,7 +14,7 @@
 --   fillable_baker: ".decorate" sets it where the decoration names one, and a
 --   bookcase is a "library". Without it the container takes the kind of the
 --   nearest vendor within 20 tiles and keeps it; with no vendor around it
---   stays empty and looks again at the next opening.
+--   stays empty and looks again five minutes later.
 --
 -- Props:
 --   content_type   the kind: the table is fillable_<content_type>
@@ -38,6 +38,9 @@ local vendor_range = 20
 -- Seconds between two fills.
 local min_wait = 60 * 60
 local max_wait = 90 * 60
+
+-- Seconds before a container with no vendor around looks for one again.
+local vendor_wait = 5 * 60
 
 -- Mobile template -> kind, as the vendors of ModernUO's tables. The female and
 -- male templates (f_baker, m_baker) count as their trade.
@@ -142,23 +145,31 @@ function fillable.on_use(serial, user)
         return
     end
 
-    local count = #item.contents(serial)
     local kind = kind_of(serial)
 
-    -- Full enough, or of no kind yet: looked at again at the next opening.
-    if not kind or (kind == "library" and count >= library_size) or (kind ~= "library" and count > threshold) then
+    -- No vendor around yet: looked for again a little later, not at every double click.
+    if not kind then
+        item.set_prop(serial, "fill.next", now + vendor_wait)
+
+        return
+    end
+
+    -- As ModernUO, what counts is how many things lie inside: a pile of six arrows is six.
+    local count = 0
+
+    for _, inside in ipairs(item.contents(serial)) do
+        count = count + (item.amount(inside) or 1)
+    end
+
+    -- Full enough: looked at again at the next opening.
+    if (kind == "library" and count >= library_size) or (kind ~= "library" and count > threshold) then
         return
     end
 
     local wanted = share(kind, count)
-    local added = 0
-
-    for _ = 1, wanted do
-        added = added + item.add_loot(serial, "fillable_" .. kind)
-    end
 
     -- Rolls that added nothing, such as when the server has no item serial at hand: tried again at the next opening.
-    if wanted > 0 and added == 0 then
+    if wanted > 0 and item.add_loot(serial, "fillable_" .. kind, wanted) == 0 then
         return
     end
 

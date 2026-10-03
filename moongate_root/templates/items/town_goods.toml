@@ -1,0 +1,30 @@
+# ==============================================================================
+# Moongate - templates/items/town_goods.toml
+#
+# What it is for:
+#   Two goods of the town containers (templates/loots/fillable_containers.toml)
+#   that the converted item files do not have: the mallet and chisel of the
+#   artisans and the arrow shafts of the tinkers.
+#
+# Fields:
+#   base_id   inherits base_item
+#   item_id   the graphic
+#   name      the name shown
+#   weight    in stones
+# ==============================================================================
+
+[[item]]
+id = "0x12b3_mallet_and_chisel"
+base_id = "base_item"
+item_id = 0x12B3
+name = "mallet and chisel"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1024_arrow_shafts"
+base_id = "base_item"
+item_id = 0x1024
+name = "arrow shafts"
+rarity = "common"
+weight = 1.0
