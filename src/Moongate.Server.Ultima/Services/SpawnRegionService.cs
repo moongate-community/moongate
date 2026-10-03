@@ -288,6 +288,18 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
                 region.Filled = true;
                 region.FillNow = false;
             }
+            // Said once, when it starts: a region that never finds a spot retries every minute.
+            if (missed && !region.Retrying)
+            {
+                _logger.Warning(
+                    "Spawn {Region} ({Name}) on {Map} found no spot for {Count} spawn(s); retrying every minute",
+                    template.Id,
+                    template.Name,
+                    template.Map,
+                    count
+                );
+            }
+
             region.Retrying = missed;
 
             region.NextSpawn = missed

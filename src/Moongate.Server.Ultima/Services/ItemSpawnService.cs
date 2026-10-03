@@ -12,7 +12,7 @@ namespace Moongate.Server.Ultima.Services;
 /// <summary>
 ///     Makes an item on the ground with what its template puts inside: the gold in piles, then each loot table rolled
 ///     once. The item is saved before its contents, which need its serial; if their save fails the item never enters
-///     the world, and its empty row decays after the next start.
+///     the world and its row is queued for deletion.
 /// </summary>
 public sealed class ItemSpawnService : IItemSpawnService
 {
@@ -88,11 +88,22 @@ public sealed class ItemSpawnService : IItemSpawnService
 
         if (contents.Count > 0)
         {
-            await _factory.SaveAsync(contents, cancellationToken);
+            try
+            {
+                await _factory.SaveAsync(contents, cancellationToken);
+            }
+            catch
+            {
+                // The item is saved and its contents are not: its row goes with the next world save, or an empty
+                // chest would come back at the next start.
+                await OnLoopAsync(() => _items.Absorb(item));
+
+                throw;
+            }
         }
 
         // Saved already: from here the item is live whatever the caller does.
-        var enter = new LoopActionWorkItem(
+        await OnLoopAsync(
             () =>
             {
                 foreach (var created in contents.Prepend(item))
@@ -104,10 +115,15 @@ public sealed class ItemSpawnService : IItemSpawnService
                 _view.ItemAppeared(item);
             }
         );
-        await _loop.PostAsync(enter, CancellationToken.None);
-        await enter.Completion;
 
         return item;
+    }
+
+    private async Task OnLoopAsync(Action action)
+    {
+        var work = new LoopActionWorkItem(action);
+        await _loop.PostAsync(work, CancellationToken.None);
+        await work.Completion;
     }
 
     private void Pack(ItemEntity container, ItemEntity item, List<ItemEntity> contents)

@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Templates.Items;
@@ -144,5 +145,27 @@ public sealed class ItemSpawnServiceTests
 
         Assert.Empty(_items.Items);
         Assert.Empty(_view.Calls);
+    }
+
+    // The chest was saved before its contents failed: its row must not come back as an empty chest at the next start.
+    [Fact]
+    public async Task SpawnAsync_AContentsSaveThatFails_QueuesTheSavedItemForDeletion()
+    {
+        _factory.FailingSave = 2;
+
+        await Assert.ThrowsAsync<IOException>(() => _service.SpawnAsync("chest", MapType.Felucca, Spot));
+
+        var chest = Assert.Single(_factory.Saved[0]);
+        Assert.Equal([chest.Id], ((IPersistenceDeletionSource)_items).Capture());
+    }
+
+    [Fact]
+    public async Task SpawnAsync_AFirstSaveThatFails_QueuesNothingForDeletion()
+    {
+        _factory.FailingSave = 1;
+
+        await Assert.ThrowsAsync<IOException>(() => _service.SpawnAsync("chest", MapType.Felucca, Spot));
+
+        Assert.Empty(((IPersistenceDeletionSource)_items).Capture());
     }
 }
