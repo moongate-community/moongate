@@ -24,6 +24,7 @@ using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
 using Moongate.Server.Ultima;
+using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces;
@@ -232,6 +233,16 @@ public sealed class ServerRoleRegistrationTests
             Assert.IsType<EffectService>(container.Resolve<IEffectService>());
             Assert.IsType<PublicMoongateService>(container.Resolve<IPublicMoongateService>());
             Assert.NotNull(container.Resolve<MoongatesModule>());
+            Assert.IsType<LocationService>(container.Resolve<ILocationService>());
+            Assert.NotNull(container.Resolve<LocationsModule>());
+            // The places and the gump are optional in its constructor: the container must still hand them over.
+            var go = container.Resolve<GoCommand>();
+            Assert.All(
+                new[] { "_locations", "_gumps" },
+                field => Assert.NotNull(
+                    typeof(GoCommand).GetField(field, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.GetValue(go)
+                )
+            );
             Assert.IsType<ItemHearingService>(container.Resolve<IItemSpeechListener>());
             Assert.NotNull(container.Resolve<EffectModule>());
             Assert.Contains(typeof(EffectGraphicType), container.Resolve<IScriptModuleRegistry>().EnumTypes);

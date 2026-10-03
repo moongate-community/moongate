@@ -79,6 +79,11 @@ public sealed class LocationsLoaderTests
      InlineData("location = \"(2499, 919, 0)\"", ""),
      InlineData("location = \"(2499, 919, 0)\"", "location = \"(2499, 919, 200)\""),
      InlineData("location = \"(2499, 919, 0)\"", "location = \"(-1, 919, 0)\""),
+     InlineData("location = \"(2499, 919, 0)\"", "location = \"(0, 0, 0)\""),
+     InlineData("location = \"(2499, 919, 0)\"", "location = \"(65536, 919, 0)\""),
+     InlineData("location = \"(2499, 919, 0)\"", "location = \"(2499, 65536, 0)\""),
+     InlineData("location = \"(2499, 919, 0)\"", "location = \"(2499, -1, 0)\""),
+     InlineData("location = \"(2499, 919, 0)\"", "location = \"(2499, 919, -129)\""),
      InlineData("category = \"Dungeons/Covetous\"", "category = \"Dungeons//Covetous\""),
      InlineData("category = \"Dungeons/Covetous\"", "category = \"Dungeons/\"")]
     public async Task LoadDataAsync_ABadPlace_ThrowsInvalidDataException(string from, string to)

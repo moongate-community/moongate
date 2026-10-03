@@ -23,7 +23,9 @@ In game only.
 on the level of your map: its categories first (`Dungeons`, `Towns`, ...), then the places listed
 under the map itself, twelve per page. A category opens the level below it, `Back` the one above,
 up to the list of the maps. A place takes you there at once and the gump stays open, so you can
-hop from one to the next.
+hop from one to the next; a place the world refuses, such as one outside its map, says so with
+`You cannot go to Arena: its map is not loaded or the spot is outside it.` Long paths and names
+are cut at the frame.
 
 The gump is [`templates/gumps/go.xml`](../gumps.md) and its rows come from
 `scripts/gumps/go.lua`; both are yours to change. Without `locations.toml`, or when none of its

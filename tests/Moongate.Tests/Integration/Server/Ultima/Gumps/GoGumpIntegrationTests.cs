@@ -47,6 +47,7 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
     private readonly RecordingTimerService _timers = new();
     private readonly RecordingGumpService _gumps = new();
     private readonly RecordingTeleportService _teleports = new();
+    private readonly RecordingSpeechService _speech = new();
     private readonly List<ScriptErrorEvent> _errors = [];
     private readonly List<NamedLocation> _places =
     [
@@ -90,7 +91,7 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IItemService>(items);
         _container.RegisterInstance<ISessionService>(_fixture.Sessions);
         _container.RegisterInstance<IMobileService>(_fixture.Mobiles);
-        _container.RegisterInstance<ISpeechService>(new RecordingSpeechService());
+        _container.RegisterInstance<ISpeechService>(_speech);
         _container.RegisterInstance<ISectorService>(_fixture.Sectors);
         _container.RegisterInstance<IClockService>(new StubClockService());
         _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
@@ -198,6 +199,42 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
         Assert.Equal((new Serial((uint)Staff), MapType.Felucca, new Point3D(1400, 1500, -3)), (mobile.Id, map, location));
         Assert.Contains("Arena", _gumps.Opened[1].Gump.Layout.Build().Strings);
         Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void APlaceTheWorldRefuses_TellsTheTraveller_AndKeepsTheGumpOpen()
+    {
+        _teleports.Result = false;
+        Open(Staff, "Felucca");
+
+        Answer(0, 3);
+
+        var (player, text) = Assert.Single(_speech.Told);
+        Assert.Equal((new Serial((uint)Staff), "You cannot go to Arena: its map is not loaded or the spot is outside it."), (player.Id, text));
+        Assert.Equal(2, _gumps.Opened.Count);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void APlaceTheWorldAccepts_TellsNothing()
+    {
+        Open(Staff, "Felucca");
+
+        Answer(0, 3);
+
+        Assert.Empty(_speech.Told);
+    }
+
+    // A long path or name is cut at the frame instead of running over it.
+    [Fact]
+    public void TheTexts_AreCutToTheFrame()
+    {
+        var built = Open(Staff, "Felucca");
+
+        // The heading of the frame is the one text left as it is.
+        Assert.Single(System.Text.RegularExpressions.Regex.Matches(built.Layout, @"\{ text "));
+        // The path, Back, Towns and Arena.
+        Assert.Equal(4, System.Text.RegularExpressions.Regex.Matches(built.Layout, @"\{ croppedtext ").Count);
     }
 
     [Fact]

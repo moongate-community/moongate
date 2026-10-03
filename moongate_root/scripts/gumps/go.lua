@@ -6,7 +6,8 @@
 --   by .go: it fills the "rows" slot with one level of data/locations.toml, the
 --   categories first and then the places, twelve per page. A category opens
 --   the gump one level down, a place takes the traveller there and keeps the
---   gump open. Staff only: anyone else sees an empty gump.
+--   gump open; a place the world refuses says so. Texts are cut at the frame.
+--   Staff only: anyone else sees an empty gump.
 --
 -- Functions:
 --   rows(g, player, args)  fills the slot; args.path is the level to list,
@@ -18,6 +19,11 @@ go = {}
 local per_page = 12
 local row_height = 22
 local first_row = 50
+
+-- The frame is 460 wide and the slot starts at 20: texts are cut here instead of running over the edge.
+local title_width = 420
+local row_width = 380
+local text_height = 20
 
 local title_hue = 68
 local category_hue = 1152
@@ -39,16 +45,17 @@ function go.rows(g, player, args)
     -- A level that is no longer there, such as after the file changed: the maps.
     local node = locations.node(args.path or "") or locations.node("")
 
-    g:text{ x = 0, y = 0, hue = title_hue, text = node.path == "" and "All maps" or node.path }
+    g:label_cropped{ x = 0, y = 0, width = title_width, height = text_height, hue = title_hue,
+        text = node.path == "" and "All maps" or node.path }
 
     if node.path ~= "" then
         g:button{ x = 0, y = 22, up = 4014, down = 4015, on_click = function(who)
             open(who, above(node.path))
         end }
-        g:text{ x = 35, y = 22, text = "Back" }
+        g:label_cropped{ x = 35, y = 22, width = row_width, height = text_height, text = "Back" }
     end
 
-    g:pager{ previous = { x = 0, y = 330 }, next = { x = 290, y = 330 } }
+    g:pager{ previous = { x = 0, y = 330 }, next = { x = 390, y = 330 } }
 
     local index = 0
 
@@ -59,7 +66,7 @@ function go.rows(g, player, args)
         g:button{ x = 0, y = y, up = 4005, down = 4007, on_click = function(who)
             open(who, category.path)
         end }
-        g:text{ x = 35, y = y, hue = category_hue, text = category.name }
+        g:label_cropped{ x = 35, y = y, width = row_width, height = text_height, hue = category_hue, text = category.name }
     end
 
     for _, place in ipairs(node.locations) do
@@ -72,9 +79,12 @@ function go.rows(g, player, args)
                 return
             end
 
-            mobile.teleport(who, place.x, place.y, place.z, place.map)
+            if not mobile.teleport(who, place.x, place.y, place.z, place.map) then
+                mobile.message(who, "You cannot go to " .. place.name .. ": its map is not loaded or the spot is outside it.")
+            end
+
             open(who, node.path)
         end }
-        g:text{ x = 35, y = y, text = place.name }
+        g:label_cropped{ x = 35, y = y, width = row_width, height = text_height, text = place.name }
     end
 end
