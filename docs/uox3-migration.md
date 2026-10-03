@@ -3,9 +3,9 @@
 `mgctl convert uox` converts [UOX3](https://github.com/UOX3DevTeam/UOX3) `.dfn` item
 definitions and loot lists into Moongate's `ItemTemplate` and `LootTemplate` TOML, and
 UOX3 NPCs, NPC lists, spawn regions and name lists into `MobileTemplate`, NPC list and
-spawn TOML and `names.toml`. Three more commands convert ModernUO's
-[signs](#signs-of-modernuo), [teleporters](#teleporters-of-modernuo) and
-[spawners](#spawns-of-modernuo).
+spawn TOML and `names.toml`. Four more commands convert ModernUO's
+[signs](#signs-of-modernuo), [teleporters](#teleporters-of-modernuo),
+[named places](#named-places-of-modernuo) and [spawners](#spawns-of-modernuo).
 The shapes it writes are described in [Loading TOML templates](templates.md#the-template-shapes);
 the server loads them at startup from `templates/`.
 
@@ -256,6 +256,22 @@ It writes one `teleporters.toml` per map folder of the
 from its destination to its source, and a later entry replaces an earlier one on the same cell
 within 12 of height, as `[TelGen` does. An entry that is not a teleporter stops the run and names
 itself, and nothing is written. [`.decorate`](commands/decorate.md) places them.
+
+## Named places of ModernUO
+
+The places of ModernUO's `[Go` gump, one JSON file per map with categories inside categories,
+become [`locations.toml`](data-files/locations.md), which [`.go`](commands/go.md) lists and
+travels to:
+
+```sh
+dotnet run --project src/Moongate.Ctl -- convert modernuo-locations \
+  --source <ModernUO>/Distribution/Data/Locations --destination moongate_root/data/locations.toml
+```
+
+It reads `felucca.json`, `trammel.json`, `ilshenar.json`, `malas.json`, `tokuno.json` and
+`termur.json`, those that are there, and writes one `[[location]]` per place with its map, its
+categories joined by `/`, its name and its spot, replacing the file of a previous run. A place
+without a name or without three numbers stops the run and names itself, and nothing is written.
 
 ## Spawns of ModernUO
 
