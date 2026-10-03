@@ -40,6 +40,7 @@ public sealed class ItemModuleTests : IAsyncLifetime
             new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
             new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) },
             new ItemTemplate { Id = "bag", ItemId = new Serial(0x0E76) },
+            new ItemTemplate { Id = "shirt", ItemId = new Serial(0x1517), Layer = LayerType.Shirt },
             // The graphic does not stack by its tiledata, the template says it does.
             new ItemTemplate { Id = "arrows", ItemId = new Serial(0x0F3F), Stackable = true },
             // And the reverse.
@@ -637,10 +638,100 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.False(result[0].Read<bool>());
     }
 
+    [Fact]
+    public void Equip_AnItemFromTheBackpack_PutsItOnTheMobileAndShowsItToThoseAround()
+    {
+        var shirt = Shirt(0x40000080);
+        shirt.PutInContainer(_backpack.Id, new Point2D(50, 50));
+        _items.Add([shirt]);
+
+        Assert.True(Run("return item.equip(0x40000080, 2)")[0].Read<bool>());
+
+        Assert.Equal((new Serial(2), LayerType.Shirt), (shirt.MobileId!.Value, shirt.Layer!.Value));
+        Assert.Contains(shirt, _items.GetWorn(new Serial(2)));
+        Assert.Equal(["Worn 2 1073741952"], _view.Calls);
+    }
+
+    [Fact]
+    public void Equip_AGroundItem_TakesItOffTheGround()
+    {
+        var shirt = Shirt(0x40000080);
+        _items.Add([shirt]);
+        _items.PlaceOnGround(shirt, MapType.Trammel, new Point3D(1600, 1600, 0));
+
+        Assert.True(Run("return item.equip(0x40000080, 2)")[0].Read<bool>());
+
+        Assert.Null(shirt.GroundLocation);
+        Assert.False(_items.IsLyingOnGround(shirt));
+        Assert.Equal(["Disappeared 1073741952", "Worn 2 1073741952"], _view.Calls);
+    }
+
+    [Fact]
+    public void Equip_WhatCannotBeWorn_IsRefused()
+    {
+        var shirt = Shirt(0x40000080);
+        var second = Shirt(0x40000081);
+        var others = Shirt(0x40000083);
+        var otherBackpack = new ItemEntity { Id = new Serial(0x40000070), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        otherBackpack.Equip(new Serial(3), LayerType.Backpack);
+        shirt.Equip(new Serial(2), LayerType.Shirt);
+        second.PutInContainer(_backpack.Id, new Point2D(50, 50));
+        others.PutInContainer(otherBackpack.Id, new Point2D(60, 50));
+        _items.Add([shirt, second, otherBackpack, others]);
+
+        var result = Run(
+            "return item.equip(0x40000081, 2), item.equip(0x40000080, 2), " +
+            "item.equip(0x40000002, 2), item.equip(0x40000081, 99), item.equip(12, 2), item.equip(0x40000083, 2)"
+        );
+
+        // The layer is taken, it is already worn, potions have no layer, no such mobile, no such item, another mobile
+        // carries it.
+        Assert.All(result, value => Assert.False(value.Read<bool>()));
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public async Task Equip_AnItemAPlayerHolds_IsRefused()
+    {
+        var shirt = Shirt(0x40000080);
+        shirt.PutInContainer(_backpack.Id, new Point2D(50, 50));
+        _items.Add([shirt]);
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == new Serial(2));
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(shirt.Id)));
+
+        Assert.False(Run("return item.equip(0x40000080, 2)")[0].Read<bool>());
+        Assert.Null(shirt.MobileId);
+    }
+
+    [Fact]
+    public void Find_GivesTheItemsOfATemplateInAContainerAtAnyDepth_OrCarriedByAMobile()
+    {
+        var bag = new ItemEntity { Id = new Serial(0x40000090), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
+        var deep = new ItemEntity { Id = new Serial(0x40000091), TemplateId = "potion", ItemId = 0x0F0E, Amount = 1 };
+        bag.PutInContainer(_backpack.Id, new Point2D(50, 50));
+        deep.PutInContainer(bag.Id, new Point2D(50, 50));
+        _items.Add([bag, deep]);
+
+        var result = Run(
+            "local inside, carried, sword = item.find(0x40000001, 'potion'), item.find(2, 'potion'), item.find(2, 'sword') " +
+            "table.sort(inside) table.sort(carried) " +
+            "return #inside, inside[1], inside[2], #carried, #sword, sword[1], #item.find(0x40000090, 'sword'), " +
+            "#item.find(12, 'potion'), #item.find(3, 'potion'), #item.find(0x40000003, 'potion')"
+        );
+
+        Assert.Equal([2, 0x40000002, 0x40000091, 2, 1, 0x40000004, 0, 0, 0, 0], result.Select(value => value.Read<int>()));
+    }
+
+    private static ItemEntity Shirt(uint serial)
+    {
+        return new() { Id = new Serial(serial), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
+        state.OpenTableLibrary();
         var factory = new FakeItemFactoryService(_templates, _tiles);
         var module = new ItemModule(
             _items,
@@ -655,6 +746,7 @@ public sealed class ItemModuleTests : IAsyncLifetime
             _serials,
             tiles: _tiles,
             templates: _templates,
+            equipment: new EquipmentService(_templates, _tiles, _items),
             loot: new LootService(
                 new StubDataLoaderService().With(
                     // What does not stack comes as that many items.

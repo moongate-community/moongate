@@ -50,6 +50,7 @@ public sealed class ItemModule
     private readonly ITileDataService? _tiles;
     private readonly IItemTemplateService? _templates;
     private readonly ILootService? _loot;
+    private readonly IEquipmentService? _equipment;
 
     public ItemModule(
         IItemService items,
@@ -65,9 +66,11 @@ public sealed class ItemModule
         IContainerLayoutService? layouts = null,
         ITileDataService? tiles = null,
         IItemTemplateService? templates = null,
-        ILootService? loot = null
+        ILootService? loot = null,
+        IEquipmentService? equipment = null
     )
     {
+        _equipment = equipment;
         _loot = loot;
         _templates = templates;
         _factory = factory;
@@ -507,6 +510,72 @@ public sealed class ItemModule
     }
 
     /// <summary>
+    ///     Puts the item on a mobile, on the layer its template gives it; <c>item.equip(serial, user)</c>. The layer must
+    ///     be free. Those who saw the item where it was lose it and everyone around sees it worn; its script's
+    ///     <c>can_equip</c> is not asked.
+    /// </summary>
+    [ScriptFunction(helpText: "Puts the item on the mobile, on its template's layer; false for a worn or held item, a stack, an item without a layer or one the mobile cannot wear, a taken layer, a mobile not in the world, or an item another mobile carries.")]
+    public bool Equip(long serial, long mobile)
+    {
+        if (_equipment is null ||
+            !TryGetItem(serial, out var item) ||
+            item.MobileId is not null ||
+            item.Amount != 1 ||
+            IsHeld(item) ||
+            mobile is <= 0 or > uint.MaxValue ||
+            !_mobiles.TryGet(new Serial((uint)mobile), out var wearer) ||
+            // From one mobile to another is a trade, which the saves do not follow yet.
+            (_items.GetOwner(item) is { } owner && owner != wearer.Id) ||
+            !_equipment.TryGetLayer(item, out var layer) ||
+            !_equipment.CanWear(wearer.Id, item, layer))
+        {
+            return false;
+        }
+
+        if (item.GroundLocation is not null)
+        {
+            _view.ItemDisappeared(item);
+        }
+        else if (OwnerSession(item) is { } previous)
+        {
+            _sender.TrySend(previous.SessionId, new RemoveEntityPacket(item.Id));
+        }
+
+        _items.Equip(item, wearer.Id, layer);
+        _view.WornItemChanged(wearer, item);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Gets the items of a template inside a container, at any depth, or among everything a mobile wears and
+    ///     carries; <c>for _, coins in ipairs(item.find(user, "gold")) do ... end</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The serials of the items of a template inside a container, at any depth, or worn and carried by a mobile, as a list; empty when there is none, or for an unknown container or mobile.")]
+    public LuaTable Find(long holder, string template)
+    {
+        var table = new LuaTable();
+
+        if (holder is <= 0 or > uint.MaxValue || string.IsNullOrEmpty(template))
+        {
+            return table;
+        }
+
+        var serial = new Serial((uint)holder);
+        var index = 1;
+
+        foreach (var inside in serial.IsItem ? Inside(serial) : _items.GetOwnedBy(serial))
+        {
+            if (inside.TemplateId == template)
+            {
+                table[index++] = (long)inside.Id.Value;
+            }
+        }
+
+        return table;
+    }
+
+    /// <summary>
     ///     Gets the item's graphic; <c>item.item_id(serial)</c>.
     /// </summary>
     [ScriptFunction(helpText: "The item's graphic; nil for an unknown item.")]
@@ -685,6 +754,21 @@ public sealed class ItemModule
                (tile.Flags & TileFlagType.Container) != 0
             ? item
             : null;
+    }
+
+    // Everything inside a container, at any depth.
+    private IEnumerable<ItemEntity> Inside(Serial container)
+    {
+        var pending = new Queue<Serial>([container]);
+
+        while (pending.TryDequeue(out var current))
+        {
+            foreach (var inside in _items.GetContents(current))
+            {
+                yield return inside;
+                pending.Enqueue(inside.Id);
+            }
+        }
     }
 
     private ItemEntity? ContainerOf(ItemEntity item)
