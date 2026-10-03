@@ -61,6 +61,17 @@ public sealed class PromptModuleTests : IAsyncLifetime
         Assert.Equal(1, _loop.PostedWorkItems);
     }
 
+    [Fact]
+    public void AnAnswerThatComesOffTheGameLoop_AsWhenASessionClosesAtShutdown_IsPostedToIt()
+    {
+        _loop.IsOnLoopThread = false;
+
+        Run("prompt.ask(2, function(text) end)");
+
+        Assert.Empty(_engine.FunctionCalls);
+        Assert.Equal(1, _loop.PostedWorkItems);
+    }
+
     [Theory, InlineData("return prompt.ask(999, function() end)"), InlineData("return prompt.cancel(-1)")]
     public void APlayerNotInTheWorld_IsFalse_AndNothingIsAsked(string chunk)
     {

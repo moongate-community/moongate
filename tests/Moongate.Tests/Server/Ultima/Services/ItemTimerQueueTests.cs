@@ -31,6 +31,35 @@ public sealed class ItemTimerQueueTests
     }
 
     [Fact]
+    public void ATimerScheduledAgain_IsTakenOnceAtItsLastTime()
+    {
+        var now = _clock.Now.ToUnixTimeMilliseconds();
+        var door = new Serial(0x40000001);
+        _queue.Schedule(door, "close", now + 1000);
+        _queue.Schedule(door, "close", now + 5000);
+        _queue.Schedule(door, "close", now + 5000);
+
+        _clock.Advance(TimeSpan.FromSeconds(2));
+        Assert.Empty(_queue.TakeDue());
+        _clock.Advance(TimeSpan.FromSeconds(3));
+
+        Assert.Equal(now + 5000, Assert.Single(_queue.TakeDue()).DueAt);
+    }
+
+    [Fact]
+    public void ATimerScheduledAgainManyTimes_DoesNotGrowTheQueue()
+    {
+        var now = _clock.Now.ToUnixTimeMilliseconds();
+
+        for (var index = 0; index < 10_000; index++)
+        {
+            _queue.Schedule(new Serial(0x40000001), "idle", now + 3_600_000 + index);
+        }
+
+        Assert.InRange(_queue.Count, 1, ItemTimerQueue.CompactAbove);
+    }
+
+    [Fact]
     public void Track_QueuesTheTimersTheItemsPropsKeep_AndNothingElse()
     {
         var now = _clock.Now.ToUnixTimeMilliseconds();

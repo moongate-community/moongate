@@ -547,6 +547,11 @@ public sealed class ItemModule
         {
             _sender.TrySend(previous.SessionId, new RemoveEntityPacket(item.Id));
         }
+        else if (_items.GetGroundRoot(item) is { } chest)
+        {
+            // Those who look into the chest on the ground see it go.
+            _view.ContainedItemDisappeared(item, chest, Serial.Zero);
+        }
 
         _items.Equip(item, wearer.Id, layer);
         _view.WornItemChanged(wearer, item);

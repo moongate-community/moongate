@@ -671,6 +671,19 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Equip_AnItemFromAChestOnTheGround_TellsThoseWhoLookIntoTheChest()
+    {
+        var chest = GroundChest();
+        var shirt = Shirt(0x40000080);
+        shirt.PutInContainer(chest.Id, new Point2D(50, 50));
+        _items.Add([shirt]);
+
+        Assert.True(Run("return item.equip(0x40000080, 2)")[0].Read<bool>());
+
+        Assert.Equal([$"ContainedDisappeared {shirt.Id.Value} in {chest.Id.Value} except 0", "Worn 2 1073741952"], _view.Calls);
+    }
+
+    [Fact]
     public void Equip_WhatCannotBeWorn_IsRefused()
     {
         var shirt = Shirt(0x40000080);

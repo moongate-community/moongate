@@ -74,10 +74,11 @@ public sealed class PromptModule
     }
 
     // A prompt ends from inside a running script when that script asks for another or cancels it: the function cannot
-    // run nested in it, so it runs on the next turn of the game loop.
+    // run nested in it, so it runs on the next turn of the game loop. So does one that ends off the loop, as when a
+    // session closes while the server stops: once the loop is gone it is dropped.
     private void Answer(string owner, LuaFunction function, string? text)
     {
-        if (_engine.Value.IsRunningScript)
+        if (_engine.Value.IsRunningScript || !_loop.IsOnLoopThread)
         {
             _loop.TryPost(new LoopActionWorkItem(() => _engine.Value.CallFunction(owner, function, text)));
 
