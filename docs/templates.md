@@ -492,7 +492,8 @@ client as its name, unless the item has a name of its own. A teleporter's `point
 A `KeywordTeleporter` takes the template `decoration_keyword_teleporter`, with
 `script_id = "keyword_teleport"`, and keeps its `substring`, `keyword`, `range` and `delay` as props.
 A `PublicMoongate` takes the template `decoration_public_moongate`, with
-`script_id = "public_moongate"`; `.decorate` also places one on every destination of
+`script_id = "public_moongate"` and the light `circle300` in its props unless the data gives
+another; `.decorate` also places one on every destination of
 [`moongates.toml`](data-files/moongates.md).
 Spawners, mark containers, addons and every other kind whose name ends in
 `Teleporter`, those that ask for a skill, a quest or a double click (`SkillTeleporter`,

@@ -30,7 +30,7 @@ template: a player who says its word within its range stands on its destination
 ([keyword teleporter script](../scripting.md)). The public moongates are not in the decoration
 files: after them, `.decorate` places a gate with the `decoration_public_moongate` template on
 every destination of [`moongates.toml`](../data-files/moongates.md) whose map is loaded, reported
-as `<map>/moongates`. Spawners, mark
+as `<map>/moongates`. Every public moongate glows (prop `light = "circle300"`, as ModernUO). Spawners, mark
 containers, addons and every other kind of teleporter (those that ask for a
 skill, belong to a quest or want a double click) are skipped for now: they need their own logic.
 

@@ -17,8 +17,8 @@ by spaces, `z` from -128 to 127, then at most one of the `MapType` names (`Feluc
 `Trammel`, `Ilshenar`, `Malas`, `Tokuno`, `TerMur`), in any case. Without a map the gate leads
 to a place of the map you stand on.
 
-A blue moongate (the `moongate` item template) appears where you stand and is saved with the
-world. It keeps the place in its props `teleport.x`, `teleport.y`, `teleport.z` and
+A blue moongate (the `moongate` item template) appears where you stand, glowing (prop
+`light = "circle300"`, as ModernUO), and is saved with the world. It keeps the place in its props `teleport.x`, `teleport.y`, `teleport.z` and
 `teleport.map`; its script, `scripts/items/moongate.lua`, takes whoever steps onto it there a
 second later (see [Item scripts](../scripting.md#item-scripts)). You are standing on it, so
 step off and on again to use it. The height is taken as you write it; the command does not
