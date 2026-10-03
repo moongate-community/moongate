@@ -74,7 +74,7 @@ public sealed class GoCommand : ICommandExecutor
         }
 
         // Numbers are a spot; anything else is the name of a place.
-        if (_locations is null || context.Arguments[0][0] is '-' or (>= '0' and <= '9'))
+        if (_locations is null || context.Arguments[0][0] is '-' or '+' or (>= '0' and <= '9'))
         {
             if (!PlaceArgument.TryParse(context.Arguments, character.Map, out var map, out var location))
             {

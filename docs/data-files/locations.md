@@ -43,7 +43,7 @@ Scripts read the places with `locations.node(path)` and `locations.find(text, ma
 The server stops at startup when:
 
 - a `[[location]]` has no `name`, no `map` or an unknown one;
-- its `location` is missing, or has `x` or `y` outside 0 to 65535 or `z` outside -128 to 127;
+- its `location` is missing or `(0, 0, 0)`, or has `x` or `y` outside 0 to 65535 or `z` outside -128 to 127;
 - its `category` has an empty part, such as `Dungeons//Covetous`.
 
 ## See also

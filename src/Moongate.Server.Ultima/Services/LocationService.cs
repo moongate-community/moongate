@@ -20,7 +20,11 @@ public sealed class LocationService : ILocationService
 
     // By path in lower case; the lists are those the nodes show.
     private Dictionary<string, (LocationNode Node, List<string> Categories, List<NamedLocation> Locations)>? _nodes;
-    private List<(NamedLocation Place, string Label)>? _places;
+    // The words of each place, part by part: its categories, then its name.
+    private List<(NamedLocation Place, string[] Parts)>? _places;
+
+    // The categories below the maps, in file order, with their words part by part.
+    private List<(LocationNode Node, string[] Parts)>? _categories;
 
     public LocationService(IDataLoaderService data, ISectorService sectors, IMapService? maps = null)
     {
@@ -46,27 +50,39 @@ public sealed class LocationService : ILocationService
             return [];
         }
 
-        var found = _places!.Where(entry => EndsWithWords(entry.Label, wanted)).Select(entry => entry.Place).ToList();
+        // What is named exactly so comes first: a place, else a category, whose first place stands for it.
+        var named = _places!.Where(entry => EndsWithParts(entry.Parts, wanted)).Select(entry => entry.Place).ToList();
+        var filed = new List<NamedLocation>();
 
-        if (found.Count == 0)
+        foreach (var (node, parts) in _categories!)
         {
-            // No place is named so: a category is, and its first place stands for it.
-            foreach (var (key, entry) in _nodes!)
+            if (EndsWithParts(parts, wanted) && FirstPlace(node) is { } place)
             {
-                var slash = key.IndexOf(Separator);
-
-                if (slash >= 0 &&
-                    EndsWithWords(Words(key[(slash + 1)..].Replace(Separator, ' ')), wanted) &&
-                    FirstPlace(entry.Node) is { } place)
-                {
-                    found.Add(place);
-                }
+                filed.Add(place);
             }
         }
 
-        var here = found.Where(place => place.Map == own).ToList();
+        // The own map wins, even with a category against a place of another map.
+        foreach (var found in new[] { Here(named, own), Here(filed, own), named, filed })
+        {
+            if (found.Count > 0)
+            {
+                return found;
+            }
+        }
 
-        return here.Count > 0 ? here : found;
+        // Nothing is named so: the last words of a name, such as "haven" for "Old Haven".
+        var ending = _places.Where(entry => EndsWithWords(string.Join(' ', entry.Parts), wanted))
+                            .Select(entry => entry.Place)
+                            .ToList();
+        var here = Here(ending, own);
+
+        return here.Count > 0 ? here : ending;
+    }
+
+    private static List<NamedLocation> Here(List<NamedLocation> places, MapType own)
+    {
+        return places.Where(place => place.Map == own).ToList();
     }
 
     private void Build()
@@ -77,7 +93,8 @@ public sealed class LocationService : ILocationService
         }
 
         var nodes = new Dictionary<string, (LocationNode Node, List<string> Categories, List<NamedLocation> Locations)>();
-        var places = new List<(NamedLocation Place, string Label)>();
+        var places = new List<(NamedLocation Place, string[] Parts)>();
+        var categories = new List<(LocationNode Node, string[] Parts)>();
         Add(nodes, "", "");
 
         foreach (var place in _data.GetEntities<NamedLocation>())
@@ -113,16 +130,22 @@ public sealed class LocationService : ILocationService
                 {
                     Add(nodes, nodes[Key(parent)].Node.Path is { Length: > 0 } above ? above + Separator + name : name, name);
                     nodes[Key(parent)].Categories.Add(name);
+
+                    if (parent.Length > 0)
+                    {
+                        categories.Add((nodes[Key(child)].Node, Parts(child[(child.IndexOf(Separator) + 1)..])));
+                    }
                 }
 
                 parent = child;
             }
 
             nodes[Key(parent)].Locations.Add(place);
-            places.Add((place, Words(place.Category.Replace(Separator, ' ') + " " + place.Name)));
+            places.Add((place, [.. Parts(place.Category), Words(place.Name)]));
         }
 
         _places = places;
+        _categories = categories;
         _nodes = nodes;
     }
 
@@ -167,6 +190,25 @@ public sealed class LocationService : ILocationService
     {
         return string.Join(' ', text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
                      .ToLowerInvariant();
+    }
+
+    private static string[] Parts(string category)
+    {
+        return category.Split(Separator, StringSplitOptions.RemoveEmptyEntries).Select(Words).ToArray();
+    }
+
+    // Whether the last parts, whole, are the wanted words: "covetous entrance" for Dungeons, Covetous, Entrance.
+    private static bool EndsWithParts(string[] parts, string wanted)
+    {
+        for (var start = parts.Length - 1; start >= 0; start--)
+        {
+            if (string.Join(' ', parts[start..]) == wanted)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool EndsWithWords(string label, string wanted)

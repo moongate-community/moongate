@@ -33,13 +33,15 @@ places is on a loaded map, `.go` alone prints the usage.
 
 `.go <place>` goes to the place the words name, in any case:
 
-- its name: `.go britain`;
-- the last words of its categories and its name, when several places share a name:
-  `.go covetous entrance`, `.go dungeons covetous level 1`;
-- a category no place is named as, which stands for its first place: `.go covetous`.
+- its name: `.go minoc`;
+- its categories and its name, as many of the last ones as it takes when several places share a
+  name: `.go covetous entrance`, `.go dungeons covetous level 1`;
+- a category, which stands for its first place: `.go covetous`, `.go britain`.
 
-Only whole words count. A place of your own map wins over one of the same name on another; a
-name found on other maps only takes you there. When several places still fit, none is chosen and
+Your own map comes first: a place of it, else a category of it, and only then a place or a
+category of another map, which takes you to that map. When nothing is named exactly so, the
+last words of a name are enough: `.go haven` finds `Old Haven` on a map with no Haven. Only whole
+words count. When several places still fit, none is chosen and
 the first ten are listed, so you can add a word:
 
 ```text
@@ -52,7 +54,7 @@ Felucca: Dungeons/Shame/Entrance
 
 ## Give the spot
 
-An argument that starts with a digit or a minus sign is a spot. The three numbers are `x`, `y`
+An argument that starts with a digit or a sign is a spot. The three numbers are `x`, `y`
 and `z`, split by commas or by spaces; `z` goes from -128 to 127. Without a map you stay on your
 own; a map is one of the `MapType` names (`Felucca`, `Trammel`, `Ilshenar`, `Malas`, `Tokuno`,
 `TerMur`), in any case. Anything else that is not three numbers and at most a map name prints the

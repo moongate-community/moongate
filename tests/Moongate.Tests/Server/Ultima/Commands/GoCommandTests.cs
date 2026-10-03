@@ -38,7 +38,8 @@ public sealed class GoCommandTests : IAsyncDisposable
      InlineData("1496,1628,10"),
      InlineData("1496", "1628", "10"),
      InlineData("1496,", "1628,", "10"),
-     InlineData("1496,1628", "10")]
+     InlineData("1496,1628", "10"),
+     InlineData("+1496", "+1628", "+10")]
     public async Task WithThreeNumbers_TakesYouThereOnYourOwnMap(params string[] arguments)
     {
         var context = await RunAsync(arguments);

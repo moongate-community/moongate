@@ -1,5 +1,9 @@
+using Moongate.Core.Directories;
 using Moongate.Core.Geometry;
+using Moongate.Core.Serialization.Toml;
+using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data.Locations;
+using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Maps;
@@ -172,6 +176,51 @@ public sealed class LocationServiceTests
         Assert.Equal("Factions/Towns", Assert.Single(service.Find("britain", MapType.Felucca)).Category);
     }
 
+    // As the shipped data: Felucca has the faction town Britain, Trammel only the category.
+    [Fact]
+    public void Find_ACategoryOfTheOwnMap_WinsOverAPlaceOfAnotherMap()
+    {
+        var service = Service(Place(MapType.Felucca, "Factions/Towns", "Britain"), Place(MapType.Trammel, "Towns/Britain", "Bank"));
+
+        var found = Assert.Single(service.Find("britain", MapType.Trammel));
+
+        Assert.Equal((MapType.Trammel, "Bank"), (found.Map, found.Name));
+    }
+
+    [Fact]
+    public void Find_ACategory_WinsOverAPlaceWhoseNameOnlyEndsWithTheText()
+    {
+        var service = Service(
+            Place(MapType.Felucca, "Dungeons/Tomb of Kings", "Gate to Stygian Abyss"),
+            Place(MapType.Felucca, "Dungeons/Stygian Abyss", "Entrance"),
+            Place(MapType.Felucca, "Towns", "Old Haven"),
+            Place(MapType.Felucca, "Towns/Haven", "Bank")
+        );
+
+        Assert.Equal("Entrance", Assert.Single(service.Find("stygian abyss", MapType.Felucca)).Name);
+        Assert.Equal("Bank", Assert.Single(service.Find("haven", MapType.Felucca)).Name);
+    }
+
+    [Fact]
+    public void Find_TheLastWordsOfAName_FindThePlace_WhenNothingIsNamedSo()
+    {
+        var service = Service(Place(MapType.Felucca, "Towns", "Old Haven"), Place(MapType.Felucca, "Towns", "Cove"));
+
+        Assert.Equal("Old Haven", Assert.Single(service.Find("haven", MapType.Felucca)).Name);
+    }
+
+    [Fact]
+    public void Find_SeveralCategories_GiveTheirFirstPlacesInFileOrder()
+    {
+        var service = Service(
+            Place(MapType.Felucca, "Towns/Britain", "Bank"),
+            Place(MapType.Felucca, "Factions/Britain", "Base"),
+            Place(MapType.Felucca, "Towns/Britain", "Inn")
+        );
+
+        Assert.Equal(["Bank", "Base"], service.Find("britain", MapType.Felucca).Select(place => place.Name));
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -179,6 +228,31 @@ public sealed class LocationServiceTests
     public void Find_NothingToFind_IsEmpty(string text)
     {
         Assert.Empty(Service(Place(MapType.Felucca, "Towns", "Cove")).Find(text, MapType.Felucca));
+    }
+
+    // The places the documentation of go names, on the shipped file.
+    [Theory]
+    [InlineData("britain", MapType.Trammel, MapType.Trammel, "Towns/Britain")]
+    [InlineData("britain", MapType.Felucca, MapType.Felucca, "Factions/Towns")]
+    [InlineData("haven", MapType.Trammel, MapType.Trammel, "Towns/Haven")]
+    [InlineData("covetous entrance", MapType.Felucca, MapType.Felucca, "Dungeons/Covetous")]
+    [InlineData("covetous", MapType.Trammel, MapType.Trammel, "Dungeons/Covetous")]
+    public async Task Find_OnTheShippedFile_GoesWhereTheWordsSay(string text, MapType own, MapType map, string category)
+    {
+        TomlUtils.AddTomlConverter(new Point3DTomlConverter());
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (!File.Exists(Path.Combine(directory!.FullName, "Moongate.slnx")))
+        {
+            directory = directory.Parent;
+        }
+
+        var loader = new LocationsLoader(new DirectoriesConfig(Path.Combine(directory.FullName, "moongate_root"), ["data"]));
+        var places = (await loader.LoadDataAsync()).Entities.ToArray();
+
+        var found = Assert.Single(Service(places).Find(text, own));
+
+        Assert.Equal((map, category), (found.Map, found.Category));
     }
 
     private static LocationService Service(params NamedLocation[] places)
