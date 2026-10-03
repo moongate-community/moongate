@@ -183,7 +183,7 @@ from the development generator; the foreign keys, CHECK constraints and partial 
 are written by hand, since the generator produces only columns and sequences, and the
 startup schema check accepts them. The sample plugin ships
 `world/0001_create_notes.sql`. `0012_mobile_flags.sql` adds the `hidden` and `frozen` columns of the mobiles, and
-`0013_world_state.sql` the one-row table `world.state`, with the props scripts keep for the whole
+`0013_world_state.sql` the one-row table `world.state` (`0014_world_state_one_row.sql` makes the database refuse a second row), with the props scripts keep for the whole
 shard.
 
 ## Automatic development migrations

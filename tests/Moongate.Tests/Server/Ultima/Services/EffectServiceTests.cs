@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Effects;
 using Moongate.Server.Ultima.Packets.World;
@@ -220,6 +221,35 @@ public sealed class EffectServiceTests
         await fixture.Network.ExecuteOnLoopAsync(() => sent = service.PlayAt(MapType.Trammel, Spot, Smoke));
 
         Assert.Equal(0, sent);
+    }
+
+    [Fact]
+    public async Task AnEffectOnAHiddenMobile_IsShownToItselfAndTheStaffOnly()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var player = await fixture.AddAsync(2);
+        var staff = await fixture.AddAsync(3);
+        var own = await fixture.AddAsync(4);
+        Place(fixture, 2, 101, 100);
+        Place(fixture, 3, 102, 100);
+        Place(fixture, 4, 100, 100);
+        Assert.True(fixture.Mobiles.TryGet(new Serial(4), out var hidden));
+        hidden.Hidden = true;
+
+        await fixture.Network.ExecuteOnLoopAsync(
+            () =>
+            {
+                staff.Set(SessionKeys.AccountType, AccountType.GameMaster);
+                Service(fixture).PlayOn(hidden.Id, MapType.Trammel, Spot, Smoke);
+                Service(fixture).PlayLightning(hidden.Id, MapType.Trammel, Spot);
+                Service(fixture).PlayMoving(MapType.Trammel, hidden.Id, Spot, new Serial(2), new Point3D(101, 100, 0), Smoke);
+            }
+        );
+
+        Assert.Equal(6, fixture.Sender.Sent.Count);
+        Assert.DoesNotContain(player.SessionId, fixture.Sender.SentSessionIds);
+        Assert.Contains(staff.SessionId, fixture.Sender.SentSessionIds);
+        Assert.Contains(own.SessionId, fixture.Sender.SentSessionIds);
     }
 
     private static EffectService Service(BroadcastFixture fixture)

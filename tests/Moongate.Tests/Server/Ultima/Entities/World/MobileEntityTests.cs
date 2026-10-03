@@ -67,6 +67,15 @@ public sealed class MobileEntityTests
     }
 
     [Fact]
+    public void Snapshot_LeavesOutTheWarMode_WhichIsNotSaved()
+    {
+        var aria = new MobileEntity { Id = new(0x00000002), Name = "Aria", WarMode = true };
+
+        Assert.False(aria.Snapshot().WarMode);
+        Assert.True(aria.WarMode);
+    }
+
+    [Fact]
     public void Snapshot_IsADetachedCopyWithTheSameValues()
     {
         var aria = new MobileEntity

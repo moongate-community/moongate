@@ -66,4 +66,16 @@ public sealed class WorldMigrationsTests
         Assert.IsType<PostgresException>(exception);
         Assert.Equal("ck_mobiles_direction", ((PostgresException)exception!).ConstraintName);
     }
+
+    [Fact]
+    public async Task ASecondRowOfTheWorldState_IsRejectedByTheDatabase()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+
+        var exception = await Record.ExceptionAsync(() => host.Database.ExecuteAsync("INSERT INTO world.state (id) VALUES (2)"));
+
+        Assert.IsType<PostgresException>(exception);
+        Assert.Equal("ck_state_one_row", ((PostgresException)exception!).ConstraintName);
+    }
 }

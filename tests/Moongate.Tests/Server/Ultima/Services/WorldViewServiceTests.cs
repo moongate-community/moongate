@@ -310,6 +310,40 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void AHiddenMobileGoingAway_IsRemovedForTheStaffOnly()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var carla = Mobile(4, 1497, 1628);
+        _mobiles.EnterWorld(carla);
+        _view.Entered(carla, CarlaSession, null, AccountType.GameMaster);
+        var shirt = Worn(0x40000010, aria);
+        aria.Hidden = true;
+        ClearSent();
+
+        _view.WornItemRemoved(aria, shirt);
+        Assert.Equal([CarlaSession], _sender.SentSessionIds);
+        ClearSent();
+
+        var old = aria.Location;
+        Assert.True(_mobiles.MoveTo(aria, MapType.Trammel, new Point3D(1700, 1628, 0)));
+        _view.Teleported(aria, MapType.Trammel, old);
+        Assert.Equal([CarlaSession], _sender.SentSessionIds);
+        ClearSent();
+
+        Assert.True(_mobiles.MoveTo(aria, MapType.Trammel, old));
+        Assert.True(_mobiles.MoveTo(aria, MapType.Felucca, new Point3D(1496, 1628, 0)));
+        _view.Teleported(aria, MapType.Trammel, old);
+        Assert.DoesNotContain(BorisSession, _sender.SentSessionIds);
+        Assert.Contains(CarlaSession, _sender.SentSessionIds);
+        ClearSent();
+
+        Assert.True(_mobiles.MoveTo(aria, MapType.Trammel, old));
+        _view.Left(aria);
+        Assert.Equal([CarlaSession], _sender.SentSessionIds);
+    }
+
+    [Fact]
     public void Left_ThePlayerNoLongerReceivesPackets()
     {
         var aria = Enter(2, 1496, 1628, AriaSession);

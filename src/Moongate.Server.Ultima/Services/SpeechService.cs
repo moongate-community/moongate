@@ -50,7 +50,7 @@ public sealed class SpeechService : ISpeechService
 
     public int PlaySound(MobileEntity source, int sound)
     {
-        return PlaySound(source.Map, source.Location, sound);
+        return SendAround(source.Map, source.Location, new PlaySoundPacket(sound, source.Location), source);
     }
 
     public int PlaySound(MapType map, Point3D location, int sound)
@@ -64,7 +64,7 @@ public sealed class SpeechService : ISpeechService
                SpeechMessageHelper.TrySend(_sender, session, SpeechMessageHelper.CreateSystem(text, SpeechHue));
     }
 
-    // With a speaker, those who do not see it do not hear it either, as ModernUO.
+    // With a speaker, those who do not see it do not hear it or its sounds either, as ModernUO.
     private int SendAround(MapType map, Point3D location, IOutgoingPacket packet, MobileEntity? speaker = null)
     {
         var sent = 0;

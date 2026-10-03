@@ -274,7 +274,7 @@ public sealed class NpcModule
     [ScriptFunction(helpText: "Turns the NPC towards x, y, seen by the players in range; false for an unknown NPC or its own cell.")]
     public bool Face(long serial, int x, int y)
     {
-        if (!TryGetNpc(serial, out var npc) || npc.Location.X == x && npc.Location.Y == y)
+        if (!TryGetNpc(serial, out var npc) || npc.Frozen || npc.Location.X == x && npc.Location.Y == y)
         {
             return false;
         }

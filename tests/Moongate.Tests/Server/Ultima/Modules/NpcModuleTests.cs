@@ -520,6 +520,19 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void Face_AFrozenNpc_DoesNotTurn()
+    {
+        _orc.Frozen = true;
+        var facing = _orc.Direction;
+
+        var result = Run("return npc.face(256, 1605, 1600)");
+
+        Assert.False(result[0].Read<bool>());
+        Assert.Equal(facing, _orc.Direction);
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
     public void DistanceTo_CountsTilesAsTheViewRangeDoes()
     {
         var result = Run("return npc.distance_to(256, 1603, 1595), npc.distance_to(256, 1600, 1600), npc.distance_to(999, 1, 1)");

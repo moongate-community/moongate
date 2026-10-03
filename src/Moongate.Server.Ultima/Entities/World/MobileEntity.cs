@@ -282,6 +282,8 @@ public class MobileEntity : IMoongateEntity
     public MobileEntity Snapshot()
     {
         var copy = (MobileEntity)MemberwiseClone();
+        // Not a column: left in, a change of war mode alone would write the row again.
+        copy.WarMode = false;
         copy.Skills =
         [
             .. Skills.Select(

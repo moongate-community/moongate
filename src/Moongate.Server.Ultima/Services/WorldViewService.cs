@@ -139,7 +139,7 @@ public sealed class WorldViewService : IWorldViewService
                 continue;
             }
 
-            if (_sessions.TryGetValue(other.Id, out var viewer))
+            if (_sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
             {
                 _sender.TrySend(viewer.SessionId, remove);
             }
@@ -169,7 +169,8 @@ public sealed class WorldViewService : IWorldViewService
         {
             if (other.Id != mobile.Id &&
                 !InRange(other.Location, mobile.Location) &&
-                _sessions.TryGetValue(other.Id, out var viewer))
+                _sessions.TryGetValue(other.Id, out var viewer) &&
+                CanSee(viewer, mobile))
             {
                 _sender.TrySend(viewer.SessionId, new RemoveEntityPacket(mobile.Id));
             }
@@ -236,7 +237,7 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
         {
-            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer))
+            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
             {
                 _sender.TrySend(viewer.SessionId, remove);
             }
@@ -402,7 +403,7 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var other in _sectors.GetMobilesInRange(wearer.Map, wearer.Location, ViewRange))
         {
-            if (other.Id != wearer.Id && _sessions.TryGetValue(other.Id, out var viewer))
+            if (other.Id != wearer.Id && _sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, wearer))
             {
                 _sender.TrySend(viewer.SessionId, remove);
             }
@@ -454,13 +455,14 @@ public sealed class WorldViewService : IWorldViewService
         );
     }
 
-    // The mobile, then the revision of its tooltip and of each worn item's, as ModernUO: the client asks for the
-    // tooltips it does not have yet.
     // A hidden mobile is on no player's screen; the staff sees it, as in ModernUO.
     private static bool CanSee(Viewer viewer, MobileEntity mobile)
     {
         return !mobile.Hidden || viewer.Account >= AccountType.GameMaster;
     }
+
+    // The mobile, then the revision of its tooltip and of each worn item's, as ModernUO: the client asks for the
+    // tooltips it does not have yet.
 
     private void SendMobile(long sessionId, MobileEntity mobile, MobileIncomingPacket incoming)
     {

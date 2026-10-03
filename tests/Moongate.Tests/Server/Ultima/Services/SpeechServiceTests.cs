@@ -143,6 +143,35 @@ public sealed class SpeechServiceTests
         Assert.DoesNotContain(player.SessionId, fixture.Sender.SentSessionIds);
     }
 
+    [Fact]
+    public async Task PlaySound_OfAHiddenMobile_ReachesItselfAndTheStaffOnly()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var player = await fixture.AddAsync(2);
+        var staff = await fixture.AddAsync(3);
+        var own = await fixture.AddAsync(4);
+        Place(fixture, 2, 101, 100);
+        Place(fixture, 3, 102, 100);
+        Place(fixture, 4, 100, 100);
+        Assert.True(fixture.Mobiles.TryGet(new Serial(4), out var source));
+        source.Hidden = true;
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+        var sent = 0;
+
+        await fixture.Network.ExecuteOnLoopAsync(
+            () =>
+            {
+                staff.Set(SessionKeys.AccountType, AccountType.GameMaster);
+                sent = speech.PlaySound(source, 0x69);
+            }
+        );
+
+        Assert.Equal(2, sent);
+        Assert.DoesNotContain(player.SessionId, fixture.Sender.SentSessionIds);
+        Assert.Contains(staff.SessionId, fixture.Sender.SentSessionIds);
+        Assert.Contains(own.SessionId, fixture.Sender.SentSessionIds);
+    }
+
     private static void Place(BroadcastFixture fixture, uint serial, int x, int y)
     {
         Assert.True(fixture.Mobiles.TryGet(new Serial(serial), out var mobile));
