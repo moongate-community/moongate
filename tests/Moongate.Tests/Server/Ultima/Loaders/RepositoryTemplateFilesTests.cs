@@ -217,6 +217,23 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedTreasureChests_AreFixedDecayAndHoldGoldAndLoot()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        var chests = Enumerable.Range(1, 4).Select(level => templates[$"treasure_chest_level_{level}"]).ToList();
+
+        Assert.All(
+            chests,
+            chest => Assert.Equal(((bool?)false, (bool?)true, (int?)45), (chest.Movable, chest.Decays, chest.DecayMinutes))
+        );
+        Assert.Equal([30, 70, 180, 200], chests.Select(chest => chest.Gold!.Value.Min));
+        Assert.Equal([129, 169, 419, 599], chests.Select(chest => chest.Gold!.Value.Max));
+        Assert.Equal([5, 5, 12, 19], chests.Select(chest => chest.Loot!.Count));
+        Assert.Equal([0x0E43u, 0x0E41u, 0x09ABu, 0x0E40u], chests.Select(chest => chest.ItemId.Value));
+    }
+
+    [Fact]
     public async Task ShippedLootTables_LoadAgainstTheShippedItems()
     {
         var directories = Directories();
