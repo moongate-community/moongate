@@ -35,4 +35,18 @@ public sealed class MobileStatusPacketTests
         );
         Assert.Equal(91, bytes.Length);
     }
+
+    // What a player gets of another mobile: its name and its health bar.
+    [Fact]
+    public void Encode_Compact_WritesTheNameAndTheHitsAsAShareOfAHundred_In43Bytes()
+    {
+        var status = new MobileStatusInfo { Serial = new Serial(0x00000100), Name = "an orc", Hits = 29, HitsMax = 58 };
+
+        var bytes = PacketCodec.Encode(new MobileStatusPacket(status, true));
+
+        var name = new byte[30];
+        "an orc"u8.CopyTo(name);
+        Assert.Equal(Convert.FromHexString("11" + "002B" + "00000100" + Convert.ToHexString(name) + "0032" + "0064" + "00" + "00"), bytes);
+        Assert.Equal(43, bytes.Length);
+    }
 }

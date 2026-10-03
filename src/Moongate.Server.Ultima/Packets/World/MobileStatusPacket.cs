@@ -9,22 +9,31 @@ namespace Moongate.Server.Ultima.Packets.World;
 
 /// <summary>
 ///     The status bar of the player's own character (0x11), version 5 (Mondain's Legacy, 91 bytes): name, hits,
-///     stats, gold, weight, race, followers, resistances, luck, damage and tithing.
+///     stats, gold, weight, race, followers, resistances, luck, damage and tithing. Compact, for another mobile, it is
+///     version 0 (43 bytes): the name and the hit points as a share of 100.
 /// </summary>
 [PacketHandler(0x11, PacketSizing.Variable, MinimumLength = 43)]
 public sealed class MobileStatusPacket : BasePacket<MobileStatusPacket>, IOutgoingPacket
 {
     private const byte Version = 5;
+    private const byte CompactVersion = 0;
     private const int NameLength = 30;
+    private const int Share = 100;
 
-    public override int Length => 91;
+    public override int Length => Compact ? 43 : 91;
+
+    /// <summary>
+    ///     Gets whether only the name and the health bar are sent, as for a mobile that is not the player's own.
+    /// </summary>
+    public bool Compact { get; }
 
     public MobileStatusInfo Status { get; }
 
-    public MobileStatusPacket(MobileStatusInfo status)
+    public MobileStatusPacket(MobileStatusInfo status, bool compact = false)
     {
         ArgumentNullException.ThrowIfNull(status);
         Status = status;
+        Compact = compact;
     }
 
     public void Write(ref PacketWriter writer)
@@ -35,6 +44,18 @@ public sealed class MobileStatusPacket : BasePacket<MobileStatusPacket>, IOutgoi
         writer.WriteUInt16BigEndian((ushort)Length);
         writer.WriteSerial(status.Serial);
         writer.WriteFixedAscii(status.Name.Length > NameLength ? status.Name[..NameLength] : status.Name, NameLength);
+
+        if (Compact)
+        {
+            // As ModernUO: never the real numbers of another mobile.
+            writer.WriteUInt16BigEndian((ushort)(status.HitsMax == 0 ? status.Hits : status.Hits * Share / status.HitsMax));
+            writer.WriteUInt16BigEndian((ushort)(status.HitsMax == 0 ? 0 : Share));
+            writer.WriteByte(status.CanBeRenamed ? (byte)1 : (byte)0);
+            writer.WriteByte(CompactVersion);
+
+            return;
+        }
+
         writer.WriteUInt16BigEndian((ushort)status.Hits);
         writer.WriteUInt16BigEndian((ushort)status.HitsMax);
         writer.WriteByte(status.CanBeRenamed ? (byte)1 : (byte)0);
