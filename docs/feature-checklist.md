@@ -45,8 +45,8 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Creation: races, professions, starting items, starting cities | ✅ | |
-| Stats | 🟡 | Rolled and stored; no gain, caps or locks |
-| Skills | 🟡 | Stored; no use, gain, caps or locks |
+| Stats | 🟡 | Rolled, stored and set by scripts; no gain, caps or locks |
+| Skills | 🟡 | Stored, shown in the skill window and set by scripts; no use, gain or locks |
 | Hit points, mana and stamina regeneration | ❌ | |
 | Titles | 🟡 | Fame and karma titles in the paperdoll; no skill titles |
 | Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); nothing gains or loses them yet |
@@ -311,7 +311,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Script events | 🟡 | NPC, item and character events, and `player_say`; no combat, skill or region events |
 | Events that can refuse the default action | 🟡 | Only `on_use` |
 | Region enter and leave events | 🟡 | `player_region_changed` for players; not for NPCs |
-| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`; stats are read only, no skills API |
+| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`; a mobile's stats and skills are read and written |
 | World queries from scripts (objects near, in sight, by serial) | 🟡 | `world.is_occupied`, `world.carries` |
 | Creating and moving items from scripts | 🟡 | Move on the ground, consume, delete; no create, container or equip |
 | Messages, target cursor and prompts from scripts | 🟡 | `npc.say`, `mobile.message`, `item.message`, `item.message_cliloc`, `target.pick`, gumps; no text prompt |

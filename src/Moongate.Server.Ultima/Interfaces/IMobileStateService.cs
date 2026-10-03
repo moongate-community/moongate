@@ -23,8 +23,8 @@ public interface IMobileStateService
     /// <summary>
     ///     Changes the numbers given. A stat or a maximum goes from 0 to <see cref="MaxValue" />; hit points, mana and
     ///     stamina are brought between 0 and their maximum, also when only the maximum changes. The mobile's player
-    ///     gets its status again, and the players around the new health bar when the hit points or their maximum
-    ///     changed.
+    ///     gets the bars that moved, or its whole status when a stat, the fame or the karma changed, and the players
+    ///     around the new health bar when the hit points or their maximum changed.
     /// </summary>
     /// <returns>
     ///     False, with nothing changed, when a stat or a maximum is out of range.

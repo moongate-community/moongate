@@ -13,6 +13,7 @@ using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
@@ -24,6 +25,7 @@ public sealed class MobileModuleTests
 {
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
+    private readonly RecordingMobileStateService _state = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly ItemService _items = TestItems.Create();
     private readonly StubMusicService _music = new();
@@ -278,12 +280,143 @@ public sealed class MobileModuleTests
         Assert.Equal([LuaValueType.Nil, LuaValueType.Nil], result[1..].Select(value => value.Type));
     }
 
+    [Fact]
+    public void SetStats_HandsOverTheNumbersGiven_AndLeavesTheOthersAlone()
+    {
+        var result = Run("return mobile.set_stats(0x100, { hits = 10, hits_max = 80, strength = 120, karma = -500 })");
+
+        Assert.True(result[0].Read<bool>());
+        var (mobile, change) = Assert.Single(_state.Stats);
+        Assert.Same(_orc, mobile);
+        Assert.Equal((10, 80, 120, -500), (change.Hits, change.HitsMax, change.Strength, change.Karma));
+        Assert.Equal(
+            (null, null, null, null, null, null, null),
+            (change.Dexterity, change.Intelligence, change.Mana, change.ManaMax, change.Stamina, change.StaminaMax, change.Fame)
+        );
+    }
+
+    [Fact]
+    public void SetStats_EveryNumberOfStats_CanBeGiven()
+    {
+        Run(
+            """
+            return mobile.set_stats(0x100, { strength = 1, dexterity = 2, intelligence = 3, hits = 4, hits_max = 5,
+                mana = 6, mana_max = 7, stamina = 8, stamina_max = 9, fame = 10, karma = 11 })
+            """
+        );
+
+        var change = Assert.Single(_state.Stats).Change;
+        Assert.Equal(
+            (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
+            (change.Strength, change.Dexterity, change.Intelligence, change.Hits, change.HitsMax, change.Mana, change.ManaMax,
+                change.Stamina, change.StaminaMax, change.Fame, change.Karma)
+        );
+    }
+
+    [Theory]
+    [InlineData("mobile.set_stats(0x100, { hit_points = 10 })")]
+    [InlineData("mobile.set_stats(0x100, { body = 17 })")]
+    [InlineData("mobile.set_stats(0x100, { hits = 'ten' })")]
+    [InlineData("mobile.set_stats(0x100, { hits = 10.5 })")]
+    [InlineData("mobile.set_stats(0x100, { hits = 10, mana = true })")]
+    [InlineData("mobile.set_stats(0x100, { 10 })")]
+    [InlineData("mobile.set_stats(0x100, {})")]
+    [InlineData("mobile.set_stats(0x999, { hits = 10 })")]
+    public void SetStats_AnUnknownNameABadValueOrAnUnknownMobile_ChangesNothing(string call)
+    {
+        Assert.False(Run("return " + call)[0].Read<bool>());
+
+        Assert.Empty(_state.Stats);
+    }
+
+    [Fact]
+    public void SetStats_WhatTheServiceRefuses_IsFalse()
+    {
+        _state.Result = false;
+
+        Assert.False(Run("return mobile.set_stats(0x100, { strength = 70000 })")[0].Read<bool>());
+    }
+
+    [Fact]
+    public void Skill_GivesTheValueAndTheCapInPoints_AndTheLockByName()
+    {
+        _state.Skills.Add(new() { Skill = SkillType.Magery, Base = 505, Cap = 1200, Lock = SkillLockType.Locked });
+
+        var result = Run("local s = mobile.skill(0x100, 25) return s.value, s.cap, s.lock, mobile.skill(0x100, 0).value, mobile.skill(0x999, 25)");
+
+        Assert.Equal([50.5, 120.0], result[..2].Select(value => value.Read<double>()));
+        Assert.Equal("locked", result[2].Read<string>());
+        Assert.Equal(0.0, result[3].Read<double>());
+        Assert.Equal(LuaValueType.Nil, result[4].Type);
+    }
+
+    [Fact]
+    public void Skills_GivesEverySkillAboveZeroByItsName()
+    {
+        _state.Skills.Add(new() { Skill = SkillType.Magery, Base = 505 });
+        _state.Skills.Add(new() { Skill = SkillType.EvaluatingIntelligence, Base = 300 });
+
+        var result = Run(
+            """
+            local all = mobile.skills(0x100)
+            local count = 0
+            for _ in pairs(all) do count = count + 1 end
+            return all.magery, all.evaluating_intelligence, all.alchemy, count, mobile.skills(0x999)
+            """
+        );
+
+        Assert.Equal([50.5, 30.0], result[..2].Select(value => value.Read<double>()));
+        Assert.Equal(LuaValueType.Nil, result[2].Type);
+        Assert.Equal(2, result[3].Read<int>());
+        Assert.Equal(LuaValueType.Nil, result[4].Type);
+    }
+
+    [Fact]
+    public void SetSkill_TakesPointsAndHandsOverTenths()
+    {
+        var result = Run("return mobile.set_skill(0x100, 25, 50.5), mobile.set_skill(0x100, 0, 100, 120)");
+
+        Assert.Equal([true, true], result.Select(value => value.Read<bool>()));
+        Assert.Equal(
+            [(SkillType.Magery, 505, (int?)null), (SkillType.Alchemy, 1000, (int?)1200)],
+            _state.SkillsSet.Select(set => (set.Skill, set.Value, set.Cap))
+        );
+    }
+
+    [Fact]
+    public void SetSkill_OfAnUnknownMobile_IsFalse()
+    {
+        Assert.False(Run("return mobile.set_skill(0x999, 25, 50)")[0].Read<bool>());
+
+        Assert.Empty(_state.SkillsSet);
+    }
+
+    [Fact]
+    public void SetNameBodyAndHue_HandOverWhatIsGiven()
+    {
+        var result = Run("return mobile.set_name(0x100, 'Grog'), mobile.set_body(0x100, 58), mobile.set_hue(0x100, 1153)");
+
+        Assert.Equal([true, true, true], result.Select(value => value.Read<bool>()));
+        Assert.Equal("Grog", Assert.Single(_state.Names).Name);
+        Assert.Equal([((int?)58, (int?)null), (null, 1153)], _state.Looks.Select(look => (look.Body, look.Hue)));
+    }
+
+    [Fact]
+    public void SetNameBodyAndHue_OfAnUnknownMobile_AreFalse()
+    {
+        var result = Run("return mobile.set_name(0x999, 'Grog'), mobile.set_body(0x999, 58), mobile.set_hue(0x999, 1153)");
+
+        Assert.Equal([false, false, false], result.Select(value => value.Read<bool>()));
+        Assert.Empty(_state.Names);
+        Assert.Empty(_state.Looks);
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

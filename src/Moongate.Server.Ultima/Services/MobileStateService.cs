@@ -53,6 +53,10 @@ public sealed class MobileStateService : IMobileStateService
         }
 
         var health = (mobile.Hits, mobile.HitsMax);
+        var mana = (mobile.Mana, mobile.ManaMax);
+        var stamina = (mobile.Stamina, mobile.StaminaMax);
+        // What only the whole status shows.
+        var others = (mobile.Strength, mobile.Dexterity, mobile.Intelligence, mobile.Fame, mobile.Karma);
         mobile.Strength = change.Strength ?? mobile.Strength;
         mobile.Dexterity = change.Dexterity ?? mobile.Dexterity;
         mobile.Intelligence = change.Intelligence ?? mobile.Intelligence;
@@ -73,7 +77,28 @@ public sealed class MobileStateService : IMobileStateService
 
         if (_sessions.TryGetByCharacterId(mobile.Id, out var own))
         {
-            SendStatus(own, mobile);
+            // As ModernUO: the bar that moved, or the whole status when a stat did.
+            if (others != (mobile.Strength, mobile.Dexterity, mobile.Intelligence, mobile.Fame, mobile.Karma))
+            {
+                SendStatus(own, mobile);
+            }
+            else
+            {
+                if (health != (mobile.Hits, mobile.HitsMax))
+                {
+                    _sender.TrySend(own.SessionId, new MobileHitsPacket(mobile.Id, mobile.Hits, mobile.HitsMax));
+                }
+
+                if (mana != (mobile.Mana, mobile.ManaMax))
+                {
+                    _sender.TrySend(own.SessionId, new MobileManaPacket(mobile.Id, mobile.Mana, mobile.ManaMax));
+                }
+
+                if (stamina != (mobile.Stamina, mobile.StaminaMax))
+                {
+                    _sender.TrySend(own.SessionId, new MobileStaminaPacket(mobile.Id, mobile.Stamina, mobile.StaminaMax));
+                }
+            }
         }
 
         if (health != (mobile.Hits, mobile.HitsMax))

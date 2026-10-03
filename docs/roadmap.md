@@ -78,7 +78,7 @@ written. The [scripting page](scripting.md#available-host-functions) lists what 
 
 | Step | State | What | Why it comes here |
 | --- | --- | --- | --- |
-| 0.1 | 🟡 | **Mobile state in Lua**: stats, skills, hits, mana, stamina, flags (hidden, frozen, dead, war mode), hue, body, name; props on players; global props. Done: reading the stats, props on players and NPCs. Left: changing them, skills, flags, global props | Every rule reads or changes them |
+| 0.1 | 🟡 | **Mobile state in Lua**: stats, skills, hits, mana, stamina, flags (hidden, frozen, dead, war mode), hue, body, name; props on players; global props. Done: reading and changing the stats, the skills, the name, the body and the hue; props on players and NPCs. Left: flags, global props | Every rule reads or changes them |
 | 0.2 | ✅ | **World queries**: mobiles and items near a point, in sight; online players; region, height and line of sight lookups | Every AI, spell and area effect needs them |
 | 0.3 | 🟡 | **Item API**: create (on the ground, in a backpack, in a container), move into a container, equip, list the content, find by type, set hue and name. Left: equip, find by type | Loot, crafting, vendors, quests |
 | 0.4 | 🟡 | **Player input and output**: system message, text over any object, cliloc messages, the target cursor, a text prompt. Left: the text prompt | Every skill and spell starts with a target |

@@ -90,24 +90,47 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void SetStats_SendsThePlayerItsWholeStatus_AndThoseAroundTheHealthBarAsAShare()
+    public void SetStats_TheHitPoints_GoToThePlayerAsTheyAre_AndToThoseAroundAsAShare()
     {
         Assert.True(_service.SetStats(_aria, new() { Hits = 30 }));
 
-        var status = Assert.Single(_fixture.Sender.Sent.OfType<MobileStatusPacket>());
-        Assert.Equal((false, 30, 60), (status.Compact, status.Status.Hits, status.Status.HitsMax));
-        var bar = Assert.Single(_fixture.Sender.Sent.OfType<MobileHitsPacket>());
-        Assert.Equal((new Serial((uint)Aria), 50, 100), (bar.Serial, bar.Hits, bar.HitsMax));
+        var bars = _fixture.Sender.Sent.Cast<MobileHitsPacket>().ToList();
+        Assert.Equal([(30, 60), (50, 100)], bars.Select(bar => (bar.Hits, bar.HitsMax)));
         Assert.Equal([Aria, Boris], _fixture.Sender.SentSessionIds);
     }
 
     [Fact]
-    public void SetStats_WithoutAChangeOfTheHitPoints_TellsOnlyThePlayer()
+    public void SetStats_TheManaAndTheStamina_GoToThePlayerOnly()
     {
-        Assert.True(_service.SetStats(_aria, new() { Mana = 3, Strength = 61 }));
+        Assert.True(_service.SetStats(_aria, new() { Mana = 3, StaminaMax = 40 }));
 
-        Assert.IsType<MobileStatusPacket>(Assert.Single(_fixture.Sender.Sent));
+        Assert.Equal([typeof(MobileManaPacket), typeof(MobileStaminaPacket)], _fixture.Sender.Sent.Select(packet => packet.GetType()));
+        var mana = (MobileManaPacket)_fixture.Sender.Sent[0];
+        var stamina = (MobileStaminaPacket)_fixture.Sender.Sent[1];
+        Assert.Equal((3, 10, 18, 40), (mana.Mana, mana.ManaMax, stamina.Stamina, stamina.StaminaMax));
+        Assert.Equal([Aria, Aria], _fixture.Sender.SentSessionIds);
+    }
+
+    [Theory]
+    [InlineData("strength")]
+    [InlineData("fame")]
+    public void SetStats_AStatTheFameOrTheKarma_SendsThePlayerItsWholeStatus(string what)
+    {
+        var change = what == "strength" ? new MobileStatsChange { Strength = 61, Mana = 3 } : new MobileStatsChange { Fame = 5, Mana = 3 };
+
+        Assert.True(_service.SetStats(_aria, change));
+
+        var status = Assert.IsType<MobileStatusPacket>(Assert.Single(_fixture.Sender.Sent));
+        Assert.Equal((false, 3), (status.Compact, status.Status.Mana));
         Assert.Equal([Aria], _fixture.Sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void SetStats_ThatChangeNothing_SendNothing()
+    {
+        Assert.True(_service.SetStats(_aria, new() { Hits = 50, Strength = 60 }));
+
+        Assert.Empty(_fixture.Sender.Sent);
     }
 
     [Fact]
@@ -134,6 +157,7 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.True(_service.SetStats(_aria, new() { Hits = 30 }));
 
         Assert.Equal([Aria], _fixture.Sender.SentSessionIds);
+        Assert.Equal(30, Assert.IsType<MobileHitsPacket>(Assert.Single(_fixture.Sender.Sent)).Hits);
     }
 
     [Fact]
