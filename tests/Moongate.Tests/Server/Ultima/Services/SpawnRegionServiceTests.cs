@@ -521,6 +521,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         await TickAsync();
 
         Assert.Single(_itemSpawns.Spawns);
+        Assert.Equal(1, Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 10, 10)).Live);
         Assert.All(
             _items.Items,
             item =>
@@ -576,19 +577,36 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         chest.PlaceOnGround(MapType.Felucca, new Point3D(10, 10, 0));
         chest.SetProp(SpawnRegionService.RegionProp, "crypt");
         _items.Add([chest]);
-        await StartAsync(new ScriptedRandom(0), Chests("crypt"));
+        // A second cell is free: only the count keeps a new chest away.
+        await StartAsync(new ScriptedRandom(0), Chests("crypt", x2: 11));
 
         await TickAsync();
 
         Assert.Empty(_itemSpawns.Spawns);
+        var status = Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 10, 10));
+        Assert.Equal((1, false), (status.Live, status.Retrying));
     }
 
     [Fact]
-    public async Task TwoItemsOfARegion_NeverShareACell()
+    public async Task TwoItemsOfARegion_TakeACellEach()
     {
         _itemSpawns.Items = _items;
-        // The random always picks the first cell of the two.
-        await StartAsync(new ScriptedRandom(0), Chests("crypt", max: 2, x: 30, y: 40, x2: 31));
+        await StartAsync(new System.Random(1), Chests("crypt", max: 2, x: 30, y: 40, x2: 31));
+
+        await TickAsync();
+        await TickAsync();
+        await TickAsync();
+
+        Assert.Equal([30, 31], _itemSpawns.Spawns.Select(spawn => spawn.Location.X).Order());
+        var status = Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 30, 40));
+        Assert.Equal((2, false), (status.Live, status.Retrying));
+    }
+
+    [Fact]
+    public async Task ARegionWithMoreItemsThanCells_FillsItsCellsAndKeepsTrying()
+    {
+        _itemSpawns.Items = _items;
+        await StartAsync(new ScriptedRandom(0), Chests("crypt", max: 2, x: 30, y: 40));
 
         await TickAsync();
         await TickAsync();

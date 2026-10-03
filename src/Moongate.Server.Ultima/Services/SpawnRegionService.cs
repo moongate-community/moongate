@@ -283,8 +283,11 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
                 var movement = _movements.GetValueOrDefault(templateId, MobileMovementType.Land);
 
                 // A spawned item wants a cell of its own: not where another one lies or is about to.
-                if (TryFindSpot(template, movement, out var location, out var area) &&
-                    !(region.OfItems && (IsTaken(template.Map, location, planned) || HasSpawnedItem(template.Map, location))))
+                Func<int, int, bool>? taken = region.OfItems
+                    ? (x, y) => IsTaken(template.Map, x, y, planned) || HasSpawnedItem(template.Map, x, y)
+                    : null;
+
+                if (TryFindSpot(template, movement, taken, out var location, out var area))
                 {
                     planned.Add(new(template, templateId, location, area, region.OfItems));
                     found++;
@@ -385,7 +388,13 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 
     // UOX3 FindSpotForNPC: a random cell of the areas, out of the excluded ones, where a mobile stands under the ceiling,
     // or on the water for a mobile that swims: only there when it cannot walk, else when the cell has no land to stand on.
-    private bool TryFindSpot(SpawnTemplate template, MobileMovementType movement, out Point3D location, out SpawnArea area)
+    private bool TryFindSpot(
+        SpawnTemplate template,
+        MobileMovementType movement,
+        Func<int, int, bool>? taken,
+        out Point3D location,
+        out SpawnArea area
+    )
     {
         for (var i = 0; i < SpotTries; i++)
         {
@@ -393,7 +402,9 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
             var x = _random.Next(area.X1, area.X2 + 1);
             var y = _random.Next(area.Y1, area.Y2 + 1);
 
-            if (template.Exclude.Any(exclude => exclude.Contains(x, y)) || !_map.Contains(template.Map, x, y))
+            if (template.Exclude.Any(exclude => exclude.Contains(x, y)) ||
+                !_map.Contains(template.Map, x, y) ||
+                taken is not null && taken(x, y))
             {
                 continue;
             }
@@ -416,23 +427,21 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         return false;
     }
 
-    private static bool IsTaken(MapType map, Point3D location, List<PlannedSpawn> planned)
+    private static bool IsTaken(MapType map, int x, int y, List<PlannedSpawn> planned)
     {
-        return planned.Any(
-            other => other.OfItems && other.Region.Map == map && other.Location.X == location.X && other.Location.Y == location.Y
-        );
+        return planned.Any(other => other.OfItems && other.Region.Map == map && other.Location.X == x && other.Location.Y == y);
     }
 
     // What a region spawned, of this region or of another: the decoration of the place does not count, as ModernUO
     // puts a chest where its spawner says.
-    private bool HasSpawnedItem(MapType map, Point3D location)
+    private bool HasSpawnedItem(MapType map, int x, int y)
     {
         if (_sectors is null)
         {
             return false;
         }
 
-        var items = _sectors.GetItemsAt(map, location.X, location.Y);
+        var items = _sectors.GetItemsAt(map, x, y);
 
         for (var index = 0; index < items.Count; index++)
         {

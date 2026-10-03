@@ -143,8 +143,9 @@ up to 633 chests. The four templates, `treasure_chest_level_1` to `treasure_ches
 | 3 | Metal bound | 180-419 | One or two piles of 1-9 reagents; up to two each of 1-12 scrolls, potions, 1-9 gems, clothing and jewellery; magic items |
 | 4 | Golden | 200-599 | 1-4 blank scrolls; up to three each of 12 reagents, 16 scrolls, potions and 12 gems; up to two of clothing and jewellery; magic items |
 
-Each of these comes one time in two (a magic item one time in five, rolled four times at level 3
-and six at level 4), from the tables of `templates/loots/treasure_chests.toml`, which give the
+Each pile of gems, reagents or scrolls and each potion comes one time in two; a weapon, an armour,
+clothing or jewellery a little less, since their own tables also give nothing at times; a magic
+item one time in five, rolled four times at level 3 and six at level 4. They come from the tables of `templates/loots/treasure_chests.toml`, which give the
 piles of ModernUO out of the gems, reagents and scrolls of the other loot tables. ModernUO's wands
 are not there: no wand template exists yet.
 

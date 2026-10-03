@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Handlers.Items.Internal;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -17,8 +18,9 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 
 /// <summary>
 ///     Drops the item the player holds (0x08) into a container their character carries, onto a carried stack of the
-///     same kind (they merge), into the container of a carried item it was dropped on, on the ground within 2 tiles, or
-///     onto a ground stack of the same kind within reach; anything else bounces the item back to where it was. The hand
+///     same kind (they merge), into the container of a carried item it was dropped on, into a container lying on the
+///     ground within reach or one inside it, on the ground within 2 tiles, or onto a ground stack of the same kind
+///     within reach; anything else bounces the item back to where it was. The hand
 ///     is always freed: 0x25 shows the item where it really is, and a ground item is shown to everyone in range.
 /// </summary>
 /// <remarks>
@@ -264,19 +266,29 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         }
 
         chest = root;
+        ItemEntity container;
+        Point2D position;
 
         if (IsContainer(target))
         {
-            return TryPut(item, target, AtPosition(target, packet.X, packet.Y), packet.GridIndex);
+            container = target;
+            position = AtPosition(target, packet.X, packet.Y);
         }
-
-        // On a plain item lying on the ground: not a container, the drop falls through to the other rules.
-        if (target.ContainerId is not { } parent || !_items.TryGet(parent, out var container))
+        else if (target.ContainerId is { } parent && _items.TryGet(parent, out var holder))
         {
+            // Dropped on an item inside: beside it.
+            container = holder;
+            position = target.GridLocation!.Value;
+        }
+        else
+        {
+            // On a plain item lying on the ground: the drop falls through to the other rules.
             return false;
         }
 
-        return TryPut(item, container, target.GridLocation!.Value, packet.GridIndex);
+        // Anyone may put things here: as a backpack on the client, it holds 125 at most.
+        return _items.GetContents(container.Id).Count(other => other.Id != item.Id) < ContainerSlotUtils.SlotCount &&
+               TryPut(item, container, position, packet.GridIndex);
     }
 
     // What lies in a bank box is reached only while the bank is open.
