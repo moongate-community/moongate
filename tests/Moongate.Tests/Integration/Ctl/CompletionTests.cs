@@ -38,7 +38,7 @@ public sealed class CompletionTests
     {
         Assert.Equal(["apply", "status"], await CompleteAsync("mgctl", "migrate", ""));
         Assert.Equal(
-            ["modernuo-signs", "modernuo-spawns", "modernuo-teleporters", "uox"],
+            ["modernuo-locations", "modernuo-signs", "modernuo-spawns", "modernuo-teleporters", "uox"],
             await CompleteAsync("mgctl", "convert", "")
         );
         Assert.Equal(["bash", "fish", "zsh"], await CompleteAsync("mgctl", "completion", ""));

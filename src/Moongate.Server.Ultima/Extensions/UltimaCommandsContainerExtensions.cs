@@ -152,7 +152,7 @@ public static class UltimaCommandsContainerExtensions
         );
         container.RegisterCommand<GoCommand>(
             "go",
-            "Takes you to a place of your map or of another: go <x>,<y>,<z> [map].",
+            "Takes you to a place: go alone lists the named ones, go <place> goes to one, go <x>,<y>,<z> [map] to a spot.",
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.GoDescription

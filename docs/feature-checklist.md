@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 64 done, 🟡 37 partly done, ❌ 167 not built yet.
+**268 systems:** ✅ 64 done, 🟡 38 partly done, ❌ 166 not built yet.
 
 **Coverage: 24%** of the systems done, **31%** counting a partly done system as half.
 
@@ -290,7 +290,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Help menu and stuck menu | ❌ | |
 | Jails | ❌ | Jail regions are dim, nothing more |
 | Who list | ❌ | |
-| Staff tools: property gump, add menu, area commands | ❌ | |
+| Staff tools: property gump, add menu, area commands | 🟡 | The gump of the named places, `.go`, with ModernUO's 558 places; no property gump, add menu or area commands |
 | Named locations and travel menu for staff | ❌ | `.go` takes coordinates |
 | Web status pages | ❌ | |
 | Bug reports | 🟡 | Exception reports ready for a GitHub issue; no in-game report |

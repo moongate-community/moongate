@@ -38,7 +38,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`spawn`](commands/spawn.md) | `spawn <template>`, then target a spot | No | Yes | GameMaster | Game |
 | [`remove`](commands/remove.md) | `remove`, then target an NPC | No | Yes | GameMaster | Game |
 | [`where`](commands/where.md) | `where`, then target anything | No | Yes | GameMaster | Game |
-| [`go`](commands/go.md) | `go <x>,<y>,<z> [map]` | No | Yes | GameMaster | Game |
+| [`go`](commands/go.md) | `go [<x>,<y>,<z> [map] \| <place>]` | No | Yes | GameMaster | Game |
 | [`moongate`](commands/moongate.md) | `moongate <x>,<y>,<z> [map]` | No | Yes | GameMaster | Game |
 | [`fame`](commands/fame.md) | `fame <0..32000>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`karma`](commands/karma.md) | `karma <-32000..32000>`, then target a mobile | No | Yes | GameMaster | Game |

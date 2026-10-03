@@ -131,10 +131,13 @@
 30107 = "SQL backup of {0} failed: {1}."
 30108 = "Saves the world, then writes a SQL backup of the databases this server owns."
 30109 = "You cannot go there: {0} is not loaded or the spot is outside it."
-30110 = "Takes you to a place of your map or of another: go <x>,<y>,<z> [map]."
+30110 = "Takes you to a place: go alone lists the named ones, go <place> goes to one, go <x>,<y>,<z> [map] to a spot."
 30111 = "A moongate to {0} ({1}, {2}, {3}) is at your feet."
 30112 = "No moongate can lead there: {0} is not loaded or the spot is outside it."
 30113 = "Puts at your feet a moongate to a place of your map or of another: moongate <x>,<y>,<z> [map]."
+30115 = "No place is named {0}; go alone lists them."
+30116 = "{0} places are named {1}; add words of the category, such as go covetous entrance:"
+30117 = "... and {0} more."
 
 # Moongate: texts of the item scripts.
 30114 = "This moongate does not seem to go anywhere."

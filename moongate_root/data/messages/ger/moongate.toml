@@ -131,10 +131,13 @@
 30107 = "SQL-Sicherung von {0} fehlgeschlagen: {1}."
 30108 = "Speichert die Welt und schreibt dann eine SQL-Sicherung der Datenbanken dieses Servers."
 30109 = "Du kannst dort nicht hin: {0} ist nicht geladen oder der Ort liegt außerhalb der Karte."
-30110 = "Bringt dich an einen Ort deiner Karte oder einer anderen: go <x>,<y>,<z> [Karte]."
+30110 = "Bringt dich an einen Ort: go allein listet die benannten auf, go <Ort> geht zu einem, go <x>,<y>,<z> [Karte] zu einem Punkt."
 30111 = "Ein Mondtor nach {0} ({1}, {2}, {3}) steht zu deinen Füßen."
 30112 = "Kein Mondtor kann dorthin führen: {0} ist nicht geladen oder der Ort liegt außerhalb der Karte."
 30113 = "Stellt zu deinen Füßen ein Mondtor zu einem Ort deiner Karte oder einer anderen: moongate <x>,<y>,<z> [Karte]."
+30115 = "Kein Ort heißt {0}; go allein listet sie auf."
+30116 = "{0} Orte heißen {1}; füge Wörter der Kategorie hinzu, etwa go covetous entrance:"
+30117 = "... und {0} weitere."
 
 # Moongate: texts of the item scripts.
 30114 = "Dieses Mondtor scheint nirgendwohin zu führen."

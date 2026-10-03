@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Locations;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Data.Moongates;
@@ -53,6 +54,7 @@ public sealed class RepositoryDataFilesTests
         container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
         container.AddUltimaDataLoader<NamesLoader, NameList>(11);
         container.AddUltimaDataLoader<MoongatesLoader, MoongateFacet>(12);
+        container.AddUltimaDataLoader<LocationsLoader, NamedLocation>(13);
         container.RegisterInstance(new LocalizationConfig { Language = "ita" });
         container.Register<IDataLoaderService, DataLoaderService>(Reuse.Singleton);
         var service = container.Resolve<IDataLoaderService>();
@@ -67,6 +69,12 @@ public sealed class RepositoryDataFilesTests
             moongates.Select(facet => facet.Map)
         );
         Assert.Equal([9, 9, 9, 2, 3, 2], moongates.Select(facet => facet.Destination.Count));
+        var places = service.GetEntities<NamedLocation>();
+        Assert.Equal(558, places.Count);
+        Assert.Equal(
+            [MapType.Felucca, MapType.Trammel, MapType.Ilshenar, MapType.Malas, MapType.Tokuno, MapType.TerMur],
+            places.Select(place => place.Map).Distinct()
+        );
         Assert.Equal(58, service.GetEntities<SkillContent>().Count);
         Assert.Equal(7, service.GetEntities<ProfessionContent>().Count);
         Assert.Equal(3, service.GetEntities<RaceContent>().Count);
@@ -82,7 +90,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5577, messages.Count);
+        Assert.Equal(5580, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
@@ -144,7 +152,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5577, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5580, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     [Theory,

@@ -95,6 +95,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
         container.Register<IEffectService, EffectService>(Reuse.Singleton);
         container.Register<IPublicMoongateService, PublicMoongateService>(Reuse.Singleton);
+        container.Register<ILocationService, LocationService>(Reuse.Singleton);
         container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
         container.Register<IMovementService, MovementService>(Reuse.Singleton);
         container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
@@ -111,6 +112,7 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<BankModule>();
         container.AddScriptModule<EffectModule>();
         container.AddScriptModule<MoongatesModule>();
+        container.AddScriptModule<LocationsModule>();
         // No module function takes it: registered so on_speech can compare its keywords with names.
         container.RegisterScriptEnum<SpeechKeywordType>();
         container.RegisterScriptEnum<DirectionType>();

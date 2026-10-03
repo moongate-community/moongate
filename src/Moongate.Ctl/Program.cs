@@ -19,6 +19,7 @@ app.Add("convert uox", ConvertCommands.Uox);
 app.Add("convert modernuo-spawns", ConvertCommands.ModernUoSpawns);
 app.Add("convert modernuo-signs", ConvertCommands.ModernUoSigns);
 app.Add("convert modernuo-teleporters", ConvertCommands.ModernUoTeleporters);
+app.Add("convert modernuo-locations", ConvertCommands.ModernUoLocations);
 app.Add("completion", CompletionCommands.Completion);
 await app.RunAsync(arguments);
 
