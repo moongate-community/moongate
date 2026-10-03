@@ -71,6 +71,15 @@ public class LootTemplatesLoader : IDataLoader<LootTemplate>
             Check(table, file, byId, itemIds);
         }
 
+        // Here and not with the item templates: those load first, the tables name them.
+        foreach (var template in _dataLoaderService.GetEntities<ItemTemplate>())
+        {
+            if (template.Loot?.FirstOrDefault(loot => !byId.ContainsKey(loot)) is { } missing)
+            {
+                throw new InvalidDataException($"Item template '{template.Id}' has loot '{missing}', which is not a loot table.");
+            }
+        }
+
         var done = new HashSet<string>(StringComparer.Ordinal);
 
         foreach (var id in byId.Keys)

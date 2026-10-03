@@ -142,5 +142,7 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         child.Visibility ??= parent.Visibility;
         child.MaxItems ??= parent.MaxItems;
         child.MaxWeight ??= parent.MaxWeight;
+        child.Loot ??= parent.Loot is null ? null : [..parent.Loot];
+        child.Gold ??= parent.Gold;
     }
 }

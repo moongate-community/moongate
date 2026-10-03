@@ -63,11 +63,34 @@ public sealed class LootTemplatesLoaderTests
         await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
     }
 
-    private static LootTemplatesLoader CreateLoader(TemporaryDirectory root)
+    [Fact]
+    public async Task LoadDataAsync_AnItemTemplateWhoseLootIsNoTable_ThrowsInvalidDataException()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/loots/a.toml", "[[loot]]\nid = \"gems\"\n[[loot.entries]]\nitem_id = \"ruby\"\n");
+        var chest = new ItemTemplate { Id = "chest", ItemId = new Serial(0x0E41), Loot = ["gems", "missing"] };
+
+        var exception = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root, chest).LoadDataAsync());
+
+        Assert.Contains("chest", exception.Message);
+        Assert.Contains("missing", exception.Message);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_AnItemTemplateWhoseLootExists_Loads()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/loots/a.toml", "[[loot]]\nid = \"gems\"\n[[loot.entries]]\nitem_id = \"ruby\"\n");
+        var chest = new ItemTemplate { Id = "chest", ItemId = new Serial(0x0E41), Loot = ["gems", "gems"] };
+
+        Assert.Single((await CreateLoader(root, chest).LoadDataAsync()).Entities);
+    }
+
+    private static LootTemplatesLoader CreateLoader(TemporaryDirectory root, params ItemTemplate[] more)
     {
         return new(
             new DirectoriesConfig(root.Path, ["templates"]),
-            new StubDataLoaderService().With(new ItemTemplate { Id = "ruby", ItemId = new Serial(0x0F13) })
+            new StubDataLoaderService().With([new ItemTemplate { Id = "ruby", ItemId = new Serial(0x0F13) }, ..more])
         );
     }
 }
