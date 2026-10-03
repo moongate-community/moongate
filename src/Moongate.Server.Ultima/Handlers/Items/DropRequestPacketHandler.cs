@@ -30,6 +30,8 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 {
     public const string DropFunction = "on_drop";
+    public const string CanDropFunction = "can_drop";
+    public const string CanInsertFunction = "can_insert";
 
     private const short OnIcon = -1;
     private const int MaxStack = 60_000;
@@ -91,10 +93,30 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return;
         }
 
+        var dropper = (long)session.CharacterId.Value;
+
+        // The item's script may refuse to be put down anywhere.
+        if (!_scripts.Allows(item, CanDropFunction, dropper))
+        {
+            _logger.Debug("{Item} refuses to be dropped: it bounces back", item);
+            HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+
+            return;
+        }
+
+        // The script of the container that would receive it may refuse it: asked once the rules allow the drop, and
+        // once for the whole drop.
+        bool? verdict = null;
+
+        bool AllowsInto(ItemEntity container)
+        {
+            return verdict ??= _scripts.Allows(container, CanInsertFunction, dropper, (long)item.Id.Value);
+        }
+
         // Taken off the paperdoll: players who came into range while it was held still see it worn.
         var wearer = item.MobileId is { } wearerId && _mobiles.TryGet(wearerId, out var worn) ? worn : null;
 
-        if (TryMerge(session, item, packet.Destination, out var stack))
+        if (TryMerge(session, item, packet.Destination, AllowsInto, out var stack))
         {
             TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(stack, session.UsesContainerGrid()));
@@ -119,7 +141,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return;
         }
 
-        if (mobile is not null && TryMergeInChest(mobile, item, packet.Destination, out var chestStack, out var holder))
+        if (mobile is not null && TryMergeInChest(mobile, item, packet.Destination, AllowsInto, out var chestStack, out var holder))
         {
             // As on the ground: the character's leave saves the grown pile and deletes the absorbed item.
             _items.Release(chestStack, session.CharacterId);
@@ -145,7 +167,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
                 return;
             }
         }
-        else if (mobile is not null && TryPlaceOnTheGround(mobile, item, packet, out var chest))
+        else if (mobile is not null && TryPlaceOnTheGround(mobile, item, packet, AllowsInto, out var chest))
         {
             // Its row still says the character carries it: the character's leave saves where it lies now.
             _items.Release(item, session.CharacterId);
@@ -157,7 +179,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
             return;
         }
-        else if (TryPlace(session, item, packet))
+        else if (TryPlace(session, item, packet, AllowsInto))
         {
             TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
@@ -187,7 +209,13 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     }
 
     // Onto a carried stack of the same kind: the stack grows and the held item is absorbed.
-    private bool TryMerge(GameSession session, ItemEntity item, Serial destination, out ItemEntity stack)
+    private bool TryMerge(
+        GameSession session,
+        ItemEntity item,
+        Serial destination,
+        Func<ItemEntity, bool> allowsInto,
+        out ItemEntity stack
+    )
     {
         if (!_items.TryGet(destination, out stack!) ||
             stack.Id == item.Id ||
@@ -196,7 +224,8 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             !CanAccess(session, stack) ||
             !IsSameKind(stack, item) ||
             (long)stack.Amount + item.Amount > MaxStack ||
-            !IsStackable(stack))
+            !IsStackable(stack) ||
+            (_items.TryGet(stack.ContainerId.Value, out var container) && !allowsInto(container)))
         {
             return false;
         }
@@ -229,7 +258,14 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
     // Onto a pile of the same kind inside a container lying on the ground within reach: the pile grows and the held
     // item is absorbed.
-    private bool TryMergeInChest(MobileEntity mobile, ItemEntity item, Serial destination, out ItemEntity stack, out ItemEntity chest)
+    private bool TryMergeInChest(
+        MobileEntity mobile,
+        ItemEntity item,
+        Serial destination,
+        Func<ItemEntity, bool> allowsInto,
+        out ItemEntity stack,
+        out ItemEntity chest
+    )
     {
         chest = null!;
 
@@ -241,7 +277,8 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             !_items.CanReach(mobile, root) ||
             !IsSameKind(stack, item) ||
             (long)stack.Amount + item.Amount > MaxStack ||
-            !IsStackable(stack))
+            !IsStackable(stack) ||
+            (_items.TryGet(stack.ContainerId.Value, out var container) && !allowsInto(container)))
         {
             return false;
         }
@@ -265,7 +302,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
                item.Props is not { Count: > 0 };
     }
 
-    private bool TryPlace(GameSession session, ItemEntity item, DropRequestPacket packet)
+    private bool TryPlace(GameSession session, ItemEntity item, DropRequestPacket packet, Func<ItemEntity, bool> allowsInto)
     {
         if (!packet.Destination.IsItem ||
             !_items.TryGet(packet.Destination, out var target) ||
@@ -277,7 +314,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
         if (IsContainer(target))
         {
-            return TryPut(item, target, AtPosition(target, packet.X, packet.Y), packet.GridIndex);
+            return TryPut(item, target, AtPosition(target, packet.X, packet.Y), packet.GridIndex, allowsInto);
         }
 
         // Dropped on a carried item: into that item's container, where that item lies.
@@ -286,12 +323,18 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return false;
         }
 
-        return TryPut(item, container, target.GridLocation!.Value, packet.GridIndex);
+        return TryPut(item, container, target.GridLocation!.Value, packet.GridIndex, allowsInto);
     }
 
     // Into a container lying on the ground within reach, such as a treasure chest, or into one inside it; dropped on an
     // item inside, it goes beside that item.
-    private bool TryPlaceOnTheGround(MobileEntity mobile, ItemEntity item, DropRequestPacket packet, out ItemEntity chest)
+    private bool TryPlaceOnTheGround(
+        MobileEntity mobile,
+        ItemEntity item,
+        DropRequestPacket packet,
+        Func<ItemEntity, bool> allowsInto,
+        out ItemEntity chest
+    )
     {
         chest = null!;
 
@@ -328,7 +371,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
         // Anyone may put things here: as a backpack on the client, it holds 125 at most.
         return _items.GetContents(container.Id).Count(other => other.Id != item.Id) < ContainerSlotUtils.SlotCount &&
-               TryPut(item, container, position, packet.GridIndex);
+               TryPut(item, container, position, packet.GridIndex, allowsInto);
     }
 
     // What lies in a bank box is reached only while the bank is open.
@@ -337,9 +380,9 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         return _bank is null || !_mobiles.TryGet(session.CharacterId, out var character) || _bank.CanAccess(session, character, target);
     }
 
-    private bool TryPut(ItemEntity item, ItemEntity container, Point2D position, int gridIndex)
+    private bool TryPut(ItemEntity item, ItemEntity container, Point2D position, int gridIndex, Func<ItemEntity, bool> allowsInto)
     {
-        if (Encloses(item, container))
+        if (Encloses(item, container) || !allowsInto(container))
         {
             return false;
         }

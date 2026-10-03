@@ -187,6 +187,46 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_ALiftTheItemsScriptRefuses_IsRejectedBeforeAnythingMoves()
+    {
+        _scripts.Scripted.Add("item");
+        _scripts.Refused.Add("can_pick_up");
+        await StartAsync(Aria);
+
+        await LiftAsync(_coins.Id, 50);
+
+        // Inspecific shows no message of the client's: the script tells the player why.
+        AssertRefused(LiftRejectReasonType.Inspecific, _coins);
+        Assert.Equal(250, _coins.Amount);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(["0x40000002 can_pick_up 2"], _scripts.Calls);
+        Assert.Empty(_scripts.Queued);
+    }
+
+    [Fact]
+    public async Task Handle_ALiftTheItemsScriptAllows_AsksItOnceAndLifts()
+    {
+        _scripts.Scripted.Add("item");
+        await StartAsync(Aria);
+
+        await LiftAsync(_coins.Id, 250);
+
+        Assert.Equal(_coins.Id, _session.Get(ItemSessionKeys.Held)!.Item);
+        Assert.Equal(["0x40000002 can_pick_up 2"], _scripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_ALiftTheRulesRefuse_DoesNotAskTheScript()
+    {
+        _scripts.Scripted.Add("shirt");
+        await StartAsync(Aria);
+
+        await LiftAsync(_otherShirt.Id, 1);
+
+        Assert.Empty(_scripts.Calls);
+    }
+
+    [Fact]
     public async Task Handle_ARefusedLift_QueuesNothing()
     {
         _scripts.Scripted.Add("shirt");

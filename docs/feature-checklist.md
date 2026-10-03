@@ -309,7 +309,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Scripts bound to templates | ✅ | `script_id` on item and mobile templates |
 | Several scripts on one object, scripts by item type | ❌ | |
 | Script events | 🟡 | NPC, item and character events, and `player_say`; no combat, skill or region events |
-| Events that can refuse the default action | 🟡 | Only `on_use` |
+| Events that can refuse the default action | 🟡 | Items: `on_use`, `can_pick_up`, `can_drop`, `can_equip`, `can_insert`; none yet for skills and combat |
 | Region enter and leave events | 🟡 | `player_region_changed` for players; not for NPCs |
 | Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`; a mobile's stats and skills are read and written |
 | World queries from scripts (objects near, in sight, by serial) | 🟡 | `world.is_occupied`, `world.carries` |

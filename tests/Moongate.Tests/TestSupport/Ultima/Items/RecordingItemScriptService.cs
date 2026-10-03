@@ -14,6 +14,11 @@ public sealed class RecordingItemScriptService : IItemScriptService
 
     public ScriptResult Result { get; set; } = ScriptResult.Completed([]);
 
+    /// <summary>
+    ///     The functions that answer <c>false</c>, such as <c>can_pick_up</c>, whatever <see cref="Result" /> is.
+    /// </summary>
+    public HashSet<string> Refused { get; } = [];
+
     public List<string> Calls { get; } = [];
 
     public List<string> Queued { get; } = [];
@@ -32,7 +37,7 @@ public sealed class RecordingItemScriptService : IItemScriptService
 
         Calls.Add(Describe(item, function, args));
 
-        return Result;
+        return Refused.Contains(function) ? ScriptResult.Completed([false]) : Result;
     }
 
     public void Queue(ItemEntity item, string function, params object?[] args)
