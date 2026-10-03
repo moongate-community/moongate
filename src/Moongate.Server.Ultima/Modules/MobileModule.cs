@@ -5,6 +5,8 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Data.Mobiles;
+using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Ultima.Types;
@@ -19,6 +21,8 @@ namespace Moongate.Server.Ultima.Modules;
 [ScriptModule("mobile", "Acts on a mobile in the world, a player or an NPC: teleports it, reads where it is, plays a sound on it, tells a player something.")]
 public sealed class MobileModule
 {
+    private const double TenthsPerPoint = 10.0;
+
     private readonly IMobileService _mobiles;
     private readonly ITeleportService _teleports;
     private readonly ISpeechService _speech;
@@ -26,6 +30,7 @@ public sealed class MobileModule
     private readonly IMusicService? _music;
     private readonly IRegionService? _regions;
     private readonly ILightService? _light;
+    private readonly IMobileStateService? _state;
 
     public MobileModule(
         IMobileService mobiles,
@@ -34,9 +39,11 @@ public sealed class MobileModule
         IItemService? items = null,
         IMusicService? music = null,
         IRegionService? regions = null,
-        ILightService? light = null
+        ILightService? light = null,
+        IMobileStateService? state = null
     )
     {
+        _state = state;
         _mobiles = mobiles;
         _teleports = teleports;
         _speech = speech;
@@ -109,6 +116,174 @@ public sealed class MobileModule
         table["karma"] = mobile.Karma;
 
         return table;
+    }
+
+    /// <summary>
+    ///     Changes the mobile's numbers: any of those <see cref="Stats" /> gives but the body;
+    ///     <c>mobile.set_stats(who, { hits = 10, strength = 80 })</c>. Hit points, mana and stamina stay between 0 and
+    ///     their maximum. The mobile's player sees the new status and the players around the new health bar.
+    /// </summary>
+    [ScriptFunction(helpText: "Changes the mobile's numbers, given as a table with any of strength, dexterity, intelligence, hits, hits_max, mana, mana_max, stamina, stamina_max, fame, karma; hits, mana and stamina stay between 0 and their maximum. False, with nothing changed, for an unknown name, a value that is not a whole number, a stat or a maximum outside 0 to 65535, an empty table or a mobile not in the world.")]
+    public bool SetStats(long serial, LuaTable values)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        var change = new MobileStatsChange();
+        var given = 0;
+
+        foreach (var (key, value) in values)
+        {
+            if (!key.TryRead<string>(out var name) ||
+                value.Type != LuaValueType.Number ||
+                !value.TryRead<double>(out var number) ||
+                Math.Floor(number) != number ||
+                number is < int.MinValue or > int.MaxValue)
+            {
+                return false;
+            }
+
+            var whole = (int)number;
+
+            switch (name)
+            {
+                case "strength":
+                    change.Strength = whole;
+
+                    break;
+                case "dexterity":
+                    change.Dexterity = whole;
+
+                    break;
+                case "intelligence":
+                    change.Intelligence = whole;
+
+                    break;
+                case "hits":
+                    change.Hits = whole;
+
+                    break;
+                case "hits_max":
+                    change.HitsMax = whole;
+
+                    break;
+                case "mana":
+                    change.Mana = whole;
+
+                    break;
+                case "mana_max":
+                    change.ManaMax = whole;
+
+                    break;
+                case "stamina":
+                    change.Stamina = whole;
+
+                    break;
+                case "stamina_max":
+                    change.StaminaMax = whole;
+
+                    break;
+                case "fame":
+                    change.Fame = whole;
+
+                    break;
+                case "karma":
+                    change.Karma = whole;
+
+                    break;
+                default:
+                    return false;
+            }
+
+            given++;
+        }
+
+        return given > 0 && _state.SetStats(mobile, change);
+    }
+
+    /// <summary>
+    ///     Gets a skill of the mobile, in points: <c>mobile.skill(who, SkillType.Magery).value</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "A skill of the mobile as { value, cap, lock }: value and cap in points (50.5), lock is up, down or locked; a skill never trained is 0. nil for a mobile not in the world.")]
+    public LuaTable? Skill(long serial, SkillType skill)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return null;
+        }
+
+        var known = _state.GetSkill(mobile, skill);
+        var table = new LuaTable();
+        table["value"] = known.Base / TenthsPerPoint;
+        table["cap"] = known.Cap / TenthsPerPoint;
+        table["lock"] = EnumNameUtils.Format(known.Lock);
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Gets the skills the mobile has above 0, by name, in points; <c>mobile.skills(who).magery</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The skills of the mobile above 0, as a table of name (magery, evaluating_intelligence) and value in points; nil for a mobile not in the world.")]
+    public LuaTable? Skills(long serial)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+
+        foreach (var skill in _state.GetSkills(mobile).Where(skill => skill.Base > 0))
+        {
+            table[EnumNameUtils.Format(skill.Skill)] = skill.Base / TenthsPerPoint;
+        }
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Sets a skill of the mobile, in points, and its cap when given;
+    ///     <c>mobile.set_skill(who, SkillType.Magery, 50.5)</c>. The value stays between 0 and the cap, and the
+    ///     mobile's player sees it in the skill window.
+    /// </summary>
+    [ScriptFunction(helpText: "Sets a skill of the mobile in points (50.5), and its cap when given; the value stays between 0 and the cap. False for a cap outside 0 to 6553.5 or a mobile not in the world; a skill number that is no SkillType raises an error.")]
+    public bool SetSkill(long serial, SkillType skill, double value, double? cap = null)
+    {
+        return _state is not null &&
+               TryGetMobile(serial, out var mobile) &&
+               Tenths(value) is { } tenths &&
+               (cap is null || Tenths(cap.Value) is not null) &&
+               _state.SetSkill(mobile, skill, tenths, cap is null ? null : Tenths(cap.Value));
+    }
+
+    /// <summary>
+    ///     Gives the mobile another name; <c>mobile.set_name(who, "Grog")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Gives the mobile another name of at most 30 characters, seen by its player and the players around; false for a blank or longer name or a mobile not in the world.")]
+    public bool SetName(long serial, string name)
+    {
+        return _state is not null && TryGetMobile(serial, out var mobile) && _state.SetName(mobile, name);
+    }
+
+    /// <summary>
+    ///     Gives the mobile another body, such as an animal's; <c>mobile.set_body(who, 0xD3)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Gives the mobile another body graphic (0 to 65535), seen at once by its player and the players around; false for a body out of range or a mobile not in the world.")]
+    public bool SetBody(long serial, int body)
+    {
+        return _state is not null && TryGetMobile(serial, out var mobile) && _state.SetLooks(mobile, body, null);
+    }
+
+    /// <summary>
+    ///     Gives the mobile another skin hue; <c>mobile.set_hue(who, 1153)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Gives the mobile another skin hue (0 to 65535, 0 the colours of its art), seen at once by its player and the players around; false for a hue out of range or a mobile not in the world.")]
+    public bool SetHue(long serial, int hue)
+    {
+        return _state is not null && TryGetMobile(serial, out var mobile) && _state.SetLooks(mobile, null, hue);
     }
 
     /// <summary>
@@ -270,6 +445,14 @@ public sealed class MobileModule
         }
 
         return _speech.Tell(mobile, text.Length > ItemModule.MaximumTextLength ? text[..ItemModule.MaximumTextLength] : text);
+    }
+
+    // Points to the tenths the mobile keeps; null for a value no skill can have.
+    private static int? Tenths(double points)
+    {
+        var tenths = Math.Round(points * TenthsPerPoint, MidpointRounding.AwayFromZero);
+
+        return double.IsFinite(tenths) && tenths is >= int.MinValue and <= int.MaxValue ? (int)tenths : null;
     }
 
     private bool TryGetMobile(long serial, [NotNullWhen(true)] out MobileEntity? mobile)

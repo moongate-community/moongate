@@ -54,7 +54,8 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x24` | `DisplayContainerPacket` | Outgoing | Fixed 7, or 9 from client 7.0.9.0 | — |
 | `0x3C` | `ContainerContentPacket` | Outgoing | Variable, minimum 5 | — |
 | `0x09` | `LookRequestPacket` | Incoming | Fixed 5 | `LookRequestPacketHandler`: shows the name over the object (`0xC1`) |
-| `0x34`, `0x72` | `MobileQueryPacket`, `WarModeRequestPacket` | Incoming | Fixed 10, 5 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x34` | `MobileQueryPacket` | Incoming | Fixed 10 | `MobileQueryPacketHandler`: answers the status of the character or of a mobile in sight (`0x11`) and the character's skills (`0x3A`) |
+| `0x72` | `WarModeRequestPacket` | Incoming | Fixed 5 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0xC8` | `UpdateRangePacket` | Incoming | Fixed 2 | `UpdateRangePacketHandler`: answers with the server's view range |
 | `0xC8` | `ViewRangePacket` | Outgoing | Fixed 2 | — |
 | `0x88` | `DisplayPaperdollPacket` | Outgoing | Fixed 66 | — |
@@ -86,7 +87,9 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x4E` | `PersonalLightLevelPacket` | Outgoing | Fixed 6 | — |
 | `0x20` | `MobileUpdatePacket` | Outgoing | Fixed 19 | — |
 | `0x78` | `MobileIncomingPacket` | Outgoing | Variable, minimum 23 | — |
-| `0x11` | `MobileStatusPacket` | Outgoing | Variable, 91 (version 5) | — |
+| `0x11` | `MobileStatusPacket` | Outgoing | Variable, 91 (version 5), or 43 (version 0) for another mobile | — |
+| `0xA1`, `0xA2`, `0xA3` | `MobileHitsPacket`, `MobileManaPacket`, `MobileStaminaPacket` | Outgoing | Fixed 9 | Sent by `MobileStateService`; the hits go to the players around as a share of 100 |
+| `0x3A` | `SkillsPacket` | Outgoing | Variable, minimum 6 | The whole skill list, or one skill that changed |
 | `0x72` | `WarModePacket` | Outgoing | Fixed 5 | — |
 | `0x5B` | `CurrentTimePacket` | Outgoing | Fixed 4 | — |
 | `0x65` | `WeatherPacket` | Outgoing | Fixed 4 | — |

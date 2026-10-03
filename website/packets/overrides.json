@@ -276,7 +276,7 @@
         "description": "Stats and extended status values."
       }
     ],
-    "notes": "Version 5 status payload; fields after the basic header depend on the status version.",
+    "notes": "Version 5 status payload; fields after the basic header depend on the status version. For a mobile that is not the player's own the packet is compact: 43 bytes, version 0, the name and the hit points as a share of 100.",
     "handler": "CharacterEnterWorldService: sends the player status in the world-entry sequence."
   },
   "0x12:incoming": {
@@ -907,14 +907,28 @@
       },
       {
         "offset": "1",
-        "name": "Query data",
-        "type": "byte[]",
-        "size": "9",
-        "description": "Mobile query payload."
+        "name": "Pattern",
+        "type": "uint",
+        "size": "4",
+        "description": "Always 0xEDEDEDED."
+      },
+      {
+        "offset": "5",
+        "name": "Kind",
+        "type": "byte",
+        "size": "1",
+        "description": "4 asks a mobile's status, 5 the character's skills."
+      },
+      {
+        "offset": "6",
+        "name": "Mobile",
+        "type": "serial",
+        "size": "4",
+        "description": "The mobile asked about."
       }
     ],
-    "notes": "Recognized and ignored for now.",
-    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+    "notes": "Sent when the status bar or the skill window opens.",
+    "handler": "MobileQueryPacketHandler: answers the status of the character (whole) or of a mobile in sight (compact) with 0x11, and the skills with 0x3A."
   },
   "0x3C:outgoing": {
     "category": "Items",
@@ -3807,5 +3821,196 @@
     ],
     "notes": "Plays a music track on the client.",
     "handler": "MusicService: the track of the player's region, else its map's, when it changes; .music plays one."
+  },
+  "0xA1:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile",
+        "type": "serial",
+        "size": "4",
+        "description": "The mobile."
+      },
+      {
+        "offset": "5",
+        "name": "Maximum",
+        "type": "ushort",
+        "size": "2",
+        "description": "The maximum hit points."
+      },
+      {
+        "offset": "7",
+        "name": "Current",
+        "type": "ushort",
+        "size": "2",
+        "description": "The current hit points."
+      }
+    ],
+    "notes": "The hit points of a mobile. The players around get them as a share of 100, never the real numbers.",
+    "handler": "MobileStateService: sent when a script changes a mobile's numbers."
+  },
+  "0xA2:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile",
+        "type": "serial",
+        "size": "4",
+        "description": "The mobile."
+      },
+      {
+        "offset": "5",
+        "name": "Maximum",
+        "type": "ushort",
+        "size": "2",
+        "description": "The maximum mana."
+      },
+      {
+        "offset": "7",
+        "name": "Current",
+        "type": "ushort",
+        "size": "2",
+        "description": "The current mana."
+      }
+    ],
+    "notes": "The mana of a mobile, for its own player.",
+    "handler": "MobileStateService: sent when a script changes a mobile's numbers."
+  },
+  "0xA3:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile",
+        "type": "serial",
+        "size": "4",
+        "description": "The mobile."
+      },
+      {
+        "offset": "5",
+        "name": "Maximum",
+        "type": "ushort",
+        "size": "2",
+        "description": "The maximum stamina."
+      },
+      {
+        "offset": "7",
+        "name": "Current",
+        "type": "ushort",
+        "size": "2",
+        "description": "The current stamina."
+      }
+    ],
+    "notes": "The stamina of a mobile, for its own player.",
+    "handler": "MobileStateService: sent when a script changes a mobile's numbers."
+  },
+  "0x3A:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Packet length."
+      },
+      {
+        "offset": "3",
+        "name": "Type",
+        "type": "byte",
+        "size": "1",
+        "description": "0x02 the whole list with caps, 0xDF one skill with its cap."
+      },
+      {
+        "offset": "4",
+        "name": "Skill",
+        "type": "ushort",
+        "size": "2",
+        "description": "The skill: numbered from 1 in the whole list, from 0 for one skill."
+      },
+      {
+        "offset": "6",
+        "name": "Value",
+        "type": "ushort",
+        "size": "2",
+        "description": "The skill in tenths of a point."
+      },
+      {
+        "offset": "8",
+        "name": "Base",
+        "type": "ushort",
+        "size": "2",
+        "description": "The skill without bonuses, in tenths."
+      },
+      {
+        "offset": "10",
+        "name": "Lock",
+        "type": "byte",
+        "size": "1",
+        "description": "0 up, 1 down, 2 locked."
+      },
+      {
+        "offset": "11",
+        "name": "Cap",
+        "type": "ushort",
+        "size": "2",
+        "description": "The cap in tenths."
+      },
+      {
+        "offset": "13",
+        "name": "End",
+        "type": "ushort",
+        "size": "2",
+        "description": "A zero closes the whole list; one skill has none."
+      }
+    ],
+    "notes": "The skills of the player's own character. The fields from Skill to Cap repeat for every skill of the whole list.",
+    "handler": "MobileStateService: the whole list answers a mobile query, one skill follows a change made by a script."
   }
 }

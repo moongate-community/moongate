@@ -94,6 +94,10 @@ exists but fails compilation/execution aborts server startup.
 | `mobile.template(serial)` | The id of the mobile template an NPC was made from, such as `"f_baker"`; `nil` for a player or a mobile not in the world |
 | `mobile.name(serial)`, `mobile.is_player(serial)`, `mobile.direction(serial)` | The mobile's name, whether it is a player's character, and the `DirectionType` it faces; `nil`, `false` and `nil` for a mobile not in the world |
 | `mobile.stats(serial)` | The mobile's numbers as a table: `body`, `strength`, `dexterity`, `intelligence`, `hits`, `hits_max`, `mana`, `mana_max`, `stamina`, `stamina_max`, `fame`, `karma`. Read only |
+| `mobile.set_stats(serial, values)` | Changes the mobile's numbers, given as a table with any of those `mobile.stats` gives but `body`: `mobile.set_stats(who, { hits = 10, strength = 80 })`. Hit points, mana and stamina stay between 0 and their maximum, also when only the maximum changes. The mobile's player sees its bars or its status change and the players around the new health bar. `false`, with nothing changed, for an unknown name, a value that is not a whole number, a stat or a maximum outside 0 to 65535, an empty table or a mobile not in the world |
+| `mobile.skill(serial, skill)`, `mobile.skills(serial)` | A skill as `{ value, cap, lock }`, in points (`50.5`) with `lock` being `up`, `down` or `locked`: `mobile.skill(who, SkillType.Magery).value`; a skill never trained is 0. And every skill above 0 as a table of name and value: `mobile.skills(who).magery`. `nil` for a mobile not in the world |
+| `mobile.set_skill(serial, skill, value, cap?)` | Sets a skill in points, and its cap when given; the value stays between 0 and the cap. The mobile's player sees it in the skill window. `false` for a cap outside 0 to 6553.5 or a mobile not in the world; a number that is no `SkillType` raises an error |
+| `mobile.set_name(serial, name)`, `mobile.set_body(serial, body)`, `mobile.set_hue(serial, hue)` | Give the mobile another name (30 characters at most), another body graphic or another skin hue (0 to 65535), seen at once by its player and the players around; `false` for a blank or longer name, a value out of range or a mobile not in the world |
 | `mobile.backpack(serial)`, `mobile.region(serial)`, `mobile.light(serial)` | The serial of the backpack the mobile wears (look into it with `item.contents`), the name of the region it stands in (`nil` outside every region) and the light level there, 0 (day) to 30 (dark) |
 | `mobile.get_prop(serial, key)`, `mobile.set_prop(serial, key, value)` | A value a mobile, a player or an NPC, keeps across restarts: a string, a number or a bool; `nil` removes it. A player's is saved with its character |
 | `mobile.play_music(player, music)` | Plays a `MusicType` to a player, until its region gives it another; `false` for an NPC |
@@ -142,8 +146,9 @@ For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
 The `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` modules serve the [mobile](#mobile-scripts) and
-[item scripts](#item-scripts); a character's stats are read only and there is no API for its skills
-yet (see the [Roadmap](roadmap.md#phase-0-what-lua-needs-before-any-gameplay)). To expose application
+[item scripts](#item-scripts). A script reads and writes a mobile's numbers and skills; nothing
+uses them yet, so a skill a script sets gains nothing by itself (see the
+[Roadmap](roadmap.md#phase-0-what-lua-needs-before-any-gameplay)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Events

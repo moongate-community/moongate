@@ -116,6 +116,7 @@ public static class UltimaWorldContainerExtensions
         // No module function takes it: registered so on_speech can compare its keywords with names.
         container.RegisterScriptEnum<SpeechKeywordType>();
         container.RegisterScriptEnum<DirectionType>();
+        container.RegisterScriptEnum<SkillType>();
         container.RegisterScriptEnum<SeasonType>();
         container.RegisterScriptEnum<WeatherKindType>();
         container.RegisterScriptEnum<EffectGraphicType>();
@@ -161,6 +162,7 @@ public static class UltimaWorldContainerExtensions
         // As the ground items: the NPCs are live before the game server takes players.
         container.AddMoongateService<INpcService, NpcService>(10);
         container.Register<IItemSpawnService, ItemSpawnService>(Reuse.Singleton);
+        container.Register<IMobileStateService, MobileStateService>(Reuse.Singleton);
         // After the NPCs (10), and stopped before the world save (40) stops the game loop, so no spawn is cut in half.
         container.AddMoongateService<ISpawnRegionService, SpawnRegionService>(50);
 
