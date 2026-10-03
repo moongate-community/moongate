@@ -160,6 +160,7 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<ITooltipService, TooltipService>();
         // As the ground items: the NPCs are live before the game server takes players.
         container.AddMoongateService<INpcService, NpcService>(10);
+        container.Register<IItemSpawnService, ItemSpawnService>(Reuse.Singleton);
         // After the NPCs (10), and stopped before the world save (40) stops the game loop, so no spawn is cut in half.
         container.AddMoongateService<ISpawnRegionService, SpawnRegionService>(50);
 
