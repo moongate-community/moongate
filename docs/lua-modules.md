@@ -83,7 +83,7 @@ greeting = greeter.hello('Moongate', Tone.Warm)
 function report() return greeting, greeter.DEFAULT_GREETING end
 ```
 
-At startup the engine writes `definitions.lua` for editor completion. The full file begins with a `---@meta` header and the built-in `wait` function, and from a running server also declares the built-in `engine`, `timer`, `events` and `log` modules, the Ultima plugin's `dice`, `localization`, `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump`, and anything else registered. The excerpt below is what the sample module and its enum produce:
+At startup the engine writes `definitions.lua` for editor completion. The full file begins with a `---@meta` header and the built-in `wait` function, and from a running server also declares the built-in `engine`, `timer`, `events` and `log` modules, the Ultima plugin's `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates` and `locations`, and anything else registered. The excerpt below is what the sample module and its enum produce:
 
 ```lua
 ---@enum Tone

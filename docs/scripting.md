@@ -105,8 +105,8 @@ exists but fails compilation/execution aborts server startup.
 | `mobile.flags(serial)` | What the mobile is, as `{ hidden, frozen, war_mode }`, each `true` or `false`; `nil` for a mobile not in the world |
 | `mobile.set_hidden(serial, hidden)`, `mobile.set_frozen(serial, frozen)`, `mobile.set_war_mode(serial, war_mode)` | Hide or reveal the mobile: hidden, it leaves the screens of the players around, who get it back when it is revealed, while game masters and administrators still see it; the players do not hear what it says, cannot open its paperdoll or read its tooltip, and NPCs do not sense it (`world.mobiles_in_range` still returns it). Freeze or free it: frozen, it neither steps nor turns. Put it in war mode or in peace, shown to its player and the players around. Hidden and frozen are saved with the mobile; a mobile comes back in peace. `false` for a mobile not in the world |
 | `mobile.backpack(serial)`, `mobile.region(serial)`, `mobile.light(serial)` | The serial of the backpack the mobile wears (look into it with `item.contents`), the name of the region it stands in (`nil` outside every region) and the light level there, 0 (day) to 30 (dark) |
-| `mobile.get_prop(serial, key)`, `mobile.set_prop(serial, key, value)` | A value a mobile, a player or an NPC, keeps across restarts: a string, a number or a bool; `nil` removes it. A player's is saved with its character |
-| `mobile.play_music(player, music)` | Plays a `MusicType` to a player, until its region gives it another; `false` for an NPC |
+| `mobile.get_prop(serial, key)`, `mobile.set_prop(serial, key, value)` | A value a mobile, a player or an NPC, keeps across restarts: a string, a number or a bool; `nil` removes it. A player's is saved with its character. `set_prop` is `false` for a table, a function, a blank key or a mobile not in the world |
+| `mobile.play_music(player, music)` | Plays a `MusicType` to a player, until its region gives it another; `false` for an NPC or a player not in the world |
 | `target.pick(player, fn)`, `target.pick_location(player, fn)`, `target.cancel(player)` | Give the player the target cursor, to pick an item or a mobile, or a place, and run `fn(picked)` with what it clicked: `{ kind = "object", serial }`, `{ kind = "location", map, x, y, z }` or `{ kind = "canceled" }` (ESC, another cursor, or the player left); when a script itself replaces or cancels the cursor, the function runs on the next turn of the game loop. `false` for an NPC or a player not in the world |
 | `effect.at(map, x, y, z, graphic, options)` | Plays an effect graphic that stays at a point of a map, such as the smoke of a teleport: `effect.at(MapType.Trammel, 1600, 1628, 5, EffectGraphicType.Smoke)`; see [Effects](#effects) |
 | `effect.on(serial, graphic, options)` | Plays an effect graphic on a mobile, which it follows, or on an item lying on the ground; `false` for something not in the world |
@@ -128,7 +128,7 @@ exists but fails compilation/execution aborts server startup.
 | `world.players()` | The serials of the players' characters in the world, as a list |
 | `world.line_of_sight(map, x1, y1, z1, x2, y2, z2)` | Whether nothing stands between two places of a map, as for a spell or an arrow; `false` beyond the range a line of sight is checked at and on a map that is not loaded |
 | `world.standing_z(map, x, y, z)` | The height a mobile can stand at on a cell, at or below `z`, such as before teleporting someone there; `nil` when nothing there can be stood on |
-| `world.weather(player)`, `world.season(map)` | The weather where a player stands, as `{ kind, density, temperature }` with `kind` a `WeatherKindType`, and the `SeasonType` of a map |
+| `world.weather(player)`, `world.season(map)` | The weather where a player stands, as `{ kind, density, temperature }` with `kind` a `WeatherKindType` (`nil` for an NPC or a player not in the world), and the `SeasonType` of a map (`nil` when the seasons are not running) |
 | `world.broadcast(text)` | A system message (cut to 128 characters) to every player in the world; `false` for a blank text |
 | `bank.open(player)`, `bank.is_open(player)` | Opens the player's bank box, made the first time, open while the player stands still; and whether it is open. `false` for an NPC or a player not in the world; see [Bank](bank.md) |
 | `gump.open(player, id, args)`, `gump.close(player, id)` | Opens the gump `templates/gumps/<id>.xml` on the player, its `${name}` filled from `args`, and closes it; its script `scripts/gumps/<id>.lua` gets the answer. `false` for an unknown player, and from `gump.open` for an unknown gump. Called from a script, the gump opens or closes on the next turn of the game loop, so `gump.close` gives `true` even for a gump that is not open. See [Gumps](gumps.md) |
@@ -138,7 +138,7 @@ exists but fails compilation/execution aborts server startup.
 | `item.message_cliloc(serial, player, cliloc, args?)` | The same label with a text of the client, by its number, so each player reads it in the language of the client; `args` fills its `~1_NAME~` places, split by tabs. `false` when the player or the item is not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
+The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates` and `locations` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -152,7 +152,7 @@ the timer prevents later starts; it does not cancel an already-started coroutine
 For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
-The `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` modules serve the [mobile](#mobile-scripts) and
+The `npc`, `item`, `mobile`, `effect`, `world`, `target`, `prompt`, `bank` and `gump` modules serve the [mobile](#mobile-scripts) and
 [item scripts](#item-scripts). A script reads and writes a mobile's numbers and skills; nothing
 uses them yet, so a skill a script sets gains nothing by itself (see the
 [Roadmap](roadmap.md#phase-0-what-lua-needs-before-any-gameplay)). To expose application
@@ -390,7 +390,8 @@ script_id = "potion"
 | `can_equip(serial, wearer)` | The held item is about to be worn by `wearer`, once the layer is free and the rules allow it. Return `false` to refuse: the item goes back where it was lifted from and `on_equip` does not run. Not asked of a worn item lifted and put back on its layer, which it never left |
 | `can_insert(serial, mobile, item)` | Asked of a container: the player `mobile` is about to put `item` into it, or onto a stack that lies directly in it, once the rules allow the drop. `serial` is the container, carried or lying on the ground; a container holding that container is not asked. Return `false` to refuse: the item goes back where it was lifted from. It is asked after the item's own `can_drop`, and once for each drop |
 | `on_timer(serial, name)` | A timer of the item, started with `item.start_timer`, is due. Timers are checked once a second. The timer is gone when the function runs: start it again there for something that repeats. One that came due while the server was down, or while the character carrying the item was offline, runs as soon as the item is in the world again. It may call `wait` |
-| `on_create(serial)` | A newly created item enters the world: today the equipment, backpack and loot of a spawned NPC, before that NPC's `on_spawn`. A new character's starting items and the rest of a split stack raise nothing. |
+| `on_darkness(serial, dark)` | Every 30 seconds, and right after `.globallight`, on a lamp post (template `decoration_light`, prop `decoration_type` LampPost1 to LampPost3) whose spot turned dark (`true`) or light (`false`) |
+| `on_create(serial)` | A newly created item enters the world: the equipment, backpack and loot of a spawned NPC, before that NPC's `on_spawn`, and a chest a spawn region makes, with everything inside it. A new character's starting items, the rest of a split stack, and items made by `item.give`, `item.create`, `item.add_loot` or `.decorate` raise nothing. |
 
 `on_equip`, `on_unequip`, `on_pickup`, `on_drop` and `on_create` run right after what
 caused them, on the next turn of the game loop, once the players have seen it: a script
@@ -518,7 +519,9 @@ prop `content_type`, such as `baker` for the table `fillable_baker` of
 `templates/loots/fillable_containers.toml`; without it the container takes the kind of the nearest
 vendor within 20 tiles, told by `mobile.template`, and keeps it. With no vendor around it stays
 empty and looks again five minutes later. ModernUO starts the wait when an item is taken out, and
-locks and traps the container: those are not there yet.
+locks and traps the container: those are not there yet. The town tables use
+`templates/loots/randomshields.toml` (one plain shield, ModernUO's `Loot.ShieldTypes`) and the two goods of
+`templates/items/town_goods.toml` (mallet and chisel, arrow shafts) that the converted item files lack.
 
 LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
 `{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,

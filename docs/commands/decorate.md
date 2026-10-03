@@ -12,7 +12,8 @@ decorate
 
 In game, administrators use `.decorate`. It first asks for confirmation with the
 [gump](../gumps.md) `templates/gumps/decorate_confirm.xml`: CONTINUE goes on, CANCEL or closing
-it prints `Decoration canceled.` and places nothing (without that file it does not ask). It places the
+it prints `Decoration canceled.` and places nothing (without that file it does not ask). While another
+decoration runs, the command answers `A decoration is already running.` and places nothing. It places the
 [decoration files](../templates.md#decorations) of `templates/decorations/`, file by file, as
 fixed items that never decay; the next world save keeps them. Doors and gates get the
 `decoration_door` template, whose [door script](../scripting.md) opens and closes them, and

@@ -128,7 +128,7 @@ Distribute only `admin.crt`; clients must verify trust and hostname.
 | `config/moongate.toml` | Current server defaults serialized as snake_case TOML; plugin sections such as `[ultima]` are appended at the first server start |
 | `logs/`, `plugins/` | Standard server directories |
 | `migrations/auth/` | The core auth SQL files included in the distribution |
-| `migrations/world/` | The core World SQL files included in the distribution: the mobiles and items tables |
+| `migrations/world/` | The core World SQL files included in the distribution: the mobiles, items and world state tables |
 | `data/` | The shard data files included in the distribution: maps, regions, races, skills, messages and the rest; see [Shard data files](data-files.md) |
 | `templates/` | The item, loot and mobile templates included in the distribution; see [Templates](templates.md) |
 | `scripts/` | The example [mobile](scripting.md#mobile-scripts) and [item scripts](scripting.md#item-scripts) included in the distribution, `mobiles/wander.lua` and `items/potion.lua`; the engine writes `definitions.lua` and `.luarc.json` here at startup |

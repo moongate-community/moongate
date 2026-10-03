@@ -105,7 +105,8 @@ Regions on a map the server does not load are skipped, and the startup log says 
 
 A region with `item_ids` instead of `mobile_ids` and `npc_list_ids` spawns items on the ground. It
 follows the same check, times, `max`, `call`, areas and spot rules as a region of NPCs; each spawn
-picks one of its item templates at random.
+picks one of its item templates at random. An item always takes a land spot; `only_outside`, `pref_z`
+and `z` apply as for NPCs.
 
 ```toml
 [[spawn]]
@@ -115,7 +116,7 @@ item_ids = ["treasure_chest_level_3"]
 max = 1
 min_minutes = 5
 max_minutes = 10
-z = 26
+z = 36
 [[spawn.areas]]
 x1 = 5398
 y1 = 18

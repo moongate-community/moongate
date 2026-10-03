@@ -94,7 +94,7 @@ written. The [scripting page](scripting.md#available-host-functions) lists what 
 | 1.2 | ❌ | **Skill use, check and gain**; stat gain; caps and locks. Stats and skills are stored; nothing uses them | The progression of the game; every later system calls the skill check | UOX3 `skills.dfn` (61 skills: stat weights, gain curves), ModernUO `skills.json` |
 | 1.3 | ❌ | **Timed effects**: one mechanism for poison, curses, blessings, polymorph, hiding; the buff bar shows them | Magic, potions and combat all need it | |
 | 1.4 | 🟡 | **Containers on the ground**, with item and weight limits; weight and overloading. Done: a container on the ground opens, items go in and out of it, 125 at most; left: the weight limits and overloading | Corpses, vendors, chests and houses need them | |
-| 1.5 | ❌ | **Context menus, old-style menus, text prompts** | Vendors, pets, crafting and guilds open through them | |
+| 1.5 | 🟡 | **Context menus and old-style menus**. Done: the text prompt (`prompt.ask`) | Vendors, pets, crafting and guilds open through them | |
 | 1.6 | ❌ | **Item combat fields** in the templates and the converter: damage, speed, armour, hit points, strength requirement | Combat reads them; the converter drops them today | UOX3 `items/gear/` |
 
 ## Phase 2: combat

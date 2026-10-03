@@ -277,7 +277,7 @@
       }
     ],
     "notes": "Version 5 status payload; fields after the basic header depend on the status version. For a mobile that is not the player's own the packet is compact: 43 bytes, version 0, the name and the hit points as a share of 100.",
-    "handler": "CharacterEnterWorldService: sends the player status in the world-entry sequence."
+    "handler": "CharacterEnterWorldService: sends the player status in the world-entry sequence. MobileStateService: the answer to a 0x34 status query, whole for the character, compact for another mobile."
   },
   "0x12:incoming": {
     "category": "Chat",
@@ -489,7 +489,7 @@
         "name": "Flags",
         "type": "bitfield",
         "size": "1",
-        "description": "Mobile flags"
+        "description": "Mobile flags: frozen 0x01, female 0x02, war mode 0x40, hidden 0x80"
       },
       {
         "offset": "11",
@@ -521,7 +521,7 @@
       }
     ],
     "notes": "Updates the player mobile after world entry, and tells a teleported player where it stands.",
-    "handler": "CharacterEnterWorldService: sends the player mobile update during world entry. TeleportService: sends it to a teleported player, whose step sequence starts again."
+    "handler": "CharacterEnterWorldService: sends the player mobile update during world entry. TeleportService: sends it to a teleported player, whose step sequence starts again. MobileStateService: sent to the mobile's own player when its flags change, and its step sequence starts again."
   },
   "0x21:outgoing": {
     "category": "Movement",
@@ -740,7 +740,7 @@
         "name": "Flags",
         "type": "byte",
         "size": "1",
-        "description": "Mobile flags (female)"
+        "description": "Mobile flags: frozen 0x01, female 0x02, war mode 0x40, hidden 0x80"
       },
       {
         "offset": "16",
@@ -790,7 +790,7 @@
       }
     ],
     "notes": "Seven bytes for older clients; nine bytes from client 7.0.9.0. This version-dependent packet has no on-wire length header.",
-    "handler": "UseRequestPacketHandler: opens the carried container gump; BankService: opens the bank box."
+    "handler": "UseRequestPacketHandler: opens a carried container, or one on the ground within reach; BankService: opens the bank box."
   },
   "0x25:outgoing": {
     "category": "Items",
@@ -922,7 +922,7 @@
       {
         "offset": "6",
         "name": "Mobile",
-        "type": "serial",
+        "type": "uint",
         "size": "4",
         "description": "The mobile asked about."
       }
@@ -967,7 +967,7 @@
       }
     ],
     "notes": "Each item uses 19 bytes, or 20 with the grid byte for newer clients: the item's slot (0 to 124) in the grid the Enhanced Client shows.",
-    "handler": "UseRequestPacketHandler and BankService: send the opened container contents."
+    "handler": "UseRequestPacketHandler: the contents of a carried container, or of one on the ground within reach; BankService: those of the bank box."
   },
   "0x4E:outgoing": {
     "category": "World",
@@ -1314,6 +1314,13 @@
         "description": "Body hue"
       },
       {
+        "offset": "17",
+        "name": "Flags",
+        "type": "bitfield",
+        "size": "1",
+        "description": "Mobile flags: frozen 0x01, female 0x02, war mode 0x40, hidden 0x80"
+      },
+      {
         "offset": "18",
         "name": "Notoriety",
         "type": "enum",
@@ -1329,7 +1336,7 @@
       }
     ],
     "notes": "Introduces the mobile and its worn items; ends with a zero serial.",
-    "handler": "CharacterEnterWorldService: sends the player and worn items during world entry."
+    "handler": "CharacterEnterWorldService: sends the player and worn items during world entry. WorldViewService: a mobile that comes into range, or is revealed, to the players around."
   },
   "0x80:incoming": {
     "category": "Login",
@@ -1393,7 +1400,7 @@
       }
     ],
     "notes": "Rejects login with a reason code.",
-    "handler": "AccountLoginPacketHandler: denies a failed account login."
+    "handler": "LoginRoleAccountPacketHandler and LoginRoleServerSelectPacketHandler on the login role; GameLoginPacketHandler on the game role when the handoff ticket is refused."
   },
   "0x83:incoming": {
     "category": "Characters",
@@ -1768,7 +1775,7 @@
       }
     ],
     "notes": "Lists realms eligible for the authenticated account.",
-    "handler": "AccountLoginPacketHandler: sends eligible realms after authentication."
+    "handler": "LoginRoleAccountPacketHandler: sends the eligible realms after authentication."
   },
   "0xA9:outgoing": {
     "category": "Characters",
@@ -2052,7 +2059,7 @@
       }
     ],
     "notes": "Requests the client version.",
-    "handler": "Login host: requests the client version before further processing."
+    "handler": "Registered in the built-in table; not sent by any host today."
   },
   "0xBF/0x08:outgoing": {
     "category": "World",
@@ -2154,7 +2161,7 @@
         "description": "Requested update range."
       }
     ],
-    "notes": "Recognized and ignored for now.",
+    "notes": "Answered with the server's view range, whatever the client asked.",
     "handler": "UpdateRangePacketHandler: answers with the server's view range."
   },
   "0xD6:incoming": {
@@ -3172,7 +3179,7 @@
       }
     ],
     "notes": "A cliloc shown by the client in its language.",
-    "handler": "LookRequestPacketHandler."
+    "handler": "LookRequestPacketHandler: the name over an object. UseRequestPacketHandler: the too-far message. ItemModule: a cliloc shown by a script."
   },
   "0x54:outgoing": {
     "category": "World",
@@ -3232,7 +3239,7 @@
       }
     ],
     "notes": "Plays a sound once at a location.",
-    "handler": "SpeechService: npc.play_sound of a mobile script, to the players within 15 cells."
+    "handler": "SpeechService: npc.play_sound of a mobile script, to the players within 15 cells. Also item.play_sound of item scripts, and WeatherService: thunder during a storm."
   },
   "0xC0:outgoing": {
     "category": "World",
@@ -3839,7 +3846,7 @@
       {
         "offset": "1",
         "name": "Mobile",
-        "type": "serial",
+        "type": "uint",
         "size": "4",
         "description": "The mobile."
       },
@@ -3878,7 +3885,7 @@
       {
         "offset": "1",
         "name": "Mobile",
-        "type": "serial",
+        "type": "uint",
         "size": "4",
         "description": "The mobile."
       },
@@ -3917,7 +3924,7 @@
       {
         "offset": "1",
         "name": "Mobile",
-        "type": "serial",
+        "type": "uint",
         "size": "4",
         "description": "The mobile."
       },
@@ -4104,15 +4111,15 @@
       {
         "offset": "15",
         "name": "Language",
-        "type": "char[]",
+        "type": "ascii",
         "size": "4",
         "description": "Language code of the client, such as ENU"
       },
       {
         "offset": "19",
         "name": "Text",
-        "type": "utf16le",
-        "size": "*",
+        "type": "byte[]",
+        "size": "variable",
         "description": "The text typed, little-endian UTF-16"
       }
     ],

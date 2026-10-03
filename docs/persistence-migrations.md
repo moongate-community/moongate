@@ -91,7 +91,8 @@ database. Stop its runtime processes and use the runner:
   --root-directory /srv/moongate/realm-1 --target world
 ```
 
-The runner reads that root's `config/moongate.toml` and `plugins/`. `--target auth`
+The runner reads that root's `config/moongate.toml` and `plugins/`; `--plugins-directory` names
+another directory of plugin bundles to scan for their migrations. `--target auth`
 selects `[persistence.accounts]`; `--target world` selects `[persistence.realm]`.
 Only the selected connection is resolved. `MOONGATE_ROOT` is an alternative to
 `--root-directory`; without either, `mgctl` uses its own directory, the server's, as

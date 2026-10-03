@@ -79,7 +79,7 @@ Prepare a root before starting (this also copies the shard data files, templates
 
 ```sh
 docker volume create moongate-data
-docker run --rm --entrypoint /app/mgctl -v moongate-data:/data moongate:local /data
+docker run --rm --entrypoint /app/mgctl -v moongate-data:/data moongate:local init /data
 ```
 
 For optional administration TLS in this root, append `--generate-admin-certificate`
