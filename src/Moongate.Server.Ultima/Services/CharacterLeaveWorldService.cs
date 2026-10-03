@@ -58,6 +58,13 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
             _items.Show(lifted);
             _view.ItemAppeared(lifted);
         }
+        else if (session.Get(ItemSessionKeys.Held) is { } taken &&
+                 _items.TryGet(taken.Item, out var fromChest) &&
+                 _items.GetGroundRoot(fromChest) is { } chest)
+        {
+            // Taken from a chest on the ground, it never left it: those around were told it had.
+            _view.ContainedItemAppeared(fromChest, chest, character.Id);
+        }
 
         var snapshot = character.Snapshot();
         var carried = _items.GetOwnedBy(character.Id);

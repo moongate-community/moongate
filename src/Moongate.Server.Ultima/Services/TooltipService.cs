@@ -102,7 +102,7 @@ public sealed class TooltipService : ITooltipService
 
         if (_mobiles.TryGet(target, out var mobile))
         {
-            if (!InView(character, mobile.Map, mobile.Location))
+            if (!InView(character, mobile.Map, mobile.Location) || mobile.IsHiddenFrom(viewer, account))
             {
                 return false;
             }

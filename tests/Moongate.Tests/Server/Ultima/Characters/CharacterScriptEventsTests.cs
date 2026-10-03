@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Characters;
@@ -93,5 +94,24 @@ public sealed class CharacterScriptEventsTests
         Assert.Equal("Aria", fields["name"]);
         Assert.Equal(MapType.Trammel, fields["map"]);
         Assert.Equal((1497, 1628, 12), ((int)fields["x"]!, (int)fields["y"]!, (int)fields["z"]!));
+    }
+
+    [Fact]
+    public void PlayerRegionChanged_NamesBothRegions_AndWhereThePlayerStands()
+    {
+        var aria = new MobileEntity
+        {
+            Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 10)
+        };
+
+        var fields = CharacterScriptEvents.PlayerRegionChanged(
+            new PlayerRegionChangedEvent(aria, null, new RegionContent { Map = MapType.Trammel, Name = "Britain" })
+        );
+
+        Assert.Equal(2L, fields["serial"]);
+        Assert.Equal("Aria", fields["name"]);
+        Assert.Null(fields["previous"]);
+        Assert.Equal("Britain", fields["current"]);
+        Assert.Equal((MapType.Trammel, 1496, 1628, 10), (fields["map"], fields["x"], fields["y"], fields["z"]));
     }
 }

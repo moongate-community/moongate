@@ -75,6 +75,22 @@ internal static class CompletionCatalog
             ]
         ),
         new(
+            "convert modernuo-locations",
+            "Convert the named places of ModernUO into locations.toml",
+            [
+                new("--source", "The Distribution/Data/Locations folder of ModernUO", CompletionValueType.Directory),
+                new("--destination", "The locations.toml file to write", CompletionValueType.File)
+            ]
+        ),
+        new(
+            "convert modernuo-chests",
+            "Convert the treasure chests of ModernUO's spawners into spawn regions",
+            [
+                new("--source", "The Distribution/Data/Spawns folder of ModernUO", CompletionValueType.Directory),
+                new("--destination", "The spawns folder", CompletionValueType.Directory)
+            ]
+        ),
+        new(
             "completion",
             "Print the completion script of a shell",
             [],

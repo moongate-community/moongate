@@ -109,12 +109,15 @@ public sealed class EffectService : IEffectService
         var sent = 0;
         HuedEffectPacket? hued = null;
         ParticleEffectPacket? particles = null;
+        // An effect on a hidden mobile, or thrown by one, would give it away.
+        _mobiles.TryGet(effect.Source, out var source);
 
         foreach (var session in _sessions.GetAll())
         {
             if (!session.CharacterId.IsValid ||
                 !_mobiles.TryGet(session.CharacterId, out var viewer) ||
                 !Sees(viewer, map, from, to) ||
+                source?.IsHiddenFrom(viewer.Id, session.AccountType) == true ||
                 session.NetworkSession.Client is not { IsConnected: true } connection)
             {
                 continue;

@@ -30,6 +30,16 @@ public interface IItemService : IPersistenceDeletionSource
     void Add(IEnumerable<ItemEntity> items);
 
     /// <summary>
+    ///     Adds the items loaded for a character entering the world, as its last save left them, leaving out those the
+    ///     world has moved on from since: an item already live, which someone else carries or which lies on the ground,
+    ///     and an item queued for deletion, merged into a stack.
+    /// </summary>
+    /// <returns>
+    ///     The items added.
+    /// </returns>
+    IReadOnlyList<ItemEntity> AddLoaded(IEnumerable<ItemEntity> items);
+
+    /// <summary>
     ///     Gets the live item with the serial.
     /// </summary>
     bool TryGet(Serial serial, [NotNullWhen(true)] out ItemEntity? item);
@@ -55,6 +65,12 @@ public interface IItemService : IPersistenceDeletionSource
     ///     on the ground or inside a container that is not live.
     /// </summary>
     ItemEntity? GetWornRoot(ItemEntity item);
+
+    /// <summary>
+    ///     Gets the item on the ground the item is, or is in at any depth, such as a treasure chest; null for an item a
+    ///     mobile carries or inside a container that is not live.
+    /// </summary>
+    ItemEntity? GetGroundRoot(ItemEntity item);
 
     /// <summary>
     ///     Gets the live items the mobile wears and everything inside them, at any depth.

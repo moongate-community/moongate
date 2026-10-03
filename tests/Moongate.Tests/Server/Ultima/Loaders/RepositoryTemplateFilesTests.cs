@@ -170,11 +170,20 @@ public sealed class RepositoryTemplateFilesTests
                           .LoadDataAsync()).Entities.ToArray();
         var lists = (await new NpcListsLoader(directories, new StubDataLoaderService().With(mobiles)).LoadDataAsync()).Entities.ToArray();
 
-        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists)).LoadDataAsync())
+        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists).With(items)).LoadDataAsync())
                      .Entities.ToDictionary(spawn => spawn.Id);
 
         Assert.Equal(446, lists.Length);
-        Assert.Equal(4041, spawns.Count);
+        Assert.Equal(4440, spawns.Count);
+        // The treasure chests of ModernUO's spawners: regions of items.
+        var chests = spawns.Values.Where(spawn => spawn.ItemIds.Count > 0).ToList();
+        Assert.Equal(399, chests.Count);
+        Assert.Equal(633, chests.Sum(chest => chest.Max));
+        Assert.Equal(
+            [(MapType.Felucca, 198), (MapType.Ilshenar, 3), (MapType.Trammel, 198)],
+            chests.GroupBy(chest => chest.Map).Select(group => (group.Key, group.Count()))
+        );
+        Assert.All(chests, chest => Assert.All(chest.ItemIds, item => Assert.StartsWith("treasure_chest_level_", item)));
         var shop = spawns["felucca_0"];
         Assert.Equal(("The Hammer And Anvil", MapType.Felucca, 480), (shop.Name, shop.Map, shop.MinMinutes));
         Assert.Equal(["weaponsmith"], shop.MobileIds);
@@ -217,6 +226,23 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedTreasureChests_AreFixedDecayAndHoldGoldAndLoot()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        var chests = Enumerable.Range(1, 4).Select(level => templates[$"treasure_chest_level_{level}"]).ToList();
+
+        Assert.All(
+            chests,
+            chest => Assert.Equal(((bool?)false, (bool?)true, (int?)45), (chest.Movable, chest.Decays, chest.DecayMinutes))
+        );
+        Assert.Equal([30, 70, 180, 200], chests.Select(chest => chest.Gold!.Value.Min));
+        Assert.Equal([129, 169, 419, 599], chests.Select(chest => chest.Gold!.Value.Max));
+        Assert.Equal([5, 5, 16, 23], chests.Select(chest => chest.Loot!.Count));
+        Assert.Equal([0x0E43u, 0x0E41u, 0x09ABu, 0x0E40u], chests.Select(chest => chest.ItemId.Value));
+    }
+
+    [Fact]
     public async Task ShippedLootTables_LoadAgainstTheShippedItems()
     {
         var directories = Directories();
@@ -224,7 +250,12 @@ public sealed class RepositoryTemplateFilesTests
 
         var tables = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
 
-        Assert.Equal(71, tables.Count);
+        Assert.Equal(124, tables.Count);
+        // What the town containers fill up with: ModernUO's 35 kinds of place.
+        var fillable = tables.Where(table => table.Id.StartsWith("fillable_", StringComparison.Ordinal)).ToList();
+        Assert.Equal(35, fillable.Count);
+        Assert.All(fillable, table => Assert.NotEmpty(table.Entries));
+        Assert.Equal(338, fillable.Sum(table => table.Entries.Count));
     }
 
     private static DirectoriesConfig Directories()

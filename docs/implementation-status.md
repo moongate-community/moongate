@@ -13,9 +13,9 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 | Login, realms and accounts | ✅ Works | Login server, game realms, handoff between them |
 | Characters | ✅ Works | Create, delete and restore, enter the world, walk and run |
 | Other players | ✅ Works | See each other, talk |
-| Items | 🟡 Partial | Backpack, paperdoll, ground, tooltips; no ground containers |
-| NPCs | 🟡 Partial | Spawn regions, Lua scripts, wandering; no combat or pathfinding |
-| World | 🟡 Partial | Decoration, doors and keys, teleporters and public moongates (also across maps), day and night, weather, seasons; no houses |
+| Items | 🟡 Partial | Backpack, paperdoll, ground, tooltips; containers on the ground open, and items go in and out of them |
+| NPCs | 🟡 Partial | Spawn regions, Lua scripts, wandering, walking a path; no combat |
+| World | 🟡 Partial | Decoration, doors and keys, teleporters and public moongates (also across maps), day and night, weather, seasons, dungeon treasure chests that respawn and town containers that fill up; no houses |
 | Combat, death, skill gain | ❌ Not yet | |
 | Lua scripting | ✅ Works | NPC and item scripts, sandboxed |
 | Persistence | ✅ Works | PostgreSQL, world saves, migrations, rotating SQL backups |
@@ -24,7 +24,8 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 ## What a player can do
 
 - Log in, pick a realm, create a character (with its starting items) and enter the world.
-- Walk and run, with the server checking the terrain, the statics and the speed.
+- Walk and run, with the server checking the terrain, the statics, the items in the way (a closed
+  door, a crate, a wall) and the speed.
 - See the other players within 18 tiles, and talk to them.
 - Open the backpack, move items in it, split and merge stacks, drop items on the ground and pick
   them up; items left on the ground decay.
@@ -36,14 +37,17 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - Step on a teleporter, or say the word of one that answers a word, and arrive elsewhere, also on
   another map; step into a moongate.
 - Read the game time and the moon phases where they stand: `.time`.
-- Meet NPCs that wander around their home, greet and answer.
+- Meet NPCs that wander around their home, greet and answer, and, when their script says so, walk to a
+  place or follow someone around what stands in the way.
 - Open the bank box at a banker by saying *bank*, in any client language.
+- Open the treasure chests of the dungeons and the shop crates that fill up; read a clock; switch war mode.
 
 ## What a game master can do
 
 - Spawn and remove single NPCs: `.spawn`, `.remove`.
 - See the spawn regions where they stand: `.spawns`; get a message when regions spawn.
-- Go to any spot of any map: `.go`.
+- Go to any spot of any map, or to one of the 558 named places, by name or from a gump that
+  lists them by map and category: [`.go`](commands/go.md); walk through doors.
 - Lock and unlock doors and make their keys: `.lock`, `.unlock`, `.key`.
 - Force the light, the weather or the season, try a music track: `.globallight`, `.weather`,
   `.season`, `.music`.
@@ -59,11 +63,12 @@ See all of them in [Commands](commands.md).
 ## Not built yet
 
 - Combat, death, corpses and skill gain.
-- Pathfinding AI: NPCs only run their Lua script (`on_think`, `on_speech`, `on_spawn`,
-  `on_mobile_in_range`).
+- A built-in AI: NPCs only run their Lua script (`on_think`, `on_speech`, `on_spawn`,
+  `on_mobile_in_range`), which can walk them along a [path](scripting.md#walking-a-path) with
+  `npc.walk_to`; nothing chases, flees or fights by itself.
 - Recall and gate travel, and mounts.
 - Houses and boats (placement, and multis in movement and line of sight).
-- Containers on the ground, dressing other characters, strength requirements.
+- Weight limits of the containers on the ground, dressing other characters, strength requirements.
 - Region rules: guards and housing. Regions drive the weather, the dungeon light, the music and the season.
 - Spawner items (the [spawn regions](spawns.md) do the respawning).
 - Per-player language, a restore command for the SQL backups, a web administration panel.
@@ -85,8 +90,8 @@ See all of them in [Commands](commands.md).
 ### World
 
 - **Movement and sight:** walkability and landing height from the terrain and the statics (as
-  ModernUO), line of sight (as POL and ModernUO). Items, mobiles and multis are not part of these
-  checks yet. See [World queries](world-queries.md).
+  ModernUO), line of sight (as POL and ModernUO). Ground items block movement (a closed door, a crate); mobiles and
+  multis are not part of these checks yet, and line of sight ignores items. See [World queries](world-queries.md).
 - **Map sectors:** players, NPCs and ground items are seen within the view range; NPCs away from
   every player sleep.
 - **Light:** a game clock with day and night by map and longitude, and the phases of the two moons;
@@ -109,15 +114,15 @@ See all of them in [Commands](commands.md).
 - Sandboxed Lua 5.2 with an instruction budget, `wait`, timers, events, hot reload and editor
   definitions. See [Writing Lua scripts](scripting.md).
 - Modules: `engine`, `log`, `timer`, `events`, and in the Ultima plugin `dice`, `localization`,
-  `npc`, `item`, `world`, `mobile`, `gump`, `bank` and `effect`.
+  `npc`, `item`, `world`, `mobile`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates` and `locations`.
 - Gumps: XML layouts checked by `gump.xsd`, a Lua script per gump for the answers, slots and whole
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
-  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `wander.lua`,
+  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `gumps/go.lua`, `wander.lua`,
   `banker.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
   and `gumps/tutorial_list.lua`.
-- Not yet: APIs for stats, skills and inventory.
+- Not yet: timers on mobiles, combat and skill events.
 
 ### Data and templates
 

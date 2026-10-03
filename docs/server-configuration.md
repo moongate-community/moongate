@@ -76,6 +76,8 @@ jail_light = 9 # Light level inside a jail region, from 0 (brightest) to 31.
 lamp_post_light = 6 # Light level from which the town lamp posts are lit, from 0 to 31.
 season_rotation = false # true: the maps change season every days_per_season game days.
 days_per_season = 12 # Game days a season lasts when they rotate, from 1 to 365.
+pathfinding_range = 38 # How far apart the two ends of a path search may be, in tiles, from 8 to 64.
+pathfinding_max_nodes = 1000 # Places a path search looks at before it gives up, from 50 to 20000.
 
 [ultima.items]
 backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.
@@ -200,6 +202,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.world.dungeon_light`, `ultima.world.jail_light` | From 0 (brightest) to 31; defaults 26 and 9, as ModernUO. The light inside a region of type `dungeon` or `jail`, whatever the time of day; sent as soon as a player walks in or out. `.globallight` still wins, so a game master can see. |
 | `ultima.world.lamp_post_light` | From 0 to 31; default 6. Every 30 seconds the town lamp posts placed by `.decorate` (kinds `LampPost1` to `LampPost3`) are lit where the light of the time of day (or `.globallight`) is at least this level, and doused where it is below; with the default night of 12 that is about 23:00 to 05:00, game time. Regions do not count. |
 | `ultima.world.season_rotation`, `ultima.world.days_per_season` | `false` and 12 (1 to 365). When on, every map whose `maps.toml` season is not `desolation` goes spring, summer, fall, winter from that season, changing every `days_per_season` game days of its clock; a region with its own `season` keeps it. Players get the new season within a minute. See [Seasons](data-files/maps.md#seasons). |
+| `ultima.world.pathfinding_range`, `ultima.world.pathfinding_max_nodes` | 38 (8 to 64) and 1000 (50 to 20000), as ModernUO. The bounds of a [path search](world-queries.md#pathfinding): how far apart its two ends may be along X or Y, and how many places it looks at before it gives up. A search that gives up costs about a millisecond per hundred places |
 | `ultima.items.backpack_template`, `ultima.items.gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Used for the backpack of new characters and spawned NPCs and for the gold of spawned NPCs; the starting gold of new characters is an item of the common set in [`starting_items.toml`](data-files/starting-items.md). Both must exist in `templates/items/`, and the gold template must stack, or the game server stops at startup. See [Starting items](data-files/starting-items.md). |
 | `ultima.starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |
 | `ultima.characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |

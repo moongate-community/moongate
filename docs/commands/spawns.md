@@ -14,10 +14,10 @@ In game only. It prints one line per spawn region with an area over your positio
 order:
 
 ```text
-The Hammer And Anvil (felucca_0): 1/1 NPCs, next spawn in 312 min.
+The Hammer And Anvil (felucca_0): 1/1, next spawn in 312 min.
 ```
 
-The name comes first (the id when the region has none), then the id, the live NPCs against the
+The name comes first (the id when the region has none), then the id, the live NPCs (or items, for a region of items such as treasure chests) against the
 region's `max`, and the minutes until the next check spawns there. A region at its `max` still has
 a next spawn: it spawns nothing then and waits again. A region whose last check found no spot
 says so, `no spot found, retrying in 1 min.`, until it spawns again. `No spawn region here.`

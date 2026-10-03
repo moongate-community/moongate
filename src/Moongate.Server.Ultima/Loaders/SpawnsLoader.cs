@@ -1,6 +1,7 @@
 using Moongate.Core.Directories;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -46,6 +47,7 @@ public class SpawnsLoader : IDataLoader<SpawnTemplate>
 
         var mobileIds = _dataLoaderService.GetEntities<MobileTemplate>().Select(template => template.Id).ToHashSet(StringComparer.Ordinal);
         var listIds = _dataLoaderService.GetEntities<NpcListTemplate>().Select(list => list.Id).ToHashSet(StringComparer.Ordinal);
+        var itemIds = _dataLoaderService.GetEntities<ItemTemplate>().Select(template => template.Id).ToHashSet(StringComparer.Ordinal);
         var files = new Dictionary<string, string>(StringComparer.Ordinal);
 
         foreach (var folder in Directory.GetDirectories(spawnsDirectoryPath).Order(StringComparer.Ordinal))
@@ -76,24 +78,46 @@ public class SpawnsLoader : IDataLoader<SpawnTemplate>
                         throw new InvalidDataException($"Spawn '{spawn.Id}' is defined twice: in {files[spawn.Id]} and {path}.");
                     }
 
-                    Check(spawn, path, mobileIds, listIds);
+                    Check(spawn, path, mobileIds, listIds, itemIds);
                     spawns.Add(spawn);
                 }
             }
         }
 
-        _logger.Information("Found {Count} spawns for up to {Npcs} NPCs", spawns.Count, spawns.Sum(spawn => spawn.Max));
+        _logger.Information(
+            "Found {Count} spawns for up to {Npcs} NPCs and {Items} items",
+            spawns.Count,
+            spawns.Where(spawn => spawn.ItemIds.Count == 0).Sum(spawn => spawn.Max),
+            spawns.Where(spawn => spawn.ItemIds.Count > 0).Sum(spawn => spawn.Max)
+        );
 
         return new() { Entities = spawns };
     }
 
-    private static void Check(SpawnTemplate spawn, string file, HashSet<string> mobileIds, HashSet<string> listIds)
+    private static void Check(
+        SpawnTemplate spawn,
+        string file,
+        HashSet<string> mobileIds,
+        HashSet<string> listIds,
+        HashSet<string> itemIds
+    )
     {
         var where = $"{file}: spawn '{spawn.Id}'";
+        var npcs = spawn.MobileIds.Count > 0 || spawn.NpcListIds.Count > 0;
 
-        if (spawn.MobileIds.Count == 0 && spawn.NpcListIds.Count == 0)
+        if (!npcs && spawn.ItemIds.Count == 0)
         {
-            throw new InvalidDataException($"{where} has nothing to spawn: give mobile_ids or npc_list_ids.");
+            throw new InvalidDataException($"{where} has nothing to spawn: give mobile_ids, npc_list_ids or item_ids.");
+        }
+
+        if (npcs && spawn.ItemIds.Count > 0)
+        {
+            throw new InvalidDataException($"{where} has both NPCs and item_ids: a spawn is of NPCs or of items.");
+        }
+
+        foreach (var item in spawn.ItemIds.Where(item => !itemIds.Contains(item)))
+        {
+            throw new InvalidDataException($"{where} spawns '{item}', which is not an item template.");
         }
 
         foreach (var mobile in spawn.MobileIds.Where(mobile => !mobileIds.Contains(mobile)))

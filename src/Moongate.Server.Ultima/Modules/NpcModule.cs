@@ -3,6 +3,12 @@ using Lua;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Core.Geometry;
+using Moongate.Scripting.Interfaces;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Ultima.Types;
+using Serilog;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules.Internal;
@@ -23,18 +29,46 @@ public sealed class NpcModule
 
     private const DirectionType DirectionMask = (DirectionType)0x07;
 
+    // A mover's height: the ground of a place it walks to is first looked for no higher than its head.
+    private const int MoverHeight = 16;
+
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
     private readonly IWorldViewService _view;
     private readonly IMobileTemplateService _templates;
+    private readonly INpcService? _npcs;
+    private readonly Lazy<IScriptEngine>? _engine;
+    private readonly IGameLoopService? _loop;
+    private readonly ISectorService? _sectors;
+    private readonly IMoveOverService? _moveOver;
+    private readonly INpcPathService? _paths;
+    private readonly IPathfindingService? _finder;
+    private readonly IMovementService? _movement;
+    private readonly ILogger _logger = Log.ForContext<NpcModule>();
 
     public NpcModule(
         IMobileService mobiles,
         ISpeechService speech,
         IWorldViewService view,
-        IMobileTemplateService templates
+        IMobileTemplateService templates,
+        INpcService? npcs = null,
+        Lazy<IScriptEngine>? engine = null,
+        IGameLoopService? loop = null,
+        ISectorService? sectors = null,
+        IMoveOverService? moveOver = null,
+        INpcPathService? paths = null,
+        IPathfindingService? finder = null,
+        IMovementService? movement = null
     )
     {
+        _paths = paths;
+        _finder = finder;
+        _movement = movement;
+        _moveOver = moveOver;
+        _npcs = npcs;
+        _engine = engine;
+        _loop = loop;
+        _sectors = sectors;
         _mobiles = mobiles;
         _speech = speech;
         _view = view;
@@ -87,6 +121,75 @@ public sealed class NpcModule
             return false;
         }
 
+        return Take(npc, direction, running);
+    }
+
+    /// <summary>
+    ///     Takes one step towards a place along a path that avoids what stands in the way, and says how it goes; call it
+    ///     from <c>on_think</c> on every tick: <c>if npc.walk_to(serial, 1434, 1699) == "arrived" then ... end</c>. The
+    ///     path is searched the first time and kept: it is searched again only when the place changes or a step is
+    ///     blocked, and two seconds after the last search at the soonest.
+    /// </summary>
+    [ScriptFunction(helpText: "One step along a path to x, y (z defaults to the ground there), a run when running is true: 'arrived' within range tiles of it, 'moving' after a step, 'blocked' when the step was refused or it waits to look for another way, 'no_path' when the last search did not reach the place; nil for an unknown NPC, a negative range or a z outside -128 to 127.")]
+    public string? WalkTo(long serial, int x, int y, int? z = null, int? range = null, bool running = false)
+    {
+        if (_paths is null || range is < 0 || !TryGetNpc(serial, out var npc) || GoalOf(npc, x, y, z) is not { } goal)
+        {
+            return null;
+        }
+
+        var step = _paths.Next(npc, goal, range ?? 0, AbilityOf(npc));
+
+        switch (step.Kind)
+        {
+            case NpcWalkType.Arrived:
+                return "arrived";
+            case NpcWalkType.NoPath:
+                return "no_path";
+            case NpcWalkType.Blocked:
+                return "blocked";
+        }
+
+        var moved = Take(npc, step.Direction, running);
+        _paths.Stepped(npc, moved);
+
+        return moved ? "moving" : "blocked";
+    }
+
+    /// <summary>
+    ///     Finds the steps from the NPC to a place, for a script that walks them itself with <c>npc.step</c>;
+    ///     <c>for _, direction in ipairs(npc.find_path(serial, 1434, 1699) or {}) do ... end</c>. Each call searches:
+    ///     keep the list, do not ask on every tick.
+    /// </summary>
+    [ScriptFunction(helpText: "The steps from the NPC to x, y (z defaults to the ground there) as a list of DirectionType; with partial true, the steps to the closest place when it cannot be reached. Nil when there is no path, the place is too far or the NPC is unknown.")]
+    public LuaTable? FindPath(long serial, int x, int y, int? z = null, bool partial = false)
+    {
+        if (_finder is null || !TryGetNpc(serial, out var npc) || GoalOf(npc, x, y, z) is not { } goal)
+        {
+            return null;
+        }
+
+        var path = _finder.FindPath(npc.Map, npc.Location, goal, AbilityOf(npc), partial);
+
+        if (path.Kind is not (PathResultType.Found or PathResultType.Partial))
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        var index = 1;
+
+        foreach (var direction in path.Steps)
+        {
+            table[index++] = (int)direction;
+        }
+
+        return table;
+    }
+
+    // One step, a turn first when needed, shown to the players around; true when the NPC moved.
+    private bool Take(MobileEntity npc, DirectionType direction, bool running)
+    {
         var oldLocation = npc.Location;
         var oldDirection = npc.Direction;
         var ability = AbilityOf(npc);
@@ -102,7 +205,132 @@ public sealed class NpcModule
             _view.Moved(npc, oldLocation, running);
         }
 
+        // On the next turn of the loop: the items' scripts cannot run inside the NPC's own, which called this.
+        // Only for a cell that holds an item: most steps post nothing.
+        if (npc.Location != oldLocation &&
+            _moveOver is not null &&
+            _sectors?.GetItemsInRange(npc.Map, npc.Location, 0).Count > 0)
+        {
+            _loop?.TryPost(new LoopActionWorkItem(() => _moveOver.SteppedOn(npc)));
+        }
+
         return result == MoveResultType.Moved;
+    }
+
+    /// <summary>
+    ///     Brings a new NPC of a template into the world; <c>npc.spawn("orc", MapType.Trammel, 1500, 1600, 10,
+    ///     function(serial) npc.say(serial, "Grr") end)</c>. The NPC is saved first, so it appears a moment later: its
+    ///     script's <c>on_spawn</c> runs then, and so does <paramref name="callback" />, with its serial.
+    /// </summary>
+    [ScriptFunction(helpText: "Spawns an NPC of a mobile template at x, y, z of the map, a moment later; the optional function gets its serial. False for an unknown template, a spot outside the map or a z outside -128 to 127.")]
+    public bool Spawn(string template, MapType map, int x, int y, int z, LuaValue callback = default)
+    {
+        if (callback.Type is not (LuaValueType.Nil or LuaValueType.Function))
+        {
+            throw new ArgumentException($"expected a function, got {callback.TypeToString()}", nameof(callback));
+        }
+
+        if (_npcs is null ||
+            z is < sbyte.MinValue or > sbyte.MaxValue ||
+            string.IsNullOrWhiteSpace(template) ||
+            !_templates.TryGet(template, out _) ||
+            _sectors?.IsInside(map, x, y) == false)
+        {
+            return false;
+        }
+
+        var function = callback.Type == LuaValueType.Function ? callback.Read<LuaFunction>() : null;
+        var owner = _engine?.Value.CurrentScript ?? "npc.spawn";
+        _ = SpawnAsync(template, map, new Point3D(x, y, z), function, owner);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Takes the NPC out of the world for good, with what it carries; <c>npc.delete(serial)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Deletes the NPC and what it carries, on the next turn of the game loop; false for a serial that is not an NPC in the world.")]
+    public bool Delete(long serial)
+    {
+        if (_npcs is null || !TryGetNpc(serial, out var npc))
+        {
+            return false;
+        }
+
+        _ = _npcs.RemoveAsync(npc.Id)
+                 .ContinueWith(
+                     task => _logger.Warning(task.Exception, "npc.delete of {Serial} failed", serial),
+                     CancellationToken.None,
+                     TaskContinuationOptions.OnlyOnFaulted,
+                     TaskScheduler.Default
+                 );
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Turns the NPC towards a place without stepping; <c>npc.face(serial, there.x, there.y)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Turns the NPC towards x, y, seen by the players in range; false for an unknown NPC or its own cell.")]
+    public bool Face(long serial, int x, int y)
+    {
+        if (!TryGetNpc(serial, out var npc) || npc.Frozen || npc.Location.X == x && npc.Location.Y == y)
+        {
+            return false;
+        }
+
+        var direction = npc.Location.GetDirectionTo(new Point3D(x, y, npc.Location.Z)) & DirectionMask;
+
+        if (direction != npc.Direction)
+        {
+            npc.Direction = direction;
+            _view.Moved(npc, npc.Location, false);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Gets how many tiles lie between the NPC and a place, as the view range counts them;
+    ///     <c>npc.distance_to(serial, there.x, there.y) <= 2</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The tiles between the NPC and x, y, the larger of the two differences; nil for an unknown NPC.")]
+    public int? DistanceTo(long serial, int x, int y)
+    {
+        return TryGetNpc(serial, out var npc) ? Distance(npc.Location, new Point3D(x, y, 0)) : null;
+    }
+
+    /// <summary>
+    ///     Gets the mobiles around the NPC, itself left out, nearest first, as a list of serials: the other NPCs, or
+    ///     with <paramref name="kind" /> the players or everyone; <c>for _, other in ipairs(npc.nearby(serial, 8)) do ...
+    ///     end</c>, <c>npc.nearby(serial, 8, "players")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The serials of the mobiles within range tiles (0 to 32) of the NPC, itself left out, nearest first: the other NPCs, or with kind 'players' the players, with 'all' everyone. Empty for an unknown NPC or a range out of bounds.")]
+    public LuaTable Nearby(long serial, int range, string kind = "npcs")
+    {
+        if (kind is not ("npcs" or "players" or "all"))
+        {
+            throw new ArgumentException($"expected 'npcs', 'players' or 'all', got '{kind}'", nameof(kind));
+        }
+
+        var table = new LuaTable();
+
+        if (_sectors is null || range is < 0 or > WorldModule.MaximumRange || !TryGetNpc(serial, out var npc))
+        {
+            return table;
+        }
+
+        var index = 1;
+
+        foreach (var other in _sectors.GetMobilesInRange(npc.Map, npc.Location, range)
+                                      .Where(other => other.Id != npc.Id && (kind == "all" || other.IsNpc == (kind == "npcs")))
+                                      .OrderBy(other => Distance(npc.Location, other.Location))
+                                      .ThenBy(other => other.Id.Value))
+        {
+            table[index++] = (long)other.Id.Value;
+        }
+
+        return table;
     }
 
     /// <summary>
@@ -198,6 +426,58 @@ public sealed class NpcModule
         npc.SetProp(key, prop);
 
         return true;
+    }
+
+    // The place a script names: at the height it gives, else on the ground of the cell, of the NPC's own storey when
+    // there is one.
+    private Point3D? GoalOf(MobileEntity npc, int x, int y, int? z)
+    {
+        if (z is { } given)
+        {
+            return given is >= sbyte.MinValue and <= sbyte.MaxValue ? new Point3D(x, y, given) : null;
+        }
+
+        var ground = npc.Location.Z;
+
+        try
+        {
+            // The NPC's own storey first: the highest ground not above its head. Else the highest there, as up a hill.
+            if (_movement is not null &&
+                (_movement.TryGetSpawnZ(npc.Map, x, y, npc.Location.Z + MoverHeight, out var found) ||
+                 _movement.TryGetSpawnZ(npc.Map, x, y, sbyte.MaxValue, out found)))
+            {
+                ground = found;
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            // The map is not loaded: the search will find nothing.
+        }
+
+        return new Point3D(x, y, ground);
+    }
+
+    private async Task SpawnAsync(string template, MapType map, Point3D location, LuaFunction? callback, string owner)
+    {
+        try
+        {
+            var npc = await _npcs!.SpawnAsync(template, map, location);
+
+            if (callback is not null && _engine is not null && _loop is not null)
+            {
+                _loop.TryPost(new LoopActionWorkItem(() => _engine.Value.CallFunction(owner, callback, (long)npc.Id.Value)));
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.Warning(exception, "npc.spawn of {Template} at {Map} {Location} failed", template, map, location);
+        }
+    }
+
+    // The tiles between two places, as the view range counts them.
+    private static int Distance(Point3D from, Point3D to)
+    {
+        return Math.Max(Math.Abs(from.X - to.X), Math.Abs(from.Y - to.Y));
     }
 
     // As its template says: a water mobile swims, an amphibious one walks and swims.

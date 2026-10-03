@@ -10,7 +10,15 @@ internal sealed class SpawnRegionState
 {
     public required SpawnTemplate Template { get; init; }
 
-    public required SpawnPool Pool { get; init; }
+    /// <summary>
+    ///     Gets what the NPCs are picked from; null for a region of items.
+    /// </summary>
+    public SpawnPool? Pool { get; init; }
+
+    /// <summary>
+    ///     Gets whether the region spawns items on the ground instead of NPCs.
+    /// </summary>
+    public bool OfItems => Template.ItemIds.Count > 0;
 
     public DateTimeOffset NextSpawn { get; set; }
 

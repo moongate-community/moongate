@@ -4,7 +4,8 @@ namespace Moongate.Server.Ultima.Data.Templates.Spawns;
 
 /// <summary>
 ///     A spawn region, converted from UOX3's <c>[REGIONSPAWN n]</c>: up to <see cref="Max" /> NPCs of its mobiles or
-///     lists live in its areas; a new one comes every <see cref="MinMinutes" /> to <see cref="MaxMinutes" />.
+///     lists live in its areas; a new one comes every <see cref="MinMinutes" /> to <see cref="MaxMinutes" />. A region
+///     with <see cref="ItemIds" /> spawns items on the ground instead, such as treasure chests.
 /// </summary>
 public class SpawnTemplate
 {
@@ -34,6 +35,12 @@ public class SpawnTemplate
     ///     The NPC lists spawned from.
     /// </summary>
     public List<string> NpcListIds { get; set; } = [];
+
+    /// <summary>
+    ///     The item templates spawned on the ground, one picked at random each time, instead of NPCs: a region has
+    ///     these or mobiles and lists, never both. An item counts for its region while it lies on the ground.
+    /// </summary>
+    public List<string> ItemIds { get; set; } = [];
 
     /// <summary>
     ///     How many NPCs of the region live at once.

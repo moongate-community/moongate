@@ -124,7 +124,7 @@ spawn.
 before the mobile templates. The server stops when an id is empty or used twice, an entry
 sets both `item_id` and `loot_template_id`, an `item_id` is not an item template, a
 `loot_template_id` names no table, a `weight` is below 1, an `amount` can roll outside 1
-to 65535, or nested tables loop. A table with no entries is kept, logged as a warning, and gives
+to 65535, nested tables loop, or an item template's `loot` names a table that does not exist. A table with no entries is kept, logged as a warning, and gives
 nothing: two shipped UOX3 tables (`randomwands`, `random_useless_junk`) are empty in
 UOX3's own data.
 
@@ -275,15 +275,16 @@ own, see [TOML value types](toml-types.md).
 | `ItemId` | The base client graphic; runtime physical properties come from `ITileDataService` unless overridden |
 | `Name`, `Comment` | A display name override, and a designer note nobody reads at runtime |
 | `Rarity` | `EnumValueSpec<ItemRarityType>` |
-| `ScriptId` | The global Lua table, defined by `scripts/items/<script_id>.lua`, whose functions (`on_use`, `on_equip`, `on_unequip`, `on_pickup`, `on_drop`, `on_create`) handle what happens to the item; a lower-case Lua identifier, empty for none. See [Item scripts](scripting.md#item-scripts) |
-| `Movable` | Unset uses tiledata: movable unless the tiledata weight is 255, the client's "cannot be lifted" |
+| `ScriptId` | The global Lua table, defined by `scripts/items/<script_id>.lua`, whose functions handle what happens to the item (`on_use`, `on_move_over`, `on_npc_move_over`, `on_speech`, `on_equip`, `on_unequip`, `on_pickup`, `on_drop`, `on_create`, `on_timer`, `on_darkness`) and answer the questions asked before a move (`can_pick_up`, `can_drop`, `can_equip`, `can_insert`); a lower-case Lua identifier, empty for none. See [Item scripts](scripting.md#item-scripts) |
+| `Movable` | Unset uses tiledata: movable unless the tiledata weight is 255, the client's "cannot be lifted". Players cannot pick up what is not movable; game masters and administrators can |
 | `Weight` | Stones to two decimals (`weight = 0.02` for a coin); unset uses the whole-stone tiledata weight |
 | `Amount` | `RangeValueSpec<int>`: the stack size of a new item, fixed or `"10-20"`; unset is 1 |
 | `Stackable` | Unset uses the tiledata `Generic` flag |
 | `Layer` | A `LayerType` name such as `one_handed`; unset uses the tiledata layer |
 | `TwoHandedWeapon` | `two_handed_weapon = true` on a weapon held in both hands (bows, polearms, staves), as POL's `TwoHanded`: worn on `two_handed`, it leaves no hand free. Anything else on `two_handed` (shields, torches) goes in the other hand, with a one-handed weapon. Tiledata cannot tell them apart: it marks shields as weapons and bows as one-handed |
 | `BuyPrice`, `SellPrice` | What vendors sell it for and pay for it; unset means vendors do not trade it |
-| `Decays`, `DecayMinutes` | Whether the item decays on the ground, and after how many minutes; unset decays when movable, after 60 minutes, as ModernUO. An item decays when it lies on the ground, is movable and its template is visible to players. The countdown (`DecayAt`, saved with the item, so downtime counts) starts when it lands on the ground, again when a lifted item bounces back there, and stops when it is picked up, moved into a container or worn; the rest of a split stack keeps the stack's time. A check every 5 seconds deletes the due items, a container with its contents, whether or not a player is near |
+| `Decays`, `DecayMinutes` | Whether the item decays on the ground, and after how many minutes; unset decays when movable, after 60 minutes, as ModernUO. An item that cannot be picked up decays only when its template has both `decays = true` and `decay_minutes`, as the treasure chests. An item decays when it lies on the ground, is movable (or has both of those) and its template is visible to players. The countdown (`DecayAt`, saved with the item, so downtime counts) starts when it lands on the ground, again when a lifted item bounces back there, and stops when it is picked up, moved into a container or worn; the rest of a split stack keeps the stack's time. A check every 5 seconds deletes the due items, a container with its contents, whether or not a player is near |
+| `Loot`, `Gold` | What a container holds when a [spawn region of items](spawns.md#regions-of-items-treasure-chests) makes it: `loot = ["reagents", "reagents"]` rolls each loot table once (list one twice to roll it twice) and `gold = "1d100+29"` puts that much gold inside, in piles of at most 65,535. Unset takes the base template's, else nothing. Only a spawn region fills the item: one made by a command or a script is empty |
 | `LootType` | `regular`, `newbied`, `blessed` or `cursed`: what happens when the owner dies; unset is `regular` |
 | `Tags` | Free script values in an `[item.tags]` table; a child's explicit tags replace the entire base map |
 | `Visibility` | The lowest account type that sees the item: `regular`, `game_master` or `administrator`, as `realm_directory.minimum_account_type`. Unset by default, so a template inherits it through `BaseId`; an item with none anywhere is visible to everyone. `IsVisibleTo(accountType)` answers for one viewer |
@@ -294,8 +295,8 @@ Fields that the client's `tiledata.mul` also carries (weight, stackability, laye
 movability) are overrides: unset means tiledata, as in POL and ModernUO. The extensions
 in `ItemTemplateExtensions` give the value a new item gets, such as
 `template.EffectiveWeight(tileDataService)`, and `Validate()` rejects a negative weight or
-price, a weight with more than two decimals, an amount below 1, a decay time below one
-minute and an empty tag key.
+price, a weight with more than two decimals, an amount below 1, gold that can roll below 0, a decay time
+below one minute, an empty tag key and a malformed `script_id`.
 
 Spawners, for example, are for staff only, and their children inherit it:
 
@@ -349,7 +350,7 @@ to 120; a constant is a bare integer.
 `base_orc` sets the five sounds once and every orc keeps them; every other field a child
 sets replaces the base's. `Validate()` rejects dice that can roll below 0 (karma apart),
 an unknown skill, a skill above 120, a resistance above 100, a negative sound, an
-equipment entry with no item or an empty item id, and an empty tag key.
+equipment entry with no item or an empty item id, an empty tag key and a malformed `script_id`.
 
 ```toml
 [[mobile]]
@@ -370,7 +371,7 @@ id = "orc"
 base_id = "base_orc"
 strength = "1d25+95"
 karma = -2500
-loot = ["orc_loot"]
+loot = ["randomgems"]
 
 [mobile.skills]
 tactics = "1d26+54"
@@ -385,7 +386,7 @@ notoriety = "invulnerable"
 script_id = "wander"
 
 [[mobile.equipment]]
-items = ["leather_skirt", "leather_shorts"]
+items = ["0x1516_skirt", "0x152e_short_pants"]
 gender = "female"
 ```
 
@@ -449,7 +450,7 @@ regions spawn at runtime, water mobiles included, is in [NPC spawns](spawns.md).
 ## Decorations
 
 `templates/decorations/` holds the world decoration the client's map files do not: doors, signs,
-lights, furniture, teleporters and the like, about 42,600 placements in 115 files. It was
+lights, furniture, teleporters and the like, about 35,500 placements in the loaded folders (115 files in all). It was
 converted once from ModernUO's `Data/Decoration`, plus ServUO's New Haven (`trammel/newhaven.toml`,
 `havenisland.toml`, `havenmine.toml`, which ModernUO lacks) and the shop and world signs of
 ModernUO's `signs.cfg` (`signs.toml`, written by
@@ -471,8 +472,8 @@ props = { facing = "west_cw" }    # the kind's settings; facing is a DoorFacingT
 locations = [[1411, 1621, 30], [1411, 1622, 30]]
 ```
 
-A block without `item_id` is an addon built from several graphics. `extras`, when present, gives a
-setting per location in the order of `locations`.
+A block without `item_id` is an addon built from several graphics. `extras`, present in some
+shipped files, is not read: a block's settings are its `props`, the same for every location.
 
 [`.decorate`](commands/decorate.md) places them with the templates of
 `templates/items/decorations.toml`: `decoration`, fixed and never decaying, for most kinds;
@@ -489,9 +490,20 @@ staff open. An item with a `label_number` prop, such as a `LocalizedSign`, shows
 client as its name, unless the item has a name of its own. A teleporter's `point_dest = [x, y, z]` becomes the props `teleport.x`,
 `teleport.y` and `teleport.z`, and its `map_dest` the prop `teleport.map`, a `MapType` number.
 A `KeywordTeleporter` takes the template `decoration_keyword_teleporter`, with
-`script_id = "keyword_teleport"`, and keeps its `substring`, `keyword`, `range` and `delay` as props.
+`script_id = "keyword_teleport"` and `visibility = "game_master"`, and keeps its `substring`, `keyword`, `range` and `delay` as props.
+A `Clock` takes the template `decoration_clock`, with `script_id = "clock"`, and tells the time on a
+double click; one placed as plain decoration by an earlier run becomes a clock where it stands. A
+`Blocker` is plain decoration whose graphic draws nothing and cannot be walked through: players
+are stopped by it unseen, and game masters and administrators see a gravestone in its place, as
+ModernUO shows it.
+A `Fillable...` kind (crate, box, chest, barrel) or a `LibraryBookcase` takes the template
+`decoration_fillable`, with `script_id = "fillable"`: a
+[container that fills up](scripting.md#item-scripts) when it is opened. Its `content_type`
+(`Inn`, `ThiefGuild`) is kept as the name of its table (`inn`, `thief_guild`), a bookcase is a
+`library`, and one placed as plain decoration by an earlier run becomes fillable where it stands.
 A `PublicMoongate` takes the template `decoration_public_moongate`, with
-`script_id = "public_moongate"`; `.decorate` also places one on every destination of
+`script_id = "public_moongate"` and the light `circle300` in its props unless the data gives
+another; `.decorate` also places one on every destination of
 [`moongates.toml`](data-files/moongates.md).
 Spawners, mark containers, addons and every other kind whose name ends in
 `Teleporter`, those that ask for a skill, a quest or a double click (`SkillTeleporter`,

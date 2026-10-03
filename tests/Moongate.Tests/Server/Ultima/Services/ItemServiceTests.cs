@@ -57,6 +57,171 @@ public sealed class ItemServiceTests
         Assert.Equal(4, items.Items.Count);
     }
 
+    // A character's rows are as its last save left them: an item another player took since, or one merged into a
+    // stack since, must not come back with the character.
+    [Fact]
+    public void AddLoaded_LeavesOutWhatIsAlreadyLive_AndWhatIsQueuedForDeletion()
+    {
+        var items = Service();
+        items.Absorb(_coin);
+        var staleDagger = Item(_dagger.Id.Value);
+        staleDagger.PutInContainer(new Serial(0x40000900), new Point2D(1, 1));
+        var staleCoin = Item(_coin.Id.Value);
+        staleCoin.PutInContainer(new Serial(0x40000900), new Point2D(2, 2));
+        var fresh = Item(0x40000901);
+        fresh.PutInContainer(new Serial(0x40000900), new Point2D(3, 3));
+
+        var added = items.AddLoaded([staleDagger, staleCoin, fresh]);
+
+        Assert.Equal([fresh], added);
+        Assert.True(items.TryGet(_dagger.Id, out var live));
+        Assert.Same(_dagger, live);
+        Assert.Equal([_bag, _dagger], items.GetContents(_backpack.Id));
+        Assert.False(items.TryGet(_coin.Id, out _));
+        Assert.Equal([_coin.Id], items.TombstonesOf(Aria));
+        Assert.Equal([fresh], items.GetContents(new Serial(0x40000900)));
+    }
+
+    [Fact]
+    public void AddLoaded_WithNothingStale_AddsEverything()
+    {
+        var items = TestItems.Create();
+
+        Assert.Equal(6, items.AddLoaded([_backpack, _bag, _coin, _dagger, _shirt, _ground]).Count);
+        Assert.Equal(6, items.Items.Count);
+    }
+
+    [Fact]
+    public void GetContents_OfAnUnknownContainerOrAnEmptyOne_IsEmpty()
+    {
+        var items = Service();
+
+        Assert.Empty(items.GetContents(new Serial(0x40000999)));
+        Assert.Empty(items.GetContents(_dagger.Id));
+        Assert.Empty(items.GetContents(_ground.Id));
+    }
+
+    [Fact]
+    public void GetContents_FollowsAnItemMovedToAnotherContainer()
+    {
+        var items = Service();
+
+        items.MoveToContainer(_dagger, _bag.Id, new Point2D(1, 1));
+
+        Assert.Equal([_bag], items.GetContents(_backpack.Id));
+        Assert.Equal([_coin, _dagger], items.GetContents(_bag.Id));
+
+        items.MoveToContainer(_dagger, _backpack.Id, new Point2D(1, 1));
+
+        Assert.Equal([_bag, _dagger], items.GetContents(_backpack.Id));
+        Assert.Equal([_coin], items.GetContents(_bag.Id));
+    }
+
+    [Fact]
+    public void GetContents_FollowsAnItemMovedInsideItsOwnContainer()
+    {
+        var items = Service();
+
+        items.MoveToContainer(_dagger, _backpack.Id, new Point2D(5, 5));
+
+        Assert.Equal([_bag, _dagger], items.GetContents(_backpack.Id));
+    }
+
+    [Fact]
+    public void GetContents_LosesAnItemPutOnTheGroundOrWorn_AndGainsOnePutIn()
+    {
+        var items = Service();
+
+        items.PlaceOnGround(_dagger, MapType.Trammel, new Point3D(1497, 1628, 10));
+        items.Equip(_bag, Aria, LayerType.Waist);
+
+        Assert.Empty(items.GetContents(_backpack.Id));
+        // What is inside a moved container stays inside it.
+        Assert.Equal([_coin], items.GetContents(_bag.Id));
+
+        items.MoveToContainer(_ground, _backpack.Id, new Point2D(1, 1));
+        items.MoveToContainer(_shirt, _backpack.Id, new Point2D(2, 2));
+
+        Assert.Equal([_shirt, _ground], items.GetContents(_backpack.Id));
+    }
+
+    [Fact]
+    public void GetContents_LosesAnItemRemovedOrAbsorbed()
+    {
+        var items = Service();
+
+        items.Remove([_dagger.Id]);
+        items.Absorb(_bag);
+
+        Assert.Empty(items.GetContents(_backpack.Id));
+    }
+
+    [Fact]
+    public void GetContents_HasTheRestOfAStackSplitInAContainer()
+    {
+        var items = Service();
+        _coin.Amount = 10;
+
+        var rest = items.Split(_coin, 4, new Serial(0x40000050));
+
+        Assert.Equal([_coin, rest], items.GetContents(_bag.Id));
+    }
+
+    [Fact]
+    public void GetContents_AnItemAddedAgainAsANewInstance_IsListedOnce_WhereTheNewOneLies()
+    {
+        var items = Service();
+        var reloaded = Item(_dagger.Id.Value);
+        reloaded.PutInContainer(_bag.Id, new Point2D(1, 1));
+
+        items.Add([reloaded]);
+
+        Assert.Equal([_bag], items.GetContents(_backpack.Id));
+        Assert.Equal([_coin, reloaded], items.GetContents(_bag.Id));
+    }
+
+    // An entity changed outside the service is wrong use, but must not leave a ghost in the old container.
+    [Fact]
+    public void GetContents_AnItemChangedOutsideTheServiceAndAddedAgain_IsListedOnce_WhereItLies()
+    {
+        var items = Service();
+
+        _dagger.PutInContainer(_bag.Id, new Point2D(1, 1));
+        Assert.Equal([_bag], items.GetContents(_backpack.Id));
+
+        items.Add([_dagger]);
+
+        Assert.Equal([_bag], items.GetContents(_backpack.Id));
+        Assert.Equal([_coin, _dagger], items.GetContents(_bag.Id));
+    }
+
+    [Fact]
+    public void GetContents_DoesNotLookAtTheOtherItemsOfTheWorld()
+    {
+        var items = Service();
+        var others = Enumerable.Range(0, 100_000)
+                               .Select(
+                                   index =>
+                                   {
+                                       var item = Item(0x41000000u + (uint)index);
+                                       item.PlaceOnGround(MapType.Trammel, new Point3D(100 + index % 1000, 100, 0));
+
+                                       return item;
+                                   }
+                               )
+                               .ToList();
+        items.Add(others);
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+
+        for (var index = 0; index < 5_000; index++)
+        {
+            items.GetContents(_backpack.Id);
+        }
+
+        // A scan of the 100,000 items at each call takes many seconds; the index, a few milliseconds.
+        Assert.InRange(watch.ElapsedMilliseconds, 0, 1000);
+    }
+
     [Fact]
     public void GetContents_ReturnsOnlyTheDirectChildrenInSerialOrder()
     {
@@ -81,6 +246,31 @@ public sealed class ItemServiceTests
         var service = Service();
 
         Assert.Equal((_backpack, _backpack, null), (service.GetWornRoot(_coin), service.GetWornRoot(_backpack), service.GetWornRoot(_ground)));
+    }
+
+    [Fact]
+    public void GetGroundRoot_IsTheGroundItemAtTheTop_AndNullWhenCarried()
+    {
+        var service = Service();
+        var gem = Item(0x40000060);
+        var box = Item(0x40000061);
+        box.PutInContainer(_ground.Id, new Point2D(1, 1));
+        gem.PutInContainer(box.Id, new Point2D(1, 1));
+        service.Add([box, gem]);
+
+        Assert.Equal((_ground, _ground, _ground), (service.GetGroundRoot(gem), service.GetGroundRoot(box), service.GetGroundRoot(_ground)));
+        Assert.Equal((null, null), (service.GetGroundRoot(_coin), service.GetGroundRoot(_backpack)));
+    }
+
+    [Fact]
+    public void GetGroundRoot_InAContainerThatIsNotLive_IsNull()
+    {
+        var service = Service();
+        var gem = Item(0x40000060);
+        gem.PutInContainer(new Serial(0x40000099), new Point2D(1, 1));
+        service.Add([gem]);
+
+        Assert.Null(service.GetGroundRoot(gem));
     }
 
     [Fact]

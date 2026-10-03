@@ -24,7 +24,8 @@ public static class TestItems
         IDataAccess<ItemEntity>? data = null,
         IGameLoopService? loop = null,
         IItemScriptService? scripts = null,
-        IItemDecayQueue? decay = null
+        IItemDecayQueue? decay = null,
+        IItemTimerQueue? timers = null
     )
     {
         return new(
@@ -34,7 +35,8 @@ public static class TestItems
             data ?? new RecordingDataAccess<ItemEntity>(),
             loop ?? new StubGameLoop(),
             scripts,
-            decay
+            decay,
+            timers
         );
     }
 }

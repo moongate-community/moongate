@@ -38,6 +38,7 @@ it.
 | <span id="maps"></span><span id="validation-at-startup"></span><span id="read-the-map-from-code"></span>[`maps.toml`](data-files/maps.md) | `MapContent` | first; its `weather` is checked by the regions loader | Yes, `IMapService` opens the client files of each map |
 | <span id="starting-cities"></span><span id="validation-at-startup-1"></span>[`starting_cities.toml`](data-files/starting-cities.md) | `StartingCityContent` | maps | Yes, in the character list |
 | <span id="moongates"></span>[`moongates.toml`](data-files/moongates.md) | `MoongateFacet` | maps | Yes, by `.decorate` and the moongate script |
+| <span id="locations"></span>[`locations.toml`](data-files/locations.md) | `NamedLocation` | optional; read last | Yes, by `.go` and its gump |
 | <span id="skills"></span><span id="validation-at-startup-2"></span>[`skills.toml`](data-files/skills.md) | `SkillContent` | starting cities | No |
 | <span id="professions"></span><span id="validation-at-startup-3"></span>[`professions.toml`](data-files/professions.md) | `ProfessionContent` | skills (every starting skill must exist) | Yes, character creation |
 | <span id="races"></span><span id="validation-at-startup-4"></span>[`races.toml`](data-files/races.md) | `RaceContent` | professions | Yes, character creation and mobile appearance |

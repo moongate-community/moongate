@@ -71,4 +71,10 @@ public interface ISectorService
     ///     Gets the ground items on the map within <paramref name="range" /> tiles of the center on both axes.
     /// </summary>
     IReadOnlyList<ItemEntity> GetItemsInRange(MapType map, Point3D center, int range);
+
+    /// <summary>
+    ///     Gets the items lying on the ground of one cell, at any height, without searching its sector: what the movement
+    ///     asks for every step it checks. The list is the service's own: read it, do not keep it.
+    /// </summary>
+    IReadOnlyList<ItemEntity> GetItemsAt(MapType map, int x, int y);
 }

@@ -2,9 +2,13 @@ using System.Diagnostics.CodeAnalysis;
 using Lua;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Data.Mobiles;
+using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -17,15 +21,417 @@ namespace Moongate.Server.Ultima.Modules;
 [ScriptModule("mobile", "Acts on a mobile in the world, a player or an NPC: teleports it, reads where it is, plays a sound on it, tells a player something.")]
 public sealed class MobileModule
 {
+    private const double TenthsPerPoint = 10.0;
+
     private readonly IMobileService _mobiles;
     private readonly ITeleportService _teleports;
     private readonly ISpeechService _speech;
+    private readonly IItemService? _items;
+    private readonly IMusicService? _music;
+    private readonly IRegionService? _regions;
+    private readonly ILightService? _light;
+    private readonly IMobileStateService? _state;
 
-    public MobileModule(IMobileService mobiles, ITeleportService teleports, ISpeechService speech)
+    public MobileModule(
+        IMobileService mobiles,
+        ITeleportService teleports,
+        ISpeechService speech,
+        IItemService? items = null,
+        IMusicService? music = null,
+        IRegionService? regions = null,
+        ILightService? light = null,
+        IMobileStateService? state = null
+    )
     {
+        _state = state;
         _mobiles = mobiles;
         _teleports = teleports;
         _speech = speech;
+        _items = items;
+        _music = music;
+        _regions = regions;
+        _light = light;
+    }
+
+    /// <summary>
+    ///     Gets the id of the template an NPC was made from, such as to tell a baker from a blacksmith;
+    ///     <c>mobile.template(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The id of the mobile template an NPC was made from; nil for a player or a mobile not in the world.")]
+    public string? Template(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) && !string.IsNullOrEmpty(mobile.TemplateId) ? mobile.TemplateId : null;
+    }
+
+    /// <summary>
+    ///     Gets the mobile's name; <c>mobile.name(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The mobile's name; nil for a mobile not in the world.")]
+    public string? Name(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? mobile.Name : null;
+    }
+
+    /// <summary>
+    ///     Gets whether the serial is a player's character in the world; <c>mobile.is_player(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the serial is a player's character in the world; false for an NPC or an unknown serial.")]
+    public bool IsPlayer(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) && !mobile.IsNpc;
+    }
+
+    /// <summary>
+    ///     Gets the direction the mobile faces; <c>mobile.direction(who) == DirectionType.North</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The direction the mobile faces, a DirectionType; nil for a mobile not in the world.")]
+    public DirectionType? Direction(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? mobile.Direction : null;
+    }
+
+    /// <summary>
+    ///     Gets the mobile's body, strength, hit points and the like as a table; <c>mobile.stats(who).hits</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The mobile's numbers as a table: body, strength, dexterity, intelligence, hits, hits_max, mana, mana_max, stamina, stamina_max, fame, karma; nil for a mobile not in the world.")]
+    public LuaTable? Stats(long serial)
+    {
+        if (!TryGetMobile(serial, out var mobile))
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        table["body"] = mobile.Body;
+        table["strength"] = mobile.Strength;
+        table["dexterity"] = mobile.Dexterity;
+        table["intelligence"] = mobile.Intelligence;
+        table["hits"] = mobile.Hits;
+        table["hits_max"] = mobile.HitsMax;
+        table["mana"] = mobile.Mana;
+        table["mana_max"] = mobile.ManaMax;
+        table["stamina"] = mobile.Stamina;
+        table["stamina_max"] = mobile.StaminaMax;
+        table["fame"] = mobile.Fame;
+        table["karma"] = mobile.Karma;
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Changes the mobile's numbers: any of those <see cref="Stats" /> gives but the body;
+    ///     <c>mobile.set_stats(who, { hits = 10, strength = 80 })</c>. Hit points, mana and stamina stay between 0 and
+    ///     their maximum. The mobile's player sees the new status and the players around the new health bar.
+    /// </summary>
+    [ScriptFunction(helpText: "Changes the mobile's numbers, given as a table with any of strength, dexterity, intelligence, hits, hits_max, mana, mana_max, stamina, stamina_max, fame, karma; hits, mana and stamina stay between 0 and their maximum. False, with nothing changed, for an unknown name, a value that is not a whole number, a stat or a maximum outside 0 to 65535, an empty table or a mobile not in the world.")]
+    public bool SetStats(long serial, LuaTable values)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        var change = new MobileStatsChange();
+        var given = 0;
+
+        foreach (var (key, value) in values)
+        {
+            if (!key.TryRead<string>(out var name) ||
+                value.Type != LuaValueType.Number ||
+                !value.TryRead<double>(out var number) ||
+                Math.Floor(number) != number ||
+                number is < int.MinValue or > int.MaxValue)
+            {
+                return false;
+            }
+
+            var whole = (int)number;
+
+            switch (name)
+            {
+                case "strength":
+                    change.Strength = whole;
+
+                    break;
+                case "dexterity":
+                    change.Dexterity = whole;
+
+                    break;
+                case "intelligence":
+                    change.Intelligence = whole;
+
+                    break;
+                case "hits":
+                    change.Hits = whole;
+
+                    break;
+                case "hits_max":
+                    change.HitsMax = whole;
+
+                    break;
+                case "mana":
+                    change.Mana = whole;
+
+                    break;
+                case "mana_max":
+                    change.ManaMax = whole;
+
+                    break;
+                case "stamina":
+                    change.Stamina = whole;
+
+                    break;
+                case "stamina_max":
+                    change.StaminaMax = whole;
+
+                    break;
+                case "fame":
+                    change.Fame = whole;
+
+                    break;
+                case "karma":
+                    change.Karma = whole;
+
+                    break;
+                default:
+                    return false;
+            }
+
+            given++;
+        }
+
+        return given > 0 && _state.SetStats(mobile, change);
+    }
+
+    /// <summary>
+    ///     Gets a skill of the mobile, in points: <c>mobile.skill(who, SkillType.Magery).value</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "A skill of the mobile as { value, cap, lock }: value and cap in points (50.5), lock is up, down or locked; a skill never trained is 0. nil for a mobile not in the world.")]
+    public LuaTable? Skill(long serial, SkillType skill)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return null;
+        }
+
+        var known = _state.GetSkill(mobile, skill);
+        var table = new LuaTable();
+        table["value"] = known.Base / TenthsPerPoint;
+        table["cap"] = known.Cap / TenthsPerPoint;
+        table["lock"] = EnumNameUtils.Format(known.Lock);
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Gets the skills the mobile has above 0, by name, in points; <c>mobile.skills(who).magery</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The skills of the mobile above 0, as a table of name (magery, evaluating_intelligence) and value in points; nil for a mobile not in the world.")]
+    public LuaTable? Skills(long serial)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+
+        foreach (var skill in _state.GetSkills(mobile).Where(skill => skill.Base > 0))
+        {
+            table[EnumNameUtils.Format(skill.Skill)] = skill.Base / TenthsPerPoint;
+        }
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Sets a skill of the mobile, in points, and its cap when given;
+    ///     <c>mobile.set_skill(who, SkillType.Magery, 50.5)</c>. The value stays between 0 and the cap, and the
+    ///     mobile's player sees it in the skill window.
+    /// </summary>
+    [ScriptFunction(helpText: "Sets a skill of the mobile in points (50.5), and its cap when given; the value stays between 0 and the cap. False for a cap outside 0 to 6553.5 or a mobile not in the world; a skill number that is no SkillType raises an error.")]
+    public bool SetSkill(long serial, SkillType skill, double value, double? cap = null)
+    {
+        return _state is not null &&
+               TryGetMobile(serial, out var mobile) &&
+               Tenths(value) is { } tenths &&
+               (cap is null || Tenths(cap.Value) is not null) &&
+               _state.SetSkill(mobile, skill, tenths, cap is null ? null : Tenths(cap.Value));
+    }
+
+    /// <summary>
+    ///     Gives the mobile another name; <c>mobile.set_name(who, "Grog")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Gives the mobile another name of at most 30 characters, seen by its player and the players around; false for a blank or longer name or a mobile not in the world.")]
+    public bool SetName(long serial, string name)
+    {
+        return _state is not null && TryGetMobile(serial, out var mobile) && _state.SetName(mobile, name);
+    }
+
+    /// <summary>
+    ///     Gives the mobile another body, such as an animal's; <c>mobile.set_body(who, 0xD3)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Gives the mobile another body graphic (0 to 65535), seen at once by its player and the players around; false for a body out of range or a mobile not in the world.")]
+    public bool SetBody(long serial, int body)
+    {
+        return _state is not null && TryGetMobile(serial, out var mobile) && _state.SetLooks(mobile, body, null);
+    }
+
+    /// <summary>
+    ///     Gives the mobile another skin hue; <c>mobile.set_hue(who, 1153)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Gives the mobile another skin hue (0 to 65535, 0 the colours of its art), seen at once by its player and the players around; false for a hue out of range or a mobile not in the world.")]
+    public bool SetHue(long serial, int hue)
+    {
+        return _state is not null && TryGetMobile(serial, out var mobile) && _state.SetLooks(mobile, null, hue);
+    }
+
+    /// <summary>
+    ///     Gets what the mobile is as a table of booleans; <c>mobile.flags(who).hidden</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "What the mobile is, as { hidden, frozen, war_mode }, each true or false; nil for a mobile not in the world.")]
+    public LuaTable? Flags(long serial)
+    {
+        if (!TryGetMobile(serial, out var mobile))
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        table["hidden"] = mobile.Hidden;
+        table["frozen"] = mobile.Frozen;
+        table["war_mode"] = mobile.WarMode;
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Hides or reveals the mobile; <c>mobile.set_hidden(who, true)</c>. Hidden, it leaves the screens of the
+    ///     players around; the staff still sees it.
+    /// </summary>
+    [ScriptFunction(helpText: "Hides or reveals the mobile: hidden, the players around no longer see it, the staff does; saved with the mobile. False for a mobile not in the world.")]
+    public bool SetHidden(long serial, bool hidden)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        _state.SetHidden(mobile, hidden);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Freezes or frees the mobile; <c>mobile.set_frozen(who, true)</c>. Frozen, it neither steps nor turns.
+    /// </summary>
+    [ScriptFunction(helpText: "Freezes or frees the mobile: frozen, it neither steps nor turns; saved with the mobile. False for a mobile not in the world.")]
+    public bool SetFrozen(long serial, bool frozen)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        _state.SetFrozen(mobile, frozen);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Puts the mobile in war or peace mode; <c>mobile.set_war_mode(who, false)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Puts the mobile in war mode or in peace, seen by its player and the players around; a mobile comes back in peace after a restart. False for a mobile not in the world.")]
+    public bool SetWarMode(long serial, bool warMode)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        _state.SetWarMode(mobile, warMode);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Gets the backpack the mobile wears, to look into it with <c>item.contents</c>; <c>mobile.backpack(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The serial of the backpack the mobile wears; nil for a mobile without one or not in the world.")]
+    public long? Backpack(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) &&
+               _items?.GetWorn(mobile.Id).FirstOrDefault(item => item.Layer == LayerType.Backpack) is { } backpack
+            ? backpack.Id.Value
+            : null;
+    }
+
+    /// <summary>
+    ///     Gets the name of the region the mobile stands in; <c>mobile.region(who) == "Britain"</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The name of the region the mobile stands in; nil outside every region or for a mobile not in the world.")]
+    public string? Region(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? _regions?.Find(mobile.Map, mobile.Location)?.Name : null;
+    }
+
+    /// <summary>
+    ///     Gets the light level where the mobile stands, 0 the brightest day and 30 the darkest; <c>mobile.light(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The light level where the mobile stands, 0 (day) to 30 (dark): the hour, or its dungeon's; nil for a mobile not in the world.")]
+    public int? Light(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? _light?.LevelFor(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Plays a music to a player, until its region gives it another; <c>mobile.play_music(who, MusicType.Britain1)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Plays a music (a MusicType) to the player; false for an NPC or a player not in the world.")]
+    public bool PlayMusic(long serial, MusicType music)
+    {
+        return _music is not null && TryGetMobile(serial, out var mobile) && !mobile.IsNpc && _music.Play(mobile, music);
+    }
+
+    /// <summary>
+    ///     Gets the prop <paramref name="key" /> the mobile keeps, saved with it across restarts;
+    ///     <c>mobile.get_prop(who, "quest.step")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "A value the mobile, a player or an NPC, keeps across restarts: a string, a number or a bool; nil when it has none.")]
+    public object? GetProp(long serial, string key)
+    {
+        return TryGetMobile(serial, out var mobile) && mobile.Props is { } props && props.TryGetValue(key, out var value)
+            ? value
+            : null;
+    }
+
+    /// <summary>
+    ///     Keeps <paramref name="value" /> as the prop <paramref name="key" /> of the mobile, saved with it, or removes
+    ///     it for <c>nil</c>; <c>mobile.set_prop(who, "quest.step", 2)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Keeps a string, a number or a bool on the mobile across restarts, nil removes it; false for a table, a function, a blank key or a mobile not in the world.")]
+    public bool SetProp(long serial, string key, object? value = null)
+    {
+        if (string.IsNullOrWhiteSpace(key) || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        if (value is null)
+        {
+            mobile.RemoveProp(key);
+
+            return true;
+        }
+
+        if (!ScriptPropValue.TryFromLua(value, out var prop))
+        {
+            return false;
+        }
+
+        mobile.SetProp(key, prop);
+
+        return true;
     }
 
     /// <summary>
@@ -107,6 +513,14 @@ public sealed class MobileModule
         }
 
         return _speech.Tell(mobile, text.Length > ItemModule.MaximumTextLength ? text[..ItemModule.MaximumTextLength] : text);
+    }
+
+    // Points to the tenths the mobile keeps; null for a value no skill can have.
+    private static int? Tenths(double points)
+    {
+        var tenths = Math.Round(points * TenthsPerPoint, MidpointRounding.AwayFromZero);
+
+        return double.IsFinite(tenths) && tenths is >= int.MinValue and <= int.MaxValue ? (int)tenths : null;
     }
 
     private bool TryGetMobile(long serial, [NotNullWhen(true)] out MobileEntity? mobile)

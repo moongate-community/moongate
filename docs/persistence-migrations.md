@@ -91,7 +91,8 @@ database. Stop its runtime processes and use the runner:
   --root-directory /srv/moongate/realm-1 --target world
 ```
 
-The runner reads that root's `config/moongate.toml` and `plugins/`. `--target auth`
+The runner reads that root's `config/moongate.toml` and `plugins/`; `--plugins-directory` names
+another directory of plugin bundles to scan for their migrations. `--target auth`
 selects `[persistence.accounts]`; `--target world` selects `[persistence.realm]`.
 Only the selected connection is resolved. `MOONGATE_ROOT` is an alternative to
 `--root-directory`; without either, `mgctl` uses its own directory, the server's, as
@@ -182,7 +183,9 @@ Enhanced Client's container grid, numbering the items already in a container. Th
 from the development generator; the foreign keys, CHECK constraints and partial indexes
 are written by hand, since the generator produces only columns and sequences, and the
 startup schema check accepts them. The sample plugin ships
-`world/0001_create_notes.sql`.
+`world/0001_create_notes.sql`. `0012_mobile_flags.sql` adds the `hidden` and `frozen` columns of the mobiles, and
+`0013_world_state.sql` the one-row table `world.state` (`0014_world_state_one_row.sql` makes the database refuse a second row), with the props scripts keep for the whole
+shard.
 
 ## Automatic development migrations
 

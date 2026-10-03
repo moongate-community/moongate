@@ -95,7 +95,15 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
                     // Together on the loop: a session retirement then always finds the character live.
                     session.Set(SessionKeys.CharacterId, character.Id);
                     _mobiles.EnterWorld(character);
-                    _items.Add(play.Equipment.Concat(play.Contents));
+
+                    // Its rows are as its last save left them: what another player took or merged since stays out, and
+                    // is not shown on the character either.
+                    var added = _items.AddLoaded(play.Equipment.Concat(play.Contents)).ToHashSet();
+                    play = play with
+                    {
+                        Equipment = play.Equipment.Where(added.Contains).ToList(),
+                        Contents = play.Contents.Where(added.Contains).ToList()
+                    };
                     admitted = true;
                 },
                 cancellationToken

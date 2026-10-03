@@ -10,7 +10,7 @@ internal static class CommandLine
     {
         ["init"] = [],
         ["migrate"] = ["status", "apply"],
-        ["convert"] = ["uox", "modernuo-spawns", "modernuo-signs", "modernuo-teleporters"],
+        ["convert"] = ["uox", "modernuo-spawns", "modernuo-signs", "modernuo-teleporters", "modernuo-locations", "modernuo-chests"],
         ["completion"] = []
     };
 

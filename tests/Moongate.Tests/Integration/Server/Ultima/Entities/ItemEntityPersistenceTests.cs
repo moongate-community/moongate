@@ -12,6 +12,8 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
@@ -91,6 +93,26 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         Assert.Null(loadedCoin.Visibility);
         Assert.Equal("3", loadedWand.GetProp<string>("quest_step"));
         Assert.Equal((mobile.Id, LayerType.Backpack), (loadedPack.MobileId!.Value, loadedPack.Layer!.Value));
+    }
+
+    [Fact]
+    public async Task ATimerOfAnItem_ComesBackFromTheDatabase_AndIsQueuedAgain()
+    {
+        var clock = new SettableClock();
+        var door = Item(0x40000040, i => i.PlaceOnGround(MapType.Felucca, new Point3D(5, 5, 0)));
+        var started = new ItemTimerQueue(clock);
+        var timers = new ItemTimerService(new RecordingTimerService(), started, TestItems.Create(), new RecordingItemScriptService(), clock);
+        Assert.True(timers.Start(door, "close", TimeSpan.FromSeconds(20)));
+        await _items.UpsertAsync(door);
+
+        var loaded = (await _items.GetByIdAsync(door.Id))!;
+        var queue = new ItemTimerQueue(clock);
+        queue.Track(loaded);
+        clock.Advance(TimeSpan.FromSeconds(20));
+
+        var entry = Assert.Single(queue.TakeDue());
+        Assert.Equal((door.Id, "close", door.GetProp<long>("timer.close")), (entry.Item, entry.Name, entry.DueAt));
+        Assert.Equal(TimeSpan.Zero, timers.Remaining(loaded, "close"));
     }
 
     [Fact]

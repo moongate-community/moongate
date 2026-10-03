@@ -25,6 +25,9 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class DecorationService : IDecorationService, IDisposable
 {
     public const string DecorationTemplate = "decoration";
+    public const string FillableTemplate = "decoration_fillable";
+    public const string ContentTypeProp = "content_type";
+    public const string ClockTemplate = "decoration_clock";
     public const string DoorTemplate = "decoration_door";
     public const string LightTemplate = "decoration_light";
     public const string TeleporterTemplate = "decoration_teleporter";
@@ -49,6 +52,9 @@ public sealed class DecorationService : IDecorationService, IDisposable
     public const string GeneratedDoorsFile = "generated_doors";
 
     // ModernUO's DarkWoodDoor: the closed graphic of a facing is this plus twice the facing.
+    private const string LibraryBookcaseType = "LibraryBookcase";
+    private const string LibraryContentType = "library";
+    private const string ClockType = "Clock";
     private const int GeneratedDoorGraphic = 0x06A5;
     private const int PublicMoongateGraphic = 0x0F6C;
 
@@ -307,6 +313,10 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     {
                         Count(skipped, OutsideTheMap, 1);
                     }
+                    else if (LaterTemplateOf(block.Type) is { } template && Upgrade(map, location, block, template))
+                    {
+                        present++;
+                    }
                     else if (!seen.Add((map, location, block.ItemId!.Value)) ||
                              IsThere(map, location, block) ||
                              IsTeleporter(block.Type) &&
@@ -395,6 +405,56 @@ public sealed class DecorationService : IDecorationService, IDisposable
         return type == KeywordTeleporterType ? KeywordTeleporterTemplate : TeleporterTemplate;
     }
 
+    // ModernUO's FillableContainer kinds and its bookcase: containers that fill up, by fillable.lua.
+    private static bool IsFillable(string type)
+    {
+        return type.StartsWith("Fillable", StringComparison.Ordinal) || type == LibraryBookcaseType;
+    }
+
+    // The table the container fills from, as the id of its loot table ends: the block's, or books for a bookcase; null
+    // leaves it to the nearest vendor.
+    private static string? ContentTypeOf(DecorationBlock block)
+    {
+        return block.Props.GetValueOrDefault(ContentTypeProp) is string given && !string.IsNullOrWhiteSpace(given)
+            ? StringUtils.ToSnakeCase(given)
+            : block.Type == LibraryBookcaseType
+                ? LibraryContentType
+                : null;
+    }
+
+    // The template of a kind that was placed as plain decoration before its script was written: a container that
+    // fills up, a clock. Null for the others.
+    private static string? LaterTemplateOf(string type)
+    {
+        return IsFillable(type) ? FillableTemplate : type == ClockType ? ClockTemplate : null;
+    }
+
+    // A world decorated before the script of a kind was written has its items as plain decoration: the one on the spot
+    // takes the template of the kind. False when no plain one is there.
+    private bool Upgrade(MapType map, Point3D location, DecorationBlock block, string template)
+    {
+        var plain = _sectors.GetItemsInRange(map, location, 0)
+                            .FirstOrDefault(
+                                item => item.TemplateId == DecorationTemplate &&
+                                        item.ItemId == block.ItemId!.Value &&
+                                        item.GroundLocation == location
+                            );
+
+        if (plain is null)
+        {
+            return false;
+        }
+
+        plain.TemplateId = template;
+
+        if (IsFillable(block.Type) && ContentTypeOf(block) is { } content)
+        {
+            plain.SetProp(ContentTypeProp, content);
+        }
+
+        return true;
+    }
+
     private static bool IsDoor(string type)
     {
         return type.Contains("Door", StringComparison.Ordinal) || type.Contains("Gate", StringComparison.Ordinal);
@@ -466,7 +526,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
             door ? DoorTemplate :
             isLight ? LightTemplate :
             teleporter ? TeleporterTemplateOf(block.Type) :
-            block.Type == PublicMoongateType ? PublicMoongateTemplate : DecorationTemplate
+            block.Type == PublicMoongateType ? PublicMoongateTemplate :
+            LaterTemplateOf(block.Type) ?? DecorationTemplate
         );
         var props = new Dictionary<string, object?>(StringComparer.Ordinal);
         item.ItemId = block.ItemId!.Value;
@@ -494,6 +555,9 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     props[TeleportMapProp] = (long)mapDest;
 
                     break;
+                // Set below, as the name of the table.
+                case (ContentTypeProp, _) when IsFillable(block.Type):
+                    break;
                 // An item's props keep no points.
                 case (_, Point3D):
                     break;
@@ -509,9 +573,20 @@ public sealed class DecorationService : IDecorationService, IDisposable
             props[TypeProp] = block.Type;
         }
 
+        if (IsFillable(block.Type) && ContentTypeOf(block) is { } content)
+        {
+            props[ContentTypeProp] = content;
+        }
+
         if (isLight)
         {
             AddLightProps(props, defaultLight);
+        }
+
+        // As ModernUO's PublicMoongate: the gate glows, unless the data gives it another light.
+        if (block.Type == PublicMoongateType)
+        {
+            props.TryAdd(LightProp, EnumNameUtils.Format(LightType.Circle300));
         }
 
         item.Props = props.Count > 0 ? props : null;

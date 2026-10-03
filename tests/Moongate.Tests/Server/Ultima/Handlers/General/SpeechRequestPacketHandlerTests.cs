@@ -37,6 +37,24 @@ public sealed class SpeechRequestPacketHandlerTests
     }
 
     [Fact]
+    public async Task Handle_SayOfAHiddenSpeaker_ReachesTheSpeakerAndTheStaffOnly()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync(AccountType.GameMaster);
+        var player = await fixture.AddPlayerAsync(1001, 2, "Player", MapType.Trammel, 105, 100);
+        var staff = await fixture.AddPlayerAsync(1002, 3, "Staff", MapType.Trammel, 106, 100, AccountType.GameMaster);
+        Assert.True(fixture.Mobiles.TryGet(fixture.Speaker.CharacterId, out var speaker));
+        speaker.Hidden = true;
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello"), CancellationToken.None);
+
+        Assert.Equal(2, fixture.Sender.Sent.Count);
+        Assert.Contains(fixture.Speaker.SessionId, fixture.Sender.SentSessionIds);
+        Assert.Contains(staff.SessionId, fixture.Sender.SentSessionIds);
+        Assert.DoesNotContain(player.SessionId, fixture.Sender.SentSessionIds);
+    }
+
+    [Fact]
     public async Task Handle_NoWorldCharacterOrUnsupportedMode_SendsNothing()
     {
         await using var fixture = await SpeechHandlerFixture.CreateAsync();

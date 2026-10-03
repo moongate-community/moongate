@@ -68,6 +68,12 @@ exists but fails compilation/execution aborts server startup.
 | `npc.step(serial, direction, running?)` | One step toward a `DirectionType` (`North` to `NorthWest`), turning first when needed, seen by the players in range; a run when `running` is `true`. How often the script calls it sets the speed. `false` when blocked or for `DirectionType.Running`, which is not a direction |
 | `npc.location(serial)`, `npc.name(serial)` | `{ x, y, z, map }` and the name of the NPC, or `nil` |
 | `npc.get_prop(serial, key)`, `npc.set_prop(serial, key, value)` | A value the NPC keeps across restarts: a string, a number or a bool, saved with the NPC by the world save; `get_prop` gives `nil` when it has none, `set_prop` with `nil` removes it and gives `false` for a table, a function or a blank key |
+| `npc.spawn(template, map, x, y, z, fn?)` | Brings a new NPC of a mobile template into the world. The NPC is saved first, so it appears a moment later: its `on_spawn` runs then, and so does `fn(serial)` when given. `false` for an unknown template, a spot outside the map or a `z` outside -128 to 127 |
+| `npc.delete(serial)` | Deletes the NPC and what it carries, on the next turn of the game loop; `false` for a serial that is not an NPC in the world |
+| `npc.face(serial, x, y)`, `npc.distance_to(serial, x, y)` | Turns the NPC towards a place without stepping, seen by the players in range (`false` for a frozen NPC); and the tiles between the NPC and a place, the larger of the two differences, as the view range counts them |
+| `npc.nearby(serial, range, kind?)` | The serials of the mobiles within `range` tiles (0 to 32) of the NPC, itself left out, nearest first, as a list: the other NPCs, or with `kind` `"players"` the players, with `"all"` everyone. Height and line of sight are not checked: `for _, other in ipairs(npc.nearby(serial, 8)) do ... end`. Empty for a serial that is not an NPC or a range out of bounds |
+| `npc.walk_to(serial, x, y, z?, range?, running?)` | One step along a path to a place that goes around what stands in the way; call it on every `on_think`. It answers `"moving"` after a step, `"arrived"` once within `range` tiles of the place (default 0), `"blocked"` while it waits to look for another way, `"no_path"` when none was found; `nil` for a serial that is not an NPC. See [Walking a path](#walking-a-path) |
+| `npc.find_path(serial, x, y, z?, partial?)` | The steps from the NPC to a place, as a list of `DirectionType`, for a script that walks them itself with `npc.step`; with `partial`, the steps to the closest place when it cannot be reached. `nil` when there is no path or the place is too far. Each call searches: keep the list |
 | `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
 | `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` for a worn item, an `amount` below 1, fewer units left, or an item a player holds on the cursor |
 | `item.get_prop(serial, key)`, `item.set_prop(serial, key, value)` | The same for an item, saved with it by the world save or its owner's save |
@@ -75,28 +81,64 @@ exists but fails compilation/execution aborts server startup.
 | `item.set_light(serial, type)` | The light shape a light source gives, by `LightType` name such as `circle150`, `circle300` or `west_big`; `nil` clears it. The players who see the item are shown it again; the client draws the light only for a lit graphic. `false` for an unknown shape or a worn or held item |
 | `item.location(serial)`, `item.move_to(serial, x, y, z)` | Where a ground item lies, `{ x, y, z, map }`, and moving it on its map: the players around the old spot lose it and those around the new one see it; `nil`/`false` for an item not on the ground, a spot outside the map or a `z` outside -128 to 127; moving restarts a decaying item's decay |
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
+| `item.give(mobile, template, amount?)` | Makes a new item from an item template in the mobile's backpack and gives its serial; the owner sees it at once and its next save keeps it. `nil` for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack) or when the server has no serial ready: it keeps 64 in reserve and refills them in the background, so a script that makes more than that in one go gets `nil` for the rest and must try again later |
+| `item.add_loot(container, table, rolls?)` | Rolls a loot table of `templates/loots` once, or `rolls` times, and puts what it gives into a container, or into the backpack of a mobile; returns how many items it added, `0` for rolls that give nothing, an unknown table or something that is no container; fewer than the roll gave when the container is full (125 items) or the server has no item serial at hand for a moment |
+| `item.create(template, map, x, y, z, amount?)` | Makes a new item from an item template on the ground and gives its serial; the players around see it. `nil` as `item.give`, and for a spot outside the map or a `z` outside -128 to 127 |
+| `item.template(serial)`, `item.hue(serial)` | The id of the item's template and its hue (0 for the colours of its art); `nil` for an unknown item |
+| `item.set_name(serial, name?)`, `item.set_hue(serial, hue)`, `item.set_amount(serial, amount)` | Give the item a name of its own (`nil` takes it back to its template's), a hue (0 to 65535) or, for a stack, an amount (1 to 60000); the players who see the item see it change. `false` for a held or worn item, or one that does not stack (amount above 1), as its template or its graphic says |
+| `item.container(serial)`, `item.contents(serial)` | The serial of the container the item lies in (`nil` on the ground or worn), and the serials of the items lying directly in a container, as a list: `for _, inside in ipairs(item.contents(bag)) do ... end` |
+| `item.equip(serial, mobile)` | Puts the item on a mobile, on the layer its template gives it; everyone around sees it worn and its script runs `on_equip`. `false` for a worn or held item, a stack, an item without a layer or one the mobile cannot wear, a taken layer, a mobile not in the world, or an item another mobile carries. The item's `can_equip` is not asked. Taken from a chest on the ground, those who look into the chest see it go |
+| `item.find(holder, template)` | The serials of the items of a template inside a container, at any depth, or among everything a mobile wears and carries (not what lies in its bank), as a list: `for _, coins in ipairs(item.find(user, "gold")) do ... end`; empty when there is none |
+| `item.start_timer(serial, name, seconds)`, `item.stop_timer(serial, name)`, `item.timer(serial, name)` | A timer the item keeps: when its time comes its script runs `on_timer(serial, name)`. It is saved with the item, so it also runs after a restart. Starting a running timer starts it again from now; `item.timer` gives the seconds left (`nil` when there is none). `false` for an unknown item, a blank name or one over 32 characters, or seconds not above 0 or over a year. The timers are kept in the props `timer.<name>`, which `item.set_prop` refuses; splitting a stack leaves them with the part that is lifted. A timer whose script has no `on_timer`, or fails, is dropped with a warning in the log |
+| `prompt.ask(player, fn)`, `prompt.cancel(player)` | Ask the player for a line of text, typed in the journal line, and run `fn(text)` with it: up to 128 characters, without the spaces around it, or `nil` when the player pressed escape, typed only spaces, was asked something else or left. Say what to type first with `mobile.message`. `false` for an NPC or a player not in the world |
+| `item.move_into(serial, container)` | Moves the item into a container, or into the backpack of a mobile when `container` is a mobile's serial; those who saw it lose it and the new owner sees it. `false` for a worn or held item, a target that is not a container, a container put into itself or into what it holds, or an item one mobile carries moved to another mobile (a trade, not supported yet). No weight or item limit is checked, and players who have a container on the ground open do not see it change until they open it again |
 | `mobile.teleport(serial, x, y, z, map?)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map, or of `map` (a `MapType`, or its name such as `"Tokuno"`) when given: a player's client is told of the map change (0xBF 0x08) and where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a `z` outside -128 to 127 |
 | `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells; `false` for a sound out of range or a mobile not in the world |
 | `mobile.message(serial, text)` | A system message, in the lower left of the screen, read only by that player: `mobile.message(who, "That is too far away.")`; cut at 128 characters; `false` for an empty text, an NPC or a player not in the world |
+| `mobile.template(serial)` | The id of the mobile template an NPC was made from, such as `"f_baker"`; `nil` for a player or a mobile not in the world |
+| `mobile.name(serial)`, `mobile.is_player(serial)`, `mobile.direction(serial)` | The mobile's name, whether it is a player's character, and the `DirectionType` it faces; `nil`, `false` and `nil` for a mobile not in the world |
+| `mobile.stats(serial)` | The mobile's numbers as a table: `body`, `strength`, `dexterity`, `intelligence`, `hits`, `hits_max`, `mana`, `mana_max`, `stamina`, `stamina_max`, `fame`, `karma`. Read only |
+| `mobile.set_stats(serial, values)` | Changes the mobile's numbers, given as a table with any of those `mobile.stats` gives but `body`: `mobile.set_stats(who, { hits = 10, strength = 80 })`. Hit points, mana and stamina stay between 0 and their maximum, also when only the maximum changes. The mobile's player sees its bars or its status change and the players around the new health bar. `false`, with nothing changed, for an unknown name, a value that is not a whole number, a stat or a maximum outside 0 to 65535, an empty table or a mobile not in the world |
+| `mobile.skill(serial, skill)`, `mobile.skills(serial)` | A skill as `{ value, cap, lock }`, in points (`50.5`) with `lock` being `up`, `down` or `locked`: `mobile.skill(who, SkillType.Magery).value`; a skill never trained is 0. And every skill above 0 as a table of name and value: `mobile.skills(who).magery`. `nil` for a mobile not in the world |
+| `mobile.set_skill(serial, skill, value, cap?)` | Sets a skill in points, and its cap when given; the value stays between 0 and the cap. The mobile's player sees it in the skill window. `false` for a cap outside 0 to 6553.5 or a mobile not in the world; a number that is no `SkillType` raises an error |
+| `mobile.set_name(serial, name)`, `mobile.set_body(serial, body)`, `mobile.set_hue(serial, hue)` | Give the mobile another name (30 characters at most), another body graphic or another skin hue (0 to 65535), seen at once by its player and the players around; `false` for a blank or longer name, a value out of range or a mobile not in the world |
+| `mobile.flags(serial)` | What the mobile is, as `{ hidden, frozen, war_mode }`, each `true` or `false`; `nil` for a mobile not in the world |
+| `mobile.set_hidden(serial, hidden)`, `mobile.set_frozen(serial, frozen)`, `mobile.set_war_mode(serial, war_mode)` | Hide or reveal the mobile: hidden, it leaves the screens of the players around, who get it back when it is revealed, while game masters and administrators still see it; the players do not hear what it says, cannot open its paperdoll or read its tooltip, and NPCs do not sense it (`world.mobiles_in_range` still returns it). Freeze or free it: frozen, it neither steps nor turns. Put it in war mode or in peace, shown to its player and the players around. Hidden and frozen are saved with the mobile; a mobile comes back in peace. `false` for a mobile not in the world |
+| `mobile.backpack(serial)`, `mobile.region(serial)`, `mobile.light(serial)` | The serial of the backpack the mobile wears (look into it with `item.contents`), the name of the region it stands in (`nil` outside every region) and the light level there, 0 (day) to 30 (dark) |
+| `mobile.get_prop(serial, key)`, `mobile.set_prop(serial, key, value)` | A value a mobile, a player or an NPC, keeps across restarts: a string, a number or a bool; `nil` removes it. A player's is saved with its character. `set_prop` is `false` for a table, a function, a blank key or a mobile not in the world |
+| `mobile.play_music(player, music)` | Plays a `MusicType` to a player, until its region gives it another; `false` for an NPC or a player not in the world |
+| `target.pick(player, fn)`, `target.pick_location(player, fn)`, `target.cancel(player)` | Give the player the target cursor, to pick an item or a mobile, or a place, and run `fn(picked)` with what it clicked: `{ kind = "object", serial }`, `{ kind = "location", map, x, y, z }` or `{ kind = "canceled" }` (ESC, another cursor, or the player left); when a script itself replaces or cancels the cursor, the function runs on the next turn of the game loop. `false` for an NPC or a player not in the world |
 | `effect.at(map, x, y, z, graphic, options)` | Plays an effect graphic that stays at a point of a map, such as the smoke of a teleport: `effect.at(MapType.Trammel, 1600, 1628, 5, EffectGraphicType.Smoke)`; see [Effects](#effects) |
 | `effect.on(serial, graphic, options)` | Plays an effect graphic on a mobile, which it follows, or on an item lying on the ground; `false` for something not in the world |
 | `effect.moving(from, to, graphic, options)` | Plays an effect graphic flying from one mobile or ground item to another on the same map, such as a fireball; `false` when one is not in the world or they are on two maps |
 | `effect.lightning(serial, hue)` | Strikes a mobile or a ground item with a lightning bolt; the hue is optional |
+| `locations.node(path)` | One level of the named places of [`locations.toml`](data-files/locations.md), as the [go gump](commands/go.md) lists them: `{ path, name, categories, locations }`, each category `{ name, path }` and each location `{ name, category, map, x, y, z }`. `""` is the list of the maps, then `map/category/...` in any case; `nil` for an unknown path |
+| `locations.find(text, map)` | The places a text names, as an array of `{ name, category, map, x, y, z }`: a name, or the last words of the categories and the name (`"covetous entrance"`); a category alone gives its first place. Those of `map` when any fits, else those of the other maps |
 | `moongates.facets()` | The public moongates of the loaded maps, from [`moongates.toml`](data-files/moongates.md): an array of `{ map, cliloc, selected_cliloc, destinations }`, each destination `{ name, cliloc, x, y, z }` |
 | `world.is_occupied(map, x, y)` | Whether a player or an NPC stands on the tile, at any height, such as a door's doorway; `map` is a `MapType` |
 | `world.is_guarded(map, x, y, z)` | Whether guards protect the region of the place, such as a town: `world.is_guarded(MapType.Trammel, 1496, 1628, 10)`; `false` outside every region |
 | `world.moon(moon, x)` | The phase of `MapType.Trammel` or `MapType.Felucca` seen from the column `x`, a `MoonPhaseType` (`NewMoon`, `WaxingCrescent`, `FirstQuarter`, `WaxingGibbous`, `FullMoon`, `WaningGibbous`, `LastQuarter`, `WaningCrescent`): `world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon`. Felucca turns every 10 game minutes, Trammel every 30 |
 | `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
+| `world.now()` | The real time as whole seconds since 1970 (UTC). Keep `world.now() + 3600` in a prop to do something an hour from now, also after a restart, as the town containers do with their next refill |
+| `world.get_prop(key)`, `world.set_prop(key, value)` | A value the whole shard keeps across restarts, saved with the world: a string, a number or a bool, `nil` removes it. `world.set_prop("event.day", 12)`; `false` for a table, a function or a blank key |
 | `world.is_staff(player)` | Whether the player is a game master or an administrator in the world; `false` for an NPC or a player not in the world |
 | `world.carries(mobile, key, value)` | Whether the mobile wears or carries, in its containers at any depth, an item whose prop `key` is `value`, such as the key of a door: `world.carries(user, "key.value", 1234)` |
+| `world.region(map, x, y, z)` | The name of the region of a place; `nil` outside every region |
+| `world.mobiles_in_range(map, x, y, range)`, `world.items_in_range(map, x, y, range)` | The serials of the players and NPCs, or of the items on the ground, within `range` tiles (0 to 32) of a place, at any height, as a list |
+| `world.players()` | The serials of the players' characters in the world, as a list |
+| `world.line_of_sight(map, x1, y1, z1, x2, y2, z2)` | Whether nothing stands between two places of a map, as for a spell or an arrow; `false` beyond the range a line of sight is checked at and on a map that is not loaded |
+| `world.standing_z(map, x, y, z)` | The height a mobile can stand at on a cell, at or below `z`, such as before teleporting someone there; `nil` when nothing there can be stood on |
+| `world.weather(player)`, `world.season(map)` | The weather where a player stands, as `{ kind, density, temperature }` with `kind` a `WeatherKindType` (`nil` for an NPC or a player not in the world), and the `SeasonType` of a map (`nil` when the seasons are not running) |
+| `world.broadcast(text)` | A system message (cut to 128 characters) to every player in the world; `false` for a blank text |
 | `bank.open(player)`, `bank.is_open(player)` | Opens the player's bank box, made the first time, open while the player stands still; and whether it is open. `false` for an NPC or a player not in the world; see [Bank](bank.md) |
 | `gump.open(player, id, args)`, `gump.close(player, id)` | Opens the gump `templates/gumps/<id>.xml` on the player, its `${name}` filled from `args`, and closes it; its script `scripts/gumps/<id>.lua` gets the answer. `false` for an unknown player, and from `gump.open` for an unknown gump. Called from a script, the gump opens or closes on the next turn of the game loop, so `gump.close` gives `true` even for a gump that is not open. See [Gumps](gumps.md) |
 | `gump.create(id, x, y)`, `gump.send(player, g, args)` | Builds a gump in Lua (`g:text{...}`, `g:button{...}`, `g:paginate(...)`, ...) and opens it, from a script on the next turn of the game loop; `false` for an unknown player. A button's `on_click` may be a function. See [Gumps built in Lua](gumps.md#gumps-built-in-lua) |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
+| `item.message_cliloc(serial, player, cliloc, args?)` | The same label with a text of the client, by its number, so each player reads it in the language of the client; `args` fills its `~1_NAME~` places, split by tabs. `false` when the player or the item is not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
+The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates` and `locations` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -110,9 +152,10 @@ the timer prevents later starts; it does not cancel an already-started coroutine
 For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
-The `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` modules serve the [mobile](#mobile-scripts) and
-[item scripts](#item-scripts); there are no APIs for a character's stats, skills or inventory yet
-([Implementation status](implementation-status.md)). To expose application
+The `npc`, `item`, `mobile`, `effect`, `world`, `target`, `prompt`, `bank` and `gump` modules serve the [mobile](#mobile-scripts) and
+[item scripts](#item-scripts). A script reads and writes a mobile's numbers and skills; nothing
+uses them yet, so a skill a script sets gains nothing by itself (see the
+[Roadmap](roadmap.md#phase-0-what-lua-needs-before-any-gameplay)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Events
@@ -149,6 +192,7 @@ events.off(handle) -- returns false when the handle is unknown
 | `character_entered_world` | `serial`, `account_id`, `name`, `map`, `x`, `y`, `z`. Raised after a character entered the world and the client's login completed. |
 | `player_say` | `serial`, `name`, `text`. Raised after a player's character said something and the players and NPCs around heard it; `text` is what they heard. A command (text starting with a dot) raises nothing. |
 | `character_left_world` | `serial`, `account_id`, `name`, `map`, `x`, `y`, `z`. Raised after a character left the world because its session closed, once its save was attempted. |
+| `player_region_changed` | `serial`, `name`, `previous`, `current`, `map`, `x`, `y`, `z`. Raised when a player's character walks or is teleported from a region into another, or changes map; `previous` and `current` are the regions' names, `nil` outside every region, and `previous` is also `nil` when the character just entered the world |
 
 ### Publishing an event from C#
 
@@ -267,6 +311,55 @@ tables of the old file starts again, and the waits its handlers left are cancell
 because a script's calls belong to `mobiles/<script_id>.lua`. When the server stops,
 the scripts are no longer called, before the script engine stops.
 
+### Walking a path
+
+`npc.walk_to` lets an NPC reach a place around walls, water and cliffs. The script calls it
+on every tick and the NPC takes one step each time:
+
+```lua
+guard = {}
+
+function guard.on_think(serial)
+    local state = npc.walk_to(serial, 1434, 1699)
+
+    if state == "arrived" then
+        npc.say(serial, "All quiet at the bank.")
+    end
+end
+```
+
+| Answer | Means |
+| --- | --- |
+| `"moving"` | The NPC took a step |
+| `"arrived"` | It stands within `range` tiles of the place (default 0), at its height; it is not checked that nothing stands between them |
+| `"blocked"` | The step was refused, or the NPC waits to look for another way |
+| `"no_path"` | The last search did not reach the place: nothing leads there, or only somewhere near |
+| `nil` | The serial is not an NPC, `range` is negative or `z` is outside -128 to 127 |
+
+The path is found with the server's [path search](world-queries.md#pathfinding) and kept for
+the NPC, so most calls only take the next step. A search runs when the NPC has no steps left
+or the place changed, and only:
+
+- two seconds after the NPC's last search, as ModernUO; ten seconds when that search did not
+  reach the same place from where the NPC stands, since such a search is the costly kind;
+- for ten NPCs a second in the whole server; the others wait their turn.
+
+While it may not search, an NPC goes on along the path it has, or with none steps straight
+towards the place, so one that chases something keeps moving. A place that cannot be reached
+is walked towards as far as a path leads. To follow someone, pass where it stands on every
+tick and a `range` of 1 to stop beside it:
+
+```lua
+local where = mobile.location(target)
+npc.walk_to(serial, where.x, where.y, where.z, 1, true)
+```
+
+`running` only changes how the step looks: an NPC takes one step per `on_think`, two a second.
+Without `z` the place is the highest ground of the cell not above the NPC's head, else the
+highest there. Start and goal must be within `ultima.world.pathfinding_range` tiles (38);
+farther is `"no_path"`. A closed door blocks the way, and an NPC does not open it: it goes
+around, or walks up to it and then answers `"no_path"`. Other mobiles do not block a path.
+
 ## Item scripts
 
 An item template names its script with `script_id`, the name of a global Lua table
@@ -285,17 +378,44 @@ script_id = "potion"
 | Function | When |
 | --- | --- |
 | `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Items inside a container lying on the ground cannot be used yet: the player reads "That is too far away.". A missing `on_use`, or one that raises an error, lets the default action follow. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled; after the wait the item may have moved, so check it again, for example `item.owner(serial) == user`. |
-| `on_move_over(serial, mobile)` | A player stepped onto the cell of the item, lying on the ground at the player's height, up to 14 above its feet, or below them and tall enough to reach them (ModernUO's rule). It runs after the step was acknowledged and shown to the players around; NPCs do not trigger it yet. Once a script moved the player off the cell, the other items of the cell are not run. Arriving by teleport does not trigger it, so two teleporters that point at each other do not loop. |
+| `on_move_over(serial, mobile)` | A player stepped onto the cell of the item, lying on the ground at the player's height, up to 14 above its feet, or below them and tall enough to reach them (ModernUO's rule). It runs after the step was acknowledged and shown to the players around; an NPC runs `on_npc_move_over` instead. Once a script moved the player off the cell, the other items of the cell are not run. Arriving by teleport does not trigger it, so two teleporters that point at each other do not loop. |
+| `on_npc_move_over(serial, npc)` | An NPC stepped onto the cell of the item, by the same height rule. It runs on the turn of the game loop after the step, so the NPC may already have moved on: check where it is |
 | `on_speech(serial, speaker, text, keywords)` | A player said `text` within 15 cells of the item, lying on the ground (commands are not heard). `speaker` is the player's serial; `keywords` the speech keywords the client found, an array of numbers. Every scripted ground item in range is asked, after the NPCs, so a script checks its own range and words. It may call `wait`. |
-| `on_equip(serial, wearer)` | The item went onto a layer of the mobile `wearer`, dropped on the paperdoll. A worn item lifted and bounced back never left its layer, and items loaded or spawned already dressed raise nothing. It cannot refuse the item. |
+| `on_equip(serial, wearer)` | The item went onto a layer of the mobile `wearer`, dropped on the paperdoll. A worn item lifted and bounced back never left its layer, and items loaded or spawned already dressed raise nothing. It cannot refuse the item: `can_equip` does. |
 | `on_unequip(serial, wearer)` | The item left the layer of `wearer`: dropped in a container or on the ground, or merged into a stack (the item is gone then, so `item.*` gives `nil`). Logging out, removing an NPC or deleting a mobile with its items raise nothing. |
 | `on_pickup(serial, picker)` | The player `picker` lifts the item from a container, the paperdoll or the ground; lifting part of a stack lifts this item, and the rest left behind is not new. While it is held, `item.consume` and `item.delete` refuse it. A held item ends in `on_drop`, in `on_equip` when it is worn by a new wearer, or in nothing: when it bounces back, is worn again on the layer it came from, or its player logs out holding it. |
 | `on_drop(serial, dropper)` | The player `dropper` puts the held item down: into a container, on the ground, or onto a stack (the item is gone then, so `item.*` gives `nil`). Not when it bounces back or is worn. A worn item put down runs `on_unequip` first, then `on_drop`. |
-| `on_create(serial)` | A newly created item enters the world: today the equipment, backpack and loot of a spawned NPC, before that NPC's `on_spawn`. A new character's starting items and the rest of a split stack raise nothing. |
+| `can_pick_up(serial, picker)` | The player `picker` is about to lift the item, from a container, the paperdoll or the ground, once every rule of the server allows it and before a stack is split. Return `false` to refuse: the item stays where it is and the client shows no message of its own. A worn item is lifted before it is taken off, so this is also where a script keeps an item on its wearer |
+| `can_drop(serial, dropper)` | The player `dropper` is about to put the held item down, anywhere: on the ground, into a container or onto a stack. Return `false` to refuse: the item goes back where it was lifted from |
+| `can_equip(serial, wearer)` | The held item is about to be worn by `wearer`, once the layer is free and the rules allow it. Return `false` to refuse: the item goes back where it was lifted from and `on_equip` does not run. Not asked of a worn item lifted and put back on its layer, which it never left |
+| `can_insert(serial, mobile, item)` | Asked of a container: the player `mobile` is about to put `item` into it, or onto a stack that lies directly in it, once the rules allow the drop. `serial` is the container, carried or lying on the ground; a container holding that container is not asked. Return `false` to refuse: the item goes back where it was lifted from. It is asked after the item's own `can_drop`, and once for each drop |
+| `on_timer(serial, name)` | A timer of the item, started with `item.start_timer`, is due. Timers are checked once a second. The timer is gone when the function runs: start it again there for something that repeats. One that came due while the server was down, or while the character carrying the item was offline, runs as soon as the item is in the world again. It may call `wait` |
+| `on_darkness(serial, dark)` | Every 30 seconds, and right after `.globallight`, on a lamp post (template `decoration_light`, prop `decoration_type` LampPost1 to LampPost3) whose spot turned dark (`true`) or light (`false`) |
+| `on_create(serial)` | A newly created item enters the world: the equipment, backpack and loot of a spawned NPC, before that NPC's `on_spawn`, and a chest a spawn region makes, with everything inside it. A new character's starting items, the rest of a split stack, and items made by `item.give`, `item.create`, `item.add_loot` or `.decorate` raise nothing. |
 
 `on_equip`, `on_unequip`, `on_pickup`, `on_drop` and `on_create` run right after what
 caused them, on the next turn of the game loop, once the players have seen it: a script
 may then delete or consume the item. They are notifications: none can refuse the move.
+
+`can_pick_up`, `can_drop`, `can_equip` and `can_insert` are questions, asked before the
+move and answered at once: only `false` refuses. A missing function, an error, a call to
+`wait` or any other value lets the move follow, so a broken script never locks an item. Tell
+the player why with `mobile.message` before returning `false`. They are asked for the moves
+a player makes with the client, staff included; a script that moves an item itself
+(`item.move_to`, `item.move_into`) is not asked. While a question is asked the item counts as held, so
+`item.delete`, `item.consume`, `item.move_into` and the functions that change it refuse it:
+answer the question there, and act on the item in `on_pickup`, `on_drop` or `on_equip`.
+
+```lua
+-- a cursed ring: once worn, it stays on
+function ring.can_pick_up(serial, picker)
+    -- worn: it has an owner and lies in no container
+    if item.owner(serial) == picker and item.container(serial) == nil then
+        mobile.message(picker, "The ring will not come off.")
+        return false
+    end
+end
+```
 
 The script acts on its item with the `item` module, passing its serial; `user` is
 the serial of the player. The distribution's `scripts/items/potion.lua`, copied into the root by `mgctl`; no
@@ -320,8 +440,9 @@ one, the door swings aside by its `facing` prop and plays the sound of its
 when nobody stands in either doorway. An open door closes by itself after 20 seconds, then
 tries again every 10 seconds while the doorway is taken. A door that cannot swing aside, such
 as one at the edge of the map, stays closed. The open state is the prop `door.open`, with the
-closed spot in `door.x`, `door.y` and `door.z`, saved with the door; the auto-close timer is not, so a door left open when the
-server stops stays open until someone uses it. A closed door with the prop `locked` does not
+closed spot in `door.x`, `door.y` and `door.z`, saved with the door, and so is the auto-close timer (the door's `close` timer, started with
+`item.start_timer`): a door left open when the server stops closes once the server is back. A door saved
+open by an older version has no timer and stays open until someone uses it. A closed door with the prop `locked` does not
 open for players, who read "That is locked." (message 398, in the server language), unless
 they carry anywhere in their backpack a key whose prop `key.value` is the door's `key.value`
 (message 405: they open it and it stays locked); game masters and administrators open it
@@ -345,7 +466,7 @@ switches its graphic silently.
 teleports the player to the props `teleport.x`, `teleport.y` and `teleport.z` with
 `mobile.teleport`, shows a puff of smoke where the player left (prop `source_effect`) and
 arrived (prop `dest_effect`), then plays the prop `sound_id` there when the teleporter has one. The prop
-`active = false` turns a teleporter off. A teleporter with the prop `teleport.map`, a `MapType`
+`active = false` turns a teleporter off. Only players travel, unless the prop `creatures` is true: then an NPC that steps on it travels too. A teleporter with the prop `teleport.map`, a `MapType`
 number, takes the player to that map: the client changes map, then gets the season when it differs
 from the one it shows, the light, the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
 the accounts its visibility allows, so players walk onto a teleporter they never see.
@@ -380,6 +501,27 @@ the text, in any case) or whose client sends the speech keyword of the prop `key
 within `range` cells (0, the default, is the teleporter's own cell). With a `delay`
 (`"0:0:1"`, or a number of seconds) the teleport happens later, if the player still stands in
 range. The destination, the smoke, the sound and `active` are those of the plain teleporter.
+
+`scripts/items/clock.lua` is the script of the clocks (the item templates `0x104b_clock` and
+`0x104c_clock`, and `decoration_clock` for those `.decorate` places), as ModernUO's `Clock`: on
+`on_use` the player reads over the clock the part of the day ("It's the afternoon") and the time to
+the minute ("1:07 to be exact") where they stand, from `world.time`, as texts of the client sent
+with `item.message_cliloc`.
+
+`scripts/items/fillable.lua` is the script of the `decoration_fillable` template that `.decorate`
+gives to the town containers, ModernUO's `FillableContainer`: the crates, boxes, chests and barrels
+of the shops and the bookcases of the libraries. On `on_use`, before the container opens, a
+container whose time has come (prop `fill.next`, as `world.now()` counts) and that holds two things
+or fewer, a pile counting for its amount, gets up to twice what it misses to hold three, each one a
+roll of the loot table of its kind with `item.add_loot`; a bookcase fills up to five books. It then waits 60 to 90 minutes; a fill that could add nothing is tried again at the next opening.
+Nothing runs while nobody opens the container, and the times survive a restart. The kind is the
+prop `content_type`, such as `baker` for the table `fillable_baker` of
+`templates/loots/fillable_containers.toml`; without it the container takes the kind of the nearest
+vendor within 20 tiles, told by `mobile.template`, and keeps it. With no vendor around it stays
+empty and looks again five minutes later. ModernUO starts the wait when an item is taken out, and
+locks and traps the container: those are not there yet. The town tables use
+`templates/loots/randomshields.toml` (one plain shield, ModernUO's `Loot.ShieldTypes`) and the two goods of
+`templates/items/town_goods.toml` (mallet and chisel, arrow shafts) that the converted item files lack.
 
 LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
 `{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,

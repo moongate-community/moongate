@@ -8,6 +8,7 @@ using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.World;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Items;
@@ -25,6 +26,8 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class WorldViewService : IWorldViewService
 {
 
+    private const int NoDrawGraphic = 0x21A4;
+    private const int StaffBlockerGraphic = 0x1183;
     private static readonly ClientVersion StygianAbyss = new(7, 0, 0, 0);
     private static readonly ClientVersion HighSeas = new(7, 0, 9, 0);
 
@@ -82,13 +85,13 @@ public sealed class WorldViewService : IWorldViewService
                 continue;
             }
 
-            if (own is not null)
+            if (own is not null && CanSee(own, other))
             {
                 SendMobile(own.SessionId, other, Incoming(other));
                 sent.Add(other);
             }
 
-            if (_sessions.TryGetValue(other.Id, out var viewer))
+            if (_sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
             {
                 SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
             }
@@ -136,7 +139,7 @@ public sealed class WorldViewService : IWorldViewService
                 continue;
             }
 
-            if (_sessions.TryGetValue(other.Id, out var viewer))
+            if (_sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
             {
                 _sender.TrySend(viewer.SessionId, remove);
             }
@@ -166,7 +169,8 @@ public sealed class WorldViewService : IWorldViewService
         {
             if (other.Id != mobile.Id &&
                 !InRange(other.Location, mobile.Location) &&
-                _sessions.TryGetValue(other.Id, out var viewer))
+                _sessions.TryGetValue(other.Id, out var viewer) &&
+                CanSee(viewer, mobile))
             {
                 _sender.TrySend(viewer.SessionId, new RemoveEntityPacket(mobile.Id));
             }
@@ -186,7 +190,7 @@ public sealed class WorldViewService : IWorldViewService
 
             var sawIt = InRange(other.Location, oldLocation);
 
-            if (_sessions.TryGetValue(other.Id, out var viewer))
+            if (_sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
             {
                 if (sawIt && !teleported)
                 {
@@ -199,7 +203,7 @@ public sealed class WorldViewService : IWorldViewService
             }
 
             // The mover's client drops what it walks away from by itself, as in ModernUO; it only needs the newcomers.
-            if (!sawIt && hasSession)
+            if (!sawIt && hasSession && CanSee(own!, other))
             {
                 SendMobile(own!.SessionId, other, Incoming(other));
                 sent.Add(other);
@@ -233,7 +237,7 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
         {
-            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer))
+            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
             {
                 _sender.TrySend(viewer.SessionId, remove);
             }
@@ -246,7 +250,49 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
         {
-            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer))
+            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
+            {
+                SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
+            }
+        }
+    }
+
+    public void MobileFlagsChanged(MobileEntity mobile)
+    {
+        var moving = Moving(mobile, false);
+
+        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            // Its own player too: the client draws its own figure from these flags.
+            if (_sessions.TryGetValue(other.Id, out var viewer) && (other.Id == mobile.Id || CanSee(viewer, mobile)))
+            {
+                _sender.TrySend(viewer.SessionId, moving);
+            }
+        }
+    }
+
+    public void MobileHiddenChanged(MobileEntity mobile)
+    {
+        MobileMovingPacket? moving = null;
+        MobileIncomingPacket? incoming = null;
+
+        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            if (!_sessions.TryGetValue(other.Id, out var viewer))
+            {
+                continue;
+            }
+
+            if (other.Id == mobile.Id || viewer.Account >= AccountType.GameMaster)
+            {
+                // Itself and the staff, who see it either way: only its flags change.
+                _sender.TrySend(viewer.SessionId, moving ??= Moving(mobile, false));
+            }
+            else if (mobile.Hidden)
+            {
+                _sender.TrySend(viewer.SessionId, new RemoveEntityPacket(mobile.Id));
+            }
+            else
             {
                 SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
             }
@@ -295,6 +341,47 @@ public sealed class WorldViewService : IWorldViewService
         }
     }
 
+    public void ContainedItemAppeared(ItemEntity item, ItemEntity root, Serial except)
+    {
+        var info = _tooltips.Info(item);
+
+        foreach (var viewer in AroundTheContainer(root, except))
+        {
+            _sender.TrySend(
+                viewer.SessionId,
+                new ContainerItemUpdatePacket(item, GameSessionClientExtensions.UsesContainerGrid(viewer.Version))
+            );
+            _sender.TrySend(viewer.SessionId, info);
+        }
+    }
+
+    public void ContainedItemDisappeared(ItemEntity item, ItemEntity root, Serial except)
+    {
+        var remove = new RemoveEntityPacket(item.Id);
+
+        foreach (var viewer in AroundTheContainer(root, except))
+        {
+            _sender.TrySend(viewer.SessionId, remove);
+        }
+    }
+
+    // The players who may have the container on the ground open: those in range of it, less the one who acts.
+    private IEnumerable<Viewer> AroundTheContainer(ItemEntity root, Serial except)
+    {
+        if (root.Map is not { } map || root.GroundLocation is not { } spot)
+        {
+            yield break;
+        }
+
+        foreach (var other in _sectors.GetMobilesInRange(map, spot, ViewRange))
+        {
+            if (other.Id != except && _sessions.TryGetValue(other.Id, out var viewer))
+            {
+                yield return viewer;
+            }
+        }
+    }
+
     public void WornItemChanged(MobileEntity wearer, ItemEntity item)
     {
         var worn = new WornItemPacket(item);
@@ -302,7 +389,7 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var other in _sectors.GetMobilesInRange(wearer.Map, wearer.Location, ViewRange))
         {
-            if (_sessions.TryGetValue(other.Id, out var viewer))
+            if (_sessions.TryGetValue(other.Id, out var viewer) && (other.Id == wearer.Id || CanSee(viewer, wearer)))
             {
                 _sender.TrySend(viewer.SessionId, worn);
                 _sender.TrySend(viewer.SessionId, info);
@@ -316,26 +403,28 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var other in _sectors.GetMobilesInRange(wearer.Map, wearer.Location, ViewRange))
         {
-            if (other.Id != wearer.Id && _sessions.TryGetValue(other.Id, out var viewer))
+            if (other.Id != wearer.Id && _sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, wearer))
             {
                 _sender.TrySend(viewer.SessionId, remove);
             }
         }
     }
 
-    private static IOutgoingPacket WorldItem(ItemEntity item, ClientVersion? version)
+    private static IOutgoingPacket WorldItem(ItemEntity item, ClientVersion? version, AccountType account)
     {
         var spot = item.GroundLocation!.Value;
+        // As ModernUO's Blocker: the graphic that draws nothing blocks the way unseen; the staff sees a gravestone.
+        var graphic = item.ItemId == NoDrawGraphic && account >= AccountType.GameMaster ? StaffBlockerGraphic : item.ItemId;
 
         // As ModernUO: 0xF3 from 7.0.0.0 (Stygian Abyss), two bytes longer from 7.0.9.0 (High Seas); unknown is newest.
         if (version is null || version.CompareTo(StygianAbyss) >= 0)
         {
             var highSeas = version is null || version.CompareTo(HighSeas) >= 0;
 
-            return new WorldItemSaPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue, highSeas, LightOf(item));
+            return new WorldItemSaPacket(item.Id, graphic, item.Amount, spot, item.Hue, highSeas, LightOf(item));
         }
 
-        return new WorldItemPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue, LightOf(item));
+        return new WorldItemPacket(item.Id, graphic, item.Amount, spot, item.Hue, LightOf(item));
     }
 
     // The item's light shape, kept in its "light" prop by name, such as circle150; none for anything else.
@@ -366,8 +455,15 @@ public sealed class WorldViewService : IWorldViewService
         );
     }
 
+    // A hidden mobile is on no player's screen; the staff sees it, as in ModernUO.
+    private static bool CanSee(Viewer viewer, MobileEntity mobile)
+    {
+        return !mobile.Hidden || viewer.Account >= AccountType.GameMaster;
+    }
+
     // The mobile, then the revision of its tooltip and of each worn item's, as ModernUO: the client asks for the
     // tooltips it does not have yet.
+
     private void SendMobile(long sessionId, MobileEntity mobile, MobileIncomingPacket incoming)
     {
         _sender.TrySend(sessionId, incoming);
@@ -388,7 +484,7 @@ public sealed class WorldViewService : IWorldViewService
             return false;
         }
 
-        _sender.TrySend(viewer.SessionId, WorldItem(item, viewer.Version));
+        _sender.TrySend(viewer.SessionId, WorldItem(item, viewer.Version, viewer.Account));
         _sender.TrySend(viewer.SessionId, _tooltips.Info(item));
 
         return true;

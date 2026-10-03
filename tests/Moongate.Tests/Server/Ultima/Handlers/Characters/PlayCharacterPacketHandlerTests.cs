@@ -191,6 +191,43 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         );
     }
 
+    // The character's rows are as its last save left them: another player may have taken an item since.
+    [Fact]
+    public async Task HandleAsync_AnItemAlreadyLiveElsewhere_IsNotLoadedAgainWithTheCharacter()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var taken = new ItemEntity { Id = new Serial(0x40000002), TemplateId = "item", ItemId = 0x0EED, Amount = 1 };
+        taken.PlaceOnGround(MapType.Trammel, new Point3D(100, 100, 0));
+        _items.Add([taken]);
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+
+        Assert.True(_items.TryGet(new Serial(0x40000002), out var live));
+        Assert.Same(taken, live);
+        Assert.NotNull(live.GroundLocation);
+        Assert.True(_items.TryGet(new Serial(0x40000001), out _));
+    }
+
+    [Fact]
+    public async Task HandleAsync_AWornItemAlreadyLiveElsewhere_IsNeitherLoadedNorShownOnTheCharacter()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var taken = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "item", ItemId = 0x0E75, Amount = 1 };
+        taken.PlaceOnGround(MapType.Trammel, new Point3D(100, 100, 0));
+        _items.Add([taken]);
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+
+        Assert.True(_items.TryGet(new Serial(0x40000001), out var live));
+        Assert.Same(taken, live);
+        Assert.DoesNotContain(
+            sender.Sent.OfType<MobileIncomingPacket>().Single().Equipment,
+            entry => entry.Serial == new Serial(0x40000001)
+        );
+    }
+
     [Fact]
     public async Task HandleAsync_WaitsForTheAccountsLeaveSavesBeforeLoading()
     {

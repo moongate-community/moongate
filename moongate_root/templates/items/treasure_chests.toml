@@ -1,0 +1,73 @@
+# ==============================================================================
+# Moongate - templates/items/treasure_chests.toml
+#
+# What it is for:
+#   The treasure chests of the dungeons, as ModernUO's TreasureChestLevel1 to 4:
+#   a spawn region (templates/spawns/<map>/treasure_chests.toml) puts one on the
+#   ground with its gold and loot inside; it decays 45 minutes later, opened or
+#   not, and the region makes a new one. They have no lock and no trap yet.
+#
+# Fields:
+#   base_id        inherits base_item
+#   item_id        the chest: wooden (1), metal (2), metal bound (3), golden (4)
+#   movable        false: players cannot pick it up
+#   decays         true, with decay_minutes: an item that cannot be picked up
+#                  decays only when its template gives both
+#   decay_minutes  how long the chest stays
+#   gold           the gold inside, as dice
+#   loot           the loot tables of templates/loots, each rolled once; a
+#                  table listed twice is rolled twice. The chest_ tables
+#                  (templates/loots/treasure_chests.toml) give something one
+#                  time in two, a magic item table one time in five
+# ==============================================================================
+
+[[item]]
+id = "treasure_chest_level_1"
+base_id = "base_item"
+item_id = 0x0E43
+name = "treasure chest"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 45
+gold = "1d100+29"
+loot = ["chest_gems_1_3", "chest_weapon", "chest_armour", "chest_clothing", "chest_jewellery"]
+
+[[item]]
+id = "treasure_chest_level_2"
+base_id = "treasure_chest_level_1"
+item_id = 0x0E41
+gold = "1d100+69"
+loot = ["chest_reagents_1_2", "chest_reagents_1_2", "chest_scrolls_1_8", "chest_potion", "chest_gems_1_6"]
+
+[[item]]
+id = "treasure_chest_level_3"
+base_id = "treasure_chest_level_1"
+item_id = 0x09AB
+gold = "1d240+179"
+loot = [
+    "chest_reagents_1_9_always", "chest_reagents_1_9",
+    "chest_scrolls_1_12", "chest_scrolls_1_12",
+    "chest_potion", "chest_potion",
+    "chest_gems_1_9", "chest_gems_1_9",
+    "magic_items_max_tier_2", "magic_items_max_tier_2", "magic_items_max_tier_2", "magic_items_max_tier_2",
+    "chest_clothing", "chest_clothing",
+    "chest_jewellery", "chest_jewellery",
+]
+
+[[item]]
+id = "treasure_chest_level_4"
+base_id = "treasure_chest_level_1"
+item_id = 0x0E40
+gold = "1d400+199"
+loot = [
+    "chest_reagents_12", "chest_reagents_12", "chest_reagents_12",
+    "chest_scrolls_16", "chest_scrolls_16", "chest_scrolls_16",
+    "chest_blank_scrolls_1_4",
+    "chest_potion", "chest_potion", "chest_potion",
+    "chest_gems_12", "chest_gems_12", "chest_gems_12",
+    "magic_items_max_tier_3", "magic_items_max_tier_3", "magic_items_max_tier_3",
+    "magic_items_max_tier_3", "magic_items_max_tier_3", "magic_items_max_tier_3",
+    "chest_clothing", "chest_clothing",
+    "chest_jewellery", "chest_jewellery",
+]

@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 64 done, 🟡 36 partly done, ❌ 168 not built yet.
+**268 systems:** ✅ 70 done, 🟡 41 partly done, ❌ 157 not built yet.
 
-**Coverage: 24%** of the systems done, **31%** counting a partly done system as half.
+**Coverage: 26%** of the systems done, **34%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -45,8 +45,8 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Creation: races, professions, starting items, starting cities | ✅ | |
-| Stats | 🟡 | Rolled and stored; no gain, caps or locks |
-| Skills | 🟡 | Stored; no use, gain, caps or locks |
+| Stats | 🟡 | Rolled, stored and set by scripts; no gain, caps or locks |
+| Skills | 🟡 | Stored, shown in the skill window and set by scripts; no use, gain or locks |
 | Hit points, mana and stamina regeneration | ❌ | |
 | Titles | 🟡 | Fame and karma titles in the paperdoll; no skill titles |
 | Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); nothing gains or loses them yet |
@@ -54,14 +54,14 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Crimes, criminal timer and murder counts | ❌ | |
 | Hunger and thirst | ❌ | |
 | Poison | ❌ | |
-| Hiding and stealth | ❌ | |
+| Hiding and stealth | ❌ | A script can hide a mobile with `mobile.set_hidden`; no skill |
 | Death, corpses, ghosts and resurrection | ❌ | |
 | Young player protection | ❌ | |
 | Murder reports and bounty boards | ❌ | |
 | Virtues | ❌ | |
 | Status bar | ✅ | Name, stats, hit points, mana, stamina, gold, weight |
 | Extended status (resistances, luck, caps, stat locks) | ❌ | |
-| Staff privileges (move anything, see hidden, invulnerable) | 🟡 | Hidden ground items are shown only to staff, and `.go` takes a game master anywhere; no move anything or invulnerability |
+| Staff privileges (move anything, see hidden, invulnerable) | 🟡 | Hidden ground items and hidden mobiles are shown only to staff, and `.go` takes a game master anywhere; no move anything or invulnerability |
 | Gargoyle flying | ❌ | |
 | Movement cost and stamina use by weight | ❌ | |
 | Polymorph and incognito | ❌ | |
@@ -75,7 +75,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| War mode, melee and swing timing | ❌ | |
+| War mode, melee and swing timing | 🟡 | War mode is switched and shown; nothing is fought yet |
 | Archery | ❌ | |
 | Weapons and armour: damage, armour, durability, resistances | ❌ | NPC templates carry damage and armour; item templates do not yet |
 | Parrying | ❌ | |
@@ -139,7 +139,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
-| Pathfinding, following and fleeing | ❌ | |
+| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. No fleeing, NPCs do not open doors, and mobiles do not block a path |
 | Pets and followers: commands, loyalty, bonding | ❌ | |
 | Mounts | ❌ | |
 | Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |
@@ -175,12 +175,12 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Moving, stacking, splitting and merging | ✅ | |
 | Wearing: layers and two-handed weapons | ✅ | No strength requirements yet |
 | The character's own containers | ✅ | |
-| Containers on the ground, weight and item limits | ❌ | |
+| Containers on the ground, weight and item limits | 🟡 | A container on the ground opens within two tiles; items can be taken out and put in, and the players around see them come and go; 125 items at most, no weight limit; piles merge inside |
 | Tooltips and single-click names | ✅ | |
 | Items on the ground and their decay | ✅ | |
 | Scripted items | ✅ | Lua item scripts: use, equip, unequip, pick up, drop, create, darkness, a player stepping on them, speech nearby |
-| Loot tables | ✅ | Rolled into every spawned NPC's backpack |
-| Doors | ✅ | Open and close; linked double doors |
+| Loot tables | ✅ | Rolled into every spawned NPC's backpack, into the treasure chests and the town containers, and from scripts with `item.add_loot` |
+| Doors | ✅ | Open and close; linked double doors; a closed door blocks the way, staff walks through |
 | Locks and keys | ✅ | Locked doors open for a player carrying their key |
 | Lights | ✅ | Lit and doused; lamp posts light up at night |
 | Potions and food | 🟡 | A sample potion is drunk and used up; no effects yet |
@@ -198,13 +198,13 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Games (chess, checkers, backgammon) | ❌ | |
 | Plants and farming | ❌ | |
 | Dungeon traps and puzzles | ❌ | |
-| Dungeon and town chests that refill | ❌ | |
+| Dungeon and town chests that refill | 🟡 | The dungeon treasure chests of ModernUO, levels 1 to 4: a spawn region makes one with gold and loot, it decays and a new one comes. The town crates, chests, barrels and bookcases fill up when opened, every 60 to 90 minutes, from the 35 tables of ModernUO. No lock or trap |
 | Messages in a bottle and fished-up treasure | ❌ | |
 | Item attributes: blessed, cursed, newbie, insured | 🟡 | Blessed and cursed in tooltips; no rules behind them |
 | Deeds and redeeding | ❌ | |
 | Bandages | ❌ | |
 | Musical instruments | ❌ | |
-| Navigation tools: sextant, spyglass, clocks | ❌ | |
+| Navigation tools: sextant, spyglass, clocks | 🟡 | Clocks tell the part of the day and the time where they stand (`clock.lua`); no sextant or spyglass |
 | Potion kegs and commodity deeds | ❌ | |
 | Trash cans | ❌ | |
 | Communication crystals | ❌ | |
@@ -218,7 +218,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Maps, statics and multis from the client files | ✅ | MUL and UOP |
-| Movement and line of sight checks | ✅ | Terrain and statics; not items, mobiles or multis yet |
+| Movement and line of sight checks | ✅ | Movement: terrain, statics and ground items (a closed door, a crate); line of sight: terrain and statics. Mobiles and multis are in neither yet |
 | Map sectors and view range | ✅ | |
 | Day and night | ✅ | By map and longitude, with the moon phases; `.globallight`, `.time` |
 | Dungeon and jail light | ✅ | |
@@ -229,7 +229,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Region rules: safe, no PvP, no housing, instant logout | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |
 | World decoration | ✅ | Placed by `.decorate`, with the shop signs and the town doors read from the map |
-| Spawn regions | ✅ | On every map: UOX3's data, ModernUO's for New Haven, Malas, Tokuno and TerMur; fast first fill, `.initial_spawn`, respawn, land and water; see [NPC spawns](spawns.md) |
+| Spawn regions | ✅ | On every map: UOX3's data, ModernUO's for New Haven, Malas, Tokuno and TerMur; fast first fill, `.initial_spawn`, respawn, land and water; regions of items too, as the treasure chests; see [NPC spawns](spawns.md) |
 | Spawner items | ❌ | |
 | Housing: placement, sign, owners, friends and bans | ❌ | |
 | House lockdowns, secure containers and decay | ❌ | |
@@ -290,8 +290,8 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Help menu and stuck menu | ❌ | |
 | Jails | ❌ | Jail regions are dim, nothing more |
 | Who list | ❌ | |
-| Staff tools: property gump, add menu, area commands | ❌ | |
-| Named locations and travel menu for staff | ❌ | `.go` takes coordinates |
+| Staff tools: property gump, add menu, area commands | 🟡 | The gump of the named places, `.go`, with ModernUO's 558 places; no property gump, add menu or area commands |
+| Named locations and travel menu for staff | ✅ | `.go <place>` and the go gump, with ModernUO's 558 places from `data/locations.toml` |
 | Web status pages | ❌ | |
 | Bug reports | 🟡 | Exception reports ready for a GitHub issue; no in-game report |
 | Logging | ✅ | Structured logs with levels |
@@ -308,21 +308,21 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Script engine | ✅ | Sandboxed Lua 5.2 with an instruction budget |
 | Scripts bound to templates | ✅ | `script_id` on item and mobile templates |
 | Several scripts on one object, scripts by item type | ❌ | |
-| Script events | 🟡 | NPC, item and character events, and `player_say`; no combat, skill or region events |
-| Events that can refuse the default action | 🟡 | Only `on_use` |
-| Region enter and leave events | ❌ | |
-| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `dice`, `localization`, `timer`, `events`, `engine`, `log`; no stats, skills or inventory API |
-| World queries from scripts (objects near, in sight, by serial) | 🟡 | `world.is_occupied`, `world.carries` |
-| Creating and moving items from scripts | 🟡 | Move on the ground, consume, delete; no create, container or equip |
-| Messages, target cursor and prompts from scripts | 🟡 | `npc.say`, `item.message`, gumps; no system message, target or prompt |
+| Script events | 🟡 | NPC, item and character events, `player_say` and `player_region_changed`; no combat or skill events |
+| Events that can refuse the default action | 🟡 | Items: `on_use`, `can_pick_up`, `can_drop`, `can_equip`, `can_insert`; none yet for skills and combat |
+| Region enter and leave events | 🟡 | `player_region_changed` for players; not for NPCs |
+| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`, `prompt`; a mobile's stats and skills are read and written |
+| World queries from scripts (objects near, in sight, by serial) | ✅ | `world.mobiles_in_range`, `world.items_in_range`, `world.players`, `world.line_of_sight`, `world.standing_z`, `world.region`, `world.is_occupied`, `world.carries` |
+| Creating and moving items from scripts | ✅ | Create on the ground or in a backpack, loot into a container, move, equip, find by template, consume, delete |
+| Messages, target cursor and prompts from scripts | ✅ | `npc.say`, `mobile.message`, `item.message`, `item.message_cliloc`, `target.pick`, `prompt.ask`, gumps |
 | Script timers | ✅ | |
-| Timers kept by an object and saved with the world | ❌ | A timer is lost on a restart |
+| Timers kept by an object and saved with the world | 🟡 | Items: `item.start_timer` and `on_timer`, kept across restarts; not on mobiles |
 | Commands from plugins | ✅ | In C#; not from Lua |
 | Data-driven content | ✅ | TOML templates and data files, validated at startup |
-| Importing another emulator's content | ✅ | UOX3 items, loot, NPCs, names, starting items, NPC lists and spawn regions; ModernUO spawners |
+| Importing another emulator's content | ✅ | UOX3 items, loot, NPCs, names, starting items, NPC lists and spawn regions; ModernUO spawners, decoration, signs, teleporters, named places and treasure chests |
 | Runaway script protection | ✅ | Instruction budget per resume and per chunk |
-| Persistent values on objects | ✅ | Props on items and NPCs, saved with the world |
-| Global persistent script data | ❌ | |
+| Persistent values on objects | ✅ | Props on items, NPCs and players, saved with them |
+| Global persistent script data | ✅ | `world.get_prop`, `world.set_prop`: shard-wide props saved with the world |
 | Script debugger for an IDE | ❌ | Editor definitions for completion only |
 | Script profiling | 🟡 | Script metrics; no per-function profile |
 | Files, HTTP, SQL and email from scripts | ❌ | |
@@ -345,7 +345,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Walk sequence and speed checks | ✅ | |
 | Weight and overloading | 🟡 | Items have their weight; nothing overloads |
 | Timed effects (buffs and debuffs) | ❌ | |
-| Text prompts and input | ❌ | |
+| Text prompts and input | ✅ | The Unicode prompt (0xC2), from scripts with the `prompt` module |
 | Visual effects: moving, lightning, particles | ✅ | From scripts with the `effect` module; particles for the Enhanced Client |
 | Sounds and music | ✅ | Sounds from scripts, thunder and region music |
 | Client language | ❌ | One server language for everyone, out of the 8 shipped |

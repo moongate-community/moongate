@@ -12,7 +12,8 @@ decorate
 
 In game, administrators use `.decorate`. It first asks for confirmation with the
 [gump](../gumps.md) `templates/gumps/decorate_confirm.xml`: CONTINUE goes on, CANCEL or closing
-it prints `Decoration canceled.` and places nothing (without that file it does not ask). It places the
+it prints `Decoration canceled.` and places nothing (without that file it does not ask). While another
+decoration runs, the command answers `A decoration is already running.` and places nothing. It places the
 [decoration files](../templates.md#decorations) of `templates/decorations/`, file by file, as
 fixed items that never decay; the next world save keeps them. Doors and gates get the
 `decoration_door` template, whose [door script](../scripting.md) opens and closes them, and
@@ -30,7 +31,13 @@ template: a player who says its word within its range stands on its destination
 ([keyword teleporter script](../scripting.md)). The public moongates are not in the decoration
 files: after them, `.decorate` places a gate with the `decoration_public_moongate` template on
 every destination of [`moongates.toml`](../data-files/moongates.md) whose map is loaded, reported
-as `<map>/moongates`. Spawners, mark
+as `<map>/moongates`. The crates, boxes, chests, barrels and bookcases of the towns (ModernUO's
+`Fillable...` kinds and `LibraryBookcase`, 2,803 spots in the files, about 5,000 items with those of both Trammel and Felucca) take the `decoration_fillable`
+template and fill up when a player opens them ([fillable script](../scripting.md#item-scripts));
+those a run before this placed as plain decoration are turned into it and counted as already there.
+The clocks tell the time on a double click ([clock script](../scripting.md#item-scripts)), turned
+the same way. The spawners of the decoration files (87, all of quest characters such as Haochi or
+Uzeraan) stay skipped: none of their mobile templates exists yet. Every public moongate glows (prop `light = "circle300"`, as ModernUO). Spawners, mark
 containers, addons and every other kind of teleporter (those that ask for a
 skill, belong to a quest or want a double click) are skipped for now: they need their own logic.
 

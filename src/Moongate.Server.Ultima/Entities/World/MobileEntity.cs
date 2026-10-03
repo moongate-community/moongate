@@ -3,6 +3,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.Internal;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -197,6 +198,22 @@ public class MobileEntity : IMoongateEntity
     public DirectionType Direction { get; set; } = DirectionType.South;
 
     /// <summary>
+    ///     Whether the mobile is hidden: the players do not see it, the staff does.
+    /// </summary>
+    public bool Hidden { get; set; }
+
+    /// <summary>
+    ///     Whether the mobile is frozen: it neither steps nor turns.
+    /// </summary>
+    public bool Frozen { get; set; }
+
+    /// <summary>
+    ///     Whether the mobile is in war mode. It is not a column: a mobile comes back in peace.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public bool WarMode { get; set; }
+
+    /// <summary>
     ///     Gets or sets <see cref="X" />, <see cref="Y" /> and <see cref="Z" /> together. It is not a column: the three
     ///     coordinates are stored apart so the database can filter and index them.
     /// </summary>
@@ -205,6 +222,14 @@ public class MobileEntity : IMoongateEntity
     {
         get => new(X, Y, Z);
         set => (X, Y, Z) = (value.X, value.Y, value.Z);
+    }
+
+    /// <summary>
+    ///     Whether a viewer does not see the mobile: it is hidden, the viewer is not the mobile itself and is not staff.
+    /// </summary>
+    public bool IsHiddenFrom(Serial viewer, AccountType account)
+    {
+        return Hidden && viewer != Id && account < AccountType.GameMaster;
     }
 
     /// <summary>
@@ -257,6 +282,8 @@ public class MobileEntity : IMoongateEntity
     public MobileEntity Snapshot()
     {
         var copy = (MobileEntity)MemberwiseClone();
+        // Not a column: left in, a change of war mode alone would write the row again.
+        copy.WarMode = false;
         copy.Skills =
         [
             .. Skills.Select(

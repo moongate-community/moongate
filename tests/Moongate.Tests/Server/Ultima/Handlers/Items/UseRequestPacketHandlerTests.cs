@@ -4,6 +4,7 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Config;
@@ -101,6 +102,36 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
 
         var paperdoll = Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
         Assert.Equal((Bran, "Bran", false), (paperdoll.Mobile, paperdoll.Title, paperdoll.CanLift));
+    }
+
+    [Fact]
+    public async Task Handle_AHiddenPlayerInRange_OpensItsPaperdollForTheStaffOnly()
+    {
+        await StartAsync(Aria);
+        Assert.True(_mobiles.TryGet(Bran, out var bran));
+        bran.Hidden = true;
+
+        await UseAsync(Bran);
+
+        Assert.Empty(_sender.Sent);
+
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+        await UseAsync(Bran);
+
+        Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnPaperdollOfAHiddenCharacterInWarMode_OpensWithTheWarFlag()
+    {
+        await StartAsync(Aria);
+        Assert.True(_mobiles.TryGet(Aria, out var aria));
+        aria.Hidden = true;
+        aria.WarMode = true;
+
+        await UseAsync(Aria);
+
+        Assert.True(Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent)).WarMode);
     }
 
     [Fact]
@@ -282,6 +313,62 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(!reached, _sender.Sent.OfType<LocalizedMessagePacket>().Any(message => message.Cliloc == 500446));
     }
 
+    [Theory, InlineData(1002, true), InlineData(1003, false)]
+    public async Task Handle_AContainerOnTheGround_OpensOnlyWithinTwoTiles(int x, bool reached)
+    {
+        var (chest, ruby) = GroundChest(x);
+        await StartAsync(Aria);
+
+        await UseAsync(chest.Id);
+
+        if (reached)
+        {
+            Assert.Equal([typeof(DisplayContainerPacket), typeof(ContainerContentPacket)], _sender.Sent.Select(packet => packet.GetType()));
+            Assert.Equal(chest.Id, ((DisplayContainerPacket)_sender.Sent[0]).Container);
+            Assert.Equal([ruby.Id], ((ContainerContentPacket)_sender.Sent[1]).Items.Select(item => item.Serial));
+        }
+        else
+        {
+            Assert.Equal(500446, Assert.IsType<LocalizedMessagePacket>(Assert.Single(_sender.Sent)).Cliloc);
+        }
+    }
+
+    [Fact]
+    public async Task Handle_ABagInsideAContainerOnTheGround_Opens()
+    {
+        var (chest, ruby) = GroundChest(1001);
+        var bag = Item(0x40000022, BagGraphic);
+        bag.PutInContainer(chest.Id, new Point2D(10, 10));
+        _items.Add([bag]);
+        await StartAsync(Aria);
+
+        await UseAsync(bag.Id);
+
+        Assert.Equal(bag.Id, Assert.IsType<DisplayContainerPacket>(_sender.Sent[0]).Container);
+    }
+
+    [Fact]
+    public async Task Handle_AContainerOnTheGroundSomeoneHolds_DoesNotOpen()
+    {
+        var (chest, _) = GroundChest(1001);
+        _items.Hide(chest);
+        await StartAsync(Aria);
+
+        await UseAsync(chest.Id);
+
+        Assert.DoesNotContain(_sender.Sent, packet => packet is DisplayContainerPacket);
+    }
+
+    [Fact]
+    public async Task Handle_AnotherCharactersBackpack_DoesNotOpen()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(_otherBackpack.Id);
+
+        Assert.Empty(_sender.Sent);
+    }
+
     [Fact]
     public async Task Handle_TheOwnBackpack_OpensItsGumpThenListsItsItems()
     {
@@ -461,6 +548,18 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
                 new FameKarmaTitle(10000, 0, "The Glorious Lord", "The Glorious Lady")
             )
         );
+    }
+
+    // A bag on the ground of Aria's row at the given x, with a ruby inside.
+    private (ItemEntity Chest, ItemEntity Ruby) GroundChest(int x)
+    {
+        var chest = Item(0x40000020, BagGraphic, "chest");
+        var ruby = Item(0x40000021, 0x0F13);
+        ruby.PutInContainer(chest.Id, new Point2D(20, 20));
+        _items.Add([chest, ruby]);
+        _items.PlaceOnGround(chest, MapType.Felucca, new Point3D(x, 1000, 0));
+
+        return (chest, ruby);
     }
 
     private static MobileEntity Mobile(Serial id, string name, int body, Point3D location)

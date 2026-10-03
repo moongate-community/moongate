@@ -75,6 +75,7 @@ amount = 1
 buy_price = 24
 sell_price = 12
 decays = true
+script_id = "clock"
 
 [[item]]
 id = "0x104c_clock"
@@ -87,6 +88,7 @@ amount = 1
 buy_price = 24
 sell_price = 12
 decays = true
+script_id = "clock"
 
 [[item]]
 id = "0x104d_clock_frame"

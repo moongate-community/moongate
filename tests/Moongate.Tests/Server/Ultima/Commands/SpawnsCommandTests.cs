@@ -37,9 +37,9 @@ public sealed class SpawnsCommandTests : IAsyncDisposable
         Assert.Equal([(MapType.Trammel, 1600, 1601)], _spawns.Asked);
         Assert.Equal(
             [
-                "The Hammer And Anvil (felucca_0): 1/2 NPCs, next spawn in 2 min.",
-                "felucca_7 (felucca_7): 0/5 NPCs, next spawn in 0 min.",
-                "Deep Sea (felucca_9): 0/3 NPCs, no spot found, retrying in 1 min."
+                "The Hammer And Anvil (felucca_0): 1/2, next spawn in 2 min.",
+                "felucca_7 (felucca_7): 0/5, next spawn in 0 min.",
+                "Deep Sea (felucca_9): 0/3, no spot found, retrying in 1 min."
             ],
             context.Output.Select(line => line.Text)
         );

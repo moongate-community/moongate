@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Core.Geometry;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Types.Accounts;
@@ -50,6 +51,19 @@ public interface IWorldViewService
     void MobileAppeared(MobileEntity mobile);
 
     /// <summary>
+    ///     Tells the mobile's own player and the players who see it that its flags changed, such as war mode or
+    ///     frozen (0x77): the figure stays where it is.
+    /// </summary>
+    void MobileFlagsChanged(MobileEntity mobile);
+
+    /// <summary>
+    ///     Call it after <see cref="MobileEntity.Hidden" /> changed: a hidden mobile leaves the screens of the players
+    ///     in range (0x1D) and one revealed is shown to them again (0x78); the staff, who sees it either way, and the
+    ///     mobile's own player get its new flags (0x77).
+    /// </summary>
+    void MobileHiddenChanged(MobileEntity mobile);
+
+    /// <summary>
     ///     Shows a ground item to the players in range whose account sees it (0x1A before client 7.0.0.0, 0xF3 after);
     ///     also after its amount changed.
     /// </summary>
@@ -65,6 +79,20 @@ public interface IWorldViewService
     ///     location still set.
     /// </summary>
     void ItemDisappeared(ItemEntity item);
+
+    /// <summary>
+    ///     Shows an item put into <paramref name="root" />, a container lying on the ground, or into a container inside
+    ///     it, to the players in range of it (0x25), so those who look into it see the item come; not to
+    ///     <paramref name="except" />, who put it there and is told by the caller.
+    /// </summary>
+    void ContainedItemAppeared(ItemEntity item, ItemEntity root, Serial except);
+
+    /// <summary>
+    ///     Removes an item taken from <paramref name="root" />, a container lying on the ground, or from a container
+    ///     inside it, from the screens in range of it (0x1D), so those who look into it see the item go; not from
+    ///     that of <paramref name="except" />, who took it.
+    /// </summary>
+    void ContainedItemDisappeared(ItemEntity item, ItemEntity root, Serial except);
 
     /// <summary>
     ///     Shows an item now worn by <paramref name="wearer" /> (0x2E) to every player in range, the wearer included.

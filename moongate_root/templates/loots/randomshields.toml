@@ -1,0 +1,43 @@
+# ==============================================================================
+# Moongate - templates/loots/randomshields.toml
+#
+# What it is for:
+#   One plain shield, as ModernUO's Loot.ShieldTypes: the town containers of
+#   the guards and of the fighters' guild roll it
+#   (templates/loots/fillable_containers.toml).
+#
+# Fields:
+#   [[loot.entries]]  one shield the table can give
+#   item_id           its item template
+#   comment           what it is in ModernUO
+# ==============================================================================
+
+[[loot]]
+id = "randomshields"
+[[loot.entries]]
+item_id = "bronzeshield"
+comment = "BronzeShield"
+
+[[loot.entries]]
+item_id = "buckler"
+comment = "Buckler"
+
+[[loot.entries]]
+item_id = "base_heater_shield"
+comment = "HeaterShield"
+
+[[loot.entries]]
+item_id = "metalshield"
+comment = "MetalShield"
+
+[[loot.entries]]
+item_id = "base_metal_kite_shield"
+comment = "MetalKiteShield"
+
+[[loot.entries]]
+item_id = "base_wooden_kite_shield"
+comment = "WoodenKiteShield"
+
+[[loot.entries]]
+item_id = "woodenshield"
+comment = "WoodenShield"

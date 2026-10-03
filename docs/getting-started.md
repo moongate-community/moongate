@@ -4,7 +4,7 @@ This is the one first-start sequence for Moongate. It applies whether you instal
 the release with [the Linux installer](installation.md), run the
 [container image](docker.md), or build from source. Moongate is under active
 development: characters enter the world, walk and see each other, and NPCs and
-items run Lua scripts, but combat, pathfinding AI and most gameplay are not
+items run Lua scripts, but combat, a built-in NPC AI and most gameplay are not
 implemented yet. See [Implementation status](implementation-status.md).
 
 A server start needs a root, readable client files, the active role's PostgreSQL
@@ -163,8 +163,8 @@ another root, so unset it or pass the same path.
    `--target auth` uses `[persistence.accounts]`, `--target world` uses
    `[persistence.realm]`. The runner reads the root's configuration and its
    `migrations/` directory; `status` in place of `apply` lists pending files without
-   applying them. The world catalog has no core tables yet, so its `apply` reports
-   nothing to do.
+   applying them. Both targets have core migrations; `apply` reports each file it
+   ran.
 
 5. **Start the server.**
 
@@ -202,11 +202,11 @@ All server-managed paths below are relative to `--root-directory`:
 | `certificates/admin.pfx`, `certificates/admin.crt` | Optional `mgctl` administration TLS identity: private server PFX and public PEM for client trust |
 | `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgctl init`; plugins ship their own under `plugins/` |
 | `data/` | Shard data files copied by `mgctl`, read at game and standalone startup; see [Shard data files](data-files.md) |
-| `templates/items/`, `templates/loots/`, `templates/mobiles/` | [Templates](templates.md) copied by `mgctl`, loaded at game and standalone startup |
+| `templates/items/`, `loots/`, `mobiles/`, `npc_lists/`, `spawns/`, `decorations/`, `gumps/` | [Templates](templates.md) copied by `mgctl`, loaded at game and standalone startup |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `logs/errors/<id>.md` | The report of each exception the server logged, ready to paste into a GitHub issue |
 | `plugins/` | One assembly bundle per plugin directory |
-| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting.md#mobile-scripts) `mobiles/<script_id>.lua`, the [item scripts](scripting.md#item-scripts) `items/<script_id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
+| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting.md#mobile-scripts) `mobiles/<script_id>.lua`, the [item scripts](scripting.md#item-scripts) `items/<script_id>.lua`, the gump scripts `gumps/<id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
 | `moongate.pid` | Current process identifier |
 | `moongate.pid.lock` | Lock file used to exclude another instance |
 

@@ -30,6 +30,7 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemService _items;
     private readonly MobileService _mobiles;
     private readonly RecordingWorldViewService _view = new();
+    private readonly RecordingItemScriptService _scripts = new();
     private readonly StubPacketSendService _sender = new StubPacketSendService().Ignore<PropertyListInfoPacket>();
     private readonly EquipmentService _equipment;
     private readonly ItemEntity _backpack = Item(0x40000001, "backpack", 0x0E75);
@@ -82,6 +83,96 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
         Assert.Contains(_dagger, _items.GetWorn(Aria));
         Assert.Equal([$"Worn {Aria.Value} {_dagger.Id.Value}"], _view.Calls);
         Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_AnItemWhoseScriptRefuses_BouncesBack()
+    {
+        _scripts.Scripted.Add("dagger");
+        _scripts.Refused.Add("can_equip");
+        await StartAsync(_dagger);
+
+        await EquipAsync(_dagger, Aria);
+
+        AssertBouncedToTheBackpack(_dagger);
+        Assert.Null(_dagger.Layer);
+        Assert.Equal(["0x40000002 can_equip 2"], _scripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AnItemWhoseScriptAllows_IsAskedOnceAndWorn()
+    {
+        _scripts.Scripted.Add("dagger");
+        await StartAsync(_dagger);
+
+        await EquipAsync(_dagger, Aria);
+
+        Assert.Equal(LayerType.OneHanded, _dagger.Layer);
+        Assert.Equal(["0x40000002 can_equip 2"], _scripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_WhileTheScriptIsAsked_TheItemIsStillHeld_SoItCannotDeleteIt()
+    {
+        var held = new List<Serial?>();
+        _scripts.Scripted.Add("dagger");
+        _scripts.OnRun = _ => held.Add(_session.Get(ItemSessionKeys.Held)?.Item);
+        await StartAsync(_dagger);
+
+        await EquipAsync(_dagger, Aria);
+
+        Assert.Equal([_dagger.Id], held);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    [Fact]
+    public async Task Handle_AWornItemPutBackOnItsLayer_NeverLeftIt_SoItsScriptIsNotAsked()
+    {
+        _scripts.Scripted.Add("shirt");
+        _scripts.Refused.Add("can_equip");
+        await StartAsync(_otherShirt);
+
+        await EquipAsync(_otherShirt, Aria);
+
+        Assert.Empty(_scripts.Calls);
+        Assert.Equal((Aria, LayerType.Shirt), (_otherShirt.MobileId!.Value, _otherShirt.Layer!.Value));
+    }
+
+    [Fact]
+    public async Task Handle_ATakenLayer_IsRefusedByTheLastRuleBeforeTheScriptIsAsked()
+    {
+        _scripts.Scripted.Add("shirt");
+        await StartAsync(_shirt);
+
+        await EquipAsync(_shirt, Aria);
+
+        Assert.Empty(_scripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AGroundItemWhoseScriptRefuses_LiesThereAgain()
+    {
+        _scripts.Scripted.Add("dagger");
+        _scripts.Refused.Add("can_equip");
+        await StartAsync(_groundDagger);
+        _items.Hide(_groundDagger);
+
+        await EquipAsync(_groundDagger, Aria);
+
+        Assert.Null(_groundDagger.MobileId);
+        Assert.True(_items.IsLyingOnGround(_groundDagger));
+        Assert.Equal([$"0x{_groundDagger.Id.Value:X8} can_equip 2"], _scripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AnItemTheRulesRefuse_DoesNotAskTheScript()
+    {
+        _scripts.Scripted.Add("apple");
+        await StartAsync(_apple);
+
+        await EquipAsync(_apple, Aria);
+
+        Assert.Empty(_scripts.Calls);
     }
 
     [Fact]
@@ -220,7 +311,7 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
 
     private Task EquipAsync(ItemEntity item, Serial mobile, LayerType layer = LayerType.OneHanded)
     {
-        var handler = new EquipRequestPacketHandler(_items, _mobiles, _equipment, _view, _sender, TestTooltips.Create(_items, _mobiles));
+        var handler = new EquipRequestPacketHandler(_items, _mobiles, _equipment, _view, _sender, TestTooltips.Create(_items, _mobiles), _scripts);
 
         return _fixture.ExecuteOnLoopAsync(() =>
             handler.Handle(_session, new EquipRequestPacket { Item = item.Id, Layer = layer, Mobile = mobile })

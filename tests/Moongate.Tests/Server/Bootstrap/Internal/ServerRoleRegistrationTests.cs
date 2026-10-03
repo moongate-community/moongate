@@ -24,6 +24,7 @@ using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
 using Moongate.Server.Ultima;
+using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces;
@@ -219,24 +220,42 @@ public sealed class ServerRoleRegistrationTests
             Assert.IsType<MotdService>(container.Resolve<IMotdService>());
             Assert.IsType<SectorService>(container.Resolve<ISectorService>());
             Assert.IsType<SpeechService>(container.Resolve<ISpeechService>());
+            Assert.IsType<PathfindingService>(container.Resolve<IPathfindingService>());
+            Assert.IsType<NpcPathService>(container.Resolve<INpcPathService>());
             Assert.NotNull(container.Resolve<NpcModule>());
             Assert.NotNull(container.Resolve<ItemModule>());
             Assert.NotNull(container.Resolve<WorldModule>());
+            Assert.NotNull(container.Resolve<MobileModule>());
+            Assert.NotNull(container.Resolve<TargetModule>());
+            Assert.Contains("player_region_changed", container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(e => e.Name));
             Assert.Contains(typeof(SpeechKeywordType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
             Assert.Contains("player_say", container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(e => e.Name));
             Assert.IsType<EffectService>(container.Resolve<IEffectService>());
             Assert.IsType<PublicMoongateService>(container.Resolve<IPublicMoongateService>());
             Assert.NotNull(container.Resolve<MoongatesModule>());
+            Assert.IsType<LocationService>(container.Resolve<ILocationService>());
+            Assert.NotNull(container.Resolve<LocationsModule>());
+            // The places and the gump are optional in its constructor: the container must still hand them over.
+            var go = container.Resolve<GoCommand>();
+            Assert.All(
+                new[] { "_locations", "_gumps" },
+                field => Assert.NotNull(
+                    typeof(GoCommand).GetField(field, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.GetValue(go)
+                )
+            );
             Assert.IsType<ItemHearingService>(container.Resolve<IItemSpeechListener>());
             Assert.NotNull(container.Resolve<EffectModule>());
             Assert.Contains(typeof(EffectGraphicType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
             Assert.IsType<BankService>(container.Resolve<IBankService>());
             Assert.IsType<CharacterEnterWorldService>(container.Resolve<ICharacterEnterWorldService>());
             Assert.NotNull(container.Resolve<BankModule>());
+            // The scripts hear of a region change last, after the light, the weather, the music and the season.
+            var listeners = container.Resolve<IEnumerable<IRegionChangeListener>>().ToList();
             Assert.Equal(
                 [container.Resolve<IWeatherService>(), container.Resolve<ILightService>(), container.Resolve<IMusicService>(), container.Resolve<ISeasonService>()],
-                container.Resolve<IEnumerable<IRegionChangeListener>>()
+                listeners.Take(4)
             );
+            Assert.IsType<RegionEventPublisher>(Assert.Single(listeners.Skip(4)));
             Assert.NotNull(container.Resolve<IMobileService>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcScriptService>());
@@ -310,7 +329,8 @@ public sealed class ServerRoleRegistrationTests
             // The host registers the event bus; this test container does not.
             container.RegisterMoongateEventBus();
             var listeners = container.ResolveMany<ISessionClosedListener>().ToList();
-            Assert.Equal(4, listeners.Count);
+            Assert.Equal(5, listeners.Count);
+            Assert.Contains(listeners, listener => listener is PromptService);
             Assert.Contains(listeners, listener => listener is BankService);
             Assert.Contains(listeners, listener => listener is CharacterLeaveWorldService);
             Assert.Contains(listeners, listener => listener is TargetService);

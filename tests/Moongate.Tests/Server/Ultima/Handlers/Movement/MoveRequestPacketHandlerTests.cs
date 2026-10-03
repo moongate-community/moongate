@@ -9,6 +9,8 @@ using Moongate.Server.Ultima.Handlers.Movement;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.Support.Timing;
@@ -89,6 +91,20 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         await StepAsync(DirectionType.South, 9);
 
         Assert.Empty(_moveOver.Steps);
+    }
+
+    [Theory]
+    [InlineData(AccountType.Regular, MovementAbilityType.Walk)]
+    [InlineData(AccountType.GameMaster, MovementAbilityType.Walk | MovementAbilityType.PassDoors)]
+    [InlineData(AccountType.Administrator, MovementAbilityType.Walk | MovementAbilityType.PassDoors)]
+    public async Task Handle_AStep_OnlyStaffWalksThroughDoors(AccountType account, MovementAbilityType expected)
+    {
+        await EnterAsync();
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, account));
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.Equal(expected, Assert.Single(_movement.Abilities));
     }
 
     [Fact]
@@ -281,6 +297,32 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         await StepAsync(DirectionType.East, 1);
 
         Assert.Equal(["Moved 2 1496,1628,10"], _view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_ATurnOfAFrozenCharacter_IsRejectedAndTellsTheWorldViewNothing()
+    {
+        await EnterAsync();
+        _aria.Frozen = true;
+        var facing = _aria.Direction;
+
+        await StepAsync(DirectionType.West, 0);
+
+        Assert.IsType<MovementRejectPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(facing, _aria.Direction);
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AStepOfAFrozenCharacter_IsRejected()
+    {
+        await EnterAsync();
+        _aria.Frozen = true;
+
+        await StepAsync(_aria.Direction, 0);
+
+        Assert.IsType<MovementRejectPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(new Point3D(1496, 1628, 10), _aria.Location);
     }
 
     private async Task EnterAsync()

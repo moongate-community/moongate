@@ -42,8 +42,9 @@ their backpack and on the ground. The world is decorated, with doors that open
 lights and teleporters; days and nights pass, dungeons are dark,
 and each region has its weather, music and season. Scripts play graphic effects. Spawn regions fill the world with NPCs, on land
 and water, and respawn them; game masters also spawn and remove NPCs by hand. NPCs
-near a player run their Lua mobile script, and items react to Lua item scripts.
-There is no combat, pathfinding AI, death or skill gain yet.
+near a player run their Lua mobile script, which can walk them along a path found with A*
+around walls, closed doors and furniture, and items react to Lua item scripts.
+There is no combat, built-in NPC AI, death or skill gain yet.
 
 The networking and packet pipeline, Lua runtime, persistence infrastructure,
 shard data loading, and client-file readers with movement and line-of-sight

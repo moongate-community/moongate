@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Scripting;
@@ -27,6 +28,7 @@ public sealed class WorldViewServiceTests
 {
     private const long AriaSession = 10;
     private const long BorisSession = 20;
+    private const long CarlaSession = 30;
 
     private readonly StubPacketSendService _sender = new();
     private readonly WorldConfig _world = new();
@@ -63,6 +65,154 @@ public sealed class WorldViewServiceTests
 
         Assert.Equal(boris.Id, IncomingTo(AriaSession));
         Assert.Equal(aria.Id, IncomingTo(BorisSession));
+    }
+
+    // A hidden mobile is on no player's screen; the staff sees it, with the flag that greys it out.
+    [Fact]
+    public void Entered_AHiddenMobileAround_IsShownToTheStaffOnly()
+    {
+        var boris = Enter(3, 1500, 1628, BorisSession);
+        boris.Hidden = true;
+        ClearSent();
+
+        Enter(2, 1496, 1628, AriaSession);
+        Assert.DoesNotContain(_sender.Sent, packet => packet is MobileIncomingPacket incoming && incoming.Serial == boris.Id);
+
+        ClearSent();
+        var carla = Mobile(4, 1497, 1628);
+        _mobiles.EnterWorld(carla);
+        _view.Entered(carla, CarlaSession, null, AccountType.GameMaster);
+
+        var shown = _sender.Sent.OfType<MobileIncomingPacket>().Single(packet => packet.Serial == boris.Id);
+        Assert.True((shown.Flags & MobileFlagsType.Hidden) != 0);
+    }
+
+    [Fact]
+    public void Entered_AHiddenMobile_IsShownToTheStaffAroundOnly()
+    {
+        Enter(3, 1500, 1628, BorisSession);
+        var carla = Mobile(4, 1497, 1628);
+        _mobiles.EnterWorld(carla);
+        _view.Entered(carla, CarlaSession, null, AccountType.GameMaster);
+        ClearSent();
+
+        var aria = Mobile(2, 1496, 1628);
+        aria.Hidden = true;
+        _mobiles.EnterWorld(aria);
+        _view.Entered(aria, AriaSession, null);
+
+        Assert.Equal([CarlaSession], SessionsToldOf(aria));
+    }
+
+    [Fact]
+    public void Moved_AHiddenMobile_IsFollowedByTheStaffOnly()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var carla = Mobile(4, 1497, 1628);
+        _mobiles.EnterWorld(carla);
+        _view.Entered(carla, CarlaSession, null, AccountType.GameMaster);
+        aria.Hidden = true;
+        ClearSent();
+
+        Step(aria, 1495, 1628, false);
+
+        Assert.Equal([CarlaSession], SessionsToldOf(aria));
+    }
+
+    [Fact]
+    public void Moved_TowardsAHiddenMobile_DoesNotShowItToThePlayer()
+    {
+        var aria = Enter(2, 1470, 1628, AriaSession);
+        var boris = Enter(3, 1500, 1628, BorisSession);
+        boris.Hidden = true;
+        ClearSent();
+
+        // From out of range into range of the hidden one.
+        _mobiles.MoveTo(aria, aria.Map, new Point3D(1490, 1628, 0));
+        _view.Moved(aria, new Point3D(1470, 1628, 0), false);
+
+        Assert.DoesNotContain(_sender.Sent, packet => packet is MobileIncomingPacket incoming && incoming.Serial == boris.Id);
+    }
+
+    [Fact]
+    public void MobileHiddenChanged_Hidden_TakesItOffThePlayersScreens_AndGreysItForTheStaffAndItself()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var carla = Mobile(4, 1497, 1628);
+        _mobiles.EnterWorld(carla);
+        _view.Entered(carla, CarlaSession, null, AccountType.GameMaster);
+        aria.Hidden = true;
+        ClearSent();
+
+        _view.MobileHiddenChanged(aria);
+
+        var bySession = _sender.Sent.Zip(_sender.SentSessionIds).ToLookup(pair => pair.Second, pair => pair.First);
+        Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(bySession[BorisSession])).Serial);
+        Assert.True((Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[CarlaSession])).Flags & MobileFlagsType.Hidden) != 0);
+        Assert.True((Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[AriaSession])).Flags & MobileFlagsType.Hidden) != 0);
+    }
+
+    [Fact]
+    public void MobileHiddenChanged_Revealed_ShowsItAgainToThePlayers()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var carla = Mobile(4, 1497, 1628);
+        _mobiles.EnterWorld(carla);
+        _view.Entered(carla, CarlaSession, null, AccountType.GameMaster);
+        ClearSent();
+
+        _view.MobileHiddenChanged(aria);
+
+        var bySession = _sender.Sent.Zip(_sender.SentSessionIds).ToLookup(pair => pair.Second, pair => pair.First);
+        Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(bySession[BorisSession])).Serial);
+        // The staff saw it all along: only its flags change.
+        Assert.Equal(MobileFlagsType.None, Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[CarlaSession])).Flags & MobileFlagsType.Hidden);
+        Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[AriaSession]));
+    }
+
+    [Fact]
+    public void MobileFlagsChanged_TellsItselfAndThoseWhoSeeIt()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        Enter(4, 3000, 3000, CarlaSession);
+        aria.WarMode = true;
+        ClearSent();
+
+        _view.MobileFlagsChanged(aria);
+
+        Assert.All(_sender.Sent, packet => Assert.True((Assert.IsType<MobileMovingPacket>(packet).Flags & MobileFlagsType.WarMode) != 0));
+        Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
+    }
+
+    [Fact]
+    public void MobileFlagsChanged_OfAHiddenMobile_DoesNotTellThePlayers()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        aria.Hidden = true;
+        aria.Frozen = true;
+        ClearSent();
+
+        _view.MobileFlagsChanged(aria);
+
+        Assert.Equal([AriaSession], _sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void MobileAppeared_OfAHiddenMobile_IsForTheStaffOnly()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        aria.Hidden = true;
+        ClearSent();
+
+        _view.MobileAppeared(aria);
+
+        Assert.Empty(_sender.Sent);
     }
 
     [Fact]
@@ -157,6 +307,40 @@ public sealed class WorldViewServiceTests
         var remove = Assert.IsType<RemoveEntityPacket>(Assert.Single(_sender.Sent));
         Assert.Equal(aria.Id, remove.Serial);
         Assert.Equal([BorisSession], _sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void AHiddenMobileGoingAway_IsRemovedForTheStaffOnly()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var carla = Mobile(4, 1497, 1628);
+        _mobiles.EnterWorld(carla);
+        _view.Entered(carla, CarlaSession, null, AccountType.GameMaster);
+        var shirt = Worn(0x40000010, aria);
+        aria.Hidden = true;
+        ClearSent();
+
+        _view.WornItemRemoved(aria, shirt);
+        Assert.Equal([CarlaSession], _sender.SentSessionIds);
+        ClearSent();
+
+        var old = aria.Location;
+        Assert.True(_mobiles.MoveTo(aria, MapType.Trammel, new Point3D(1700, 1628, 0)));
+        _view.Teleported(aria, MapType.Trammel, old);
+        Assert.Equal([CarlaSession], _sender.SentSessionIds);
+        ClearSent();
+
+        Assert.True(_mobiles.MoveTo(aria, MapType.Trammel, old));
+        Assert.True(_mobiles.MoveTo(aria, MapType.Felucca, new Point3D(1496, 1628, 0)));
+        _view.Teleported(aria, MapType.Trammel, old);
+        Assert.DoesNotContain(BorisSession, _sender.SentSessionIds);
+        Assert.Contains(CarlaSession, _sender.SentSessionIds);
+        ClearSent();
+
+        Assert.True(_mobiles.MoveTo(aria, MapType.Trammel, old));
+        _view.Left(aria);
+        Assert.Equal([CarlaSession], _sender.SentSessionIds);
     }
 
     [Fact]
@@ -489,6 +673,27 @@ public sealed class WorldViewServiceTests
         Assert.Equal(shownToAll.Id, Assert.Single(_sender.Sent.OfType<WorldItemSaPacket>()).Serial);
     }
 
+    // As ModernUO's Blocker: the graphic that draws nothing blocks the players' way unseen; the staff sees a gravestone
+    // in its place, to find it and remove it.
+    [Fact]
+    public void ItemAppeared_ABlocker_IsAGravestoneForTheStaff_AndDrawsNothingForThePlayers()
+    {
+        var aria = Mobile(2, 1496, 1628);
+        var boris = Mobile(3, 1500, 1628);
+        _mobiles.EnterWorld(aria);
+        _mobiles.EnterWorld(boris);
+        _view.Entered(aria, AriaSession, null);
+        _view.Entered(boris, BorisSession, null, AccountType.GameMaster);
+        var blocker = Ground(0x40000050, 1498, 1628);
+        blocker.ItemId = 0x21A4;
+        ClearSent();
+
+        _view.ItemAppeared(blocker);
+
+        var sent = _sender.Sent.OfType<WorldItemSaPacket>().Zip(_sender.SentSessionIds).ToDictionary(pair => pair.Second, pair => pair.First.ItemId);
+        Assert.Equal((0x21A4, 0x1183), (sent[AriaSession], sent[BorisSession]));
+    }
+
     [Fact]
     public void ItemAppeared_ShowsItToEveryoneInRange()
     {
@@ -517,6 +722,56 @@ public sealed class WorldViewServiceTests
 
         Assert.All(_sender.Sent, packet => Assert.Equal(gold.Id, Assert.IsType<RemoveEntityPacket>(packet).Serial));
         Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
+    }
+
+    [Fact]
+    public void ContainedItemDisappeared_RemovesItFromThoseAroundTheChest_ButNotFromTheOneWhoTookIt()
+    {
+        Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var chest = Ground(0x40000050, 1498, 1628);
+        var ruby = new ItemEntity { Id = new Serial(0x40000051), TemplateId = "ruby", ItemId = 0x0F13, Amount = 1 };
+        ruby.PutInContainer(chest.Id, new Point2D(10, 10));
+        _items.Add([ruby]);
+        ClearSent();
+
+        _view.ContainedItemDisappeared(ruby, chest, new Serial(2));
+
+        Assert.Equal(ruby.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(_sender.Sent)).Serial);
+        Assert.Equal([BorisSession], _sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void ContainedItemAppeared_ShowsItInItsContainerToThoseAroundTheChest_ButNotToTheOneWhoPutIt()
+    {
+        Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var chest = Ground(0x40000050, 1498, 1628);
+        var ruby = new ItemEntity { Id = new Serial(0x40000051), TemplateId = "ruby", ItemId = 0x0F13, Amount = 1 };
+        ruby.PutInContainer(chest.Id, new Point2D(10, 10));
+        _items.Add([ruby]);
+        ClearSent();
+
+        _view.ContainedItemAppeared(ruby, chest, new Serial(2));
+
+        var update = Assert.Single(_sender.Sent.OfType<ContainerItemUpdatePacket>());
+        Assert.Equal((ruby.Id, chest.Id), (update.Item.Serial, update.Item.Container));
+        Assert.All(_sender.SentSessionIds, session => Assert.Equal(BorisSession, session));
+    }
+
+    [Fact]
+    public void ContainedItemAppeared_FarFromEveryone_SendsNothing()
+    {
+        Enter(2, 1496, 1628, AriaSession);
+        var chest = Ground(0x40000050, 1600, 1628);
+        var ruby = new ItemEntity { Id = new Serial(0x40000051), TemplateId = "ruby", ItemId = 0x0F13, Amount = 1 };
+        ruby.PutInContainer(chest.Id, new Point2D(10, 10));
+        ClearSent();
+
+        _view.ContainedItemAppeared(ruby, chest, new Serial(9));
+        _view.ContainedItemDisappeared(ruby, chest, new Serial(9));
+
+        Assert.Empty(_sender.Sent);
     }
 
     [Fact]
@@ -640,6 +895,20 @@ public sealed class WorldViewServiceTests
         _items.Add([item]);
 
         return item;
+    }
+
+    // The sessions that got a packet naming the mobile.
+    private List<long> SessionsToldOf(MobileEntity mobile)
+    {
+        return _sender.Sent
+                      .Zip(_sender.SentSessionIds)
+                      .Where(
+                          pair => pair.First is MobileIncomingPacket incoming && incoming.Serial == mobile.Id ||
+                                  pair.First is MobileMovingPacket moving && moving.Serial == mobile.Id
+                      )
+                      .Select(pair => pair.Second)
+                      .Distinct()
+                      .ToList();
     }
 
     private MobileEntity Enter(uint serial, int x, int y, long session)

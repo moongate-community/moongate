@@ -230,7 +230,8 @@ templates.Open(session, "release_pet", new Dictionary<string, string> { ["pet_na
 var choice = await templates.AskAsync(session, "decorate_confirm", new Dictionary<string, string>());
 ```
 
-`.decorate` asks this way with `templates/gumps/decorate_confirm.xml`.
+`.decorate` asks this way with `templates/gumps/decorate_confirm.xml`; the other shipped gump is
+`templates/gumps/go.xml`, the travel menu of [`.go`](commands/go.md).
 
 The answer also carries `answer.Open`, the gump an `open` button names (null for any other
 button), and `answer.Bound`, the values of the controls with `bind` by name. `AskAsync` follows

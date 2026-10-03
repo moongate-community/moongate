@@ -1,7 +1,11 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Handlers.Items.Internal;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
@@ -17,6 +21,8 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 /// </summary>
 public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacket>
 {
+    public const string CanEquipFunction = "can_equip";
+
     private readonly ILogger _logger = Log.ForContext<EquipRequestPacketHandler>();
     private readonly IItemService _items;
     private readonly IMobileService _mobiles;
@@ -24,6 +30,7 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
     private readonly IWorldViewService _view;
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
+    private readonly IItemScriptService? _scripts;
 
     public EquipRequestPacketHandler(
         IItemService items,
@@ -31,9 +38,11 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
         IEquipmentService equipment,
         IWorldViewService view,
         IPacketSendService sender,
-        ITooltipService tooltips
+        ITooltipService tooltips,
+        IItemScriptService? scripts = null
     )
     {
+        _scripts = scripts;
         _tooltips = tooltips;
         _items = items;
         _mobiles = mobiles;
@@ -68,7 +77,10 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
             item.Amount == 1 &&
             _mobiles.TryGet(session.CharacterId, out var character) &&
             _equipment.TryGetLayer(item, out var layer) &&
-            _equipment.CanWear(character.Id, item, layer))
+            _equipment.CanWear(character.Id, item, layer) &&
+            // Last, once the rules allow it: the item's script may still refuse to be worn. Not asked of an item lifted
+            // from the paperdoll and put back: it never left its layer.
+            (item.MobileId == character.Id || Ask(session, held, item, character.Id)))
         {
             _items.Equip(item, character.Id, layer);
             _view.WornItemChanged(character, item);
@@ -78,5 +90,20 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
 
         _logger.Debug("{Item} cannot be worn by {Mobile}: it bounces back", item, packet.Mobile);
         HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+    }
+
+    // The item counts as held while its script is asked, so item.delete, item.consume and the like refuse it.
+    private bool Ask(GameSession session, HeldItem held, ItemEntity item, Serial wearer)
+    {
+        session.Set(ItemSessionKeys.Held, held);
+
+        try
+        {
+            return _scripts.Allows(item, CanEquipFunction, (long)wearer.Value);
+        }
+        finally
+        {
+            session.Set(ItemSessionKeys.Held, null);
+        }
     }
 }

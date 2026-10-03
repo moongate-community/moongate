@@ -51,16 +51,17 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x03` | `AsciiSpeechRequestPacket` | Incoming | Variable, minimum 9 | `SpeechRequestPacketHandler`: local say or in-game dot command |
 | `0xAD` | `UnicodeSpeechRequestPacket` | Incoming | Variable, minimum 14 | `SpeechRequestPacketHandler`: Unicode and encoded-keyword say or dot command |
 | `0xAE` | `UnicodeSpeechMessagePacket` | Outgoing | Variable, minimum 50 | Player speech and private command output |
-| `0x24` | `DisplayContainerPacket` | Outgoing | Fixed 7, or 9 from client 7.0.9.0 | — |
+| `0x24` | `DisplayContainerPacket` | Outgoing | 7, or 9 from client 7.0.9.0 (no length header) | — |
 | `0x3C` | `ContainerContentPacket` | Outgoing | Variable, minimum 5 | — |
 | `0x09` | `LookRequestPacket` | Incoming | Fixed 5 | `LookRequestPacketHandler`: shows the name over the object (`0xC1`) |
-| `0x34`, `0x72` | `MobileQueryPacket`, `WarModeRequestPacket` | Incoming | Fixed 10, 5 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x34` | `MobileQueryPacket` | Incoming | Fixed 10 | `MobileQueryPacketHandler`: answers the status of the character or of a mobile in sight (`0x11`) and the character's skills (`0x3A`) |
+| `0x72` | `WarModeRequestPacket` | Incoming | Fixed 5 | `WarModeRequestPacketHandler`: puts the character in war or peace mode, answers with `0x72` and shows the stance to the players around (`0x77`) |
 | `0xC8` | `UpdateRangePacket` | Incoming | Fixed 2 | `UpdateRangePacketHandler`: answers with the server's view range |
 | `0xC8` | `ViewRangePacket` | Outgoing | Fixed 2 | — |
 | `0x88` | `DisplayPaperdollPacket` | Outgoing | Fixed 66 | — |
 | `0x07` | `LiftRequestPacket` | Incoming | Fixed 7 | `LiftRequestPacketHandler`: picks up an item the character carries or wears, or one on the ground within 2 tiles |
 | `0x08` | `DropRequestPacket` | Incoming | Fixed 15 | `DropRequestPacketHandler`: drops the held item into a carried container or on the ground |
-| `0x25` | `ContainerItemUpdatePacket` | Outgoing | Fixed 21, or 20 before client 6.0.1.7 | — |
+| `0x25` | `ContainerItemUpdatePacket` | Outgoing | 20, or 21 from client 6.0.1.7 (no length header) | — |
 | `0x27` | `LiftRejectPacket` | Outgoing | Fixed 2 | — |
 | `0x1D` | `RemoveEntityPacket` | Outgoing | Fixed 5 | — |
 | `0x1A` | `WorldItemPacket` | Outgoing | Variable, minimum 16 | — |
@@ -76,6 +77,8 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0xD6` | `PropertyListPacket` | Outgoing | Variable | — |
 | `0xDC` | `PropertyListInfoPacket` | Outgoing | Fixed 9 | — |
 | `0xC1` | `LocalizedMessagePacket` | Outgoing | Variable | — |
+| `0xC2` | `TextPromptPacket` | Outgoing | Variable (21) | — |
+| `0xC2` | `TextPromptResponsePacket` | Incoming | Variable | `TextPromptResponsePacketHandler`: completes the player's pending text prompt |
 | `0x54` | `PlaySoundPacket` | Outgoing | Fixed 12 | — |
 | `0xC0` | `HuedEffectPacket` | Outgoing | Fixed 36 | — |
 | `0xC7` | `ParticleEffectPacket` | Outgoing | Fixed 49 | — |
@@ -86,7 +89,9 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x4E` | `PersonalLightLevelPacket` | Outgoing | Fixed 6 | — |
 | `0x20` | `MobileUpdatePacket` | Outgoing | Fixed 19 | — |
 | `0x78` | `MobileIncomingPacket` | Outgoing | Variable, minimum 23 | — |
-| `0x11` | `MobileStatusPacket` | Outgoing | Variable, 91 (version 5) | — |
+| `0x11` | `MobileStatusPacket` | Outgoing | Variable, 91 (version 5), or 43 (version 0) for another mobile | — |
+| `0xA1`, `0xA2`, `0xA3` | `MobileHitsPacket`, `MobileManaPacket`, `MobileStaminaPacket` | Outgoing | Fixed 9 | Sent by `MobileStateService`; the hits go to the players around as a share of 100 |
+| `0x3A` | `SkillsPacket` | Outgoing | Variable, minimum 6 | The whole skill list, or one skill that changed |
 | `0x72` | `WarModePacket` | Outgoing | Fixed 5 | — |
 | `0x5B` | `CurrentTimePacket` | Outgoing | Fixed 4 | — |
 | `0x65` | `WeatherPacket` | Outgoing | Fixed 4 | — |
@@ -177,7 +182,7 @@ and karma prefix of [`titles.toml`](data-files/titles.md), whose rows from 10,00
 or `Lady`, the name, then `, <title>` when the mobile has one (NPC templates give titles such as "the
 mage"), as "The Glorious Lord Aria, the mage"; players and human NPCs alike. Skill titles are not
 added yet. The flags
-say war mode (always off for now) and whether the viewer may take items off, set only on the
+say whether the mobile is in war mode and whether the viewer may take items off, set only on the
 character's own paperdoll. The worn items are already known to the client from `0x78`. Other
 double clicks are not handled yet.
 
@@ -238,7 +243,15 @@ new position test as the mobiles. The items on the ground and everything inside 
 at startup and saved by the world save. A ground item decays after its template's time, 60 minutes
 unless `decay_minutes` says otherwise, counted from when it landed on the ground and restarted
 each time it is put down again; a decayed container takes its contents with it (see
-[Templates](templates.md)). A container on the ground cannot be opened yet.
+[Templates](templates.md)). A container lying on the ground, or inside one, opens within reach of the
+character (`0x24` and `0x3C`), and `0x25` shows the items that go in and out to everyone around.
+
+`IPromptService` asks a player for a line of text with the Unicode prompt (`0xC2`) and hands what it
+typed to a callback on the game loop. A player has one prompt at a time: a new one ends the old with
+no text, and so do `Cancel` and a closing session. The client has no packet that closes its prompt, so
+a late answer is ignored: ids count up per session and an answer with another id does nothing. As
+ModernUO, type 0 is the player's escape and a text over 128 characters is ignored; the text is read up
+to its terminator, without control characters, and trimmed.
 
 `ITargetService` shows a player the target cursor (`0x6C`) and hands the pick to a callback on the
 game loop, or to a command awaiting `RequestAsync`. A player has one target at a time: a new one

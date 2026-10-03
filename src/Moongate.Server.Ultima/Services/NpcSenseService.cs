@@ -56,12 +56,13 @@ public sealed class NpcSenseService : INpcSenseService
                 continue;
             }
 
-            if (other.IsNpc)
+            // A hidden mobile is sensed by no one.
+            if (other.IsNpc && !mobile.Hidden)
             {
                 _scripts.Queue(other, Function, (long)mobile.Id.Value);
             }
 
-            if (mobile.IsNpc)
+            if (mobile.IsNpc && !other.Hidden)
             {
                 _scripts.Queue(mobile, Function, (long)other.Id.Value);
             }

@@ -19,7 +19,7 @@ public sealed class InitialSpawnCommandTests
 
         Assert.Equal(1, _spawns.FillAllCalls);
         Assert.Equal(
-            "Filling 2778 spawn regions: 21000 NPCs to spawn. The spawn messages show the progress.",
+            "Filling 2778 spawn regions: 21000 to spawn. The spawn messages show the progress.",
             Assert.Single(context.Output).Text
         );
     }

@@ -16,6 +16,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
@@ -26,6 +27,7 @@ using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -49,11 +51,15 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingEffectService _effects = new();
     private readonly RecordingWorldViewService _view = new();
+    private readonly StubClockService _clock = new();
     private readonly ItemService _items;
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
     private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3 };
 
+    private readonly SettableClock _time = new();
+
     private BroadcastFixture _fixture = null!;
+    private ItemTimerService _itemTimers = null!;
 
     public ItemScriptIntegrationTests()
     {
@@ -77,9 +83,11 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IMobileService>(_fixture.Mobiles);
         _container.RegisterInstance<ISpeechService>(_speech);
         _container.RegisterInstance<ISectorService>(_sectors);
-        _container.RegisterInstance<IClockService>(new StubClockService());
+        _container.RegisterInstance<IClockService>(_clock);
         _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
+        _itemTimers = new(_timers, new ItemTimerQueue(_time), _items, new RecordingItemScriptService(), _time);
+        _container.RegisterInstance<IItemTimerService>(_itemTimers);
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
         _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService()));
@@ -120,6 +128,46 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(2, _potions.Amount);
         var label = Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>());
         Assert.Equal((SpeechType.Label, "You drink the potion."), (label.Type, label.Text));
+    }
+
+    [Fact]
+    public async Task AScriptThatReturnsFalse_RefusesTheMove_AnythingElseLetsItFollow()
+    {
+        _scripts.Write(
+            "items/potion.lua",
+            """
+            potion = {}
+
+            function potion.can_pick_up(serial, picker)
+                return picker ~= 2
+            end
+
+            function potion.can_drop(serial, dropper)
+            end
+
+            function potion.can_equip(serial, wearer)
+                error("broken")
+            end
+            """
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = new ItemScriptService(
+            engine,
+            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })),
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
+        await scripts.StartAsync();
+
+        Assert.False(scripts.Allows(_potions, "can_pick_up", 2L));
+        Assert.True(scripts.Allows(_potions, "can_pick_up", 3L));
+        Assert.True(scripts.Allows(_potions, "can_drop", 2L));
+        Assert.True(scripts.Allows(_potions, "can_insert", 2L, 3L));
+        Assert.Empty(_errors);
+        // A broken handler does not lock the item: the error is reported and the move follows.
+        Assert.True(scripts.Allows(_potions, "can_equip", 2L));
+        Assert.Single(_errors);
     }
 
     [Fact]
@@ -317,21 +365,24 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         var door = PlaceDoor(new Serial(0x40000010), "DarkWoodGate", 0x0839, "south_cw", new Point3D(1600, 1600, 0));
         var scripts = await StartDoorScriptAsync();
         scripts.Run(door, "on_use", 2L);
-        var first = Assert.Single(_timers.Timers);
-        Assert.Equal(TimeSpan.FromSeconds(20), first.Interval);
+        // The timer is a prop of the door, so the world save keeps it and a restart does not lose it.
+        Assert.Equal(TimeSpan.FromSeconds(20), _itemTimers.Remaining(door, "close"));
         var orc = new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
         _sectors.Add(orc);
 
-        _timers.Fire(first.Id);
-        var retry = Assert.Single(_timers.Timers);
-        Assert.Equal((TimeSpan.FromSeconds(10), 0x083A), (retry.Interval, door.ItemId));
+        // What the timer service does when the time has come.
+        _itemTimers.Stop(door, "close");
+        scripts.Run(door, "on_timer", "close");
+        Assert.Equal((TimeSpan.FromSeconds(10), 0x083A), (_itemTimers.Remaining(door, "close"), door.ItemId));
 
         _sectors.Remove(orc);
-        _timers.Fire(retry.Id);
+        _itemTimers.Stop(door, "close");
+        scripts.Run(door, "on_timer", "close");
 
         Assert.Empty(_errors);
         Assert.Equal((0x0839, new Point3D(1600, 1600, 0)), (door.ItemId, door.GroundLocation!.Value));
         Assert.Equal([0xEB, 0xF2], _speech.PlacedSounds.Select(sound => sound.Sound));
+        Assert.Null(_itemTimers.Remaining(door, "close"));
         Assert.Empty(_timers.Timers);
     }
 
@@ -604,6 +655,30 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
     }
 
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData(true, true)]
+    [InlineData("true", true)]
+    public async Task TheShippedTeleporterScript_AnNpc_TravelsOnlyThroughATeleporterForCreatures(object? creatures, bool travels)
+    {
+        var props = new Dictionary<string, object?> { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L };
+
+        if (creatures is not null)
+        {
+            props["creatures"] = creatures;
+        }
+
+        var teleporter = PlaceTeleporter(props);
+        var scripts = await StartTeleporterScriptAsync();
+        var orc = new MobileEntity { Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+        _fixture.Mobiles.EnterWorld(orc);
+
+        scripts.Run(teleporter, "on_npc_move_over", 0x100L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(travels ? new Point3D(5690, 569, 25) : new Point3D(1600, 1600, 0), orc.Location);
+    }
+
     [Fact]
     public async Task TheShippedTeleporterScript_ToItsOwnMap_Teleports()
     {
@@ -722,6 +797,35 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _items.Add([light]);
 
         return light;
+    }
+
+    // As ModernUO's Clock: the part of the day, then the time to the minute, as texts of the client over the clock.
+    [Theory]
+    [InlineData(0, 30, 1042950, "12:30")]
+    [InlineData(1, 0, 1042951, "1:00")]
+    [InlineData(3, 59, 1042951, "3:59")]
+    [InlineData(4, 5, 1042952, "4:05")]
+    [InlineData(8, 0, 1042953, "8:00")]
+    [InlineData(12, 0, 1042954, "12:00")]
+    [InlineData(13, 7, 1042955, "1:07")]
+    [InlineData(16, 0, 1042956, "4:00")]
+    [InlineData(20, 0, 1042957, "8:00")]
+    [InlineData(23, 59, 1042957, "11:59")]
+    public async Task TheShippedClockScript_TellsThePartOfTheDayAndTheTimeToTheMinute(int hours, int minutes, int part, string exact)
+    {
+        _clock.Time = new(hours, minutes);
+        var scripts = await StartItemScriptAsync("clock", "clock");
+        var clock = new ItemEntity { Id = new Serial(0x40000080), TemplateId = "clock", ItemId = 0x104B, Amount = 1 };
+        clock.PutInContainer(_backpack.Id, new Point2D(50, 50), 1);
+        _items.Add([clock]);
+
+        var result = scripts.Run(clock, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        var labels = _fixture.Sender.Sent.OfType<LocalizedMessagePacket>().ToList();
+        Assert.Equal([(part, ""), (1042958, exact)], labels.Select(label => (label.Cliloc, label.Arguments)));
+        Assert.All(labels, label => Assert.Equal(clock.Id, label.Serial));
     }
 
     private async Task<ItemScriptService> StartLightScriptAsync()

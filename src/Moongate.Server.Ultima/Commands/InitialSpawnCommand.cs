@@ -35,7 +35,7 @@ public sealed class InitialSpawnCommand : ICommandExecutor
         context.Print(
             _localization.Text(
                 CommandMessages.InitialSpawnStarted,
-                "Filling {0} spawn regions: {1} NPCs to spawn. The spawn messages show the progress.",
+                "Filling {0} spawn regions: {1} to spawn. The spawn messages show the progress.",
                 regions,
                 missing
             )

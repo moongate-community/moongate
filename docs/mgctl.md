@@ -11,7 +11,7 @@ executables, `migration-runner/Moongate.MigrationRunner` and `mg-uoxconv`; there
 | `mgctl init <root>` | Prepares a server root; this page. `mgctl <root>` does the same |
 | `mgctl migrate status\|apply --target auth\|world` | Lists or applies the versioned SQL; see [Persistence migrations](persistence-migrations.md) |
 | `mgctl convert uox ...` | Converts UOX3 `.dfn` content into TOML; see [Migrate from UOX3](uox3-migration.md) |
-| `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters ...` | Converts ModernUO's spawners, signs and teleporters; see [Migrate from UOX3](uox3-migration.md#spawns-of-modernuo) |
+| `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters\|modernuo-locations\|modernuo-chests ...` | Converts ModernUO's spawners, signs, teleporters, named places and treasure chests; see [Migrate from UOX3](uox3-migration.md#signs-of-modernuo) |
 | `mgctl completion bash\|zsh\|fish` | Prints the script that completes mgctl with TAB; see [TAB completion](#tab-completion) |
 
 `mgctl --help` lists the commands and `mgctl <command> --help` the options of one.
@@ -128,7 +128,7 @@ Distribute only `admin.crt`; clients must verify trust and hostname.
 | `config/moongate.toml` | Current server defaults serialized as snake_case TOML; plugin sections such as `[ultima]` are appended at the first server start |
 | `logs/`, `plugins/` | Standard server directories |
 | `migrations/auth/` | The core auth SQL files included in the distribution |
-| `migrations/world/` | The core World SQL files included in the distribution: the mobiles and items tables |
+| `migrations/world/` | The core World SQL files included in the distribution: the mobiles, items and world state tables |
 | `data/` | The shard data files included in the distribution: maps, regions, races, skills, messages and the rest; see [Shard data files](data-files.md) |
 | `templates/` | The item, loot and mobile templates included in the distribution; see [Templates](templates.md) |
 | `scripts/` | The example [mobile](scripting.md#mobile-scripts) and [item scripts](scripting.md#item-scripts) included in the distribution, `mobiles/wander.lua` and `items/potion.lua`; the engine writes `definitions.lua` and `.luarc.json` here at startup |
