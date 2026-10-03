@@ -86,6 +86,8 @@ public static class UltimaWorldContainerExtensions
         container.Register<ICharacterEnterWorldService, CharacterEnterWorldService>(Reuse.Singleton);
         container.Register<ITargetService, TargetService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, ITargetService>();
+        container.Register<IPromptService, PromptService>(Reuse.Singleton);
+        container.RegisterMapping<ISessionClosedListener, IPromptService>();
         container.Register<IGumpService, GumpService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IGumpService>();
         container.Register<IGumpTemplateService, GumpTemplateService>(Reuse.Singleton);
@@ -108,6 +110,7 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<WorldModule>();
         container.AddScriptModule<MobileModule>();
         container.AddScriptModule<TargetModule>();
+        container.AddScriptModule<PromptModule>();
         container.AddScriptModule<GumpModule>();
         container.AddScriptModule<BankModule>();
         container.AddScriptModule<EffectModule>();
