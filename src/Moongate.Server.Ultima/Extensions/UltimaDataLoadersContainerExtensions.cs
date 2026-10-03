@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Locations;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Data.Moongates;
@@ -55,6 +56,7 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<SpawnsLoader, SpawnTemplate>(19);
         container.AddUltimaDataLoader<GumpsLoader, GumpTemplate>(20);
         container.AddUltimaDataLoader<MoongatesLoader, MoongateFacet>(21);
+        container.AddUltimaDataLoader<LocationsLoader, NamedLocation>(22);
 
         return container;
     }
