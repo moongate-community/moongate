@@ -250,7 +250,12 @@ public sealed class RepositoryTemplateFilesTests
 
         var tables = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
 
-        Assert.Equal(71, tables.Count);
+        Assert.Equal(106, tables.Count);
+        // What the town containers fill up with: ModernUO's 35 kinds of place.
+        var fillable = tables.Where(table => table.Id.StartsWith("fillable_", StringComparison.Ordinal)).ToList();
+        Assert.Equal(35, fillable.Count);
+        Assert.All(fillable, table => Assert.NotEmpty(table.Entries));
+        Assert.Equal(336, fillable.Sum(table => table.Entries.Count));
     }
 
     private static DirectoriesConfig Directories()

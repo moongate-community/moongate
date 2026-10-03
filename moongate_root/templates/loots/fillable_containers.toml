@@ -1,0 +1,1850 @@
+# ==============================================================================
+# Moongate - templates/loots/fillable_containers.toml
+#
+# What it is for:
+#   What the crates, boxes, chests, barrels and bookcases of the towns fill up
+#   with (scripts/items/fillable.lua): one table per kind of place, as
+#   ModernUO's FillableContent. A container takes the table its decoration
+#   names in content_type, else that of the nearest vendor.
+#
+# Fields:
+#   [[loot]]            one table; its id is fillable_<kind>, such as
+#                       fillable_baker
+#   [[loot.entries]]    one thing the table can give; a refill rolls the table
+#                       once for each item it adds
+#   weight              the share of the entry among those of its table
+#   item_id             the item template it gives
+#   loot_template_id    or another table rolled in its place
+#   amount              how many: a number, or "min-max"
+#   comment             what the entry is in ModernUO
+# ==============================================================================
+
+[[loot]]
+id = "fillable_alchemist"
+comment = "Alchemist"
+[[loot.entries]]
+weight = 1
+item_id = "nightsightpotion"
+comment = "NightSightPotion"
+
+[[loot.entries]]
+weight = 1
+item_id = "lessercurepotion"
+comment = "LesserCurePotion"
+
+[[loot.entries]]
+weight = 1
+item_id = "agilitypotion"
+comment = "AgilityPotion"
+
+[[loot.entries]]
+weight = 1
+item_id = "strengthpotion"
+comment = "StrengthPotion"
+
+[[loot.entries]]
+weight = 1
+item_id = "lesserpoisonpotion"
+comment = "LesserPoisonPotion"
+
+[[loot.entries]]
+weight = 1
+item_id = "refreshmentpotion"
+comment = "RefreshPotion"
+
+[[loot.entries]]
+weight = 1
+item_id = "lesserhealpotion"
+comment = "LesserHealPotion"
+
+[[loot.entries]]
+weight = 1
+item_id = "lesserexplosionpotion"
+comment = "LesserExplosionPotion"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0e9b_mortar_&_pestle"
+comment = "MortarPestle"
+
+
+[[loot]]
+id = "fillable_armorer"
+comment = "Armorer"
+[[loot.entries]]
+weight = 2
+item_id = "base_chain_coif"
+comment = "ChainCoif"
+
+[[loot.entries]]
+weight = 1
+item_id = "base_plate_gorget"
+comment = "PlateGorget"
+
+[[loot.entries]]
+weight = 1
+item_id = "bronzeshield"
+comment = "BronzeShield"
+
+[[loot.entries]]
+weight = 1
+item_id = "buckler"
+comment = "Buckler"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_metal_kite_shield"
+comment = "MetalKiteShield"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_heater_shield"
+comment = "HeaterShield"
+
+[[loot.entries]]
+weight = 1
+item_id = "woodenshield"
+comment = "WoodenShield"
+
+[[loot.entries]]
+weight = 1
+item_id = "metalshield"
+comment = "MetalShield"
+
+
+[[loot]]
+id = "fillable_artisan_guild"
+comment = "ArtisanGuild"
+[[loot.entries]]
+weight = 1
+item_id = "0x0fc1_paints_and_brush"
+comment = "PaintsAndBrush"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0fb5"
+comment = "SledgeHammer"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_smiths_hammer"
+comment = "SmithHammer"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0fbb_tongs"
+comment = "Tongs"
+
+[[loot.entries]]
+weight = 4
+item_id = "0x14fc_lockpick"
+comment = "Lockpick"
+amount = "1-3"
+
+[[loot.entries]]
+weight = 4
+item_id = "0x1eb8_tool_kit"
+comment = "TinkerTools"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1224_statue"
+comment = "StatueEast2"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x139a_statue"
+comment = "StatueSouth"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1225_statue"
+comment = "StatueSouthEast"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1226_statue"
+comment = "StatueWest"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x139b_statue"
+comment = "StatueNorth"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x139c_statue"
+comment = "StatueEast"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x12ca_bust"
+comment = "BustEast"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x12cb_bust"
+comment = "BustSouth"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1545_bear_mask"
+comment = "BearMask"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1547_deer_mask"
+comment = "DeerMask"
+
+[[loot.entries]]
+weight = 4
+item_id = "orchelm"
+comment = "OrcHelm"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x154b_tribal_mask"
+comment = "TribalMask"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1549_tribal_mask"
+comment = "HornedTribalMask"
+
+
+[[loot]]
+id = "fillable_baker"
+comment = "Baker"
+[[loot.entries]]
+weight = 1
+item_id = "0x1043_rolling_pin"
+comment = "RollingPin"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1039_sack_of_flour"
+comment = "SackFlour"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x103b_bread_loaf"
+comment = "BreadLoaf"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x098c_french_bread"
+comment = "FrenchBread"
+
+
+[[loot]]
+id = "fillable_bard"
+comment = "Bard"
+[[loot.entries]]
+weight = 1
+item_id = "0x0eb2_lap_harp"
+comment = "LapHarp"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0eb3_lute"
+comment = "Lute"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0e9c_drum"
+comment = "Drums"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0e9d_tambourine"
+comment = "Tambourine"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0e9e_tambourine"
+comment = "TambourineTassel"
+
+
+[[loot]]
+id = "fillable_blacksmith"
+comment = "Blacksmith"
+[[loot.entries]]
+weight = 8
+item_id = "base_smiths_hammer"
+comment = "SmithHammer"
+
+[[loot.entries]]
+weight = 8
+item_id = "0x0fbb_tongs"
+comment = "Tongs"
+
+[[loot.entries]]
+weight = 8
+item_id = "0x0fb5"
+comment = "SledgeHammer"
+
+[[loot.entries]]
+weight = 8
+item_id = "0x1bf2_iron_ingot"
+comment = "IronIngot"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1876_iron_wire"
+comment = "IronWire"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1877_silver_wire"
+comment = "SilverWire"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1878_gold_wire"
+comment = "GoldWire"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1879_copper_wire"
+comment = "CopperWire"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0fb6_horse_shoes"
+comment = "HorseShoes"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0fb8_forged_metal"
+comment = "ForgedMetal"
+
+
+[[loot]]
+id = "fillable_bowyer"
+comment = "Bowyer"
+[[loot.entries]]
+weight = 2
+item_id = "0x13b2"
+comment = "Bow"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0f50"
+comment = "Crossbow"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f3f_arrow"
+comment = "Arrow"
+amount = "2-6"
+
+
+[[loot]]
+id = "fillable_butcher"
+comment = "Butcher"
+[[loot.entries]]
+weight = 2
+item_id = "0x0ec3"
+comment = "Cleaver"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0976_slab_of_bacon"
+comment = "SlabOfBacon"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0979_slice_of_bacon"
+comment = "Bacon"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x097a_raw_fish_steak"
+comment = "RawFishSteak"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x097b_fish_steak"
+comment = "FishSteak"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09b7_cooked_bird"
+comment = "CookedBird"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09b9_raw_bird"
+comment = "RawBird"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09c9_ham"
+comment = "Ham"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1609_raw_leg_of_lamb"
+comment = "RawLambLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x160a_leg_of_lamb"
+comment = "LambLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09f2_cooked_ribs"
+comment = "Ribs"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09f1_cut_of_raw_ribs"
+comment = "RawRibs"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09c0_sausage"
+comment = "Sausage"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1607_raw_chicken_leg"
+comment = "RawChickenLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1608_chicken_leg"
+comment = "ChickenLeg"
+
+
+[[loot]]
+id = "fillable_carpenter"
+comment = "Carpenter"
+[[loot.entries]]
+weight = 1
+item_id = "0x1026_chisels"
+comment = "ChiselsNorth"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1027_chisels"
+comment = "ChiselsWest"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1028_dovetail_saw"
+comment = "DovetailSaw"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x102a_hammer"
+comment = "Hammer"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x102c_moulding_plane"
+comment = "MouldingPlane"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x102e_nails"
+comment = "Nails"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1030_jointing_plane"
+comment = "JointingPlane"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1032_smoothing_plane"
+comment = "SmoothingPlane"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1034_saw"
+comment = "Saw"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x10e4_draw_knife"
+comment = "DrawKnife"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1bdd_log"
+comment = "Log"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x10e5_froe"
+comment = "Froe"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x10e6_inshave"
+comment = "Inshave"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x10e7_scorp"
+comment = "Scorp"
+
+
+[[loot]]
+id = "fillable_clothier"
+comment = "Clothier"
+[[loot.entries]]
+weight = 1
+item_id = "0x0df9_bale_of_cotton"
+comment = "Cotton"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0df8_pile_of_wool"
+comment = "Wool"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0e1d_ball_of_yarn"
+comment = "DarkYarn"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0e1e_ball_of_yarn"
+comment = "LightYarn"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0e1f_ball_of_yarn"
+comment = "LightYarnUnraveled"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0fa0_spool_of_thread"
+comment = "SpoolOfThread"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0fa9_dyes"
+comment = "Dyes"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1081_cut_up_leather"
+comment = "Leather"
+
+
+[[loot]]
+id = "fillable_cobbler"
+comment = "Cobbler"
+[[loot.entries]]
+weight = 1
+item_id = "0x170b_boots"
+comment = "Boots"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x170f_shoes"
+comment = "Shoes"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x170d_sandals"
+comment = "Sandals"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1711_thigh_boots"
+comment = "ThighBoots"
+
+
+[[loot]]
+id = "fillable_docks"
+comment = "Docks"
+[[loot.entries]]
+weight = 1
+item_id = "0x0dc0_fishing_pole"
+comment = "FishingPole"
+
+[[loot.entries]]
+weight = 4
+item_id = "0x09cc_fish"
+comment = "Fish"
+
+
+[[loot]]
+id = "fillable_farm"
+comment = "Farm"
+[[loot.entries]]
+weight = 1
+item_id = "0x1517_shirt"
+comment = "Shirt"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x152e_short_pants"
+comment = "ShortPants"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1516"
+comment = "Skirt"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f01_plain_dress"
+comment = "PlainDress"
+
+[[loot.entries]]
+weight = 1
+item_id = "cap"
+comment = "Cap"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x170d_sandals"
+comment = "Sandals"
+
+[[loot.entries]]
+weight = 2
+item_id = "practice_gnarled_staff"
+comment = "GnarledStaff"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_pitchfork"
+comment = "Pitchfork"
+
+[[loot.entries]]
+weight = 1
+item_id = "bag"
+comment = "Bag"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0de1_kindling"
+comment = "Kindling"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c70_head_of_lettuce"
+comment = "Lettuce"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c6d_onion"
+comment = "Onion"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0d3a_turnip"
+comment = "Turnip"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09c9_ham"
+comment = "Ham"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0979_slice_of_bacon"
+comment = "Bacon"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1609_raw_leg_of_lamb"
+comment = "RawLambLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f36_sheaf_of_hay"
+comment = "SheafOfHay"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09d6_pitcher"
+comment = "BeverageMilk"
+
+
+[[loot]]
+id = "fillable_fighter_guild"
+comment = "FighterGuild"
+[[loot.entries]]
+weight = 12
+loot_template_id = "lowlevelarmor"
+comment = "Loot.ArmorTypes"
+
+[[loot.entries]]
+weight = 8
+loot_template_id = "randomlowlevelweapons"
+comment = "Loot.WeaponTypes"
+
+[[loot.entries]]
+weight = 3
+loot_template_id = "lowlevelarmor"
+comment = "Loot.ShieldTypes"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f3f_arrow"
+comment = "Arrow"
+amount = "2-6"
+
+
+[[loot]]
+id = "fillable_guard"
+comment = "Guard"
+[[loot.entries]]
+weight = 12
+loot_template_id = "lowlevelarmor"
+comment = "Loot.ArmorTypes"
+
+[[loot.entries]]
+weight = 8
+loot_template_id = "randomlowlevelweapons"
+comment = "Loot.WeaponTypes"
+
+[[loot.entries]]
+weight = 3
+loot_template_id = "lowlevelarmor"
+comment = "Loot.ShieldTypes"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f3f_arrow"
+comment = "Arrow"
+amount = "2-6"
+
+
+[[loot]]
+id = "fillable_healer"
+comment = "Healer"
+[[loot.entries]]
+weight = 1
+item_id = "0x0e21_clean_bandage"
+comment = "Bandage"
+amount = "1-3"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0e9b_mortar_&_pestle"
+comment = "MortarPestle"
+
+[[loot.entries]]
+weight = 1
+item_id = "lesserhealpotion"
+comment = "LesserHealPotion"
+
+
+[[loot]]
+id = "fillable_herbalist"
+comment = "Herbalist"
+[[loot.entries]]
+weight = 10
+item_id = "garlic"
+comment = "Garlic"
+
+[[loot.entries]]
+weight = 10
+item_id = "ginseng"
+comment = "Ginseng"
+
+[[loot.entries]]
+weight = 10
+item_id = "mandrakeroot"
+comment = "MandrakeRoot"
+
+[[loot.entries]]
+weight = 1
+item_id = "deadwood"
+comment = "DeadWood"
+
+[[loot.entries]]
+weight = 1
+item_id = "0xc3c_dried_flowers"
+comment = "WhiteDriedFlowers"
+
+[[loot.entries]]
+weight = 1
+item_id = "0xc3e_dried_flowers"
+comment = "GreenDriedFlowers"
+
+[[loot.entries]]
+weight = 1
+item_id = "0xc40_dried_flowers"
+comment = "DriedOnions"
+
+[[loot.entries]]
+weight = 1
+item_id = "0xc42_dried_flowers"
+comment = "DriedHerbs"
+
+
+[[loot]]
+id = "fillable_inn"
+comment = "Inn"
+[[loot.entries]]
+weight = 1
+item_id = "0x0a28_candle"
+comment = "Candle"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f64_torch"
+comment = "Torch"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0a25_lantern"
+comment = "Lantern"
+
+
+[[loot]]
+id = "fillable_jeweler"
+comment = "Jeweler"
+[[loot.entries]]
+weight = 1
+item_id = "0x108a_ring"
+comment = "GoldRing"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1086_bracelet"
+comment = "GoldBracelet"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1087_earrings"
+comment = "GoldEarrings"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1088_necklace"
+comment = "GoldNecklace"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1089_necklace"
+comment = "GoldBeadNecklace"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1085_necklace"
+comment = "Necklace"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x108b_beads"
+comment = "Beads"
+
+[[loot.entries]]
+weight = 9
+loot_template_id = "randomgems"
+comment = "Loot.GemTypes"
+
+
+[[loot]]
+id = "fillable_library"
+comment = "Library"
+[[loot.entries]]
+weight = 8
+item_id = "0x0fef_book"
+comment = "Loot.LibraryBookTypes"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0ff1_a_book"
+comment = "RedBook"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0ff2_a_book"
+comment = "BlueBook"
+
+
+[[loot]]
+id = "fillable_mage"
+comment = "Mage"
+[[loot.entries]]
+weight = 16
+item_id = "0x0e34_a_blank_scroll"
+comment = "BlankScroll"
+
+[[loot.entries]]
+weight = 14
+item_id = "spellbook"
+comment = "Spellbook"
+
+[[loot.entries]]
+weight = 12
+loot_template_id = "lowlevelscrolls"
+comment = "Loot.RegularScrollTypes"
+
+[[loot.entries]]
+weight = 11
+loot_template_id = "lowlevelscrolls"
+comment = "Loot.RegularScrollTypes"
+
+[[loot.entries]]
+weight = 10
+loot_template_id = "lowlevelscrolls"
+comment = "Loot.RegularScrollTypes"
+
+[[loot.entries]]
+weight = 9
+loot_template_id = "midlevelscrolls"
+comment = "Loot.RegularScrollTypes"
+
+[[loot.entries]]
+weight = 8
+loot_template_id = "midlevelscrolls"
+comment = "Loot.RegularScrollTypes"
+
+[[loot.entries]]
+weight = 7
+loot_template_id = "midlevelscrolls"
+comment = "Loot.RegularScrollTypes"
+
+[[loot.entries]]
+weight = 6
+loot_template_id = "highlevelscrolls"
+comment = "Loot.RegularScrollTypes"
+
+[[loot.entries]]
+weight = 5
+loot_template_id = "highlevelscrolls"
+comment = "Loot.RegularScrollTypes"
+
+
+[[loot]]
+id = "fillable_merchant"
+comment = "Merchant"
+[[loot.entries]]
+weight = 1
+item_id = "0x097e_wheel_of_cheese"
+comment = "CheeseWheel"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x097d_wedge_of_cheese"
+comment = "CheeseWedge"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x097c_wedge_of_cheese"
+comment = "CheeseSlice"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09b5_eggs"
+comment = "Eggs"
+
+[[loot.entries]]
+weight = 4
+item_id = "0x09cc_fish"
+comment = "Fish"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x097a_raw_fish_steak"
+comment = "RawFishSteak"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x097b_fish_steak"
+comment = "FishSteak"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09d0_apple"
+comment = "Apple"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x171f_banana"
+comment = "Banana"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1721_bananas"
+comment = "Bananas"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1723_coconut"
+comment = "OpenCoconut"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1725_coconut"
+comment = "SplitCoconut"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1726_coconut"
+comment = "Coconut"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1727_bunch_of_dates"
+comment = "Dates"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09d1_grape_bunch"
+comment = "Grapes"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1728_lime"
+comment = "Lemon"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1729_limes"
+comment = "Lemons"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x172a_lemon"
+comment = "Lime"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x172b_lemons"
+comment = "Limes"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09d2_peach"
+comment = "Peach"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0994_pear"
+comment = "Pear"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0976_slab_of_bacon"
+comment = "SlabOfBacon"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0979_slice_of_bacon"
+comment = "Bacon"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09b7_cooked_bird"
+comment = "CookedBird"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09b9_raw_bird"
+comment = "RawBird"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09c9_ham"
+comment = "Ham"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1609_raw_leg_of_lamb"
+comment = "RawLambLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x160a_leg_of_lamb"
+comment = "LambLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09f2_cooked_ribs"
+comment = "Ribs"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09f1_cut_of_raw_ribs"
+comment = "RawRibs"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09c0_sausage"
+comment = "Sausage"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1607_raw_chicken_leg"
+comment = "RawChickenLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1608_chicken_leg"
+comment = "ChickenLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c5c_watermelon"
+comment = "Watermelon"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c5d_watermelon"
+comment = "SmallWatermelon"
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0d3a_turnip"
+comment = "Turnip"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c64_gourd"
+comment = "YellowGourd"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c66_gourd"
+comment = "GreenGourd"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c6a_pumpkin"
+comment = "Pumpkin"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c6c_pumpkin"
+comment = "SmallPumpkin"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c6d_onion"
+comment = "Onion"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c70_head_of_lettuce"
+comment = "Lettuce"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c72_squash"
+comment = "Squash"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c74_honeydew_melon"
+comment = "HoneydewMelon"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c78_carrot"
+comment = "Carrot"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c79_canteloupe"
+comment = "Cantaloupe"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c7b_head_of_cabbage"
+comment = "Cabbage"
+
+[[loot.entries]]
+weight = 4
+item_id = "0x0c81_ear_of_corn"
+comment = "EarOfCorn"
+
+
+[[loot]]
+id = "fillable_mill"
+comment = "Mill"
+[[loot.entries]]
+weight = 1
+item_id = "0x1039_sack_of_flour"
+comment = "SackFlour"
+
+
+[[loot]]
+id = "fillable_mine"
+comment = "Mine"
+[[loot.entries]]
+weight = 2
+item_id = "0x0e86"
+comment = "Pickaxe"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0f39_a_shovel"
+comment = "Shovel"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1bf2_iron_ingot"
+comment = "IronIngot"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0fb8_forged_metal"
+comment = "ForgedMetal"
+
+
+[[loot]]
+id = "fillable_observatory"
+comment = "Observatory"
+[[loot.entries]]
+weight = 2
+item_id = "sextant"
+comment = "Sextant"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x104b_clock"
+comment = "Clock"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x14f5_spyglass"
+comment = "Spyglass"
+
+
+[[loot]]
+id = "fillable_painter"
+comment = "Painter"
+[[loot.entries]]
+weight = 1
+item_id = "0x0fc1_paints_and_brush"
+comment = "PaintsAndBrush"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0fc0_pen_and_ink"
+comment = "PenAndInk"
+
+
+[[loot]]
+id = "fillable_provisioner"
+comment = "Provisioner"
+[[loot.entries]]
+weight = 1
+item_id = "0x097e_wheel_of_cheese"
+comment = "CheeseWheel"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x097d_wedge_of_cheese"
+comment = "CheeseWedge"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x097c_wedge_of_cheese"
+comment = "CheeseSlice"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09b5_eggs"
+comment = "Eggs"
+
+[[loot.entries]]
+weight = 4
+item_id = "0x09cc_fish"
+comment = "Fish"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09de_dirty_frypan"
+comment = "DirtyFrypan"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09e8_dirty_pan"
+comment = "DirtyPan"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09dc_dirty_pot"
+comment = "DirtyKettle"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09e7_dirty_pot"
+comment = "DirtySmallRoundPot"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09df_dirty_pot"
+comment = "DirtyRoundPot"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09dd_dirty_pot"
+comment = "DirtySmallPot"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09e6_dirty_pot"
+comment = "DirtyPot"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09d0_apple"
+comment = "Apple"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x171f_banana"
+comment = "Banana"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1721_bananas"
+comment = "Bananas"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1723_coconut"
+comment = "OpenCoconut"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1725_coconut"
+comment = "SplitCoconut"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1726_coconut"
+comment = "Coconut"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1727_bunch_of_dates"
+comment = "Dates"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09d1_grape_bunch"
+comment = "Grapes"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1728_lime"
+comment = "Lemon"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1729_limes"
+comment = "Lemons"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x172a_lemon"
+comment = "Lime"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x172b_lemons"
+comment = "Limes"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09d2_peach"
+comment = "Peach"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0994_pear"
+comment = "Pear"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0976_slab_of_bacon"
+comment = "SlabOfBacon"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0979_slice_of_bacon"
+comment = "Bacon"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x097a_raw_fish_steak"
+comment = "RawFishSteak"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x097b_fish_steak"
+comment = "FishSteak"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09b7_cooked_bird"
+comment = "CookedBird"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09b9_raw_bird"
+comment = "RawBird"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09c9_ham"
+comment = "Ham"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1609_raw_leg_of_lamb"
+comment = "RawLambLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x160a_leg_of_lamb"
+comment = "LambLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09f2_cooked_ribs"
+comment = "Ribs"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09f1_cut_of_raw_ribs"
+comment = "RawRibs"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x09c0_sausage"
+comment = "Sausage"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1607_raw_chicken_leg"
+comment = "RawChickenLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1608_chicken_leg"
+comment = "ChickenLeg"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c5c_watermelon"
+comment = "Watermelon"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c5d_watermelon"
+comment = "SmallWatermelon"
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0d3a_turnip"
+comment = "Turnip"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c64_gourd"
+comment = "YellowGourd"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c66_gourd"
+comment = "GreenGourd"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c6a_pumpkin"
+comment = "Pumpkin"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c6c_pumpkin"
+comment = "SmallPumpkin"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c6d_onion"
+comment = "Onion"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c70_head_of_lettuce"
+comment = "Lettuce"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c72_squash"
+comment = "Squash"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c74_honeydew_melon"
+comment = "HoneydewMelon"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c78_carrot"
+comment = "Carrot"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c79_canteloupe"
+comment = "Cantaloupe"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0c7b_head_of_cabbage"
+comment = "Cabbage"
+
+[[loot.entries]]
+weight = 4
+item_id = "0x0c81_ear_of_corn"
+comment = "EarOfCorn"
+
+
+[[loot]]
+id = "fillable_ranger"
+comment = "Ranger"
+[[loot.entries]]
+weight = 2
+item_id = "base_studded_tunic"
+comment = "StuddedChest"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_studded_leggings"
+comment = "StuddedLegs"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x13dc"
+comment = "StuddedArms"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_studded_gloves"
+comment = "StuddedGloves"
+
+[[loot.entries]]
+weight = 1
+item_id = "studdedgorget"
+comment = "StuddedGorget"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_leather_tunic"
+comment = "LeatherChest"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_leather_leggings"
+comment = "LeatherLegs"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x13cd"
+comment = "LeatherArms"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_leather_gloves"
+comment = "LeatherGloves"
+
+[[loot.entries]]
+weight = 1
+item_id = "leathergorget"
+comment = "LeatherGorget"
+
+[[loot.entries]]
+weight = 2
+item_id = "featheredhat"
+comment = "FeatheredHat"
+
+[[loot.entries]]
+weight = 1
+item_id = "base_close_helm"
+comment = "CloseHelm"
+
+[[loot.entries]]
+weight = 1
+item_id = "tallstrawhat"
+comment = "TallStrawHat"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1540"
+comment = "Bandana"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1515_cloak"
+comment = "Cloak"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x170b_boots"
+comment = "Boots"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1711_thigh_boots"
+comment = "ThighBoots"
+
+[[loot.entries]]
+weight = 2
+item_id = "practice_gnarled_staff"
+comment = "GnarledStaff"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x166e_whip"
+comment = "Whip"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x13b2"
+comment = "Bow"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x0f50"
+comment = "Crossbow"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x13fd"
+comment = "HeavyCrossbow"
+
+[[loot.entries]]
+weight = 4
+item_id = "0x0f3f_arrow"
+comment = "Arrow"
+amount = "2-6"
+
+
+[[loot]]
+id = "fillable_stables"
+comment = "Stables"
+[[loot.entries]]
+weight = 1
+item_id = "0x0c78_carrot"
+comment = "Carrot"
+
+
+[[loot]]
+id = "fillable_tanner"
+comment = "Tanner"
+[[loot.entries]]
+weight = 1
+item_id = "featheredhat"
+comment = "FeatheredHat"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x13cd"
+comment = "LeatherArms"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_leather_leggings"
+comment = "LeatherLegs"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_leather_tunic"
+comment = "LeatherChest"
+
+[[loot.entries]]
+weight = 2
+item_id = "base_leather_gloves"
+comment = "LeatherGloves"
+
+[[loot.entries]]
+weight = 1
+item_id = "leathergorget"
+comment = "LeatherGorget"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1081_cut_up_leather"
+comment = "Leather"
+
+
+[[loot]]
+id = "fillable_tavern"
+comment = "Tavern"
+[[loot.entries]]
+weight = 1
+item_id = "0x099f_bottle_of_ale"
+comment = "BeverageAle"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09c7_bottle_of_wine"
+comment = "BeverageWine"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x099b_bottle_of_liquor"
+comment = "BeverageLiquor"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x09c8_jug_of_cider"
+comment = "BeverageCider"
+
+
+[[loot]]
+id = "fillable_thief_guild"
+comment = "ThiefGuild"
+[[loot.entries]]
+weight = 1
+item_id = "0x14fc_lockpick"
+comment = "Lockpick"
+amount = "1-3"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1545_bear_mask"
+comment = "BearMask"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1547_deer_mask"
+comment = "DeerMask"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x154b_tribal_mask"
+comment = "TribalMask"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1549_tribal_mask"
+comment = "HornedTribalMask"
+
+[[loot.entries]]
+weight = 4
+item_id = "orchelm"
+comment = "OrcHelm"
+
+
+[[loot]]
+id = "fillable_tinker"
+comment = "Tinker"
+[[loot.entries]]
+weight = 1
+item_id = "0x14fc_lockpick"
+comment = "Lockpick"
+amount = "1-3"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x104b_clock"
+comment = "Clock"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x104f_clock_parts"
+comment = "ClockParts"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1051_axle_with_gears"
+comment = "AxleGears"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1053_gears"
+comment = "Gears"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1055_hinge"
+comment = "Hinge"
+
+[[loot.entries]]
+weight = 2
+item_id = "sextant"
+comment = "Sextant"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x1059_sextant_parts"
+comment = "SextantParts"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x105b_axle"
+comment = "Axle"
+
+[[loot.entries]]
+weight = 2
+item_id = "0x105d_springs"
+comment = "Springs"
+
+[[loot.entries]]
+weight = 5
+item_id = "0x1eb8_tool_kit"
+comment = "TinkerTools"
+
+[[loot.entries]]
+weight = 4
+item_id = "0x1010_iron_key"
+comment = "Key"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x14fd_lockpicks"
+comment = "Lockpicks"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1eb8_tool_kit"
+comment = "ToolKit"
+
+
+[[loot]]
+id = "fillable_veterinarian"
+comment = "Veterinarian"
+[[loot.entries]]
+weight = 1
+item_id = "0x0e21_clean_bandage"
+comment = "Bandage"
+amount = "1-3"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0e9b_mortar_&_pestle"
+comment = "MortarPestle"
+
+[[loot.entries]]
+weight = 1
+item_id = "lesserhealpotion"
+comment = "LesserHealPotion"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0c78_carrot"
+comment = "Carrot"
+
+
+[[loot]]
+id = "fillable_weaponsmith"
+comment = "Weaponsmith"
+[[loot.entries]]
+weight = 8
+loot_template_id = "randomlowlevelweapons"
+comment = "Loot.WeaponTypes"
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f3f_arrow"
+comment = "Arrow"
+amount = "2-6"
+
