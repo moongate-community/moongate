@@ -45,7 +45,8 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 
 - Spawn and remove single NPCs: `.spawn`, `.remove`.
 - See the spawn regions where they stand: `.spawns`; get a message when regions spawn.
-- Go to any spot of any map: `.go`; walk through doors.
+- Go to any spot of any map, or to one of the 558 named places, by name or from a gump that
+  lists them by map and category: [`.go`](commands/go.md); walk through doors.
 - Lock and unlock doors and make their keys: `.lock`, `.unlock`, `.key`.
 - Force the light, the weather or the season, try a music track: `.globallight`, `.weather`,
   `.season`, `.music`.

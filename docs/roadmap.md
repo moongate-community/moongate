@@ -124,7 +124,8 @@ The largest chain of prerequisites, and what keeps players for months.
 These do not depend on the gameplay phases and are done when an operator needs them.
 
 - Account bans, IP limits, login attempt limits, packet throttles.
-- Staff tools: a props gump, an add menu, area commands, named `.go` locations.
+- Staff tools: a props gump, an add menu, area commands. The named places of
+  [`.go`](commands/go.md) and their gump are done.
 - GM page queue, help and stuck menu, jail.
 - Commands written in Lua.
 
@@ -162,7 +163,6 @@ teleporters. The same converters can bring most of the rule data the phases abov
 | Shop lists | UOX3 `shoplist.dfn` | 4.1 |
 | Spells | UOX3 `spells.dfn` | 4.3 |
 | Craft recipes | UOX3 `create/` | 5.2 |
-| Named locations for `.go` | UOX3 `location.dfn`, ModernUO `Locations/*.json` | Running a shard |
 
 ModernUO and ServUO keep vendor lists, loot packs and craft definitions as C# classes, not data;
 for those UOX3 is the source.
