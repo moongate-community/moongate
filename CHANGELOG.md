@@ -2,6 +2,14 @@
 
 ## [0.13.0](https://github.com/moongate-community/moongate/compare/v0.12.0...v0.13.0) (2026-10-03)
 
+### Upgrade notes
+
+- Three new world migrations, `0012_mobile_flags.sql`, `0013_world_state.sql` and `0014_world_state_one_row.sql`: run `mgctl migrate apply --root-directory <root> --target world` before starting the server, which refuses to start while migrations are pending.
+- Run `mgctl init` again on an existing root to add the new data (`locations.toml`), templates (the treasure chests and their spawn regions, the town container tables, the go gump) and scripts (`clock.lua`, `fillable.lua`, `gumps/go.lua`); existing files are preserved, so a `door.lua` you changed keeps closing with the old timer, which a restart loses.
+- Then run `.decorate` once as an administrator to place the town containers and the clocks, and `.initial_spawn` to fill the treasure chest regions.
+- A door saved open by 0.12.0 has no timer and stays open until someone uses it.
+- New optional `[ultima.world]` settings start with their defaults: `pathfinding_range` and `pathfinding_max_nodes`.
+- New in the world: the go gump with named places, treasure chests, town containers that fill, clocks, NPCs that walk around obstacles. New for scripts: a mobile's stats, skills and flags, shard props, item events that refuse, item timers, the text prompt. Combat, death, skill use and gain are not yet available.
 
 ### Features
 
