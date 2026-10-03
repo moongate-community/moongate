@@ -155,6 +155,17 @@ public class ItemTemplate
     public int? MaxWeight { get; set; }
 
     /// <summary>
+    ///     Loot template ids, each rolled once into the container when a spawn makes it; list one twice to roll it
+    ///     twice. Unset takes the base template's, else none.
+    /// </summary>
+    public List<string>? Loot { get; set; }
+
+    /// <summary>
+    ///     Gold in the container when a spawn makes it. Unset takes the base template's, else 0.
+    /// </summary>
+    public DiceSpec? Gold { get; set; }
+
+    /// <summary>
     ///     Checks the values a template author can get wrong; the template loader calls it for every template.
     /// </summary>
     /// <exception cref="InvalidDataException">
@@ -165,6 +176,11 @@ public class ItemTemplate
         if (Weight is { } weight && (weight < 0 || decimal.Round(weight, 2) != weight))
         {
             throw Invalid("weight", "must be 0 or more with at most two decimals");
+        }
+
+        if (Gold is { Min: < 0 })
+        {
+            throw Invalid("gold", "must not roll below 0");
         }
 
         if (Amount is { } amount && amount.Min < 1)

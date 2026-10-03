@@ -15,6 +15,44 @@ public sealed class ItemTemplatesLoaderTests
         TomlUtils.AddTomlConverter(new HueSpecTomlConverter());
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
+        TomlUtils.AddTomlConverter(new DiceSpecTomlConverter());
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_LootAndGold_AreReadAndInherited()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/items/a.toml",
+            "[[item]]\nid = \"chest\"\nitem_id = 0x0E41\nloot = [\"gems\", \"gems\"]\ngold = \"1d100+29\"\n\n" +
+            "[[item]]\nid = \"old_chest\"\nbase_id = \"chest\"\nitem_id = 0\n\n" +
+            "[[item]]\nid = \"poor_chest\"\nbase_id = \"chest\"\nitem_id = 0\nloot = []\ngold = \"0\"\n\n" +
+            "[[item]]\nid = \"box\"\nitem_id = 0x09A8\n"
+        );
+
+        var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        Assert.Equal(["gems", "gems"], templates["chest"].Loot);
+        Assert.Equal((30, 129), (templates["chest"].Gold!.Value.Min, templates["chest"].Gold!.Value.Max));
+        Assert.Equal(["gems", "gems"], templates["old_chest"].Loot);
+        Assert.Equal(129, templates["old_chest"].Gold!.Value.Max);
+        // A copy: one template's list is not its parent's.
+        Assert.NotSame(templates["chest"].Loot, templates["old_chest"].Loot);
+        Assert.Empty(templates["poor_chest"].Loot!);
+        Assert.Equal(0, templates["poor_chest"].Gold!.Value.Max);
+        Assert.Null(templates["box"].Loot);
+        Assert.Null(templates["box"].Gold);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_GoldThatCanRollBelowZero_Throws()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/items/a.toml", "[[item]]\nid = \"chest\"\nitem_id = 0x0E41\ngold = \"1d4-2\"\n");
+
+        var exception = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+
+        Assert.Contains("gold", exception.Message);
     }
 
     [Fact]

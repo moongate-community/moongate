@@ -24,7 +24,10 @@ public sealed class ItemDecayQueueTests
                 new ItemTemplate { Id = "bottle", DecayMinutes = 5 },
                 new ItemTemplate { Id = "statue", Decays = false },
                 new ItemTemplate { Id = "gm_marker", Visibility = AccountType.GameMaster },
-                new ItemTemplate { Id = "anvil", Movable = false, Decays = true }
+                new ItemTemplate { Id = "anvil", Movable = false, Decays = true },
+                new ItemTemplate { Id = "treasure_chest", Movable = false, Decays = true, DecayMinutes = 45 },
+                new ItemTemplate { Id = "fixed_chest", Movable = false, Decays = false, DecayMinutes = 45 },
+                new ItemTemplate { Id = "plain_chest", Movable = false, DecayMinutes = 45 }
             )
         );
         _queue = new(templates, new FakeTileDataService(), _clock);
@@ -55,7 +58,21 @@ public sealed class ItemDecayQueueTests
         Assert.Equal(_clock.Now.UtcDateTime.AddMinutes(5), bottle.DecayAt);
     }
 
-    [Theory, InlineData("statue"), InlineData("gm_marker"), InlineData("anvil"), InlineData("unknown")]
+    // UOX3's data marks furniture as decaying; an immovable item decays only when its template also says after how long.
+    [Fact]
+    public void Restart_AnImmovableItemWhoseTemplateGivesItsDecayMinutes_Decays()
+    {
+        var chest = Ground(0x40000009, "treasure_chest");
+
+        _queue.Restart(chest);
+
+        Assert.Equal(_clock.Now.UtcDateTime.AddMinutes(45), chest.DecayAt);
+        _clock.Advance(TimeSpan.FromMinutes(45));
+        Assert.Equal([chest], _queue.TakeDue());
+    }
+
+    [Theory, InlineData("statue"), InlineData("gm_marker"), InlineData("anvil"), InlineData("unknown"),
+     InlineData("fixed_chest"), InlineData("plain_chest")]
     public void Restart_AnItemThatDoesNotDecay_HasNoDecayTime(string template)
     {
         var item = Ground(0x40000003, template);

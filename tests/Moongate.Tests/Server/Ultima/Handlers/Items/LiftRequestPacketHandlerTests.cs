@@ -2,9 +2,11 @@ using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Packets.General;
@@ -14,6 +16,7 @@ using Moongate.Server.Ultima.Types.Items;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
@@ -45,7 +48,14 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _otherShirt = new() { Id = new(0x40000009), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
     private readonly StubItemSerialPool _pool = new();
     private readonly StubBankService _bank = new();
-    private readonly FakeTileDataService _tiles = new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0);
+    private readonly ItemTemplateService _templates = new(
+        new StubDataLoaderService().With(new ItemTemplate { Id = "statue", ItemId = new Serial(0x0EED), Movable = false })
+    );
+    private const int ChestGraphic = 0x0E41;
+
+    private readonly FakeTileDataService _tiles = new FakeTileDataService()
+                                                  .Item(0x0EED, TileFlagType.Generic, 0)
+                                                  .Item(ChestGraphic, TileFlagType.Container, 0, weight: 255);
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -221,6 +231,126 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal((60, _groundGold.GroundLocation), (rest.Amount, rest.GroundLocation));
         Assert.Equal([$"Appeared {rest.Id.Value}", $"Disappeared {_groundGold.Id.Value}"], _view.Calls);
         Assert.Empty(_sender.Sent);
+    }
+
+    [Theory, InlineData(1497, true), InlineData(1499, false)]
+    public async Task Handle_AnItemInAChestOnTheGround_IsLiftedOnlyWithinReach(int x, bool reached)
+    {
+        var (chest, ruby) = GroundChest(x);
+        await StartAsync(Aria);
+
+        await LiftAsync(ruby.Id, 1);
+
+        Assert.Equal(reached ? new HeldItem(ruby.Id) : null, _session.Get(ItemSessionKeys.Held));
+        Assert.Equal(reached ? [] : [typeof(LiftRejectPacket)], _sender.Sent.Select(packet => packet.GetType()));
+        // The chest stays where it is.
+        Assert.Empty(_view.Calls);
+        Assert.True(_items.IsLyingOnGround(chest));
+    }
+
+    [Fact]
+    public async Task Handle_AnItemInABagInsideAChestOnTheGround_IsLifted()
+    {
+        var (chest, ruby) = GroundChest(1497);
+        var bag = Item(0x40000022, 1);
+        bag.PutInContainer(chest.Id, new Point2D(10, 10));
+        _items.Add([bag]);
+        _items.MoveToContainer(ruby, bag.Id, new Point2D(5, 5), 0);
+        await StartAsync(Aria);
+
+        await LiftAsync(ruby.Id, 1);
+
+        Assert.Equal(new HeldItem(ruby.Id), _session.Get(ItemSessionKeys.Held));
+    }
+
+    [Fact]
+    public async Task Handle_AnItemInAChestSomeoneHolds_IsRefused()
+    {
+        var (chest, ruby) = GroundChest(1497);
+        _items.Hide(chest);
+        await StartAsync(Aria);
+
+        await LiftAsync(ruby.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent));
+    }
+
+    [Fact]
+    public async Task Handle_AnItemInAChestOutOfSight_IsRefused()
+    {
+        var (_, ruby) = GroundChest(1497);
+        _sight.Allow = false;
+        await StartAsync(Aria);
+
+        await LiftAsync(ruby.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    [Fact]
+    public async Task Handle_AGroundItemMadeImmovable_IsRefusedAndShownAgain()
+    {
+        _groundGold.Movable = false;
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 100);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(LiftRejectReasonType.CannotLift, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
+        Assert.Equal([$"ShownTo 2 {_groundGold.Id.Value}"], _view.Calls);
+    }
+
+    // As a treasure chest or a lamp post: the client's tiledata gives it the weight that cannot be lifted.
+    [Fact]
+    public async Task Handle_AGroundItemTooHeavyToLift_IsRefused()
+    {
+        var (chest, _) = GroundChest(1497);
+        await StartAsync(Aria);
+
+        await LiftAsync(chest.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(LiftRejectReasonType.CannotLift, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
+        Assert.True(_items.IsLyingOnGround(chest));
+    }
+
+    [Fact]
+    public async Task Handle_AGroundItemWhoseTemplateIsFixed_IsRefused()
+    {
+        var statue = new ItemEntity { Id = new(0x40000030), TemplateId = "statue", ItemId = 0x0EED, Amount = 1 };
+        _items.Add([statue]);
+        _items.PlaceOnGround(statue, MapType.Trammel, new Point3D(1497, 1628, 0));
+        await StartAsync(Aria);
+
+        await LiftAsync(statue.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(LiftRejectReasonType.CannotLift, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
+    }
+
+    [Fact]
+    public async Task Handle_AnImmovableItemMadeMovable_IsLifted()
+    {
+        var (chest, _) = GroundChest(1497);
+        chest.Movable = true;
+        await StartAsync(Aria);
+
+        await LiftAsync(chest.Id, 1);
+
+        Assert.Equal(new HeldItem(chest.Id), _session.Get(ItemSessionKeys.Held));
+    }
+
+    [Theory, InlineData(AccountType.GameMaster), InlineData(AccountType.Administrator)]
+    public async Task Handle_Staff_LiftsWhatCannotBeLifted(AccountType type)
+    {
+        _groundGold.Movable = false;
+        await StartAsync(Aria);
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, type));
+
+        await LiftAsync(_groundGold.Id, 100);
+
+        Assert.Equal(new HeldItem(_groundGold.Id), _session.Get(ItemSessionKeys.Held));
     }
 
     [Fact]
@@ -399,9 +529,21 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private Task LiftAsync(Serial item, int amount)
     {
-        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank);
+        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _templates);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new LiftRequestPacket { Item = item, Amount = amount }));
+    }
+
+    // A chest two rows from Aria at the given x, with a ruby inside.
+    private (ItemEntity Chest, ItemEntity Ruby) GroundChest(int x)
+    {
+        var chest = new ItemEntity { Id = new(0x40000020), TemplateId = "chest", ItemId = ChestGraphic, Amount = 1 };
+        var ruby = Item(0x40000021, 1);
+        ruby.PutInContainer(chest.Id, new Point2D(20, 20));
+        _items.Add([chest, ruby]);
+        _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(x, 1628, 0));
+
+        return (chest, ruby);
     }
 
     private static ItemEntity Item(uint serial, int amount)

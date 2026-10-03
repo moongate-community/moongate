@@ -57,6 +57,12 @@ public interface IItemService : IPersistenceDeletionSource
     ItemEntity? GetWornRoot(ItemEntity item);
 
     /// <summary>
+    ///     Gets the item on the ground the item is, or is in at any depth, such as a treasure chest; null for an item a
+    ///     mobile carries or inside a container that is not live.
+    /// </summary>
+    ItemEntity? GetGroundRoot(ItemEntity item);
+
+    /// <summary>
     ///     Gets the live items the mobile wears and everything inside them, at any depth.
     /// </summary>
     IReadOnlyList<ItemEntity> GetOwnedBy(Serial mobile);

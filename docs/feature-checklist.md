@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 64 done, 🟡 38 partly done, ❌ 166 not built yet.
+**268 systems:** ✅ 64 done, 🟡 40 partly done, ❌ 164 not built yet.
 
 **Coverage: 24%** of the systems done, **31%** counting a partly done system as half.
 
@@ -175,7 +175,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Moving, stacking, splitting and merging | ✅ | |
 | Wearing: layers and two-handed weapons | ✅ | No strength requirements yet |
 | The character's own containers | ✅ | |
-| Containers on the ground, weight and item limits | ❌ | |
+| Containers on the ground, weight and item limits | 🟡 | A container on the ground opens within two tiles and its contents can be taken; nothing can be put in, no weight or item limits |
 | Tooltips and single-click names | ✅ | |
 | Items on the ground and their decay | ✅ | |
 | Scripted items | ✅ | Lua item scripts: use, equip, unequip, pick up, drop, create, darkness, a player stepping on them, speech nearby |
@@ -198,7 +198,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Games (chess, checkers, backgammon) | ❌ | |
 | Plants and farming | ❌ | |
 | Dungeon traps and puzzles | ❌ | |
-| Dungeon and town chests that refill | ❌ | |
+| Dungeon and town chests that refill | 🟡 | The dungeon treasure chests of ModernUO, levels 1 to 4: a spawn region makes one with gold and loot, it decays and a new one comes; no lock or trap, no town containers |
 | Messages in a bottle and fished-up treasure | ❌ | |
 | Item attributes: blessed, cursed, newbie, insured | 🟡 | Blessed and cursed in tooltips; no rules behind them |
 | Deeds and redeeding | ❌ | |

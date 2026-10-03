@@ -1,0 +1,70 @@
+# ==============================================================================
+# Moongate - templates/items/treasure_chests.toml
+#
+# What it is for:
+#   The treasure chests of the dungeons, as ModernUO's TreasureChestLevel1 to 4:
+#   a spawn region (templates/spawns/<map>/treasure_chests.toml) puts one on the
+#   ground with its gold and loot inside; it decays 45 minutes later, opened or
+#   not, and the region makes a new one. They have no lock and no trap yet.
+#
+# Fields:
+#   base_id        inherits base_item
+#   item_id        the chest: wooden (1), metal (2), metal bound (3), golden (4)
+#   movable        false: players cannot pick it up
+#   decays         true, with decay_minutes: an item that cannot be picked up
+#                  decays only when its template gives both
+#   decay_minutes  how long the chest stays
+#   gold           the gold inside, as dice
+#   loot           the loot tables of templates/loots, each rolled once; a
+#                  table listed twice is rolled twice, and most rolls of a
+#                  table give nothing
+# ==============================================================================
+
+[[item]]
+id = "treasure_chest_level_1"
+base_id = "base_item"
+item_id = 0x0E43
+name = "treasure chest"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 45
+gold = "1d100+29"
+loot = ["randomgems", "randomlowlevelweapons", "lowlevelarmor", "randomclothing", "randomgemsandjewelry"]
+
+[[item]]
+id = "treasure_chest_level_2"
+base_id = "treasure_chest_level_1"
+item_id = 0x0E41
+gold = "1d100+69"
+loot = ["reagents", "reagents", "lowlevelscrolls", "randompotions", "randomgems"]
+
+[[item]]
+id = "treasure_chest_level_3"
+base_id = "treasure_chest_level_1"
+item_id = 0x09AB
+gold = "1d240+179"
+loot = [
+    "reagents", "reagents",
+    "midlevelscrolls", "midlevelscrolls",
+    "randompotions", "randompotions",
+    "randomgems", "randomgems",
+    "magic_items_max_tier_2", "magic_items_max_tier_2",
+    "randomclothing",
+    "randomgemsandjewelry",
+]
+
+[[item]]
+id = "treasure_chest_level_4"
+base_id = "treasure_chest_level_1"
+item_id = 0x0E40
+gold = "1d400+199"
+loot = [
+    "reagents", "reagents", "reagents",
+    "midlevelscrolls", "midlevelscrolls", "midlevelscrolls",
+    "randompotions", "randompotions", "randompotions",
+    "randomgems", "randomgems", "randomgems",
+    "magic_items_max_tier_3", "magic_items_max_tier_3", "magic_items_max_tier_3",
+    "randomclothing", "randomclothing",
+    "randomgemsandjewelry", "randomgemsandjewelry",
+]

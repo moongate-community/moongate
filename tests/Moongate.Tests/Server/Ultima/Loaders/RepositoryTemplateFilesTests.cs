@@ -170,11 +170,20 @@ public sealed class RepositoryTemplateFilesTests
                           .LoadDataAsync()).Entities.ToArray();
         var lists = (await new NpcListsLoader(directories, new StubDataLoaderService().With(mobiles)).LoadDataAsync()).Entities.ToArray();
 
-        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists)).LoadDataAsync())
+        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists).With(items)).LoadDataAsync())
                      .Entities.ToDictionary(spawn => spawn.Id);
 
         Assert.Equal(446, lists.Length);
-        Assert.Equal(4041, spawns.Count);
+        Assert.Equal(4440, spawns.Count);
+        // The treasure chests of ModernUO's spawners: regions of items.
+        var chests = spawns.Values.Where(spawn => spawn.ItemIds.Count > 0).ToList();
+        Assert.Equal(399, chests.Count);
+        Assert.Equal(633, chests.Sum(chest => chest.Max));
+        Assert.Equal(
+            [(MapType.Felucca, 198), (MapType.Ilshenar, 3), (MapType.Trammel, 198)],
+            chests.GroupBy(chest => chest.Map).Select(group => (group.Key, group.Count()))
+        );
+        Assert.All(chests, chest => Assert.All(chest.ItemIds, item => Assert.StartsWith("treasure_chest_level_", item)));
         var shop = spawns["felucca_0"];
         Assert.Equal(("The Hammer And Anvil", MapType.Felucca, 480), (shop.Name, shop.Map, shop.MinMinutes));
         Assert.Equal(["weaponsmith"], shop.MobileIds);
@@ -214,6 +223,23 @@ public sealed class RepositoryTemplateFilesTests
 
         var lilly = factory.Create("lilly");
         Assert.Equal((401, "Lilly", 32000, 32000), (lilly.Body, lilly.Name, lilly.Fame, lilly.Karma));
+    }
+
+    [Fact]
+    public async Task ShippedTreasureChests_AreFixedDecayAndHoldGoldAndLoot()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        var chests = Enumerable.Range(1, 4).Select(level => templates[$"treasure_chest_level_{level}"]).ToList();
+
+        Assert.All(
+            chests,
+            chest => Assert.Equal(((bool?)false, (bool?)true, (int?)45), (chest.Movable, chest.Decays, chest.DecayMinutes))
+        );
+        Assert.Equal([30, 70, 180, 200], chests.Select(chest => chest.Gold!.Value.Min));
+        Assert.Equal([129, 169, 419, 599], chests.Select(chest => chest.Gold!.Value.Max));
+        Assert.Equal([5, 5, 12, 19], chests.Select(chest => chest.Loot!.Count));
+        Assert.Equal([0x0E43u, 0x0E41u, 0x09ABu, 0x0E40u], chests.Select(chest => chest.ItemId.Value));
     }
 
     [Fact]

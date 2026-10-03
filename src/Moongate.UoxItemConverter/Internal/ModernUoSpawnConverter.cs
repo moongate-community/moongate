@@ -20,7 +20,7 @@ internal static class ModernUoSpawnConverter
     // How far above its spawner a spot may be, so a spawner in a cave does not spawn on the hill over it.
     private const int Headroom = 16;
 
-    private static readonly string[] Eras = ["shared", "post-uoml"];
+    internal static readonly string[] Eras = ["shared", "post-uoml"];
 
     public static int Run(
         string source,
@@ -224,8 +224,6 @@ internal static class ModernUoSpawnConverter
 
     private static SpawnTemplate Region(JsonElement spawner, string id, MapType map, List<string> mobiles, int max)
     {
-        var location = spawner.GetProperty("location");
-        var (x, y, z) = (location[0].GetInt32(), location[1].GetInt32(), location[2].GetInt32());
         var min = Minutes(spawner, "minDelay");
         var spawn = new SpawnTemplate
         {
@@ -237,6 +235,17 @@ internal static class ModernUoSpawnConverter
             MinMinutes = min,
             MaxMinutes = Math.Max(min, Minutes(spawner, "maxDelay"))
         };
+
+        Place(spawner, spawn);
+
+        return spawn;
+    }
+
+    // The area a spawner spawns in and the height its spots stay under.
+    internal static void Place(JsonElement spawner, SpawnTemplate spawn)
+    {
+        var location = spawner.GetProperty("location");
+        var (x, y, z) = (location[0].GetInt32(), location[1].GetInt32(), location[2].GetInt32());
 
         if (spawner.TryGetProperty("spawnBounds", out var bounds))
         {
@@ -252,19 +261,17 @@ internal static class ModernUoSpawnConverter
             );
             spawn.Z = end.GetProperty("z").GetInt32();
 
-            return spawn;
+            return;
         }
 
         // Without a home range ModernUO spawns on the spawner's own spot.
         var range = Math.Max(0, spawner.TryGetProperty("homeRange", out var home) ? home.GetInt32() : 0);
         spawn.Areas.Add(new() { X1 = Math.Max(0, x - range), Y1 = Math.Max(0, y - range), X2 = x + range, Y2 = y + range });
         spawn.Z = z + Headroom;
-
-        return spawn;
     }
 
     // A ModernUO delay, "hh:mm:ss", in whole minutes, a minute at least.
-    private static int Minutes(JsonElement spawner, string property)
+    internal static int Minutes(JsonElement spawner, string property)
     {
         return spawner.TryGetProperty(property, out var value) &&
                TimeSpan.TryParse(value.GetString(), CultureInfo.InvariantCulture, out var delay)

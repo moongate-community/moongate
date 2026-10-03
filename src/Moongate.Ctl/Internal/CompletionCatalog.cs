@@ -83,6 +83,14 @@ internal static class CompletionCatalog
             ]
         ),
         new(
+            "convert modernuo-chests",
+            "Convert the treasure chests of ModernUO's spawners into spawn regions",
+            [
+                new("--source", "The Distribution/Data/Spawns folder of ModernUO", CompletionValueType.Directory),
+                new("--destination", "The spawns folder", CompletionValueType.Directory)
+            ]
+        ),
+        new(
             "completion",
             "Print the completion script of a shell",
             [],

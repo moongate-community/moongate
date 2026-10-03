@@ -13,9 +13,9 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 | Login, realms and accounts | ✅ Works | Login server, game realms, handoff between them |
 | Characters | ✅ Works | Create, delete and restore, enter the world, walk and run |
 | Other players | ✅ Works | See each other, talk |
-| Items | 🟡 Partial | Backpack, paperdoll, ground, tooltips; no ground containers |
+| Items | 🟡 Partial | Backpack, paperdoll, ground, tooltips; containers on the ground open and can be emptied, not filled |
 | NPCs | 🟡 Partial | Spawn regions, Lua scripts, wandering, walking a path; no combat |
-| World | 🟡 Partial | Decoration, doors and keys, teleporters and public moongates (also across maps), day and night, weather, seasons; no houses |
+| World | 🟡 Partial | Decoration, doors and keys, teleporters and public moongates (also across maps), day and night, weather, seasons, dungeon treasure chests that respawn; no houses |
 | Combat, death, skill gain | ❌ Not yet | |
 | Lua scripting | ✅ Works | NPC and item scripts, sandboxed |
 | Persistence | ✅ Works | PostgreSQL, world saves, migrations, rotating SQL backups |
@@ -67,7 +67,7 @@ See all of them in [Commands](commands.md).
   `npc.walk_to`; nothing chases, flees or fights by itself.
 - Recall and gate travel, and mounts.
 - Houses and boats (placement, and multis in movement and line of sight).
-- Containers on the ground, dressing other characters, strength requirements.
+- Putting items into containers on the ground, their weight and item limits, dressing other characters, strength requirements.
 - Region rules: guards and housing. Regions drive the weather, the dungeon light, the music and the season.
 - Spawner items (the [spawn regions](spawns.md) do the respawning).
 - Per-player language, a restore command for the SQL backups, a web administration panel.

@@ -1,4 +1,5 @@
 using Moongate.Core.Directories;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Directories;
@@ -27,6 +28,40 @@ public sealed class SpawnsLoaderTests
         Assert.Equal(["forest"], spawn.NpcListIds);
         Assert.True(spawn.Areas[0].Contains(15, 25));
         Assert.True(spawn.Exclude[0].Contains(11, 21));
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_ReadsASpawnOfItems()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/spawns/felucca/chests.toml",
+            "[[spawn]]\nid = \"crypt\"\nitem_ids = [\"chest\"]\nmax = 1\nmin_minutes = 5\nmax_minutes = 10\n" +
+            "areas = [{ x1 = 10, y1 = 20, x2 = 10, y2 = 20 }]\n"
+        );
+
+        var spawn = Assert.Single((await Loader(root).LoadDataAsync()).Entities);
+
+        Assert.Equal(["chest"], spawn.ItemIds);
+        Assert.Empty(spawn.MobileIds);
+    }
+
+    [Theory,
+     InlineData("item_ids = [\"chest\"]", "item_ids = [\"crown\"]", "crown"),
+     InlineData("item_ids = [\"chest\"]", "item_ids = [\"chest\"]\nmobile_ids = [\"orc\"]", "both"),
+     InlineData("item_ids = [\"chest\"]", "item_ids = [\"chest\"]\nnpc_list_ids = [\"forest\"]", "both")]
+    public async Task LoadDataAsync_ABrokenSpawnOfItems_StopsTheLoad(string from, string to, string reason)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/spawns/felucca/chests.toml",
+            ("[[spawn]]\nid = \"crypt\"\nitem_ids = [\"chest\"]\nmax = 1\nmin_minutes = 5\nmax_minutes = 10\n" +
+             "areas = [{ x1 = 10, y1 = 20, x2 = 10, y2 = 20 }]\n").Replace(from, to)
+        );
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Loader(root).LoadDataAsync());
+
+        Assert.Contains(reason, error.Message);
     }
 
     [Theory,
@@ -77,6 +112,7 @@ public sealed class SpawnsLoaderTests
             new DirectoriesConfig(root.Path, ["templates"]),
             new StubDataLoaderService()
                 .With(new MobileTemplate { Id = "orc" })
+                .With(new ItemTemplate { Id = "chest" })
                 .With(new NpcListTemplate { Id = "forest", Entries = [new() { MobileId = "orc" }] })
         );
     }

@@ -76,8 +76,10 @@ public sealed class ItemDecayQueue : IItemDecayQueue
     // How long the item lasts on the ground, or null when it never decays.
     private TimeSpan? DecayTime(ItemEntity item)
     {
+        // What cannot be picked up stays, unless its template says after how many minutes it goes, as a treasure chest:
+        // the converted data marks plenty of furniture as decaying.
         if (!_templates.TryGet(item.TemplateId, out var template) ||
-            !(item.Movable ?? template.EffectiveMovable(_tiles)) ||
+            !(item.Movable ?? template.EffectiveMovable(_tiles)) && template.DecayMinutes is null ||
             template.Visibility is { } visibility && visibility > AccountType.Regular ||
             !template.EffectiveDecays(_tiles))
         {
