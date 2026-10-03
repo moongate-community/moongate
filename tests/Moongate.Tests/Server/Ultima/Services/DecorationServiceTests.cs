@@ -36,6 +36,7 @@ public sealed class DecorationServiceTests
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
                 new ItemTemplate { Id = "decoration", ItemId = new Serial(0x0A28), Movable = false, Decays = false },
+                new ItemTemplate { Id = "decoration_fillable", ItemId = new Serial(0x0E3C), Movable = false, Decays = false, ScriptId = "fillable" },
                 new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door" },
                 new ItemTemplate
                 {
@@ -106,6 +107,80 @@ public sealed class DecorationServiceTests
         await Service(File("trammel", Block(type, 0x0675))).DecorateAsync(_progress);
 
         Assert.Equal(door ? "decoration_door" : "decoration", Assert.Single(_items.Items).TemplateId);
+    }
+
+    [Theory]
+    [InlineData("FillableLargeCrate", 0x0E3C)]
+    [InlineData("FillableMetalGoldenChest", 0x0E40)]
+    [InlineData("FillableBarrel", 0x0E77)]
+    public async Task DecorateAsync_AFillableContainer_UsesTheFillableTemplate_WithoutAContentType(string type, int graphic)
+    {
+        await Service(File("trammel", Block(type, graphic))).DecorateAsync(_progress);
+
+        var container = Assert.Single(_items.Items);
+        Assert.Equal(("decoration_fillable", graphic), (container.TemplateId, container.ItemId));
+        Assert.Null(container.Props);
+    }
+
+    [Theory]
+    [InlineData("Inn", "inn")]
+    [InlineData("ThiefGuild", "thief_guild")]
+    public async Task DecorateAsync_AFillableContainerWithAContentType_KeepsItAsTheNameOfItsTable(string given, string kept)
+    {
+        var block = Block("FillableMetalChest", 0x0E7C, props: new() { ["content_type"] = given });
+
+        await Service(File("trammel", block)).DecorateAsync(_progress);
+
+        Assert.Equal(new Dictionary<string, object?> { ["content_type"] = kept }, Assert.Single(_items.Items).Props);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ALibraryBookcase_IsFillableWithBooks()
+    {
+        await Service(File("trammel", Block("LibraryBookcase", 0x0A97))).DecorateAsync(_progress);
+
+        var bookcase = Assert.Single(_items.Items);
+        Assert.Equal("decoration_fillable", bookcase.TemplateId);
+        Assert.Equal(new Dictionary<string, object?> { ["content_type"] = "library" }, bookcase.Props);
+    }
+
+    // A world decorated before the containers could fill has them as plain decoration.
+    [Fact]
+    public async Task DecorateAsync_AFillableContainerPlacedAsPlainDecoration_BecomesFillable_AndCountsAsThere()
+    {
+        var crate = new ItemEntity { Id = new Serial(0x40000500), TemplateId = "decoration", ItemId = 0x0E3C, Amount = 1 };
+        crate.PlaceOnGround(MapType.Trammel, new Point3D(1500, 1600, 10));
+        var wall = new ItemEntity { Id = new Serial(0x40000501), TemplateId = "decoration", ItemId = 0x0063, Amount = 1 };
+        wall.PlaceOnGround(MapType.Trammel, new Point3D(1501, 1600, 10));
+        _items.Add([crate, wall]);
+        _items.PlaceOnGround(crate, MapType.Trammel, new Point3D(1500, 1600, 10));
+        _items.PlaceOnGround(wall, MapType.Trammel, new Point3D(1501, 1600, 10));
+        var blocks = new[]
+        {
+            Block("FillableLargeCrate", 0x0E3C, props: new() { ["content_type"] = "Mill" }),
+            Block("Static", 0x0063, new Point3D(1501, 1600, 10))
+        };
+
+        var result = await Service(File("trammel", blocks)).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(0, 2, 0, 1), result);
+        Assert.Equal("decoration_fillable", crate.TemplateId);
+        Assert.Equal(new Dictionary<string, object?> { ["content_type"] = "mill" }, crate.Props);
+        Assert.Equal(("decoration", (Dictionary<string, object?>?)null), (wall.TemplateId, wall.Props));
+    }
+
+    [Fact]
+    public async Task DecorateAsync_AFillableContainerAlreadyFillable_KeepsItsProps()
+    {
+        await Service(File("trammel", Block("FillableLargeCrate", 0x0E3C))).DecorateAsync(_progress);
+        var crate = Assert.Single(_items.Items);
+        crate.SetProp("fill.next", 123L);
+        crate.SetProp("content_type", "baker");
+
+        await Service(File("trammel", Block("FillableLargeCrate", 0x0E3C))).DecorateAsync(_progress);
+
+        Assert.Equal("decoration_fillable", Assert.Single(_items.Items).TemplateId);
+        Assert.Equal(new Dictionary<string, object?> { ["fill.next"] = 123L, ["content_type"] = "baker" }, crate.Props);
     }
 
     [Fact]
