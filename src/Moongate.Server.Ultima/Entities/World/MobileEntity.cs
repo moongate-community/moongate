@@ -197,6 +197,22 @@ public class MobileEntity : IMoongateEntity
     public DirectionType Direction { get; set; } = DirectionType.South;
 
     /// <summary>
+    ///     Whether the mobile is hidden: the players do not see it, the staff does.
+    /// </summary>
+    public bool Hidden { get; set; }
+
+    /// <summary>
+    ///     Whether the mobile is frozen: it neither steps nor turns.
+    /// </summary>
+    public bool Frozen { get; set; }
+
+    /// <summary>
+    ///     Whether the mobile is in war mode. It is not a column: a mobile comes back in peace.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public bool WarMode { get; set; }
+
+    /// <summary>
     ///     Gets or sets <see cref="X" />, <see cref="Y" /> and <see cref="Z" /> together. It is not a column: the three
     ///     coordinates are stored apart so the database can filter and index them.
     /// </summary>
