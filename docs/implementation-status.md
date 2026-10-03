@@ -15,7 +15,7 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 | Other players | ✅ Works | See each other, talk |
 | Items | 🟡 Partial | Backpack, paperdoll, ground, tooltips; no ground containers |
 | NPCs | 🟡 Partial | Spawn regions, Lua scripts, wandering, walking a path; no combat |
-| World | 🟡 Partial | Decoration, doors and keys, teleporters and public moongates (also across maps), day and night, weather, seasons; no houses |
+| World | 🟡 Partial | Decoration, doors and keys, teleporters and public moongates (also across maps), day and night, weather, seasons, dungeon treasure chests that respawn; no houses |
 | Combat, death, skill gain | ❌ Not yet | |
 | Lua scripting | ✅ Works | NPC and item scripts, sandboxed |
 | Persistence | ✅ Works | PostgreSQL, world saves, migrations, rotating SQL backups |

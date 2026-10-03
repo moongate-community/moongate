@@ -14,7 +14,7 @@ It takes no arguments. It marks every spawn region to fill at once and moves its
 now, then says how many regions and NPCs that is:
 
 ```text
-Filling 4041 spawn regions: 29000 NPCs to spawn. The spawn messages show the progress.
+Filling 4524 spawn regions: 29665 NPCs to spawn. The spawn messages show the progress.
 ```
 
 The NPCs arrive at the next check of the `npc_spawn` timer, within 10 seconds, each region bringing

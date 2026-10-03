@@ -134,7 +134,7 @@ These do not depend on the gameplay phases and are done when an operator needs t
 After phase 7. Each of these needs most of what comes before.
 
 - **Quests**: an engine for quests and escorts; about 35,000 lines in ModernUO.
-- **Champion spawns, treasure maps, dungeon chests that refill, camps.**
+- **Champion spawns, treasure maps, camps.** The dungeon chests respawn already; their locks and traps wait for the skills.
 - **Virtues and factions.**
 - **The modern ruleset**: item properties and resistances, random magic loot, special moves,
   Necromancy, Chivalry, Bushido, Ninjitsu, Spellweaving, Mysticism, bulk orders, custom house
