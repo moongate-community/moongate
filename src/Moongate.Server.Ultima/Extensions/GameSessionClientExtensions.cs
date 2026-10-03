@@ -25,6 +25,14 @@ public static class GameSessionClientExtensions
     /// </summary>
     public static bool UsesContainerGrid(this GameSession session)
     {
-        return session.ClientVersion is not { } version || version.CompareTo(ContainerGrid) >= 0;
+        return UsesContainerGrid(session.ClientVersion);
+    }
+
+    /// <summary>
+    ///     Gets whether a client of that version reads the grid byte in 0x25 and 0x3C (from 6.0.1.7).
+    /// </summary>
+    public static bool UsesContainerGrid(ClientVersion? clientVersion)
+    {
+        return clientVersion is not { } version || version.CompareTo(ContainerGrid) >= 0;
     }
 }

@@ -128,7 +128,7 @@ The item is made with what its template puts inside: its `gold` in piles and eac
 the prop `spawn.region` and counts for the region while it lies on the ground: when it decays, is
 deleted or is taken from the ground, its slot is free and the region spawns a new one at its next
 time. The staff messages and the world progress are about NPCs only; `.spawns` lists a region of
-items with its live items (the text still says NPCs), and `.initial_spawn` fills it too.
+items with its live items, and `.initial_spawn` fills it too.
 
 The shipped `treasure_chests.toml` of Felucca, Trammel and Ilshenar hold the dungeon chests of
 ModernUO's spawners, written by
@@ -136,15 +136,22 @@ ModernUO's spawners, written by
 up to 633 chests. The four templates, `treasure_chest_level_1` to `treasure_chest_level_4` in
 `templates/items/treasure_chests.toml`, are ModernUO's `TreasureChestLevel1` to `4`:
 
-| Level | Chest | Gold | Loot tables rolled |
+| Level | Chest | Gold | What it may hold |
 | --- | --- | --- | --- |
-| 1 | Wooden | 30-129 | Gems, a weapon, an armour, clothing, jewellery |
-| 2 | Metal | 70-169 | Reagents twice, a low scroll, a potion, gems |
-| 3 | Metal bound | 180-419 | Reagents, scrolls, potions, gems and magic items twice each, clothing, jewellery |
-| 4 | Golden | 200-599 | Reagents, scrolls, potions, gems and magic items three times each, clothing and jewellery twice |
+| 1 | Wooden | 30-129 | 1-3 gems of a kind, a weapon, an armour, clothing, jewellery |
+| 2 | Metal | 70-169 | Up to two piles of 1-2 reagents, 1-8 scrolls of a low circle, a potion, 1-6 gems |
+| 3 | Metal bound | 180-419 | One or two piles of 1-9 reagents; up to two each of 1-12 scrolls, potions, 1-9 gems, clothing and jewellery; magic items |
+| 4 | Golden | 200-599 | 1-4 blank scrolls; up to three each of 12 reagents, 16 scrolls, potions and 12 gems; up to two of clothing and jewellery; magic items |
 
-Most rolls of a table give nothing, so a chest holds a few of these. A player within two tiles
-opens a chest with a double click and takes what is inside; nothing can be put into it. A chest
+Each pile of gems, reagents or scrolls and each potion comes one time in two; a weapon, an armour,
+clothing or jewellery a little less, since their own tables also give nothing at times; a magic
+item one time in five, rolled four times at level 3 and six at level 4. They come from the tables of `templates/loots/treasure_chests.toml`, which give the
+piles of ModernUO out of the gems, reagents and scrolls of the other loot tables. ModernUO's wands
+are not there: no wand template exists yet.
+
+A player within two tiles opens a chest with a double click, takes what is inside and may put
+items into it; the players around see what comes and goes. A region never puts a chest on the cell
+of another spawned chest. A chest
 cannot be picked up, by all but the staff, and decays 45 minutes after it was made, opened or not,
 with what is left inside; the region then makes a new one 5 to 10 minutes later. The containers of the towns work another way: they stay and
 [fill up when opened](scripting.md#item-scripts). Chests have no lock and no trap yet, each level has one

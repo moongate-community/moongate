@@ -8,6 +8,7 @@ using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.World;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Items;
@@ -291,6 +292,47 @@ public sealed class WorldViewService : IWorldViewService
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
                 _sender.TrySend(viewer.SessionId, remove);
+            }
+        }
+    }
+
+    public void ContainedItemAppeared(ItemEntity item, ItemEntity root, Serial except)
+    {
+        var info = _tooltips.Info(item);
+
+        foreach (var viewer in AroundTheContainer(root, except))
+        {
+            _sender.TrySend(
+                viewer.SessionId,
+                new ContainerItemUpdatePacket(item, GameSessionClientExtensions.UsesContainerGrid(viewer.Version))
+            );
+            _sender.TrySend(viewer.SessionId, info);
+        }
+    }
+
+    public void ContainedItemDisappeared(ItemEntity item, ItemEntity root, Serial except)
+    {
+        var remove = new RemoveEntityPacket(item.Id);
+
+        foreach (var viewer in AroundTheContainer(root, except))
+        {
+            _sender.TrySend(viewer.SessionId, remove);
+        }
+    }
+
+    // The players who may have the container on the ground open: those in range of it, less the one who acts.
+    private IEnumerable<Viewer> AroundTheContainer(ItemEntity root, Serial except)
+    {
+        if (root.Map is not { } map || root.GroundLocation is not { } spot)
+        {
+            yield break;
+        }
+
+        foreach (var other in _sectors.GetMobilesInRange(map, spot, ViewRange))
+        {
+            if (other.Id != except && _sessions.TryGetValue(other.Id, out var viewer))
+            {
+                yield return viewer;
             }
         }
     }

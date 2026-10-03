@@ -16,8 +16,9 @@
 #   decay_minutes  how long the chest stays
 #   gold           the gold inside, as dice
 #   loot           the loot tables of templates/loots, each rolled once; a
-#                  table listed twice is rolled twice, and most rolls of a
-#                  table give nothing
+#                  table listed twice is rolled twice. The chest_ tables
+#                  (templates/loots/treasure_chests.toml) give something one
+#                  time in two, a magic item table one time in five
 # ==============================================================================
 
 [[item]]
@@ -30,14 +31,14 @@ movable = false
 decays = true
 decay_minutes = 45
 gold = "1d100+29"
-loot = ["randomgems", "randomlowlevelweapons", "lowlevelarmor", "randomclothing", "randomgemsandjewelry"]
+loot = ["chest_gems_1_3", "chest_weapon", "chest_armour", "chest_clothing", "chest_jewellery"]
 
 [[item]]
 id = "treasure_chest_level_2"
 base_id = "treasure_chest_level_1"
 item_id = 0x0E41
 gold = "1d100+69"
-loot = ["reagents", "reagents", "lowlevelscrolls", "randompotions", "randomgems"]
+loot = ["chest_reagents_1_2", "chest_reagents_1_2", "chest_scrolls_low_1_8", "chest_potion", "chest_gems_1_6"]
 
 [[item]]
 id = "treasure_chest_level_3"
@@ -45,13 +46,13 @@ base_id = "treasure_chest_level_1"
 item_id = 0x09AB
 gold = "1d240+179"
 loot = [
-    "reagents", "reagents",
-    "midlevelscrolls", "midlevelscrolls",
-    "randompotions", "randompotions",
-    "randomgems", "randomgems",
-    "magic_items_max_tier_2", "magic_items_max_tier_2",
-    "randomclothing",
-    "randomgemsandjewelry",
+    "chest_reagents_1_9_always", "chest_reagents_1_9",
+    "chest_scrolls_mid_1_12", "chest_scrolls_mid_1_12",
+    "chest_potion", "chest_potion",
+    "chest_gems_1_9", "chest_gems_1_9",
+    "magic_items_max_tier_2", "magic_items_max_tier_2", "magic_items_max_tier_2", "magic_items_max_tier_2",
+    "chest_clothing", "chest_clothing",
+    "chest_jewellery", "chest_jewellery",
 ]
 
 [[item]]
@@ -60,11 +61,13 @@ base_id = "treasure_chest_level_1"
 item_id = 0x0E40
 gold = "1d400+199"
 loot = [
-    "reagents", "reagents", "reagents",
-    "midlevelscrolls", "midlevelscrolls", "midlevelscrolls",
-    "randompotions", "randompotions", "randompotions",
-    "randomgems", "randomgems", "randomgems",
+    "chest_reagents_12", "chest_reagents_12", "chest_reagents_12",
+    "chest_scrolls_mid_16", "chest_scrolls_mid_16", "chest_scrolls_mid_16",
+    "chest_blank_scrolls_1_4",
+    "chest_potion", "chest_potion", "chest_potion",
+    "chest_gems_12", "chest_gems_12", "chest_gems_12",
     "magic_items_max_tier_3", "magic_items_max_tier_3", "magic_items_max_tier_3",
-    "randomclothing", "randomclothing",
-    "randomgemsandjewelry", "randomgemsandjewelry",
+    "magic_items_max_tier_3", "magic_items_max_tier_3", "magic_items_max_tier_3",
+    "chest_clothing", "chest_clothing",
+    "chest_jewellery", "chest_jewellery",
 ]

@@ -59,6 +59,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
+    private SessionService _sessions = null!;
 
     public LiftRequestPacketHandlerTests()
     {
@@ -243,9 +244,45 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
         Assert.Equal(reached ? new HeldItem(ruby.Id) : null, _session.Get(ItemSessionKeys.Held));
         Assert.Equal(reached ? [] : [typeof(LiftRejectPacket)], _sender.Sent.Select(packet => packet.GetType()));
-        // The chest stays where it is.
-        Assert.Empty(_view.Calls);
+        // The chest stays where it is; those who look into it see the ruby go.
+        Assert.Equal(reached ? [$"ContainedDisappeared {ruby.Id.Value} in {chest.Id.Value} except {Aria.Value}"] : [], _view.Calls);
         Assert.True(_items.IsLyingOnGround(chest));
+    }
+
+    [Fact]
+    public async Task Handle_PartOfAPileInAChestOnTheGround_ShowsTheRestToThoseAround()
+    {
+        var (chest, ruby) = GroundChest(1497);
+        ruby.Amount = 100;
+        await StartAsync(Aria);
+
+        await LiftAsync(ruby.Id, 40);
+
+        Assert.True(_items.TryGet(new Serial(0x40000100), out var rest));
+        Assert.Equal((60, (Serial?)chest.Id), (rest.Amount, rest.ContainerId));
+        Assert.Equal(
+            [
+                $"ContainedAppeared {rest.Id.Value} in {chest.Id.Value} except {Aria.Value}",
+                $"ContainedDisappeared {ruby.Id.Value} in {chest.Id.Value} except {Aria.Value}"
+            ],
+            _view.Calls
+        );
+    }
+
+    // In a chest the item stays in place while it is held: a second hand must not take it too.
+    [Fact]
+    public async Task Handle_AnItemInAChestThatAnotherPlayerHolds_IsRefused()
+    {
+        var (_, ruby) = GroundChest(1497);
+        await StartAsync(Aria);
+        var other = _sessions.GetOrCreate(new Moongate.Tests.TestSupport.Network.ControlledNetworkConnection(77));
+        await _fixture.ExecuteOnLoopAsync(() => other.Set(ItemSessionKeys.Held, new(ruby.Id)));
+
+        await LiftAsync(ruby.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(LiftRejectReasonType.CannotLift, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
+        Assert.Empty(_view.Calls);
     }
 
     [Fact]
@@ -519,7 +556,8 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     private async Task StartAsync(Serial? character)
     {
         _fixture = await SessionFixture.CreateAsync();
-        _session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
+        _sessions = new SessionService(_fixture.Loop);
+        _session = _sessions.GetOrCreate(_fixture.Client);
 
         if (character is { } id)
         {
@@ -529,7 +567,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private Task LiftAsync(Serial item, int amount)
     {
-        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _templates);
+        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _templates, _sessions);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new LiftRequestPacket { Item = item, Amount = amount }));
     }

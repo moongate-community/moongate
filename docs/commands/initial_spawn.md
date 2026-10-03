@@ -11,10 +11,10 @@ Fills every spawn region in the world to its `max` at the next spawn check.
 ```
 
 It takes no arguments. It marks every spawn region to fill at once and moves its next spawn to
-now, then says how many regions and NPCs that is:
+now, then says how many regions and how many NPCs and items that is:
 
 ```text
-Filling 4440 spawn regions: 29633 NPCs to spawn. The spawn messages show the progress.
+Filling 4440 spawn regions: 29633 to spawn. The spawn messages show the progress.
 ```
 
 The NPCs arrive at the next check of the `npc_spawn` timer, within 10 seconds, each region bringing

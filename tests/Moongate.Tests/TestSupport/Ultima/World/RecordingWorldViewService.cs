@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Core.Geometry;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Types.Accounts;
@@ -56,6 +57,16 @@ public sealed class RecordingWorldViewService : IWorldViewService
     public void ItemDisappeared(ItemEntity item)
     {
         Record($"Disappeared {item.Id.Value}");
+    }
+
+    public void ContainedItemAppeared(ItemEntity item, ItemEntity root, Serial except)
+    {
+        Record($"ContainedAppeared {item.Id.Value} in {root.Id.Value} except {except.Value}");
+    }
+
+    public void ContainedItemDisappeared(ItemEntity item, ItemEntity root, Serial except)
+    {
+        Record($"ContainedDisappeared {item.Id.Value} in {root.Id.Value} except {except.Value}");
     }
 
     public void WornItemChanged(MobileEntity wearer, ItemEntity item)

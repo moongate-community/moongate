@@ -76,6 +76,28 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         Assert.False(_mobiles.IsInWorld(_aria.Id));
     }
 
+    // Those around a chest were told the item left it when it was lifted.
+    [Fact]
+    public async Task OnSessionClosed_HoldingAnItemOfAChestOnTheGround_ShowsItAgainToThoseAround()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        var chest = new ItemEntity { Id = new(0x40000060), TemplateId = "chest", ItemId = 0x0E41, Amount = 1 };
+        var ruby = new ItemEntity { Id = new(0x40000061), TemplateId = "ruby", ItemId = 0x0F13, Amount = 1 };
+        ruby.PutInContainer(chest.Id, new Point2D(10, 10));
+        _items.Add([chest, ruby]);
+        _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(1497, 1628, 0));
+        await fixture.ExecuteOnLoopAsync(() => session.Set(ItemSessionKeys.Held, new(ruby.Id)));
+        var service = Service();
+
+        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
+        await service.StopAsync().WaitAsync(Timeout);
+
+        Assert.Contains(_view.Calls, call => call.StartsWith($"ContainedAppeared {ruby.Id.Value} in {chest.Id.Value}", StringComparison.Ordinal));
+        Assert.True(_items.TryGet(ruby.Id, out _));
+        Assert.Empty(_world.Items.Upserted.Where(item => item.Id == ruby.Id));
+    }
+
     [Fact]
     public async Task OnSessionClosed_HoldingAGroundItem_PutsItBackAndShowsIt()
     {

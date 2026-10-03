@@ -16,8 +16,9 @@ using Serilog;
 namespace Moongate.Server.Ultima.Handlers.Items;
 
 /// <summary>
-///     Lets the player pick up (0x07) an item inside a container their character carries, or an item on the ground within
-///     2 tiles in line of sight, whoever dropped it: the item is recorded as held in the session and stays where it is
+///     Lets the player pick up (0x07) an item inside a container their character carries, an item inside a container
+///     lying on the ground within reach, such as a treasure chest, or an item on the ground within 2 tiles in line of
+///     sight, whoever dropped it; what cannot be picked up stays, for all but the staff: the item is recorded as held in the session and stays where it is
 ///     until the drop; a ground item leaves every screen and the sector grid meanwhile. Part of a stackable item splits
 ///     it: the held part keeps the serial, and the rest, with a serial from <see cref="IItemSerialPool" />, stays in place
 ///     and is shown with 0x25, or to everyone in range on the ground. Anything else is refused with 0x27, and the
@@ -38,6 +39,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
     private readonly IItemScriptService? _scripts;
     private readonly IBankService? _bank;
     private readonly IItemTemplateService? _templates;
+    private readonly ISessionService? _sessions;
 
     public LiftRequestPacketHandler(
         IItemService items,
@@ -49,9 +51,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         ITooltipService tooltips,
         IItemScriptService? scripts = null,
         IBankService? bank = null,
-        IItemTemplateService? templates = null
+        IItemTemplateService? templates = null,
+        ISessionService? sessions = null
     )
     {
+        _sessions = sessions;
         _templates = templates;
         _bank = bank;
         _tooltips = tooltips;
@@ -110,8 +114,10 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             return;
         }
 
-        // A chest someone holds is in nobody's reach.
-        if (chest is not null && !(_items.IsLyingOnGround(chest) && CanReachFromTheGround(session, chest, out _)))
+        // A chest someone holds is in nobody's reach; an item of a chest stays in it while it is held, so a second
+        // hand could take it too.
+        if (chest is not null &&
+            !(_items.IsLyingOnGround(chest) && CanReachFromTheGround(session, chest, out _) && !IsHeldByAnother(session, item)))
         {
             Refuse(session, LiftRejectReasonType.CannotLift, item);
 
@@ -145,6 +151,12 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             {
                 _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(rest, session.UsesContainerGrid()));
                 _sender.TrySend(session.SessionId, _tooltips.Info(rest));
+
+                // Those around the chest lose the pile below: they are shown what stays of it.
+                if (chest is not null)
+                {
+                    _view.ContainedItemAppeared(rest, chest, session.CharacterId);
+                }
             }
         }
 
@@ -155,6 +167,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         {
             _items.Hide(item);
             _view.ItemDisappeared(item);
+        }
+        else if (chest is not null)
+        {
+            // Those who look into the chest see it go.
+            _view.ContainedItemDisappeared(item, chest, session.CharacterId);
         }
         else if (worn && _mobiles.TryGet(session.CharacterId, out var wearer))
         {
@@ -190,6 +207,12 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         reason = near ? LiftRejectReasonType.OutOfSight : LiftRejectReasonType.OutOfRange;
 
         return false;
+    }
+
+    private bool IsHeldByAnother(GameSession session, ItemEntity item)
+    {
+        return _sessions is not null &&
+               _sessions.GetAll().Any(other => other.SessionId != session.SessionId && other.Get(ItemSessionKeys.Held)?.Item == item.Id);
     }
 
     // The item's own setting, else its template's, else the weight the client's tiledata gives to what cannot be lifted.

@@ -48,8 +48,8 @@ public sealed class SpawnsCommand : ICommandExecutor
                 _localization.Text(
                     region.Retrying ? CommandMessages.SpawnRegionRetrying : CommandMessages.SpawnRegionHere,
                     region.Retrying
-                        ? "{0} ({1}): {2}/{3} NPCs, no spot found, retrying in {4} min."
-                        : "{0} ({1}): {2}/{3} NPCs, next spawn in {4} min.",
+                        ? "{0} ({1}): {2}/{3}, no spot found, retrying in {4} min."
+                        : "{0} ({1}): {2}/{3}, next spawn in {4} min.",
                     region.Name ?? region.Id,
                     region.Id,
                     region.Live,

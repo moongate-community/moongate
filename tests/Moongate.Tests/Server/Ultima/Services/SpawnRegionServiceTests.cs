@@ -20,6 +20,7 @@ using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Maps;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Ultima.Types;
 
@@ -32,7 +33,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     private readonly StubMovementService _movement = new() { LandingZ = 5 };
     private readonly StubNpcService _npcs = new();
     private readonly StubItemSpawnService _itemSpawns = new();
-    private readonly ItemService _items = TestItems.Create();
+    private readonly SectorService _sectors = TestSectors.Create();
+    private readonly ItemService _items;
     private readonly SettableClock _clock = new();
 
     private BroadcastFixture _fixture = null!;
@@ -41,6 +43,11 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
 
     // Most tests follow the spawn rules after the first fill.
     private bool _initialFill;
+
+    public SpawnRegionServiceTests()
+    {
+        _items = TestItems.Create(_sectors);
+    }
 
     public async Task InitializeAsync()
     {
@@ -507,13 +514,14 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task AnItemRegion_MarksItsItemsWithItsId_AndStopsAtItsMax()
     {
         _itemSpawns.Items = _items;
-        await StartAsync(new ScriptedRandom(0), Chests("crypt", max: 2));
+        await StartAsync(new ScriptedRandom(0), Chests("crypt"));
 
         await TickAsync();
         await TickAsync();
         await TickAsync();
 
-        Assert.Equal(2, _itemSpawns.Spawns.Count);
+        Assert.Single(_itemSpawns.Spawns);
+        Assert.Equal(1, Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 10, 10)).Live);
         Assert.All(
             _items.Items,
             item =>
@@ -553,12 +561,98 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
             () =>
             {
                 _items.Add([bag]);
-                _items.Items.Single(item => item.TemplateId == "treasure_chest").PutInContainer(bag.Id, new Point2D(1, 1));
+                _items.MoveToContainer(_items.Items.Single(item => item.TemplateId == "treasure_chest"), bag.Id, new Point2D(1, 1));
             }
         );
         await TickAsync();
 
         Assert.Equal(2, _itemSpawns.Spawns.Count);
+    }
+
+    [Fact]
+    public async Task TheItemsOfARegionAlreadyInTheWorldAtTheStart_AreCounted()
+    {
+        _itemSpawns.Items = _items;
+        var chest = new ItemEntity { Id = new Serial(0x40000700), TemplateId = "treasure_chest", ItemId = 0x0E41, Amount = 1 };
+        chest.PlaceOnGround(MapType.Felucca, new Point3D(10, 10, 0));
+        chest.SetProp(SpawnRegionService.RegionProp, "crypt");
+        _items.Add([chest]);
+        // A second cell is free: only the count keeps a new chest away.
+        await StartAsync(new ScriptedRandom(0), Chests("crypt", x2: 11));
+
+        await TickAsync();
+
+        Assert.Empty(_itemSpawns.Spawns);
+        var status = Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 10, 10));
+        Assert.Equal((1, false), (status.Live, status.Retrying));
+    }
+
+    [Fact]
+    public async Task TwoItemsOfARegion_TakeACellEach()
+    {
+        _itemSpawns.Items = _items;
+        await StartAsync(new System.Random(1), Chests("crypt", max: 2, x: 30, y: 40, x2: 31));
+
+        await TickAsync();
+        await TickAsync();
+        await TickAsync();
+
+        Assert.Equal([30, 31], _itemSpawns.Spawns.Select(spawn => spawn.Location.X).Order());
+        var status = Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 30, 40));
+        Assert.Equal((2, false), (status.Live, status.Retrying));
+    }
+
+    [Fact]
+    public async Task ARegionWithMoreItemsThanCells_FillsItsCellsAndKeepsTrying()
+    {
+        _itemSpawns.Items = _items;
+        await StartAsync(new ScriptedRandom(0), Chests("crypt", max: 2, x: 30, y: 40));
+
+        await TickAsync();
+        await TickAsync();
+
+        Assert.Single(_itemSpawns.Spawns);
+        Assert.True(Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 30, 40)).Retrying);
+    }
+
+    [Fact]
+    public async Task AnItemRegion_DoesNotSpawnOnACellWhereTheItemOfAnotherRegionLies()
+    {
+        _itemSpawns.Items = _items;
+        await StartAsync(new ScriptedRandom(0), Chests("crypt", x: 30, y: 40), Chests("vault", x: 30, y: 40));
+
+        await TickAsync();
+        await TickAsync();
+
+        Assert.Single(_itemSpawns.Spawns);
+    }
+
+    // As ModernUO, the decoration of the place does not keep a chest away.
+    [Fact]
+    public async Task AnItemRegion_SpawnsOnACellWhereAPlainItemLies()
+    {
+        _itemSpawns.Items = _items;
+        var carpet = new ItemEntity { Id = new Serial(0x40000701), TemplateId = "decoration", ItemId = 0x0AC6, Amount = 1 };
+        carpet.PlaceOnGround(MapType.Felucca, new Point3D(30, 40, 0));
+        _items.Add([carpet]);
+        await StartAsync(new ScriptedRandom(0), Chests("crypt", x: 30, y: 40));
+
+        await TickAsync();
+
+        Assert.Single(_itemSpawns.Spawns);
+    }
+
+    [Fact]
+    public async Task AnNpcRegion_SpawnsOnACellWhereAnItemLies()
+    {
+        var barrel = new ItemEntity { Id = new Serial(0x40000701), TemplateId = "decoration", ItemId = 0x0E77, Amount = 1 };
+        barrel.PlaceOnGround(MapType.Felucca, new Point3D(10, 10, 0));
+        _items.Add([barrel]);
+        await StartAsync(new ScriptedRandom(0), Spawn("forest", x2: 10, y2: 10));
+
+        await TickAsync();
+
+        Assert.Single(_npcs.Spawns);
     }
 
     [Fact]
@@ -619,7 +713,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         Assert.Equal(("crypt", 1, 2), (status.Id, status.Live, status.Max));
     }
 
-    private static SpawnTemplate Chests(string id, int max = 1, int x = 10, int y = 10)
+    private static SpawnTemplate Chests(string id, int max = 1, int x = 10, int y = 10, int? x2 = null)
     {
         return new()
         {
@@ -627,7 +721,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
             Map = MapType.Felucca,
             ItemIds = ["treasure_chest"],
             Max = max,
-            Areas = [new() { X1 = x, Y1 = y, X2 = x, Y2 = y }]
+            Areas = [new() { X1 = x, Y1 = y, X2 = x2 ?? x, Y2 = y }]
         };
     }
 
@@ -698,7 +792,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
             random,
             new SpawnsConfig { InitialFill = _initialFill },
             _itemSpawns,
-            _items
+            _items,
+            _sectors
         );
         await _service.StartAsync();
     }

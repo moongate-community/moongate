@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Data.Internal.Spawns;
 using Moongate.Server.Ultima.Data.Spawns;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Services.Internal;
@@ -61,6 +62,11 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
     private readonly SpawnsConfig _config;
     private readonly IItemSpawnService? _itemSpawns;
     private readonly IItemService? _items;
+    private readonly ISectorService? _sectors;
+
+    // The items the regions spawned and that may still lie on the ground, by serial, with their region: found once
+    // among the items of the world, then kept up to date, so a check does not go through every item.
+    private Dictionary<Serial, string>? _spawnedItems;
 
     private string? _timer;
 
@@ -84,12 +90,14 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         Random? random = null,
         SpawnsConfig? config = null,
         IItemSpawnService? itemSpawns = null,
-        IItemService? items = null
+        IItemService? items = null,
+        ISectorService? sectors = null
     )
     {
         _config = config ?? new();
         _itemSpawns = itemSpawns;
         _items = items;
+        _sectors = sectors;
         _data = data;
         _map = map;
         _movement = movement;
@@ -274,7 +282,12 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
                 var templateId = region.Pool?.Pick(_random) ?? template.ItemIds[_random.Next(0, template.ItemIds.Count)];
                 var movement = _movements.GetValueOrDefault(templateId, MobileMovementType.Land);
 
-                if (TryFindSpot(template, movement, out var location, out var area))
+                // A spawned item wants a cell of its own: not where another one lies or is about to.
+                Func<int, int, bool>? taken = region.OfItems
+                    ? (x, y) => IsTaken(template.Map, x, y, planned) || HasSpawnedItem(template.Map, x, y)
+                    : null;
+
+                if (TryFindSpot(template, movement, taken, out var location, out var area))
                 {
                     planned.Add(new(template, templateId, location, area, region.OfItems));
                     found++;
@@ -329,13 +342,18 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         // The ids of the regions are unique, so NPCs and items share the counts.
         if (_items is not null && _regions.Any(region => region.OfItems))
         {
-            foreach (var item in _items.Items)
+            _spawnedItems ??= FindSpawnedItems(_items);
+
+            foreach (var (serial, region) in _spawnedItems.ToList())
             {
-                if (item.Props is not null &&
-                    item.Location == ItemLocationType.Ground &&
-                    item.TryGetProp<string>(RegionProp, out var region))
+                // Decayed, deleted or taken from the ground: no longer the region's.
+                if (_items.TryGet(serial, out var item) && IsOnTheGroundOf(item, region))
                 {
                     live[region] = live.GetValueOrDefault(region) + 1;
+                }
+                else
+                {
+                    _spawnedItems.Remove(serial);
                 }
             }
         }
@@ -343,9 +361,40 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         return live;
     }
 
+    // Once, at the first check: the items a region spawned before the last stop come back with the world.
+    private static Dictionary<Serial, string> FindSpawnedItems(IItemService items)
+    {
+        var spawned = new Dictionary<Serial, string>();
+
+        foreach (var item in items.Items)
+        {
+            if (item.Props is not null &&
+                item.Location == ItemLocationType.Ground &&
+                item.TryGetProp<string>(RegionProp, out var region))
+            {
+                spawned[item.Id] = region;
+            }
+        }
+
+        return spawned;
+    }
+
+    private static bool IsOnTheGroundOf(ItemEntity item, string region)
+    {
+        return item.Location == ItemLocationType.Ground &&
+               item.TryGetProp<string>(RegionProp, out var marked) &&
+               marked == region;
+    }
+
     // UOX3 FindSpotForNPC: a random cell of the areas, out of the excluded ones, where a mobile stands under the ceiling,
     // or on the water for a mobile that swims: only there when it cannot walk, else when the cell has no land to stand on.
-    private bool TryFindSpot(SpawnTemplate template, MobileMovementType movement, out Point3D location, out SpawnArea area)
+    private bool TryFindSpot(
+        SpawnTemplate template,
+        MobileMovementType movement,
+        Func<int, int, bool>? taken,
+        out Point3D location,
+        out SpawnArea area
+    )
     {
         for (var i = 0; i < SpotTries; i++)
         {
@@ -353,7 +402,9 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
             var x = _random.Next(area.X1, area.X2 + 1);
             var y = _random.Next(area.Y1, area.Y2 + 1);
 
-            if (template.Exclude.Any(exclude => exclude.Contains(x, y)) || !_map.Contains(template.Map, x, y))
+            if (template.Exclude.Any(exclude => exclude.Contains(x, y)) ||
+                !_map.Contains(template.Map, x, y) ||
+                taken is not null && taken(x, y))
             {
                 continue;
             }
@@ -372,6 +423,33 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 
         location = default;
         area = null!;
+
+        return false;
+    }
+
+    private static bool IsTaken(MapType map, int x, int y, List<PlannedSpawn> planned)
+    {
+        return planned.Any(other => other.OfItems && other.Region.Map == map && other.Location.X == x && other.Location.Y == y);
+    }
+
+    // What a region spawned, of this region or of another: the decoration of the place does not count, as ModernUO
+    // puts a chest where its spawner says.
+    private bool HasSpawnedItem(MapType map, int x, int y)
+    {
+        if (_sectors is null)
+        {
+            return false;
+        }
+
+        var items = _sectors.GetItemsAt(map, x, y);
+
+        for (var index = 0; index < items.Count; index++)
+        {
+            if (items[index].TryGetProp<string>(RegionProp, out _))
+            {
+                return true;
+            }
+        }
 
         return false;
     }
@@ -481,6 +559,8 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
             new Dictionary<string, object?> { [RegionProp] = template.Id },
             cancellationToken
         );
+        // The counts are read on the loop.
+        await OnLoopAsync(() => (_spawnedItems ??= [])[item.Id] = template.Id);
         _logger.Debug(
             "Spawn {Region} ({Name}): item {Template} {Serial} at {Location} on {Map}",
             template.Id,

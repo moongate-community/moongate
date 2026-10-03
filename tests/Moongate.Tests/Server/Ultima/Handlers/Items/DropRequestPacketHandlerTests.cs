@@ -280,6 +280,125 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         AssertAt(_bag, _backpack.Id, new Point2D(50, 50));
     }
 
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task Handle_IntoAChestOnTheGroundNearby_PutsItThere_ReleasesIt_AndTellsThoseAround(bool ontoAnItemInside)
+    {
+        var (chest, ruby) = GroundChest(1497);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 60, 70, ontoAnItemInside ? ruby.Id : chest.Id);
+
+        Assert.Equal((Serial?)chest.Id, _coins.ContainerId);
+        Assert.Equal([_coins], _items.GetContents(chest.Id).Where(item => item != ruby));
+        // Its row still says the character carries it: the character's leave saves where it lies now.
+        Assert.Equal([_coins], _items.TakeReleasedOf(Aria));
+        Assert.Equal([$"ContainedAppeared {_coins.Id.Value} in {chest.Id.Value} except {Aria.Value}"], _view.Calls);
+        Assert.Equal(_coins.Id, Assert.IsType<ContainerItemUpdatePacket>(Assert.Single(_sender.Sent)).Item.Serial);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    [Fact]
+    public async Task Handle_IntoABagInsideAChestOnTheGround_PutsItThere()
+    {
+        var (chest, _) = GroundChest(1497);
+        _items.MoveToContainer(_innerBag, chest.Id, new Point2D(10, 10));
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 60, 70, _innerBag.Id);
+
+        Assert.Equal((Serial?)_innerBag.Id, _coins.ContainerId);
+        Assert.Equal([$"ContainedAppeared {_coins.Id.Value} in {chest.Id.Value} except {Aria.Value}"], _view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_IntoAChestOnTheGroundTooFar_BouncesBack()
+    {
+        var (chest, _) = GroundChest(1499);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 60, 70, chest.Id);
+
+        Assert.Equal((Serial?)_backpack.Id, _coins.ContainerId);
+        Assert.Empty(_items.TakeReleasedOf(Aria));
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_IntoAChestOnTheGroundOutOfSightOrHeldBySomeone_BouncesBack()
+    {
+        var (chest, _) = GroundChest(1497);
+        _sight.Allow = false;
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 60, 70, chest.Id);
+
+        Assert.Equal((Serial?)_backpack.Id, _coins.ContainerId);
+
+        _sight.Allow = true;
+        _items.Hide(chest);
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(ItemSessionKeys.Held, new(_coins.Id)));
+        await DropAsync(_coins.Id, 60, 70, chest.Id);
+
+        Assert.Equal((Serial?)_backpack.Id, _coins.ContainerId);
+    }
+
+    // Those around were told it left the chest when it was lifted.
+    [Fact]
+    public async Task Handle_AnItemHeldFromAChestThatBouncesBack_IsShownAgainToThoseAround()
+    {
+        var (chest, ruby) = GroundChest(1497);
+        await HoldingAsync(ruby);
+
+        await DropAsync(ruby.Id, 60, 70, _otherBackpack.Id);
+
+        Assert.Equal((Serial?)chest.Id, ruby.ContainerId);
+        Assert.Equal([$"ContainedAppeared {ruby.Id.Value} in {chest.Id.Value} except {Aria.Value}"], _view.Calls);
+        Assert.Equal(ruby.Id, Assert.IsType<ContainerItemUpdatePacket>(Assert.Single(_sender.Sent)).Item.Serial);
+    }
+
+    [Fact]
+    public async Task Handle_IntoAFullChestOnTheGround_BouncesBack()
+    {
+        var (chest, _) = GroundChest(1497);
+
+        for (var index = 0; index < 124; index++)
+        {
+            var filler = Item(0x40001000u + (uint)index, 0x0F13);
+            filler.PutInContainer(chest.Id, new Point2D(10, 10), (byte)(index + 1));
+            _items.Add([filler]);
+        }
+
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 60, 70, chest.Id);
+
+        Assert.Equal((Serial?)_backpack.Id, _coins.ContainerId);
+        Assert.Equal(125, _items.GetContents(chest.Id).Count);
+    }
+
+    [Fact]
+    public async Task Handle_AChestOnTheGroundIntoItself_BouncesBack()
+    {
+        var (chest, ruby) = GroundChest(1497);
+        _items.Hide(chest);
+        await HoldingAsync(chest);
+
+        await DropAsync(chest.Id, 60, 70, ruby.Id);
+
+        Assert.Null(chest.ContainerId);
+    }
+
+    [Fact]
+    public async Task Handle_IntoAnotherCharactersBackpack_StillBouncesBack()
+    {
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 60, 70, _otherBackpack.Id);
+
+        Assert.Equal((Serial?)_backpack.Id, _coins.ContainerId);
+        Assert.Empty(_view.Calls);
+    }
+
     [Fact]
     public async Task Handle_OnTheGroundNearby_LaysItThereAndShowsIt()
     {
@@ -525,6 +644,18 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         await DropAsync(_coins.Id, 1496, 1628, Ground);
 
         Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    // A bag on the ground of Aria's row at the given x, with a ruby inside.
+    private (ItemEntity Chest, ItemEntity Ruby) GroundChest(int x)
+    {
+        var chest = Item(0x40000020, BagGraphic);
+        var ruby = Item(0x40000021, 0x0F13);
+        ruby.PutInContainer(chest.Id, new Point2D(20, 20));
+        _items.Add([chest, ruby]);
+        _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(x, 1628, 0));
+
+        return (chest, ruby);
     }
 
     private void AssertAt(ItemEntity item, Serial container, Point2D position)
