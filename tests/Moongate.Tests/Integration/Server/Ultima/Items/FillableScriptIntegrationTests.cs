@@ -177,6 +177,38 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
+    // The pool of serials can be empty for a moment: the container must not wait an hour with nothing inside.
+    [Fact]
+    public void AFillThatCouldAddNothing_IsTriedAgainAtTheNextOpening()
+    {
+        var bookcase = Container("library");
+        var serials = _serials.Serials.ToList();
+        _serials.Serials.Clear();
+
+        Open(bookcase);
+
+        Assert.Empty(_items.GetContents(bookcase.Id));
+        Assert.False(bookcase.TryGetProp<long>("fill.next", out _));
+
+        serials.ForEach(_serials.Serials.Enqueue);
+        Open(bookcase);
+
+        Assert.InRange(_items.GetContents(bookcase.Id).Count, 1, 5);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public async Task AWaitress_MakesATavern()
+    {
+        var crate = Container(null);
+        await AddNpcAsync("f_waitress", 1501, 1600);
+
+        Open(crate);
+
+        Assert.True(crate.TryGetProp<string>("content_type", out var kind));
+        Assert.Equal("tavern", kind);
+    }
+
     [Fact]
     public void ABookcaseWithFiveBooks_GetsNoMore()
     {

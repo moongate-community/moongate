@@ -82,7 +82,7 @@ exists but fails compilation/execution aborts server startup.
 | `item.location(serial)`, `item.move_to(serial, x, y, z)` | Where a ground item lies, `{ x, y, z, map }`, and moving it on its map: the players around the old spot lose it and those around the new one see it; `nil`/`false` for an item not on the ground, a spot outside the map or a `z` outside -128 to 127; moving restarts a decaying item's decay |
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
 | `item.give(mobile, template, amount?)` | Makes a new item from an item template in the mobile's backpack and gives its serial; the owner sees it at once and its next save keeps it. `nil` for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack) or when the server has no serial ready: it keeps 64 in reserve and refills them in the background, so a script that makes more than that in one go gets `nil` for the rest and must try again later |
-| `item.add_loot(container, table)` | Rolls a loot table of `templates/loots` once and puts what it gives into a container, or into the backpack of a mobile; returns how many items it added, `0` for a roll that gives nothing, an unknown table or something that is no container |
+| `item.add_loot(container, table)` | Rolls a loot table of `templates/loots` once and puts what it gives into a container, or into the backpack of a mobile; returns how many items it added, `0` for a roll that gives nothing, an unknown table or something that is no container; fewer than the roll gave when the container is full (125 items) or the server has no item serial at hand for a moment |
 | `item.create(template, map, x, y, z, amount?)` | Makes a new item from an item template on the ground and gives its serial; the players around see it. `nil` as `item.give`, and for a spot outside the map or a `z` outside -128 to 127 |
 | `item.template(serial)`, `item.hue(serial)` | The id of the item's template and its hue (0 for the colours of its art); `nil` for an unknown item |
 | `item.set_name(serial, name?)`, `item.set_hue(serial, hue)`, `item.set_amount(serial, amount)` | Give the item a name of its own (`nil` takes it back to its template's), a hue (0 to 65535) or, for a stack, an amount (1 to 60000); the players who see the item see it change. `false` for a held or worn item, or one that does not stack (amount above 1), as its template or its graphic says |
@@ -467,7 +467,7 @@ gives to the town containers, ModernUO's `FillableContainer`: the crates, boxes,
 of the shops and the bookcases of the libraries. On `on_use`, before the container opens, a
 container whose time has come (prop `fill.next`, as `world.now()` counts) and that holds two items
 or fewer gets up to twice what it misses to hold three, each one a roll of the loot table of its
-kind with `item.add_loot`; a bookcase fills up to five books. It then waits 60 to 90 minutes.
+kind with `item.add_loot`; a bookcase fills up to five books. It then waits 60 to 90 minutes; a fill that could add nothing is tried again at the next opening.
 Nothing runs while nobody opens the container, and the times survive a restart. The kind is the
 prop `content_type`, such as `baker` for the table `fillable_baker` of
 `templates/loots/fillable_containers.toml`; without it the container takes the kind of the nearest

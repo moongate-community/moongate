@@ -609,7 +609,7 @@ comment = "Sandals"
 
 [[loot.entries]]
 weight = 2
-item_id = "practice_gnarled_staff"
+item_id = "0x13f9"
 comment = "GnarledStaff"
 
 [[loot.entries]]
@@ -664,7 +664,7 @@ comment = "SheafOfHay"
 
 [[loot.entries]]
 weight = 1
-item_id = "0x09d6_pitcher"
+item_id = "0x09f0_pitcher_of_milk"
 comment = "BeverageMilk"
 
 
@@ -1597,7 +1597,7 @@ comment = "ThighBoots"
 
 [[loot.entries]]
 weight = 2
-item_id = "practice_gnarled_staff"
+item_id = "0x13f9"
 comment = "GnarledStaff"
 
 [[loot.entries]]
@@ -1805,7 +1805,7 @@ comment = "Lockpicks"
 
 [[loot.entries]]
 weight = 1
-item_id = "0x1eb8_tool_kit"
+item_id = "0x1eba_tool_kit"
 comment = "ToolKit"
 
 

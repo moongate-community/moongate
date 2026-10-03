@@ -31,7 +31,7 @@ template: a player who says its word within its range stands on its destination
 files: after them, `.decorate` places a gate with the `decoration_public_moongate` template on
 every destination of [`moongates.toml`](../data-files/moongates.md) whose map is loaded, reported
 as `<map>/moongates`. The crates, boxes, chests, barrels and bookcases of the towns (ModernUO's
-`Fillable...` kinds and `LibraryBookcase`, 2,803 placements) take the `decoration_fillable`
+`Fillable...` kinds and `LibraryBookcase`, 2,803 spots in the files, about 5,000 items with those of both Trammel and Felucca) take the `decoration_fillable`
 template and fill up when a player opens them ([fillable script](../scripting.md#item-scripts));
 those a run before this placed as plain decoration are turned into it and counted as already there. Every public moongate glows (prop `light = "circle300"`, as ModernUO). Spawners, mark
 containers, addons and every other kind of teleporter (those that ask for a

@@ -73,6 +73,7 @@ local VENDORS = {
     furtrader = "tanner",
     tavernkeeper = "tavern",
     waiter = "tavern",
+    waitress = "tavern",
     cook = "tavern",
     thief = "thief_guild",
     thief_guildmaster = "thief_guild",
@@ -149,8 +150,16 @@ function fillable.on_use(serial, user)
         return
     end
 
-    for _ = 1, share(kind, count) do
-        item.add_loot(serial, "fillable_" .. kind)
+    local wanted = share(kind, count)
+    local added = 0
+
+    for _ = 1, wanted do
+        added = added + item.add_loot(serial, "fillable_" .. kind)
+    end
+
+    -- Rolls that added nothing, such as when the server has no item serial at hand: tried again at the next opening.
+    if wanted > 0 and added == 0 then
+        return
     end
 
     item.set_prop(serial, "fill.next", now + math.random(min_wait, max_wait))

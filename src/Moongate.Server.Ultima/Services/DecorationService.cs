@@ -27,8 +27,6 @@ public sealed class DecorationService : IDecorationService, IDisposable
     public const string DecorationTemplate = "decoration";
     public const string FillableTemplate = "decoration_fillable";
     public const string ContentTypeProp = "content_type";
-    private const string LibraryBookcaseType = "LibraryBookcase";
-    private const string LibraryContentType = "library";
     public const string DoorTemplate = "decoration_door";
     public const string LightTemplate = "decoration_light";
     public const string TeleporterTemplate = "decoration_teleporter";
@@ -53,6 +51,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
     public const string GeneratedDoorsFile = "generated_doors";
 
     // ModernUO's DarkWoodDoor: the closed graphic of a facing is this plus twice the facing.
+    private const string LibraryBookcaseType = "LibraryBookcase";
+    private const string LibraryContentType = "library";
     private const int GeneratedDoorGraphic = 0x06A5;
     private const int PublicMoongateGraphic = 0x0F6C;
 
