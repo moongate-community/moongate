@@ -298,6 +298,59 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_OntoAPileOfTheSameKindInAChestOnTheGround_GrowsThePile()
+    {
+        var (chest, _) = GroundChest(1497);
+        var gold = Item(0x40000030, CoinGraphic);
+        gold.Amount = 70;
+        gold.PutInContainer(chest.Id, new Point2D(30, 30), 1);
+        _items.Add([gold]);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, gold.Id);
+
+        Assert.Equal(100, gold.Amount);
+        Assert.False(_items.TryGet(_coins.Id, out _));
+        // The character's leave deletes the row of the coins and saves the pile that grew.
+        Assert.Equal([_coins.Id], _items.TombstonesOf(Aria));
+        Assert.Equal([gold], _items.TakeReleasedOf(Aria));
+        Assert.Equal([$"ContainedAppeared {gold.Id.Value} in {chest.Id.Value} except {Aria.Value}"], _view.Calls);
+        Assert.Equal(
+            [typeof(ContainerItemUpdatePacket), typeof(RemoveEntityPacket)],
+            _sender.Sent.Select(packet => packet.GetType())
+        );
+        Assert.Equal(gold.Id, ((ContainerItemUpdatePacket)_sender.Sent[0]).Item.Serial);
+    }
+
+    [Fact]
+    public async Task Handle_OntoAPileInAChestOnTheGroundTooFar_BouncesBack()
+    {
+        var (chest, _) = GroundChest(1499);
+        var gold = Item(0x40000030, CoinGraphic);
+        gold.Amount = 70;
+        gold.PutInContainer(chest.Id, new Point2D(30, 30), 1);
+        _items.Add([gold]);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, gold.Id);
+
+        Assert.Equal((70, 30), (gold.Amount, _coins.Amount));
+        Assert.Equal((Serial?)_backpack.Id, _coins.ContainerId);
+    }
+
+    [Fact]
+    public async Task Handle_OntoAPileOfAnotherKindInAChestOnTheGround_LiesBesideIt()
+    {
+        var (chest, ruby) = GroundChest(1497);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, ruby.Id);
+
+        Assert.Equal((Serial?)chest.Id, _coins.ContainerId);
+        Assert.Equal(30, _coins.Amount);
+    }
+
+    [Fact]
     public async Task Handle_IntoABagInsideAChestOnTheGround_PutsItThere()
     {
         var (chest, _) = GroundChest(1497);

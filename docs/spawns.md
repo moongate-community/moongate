@@ -139,8 +139,8 @@ up to 633 chests. The four templates, `treasure_chest_level_1` to `treasure_ches
 | Level | Chest | Gold | What it may hold |
 | --- | --- | --- | --- |
 | 1 | Wooden | 30-129 | 1-3 gems of a kind, a weapon, an armour, clothing, jewellery |
-| 2 | Metal | 70-169 | Up to two piles of 1-2 reagents, 1-8 scrolls of a low circle, a potion, 1-6 gems |
-| 3 | Metal bound | 180-419 | One or two piles of 1-9 reagents; up to two each of 1-12 scrolls, potions, 1-9 gems, clothing and jewellery; magic items |
+| 2 | Metal | 70-169 | Up to two piles of 1-2 reagents, 1-8 scrolls of the first five circles, a potion, 1-6 gems |
+| 3 | Metal bound | 180-419 | One or two piles of 1-9 reagents; up to two each of 1-12 scrolls of the first six circles, potions, 1-9 gems, clothing and jewellery; magic items |
 | 4 | Golden | 200-599 | 1-4 blank scrolls; up to three each of 12 reagents, 16 scrolls, potions and 12 gems; up to two of clothing and jewellery; magic items |
 
 Each pile of gems, reagents or scrolls and each potion comes one time in two; a weapon, an armour,
@@ -150,7 +150,7 @@ piles of ModernUO out of the gems, reagents and scrolls of the other loot tables
 are not there: no wand template exists yet.
 
 A player within two tiles opens a chest with a double click, takes what is inside and may put
-items into it; the players around see what comes and goes. A region never puts a chest on the cell
+items into it, a pile onto a pile of the same kind; the players around see what comes and goes. A region never puts a chest on the cell
 of another spawned chest. A chest
 cannot be picked up, by all but the staff, and decays 45 minutes after it was made, opened or not,
 with what is left inside; the region then makes a new one 5 to 10 minutes later. The containers of the towns work another way: they stay and

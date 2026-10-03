@@ -38,7 +38,7 @@ id = "treasure_chest_level_2"
 base_id = "treasure_chest_level_1"
 item_id = 0x0E41
 gold = "1d100+69"
-loot = ["chest_reagents_1_2", "chest_reagents_1_2", "chest_scrolls_low_1_8", "chest_potion", "chest_gems_1_6"]
+loot = ["chest_reagents_1_2", "chest_reagents_1_2", "chest_scrolls_1_8", "chest_potion", "chest_gems_1_6"]
 
 [[item]]
 id = "treasure_chest_level_3"
@@ -47,7 +47,7 @@ item_id = 0x09AB
 gold = "1d240+179"
 loot = [
     "chest_reagents_1_9_always", "chest_reagents_1_9",
-    "chest_scrolls_mid_1_12", "chest_scrolls_mid_1_12",
+    "chest_scrolls_1_12", "chest_scrolls_1_12",
     "chest_potion", "chest_potion",
     "chest_gems_1_9", "chest_gems_1_9",
     "magic_items_max_tier_2", "magic_items_max_tier_2", "magic_items_max_tier_2", "magic_items_max_tier_2",
@@ -62,7 +62,7 @@ item_id = 0x0E40
 gold = "1d400+199"
 loot = [
     "chest_reagents_12", "chest_reagents_12", "chest_reagents_12",
-    "chest_scrolls_mid_16", "chest_scrolls_mid_16", "chest_scrolls_mid_16",
+    "chest_scrolls_16", "chest_scrolls_16", "chest_scrolls_16",
     "chest_blank_scrolls_1_4",
     "chest_potion", "chest_potion", "chest_potion",
     "chest_gems_12", "chest_gems_12", "chest_gems_12",

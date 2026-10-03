@@ -19,8 +19,8 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 /// <summary>
 ///     Drops the item the player holds (0x08) into a container their character carries, onto a carried stack of the
 ///     same kind (they merge), into the container of a carried item it was dropped on, into a container lying on the
-///     ground within reach or one inside it, on the ground within 2 tiles, or onto a ground stack of the same kind
-///     within reach; anything else bounces the item back to where it was. The hand
+///     ground within reach or one inside it (onto a pile of the same kind there, they merge), on the ground within 2
+///     tiles, or onto a ground stack of the same kind within reach; anything else bounces the item back to where it was. The hand
 ///     is always freed: 0x25 shows the item where it really is, and a ground item is shown to everyone in range.
 /// </summary>
 /// <remarks>
@@ -119,6 +119,20 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return;
         }
 
+        if (mobile is not null && TryMergeInChest(mobile, item, packet.Destination, out var chestStack, out var holder))
+        {
+            // As on the ground: the character's leave saves the grown pile and deletes the absorbed item.
+            _items.Release(chestStack, session.CharacterId);
+            TakenOff(wearer, item);
+            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(chestStack, session.UsesContainerGrid()));
+            _sender.TrySend(session.SessionId, _tooltips.Info(chestStack));
+            _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
+            _view.ContainedItemAppeared(chestStack, holder, session.CharacterId);
+            Dropped(session, item);
+
+            return;
+        }
+
         if (packet.Destination.Value == GroundDestination)
         {
             if (mobile is not null && _items.TryDropOnGround(mobile, item, packet.X, packet.Y))
@@ -207,6 +221,32 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return false;
         }
 
+        stack.Amount += item.Amount;
+        _items.Absorb(item, mobile.Id);
+
+        return true;
+    }
+
+    // Onto a pile of the same kind inside a container lying on the ground within reach: the pile grows and the held
+    // item is absorbed.
+    private bool TryMergeInChest(MobileEntity mobile, ItemEntity item, Serial destination, out ItemEntity stack, out ItemEntity chest)
+    {
+        chest = null!;
+
+        if (!_items.TryGet(destination, out stack!) ||
+            stack.Id == item.Id ||
+            stack.ContainerId is null ||
+            _items.GetGroundRoot(stack) is not { } root ||
+            !_items.IsLyingOnGround(root) ||
+            !_items.CanReach(mobile, root) ||
+            !IsSameKind(stack, item) ||
+            (long)stack.Amount + item.Amount > MaxStack ||
+            !IsStackable(stack))
+        {
+            return false;
+        }
+
+        chest = root;
         stack.Amount += item.Amount;
         _items.Absorb(item, mobile.Id);
 
