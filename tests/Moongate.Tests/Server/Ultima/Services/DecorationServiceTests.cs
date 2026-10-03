@@ -1,4 +1,6 @@
 using Moongate.Core.Geometry;
+using Moongate.Core.Utils;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Decorations;
 using Moongate.Server.Ultima.Data.Moongates;
@@ -273,7 +275,9 @@ public sealed class DecorationServiceTests
         var result = await Service(File("felucca", Block("PublicMoongate", 0x0F6C, new Point3D(5153, 1760, 0)))).DecorateAsync(_progress);
 
         Assert.Equal(new DecorationResult(1, 0, 0, 1), result);
-        Assert.Equal("decoration_public_moongate", Assert.Single(_items.Items).TemplateId);
+        var gate = Assert.Single(_items.Items);
+        Assert.Equal("decoration_public_moongate", gate.TemplateId);
+        Assert.Equal(EnumNameUtils.Format(LightType.Circle300), gate.Props!["light"]);
     }
 
     [Fact]

@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Utils;
 using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
@@ -9,6 +10,7 @@ using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Items;
@@ -60,6 +62,7 @@ public sealed class MoongateCommandTests : IAsyncDisposable
             [2500L, 500L, -3L, (long)MapType.Trammel],
             new[] { "teleport.x", "teleport.y", "teleport.z", "teleport.map" }.Select(key => gate.Props![key])
         );
+        Assert.Equal(EnumNameUtils.Format(LightType.Circle300), gate.Props!["light"]);
         Assert.Contains(gate, Assert.Single(_factory.Saved));
         // The first serial the fake factory gives: 0x40000001.
         Assert.Equal("Appeared 1073741825", Assert.Single(_view.Calls));

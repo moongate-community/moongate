@@ -514,6 +514,12 @@ public sealed class DecorationService : IDecorationService, IDisposable
             AddLightProps(props, defaultLight);
         }
 
+        // As ModernUO's PublicMoongate: the gate glows, unless the data gives it another light.
+        if (block.Type == PublicMoongateType)
+        {
+            props.TryAdd(LightProp, EnumNameUtils.Format(LightType.Circle300));
+        }
+
         item.Props = props.Count > 0 ? props : null;
         item.PlaceOnGround(map, location);
 

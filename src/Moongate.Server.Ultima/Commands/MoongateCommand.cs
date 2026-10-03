@@ -7,7 +7,9 @@ using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Commands.Internal;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Commands;
@@ -105,6 +107,8 @@ public sealed class MoongateCommand : ICommandExecutor
         gate.SetProp(YProp, (long)destination.Y);
         gate.SetProp(ZProp, (long)destination.Z);
         gate.SetProp(MapProp, (long)map);
+        // As ModernUO's Moongate: the gate glows.
+        gate.SetProp(ItemModule.LightProp, EnumNameUtils.Format(LightType.Circle300));
         gate.PlaceOnGround(here, feet);
         await _factory.SaveAsync(gate, context.CancellationToken);
         await OnLoopAsync(
