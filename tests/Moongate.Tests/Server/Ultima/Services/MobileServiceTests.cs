@@ -260,6 +260,40 @@ public sealed class MobileServiceTests
         Assert.Empty(sectors.GetMobilesInRange(MapType.Trammel, new Point3D(100, 100, 0), 0));
     }
 
+    // As ModernUO: a frozen mobile neither steps nor turns.
+    [Theory, InlineData(DirectionType.East), InlineData(DirectionType.South)]
+    public void TryMove_AFrozenMobile_NeitherStepsNorTurns(DirectionType direction)
+    {
+        var movement = new StubMovementService();
+        var aria = Aria();
+        aria.Direction = DirectionType.South;
+        aria.Frozen = true;
+
+        var result = new MobileService(movement, TestSectors.Create()).TryMove(aria, direction);
+
+        Assert.Equal(MoveResultType.Blocked, result);
+        Assert.Equal((DirectionType.South, new Point3D(1496, 1628, 10)), (aria.Direction, aria.Location));
+        Assert.Empty(movement.Checks);
+    }
+
+    [Fact]
+    public void GetFlags_TellsWhatTheMobileIs()
+    {
+        var service = new MobileService(new StubMovementService(), TestSectors.Create());
+        var aria = Aria();
+
+        Assert.Equal(MobileFlagsType.None, service.GetFlags(aria) & ~MobileFlagsType.Female);
+
+        aria.Hidden = true;
+        aria.Frozen = true;
+        aria.WarMode = true;
+
+        Assert.Equal(
+            MobileFlagsType.Hidden | MobileFlagsType.Frozen | MobileFlagsType.WarMode,
+            service.GetFlags(aria) & ~MobileFlagsType.Female
+        );
+    }
+
     [Fact]
     public void TryMove_ADifferentDirection_OnlyTurns()
     {

@@ -44,7 +44,8 @@ public sealed class SpeechService : ISpeechService
             speaker.Name,
             text
         );
-        return SendAround(speaker.Map, speaker.Location, message);
+
+        return SendAround(speaker.Map, speaker.Location, message, speaker);
     }
 
     public int PlaySound(MobileEntity source, int sound)
@@ -63,7 +64,8 @@ public sealed class SpeechService : ISpeechService
                SpeechMessageHelper.TrySend(_sender, session, SpeechMessageHelper.CreateSystem(text, SpeechHue));
     }
 
-    private int SendAround(MapType map, Point3D location, IOutgoingPacket packet)
+    // With a speaker, those who do not see it do not hear it either, as ModernUO.
+    private int SendAround(MapType map, Point3D location, IOutgoingPacket packet, MobileEntity? speaker = null)
     {
         var sent = 0;
 
@@ -73,6 +75,7 @@ public sealed class SpeechService : ISpeechService
                 _mobiles.TryGet(session.CharacterId, out var listener) &&
                 listener.Map == map &&
                 listener.Location.InRange(location, SayRange) &&
+                speaker?.IsHiddenFrom(listener.Id, session.AccountType) != true &&
                 session.NetworkSession.Client is { IsConnected: true } connection &&
                 _sender.TrySend(session.SessionId, connection, packet))
             {

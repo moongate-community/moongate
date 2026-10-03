@@ -1173,18 +1173,18 @@
         "name": "War mode",
         "type": "bool",
         "size": "1",
-        "description": "Requested combat stance"
+        "description": "The mode asked: 1 war, 0 peace."
       },
       {
         "offset": "2",
         "name": "Trailing bytes",
         "type": "byte[]",
         "size": "3",
-        "description": "Protocol padding."
+        "description": "Not read."
       }
     ],
-    "notes": "Recognized and ignored for now.",
-    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+    "notes": "Sent when the player switches between war and peace.",
+    "handler": "WarModeRequestPacketHandler: sets the mode, answers with 0x72 and shows the stance to the players around."
   },
   "0x72:outgoing": {
     "category": "World",
@@ -1216,7 +1216,7 @@
       }
     ],
     "notes": "Tells the client its current war mode.",
-    "handler": "CharacterEnterWorldService: sends peace mode during world entry."
+    "handler": "CharacterEnterWorldService: peace during world entry. MobileStateService: the answer to a war mode request or to a script."
   },
   "0x73:both": {
     "category": "Login",

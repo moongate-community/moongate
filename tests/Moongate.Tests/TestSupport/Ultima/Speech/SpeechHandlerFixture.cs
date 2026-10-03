@@ -103,12 +103,20 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
         await EnterAsync(Speaker, new Serial(1), "Alice", MapType.Trammel, new Point3D(100, 100, 0), accountType);
     }
 
-    public async Task<GameSession> AddPlayerAsync(long sessionId, uint serial, string name, MapType map, int x, int y)
+    public async Task<GameSession> AddPlayerAsync(
+        long sessionId,
+        uint serial,
+        string name,
+        MapType map,
+        int x,
+        int y,
+        AccountType accountType = AccountType.Regular
+    )
     {
         var connection = new ControlledNetworkConnection(sessionId);
         _connections.Add(connection);
         var session = Sessions.GetOrCreate(connection);
-        await EnterAsync(session, new Serial(serial), name, map, new Point3D(x, y, 0), AccountType.Regular);
+        await EnterAsync(session, new Serial(serial), name, map, new Point3D(x, y, 0), accountType);
 
         return session;
     }

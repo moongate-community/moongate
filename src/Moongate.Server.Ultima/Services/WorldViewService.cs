@@ -85,13 +85,13 @@ public sealed class WorldViewService : IWorldViewService
                 continue;
             }
 
-            if (own is not null)
+            if (own is not null && CanSee(own, other))
             {
                 SendMobile(own.SessionId, other, Incoming(other));
                 sent.Add(other);
             }
 
-            if (_sessions.TryGetValue(other.Id, out var viewer))
+            if (_sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
             {
                 SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
             }
@@ -189,7 +189,7 @@ public sealed class WorldViewService : IWorldViewService
 
             var sawIt = InRange(other.Location, oldLocation);
 
-            if (_sessions.TryGetValue(other.Id, out var viewer))
+            if (_sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
             {
                 if (sawIt && !teleported)
                 {
@@ -202,7 +202,7 @@ public sealed class WorldViewService : IWorldViewService
             }
 
             // The mover's client drops what it walks away from by itself, as in ModernUO; it only needs the newcomers.
-            if (!sawIt && hasSession)
+            if (!sawIt && hasSession && CanSee(own!, other))
             {
                 SendMobile(own!.SessionId, other, Incoming(other));
                 sent.Add(other);
@@ -249,7 +249,49 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
         {
-            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer))
+            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
+            {
+                SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
+            }
+        }
+    }
+
+    public void MobileFlagsChanged(MobileEntity mobile)
+    {
+        var moving = Moving(mobile, false);
+
+        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            // Its own player too: the client draws its own figure from these flags.
+            if (_sessions.TryGetValue(other.Id, out var viewer) && (other.Id == mobile.Id || CanSee(viewer, mobile)))
+            {
+                _sender.TrySend(viewer.SessionId, moving);
+            }
+        }
+    }
+
+    public void MobileHiddenChanged(MobileEntity mobile)
+    {
+        MobileMovingPacket? moving = null;
+        MobileIncomingPacket? incoming = null;
+
+        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            if (!_sessions.TryGetValue(other.Id, out var viewer))
+            {
+                continue;
+            }
+
+            if (other.Id == mobile.Id || viewer.Account >= AccountType.GameMaster)
+            {
+                // Itself and the staff, who see it either way: only its flags change.
+                _sender.TrySend(viewer.SessionId, moving ??= Moving(mobile, false));
+            }
+            else if (mobile.Hidden)
+            {
+                _sender.TrySend(viewer.SessionId, new RemoveEntityPacket(mobile.Id));
+            }
+            else
             {
                 SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
             }
@@ -346,7 +388,7 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var other in _sectors.GetMobilesInRange(wearer.Map, wearer.Location, ViewRange))
         {
-            if (_sessions.TryGetValue(other.Id, out var viewer))
+            if (_sessions.TryGetValue(other.Id, out var viewer) && (other.Id == wearer.Id || CanSee(viewer, wearer)))
             {
                 _sender.TrySend(viewer.SessionId, worn);
                 _sender.TrySend(viewer.SessionId, info);
@@ -414,6 +456,12 @@ public sealed class WorldViewService : IWorldViewService
 
     // The mobile, then the revision of its tooltip and of each worn item's, as ModernUO: the client asks for the
     // tooltips it does not have yet.
+    // A hidden mobile is on no player's screen; the staff sees it, as in ModernUO.
+    private static bool CanSee(Viewer viewer, MobileEntity mobile)
+    {
+        return !mobile.Hidden || viewer.Account >= AccountType.GameMaster;
+    }
+
     private void SendMobile(long sessionId, MobileEntity mobile, MobileIncomingPacket incoming)
     {
         _sender.TrySend(sessionId, incoming);

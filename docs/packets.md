@@ -55,7 +55,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x3C` | `ContainerContentPacket` | Outgoing | Variable, minimum 5 | — |
 | `0x09` | `LookRequestPacket` | Incoming | Fixed 5 | `LookRequestPacketHandler`: shows the name over the object (`0xC1`) |
 | `0x34` | `MobileQueryPacket` | Incoming | Fixed 10 | `MobileQueryPacketHandler`: answers the status of the character or of a mobile in sight (`0x11`) and the character's skills (`0x3A`) |
-| `0x72` | `WarModeRequestPacket` | Incoming | Fixed 5 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x72` | `WarModeRequestPacket` | Incoming | Fixed 5 | `WarModeRequestPacketHandler`: puts the character in war or peace mode, answers with `0x72` and shows the stance to the players around (`0x77`) |
 | `0xC8` | `UpdateRangePacket` | Incoming | Fixed 2 | `UpdateRangePacketHandler`: answers with the server's view range |
 | `0xC8` | `ViewRangePacket` | Outgoing | Fixed 2 | — |
 | `0x88` | `DisplayPaperdollPacket` | Outgoing | Fixed 66 | — |

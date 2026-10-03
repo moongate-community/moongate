@@ -125,6 +125,12 @@ public sealed class MobileService : IMobileService
         MovementAbilityType ability = MovementAbilityType.Walk
     )
     {
+        // As ModernUO: a frozen mobile neither steps nor turns.
+        if (mobile.Frozen)
+        {
+            return MoveResultType.Blocked;
+        }
+
         var facing = (DirectionType)((byte)direction & DirectionMask);
 
         if (facing != mobile.Direction)
@@ -195,7 +201,24 @@ public sealed class MobileService : IMobileService
 
     public MobileFlagsType GetFlags(MobileEntity mobile)
     {
-        return mobile.Gender == GenderType.Female ? MobileFlagsType.Female : MobileFlagsType.None;
+        var flags = mobile.Gender == GenderType.Female ? MobileFlagsType.Female : MobileFlagsType.None;
+
+        if (mobile.Hidden)
+        {
+            flags |= MobileFlagsType.Hidden;
+        }
+
+        if (mobile.Frozen)
+        {
+            flags |= MobileFlagsType.Frozen;
+        }
+
+        if (mobile.WarMode)
+        {
+            flags |= MobileFlagsType.WarMode;
+        }
+
+        return flags;
     }
 
     public MobileStatusInfo GetStatus(MobileEntity mobile)

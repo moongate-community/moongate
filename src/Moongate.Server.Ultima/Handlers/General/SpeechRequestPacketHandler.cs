@@ -139,7 +139,8 @@ public sealed class SpeechRequestPacketHandler :
                     if (recipient.CharacterId.IsValid &&
                         _mobiles.TryGet(recipient.CharacterId, out var mobile) &&
                         mobile.Map == speaker.Map &&
-                        mobile.Location.InRange(speaker.Location, SayRange))
+                        mobile.Location.InRange(speaker.Location, SayRange) &&
+                        !speaker.IsHiddenFrom(recipient.CharacterId, recipient.AccountType))
                     {
                         SpeechMessageHelper.TrySend(_sender, recipient, message);
                     }

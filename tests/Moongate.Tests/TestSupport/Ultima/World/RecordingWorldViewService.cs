@@ -44,6 +44,16 @@ public sealed class RecordingWorldViewService : IWorldViewService
         Record($"MobileAppeared {mobile.Id.Value}");
     }
 
+    public void MobileFlagsChanged(MobileEntity mobile)
+    {
+        Record($"FlagsChanged {mobile.Id.Value}");
+    }
+
+    public void MobileHiddenChanged(MobileEntity mobile)
+    {
+        Record($"HiddenChanged {mobile.Id.Value}");
+    }
+
     public void ItemAppeared(ItemEntity item)
     {
         Record($"Appeared {item.Id.Value}");

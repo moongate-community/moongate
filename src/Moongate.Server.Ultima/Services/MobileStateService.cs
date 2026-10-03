@@ -1,6 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Movement;
@@ -221,8 +222,65 @@ public sealed class MobileStateService : IMobileStateService
         return true;
     }
 
+    public void SetHidden(MobileEntity mobile, bool hidden)
+    {
+        if (mobile.Hidden == hidden)
+        {
+            return;
+        }
+
+        mobile.Hidden = hidden;
+
+        if (_mobiles.IsInWorld(mobile.Id))
+        {
+            _view.MobileHiddenChanged(mobile);
+        }
+    }
+
+    public void SetFrozen(MobileEntity mobile, bool frozen)
+    {
+        if (mobile.Frozen == frozen)
+        {
+            return;
+        }
+
+        mobile.Frozen = frozen;
+
+        if (_mobiles.IsInWorld(mobile.Id))
+        {
+            _view.MobileFlagsChanged(mobile);
+        }
+    }
+
+    public void SetWarMode(MobileEntity mobile, bool warMode)
+    {
+        var changed = mobile.WarMode != warMode;
+        mobile.WarMode = warMode;
+
+        if (!_mobiles.IsInWorld(mobile.Id))
+        {
+            return;
+        }
+
+        // The client waits for the answer to its own request, whatever the mode was.
+        if (_sessions.TryGetByCharacterId(mobile.Id, out var own))
+        {
+            _sender.TrySend(own.SessionId, new WarModePacket(warMode));
+        }
+
+        if (changed)
+        {
+            _view.MobileFlagsChanged(mobile);
+        }
+    }
+
     public void SendStatus(GameSession session, MobileEntity target)
     {
+        if (!CanSee(session, target))
+        {
+            return;
+        }
+
         _sender.TrySend(session.SessionId, new MobileStatusPacket(_mobiles.GetStatus(target), session.CharacterId != target.Id));
     }
 
@@ -236,10 +294,16 @@ public sealed class MobileStateService : IMobileStateService
     {
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, _world.ViewRange))
         {
-            if (other.Id != mobile.Id && _sessions.TryGetByCharacterId(other.Id, out var session))
+            if (other.Id != mobile.Id && _sessions.TryGetByCharacterId(other.Id, out var session) && CanSee(session, mobile))
             {
                 yield return session;
             }
         }
+    }
+
+    // A hidden mobile is seen by its own player and by the staff.
+    private static bool CanSee(GameSession session, MobileEntity mobile)
+    {
+        return !mobile.Hidden || session.CharacterId == mobile.Id || session.AccountType >= AccountType.GameMaster;
     }
 }

@@ -59,7 +59,8 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterPacketHandler<LookRequestPacket, LookRequestPacketHandler>();
         container.RegisterIncomingPacket<MobileQueryPacket>();
         container.RegisterPacketHandler<MobileQueryPacket, MobileQueryPacketHandler>();
-        RegisterIgnoredPacket<WarModeRequestPacket>(container);
+        container.RegisterIncomingPacket<WarModeRequestPacket>();
+        container.RegisterPacketHandler<WarModeRequestPacket, WarModeRequestPacketHandler>();
         container.RegisterIncomingPacket<UpdateRangePacket>();
         container.RegisterPacketHandler<UpdateRangePacket, UpdateRangePacketHandler>();
         container.RegisterIncomingPacket<ExtendedCommandPacket>();

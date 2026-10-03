@@ -211,6 +211,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         if (!own)
         {
             if (!_mobiles.TryGet(session.CharacterId, out var character) ||
+                mobile.IsHiddenFrom(character.Id, session.AccountType) ||
                 character.Map != mobile.Map ||
                 Math.Abs(character.Location.X - mobile.Location.X) > _world.ViewRange ||
                 Math.Abs(character.Location.Y - mobile.Location.Y) > _world.ViewRange)
@@ -228,6 +229,6 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
             return;
         }
 
-        _sender.TrySend(session.SessionId, new DisplayPaperdollPacket(mobile.Id, PaperdollTitle(mobile), false, own));
+        _sender.TrySend(session.SessionId, new DisplayPaperdollPacket(mobile.Id, PaperdollTitle(mobile), mobile.WarMode, own));
     }
 }

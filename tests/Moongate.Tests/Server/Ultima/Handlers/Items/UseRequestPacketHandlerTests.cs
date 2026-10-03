@@ -4,6 +4,7 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Config;
@@ -101,6 +102,36 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
 
         var paperdoll = Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
         Assert.Equal((Bran, "Bran", false), (paperdoll.Mobile, paperdoll.Title, paperdoll.CanLift));
+    }
+
+    [Fact]
+    public async Task Handle_AHiddenPlayerInRange_OpensItsPaperdollForTheStaffOnly()
+    {
+        await StartAsync(Aria);
+        Assert.True(_mobiles.TryGet(Bran, out var bran));
+        bran.Hidden = true;
+
+        await UseAsync(Bran);
+
+        Assert.Empty(_sender.Sent);
+
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+        await UseAsync(Bran);
+
+        Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnPaperdollOfAHiddenCharacterInWarMode_OpensWithTheWarFlag()
+    {
+        await StartAsync(Aria);
+        Assert.True(_mobiles.TryGet(Aria, out var aria));
+        aria.Hidden = true;
+        aria.WarMode = true;
+
+        await UseAsync(Aria);
+
+        Assert.True(Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent)).WarMode);
     }
 
     [Fact]

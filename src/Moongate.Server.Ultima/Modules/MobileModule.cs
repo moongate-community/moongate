@@ -287,6 +287,74 @@ public sealed class MobileModule
     }
 
     /// <summary>
+    ///     Gets what the mobile is as a table of booleans; <c>mobile.flags(who).hidden</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "What the mobile is, as { hidden, frozen, war_mode }, each true or false; nil for a mobile not in the world.")]
+    public LuaTable? Flags(long serial)
+    {
+        if (!TryGetMobile(serial, out var mobile))
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        table["hidden"] = mobile.Hidden;
+        table["frozen"] = mobile.Frozen;
+        table["war_mode"] = mobile.WarMode;
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Hides or reveals the mobile; <c>mobile.set_hidden(who, true)</c>. Hidden, it leaves the screens of the
+    ///     players around; the staff still sees it.
+    /// </summary>
+    [ScriptFunction(helpText: "Hides or reveals the mobile: hidden, the players around no longer see it, the staff does; saved with the mobile. False for a mobile not in the world.")]
+    public bool SetHidden(long serial, bool hidden)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        _state.SetHidden(mobile, hidden);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Freezes or frees the mobile; <c>mobile.set_frozen(who, true)</c>. Frozen, it neither steps nor turns.
+    /// </summary>
+    [ScriptFunction(helpText: "Freezes or frees the mobile: frozen, it neither steps nor turns; saved with the mobile. False for a mobile not in the world.")]
+    public bool SetFrozen(long serial, bool frozen)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        _state.SetFrozen(mobile, frozen);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Puts the mobile in war or peace mode; <c>mobile.set_war_mode(who, false)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Puts the mobile in war mode or in peace, seen by its player and the players around; a mobile comes back in peace after a restart. False for a mobile not in the world.")]
+    public bool SetWarMode(long serial, bool warMode)
+    {
+        if (_state is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        _state.SetWarMode(mobile, warMode);
+
+        return true;
+    }
+
+    /// <summary>
     ///     Gets the backpack the mobile wears, to look into it with <c>item.contents</c>; <c>mobile.backpack(who)</c>.
     /// </summary>
     [ScriptFunction(helpText: "The serial of the backpack the mobile wears; nil for a mobile without one or not in the world.")]
