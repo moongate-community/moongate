@@ -156,6 +156,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             _items.Hide(item);
             _view.ItemDisappeared(item);
         }
+        else if (chest is not null)
+        {
+            // Those who look into the chest see it go.
+            _view.ContainedItemDisappeared(item, chest, session.CharacterId);
+        }
         else if (worn && _mobiles.TryGet(session.CharacterId, out var wearer))
         {
             // It stays on until it is dropped; the others see it taken off now.

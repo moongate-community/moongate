@@ -175,7 +175,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Moving, stacking, splitting and merging | ✅ | |
 | Wearing: layers and two-handed weapons | ✅ | No strength requirements yet |
 | The character's own containers | ✅ | |
-| Containers on the ground, weight and item limits | 🟡 | A container on the ground opens within two tiles and its contents can be taken; nothing can be put in, no weight or item limits |
+| Containers on the ground, weight and item limits | 🟡 | A container on the ground opens within two tiles; items can be taken out and put in, and the players around see them come and go; no weight or item limits |
 | Tooltips and single-click names | ✅ | |
 | Items on the ground and their decay | ✅ | |
 | Scripted items | ✅ | Lua item scripts: use, equip, unequip, pick up, drop, create, darkness, a player stepping on them, speech nearby |

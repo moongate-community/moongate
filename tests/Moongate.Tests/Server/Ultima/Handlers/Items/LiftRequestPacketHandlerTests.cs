@@ -243,8 +243,8 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
         Assert.Equal(reached ? new HeldItem(ruby.Id) : null, _session.Get(ItemSessionKeys.Held));
         Assert.Equal(reached ? [] : [typeof(LiftRejectPacket)], _sender.Sent.Select(packet => packet.GetType()));
-        // The chest stays where it is.
-        Assert.Empty(_view.Calls);
+        // The chest stays where it is; those who look into it see the ruby go.
+        Assert.Equal(reached ? [$"ContainedDisappeared {ruby.Id.Value} in {chest.Id.Value} except {Aria.Value}"] : [], _view.Calls);
         Assert.True(_items.IsLyingOnGround(chest));
     }
 

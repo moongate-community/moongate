@@ -129,6 +129,18 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
                 return;
             }
         }
+        else if (mobile is not null && TryPlaceOnTheGround(mobile, item, packet, out var chest))
+        {
+            // Its row still says the character carries it: the character's leave saves where it lies now.
+            _items.Release(item, session.CharacterId);
+            TakenOff(wearer, item);
+            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
+            _sender.TrySend(session.SessionId, _tooltips.Info(item));
+            _view.ContainedItemAppeared(item, chest, session.CharacterId);
+            Dropped(session, item);
+
+            return;
+        }
         else if (TryPlace(session, item, packet))
         {
             TakenOff(wearer, item);
@@ -227,6 +239,38 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         }
 
         // Dropped on a carried item: into that item's container, where that item lies.
+        if (target.ContainerId is not { } parent || !_items.TryGet(parent, out var container))
+        {
+            return false;
+        }
+
+        return TryPut(item, container, target.GridLocation!.Value, packet.GridIndex);
+    }
+
+    // Into a container lying on the ground within reach, such as a treasure chest, or into one inside it; dropped on an
+    // item inside, it goes beside that item.
+    private bool TryPlaceOnTheGround(MobileEntity mobile, ItemEntity item, DropRequestPacket packet, out ItemEntity chest)
+    {
+        chest = null!;
+
+        if (!packet.Destination.IsItem ||
+            !_items.TryGet(packet.Destination, out var target) ||
+            _items.GetGroundRoot(target) is not { } root ||
+            root.Id == item.Id ||
+            !_items.IsLyingOnGround(root) ||
+            !_items.CanReach(mobile, root))
+        {
+            return false;
+        }
+
+        chest = root;
+
+        if (IsContainer(target))
+        {
+            return TryPut(item, target, AtPosition(target, packet.X, packet.Y), packet.GridIndex);
+        }
+
+        // On a plain item lying on the ground: not a container, the drop falls through to the other rules.
         if (target.ContainerId is not { } parent || !_items.TryGet(parent, out var container))
         {
             return false;

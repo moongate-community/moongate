@@ -520,6 +520,56 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void ContainedItemDisappeared_RemovesItFromThoseAroundTheChest_ButNotFromTheOneWhoTookIt()
+    {
+        Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var chest = Ground(0x40000050, 1498, 1628);
+        var ruby = new ItemEntity { Id = new Serial(0x40000051), TemplateId = "ruby", ItemId = 0x0F13, Amount = 1 };
+        ruby.PutInContainer(chest.Id, new Point2D(10, 10));
+        _items.Add([ruby]);
+        ClearSent();
+
+        _view.ContainedItemDisappeared(ruby, chest, new Serial(2));
+
+        Assert.Equal(ruby.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(_sender.Sent)).Serial);
+        Assert.Equal([BorisSession], _sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void ContainedItemAppeared_ShowsItInItsContainerToThoseAroundTheChest_ButNotToTheOneWhoPutIt()
+    {
+        Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var chest = Ground(0x40000050, 1498, 1628);
+        var ruby = new ItemEntity { Id = new Serial(0x40000051), TemplateId = "ruby", ItemId = 0x0F13, Amount = 1 };
+        ruby.PutInContainer(chest.Id, new Point2D(10, 10));
+        _items.Add([ruby]);
+        ClearSent();
+
+        _view.ContainedItemAppeared(ruby, chest, new Serial(2));
+
+        var update = Assert.Single(_sender.Sent.OfType<ContainerItemUpdatePacket>());
+        Assert.Equal((ruby.Id, chest.Id), (update.Item.Serial, update.Item.Container));
+        Assert.All(_sender.SentSessionIds, session => Assert.Equal(BorisSession, session));
+    }
+
+    [Fact]
+    public void ContainedItemAppeared_FarFromEveryone_SendsNothing()
+    {
+        Enter(2, 1496, 1628, AriaSession);
+        var chest = Ground(0x40000050, 1600, 1628);
+        var ruby = new ItemEntity { Id = new Serial(0x40000051), TemplateId = "ruby", ItemId = 0x0F13, Amount = 1 };
+        ruby.PutInContainer(chest.Id, new Point2D(10, 10));
+        ClearSent();
+
+        _view.ContainedItemAppeared(ruby, chest, new Serial(9));
+        _view.ContainedItemDisappeared(ruby, chest, new Serial(9));
+
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
     public void ShowItemTo_SendsItOnlyToThatPlayer()
     {
         var aria = Enter(2, 1496, 1628, AriaSession);
