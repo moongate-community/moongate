@@ -142,8 +142,8 @@ For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
 The `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` modules serve the [mobile](#mobile-scripts) and
-[item scripts](#item-scripts); there are no APIs for a character's stats, skills or inventory yet
-([Implementation status](implementation-status.md)). To expose application
+[item scripts](#item-scripts); a character's stats are read only and there is no API for its skills
+yet (see the [Roadmap](roadmap.md#phase-0-what-lua-needs-before-any-gameplay)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Events

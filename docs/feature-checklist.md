@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 64 done, 🟡 40 partly done, ❌ 164 not built yet.
+**268 systems:** ✅ 64 done, 🟡 41 partly done, ❌ 163 not built yet.
 
-**Coverage: 24%** of the systems done, **31%** counting a partly done system as half.
+**Coverage: 24%** of the systems done, **32%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -310,11 +310,11 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Several scripts on one object, scripts by item type | ❌ | |
 | Script events | 🟡 | NPC, item and character events, and `player_say`; no combat, skill or region events |
 | Events that can refuse the default action | 🟡 | Only `on_use` |
-| Region enter and leave events | ❌ | |
-| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`; no stats, skills or inventory API |
+| Region enter and leave events | 🟡 | `player_region_changed` for players; not for NPCs |
+| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`; stats are read only, no skills API |
 | World queries from scripts (objects near, in sight, by serial) | 🟡 | `world.is_occupied`, `world.carries` |
 | Creating and moving items from scripts | 🟡 | Move on the ground, consume, delete; no create, container or equip |
-| Messages, target cursor and prompts from scripts | 🟡 | `npc.say`, `item.message`, gumps; no system message, target or prompt |
+| Messages, target cursor and prompts from scripts | 🟡 | `npc.say`, `mobile.message`, `item.message`, `item.message_cliloc`, `target.pick`, gumps; no text prompt |
 | Script timers | ✅ | |
 | Timers kept by an object and saved with the world | ❌ | A timer is lost on a restart |
 | Commands from plugins | ✅ | In C#; not from Lua |
