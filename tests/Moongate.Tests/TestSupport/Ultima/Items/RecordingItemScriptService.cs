@@ -14,6 +14,16 @@ public sealed class RecordingItemScriptService : IItemScriptService
 
     public ScriptResult Result { get; set; } = ScriptResult.Completed([]);
 
+    /// <summary>
+    ///     The functions that answer <c>false</c>, such as <c>can_pick_up</c>, whatever <see cref="Result" /> is.
+    /// </summary>
+    public HashSet<string> Refused { get; } = [];
+
+    /// <summary>
+    ///     What a script does while it runs, given the function's name: called before the answer is given.
+    /// </summary>
+    public Action<string>? OnRun { get; set; }
+
     public List<string> Calls { get; } = [];
 
     public List<string> Queued { get; } = [];
@@ -31,8 +41,9 @@ public sealed class RecordingItemScriptService : IItemScriptService
         }
 
         Calls.Add(Describe(item, function, args));
+        OnRun?.Invoke(function);
 
-        return Result;
+        return Refused.Contains(function) ? ScriptResult.Completed([false]) : Result;
     }
 
     public void Queue(ItemEntity item, string function, params object?[] args)

@@ -377,15 +377,39 @@ script_id = "potion"
 | `on_move_over(serial, mobile)` | A player stepped onto the cell of the item, lying on the ground at the player's height, up to 14 above its feet, or below them and tall enough to reach them (ModernUO's rule). It runs after the step was acknowledged and shown to the players around; an NPC runs `on_npc_move_over` instead. Once a script moved the player off the cell, the other items of the cell are not run. Arriving by teleport does not trigger it, so two teleporters that point at each other do not loop. |
 | `on_npc_move_over(serial, npc)` | An NPC stepped onto the cell of the item, by the same height rule. It runs on the turn of the game loop after the step, so the NPC may already have moved on: check where it is |
 | `on_speech(serial, speaker, text, keywords)` | A player said `text` within 15 cells of the item, lying on the ground (commands are not heard). `speaker` is the player's serial; `keywords` the speech keywords the client found, an array of numbers. Every scripted ground item in range is asked, after the NPCs, so a script checks its own range and words. It may call `wait`. |
-| `on_equip(serial, wearer)` | The item went onto a layer of the mobile `wearer`, dropped on the paperdoll. A worn item lifted and bounced back never left its layer, and items loaded or spawned already dressed raise nothing. It cannot refuse the item. |
+| `on_equip(serial, wearer)` | The item went onto a layer of the mobile `wearer`, dropped on the paperdoll. A worn item lifted and bounced back never left its layer, and items loaded or spawned already dressed raise nothing. It cannot refuse the item: `can_equip` does. |
 | `on_unequip(serial, wearer)` | The item left the layer of `wearer`: dropped in a container or on the ground, or merged into a stack (the item is gone then, so `item.*` gives `nil`). Logging out, removing an NPC or deleting a mobile with its items raise nothing. |
 | `on_pickup(serial, picker)` | The player `picker` lifts the item from a container, the paperdoll or the ground; lifting part of a stack lifts this item, and the rest left behind is not new. While it is held, `item.consume` and `item.delete` refuse it. A held item ends in `on_drop`, in `on_equip` when it is worn by a new wearer, or in nothing: when it bounces back, is worn again on the layer it came from, or its player logs out holding it. |
 | `on_drop(serial, dropper)` | The player `dropper` puts the held item down: into a container, on the ground, or onto a stack (the item is gone then, so `item.*` gives `nil`). Not when it bounces back or is worn. A worn item put down runs `on_unequip` first, then `on_drop`. |
+| `can_pick_up(serial, picker)` | The player `picker` is about to lift the item, from a container, the paperdoll or the ground, once every rule of the server allows it and before a stack is split. Return `false` to refuse: the item stays where it is and the client shows no message of its own. A worn item is lifted before it is taken off, so this is also where a script keeps an item on its wearer |
+| `can_drop(serial, dropper)` | The player `dropper` is about to put the held item down, anywhere: on the ground, into a container or onto a stack. Return `false` to refuse: the item goes back where it was lifted from |
+| `can_equip(serial, wearer)` | The held item is about to be worn by `wearer`, once the layer is free and the rules allow it. Return `false` to refuse: the item goes back where it was lifted from and `on_equip` does not run. Not asked of a worn item lifted and put back on its layer, which it never left |
+| `can_insert(serial, mobile, item)` | Asked of a container: the player `mobile` is about to put `item` into it, or onto a stack that lies directly in it, once the rules allow the drop. `serial` is the container, carried or lying on the ground; a container holding that container is not asked. Return `false` to refuse: the item goes back where it was lifted from. It is asked after the item's own `can_drop`, and once for each drop |
 | `on_create(serial)` | A newly created item enters the world: today the equipment, backpack and loot of a spawned NPC, before that NPC's `on_spawn`. A new character's starting items and the rest of a split stack raise nothing. |
 
 `on_equip`, `on_unequip`, `on_pickup`, `on_drop` and `on_create` run right after what
 caused them, on the next turn of the game loop, once the players have seen it: a script
 may then delete or consume the item. They are notifications: none can refuse the move.
+
+`can_pick_up`, `can_drop`, `can_equip` and `can_insert` are questions, asked before the
+move and answered at once: only `false` refuses. A missing function, an error, a call to
+`wait` or any other value lets the move follow, so a broken script never locks an item. Tell
+the player why with `mobile.message` before returning `false`. They are asked for the moves
+a player makes with the client, staff included; a script that moves an item itself
+(`item.move_to`, `item.move_into`) is not asked. While a question is asked the item counts as held, so
+`item.delete`, `item.consume`, `item.move_into` and the functions that change it refuse it:
+answer the question there, and act on the item in `on_pickup`, `on_drop` or `on_equip`.
+
+```lua
+-- a cursed ring: once worn, it stays on
+function ring.can_pick_up(serial, picker)
+    -- worn: it has an owner and lies in no container
+    if item.owner(serial) == picker and item.container(serial) == nil then
+        mobile.message(picker, "The ring will not come off.")
+        return false
+    end
+end
+```
 
 The script acts on its item with the `item` module, passing its serial; `user` is
 the serial of the player. The distribution's `scripts/items/potion.lua`, copied into the root by `mgctl`; no

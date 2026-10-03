@@ -27,6 +27,7 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
 {
     public const string PickupFunction = "on_pickup";
+    public const string CanPickUpFunction = "can_pick_up";
 
     private readonly ILogger _logger = Log.ForContext<LiftRequestPacketHandler>();
     private readonly IItemService _items;
@@ -132,10 +133,24 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             return;
         }
 
+        // Last, once the rules allow the lift and before a stack is split: the item's script may still refuse it. It
+        // tells the player why itself, so the client shows no message of its own.
+        // The item counts as held while it is asked, so item.delete, item.consume and the like refuse it.
+        session.Set(ItemSessionKeys.Held, new(item.Id));
+
+        if (!_scripts.Allows(item, CanPickUpFunction, (long)session.CharacterId.Value))
+        {
+            session.Set(ItemSessionKeys.Held, null);
+            Refuse(session, LiftRejectReasonType.Inspecific, item);
+
+            return;
+        }
+
         if (packet.Amount < item.Amount)
         {
             if (!_serials.TryTake(out var serial))
             {
+                session.Set(ItemSessionKeys.Held, null);
                 Refuse(session, LiftRejectReasonType.Inspecific, item);
 
                 return;

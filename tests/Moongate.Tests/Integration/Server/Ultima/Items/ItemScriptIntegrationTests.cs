@@ -16,6 +16,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
@@ -121,6 +122,46 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(2, _potions.Amount);
         var label = Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>());
         Assert.Equal((SpeechType.Label, "You drink the potion."), (label.Type, label.Text));
+    }
+
+    [Fact]
+    public async Task AScriptThatReturnsFalse_RefusesTheMove_AnythingElseLetsItFollow()
+    {
+        _scripts.Write(
+            "items/potion.lua",
+            """
+            potion = {}
+
+            function potion.can_pick_up(serial, picker)
+                return picker ~= 2
+            end
+
+            function potion.can_drop(serial, dropper)
+            end
+
+            function potion.can_equip(serial, wearer)
+                error("broken")
+            end
+            """
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = new ItemScriptService(
+            engine,
+            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })),
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
+        await scripts.StartAsync();
+
+        Assert.False(scripts.Allows(_potions, "can_pick_up", 2L));
+        Assert.True(scripts.Allows(_potions, "can_pick_up", 3L));
+        Assert.True(scripts.Allows(_potions, "can_drop", 2L));
+        Assert.True(scripts.Allows(_potions, "can_insert", 2L, 3L));
+        Assert.Empty(_errors);
+        // A broken handler does not lock the item: the error is reported and the move follows.
+        Assert.True(scripts.Allows(_potions, "can_equip", 2L));
+        Assert.Single(_errors);
     }
 
     [Fact]

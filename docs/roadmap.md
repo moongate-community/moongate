@@ -82,7 +82,7 @@ written. The [scripting page](scripting.md#available-host-functions) lists what 
 | 0.2 | ✅ | **World queries**: mobiles and items near a point, in sight; online players; region, height and line of sight lookups | Every AI, spell and area effect needs them |
 | 0.3 | 🟡 | **Item API**: create (on the ground, in a backpack, in a container), move into a container, equip, list the content, find by type, set hue and name. Left: equip, find by type | Loot, crafting, vendors, quests |
 | 0.4 | 🟡 | **Player input and output**: system message, text over any object, cliloc messages, the target cursor, a text prompt. Left: the text prompt | Every skill and spell starts with a target |
-| 0.5 | 🟡 | **Events that can refuse**: a handler stops or changes the default action (`can_equip`, `can_insert`, `can_pick_up`, and later `check_skill`, `on_damage`) | Lets a script own a rule; today only `on_use` can refuse |
+| 0.5 | 🟡 | **Events that can refuse**: a handler stops or changes the default action. Done for items: `on_use`, `can_pick_up`, `can_drop`, `can_equip`, `can_insert`. Left: `check_skill`, `on_damage`, which come with skills and combat | Lets a script own a rule |
 | 0.6 | ❌ | **Timers kept by the object** and saved with the world. Today a script keeps a time in a prop, as the town containers do | A door's auto-close timer is lost on a restart today; timed effects need the same mechanism |
 | 0.7 | 🟡 | **Region events**: enter and leave. Done for players (`player_region_changed`); not for NPCs | Guards, magic rules, music scripts, quests |
 
