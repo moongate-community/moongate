@@ -340,7 +340,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Keeps a string, a number or a bool on the item across restarts, nil removes it; false for a table, a function or a blank key.")]
     public bool SetProp(long serial, string key, object? value = null)
     {
-        if (string.IsNullOrWhiteSpace(key) || !TryGetItem(serial, out var item))
+        // The timer props are the item's timers: only item.start_timer and item.stop_timer write them.
+        if (string.IsNullOrWhiteSpace(key) ||
+            key.StartsWith(ItemTimerQueue.PropPrefix, StringComparison.Ordinal) ||
+            !TryGetItem(serial, out var item))
         {
             return false;
         }
@@ -568,7 +571,12 @@ public sealed class ItemModule
         var serial = new Serial((uint)holder);
         var index = 1;
 
-        foreach (var inside in serial.IsItem ? Inside(serial) : _items.GetOwnedBy(serial))
+        // On a mobile, what lies in the bank is not carried, as world.carries.
+        var held = serial.IsItem
+                       ? Inside(serial)
+                       : _items.GetOwnedBy(serial).Where(item => _items.GetWornRoot(item)?.Layer != LayerType.Bank);
+
+        foreach (var inside in held)
         {
             if (inside.TemplateId == template)
             {
@@ -793,17 +801,21 @@ public sealed class ItemModule
             : null;
     }
 
-    // Everything inside a container, at any depth.
+    // Everything inside a container, at any depth; each container once, whatever the data says.
     private IEnumerable<ItemEntity> Inside(Serial container)
     {
         var pending = new Queue<Serial>([container]);
+        var seen = new HashSet<Serial> { container };
 
         while (pending.TryDequeue(out var current))
         {
             foreach (var inside in _items.GetContents(current))
             {
-                yield return inside;
-                pending.Enqueue(inside.Id);
+                if (seen.Add(inside.Id))
+                {
+                    yield return inside;
+                    pending.Enqueue(inside.Id);
+                }
             }
         }
     }

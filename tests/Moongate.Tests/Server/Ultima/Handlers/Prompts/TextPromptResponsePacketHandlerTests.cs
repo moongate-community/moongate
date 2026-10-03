@@ -44,6 +44,16 @@ public sealed class TextPromptResponsePacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_OnlySpaces_GivesNothing_AsAnEscape()
+    {
+        await StartAsync();
+
+        await AnswerAsync(1, 1, "   ");
+
+        Assert.Equal([null], _answers);
+    }
+
+    [Fact]
     public async Task Handle_AnotherIdOrATextOver128Characters_IsIgnoredAndThePromptStaysPending()
     {
         await StartAsync();

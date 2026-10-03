@@ -25,10 +25,12 @@
 --   door.open        true while the door is open
 --   door.x, door.y,  the closed spot of an open door, where closing puts it
 --   door.z           back and where ".decorate" looks for it
+--   timer.close      the auto-close timer of an open door (item.start_timer)
 --
 -- Functions:
 --   on_use(serial, user)             a player double clicks the door;
 --                                    returns true
+--   on_timer(serial, name)           the auto-close timer is due
 -- ==============================================================================
 
 door = {}

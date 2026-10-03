@@ -347,6 +347,13 @@ public sealed class ItemService : IItemService, IMoongateStartupService
     {
         var rest = item.Snapshot();
         rest.Id = serial;
+
+        // The timers stay with the part that keeps the serial: the rest is not a second item waiting for them.
+        foreach (var key in rest.Props?.Keys.Where(key => key.StartsWith(ItemTimerQueue.PropPrefix, StringComparison.Ordinal)).ToList() ?? [])
+        {
+            rest.RemoveProp(key);
+        }
+
         rest.Amount = item.Amount - amount;
         item.Amount = amount;
         _items[rest.Id] = rest;

@@ -37,6 +37,17 @@ public sealed class TextPromptResponsePacketTests
     }
 
     [Fact]
+    public void TryParse_AnOddLengthOrNoTerminator_ReadsWhatIsWhole()
+    {
+        // "Hi" and a stray last byte, no terminator
+        var data = Convert.FromHexString("C20018" + "00000002" + "00000007" + "00000001" + "454E5500" + "48006900" + "41");
+
+        Assert.True(TextPromptResponsePacket.TryParse(data, out var packet));
+
+        Assert.Equal("Hi", packet.Text);
+    }
+
+    [Fact]
     public void TryParse_TooShort_Fails()
     {
         Assert.False(TextPromptResponsePacket.TryParse(Convert.FromHexString("C2000800000002"), out _));

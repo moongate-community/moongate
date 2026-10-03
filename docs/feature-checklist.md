@@ -9,7 +9,7 @@ built.
 
 **268 systems:** ✅ 67 done, 🟡 41 partly done, ❌ 160 not built yet.
 
-**Coverage: 24%** of the systems done, **32%** counting a partly done system as half.
+**Coverage: 25%** of the systems done, **33%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 

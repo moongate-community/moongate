@@ -763,6 +763,30 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Null(_ground.Props);
     }
 
+    [Fact]
+    public void Find_OnAMobile_LeavesOutWhatLiesInItsBank()
+    {
+        var box = new ItemEntity { Id = new Serial(0x400000A0), TemplateId = "bank", ItemId = 0x0E75, Amount = 1 };
+        var banked = new ItemEntity { Id = new Serial(0x400000A1), TemplateId = "potion", ItemId = 0x0F0E, Amount = 9 };
+        box.Equip(new Serial(2), LayerType.Bank);
+        banked.PutInContainer(box.Id, new Point2D(50, 50));
+        _items.Add([box, banked]);
+
+        var result = Run("local carried = item.find(2, 'potion') return #carried, carried[1], #item.find(0x400000A0, 'potion')");
+
+        // Asked of the bank box itself, its contents are given.
+        Assert.Equal([1, 0x40000002, 1], result.Select(value => value.Read<int>()));
+    }
+
+    [Fact]
+    public void SetProp_OnATimerKey_IsRefused_TimersAreStartedWithStartTimer()
+    {
+        var result = Run("return item.set_prop(0x40000003, 'timer.close', 5), item.set_prop(0x40000003, 'timer.close', 'soon'), item.timer(0x40000003, 'close')");
+
+        Assert.Equal((false, false, LuaValue.Nil), (result[0].Read<bool>(), result[1].Read<bool>(), result[2]));
+        Assert.Null(_ground.Props);
+    }
+
     private static ItemEntity Shirt(uint serial)
     {
         return new() { Id = new Serial(serial), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };

@@ -1,3 +1,4 @@
+using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
@@ -84,7 +85,8 @@ public sealed class ItemTimerService : IItemTimerService, IMoongateStartupServic
 
     public TimeSpan? Remaining(ItemEntity item, string name)
     {
-        if (string.IsNullOrWhiteSpace(name) || !item.TryGetProp<long>(ItemTimerQueue.PropPrefix + name, out var dueAt))
+        if (string.IsNullOrWhiteSpace(name) ||
+            item.Props?.GetValueOrDefault(ItemTimerQueue.PropPrefix + name) is not long dueAt)
         {
             return null;
         }
@@ -105,7 +107,7 @@ public sealed class ItemTimerService : IItemTimerService, IMoongateStartupServic
 
                 // Stale: the item is gone, or its timer was stopped or started again since.
                 if (!_items.TryGet(entry.Item, out var item) ||
-                    !item.TryGetProp<long>(key, out var dueAt) ||
+                    item.Props?.GetValueOrDefault(key) is not long dueAt ||
                     dueAt != entry.DueAt)
                 {
                     continue;
@@ -113,7 +115,17 @@ public sealed class ItemTimerService : IItemTimerService, IMoongateStartupServic
 
                 // Gone before the script runs: the script may start it again.
                 item.RemoveProp(key);
-                _scripts.Run(item, TimerFunction, entry.Name);
+                var result = _scripts.Run(item, TimerFunction, entry.Name);
+
+                if (result.Kind is ScriptResultKind.Missing or ScriptResultKind.Failed)
+                {
+                    _logger.Warning(
+                        "The timer {Name} of item {Item} came due and nothing ran it: {Kind}",
+                        entry.Name,
+                        item,
+                        result.Kind
+                    );
+                }
             }
             catch (Exception exception)
             {

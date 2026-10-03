@@ -146,6 +146,30 @@ public sealed class ItemTimerServiceTests
         Assert.Null(_door.Props);
     }
 
+    [Fact]
+    public void ASplitStack_LeavesItsTimersWithThePartThatKeepsTheSerial()
+    {
+        var coins = new ItemEntity { Id = new Serial(0x40000005), TemplateId = "door", ItemId = 0x0EED, Amount = 100 };
+        coins.PlaceOnGround(MapType.Trammel, new Point3D(1602, 1600, 0));
+        _items.Add([coins]);
+        _timers.Start(coins, "melt", TimeSpan.FromSeconds(10));
+        coins.SetProp("blessed", true);
+
+        var rest = _items.Split(coins, 40, new Serial(0x40000006));
+
+        Assert.Null(_timers.Remaining(rest, "melt"));
+        Assert.True(rest.GetProp<bool>("blessed"));
+        Assert.Equal(TimeSpan.FromSeconds(10), _timers.Remaining(coins, "melt"));
+    }
+
+    [Fact]
+    public void Remaining_OfATimerPropThatIsNotATime_IsNull()
+    {
+        _door.SetProp("timer.close", "soon");
+
+        Assert.Null(_timers.Remaining(_door, "close"));
+    }
+
     private void Check()
     {
         _wheel.Fire(_wheel.Timers[0].Id);

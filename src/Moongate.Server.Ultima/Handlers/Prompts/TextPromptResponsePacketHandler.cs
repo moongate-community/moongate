@@ -8,7 +8,7 @@ namespace Moongate.Server.Ultima.Handlers.Prompts;
 
 /// <summary>
 ///     Hands the player's answer to a text prompt (0xC2) to the prompt it was asked with: the text without the spaces
-///     around it, or nothing when the player escaped. As ModernUO, a text over 128 characters is ignored; so is an
+///     around it, or nothing when the player escaped or typed only spaces. As ModernUO, a text over 128 characters is ignored; so is an
 ///     answer to another prompt, or with none pending.
 /// </summary>
 public sealed class TextPromptResponsePacketHandler : IPacketHandler<TextPromptResponsePacket>
@@ -32,7 +32,10 @@ public sealed class TextPromptResponsePacketHandler : IPacketHandler<TextPromptR
             return;
         }
 
-        if (!_prompts.TryComplete(session, packet.PromptId, packet.IsCancel ? null : packet.Text.Trim()))
+        // A text of spaces only is no answer, as an escape.
+        var text = packet.IsCancel || string.IsNullOrWhiteSpace(packet.Text) ? null : packet.Text.Trim();
+
+        if (!_prompts.TryComplete(session, packet.PromptId, text))
         {
             _logger.Debug("Session {SessionId} answered prompt {PromptId}, which is not pending", session.SessionId, packet.PromptId);
         }
