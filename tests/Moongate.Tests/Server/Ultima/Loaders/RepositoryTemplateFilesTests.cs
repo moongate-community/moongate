@@ -238,7 +238,7 @@ public sealed class RepositoryTemplateFilesTests
         );
         Assert.Equal([30, 70, 180, 200], chests.Select(chest => chest.Gold!.Value.Min));
         Assert.Equal([129, 169, 419, 599], chests.Select(chest => chest.Gold!.Value.Max));
-        Assert.Equal([5, 5, 12, 19], chests.Select(chest => chest.Loot!.Count));
+        Assert.Equal([5, 5, 16, 23], chests.Select(chest => chest.Loot!.Count));
         Assert.Equal([0x0E43u, 0x0E41u, 0x09ABu, 0x0E40u], chests.Select(chest => chest.ItemId.Value));
     }
 
@@ -250,7 +250,7 @@ public sealed class RepositoryTemplateFilesTests
 
         var tables = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
 
-        Assert.Equal(107, tables.Count);
+        Assert.Equal(124, tables.Count);
         // What the town containers fill up with: ModernUO's 35 kinds of place.
         var fillable = tables.Where(table => table.Id.StartsWith("fillable_", StringComparison.Ordinal)).ToList();
         Assert.Equal(35, fillable.Count);
