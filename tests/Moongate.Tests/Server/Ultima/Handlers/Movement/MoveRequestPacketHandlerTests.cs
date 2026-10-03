@@ -299,6 +299,32 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(["Moved 2 1496,1628,10"], _view.Calls);
     }
 
+    [Fact]
+    public async Task Handle_ATurnOfAFrozenCharacter_IsRejectedAndTellsTheWorldViewNothing()
+    {
+        await EnterAsync();
+        _aria.Frozen = true;
+        var facing = _aria.Direction;
+
+        await StepAsync(DirectionType.West, 0);
+
+        Assert.IsType<MovementRejectPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(facing, _aria.Direction);
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AStepOfAFrozenCharacter_IsRejected()
+    {
+        await EnterAsync();
+        _aria.Frozen = true;
+
+        await StepAsync(_aria.Direction, 0);
+
+        Assert.IsType<MovementRejectPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(new Point3D(1496, 1628, 10), _aria.Location);
+    }
+
     private async Task EnterAsync()
     {
         _fixture = await SessionFixture.CreateAsync();

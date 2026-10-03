@@ -3,6 +3,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.Internal;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -221,6 +222,14 @@ public class MobileEntity : IMoongateEntity
     {
         get => new(X, Y, Z);
         set => (X, Y, Z) = (value.X, value.Y, value.Z);
+    }
+
+    /// <summary>
+    ///     Whether a viewer does not see the mobile: it is hidden, the viewer is not the mobile itself and is not staff.
+    /// </summary>
+    public bool IsHiddenFrom(Serial viewer, AccountType account)
+    {
+        return Hidden && viewer != Id && account < AccountType.GameMaster;
     }
 
     /// <summary>

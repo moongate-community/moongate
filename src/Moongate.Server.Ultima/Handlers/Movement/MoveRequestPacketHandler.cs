@@ -84,7 +84,14 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
 
         if (packet.Direction != mobile.Direction)
         {
-            _mobiles.TryMove(mobile, packet.Direction, AbilityOf(session));
+            // A frozen character does not turn: an acknowledged turn would let its client walk on alone.
+            if (_mobiles.TryMove(mobile, packet.Direction, AbilityOf(session)) != MoveResultType.Turned)
+            {
+                Reject(session, state, mobile, packet.Sequence);
+
+                return;
+            }
+
             Accept(session, state, mobile, packet.Sequence);
             _view.Moved(mobile, oldLocation, packet.Running);
 

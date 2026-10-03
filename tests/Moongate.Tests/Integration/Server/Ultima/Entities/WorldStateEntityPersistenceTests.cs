@@ -2,6 +2,8 @@ using DryIoc;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Persistence;
 
@@ -57,5 +59,28 @@ public sealed class WorldStateEntityPersistenceTests : IAsyncLifetime
         await again.StartAsync();
         Assert.Equal((13L, null, true, 1.5), (again.Get("event.day"), again.Get("motto"), again.Get("open"), again.Get("rate")));
         Assert.Equal(WorldStateEntity.RowId, Assert.Single(await _state.GetAllAsync()).Id);
+    }
+
+    [Fact]
+    public async Task WorldSave_WritesTheLiveProps_TheFirstTimeAndWhenTheyChange()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        host.Container.Register<IWorldPropsService, WorldPropsService>(Reuse.Singleton);
+        host.Container.AddPersistenceWorld<MobileEntity>().AddPersistenceWorld<ItemEntity>().AddLiveWorldState();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var data = host.Container.Resolve<IDataAccess<WorldStateEntity>>();
+        var service = (WorldPropsService)host.Container.Resolve<IWorldPropsService>();
+        await service.StartAsync();
+        service.Set("event.day", 12L);
+
+        await host.Owner.SaveAllAsync();
+        service.Set("event.day", 13L);
+        await host.Owner.SaveAllAsync();
+
+        var again = new WorldPropsService(data);
+        await again.StartAsync();
+        Assert.Equal(13L, again.Get("event.day"));
+        Assert.Single(await data.GetAllAsync());
     }
 }

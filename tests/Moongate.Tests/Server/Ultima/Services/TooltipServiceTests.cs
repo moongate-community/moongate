@@ -377,6 +377,17 @@ public sealed class TooltipServiceTests
     }
 
     [Fact]
+    public void TryBuildFor_AHiddenMobile_IsBuiltOnlyForItselfAndTheStaff()
+    {
+        Assert.True(_mobiles.TryGet(Bran, out var bran));
+        bran.Hidden = true;
+
+        Assert.False(_tooltips.TryBuildFor(Aria, Bran, out _));
+        Assert.True(_tooltips.TryBuildFor(Aria, Bran, out _, AccountType.GameMaster));
+        Assert.True(_tooltips.TryBuildFor(Bran, Bran, out _));
+    }
+
+    [Fact]
     public void TryBuildFor_AnUnknownSerial_IsRefused()
     {
         Assert.False(_tooltips.TryBuildFor(Aria, new Serial(0x40009999), out _));
