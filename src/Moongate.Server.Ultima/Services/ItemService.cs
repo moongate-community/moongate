@@ -14,8 +14,9 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Keeps the live items by serial, the ones on the ground in the sector grid, and the worn ones by wearer. Contents
-///     and owners are found by scanning, which only a character's leave and its containers need. The ground rules are
+///     Keeps the live items by serial, the ones on the ground in the sector grid, the worn ones by wearer and the
+///     contents by container, so what a mobile owns or a container holds is found without scanning the world. The
+///     ground rules are
 ///     ModernUO's <c>DropToWorld</c>, simplified: a player reaches 2 tiles in line of sight, and a dropped item lands on
 ///     the highest surface up to 16 above the player's feet, without stacking on other ground items. At startup it
 ///     loads the items lying on the ground with their contents.
@@ -27,6 +28,10 @@ public sealed class ItemService : IItemService, IMoongateStartupService
     public const string UnequipFunction = "on_unequip";
     private const int DropCeiling = 16;
     private const int EyeHeight = 14;
+
+    // The lists of one wearer or one container: the game loop is their only writer, and a default concurrent
+    // dictionary costs five times the memory, for every backpack of the world.
+    private const int InnerCapacity = 4;
 
     private readonly ConcurrentDictionary<Serial, ItemEntity> _items = new();
     private readonly ConcurrentDictionary<Serial, Serial?> _tombstones = new();
@@ -127,7 +132,8 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public IReadOnlyList<ItemEntity> GetContents(Serial container)
     {
-        // An item changed outside the service may still be filed here: what no longer says so is left out.
+        // An item changed outside the service may still be filed here: what no longer says so is left out. It is not
+        // found where it went until it is added again: items move through the service.
         return _contents.TryGetValue(container, out var inside)
             ? inside.Values.Where(item => item.ContainerId == container).OrderBy(item => item.Id.Value).ToList()
             : [];
@@ -193,7 +199,15 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public IReadOnlyList<ItemEntity> GetOwnedBy(Serial mobile)
     {
-        return _items.Values.Where(item => GetOwner(item) == mobile).ToList();
+        // What the mobile wears and, level by level, what lies inside it.
+        var owned = GetWorn(mobile).ToList();
+
+        for (var index = 0; index < owned.Count; index++)
+        {
+            owned.AddRange(GetContents(owned[index].Id));
+        }
+
+        return owned;
     }
 
     public void MoveToContainer(ItemEntity item, Serial container, Point2D position, int gridIndex = 0)
@@ -441,12 +455,12 @@ public sealed class ItemService : IItemService, IMoongateStartupService
     {
         if (item.MobileId is { } wearer)
         {
-            _worn.GetOrAdd(wearer, _ => new())[item.Id] = item;
+            _worn.GetOrAdd(wearer, _ => new(1, InnerCapacity))[item.Id] = item;
         }
 
         if (item.ContainerId is { } container)
         {
-            _contents.GetOrAdd(container, _ => new())[item.Id] = item;
+            _contents.GetOrAdd(container, _ => new(1, InnerCapacity))[item.Id] = item;
             _filedIn[item.Id] = container;
         }
     }
