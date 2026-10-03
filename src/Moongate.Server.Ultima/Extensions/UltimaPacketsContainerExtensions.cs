@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Handlers.Gumps;
 using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Handlers.Movement;
+using Moongate.Server.Ultima.Handlers.Prompts;
 using Moongate.Server.Ultima.Handlers.Targeting;
 using Moongate.Server.Ultima.Handlers.Tooltips;
 using Moongate.Server.Ultima.Packets.Characters;
@@ -43,6 +44,8 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterAsyncPacketHandler<UnicodeSpeechRequestPacket, SpeechRequestPacketHandler>();
         container.RegisterIncomingPacket<TargetResponsePacket>();
         container.RegisterPacketHandler<TargetResponsePacket, TargetResponsePacketHandler>();
+        container.RegisterIncomingPacket<TextPromptResponsePacket>();
+        container.RegisterPacketHandler<TextPromptResponsePacket, TextPromptResponsePacketHandler>();
         container.RegisterIncomingPacket<GumpResponsePacket>();
         container.RegisterPacketHandler<GumpResponsePacket, GumpResponsePacketHandler>();
         container.RegisterIncomingPacket<LiftRequestPacket>();

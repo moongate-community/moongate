@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 64 done, 🟡 42 partly done, ❌ 162 not built yet.
+**268 systems:** ✅ 67 done, 🟡 41 partly done, ❌ 160 not built yet.
 
-**Coverage: 24%** of the systems done, **32%** counting a partly done system as half.
+**Coverage: 25%** of the systems done, **33%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -311,12 +311,12 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Script events | 🟡 | NPC, item and character events, and `player_say`; no combat, skill or region events |
 | Events that can refuse the default action | 🟡 | Items: `on_use`, `can_pick_up`, `can_drop`, `can_equip`, `can_insert`; none yet for skills and combat |
 | Region enter and leave events | 🟡 | `player_region_changed` for players; not for NPCs |
-| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`; a mobile's stats and skills are read and written |
+| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`, `prompt`; a mobile's stats and skills are read and written |
 | World queries from scripts (objects near, in sight, by serial) | 🟡 | `world.is_occupied`, `world.carries` |
-| Creating and moving items from scripts | 🟡 | Move on the ground, consume, delete; no create, container or equip |
-| Messages, target cursor and prompts from scripts | 🟡 | `npc.say`, `mobile.message`, `item.message`, `item.message_cliloc`, `target.pick`, gumps; no text prompt |
+| Creating and moving items from scripts | ✅ | Create on the ground or in a backpack, loot into a container, move, equip, find by template, consume, delete |
+| Messages, target cursor and prompts from scripts | ✅ | `npc.say`, `mobile.message`, `item.message`, `item.message_cliloc`, `target.pick`, `prompt.ask`, gumps |
 | Script timers | ✅ | |
-| Timers kept by an object and saved with the world | ❌ | A timer is lost on a restart |
+| Timers kept by an object and saved with the world | 🟡 | Items: `item.start_timer` and `on_timer`, kept across restarts; not on mobiles |
 | Commands from plugins | ✅ | In C#; not from Lua |
 | Data-driven content | ✅ | TOML templates and data files, validated at startup |
 | Importing another emulator's content | ✅ | UOX3 items, loot, NPCs, names, starting items, NPC lists and spawn regions; ModernUO spawners |
@@ -345,7 +345,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Walk sequence and speed checks | ✅ | |
 | Weight and overloading | 🟡 | Items have their weight; nothing overloads |
 | Timed effects (buffs and debuffs) | ❌ | |
-| Text prompts and input | ❌ | |
+| Text prompts and input | ✅ | The Unicode prompt (0xC2), from scripts with the `prompt` module |
 | Visual effects: moving, lightning, particles | ✅ | From scripts with the `effect` module; particles for the Enhanced Client |
 | Sounds and music | ✅ | Sounds from scripts, thunder and region music |
 | Client language | ❌ | One server language for everyone, out of the 8 shipped |

@@ -6,6 +6,7 @@ using Moongate.Core.Utils;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
@@ -50,6 +51,8 @@ public sealed class ItemModule
     private readonly ITileDataService? _tiles;
     private readonly IItemTemplateService? _templates;
     private readonly ILootService? _loot;
+    private readonly IEquipmentService? _equipment;
+    private readonly IItemTimerService? _timers;
 
     public ItemModule(
         IItemService items,
@@ -65,9 +68,13 @@ public sealed class ItemModule
         IContainerLayoutService? layouts = null,
         ITileDataService? tiles = null,
         IItemTemplateService? templates = null,
-        ILootService? loot = null
+        ILootService? loot = null,
+        IEquipmentService? equipment = null,
+        IItemTimerService? timers = null
     )
     {
+        _timers = timers;
+        _equipment = equipment;
         _loot = loot;
         _templates = templates;
         _factory = factory;
@@ -333,7 +340,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Keeps a string, a number or a bool on the item across restarts, nil removes it; false for a table, a function or a blank key.")]
     public bool SetProp(long serial, string key, object? value = null)
     {
-        if (string.IsNullOrWhiteSpace(key) || !TryGetItem(serial, out var item))
+        // The timer props are the item's timers: only item.start_timer and item.stop_timer write them.
+        if (string.IsNullOrWhiteSpace(key) ||
+            key.StartsWith(ItemTimerQueue.PropPrefix, StringComparison.Ordinal) ||
+            !TryGetItem(serial, out var item))
         {
             return false;
         }
@@ -504,6 +514,110 @@ public sealed class ItemModule
         Refresh(item);
 
         return true;
+    }
+
+    /// <summary>
+    ///     Puts the item on a mobile, on the layer its template gives it; <c>item.equip(serial, user)</c>. The layer must
+    ///     be free. Those who saw the item where it was lose it and everyone around sees it worn; its script's
+    ///     <c>can_equip</c> is not asked.
+    /// </summary>
+    [ScriptFunction(helpText: "Puts the item on the mobile, on its template's layer; false for a worn or held item, a stack, an item without a layer or one the mobile cannot wear, a taken layer, a mobile not in the world, or an item another mobile carries.")]
+    public bool Equip(long serial, long mobile)
+    {
+        if (_equipment is null ||
+            !TryGetItem(serial, out var item) ||
+            item.MobileId is not null ||
+            item.Amount != 1 ||
+            IsHeld(item) ||
+            mobile is <= 0 or > uint.MaxValue ||
+            !_mobiles.TryGet(new Serial((uint)mobile), out var wearer) ||
+            // From one mobile to another is a trade, which the saves do not follow yet.
+            (_items.GetOwner(item) is { } owner && owner != wearer.Id) ||
+            !_equipment.TryGetLayer(item, out var layer) ||
+            !_equipment.CanWear(wearer.Id, item, layer))
+        {
+            return false;
+        }
+
+        if (item.GroundLocation is not null)
+        {
+            _view.ItemDisappeared(item);
+        }
+        else if (OwnerSession(item) is { } previous)
+        {
+            _sender.TrySend(previous.SessionId, new RemoveEntityPacket(item.Id));
+        }
+
+        _items.Equip(item, wearer.Id, layer);
+        _view.WornItemChanged(wearer, item);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Gets the items of a template inside a container, at any depth, or among everything a mobile wears and
+    ///     carries; <c>for _, coins in ipairs(item.find(user, "gold")) do ... end</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The serials of the items of a template inside a container, at any depth, or worn and carried by a mobile, as a list; empty when there is none, or for an unknown container or mobile.")]
+    public LuaTable Find(long holder, string template)
+    {
+        var table = new LuaTable();
+
+        if (holder is <= 0 or > uint.MaxValue || string.IsNullOrEmpty(template))
+        {
+            return table;
+        }
+
+        var serial = new Serial((uint)holder);
+        var index = 1;
+
+        // On a mobile, what lies in the bank is not carried, as world.carries.
+        var held = serial.IsItem
+                       ? Inside(serial)
+                       : _items.GetOwnedBy(serial).Where(item => _items.GetWornRoot(item)?.Layer != LayerType.Bank);
+
+        foreach (var inside in held)
+        {
+            if (inside.TemplateId == template)
+            {
+                table[index++] = (long)inside.Id.Value;
+            }
+        }
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Starts a timer the item keeps, or starts it again from now; <c>item.start_timer(serial, "close", 20)</c>. When
+    ///     its time comes the item's script runs <c>on_timer(serial, name)</c>. It is saved with the item, so it also
+    ///     runs after a restart.
+    /// </summary>
+    [ScriptFunction(helpText: "Starts, or starts again, a timer of the item that runs on_timer(serial, name) of its script after that many seconds, also after a restart; false for an unknown item, a blank name or one over 32 characters, or seconds not above 0 or over a year.")]
+    public bool StartTimer(long serial, string name, double seconds)
+    {
+        return _timers is not null &&
+               TryGetItem(serial, out var item) &&
+               double.IsFinite(seconds) &&
+               seconds <= ItemTimerService.MaximumDelay.TotalSeconds &&
+               _timers.Start(item, name, TimeSpan.FromSeconds(Math.Max(0, seconds)));
+    }
+
+    /// <summary>
+    ///     Stops a timer of the item; <c>item.stop_timer(serial, "close")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Stops a timer of the item; false for an unknown item or when it has no timer of that name.")]
+    public bool StopTimer(long serial, string name)
+    {
+        return _timers is not null && TryGetItem(serial, out var item) && _timers.Stop(item, name);
+    }
+
+    /// <summary>
+    ///     Gets the seconds a timer of the item still has to run; <c>item.timer(serial, "close")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The seconds a timer of the item still has to run, 0 when it is due; nil for an unknown item or when it has no timer of that name.")]
+    public double? Timer(long serial, string name)
+    {
+        return _timers is not null && TryGetItem(serial, out var item) ? _timers.Remaining(item, name)?.TotalSeconds : null;
     }
 
     /// <summary>
@@ -685,6 +799,25 @@ public sealed class ItemModule
                (tile.Flags & TileFlagType.Container) != 0
             ? item
             : null;
+    }
+
+    // Everything inside a container, at any depth; each container once, whatever the data says.
+    private IEnumerable<ItemEntity> Inside(Serial container)
+    {
+        var pending = new Queue<Serial>([container]);
+        var seen = new HashSet<Serial> { container };
+
+        while (pending.TryDequeue(out var current))
+        {
+            foreach (var inside in _items.GetContents(current))
+            {
+                if (seen.Add(inside.Id))
+                {
+                    yield return inside;
+                    pending.Enqueue(inside.Id);
+                }
+            }
+        }
     }
 
     private ItemEntity? ContainerOf(ItemEntity item)

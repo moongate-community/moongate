@@ -86,6 +86,8 @@ public static class UltimaWorldContainerExtensions
         container.Register<ICharacterEnterWorldService, CharacterEnterWorldService>(Reuse.Singleton);
         container.Register<ITargetService, TargetService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, ITargetService>();
+        container.Register<IPromptService, PromptService>(Reuse.Singleton);
+        container.RegisterMapping<ISessionClosedListener, IPromptService>();
         container.Register<IGumpService, GumpService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IGumpService>();
         container.Register<IGumpTemplateService, GumpTemplateService>(Reuse.Singleton);
@@ -108,6 +110,7 @@ public static class UltimaWorldContainerExtensions
         container.AddScriptModule<WorldModule>();
         container.AddScriptModule<MobileModule>();
         container.AddScriptModule<TargetModule>();
+        container.AddScriptModule<PromptModule>();
         container.AddScriptModule<GumpModule>();
         container.AddScriptModule<BankModule>();
         container.AddScriptModule<EffectModule>();
@@ -142,6 +145,9 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<IItemService, ItemService>(10);
         container.AddMoongateService<IWorldPropsService, WorldPropsService>(10);
         container.Register<IItemDecayQueue, ItemDecayQueue>(Reuse.Singleton);
+        container.Register<IItemTimerQueue, ItemTimerQueue>(Reuse.Singleton);
+        // After the item scripts are loaded: a timer that is due runs its script.
+        container.AddMoongateService<IItemTimerService, ItemTimerService>(LuaScriptEngineService.StartupPriority + 6);
         // After the items (10): the ground items it deletes are loaded by then.
         container.AddMoongateService<ItemDecayService>(11);
         // The light cycle's timer, like the decay's: the players it lights come after the game server starts.
