@@ -19,6 +19,11 @@ public sealed class RecordingItemScriptService : IItemScriptService
     /// </summary>
     public HashSet<string> Refused { get; } = [];
 
+    /// <summary>
+    ///     What a script does while it runs, given the function's name: called before the answer is given.
+    /// </summary>
+    public Action<string>? OnRun { get; set; }
+
     public List<string> Calls { get; } = [];
 
     public List<string> Queued { get; } = [];
@@ -36,6 +41,7 @@ public sealed class RecordingItemScriptService : IItemScriptService
         }
 
         Calls.Add(Describe(item, function, args));
+        OnRun?.Invoke(function);
 
         return Refused.Contains(function) ? ScriptResult.Completed([false]) : Result;
     }

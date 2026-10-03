@@ -112,6 +112,33 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_WhileTheScriptIsAsked_TheItemIsStillHeld_SoItCannotDeleteIt()
+    {
+        var held = new List<Serial?>();
+        _scripts.Scripted.Add("dagger");
+        _scripts.OnRun = _ => held.Add(_session.Get(ItemSessionKeys.Held)?.Item);
+        await StartAsync(_dagger);
+
+        await EquipAsync(_dagger, Aria);
+
+        Assert.Equal([_dagger.Id], held);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    [Fact]
+    public async Task Handle_AWornItemPutBackOnItsLayer_NeverLeftIt_SoItsScriptIsNotAsked()
+    {
+        _scripts.Scripted.Add("shirt");
+        _scripts.Refused.Add("can_equip");
+        await StartAsync(_otherShirt);
+
+        await EquipAsync(_otherShirt, Aria);
+
+        Assert.Empty(_scripts.Calls);
+        Assert.Equal((Aria, LayerType.Shirt), (_otherShirt.MobileId!.Value, _otherShirt.Layer!.Value));
+    }
+
+    [Fact]
     public async Task Handle_AnItemTheRulesRefuse_DoesNotAskTheScript()
     {
         _scripts.Scripted.Add("apple");

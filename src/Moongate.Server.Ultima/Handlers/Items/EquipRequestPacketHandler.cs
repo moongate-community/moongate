@@ -1,7 +1,10 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Handlers.Items.Internal;
 using Moongate.Server.Ultima.Interfaces;
@@ -75,8 +78,9 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
             _mobiles.TryGet(session.CharacterId, out var character) &&
             _equipment.TryGetLayer(item, out var layer) &&
             _equipment.CanWear(character.Id, item, layer) &&
-            // Last, once the rules allow it: the item's script may still refuse to be worn.
-            _scripts.Allows(item, CanEquipFunction, (long)character.Id.Value))
+            // Last, once the rules allow it: the item's script may still refuse to be worn. Not asked of an item lifted
+            // from the paperdoll and put back: it never left its layer.
+            (item.MobileId == character.Id || Ask(session, held, item, character.Id)))
         {
             _items.Equip(item, character.Id, layer);
             _view.WornItemChanged(character, item);
@@ -86,5 +90,20 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
 
         _logger.Debug("{Item} cannot be worn by {Mobile}: it bounces back", item, packet.Mobile);
         HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+    }
+
+    // The item counts as held while its script is asked, so item.delete, item.consume and the like refuse it.
+    private bool Ask(GameSession session, HeldItem held, ItemEntity item, Serial wearer)
+    {
+        session.Set(ItemSessionKeys.Held, held);
+
+        try
+        {
+            return _scripts.Allows(item, CanEquipFunction, (long)wearer.Value);
+        }
+        finally
+        {
+            session.Set(ItemSessionKeys.Held, null);
+        }
     }
 }

@@ -216,6 +216,21 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_WhileTheScriptIsAsked_TheItemIsAlreadyHeld_SoItCannotDeleteIt()
+    {
+        var held = new List<Serial?>();
+        _scripts.Scripted.Add("item");
+        _scripts.Refused.Add("can_pick_up");
+        _scripts.OnRun = _ => held.Add(_session.Get(ItemSessionKeys.Held)?.Item);
+        await StartAsync(Aria);
+
+        await LiftAsync(_coins.Id, 50);
+
+        Assert.Equal([_coins.Id], held);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    [Fact]
     public async Task Handle_ALiftTheRulesRefuse_DoesNotAskTheScript()
     {
         _scripts.Scripted.Add("shirt");

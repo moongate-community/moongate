@@ -383,7 +383,7 @@ script_id = "potion"
 | `on_drop(serial, dropper)` | The player `dropper` puts the held item down: into a container, on the ground, or onto a stack (the item is gone then, so `item.*` gives `nil`). Not when it bounces back or is worn. A worn item put down runs `on_unequip` first, then `on_drop`. |
 | `can_pick_up(serial, picker)` | The player `picker` is about to lift the item, from a container, the paperdoll or the ground, once every rule of the server allows it and before a stack is split. Return `false` to refuse: the item stays where it is and the client shows no message of its own. A worn item is lifted before it is taken off, so this is also where a script keeps an item on its wearer |
 | `can_drop(serial, dropper)` | The player `dropper` is about to put the held item down, anywhere: on the ground, into a container or onto a stack. Return `false` to refuse: the item goes back where it was lifted from |
-| `can_equip(serial, wearer)` | The held item is about to be worn by `wearer`, once the layer is free and the rules allow it. Return `false` to refuse: the item goes back where it was lifted from and `on_equip` does not run |
+| `can_equip(serial, wearer)` | The held item is about to be worn by `wearer`, once the layer is free and the rules allow it. Return `false` to refuse: the item goes back where it was lifted from and `on_equip` does not run. Not asked of a worn item lifted and put back on its layer, which it never left |
 | `can_insert(serial, mobile, item)` | Asked of a container: the player `mobile` is about to put `item` into it, or onto a stack that lies directly in it, once the rules allow the drop. `serial` is the container, carried or lying on the ground; a container holding that container is not asked. Return `false` to refuse: the item goes back where it was lifted from. It is asked after the item's own `can_drop`, and once for each drop |
 | `on_create(serial)` | A newly created item enters the world: today the equipment, backpack and loot of a spawned NPC, before that NPC's `on_spawn`. A new character's starting items and the rest of a split stack raise nothing. |
 
@@ -396,7 +396,9 @@ move and answered at once: only `false` refuses. A missing function, an error, a
 `wait` or any other value lets the move follow, so a broken script never locks an item. Tell
 the player why with `mobile.message` before returning `false`. They are asked for the moves
 a player makes with the client, staff included; a script that moves an item itself
-(`item.move_to`, `item.move_into`) is not asked.
+(`item.move_to`, `item.move_into`) is not asked. While a question is asked the item counts as held, so
+`item.delete`, `item.consume`, `item.move_into` and the functions that change it refuse it:
+answer the question there, and act on the item in `on_pickup`, `on_drop` or `on_equip`.
 
 ```lua
 -- a cursed ring: once worn, it stays on

@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
@@ -96,7 +97,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         var dropper = (long)session.CharacterId.Value;
 
         // The item's script may refuse to be put down anywhere.
-        if (!_scripts.Allows(item, CanDropFunction, dropper))
+        if (!Ask(session, held, item, CanDropFunction, dropper))
         {
             _logger.Debug("{Item} refuses to be dropped: it bounces back", item);
             HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
@@ -110,7 +111,9 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
         bool AllowsInto(ItemEntity container)
         {
-            return verdict ??= _scripts.Allows(container, CanInsertFunction, dropper, (long)item.Id.Value);
+            // A container its script removed while it was asked receives nothing.
+            return verdict ??= Ask(session, held, container, CanInsertFunction, dropper, (long)item.Id.Value) &&
+                               _items.TryGet(container.Id, out _);
         }
 
         // Taken off the paperdoll: players who came into range while it was held still see it worn.
@@ -192,6 +195,22 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         _logger.Debug("{Item} dropped on {Destination} bounces back", item, packet.Destination);
 
         HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+    }
+
+    // The item counts as held while a script is asked, so item.delete, item.consume and the like refuse it and the
+    // drop goes on with an item that is still there.
+    private bool Ask(GameSession session, HeldItem held, ItemEntity asked, string function, params object?[] args)
+    {
+        session.Set(ItemSessionKeys.Held, held);
+
+        try
+        {
+            return _scripts.Allows(asked, function, args);
+        }
+        finally
+        {
+            session.Set(ItemSessionKeys.Held, null);
+        }
     }
 
     // The item's script hears it was put down, after the packets: merged into a stack, the item is already gone.

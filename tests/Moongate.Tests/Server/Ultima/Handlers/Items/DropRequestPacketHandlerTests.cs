@@ -313,6 +313,61 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_WhileTheScriptsAreAsked_TheItemIsStillHeld_SoTheyCannotDeleteIt()
+    {
+        var held = new List<Serial?>();
+        _scripts.Scripted.Add(_coins.TemplateId);
+        _scripts.OnRun = _ => held.Add(_session.Get(ItemSessionKeys.Held)?.Item);
+        await HoldingAsync(_coins);
+
+        await DropTo("bag");
+
+        Assert.Equal([_coins.Id, _coins.Id], held);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(_bag.Id, _coins.ContainerId);
+    }
+
+    [Fact]
+    public async Task Handle_AContainerItsScriptRemovesWhileAsked_ReceivesNothing()
+    {
+        _scripts.Scripted.Add(_coins.TemplateId);
+        _scripts.OnRun = function =>
+        {
+            if (function == "can_insert")
+            {
+                _items.Remove([_innerBag.Id, _bag.Id]);
+            }
+        };
+        await HoldingAsync(_coins);
+
+        await DropTo("bag");
+
+        Assert.Equal(_backpack.Id, _coins.ContainerId);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    [Fact]
+    public async Task Handle_OntoAPileInAChestOnTheGroundWhoseScriptRefuses_BouncesBack_AndAsksItOnce()
+    {
+        var (chest, _) = GroundChest(1497);
+        var pile = Item(0x40000022, CoinGraphic);
+        pile.Amount = 5;
+        pile.PutInContainer(chest.Id, new Point2D(40, 40));
+        _items.Add([pile]);
+        _scripts.Scripted.Add(_coins.TemplateId);
+        _scripts.Refused.Add("can_insert");
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, pile.Id);
+
+        Assert.Equal((_backpack.Id, 30, 5), (_coins.ContainerId!.Value, _coins.Amount, pile.Amount));
+        Assert.Equal(
+            [$"0x{_coins.Id.Value:X8} can_drop 2", $"0x{chest.Id.Value:X8} can_insert 2 {_coins.Id.Value}"],
+            _scripts.Calls
+        );
+    }
+
+    [Fact]
     public async Task Handle_ADropTheRulesRefuse_DoesNotAskTheContainer()
     {
         _scripts.Scripted.Add(_coins.TemplateId);
