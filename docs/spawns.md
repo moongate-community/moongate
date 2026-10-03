@@ -109,7 +109,7 @@ picks one of its item templates at random.
 
 ```toml
 [[spawn]]
-id = "felucca_chest_shared_shame_12_level_3"
+id = "felucca_chest_shared_shame_12"
 name = "Treasure chest level 3"
 item_ids = ["treasure_chest_level_3"]
 max = 1
@@ -132,8 +132,8 @@ items with its live items (the text still says NPCs), and `.initial_spawn` fills
 
 The shipped `treasure_chests.toml` of Felucca, Trammel and Ilshenar hold the dungeon chests of
 ModernUO's spawners, written by
-[`mgctl convert modernuo-chests`](uox3-migration.md#treasure-chests-of-modernuo): 483 regions for
-up to 665 chests. The four templates, `treasure_chest_level_1` to `treasure_chest_level_4` in
+[`mgctl convert modernuo-chests`](uox3-migration.md#treasure-chests-of-modernuo): 399 regions for
+up to 633 chests. The four templates, `treasure_chest_level_1` to `treasure_chest_level_4` in
 `templates/items/treasure_chests.toml`, are ModernUO's `TreasureChestLevel1` to `4`:
 
 | Level | Chest | Gold | Loot tables rolled |
@@ -143,9 +143,10 @@ up to 665 chests. The four templates, `treasure_chest_level_1` to `treasure_ches
 | 3 | Metal bound | 180-419 | Reagents, scrolls, potions, gems and magic items twice each, clothing, jewellery |
 | 4 | Golden | 200-599 | Reagents, scrolls, potions, gems and magic items three times each, clothing and jewellery twice |
 
-Most rolls of a table give nothing, so a chest holds a few of these. A chest cannot be picked up
-and decays 45 minutes after it was made, opened or not, with what is left inside; the region then
-makes a new one 5 to 10 minutes later. Chests have no lock and no trap yet, each level has one
+Most rolls of a table give nothing, so a chest holds a few of these. A player within two tiles
+opens a chest with a double click and takes what is inside; nothing can be put into it. A chest
+cannot be picked up, by all but the staff, and decays 45 minutes after it was made, opened or not,
+with what is left inside; the region then makes a new one 5 to 10 minutes later. Chests have no lock and no trap yet, each level has one
 look, and the time to decay is fixed, where ModernUO picks 15 to 74 minutes.
 
 ## Water and amphibious NPCs

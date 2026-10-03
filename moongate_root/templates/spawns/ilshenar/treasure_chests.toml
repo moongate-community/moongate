@@ -1,10 +1,10 @@
 [[spawn]]
-id = "ilshenar_chest_shared_ratmancave_1_level_3"
+id = "ilshenar_chest_shared_ratmancave_1"
 map = "ilshenar"
-name = "Treasure chest level 3"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -19,27 +19,7 @@ x2 = 1176
 y2 = 1516
 
 [[spawn]]
-id = "ilshenar_chest_shared_ratmancave_1_level_4"
-map = "ilshenar"
-name = "Treasure chest level 4"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 1
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = -52
-only_outside = false
-[[spawn.areas]]
-x1 = 1166
-y1 = 1506
-x2 = 1176
-y2 = 1516
-
-[[spawn]]
-id = "ilshenar_chest_shared_rock_6_level_4"
+id = "ilshenar_chest_shared_rock_6"
 map = "ilshenar"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -59,73 +39,13 @@ x2 = 2190
 y2 = 173
 
 [[spawn]]
-id = "ilshenar_chest_shared_wisp_9_level_1"
+id = "ilshenar_chest_shared_wisp_9"
 map = "ilshenar"
-name = "Treasure chest level 1"
+name = "Treasure chest level 1, 2, 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_1"]
-max = 9
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = -12
-only_outside = false
-[[spawn.areas]]
-x1 = 773
-y1 = 1477
-x2 = 779
-y2 = 1483
-
-[[spawn]]
-id = "ilshenar_chest_shared_wisp_9_level_2"
-map = "ilshenar"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 9
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = -12
-only_outside = false
-[[spawn.areas]]
-x1 = 773
-y1 = 1477
-x2 = 779
-y2 = 1483
-
-[[spawn]]
-id = "ilshenar_chest_shared_wisp_9_level_3"
-map = "ilshenar"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 6
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = -12
-only_outside = false
-[[spawn.areas]]
-x1 = 773
-y1 = 1477
-x2 = 779
-y2 = 1483
-
-[[spawn]]
-id = "ilshenar_chest_shared_wisp_9_level_4"
-map = "ilshenar"
-name = "Treasure chest level 4"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 6
+item_ids = ["treasure_chest_level_1", "treasure_chest_level_2", "treasure_chest_level_3", "treasure_chest_level_4"]
+max = 15
 min_minutes = 5
 max_minutes = 10
 call = 1

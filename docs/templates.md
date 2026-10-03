@@ -276,7 +276,7 @@ own, see [TOML value types](toml-types.md).
 | `Name`, `Comment` | A display name override, and a designer note nobody reads at runtime |
 | `Rarity` | `EnumValueSpec<ItemRarityType>` |
 | `ScriptId` | The global Lua table, defined by `scripts/items/<script_id>.lua`, whose functions (`on_use`, `on_equip`, `on_unequip`, `on_pickup`, `on_drop`, `on_create`) handle what happens to the item; a lower-case Lua identifier, empty for none. See [Item scripts](scripting.md#item-scripts) |
-| `Movable` | Unset uses tiledata: movable unless the tiledata weight is 255, the client's "cannot be lifted" |
+| `Movable` | Unset uses tiledata: movable unless the tiledata weight is 255, the client's "cannot be lifted". Players cannot pick up what is not movable; game masters and administrators can |
 | `Weight` | Stones to two decimals (`weight = 0.02` for a coin); unset uses the whole-stone tiledata weight |
 | `Amount` | `RangeValueSpec<int>`: the stack size of a new item, fixed or `"10-20"`; unset is 1 |
 | `Stackable` | Unset uses the tiledata `Generic` flag |

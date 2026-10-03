@@ -119,9 +119,13 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
             return;
         }
 
-        if (_items.GetOwner(item) != session.CharacterId)
+        if (_items.GetOwner(item) != session.CharacterId && !CanOpenOnTheGround(session, item))
         {
-            _logger.Debug("Session {SessionId} tried to open {Item}, which its character does not carry", session.SessionId, item);
+            _logger.Debug(
+                "Session {SessionId} tried to open {Item}, which its character neither carries nor reaches on the ground",
+                session.SessionId,
+                item
+            );
 
             return;
         }
@@ -136,6 +140,27 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         {
             _sender.TrySend(session.SessionId, _tooltips.Info(content));
         }
+    }
+
+    // A container lying on the ground, or inside one, within reach of the character, such as a treasure chest; one too
+    // far says so.
+    private bool CanOpenOnTheGround(GameSession session, ItemEntity item)
+    {
+        if (_items.GetGroundRoot(item) is not { } root ||
+            !_items.IsLyingOnGround(root) ||
+            !_mobiles.TryGet(session.CharacterId, out var character))
+        {
+            return false;
+        }
+
+        if (_items.CanReach(character, root))
+        {
+            return true;
+        }
+
+        _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, TooFarCliloc, "", ""));
+
+        return false;
     }
 
     // The item's on_use, for an item the character carries or reaches on the ground; true when the script handled the

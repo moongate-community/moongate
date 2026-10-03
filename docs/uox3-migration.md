@@ -287,10 +287,10 @@ dotnet run --project src/Moongate.Ctl -- convert modernuo-chests \
 
 It reads the `shared` and `post-uoml` eras and writes one `treasure_chests.toml` per map folder
 that has chests, replacing that of a previous run: a
-[spawn region of items](spawns.md#regions-of-items-treasure-chests) per chest level of a spawner,
-with the spawner's delays, its home range as the area and the cap of the entry as `max` (the
-spawner's count at most; a level listed twice adds its caps). A chest of another level is counted
-in the report and left out. With no chest at all it fails and writes nothing.
+[spawn region of items](spawns.md#regions-of-items-treasure-chests) per spawner with chests,
+which picks among the levels the spawner lists, with the spawner's delays, its home range as the
+area and the caps of its chest entries together as `max`, the spawner's count at most. A chest of
+another level is counted in the report and left out. With no chest at all it fails and writes nothing.
 
 ## Spawns of ModernUO
 

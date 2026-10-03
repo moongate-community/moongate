@@ -84,6 +84,31 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void GetGroundRoot_IsTheGroundItemAtTheTop_AndNullWhenCarried()
+    {
+        var service = Service();
+        var gem = Item(0x40000060);
+        var box = Item(0x40000061);
+        box.PutInContainer(_ground.Id, new Point2D(1, 1));
+        gem.PutInContainer(box.Id, new Point2D(1, 1));
+        service.Add([box, gem]);
+
+        Assert.Equal((_ground, _ground, _ground), (service.GetGroundRoot(gem), service.GetGroundRoot(box), service.GetGroundRoot(_ground)));
+        Assert.Equal((null, null), (service.GetGroundRoot(_coin), service.GetGroundRoot(_backpack)));
+    }
+
+    [Fact]
+    public void GetGroundRoot_InAContainerThatIsNotLive_IsNull()
+    {
+        var service = Service();
+        var gem = Item(0x40000060);
+        gem.PutInContainer(new Serial(0x40000099), new Point2D(1, 1));
+        service.Add([gem]);
+
+        Assert.Null(service.GetGroundRoot(gem));
+    }
+
+    [Fact]
     public void GetOwner_OfAGroundItem_IsNobody()
     {
         Assert.Null(Service().GetOwner(_ground));

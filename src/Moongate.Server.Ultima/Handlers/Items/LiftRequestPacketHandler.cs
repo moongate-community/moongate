@@ -1,6 +1,7 @@
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
@@ -36,6 +37,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
     private readonly ITooltipService _tooltips;
     private readonly IItemScriptService? _scripts;
     private readonly IBankService? _bank;
+    private readonly IItemTemplateService? _templates;
 
     public LiftRequestPacketHandler(
         IItemService items,
@@ -46,9 +48,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         IPacketSendService sender,
         ITooltipService tooltips,
         IItemScriptService? scripts = null,
-        IBankService? bank = null
+        IBankService? bank = null,
+        IItemTemplateService? templates = null
     )
     {
+        _templates = templates;
         _bank = bank;
         _tooltips = tooltips;
         _scripts = scripts;
@@ -73,11 +77,14 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
 
         var onGround = item?.GroundLocation is not null;
         var worn = item is not null && IsOwnWornItem(session, item);
+        // The chest on the ground the item lies in, at any depth.
+        var chest = item is null || onGround ? null : _items.GetGroundRoot(item);
 
-        // An item inside a carried container, one the character wears (from the paperdoll), or on the ground.
+        // An item inside a carried container or inside a chest on the ground, one the character wears (from the
+        // paperdoll), or on the ground.
         if (!session.CharacterId.IsValid ||
             item is null ||
-            (!onGround && !worn && (item.ContainerId is null || _items.GetOwner(item) != session.CharacterId)) ||
+            (!onGround && !worn && chest is null && (item.ContainerId is null || _items.GetOwner(item) != session.CharacterId)) ||
             packet.Amount <= 0 ||
             packet.Amount > item.Amount ||
             // A worn stack is taken whole: the rest of a split would be a second item on the same layer.
@@ -99,6 +106,22 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         if (onGround && !CanReachFromTheGround(session, item, out var reason))
         {
             Refuse(session, reason, item);
+
+            return;
+        }
+
+        // A chest someone holds is in nobody's reach.
+        if (chest is not null && !(_items.IsLyingOnGround(chest) && CanReachFromTheGround(session, chest, out _)))
+        {
+            Refuse(session, LiftRejectReasonType.CannotLift, item);
+
+            return;
+        }
+
+        // What cannot be picked up, such as a treasure chest or a lamp post, stays where it is for all but the staff.
+        if (session.AccountType < AccountType.GameMaster && !IsMovable(item))
+        {
+            Refuse(session, LiftRejectReasonType.CannotLift, item);
 
             return;
         }
@@ -167,6 +190,22 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         reason = near ? LiftRejectReasonType.OutOfSight : LiftRejectReasonType.OutOfRange;
 
         return false;
+    }
+
+    // The item's own setting, else its template's, else the weight the client's tiledata gives to what cannot be lifted.
+    private bool IsMovable(ItemEntity item)
+    {
+        if (item.Movable is { } movable)
+        {
+            return movable;
+        }
+
+        if (_templates is not null && _templates.TryGet(item.TemplateId, out var template))
+        {
+            return template.EffectiveMovable(_tiles);
+        }
+
+        return !(_tiles.TryGetItem(item.ItemId, out var tile) && tile.Weight == ItemTemplateExtensions.TiledataWeightCannotLift);
     }
 
     private bool IsStackable(ItemEntity item)

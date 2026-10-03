@@ -8,8 +8,8 @@ namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
 ///     Converts the treasure chests of ModernUO's spawners (<c>Distribution/Data/Spawns/&lt;era&gt;/&lt;map&gt;/*.json</c>,
-///     the entries named <c>TreasureChestLevel1</c> to <c>4</c>) into spawn regions of items, one per chest level of a
-///     spawner, and
+///     the entries named <c>TreasureChestLevel1</c> to <c>4</c>) into spawn regions of items, one per spawner
+///     with chests, and
 ///     writes them as <c>&lt;map&gt;/treasure_chests.toml</c>, replacing that of a previous run. The creatures of the
 ///     same spawners are left to the spawn converters.
 /// </summary>
@@ -91,12 +91,13 @@ internal static class ModernUoChestConverter
         return 0;
     }
 
-    // One region per chest level of the spawner: up to its cap live at once, the spawner's count at most; a level listed
-    // twice adds its caps.
+    // One region for the chests of a spawner: it picks among their levels, and as many live at once as their caps
+    // allow, the spawner's count at most, which they share.
     private static IEnumerable<SpawnTemplate> Build(JsonElement spawner, string id, MapType map, ConversionReport report)
     {
         var count = Math.Max(1, spawner.TryGetProperty("count", out var countValue) ? countValue.GetInt32() : 1);
-        var caps = new SortedDictionary<int, int>();
+        var levels = new SortedSet<int>();
+        var caps = 0;
 
         foreach (var entry in spawner.GetProperty("entries").EnumerateArray())
         {
@@ -115,26 +116,28 @@ internal static class ModernUoChestConverter
                 continue;
             }
 
-            var cap = Math.Clamp(entry.TryGetProperty("maxCount", out var maxCount) ? maxCount.GetInt32() : count, 1, count);
-            caps[level] = Math.Min(count, caps.GetValueOrDefault(level) + cap);
+            levels.Add(level);
+            caps += Math.Clamp(entry.TryGetProperty("maxCount", out var maxCount) ? maxCount.GetInt32() : count, 1, count);
         }
 
-        foreach (var (level, cap) in caps)
+        if (levels.Count == 0)
         {
-            var min = ModernUoSpawnConverter.Minutes(spawner, "minDelay");
-            var spawn = new SpawnTemplate
-            {
-                Id = $"{id}_level_{level}",
-                Map = map,
-                Name = $"Treasure chest level {level}",
-                ItemIds = [$"treasure_chest_level_{level}"],
-                Max = cap,
-                MinMinutes = min,
-                MaxMinutes = Math.Max(min, ModernUoSpawnConverter.Minutes(spawner, "maxDelay"))
-            };
-            ModernUoSpawnConverter.Place(spawner, spawn);
-
-            yield return spawn;
+            yield break;
         }
+
+        var min = ModernUoSpawnConverter.Minutes(spawner, "minDelay");
+        var spawn = new SpawnTemplate
+        {
+            Id = id,
+            Map = map,
+            Name = $"Treasure chest level {string.Join(", ", levels)}",
+            ItemIds = levels.Select(level => $"treasure_chest_level_{level}").ToList(),
+            Max = Math.Min(count, caps),
+            MinMinutes = min,
+            MaxMinutes = Math.Max(min, ModernUoSpawnConverter.Minutes(spawner, "maxDelay"))
+        };
+        ModernUoSpawnConverter.Place(spawner, spawn);
+
+        yield return spawn;
     }
 }

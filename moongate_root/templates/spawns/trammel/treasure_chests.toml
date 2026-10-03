@@ -1,11 +1,11 @@
 [[spawn]]
-id = "trammel_chest_shared_covetous_1_level_2"
+id = "trammel_chest_shared_covetous_1"
 map = "trammel"
-name = "Treasure chest level 2"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -19,33 +19,13 @@ x2 = 5404
 y2 = 1864
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_1_level_3"
+id = "trammel_chest_shared_covetous_3"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5394
-y1 = 1854
-x2 = 5404
-y2 = 1864
-
-[[spawn]]
-id = "trammel_chest_shared_covetous_3_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -59,33 +39,13 @@ x2 = 5418
 y2 = 1939
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_3_level_3"
+id = "trammel_chest_shared_covetous_5"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5404
-y1 = 1925
-x2 = 5418
-y2 = 1939
-
-[[spawn]]
-id = "trammel_chest_shared_covetous_5_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -99,33 +59,13 @@ x2 = 5467
 y2 = 1982
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_5_level_3"
+id = "trammel_chest_shared_covetous_9"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5453
-y1 = 1968
-x2 = 5467
-y2 = 1982
-
-[[spawn]]
-id = "trammel_chest_shared_covetous_9_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -139,33 +79,13 @@ x2 = 5456
 y2 = 2035
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_9_level_4"
+id = "trammel_chest_shared_covetous_11"
 map = "trammel"
-name = "Treasure chest level 4"
+name = "Treasure chest level 1, 2"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5440
-y1 = 2019
-x2 = 5456
-y2 = 2035
-
-[[spawn]]
-id = "trammel_chest_shared_covetous_11_level_1"
-map = "trammel"
-name = "Treasure chest level 1"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_1"]
-max = 1
+item_ids = ["treasure_chest_level_1", "treasure_chest_level_2"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -179,33 +99,13 @@ x2 = 5454
 y2 = 1893
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_11_level_2"
+id = "trammel_chest_shared_covetous_15"
 map = "trammel"
-name = "Treasure chest level 2"
+name = "Treasure chest level 1, 2"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5450
-y1 = 1889
-x2 = 5454
-y2 = 1893
-
-[[spawn]]
-id = "trammel_chest_shared_covetous_15_level_1"
-map = "trammel"
-name = "Treasure chest level 1"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_1"]
-max = 1
+item_ids = ["treasure_chest_level_1", "treasure_chest_level_2"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -219,27 +119,7 @@ x2 = 5389
 y2 = 1913
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_15_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5385
-y1 = 1909
-x2 = 5389
-y2 = 1913
-
-[[spawn]]
-id = "trammel_chest_shared_covetous_16_level_2"
+id = "trammel_chest_shared_covetous_16"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -259,13 +139,13 @@ x2 = 5423
 y2 = 2010
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_17_level_3"
+id = "trammel_chest_shared_covetous_17"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -279,33 +159,13 @@ x2 = 5469
 y2 = 1826
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_17_level_4"
+id = "trammel_chest_shared_covetous_18"
 map = "trammel"
-name = "Treasure chest level 4"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5453
-y1 = 1810
-x2 = 5469
-y2 = 1826
-
-[[spawn]]
-id = "trammel_chest_shared_covetous_18_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -319,33 +179,13 @@ x2 = 5508
 y2 = 2007
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_18_level_3"
+id = "trammel_chest_shared_covetous_24"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5498
-y1 = 1997
-x2 = 5508
-y2 = 2007
-
-[[spawn]]
-id = "trammel_chest_shared_covetous_24_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -359,33 +199,13 @@ x2 = 5623
 y2 = 1846
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_24_level_4"
+id = "trammel_chest_shared_covetous_32"
 map = "trammel"
-name = "Treasure chest level 4"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5607
-y1 = 1830
-x2 = 5623
-y2 = 1846
-
-[[spawn]]
-id = "trammel_chest_shared_covetous_32_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -399,33 +219,13 @@ x2 = 5507
 y2 = 1811
 
 [[spawn]]
-id = "trammel_chest_shared_covetous_32_level_4"
+id = "trammel_chest_shared_deceit_0"
 map = "trammel"
-name = "Treasure chest level 4"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5501
-y1 = 1805
-x2 = 5507
-y2 = 1811
-
-[[spawn]]
-id = "trammel_chest_shared_deceit_0_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -439,33 +239,13 @@ x2 = 5153
 y2 = 745
 
 [[spawn]]
-id = "trammel_chest_shared_deceit_0_level_3"
+id = "trammel_chest_shared_deceit_9"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5147
-y1 = 739
-x2 = 5153
-y2 = 745
-
-[[spawn]]
-id = "trammel_chest_shared_deceit_9_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -479,33 +259,13 @@ x2 = 5325
 y2 = 573
 
 [[spawn]]
-id = "trammel_chest_shared_deceit_9_level_3"
+id = "trammel_chest_shared_deceit_10"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5321
-y1 = 569
-x2 = 5325
-y2 = 573
-
-[[spawn]]
-id = "trammel_chest_shared_deceit_10_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -519,33 +279,13 @@ x2 = 5152
 y2 = 625
 
 [[spawn]]
-id = "trammel_chest_shared_deceit_10_level_3"
+id = "trammel_chest_shared_deceit_13"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = -34
-only_outside = false
-[[spawn.areas]]
-x1 = 5138
-y1 = 611
-x2 = 5152
-y2 = 625
-
-[[spawn]]
-id = "trammel_chest_shared_deceit_13_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -559,33 +299,13 @@ x2 = 5269
 y2 = 692
 
 [[spawn]]
-id = "trammel_chest_shared_deceit_13_level_3"
+id = "trammel_chest_shared_deceit_22"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5265
-y1 = 688
-x2 = 5269
-y2 = 692
-
-[[spawn]]
-id = "trammel_chest_shared_deceit_22_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -599,27 +319,7 @@ x2 = 5322
 y2 = 756
 
 [[spawn]]
-id = "trammel_chest_shared_deceit_22_level_4"
-map = "trammel"
-name = "Treasure chest level 4"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = -4
-only_outside = false
-[[spawn.areas]]
-x1 = 5306
-y1 = 740
-x2 = 5322
-y2 = 756
-
-[[spawn]]
-id = "trammel_chest_shared_despise_3_level_4"
+id = "trammel_chest_shared_despise_3"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -639,7 +339,7 @@ x2 = 5569
 y2 = 826
 
 [[spawn]]
-id = "trammel_chest_shared_despise_17_level_2"
+id = "trammel_chest_shared_despise_17"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -659,13 +359,13 @@ x2 = 5598
 y2 = 799
 
 [[spawn]]
-id = "trammel_chest_shared_despise_19_level_1"
+id = "trammel_chest_shared_despise_19"
 map = "trammel"
-name = "Treasure chest level 1"
+name = "Treasure chest level 1, 2"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_1"]
-max = 1
+item_ids = ["treasure_chest_level_1", "treasure_chest_level_2"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -679,33 +379,13 @@ x2 = 5399
 y2 = 530
 
 [[spawn]]
-id = "trammel_chest_shared_despise_19_level_2"
+id = "trammel_chest_shared_despise_21"
 map = "trammel"
-name = "Treasure chest level 2"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
 max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 81
-only_outside = false
-[[spawn.areas]]
-x1 = 5389
-y1 = 520
-x2 = 5399
-y2 = 530
-
-[[spawn]]
-id = "trammel_chest_shared_despise_21_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -719,33 +399,13 @@ x2 = 5515
 y2 = 541
 
 [[spawn]]
-id = "trammel_chest_shared_despise_21_level_3"
+id = "trammel_chest_shared_despise_22"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 76
-only_outside = false
-[[spawn.areas]]
-x1 = 5491
-y1 = 517
-x2 = 5515
-y2 = 541
-
-[[spawn]]
-id = "trammel_chest_shared_despise_22_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -759,33 +419,13 @@ x2 = 5398
 y2 = 624
 
 [[spawn]]
-id = "trammel_chest_shared_despise_22_level_3"
+id = "trammel_chest_shared_despise_24"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 61
-only_outside = false
-[[spawn.areas]]
-x1 = 5374
-y1 = 600
-x2 = 5398
-y2 = 624
-
-[[spawn]]
-id = "trammel_chest_shared_despise_24_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -799,33 +439,13 @@ x2 = 5554
 y2 = 896
 
 [[spawn]]
-id = "trammel_chest_shared_despise_24_level_3"
+id = "trammel_chest_shared_despise_25"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 1, 2"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 46
-only_outside = false
-[[spawn.areas]]
-x1 = 5538
-y1 = 880
-x2 = 5554
-y2 = 896
-
-[[spawn]]
-id = "trammel_chest_shared_despise_25_level_1"
-map = "trammel"
-name = "Treasure chest level 1"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_1"]
-max = 1
+item_ids = ["treasure_chest_level_1", "treasure_chest_level_2"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -839,33 +459,13 @@ x2 = 5395
 y2 = 592
 
 [[spawn]]
-id = "trammel_chest_shared_despise_25_level_2"
+id = "trammel_chest_shared_despise_27"
 map = "trammel"
-name = "Treasure chest level 2"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 61
-only_outside = false
-[[spawn.areas]]
-x1 = 5385
-y1 = 582
-x2 = 5395
-y2 = 592
-
-[[spawn]]
-id = "trammel_chest_shared_despise_27_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -879,27 +479,7 @@ x2 = 5512
 y2 = 661
 
 [[spawn]]
-id = "trammel_chest_shared_despise_27_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 36
-only_outside = false
-[[spawn.areas]]
-x1 = 5502
-y1 = 651
-x2 = 5512
-y2 = 661
-
-[[spawn]]
-id = "trammel_chest_shared_despise_33_level_3"
+id = "trammel_chest_shared_despise_33"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -919,13 +499,13 @@ x2 = 5564
 y2 = 835
 
 [[spawn]]
-id = "trammel_chest_shared_despise_34_level_2"
+id = "trammel_chest_shared_despise_34"
 map = "trammel"
-name = "Treasure chest level 2"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 5
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -939,27 +519,7 @@ x2 = 5392
 y2 = 702
 
 [[spawn]]
-id = "trammel_chest_shared_despise_34_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 4
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 31
-only_outside = false
-[[spawn.areas]]
-x1 = 5382
-y1 = 692
-x2 = 5392
-y2 = 702
-
-[[spawn]]
-id = "trammel_chest_shared_despise_36_level_3"
+id = "trammel_chest_shared_despise_36"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -979,7 +539,7 @@ x2 = 5615
 y2 = 809
 
 [[spawn]]
-id = "trammel_chest_shared_despise_40_level_3"
+id = "trammel_chest_shared_despise_40"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -999,7 +559,7 @@ x2 = 5407
 y2 = 1005
 
 [[spawn]]
-id = "trammel_chest_shared_despise_41_level_4"
+id = "trammel_chest_shared_despise_41"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -1019,13 +579,13 @@ x2 = 5408
 y2 = 1005
 
 [[spawn]]
-id = "trammel_chest_shared_destard_7_level_2"
+id = "trammel_chest_shared_destard_7"
 map = "trammel"
-name = "Treasure chest level 2"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -1039,33 +599,13 @@ x2 = 5239
 y2 = 851
 
 [[spawn]]
-id = "trammel_chest_shared_destard_7_level_3"
+id = "trammel_chest_shared_destard_8"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 17
-only_outside = false
-[[spawn.areas]]
-x1 = 5219
-y1 = 831
-x2 = 5239
-y2 = 851
-
-[[spawn]]
-id = "trammel_chest_shared_destard_8_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -1079,32 +619,12 @@ x2 = 5251
 y2 = 955
 
 [[spawn]]
-id = "trammel_chest_shared_destard_8_level_4"
+id = "trammel_chest_shared_destard_9"
 map = "trammel"
-name = "Treasure chest level 4"
+name = "Treasure chest level 2, 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = -24
-only_outside = false
-[[spawn.areas]]
-x1 = 5231
-y1 = 935
-x2 = 5251
-y2 = 955
-
-[[spawn]]
-id = "trammel_chest_shared_destard_9_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3", "treasure_chest_level_4"]
 max = 4
 min_minutes = 5
 max_minutes = 10
@@ -1119,53 +639,13 @@ x2 = 5193
 y2 = 882
 
 [[spawn]]
-id = "trammel_chest_shared_destard_9_level_3"
+id = "trammel_chest_shared_destard_10"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 4
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5113
-y1 = 802
-x2 = 5193
-y2 = 882
-
-[[spawn]]
-id = "trammel_chest_shared_destard_9_level_4"
-map = "trammel"
-name = "Treasure chest level 4"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 4
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5113
-y1 = 802
-x2 = 5193
-y2 = 882
-
-[[spawn]]
-id = "trammel_chest_shared_destard_10_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -1179,33 +659,13 @@ x2 = 5153
 y2 = 996
 
 [[spawn]]
-id = "trammel_chest_shared_destard_10_level_4"
+id = "trammel_chest_shared_destard_13"
 map = "trammel"
-name = "Treasure chest level 4"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5133
-y1 = 976
-x2 = 5153
-y2 = 996
-
-[[spawn]]
-id = "trammel_chest_shared_destard_13_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -1219,33 +679,13 @@ x2 = 5166
 y2 = 940
 
 [[spawn]]
-id = "trammel_chest_shared_destard_13_level_3"
+id = "trammel_chest_shared_destard_18"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5116
-y1 = 890
-x2 = 5166
-y2 = 940
-
-[[spawn]]
-id = "trammel_chest_shared_destard_18_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -1259,33 +699,13 @@ x2 = 5324
 y2 = 987
 
 [[spawn]]
-id = "trammel_chest_shared_destard_18_level_4"
+id = "trammel_chest_shared_destard_24"
 map = "trammel"
-name = "Treasure chest level 4"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5310
-y1 = 973
-x2 = 5324
-y2 = 987
-
-[[spawn]]
-id = "trammel_chest_shared_destard_24_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -1299,27 +719,7 @@ x2 = 5193
 y2 = 1017
 
 [[spawn]]
-id = "trammel_chest_shared_destard_24_level_4"
-map = "trammel"
-name = "Treasure chest level 4"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5173
-y1 = 997
-x2 = 5193
-y2 = 1017
-
-[[spawn]]
-id = "trammel_chest_shared_destard_25_level_3"
+id = "trammel_chest_shared_destard_25"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1339,7 +739,7 @@ x2 = 5212
 y2 = 785
 
 [[spawn]]
-id = "trammel_chest_shared_fire_0_level_3"
+id = "trammel_chest_shared_fire_0"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1359,7 +759,7 @@ x2 = 5729
 y2 = 1397
 
 [[spawn]]
-id = "trammel_chest_shared_fire_15_level_2"
+id = "trammel_chest_shared_fire_15"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1379,7 +779,7 @@ x2 = 5721
 y2 = 1472
 
 [[spawn]]
-id = "trammel_chest_shared_fire_16_level_4"
+id = "trammel_chest_shared_fire_16"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -1399,7 +799,7 @@ x2 = 5645
 y2 = 1437
 
 [[spawn]]
-id = "trammel_chest_shared_fire_23_level_2"
+id = "trammel_chest_shared_fire_23"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1419,7 +819,7 @@ x2 = 5684
 y2 = 1443
 
 [[spawn]]
-id = "trammel_chest_shared_fire_29_level_3"
+id = "trammel_chest_shared_fire_29"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1439,7 +839,7 @@ x2 = 5722
 y2 = 1472
 
 [[spawn]]
-id = "trammel_chest_shared_fire_34_level_3"
+id = "trammel_chest_shared_fire_34"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1459,7 +859,7 @@ x2 = 5652
 y2 = 1436
 
 [[spawn]]
-id = "trammel_chest_shared_fire_48_level_3"
+id = "trammel_chest_shared_fire_48"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1479,7 +879,7 @@ x2 = 5684
 y2 = 1444
 
 [[spawn]]
-id = "trammel_chest_shared_fire_49_level_2"
+id = "trammel_chest_shared_fire_49"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1499,7 +899,7 @@ x2 = 5730
 y2 = 1397
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_0_level_1"
+id = "trammel_chest_shared_hythloth_0"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -1519,7 +919,7 @@ x2 = 5967
 y2 = 71
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_1_level_2"
+id = "trammel_chest_shared_hythloth_1"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1539,7 +939,7 @@ x2 = 5963
 y2 = 218
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_3_level_2"
+id = "trammel_chest_shared_hythloth_3"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1559,7 +959,7 @@ x2 = 5946
 y2 = 79
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_4_level_3"
+id = "trammel_chest_shared_hythloth_4"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1579,7 +979,7 @@ x2 = 5966
 y2 = 237
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_5_level_4"
+id = "trammel_chest_shared_hythloth_5"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -1599,7 +999,7 @@ x2 = 6109
 y2 = 37
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_6_level_3"
+id = "trammel_chest_shared_hythloth_6"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1619,7 +1019,7 @@ x2 = 6125
 y2 = 160
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_7_level_4"
+id = "trammel_chest_shared_hythloth_7"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -1639,7 +1039,7 @@ x2 = 6034
 y2 = 206
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_9_level_2"
+id = "trammel_chest_shared_hythloth_9"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1659,7 +1059,7 @@ x2 = 6109
 y2 = 67
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_12_level_4"
+id = "trammel_chest_shared_hythloth_12"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -1679,7 +1079,7 @@ x2 = 6059
 y2 = 154
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_13_level_4"
+id = "trammel_chest_shared_hythloth_13"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -1699,7 +1099,7 @@ x2 = 5928
 y2 = 245
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_14_level_2"
+id = "trammel_chest_shared_hythloth_14"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1719,7 +1119,7 @@ x2 = 5979
 y2 = 186
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_15_level_3"
+id = "trammel_chest_shared_hythloth_15"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1739,7 +1139,7 @@ x2 = 6082
 y2 = 45
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_16_level_3"
+id = "trammel_chest_shared_hythloth_16"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1759,7 +1159,7 @@ x2 = 6098
 y2 = 37
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_17_level_3"
+id = "trammel_chest_shared_hythloth_17"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1779,7 +1179,7 @@ x2 = 6126
 y2 = 222
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_18_level_1"
+id = "trammel_chest_shared_hythloth_18"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -1799,7 +1199,7 @@ x2 = 5982
 y2 = 85
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_21_level_4"
+id = "trammel_chest_shared_hythloth_21"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -1819,7 +1219,7 @@ x2 = 6042
 y2 = 231
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_23_level_2"
+id = "trammel_chest_shared_hythloth_23"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1839,7 +1239,7 @@ x2 = 5971
 y2 = 170
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_24_level_2"
+id = "trammel_chest_shared_hythloth_24"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1859,7 +1259,7 @@ x2 = 5930
 y2 = 78
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_25_level_2"
+id = "trammel_chest_shared_hythloth_25"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1879,7 +1279,7 @@ x2 = 5918
 y2 = 94
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_27_level_1"
+id = "trammel_chest_shared_hythloth_27"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -1899,7 +1299,7 @@ x2 = 5922
 y2 = 82
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_29_level_3"
+id = "trammel_chest_shared_hythloth_29"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1919,13 +1319,13 @@ x2 = 6061
 y2 = 159
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_30_level_1"
+id = "trammel_chest_shared_hythloth_30"
 map = "trammel"
-name = "Treasure chest level 1"
+name = "Treasure chest level 1, 2"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_1"]
-max = 1
+item_ids = ["treasure_chest_level_1", "treasure_chest_level_2"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -1939,27 +1339,7 @@ x2 = 5973
 y2 = 86
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_30_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 5961
-y1 = 74
-x2 = 5973
-y2 = 86
-
-[[spawn]]
-id = "trammel_chest_shared_hythloth_31_level_3"
+id = "trammel_chest_shared_hythloth_31"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -1979,7 +1359,7 @@ x2 = 6047
 y2 = 200
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_32_level_2"
+id = "trammel_chest_shared_hythloth_32"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -1999,7 +1379,7 @@ x2 = 5998
 y2 = 146
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_33_level_4"
+id = "trammel_chest_shared_hythloth_33"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2019,7 +1399,7 @@ x2 = 6065
 y2 = 97
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_34_level_3"
+id = "trammel_chest_shared_hythloth_34"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2039,7 +1419,7 @@ x2 = 5990
 y2 = 187
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_39_level_3"
+id = "trammel_chest_shared_hythloth_39"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2059,7 +1439,7 @@ x2 = 6114
 y2 = 93
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_40_level_1"
+id = "trammel_chest_shared_hythloth_40"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -2079,7 +1459,7 @@ x2 = 5980
 y2 = 27
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_43_level_3"
+id = "trammel_chest_shared_hythloth_43"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2099,7 +1479,7 @@ x2 = 5927
 y2 = 231
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_45_level_1"
+id = "trammel_chest_shared_hythloth_45"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -2119,7 +1499,7 @@ x2 = 5938
 y2 = 66
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_46_level_4"
+id = "trammel_chest_shared_hythloth_46"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2139,7 +1519,7 @@ x2 = 6087
 y2 = 46
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_48_level_3"
+id = "trammel_chest_shared_hythloth_48"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2159,7 +1539,7 @@ x2 = 6042
 y2 = 223
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_49_level_1"
+id = "trammel_chest_shared_hythloth_49"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -2179,7 +1559,7 @@ x2 = 5987
 y2 = 38
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_51_level_1"
+id = "trammel_chest_shared_hythloth_51"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -2199,7 +1579,7 @@ x2 = 5959
 y2 = 66
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_52_level_1"
+id = "trammel_chest_shared_hythloth_52"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -2219,7 +1599,7 @@ x2 = 5984
 y2 = 26
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_53_level_1"
+id = "trammel_chest_shared_hythloth_53"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -2239,7 +1619,7 @@ x2 = 5990
 y2 = 26
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_54_level_2"
+id = "trammel_chest_shared_hythloth_54"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -2259,7 +1639,7 @@ x2 = 6118
 y2 = 82
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_56_level_2"
+id = "trammel_chest_shared_hythloth_56"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -2279,7 +1659,7 @@ x2 = 5973
 y2 = 87
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_58_level_2"
+id = "trammel_chest_shared_hythloth_58"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -2299,7 +1679,7 @@ x2 = 6122
 y2 = 167
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_59_level_3"
+id = "trammel_chest_shared_hythloth_59"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2319,7 +1699,7 @@ x2 = 6108
 y2 = 71
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_61_level_3"
+id = "trammel_chest_shared_hythloth_61"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2339,7 +1719,7 @@ x2 = 6059
 y2 = 93
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_62_level_1"
+id = "trammel_chest_shared_hythloth_62"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -2359,7 +1739,7 @@ x2 = 5921
 y2 = 65
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_65_level_1"
+id = "trammel_chest_shared_hythloth_65"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -2379,7 +1759,7 @@ x2 = 5984
 y2 = 170
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_66_level_1"
+id = "trammel_chest_shared_hythloth_66"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -2399,7 +1779,7 @@ x2 = 5991
 y2 = 37
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_69_level_4"
+id = "trammel_chest_shared_hythloth_69"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2419,7 +1799,7 @@ x2 = 6121
 y2 = 230
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_71_level_4"
+id = "trammel_chest_shared_hythloth_71"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2439,7 +1819,7 @@ x2 = 6093
 y2 = 188
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_72_level_3"
+id = "trammel_chest_shared_hythloth_72"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2459,7 +1839,7 @@ x2 = 6088
 y2 = 187
 
 [[spawn]]
-id = "trammel_chest_shared_hythloth_74_level_1"
+id = "trammel_chest_shared_hythloth_74"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -2479,7 +1859,7 @@ x2 = 5993
 y2 = 148
 
 [[spawn]]
-id = "trammel_chest_shared_ice_0_level_4"
+id = "trammel_chest_shared_ice_0"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2499,7 +1879,7 @@ x2 = 5838
 y2 = 246
 
 [[spawn]]
-id = "trammel_chest_shared_ice_1_level_3"
+id = "trammel_chest_shared_ice_1"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2519,7 +1899,7 @@ x2 = 5834
 y2 = 243
 
 [[spawn]]
-id = "trammel_chest_shared_ice_3_level_3"
+id = "trammel_chest_shared_ice_3"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2539,7 +1919,7 @@ x2 = 5773
 y2 = 189
 
 [[spawn]]
-id = "trammel_chest_shared_ice_6_level_4"
+id = "trammel_chest_shared_ice_6"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2559,7 +1939,7 @@ x2 = 5667
 y2 = 332
 
 [[spawn]]
-id = "trammel_chest_shared_ice_10_level_4"
+id = "trammel_chest_shared_ice_10"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2579,7 +1959,7 @@ x2 = 5685
 y2 = 182
 
 [[spawn]]
-id = "trammel_chest_shared_ice_11_level_2"
+id = "trammel_chest_shared_ice_11"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -2599,7 +1979,7 @@ x2 = 5839
 y2 = 356
 
 [[spawn]]
-id = "trammel_chest_shared_ice_12_level_3"
+id = "trammel_chest_shared_ice_12"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2619,7 +1999,7 @@ x2 = 5755
 y2 = 212
 
 [[spawn]]
-id = "trammel_chest_shared_ice_13_level_4"
+id = "trammel_chest_shared_ice_13"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2639,7 +2019,7 @@ x2 = 5764
 y2 = 188
 
 [[spawn]]
-id = "trammel_chest_shared_ice_14_level_3"
+id = "trammel_chest_shared_ice_14"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2659,7 +2039,7 @@ x2 = 5825
 y2 = 364
 
 [[spawn]]
-id = "trammel_chest_shared_ice_15_level_4"
+id = "trammel_chest_shared_ice_15"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2679,7 +2059,7 @@ x2 = 5757
 y2 = 204
 
 [[spawn]]
-id = "trammel_chest_shared_ice_17_level_3"
+id = "trammel_chest_shared_ice_17"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2699,7 +2079,7 @@ x2 = 5855
 y2 = 228
 
 [[spawn]]
-id = "trammel_chest_shared_ice_18_level_4"
+id = "trammel_chest_shared_ice_18"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2719,7 +2099,7 @@ x2 = 5713
 y2 = 146
 
 [[spawn]]
-id = "trammel_chest_shared_ice_21_level_4"
+id = "trammel_chest_shared_ice_21"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2739,7 +2119,7 @@ x2 = 5683
 y2 = 315
 
 [[spawn]]
-id = "trammel_chest_shared_ice_26_level_4"
+id = "trammel_chest_shared_ice_26"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2759,7 +2139,7 @@ x2 = 5677
 y2 = 332
 
 [[spawn]]
-id = "trammel_chest_shared_ice_27_level_3"
+id = "trammel_chest_shared_ice_27"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2779,7 +2159,7 @@ x2 = 5684
 y2 = 198
 
 [[spawn]]
-id = "trammel_chest_shared_ice_28_level_2"
+id = "trammel_chest_shared_ice_28"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -2799,7 +2179,7 @@ x2 = 5849
 y2 = 227
 
 [[spawn]]
-id = "trammel_chest_shared_ice_29_level_4"
+id = "trammel_chest_shared_ice_29"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2819,7 +2199,7 @@ x2 = 5752
 y2 = 141
 
 [[spawn]]
-id = "trammel_chest_shared_ice_30_level_3"
+id = "trammel_chest_shared_ice_30"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2839,7 +2219,7 @@ x2 = 5759
 y2 = 140
 
 [[spawn]]
-id = "trammel_chest_shared_ice_31_level_4"
+id = "trammel_chest_shared_ice_31"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -2859,7 +2239,7 @@ x2 = 5697
 y2 = 304
 
 [[spawn]]
-id = "trammel_chest_shared_ice_33_level_3"
+id = "trammel_chest_shared_ice_33"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -2879,13 +2259,13 @@ x2 = 5722
 y2 = 148
 
 [[spawn]]
-id = "trammel_chest_shared_outdoors_59_level_3"
+id = "trammel_chest_shared_outdoors_59"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -2899,33 +2279,13 @@ x2 = 1022
 y2 = 831
 
 [[spawn]]
-id = "trammel_chest_shared_outdoors_59_level_4"
+id = "trammel_chest_shared_outdoors_179"
 map = "trammel"
-name = "Treasure chest level 4"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 1012
-y1 = 821
-x2 = 1022
-y2 = 831
-
-[[spawn]]
-id = "trammel_chest_shared_outdoors_179_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -2939,33 +2299,13 @@ x2 = 1020
 y2 = 711
 
 [[spawn]]
-id = "trammel_chest_shared_outdoors_179_level_3"
+id = "trammel_chest_shared_outdoors_196"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 1010
-y1 = 701
-x2 = 1020
-y2 = 711
-
-[[spawn]]
-id = "trammel_chest_shared_outdoors_196_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -2979,33 +2319,13 @@ x2 = 2205
 y2 = 1381
 
 [[spawn]]
-id = "trammel_chest_shared_outdoors_196_level_3"
+id = "trammel_chest_shared_outdoors_231"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 2201
-y1 = 1377
-x2 = 2205
-y2 = 1381
-
-[[spawn]]
-id = "trammel_chest_shared_outdoors_231_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 3
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 6
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -3019,37 +2339,17 @@ x2 = 4603
 y2 = 3578
 
 [[spawn]]
-id = "trammel_chest_shared_outdoors_231_level_4"
+id = "trammel_chest_shared_outdoors_410"
 map = "trammel"
-name = "Treasure chest level 4"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
 max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
 exclude = []
-z = 46
-only_outside = false
-[[spawn.areas]]
-x1 = 4587
-y1 = 3562
-x2 = 4603
-y2 = 3578
-
-[[spawn]]
-id = "trammel_chest_shared_outdoors_410_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
 z = 16
 only_outside = false
 [[spawn.areas]]
@@ -3059,27 +2359,7 @@ x2 = 2157
 y2 = 1372
 
 [[spawn]]
-id = "trammel_chest_shared_outdoors_410_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 2153
-y1 = 1368
-x2 = 2157
-y2 = 1372
-
-[[spawn]]
-id = "trammel_chest_shared_prism_of_light_5_level_2"
+id = "trammel_chest_shared_prism_of_light_5"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3099,7 +2379,7 @@ x2 = 6567
 y2 = 170
 
 [[spawn]]
-id = "trammel_chest_shared_prism_of_light_12_level_4"
+id = "trammel_chest_shared_prism_of_light_12"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -3119,7 +2399,7 @@ x2 = 6505
 y2 = 182
 
 [[spawn]]
-id = "trammel_chest_shared_prism_of_light_18_level_2"
+id = "trammel_chest_shared_prism_of_light_18"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3139,7 +2419,7 @@ x2 = 6550
 y2 = 194
 
 [[spawn]]
-id = "trammel_chest_shared_prism_of_light_20_level_3"
+id = "trammel_chest_shared_prism_of_light_20"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3159,7 +2439,7 @@ x2 = 6502
 y2 = 120
 
 [[spawn]]
-id = "trammel_chest_shared_shame_1_level_3"
+id = "trammel_chest_shared_shame_1"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3179,7 +2459,7 @@ x2 = 5734
 y2 = 92
 
 [[spawn]]
-id = "trammel_chest_shared_shame_3_level_2"
+id = "trammel_chest_shared_shame_3"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3199,7 +2479,7 @@ x2 = 5605
 y2 = 167
 
 [[spawn]]
-id = "trammel_chest_shared_shame_6_level_4"
+id = "trammel_chest_shared_shame_6"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -3219,7 +2499,7 @@ x2 = 5476
 y2 = 191
 
 [[spawn]]
-id = "trammel_chest_shared_shame_7_level_2"
+id = "trammel_chest_shared_shame_7"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3239,7 +2519,7 @@ x2 = 5731
 y2 = 94
 
 [[spawn]]
-id = "trammel_chest_shared_shame_8_level_2"
+id = "trammel_chest_shared_shame_8"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3259,7 +2539,7 @@ x2 = 5818
 y2 = 84
 
 [[spawn]]
-id = "trammel_chest_shared_shame_10_level_4"
+id = "trammel_chest_shared_shame_10"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -3279,7 +2559,7 @@ x2 = 5728
 y2 = 73
 
 [[spawn]]
-id = "trammel_chest_shared_shame_12_level_1"
+id = "trammel_chest_shared_shame_12"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -3299,7 +2579,7 @@ x2 = 5417
 y2 = 60
 
 [[spawn]]
-id = "trammel_chest_shared_shame_13_level_3"
+id = "trammel_chest_shared_shame_13"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3319,7 +2599,7 @@ x2 = 5699
 y2 = 58
 
 [[spawn]]
-id = "trammel_chest_shared_shame_17_level_1"
+id = "trammel_chest_shared_shame_17"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -3339,7 +2619,7 @@ x2 = 5724
 y2 = 74
 
 [[spawn]]
-id = "trammel_chest_shared_shame_21_level_2"
+id = "trammel_chest_shared_shame_21"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3359,7 +2639,7 @@ x2 = 5457
 y2 = 158
 
 [[spawn]]
-id = "trammel_chest_shared_shame_23_level_2"
+id = "trammel_chest_shared_shame_23"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3379,7 +2659,7 @@ x2 = 5606
 y2 = 203
 
 [[spawn]]
-id = "trammel_chest_shared_shame_24_level_3"
+id = "trammel_chest_shared_shame_24"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3399,7 +2679,7 @@ x2 = 5475
 y2 = 177
 
 [[spawn]]
-id = "trammel_chest_shared_shame_25_level_3"
+id = "trammel_chest_shared_shame_25"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3419,7 +2699,7 @@ x2 = 5726
 y2 = 79
 
 [[spawn]]
-id = "trammel_chest_shared_shame_26_level_3"
+id = "trammel_chest_shared_shame_26"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3439,7 +2719,7 @@ x2 = 5616
 y2 = 174
 
 [[spawn]]
-id = "trammel_chest_shared_shame_27_level_2"
+id = "trammel_chest_shared_shame_27"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3459,7 +2739,7 @@ x2 = 5547
 y2 = 119
 
 [[spawn]]
-id = "trammel_chest_shared_shame_28_level_2"
+id = "trammel_chest_shared_shame_28"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3479,7 +2759,7 @@ x2 = 5403
 y2 = 59
 
 [[spawn]]
-id = "trammel_chest_shared_shame_29_level_3"
+id = "trammel_chest_shared_shame_29"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3499,7 +2779,7 @@ x2 = 5406
 y2 = 186
 
 [[spawn]]
-id = "trammel_chest_shared_shame_30_level_2"
+id = "trammel_chest_shared_shame_30"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3519,7 +2799,7 @@ x2 = 5411
 y2 = 171
 
 [[spawn]]
-id = "trammel_chest_shared_shame_31_level_1"
+id = "trammel_chest_shared_shame_31"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -3539,7 +2819,7 @@ x2 = 5702
 y2 = 61
 
 [[spawn]]
-id = "trammel_chest_shared_shame_32_level_4"
+id = "trammel_chest_shared_shame_32"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -3559,7 +2839,7 @@ x2 = 5718
 y2 = 59
 
 [[spawn]]
-id = "trammel_chest_shared_shame_35_level_1"
+id = "trammel_chest_shared_shame_35"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -3579,7 +2859,7 @@ x2 = 5731
 y2 = 91
 
 [[spawn]]
-id = "trammel_chest_shared_shame_37_level_2"
+id = "trammel_chest_shared_shame_37"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3599,7 +2879,7 @@ x2 = 5405
 y2 = 44
 
 [[spawn]]
-id = "trammel_chest_shared_shame_40_level_1"
+id = "trammel_chest_shared_shame_40"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -3619,7 +2899,7 @@ x2 = 5537
 y2 = 120
 
 [[spawn]]
-id = "trammel_chest_shared_shame_41_level_1"
+id = "trammel_chest_shared_shame_41"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -3639,7 +2919,7 @@ x2 = 5401
 y2 = 46
 
 [[spawn]]
-id = "trammel_chest_shared_shame_42_level_2"
+id = "trammel_chest_shared_shame_42"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3659,7 +2939,7 @@ x2 = 5440
 y2 = 138
 
 [[spawn]]
-id = "trammel_chest_shared_shame_44_level_1"
+id = "trammel_chest_shared_shame_44"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -3679,7 +2959,7 @@ x2 = 5435
 y2 = 101
 
 [[spawn]]
-id = "trammel_chest_shared_shame_46_level_2"
+id = "trammel_chest_shared_shame_46"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3699,7 +2979,7 @@ x2 = 5393
 y2 = 11
 
 [[spawn]]
-id = "trammel_chest_shared_shame_48_level_2"
+id = "trammel_chest_shared_shame_48"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3719,7 +2999,7 @@ x2 = 5444
 y2 = 37
 
 [[spawn]]
-id = "trammel_chest_shared_shame_49_level_3"
+id = "trammel_chest_shared_shame_49"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3739,7 +3019,7 @@ x2 = 5404
 y2 = 236
 
 [[spawn]]
-id = "trammel_chest_shared_shame_51_level_1"
+id = "trammel_chest_shared_shame_51"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -3759,7 +3039,7 @@ x2 = 5438
 y2 = 12
 
 [[spawn]]
-id = "trammel_chest_shared_shame_52_level_2"
+id = "trammel_chest_shared_shame_52"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3779,7 +3059,7 @@ x2 = 5724
 y2 = 78
 
 [[spawn]]
-id = "trammel_chest_shared_shame_53_level_1"
+id = "trammel_chest_shared_shame_53"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -3799,7 +3079,7 @@ x2 = 5493
 y2 = 57
 
 [[spawn]]
-id = "trammel_chest_shared_shame_54_level_2"
+id = "trammel_chest_shared_shame_54"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3819,7 +3099,7 @@ x2 = 5416
 y2 = 190
 
 [[spawn]]
-id = "trammel_chest_shared_shame_55_level_3"
+id = "trammel_chest_shared_shame_55"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3839,7 +3119,7 @@ x2 = 5617
 y2 = 185
 
 [[spawn]]
-id = "trammel_chest_shared_shame_58_level_2"
+id = "trammel_chest_shared_shame_58"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3859,7 +3139,7 @@ x2 = 5571
 y2 = 119
 
 [[spawn]]
-id = "trammel_chest_shared_shame_59_level_2"
+id = "trammel_chest_shared_shame_59"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3879,7 +3159,7 @@ x2 = 5469
 y2 = 101
 
 [[spawn]]
-id = "trammel_chest_shared_shame_60_level_3"
+id = "trammel_chest_shared_shame_60"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3899,7 +3179,7 @@ x2 = 5621
 y2 = 22
 
 [[spawn]]
-id = "trammel_chest_shared_shame_65_level_2"
+id = "trammel_chest_shared_shame_65"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3919,7 +3199,7 @@ x2 = 5700
 y2 = 62
 
 [[spawn]]
-id = "trammel_chest_shared_shame_68_level_3"
+id = "trammel_chest_shared_shame_68"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3939,7 +3219,7 @@ x2 = 5457
 y2 = 144
 
 [[spawn]]
-id = "trammel_chest_shared_shame_69_level_2"
+id = "trammel_chest_shared_shame_69"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -3959,7 +3239,7 @@ x2 = 5609
 y2 = 191
 
 [[spawn]]
-id = "trammel_chest_shared_shame_71_level_3"
+id = "trammel_chest_shared_shame_71"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3979,7 +3259,7 @@ x2 = 5406
 y2 = 201
 
 [[spawn]]
-id = "trammel_chest_shared_shame_73_level_3"
+id = "trammel_chest_shared_shame_73"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -3999,7 +3279,7 @@ x2 = 5596
 y2 = 148
 
 [[spawn]]
-id = "trammel_chest_shared_shame_74_level_2"
+id = "trammel_chest_shared_shame_74"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -4019,7 +3299,7 @@ x2 = 5546
 y2 = 154
 
 [[spawn]]
-id = "trammel_chest_shared_shame_75_level_2"
+id = "trammel_chest_shared_shame_75"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -4039,7 +3319,7 @@ x2 = 5494
 y2 = 52
 
 [[spawn]]
-id = "trammel_chest_shared_shame_76_level_3"
+id = "trammel_chest_shared_shame_76"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -4059,7 +3339,7 @@ x2 = 5573
 y2 = 114
 
 [[spawn]]
-id = "trammel_chest_shared_shame_77_level_3"
+id = "trammel_chest_shared_shame_77"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -4079,7 +3359,7 @@ x2 = 5554
 y2 = 147
 
 [[spawn]]
-id = "trammel_chest_shared_shame_78_level_3"
+id = "trammel_chest_shared_shame_78"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -4099,7 +3379,7 @@ x2 = 5818
 y2 = 79
 
 [[spawn]]
-id = "trammel_chest_shared_shame_80_level_4"
+id = "trammel_chest_shared_shame_80"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -4119,7 +3399,7 @@ x2 = 5734
 y2 = 94
 
 [[spawn]]
-id = "trammel_chest_shared_shame_83_level_3"
+id = "trammel_chest_shared_shame_83"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -4139,7 +3419,7 @@ x2 = 5716
 y2 = 59
 
 [[spawn]]
-id = "trammel_chest_shared_shame_84_level_4"
+id = "trammel_chest_shared_shame_84"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -4159,7 +3439,7 @@ x2 = 5702
 y2 = 59
 
 [[spawn]]
-id = "trammel_chest_shared_shame_85_level_2"
+id = "trammel_chest_shared_shame_85"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -4179,7 +3459,7 @@ x2 = 5446
 y2 = 13
 
 [[spawn]]
-id = "trammel_chest_shared_shame_86_level_2"
+id = "trammel_chest_shared_shame_86"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -4199,7 +3479,7 @@ x2 = 5595
 y2 = 140
 
 [[spawn]]
-id = "trammel_chest_shared_shame_88_level_1"
+id = "trammel_chest_shared_shame_88"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -4219,7 +3499,7 @@ x2 = 5399
 y2 = 149
 
 [[spawn]]
-id = "trammel_chest_shared_shame_90_level_1"
+id = "trammel_chest_shared_shame_90"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -4239,7 +3519,7 @@ x2 = 5449
 y2 = 34
 
 [[spawn]]
-id = "trammel_chest_shared_shame_93_level_2"
+id = "trammel_chest_shared_shame_93"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -4259,7 +3539,7 @@ x2 = 5718
 y2 = 61
 
 [[spawn]]
-id = "trammel_chest_shared_shame_95_level_1"
+id = "trammel_chest_shared_shame_95"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -4279,7 +3559,7 @@ x2 = 5400
 y2 = 12
 
 [[spawn]]
-id = "trammel_chest_shared_shame_97_level_3"
+id = "trammel_chest_shared_shame_97"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -4299,7 +3579,7 @@ x2 = 5407
 y2 = 178
 
 [[spawn]]
-id = "trammel_chest_shared_shame_99_level_2"
+id = "trammel_chest_shared_shame_99"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -4319,7 +3599,7 @@ x2 = 5422
 y2 = 118
 
 [[spawn]]
-id = "trammel_chest_shared_shame_100_level_3"
+id = "trammel_chest_shared_shame_100"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -4339,7 +3619,7 @@ x2 = 5547
 y2 = 114
 
 [[spawn]]
-id = "trammel_chest_shared_shame_101_level_2"
+id = "trammel_chest_shared_shame_101"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -4359,7 +3639,7 @@ x2 = 5397
 y2 = 227
 
 [[spawn]]
-id = "trammel_chest_shared_shame_102_level_1"
+id = "trammel_chest_shared_shame_102"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -4379,7 +3659,7 @@ x2 = 5716
 y2 = 62
 
 [[spawn]]
-id = "trammel_chest_shared_shame_104_level_2"
+id = "trammel_chest_shared_shame_104"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -4399,7 +3679,7 @@ x2 = 5607
 y2 = 26
 
 [[spawn]]
-id = "trammel_chest_shared_shame_105_level_2"
+id = "trammel_chest_shared_shame_105"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -4419,7 +3699,7 @@ x2 = 5391
 y2 = 146
 
 [[spawn]]
-id = "trammel_chest_shared_shame_106_level_3"
+id = "trammel_chest_shared_shame_106"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -4439,7 +3719,7 @@ x2 = 5433
 y2 = 159
 
 [[spawn]]
-id = "trammel_chest_shared_shame_107_level_2"
+id = "trammel_chest_shared_shame_107"
 map = "trammel"
 name = "Treasure chest level 2"
 mobile_ids = []
@@ -4459,7 +3739,7 @@ x2 = 5435
 y2 = 90
 
 [[spawn]]
-id = "trammel_chest_shared_shame_109_level_1"
+id = "trammel_chest_shared_shame_109"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -4479,7 +3759,7 @@ x2 = 5424
 y2 = 113
 
 [[spawn]]
-id = "trammel_chest_shared_shame_110_level_1"
+id = "trammel_chest_shared_shame_110"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -4499,7 +3779,7 @@ x2 = 5469
 y2 = 107
 
 [[spawn]]
-id = "trammel_chest_shared_terathan_keep_7_level_4"
+id = "trammel_chest_shared_terathan_keep_7"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -4519,7 +3799,7 @@ x2 = 5364
 y2 = 1710
 
 [[spawn]]
-id = "trammel_chest_shared_terathan_keep_9_level_3"
+id = "trammel_chest_shared_terathan_keep_9"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -4539,7 +3819,7 @@ x2 = 5349
 y2 = 1553
 
 [[spawn]]
-id = "trammel_chest_shared_terathan_keep_13_level_4"
+id = "trammel_chest_shared_terathan_keep_13"
 map = "trammel"
 name = "Treasure chest level 4"
 mobile_ids = []
@@ -4559,7 +3839,7 @@ x2 = 5346
 y2 = 1552
 
 [[spawn]]
-id = "trammel_chest_shared_terathan_keep_28_level_3"
+id = "trammel_chest_shared_terathan_keep_28"
 map = "trammel"
 name = "Treasure chest level 3"
 mobile_ids = []
@@ -4579,7 +3859,7 @@ x2 = 5366
 y2 = 1708
 
 [[spawn]]
-id = "trammel_chest_shared_towns_people_15_level_1"
+id = "trammel_chest_shared_towns_people_15"
 map = "trammel"
 name = "Treasure chest level 1"
 mobile_ids = []
@@ -4599,13 +3879,13 @@ x2 = 2877
 y2 = 677
 
 [[spawn]]
-id = "trammel_chest_shared_towns_people_19_level_1"
+id = "trammel_chest_shared_towns_people_19"
 map = "trammel"
-name = "Treasure chest level 1"
+name = "Treasure chest level 1, 2"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_1"]
-max = 1
+item_ids = ["treasure_chest_level_1", "treasure_chest_level_2"]
+max = 2
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -4619,33 +3899,13 @@ x2 = 2875
 y2 = 693
 
 [[spawn]]
-id = "trammel_chest_shared_towns_people_19_level_2"
+id = "trammel_chest_shared_towns_people_25"
 map = "trammel"
-name = "Treasure chest level 2"
+name = "Treasure chest level 3, 4"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 2873
-y1 = 691
-x2 = 2875
-y2 = 693
-
-[[spawn]]
-id = "trammel_chest_shared_towns_people_25_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
+item_ids = ["treasure_chest_level_3", "treasure_chest_level_4"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -4659,33 +3919,13 @@ x2 = 1815
 y2 = 2836
 
 [[spawn]]
-id = "trammel_chest_shared_towns_people_25_level_4"
+id = "trammel_chest_shared_towns_people_43"
 map = "trammel"
-name = "Treasure chest level 4"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_4"]
-max = 2
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 1811
-y1 = 2832
-x2 = 1815
-y2 = 2836
-
-[[spawn]]
-id = "trammel_chest_shared_towns_people_43_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 2
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -4699,53 +3939,13 @@ x2 = 2885
 y2 = 693
 
 [[spawn]]
-id = "trammel_chest_shared_towns_people_43_level_3"
+id = "trammel_chest_shared_trinsic_passage_5"
 map = "trammel"
-name = "Treasure chest level 3"
+name = "Treasure chest level 2, 3"
 mobile_ids = []
 npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 1
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 16
-only_outside = false
-[[spawn.areas]]
-x1 = 2883
-y1 = 691
-x2 = 2885
-y2 = 693
-
-[[spawn]]
-id = "trammel_chest_shared_trinsic_passage_5_level_2"
-map = "trammel"
-name = "Treasure chest level 2"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_2"]
-max = 1
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 18
-only_outside = false
-[[spawn.areas]]
-x1 = 5914
-y1 = 1301
-x2 = 5916
-y2 = 1303
-
-[[spawn]]
-id = "trammel_chest_shared_trinsic_passage_5_level_3"
-map = "trammel"
-name = "Treasure chest level 3"
-mobile_ids = []
-npc_list_ids = []
-item_ids = ["treasure_chest_level_3"]
-max = 2
+item_ids = ["treasure_chest_level_2", "treasure_chest_level_3"]
+max = 3
 min_minutes = 5
 max_minutes = 10
 call = 1

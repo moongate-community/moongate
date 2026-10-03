@@ -174,16 +174,16 @@ public sealed class RepositoryTemplateFilesTests
                      .Entities.ToDictionary(spawn => spawn.Id);
 
         Assert.Equal(446, lists.Length);
-        Assert.Equal(4524, spawns.Count);
+        Assert.Equal(4440, spawns.Count);
         // The treasure chests of ModernUO's spawners: regions of items.
         var chests = spawns.Values.Where(spawn => spawn.ItemIds.Count > 0).ToList();
-        Assert.Equal(483, chests.Count);
-        Assert.Equal(665, chests.Sum(chest => chest.Max));
+        Assert.Equal(399, chests.Count);
+        Assert.Equal(633, chests.Sum(chest => chest.Max));
         Assert.Equal(
-            [(MapType.Felucca, 238), (MapType.Ilshenar, 7), (MapType.Trammel, 238)],
+            [(MapType.Felucca, 198), (MapType.Ilshenar, 3), (MapType.Trammel, 198)],
             chests.GroupBy(chest => chest.Map).Select(group => (group.Key, group.Count()))
         );
-        Assert.All(chests, chest => Assert.StartsWith("treasure_chest_level_", Assert.Single(chest.ItemIds)));
+        Assert.All(chests, chest => Assert.All(chest.ItemIds, item => Assert.StartsWith("treasure_chest_level_", item)));
         var shop = spawns["felucca_0"];
         Assert.Equal(("The Hammer And Anvil", MapType.Felucca, 480), (shop.Name, shop.Map, shop.MinMinutes));
         Assert.Equal(["weaponsmith"], shop.MobileIds);

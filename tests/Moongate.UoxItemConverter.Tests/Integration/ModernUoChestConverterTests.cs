@@ -30,7 +30,7 @@ public sealed class ModernUoChestConverterTests : IDisposable
         Assert.True(Run() == 0, CombinedOutput);
 
         var spawn = Assert.Single(Read("felucca"));
-        Assert.Equal("felucca_chest_shared_shame_0_level_3", spawn.Id);
+        Assert.Equal("felucca_chest_shared_shame_0", spawn.Id);
         Assert.Equal(["treasure_chest_level_3"], spawn.ItemIds);
         Assert.Empty(spawn.MobileIds);
         Assert.Equal((1, 1, 5, 10), (spawn.Max, spawn.Call, spawn.MinMinutes, spawn.MaxMinutes));
@@ -43,7 +43,25 @@ public sealed class ModernUoChestConverterTests : IDisposable
     }
 
     [Fact]
-    public void Run_ASpawnerOfChestsAndCreatures_GivesItsChestsOnly_EachLevelWithItsCap()
+    public void Run_TwoLevelsWithOnePlace_GiveOneChestAtATime()
+    {
+        Write(
+            "shared/ilshenar/Ratmancave.json",
+            """
+            [ { "location": [1, 2, 0], "count": 1, "minDelay": "00:05:00", "maxDelay": "00:10:00",
+                "entries": [ { "name": "TreasureChestLevel3", "maxCount": 1 }, { "name": "TreasureChestLevel4", "maxCount": 1 } ] } ]
+            """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var spawn = Assert.Single(Read("ilshenar"));
+        Assert.Equal(1, spawn.Max);
+        Assert.Equal(["treasure_chest_level_3", "treasure_chest_level_4"], spawn.ItemIds);
+    }
+
+    [Fact]
+    public void Run_ASpawnerOfChestsAndCreatures_GivesOneRegionOfItsChestsOnly()
     {
         Write(
             "shared/trammel/Deceit.json",
@@ -59,11 +77,13 @@ public sealed class ModernUoChestConverterTests : IDisposable
 
         Assert.True(Run() == 0, CombinedOutput);
 
-        var spawns = Read("trammel");
-        Assert.Equal(["trammel_chest_shared_deceit_0_level_1", "trammel_chest_shared_deceit_0_level_2"], spawns.Select(spawn => spawn.Id));
-        // A cap above the spawner's count is the count.
-        Assert.Equal([1, 3], spawns.Select(spawn => spawn.Max));
-        Assert.Equal((100, 200, 100, 200), (spawns[0].Areas[0].X1, spawns[0].Areas[0].Y1, spawns[0].Areas[0].X2, spawns[0].Areas[0].Y2));
+        var spawn = Assert.Single(Read("trammel"));
+        Assert.Equal("trammel_chest_shared_deceit_0", spawn.Id);
+        Assert.Equal(["treasure_chest_level_1", "treasure_chest_level_2"], spawn.ItemIds);
+        Assert.Equal("Treasure chest level 1, 2", spawn.Name);
+        // The caps of the chests together, the spawner's count at most.
+        Assert.Equal(3, spawn.Max);
+        Assert.Equal((100, 200, 100, 200), (spawn.Areas[0].X1, spawn.Areas[0].Y1, spawn.Areas[0].X2, spawn.Areas[0].Y2));
     }
 
     [Fact]
@@ -82,7 +102,7 @@ public sealed class ModernUoChestConverterTests : IDisposable
         Assert.True(Run() == 0, CombinedOutput);
 
         Assert.Equal(
-            ["felucca_chest_post_uoml_b_0_level_4", "felucca_chest_shared_a_0_level_4"],
+            ["felucca_chest_post_uoml_b_0", "felucca_chest_shared_a_0"],
             Read("felucca").Select(spawn => spawn.Id).Order()
         );
         Assert.Single(Read("ilshenar"));
@@ -90,7 +110,7 @@ public sealed class ModernUoChestConverterTests : IDisposable
     }
 
     [Fact]
-    public void Run_ALevelListedTwiceInASpawner_IsOneRegionWithBothCaps()
+    public void Run_TheChestsOfASpawner_ShareItsCount()
     {
         Write(
             "shared/felucca/A.json",
@@ -103,10 +123,10 @@ public sealed class ModernUoChestConverterTests : IDisposable
 
         Assert.True(Run() == 0, CombinedOutput);
 
-        var spawns = Read("felucca");
-        Assert.Equal(["felucca_chest_shared_a_0_level_2", "felucca_chest_shared_a_0_level_3"], spawns.Select(spawn => spawn.Id));
-        // Together at most the spawner's count.
-        Assert.Equal([3, 5], spawns.Select(spawn => spawn.Max));
+        var spawn = Assert.Single(Read("felucca"));
+        // A level listed twice is one item; the caps add up to 11, the spawner allows 5.
+        Assert.Equal(["treasure_chest_level_2", "treasure_chest_level_3"], spawn.ItemIds);
+        Assert.Equal(5, spawn.Max);
     }
 
     [Fact]

@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 64 done, 🟡 39 partly done, ❌ 165 not built yet.
+**268 systems:** ✅ 64 done, 🟡 40 partly done, ❌ 164 not built yet.
 
 **Coverage: 24%** of the systems done, **31%** counting a partly done system as half.
 
@@ -175,7 +175,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Moving, stacking, splitting and merging | ✅ | |
 | Wearing: layers and two-handed weapons | ✅ | No strength requirements yet |
 | The character's own containers | ✅ | |
-| Containers on the ground, weight and item limits | ❌ | |
+| Containers on the ground, weight and item limits | 🟡 | A container on the ground opens within two tiles and its contents can be taken; nothing can be put in, no weight or item limits |
 | Tooltips and single-click names | ✅ | |
 | Items on the ground and their decay | ✅ | |
 | Scripted items | ✅ | Lua item scripts: use, equip, unequip, pick up, drop, create, darkness, a player stepping on them, speech nearby |

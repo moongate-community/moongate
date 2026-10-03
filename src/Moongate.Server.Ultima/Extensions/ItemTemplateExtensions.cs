@@ -12,7 +12,7 @@ namespace Moongate.Server.Ultima.Extensions;
 /// </summary>
 public static class ItemTemplateExtensions
 {
-    private const byte TiledataWeightCannotLift = 255;
+    internal const byte TiledataWeightCannotLift = 255;
     private const int DefaultDecayMinutes = 60;
 
     /// <summary>

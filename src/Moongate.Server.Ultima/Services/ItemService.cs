@@ -154,6 +154,30 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         return null;
     }
 
+    public ItemEntity? GetGroundRoot(ItemEntity item)
+    {
+        var visited = new HashSet<Serial>();
+        var current = item;
+
+        // Climbs the containers; a cycle or a container that is not live has no root.
+        while (visited.Add(current.Id))
+        {
+            if (current.GroundLocation is not null)
+            {
+                return current;
+            }
+
+            if (current.ContainerId is not { } container || !_items.TryGetValue(container, out var parent))
+            {
+                return null;
+            }
+
+            current = parent;
+        }
+
+        return null;
+    }
+
     public IReadOnlyList<ItemEntity> GetWorn(Serial mobile)
     {
         return _worn.TryGetValue(mobile, out var worn) ? worn.Values.ToList() : [];
