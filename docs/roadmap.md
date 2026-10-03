@@ -150,7 +150,7 @@ After phase 7. Each of these needs most of what comes before.
 
 ## Data we can import
 
-Moongate already imports UOX3 items, NPCs and spawns, and ModernUO decoration, spawns and
+Moongate already imports UOX3 items, NPCs and spawns, and ModernUO decoration, spawns, named places and
 teleporters. The same converters can bring most of the rule data the phases above need:
 
 | Data | Source | Phase |
