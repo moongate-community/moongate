@@ -49,4 +49,14 @@ public sealed class MobileStatusPacketTests
         Assert.Equal(Convert.FromHexString("11" + "002B" + "00000100" + Convert.ToHexString(name) + "0032" + "0064" + "00" + "00"), bytes);
         Assert.Equal(43, bytes.Length);
     }
+
+    [Fact]
+    public void Encode_Compact_OfAMobileWithoutAMaximum_WritesItsHitsAsTheyAre()
+    {
+        var status = new MobileStatusInfo { Serial = new Serial(0x00000100), Name = "x", Hits = 5, HitsMax = 0 };
+
+        var bytes = PacketCodec.Encode(new MobileStatusPacket(status, true));
+
+        Assert.Equal("0005" + "0000" + "00" + "00", Convert.ToHexString(bytes[37..]));
+    }
 }

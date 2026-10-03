@@ -70,13 +70,27 @@ public sealed class MobileQueryPacketHandlerTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Handle_TheStatusOfAMobileOutOfSightOrOnAnotherMap_SendsNothing()
+    public void Handle_TheStatusOfAMobileOutOfSight_SendsNothing()
     {
         Assert.True(_fixture.Mobiles.TryGet(Boris, out var boris));
         _fixture.Mobiles.MoveTo(boris, boris.Map, new Point3D(19, 0, 0));
+
         Handle(MobileQueryType.Status, Boris);
 
+        Assert.Empty(_fixture.Sender.Sent);
+
+        _fixture.Mobiles.MoveTo(boris, boris.Map, new Point3D(18, 0, 0));
+        Handle(MobileQueryType.Status, Boris);
+
+        Assert.Single(_fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public void Handle_TheStatusOfAMobileOnAnotherMap_SendsNothing()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(Boris, out var boris));
         _fixture.Mobiles.MoveTo(boris, MapType.Felucca, new Point3D(0, 0, 0));
+
         Handle(MobileQueryType.Status, Boris);
 
         Assert.Empty(_fixture.Sender.Sent);

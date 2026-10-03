@@ -2,6 +2,8 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Internal.Movement;
+using Moongate.Server.Ultima.Data.Movement;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.World;
@@ -221,8 +223,43 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.True(_service.SetName(_aria, "  Aria the Brave "));
 
         Assert.Equal("Aria the Brave", _aria.Name);
-        Assert.Equal("Aria the Brave", Assert.Single(_fixture.Sender.Sent.OfType<MobileStatusPacket>()).Status.Name);
+        // The status carries the name; the figure did not change, so the client is not placed again.
+        Assert.Equal("Aria the Brave", Assert.IsType<MobileStatusPacket>(Assert.Single(_fixture.Sender.Sent)).Status.Name);
         Assert.Equal([$"MobileAppeared {Aria}"], _view.Calls);
+    }
+
+    // The status shows 30 characters and the world keeps 255: a longer name would fail every save.
+    [Fact]
+    public void SetName_ANameLongerThanTheStatusShows_IsRefused()
+    {
+        Assert.True(_service.SetName(_aria, new string('x', 30)));
+        Assert.False(_service.SetName(_aria, new string('y', 31)));
+
+        Assert.Equal(new string('x', 30), _aria.Name);
+    }
+
+    // The client starts its step sequence again when it gets 0x20: the server must expect it from the start too.
+    [Fact]
+    public async Task SetLooks_StartsTheStepSequenceOfItsPlayerAgain()
+    {
+        var steps = new MovementState { ExpectedSequence = 7, NextStepAt = 123_456 };
+        await _fixture.Network.ExecuteOnLoopAsync(() => _ariaSession.Set(MovementSessionKeys.State, steps));
+
+        Assert.True(_service.SetLooks(_aria, 0x3A, null));
+
+        Assert.Equal(((byte)0, 0L), (steps.ExpectedSequence, steps.NextStepAt));
+    }
+
+    [Fact]
+    public void SetSkill_ThatChangesNothing_SendsNothing()
+    {
+        Assert.True(_service.SetSkill(_aria, SkillType.Magery, 505));
+        _fixture.Sender.Sent.Clear();
+
+        Assert.True(_service.SetSkill(_aria, SkillType.Magery, 505));
+        Assert.True(_service.SetSkill(_aria, SkillType.Magery, 505, 1000));
+
+        Assert.Empty(_fixture.Sender.Sent);
     }
 
     [Theory, InlineData(""), InlineData("   ")]
@@ -239,7 +276,8 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.True(_service.SetLooks(_aria, 0x3A, 0x0481));
 
         Assert.Equal((0x3A, (ushort)0x0481), (_aria.Body, _aria.SkinHue.Value));
-        var update = Assert.Single(_fixture.Sender.Sent.OfType<MobileUpdatePacket>());
+        // The status shows neither.
+        var update = Assert.IsType<MobileUpdatePacket>(Assert.Single(_fixture.Sender.Sent));
         Assert.Equal(new Serial((uint)Aria), update.Serial);
         Assert.Equal([$"MobileAppeared {Aria}"], _view.Calls);
     }

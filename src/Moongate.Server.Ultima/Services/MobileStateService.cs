@@ -3,6 +3,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mobiles;
+using Moongate.Server.Ultima.Data.Movement;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
@@ -140,10 +141,11 @@ public sealed class MobileStateService : IMobileStateService
             mobile.Skills.Add(known);
         }
 
+        var before = (known.Base, known.Cap);
         known.Cap = cap ?? known.Cap;
         known.Base = Math.Clamp(value, 0, known.Cap);
 
-        if (_sessions.TryGetByCharacterId(mobile.Id, out var own))
+        if (before != (known.Base, known.Cap) && _sessions.TryGetByCharacterId(mobile.Id, out var own))
         {
             _sender.TrySend(own.SessionId, SkillsPacket.One(known));
         }
@@ -153,13 +155,25 @@ public sealed class MobileStateService : IMobileStateService
 
     public bool SetName(MobileEntity mobile, string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (string.IsNullOrWhiteSpace(name) || name.Trim().Length > IMobileStateService.MaxNameLength)
         {
             return false;
         }
 
         mobile.Name = name.Trim();
-        Shown(mobile);
+
+        if (!_mobiles.IsInWorld(mobile.Id))
+        {
+            return true;
+        }
+
+        // The status carries the name; the figure is the same, so the client is not placed again.
+        if (_sessions.TryGetByCharacterId(mobile.Id, out var own))
+        {
+            SendStatus(own, mobile);
+        }
+
+        _view.MobileAppeared(mobile);
 
         return true;
     }
@@ -173,32 +187,22 @@ public sealed class MobileStateService : IMobileStateService
 
         mobile.Body = body ?? mobile.Body;
         mobile.SkinHue = hue is { } skin ? new Hue((ushort)skin) : mobile.SkinHue;
-        Shown(mobile);
 
-        return true;
-    }
-
-    public void SendStatus(GameSession session, MobileEntity target)
-    {
-        _sender.TrySend(session.SessionId, new MobileStatusPacket(_mobiles.GetStatus(target), session.CharacterId != target.Id));
-    }
-
-    public void SendSkills(GameSession session, MobileEntity character)
-    {
-        _sender.TrySend(session.SessionId, SkillsPacket.All(GetSkills(character)));
-    }
-
-    // Its own player gets its status and its figure again; the players around its figure.
-    private void Shown(MobileEntity mobile)
-    {
         if (!_mobiles.IsInWorld(mobile.Id))
         {
-            return;
+            return true;
         }
 
         if (_sessions.TryGetByCharacterId(mobile.Id, out var own))
         {
-            SendStatus(own, mobile);
+            // The client starts its step sequence again when it gets 0x20; a step it sent before is refused, and the
+            // next one is due at once, as after a teleport.
+            if (own.Get(MovementSessionKeys.State) is { } steps)
+            {
+                steps.ExpectedSequence = 0;
+                steps.NextStepAt = 0;
+            }
+
             _sender.TrySend(
                 own.SessionId,
                 new MobileUpdatePacket(
@@ -213,6 +217,18 @@ public sealed class MobileStateService : IMobileStateService
         }
 
         _view.MobileAppeared(mobile);
+
+        return true;
+    }
+
+    public void SendStatus(GameSession session, MobileEntity target)
+    {
+        _sender.TrySend(session.SessionId, new MobileStatusPacket(_mobiles.GetStatus(target), session.CharacterId != target.Id));
+    }
+
+    public void SendSkills(GameSession session, MobileEntity character)
+    {
+        _sender.TrySend(session.SessionId, SkillsPacket.All(GetSkills(character)));
     }
 
     // The sessions of the players who see the mobile, its own left out.

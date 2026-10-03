@@ -249,7 +249,7 @@ public sealed class MobileModule
     ///     <c>mobile.set_skill(who, SkillType.Magery, 50.5)</c>. The value stays between 0 and the cap, and the
     ///     mobile's player sees it in the skill window.
     /// </summary>
-    [ScriptFunction(helpText: "Sets a skill of the mobile in points (50.5), and its cap when given; the value stays between 0 and the cap. False for a skill that does not exist, a cap outside 0 to 6553.5 or a mobile not in the world.")]
+    [ScriptFunction(helpText: "Sets a skill of the mobile in points (50.5), and its cap when given; the value stays between 0 and the cap. False for a cap outside 0 to 6553.5 or a mobile not in the world; a skill number that is no SkillType raises an error.")]
     public bool SetSkill(long serial, SkillType skill, double value, double? cap = null)
     {
         return _state is not null &&
@@ -262,7 +262,7 @@ public sealed class MobileModule
     /// <summary>
     ///     Gives the mobile another name; <c>mobile.set_name(who, "Grog")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Gives the mobile another name, seen by its player and the players around; false for a blank name or a mobile not in the world.")]
+    [ScriptFunction(helpText: "Gives the mobile another name of at most 30 characters, seen by its player and the players around; false for a blank or longer name or a mobile not in the world.")]
     public bool SetName(long serial, string name)
     {
         return _state is not null && TryGetMobile(serial, out var mobile) && _state.SetName(mobile, name);

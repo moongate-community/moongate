@@ -21,6 +21,11 @@ public interface IMobileStateService
     const int MaxValue = ushort.MaxValue;
 
     /// <summary>
+    ///     The longest name a mobile can be given: what the status bar shows.
+    /// </summary>
+    const int MaxNameLength = 30;
+
+    /// <summary>
     ///     Changes the numbers given. A stat or a maximum goes from 0 to <see cref="MaxValue" />; hit points, mana and
     ///     stamina are brought between 0 and their maximum, also when only the maximum changes. The mobile's player
     ///     gets the bars that moved, or its whole status when a stat, the fame or the karma changed, and the players
@@ -51,16 +56,16 @@ public interface IMobileStateService
     bool SetSkill(MobileEntity mobile, SkillType skill, int value, int? cap = null);
 
     /// <summary>
-    ///     Gives the mobile another name; its player's status and the players around are told.
+    ///     Gives the mobile another name, trimmed; its player's status and the players around are told.
     /// </summary>
     /// <returns>
-    ///     False for a blank name.
+    ///     False for a blank name or one longer than <see cref="MaxNameLength" />.
     /// </returns>
     bool SetName(MobileEntity mobile, string name);
 
     /// <summary>
     ///     Gives the mobile another body or another skin hue, null keeping what it is; its player and the players
-    ///     around see it at once.
+    ///     around see it at once. Its player's step sequence starts again, as after a teleport.
     /// </summary>
     /// <returns>
     ///     False, with nothing changed, for a body or a hue outside 0 to 65535.
