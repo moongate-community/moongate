@@ -242,6 +242,64 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_AnImmovableItem_IsRefusedByTheLastRuleBeforeTheScriptIsAsked()
+    {
+        _scripts.Scripted.Add("item");
+        _groundGold.Movable = false;
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 100);
+
+        Assert.Empty(_scripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AWornItemWhoseScriptRefuses_StaysOnAndIsShownBackOnTheCharacter()
+    {
+        _scripts.Scripted.Add("shirt");
+        _scripts.Refused.Add("can_pick_up");
+        await StartAsync(Aria);
+
+        await LiftAsync(_shirt.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal([typeof(LiftRejectPacket), typeof(WornItemPacket)], _sender.Sent.Select(packet => packet.GetType()));
+        Assert.Empty(_view.Calls);
+        Assert.Equal((Aria, LayerType.Shirt), (_shirt.MobileId!.Value, _shirt.Layer!.Value));
+    }
+
+    [Fact]
+    public async Task Handle_AGroundItemWhoseScriptRefuses_LiesThereAndIsShownAgain()
+    {
+        _scripts.Scripted.Add("item");
+        _scripts.Refused.Add("can_pick_up");
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 100);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(LiftRejectReasonType.Inspecific, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
+        Assert.Equal([$"ShownTo 2 {_groundGold.Id.Value}"], _view.Calls);
+        Assert.True(_items.IsLyingOnGround(_groundGold));
+    }
+
+    [Fact]
+    public async Task Handle_AnItemInAChestOnTheGroundWhoseScriptRefuses_StaysThereAndIsShownBack()
+    {
+        var (chest, ruby) = GroundChest(1497);
+        _scripts.Scripted.Add("item");
+        _scripts.Refused.Add("can_pick_up");
+        await StartAsync(Aria);
+
+        await LiftAsync(ruby.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal([typeof(LiftRejectPacket), typeof(ContainerItemUpdatePacket)], _sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal((ruby.Id, chest.Id), (((ContainerItemUpdatePacket)_sender.Sent[1]).Item.Serial, ((ContainerItemUpdatePacket)_sender.Sent[1]).Item.Container));
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
     public async Task Handle_ARefusedLift_QueuesNothing()
     {
         _scripts.Scripted.Add("shirt");

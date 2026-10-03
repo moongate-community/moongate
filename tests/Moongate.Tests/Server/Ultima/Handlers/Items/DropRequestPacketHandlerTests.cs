@@ -368,6 +368,37 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_ABagIntoItself_IsRefusedByTheLastRuleBeforeTheContainerIsAsked()
+    {
+        _scripts.Scripted.Add(_bag.TemplateId);
+        await HoldingAsync(_bag);
+
+        await DropAsync(_bag.Id, 60, 70, _innerBag.Id);
+
+        Assert.Equal([$"0x{_bag.Id.Value:X8} can_drop 2"], _scripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_IntoAFullChestOnTheGround_IsRefusedByTheLastRuleBeforeTheContainerIsAsked()
+    {
+        var (chest, _) = GroundChest(1497);
+
+        for (var index = 0; index < 124; index++)
+        {
+            var filler = Item(0x40001000u + (uint)index, 0x0F13);
+            filler.PutInContainer(chest.Id, new Point2D(10, 10), (byte)(index + 1));
+            _items.Add([filler]);
+        }
+
+        _scripts.Scripted.Add(_coins.TemplateId);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 60, 70, chest.Id);
+
+        Assert.Equal([$"0x{_coins.Id.Value:X8} can_drop 2"], _scripts.Calls);
+    }
+
+    [Fact]
     public async Task Handle_ADropTheRulesRefuse_DoesNotAskTheContainer()
     {
         _scripts.Scripted.Add(_coins.TemplateId);

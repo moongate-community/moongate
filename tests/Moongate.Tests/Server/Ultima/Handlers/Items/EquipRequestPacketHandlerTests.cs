@@ -139,6 +139,32 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_ATakenLayer_IsRefusedByTheLastRuleBeforeTheScriptIsAsked()
+    {
+        _scripts.Scripted.Add("shirt");
+        await StartAsync(_shirt);
+
+        await EquipAsync(_shirt, Aria);
+
+        Assert.Empty(_scripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AGroundItemWhoseScriptRefuses_LiesThereAgain()
+    {
+        _scripts.Scripted.Add("dagger");
+        _scripts.Refused.Add("can_equip");
+        await StartAsync(_groundDagger);
+        _items.Hide(_groundDagger);
+
+        await EquipAsync(_groundDagger, Aria);
+
+        Assert.Null(_groundDagger.MobileId);
+        Assert.True(_items.IsLyingOnGround(_groundDagger));
+        Assert.Equal([$"0x{_groundDagger.Id.Value:X8} can_equip 2"], _scripts.Calls);
+    }
+
+    [Fact]
     public async Task Handle_AnItemTheRulesRefuse_DoesNotAskTheScript()
     {
         _scripts.Scripted.Add("apple");

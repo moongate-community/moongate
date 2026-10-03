@@ -277,5 +277,14 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         {
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
         }
+        else if (item?.ContainerId is not null &&
+                 _items.GetGroundRoot(item) is { } chest &&
+                 _items.IsLyingOnGround(chest) &&
+                 CanReachFromTheGround(session, chest, out _) &&
+                 !IsHeldByAnother(session, item))
+        {
+            // In a chest on the ground the player can look into, and on nobody's cursor: it is shown back there.
+            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
+        }
     }
 }
