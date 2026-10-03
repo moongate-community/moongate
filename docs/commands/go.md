@@ -43,7 +43,8 @@ places is on a loaded map, `.go` alone prints the usage.
 Your own map comes first: a place of it, else a category of it, and only then a place or a
 category of another map, which takes you to that map. When nothing is named exactly so, the
 last words of a name are enough: `.go haven` finds `Old Haven` on a map with no Haven. Only whole
-words count. When several places still fit, none is chosen and
+words count, and a `/` is read as a space, so a path copied from the title of the gump works:
+`.go dungeons/covetous`. When several places still fit, none is chosen and
 the first ten are listed, so you can add a word:
 
 ```text

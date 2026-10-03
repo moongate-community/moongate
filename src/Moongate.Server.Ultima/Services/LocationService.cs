@@ -43,7 +43,8 @@ public sealed class LocationService : ILocationService
     public IReadOnlyList<NamedLocation> Find(string text, MapType own)
     {
         Build();
-        var wanted = Words(text ?? "");
+        // A path written as the gump shows it, "dungeons/covetous", is its words.
+        var wanted = Words((text ?? "").Replace(Separator, ' '));
 
         if (wanted.Length == 0)
         {

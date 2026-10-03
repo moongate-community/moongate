@@ -129,6 +129,18 @@ public sealed class LocationServiceTests
         Assert.Equal("Level 1", Assert.Single(service.Find("dungeons shame level 1", MapType.Felucca)).Name);
     }
 
+    // As the title of the gump writes a level.
+    [Theory]
+    [InlineData("dungeons/covetous/entrance")]
+    [InlineData("Covetous / Entrance")]
+    [InlineData("/covetous/entrance/")]
+    public void Find_APathWrittenWithSlashes_IsReadAsItsWords(string text)
+    {
+        var service = Service(Place(MapType.Felucca, "Dungeons/Covetous", "Entrance"), Place(MapType.Felucca, "Dungeons/Shame", "Entrance"));
+
+        Assert.Equal("Dungeons/Covetous", Assert.Single(service.Find(text, MapType.Felucca)).Category);
+    }
+
     [Fact]
     public void Find_OnlyWholeWordsCount()
     {
