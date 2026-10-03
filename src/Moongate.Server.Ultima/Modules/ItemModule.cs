@@ -269,6 +269,25 @@ public sealed class ItemModule
     }
 
     /// <summary>
+    ///     Shows a text of the client, by its number, as a label over the item to <paramref name="player" /> only, in
+    ///     the language of that client; <c>item.message_cliloc(serial, player, 1042958, "3:05")</c>. The arguments fill
+    ///     the <c>~1_NAME~</c> places of the text, split by tabs.
+    /// </summary>
+    [ScriptFunction(helpText: "A label over the item seen only by that player, with a text of the client by its number, in the client's language; args fill its ~1_NAME~ places, split by tabs. False when the player or the item is not in the world.")]
+    public bool MessageCliloc(long serial, long player, int cliloc, string? args = null)
+    {
+        if (cliloc <= 0 ||
+            !TryGetItem(serial, out var item) ||
+            player is <= 0 or > uint.MaxValue ||
+            SessionOf(new Serial((uint)player)) is not { } session)
+        {
+            return false;
+        }
+
+        return _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, cliloc, "", args ?? ""));
+    }
+
+    /// <summary>
     ///     Shows <paramref name="text" /> as a label over the item to <paramref name="player" /> only;
     ///     <c>item.message(serial, player, "You drink the potion.")</c>.
     /// </summary>

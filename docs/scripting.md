@@ -124,6 +124,7 @@ exists but fails compilation/execution aborts server startup.
 | `gump.create(id, x, y)`, `gump.send(player, g, args)` | Builds a gump in Lua (`g:text{...}`, `g:button{...}`, `g:paginate(...)`, ...) and opens it, from a script on the next turn of the game loop; `false` for an unknown player. A button's `on_click` may be a function. See [Gumps built in Lua](gumps.md#gumps-built-in-lua) |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
+| `item.message_cliloc(serial, player, cliloc, args?)` | The same label with a text of the client, by its number, so each player reads it in the language of the client; `args` fills its `~1_NAME~` places, split by tabs. `false` when the player or the item is not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
 The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `effect`, `world`, `bank` and `gump` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
@@ -461,6 +462,12 @@ the text, in any case) or whose client sends the speech keyword of the prop `key
 within `range` cells (0, the default, is the teleporter's own cell). With a `delay`
 (`"0:0:1"`, or a number of seconds) the teleport happens later, if the player still stands in
 range. The destination, the smoke, the sound and `active` are those of the plain teleporter.
+
+`scripts/items/clock.lua` is the script of the clocks (the item templates `0x104b_clock` and
+`0x104c_clock`, and `decoration_clock` for those `.decorate` places), as ModernUO's `Clock`: on
+`on_use` the player reads over the clock the part of the day ("It's the afternoon") and the time to
+the minute ("1:07 to be exact") where they stand, from `world.time`, as texts of the client sent
+with `item.message_cliloc`.
 
 `scripts/items/fillable.lua` is the script of the `decoration_fillable` template that `.decorate`
 gives to the town containers, ModernUO's `FillableContainer`: the crates, boxes, chests and barrels

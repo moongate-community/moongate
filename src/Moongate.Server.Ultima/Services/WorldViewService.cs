@@ -26,6 +26,8 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class WorldViewService : IWorldViewService
 {
 
+    private const int NoDrawGraphic = 0x21A4;
+    private const int StaffBlockerGraphic = 0x1183;
     private static readonly ClientVersion StygianAbyss = new(7, 0, 0, 0);
     private static readonly ClientVersion HighSeas = new(7, 0, 9, 0);
 
@@ -365,19 +367,21 @@ public sealed class WorldViewService : IWorldViewService
         }
     }
 
-    private static IOutgoingPacket WorldItem(ItemEntity item, ClientVersion? version)
+    private static IOutgoingPacket WorldItem(ItemEntity item, ClientVersion? version, AccountType account)
     {
         var spot = item.GroundLocation!.Value;
+        // As ModernUO's Blocker: the graphic that draws nothing blocks the way unseen; the staff sees a gravestone.
+        var graphic = item.ItemId == NoDrawGraphic && account >= AccountType.GameMaster ? StaffBlockerGraphic : item.ItemId;
 
         // As ModernUO: 0xF3 from 7.0.0.0 (Stygian Abyss), two bytes longer from 7.0.9.0 (High Seas); unknown is newest.
         if (version is null || version.CompareTo(StygianAbyss) >= 0)
         {
             var highSeas = version is null || version.CompareTo(HighSeas) >= 0;
 
-            return new WorldItemSaPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue, highSeas, LightOf(item));
+            return new WorldItemSaPacket(item.Id, graphic, item.Amount, spot, item.Hue, highSeas, LightOf(item));
         }
 
-        return new WorldItemPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue, LightOf(item));
+        return new WorldItemPacket(item.Id, graphic, item.Amount, spot, item.Hue, LightOf(item));
     }
 
     // The item's light shape, kept in its "light" prop by name, such as circle150; none for anything else.
@@ -430,7 +434,7 @@ public sealed class WorldViewService : IWorldViewService
             return false;
         }
 
-        _sender.TrySend(viewer.SessionId, WorldItem(item, viewer.Version));
+        _sender.TrySend(viewer.SessionId, WorldItem(item, viewer.Version, viewer.Account));
         _sender.TrySend(viewer.SessionId, _tooltips.Info(item));
 
         return true;

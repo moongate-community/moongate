@@ -49,6 +49,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingEffectService _effects = new();
     private readonly RecordingWorldViewService _view = new();
+    private readonly StubClockService _clock = new();
     private readonly ItemService _items;
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
     private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3 };
@@ -77,7 +78,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IMobileService>(_fixture.Mobiles);
         _container.RegisterInstance<ISpeechService>(_speech);
         _container.RegisterInstance<ISectorService>(_sectors);
-        _container.RegisterInstance<IClockService>(new StubClockService());
+        _container.RegisterInstance<IClockService>(_clock);
         _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.AddScriptModule<ItemModule>();
@@ -746,6 +747,35 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _items.Add([light]);
 
         return light;
+    }
+
+    // As ModernUO's Clock: the part of the day, then the time to the minute, as texts of the client over the clock.
+    [Theory]
+    [InlineData(0, 30, 1042950, "12:30")]
+    [InlineData(1, 0, 1042951, "1:00")]
+    [InlineData(3, 59, 1042951, "3:59")]
+    [InlineData(4, 5, 1042952, "4:05")]
+    [InlineData(8, 0, 1042953, "8:00")]
+    [InlineData(12, 0, 1042954, "12:00")]
+    [InlineData(13, 7, 1042955, "1:07")]
+    [InlineData(16, 0, 1042956, "4:00")]
+    [InlineData(20, 0, 1042957, "8:00")]
+    [InlineData(23, 59, 1042957, "11:59")]
+    public async Task TheShippedClockScript_TellsThePartOfTheDayAndTheTimeToTheMinute(int hours, int minutes, int part, string exact)
+    {
+        _clock.Time = new(hours, minutes);
+        var scripts = await StartItemScriptAsync("clock", "clock");
+        var clock = new ItemEntity { Id = new Serial(0x40000080), TemplateId = "clock", ItemId = 0x104B, Amount = 1 };
+        clock.PutInContainer(_backpack.Id, new Point2D(50, 50), 1);
+        _items.Add([clock]);
+
+        var result = scripts.Run(clock, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        var labels = _fixture.Sender.Sent.OfType<LocalizedMessagePacket>().ToList();
+        Assert.Equal([(part, ""), (1042958, exact)], labels.Select(label => (label.Cliloc, label.Arguments)));
+        Assert.All(labels, label => Assert.Equal(clock.Id, label.Serial));
     }
 
     private async Task<ItemScriptService> StartLightScriptAsync()

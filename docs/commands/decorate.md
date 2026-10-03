@@ -33,7 +33,10 @@ every destination of [`moongates.toml`](../data-files/moongates.md) whose map is
 as `<map>/moongates`. The crates, boxes, chests, barrels and bookcases of the towns (ModernUO's
 `Fillable...` kinds and `LibraryBookcase`, 2,803 spots in the files, about 5,000 items with those of both Trammel and Felucca) take the `decoration_fillable`
 template and fill up when a player opens them ([fillable script](../scripting.md#item-scripts));
-those a run before this placed as plain decoration are turned into it and counted as already there. Every public moongate glows (prop `light = "circle300"`, as ModernUO). Spawners, mark
+those a run before this placed as plain decoration are turned into it and counted as already there.
+The clocks tell the time on a double click ([clock script](../scripting.md#item-scripts)), turned
+the same way. The spawners of the decoration files (87, all of quest characters such as Haochi or
+Uzeraan) stay skipped: none of their mobile templates exists yet. Every public moongate glows (prop `light = "circle300"`, as ModernUO). Spawners, mark
 containers, addons and every other kind of teleporter (those that ask for a
 skill, belong to a quest or want a double click) are skipped for now: they need their own logic.
 

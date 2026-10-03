@@ -489,6 +489,27 @@ public sealed class WorldViewServiceTests
         Assert.Equal(shownToAll.Id, Assert.Single(_sender.Sent.OfType<WorldItemSaPacket>()).Serial);
     }
 
+    // As ModernUO's Blocker: the graphic that draws nothing blocks the players' way unseen; the staff sees a gravestone
+    // in its place, to find it and remove it.
+    [Fact]
+    public void ItemAppeared_ABlocker_IsAGravestoneForTheStaff_AndDrawsNothingForThePlayers()
+    {
+        var aria = Mobile(2, 1496, 1628);
+        var boris = Mobile(3, 1500, 1628);
+        _mobiles.EnterWorld(aria);
+        _mobiles.EnterWorld(boris);
+        _view.Entered(aria, AriaSession, null);
+        _view.Entered(boris, BorisSession, null, AccountType.GameMaster);
+        var blocker = Ground(0x40000050, 1498, 1628);
+        blocker.ItemId = 0x21A4;
+        ClearSent();
+
+        _view.ItemAppeared(blocker);
+
+        var sent = _sender.Sent.OfType<WorldItemSaPacket>().Zip(_sender.SentSessionIds).ToDictionary(pair => pair.Second, pair => pair.First.ItemId);
+        Assert.Equal((0x21A4, 0x1183), (sent[AriaSession], sent[BorisSession]));
+    }
+
     [Fact]
     public void ItemAppeared_ShowsItToEveryoneInRange()
     {

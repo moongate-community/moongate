@@ -36,6 +36,7 @@ public sealed class DecorationServiceTests
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
                 new ItemTemplate { Id = "decoration", ItemId = new Serial(0x0A28), Movable = false, Decays = false },
+                new ItemTemplate { Id = "decoration_clock", ItemId = new Serial(0x104B), Movable = false, Decays = false, ScriptId = "clock" },
                 new ItemTemplate { Id = "decoration_fillable", ItemId = new Serial(0x0E3C), Movable = false, Decays = false, ScriptId = "fillable" },
                 new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door" },
                 new ItemTemplate
@@ -142,6 +143,38 @@ public sealed class DecorationServiceTests
         var bookcase = Assert.Single(_items.Items);
         Assert.Equal("decoration_fillable", bookcase.TemplateId);
         Assert.Equal(new Dictionary<string, object?> { ["content_type"] = "library" }, bookcase.Props);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_AClock_UsesTheClockTemplate()
+    {
+        await Service(File("trammel", Block("Clock", 0x104B))).DecorateAsync(_progress);
+
+        var clock = Assert.Single(_items.Items);
+        Assert.Equal(("decoration_clock", 0x104B), (clock.TemplateId, clock.ItemId));
+    }
+
+    // The parts a tinker makes a clock from tell no time.
+    [Theory, InlineData("ClockFrame"), InlineData("ClockParts")]
+    public async Task DecorateAsync_ThePartsOfAClock_StayPlain(string type)
+    {
+        await Service(File("trammel", Block(type, 0x104D))).DecorateAsync(_progress);
+
+        Assert.Equal("decoration", Assert.Single(_items.Items).TemplateId);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_AClockPlacedAsPlainDecoration_BecomesAClock_AndCountsAsThere()
+    {
+        var clock = new ItemEntity { Id = new Serial(0x40000510), TemplateId = "decoration", ItemId = 0x104B, Amount = 1 };
+        _items.Add([clock]);
+        _items.PlaceOnGround(clock, MapType.Trammel, new Point3D(1500, 1600, 10));
+
+        var result = await Service(File("trammel", Block("Clock", 0x104B))).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(0, 1, 0, 1), result);
+        Assert.Equal("decoration_clock", clock.TemplateId);
+        Assert.Null(clock.Props);
     }
 
     // A world decorated before the containers could fill has them as plain decoration.

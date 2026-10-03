@@ -291,6 +291,29 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Equal((_potions.Id, SpeechType.Label, "You drink the potion."), (label.Serial, label.Type, label.Text));
     }
 
+    [Fact]
+    public void MessageCliloc_IsALabelOfTheClientsOwnTextOverTheItem_WithItsArguments()
+    {
+        var result = Run("return item.message_cliloc(0x40000002, 2, 1042958, '3:05'), item.message_cliloc(0x40000002, 2, 1042955)");
+
+        Assert.Equal([true, true], result.Select(value => value.Read<bool>()));
+        Assert.Equal([2L, 2L], _fixture.Sender.SentSessionIds);
+        var labels = _fixture.Sender.Sent.Cast<LocalizedMessagePacket>().ToList();
+        Assert.Equal((_potions.Id, _potions.ItemId, 1042958, "3:05"), (labels[0].Serial, labels[0].Graphic, labels[0].Cliloc, labels[0].Arguments));
+        Assert.Equal((1042955, ""), (labels[1].Cliloc, labels[1].Arguments));
+    }
+
+    [Theory]
+    [InlineData("item.message_cliloc(0x40000002, 99, 1042955)")]
+    [InlineData("item.message_cliloc(0x40000999, 2, 1042955)")]
+    [InlineData("item.message_cliloc(0x40000002, 2, 0)")]
+    [InlineData("item.message_cliloc(0x40000002, 2, -5)")]
+    public void MessageCliloc_NoSuchPlayerOrItemOrText_IsFalse(string call)
+    {
+        Assert.False(Run("return " + call)[0].Read<bool>());
+        Assert.Empty(_fixture.Sender.Sent);
+    }
+
     [Theory, InlineData("item.message(0x40000002, 99, 'hi')"), InlineData("item.message(0x40000002, 2, '  ')")]
     public void Message_NoSuchPlayerOrBlank_IsFalse(string call)
     {
