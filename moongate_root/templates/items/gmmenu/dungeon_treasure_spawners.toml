@@ -7,7 +7,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_woodbox_1"
@@ -19,7 +19,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_woodbox_2"
@@ -31,7 +31,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_woodbox_3"
@@ -43,7 +43,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_woodbox_4"
@@ -55,7 +55,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_woodchest_1"
@@ -67,7 +67,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_woodchest_2"
@@ -79,7 +79,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_woodchest_3"
@@ -91,7 +91,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_woodchest_4"
@@ -103,7 +103,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_metalchest_1"
@@ -115,7 +115,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_metalchest_2"
@@ -127,7 +127,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_metalchest_3"
@@ -139,7 +139,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_metalchest_4"
@@ -151,7 +151,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_goldmetalchest_1"
@@ -163,7 +163,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_goldmetalchest_2"
@@ -175,7 +175,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_goldmetalchest_3"
@@ -187,7 +187,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_goldmetalchest_4"
@@ -199,7 +199,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_smallcrate_1"
@@ -211,7 +211,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_smallcrate_2"
@@ -223,7 +223,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_smallcrate_3"
@@ -235,7 +235,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_smallcrate_4"
@@ -247,7 +247,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_mediumcrate_1"
@@ -259,7 +259,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_mediumcrate_2"
@@ -271,7 +271,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_mediumcrate_3"
@@ -283,7 +283,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_mediumcrate_4"
@@ -295,7 +295,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_largecrate_1"
@@ -307,7 +307,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_largecrate_2"
@@ -319,7 +319,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_largecrate_3"
@@ -331,7 +331,7 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "d_largecrate_4"
@@ -343,4 +343,4 @@ movable = false
 weight = 20.0
 amount = 1
 visibility = "regular"
-max_weight = 400000
+max_weight = 4000

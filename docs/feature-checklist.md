@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 72 done, 🟡 42 partly done, ❌ 154 not built yet.
+**268 systems:** ✅ 75 done, 🟡 40 partly done, ❌ 153 not built yet.
 
-**Coverage: 27%** of the systems done, **35%** counting a partly done system as half.
+**Coverage: 28%** of the systems done, **35%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -63,7 +63,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Extended status (resistances, luck, caps, stat locks) | ❌ | |
 | Staff privileges (move anything, see hidden, invulnerable) | 🟡 | Hidden ground items and hidden mobiles are shown only to staff, and `.go` takes a game master anywhere; no move anything or invulnerability |
 | Gargoyle flying | ❌ | |
-| Movement cost and stamina use by weight | ❌ | |
+| Movement cost and stamina use by weight | ✅ | Running costs a point every 16 steps; overloaded, every step costs 5 and more, and with no stamina left the step is refused. No mounts yet |
 | Polymorph and incognito | ❌ | |
 | Experience and levels (optional) | ❌ | |
 | Factions | ❌ | |
@@ -175,7 +175,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Moving, stacking, splitting and merging | ✅ | |
 | Wearing: layers and two-handed weapons | ✅ | No strength requirements yet |
 | The character's own containers | ✅ | |
-| Containers on the ground, weight and item limits | 🟡 | A container on the ground opens within two tiles; items can be taken out and put in, and the players around see them come and go; 125 items at most, no weight limit; piles merge inside |
+| Containers on the ground, weight and item limits | ✅ | A container on the ground opens within two tiles; items can be taken out and put in, and the players around see them come and go; 125 items at most and up to the container's limit of stones (400 without one); piles merge inside |
 | Tooltips and single-click names | ✅ | |
 | Items on the ground and their decay | ✅ | |
 | Scripted items | ✅ | Lua item scripts: use, equip, unequip, pick up, drop, create, darkness, a player stepping on them, speech nearby |
@@ -343,7 +343,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Context menus | ❌ | |
 | Buff bar | ❌ | |
 | Walk sequence and speed checks | ✅ | |
-| Weight and overloading | 🟡 | Items have their weight; nothing overloads |
+| Weight and overloading | ✅ | What a mobile carries and may carry (40 and 3.5 a point of strength) is counted and shown; an overloaded player tires at every step |
 | Timed effects (buffs and debuffs) | ❌ | |
 | Text prompts and input | ✅ | The Unicode prompt (0xC2), from scripts with the `prompt` module |
 | Visual effects: moving, lightning, particles | ✅ | From scripts with the `effect` module; particles for the Enhanced Client |

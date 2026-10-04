@@ -27,6 +27,7 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
     private readonly ManualTimeProvider _time = new();
     private readonly StubBankService _bank = new();
     private readonly RecordingMoveOverService _moveOver = new();
+    private readonly RecordingFatigueService _fatigue = new();
     private readonly StubMovementService _movement = new() { LandingZ = 10 };
     private readonly StubPacketSendService _sender = new();
     private readonly RecordingWorldViewService _view = new();
@@ -55,6 +56,43 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(new Point3D(1497, 1628, 10), _aria.Location);
         var ack = Assert.IsType<MovementAckPacket>(Assert.Single(_sender.Sent));
         Assert.Equal(((byte)0, NotorietyType.Innocent), (ack.Sequence, ack.Notoriety));
+    }
+
+    [Fact]
+    public async Task Handle_AStep_CostsItsStamina_ATurnAsksNothing()
+    {
+        await EnterAsync();
+
+        await StepAsync(DirectionType.East, 0, true);
+        await StepAsync(DirectionType.South, 1);
+
+        // The run was asked about and then paid; the turn neither.
+        Assert.Equal([true], _fatigue.Asked);
+        Assert.Equal([true], _fatigue.Taken);
+    }
+
+    [Fact]
+    public async Task Handle_AStepThePlayerIsTooTiredFor_IsRefused_AndCostsNothing()
+    {
+        await EnterAsync();
+        _fatigue.Allows = false;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.IsType<MovementRejectPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(new Point3D(1496, 1628, 10), _aria.Location);
+        Assert.Empty(_fatigue.Taken);
+    }
+
+    [Fact]
+    public async Task Handle_AStepTheWorldRefuses_CostsNothing()
+    {
+        await EnterAsync();
+        _aria.Frozen = true;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.Empty(_fatigue.Taken);
     }
 
     [Fact]
@@ -335,7 +373,7 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
 
     private Task StepAsync(DirectionType direction, byte sequence, bool running = false)
     {
-        var handler = new MoveRequestPacketHandler(_mobiles, _view, _sender, _time, _bank, _moveOver);
+        var handler = new MoveRequestPacketHandler(_mobiles, _view, _sender, _time, _bank, _moveOver, _fatigue);
         var packet = new MoveRequestPacket { Direction = direction, Running = running, Sequence = sequence, FastWalkKey = 0 };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));

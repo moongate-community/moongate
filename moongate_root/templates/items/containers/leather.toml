@@ -8,7 +8,7 @@ weight = 1.0
 buy_price = 7
 sell_price = 3
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e79_pouch"
@@ -20,7 +20,7 @@ weight = 1.0
 buy_price = 7
 sell_price = 3
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x09b2_backpack"
@@ -32,7 +32,7 @@ weight = 1.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e75_backpack"
@@ -44,7 +44,7 @@ weight = 1.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e76_bag"
@@ -56,7 +56,7 @@ weight = 1.0
 buy_price = 7
 sell_price = 3
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "bag"
@@ -83,7 +83,7 @@ weight = 1.0
 buy_price = 10
 sell_price = 5
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "picnicbasket"

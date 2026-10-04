@@ -39,6 +39,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
     private readonly ILightService? _light;
     private readonly ISeasonService? _seasons;
     private readonly IWorldViewService _view;
+    private readonly IWeightService? _weight;
 
     public CharacterEnterWorldService(
         IMobileService mobiles,
@@ -49,9 +50,11 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         IWorldViewService view,
         IMotdService motd,
         ILightService? light = null,
-        ISeasonService? seasons = null
+        ISeasonService? seasons = null,
+        IWeightService? weight = null
     )
     {
+        _weight = weight;
         _light = light;
         _seasons = seasons;
         _mobiles = mobiles;
@@ -178,7 +181,12 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
             character.Notoriety ?? NotorietyType.Innocent,
             _mobiles.GetEquipment(character, play.Equipment)
         );
-        yield return new MobileStatusPacket(_mobiles.GetStatus(character));
+        var status = _mobiles.GetStatus(character);
+        yield return new MobileStatusPacket(
+            _weight is null
+                ? status
+                : status with { Weight = _weight.Carried(character), MaxWeight = _weight.MaxCarried(character) }
+        );
         yield return new WarModePacket(false);
         yield return new LoginCompletePacket();
         yield return new CurrentTimePacket(TimeOnly.FromDateTime(DateTime.UtcNow));

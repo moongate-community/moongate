@@ -1,3 +1,6 @@
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Tests.TestSupport.Ultima.Speech;
+using Moongate.Tests.TestSupport.Ultima.Weight;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -54,6 +57,9 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _shirt = Item(0x40000008, 0x1517);
     private readonly StubBankService _bank = new();
     private readonly RecordingItemScriptService _scripts = new();
+    private readonly StubWeightService _weight = new();
+    private readonly RecordingSpeechService _speech = new();
+    private readonly RecordingFatigueService _fatigue = new();
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -280,6 +286,48 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
             _scripts.Calls
         );
         Assert.Empty(_scripts.Queued);
+    }
+
+    [Theory, InlineData("backpack"), InlineData("bag"), InlineData("pile")]
+    public async Task Handle_IntoAContainerThatHoldsNoMoreWeight_BouncesBack_AndThePlayerIsToldWhy(string where)
+    {
+        _weight.HoldsResult = false;
+        await HoldingAsync(_coins);
+
+        await DropTo(where);
+
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+        Assert.Equal((30, 70), (_coins.Amount, _pile.Amount));
+        Assert.Equal(DropRequestPacketHandler.TooHeavyMessage, Assert.Single(_speech.ToldClilocs).Cliloc);
+    }
+
+    [Fact]
+    public async Task Handle_TheStaff_PutsIntoAContainerWhateverItWeighs()
+    {
+        _weight.HoldsResult = false;
+        await HoldingAsync(_coins);
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        await DropAsync(_coins.Id, 80, 70, _bag.Id);
+
+        Assert.Equal(_bag.Id, _coins.ContainerId);
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
+    [Fact]
+    public async Task Handle_ADrop_ShowsThePlayerItsWeightAgain_AndABounceToo()
+    {
+        await HoldingAsync(_coins);
+        await DropAsync(_coins.Id, 80, 70, _bag.Id);
+
+        // After a drop that went through, the player may be warned that it is overloaded.
+        Assert.True(Assert.Single(_fatigue.Loads).Warn);
+
+        _weight.HoldsResult = false;
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(ItemSessionKeys.Held, new(_coins.Id)));
+        await DropAsync(_coins.Id, 80, 70, _backpack.Id);
+
+        Assert.Equal([true, false], _fatigue.Loads.Select(load => load.Warn));
     }
 
     [Fact]
@@ -922,7 +970,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
                 }
             )
         );
-        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank);
+        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _weight, _speech, _fatigue);
         var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, GridIndex = gridIndex, Destination = destination };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));

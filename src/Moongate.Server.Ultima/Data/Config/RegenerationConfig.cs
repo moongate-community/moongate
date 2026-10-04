@@ -30,6 +30,12 @@ public sealed class RegenerationConfig
     public bool HungerEnabled { get; set; } = true;
 
     /// <summary>
+    ///     Gets or sets whether moving costs a player stamina: running, and every step when it carries more than its
+    ///     maximum. Off, a step costs nothing and is never refused for fatigue.
+    /// </summary>
+    public bool FatigueEnabled { get; set; } = true;
+
+    /// <summary>
     ///     Gets or sets whether the players get thirsty: off, thirst neither drops nor stops the stamina.
     /// </summary>
     public bool ThirstEnabled { get; set; } = true;

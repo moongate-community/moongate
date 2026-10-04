@@ -106,6 +106,7 @@ table below is the same surface at a glance.
 | `mobile.body_type(serial)` | The kind of the mobile's body, as `data/bodies.toml` says: `BodyType.Human` (every race of player and the human NPCs), `Monster`, `Animal`, `Sea`, `Equipment`, or `Empty` for a body the file does not list. The kind tells which animations the body has: `if mobile.body_type(who) == BodyType.Human then mobile.animate(who, HumanAnimationType.Eat) end`. `nil` for a mobile not in the world |
 | `mobile.hunger(serial)`, `mobile.set_hunger(serial, value)` | How full the mobile is, from 0 (starving) to 20 (full), and setting it, kept in that range: `mobile.set_hunger(who, mobile.hunger(who) + 3)`. A player loses a point every `ultima.regeneration.hunger_minutes`, counted from when it entered the world, and, at 0, gets no hit points back; the staff neither gets hungry nor starves. `nil` and `false` for a mobile not in the world |
 | `mobile.thirst(serial)`, `mobile.set_thirst(serial, value)` | How quenched the mobile is, from 0 (parched) to 20 (quenched), and setting it, kept in that range: `mobile.set_thirst(who, mobile.thirst(who) + 3)`. A player loses a point every `ultima.regeneration.hunger_minutes`, as for hunger, and, at 0, gets no stamina back; the staff is left alone. `nil` and `false` for a mobile not in the world |
+| `mobile.weight(serial)`, `mobile.max_weight(serial)` | The stones the mobile carries (what it wears and everything inside, without the bank box, each pile rounded up as its tooltip says) and the stones it may carry before it is overloaded, 40 and 3.5 a point of strength: `if mobile.weight(who) > mobile.max_weight(who) then ... end`. `nil` for a mobile not in the world |
 | `mobile.message(serial, text)` | A system message, in the lower left of the screen, read only by that player: `mobile.message(who, "That is too far away.")`; cut at 128 characters; `false` for an empty text, an NPC or a player not in the world |
 | `mobile.template(serial)` | The id of the mobile template an NPC was made from, such as `"f_baker"`; `nil` for a player or a mobile not in the world |
 | `mobile.name(serial)`, `mobile.is_player(serial)`, `mobile.direction(serial)` | The mobile's name, whether it is a player's character, and the `DirectionType` it faces; `nil`, `false` and `nil` for a mobile not in the world |
@@ -513,6 +514,11 @@ Hit points, mana and stamina come back by themselves (see
 props, in seconds for a point: `mobile.set_prop(who, "regen.hits", 2)` heals it five times faster than
 the default; `nil` gives it the configured rate back. The props are `regen.hits`, `regen.mana` and
 `regen.stamina`.
+
+Moving takes stamina from a player (see `fatigue_enabled` in
+[`ultima.regeneration`](server-configuration.md)): running, and every step when it carries more than
+`mobile.max_weight`. A script that gives or takes items changes what the mobile carries at once; the
+status bar of its player follows at the next status update.
 
 The two teleporter scripts below share `scripts/common/teleport.lua`, a Lua module they take with
 `local teleport = require("common.teleport")`: `teleport.send(serial, who)` sends a mobile where the

@@ -57,6 +57,8 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
                                                   .Item(0x0EED, TileFlagType.Generic, 0)
                                                   .Item(ChestGraphic, TileFlagType.Container, 0, weight: 255);
 
+    private readonly RecordingFatigueService _fatigue = new();
+
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
     private SessionService _sessions = null!;
@@ -93,6 +95,16 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         Assert.Empty(_sender.Sent);
         // Worn until it is dropped somewhere.
         Assert.Equal((Aria, LayerType.Shirt), (_shirt.MobileId!.Value, _shirt.Layer!.Value));
+    }
+
+    [Fact]
+    public async Task Handle_ALift_ShowsThePlayerItsWeightAgain_WithoutAWarning()
+    {
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 1);
+
+        Assert.False(Assert.Single(_fatigue.Loads).Warn);
     }
 
     [Fact]
@@ -680,7 +692,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private Task LiftAsync(Serial item, int amount)
     {
-        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _templates, _sessions);
+        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _templates, _sessions, _fatigue);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new LiftRequestPacket { Item = item, Amount = amount }));
     }

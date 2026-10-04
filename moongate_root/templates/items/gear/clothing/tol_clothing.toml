@@ -6,6 +6,6 @@ name = "First Aid Belt"
 rarity = "common"
 weight = 1.0
 layer = "earrings"
-max_weight = 40000
+max_weight = 400
 [item.tags]
 healingBonus = "15"

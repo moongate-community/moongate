@@ -8,7 +8,7 @@ movable = true
 weight = 20.0
 buy_price = 14
 sell_price = 7
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "0x0e80_metal_box"
@@ -20,7 +20,7 @@ movable = true
 weight = 20.0
 buy_price = 14
 sell_price = 7
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "strongbox"
@@ -56,7 +56,7 @@ movable = true
 weight = 20.0
 buy_price = 40
 sell_price = 20
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "0x0e7c_metal_chest"
@@ -68,7 +68,7 @@ movable = true
 weight = 20.0
 buy_price = 40
 sell_price = 20
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "0x0e40_metal_chest"
@@ -80,7 +80,7 @@ movable = true
 weight = 30.0
 buy_price = 40
 sell_price = 20
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "0x0e41_metal_chest"
@@ -92,7 +92,7 @@ movable = true
 weight = 30.0
 buy_price = 40
 sell_price = 20
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "puzzlechest"
