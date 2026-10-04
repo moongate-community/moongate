@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Ultima.Types;
 
@@ -537,6 +538,42 @@ public sealed class MobileModule
         }
 
         return _speech.Tell(mobile, text.Length > ItemModule.MaximumTextLength ? text[..ItemModule.MaximumTextLength] : text);
+    }
+
+    /// <summary>
+    ///     Sends a text of the client, by its number, to the player as a system message, in the language of that
+    ///     client; <c>mobile.message_cliloc(who, 500867)</c>. The arguments fill its <c>~1_NAME~</c> places, split by tabs.
+    /// </summary>
+    [ScriptFunction(helpText: "A system message of the client's own texts, by cliloc number, read only by that player; args fills its ~1_NAME~ places, split by tabs. False for a number not above 0, an NPC or a player not in the world.")]
+    public bool MessageCliloc(long serial, int cliloc, string? args = null)
+    {
+        return cliloc > 0 && TryGetMobile(serial, out var mobile) && _speech.TellCliloc(mobile, cliloc, args ?? "");
+    }
+
+    /// <summary>
+    ///     Gets how full the mobile is, from 0 (starving) to 20 (full); <c>mobile.hunger(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "How full the mobile is, from 0 (starving) to 20 (full); nil for a mobile not in the world.")]
+    public int? Hunger(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? mobile.Hunger : null;
+    }
+
+    /// <summary>
+    ///     Sets how full the mobile is, kept from 0 to 20; <c>mobile.set_hunger(who, mobile.hunger(who) + 3)</c>. A
+    ///     player with 0 gets no hit points back.
+    /// </summary>
+    [ScriptFunction(helpText: "Sets how full the mobile is, kept from 0 (starving) to 20 (full); false for a mobile not in the world.")]
+    public bool SetHunger(long serial, int hunger)
+    {
+        if (!TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        mobile.Hunger = Math.Clamp(hunger, 0, HungerService.Full);
+
+        return true;
     }
 
     // Points to the tenths the mobile keeps; null for a value no skill can have.

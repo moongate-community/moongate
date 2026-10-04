@@ -64,6 +64,12 @@ public sealed class SpeechService : ISpeechService
                SpeechMessageHelper.TrySend(_sender, session, SpeechMessageHelper.CreateSystem(text, SpeechHue));
     }
 
+    public bool TellCliloc(MobileEntity player, int cliloc, string arguments = "")
+    {
+        return _sessions.TryGetByCharacterId(player.Id, out var session) &&
+               _sender.TrySend(session.SessionId, LocalizedMessagePacket.System(cliloc, arguments));
+    }
+
     // With a speaker, those who do not see it do not hear it or its sounds either, as ModernUO.
     private int SendAround(MapType map, Point3D location, IOutgoingPacket packet, MobileEntity? speaker = null)
     {

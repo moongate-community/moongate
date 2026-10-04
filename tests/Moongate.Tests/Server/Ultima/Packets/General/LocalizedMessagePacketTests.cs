@@ -16,4 +16,15 @@ public sealed class LocalizedMessagePacketTests
         Assert.Equal("5\t#1023821"u8.ToArray().SelectMany(b => new byte[] { b, 0 }).ToArray(), bytes[48..68]);
         Assert.Equal(new byte[] { 0, 0 }, bytes[68..70]);
     }
+
+    [Fact]
+    public void System_WritesARegularMessageOfNoObject_NamedSystem()
+    {
+        var bytes = PacketCodec.Encode(LocalizedMessagePacket.System(500867));
+
+        Assert.Equal(50, bytes.Length);
+        // serial -1, graphic -1, type 0 (regular), hue 0x3B2, font 3, cliloc 500867
+        Assert.Equal(Convert.FromHexString("C1" + "0032" + "FFFFFFFF" + "FFFF" + "00" + "03B2" + "0003" + "0007A483"), bytes[..18]);
+        Assert.Equal("System"u8.ToArray(), bytes[18..24]);
+    }
 }

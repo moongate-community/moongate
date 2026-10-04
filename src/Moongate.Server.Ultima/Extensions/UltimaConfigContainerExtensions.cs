@@ -28,6 +28,7 @@ public static class UltimaConfigContainerExtensions
         container.RegisterInstance(ultima.StartingItems);
         container.RegisterInstance(ultima.Characters);
         container.RegisterInstance(ultima.Npcs);
+        container.RegisterInstance(ultima.Regeneration);
         container.RegisterInstance(ultima.Spawns);
 
         return ultima;

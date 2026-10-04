@@ -23,6 +23,8 @@ public class UltimaConfig : IConfigSection
 
     public NpcsConfig Npcs { get; set; } = new();
 
+    public RegenerationConfig Regeneration { get; set; } = new();
+
     public SpawnsConfig Spawns { get; set; } = new();
 
     /// <summary>
@@ -83,5 +85,12 @@ public class UltimaConfig : IConfigSection
         }
 
         Npcs.Validate();
+
+        if (Regeneration is null)
+        {
+            throw new InvalidOperationException("The ultima.regeneration configuration section cannot be null.");
+        }
+
+        Regeneration.Validate();
     }
 }
