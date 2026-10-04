@@ -11,6 +11,12 @@ public sealed class ConsoleCommandTests
 {
     private readonly RecordingPromptService _prompt = new();
 
+    [Theory, InlineData(new string[0], new[] { "lock" }), InlineData(new[] { "lock" }, new string[0])]
+    public void GetArgumentCompletions_OffersLockFirst(string[] previous, string[] expected)
+    {
+        Assert.Equal(expected, new ConsoleCommand(_prompt).GetArgumentCompletions(previous));
+    }
+
     [Fact]
     public async Task Lock_LocksTheConsoleInput_AndSaysHowToUnlockIt()
     {

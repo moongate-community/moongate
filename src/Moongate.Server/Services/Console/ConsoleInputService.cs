@@ -8,8 +8,8 @@ using Serilog;
 namespace Moongate.Server.Services.Console;
 
 /// <summary>
-///     Polls the terminal for keystrokes and dispatches submitted command lines. TAB completes the command name, Up and
-///     Down walk the lines submitted in this run.
+///     Polls the terminal for keystrokes and dispatches submitted command lines. TAB completes the command name and the
+///     arguments its command knows, Up and Down walk the lines submitted in this run.
 /// </summary>
 public sealed class ConsoleInputService : IConsoleInputService, IDisposable
 {
@@ -199,7 +199,8 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
 
                 if (key.Key == ConsoleKey.Tab)
                 {
-                    Complete(buffer, secondTab);
+                    // A TAB that completed something starts over: only one that could not arms the listing.
+                    tabbed = !Complete(buffer, secondTab);
 
                     continue;
                 }
@@ -281,22 +282,38 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         }
     }
 
-    private void Complete(StringBuilder buffer, bool list)
+    // Whether the line changed.
+    private bool Complete(StringBuilder buffer, bool list)
     {
-        var names = _commands.GetRegisteredCommands()
-                             .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
-                             .SelectMany(definition => definition.Aliases);
-        var (text, matches) = ConsoleCompletion.Complete(buffer.ToString(), names);
+        var (text, matches) = ConsoleCompletion.Complete(buffer.ToString(), CandidatesAfter);
 
         if (text != buffer.ToString())
         {
             Replace(buffer, text);
             _history.Reset();
+
+            return true;
         }
-        else if (list && matches.Count > 1)
+
+        if (list && matches.Count > 1)
         {
             _prompt.WriteOutputLine(string.Join("  ", matches), CommandOutputLevel.Information);
         }
+
+        return false;
+    }
+
+    // The console commands for the first word, then the values the command gives for its next argument.
+    private IEnumerable<string> CandidatesAfter(IReadOnlyList<string> previous)
+    {
+        if (previous.Count == 0)
+        {
+            return _commands.GetRegisteredCommands()
+                            .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
+                            .SelectMany(definition => definition.Aliases);
+        }
+
+        return _commands.GetArgumentCompletions(previous[0], previous.Skip(1).ToArray());
     }
 
     private void Replace(StringBuilder buffer, string text)
