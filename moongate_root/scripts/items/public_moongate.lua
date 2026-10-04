@@ -30,7 +30,7 @@ local cancel_cliloc = 1011012
 
 local row_height = 25
 
--- As ModernUO: the player may have walked away while the gump was open.
+-- Where the player stands when it is on the gate's map and within reach of it; nil otherwise.
 local function near(serial, who)
     return item.in_range(serial, who, use_range) and mobile.location(who) or nil
 end

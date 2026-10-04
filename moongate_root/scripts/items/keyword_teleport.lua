@@ -58,9 +58,12 @@ local function seconds(delay)
     return tonumber(hours) * 3600 + tonumber(minutes) * 60 + tonumber(secs)
 end
 
--- Whether the player is on the teleporter's map and within its range.
+-- Whether the player is on the teleporter's map and within its range. A range written by hand may be text or
+-- have a fraction: the whole tiles of it count.
 local function in_range(serial, who)
-    return item.in_range(serial, who, tonumber(item.get_prop(serial, "range")) or 0)
+    local range = tonumber(item.get_prop(serial, "range")) or 0
+
+    return item.in_range(serial, who, math.floor(math.max(math.min(range, 32), 0)))
 end
 
 local function matches(serial, text, keywords)

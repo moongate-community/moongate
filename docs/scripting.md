@@ -489,6 +489,10 @@ The two teleporter scripts below share `scripts/common/teleport.lua`, a Lua modu
 item's props say (`teleport.x`, `teleport.y`, `teleport.z`, `teleport.map`), with the smoke of
 `source_effect` and `dest_effect` and the sound of `sound_id`, and `teleport.is_on(value)` reads a flag
 the decoration files carry as text. A script of your own that teleports can take it the same way.
+A script keeps the module it took: after `script reload common/teleport.lua`, reload the scripts that
+use it too (see [Reload and ownership](#reload-and-ownership)). `mgctl init` adds `scripts/common/` to an
+existing root and keeps the scripts already there; a root whose item scripts are replaced by hand needs
+`scripts/common/` as well, or its teleporters stop.
 
 `scripts/items/teleporter.lua` is the script of the `decoration_teleporter` template that
 [`.decorate`](commands/decorate.md) gives to ModernUO's `Teleporter`: on `on_move_over` it

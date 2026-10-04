@@ -14,7 +14,8 @@
 --                  one; without it the mobile stays on its map
 --   source_effect  true shows a puff of smoke where the mobile left
 --   dest_effect    true shows a puff of smoke where the mobile arrived
---   sound_id       a sound played at the destination after the teleport
+--   sound_id       a sound, a number above 0, played at the destination after
+--                  the teleport
 --
 -- Functions:
 --   teleport.is_on(value)      whether a flag is set: the decoration files
