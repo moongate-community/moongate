@@ -144,7 +144,7 @@
 30121 = "Kładzie na ziemi, tam gdzie wskażesz, przedmiot z szablonu przedmiotu: add <template>."
 30122 = "Usunąć można tylko przedmiot leżący na ziemi."
 30126 = "{0}: {1} wynosi teraz {2}."
-30127 = "Ustawia życie, manę, wytrzymałość, głód lub pragnienie wskazanej istoty: set <hits|mana|stamina|hunger|thirst> <wartość>."
+30127 = "Ustawia życie, manę, wytrzymałość, głód lub pragnienie wskazanej istoty albo czyni ją przestępcą: set <hits|mana|stamina|hunger|thirst|criminal> <wartość>."
 
 # Moongate: texts of the item scripts.
 30114 = "Ten moongate zdaje się nigdzie nie prowadzić."

@@ -218,6 +218,27 @@ public class MobileEntity : IMoongateEntity
     public bool Frozen { get; set; }
 
     /// <summary>
+    ///     Until when the mobile is a criminal, in UTC; null for one that is not. Its name is grey until then.
+    /// </summary>
+    public DateTime? CriminalUntil { get; set; }
+
+    /// <summary>
+    ///     Whether the mobile is a criminal now, kept by the crime service from <see cref="CriminalUntil" />. It is not
+    ///     a column: the time is what is saved.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public bool Criminal { get; set; }
+
+    /// <summary>
+    ///     Gets the notoriety those who see the mobile are shown: its own, grey while it is a criminal, and a
+    ///     murderer's red before that.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public NotorietyType ShownNotoriety =>
+        Notoriety == NotorietyType.Murderer ? NotorietyType.Murderer :
+        Criminal ? NotorietyType.Criminal : Notoriety ?? NotorietyType.Innocent;
+
+    /// <summary>
     ///     Whether the mobile is in war mode. It is not a column: a mobile comes back in peace.
     /// </summary>
     [Column(IsIgnore = true)]
@@ -294,6 +315,7 @@ public class MobileEntity : IMoongateEntity
         var copy = (MobileEntity)MemberwiseClone();
         // Not a column: left in, a change of war mode alone would write the row again.
         copy.WarMode = false;
+        copy.Criminal = false;
         copy.Skills =
         [
             .. Skills.Select(

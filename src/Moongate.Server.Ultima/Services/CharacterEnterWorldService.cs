@@ -178,7 +178,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
             direction,
             character.SkinHue,
             flags,
-            character.Notoriety ?? NotorietyType.Innocent,
+            character.ShownNotoriety,
             _mobiles.GetEquipment(character, play.Equipment)
         );
         var status = _mobiles.GetStatus(character);

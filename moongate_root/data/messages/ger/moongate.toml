@@ -144,7 +144,7 @@
 30121 = "Legt einen Gegenstand aus einer Gegenstandsvorlage dort auf den Boden, wohin du zielst: add <template>."
 30122 = "Nur ein Gegenstand, der auf dem Boden liegt, kann entfernt werden."
 30126 = "{0}: {1} ist jetzt {2}."
-30127 = "Setzt Lebenspunkte, Mana, Ausdauer, Hunger oder Durst des gewählten Wesens: set <hits|mana|stamina|hunger|thirst> <Wert>."
+30127 = "Setzt Lebenspunkte, Mana, Ausdauer, Hunger oder Durst des gewählten Wesens oder macht es zum Verbrecher: set <hits|mana|stamina|hunger|thirst|criminal> <Wert>."
 
 # Moongate: texts of the item scripts.
 30114 = "Dieses Mondtor scheint nirgendwohin zu führen."

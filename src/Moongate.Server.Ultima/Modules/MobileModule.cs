@@ -38,6 +38,7 @@ public sealed class MobileModule
     private readonly IWorldViewService? _view;
     private readonly Lazy<FrozenDictionary<int, BodyType>> _bodies;
     private readonly IWeightService? _weight;
+    private readonly ICrimeService? _crimes;
 
     public MobileModule(
         IMobileService mobiles,
@@ -50,9 +51,11 @@ public sealed class MobileModule
         IMobileStateService? state = null,
         IWorldViewService? view = null,
         IDataLoaderService? data = null,
-        IWeightService? weight = null
+        IWeightService? weight = null,
+        ICrimeService? crimes = null
     )
     {
+        _crimes = crimes;
         _weight = weight;
         _bodies = new(
             () => data?.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type) ??
@@ -642,6 +645,39 @@ public sealed class MobileModule
     public int? MaxWeight(long serial)
     {
         return _weight is not null && TryGetMobile(serial, out var mobile) ? _weight.MaxCarried(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Gets whether the mobile is a criminal now, its name in grey; <c>mobile.criminal(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the mobile is a criminal now, its name in grey for those who see it; nil for a mobile not in the world.")]
+    public bool? Criminal(long serial)
+    {
+        return _crimes is not null && TryGetMobile(serial, out var mobile) ? _crimes.IsCriminal(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Makes the mobile a criminal for the configured time, or pardons it at once;
+    ///     <c>mobile.set_criminal(thief, true)</c>. Making one again starts the time again.
+    /// </summary>
+    [ScriptFunction(helpText: "Makes the mobile a criminal for ultima.crime.criminal_seconds, starting the time again if it is one, or pardons it at once with false; false for a mobile not in the world.")]
+    public bool SetCriminal(long serial, bool criminal)
+    {
+        if (_crimes is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        if (criminal)
+        {
+            _crimes.MakeCriminal(mobile);
+        }
+        else
+        {
+            _crimes.Pardon(mobile);
+        }
+
+        return true;
     }
 
     // Points to the tenths the mobile keeps; null for a value no skill can have.

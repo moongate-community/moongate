@@ -144,7 +144,7 @@
 30121 = "Pone en el suelo, donde apuntas, un objeto de una plantilla de objeto: add <template>."
 30122 = "Solo se puede eliminar un objeto que está en el suelo."
 30126 = "{0}: {1} ahora vale {2}."
-30127 = "Establece la vida, el maná, el aguante, el hambre o la sed de la criatura a la que apuntas: set <hits|mana|stamina|hunger|thirst> <valor>."
+30127 = "Establece la vida, el maná, el aguante, el hambre o la sed de la criatura a la que apuntas, o la hace criminal: set <hits|mana|stamina|hunger|thirst|criminal> <valor>."
 
 # Moongate: texts of the item scripts.
 30114 = "Este moongate no parece llevar a ninguna parte."

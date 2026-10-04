@@ -134,7 +134,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private void Accept(GameSession session, MovementState state, MobileEntity mobile, byte sequence)
     {
         state.ExpectedSequence = sequence == LastSequence ? (byte)1 : (byte)(sequence + 1);
-        _sender.TrySend(session.SessionId, new MovementAckPacket(sequence, mobile.Notoriety ?? NotorietyType.Innocent));
+        _sender.TrySend(session.SessionId, new MovementAckPacket(sequence, mobile.ShownNotoriety));
     }
 
     private void Reject(GameSession session, MovementState state, MobileEntity mobile, byte sequence)

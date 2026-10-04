@@ -41,7 +41,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`initial_spawn`](commands/initial_spawn.md) | `initial_spawn` | Yes | Yes | Administrator | Game |
 | [`globallight`](commands/globallight.md) | `globallight [0-31]` | Yes | Yes | GameMaster | Game |
 | [`spawn`](commands/spawn.md) | `spawn <template>`, then target a spot | No | Yes | GameMaster | Game |
-| [`set`](commands/set.md) | `set <hits\|mana\|stamina\|hunger\|thirst> <value>`, then target a mobile | No | Yes | GameMaster | Game |
+| [`set`](commands/set.md) | `set <hits\|mana\|stamina\|hunger\|thirst\|criminal> <value>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`add`](commands/add.md) | `add <template>`, then target a spot | No | Yes | GameMaster | Game |
 | [`remove`](commands/remove.md) | `remove`, then target an NPC or an item on the ground | No | Yes | GameMaster | Game |
 | [`where`](commands/where.md) | `where`, then target anything | No | Yes | GameMaster | Game |
