@@ -321,7 +321,7 @@ monster is in one of three states:
 
 | State | What it does | It ends when |
 | --- | --- | --- |
-| wander | Strolls in its home, the area of its spawn region: about a step every two seconds, mostly straight ahead, back towards home from outside. One think in twenty it rests 15 to 25 seconds, with its `idle` sound and a fidget | It sees a player |
+| wander | Strolls in its home, the area of its spawn region: about a step every two seconds, mostly straight ahead. From outside, as after a chase, it walks back with `npc.walk_to`, and takes a step at random when no way is found. One think in twenty it rests 15 to 25 seconds, with its `idle` sound and a fidget | It sees a player |
 | chase | Threatens the player with its `start_attack` sound and an animation, goes into war mode and walks to it with `npc.walk_to`, a step every think, never running. Beside it, it faces it and snarls every three seconds (`attack` sound and an attack animation): it does no harm | The player hides, leaves, is farther than 32 tiles, or cannot be reached for 20 seconds |
 | guard | Stands in war mode for 10 seconds, looking around | It sees a player, or the time is over: back to wander, in peace |
 

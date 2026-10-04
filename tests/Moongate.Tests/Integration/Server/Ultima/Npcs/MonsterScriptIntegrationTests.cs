@@ -262,13 +262,56 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     {
         Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1700, 1700, 0)));
         SetHome(1590, 1600, 1592, 1600);
+        _finder.Finds(Enumerable.Repeat(DirectionType.West, 8).ToArray());
 
-        for (var think = 0; think < 400 && _skeleton.Location.X > 1592; think++)
+        // A rest of 25 seconds may come in between: the cap leaves room for many.
+        for (var think = 0; think < 2000 && _skeleton.Location.X > 1592; think++)
         {
             Think(1);
         }
 
         Assert.InRange(_skeleton.Location.X, 1590, 1592);
+        Assert.Contains(_finder.Searches, search => search.To == new Point3D(1592, 1600, 0));
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void OutsideItsHome_WithNoWayBack_ItStillMoves_InsteadOfPushingAgainstAWall()
+    {
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1700, 1700, 0)));
+        SetHome(1590, 1600, 1592, 1600);
+        var cells = new HashSet<Point3D>();
+
+        // No path is ever found.
+        for (var think = 0; think < 2000 && cells.Count < 3; think++)
+        {
+            Think(1);
+            cells.Add(_skeleton.Location);
+        }
+
+        Assert.True(cells.Count >= 3);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void AMonsterStillInWarModeWhenTheScriptForgotIt_GoesBackToPeace()
+    {
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1700, 1700, 0)));
+        _skeleton.WarMode = true;
+
+        Think(1);
+
+        Assert.Equal(["war 256 False"], _state.Flags);
+    }
+
+    [Fact]
+    public void APlayerOneTileAwayOnTheFloorAbove_IsNotReached()
+    {
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1601, 1600, 20)));
+
+        Think(40);
+
+        Assert.DoesNotContain((_skeleton, AttackSound), _speech.Sounds);
         Assert.Empty(_errors);
     }
 

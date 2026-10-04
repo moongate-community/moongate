@@ -45,8 +45,9 @@ local GIVE_UP_THINKS = 40
 local SNARL_EVERY = 6
 local REST_MIN, REST_MAX = 30, 50
 
--- The eye of a mobile above its feet, for the line of sight.
+-- The eye of a mobile above its feet, for the line of sight, and how far apart two heights of one storey are.
 local EYE = 14
+local STOREY = 16
 
 -- A monster body's actions: it threatens, attacks and fidgets (ModernUO's choices).
 local THREATEN = MonsterAnimationType.Pillage
@@ -66,6 +67,13 @@ local function mind_of(serial)
     if mind == nil then
         mind = { state = "wander", thinks = 0, rest = 0, until_think = 0, stalled = 0 }
         minds[serial] = mind
+
+        -- A monster the script lost track of, as after a script reload, may still be in war mode.
+        local flags = mobile.flags(serial)
+
+        if flags ~= nil and flags.war_mode then
+            mobile.set_war_mode(serial, false)
+        end
     end
 
     return mind
@@ -73,16 +81,6 @@ end
 
 local function random(max)
     return dice.roll("1d" .. max)
-end
-
-local function sign(value)
-    if value > 0 then
-        return 1
-    elseif value < 0 then
-        return -1
-    end
-
-    return 0
 end
 
 -- The home area of a monster of a spawn region, or nil for any other.
@@ -124,7 +122,10 @@ local function is_prey(here, player, range, in_sight)
         return false
     end
 
-    return not in_sight or world.line_of_sight(here.map, here.x, here.y, here.z + EYE, there.x, there.y, there.z + EYE)
+    -- A height is 127 at most.
+    return not in_sight or world.line_of_sight(
+        here.map, here.x, here.y, math.min(here.z + EYE, 127), there.x, there.y, math.min(there.z + EYE, 127)
+    )
 end
 
 -- Whether the monster gave this player up as out of reach and the player still stands where it was then.
@@ -191,17 +192,17 @@ local function stroll(serial, here)
         return
     end
 
+    -- Outside, as after a chase: back to the nearest cell of home, around what stands in the way. With no way
+    -- found it takes a step at random, so a wall between it and home does not hold it for ever.
     if not inside(home, here.x, here.y) then
-        local x = sign(math.max(home.x1 - here.x, 0) + math.min(home.x2 - here.x, 0))
-        local y = sign(math.max(home.y1 - here.y, 0) + math.min(home.y2 - here.y, 0))
+        local x = math.min(math.max(here.x, home.x1), home.x2)
+        local y = math.min(math.max(here.y, home.y1), home.y2)
 
-        for direction = 0, 7 do
-            if dx[direction] == x and dy[direction] == y then
-                npc.step(serial, direction)
-
-                return
-            end
+        if npc.walk_to(serial, x, y) ~= "moving" then
+            npc.step(serial, random(8) - 1)
         end
+
+        return
     end
 
     for i = 0, 7 do
@@ -258,7 +259,8 @@ local function chase(serial, mind, here)
 
     local there = mobile.location(target)
 
-    if math.max(math.abs(there.x - here.x), math.abs(there.y - here.y)) <= 1 then
+    -- Beside it, and on its storey: one tile away on the floor above is not reached.
+    if math.max(math.abs(there.x - here.x), math.abs(there.y - here.y)) <= 1 and math.abs(there.z - here.z) <= STOREY then
         mind.stalled = 0
         npc.face(serial, there.x, there.y)
 
