@@ -81,7 +81,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
 | NPC combat AI | 🟡 | `monster.lua`: the undead of the graveyards notice a player, walk to it and stand guard when they lose it; no fight yet |
-| Guards in guarded regions | 🟡 | A player that says "guards" brings a guard onto each criminal near it: it appears, says its line and leaves. No punishment yet, the standing guards do nothing |
+| Guards in guarded regions | 🟡 | A player that says "guards" brings a guard onto each criminal near it: it appears, says its line and leaves. The guards standing in the towns notice a criminal by themselves and go to it (`guard.lua`). No punishment yet |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
 | Aggressor lists and attack timeouts | ❌ | |

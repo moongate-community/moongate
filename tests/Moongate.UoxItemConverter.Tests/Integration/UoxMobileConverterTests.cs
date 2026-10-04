@@ -150,7 +150,7 @@ public sealed class UoxMobileConverterTests : IDisposable
             "npc/undead.dfn",
             "[skeleton]\n{\nID=0x0032\n}\n[zombie]\n{\nID=0x0003\n}\n[wraith]\n{\nID=0x001a\n}\n[ghoul]\n{\nGET=wraith\n}\n" +
             "[spectre]\n{\nID=0x001a\n}\n[lich]\n{\nID=0x0018\n}\n[headless]\n{\nID=0x001f\n}\n[boneknight]\n{\nGET=skeleton\n}\n[m_banker]\n{\nID=0x0190\nNPCAI=8\n}\n" +
-            "[orc]\n{\nID=0x0011\nNPCAI=2\n}\n"
+            "[orc]\n{\nID=0x0011\nNPCAI=2\n}\n[m_guard]\n{\nID=0x0190\nNPCAI=4\n}\n"
         );
 
         Assert.True(Run() == 0, CombinedOutput);
@@ -164,6 +164,8 @@ public sealed class UoxMobileConverterTests : IDisposable
             new[] { "wraith", "ghoul", "spectre", "lich", "headless" },
             id => Assert.Equal("monster", mobiles[id].ScriptId)
         );
+        // UOX3's AI of the town guards.
+        Assert.Equal("guard", mobiles["m_guard"].ScriptId);
         // A template based on one of them takes the script through its base; the others have none yet.
         Assert.True(string.IsNullOrEmpty(mobiles["boneknight"].ScriptId));
         Assert.True(string.IsNullOrEmpty(mobiles["orc"].ScriptId));

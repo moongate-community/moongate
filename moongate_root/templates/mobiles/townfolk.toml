@@ -506,6 +506,7 @@ damage = "1d301+1199"
 armor = 20
 karma = 10000
 fame = 10000
+script_id = "guard"
 [mobile.skills]
 detecting_hidden = "1d11+89"
 fencing = "1d11+89"

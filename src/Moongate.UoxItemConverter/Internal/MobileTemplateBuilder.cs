@@ -27,8 +27,13 @@ internal static class MobileTemplateBuilder
     // Hair and beard item lists: the race gives hair and beard instead.
     private static readonly HashSet<int> HairItemLists = [13, 14, 15];
 
-    // UOX3's NPCAI of a banker: its script is scripts/mobiles/banker.lua.
-    private const string BankerAi = "8";
+    // UOX3's NPCAI values Moongate has a mobile script for: the town guards (4, scripts/mobiles/guard.lua) and the
+    // bankers (8, scripts/mobiles/banker.lua).
+    private static readonly Dictionary<string, string> AiScripts = new(StringComparer.Ordinal)
+    {
+        ["4"] = "guard",
+        ["8"] = "banker"
+    };
 
     // The mobiles a Moongate mobile script is written for, by their UOX3 name; those based on them take it through
     // base_id. scripts/mobiles/monster.lua is the melee AI without the fight: the undead of the graveyards take it,
@@ -100,9 +105,9 @@ internal static class MobileTemplateBuilder
         {
             template.ScriptId = scriptId;
         }
-        else if (block.Fields.TryGetValue("NPCAI", out var ai) && ai.Trim() == BankerAi)
+        else if (block.Fields.TryGetValue("NPCAI", out var ai) && AiScripts.TryGetValue(ai.Trim(), out var aiScript))
         {
-            template.ScriptId = "banker";
+            template.ScriptId = aiScript;
         }
     }
 
