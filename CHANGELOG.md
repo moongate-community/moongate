@@ -1,5 +1,71 @@
 # Changelog
 
+## [0.14.0](https://github.com/moongate-community/moongate/compare/v0.13.0...v0.14.0) (2026-10-04)
+
+### Upgrade notes
+
+- Two new world migrations, `0015_mobile_hunger.sql` and `0016_mobile_thirst.sql`: run `mgctl init <root>` and then `mgctl migrate apply --root-directory <root> --target world` before starting the server. Existing characters and NPCs start full and quenched.
+- Or let the server do it: the new `persistence.auto_apply_migrations = true` makes a start add the bundled core migrations the root lacks and apply the pending ones, plugin bundles included. It is off by default, needs a database role that may change the schema, and never writes SQL from the entities. With a Docker image an update is then a new tag and a restart.
+- `mgctl init` adds the files a root lacks and never replaces one that is there. To get what changed in files a 0.13.0 root already has, delete the ones you did not edit and run `mgctl init` again: `templates/items` (food and drinks now carry `script_id = "food"` and `"drink"`), `templates/mobiles` (the undead carry `script_id = "monster"`), `templates/spawns` (the Tokuno and Malas spawners are on their own maps), `data/starting_items.toml` (bread and a pitcher of water for every new character) and `data/messages` (the new texts in the eight languages; without them the English text is used).
+- Hunger and thirst are on by default: a player loses a point of each every five minutes, at 0 hunger its hit points do not come back and at 0 thirst its stamina does not. Turn them off with `hunger_enabled = false` and `thirst_enabled = false` under `[ultima.regeneration]`; the same section sets the regeneration rates.
+- New for the staff: `add <template>`, `remove` on an item lying on the ground, `set <hits|mana|stamina|hunger|thirst> <value>`. New in the console: TAB completion of commands and arguments, and the history with Up and Down.
+- New for scripts: `mobile.animate` with named animations, `mobile.body_type`, `mobile.hunger`, `mobile.thirst`, `mobile.message_cliloc`, `npc.home`, `npc.wander`, `npc.can_see`, `npc.players_in_sight`, `item.in_range`, the shared `scripts/common/teleport.lua`, and a generated Lua API reference in the documentation.
+
+
+### Features
+
+* **console:** complete command arguments with TAB ([68386dd](https://github.com/moongate-community/moongate/commit/68386dd4c14f1e6064356a5820096d5f3572b819)), closes [#298](https://github.com/moongate-community/moongate/issues/298)
+* **console:** complete commands with TAB and walk the history with Up and Down ([99cc385](https://github.com/moongate-community/moongate/commit/99cc385a6c0f35dd9a8e1f347ccf817c0370897f)), closes [#295](https://github.com/moongate-community/moongate/issues/295)
+* **console:** TAB completion and Up/Down history ([56e7628](https://github.com/moongate-community/moongate/commit/56e7628dc63556ac4b16f1ee5f857d4de66f0753))
+* **console:** TAB completion of command arguments ([1358379](https://github.com/moongate-community/moongate/commit/1358379b6a2f26a3eef0fb89b288c30dd1e4d35e))
+* **converter:** the starting gold, bread and water come from the converter ([68f92f1](https://github.com/moongate-community/moongate/commit/68f92f1fffa83d724cbc3379d9fc7103ff5d5a5c))
+* **ctl:** the UOX3 converter gives a mobile its script ([11697ce](https://github.com/moongate-community/moongate/commit/11697ce393aaa698509e1408799d33c1cb73ccf0))
+* **data:** every new character starts with bread and a pitcher of water ([4afa9ac](https://github.com/moongate-community/moongate/commit/4afa9acf05f1f3ca8db15f8a285370c98dd0f987))
+* **docs:** dump the Lua modules, functions and enums the server publishes ([3ab93c1](https://github.com/moongate-community/moongate/commit/3ab93c199016ee37ec78c8b610d6b0dc9a16171c))
+* **docs:** generated Lua API reference on the site ([768e516](https://github.com/moongate-community/moongate/commit/768e5165ae92f51c210f5dd0d66f4bbfe719fbd3))
+* **docs:** render the Lua API reference pages from the dump ([329349d](https://github.com/moongate-community/moongate/commit/329349d55e1437be8316e5d9acd7c328493686e4))
+* **docs:** serve the Lua API reference under /lua/ with its sidebar group ([bc0abb0](https://github.com/moongate-community/moongate/commit/bc0abb02fa6e8caaf29607584521fe57862e2f5e))
+* item.in_range and a teleport module the item scripts share ([52338fb](https://github.com/moongate-community/moongate/commit/52338fb324b09ed67734132c0a94030fcb8fac4d))
+* monster AI for skeletons and zombies, mobile animations, remove for ground items ([398afb3](https://github.com/moongate-community/moongate/commit/398afb3f4ff5a02a0d4a0f53174b0da355e19003))
+* npc.home, npc.wander, npc.can_see and npc.players_in_sight ([4eab6a6](https://github.com/moongate-community/moongate/commit/4eab6a69abbfa5452e0a206b1a8795c94a456615))
+* regeneration of hits, mana and stamina, hunger and food ([f3a74cb](https://github.com/moongate-community/moongate/commit/f3a74cb1f8341beab73d5ace6e8ed21637b4ba73))
+* **scripts:** a monster script that notices players, walks to them and stands guard ([aa1baf9](https://github.com/moongate-community/moongate/commit/aa1baf9d727d735a4416b8cb536c1c3cdd9406bf))
+* **scripts:** food is eaten, and a staff command sets a mobile's bars and hunger ([f88e10e](https://github.com/moongate-community/moongate/commit/f88e10ede6505329f1e9e4b875be3ae367eaa18f))
+* **scripts:** item.in_range and a teleport module the item scripts share ([8ca924d](https://github.com/moongate-community/moongate/commit/8ca924d22212356e8430e3c6ae4c61299d40810d))
+* **scripts:** play an animation of a mobile from Lua ([9a70486](https://github.com/moongate-community/moongate/commit/9a70486b37fb43c9d3c31755a2096c772e98f040))
+* **scripts:** the npc module strolls, knows its home and says what an NPC sees ([5e53768](https://github.com/moongate-community/moongate/commit/5e53768daa76e9eaa4b0c1154217fed1e9179b36))
+* **scripts:** the other undead of the graveyards take the monster script ([f9330a2](https://github.com/moongate-community/moongate/commit/f9330a2e0102d6b7811939372363bf1dc15a8264))
+* **server:** a start can add the bundled migrations and apply the pending ones ([3401ea6](https://github.com/moongate-community/moongate/commit/3401ea6b4516d88ca24de673d4a9743437b7c8ff))
+* **server:** a start can add the bundled migrations and apply the pending ones ([2f4d00d](https://github.com/moongate-community/moongate/commit/2f4d00d7ea9fe56410fcae3b877dcc51da4e0760)), closes [#310](https://github.com/moongate-community/moongate/issues/310)
+* **server:** add puts an item on the ground where a game master targets ([0aa0df2](https://github.com/moongate-community/moongate/commit/0aa0df24491459c39682e1a985672a723c5e5dc2))
+* **server:** colour the console log with a Moongate theme ([54ecf4b](https://github.com/moongate-community/moongate/commit/54ecf4bfa73654f594ed82d66d3cc730c0baac3d))
+* **server:** hits, mana and stamina come back with time, and players get hungry ([5ae4191](https://github.com/moongate-community/moongate/commit/5ae41916c62ebbc8d964dffc65b78f009d477626))
+* **server:** players get thirsty, and drinks quench it ([03fd75f](https://github.com/moongate-community/moongate/commit/03fd75f291a463ab63ce658ba2d468c9e8ce5a63))
+* **server:** players get thirsty, and drinks quench it ([86316e9](https://github.com/moongate-community/moongate/commit/86316e917721851c9c36e566b70391b069bba70c)), closes [#308](https://github.com/moongate-community/moongate/issues/308)
+* **server:** remove also takes an item lying on the ground ([2db8909](https://github.com/moongate-community/moongate/commit/2db89098aa72e958c460c1dd4dc10c401901aa26))
+* **spawns:** turn off a spawn region whose whole area has no spot ([3e34592](https://github.com/moongate-community/moongate/commit/3e3459203ff486c1a66bbb4fff062948eda5583b))
+
+
+### Bug Fixes
+
+* **console:** settle the findings of the argument completion review ([430ebb1](https://github.com/moongate-community/moongate/commit/430ebb1757e8be47a1162c2099fdf0fe853cdda4)), closes [#298](https://github.com/moongate-community/moongate/issues/298)
+* **console:** settle the findings of the console completion review ([7e79102](https://github.com/moongate-community/moongate/commit/7e791029941eaf016ff0e1f190571b59c2052295)), closes [#295](https://github.com/moongate-community/moongate/issues/295)
+* **ctl:** a ModernUO spawner keeps the map it names, not its folder's ([5024754](https://github.com/moongate-community/moongate/commit/5024754c9e74725219f4d299022f9e9020d1cbd6))
+* **docs:** print Lua help text as written and close the review's findings ([4e5d562](https://github.com/moongate-community/moongate/commit/4e5d562bc95770e046298f263470e6e52f554e6e))
+* **scripts:** settle the findings of the item helpers review ([4710a01](https://github.com/moongate-community/moongate/commit/4710a01f2b31df6ca9ee8ef285ceaa2cd8788694))
+* **scripts:** settle the findings of the monster script review ([c811d18](https://github.com/moongate-community/moongate/commit/c811d18a4942f665ac9a212af8f85bf0729f418a))
+* **scripts:** settle the findings of the npc helpers review ([0276fe3](https://github.com/moongate-community/moongate/commit/0276fe3e78a46122af30e723fc70c47b23ca671c))
+* **scripts:** settle the findings of the thirst review ([ba154fd](https://github.com/moongate-community/moongate/commit/ba154fd88db4f1d02a062ce73e2e9cbf69faab89)), closes [#308](https://github.com/moongate-community/moongate/issues/308)
+* **server:** settle the findings of the auto-apply review ([c6da5a4](https://github.com/moongate-community/moongate/commit/c6da5a426595a3799dfe394a69a54975002b912e)), closes [#310](https://github.com/moongate-community/moongate/issues/310)
+* **server:** settle the findings of the regeneration review ([02f5dc4](https://github.com/moongate-community/moongate/commit/02f5dc465139c9151aaf80210a00048b5a73ebe0))
+* **server:** settle the minors of regeneration and hunger ([d915ee7](https://github.com/moongate-community/moongate/commit/d915ee7b25b388ea270f1f459b0374b09dd03842))
+* **spawns:** never put a spawn region's fixed ceiling below the ground ([a3348d3](https://github.com/moongate-community/moongate/commit/a3348d307609119c89d222df10688000c20c7768))
+
+
+### Reverts
+
+* **spawns:** undo the ground floor for a fixed spawn ceiling ([26b78a6](https://github.com/moongate-community/moongate/commit/26b78a6d3b76c24920043bfa42f3139423cf3f6a))
+
 ## [0.13.0](https://github.com/moongate-community/moongate/compare/v0.12.0...v0.13.0) (2026-10-03)
 
 ### Upgrade notes
