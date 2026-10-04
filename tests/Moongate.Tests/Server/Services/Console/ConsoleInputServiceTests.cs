@@ -225,6 +225,114 @@ public sealed class ConsoleInputServiceTests
         await commands.StopAsync();
     }
 
+    [Fact]
+    public async Task Tab_CompletesTheCommandName()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.Enqueue('*');
+        keys.EnqueueText("ec");
+        keys.Enqueue(ConsoleKey.Tab);
+        keys.EnqueueText("hi");
+        keys.Enqueue(ConsoleKey.Enter);
+        using var container = CreateContainer();
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+
+        await WaitForAsync(() => prompt.Output.Count > 0);
+
+        Assert.Equal("hi", Assert.Single(prompt.Output).Text);
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
+    public async Task TabTwice_ListsTheConsoleCommandsThatMatch()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.Enqueue('*');
+        keys.EnqueueText("s");
+        keys.Enqueue(ConsoleKey.Tab);
+        keys.Enqueue(ConsoleKey.Tab);
+        using var container = CreateContainer();
+        container.RegisterCommand<RecordingCommandExecutor>("save");
+        container.RegisterCommand<EchoCommand>("shutdown");
+        // In game only: never offered on the console.
+        container.RegisterCommand<EchoCommand>("spawn", source: CommandSourceType.InGame);
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+
+        await WaitForAsync(() => prompt.Output.Count > 0);
+
+        Assert.Equal("save  shutdown", Assert.Single(prompt.Output).Text);
+        Assert.Equal("s", prompt.CurrentInput);
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
+    public async Task UpAndDown_WalkTheSubmittedLines()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.Enqueue('*');
+        keys.EnqueueText("echo one");
+        keys.Enqueue(ConsoleKey.Enter);
+        keys.EnqueueText("echo two");
+        keys.Enqueue(ConsoleKey.Enter);
+        using var container = CreateContainer();
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+        await WaitForAsync(() => prompt.Output.Count == 2);
+
+        keys.EnqueueText("ec");
+        keys.Enqueue(ConsoleKey.UpArrow);
+        keys.Enqueue(ConsoleKey.UpArrow);
+        await WaitForAsync(() => prompt.CurrentInput == "echo one");
+
+        keys.Enqueue(ConsoleKey.DownArrow);
+        await WaitForAsync(() => prompt.CurrentInput == "echo two");
+        keys.Enqueue(ConsoleKey.DownArrow);
+        await WaitForAsync(() => prompt.CurrentInput == "ec");
+
+        keys.Enqueue(ConsoleKey.UpArrow);
+        keys.Enqueue(ConsoleKey.Enter);
+        await WaitForAsync(() => prompt.Output.Count == 3);
+
+        Assert.Equal("two", prompt.Output[2].Text);
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
+    public async Task AnAccountCreateLine_IsNeverKeptInTheHistory()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.Enqueue('*');
+        keys.EnqueueText("echo before");
+        keys.Enqueue(ConsoleKey.Enter);
+        keys.EnqueueText("account create alice synthetic-password Administrator");
+        keys.Enqueue(ConsoleKey.Enter);
+        using var container = CreateContainer();
+        container.RegisterCommand<RecordingCommandExecutor>("account");
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+        await WaitForAsync(() => container.Resolve<RecordingCommandExecutor>().Invocations.Count == 1);
+
+        keys.Enqueue(ConsoleKey.UpArrow);
+        await WaitForAsync(() => prompt.CurrentInput == "echo before");
+
+        Assert.DoesNotContain(prompt.Calls, call => call.Contains("synthetic-password", StringComparison.Ordinal));
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
     private static async Task<CommandSystemService> CreateCommandsAsync(Container container)
     {
         var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);

@@ -8,7 +8,8 @@ using Serilog;
 namespace Moongate.Server.Services.Console;
 
 /// <summary>
-///     Polls the terminal for keystrokes and dispatches submitted command lines.
+///     Polls the terminal for keystrokes and dispatches submitted command lines. TAB completes the command name, Up and
+///     Down walk the lines submitted in this run.
 /// </summary>
 public sealed class ConsoleInputService : IConsoleInputService, IDisposable
 {
@@ -18,6 +19,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     private readonly ICommandSystemService _commands;
     private readonly IConsoleKeySource _keys;
     private readonly CancellationTokenSource _lifetime = new();
+    private readonly ConsoleHistory _history = new();
     private readonly ILogger _logger = Log.ForContext<ConsoleInputService>();
 
     private Task _loop = Task.CompletedTask;
@@ -130,6 +132,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     {
         var buffer = new StringBuilder();
         var lockWarningShown = false;
+        var tabbed = false;
 
         try
         {
@@ -177,11 +180,45 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                     continue;
                 }
 
+                // A second TAB in a row lists the matches the first one could not choose between.
+                var secondTab = tabbed && key.Key == ConsoleKey.Tab;
+                tabbed = key.Key == ConsoleKey.Tab;
+
+                if (key.Key == ConsoleKey.Tab)
+                {
+                    Complete(buffer, secondTab);
+
+                    continue;
+                }
+
+                if (key.Key is ConsoleKey.UpArrow or ConsoleKey.DownArrow)
+                {
+                    var recalled = key.Key == ConsoleKey.UpArrow ? _history.Previous(buffer.ToString()) : _history.Next();
+
+                    if (recalled is not null)
+                    {
+                        Replace(buffer, recalled);
+                    }
+
+                    continue;
+                }
+
                 if (key.Key == ConsoleKey.Enter)
                 {
                     var commandLine = buffer.ToString();
                     buffer.Clear();
                     _prompt.UpdateInput("");
+
+                    // A line the prompt masks carries a password: it is never kept.
+                    if (MaskSensitiveInput(commandLine) == commandLine)
+                    {
+                        _history.Add(commandLine);
+                    }
+                    else
+                    {
+                        _history.Reset();
+                    }
+
                     await SubmitAsync(commandLine, cancellationToken);
 
                     continue;
@@ -222,6 +259,29 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
             _logger.Error(exception, "Console input has stopped unexpectedly; no further keys will be processed.");
             _prompt.HidePrompt();
         }
+    }
+
+    private void Complete(StringBuilder buffer, bool list)
+    {
+        var names = _commands.GetRegisteredCommands()
+                             .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
+                             .SelectMany(definition => definition.Aliases.Prepend(definition.Name));
+        var (text, matches) = ConsoleCompletion.Complete(buffer.ToString(), names);
+
+        if (text != buffer.ToString())
+        {
+            Replace(buffer, text);
+        }
+        else if (list && matches.Count > 1)
+        {
+            _prompt.WriteOutputLine(string.Join("  ", matches), CommandOutputLevel.Information);
+        }
+    }
+
+    private void Replace(StringBuilder buffer, string text)
+    {
+        buffer.Clear().Append(text);
+        _prompt.UpdateInput(MaskSensitiveInput(text));
     }
 
     private async Task SubmitAsync(string commandLine, CancellationToken cancellationToken)
