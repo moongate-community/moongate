@@ -102,7 +102,7 @@ public sealed class WorldModule
     ///     Keeps a value for the whole shard, saved with the world, or removes it for <c>nil</c>;
     ///     <c>world.set_prop("event.day", 12)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Keeps a string, a number or a bool for the whole shard across restarts, nil removes it; false for a table, a function or a blank key.")]
+    [ScriptFunction(helpText: "Keeps a string, a number or a bool for the whole shard across restarts, saved with the world; nil removes it. False for a table, a function or a blank key.")]
     public bool SetProp(string key, object? value = null)
     {
         if (_props is null || string.IsNullOrWhiteSpace(key))
@@ -314,7 +314,7 @@ public sealed class WorldModule
     ///     from the column <paramref name="x" />, as the spyglass shows it;
     ///     <c>world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The phase of the moon (MapType.Trammel or MapType.Felucca) seen from the column x, a MoonPhaseType.")]
+    [ScriptFunction(helpText: "The phase of the moon (MapType.Trammel or MapType.Felucca) seen from the column x, a MoonPhaseType; Felucca turns every 10 game minutes, Trammel every 30.")]
     public MoonPhaseType Moon(MapType moon, int x)
     {
         return _clock.GetMoonPhase(moon, x);
@@ -324,7 +324,7 @@ public sealed class WorldModule
     ///     Gets the time of day on <paramref name="map" /> at the column <paramref name="x" />, as a table
     ///     <c>{ hours, minutes }</c>; <c>world.time(MapType.Trammel, x).hours</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The time of day on the map at the column x, as a table { hours, minutes }.")]
+    [ScriptFunction(helpText: "The time of day on the map at the column x, as a table { hours, minutes }; see the setting ultima.world.seconds_per_uo_minute.")]
     public LuaTable Time(MapType map, int x)
     {
         var time = _clock.GetTime(map, x);

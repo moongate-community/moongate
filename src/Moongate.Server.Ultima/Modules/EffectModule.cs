@@ -63,7 +63,7 @@ public sealed class EffectModule
     ///     Plays an animation on a mobile or on an item lying on the ground;
     ///     <c>effect.on(who, EffectGraphicType.SparkleHeal)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Plays an effect graphic on a mobile or a ground item; false for something not in the world or a value out of range.")]
+    [ScriptFunction(helpText: "Plays an effect graphic on a mobile, which it follows, or on a ground item; false for something not in the world or a value out of range.")]
     public bool On(long serial, int graphic, LuaTable? options = null)
     {
         if (!TryLocate(serial, out var target, out var map, out var location) ||

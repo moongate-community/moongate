@@ -109,7 +109,7 @@ public sealed class MobileModule
     /// <summary>
     ///     Gets the mobile's body, strength, hit points and the like as a table; <c>mobile.stats(who).hits</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The mobile's numbers as a table: body, strength, dexterity, intelligence, hits, hits_max, mana, mana_max, stamina, stamina_max, fame, karma; nil for a mobile not in the world.")]
+    [ScriptFunction(helpText: "The mobile's numbers as a table: body, strength, dexterity, intelligence, hits, hits_max, mana, mana_max, stamina, stamina_max, fame, karma; nil for a mobile not in the world. Read only; change them with mobile.set_stats.")]
     public LuaTable? Stats(long serial)
     {
         if (!TryGetMobile(serial, out var mobile))
@@ -139,7 +139,7 @@ public sealed class MobileModule
     ///     <c>mobile.set_stats(who, { hits = 10, strength = 80 })</c>. Hit points, mana and stamina stay between 0 and
     ///     their maximum. The mobile's player sees the new status and the players around the new health bar.
     /// </summary>
-    [ScriptFunction(helpText: "Changes the mobile's numbers, given as a table with any of strength, dexterity, intelligence, hits, hits_max, mana, mana_max, stamina, stamina_max, fame, karma; hits, mana and stamina stay between 0 and their maximum. False, with nothing changed, for an unknown name, a value that is not a whole number, a stat or a maximum outside 0 to 65535, an empty table or a mobile not in the world.")]
+    [ScriptFunction(helpText: "Changes the mobile's numbers, given as a table with any of those mobile.stats gives but body; hits, mana and stamina stay between 0 and their maximum, also when only the maximum changes. Its player sees its bars or status change, the players around its health bar. False, with nothing changed, for an unknown name, a value that is not a whole number or outside 0 to 65535, an empty table or a mobile not in the world.")]
     public bool SetStats(long serial, LuaTable values)
     {
         if (_state is null || !TryGetMobile(serial, out var mobile))
@@ -265,7 +265,7 @@ public sealed class MobileModule
     ///     <c>mobile.set_skill(who, SkillType.Magery, 50.5)</c>. The value stays between 0 and the cap, and the
     ///     mobile's player sees it in the skill window.
     /// </summary>
-    [ScriptFunction(helpText: "Sets a skill of the mobile in points (50.5), and its cap when given; the value stays between 0 and the cap. False for a cap outside 0 to 6553.5 or a mobile not in the world; a skill number that is no SkillType raises an error.")]
+    [ScriptFunction(helpText: "Sets a skill of the mobile in points (50.5), and its cap when given; the value stays between 0 and the cap. False for a cap outside 0 to 6553.5 or a mobile not in the world; a skill number that is no SkillType raises an error. The mobile's player sees it in the skill window.")]
     public bool SetSkill(long serial, SkillType skill, double value, double? cap = null)
     {
         return _state is not null &&
@@ -325,7 +325,7 @@ public sealed class MobileModule
     ///     Hides or reveals the mobile; <c>mobile.set_hidden(who, true)</c>. Hidden, it leaves the screens of the
     ///     players around; the staff still sees it.
     /// </summary>
-    [ScriptFunction(helpText: "Hides or reveals the mobile: hidden, the players around no longer see it, the staff does; saved with the mobile. False for a mobile not in the world.")]
+    [ScriptFunction(helpText: "Hides or reveals the mobile: hidden, the players around no longer see it, hear it, open its paperdoll or read its tooltip, and NPCs do not sense it; the staff still sees it and world.mobiles_in_range still returns it. Saved with the mobile. False for a mobile not in the world.")]
     public bool SetHidden(long serial, bool hidden)
     {
         if (_state is null || !TryGetMobile(serial, out var mobile))
@@ -373,7 +373,7 @@ public sealed class MobileModule
     /// <summary>
     ///     Gets the backpack the mobile wears, to look into it with <c>item.contents</c>; <c>mobile.backpack(who)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serial of the backpack the mobile wears; nil for a mobile without one or not in the world.")]
+    [ScriptFunction(helpText: "The serial of the backpack the mobile wears, to look into with item.contents; nil for a mobile without one or not in the world.")]
     public long? Backpack(long serial)
     {
         return TryGetMobile(serial, out var mobile) &&
@@ -403,7 +403,7 @@ public sealed class MobileModule
     /// <summary>
     ///     Plays a music to a player, until its region gives it another; <c>mobile.play_music(who, MusicType.Britain1)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Plays a music (a MusicType) to the player; false for an NPC or a player not in the world.")]
+    [ScriptFunction(helpText: "Plays a music (a MusicType) to the player, until its region gives it another; false for an NPC or a player not in the world.")]
     public bool PlayMusic(long serial, MusicType music)
     {
         return _music is not null && TryGetMobile(serial, out var mobile) && !mobile.IsNpc && _music.Play(mobile, music);
@@ -425,7 +425,7 @@ public sealed class MobileModule
     ///     Keeps <paramref name="value" /> as the prop <paramref name="key" /> of the mobile, saved with it, or removes
     ///     it for <c>nil</c>; <c>mobile.set_prop(who, "quest.step", 2)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Keeps a string, a number or a bool on the mobile across restarts, nil removes it; false for a table, a function, a blank key or a mobile not in the world.")]
+    [ScriptFunction(helpText: "Keeps a string, a number or a bool on the mobile across restarts, a player's saved with its character; nil removes it. False for a table, a function, a blank key or a mobile not in the world.")]
     public bool SetProp(long serial, string key, object? value = null)
     {
         if (string.IsNullOrWhiteSpace(key) || !TryGetMobile(serial, out var mobile))
@@ -457,7 +457,7 @@ public sealed class MobileModule
     ///     map change when there is one; the players around the old spot lose the mobile and those around the new one
     ///     see it.
     /// </summary>
-    [ScriptFunction(helpText: "Teleports the mobile to x, y, z on its map, or on the given map (a MapType or its name); false for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a z outside -128 to 127.")]
+    [ScriptFunction(helpText: "Teleports the mobile to x, y, z on its map, or on the given map (a MapType or its name, such as Tokuno); the players around the old spot lose it and those around the new one see it. False for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a z outside -128 to 127.")]
     public bool Teleport(long serial, int x, int y, int z, object? map = null)
     {
         if (z is < sbyte.MinValue or > sbyte.MaxValue || !TryGetMobile(serial, out var mobile))
@@ -503,7 +503,7 @@ public sealed class MobileModule
     ///     Plays an animation of the mobile, seen by its player and those around; <c>mobile.animate(who, 32)</c> makes a
     ///     human bow. The action is a number of the mobile's body: a human and a monster do not share them.
     /// </summary>
-    [ScriptFunction(helpText: "Plays an action (0 to 65535) of the mobile's body, with frames (1 to 255, default 5) and how many times (1 to 255, default 1); false for a mobile not in the world or a number out of range.")]
+    [ScriptFunction(helpText: "Plays an action (0 to 65535) of the mobile's body, seen by its player and those who see it, with frames (1 to 255, default 5) and how many times (1 to 255, default 1). The bodies do not share the numbers: use the names of HumanAnimationType, MonsterAnimationType or AnimalAnimationType. False for a mobile not in the world or a number out of range.")]
     public bool Animate(long serial, int action, int frames = 5, int repeatCount = 1)
     {
         if (_view is null ||
@@ -524,7 +524,7 @@ public sealed class MobileModule
     ///     Plays <paramref name="sound" /> where the mobile stands for the players within 15 cells;
     ///     <c>mobile.play_sound(who, 0x1FE)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) where the mobile stands; false for a mobile not in the world or an unknown sound.")]
+    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) where the mobile stands, for the players within 15 cells; false for a mobile not in the world or a sound out of range.")]
     public bool PlaySound(long serial, int sound)
     {
         if (sound is < 0 or > ushort.MaxValue || !TryGetMobile(serial, out var mobile))
@@ -541,7 +541,7 @@ public sealed class MobileModule
     ///     Sends <paramref name="text" /> to the player as a system message, in the lower left of its screen;
     ///     <c>mobile.message(who, "That is too far away.")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "A system message read only by that player; false for an empty text, an NPC or a player not in the world.")]
+    [ScriptFunction(helpText: "A system message, in the lower left of the screen, read only by that player (cut at 128 characters); false for an empty text, an NPC or a player not in the world.")]
     public bool Message(long serial, string text)
     {
         if (string.IsNullOrWhiteSpace(text) || !TryGetMobile(serial, out var mobile))
@@ -556,7 +556,7 @@ public sealed class MobileModule
     ///     Sends a text of the client, by its number, to the player as a system message, in the language of that
     ///     client; <c>mobile.message_cliloc(who, 500867)</c>. The arguments fill its <c>~1_NAME~</c> places, split by tabs.
     /// </summary>
-    [ScriptFunction(helpText: "A system message of the client's own texts, by cliloc number, read only by that player; args fills its ~1_NAME~ places, split by tabs. False for a number not above 0, an NPC or a player not in the world.")]
+    [ScriptFunction(helpText: "A system message of the client's own texts, by cliloc number, read only by that player in the language of its client; args fills its ~1_NAME~ places, split by tabs. False for a number not above 0, an NPC or a player not in the world.")]
     public bool MessageCliloc(long serial, int cliloc, string? args = null)
     {
         return cliloc > 0 && TryGetMobile(serial, out var mobile) && _speech.TellCliloc(mobile, cliloc, args ?? "");
@@ -566,7 +566,7 @@ public sealed class MobileModule
     ///     Gets the kind of body of the mobile, as <c>data/bodies.toml</c> says: <c>mobile.body_type(who) ==
     ///     BodyType.Human</c>. The kind tells which animations the body has.
     /// </summary>
-    [ScriptFunction(helpText: "The kind of the mobile's body, a BodyType: Human, Monster, Animal, Sea, Equipment, or Empty for a body bodies.toml does not list; nil for a mobile not in the world.")]
+    [ScriptFunction(helpText: "The kind of the mobile's body, as data/bodies.toml says, a BodyType: Human (every race of player and the human NPCs), Monster, Animal, Sea, Equipment, or Empty for a body the file does not list; it tells which animations the body has. Nil for a mobile not in the world.")]
     public BodyType? BodyType(long serial)
     {
         return TryGetMobile(serial, out var mobile) ? _bodies.Value.GetValueOrDefault(mobile.Body) : null;
@@ -575,7 +575,7 @@ public sealed class MobileModule
     /// <summary>
     ///     Gets how full the mobile is, from 0 (starving) to 20 (full); <c>mobile.hunger(who)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "How full the mobile is, from 0 (starving) to 20 (full); nil for a mobile not in the world.")]
+    [ScriptFunction(helpText: "How full the mobile is, from 0 (starving) to 20 (full); a player loses a point every ultima.regeneration.hunger_minutes, counted from when it entered the world, and at 0 gets no hit points back; the staff neither gets hungry nor starves. Nil for a mobile not in the world.")]
     public int? Hunger(long serial)
     {
         return TryGetMobile(serial, out var mobile) ? mobile.Hunger : null;
@@ -601,7 +601,7 @@ public sealed class MobileModule
     /// <summary>
     ///     Gets how quenched the mobile is, from 0 (parched) to 20 (quenched); <c>mobile.thirst(who)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "How quenched the mobile is, from 0 (parched) to 20 (quenched); nil for a mobile not in the world.")]
+    [ScriptFunction(helpText: "How quenched the mobile is, from 0 (parched) to 20 (quenched); a player loses a point every ultima.regeneration.hunger_minutes and at 0 gets no stamina back; the staff is left alone. Nil for a mobile not in the world.")]
     public int? Thirst(long serial)
     {
         return TryGetMobile(serial, out var mobile) ? mobile.Thirst : null;

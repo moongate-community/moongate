@@ -43,7 +43,7 @@ internal sealed class TimerModule
     /// <returns>
     ///     A handle for <see cref="Cancel" />.
     /// </returns>
-    [ScriptFunction(helpText: "Runs fn once after the given seconds. Returns a handle for cancel.")]
+    [ScriptFunction(helpText: "Runs fn once after the given seconds, which must be positive. Returns a handle for cancel.")]
     public string After(double seconds, [ScriptParameterType("function")] LuaValue fn)
     {
         return Schedule(seconds, fn, false);
@@ -69,7 +69,7 @@ internal sealed class TimerModule
     /// <returns>
     ///     A handle for <see cref="Cancel" />.
     /// </returns>
-    [ScriptFunction(helpText: "Runs fn every given seconds until cancelled. Returns a handle for cancel.")]
+    [ScriptFunction(helpText: "Runs fn every given seconds, a positive interval, until cancelled. Returns a handle for cancel.")]
     public string Every(double seconds, [ScriptParameterType("function")] LuaValue fn)
     {
         return Schedule(seconds, fn, true);

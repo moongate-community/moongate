@@ -15,7 +15,7 @@ public sealed class DiceModule
     ///     raises a Lua error naming it.
     /// </summary>
     /// <exception cref="FormatException">The expression is not a number or a dice expression.</exception>
-    [ScriptFunction(helpText: "Rolls a dice expression such as 1d4+2; a malformed one raises an error.")]
+    [ScriptFunction(helpText: "Rolls a dice expression such as 1d4+2 or 4d6k3, the forms of DiceSpec; a malformed one raises an error naming it.")]
     public int Roll(string expression)
     {
         return DiceSpec.Parse(expression).Roll();
@@ -25,7 +25,7 @@ public sealed class DiceModule
     ///     Rolls <paramref name="expression" />, or gives <c>nil</c> when it is malformed; scripts call it as
     ///     <c>dice.try_roll(text) or 0</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Rolls a dice expression such as 1d4+2, or returns nil when it is malformed.")]
+    [ScriptFunction(helpText: "Rolls a dice expression such as 1d4+2, or returns nil when it is malformed: dice.try_roll(text) or 0.")]
     public int? TryRoll(string expression)
     {
         return DiceSpec.TryParse(expression, out var spec) ? spec.Roll() : null;
