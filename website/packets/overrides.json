@@ -2327,6 +2327,45 @@
     "notes": "Records the client version when sent on login listeners.",
     "handler": "LoginSeedPacketHandler; on login listeners it also records the client version, which the handoff ticket carries to the game session"
   },
+  "0xF0:incoming": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Command",
+        "type": "byte",
+        "size": "1",
+        "description": "0 asks where the party members are, 1 where the guild members are."
+      },
+      {
+        "offset": "4",
+        "name": "Command data",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Only in command 1: one byte, 1 to ask for the places of the members too."
+      }
+    ],
+    "notes": "The Krrios protocol extension. ClassicUO sends it every few seconds while the world map is open. Recognized and ignored for now: there are no parties or guilds yet.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
   "0xF8:incoming": {
     "category": "Characters",
     "tags": [

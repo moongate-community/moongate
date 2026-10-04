@@ -73,6 +73,7 @@ public static class UltimaPacketsContainerExtensions
         RegisterIgnoredPacket<AttackRequestPacket>(container);
         RegisterIgnoredPacket<TextCommandPacket>(container);
         RegisterIgnoredPacket<ProfileRequestPacket>(container);
+        RegisterIgnoredPacket<ProtocolExtensionPacket>(container);
         RegisterIgnoredPacket<ResynchronizeRequestPacket>(container);
         RegisterIgnoredPacket<OpenChatWindowPacket>(container);
         RegisterIgnoredPacket<ClientTypePacket>(container);

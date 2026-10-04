@@ -72,7 +72,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0x12`, `0xB8`, `0xE1` | `TextCommandPacket`, `ProfileRequestPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x12`, `0xB8`, `0xE1`, `0xF0` | `TextCommandPacket`, `ProfileRequestPacket`, `ClientTypePacket`, `ProtocolExtensionPacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip; the others are ignored for now |
 | `0xD6` | `QueryPropertiesPacket` | Incoming | Variable, at most 500 serials | `QueryPropertiesPacketHandler`: one `0xD6` per object the character sees |
 | `0xD6` | `PropertyListPacket` | Outgoing | Variable | — |
