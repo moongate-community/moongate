@@ -26,6 +26,56 @@ public sealed class CommandSystemServiceTests
     }
 
     [Fact]
+    public async Task GetArgumentCompletions_AsksTheCommandByAnyAlias_WithTheArgumentsBeforeTheOneTyped()
+    {
+        using var container = new Container();
+        container.RegisterCommand<CompletingCommandExecutor>("pick|p");
+        var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
+        await service.StartAsync();
+
+        var values = service.GetArgumentCompletions("P", ["one"]);
+
+        Assert.Equal(["first", "second"], values);
+        Assert.Equal(["one"], Assert.Single(container.Resolve<CompletingCommandExecutor>().Asked));
+    }
+
+    [Fact]
+    public async Task GetArgumentCompletions_OfACommandThatCompletesNothing_OrIsUnknown_IsEmpty()
+    {
+        using var container = new Container();
+        container.RegisterCommand<RecordingCommandExecutor>("echo");
+        var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
+        await service.StartAsync();
+
+        Assert.Empty(service.GetArgumentCompletions("echo", []));
+        Assert.Empty(service.GetArgumentCompletions("nope", []));
+    }
+
+    [Fact]
+    public async Task GetArgumentCompletions_OfACommandNotAvailableFromTheSource_IsEmpty()
+    {
+        using var container = new Container();
+        container.RegisterCommand<CompletingCommandExecutor>("pick", source: CommandSourceType.InGame);
+        var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
+        await service.StartAsync();
+
+        Assert.Empty(service.GetArgumentCompletions("pick", []));
+        Assert.Empty(container.Resolve<CompletingCommandExecutor>().Asked);
+    }
+
+    [Fact]
+    public async Task GetArgumentCompletions_ThatThrows_IsEmpty()
+    {
+        using var container = new Container();
+        container.RegisterCommand<CompletingCommandExecutor>("pick");
+        var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
+        await service.StartAsync();
+        container.Resolve<CompletingCommandExecutor>().Failure = new IOException("The disk is gone.");
+
+        Assert.Empty(service.GetArgumentCompletions("pick", []));
+    }
+
+    [Fact]
     public async Task ExecuteAsync_AnUnknownCommand_IsReportedInTheServerLanguage()
     {
         using var container = new Container();

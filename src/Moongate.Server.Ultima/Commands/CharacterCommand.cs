@@ -15,7 +15,7 @@ namespace Moongate.Server.Ultima.Commands;
 /// <summary>
 ///     Staff operations on player characters: list the ones pending deletion and restore them.
 /// </summary>
-public sealed class CharacterCommand : ICommandExecutor
+public sealed class CharacterCommand : ICommandExecutor, ICommandArgumentCompleter
 {
     private const string Syntax = "character pending [account-serial] | character restore <character-serial>";
     private const string TimeFormat = "yyyy-MM-dd HH:mm";
@@ -55,6 +55,12 @@ public sealed class CharacterCommand : ICommandExecutor
 
                 return;
         }
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<string> GetArgumentCompletions(IReadOnlyList<string> previousArguments)
+    {
+        return previousArguments.Count == 0 ? ["pending", "restore"] : [];
     }
 
     private async Task PendingAsync(CommandContext context, Serial? accountId)

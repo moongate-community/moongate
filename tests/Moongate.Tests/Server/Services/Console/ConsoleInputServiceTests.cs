@@ -274,6 +274,26 @@ public sealed class ConsoleInputServiceTests
     }
 
     [Fact]
+    public async Task Tab_AfterTheCommandName_CompletesItsArgument()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.Enqueue('*');
+        keys.EnqueueText("pick s");
+        keys.Enqueue(ConsoleKey.Tab);
+        using var container = CreateContainer();
+        container.RegisterCommand<CompletingCommandExecutor>("pick");
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+
+        await WaitForAsync(() => prompt.CurrentInput == "pick second ");
+
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
     public async Task UpAndDown_WalkTheSubmittedLines()
     {
         var prompt = new RecordingPromptService();

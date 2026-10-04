@@ -362,6 +362,19 @@ English text when a message is missing. `CommandContext` gives it `Arguments`
 (the tokens after the command name), `Print` and `PrintError` (one output line each)
 and the `CancellationToken` of the invocation.
 
+A command can also implement `ICommandArgumentCompleter` to have its arguments completed by TAB on
+the console: `GetArgumentCompletions(previousArguments)` gives the values the argument being typed
+can take, after the arguments already typed (`[]` for the first one), or none. It runs on the
+console's thread, so it returns fixed lists or names read from disk, never game state; an
+exception is logged and completes nothing.
+
+```csharp
+public IReadOnlyList<string> GetArgumentCompletions(IReadOnlyList<string> previousArguments)
+{
+    return previousArguments.Count == 0 ? ["on", "off"] : [];
+}
+```
+
 `CommandSourceType` is a `[Flags]` enum (`InGame`, `Console`), so one command can
 serve both sources by ORing them, as the built-in `echo` does. `AccountType` is
 `Regular`, `GameMaster`, `Administrator` in ascending order; a console invocation is

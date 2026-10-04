@@ -15,6 +15,19 @@ namespace Moongate.Tests.Server.Commands;
 public sealed class HelpCommandTests
 {
     [Fact]
+    public void GetArgumentCompletions_OffersTheNamesAndAliasesOfTheConsoleCommands()
+    {
+        using var container = CreateContainer();
+        container.RegisterCommand<RecordingCommandExecutor>("game-only", source: CommandSourceType.InGame);
+        var help = new HelpCommand(container.Resolve<CommandRegistry>());
+
+        var names = help.GetArgumentCompletions([]);
+
+        Assert.Equal(["admin", "console-only", "e", "echo", "help"], names.Order(StringComparer.Ordinal));
+        Assert.Empty(help.GetArgumentCompletions(["echo"]));
+    }
+
+    [Fact]
     public async Task Help_ConsoleListsEachAvailableCommandOnce()
     {
         using var container = CreateContainer();

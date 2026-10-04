@@ -1,3 +1,4 @@
+using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Commands.Internal;
 using Moongate.Server.Core.Data.Commands;
@@ -10,12 +11,13 @@ namespace Moongate.Server.Commands;
 ///     "script reload &lt;file&gt;" re-reads one script file on the game loop; "script metrics" prints the engine's
 ///     counters.
 /// </summary>
-public sealed class ScriptCommand : ICommandExecutor
+public sealed class ScriptCommand : ICommandExecutor, ICommandArgumentCompleter
 {
     private const string Usage = "Usage: script reload <file relative to scripts/> | script metrics";
 
     private readonly IScriptEngine _engine;
     private readonly IGameLoopService _gameLoop;
+    private readonly ScriptEngineOptions? _options;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ScriptCommand" /> class.
@@ -27,10 +29,15 @@ public sealed class ScriptCommand : ICommandExecutor
     /// <param name="gameLoop">
     ///     Loop a reload is posted to, since the command runs on the caller's thread.
     /// </param>
-    public ScriptCommand(IScriptEngine engine, IGameLoopService gameLoop)
+    /// <param name="options">
+    ///     The engine's settings, whose scripts directory gives the files <c>reload</c> completes; without them nothing is
+    ///     completed.
+    /// </param>
+    public ScriptCommand(IScriptEngine engine, IGameLoopService gameLoop, ScriptEngineOptions? options = null)
     {
         _engine = engine;
         _gameLoop = gameLoop;
+        _options = options;
     }
 
     /// <inheritdoc />
@@ -64,6 +71,30 @@ public sealed class ScriptCommand : ICommandExecutor
         {
             context.PrintError("Reload failed: {0}", error);
         }
+    }
+
+    /// <inheritdoc />
+    /// <remarks>After <c>reload</c>, the <c>.lua</c> files under the scripts directory, as <c>reload</c> takes them.</remarks>
+    public IReadOnlyList<string> GetArgumentCompletions(IReadOnlyList<string> previousArguments)
+    {
+        return previousArguments switch
+        {
+            [] => ["reload", "metrics"],
+            [var action] when action.Equals("reload", StringComparison.OrdinalIgnoreCase) => ScriptFiles(),
+            _ => []
+        };
+    }
+
+    private string[] ScriptFiles()
+    {
+        if (_options is null || !Directory.Exists(_options.ScriptsDirectory))
+        {
+            return [];
+        }
+
+        return Directory.EnumerateFiles(_options.ScriptsDirectory, "*.lua", SearchOption.AllDirectories)
+                        .Select(path => Path.GetRelativePath(_options.ScriptsDirectory, path).Replace('\\', '/'))
+                        .ToArray();
     }
 
     private void PrintMetrics(CommandContext context)

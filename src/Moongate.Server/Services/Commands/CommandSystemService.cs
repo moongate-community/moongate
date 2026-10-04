@@ -5,6 +5,7 @@ using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
@@ -164,9 +165,44 @@ public sealed class CommandSystemService : ICommandSystemService
         return Task.CompletedTask;
     }
 
+    /// <inheritdoc />
+    public IReadOnlyList<string> GetArgumentCompletions(
+        string commandName,
+        IReadOnlyList<string> previousArguments,
+        CommandSourceType source = CommandSourceType.Console
+    )
+    {
+        FrozenDictionary<string, BoundCommand> commands;
+
+        lock (_gate)
+        {
+            commands = _commands;
+        }
+
+        if (!commands.TryGetValue(commandName, out var command) ||
+            source == CommandSourceType.None ||
+            !command.Definition.Source.HasFlag(source) ||
+            command.Completer is null)
+        {
+            return [];
+        }
+
+        try
+        {
+            return command.Completer.GetArgumentCompletions(previousArguments);
+        }
+        catch (Exception exception)
+        {
+            _logger.Warning(exception, "Completing the arguments of '{Command}' failed", commandName);
+
+            return [];
+        }
+    }
+
     private FrozenDictionary<string, BoundCommand> BindCommands()
     {
         var handlers = new Dictionary<CommandRegistration, Func<CommandContext, Task>>();
+        var completers = new Dictionary<CommandRegistration, ICommandArgumentCompleter?>();
         var commands = new Dictionary<string, BoundCommand>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var (alias, registration) in _registry.Freeze())
@@ -175,9 +211,15 @@ public sealed class CommandSystemService : ICommandSystemService
             {
                 handler = registration.Bind(_resolver);
                 handlers.Add(registration, handler);
+
+                // The executors are singletons: this is the instance the handler runs.
+                completers.Add(
+                    registration,
+                    _resolver.Resolve(registration.Definition.ExecutorType, IfUnresolved.ReturnDefault) as ICommandArgumentCompleter
+                );
             }
 
-            commands.Add(alias, new(registration.Definition, handler));
+            commands.Add(alias, new(registration.Definition, handler, completers[registration]));
         }
 
         return commands.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);

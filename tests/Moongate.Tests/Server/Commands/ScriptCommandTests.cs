@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Commands;
 using Moongate.Server.Core.Commands;
@@ -6,6 +7,7 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Commands;
+using Moongate.Tests.TestSupport.Directories;
 using Moongate.Tests.TestSupport.Scripting;
 
 namespace Moongate.Tests.Server.Commands;
@@ -14,6 +16,30 @@ public sealed class ScriptCommandTests
 {
     private readonly FakeScriptEngine _engine = new();
     private readonly StubGameLoop _loop = new();
+
+    [Fact]
+    public void GetArgumentCompletions_OffersTheActions_ThenTheLuaFilesForReload()
+    {
+        using var scripts = new TemporaryDirectory();
+        scripts.CreateFile("init.lua");
+        scripts.CreateFile("mobiles/wander.lua");
+        scripts.CreateFile("mobiles/notes.txt");
+        var command = new ScriptCommand(_engine, _loop, new ScriptEngineOptions { ScriptsDirectory = scripts.Path });
+
+        Assert.Equal(["reload", "metrics"], command.GetArgumentCompletions([]));
+        Assert.Equal(["init.lua", "mobiles/wander.lua"], command.GetArgumentCompletions(["reload"]).Order(StringComparer.Ordinal));
+        Assert.Empty(command.GetArgumentCompletions(["metrics"]));
+    }
+
+    [Fact]
+    public void GetArgumentCompletions_WithoutAScriptsDirectory_OffersNoFile()
+    {
+        Assert.Empty(new ScriptCommand(_engine, _loop).GetArgumentCompletions(["reload"]));
+        Assert.Empty(
+            new ScriptCommand(_engine, _loop, new ScriptEngineOptions { ScriptsDirectory = "/nowhere/at/all" })
+                .GetArgumentCompletions(["reload"])
+        );
+    }
 
     [Fact]
     public async Task ExecuteAsync_Metrics_PrintsOneLinePerCounter()

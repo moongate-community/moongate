@@ -14,7 +14,7 @@ namespace Moongate.Server.Ultima.Commands;
 /// <summary>
 ///     Creates accounts through an authorized command source.
 /// </summary>
-public sealed class AccountCommand : ICommandExecutor
+public sealed class AccountCommand : ICommandExecutor, ICommandArgumentCompleter
 {
     private const string Syntax = "account create <username> <password> [Regular|GameMaster|Administrator]";
 
@@ -84,6 +84,19 @@ public sealed class AccountCommand : ICommandExecutor
         {
             context.PrintError(_localization.Text(CommandMessages.AccountCreationFailed, "The account creation failed. Check the server logs."));
         }
+    }
+
+    /// <inheritdoc />
+    /// <remarks>The user name and the password are never offered.</remarks>
+    public IReadOnlyList<string> GetArgumentCompletions(IReadOnlyList<string> previousArguments)
+    {
+        return previousArguments switch
+        {
+            [] => ["create", "api-access"],
+            [var action, _, _] when action.Equals("create", StringComparison.OrdinalIgnoreCase) => Enum.GetNames<AccountType>(),
+            [var action, _] when action.Equals("api-access", StringComparison.OrdinalIgnoreCase) => ["on", "off"],
+            _ => []
+        };
     }
 
     private async Task SetApiAccessAsync(CommandContext context)

@@ -10,7 +10,7 @@ namespace Moongate.Server.Commands;
 ///     Locks the console input again, as it is at startup, so stray keys reach no command: <c>console lock</c>. The
 ///     unlock key opens it.
 /// </summary>
-public sealed class ConsoleCommand : ICommandExecutor
+public sealed class ConsoleCommand : ICommandExecutor, ICommandArgumentCompleter
 {
     private const string UsageText = "console lock";
 
@@ -40,4 +40,11 @@ public sealed class ConsoleCommand : ICommandExecutor
 
         return Task.CompletedTask;
     }
+
+    /// <inheritdoc />
+    public IReadOnlyList<string> GetArgumentCompletions(IReadOnlyList<string> previousArguments)
+    {
+        return previousArguments.Count == 0 ? ["lock"] : [];
+    }
+
 }

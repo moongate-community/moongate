@@ -1,40 +1,47 @@
 namespace Moongate.Server.Services.Console.Internal;
 
 /// <summary>
-///     Completes the command name the console line starts with, as TAB does in a shell.
+///     Completes the word being typed on the console line, as TAB does in a shell: the command name, then its arguments.
 /// </summary>
 internal static class ConsoleCompletion
 {
     /// <summary>
-    ///     Completes the first word of <paramref name="line" /> among <paramref name="names" />, in any case: one match
-    ///     gives the name and a space, several give their common prefix. Past the first word nothing is completed.
+    ///     Completes the last word of <paramref name="line" />, empty after a space, among the values
+    ///     <paramref name="candidates" /> gives for the words before it (none for the command name), in any case: one match
+    ///     gives the value and a space, several give their common prefix.
     /// </summary>
-    /// <returns>The completed line, and the names that matched in order; none past the first word.</returns>
-    public static (string Text, IReadOnlyList<string> Matches) Complete(string line, IEnumerable<string> names)
+    /// <returns>The completed line, and the values that matched in order.</returns>
+    public static (string Text, IReadOnlyList<string> Matches) Complete(
+        string line,
+        Func<IReadOnlyList<string>, IEnumerable<string>> candidates
+    )
     {
-        // Spaces before the name are kept: the command parser skips them.
-        var word = line.TrimStart();
-        var indent = line[..^word.Length];
+        // What comes before the word being typed is kept as it is, spaces included: the command parser skips them.
+        var start = line.Length;
 
-        if (word.Any(char.IsWhiteSpace))
+        while (start > 0 && !char.IsWhiteSpace(line[start - 1]))
         {
-            return (line, []);
+            start--;
         }
 
-        var matches = names.Where(name => name.StartsWith(word, StringComparison.OrdinalIgnoreCase))
-                           .Distinct(StringComparer.OrdinalIgnoreCase)
-                           .Order(StringComparer.Ordinal)
-                           .ToList();
+        var head = line[..start];
+        var word = line[start..];
+        var previous = head.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+        var matches = candidates(previous)
+                      .Where(value => value.StartsWith(word, StringComparison.OrdinalIgnoreCase))
+                      .Distinct(StringComparer.OrdinalIgnoreCase)
+                      .Order(StringComparer.Ordinal)
+                      .ToList();
 
         return matches.Count switch
         {
             0 => (line, matches),
-            1 => (indent + matches[0] + " ", matches),
-            _ => (indent + CommonPrefix(matches), matches)
+            1 => (head + matches[0] + " ", matches),
+            _ => (head + CommonPrefix(matches), matches)
         };
     }
 
-    // In the case of the names: "SA" with save and saveall gives "save".
+    // In the case of the values: "SA" with save and saveall gives "save".
     private static string CommonPrefix(List<string> matches)
     {
         var length = matches[0].Length;
