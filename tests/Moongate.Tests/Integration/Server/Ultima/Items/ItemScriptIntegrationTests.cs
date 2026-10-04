@@ -131,7 +131,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.InRange(aria.Stamina, 16, 18);
         Assert.InRange(Assert.Single(_speech.Sounds).Sound, 0x3A, 0x3C);
         Assert.Contains("Animated 2 34 5 1", _view.Calls);
-        // Eleven of twenty: "You eat the food, and begin to feel more satiated."
+        // Eleven of twenty: below fifteen, the third of the client's four texts.
         Assert.Equal((aria, 500870, ""), Assert.Single(_speech.ToldClilocs));
     }
 

@@ -20,7 +20,7 @@ public sealed class RegenerationConfig
 
     /// <summary>
     ///     Gets or sets the seconds between two points of mana coming back for a mobile with no intelligence and no
-    ///     Meditation; both shorten it, down to half a second.
+    ///     Meditation; both shorten it by ModernUO's classic curve, down to about a tenth of it.
     /// </summary>
     public double ManaSeconds { get; set; } = 7.0;
 

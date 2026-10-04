@@ -88,6 +88,82 @@ public sealed class RegenerationServiceTests
     }
 
     [Fact]
+    public void Tick_TicksThatComeALittleEarly_DoNotSlowTheRateDown()
+    {
+        // A point a second (intelligence 100, Meditation 100), ticked every 990 ms as a timer wheel may.
+        _aria.Intelligence = 100;
+        _aria.Skills = [new MobileSkill { Skill = SkillType.Meditation, Base = 1000 }];
+        _aria.Mana = 0;
+        _regeneration.Tick(_aria);
+
+        for (var tick = 0; tick < 100; tick++)
+        {
+            _clock.Advance(TimeSpan.FromMilliseconds(990));
+            _regeneration.Tick(_aria);
+        }
+
+        // 99 seconds: 98 or 99 points, not the 50 a late point every other tick would give.
+        Assert.InRange(_aria.Mana, 98, 99);
+    }
+
+    [Fact]
+    public void Tick_ARateFasterThanTheTick_GivesThePointsOfTheWholeTick()
+    {
+        _aria.Mana = 0;
+        _aria.SetProp("regen.mana", 0.5);
+        _regeneration.Tick(_aria);
+
+        Pass(10);
+
+        Assert.Equal(20, _aria.Mana);
+    }
+
+    [Fact]
+    public void Tick_AfterALongSleep_GivesAFewPointsAtOnce_NotAllOfThem()
+    {
+        _aria.Hits = 10;
+        _regeneration.Tick(_aria);
+
+        _clock.Advance(TimeSpan.FromHours(1));
+        _regeneration.Tick(_aria);
+
+        Assert.Equal(15, _aria.Hits);
+    }
+
+    [Theory, InlineData(1e16), InlineData(-5.0), InlineData(0.0)]
+    public void Tick_APropOutOfRange_IsKeptWithinTheRangeOfTheConfiguration_OrIgnored(double seconds)
+    {
+        _aria.Hits = 50;
+        _aria.SetProp("regen.hits", seconds);
+        _regeneration.Tick(_aria);
+
+        Pass(11);
+
+        // An hour at most for the huge one; the configured eleven seconds for what is not a rate.
+        Assert.Equal(seconds > 1 ? 50 : 51, _aria.Hits);
+    }
+
+    [Fact]
+    public void ManaSeconds_WithAnotherSlowestRate_KeepTheShapeOfTheCurve()
+    {
+        _config.ManaSeconds = 14;
+        _aria.Skills = [new MobileSkill { Skill = SkillType.Meditation, Base = 1000 }];
+
+        _aria.Intelligence = 0;
+        var half = _regeneration.ManaSeconds(_aria);
+        _aria.Intelligence = 100;
+        var full = _regeneration.ManaSeconds(_aria);
+        _aria.Intelligence = 140;
+        var more = _regeneration.ManaSeconds(_aria);
+        _aria.Skills = [];
+        _aria.Intelligence = 0;
+
+        // Twice ModernUO's seven seconds: twice its curve, and more points are never slower.
+        Assert.Equal(14.0, _regeneration.ManaSeconds(_aria), 2);
+        Assert.Equal((6.02, 2.0, 1.5), (Math.Round(half, 2), Math.Round(full, 2), Math.Round(more, 2)));
+    }
+
+    [Fact]
     public void Tick_AStatThatBecomesFullAndDropsAgain_WaitsAWholeIntervalAgain()
     {
         _aria.Hits = 99;

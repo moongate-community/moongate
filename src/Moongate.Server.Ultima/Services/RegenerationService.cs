@@ -13,7 +13,7 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     Regenerates hit points, mana and stamina, as ModernUO's classic rules: a point at a time, hit points every 11
-///     seconds, stamina every 7, mana from 7 seconds down to half a second by intelligence and Meditation. One
+///     seconds, stamina every 7, mana from 7 seconds down to three quarters of one by intelligence and Meditation. One
 ///     repeating <c>regeneration</c> timer every second ticks the players in the world; the NPCs are ticked by their
 ///     think. A prop of the mobile (<c>regen.hits</c>, <c>regen.mana</c>, <c>regen.stamina</c>, in seconds) replaces
 ///     the rate.
@@ -26,6 +26,9 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
     public const string StaminaProp = "regen.stamina";
 
     private const double FastestSeconds = 0.5;
+    private const double SlowestSeconds = 3600;
+    private const double ClassicManaSeconds = 7.0;
+    private const int MaximumPointsPerTick = 5;
 
     private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(1);
 
@@ -80,43 +83,60 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
     public void Tick(MobileEntity mobile)
     {
         var clock = _clocks.GetOrCreateValue(mobile);
+
+        // Nothing to give back: the three waits start again when a bar drops.
+        if (mobile.Hits >= mobile.HitsMax && mobile.Mana >= mobile.ManaMax && mobile.Stamina >= mobile.StaminaMax)
+        {
+            clock.HitsAt = clock.ManaAt = clock.StaminaAt = 0;
+
+            return;
+        }
+
         var now = _time.GetUtcNow().ToUnixTimeMilliseconds();
         var change = new MobileStatsChange();
         var changed = false;
 
         // A player with an empty stomach gets no hit points back, as in UOX3.
-        var starving = _config.HungerEnabled && !mobile.IsNpc && mobile.Hunger <= 0;
-
-        if (starving)
+        if (_config.HungerEnabled && !mobile.IsNpc && mobile.Hunger <= 0)
         {
             clock.HitsAt = 0;
         }
         else
         {
-            if (Due(mobile.Hits, mobile.HitsMax, clock.HitsAt, now, Seconds(mobile, HitsProp, _config.HitsSeconds), out var hitsAt))
+            var hits = Due(mobile.Hits, mobile.HitsMax, clock.HitsAt, now, Seconds(mobile, HitsProp, _config.HitsSeconds), out var hitsAt);
+            clock.HitsAt = hitsAt;
+
+            if (hits > 0)
             {
-                change.Hits = mobile.Hits + 1;
+                change.Hits = mobile.Hits + hits;
                 changed = true;
             }
-
-            clock.HitsAt = hitsAt;
         }
 
-        if (Due(mobile.Mana, mobile.ManaMax, clock.ManaAt, now, Seconds(mobile, ManaProp, ManaSeconds(mobile)), out var manaAt))
-        {
-            change.Mana = mobile.Mana + 1;
-            changed = true;
-        }
-
+        var mana = Due(mobile.Mana, mobile.ManaMax, clock.ManaAt, now, Seconds(mobile, ManaProp, ManaSeconds(mobile)), out var manaAt);
         clock.ManaAt = manaAt;
 
-        if (Due(mobile.Stamina, mobile.StaminaMax, clock.StaminaAt, now, Seconds(mobile, StaminaProp, _config.StaminaSeconds), out var staminaAt))
+        if (mana > 0)
         {
-            change.Stamina = mobile.Stamina + 1;
+            change.Mana = mobile.Mana + mana;
             changed = true;
         }
 
+        var stamina = Due(
+            mobile.Stamina,
+            mobile.StaminaMax,
+            clock.StaminaAt,
+            now,
+            Seconds(mobile, StaminaProp, _config.StaminaSeconds),
+            out var staminaAt
+        );
         clock.StaminaAt = staminaAt;
+
+        if (stamina > 0)
+        {
+            change.Stamina = mobile.Stamina + stamina;
+            changed = true;
+        }
 
         if (changed)
         {
@@ -126,19 +146,19 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
 
     public double ManaSeconds(MobileEntity mobile)
     {
-        // ModernUO's rule before AOS, on half of intelligence plus Meditation.
+        // ModernUO's rule before AOS, on half of intelligence plus Meditation: seven seconds down to three quarters
+        // of one, half a second at the least. Another slowest rate keeps the shape of the curve.
         var meditation = mobile.Skills.FirstOrDefault(skill => skill.Skill == SkillType.Meditation)?.Base / 10.0 ?? 0;
         var points = (mobile.Intelligence + meditation) * 0.5;
-        var slowest = _config.ManaSeconds;
         double seconds;
 
         if (points <= 0)
         {
-            seconds = slowest;
+            seconds = ClassicManaSeconds;
         }
         else if (points <= 100)
         {
-            seconds = slowest - 239 * points / 2400 + 19 * points * points / 48000;
+            seconds = ClassicManaSeconds - 239 * points / 2400 + 19 * points * points / 48000;
         }
         else if (points < 120)
         {
@@ -149,48 +169,61 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
             seconds = 0.75;
         }
 
-        return Math.Clamp(seconds, FastestSeconds, Math.Max(FastestSeconds, slowest));
+        return Math.Clamp(seconds, FastestSeconds, ClassicManaSeconds) * _config.ManaSeconds / ClassicManaSeconds;
     }
 
-    // Whether a point of the bar is due now, and when the next one is: 0 for a full bar.
-    private static bool Due(int current, int maximum, long at, long now, double seconds, out long next)
+    // How many points of the bar are due now, and when the next one is: 0 for a full bar. A tick that comes a little
+    // early or late does not move the rate: the next point is counted from when this one was due. After a long gap,
+    // as an NPC that slept, a few points come at once and the wait starts again.
+    private static int Due(int current, int maximum, long at, long now, double seconds, out long next)
     {
         if (current >= maximum)
         {
             next = 0;
 
-            return false;
+            return 0;
         }
 
-        var wait = (long)(seconds * 1000);
+        var wait = Math.Max(1, (long)(seconds * 1000));
 
         if (at == 0)
         {
             next = now + wait;
 
-            return false;
+            return 0;
         }
 
         if (now < at)
         {
             next = at;
 
-            return false;
+            return 0;
         }
 
-        next = now + wait;
+        var due = 1 + (now - at) / wait;
 
-        return true;
+        if (due > MaximumPointsPerTick)
+        {
+            next = now + wait;
+
+            return Math.Min(MaximumPointsPerTick, maximum - current);
+        }
+
+        next = at + due * wait;
+
+        return (int)Math.Min(due, maximum - current);
     }
 
-    // The mobile's own rate, when a script gave it one, else the given seconds.
+    // The mobile's own rate, when a script gave it one, else the given seconds; kept within what the configuration
+    // allows.
     private static double Seconds(MobileEntity mobile, string prop, double seconds)
     {
         return mobile.Props?.GetValueOrDefault(prop) switch
         {
-            long own when own > 0     => own,
-            double own when own > 0.0 => Math.Max(own, 0.1),
-            _                         => seconds
+            long own when own > 0                              => Math.Min(own, SlowestSeconds),
+            int own when own > 0                               => Math.Min(own, SlowestSeconds),
+            double own when double.IsFinite(own) && own > 0.0 => Math.Clamp(own, 0.1, SlowestSeconds),
+            _                                                  => seconds
         };
     }
 
