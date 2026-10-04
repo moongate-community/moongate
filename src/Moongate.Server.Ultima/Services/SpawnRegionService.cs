@@ -35,6 +35,9 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
     public const string RegionProp = "spawn.region";
     private const int DefaultPrefZ = 18;
     private const int SpotTries = 100;
+
+    // How many cells of a region's areas are looked at, spread evenly, before turning it off for having no spot.
+    private const int MaxScannedCells = 65536;
     private const int RoofHeight = 10;
     private const int FirstSpawnWindowMinutes = 10;
     private const int NamedRegions = 5;
@@ -45,6 +48,9 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 
     private readonly ILogger _logger = Log.ForContext<SpawnRegionService>();
     private readonly List<SpawnRegionState> _regions = [];
+
+    // The regions turned off by the current check, said in one line at its end.
+    private readonly List<string> _turnedOff = [];
     private readonly CancellationTokenSource _stopping = new();
     private readonly Dictionary<string, MobileMovementType> _movements = new(StringComparer.Ordinal);
     private readonly IDataLoaderService _data;
@@ -256,6 +262,16 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
             {
                 Running = Task.Run(() => SpawnAsync(planned, _stopping.Token));
             }
+
+            if (_turnedOff.Count > 0)
+            {
+                _logger.Warning(
+                    "{Count} spawn region(s) have no spot anywhere in their area and are off until the next start: {Regions}",
+                    _turnedOff.Count,
+                    string.Join(", ", _turnedOff)
+                );
+                _turnedOff.Clear();
+            }
         }
         catch (Exception exception)
         {
@@ -275,12 +291,14 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
             // The first spawn after the start fills the region; later ones bring call NPCs at a time.
             var count = region.FillNow || _config.InitialFill && !region.Filled ? room : Math.Min(template.Call, room);
             var found = 0;
+            var tried = new HashSet<MobileMovementType>();
 
             // A pick with no spot, such as a sea creature in a region with little water, leaves the others to spawn.
             for (var i = 0; i < count; i++)
             {
                 var templateId = region.Pool?.Pick(_random) ?? template.ItemIds[_random.Next(0, template.ItemIds.Count)];
                 var movement = _movements.GetValueOrDefault(templateId, MobileMovementType.Land);
+                tried.Add(movement);
 
                 // A spawned item wants a cell of its own: not where another one lies or is about to.
                 Func<int, int, bool>? taken = region.OfItems
@@ -295,6 +313,15 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
             }
 
             var missed = count > 0 && found == 0;
+
+            // A region whose whole area has no spot, such as land animals in the open sea, would retry for ever.
+            if (missed && !region.Retrying && !HasAnySpot(template, tried))
+            {
+                region.NextSpawn = DateTimeOffset.MaxValue;
+                _turnedOff.Add(template.Id);
+
+                return;
+            }
 
             if (!missed)
             {
@@ -423,6 +450,38 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 
         location = default;
         area = null!;
+
+        return false;
+    }
+
+    // Every cell of the areas, or MaxScannedCells of them spread evenly, for the movements the region picked.
+    private bool HasAnySpot(SpawnTemplate template, HashSet<MobileMovementType> movements)
+    {
+        foreach (var area in template.Areas)
+        {
+            var cells = (long)(area.X2 - area.X1 + 1) * (area.Y2 - area.Y1 + 1);
+            var stride = Math.Max(1, (int)Math.Ceiling(Math.Sqrt(cells / (double)MaxScannedCells)));
+
+            for (var x = area.X1; x <= area.X2; x += stride)
+            {
+                for (var y = area.Y1; y <= area.Y2; y += stride)
+                {
+                    if (template.Exclude.Any(exclude => exclude.Contains(x, y)) || !_map.Contains(template.Map, x, y))
+                    {
+                        continue;
+                    }
+
+                    foreach (var movement in movements)
+                    {
+                        if (movement != MobileMovementType.Water && TryGetLandZ(template, x, y, out _) ||
+                            movement != MobileMovementType.Land && _movement.TryGetSwimZ(template.Map, x, y, out _))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
 
         return false;
     }
