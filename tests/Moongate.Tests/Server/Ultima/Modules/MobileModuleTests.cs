@@ -26,6 +26,7 @@ public sealed class MobileModuleTests
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingMobileStateService _state = new();
+    private readonly RecordingWorldViewService _view = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly ItemService _items = TestItems.Create();
     private readonly StubMusicService _music = new();
@@ -247,6 +248,29 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Animate_PlaysTheActionOfTheMobile_FiveFramesOnceByDefault()
+    {
+        var result = Run("return mobile.animate(2, 32), mobile.animate(2, 17, 7, 3)");
+
+        Assert.Equal((true, true), (result[0].Read<bool>(), result[1].Read<bool>()));
+        Assert.Equal(["Animated 2 32 5 1", "Animated 2 17 7 3"], _view.Calls);
+    }
+
+    [Theory,
+     InlineData("return mobile.animate(999, 32)"),
+     InlineData("return mobile.animate(2, -1)"),
+     InlineData("return mobile.animate(2, 65536)"),
+     InlineData("return mobile.animate(2, 32, 0)"),
+     InlineData("return mobile.animate(2, 32, 5, 0)"),
+     InlineData("return mobile.animate(2, 32, 300)")]
+    public void Animate_AnUnknownMobileOrNumbersOutOfRange_IsFalseAndShowsNothing(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
     public void Message_TellsThePlayer()
     {
         var result = Run("return mobile.message(2, 'That is too far away.')");
@@ -448,7 +472,7 @@ public sealed class MobileModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

@@ -65,7 +65,7 @@
 30041 = "Zapisuje świat i powiadamia wszystkich graczy po zakończeniu."
 30042 = "Wysyła wiadomość systemową do wszystkich graczy w tym świecie: broadcast <tekst>."
 30043 = "Tworzy NPC z szablonu stworzenia we wskazanym miejscu: spawn <szablon>."
-30044 = "Usuwa wskazanego NPC."
+30044 = "Usuwa wskazanego NPC lub przedmiot leżący na ziemi."
 30045 = "Pokazuje wskazany cel: jego numer seryjny albo mapę i położenie punktu."
 30046 = "Oczekujące usunięcia postaci: character pending [numer-konta]; character restore <numer-postaci>."
 30047 = "Powtarza swoje argumenty."
@@ -142,6 +142,7 @@
 30119 = "Dodano {0} ({1}) w {2} ({3}, {4}, {5})."
 30120 = "Nie udało się dodać przedmiotu. Sprawdź logi serwera."
 30121 = "Kładzie na ziemi, tam gdzie wskażesz, przedmiot z szablonu przedmiotu: add <template>."
+30122 = "Usunąć można tylko przedmiot leżący na ziemi."
 
 # Moongate: texts of the item scripts.
 30114 = "Ten moongate zdaje się nigdzie nie prowadzić."

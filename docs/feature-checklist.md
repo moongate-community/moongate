@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 70 done, 🟡 41 partly done, ❌ 157 not built yet.
+**268 systems:** ✅ 70 done, 🟡 42 partly done, ❌ 156 not built yet.
 
 **Coverage: 26%** of the systems done, **34%** counting a partly done system as half.
 
@@ -80,7 +80,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Weapons and armour: damage, armour, durability, resistances | ❌ | NPC templates carry damage and armour; item templates do not yet |
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
-| NPC combat AI | ❌ | |
+| NPC combat AI | 🟡 | `monster.lua`: skeletons and zombies notice a player, walk to it and stand guard when they lose it; no fight yet |
 | Guards in guarded regions | ❌ | |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |

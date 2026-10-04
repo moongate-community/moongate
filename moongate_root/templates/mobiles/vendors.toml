@@ -215,7 +215,6 @@ gender = "female"
 
 [[mobile]]
 id = "banker"
-script_id = "banker"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Banker"
@@ -224,6 +223,7 @@ race = "human"
 strength = "1d26+49"
 dexterity = "1d6+64"
 intelligence = "1d26+49"
+script_id = "banker"
 [[mobile.equipment]]
 items = ["0x1efd_fancy_shirt"]
 hue = "0x0835-0x0852"
@@ -789,7 +789,6 @@ gender = "female"
 
 [[mobile]]
 id = "gypsybanker"
-script_id = "banker"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Gypsy Banker"
@@ -798,6 +797,7 @@ race = "human"
 strength = "1d26+49"
 dexterity = "1d6+64"
 intelligence = "1d26+49"
+script_id = "banker"
 [[mobile.equipment]]
 items = ["0x1efd_fancy_shirt"]
 

@@ -189,6 +189,43 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void MobileAnimated_ShowsTheAnimationToItselfAndThoseWhoSeeIt()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        Enter(4, 3000, 3000, CarlaSession);
+        ClearSent();
+
+        _view.MobileAnimated(aria, 32, 7, 2);
+
+        Assert.All(
+            _sender.Sent,
+            packet =>
+            {
+                var animation = Assert.IsType<MobileAnimationPacket>(packet);
+                Assert.Equal((aria.Id, 32, 7, 2), (animation.Serial, animation.Action, animation.FrameCount, animation.RepeatCount));
+            }
+        );
+        Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
+    }
+
+    [Fact]
+    public void MobileAnimated_OfAHiddenMobile_IsForItselfAndTheStaffOnly()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var carla = Mobile(4, 1497, 1628);
+        _mobiles.EnterWorld(carla);
+        _view.Entered(carla, CarlaSession, null, AccountType.GameMaster);
+        aria.Hidden = true;
+        ClearSent();
+
+        _view.MobileAnimated(aria, 17, 5, 1);
+
+        Assert.Equal([AriaSession, CarlaSession], _sender.SentSessionIds.Order());
+    }
+
+    [Fact]
     public void MobileFlagsChanged_OfAHiddenMobile_DoesNotTellThePlayers()
     {
         var aria = Enter(2, 1496, 1628, AriaSession);

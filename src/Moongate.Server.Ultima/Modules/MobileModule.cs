@@ -31,6 +31,7 @@ public sealed class MobileModule
     private readonly IRegionService? _regions;
     private readonly ILightService? _light;
     private readonly IMobileStateService? _state;
+    private readonly IWorldViewService? _view;
 
     public MobileModule(
         IMobileService mobiles,
@@ -40,9 +41,11 @@ public sealed class MobileModule
         IMusicService? music = null,
         IRegionService? regions = null,
         ILightService? light = null,
-        IMobileStateService? state = null
+        IMobileStateService? state = null,
+        IWorldViewService? view = null
     )
     {
+        _view = view;
         _state = state;
         _mobiles = mobiles;
         _teleports = teleports;
@@ -481,6 +484,27 @@ public sealed class MobileModule
         table["map"] = (int)mobile.Map;
 
         return table;
+    }
+
+    /// <summary>
+    ///     Plays an animation of the mobile, seen by its player and those around; <c>mobile.animate(who, 32)</c> makes a
+    ///     human bow. The action is a number of the mobile's body: a human and a monster do not share them.
+    /// </summary>
+    [ScriptFunction(helpText: "Plays an action (0 to 65535) of the mobile's body, with frames (1 to 255, default 5) and how many times (1 to 255, default 1); false for a mobile not in the world or a number out of range.")]
+    public bool Animate(long serial, int action, int frames = 5, int repeatCount = 1)
+    {
+        if (_view is null ||
+            action is < 0 or > ushort.MaxValue ||
+            frames is < 1 or > byte.MaxValue ||
+            repeatCount is < 1 or > byte.MaxValue ||
+            !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        _view.MobileAnimated(mobile, action, frames, repeatCount);
+
+        return true;
     }
 
     /// <summary>

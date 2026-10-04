@@ -17,6 +17,7 @@ karma = -600
 fame = 600
 loot = ["bonearmor"]
 gold = "1d13+3"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d26+14"
 parrying = "1d11+19"
@@ -203,6 +204,7 @@ karma = -450
 fame = 450
 loot = ["bonearmor"]
 gold = "1d51-1"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+44"
 parrying = "1d11+44"
