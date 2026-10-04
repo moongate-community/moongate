@@ -24,7 +24,7 @@
     <!-- Package Metadata -->
     <PropertyGroup>
         <IsPackable>false</IsPackable>
-        <Version>0.13.0</Version>
+        <Version>0.14.0</Version>
         <Codename>Lilly</Codename>
         <Authors>Squid Development</Authors>
         <Product>Moongate</Product>
