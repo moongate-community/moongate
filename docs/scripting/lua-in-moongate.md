@@ -1,7 +1,7 @@
 # Lua in Moongate
 
 This page is part of [Writing Lua scripts](../scripting.md). The server runs Lua 5.2 through LuaCSharp, a Lua
-written in C#, so no separate Lua installation is required. The language is the one of the
+written in C#, so no separate Lua installation is required. The language is that of the
 [Lua 5.2 reference manual](https://www.lua.org/manual/5.2/); this page says what a script has and where it
 sees a difference.
 
@@ -28,7 +28,7 @@ for the exact removed functions.
 | `require` | `package.path`, `package.cpath`, `package.loadlib`, `package.searchpath` |
 
 `print` writes its values, separated by tabs, to the server log at Information level and returns nothing.
-`string.rep` refuses a result longer than the cap told in
+`string.rep` refuses a result longer than the cap given in
 [Budgets and sandbox](runtime.md#budgets-and-sandbox).
 
 ## What differs from the manual
@@ -48,18 +48,18 @@ false.
 
 ### Numbers
 
-Every number is a double, as in Lua 5.2. A whole value is written without a fraction: `10 / 2` gives `5`. The
-others are written with every digit, where the manual's Lua rounds to 14: `0.1 + 0.2` gives
-`0.30000000000000004`, and `2 ^ 63` gives `9.223372036854776E+18`. `string.format("%d", 3.5)` raises an error:
-`%d` takes a whole number.
+Every number is a double, as in Lua 5.2. A whole value is written without a fraction: `10 / 2` gives `5`. Any
+other value is written with every digit, where the manual's Lua rounds to 14: `0.1 + 0.2` gives
+`0.30000000000000004`. A very large value is written with an exponent: `2 ^ 63` gives
+`9.223372036854776E+18`. `string.format("%d", 3.5)` raises an error: `%d` takes a whole number.
 
 ## Calling host functions
 
 The server publishes its functions in module tables, such as `npc` and `item`; the
 [Lua API reference](https://moongate.sh/lua/) lists them with their parameters.
 
-- A module table is read-only: assigning to it raises an error such as `'log' is read-only`, and its metatable
-  is locked.
+- A module table is read-only: assigning to one of its fields raises an error such as `'log' is read-only`,
+  and its metatable is locked.
 - An enum is a read-only global table, and `DirectionType.North` is a number. A parameter typed with an enum
   takes the number or the member's name in its exact case: `"North"`, not `"north"`.
 - A parameter typed `integer` needs a whole number: `1.5` raises a `bad argument` error.

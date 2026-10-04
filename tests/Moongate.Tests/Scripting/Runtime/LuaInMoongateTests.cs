@@ -11,9 +11,10 @@ using Moongate.Tests.TestSupport.Scripting;
 namespace Moongate.Tests.Scripting.Runtime;
 
 /// <summary>
-///     Pins what docs/scripting/lua-in-moongate.md tells script authors about the Lua of the server, by running each
-///     statement through the script engine. A failure here means the page is no longer true: change the page with
-///     the engine.
+///     Pins what docs/scripting/lua-in-moongate.md tells script authors about the Lua of the server, by running its
+///     statements through the script engine. A failure here means the page is no longer true: change the page with
+///     the engine. The cap of string.rep and where print writes are pinned by LuaScriptEngineServiceTests, and the
+///     enum tables by LuaModuleBinderConstantsTests.
 /// </summary>
 public sealed class LuaInMoongateTests : IDisposable
 {

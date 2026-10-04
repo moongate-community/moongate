@@ -68,8 +68,9 @@ requires the .NET 10 SDK.
 
 An example goes in `website/lua/examples/<module>.md`: one `## <function>` section per function, whose
 body, a sentence and a Lua code block or a note, is put under that function on the module's page. The body
-is Markdown. Build fails for a file that names no module, a section that names no function of the module, and
-a repeated or empty section.
+is Markdown. Build fails for a file that names no module, a section that names no function of the module, a
+repeated or empty section, text before the first section, and a file with no section. The test suite checks
+the names too (`PublishedScriptModulesTests`), so renaming a function that has an example fails a pull request.
 
 Help text is written to the pages as HTML, not Markdown, so Lua such as `g:text{...}` or
 `~1_NAME~` prints as written. A constant read through a C# property, such as `engine.version`,

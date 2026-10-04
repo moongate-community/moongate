@@ -43,7 +43,7 @@ allocations, including tables and concatenation, do not have a global memory cap
 Treat scripts and C# plugins as trusted shard content, not as an isolation boundary
 for arbitrary hostile code.
 
-Which libraries a script has, and where the Lua of the server differs from the manual, is told in
+Which libraries a script has, and where the Lua of the server differs from the manual, are described in
 [Lua in Moongate](lua-in-moongate.md).
 
 ## Editor support

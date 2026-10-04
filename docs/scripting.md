@@ -87,7 +87,7 @@ Some modules have a page that says more:
 - [Shipped scripts](scripting/shipped-scripts.md): what each script of the distribution does: monsters, doors,
   lights, food, teleporters, moongates, clocks and the containers that fill up.
 - [Effects](scripting/effects.md): the options of the `effect` module.
-- [Reload, budgets and editor](scripting/runtime.md): reloading a script, what a script may not do, and
+- [Reload, budgets and editor](scripting/runtime.md): reloading a script, the instruction budgets, and
   completion in an editor.
 - [Lua API reference](https://moongate.sh/lua/): every function, with its signature and, for many, an
   example.
