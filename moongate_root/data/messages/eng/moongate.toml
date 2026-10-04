@@ -28,7 +28,7 @@
 30006 = "Weight: 1 stone"
 30007 = "Weight: {0} stones"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102, 30104-30107, 30109, 30111-30112, 30115-30117) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103, 30108, 30110, 30113).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068, 30071-30072, 30074-30078, 30080-30085, 30087-30090, 30092, 30094, 30096-30098, 30100-30102, 30104-30107, 30109, 30111-30112, 30115-30120, 30122, 30126) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070, 30073, 30079, 30086, 30091, 30093, 30095, 30099, 30103, 30108, 30110, 30113, 30121, 30127).
 30008 = "Target canceled."
 30009 = "A command is already running."
 30010 = "Unknown command: {0}"
@@ -65,7 +65,7 @@
 30041 = "Saves the world and tells every player when it is done."
 30042 = "Sends a system message to every player in this world: broadcast <text>."
 30043 = "Spawns an NPC from a mobile template where you target: spawn <template>."
-30044 = "Removes the NPC you target."
+30044 = "Removes the NPC or the item on the ground you target."
 30045 = "Shows what you target: its serial, or the map and location of a spot."
 30046 = "Pending character deletions: character pending [account-serial]; character restore <character-serial>."
 30047 = "Echoes back its arguments."
@@ -138,6 +138,20 @@
 30115 = "No place is named {0}; go alone lists them."
 30116 = "{0} places are named {1}; add words of the category, such as go covetous entrance:"
 30117 = "... and {0} more."
+30118 = "Unknown item template: {0}"
+30119 = "Added {0} ({1}) at {2} ({3}, {4}, {5})."
+30120 = "The item could not be added. Check the server logs."
+30121 = "Puts an item from an item template on the ground where you target: add <template>."
+30122 = "Only an item lying on the ground can be removed."
+30126 = "{0}: {1} is now {2}."
+30127 = "Sets the hits, mana, stamina, hunger or thirst of the mobile you target: set <hits|mana|stamina|hunger|thirst> <value>."
 
 # Moongate: texts of the item scripts.
 30114 = "This moongate does not seem to go anywhere."
+30123 = "You are hungry."
+30124 = "You are starving: your wounds will not heal until you eat."
+30128 = "You are thirsty."
+30129 = "You are parched: your stamina will not come back until you drink."
+30130 = "You are simply too full to drink any more!"
+30131 = "It is empty."
+30132 = "You drink, and feel less thirsty."

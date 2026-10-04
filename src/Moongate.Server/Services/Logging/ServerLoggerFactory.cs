@@ -4,7 +4,6 @@ using Moongate.Server.Services.Logging.Internal;
 using Serilog;
 using Serilog.Core;
 using Serilog.Formatting.Compact;
-using Serilog.Templates.Themes;
 
 namespace Moongate.Server.Services.Logging;
 
@@ -27,7 +26,7 @@ internal static class ServerLoggerFactory
         // Pass-through: the outer logger owns level policy.
         var console = new LoggerConfiguration().MinimumLevel.Verbose();
         var consoleLogger = (consoleWriter is null
-                                 ? console.WriteTo.Console(ConsoleLogTemplate.Create(TemplateTheme.Code))
+                                 ? console.WriteTo.Console(ConsoleLogTemplate.Create(ConsoleLogTheme.Moongate))
                                  : console.WriteTo.Sink(new TextWriterLogSink(ConsoleLogTemplate.Create(null), consoleWriter)))
             .CreateLogger();
 

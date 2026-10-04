@@ -153,7 +153,9 @@ another root, so unset it or pass the same path.
    All three modes also check Redis at startup.
 
 4. **Apply the core migrations.** Startup validates the versioned SQL history and
-   refuses to start while files are pending, so apply them first:
+   refuses to start while files are pending, so apply them first (or set
+   [`persistence.auto_apply_migrations`](persistence-migrations.md#apply-at-startup) and let a
+   start apply them):
 
    ```sh
    mgctl migrate apply --root-directory /srv/moongate --target auth
@@ -206,7 +208,7 @@ All server-managed paths below are relative to `--root-directory`:
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `logs/errors/<id>.md` | The report of each exception the server logged, ready to paste into a GitHub issue |
 | `plugins/` | One assembly bundle per plugin directory |
-| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting.md#mobile-scripts) `mobiles/<script_id>.lua`, the [item scripts](scripting.md#item-scripts) `items/<script_id>.lua`, the gump scripts `gumps/<id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
+| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting.md#mobile-scripts) `mobiles/<script_id>.lua`, the [item scripts](scripting.md#item-scripts) `items/<script_id>.lua`, the Lua modules they share in `common/`, the gump scripts `gumps/<id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
 | `moongate.pid` | Current process identifier |
 | `moongate.pid.lock` | Lock file used to exclude another instance |
 
@@ -253,7 +255,7 @@ the message of what it wraps. The `.clef` logs keep the full exception of every 
 | `Postgres connection` failure | The database does not exist, the host is wrong, or the role cannot log in. Inside a container, `localhost` is the container itself |
 | Connection variable missing | Export the PostgreSQL and Redis variables referenced by the active TOML sections |
 | Redis connection failure | Check the private endpoint, credential, Redis health and `noeviction` policy |
-| Pending or changed migrations | Run the migration runner `status` and `apply` for the named target (step 4). Never edit an applied file |
+| Pending or changed migrations | Run the migration runner `status` and `apply` for the named target (step 4), or turn on `persistence.auto_apply_migrations`. Never edit an applied file |
 | PostgreSQL schema changes required | An entity needs DDL that no migration provides. Generate and review a versioned SQL file with `--persistence-schema generate`, then apply it with the runner while the server is stopped |
 | Port binding failure | Check `network.listen_address`, port availability and interface addresses |
 | Another instance detected | Check the PID and running process; use a separate root for another server |

@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 70 done, 🟡 41 partly done, ❌ 157 not built yet.
+**268 systems:** ✅ 72 done, 🟡 42 partly done, ❌ 154 not built yet.
 
-**Coverage: 26%** of the systems done, **34%** counting a partly done system as half.
+**Coverage: 27%** of the systems done, **35%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -47,12 +47,12 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Creation: races, professions, starting items, starting cities | ✅ | |
 | Stats | 🟡 | Rolled, stored and set by scripts; no gain, caps or locks |
 | Skills | 🟡 | Stored, shown in the skill window and set by scripts; no use, gain or locks |
-| Hit points, mana and stamina regeneration | ❌ | |
+| Hit points, mana and stamina regeneration | ✅ | A point at a time, ModernUO's classic rates; mana by intelligence and Meditation; rates per mobile from scripts |
 | Titles | 🟡 | Fame and karma titles in the paperdoll; no skill titles |
 | Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); nothing gains or loses them yet |
 | Notoriety (innocent, criminal, murderer) | 🟡 | Name colour from the mobile template |
 | Crimes, criminal timer and murder counts | ❌ | |
-| Hunger and thirst | ❌ | |
+| Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
 | Hiding and stealth | ❌ | A script can hide a mobile with `mobile.set_hidden`; no skill |
 | Death, corpses, ghosts and resurrection | ❌ | |
@@ -80,7 +80,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Weapons and armour: damage, armour, durability, resistances | ❌ | NPC templates carry damage and armour; item templates do not yet |
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
-| NPC combat AI | ❌ | |
+| NPC combat AI | 🟡 | `monster.lua`: the undead of the graveyards notice a player, walk to it and stand guard when they lose it; no fight yet |
 | Guards in guarded regions | ❌ | |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
@@ -183,7 +183,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Doors | ✅ | Open and close; linked double doors; a closed door blocks the way, staff walks through |
 | Locks and keys | ✅ | Locked doors open for a player carrying their key |
 | Lights | ✅ | Lit and doused; lamp posts light up at night |
-| Potions and food | 🟡 | A sample potion is drunk and used up; no effects yet |
+| Potions and food | 🟡 | Food is eaten: hunger, stamina, sound and gesture. Drinks are drunk by sips, and a pitcher or a glass is left empty; no refilling, no drunkenness. A sample potion is drunk and used up, with no effect yet |
 | Books | ❌ | |
 | Maps and treasure maps | ❌ | |
 | Runes, recall and gates | ❌ | |
@@ -275,7 +275,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| Commands with access levels | ✅ | From the console and in game; see [Commands](commands.md) |
+| Commands with access levels | ✅ | From the console (TAB completion of commands and arguments, Up/Down history) and in game; see [Commands](commands.md) |
 | World save | ✅ | Periodic and on shutdown, with `.save` |
 | Database backup | ✅ | Rotating SQL exports on a schedule and with `.sql_backup`; restore with psql |
 | Console | ✅ | |
@@ -358,7 +358,7 @@ Systems most emulators do not have:
 - Login server and game realms as separate processes, discovered through Redis, with one-use
   handoff tickets.
 - PostgreSQL persistence with versioned migrations, applied by `mgctl migrate` while the server is
-  stopped.
+  stopped, or by the server itself at startup when `persistence.auto_apply_migrations` is on.
 - World saves that never stop the game: about 0.1 s on the game loop to copy 173,000 entities, then
   only the changed rows written in the background; see
   [A save does not stop the game](persistence-operations.md#a-save-does-not-stop-the-game).

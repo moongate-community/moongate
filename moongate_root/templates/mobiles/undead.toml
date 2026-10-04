@@ -17,6 +17,7 @@ karma = -600
 fame = 600
 loot = ["bonearmor"]
 gold = "1d13+3"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d26+14"
 parrying = "1d11+19"
@@ -105,6 +106,7 @@ karma = -8000
 fame = 8000
 loot = ["lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "randomgems", "randomgems", "lich_loot", "lich_loot", "treasure_map_lvl1loot", "treasure_map_lvl3loot"]
 gold = "1d51+199"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = 100
 magery = "1d11+69"
@@ -134,6 +136,7 @@ karma = -4000
 fame = 4000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "bonearmor"]
 gold = "1d101+49"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d16+54"
 hiding = "1d11+54"
@@ -164,6 +167,7 @@ karma = -4000
 fame = 4000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems"]
 gold = "1d101+49"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+44"
 parrying = "1d11+44"
@@ -203,6 +207,7 @@ karma = -450
 fame = 450
 loot = ["bonearmor"]
 gold = "1d51-1"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+44"
 parrying = "1d11+44"
@@ -373,6 +378,7 @@ base_id = "wraith"
 name = "a ghoul"
 body = 153
 skin_hue = 0
+script_id = "monster"
 [mobile.sounds]
 start_attack = 1154
 idle = 1155

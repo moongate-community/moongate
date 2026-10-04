@@ -74,13 +74,17 @@ export async function validateSite({ directory, site, basePath, expectedSlugs = 
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
+  // The Lua reference has no manifest entries: its pages are the files the build generated.
+  const luaPages = (await readdir(fileURLToPath(new URL('../src/content/docs/lua/', import.meta.url))))
+    .map(file => (file === 'index.md' ? 'lua' : `lua/${path.basename(file, '.md')}`));
+  const expectedSlugs = [...contentEntries.map(entry => entry.slug), ...luaPages];
   const errors = await validateSite({
     directory: fileURLToPath(new URL('../dist/', import.meta.url)),
     site: docsSite, basePath: docsBasePath,
-    expectedSlugs: contentEntries.map(entry => entry.slug),
+    expectedSlugs,
   });
   if (errors.length) {
     console.error(errors.join('\n'));
     process.exitCode = 1;
-  } else console.log(`Local links verified (${contentEntries.length + 1} expected pages).`);
+  } else console.log(`Local links verified (${expectedSlugs.length + 1} expected pages).`);
 }

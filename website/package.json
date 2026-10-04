@@ -8,9 +8,10 @@
   "scripts": {
     "prepare:docs": "node scripts/prepare-docs.mjs",
     "prepare:packets": "node scripts/build-packets.mjs",
+    "prepare:lua": "node scripts/build-lua.mjs",
     "test": "node --test tests/*.test.mjs",
-    "dev": "npm run prepare:docs && npm run prepare:packets && astro dev",
-    "build": "npm run prepare:docs && npm run prepare:packets && astro build && npm run check:links",
+    "dev": "npm run prepare:docs && npm run prepare:packets && npm run prepare:lua && astro dev",
+    "build": "npm run prepare:docs && npm run prepare:packets && npm run prepare:lua && astro build && npm run check:links",
     "check:links": "node scripts/check-links.mjs",
     "preview": "astro preview"
   },

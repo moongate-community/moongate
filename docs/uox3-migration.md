@@ -36,7 +36,12 @@ The three mobile arguments go together (see [Mobiles and name lists](#mobiles-an
 Moongate Lua script gets its `script_id`: the script of the block's `script=`, else the one
 `jse_objectassociations.scp` ([ENVOKE]) gives its graphic, looked up by number in
 `jse_fileassociations.scp` ([SCRIPT_LIST]). Today `item/lights.js` becomes `light`
-(`scripts/items/light.lua`); other scripts are left out. Without it no `script_id` is written.
+(`scripts/items/light.lua`); other scripts are left out. With or without it, what UOX3 calls food
+(item type 14, on the block or on the one it gets its fields from) takes `script_id = "food"`
+(`scripts/items/food.lua`), but for what UOX3 files under food and nobody eats as it is: the bowl of
+flour (`0x0a1e_bowl_of_flour`) and the magic fish (`base_magic_fish`). What UOX3 calls a drink (item
+type 105) takes `script_id = "drink"` (`scripts/items/drink.lua`) the same way, in place of UOX3's own
+`pitchers.js`, but for the jar of honey (`0x09ec_jar_of_honey`).
 A folder missing either file exits `2`.
 
 `--npc-lists-destination` and `--spawns-destination` go together and need `--mobile-source`.
@@ -194,7 +199,12 @@ Two known mistakes in UOX3's item data are corrected as the blocks are read
 leather tunic as their parents; they get the leather sleeves (`0x13cd`) and leggings
 (`0x13cb`).
 
-Dropped, no home yet: AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
+A mobile Moongate has a script for gets its `script_id`: a banker (`NPCAI=8`) takes `banker`
+(`scripts/mobiles/banker.lua`), and the undead of the graveyards (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`, `spectre`, `lich`) take
+`monster` (`scripts/mobiles/monster.lua`);
+the templates based on them take it through `base_id`.
+
+Dropped, no home yet: the rest of AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
 taming and bard skills (`TOTAME`, `CONTROLSLOTS`, `TOPROV`, `TOPEACE`), shops
 (`SHOPKEEPER`, `SHOPLIST`), `PACKITEM`, `CARVE`, `FOOD`, `PRIV`, `SCRIPT` and the other
 tags without a field. The run prints how often each kind of value was dropped.
@@ -222,8 +232,9 @@ an item block with no `id=` of its own is followed. Items that resolve to nothin
 dropped and counted. The file is read back and every item must exist. UOX3's own rules
 (the three best skills, four with extended starting skills, and `STARTGOLD`) are not data
 and are not converted. Set `ultima.starting_items.best_skills` in the server
-configuration, and give the `STARTGOLD` coins with a gold entry in the common set, as
-the [shipped file](data-files/starting-items.md) does.
+configuration. The converter adds Moongate's own entries to the common set, for the items the
+source has: 1000 gold coins first, in place of `STARTGOLD`, then three loaves of bread and a
+pitcher of water last (see the [shipped file](data-files/starting-items.md)).
 
 ## Signs of ModernUO
 
@@ -305,11 +316,16 @@ dotnet run --project src/Moongate.Ctl -- convert modernuo-spawns \
 
 It reads the `shared` and `post-uoml` eras of each map (the world of a modern client) and writes
 the spawn regions into `<map>/modernuo_<file>.toml`, such as `malas/modernuo_doom.toml`, replacing
-the `modernuo_` files of that map a previous run wrote; the other files of the folder are left
-alone, and a map with nothing to write keeps its files. A region's id names the era, the file and
+the `modernuo_` files a previous run wrote in the folders of the maps it converts; the other files
+of the folder are left alone, and a map with nothing to write keeps its files. A region's id names the era, the file and
 the spawner's index in it (`malas_modernuo_post_uoml_south_12`), so it stays the same when a later
 run, with more templates, resolves more mobiles. Use it for maps UOX3 does not cover: on Felucca or
-Trammel it would add ModernUO's spawns on top of UOX3's. A spawner becomes:
+Trammel it would add ModernUO's spawns on top of UOX3's. A region takes the map its spawner
+names, which is not always its folder's, and goes into the folder of that map, since the server
+takes a region's map from its folder: the Yomotsu Mines and the Fan Dancer's Dojo lie in
+ModernUO's `tokuno` folder and on the Malas map, so their regions are in
+`malas/modernuo_yomutso_mines.toml` and `malas/modernuo_fan_dancers_dojo.toml`, with ids that
+still start with `tokuno_`. A spawner becomes:
 
 - `mobile_ids`: its entries, each ModernUO class found among the `--mobiles` templates. The command
   tries an alias of its table first (`Minter` is `banker`, `GreatHart` is `hart`, guildmasters are

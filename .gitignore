@@ -605,6 +605,7 @@ website/.astro/
 website/dist/
 website/src/content/docs/generated/
 website/src/generated/packets.json
+website/src/content/docs/lua/
 website/public/generated/
 website/public/install.sh
 website/public/coverage/

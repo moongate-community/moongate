@@ -32,18 +32,7 @@ local row_height = 25
 
 -- Where the player stands when it is on the gate's map and within reach of it; nil otherwise.
 local function near(serial, who)
-    local here = item.location(serial)
-    local at = mobile.location(who)
-
-    if not here or not at or here.map ~= at.map then
-        return nil
-    end
-
-    if math.abs(at.x - here.x) > use_range or math.abs(at.y - here.y) > use_range then
-        return nil
-    end
-
-    return at
+    return item.in_range(serial, who, use_range) and mobile.location(who) or nil
 end
 
 -- Called by the button of a city. The player may have walked away while the gump was open.

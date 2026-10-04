@@ -102,6 +102,8 @@ After pulling a newer image, run `mgctl` on the volume again, as above: it adds 
 
 To update an instance, read the target release's changelog, stop it, follow your database backup policy, change the image tag, and restart with the same volumes. If startup reports pending migrations, stop the affected server and apply the reviewed SQL before starting it again.
 
+With `persistence.auto_apply_migrations = true` in `config/moongate.toml` the server does both steps at startup: it adds the core SQL the new image ships to `/data/migrations` and applies what is pending, so an update is a new image tag and a restart. See [Apply at startup](persistence-migrations.md#apply-at-startup) for what it needs and what still stops it; the data files, templates and scripts a release adds still come from `mgctl init`.
+
 ## UOX3 content conversion
 
 The image's `/app/mgctl` converts UOX3 `.dfn` files to TOML with `convert uox`. Bind the source read-only and an output directory writable by the invoking user:

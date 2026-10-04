@@ -18,8 +18,15 @@ public sealed class LocalizedMessagePacket : BasePacket<LocalizedMessagePacket>,
     private const int HeaderLength = 48;
     private const int NameLength = 30;
     private const byte LabelType = 6;
+    private const byte RegularType = 0;
     private const ushort LabelHue = 0x03B2;
     private const ushort LabelFont = 3;
+    private const int NoGraphic = 0xFFFF;
+    private const string SystemName = "System";
+
+    private static readonly Serial NoSerial = new(0xFFFFFFFF);
+
+    private readonly byte _type = LabelType;
 
     public override int Length { get; }
 
@@ -43,6 +50,21 @@ public sealed class LocalizedMessagePacket : BasePacket<LocalizedMessagePacket>,
         Length = HeaderLength + arguments.Length * 2 + 2;
     }
 
+    private LocalizedMessagePacket(Serial serial, int graphic, int cliloc, string name, string arguments, byte type)
+        : this(serial, graphic, cliloc, name, arguments)
+    {
+        _type = type;
+    }
+
+    /// <summary>
+    ///     Gets a cliloc shown as a system message, in the lower left of the screen, as ModernUO's
+    ///     SendLocalizedMessage: no object, the name "System".
+    /// </summary>
+    public static LocalizedMessagePacket System(int cliloc, string arguments = "")
+    {
+        return new(NoSerial, NoGraphic, cliloc, SystemName, arguments, RegularType);
+    }
+
     public void Write(ref PacketWriter writer)
     {
         writer.EnsureCapacity(Length);
@@ -50,7 +72,7 @@ public sealed class LocalizedMessagePacket : BasePacket<LocalizedMessagePacket>,
         writer.WriteUInt16BigEndian((ushort)Length);
         writer.WriteSerial(Serial);
         writer.WriteUInt16BigEndian((ushort)Graphic);
-        writer.WriteByte(LabelType);
+        writer.WriteByte(_type);
         writer.WriteUInt16BigEndian(LabelHue);
         writer.WriteUInt16BigEndian(LabelFont);
         writer.WriteUInt32BigEndian((uint)Cliloc);

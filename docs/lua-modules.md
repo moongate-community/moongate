@@ -175,6 +175,24 @@ Binding runs once, at startup, and any failure is reported through the exception
 
 See [Writing a plugin: registering Lua modules](plugins.md#what-register-may-do) for where `Register` fits in the plugin lifecycle.
 
+## In the API reference
+
+The site's [Lua API reference](https://moongate.sh/lua/) is generated from the same attributes
+as `definitions.lua`. A module the shipped server registers, in `AddUltimaScriptModules` or in
+`Moongate.Scripting`, gets a page there with nothing to write by hand: the page shows the
+`[ScriptModule]` help text, and each function shows its Lua signature, its `helpText` and its
+parameters with their defaults. So both texts are required for those modules: the site build
+fails on a module without help text or a function without `helpText`. A module registered by a
+plugin of your own is not listed on the site; its `definitions.lua` entries are still written.
+
+A callback is taken as a `LuaValue`, which the editor and the site would show as `any`. Mark it
+`[ScriptParameterType("function")] LuaValue callback`, as `timer.after` does, so both show
+`function`.
+
+`LuaModuleDescriber.Describe(typeof(GreeterModule))` gives the same description without
+building the module, and `LuaFunctionDescriber.Describe(function)` gives a function's
+parameters and return in Lua terms, if you want to generate documentation for your own modules.
+
 ## Testing without a server
 
 The minimal path needs no server: open the libraries a module needs, bind it with

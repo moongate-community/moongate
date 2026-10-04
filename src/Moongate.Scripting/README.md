@@ -24,6 +24,8 @@ dotnet add package Moongate.Scripting
   each handler runs as a coroutine on the game loop.
 - VM resumes have an instruction budget; blocking C# bindings and total memory are not bounded by it.
 - `definitions.lua` and `.luarc.json` are written at startup for editor completion.
+- `LuaModuleDescriber` and `LuaFunctionDescriber` describe a module and its functions from the type alone, in Lua
+  terms, for documentation generated without starting the engine.
 
 ## Sandbox
 

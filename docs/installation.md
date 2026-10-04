@@ -55,7 +55,9 @@ the server first: replacing the binary under a live process is not supported.
 
 After the upgrade run `mgctl init /srv/moongate` again to add the files the new release ships, then
 `mgctl migrate apply --root-directory /srv/moongate --target auth` and the same with
-`--target world`: the server refuses to start while migrations are pending.
+`--target world`: the server refuses to start while migrations are pending, unless
+[`persistence.auto_apply_migrations`](persistence-migrations.md#apply-at-startup) is on, which makes
+a start copy and apply them itself.
 
 The upgrade replaces `/opt/moongate` entirely and deletes the copy it moved aside. Nothing you
 want to keep belongs in there, which is why the server root goes somewhere else.

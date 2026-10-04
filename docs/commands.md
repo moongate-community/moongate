@@ -1,7 +1,12 @@
 # Server commands
 
 Moongate accepts commands through its interactive server console. Press `*` to
-unlock the prompt after startup; [`console lock`](commands/console.md) locks it again. In game, type a command with a leading dot,
+unlock the prompt after startup; [`console lock`](commands/console.md) locks it again. On the
+console, TAB completes the command name and then the arguments that have fixed values, such as
+`account create` and its levels, `script reload` and the `.lua` files, `help` and the command
+names (a second TAB lists what matches what you typed); it never offers a user name or a
+password. Up and Down walk the lines you sent since the start (the last 100; an `account create`
+line with a password is never kept), and Escape clears the line. In game, type a command with a leading dot,
 such as `.help`. Commands are separated on whitespace; quoted arguments and
 passwords containing spaces are not supported.
 
@@ -36,7 +41,9 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`initial_spawn`](commands/initial_spawn.md) | `initial_spawn` | Yes | Yes | Administrator | Game |
 | [`globallight`](commands/globallight.md) | `globallight [0-31]` | Yes | Yes | GameMaster | Game |
 | [`spawn`](commands/spawn.md) | `spawn <template>`, then target a spot | No | Yes | GameMaster | Game |
-| [`remove`](commands/remove.md) | `remove`, then target an NPC | No | Yes | GameMaster | Game |
+| [`set`](commands/set.md) | `set <hits\|mana\|stamina\|hunger\|thirst> <value>`, then target a mobile | No | Yes | GameMaster | Game |
+| [`add`](commands/add.md) | `add <template>`, then target a spot | No | Yes | GameMaster | Game |
+| [`remove`](commands/remove.md) | `remove`, then target an NPC or an item on the ground | No | Yes | GameMaster | Game |
 | [`where`](commands/where.md) | `where`, then target anything | No | Yes | GameMaster | Game |
 | [`go`](commands/go.md) | `go [<x>,<y>,<z> [map] \| <place>]` | No | Yes | GameMaster | Game |
 | [`moongate`](commands/moongate.md) | `moongate <x>,<y>,<z> [map]` | No | Yes | GameMaster | Game |
@@ -54,7 +61,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 ### By who uses them
 
 - **Everyone:** `help`, `echo`, `time`.
-- **Game masters:** `character`, `spawn`, `remove`, `where`, `go`, `moongate`, `fame`, `karma`, `globallight`,
+- **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `where`, `go`, `moongate`, `fame`, `karma`, `globallight`,
   `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`.
 - **Administrators:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, plus everything a

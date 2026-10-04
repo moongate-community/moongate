@@ -56,7 +56,7 @@ internal sealed class EventsModule
     ///     A handle for <see cref="Off" />.
     /// </returns>
     [ScriptFunction(helpText: "Runs fn with the event's table every time the event happens. Returns a handle for off.")]
-    public string On([ScriptParameterType("EventName")] string name, LuaValue fn)
+    public string On([ScriptParameterType("EventName")] string name, [ScriptParameterType("function")] LuaValue fn)
     {
         if (!_names.Contains(name))
         {

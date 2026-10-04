@@ -40,6 +40,7 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - Meet NPCs that wander around their home, greet and answer, and, when their script says so, walk to a
   place or follow someone around what stands in the way.
 - Open the bank box at a banker by saying *bank*, in any client language.
+- Get hit points, mana and stamina back with time, get hungry and thirsty, eat and drink.
 - Open the treasure chests of the dungeons and the shop crates that fill up; read a clock; switch war mode.
 
 ## What a game master can do
@@ -86,6 +87,8 @@ See all of them in [Commands](commands.md).
   themselves through Redis leases; the login filters them by account level and hands the player
   over with a one-use ticket.
 - The packets the server handles and sends are listed in the [packet reference](packets.md).
+- The modules and functions Lua scripts can call are listed in the
+  [Lua API reference](https://moongate.sh/lua/), generated from the server's code.
 
 ### World
 
@@ -119,7 +122,7 @@ See all of them in [Commands](commands.md).
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
-  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `gumps/go.lua`, `wander.lua`,
+  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `gumps/go.lua`, `wander.lua`, `monster.lua`,
   `banker.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
   and `gumps/tutorial_list.lua`.
 - Not yet: timers on mobiles, combat and skill events.

@@ -129,7 +129,7 @@ internal static class ModernUoChestConverter
         var spawn = new SpawnTemplate
         {
             Id = id,
-            Map = map,
+            Map = ModernUoSpawnConverter.MapOf(spawner, map),
             Name = $"Treasure chest level {string.Join(", ", levels)}",
             ItemIds = levels.Select(level => $"treasure_chest_level_{level}").ToList(),
             Max = Math.Min(count, caps),

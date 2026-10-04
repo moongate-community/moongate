@@ -127,6 +127,56 @@ public sealed class UoxStartingItemsConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_TheCommonSet_AlsoGetsMoongatesOwnGoldBreadAndWater_WhenTheItemsExist()
+    {
+        _dirs.WriteSource(
+            "extras.dfn",
+            """
+            [0x0eed]
+            {
+            id=0x0eed
+            name=gold coin
+            }
+            [0x103b]
+            {
+            id=0x103b
+            name=bread loaf
+            }
+            [0x1f9e]
+            {
+            id=0x1f9e
+            name=pitcher of water
+            }
+            """
+        );
+        WriteSources("[BESTSKILL 0]\n{\nPACKITEM=0x0f7a\n}\n[DEFAULT ALL]\n{\nPACKITEM=0x0f7a\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        // UOX3 keeps the starting gold in uox.ini and gives no food: the gold first, bread and water last.
+        var common = Assert.Single(ReadSets(), set => set.Common);
+        Assert.Equal(
+            ["0x0eed_gold_coin", "0x0f7a_black_pearl", "0x103b_bread_loaf", "0x1f9e_pitcher_of_water"],
+            common.Items.Select(entry => Assert.Single(entry.Items))
+        );
+        Assert.Equal(["1000", null, "3", null], common.Items.Select(entry => entry.Amount?.ToString()));
+        Assert.All(common.Items, entry => Assert.False(entry.Equip));
+        Assert.Single(Assert.Single(ReadSets(), set => !set.Common).Items);
+    }
+
+    [Fact]
+    public void Run_WithNoDefaultAllSection_TheCommonSetIsMadeForMoongatesOwnItems()
+    {
+        _dirs.WriteSource("extras.dfn", "[0x0eed]\n{\nid=0x0eed\nname=gold coin\n}\n");
+        WriteSources("[BESTSKILL 0]\n{\nPACKITEM=0x0f7a\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var common = Assert.Single(ReadSets(), set => set.Common);
+        Assert.Equal(["0x0eed_gold_coin"], Assert.Single(common.Items).Items);
+    }
+
+    [Fact]
     public void Run_TheHeader_IsFollowedByABlankLine()
     {
         WriteSources("[DEFAULT ALL]\n{\nPACKITEM=0x0f7a\n}\n");

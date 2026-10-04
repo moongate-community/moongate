@@ -45,9 +45,23 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.SpawnDescription
         );
+        container.RegisterCommand<AddCommand>(
+            "add",
+            "Puts an item from an item template on the ground where you target: add <template>.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.AddDescription
+        );
+        container.RegisterCommand<SetCommand>(
+            "set",
+            "Sets the hits, mana, stamina, hunger or thirst of the mobile you target: set <hits|mana|stamina|hunger|thirst> <value>.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.SetDescription
+        );
         container.RegisterCommand<RemoveCommand>(
             "remove",
-            "Removes the NPC you target.",
+            "Removes the NPC or the item on the ground you target.",
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.RemoveDescription

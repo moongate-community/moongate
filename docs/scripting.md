@@ -47,6 +47,10 @@ exists but fails compilation/execution aborts server startup.
 
 ## Available host functions
 
+The [Lua API reference](https://moongate.sh/lua/) has a page for each module, with every
+function's signature, parameters and return type; it is generated from the server's code. The
+table below is the same surface at a glance.
+
 | API | Purpose |
 | --- | --- |
 | `engine.name`, `.version`, `.codename`, `.platform` | Read-only engine metadata |
@@ -72,6 +76,8 @@ exists but fails compilation/execution aborts server startup.
 | `npc.delete(serial)` | Deletes the NPC and what it carries, on the next turn of the game loop; `false` for a serial that is not an NPC in the world |
 | `npc.face(serial, x, y)`, `npc.distance_to(serial, x, y)` | Turns the NPC towards a place without stepping, seen by the players in range (`false` for a frozen NPC); and the tiles between the NPC and a place, the larger of the two differences, as the view range counts them |
 | `npc.nearby(serial, range, kind?)` | The serials of the mobiles within `range` tiles (0 to 32) of the NPC, itself left out, nearest first, as a list: the other NPCs, or with `kind` `"players"` the players, with `"all"` everyone. Height and line of sight are not checked: `for _, other in ipairs(npc.nearby(serial, 8)) do ... end`. Empty for a serial that is not an NPC or a range out of bounds |
+| `npc.home(serial)`, `npc.wander(serial)` | The home of an NPC of a spawn region, the area it was spawned in, as `{ x1, y1, x2, y2 }` (`nil` without one); and one stroll step, as ModernUO's wander: two times in three straight ahead, else another way. An NPC with a home keeps to it, and from outside it walks back along a path, with a step at random when none is found so a wall does not hold it. `false` when it did not move, as in a home of one cell |
+| `npc.can_see(serial, other, range?, in_sight?)`, `npc.players_in_sight(serial, range?, limit?)` | Whether the NPC sees a mobile: on its map, within `range` tiles (default 16, 0 to 32), not hidden, not a game master or an administrator, and in line of sight from eye to eye; with `in_sight` `false` the line of sight is not checked, for what it keeps following once it saw it. A line of sight is never checked beyond `ultima.line_of_sight.max_distance` (25), so nothing is seen farther. And the players it sees, nearest first, as a list, `limit` of them at most: `local prey = npc.players_in_sight(serial, 16, 1)[1]` |
 | `npc.walk_to(serial, x, y, z?, range?, running?)` | One step along a path to a place that goes around what stands in the way; call it on every `on_think`. It answers `"moving"` after a step, `"arrived"` once within `range` tiles of the place (default 0), `"blocked"` while it waits to look for another way, `"no_path"` when none was found; `nil` for a serial that is not an NPC. See [Walking a path](#walking-a-path) |
 | `npc.find_path(serial, x, y, z?, partial?)` | The steps from the NPC to a place, as a list of `DirectionType`, for a script that walks them itself with `npc.step`; with `partial`, the steps to the closest place when it cannot be reached. `nil` when there is no path or the place is too far. Each call searches: keep the list |
 | `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
@@ -80,6 +86,7 @@ exists but fails compilation/execution aborts server startup.
 | `item.item_id(serial)`, `item.set_item_id(serial, graphic)` | The item's graphic, and changing it (0 to 65535), as a door opening: the players around a ground item, or the owner of a carried one, see it change; `false` for an unknown, worn or held item or a graphic out of range; an item inside a container on the ground changes without being shown again |
 | `item.set_light(serial, type)` | The light shape a light source gives, by `LightType` name such as `circle150`, `circle300` or `west_big`; `nil` clears it. The players who see the item are shown it again; the client draws the light only for a lit graphic. `false` for an unknown shape or a worn or held item |
 | `item.location(serial)`, `item.move_to(serial, x, y, z)` | Where a ground item lies, `{ x, y, z, map }`, and moving it on its map: the players around the old spot lose it and those around the new one see it; `nil`/`false` for an item not on the ground, a spot outside the map or a `z` outside -128 to 127; moving restarts a decaying item's decay |
+| `item.in_range(serial, mobile, range)` | Whether a mobile is on the map of a ground item and within `range` tiles of it, the larger of the two differences: `if item.in_range(serial, user, 2) then ... end`; `false` for an item not on the ground, a mobile not in the world or a negative range |
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
 | `item.give(mobile, template, amount?)` | Makes a new item from an item template in the mobile's backpack and gives its serial; the owner sees it at once and its next save keeps it. `nil` for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack) or when the server has no serial ready: it keeps 64 in reserve and refills them in the background, so a script that makes more than that in one go gets `nil` for the rest and must try again later |
 | `item.add_loot(container, table, rolls?)` | Rolls a loot table of `templates/loots` once, or `rolls` times, and puts what it gives into a container, or into the backpack of a mobile; returns how many items it added, `0` for rolls that give nothing, an unknown table or something that is no container; fewer than the roll gave when the container is full (125 items) or the server has no item serial at hand for a moment |
@@ -93,7 +100,12 @@ exists but fails compilation/execution aborts server startup.
 | `prompt.ask(player, fn)`, `prompt.cancel(player)` | Ask the player for a line of text, typed in the journal line, and run `fn(text)` with it: up to 128 characters, without the spaces around it, or `nil` when the player pressed escape, typed only spaces, was asked something else or left. Say what to type first with `mobile.message`. `false` for an NPC or a player not in the world |
 | `item.move_into(serial, container)` | Moves the item into a container, or into the backpack of a mobile when `container` is a mobile's serial; those who saw it lose it and the new owner sees it. `false` for a worn or held item, a target that is not a container, a container put into itself or into what it holds, or an item one mobile carries moved to another mobile (a trade, not supported yet). No weight or item limit is checked, and players who have a container on the ground open do not see it change until they open it again |
 | `mobile.teleport(serial, x, y, z, map?)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map, or of `map` (a `MapType`, or its name such as `"Tokuno"`) when given: a player's client is told of the map change (0xBF 0x08) and where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a `z` outside -128 to 127 |
+| `mobile.animate(serial, action, frames?, repeat_count?)` | Plays an animation of the mobile, seen by its own player and those who see it: `action` is a number of its body (0 to 65535), with `frames` (1 to 255, default 5) played `repeat_count` times (1 to 255, default 1). The bodies do not share the numbers, so use the names of the body: `HumanAnimationType` (`Bow`, `Salute`, `Fidget1`, `Spell1`...), `MonsterAnimationType` (`Attack1`, `GetHit`, `Pillage`, `Fidget1`...) or `AnimalAnimationType` (`Eat`, `Alert`, `LieDown`...), as in `mobile.animate(who, HumanAnimationType.Bow)`; a number works too. `false` for a mobile not in the world or a number out of range |
 | `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells; `false` for a sound out of range or a mobile not in the world |
+| `mobile.message_cliloc(serial, cliloc, args?)` | A system message of the client's own texts, by its number, in the language of that client: `mobile.message_cliloc(who, 500867)`; `args` fills its `~1_NAME~` places, split by tabs. `false` for a number not above 0, an NPC or a player not in the world |
+| `mobile.body_type(serial)` | The kind of the mobile's body, as `data/bodies.toml` says: `BodyType.Human` (every race of player and the human NPCs), `Monster`, `Animal`, `Sea`, `Equipment`, or `Empty` for a body the file does not list. The kind tells which animations the body has: `if mobile.body_type(who) == BodyType.Human then mobile.animate(who, HumanAnimationType.Eat) end`. `nil` for a mobile not in the world |
+| `mobile.hunger(serial)`, `mobile.set_hunger(serial, value)` | How full the mobile is, from 0 (starving) to 20 (full), and setting it, kept in that range: `mobile.set_hunger(who, mobile.hunger(who) + 3)`. A player loses a point every `ultima.regeneration.hunger_minutes`, counted from when it entered the world, and, at 0, gets no hit points back; the staff neither gets hungry nor starves. `nil` and `false` for a mobile not in the world |
+| `mobile.thirst(serial)`, `mobile.set_thirst(serial, value)` | How quenched the mobile is, from 0 (parched) to 20 (quenched), and setting it, kept in that range: `mobile.set_thirst(who, mobile.thirst(who) + 3)`. A player loses a point every `ultima.regeneration.hunger_minutes`, as for hunger, and, at 0, gets no stamina back; the staff is left alone. `nil` and `false` for a mobile not in the world |
 | `mobile.message(serial, text)` | A system message, in the lower left of the screen, read only by that player: `mobile.message(who, "That is too far away.")`; cut at 128 characters; `false` for an empty text, an NPC or a player not in the world |
 | `mobile.template(serial)` | The id of the mobile template an NPC was made from, such as `"f_baker"`; `nil` for a player or a mobile not in the world |
 | `mobile.name(serial)`, `mobile.is_player(serial)`, `mobile.direction(serial)` | The mobile's name, whether it is a player's character, and the `DirectionType` it faces; `nil`, `false` and `nil` for a mobile not in the world |
@@ -257,12 +269,7 @@ function wander.on_think(serial)
     thinks[serial] = (thinks[serial] or 0) + 1
 
     if thinks[serial] % 4 == 0 then
-        -- pick_direction (in the file) keeps a spawned NPC in its home area; nil when no step does.
-        local direction = pick_direction(serial)
-
-        if direction ~= nil then
-            npc.step(serial, direction)
-        end
+        npc.wander(serial)
     end
 end
 
@@ -286,8 +293,9 @@ end
 
 No template in the repository uses it: add `script_id = "wander"` to a mobile template
 to try it. An NPC spawned by a spawn region carries its home area in the props `spawn.x1`,
-`spawn.y1`, `spawn.x2` and `spawn.y2`: `wander.lua` only steps inside it, and walks the NPC back
-when it is outside.
+`spawn.y1`, `spawn.x2` and `spawn.y2`, which `npc.home` gives as a table: `npc.wander` only steps
+inside it, and walks the NPC back when it is outside. It strolls as ModernUO's creatures do, mostly
+straight ahead, where the script before picked a new direction at every step.
 
 A script's `local` tables live in memory: they start again empty after a restart or a
 reload. To remember something across restarts, keep it in the NPC's props, prefixing the
@@ -310,6 +318,29 @@ so the NPCs use the new functions from their next think; state kept in `local`
 tables of the old file starts again, and the waits its handlers left are cancelled,
 because a script's calls belong to `mobiles/<script_id>.lua`. When the server stops,
 the scripts are no longer called, before the script engine stops.
+
+### The monster script
+
+The distribution's `scripts/mobiles/monster.lua` is the script of the monsters that go for the players,
+after ModernUO's melee AI without the fight: the server has no combat yet. A template takes it with
+`script_id = "monster"`; the undead of the graveyards do (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`,
+`spectre`, `lich`), and so the templates based on them. The wraith, the spectre and the lich are casters in
+ModernUO: they walk up and snarl like the others until magic exists. A
+monster is in one of three states:
+
+| State | What it does | It ends when |
+| --- | --- | --- |
+| wander | Strolls in its home, the area of its spawn region: about a step every two seconds, mostly straight ahead. It strolls with `npc.wander`, which walks it back from outside, as after a chase. One think in twenty it rests 15 to 25 seconds, with its `idle` sound and a fidget | It sees a player |
+| chase | Threatens the player with its `start_attack` sound and an animation, goes into war mode and walks to it with `npc.walk_to`, a step every think, never running. Beside it, it faces it and snarls every three seconds (`attack` sound and an attack animation): it does no harm | The player hides, leaves, is farther than 32 tiles, or cannot be reached for 20 seconds |
+| guard | Stands in war mode for 10 seconds, looking around | It sees a player, or the time is over: back to wander, in peace |
+
+It looks for a player every two seconds while it wanders and every second on guard, and takes the
+nearest one of `npc.players_in_sight`: within 16 tiles and in line of sight, from eye to eye. It never
+sees a hidden player, a game master or an administrator, and it ignores NPCs. Once it chases a player
+it follows it without seeing it (`npc.can_see` with `in_sight` false), up to the leash. A player it could not
+reach is left alone until it moves. What a monster is doing is kept in memory by its serial, not
+saved: after a restart, or once no player is near enough for it to think, it starts again from
+wandering. The numbers (16, 32, the times) are constants at the top of the file.
 
 ### Walking a path
 
@@ -460,6 +491,38 @@ graphic, such as a brazier, stays as it is. The lights `.decorate` places have t
 light and douse themselves: every 30 seconds the server calls `on_darkness(serial, dark)` on a
 lamp post whose spot turned dark or light (`ultima.world.lamp_post_light`), and `light.lua`
 switches its graphic silently.
+
+`scripts/items/food.lua` is the script of what can be eaten, as ModernUO's `Food`: the converted
+food templates carry `script_id = "food"`. Double clicking a piece eats one: the player's hunger rises
+by the item's prop `food.fill` (3 without it), 20 at most; it gets 6 to 8 points of stamina back, makes
+the sound and, with a body of the `Human` kind (`mobile.body_type`), the gesture of eating, and reads how full it feels
+in the language of its client (messages 500868 to 500872). A full player reads "You are simply too full
+to eat any more!" (500867) and eats nothing.
+
+`scripts/items/drink.lua` is the script of what can be drunk, as ModernUO's beverages: the converted
+drink templates carry `script_id = "drink"`. Double clicking one drinks a sip: the player's thirst rises
+by the item's prop `drink.fill` (3 without it), 20 at most, and it makes the sound and, with a body of
+the `Human` kind, the gesture of drinking. The graphic says how many sips a full container holds: a
+pitcher or a bottle 5, a jug 10, a glass or a mug 1; the sips left are kept in the prop `drink.uses`.
+Once empty, a pitcher, a glass or a mug turns into its empty graphic, is renamed and stays; a bottle or a jug
+is gone. A quenched player reads "You are simply too full to drink any more!" and drinks nothing.
+Refilling, pouring and drunkenness are not there yet.
+
+Hit points, mana and stamina come back by themselves (see
+[`ultima.regeneration`](server-configuration.md)). A script changes the rate of one mobile with its
+props, in seconds for a point: `mobile.set_prop(who, "regen.hits", 2)` heals it five times faster than
+the default; `nil` gives it the configured rate back. The props are `regen.hits`, `regen.mana` and
+`regen.stamina`.
+
+The two teleporter scripts below share `scripts/common/teleport.lua`, a Lua module they take with
+`local teleport = require("common.teleport")`: `teleport.send(serial, who)` sends a mobile where the
+item's props say (`teleport.x`, `teleport.y`, `teleport.z`, `teleport.map`), with the smoke of
+`source_effect` and `dest_effect` and the sound of `sound_id`, and `teleport.is_on(value)` reads a flag
+the decoration files carry as text. A script of your own that teleports can take it the same way.
+A script keeps the module it took: after `script reload common/teleport.lua`, reload the scripts that
+use it too (see [Reload and ownership](#reload-and-ownership)). `mgctl init` adds `scripts/common/` to an
+existing root and keeps the scripts already there; a root whose item scripts are replaced by hand needs
+`scripts/common/` as well, or its teleporters stop.
 
 `scripts/items/teleporter.lua` is the script of the `decoration_teleporter` template that
 [`.decorate`](commands/decorate.md) gives to ModernUO's `Teleporter`: on `on_move_over` it

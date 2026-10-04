@@ -51,6 +51,12 @@ public interface IWorldViewService
     void MobileAppeared(MobileEntity mobile);
 
     /// <summary>
+    ///     Shows an animation of the mobile (0x6E) to its own player and to the players who see it: the action of its
+    ///     body, played <paramref name="repeatCount" /> times with <paramref name="frameCount" /> frames.
+    /// </summary>
+    void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount);
+
+    /// <summary>
     ///     Tells the mobile's own player and the players who see it that its flags changed, such as war mode or
     ///     frozen (0x77): the figure stays where it is.
     /// </summary>

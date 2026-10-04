@@ -9,14 +9,8 @@ using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Loaders;
-using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services.Diagnostics;
 using Moongate.Server.Ultima.Services;
-using Moongate.Core.Types.Geometry;
-using Moongate.Server.Ultima.Types.Weather;
-using Moongate.Ultima.Types;
-using Moongate.Server.Ultima.Types.Effects;
-using Moongate.Server.Ultima.Types.Speech;
 
 namespace Moongate.Server.Ultima.Extensions;
 
@@ -44,6 +38,8 @@ public static class UltimaWorldContainerExtensions
         container.Register<ILootService, LootService>(Reuse.Singleton);
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
         container.Register<INpcTickService, NpcTickService>(Reuse.Singleton);
+        container.AddMoongateService<IRegenerationService, RegenerationService>(12);
+        container.AddMoongateService<IHungerService, HungerService>(12);
         // After the script engine (70) and its bootstrap: the mobile scripts load into the running engine.
         container.AddMoongateService<NpcScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
@@ -103,28 +99,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
         container.Register<IPathfindingService, PathfindingService>(Reuse.Singleton);
         container.Register<INpcPathService, NpcPathService>(Reuse.Singleton);
-        container.AddScriptModule<DiceModule>();
-        container.AddScriptModule<LocalizationModule>();
-        container.AddScriptModule<NpcModule>();
-        container.AddScriptModule<ItemModule>();
-        container.AddScriptModule<WorldModule>();
-        container.AddScriptModule<MobileModule>();
-        container.AddScriptModule<TargetModule>();
-        container.AddScriptModule<PromptModule>();
-        container.AddScriptModule<GumpModule>();
-        container.AddScriptModule<BankModule>();
-        container.AddScriptModule<EffectModule>();
-        container.AddScriptModule<MoongatesModule>();
-        container.AddScriptModule<LocationsModule>();
-        // No module function takes it: registered so on_speech can compare its keywords with names.
-        container.RegisterScriptEnum<SpeechKeywordType>();
-        container.RegisterScriptEnum<DirectionType>();
-        container.RegisterScriptEnum<SkillType>();
-        container.RegisterScriptEnum<SeasonType>();
-        container.RegisterScriptEnum<WeatherKindType>();
-        container.RegisterScriptEnum<EffectGraphicType>();
-        container.RegisterScriptEnum<EffectRenderModeType>();
-        container.RegisterScriptEnum<EffectLayerType>();
+        container.AddUltimaScriptModules();
 
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
         container.AddLiveWorldMobiles();

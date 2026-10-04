@@ -8,7 +8,8 @@ using Serilog;
 namespace Moongate.Server.Services.Console;
 
 /// <summary>
-///     Polls the terminal for keystrokes and dispatches submitted command lines.
+///     Polls the terminal for keystrokes and dispatches submitted command lines. TAB completes the command name and the
+///     arguments its command knows, Up and Down walk the lines submitted in this run.
 /// </summary>
 public sealed class ConsoleInputService : IConsoleInputService, IDisposable
 {
@@ -18,6 +19,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     private readonly ICommandSystemService _commands;
     private readonly IConsoleKeySource _keys;
     private readonly CancellationTokenSource _lifetime = new();
+    private readonly ConsoleHistory _history = new();
     private readonly ILogger _logger = Log.ForContext<ConsoleInputService>();
 
     private Task _loop = Task.CompletedTask;
@@ -81,19 +83,33 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         return key.KeyChar == '\0' && key.Key == default && key.Modifiers == 0;
     }
 
+    // A line carrying a password, account create <user> <password>: masked on the prompt and never kept.
+    private static bool IsSensitive(string input)
+    {
+        return TryFindPassword(input, out _, out _);
+    }
+
     private static string MaskSensitiveInput(string input)
+    {
+        return TryFindPassword(input, out var start, out var end)
+            ? input[..start] + new string('*', end - start) + input[end..]
+            : input;
+    }
+
+    private static bool TryFindPassword(string input, out int start, out int end)
     {
         var text = input.AsSpan();
         var position = 0;
         var command = ReadToken(text, ref position);
         var action = ReadToken(text, ref position);
         var username = ReadToken(text, ref position);
+        start = end = 0;
 
         if (!command.Equals("account".AsSpan(), StringComparison.OrdinalIgnoreCase) ||
             !action.Equals("create".AsSpan(), StringComparison.OrdinalIgnoreCase) ||
             username.IsEmpty)
         {
-            return input;
+            return false;
         }
 
         while (position < text.Length && char.IsWhiteSpace(text[position]))
@@ -101,12 +117,11 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
             position++;
         }
 
-        var passwordStart = position;
+        start = position;
         _ = ReadToken(text, ref position);
+        end = position;
 
-        return position == passwordStart
-            ? input
-            : input[..passwordStart] + new string('*', position - passwordStart) + input[position..];
+        return end > start;
     }
 
     private static ReadOnlySpan<char> ReadToken(ReadOnlySpan<char> text, ref int position)
@@ -130,6 +145,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     {
         var buffer = new StringBuilder();
         var lockWarningShown = false;
+        var tabbed = false;
 
         try
         {
@@ -177,11 +193,46 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                     continue;
                 }
 
+                // A second TAB in a row lists the matches the first one could not choose between.
+                var secondTab = tabbed && key.Key == ConsoleKey.Tab;
+                tabbed = key.Key == ConsoleKey.Tab;
+
+                if (key.Key == ConsoleKey.Tab)
+                {
+                    // A TAB that completed something starts over: only one that could not arms the listing.
+                    tabbed = !Complete(buffer, secondTab);
+
+                    continue;
+                }
+
+                if (key.Key is ConsoleKey.UpArrow or ConsoleKey.DownArrow)
+                {
+                    var recalled = key.Key == ConsoleKey.UpArrow ? _history.Previous(buffer.ToString()) : _history.Next();
+
+                    if (recalled is not null)
+                    {
+                        Replace(buffer, recalled);
+                    }
+
+                    continue;
+                }
+
                 if (key.Key == ConsoleKey.Enter)
                 {
                     var commandLine = buffer.ToString();
                     buffer.Clear();
                     _prompt.UpdateInput("");
+
+                    // A line the prompt masks carries a password: it is never kept.
+                    if (!IsSensitive(commandLine))
+                    {
+                        _history.Add(commandLine);
+                    }
+                    else
+                    {
+                        _history.Reset();
+                    }
+
                     await SubmitAsync(commandLine, cancellationToken);
 
                     continue;
@@ -193,6 +244,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                     {
                         buffer.Length--;
                         _prompt.UpdateInput(MaskSensitiveInput(buffer.ToString()));
+                        _history.Reset();
                     }
 
                     continue;
@@ -203,6 +255,9 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                     buffer.Clear();
                     _prompt.UpdateInput("");
 
+                    // A line thrown away, a password with it, does not come back with Down.
+                    _history.Reset();
+
                     continue;
                 }
 
@@ -210,6 +265,9 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                 {
                     buffer.Append(key.KeyChar);
                     _prompt.UpdateInput(MaskSensitiveInput(buffer.ToString()));
+
+                    // An edited line is the one being typed: the next Up keeps it for Down.
+                    _history.Reset();
                 }
             }
         }
@@ -222,6 +280,46 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
             _logger.Error(exception, "Console input has stopped unexpectedly; no further keys will be processed.");
             _prompt.HidePrompt();
         }
+    }
+
+    // Whether the line changed.
+    private bool Complete(StringBuilder buffer, bool list)
+    {
+        var (text, matches) = ConsoleCompletion.Complete(buffer.ToString(), CandidatesAfter);
+
+        if (text != buffer.ToString())
+        {
+            Replace(buffer, text);
+            _history.Reset();
+
+            return true;
+        }
+
+        if (list && matches.Count > 1)
+        {
+            _prompt.WriteOutputLine(string.Join("  ", matches), CommandOutputLevel.Information);
+        }
+
+        return false;
+    }
+
+    // The console commands for the first word, then the values the command gives for its next argument.
+    private IEnumerable<string> CandidatesAfter(IReadOnlyList<string> previous)
+    {
+        if (previous.Count == 0)
+        {
+            return _commands.GetRegisteredCommands()
+                            .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
+                            .SelectMany(definition => definition.Aliases);
+        }
+
+        return _commands.GetArgumentCompletions(previous[0], previous.Skip(1).ToArray());
+    }
+
+    private void Replace(StringBuilder buffer, string text)
+    {
+        buffer.Clear().Append(text);
+        _prompt.UpdateInput(MaskSensitiveInput(text));
     }
 
     private async Task SubmitAsync(string commandLine, CancellationToken cancellationToken)

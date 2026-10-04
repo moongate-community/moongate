@@ -90,7 +90,7 @@ written. The [scripting page](scripting.md#available-host-functions) lists what 
 
 | Step | State | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- | --- |
-| 1.1 | ❌ | **Regeneration** of hits, mana and stamina; hunger | Nothing depends on anything else; visible in the first fight | |
+| 1.1 | ✅ | **Regeneration** of hits, mana and stamina; hunger and thirst, food that is eaten and drinks that are drunk | Nothing depends on anything else; visible in the first fight | |
 | 1.2 | ❌ | **Skill use, check and gain**; stat gain; caps and locks. Stats and skills are stored; nothing uses them | The progression of the game; every later system calls the skill check | UOX3 `skills.dfn` (61 skills: stat weights, gain curves), ModernUO `skills.json` |
 | 1.3 | ❌ | **Timed effects**: one mechanism for poison, curses, blessings, polymorph, hiding; the buff bar shows them | Magic, potions and combat all need it | |
 | 1.4 | 🟡 | **Containers on the ground**, with item and weight limits; weight and overloading. Done: a container on the ground opens, items go in and out of it, 125 at most; left: the weight limits and overloading | Corpses, vendors, chests and houses need them | |
@@ -113,7 +113,7 @@ written. The [scripting page](scripting.md#available-host-functions) lists what 
 | Step | State | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- | --- |
 | 3.1 | 🟡 | **Pathfinding** and movement that checks items and mobiles. Done: the A* path search, `npc.walk_to`, and items that block; mobiles do not block yet | AI cannot chase without it | |
-| 3.2 | 🟡 | **NPC AI**: melee, archer, mage, animal, fleeing; NPC memory of who attacked. Today a Lua script on a tick, and wandering | The 29,000 spawned NPCs become content | UOX3 NPC tags dropped today (`NPCAI`, `FLEEAT`, `SPATTACK`), ModernUO `npc-speeds.json` |
+| 3.2 | 🟡 | **NPC AI**: melee, archer, mage, animal, fleeing; NPC memory of who attacked. Today a Lua script on a tick, wandering, and `monster.lua`, the melee AI without the fight, on the undead of the graveyards | The 29,000 spawned NPCs become content | UOX3 NPC tags dropped today (`NPCAI`, `FLEEAT`, `SPATTACK`), ModernUO `npc-speeds.json` |
 | 3.3 | 🟡 | **Loot on corpses**, carving, fame and karma gain. Loot is rolled into the backpack at spawn; there are no corpses | Reward for the fight | UOX3 `carve.dfn` (102 tables) |
 | 3.4 | 🟡 | **Notoriety**: criminal and murderer flags, name colours, murder counts. Today the name colour of the mobile template | Makes PvP rule-bound | |
 | 3.5 | ❌ | **Region rules and guards**: guarded towns, no recall, no gate, no housing | Makes towns safe | ModernUO `regions.json` (typed regions), UOX3 `regions.dfn` (179 rule sets) |

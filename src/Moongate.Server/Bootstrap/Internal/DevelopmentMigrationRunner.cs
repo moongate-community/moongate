@@ -114,6 +114,6 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        _logger.Information("Development migrations for {Target}: {Result}", target, output.Trim());
+        _logger.Information("Migrations for {Target}: {Result}", target, output.Trim());
     }
 }

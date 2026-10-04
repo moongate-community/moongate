@@ -1,9 +1,10 @@
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_0_earthele"
-map = "tokuno"
-name = "Tokuno earthele"
+map = "malas"
+name = "Malas earthele"
 mobile_ids = ["earthele"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -19,10 +20,11 @@ y2 = 59
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_0_dullcopperele"
-map = "tokuno"
-name = "Tokuno dullcopperele"
+map = "malas"
+name = "Malas dullcopperele"
 mobile_ids = ["dullcopperele"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -38,10 +40,11 @@ y2 = 59
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_0_yomotsuwarrior"
-map = "tokuno"
-name = "Tokuno yomotsuwarrior"
+map = "malas"
+name = "Malas yomotsuwarrior"
 mobile_ids = ["yomotsuwarrior"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -57,10 +60,11 @@ y2 = 59
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_0_yomotsupriest"
-map = "tokuno"
-name = "Tokuno yomotsupriest"
+map = "malas"
+name = "Malas yomotsupriest"
 mobile_ids = ["yomotsupriest"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -76,10 +80,11 @@ y2 = 59
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_1_earthele"
-map = "tokuno"
-name = "Tokuno earthele"
+map = "malas"
+name = "Malas earthele"
 mobile_ids = ["earthele"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -95,10 +100,11 @@ y2 = 50
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_1_dullcopperele"
-map = "tokuno"
-name = "Tokuno dullcopperele"
+map = "malas"
+name = "Malas dullcopperele"
 mobile_ids = ["dullcopperele"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -114,10 +120,11 @@ y2 = 50
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_1_yomotsuwarrior"
-map = "tokuno"
-name = "Tokuno yomotsuwarrior"
+map = "malas"
+name = "Malas yomotsuwarrior"
 mobile_ids = ["yomotsuwarrior"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -133,10 +140,11 @@ y2 = 50
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_1_yomotsupriest"
-map = "tokuno"
-name = "Tokuno yomotsupriest"
+map = "malas"
+name = "Malas yomotsupriest"
 mobile_ids = ["yomotsupriest"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -152,10 +160,11 @@ y2 = 50
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_2"
-map = "tokuno"
-name = "Tokuno firebeetle"
+map = "malas"
+name = "Malas firebeetle"
 mobile_ids = ["firebeetle"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -171,10 +180,11 @@ y2 = 28
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_3_earthele"
-map = "tokuno"
-name = "Tokuno earthele"
+map = "malas"
+name = "Malas earthele"
 mobile_ids = ["earthele"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -190,10 +200,11 @@ y2 = 97
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_3_dullcopperele"
-map = "tokuno"
-name = "Tokuno dullcopperele"
+map = "malas"
+name = "Malas dullcopperele"
 mobile_ids = ["dullcopperele"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -209,10 +220,11 @@ y2 = 97
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_3_yomotsuwarrior"
-map = "tokuno"
-name = "Tokuno yomotsuwarrior"
+map = "malas"
+name = "Malas yomotsuwarrior"
 mobile_ids = ["yomotsuwarrior"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -228,10 +240,11 @@ y2 = 97
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_3_yomotsupriest"
-map = "tokuno"
-name = "Tokuno yomotsupriest"
+map = "malas"
+name = "Malas yomotsupriest"
 mobile_ids = ["yomotsupriest"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -247,10 +260,11 @@ y2 = 97
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_4_earthele"
-map = "tokuno"
-name = "Tokuno earthele"
+map = "malas"
+name = "Malas earthele"
 mobile_ids = ["earthele"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -266,10 +280,11 @@ y2 = 86
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_4_dullcopperele"
-map = "tokuno"
-name = "Tokuno dullcopperele"
+map = "malas"
+name = "Malas dullcopperele"
 mobile_ids = ["dullcopperele"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -285,10 +300,11 @@ y2 = 86
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_4_yomotsuwarrior"
-map = "tokuno"
-name = "Tokuno yomotsuwarrior"
+map = "malas"
+name = "Malas yomotsuwarrior"
 mobile_ids = ["yomotsuwarrior"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -304,10 +320,11 @@ y2 = 86
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_4_yomotsupriest"
-map = "tokuno"
-name = "Tokuno yomotsupriest"
+map = "malas"
+name = "Malas yomotsupriest"
 mobile_ids = ["yomotsupriest"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -323,10 +340,11 @@ y2 = 86
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_5_earthele"
-map = "tokuno"
-name = "Tokuno earthele"
+map = "malas"
+name = "Malas earthele"
 mobile_ids = ["earthele"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -342,10 +360,11 @@ y2 = 114
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_5_dullcopperele"
-map = "tokuno"
-name = "Tokuno dullcopperele"
+map = "malas"
+name = "Malas dullcopperele"
 mobile_ids = ["dullcopperele"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -361,10 +380,11 @@ y2 = 114
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_5_yomotsuwarrior"
-map = "tokuno"
-name = "Tokuno yomotsuwarrior"
+map = "malas"
+name = "Malas yomotsuwarrior"
 mobile_ids = ["yomotsuwarrior"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -380,10 +400,11 @@ y2 = 114
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_5_yomotsupriest"
-map = "tokuno"
-name = "Tokuno yomotsupriest"
+map = "malas"
+name = "Malas yomotsupriest"
 mobile_ids = ["yomotsupriest"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -399,10 +420,11 @@ y2 = 114
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_6_earthele"
-map = "tokuno"
-name = "Tokuno earthele"
+map = "malas"
+name = "Malas earthele"
 mobile_ids = ["earthele"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -418,10 +440,11 @@ y2 = 144
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_6_dullcopperele"
-map = "tokuno"
-name = "Tokuno dullcopperele"
+map = "malas"
+name = "Malas dullcopperele"
 mobile_ids = ["dullcopperele"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -437,10 +460,11 @@ y2 = 144
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_6_yomotsuwarrior"
-map = "tokuno"
-name = "Tokuno yomotsuwarrior"
+map = "malas"
+name = "Malas yomotsuwarrior"
 mobile_ids = ["yomotsuwarrior"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -456,10 +480,11 @@ y2 = 144
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_6_yomotsupriest"
-map = "tokuno"
-name = "Tokuno yomotsupriest"
+map = "malas"
+name = "Malas yomotsupriest"
 mobile_ids = ["yomotsupriest"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -475,10 +500,11 @@ y2 = 144
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_7_earthele"
-map = "tokuno"
-name = "Tokuno earthele"
+map = "malas"
+name = "Malas earthele"
 mobile_ids = ["earthele"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -494,10 +520,11 @@ y2 = 91
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_7_dullcopperele"
-map = "tokuno"
-name = "Tokuno dullcopperele"
+map = "malas"
+name = "Malas dullcopperele"
 mobile_ids = ["dullcopperele"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -513,10 +540,11 @@ y2 = 91
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_7_yomotsuwarrior"
-map = "tokuno"
-name = "Tokuno yomotsuwarrior"
+map = "malas"
+name = "Malas yomotsuwarrior"
 mobile_ids = ["yomotsuwarrior"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -532,10 +560,11 @@ y2 = 91
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_7_yomotsupriest"
-map = "tokuno"
-name = "Tokuno yomotsupriest"
+map = "malas"
+name = "Malas yomotsupriest"
 mobile_ids = ["yomotsupriest"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -551,10 +580,11 @@ y2 = 91
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_8_earthele"
-map = "tokuno"
-name = "Tokuno earthele"
+map = "malas"
+name = "Malas earthele"
 mobile_ids = ["earthele"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -570,10 +600,11 @@ y2 = 49
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_8_dullcopperele"
-map = "tokuno"
-name = "Tokuno dullcopperele"
+map = "malas"
+name = "Malas dullcopperele"
 mobile_ids = ["dullcopperele"]
 npc_list_ids = []
+item_ids = []
 max = 1
 min_minutes = 5
 max_minutes = 10
@@ -589,10 +620,11 @@ y2 = 49
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_8_yomotsuwarrior"
-map = "tokuno"
-name = "Tokuno yomotsuwarrior"
+map = "malas"
+name = "Malas yomotsuwarrior"
 mobile_ids = ["yomotsuwarrior"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10
@@ -608,10 +640,11 @@ y2 = 49
 
 [[spawn]]
 id = "tokuno_modernuo_shared_yomutso_mines_8_yomotsupriest"
-map = "tokuno"
-name = "Tokuno yomotsupriest"
+map = "malas"
+name = "Malas yomotsupriest"
 mobile_ids = ["yomotsupriest"]
 npc_list_ids = []
+item_ids = []
 max = 2
 min_minutes = 5
 max_minutes = 10

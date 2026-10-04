@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using Lua;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
+using Moongate.Core.Utils;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Core.Geometry;
 using Moongate.Scripting.Interfaces;
@@ -32,6 +34,19 @@ public sealed class NpcModule
     // A mover's height: the ground of a place it walks to is first looked for no higher than its head.
     private const int MoverHeight = 16;
 
+    // The eye of a mobile above its feet, as the reach of an item is checked.
+    private const int EyeHeight = 14;
+
+    // How far an NPC sees when a script names no range, ModernUO's perception.
+    private const int DefaultSight = 16;
+
+    private const string HomeX1 = "spawn.x1";
+    private const string HomeY1 = "spawn.y1";
+    private const string HomeX2 = "spawn.x2";
+    private const string HomeY2 = "spawn.y2";
+
+    private const int Directions = 8;
+
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
     private readonly IWorldViewService _view;
@@ -44,6 +59,8 @@ public sealed class NpcModule
     private readonly INpcPathService? _paths;
     private readonly IPathfindingService? _finder;
     private readonly IMovementService? _movement;
+    private readonly ISessionService? _sessions;
+    private readonly ILineOfSightService? _sight;
     private readonly ILogger _logger = Log.ForContext<NpcModule>();
 
     public NpcModule(
@@ -58,9 +75,13 @@ public sealed class NpcModule
         IMoveOverService? moveOver = null,
         INpcPathService? paths = null,
         IPathfindingService? finder = null,
-        IMovementService? movement = null
+        IMovementService? movement = null,
+        ISessionService? sessions = null,
+        ILineOfSightService? sight = null
     )
     {
+        _sessions = sessions;
+        _sight = sight;
         _paths = paths;
         _finder = finder;
         _movement = movement;
@@ -223,7 +244,14 @@ public sealed class NpcModule
     ///     script's <c>on_spawn</c> runs then, and so does <paramref name="callback" />, with its serial.
     /// </summary>
     [ScriptFunction(helpText: "Spawns an NPC of a mobile template at x, y, z of the map, a moment later; the optional function gets its serial. False for an unknown template, a spot outside the map or a z outside -128 to 127.")]
-    public bool Spawn(string template, MapType map, int x, int y, int z, LuaValue callback = default)
+    public bool Spawn(
+        string template,
+        MapType map,
+        int x,
+        int y,
+        int z,
+        [ScriptParameterType("function")] LuaValue callback = default
+    )
     {
         if (callback.Type is not (LuaValueType.Nil or LuaValueType.Function))
         {
@@ -328,6 +356,135 @@ public sealed class NpcModule
                                       .ThenBy(other => other.Id.Value))
         {
             table[index++] = (long)other.Id.Value;
+        }
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Gets the home of an NPC of a spawn region, the area it was spawned in, as <c>{ x1, y1, x2, y2 }</c>;
+    ///     <c>npc.home(serial)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The home of an NPC of a spawn region, as a table { x1, y1, x2, y2 }; nil for an NPC without one or an unknown NPC.")]
+    public LuaTable? Home(long serial)
+    {
+        if (!TryGetNpc(serial, out var npc) || HomeOf(npc) is not { } home)
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        table["x1"] = home.Start.X;
+        table["y1"] = home.Start.Y;
+        table["x2"] = home.End.X;
+        table["y2"] = home.End.Y;
+
+        return table;
+    }
+
+    /// <summary>
+    ///     One stroll step, as ModernUO's wander: mostly straight ahead, now and then another way; <c>npc.wander(serial)</c>
+    ///     on a think. An NPC with a home keeps to it, and from outside it walks back, around what stands in the way.
+    /// </summary>
+    [ScriptFunction(helpText: "One stroll step: two times in three straight ahead, else another way. An NPC of a spawn region keeps to its home and walks back to it from outside. False when it did not move, as in a home of one cell, or for an unknown NPC.")]
+    public bool Wander(long serial)
+    {
+        if (!TryGetNpc(serial, out var npc))
+        {
+            return false;
+        }
+
+        var facing = (int)(npc.Direction & DirectionMask);
+        // One time in three it turns somewhere else.
+        var first = RandomUtils.Random(3) == 0 ? RandomUtils.Random(Directions) : facing;
+
+        if (HomeOf(npc) is not { } home)
+        {
+            return Take(npc, (DirectionType)first, false);
+        }
+
+        var here = npc.Location;
+
+        // Outside, as after a chase: back to the nearest cell of home along a path. With no way found it steps at
+        // random, so a wall between it and home does not hold it for ever; without a path service it goes straight.
+        if (!Contains(home, here.X, here.Y))
+        {
+            var x = Math.Clamp(here.X, home.Start.X, home.End.X);
+            var y = Math.Clamp(here.Y, home.Start.Y, home.End.Y);
+            var state = WalkTo(serial, x, y);
+
+            if (state == "moving")
+            {
+                return true;
+            }
+
+            var direction = state is null
+                                ? here.GetDirectionTo(new Point3D(x, y, here.Z)) & DirectionMask
+                                : (DirectionType)RandomUtils.Random(Directions);
+
+            return Take(npc, direction, false);
+        }
+
+        for (var turn = 0; turn < Directions; turn++)
+        {
+            var direction = (DirectionType)((first + turn) % Directions);
+            var (dx, dy) = Offset(direction);
+
+            if (Contains(home, here.X + dx, here.Y + dy))
+            {
+                return Take(npc, direction, false);
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    ///     Gets whether the NPC sees a mobile: in the world, on its map, within <paramref name="range" /> tiles, not
+    ///     hidden, not staff and in line of sight from eye to eye; <c>npc.can_see(serial, user)</c>. With
+    ///     <paramref name="inSight" /> false the line of sight is not checked: what an NPC keeps following once it saw it.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the NPC sees the mobile: on its map, within range tiles (default 16, 0 to 32), not hidden, not a game master or an administrator, and in line of sight from eye to eye (never beyond ultima.line_of_sight.max_distance, 25); with in_sight false the line of sight is not checked. False for itself or an unknown NPC or mobile.")]
+    public bool CanSee(long serial, long other, int range = DefaultSight, bool inSight = true)
+    {
+        return range is >= 0 and <= WorldModule.MaximumRange &&
+               other is > 0 and <= uint.MaxValue &&
+               TryGetNpc(serial, out var npc) &&
+               _mobiles.TryGet(new Serial((uint)other), out var mobile) &&
+               Sees(npc, mobile, range, inSight);
+    }
+
+    /// <summary>
+    ///     Gets the players the NPC sees, nearest first, as a list of serials; <c>for _, player in
+    ///     ipairs(npc.players_in_sight(serial, 16)) do ... end</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The serials of the players the NPC sees within range tiles (default 16, 0 to 32), as npc.can_see says, nearest first; with limit, that many at most, so a script that wants the nearest does not pay for a crowd. A line of sight is not checked beyond ultima.line_of_sight.max_distance (25). Empty for an unknown NPC, a range out of bounds or a limit below 1.")]
+    public LuaTable PlayersInSight(long serial, int range = DefaultSight, int limit = int.MaxValue)
+    {
+        var table = new LuaTable();
+
+        if (_sectors is null || limit < 1 || range is < 0 or > WorldModule.MaximumRange || !TryGetNpc(serial, out var npc))
+        {
+            return table;
+        }
+
+        var index = 1;
+
+        // Nearest first, so the line of sight of a far player is not checked before that of a near one.
+        foreach (var player in _sectors.GetMobilesInRange(npc.Map, npc.Location, range)
+                                       .Where(other => !other.IsNpc)
+                                       .OrderBy(other => Distance(npc.Location, other.Location))
+                                       .ThenBy(other => other.Id.Value))
+        {
+            if (Sees(npc, player, range, true))
+            {
+                table[index++] = (long)player.Id.Value;
+
+                if (index > limit)
+                {
+                    break;
+                }
+            }
         }
 
         return table;
@@ -478,6 +635,93 @@ public sealed class NpcModule
     private static int Distance(Point3D from, Point3D to)
     {
         return Math.Max(Math.Abs(from.X - to.X), Math.Abs(from.Y - to.Y));
+    }
+
+    private bool Sees(MobileEntity npc, MobileEntity other, int range, bool inSight)
+    {
+        if (other.Id == npc.Id ||
+            other.Hidden ||
+            other.Map != npc.Map ||
+            !_mobiles.IsInWorld(other.Id) ||
+            Distance(npc.Location, other.Location) > range ||
+            IsStaff(other))
+        {
+            return false;
+        }
+
+        if (!inSight)
+        {
+            return true;
+        }
+
+        try
+        {
+            return _sight is not null && _sight.HasLineOfSight(npc.Map, EyeOf(npc), EyeOf(other));
+        }
+        catch (KeyNotFoundException)
+        {
+            // The map is not loaded.
+            return false;
+        }
+    }
+
+    // As ModernUO, a monster never goes for the staff.
+    private bool IsStaff(MobileEntity mobile)
+    {
+        return _sessions is not null &&
+               _sessions.TryGetByCharacterId(mobile.Id, out var session) &&
+               session.AccountType >= AccountType.GameMaster;
+    }
+
+    // A height is 127 at most.
+    private static Point3D EyeOf(MobileEntity mobile)
+    {
+        var spot = mobile.Location;
+
+        return new(spot.X, spot.Y, Math.Min(spot.Z + EyeHeight, sbyte.MaxValue));
+    }
+
+    // The props a spawn region gives its NPCs. A script may have written anything there: what is not four numbers
+    // in order is no home, rather than an error on every think.
+    private static Rectangle2D? HomeOf(MobileEntity npc)
+    {
+        try
+        {
+            return npc.TryGetProp<long>(HomeX1, out var x1) &&
+                   npc.TryGetProp<long>(HomeY1, out var y1) &&
+                   npc.TryGetProp<long>(HomeX2, out var x2) &&
+                   npc.TryGetProp<long>(HomeY2, out var y2) &&
+                   x1 <= x2 &&
+                   y1 <= y2
+                ? new Rectangle2D(new Point2D((int)x1, (int)y1), new Point2D((int)x2, (int)y2))
+                : null;
+        }
+        catch (Exception exception) when (exception is InvalidCastException or FormatException or OverflowException)
+        {
+            return null;
+        }
+    }
+
+    // The corners of a home are both inside it.
+    private static bool Contains(Rectangle2D home, int x, int y)
+    {
+        return x >= home.Start.X && x <= home.End.X && y >= home.Start.Y && y <= home.End.Y;
+    }
+
+    // The cell a step in a direction leads to.
+    private static (int X, int Y) Offset(DirectionType direction)
+    {
+        return (direction & DirectionMask) switch
+        {
+            DirectionType.North     => (0, -1),
+            DirectionType.NorthEast => (1, -1),
+            DirectionType.East      => (1, 0),
+            DirectionType.SouthEast => (1, 1),
+            DirectionType.South     => (0, 1),
+            DirectionType.SouthWest => (-1, 1),
+            DirectionType.West      => (-1, 0),
+            _                       => (-1, -1)
+        };
     }
 
     // As its template says: a water mobile swims, an amphibious one walks and swims.

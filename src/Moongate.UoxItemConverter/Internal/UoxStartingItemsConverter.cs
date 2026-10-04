@@ -14,7 +14,8 @@ internal static class UoxStartingItemsConverter
                                   #
                                   # What it is for:
                                   #   The items a new character gets: every common set, plus every set whose
-                                  #   filters it matches.
+                                  #   filters it matches. The starting gold, the bread and the water are items
+                                  #   of the common set.
                                   #
                                   # Fields of a [[set]]:
                                   #   common  true gives the set to every character

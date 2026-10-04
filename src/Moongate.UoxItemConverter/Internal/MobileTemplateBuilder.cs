@@ -27,6 +27,23 @@ internal static class MobileTemplateBuilder
     // Hair and beard item lists: the race gives hair and beard instead.
     private static readonly HashSet<int> HairItemLists = [13, 14, 15];
 
+    // UOX3's NPCAI of a banker: its script is scripts/mobiles/banker.lua.
+    private const string BankerAi = "8";
+
+    // The mobiles a Moongate mobile script is written for, by their UOX3 name; those based on them take it through
+    // base_id. scripts/mobiles/monster.lua is the melee AI without the fight: the undead of the graveyards take it,
+    // the casters among them (wraith, spectre, lich) too until magic exists.
+    private static readonly Dictionary<string, string> ScriptIds = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["skeleton"] = "monster",
+        ["zombie"] = "monster",
+        ["ghoul"] = "monster",
+        ["headless"] = "monster",
+        ["wraith"] = "monster",
+        ["spectre"] = "monster",
+        ["lich"] = "monster"
+    };
+
     /// <summary>
     ///     Gets whether <paramref name="header" /> is a section that is not an npc, such as a name list.
     /// </summary>
@@ -50,6 +67,7 @@ internal static class MobileTemplateBuilder
         var template = new MobileTemplate { Id = StringUtils.ToSnakeCase(block.Header) };
 
         ApplyInheritance(block, template, context);
+        ApplyScript(block, template);
         ApplyIdentity(block, template, context);
         ApplyNumbers(block, template, context);
         ApplyEquipmentAndLoot(block, template, context);
@@ -73,6 +91,18 @@ internal static class MobileTemplateBuilder
         else
         {
             context.Report.Count("unresolved get");
+        }
+    }
+
+    private static void ApplyScript(DfnBlock block, MobileTemplate template)
+    {
+        if (ScriptIds.TryGetValue(block.Header, out var scriptId))
+        {
+            template.ScriptId = scriptId;
+        }
+        else if (block.Fields.TryGetValue("NPCAI", out var ai) && ai.Trim() == BankerAi)
+        {
+            template.ScriptId = "banker";
         }
     }
 

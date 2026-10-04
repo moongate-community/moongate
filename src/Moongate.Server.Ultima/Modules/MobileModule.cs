@@ -1,3 +1,6 @@
+using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Data.Bodies;
+using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using Lua;
 using Moongate.Core.Geometry;
@@ -8,6 +11,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Ultima.Types;
 
@@ -31,6 +35,8 @@ public sealed class MobileModule
     private readonly IRegionService? _regions;
     private readonly ILightService? _light;
     private readonly IMobileStateService? _state;
+    private readonly IWorldViewService? _view;
+    private readonly Lazy<FrozenDictionary<int, BodyType>> _bodies;
 
     public MobileModule(
         IMobileService mobiles,
@@ -40,9 +46,16 @@ public sealed class MobileModule
         IMusicService? music = null,
         IRegionService? regions = null,
         ILightService? light = null,
-        IMobileStateService? state = null
+        IMobileStateService? state = null,
+        IWorldViewService? view = null,
+        IDataLoaderService? data = null
     )
     {
+        _bodies = new(
+            () => data?.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type) ??
+                  FrozenDictionary<int, BodyType>.Empty
+        );
+        _view = view;
         _state = state;
         _mobiles = mobiles;
         _teleports = teleports;
@@ -484,6 +497,27 @@ public sealed class MobileModule
     }
 
     /// <summary>
+    ///     Plays an animation of the mobile, seen by its player and those around; <c>mobile.animate(who, 32)</c> makes a
+    ///     human bow. The action is a number of the mobile's body: a human and a monster do not share them.
+    /// </summary>
+    [ScriptFunction(helpText: "Plays an action (0 to 65535) of the mobile's body, with frames (1 to 255, default 5) and how many times (1 to 255, default 1); false for a mobile not in the world or a number out of range.")]
+    public bool Animate(long serial, int action, int frames = 5, int repeatCount = 1)
+    {
+        if (_view is null ||
+            action is < 0 or > ushort.MaxValue ||
+            frames is < 1 or > byte.MaxValue ||
+            repeatCount is < 1 or > byte.MaxValue ||
+            !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        _view.MobileAnimated(mobile, action, frames, repeatCount);
+
+        return true;
+    }
+
+    /// <summary>
     ///     Plays <paramref name="sound" /> where the mobile stands for the players within 15 cells;
     ///     <c>mobile.play_sound(who, 0x1FE)</c>.
     /// </summary>
@@ -513,6 +547,78 @@ public sealed class MobileModule
         }
 
         return _speech.Tell(mobile, text.Length > ItemModule.MaximumTextLength ? text[..ItemModule.MaximumTextLength] : text);
+    }
+
+    /// <summary>
+    ///     Sends a text of the client, by its number, to the player as a system message, in the language of that
+    ///     client; <c>mobile.message_cliloc(who, 500867)</c>. The arguments fill its <c>~1_NAME~</c> places, split by tabs.
+    /// </summary>
+    [ScriptFunction(helpText: "A system message of the client's own texts, by cliloc number, read only by that player; args fills its ~1_NAME~ places, split by tabs. False for a number not above 0, an NPC or a player not in the world.")]
+    public bool MessageCliloc(long serial, int cliloc, string? args = null)
+    {
+        return cliloc > 0 && TryGetMobile(serial, out var mobile) && _speech.TellCliloc(mobile, cliloc, args ?? "");
+    }
+
+    /// <summary>
+    ///     Gets the kind of body of the mobile, as <c>data/bodies.toml</c> says: <c>mobile.body_type(who) ==
+    ///     BodyType.Human</c>. The kind tells which animations the body has.
+    /// </summary>
+    [ScriptFunction(helpText: "The kind of the mobile's body, a BodyType: Human, Monster, Animal, Sea, Equipment, or Empty for a body bodies.toml does not list; nil for a mobile not in the world.")]
+    public BodyType? BodyType(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? _bodies.Value.GetValueOrDefault(mobile.Body) : null;
+    }
+
+    /// <summary>
+    ///     Gets how full the mobile is, from 0 (starving) to 20 (full); <c>mobile.hunger(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "How full the mobile is, from 0 (starving) to 20 (full); nil for a mobile not in the world.")]
+    public int? Hunger(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? mobile.Hunger : null;
+    }
+
+    /// <summary>
+    ///     Sets how full the mobile is, kept from 0 to 20; <c>mobile.set_hunger(who, mobile.hunger(who) + 3)</c>. A
+    ///     player with 0 gets no hit points back.
+    /// </summary>
+    [ScriptFunction(helpText: "Sets how full the mobile is, kept from 0 (starving) to 20 (full); false for a mobile not in the world.")]
+    public bool SetHunger(long serial, int hunger)
+    {
+        if (!TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        mobile.Hunger = HungerService.Clamp(hunger);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Gets how quenched the mobile is, from 0 (parched) to 20 (quenched); <c>mobile.thirst(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "How quenched the mobile is, from 0 (parched) to 20 (quenched); nil for a mobile not in the world.")]
+    public int? Thirst(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? mobile.Thirst : null;
+    }
+
+    /// <summary>
+    ///     Sets how quenched the mobile is, kept from 0 to 20; <c>mobile.set_thirst(who, mobile.thirst(who) + 3)</c>.
+    ///     A player with 0 gets no stamina back.
+    /// </summary>
+    [ScriptFunction(helpText: "Sets how quenched the mobile is, kept from 0 (parched) to 20 (quenched); false for a mobile not in the world.")]
+    public bool SetThirst(long serial, int thirst)
+    {
+        if (!TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        mobile.Thirst = HungerService.Clamp(thirst);
+
+        return true;
     }
 
     // Points to the tenths the mobile keeps; null for a value no skill can have.

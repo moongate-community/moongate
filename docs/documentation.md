@@ -53,6 +53,24 @@ ignored by Git. Each packet needs an override keyed by `opcode:direction` (for e
 `0xBD:incoming`); subcommands use IDs such as `0xBF/0x08:outgoing`. Build fails when
 either source has an entry the other lacks. The dump requires the .NET 10 SDK.
 
+The Lua API reference at `/lua/` is generated too: an overview, one page per module and a page
+of enums. `npm run dev` and `npm run build` run `website/lua/dump`, which lists what the server
+publishes to Lua: the modules and enums `AddUltimaScriptModules` registers and the modules of
+`Moongate.Scripting`, with each function's signature read from its C# method.
+`website/scripts/build-lua.mjs` turns that list into Markdown under
+`website/src/content/docs/lua/`, which Git ignores. Nothing is written by hand: a module's
+description comes from `[ScriptModule]`, a function's text from the `helpText` of
+`[ScriptFunction]`, and the same description feeds `scripts/definitions.lua`, so the editor and
+the site agree. Build fails when a module has no description, a function has no help text, or a
+name repeats. Each function has an anchor named after it, such as `/lua/npc/#walk_to`. The dump
+requires the .NET 10 SDK.
+
+Help text is written to the pages as HTML, not Markdown, so Lua such as `g:text{...}` or
+`~1_NAME~` prints as written. A constant read through a C# property, such as `engine.version`,
+shows "set when the server starts": its value belongs to the process that reads it. The site is
+built at release time, so `PublishedScriptModulesTests` checks the same requirements in the test
+suite: a pull request that adds a function without help text fails there.
+
 The [Test coverage](test-coverage.md) page is filled from the coverage report in
 `artifacts/coverage` (or `MOONGATE_COVERAGE_DIR`): the importer replaces the
 `<!-- coverage-summary -->` marker with the per-assembly table and copies the HTML

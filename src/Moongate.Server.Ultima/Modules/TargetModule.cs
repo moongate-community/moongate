@@ -39,7 +39,7 @@ public sealed class TargetModule
     ///     "object" then ... end end)</c>. A cursor the player already had is canceled, and its function told so.
     /// </summary>
     [ScriptFunction(helpText: "Gives the player a cursor to pick an item or a mobile; the function gets { kind = 'object', serial } or { kind = 'canceled' }. False for an NPC or a player not in the world.")]
-    public bool Pick(long player, LuaValue callback)
+    public bool Pick(long player, [ScriptParameterType("function")] LuaValue callback)
     {
         return Begin(player, TargetCursorType.Object, callback);
     }
@@ -49,7 +49,7 @@ public sealed class TargetModule
     ///     click on an item or a mobile gives that object instead.
     /// </summary>
     [ScriptFunction(helpText: "Gives the player a cursor to pick a place; the function gets { kind = 'location', map, x, y, z }, an object when one was clicked, or { kind = 'canceled' }. False for an NPC or a player not in the world.")]
-    public bool PickLocation(long player, LuaValue callback)
+    public bool PickLocation(long player, [ScriptParameterType("function")] LuaValue callback)
     {
         return Begin(player, TargetCursorType.Location, callback);
     }

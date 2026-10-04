@@ -58,6 +58,94 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     [Fact]
+    public void Run_WhatUox3CallsFood_GetsTheFoodScript()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [base_food]
+            {
+            type=14
+            weight=100
+            }
+            [0x09d0]
+            {
+            get=base_food
+            name=apple
+            id=0x09d0
+            }
+            [0x0a1e]
+            {
+            get=base_food
+            name=bowl of flour
+            id=0x0a1e
+            }
+            [base_magic_fish]
+            {
+            get=base_food
+            id=0x0dd6
+            }
+            [0x1f9e]
+            {
+            name=pitcher of water
+            id=0x1f9e
+            type=105
+            }
+            """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        // UOX3's item type 14 is food, on the block itself or the one it gets its fields from; a drink (type 105) has its own script.
+        // Nor is what UOX3 files under food and nobody eats: a bowl of flour, the magic fish.
+        var items = ReadItems();
+        Assert.True(string.IsNullOrEmpty(items.Values.Single(item => item.Name == "bowl of flour").ScriptId));
+        Assert.True(string.IsNullOrEmpty(items["base_magic_fish"].ScriptId));
+        Assert.Equal("food", items.Values.Single(item => item.Name == "apple").ScriptId);
+        Assert.Equal("drink", items.Values.Single(item => item.Name == "pitcher of water").ScriptId);
+    }
+
+    [Fact]
+    public void Run_WhatUox3CallsADrink_GetsTheDrinkScript_ButTheJarOfHoney()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [base_drink]
+            {
+            type=105
+            script=2100
+            }
+            [0x1f9e]
+            {
+            get=base_drink
+            name=pitcher of water
+            id=0x1f9e
+            }
+            [0x09ec]
+            {
+            get=base_drink
+            name=jar of honey
+            id=0x09ec
+            }
+            [0x09d0]
+            {
+            name=apple
+            id=0x09d0
+            type=14
+            }
+            """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems();
+        Assert.Equal("drink", items.Values.Single(item => item.Name == "pitcher of water").ScriptId);
+        Assert.True(string.IsNullOrEmpty(items.Values.Single(item => item.Name == "jar of honey").ScriptId));
+        Assert.Equal("food", items.Values.Single(item => item.Name == "apple").ScriptId);
+    }
+
+    [Fact]
     public void Run_TheBaseFields_AreConverted()
     {
         _dirs.WriteSource(

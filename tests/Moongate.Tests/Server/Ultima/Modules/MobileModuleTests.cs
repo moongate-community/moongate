@@ -17,6 +17,7 @@ using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
+using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Modules;
@@ -26,6 +27,7 @@ public sealed class MobileModuleTests
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingMobileStateService _state = new();
+    private readonly RecordingWorldViewService _view = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly ItemService _items = TestItems.Create();
     private readonly StubMusicService _music = new();
@@ -247,6 +249,83 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Animate_PlaysTheActionOfTheMobile_FiveFramesOnceByDefault()
+    {
+        var result = Run("return mobile.animate(2, 32), mobile.animate(2, 17, 7, 3)");
+
+        Assert.Equal((true, true), (result[0].Read<bool>(), result[1].Read<bool>()));
+        Assert.Equal(["Animated 2 32 5 1", "Animated 2 17 7 3"], _view.Calls);
+    }
+
+    [Theory,
+     InlineData("return mobile.animate(999, 32)"),
+     InlineData("return mobile.animate(2, -1)"),
+     InlineData("return mobile.animate(2, 65536)"),
+     InlineData("return mobile.animate(2, 32, 0)"),
+     InlineData("return mobile.animate(2, 32, 5, 0)"),
+     InlineData("return mobile.animate(2, 32, 300)")]
+    public void Animate_AnUnknownMobileOrNumbersOutOfRange_IsFalseAndShowsNothing(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public void Hunger_IsHowFullTheMobileIs_AndSetHungerKeepsItFromZeroToTwenty()
+    {
+        var result = Run(
+            "local full = mobile.hunger(2) " +
+            "return full, mobile.set_hunger(2, 7), mobile.hunger(2), mobile.set_hunger(2, 99), mobile.hunger(2), " +
+            "mobile.set_hunger(2, -4), mobile.hunger(2), mobile.hunger(999), mobile.set_hunger(999, 5)"
+        );
+
+        Assert.Equal([20, 7, 20, 0], new[] { result[0], result[2], result[4], result[6] }.Select(value => value.Read<int>()));
+        Assert.All(new[] { result[1], result[3], result[5] }, value => Assert.True(value.Read<bool>()));
+        Assert.Equal((LuaValue.Nil, false), (result[7], result[8].Read<bool>()));
+        Assert.Equal(0, _aria.Hunger);
+    }
+
+    [Fact]
+    public void Thirst_IsHowQuenchedTheMobileIs_AndSetThirstKeepsItFromZeroToTwenty()
+    {
+        var result = Run(
+            "local full = mobile.thirst(2) " +
+            "return full, mobile.set_thirst(2, 7), mobile.thirst(2), mobile.set_thirst(2, 99), mobile.thirst(2), " +
+            "mobile.set_thirst(2, -4), mobile.thirst(2), mobile.thirst(999), mobile.set_thirst(999, 5)"
+        );
+
+        Assert.Equal([20, 7, 20, 0], new[] { result[0], result[2], result[4], result[6] }.Select(value => value.Read<int>()));
+        Assert.All(new[] { result[1], result[3], result[5] }, value => Assert.True(value.Read<bool>()));
+        Assert.Equal((LuaValue.Nil, false), (result[7], result[8].Read<bool>()));
+        Assert.Equal((0, 20), (_aria.Thirst, _aria.Hunger));
+    }
+
+    [Fact]
+    public void BodyType_IsTheKindOfBodyOfTheMobile_AsTheBodiesFileSays()
+    {
+        _aria.Body = 400;
+        _orc.Body = 17;
+
+        var result = Run("return mobile.body_type(2), mobile.body_type(256), mobile.body_type(999)");
+
+        Assert.Equal(((int)BodyType.Human, (int)BodyType.Monster, LuaValue.Nil), (result[0].Read<int>(), result[1].Read<int>(), result[2]));
+
+        // A body the file does not list is empty.
+        _orc.Body = 5000;
+        Assert.Equal((int)BodyType.Empty, Run("return mobile.body_type(256)")[0].Read<int>());
+    }
+
+    [Fact]
+    public void MessageCliloc_TellsThePlayerATextOfItsClient()
+    {
+        var result = Run("return mobile.message_cliloc(2, 500867), mobile.message_cliloc(2, 1042958, '3:05'), mobile.message_cliloc(2, 0), mobile.message_cliloc(999, 500867)");
+
+        Assert.Equal([true, true, false, false], result.Select(value => value.Read<bool>()));
+        Assert.Equal([(_aria, 500867, ""), (_aria, 1042958, "3:05")], _speech.ToldClilocs);
+    }
+
+    [Fact]
     public void Message_TellsThePlayer()
     {
         var result = Run("return mobile.message(2, 'That is too far away.')");
@@ -448,7 +527,7 @@ public sealed class MobileModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view, new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human }, new BodyContent { Body = new(17), Type = BodyType.Monster })));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

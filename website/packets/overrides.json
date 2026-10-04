@@ -3179,7 +3179,7 @@
       }
     ],
     "notes": "A cliloc shown by the client in its language.",
-    "handler": "LookRequestPacketHandler: the name over an object. UseRequestPacketHandler: the too-far message. ItemModule: a cliloc shown by a script."
+    "handler": "LookRequestPacketHandler: the name over an object. UseRequestPacketHandler: the too-far message. ItemModule: a cliloc shown by a script. SpeechService: a cliloc as a system message (mobile.message_cliloc, the food script)."
   },
   "0x54:outgoing": {
     "category": "World",
@@ -4125,5 +4125,72 @@
     ],
     "notes": "The player's answer to a text prompt.",
     "handler": "TextPromptResponsePacketHandler: completes the player's pending prompt; over 128 characters or another id is ignored."
+  },
+  "0x6E:outgoing": {
+    "category": "Mobiles",
+    "tags": [
+      "Mobiles",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The mobile that plays the animation."
+      },
+      {
+        "offset": "5",
+        "name": "Action",
+        "type": "ushort",
+        "size": "2",
+        "description": "The action of the mobile's body"
+      },
+      {
+        "offset": "7",
+        "name": "Frame count",
+        "type": "ushort",
+        "size": "2",
+        "description": "How many frames are played"
+      },
+      {
+        "offset": "9",
+        "name": "Repeat count",
+        "type": "ushort",
+        "size": "2",
+        "description": "How many times"
+      },
+      {
+        "offset": "11",
+        "name": "Reverse",
+        "type": "bool",
+        "size": "1",
+        "description": "1 plays it backwards"
+      },
+      {
+        "offset": "12",
+        "name": "Repeat",
+        "type": "bool",
+        "size": "1",
+        "description": "1 repeats it"
+      },
+      {
+        "offset": "13",
+        "name": "Delay",
+        "type": "byte",
+        "size": "1",
+        "description": "Delay between frames"
+      }
+    ],
+    "notes": "Plays an animation of a mobile.",
+    "handler": "WorldViewService: mobile.animate of a script, to the mobile's own player and those who see it."
   }
 }

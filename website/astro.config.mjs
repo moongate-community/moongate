@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import { contentEntries, sidebarGroups } from './content-manifest.mjs';
+import { contentEntries, generatedSidebarItems, sidebarGroups } from './content-manifest.mjs';
 import { docsSite, docsBasePath } from './site-config.mjs';
 
 const releaseVersion = JSON.parse(readFileSync(new URL('../.release-please-manifest.json', import.meta.url), 'utf8'))['.'];
@@ -38,6 +38,9 @@ export default defineConfig({
     customCss: ['./src/styles/custom.css'],
     components: { Footer: './src/components/Footer.astro' },
     social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/moongate-community/moongate' }],
-    sidebar: sidebarGroups.map(label => ({ label, items: sidebarItems(contentEntries.filter(entry => entry.group === label)) })),
+    sidebar: sidebarGroups.map(label => ({
+      label,
+      items: [...sidebarItems(contentEntries.filter(entry => entry.group === label)), ...(generatedSidebarItems[label] ?? [])],
+    })),
   })],
 });

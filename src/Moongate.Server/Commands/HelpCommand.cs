@@ -12,7 +12,7 @@ namespace Moongate.Server.Commands;
 /// <summary>
 ///     Lists commands available to the caller and describes a command by name or alias.
 /// </summary>
-public sealed class HelpCommand : ICommandExecutor
+public sealed class HelpCommand : ICommandExecutor, ICommandArgumentCompleter
 {
     private readonly CommandRegistry _registry;
     private readonly ILocalizationService? _localization;
@@ -73,6 +73,21 @@ public sealed class HelpCommand : ICommandExecutor
         context.Print(_localization.Text(CommandMessages.HelpMinimumAccountLevel, "Minimum account level: {0}", command.MinimumAccountType));
 
         return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    /// <remarks>The commands of the console, the one place that completes.</remarks>
+    public IReadOnlyList<string> GetArgumentCompletions(IReadOnlyList<string> previousArguments)
+    {
+        return previousArguments.Count == 0
+            ? _registry.Registrations
+                       .Values
+                       .Select(registration => registration.Definition)
+                       .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
+                       .SelectMany(definition => definition.Aliases)
+                       .Distinct(StringComparer.OrdinalIgnoreCase)
+                       .ToArray()
+            : [];
     }
 
     private string Description(CommandDefinition definition)

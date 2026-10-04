@@ -91,7 +91,10 @@ from the folder and ignores the key, so a `map` that disagrees with its folder c
    - with `only_outside`, a spot under a roof (a static more than 10 above it) is refused.
 
    A pick with no spot is skipped, and the others of the same `call` still spawn. A region that
-   placed nothing tries again a minute later.
+   placed nothing tries again a minute later, after a warning. The first time, the server also
+   looks over its whole area (up to 65536 cells, spread evenly) for a spot for the mobiles it
+   picked: when there is none, as for land animals placed in the open sea, the region is off until
+   the next start (or `.initial_spawn`), and one warning per check lists the regions turned off.
 4. **The NPC.** It spawns dressed, with its loot, and runs its Lua `on_spawn`. It keeps its region
    in the prop `spawn.region` and the area it came from in `spawn.x1`, `spawn.y1`, `spawn.x2`,
    `spawn.y2`, saved with it from the start.

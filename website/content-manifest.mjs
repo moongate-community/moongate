@@ -32,6 +32,8 @@ export const contentEntries = [
   { source: 'docs/commands/decorate.md', slug: 'server/commands/decorate', title: 'decorate', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/globallight.md', slug: 'server/commands/globallight', title: 'globallight', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/spawn.md', slug: 'server/commands/spawn', title: 'spawn', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/add.md', slug: 'server/commands/add', title: 'add', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/set.md', slug: 'server/commands/set', title: 'set', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/remove.md', slug: 'server/commands/remove', title: 'remove', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/where.md', slug: 'server/commands/where', title: 'where', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/go.md', slug: 'server/commands/go', title: 'go', group: 'Run a shard', subgroup: 'Commands' },
@@ -114,4 +116,10 @@ export const contentEntries = [
   { source: 'docs/security-audit.md', slug: 'contributing/security-audit', title: 'Dependency security', group: 'Contributing' },
 ];
 
-export const sidebarGroups = ['Start here', 'Run a shard', 'Scripting and content', 'Extend with C#', 'Libraries', 'Contributing'];
+export const sidebarGroups = ['Start here', 'Run a shard', 'Scripting and content', 'Lua', 'Extend with C#', 'Libraries', 'Contributing'];
+
+// Groups whose pages are generated at build time, so they have no manifest entries: `Lua` holds the API
+// reference that `scripts/build-lua.mjs` writes to `src/content/docs/lua/`.
+export const generatedSidebarItems = {
+  Lua: [{ label: 'API reference', collapsed: true, items: [{ autogenerate: { directory: 'lua' } }] }],
+};
