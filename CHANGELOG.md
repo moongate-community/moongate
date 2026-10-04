@@ -2,6 +2,15 @@
 
 ## [0.14.0](https://github.com/moongate-community/moongate/compare/v0.13.0...v0.14.0) (2026-10-04)
 
+### Upgrade notes
+
+- Two new world migrations, `0015_mobile_hunger.sql` and `0016_mobile_thirst.sql`: run `mgctl init <root>` and then `mgctl migrate apply --root-directory <root> --target world` before starting the server. Existing characters and NPCs start full and quenched.
+- Or let the server do it: the new `persistence.auto_apply_migrations = true` makes a start add the bundled core migrations the root lacks and apply the pending ones, plugin bundles included. It is off by default, needs a database role that may change the schema, and never writes SQL from the entities. With a Docker image an update is then a new tag and a restart.
+- `mgctl init` adds the files a root lacks and never replaces one that is there. To get what changed in files a 0.13.0 root already has, delete the ones you did not edit and run `mgctl init` again: `templates/items` (food and drinks now carry `script_id = "food"` and `"drink"`), `templates/mobiles` (the undead carry `script_id = "monster"`), `templates/spawns` (the Tokuno and Malas spawners are on their own maps), `data/starting_items.toml` (bread and a pitcher of water for every new character) and `data/messages` (the new texts in the eight languages; without them the English text is used).
+- Hunger and thirst are on by default: a player loses a point of each every five minutes, at 0 hunger its hit points do not come back and at 0 thirst its stamina does not. Turn them off with `hunger_enabled = false` and `thirst_enabled = false` under `[ultima.regeneration]`; the same section sets the regeneration rates.
+- New for the staff: `add <template>`, `remove` on an item lying on the ground, `set <hits|mana|stamina|hunger|thirst> <value>`. New in the console: TAB completion of commands and arguments, and the history with Up and Down.
+- New for scripts: `mobile.animate` with named animations, `mobile.body_type`, `mobile.hunger`, `mobile.thirst`, `mobile.message_cliloc`, `npc.home`, `npc.wander`, `npc.can_see`, `npc.players_in_sight`, `item.in_range`, the shared `scripts/common/teleport.lua`, and a generated Lua API reference in the documentation.
+
 
 ### Features
 
