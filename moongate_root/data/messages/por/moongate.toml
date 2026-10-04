@@ -144,7 +144,7 @@
 30121 = "Coloca no chão, onde apontas, um objeto de um modelo de objeto: add <template>."
 30122 = "Só se pode remover um objeto que está no chão."
 30126 = "{0}: {1} agora vale {2}."
-30127 = "Define a vida, a mana, a estamina, a fome ou a sede da criatura que você mirar: set <hits|mana|stamina|hunger|thirst> <valor>."
+30127 = "Define a vida, a mana, a estamina, a fome ou a sede da criatura que você mirar, ou a torna criminosa: set <hits|mana|stamina|hunger|thirst|criminal> <valor>."
 
 # Moongate: texts of the item scripts.
 30114 = "Este moongate não parece levar a lado nenhum."
@@ -160,14 +160,15 @@
 30135 = "Você saiu de {0}."
 30136 = "Agora você está sob a proteção dos guardas de {0}."
 30137 = "Você deixou a proteção dos guardas de {0}."
+30138 = "Você vai se arrepender dos seus atos, canalha!"
 
-# Moongate: texts of the jail (30138-30142 to the prisoner and on its release note, 30143-30146 of the jail command).
-30138 = "Você foi preso por {0} dias."
-30139 = "Você cumpriu sua pena. Foi cobrada uma multa de {0} moedas de ouro."
-30140 = "Você cumpriu sua pena."
-30141 = "Você foi libertado da prisão."
-30142 = "{0} cumpriu {1} dias na cela {2}, de {3} a {4}, e pagou uma multa de {5} moedas de ouro. Preso por {6}."
-30143 = "Envia o personagem escolhido para uma cela da prisão por alguns dias, ou o liberta: um gump lista as celas."
-30144 = "A prisão não está configurada: falta data/jail.toml."
-30145 = "Isso não é um personagem."
-30146 = "Falta o gump da prisão: templates/gumps/jail_sentence.xml."
+# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 of the jail command).
+30139 = "Você foi preso por {0} dias."
+30140 = "Você cumpriu sua pena. Foi cobrada uma multa de {0} moedas de ouro."
+30141 = "Você cumpriu sua pena."
+30142 = "Você foi libertado da prisão."
+30143 = "{0} cumpriu {1} dias na cela {2}, de {3} a {4}, e pagou uma multa de {5} moedas de ouro. Preso por {6}."
+30144 = "Envia o personagem escolhido para uma cela da prisão por alguns dias, ou o liberta: um gump lista as celas."
+30145 = "A prisão não está configurada: falta data/jail.toml."
+30146 = "Isso não é um personagem."
+30147 = "Falta o gump da prisão: templates/gumps/jail_sentence.xml."

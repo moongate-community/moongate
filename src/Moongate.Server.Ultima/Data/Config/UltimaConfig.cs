@@ -25,6 +25,8 @@ public class UltimaConfig : IConfigSection
 
     public RegenerationConfig Regeneration { get; set; } = new();
 
+    public CrimeConfig Crime { get; set; } = new();
+
     public SpawnsConfig Spawns { get; set; } = new();
 
     public JailConfig Jail { get; set; } = new();
@@ -94,6 +96,13 @@ public class UltimaConfig : IConfigSection
         }
 
         Regeneration.Validate();
+
+        if (Crime is null)
+        {
+            throw new InvalidOperationException("The ultima.crime configuration section cannot be null.");
+        }
+
+        Crime.Validate();
 
         if (Jail is null)
         {

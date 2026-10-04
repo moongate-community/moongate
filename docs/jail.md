@@ -85,7 +85,7 @@ Jailed by Giachi.
 ```
 
 The fine on the note is the gold really taken. The text is written in the server's language
-(message 30142 of [`messages`](data-files/messages.md)), with the dates in UTC. The note also
+(message 30143 of [`messages`](data-files/messages.md)), with the dates in UTC. The note also
 keeps the props `jail.cell`, `jail.days` and `jail.fine` for scripts; its script is
 [`jail_note.lua`](scripting/shipped-scripts.md#jail_notelua).
 

@@ -144,7 +144,7 @@
 30121 = "Kładzie na ziemi, tam gdzie wskażesz, przedmiot z szablonu przedmiotu: add <template>."
 30122 = "Usunąć można tylko przedmiot leżący na ziemi."
 30126 = "{0}: {1} wynosi teraz {2}."
-30127 = "Ustawia życie, manę, wytrzymałość, głód lub pragnienie wskazanej istoty: set <hits|mana|stamina|hunger|thirst> <wartość>."
+30127 = "Ustawia życie, manę, wytrzymałość, głód lub pragnienie wskazanej istoty albo czyni ją przestępcą: set <hits|mana|stamina|hunger|thirst|criminal> <wartość>."
 
 # Moongate: texts of the item scripts.
 30114 = "Ten moongate zdaje się nigdzie nie prowadzić."
@@ -160,14 +160,15 @@
 30135 = "Opuszczasz: {0}."
 30136 = "Jesteś teraz pod ochroną straży: {0}."
 30137 = "Opuszczasz ochronę straży: {0}."
+30138 = "Pożałujesz swoich czynów, łotrze!"
 
-# Moongate: texts of the jail (30138-30142 to the prisoner and on its release note, 30143-30146 of the jail command).
-30138 = "Zostałeś uwięziony na {0} dni."
-30139 = "Odsiedziałeś swój wyrok. Pobrano grzywnę w wysokości {0} sztuk złota."
-30140 = "Odsiedziałeś swój wyrok."
-30141 = "Zostałeś zwolniony z więzienia."
-30142 = "{0} odsiedział {1} dni w celi {2}, od {3} do {4}, i zapłacił grzywnę w wysokości {5} sztuk złota. Uwięziony przez: {6}."
-30143 = "Wysyła wskazaną postać do celi więziennej na kilka dni albo ją zwalnia: gump pokazuje listę cel."
-30144 = "Więzienie nie jest skonfigurowane: brakuje data/jail.toml."
-30145 = "To nie jest postać."
-30146 = "Brakuje gumpa więzienia: templates/gumps/jail_sentence.xml."
+# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 of the jail command).
+30139 = "Zostałeś uwięziony na {0} dni."
+30140 = "Odsiedziałeś swój wyrok. Pobrano grzywnę w wysokości {0} sztuk złota."
+30141 = "Odsiedziałeś swój wyrok."
+30142 = "Zostałeś zwolniony z więzienia."
+30143 = "{0} odsiedział {1} dni w celi {2}, od {3} do {4}, i zapłacił grzywnę w wysokości {5} sztuk złota. Uwięziony przez: {6}."
+30144 = "Wysyła wskazaną postać do celi więziennej na kilka dni albo ją zwalnia: gump pokazuje listę cel."
+30145 = "Więzienie nie jest skonfigurowane: brakuje data/jail.toml."
+30146 = "To nie jest postać."
+30147 = "Brakuje gumpa więzienia: templates/gumps/jail_sentence.xml."

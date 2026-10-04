@@ -66,6 +66,13 @@ the site agree. Build fails when a module has no description, a function has no 
 name repeats. Each function has an anchor named after it, such as `/lua/npc/#walk_to`. The dump
 requires the .NET 10 SDK.
 
+An example goes in `website/lua/examples/<module>.md`: one `## <function>` section per function, whose
+body, a sentence and a Lua code block or a note, is put under that function on the module's page. The body
+is Markdown. Build fails for a file that names no module, a section that names no function of the module, a
+repeated or empty section, text before the first section, a file with no section, a code block left open, and
+any other heading inside a section. The test suite checks
+the names too (`PublishedScriptModulesTests`), so renaming a function that has an example fails a pull request.
+
 Help text is written to the pages as HTML, not Markdown, so Lua such as `g:text{...}` or
 `~1_NAME~` prints as written. A constant read through a C# property, such as `engine.version`,
 shows "set when the server starts": its value belongs to the process that reads it. The site is

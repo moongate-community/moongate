@@ -144,7 +144,7 @@
 30121 = "Legt einen Gegenstand aus einer Gegenstandsvorlage dort auf den Boden, wohin du zielst: add <template>."
 30122 = "Nur ein Gegenstand, der auf dem Boden liegt, kann entfernt werden."
 30126 = "{0}: {1} ist jetzt {2}."
-30127 = "Setzt Lebenspunkte, Mana, Ausdauer, Hunger oder Durst des gewählten Wesens: set <hits|mana|stamina|hunger|thirst> <Wert>."
+30127 = "Setzt Lebenspunkte, Mana, Ausdauer, Hunger oder Durst des gewählten Wesens oder macht es zum Verbrecher: set <hits|mana|stamina|hunger|thirst|criminal> <Wert>."
 
 # Moongate: texts of the item scripts.
 30114 = "Dieses Mondtor scheint nirgendwohin zu führen."
@@ -160,14 +160,15 @@
 30135 = "Du hast {0} verlassen."
 30136 = "Du stehst jetzt unter dem Schutz der Wachen von {0}."
 30137 = "Du hast den Schutz der Wachen von {0} verlassen."
+30138 = "Du wirst deine Taten bereuen, Schurke!"
 
-# Moongate: texts of the jail (30138-30142 to the prisoner and on its release note, 30143-30146 of the jail command).
-30138 = "Du wurdest für {0} Tage eingesperrt."
-30139 = "Du hast deine Strafe verbüßt. Eine Geldstrafe von {0} Gold wurde eingezogen."
-30140 = "Du hast deine Strafe verbüßt."
-30141 = "Du wurdest aus dem Gefängnis entlassen."
-30142 = "{0} hat {1} Tage in Zelle {2} verbüßt, vom {3} bis zum {4}, und eine Geldstrafe von {5} Gold bezahlt. Eingesperrt von {6}."
-30143 = "Schickt den gewählten Charakter für einige Tage in eine Gefängniszelle oder entlässt ihn: ein Gump listet die Zellen auf."
-30144 = "Das Gefängnis ist nicht eingerichtet: data/jail.toml fehlt."
-30145 = "Das ist kein Charakter."
-30146 = "Das Gump des Gefängnisses fehlt: templates/gumps/jail_sentence.xml."
+# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 of the jail command).
+30139 = "Du wurdest für {0} Tage eingesperrt."
+30140 = "Du hast deine Strafe verbüßt. Eine Geldstrafe von {0} Gold wurde eingezogen."
+30141 = "Du hast deine Strafe verbüßt."
+30142 = "Du wurdest aus dem Gefängnis entlassen."
+30143 = "{0} hat {1} Tage in Zelle {2} verbüßt, vom {3} bis zum {4}, und eine Geldstrafe von {5} Gold bezahlt. Eingesperrt von {6}."
+30144 = "Schickt den gewählten Charakter für einige Tage in eine Gefängniszelle oder entlässt ihn: ein Gump listet die Zellen auf."
+30145 = "Das Gefängnis ist nicht eingerichtet: data/jail.toml fehlt."
+30146 = "Das ist kein Charakter."
+30147 = "Das Gump des Gefängnisses fehlt: templates/gumps/jail_sentence.xml."

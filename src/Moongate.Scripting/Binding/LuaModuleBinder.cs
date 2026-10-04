@@ -9,8 +9,8 @@ using Moongate.Scripting.Internal;
 namespace Moongate.Scripting.Binding;
 
 /// <summary>
-///     Turns a [ScriptModule] instance into a Lua table. Reflection runs here, once; the delegates it builds never
-///     reflect.
+///     Turns a [ScriptModule] instance into a Lua table. <see cref="LuaModuleDescriber" /> reflects the module once;
+///     the delegates built here never reflect.
 /// </summary>
 public sealed class LuaModuleBinder
 {

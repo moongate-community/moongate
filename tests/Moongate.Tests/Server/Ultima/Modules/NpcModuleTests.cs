@@ -503,7 +503,20 @@ public sealed class NpcModuleTests
         Assert.True(result[0].Read<bool>());
         Assert.False(result[1].Read<bool>());
         Assert.False(result[2].Read<bool>());
+        Assert.True(SpinWait.SpinUntil(() => _npcs.Removals.Count == 1, TimeSpan.FromSeconds(10)));
         Assert.Equal([_orc.Id], _npcs.Removals);
+    }
+
+    [Fact]
+    public void Delete_StartsTheRemovalOffTheScriptsThread_WhichIsTheGameLoops()
+    {
+        // The real service posts to the game loop and waits: started on the loop's own thread it is refused.
+        var scripts = Environment.CurrentManagedThreadId;
+        _npcs.OnLoopThread = () => Environment.CurrentManagedThreadId == scripts;
+
+        Run("return npc.delete(256)");
+
+        Assert.True(SpinWait.SpinUntil(() => _npcs.Removals.Count == 1, TimeSpan.FromSeconds(10)));
     }
 
     [Fact]

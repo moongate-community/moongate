@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 76 done, 🟡 40 partly done, ❌ 152 not built yet.
+**268 systems:** ✅ 76 done, 🟡 42 partly done, ❌ 150 not built yet.
 
 **Coverage: 28%** of the systems done, **36%** counting a partly done system as half.
 
@@ -50,8 +50,8 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Hit points, mana and stamina regeneration | ✅ | A point at a time, ModernUO's classic rates; mana by intelligence and Meditation; rates per mobile from scripts |
 | Titles | 🟡 | Fame and karma titles in the paperdoll; no skill titles |
 | Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); nothing gains or loses them yet |
-| Notoriety (innocent, criminal, murderer) | 🟡 | Name colour from the mobile template |
-| Crimes, criminal timer and murder counts | ❌ | |
+| Notoriety (innocent, criminal, murderer) | 🟡 | Name colour from the mobile template, grey while the mobile is a criminal |
+| Crimes, criminal timer and murder counts | 🟡 | The criminal flag with its timer, saved with the mobile, set by scripts and by the staff; no act makes a criminal yet, no murder counts |
 | Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
 | Hiding and stealth | ❌ | A script can hide a mobile with `mobile.set_hidden`; no skill |
@@ -81,7 +81,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
 | NPC combat AI | 🟡 | `monster.lua`: the undead of the graveyards notice a player, walk to it and stand guard when they lose it; no fight yet |
-| Guards in guarded regions | ❌ | |
+| Guards in guarded regions | 🟡 | A player that says "guards" brings a guard onto each criminal near it: it appears, says its line and leaves. No punishment yet, the standing guards do nothing |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
 | Aggressor lists and attack timeouts | ❌ | |

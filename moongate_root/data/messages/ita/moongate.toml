@@ -144,7 +144,7 @@
 30121 = "Mette a terra, dove indichi, un oggetto da un modello di oggetto: add <template>."
 30122 = "Si può rimuovere solo un oggetto a terra."
 30126 = "{0}: {1} ora vale {2}."
-30127 = "Imposta vita, mana, stamina, fame o sete del personaggio che scegli: set <hits|mana|stamina|hunger|thirst> <valore>."
+30127 = "Imposta vita, mana, stamina, fame o sete del personaggio che scegli, o lo rende criminale: set <hits|mana|stamina|hunger|thirst|criminal> <valore>."
 
 # Moongate: texts of the item scripts.
 30114 = "Questo moongate non sembra portare da nessuna parte."
@@ -160,14 +160,15 @@
 30135 = "Hai lasciato: {0}."
 30136 = "Ora sei sotto la protezione delle guardie di {0}."
 30137 = "Hai lasciato la protezione delle guardie di {0}."
+30138 = "Ti pentirai delle tue azioni, canaglia!"
 
-# Moongate: texts of the jail (30138-30142 to the prisoner and on its release note, 30143-30146 of the jail command).
-30138 = "Sei stato imprigionato per {0} giorni."
-30139 = "Hai scontato la tua pena. È stata prelevata una multa di {0} monete d'oro."
-30140 = "Hai scontato la tua pena."
-30141 = "Sei stato rilasciato dalla prigione."
-30142 = "{0} ha scontato {1} giorni nella cella {2}, dal {3} al {4}, e ha pagato una multa di {5} monete d'oro. Imprigionato da {6}."
-30143 = "Manda il personaggio che scegli in una cella della prigione per alcuni giorni, o lo rilascia: un gump elenca le celle."
-30144 = "La prigione non è configurata: manca data/jail.toml."
-30145 = "Quello non è un personaggio."
-30146 = "Manca il gump della prigione: templates/gumps/jail_sentence.xml."
+# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 of the jail command).
+30139 = "Sei stato imprigionato per {0} giorni."
+30140 = "Hai scontato la tua pena. È stata prelevata una multa di {0} monete d'oro."
+30141 = "Hai scontato la tua pena."
+30142 = "Sei stato rilasciato dalla prigione."
+30143 = "{0} ha scontato {1} giorni nella cella {2}, dal {3} al {4}, e ha pagato una multa di {5} monete d'oro. Imprigionato da {6}."
+30144 = "Manda il personaggio che scegli in una cella della prigione per alcuni giorni, o lo rilascia: un gump elenca le celle."
+30145 = "La prigione non è configurata: manca data/jail.toml."
+30146 = "Quello non è un personaggio."
+30147 = "Manca il gump della prigione: templates/gumps/jail_sentence.xml."

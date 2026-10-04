@@ -42,6 +42,8 @@ public static class UltimaWorldContainerExtensions
         container.Register<IFatigueService, FatigueService>(Reuse.Singleton);
         container.AddMoongateService<IRegenerationService, RegenerationService>(12);
         container.AddMoongateService<IHungerService, HungerService>(12);
+        container.AddMoongateService<ICrimeService, CrimeService>(12);
+        container.AddMoongateService<IGuardService, GuardService>(12);
         // After the data loaders: the cells come from data/jail.toml; its sentences are read from the world database.
         container.AddMoongateService<IJailService, JailService>(12);
         // After the script engine (70) and its bootstrap: the mobile scripts load into the running engine.

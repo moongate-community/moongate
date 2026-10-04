@@ -28,11 +28,11 @@ public sealed class JailService : IJailService
     public const string TimerName = "jail";
     public const string NoteTemplate = "jail_release_note";
     public const string NoteTextProp = "jail.text";
-    public const int JailedMessage = 30138;
-    public const int ReleasedFinedMessage = 30139;
-    public const int ReleasedMessage = 30140;
-    public const int PardonedMessage = 30141;
-    public const int NoteMessage = 30142;
+    public const int JailedMessage = 30139;
+    public const int ReleasedFinedMessage = 30140;
+    public const int ReleasedMessage = 30141;
+    public const int PardonedMessage = 30142;
+    public const int NoteMessage = 30143;
 
     private const long MillisecondsADay = 86_400_000;
 

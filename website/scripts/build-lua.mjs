@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -16,6 +16,67 @@ const sectionAnchors = new Set(['functions', 'constants']);
 const reservedPages = new Set(['index', 'enums']);
 const byName = (left, right) => (left.name < right.name ? -1 : left.name > right.name ? 1 : 0);
 const blank = text => typeof text !== 'string' || !text.trim();
+
+// Splits website/lua/examples/<module>.md into one Markdown body per function: each "## <function>" heading
+// starts a section. The bodies are written by hand in the repository, so they reach the page as Markdown.
+export function parseExamples(module, markdown) {
+  const examples = new Map();
+  let name = null, body = [], fenced = false;
+  const close = () => {
+    if (name === null) return;
+    const text = body.join('\n').trim();
+    if (!text) throw new Error(`Empty example: ${module}.${name}`);
+    examples.set(name, text);
+  };
+  for (const line of markdown.split('\n')) {
+    if (line.startsWith('```')) fenced = !fenced;
+    const heading = fenced ? null : line.match(/^## (.+?)\s*$/);
+    if (heading) {
+      close();
+      name = heading[1];
+      if (examples.has(name)) throw new Error(`Duplicate example: ${module}.${name}`);
+      body = [];
+    } else if (name === null) {
+      if (line.trim()) throw new Error(`${module}: text before the first function heading`);
+    } else {
+      // Another heading would look like a second function on the page, with an anchor of its own.
+      if (!fenced && /^#{1,6} /.test(line)) throw new Error(`${module}.${name}: a heading inside an example`);
+      body.push(line);
+    }
+  }
+  // An open code block would take the parameter table and every function after it.
+  if (fenced) throw new Error(`${module}: unclosed code block`);
+  close();
+  if (!examples.size) throw new Error(`${module}: no examples`);
+  return examples;
+}
+
+// Reads every <module>.md of the examples directory; a missing directory means no examples.
+export async function readExamples(directory) {
+  let files;
+  try {
+    files = await readdir(directory);
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    return {};
+  }
+  const examples = {};
+  for (const file of files.filter(name => name.endsWith('.md')).sort()) {
+    const module = path.basename(file, '.md');
+    examples[module] = parseExamples(module, await readFile(path.join(directory, file), 'utf8'));
+  }
+  return examples;
+}
+
+function validateExamples(dump, examples) {
+  for (const [name, bodies] of Object.entries(examples)) {
+    const module = dump.modules.find(item => item.name === name);
+    if (!module) throw new Error(`Examples for an unknown module: ${name}`);
+    for (const fn of bodies.keys()) {
+      if (!module.functions.some(item => item.name === fn)) throw new Error(`Example for an unknown function: ${name}.${fn}`);
+    }
+  }
+}
 
 function validate(dump) {
   const modules = new Set();
@@ -83,11 +144,12 @@ function typeHtml(type, enums) {
   }).join(' | ');
 }
 
-function functionSection(module, fn, enums) {
+function functionSection(module, fn, enums, example) {
   const names = fn.parameters.map(parameter => parameter.name + (parameter.optional ? '?' : ''));
   const signature = `${module.name}.${fn.name}(${names.join(', ')})${fn.returns ? ` -> ${fn.returns}` : ''}`;
   const lines = [`### ${fn.name}`, '', '```lua', signature, '```', ''];
   for (const paragraph of paragraphs(fn.help)) lines.push(paragraph, '');
+  if (example) lines.push(example, '');
   if (fn.parameters.length) {
     lines.push(...table(['Parameter', 'Type', 'Default'], fn.parameters.map(parameter => [
       code(parameter.name) + (parameter.optional ? ' (optional)' : ''),
@@ -99,13 +161,13 @@ function functionSection(module, fn, enums) {
   return lines;
 }
 
-function modulePage(module, enums, sourceRef) {
+function modulePage(module, enums, sourceRef, examples) {
   const lines = [frontMatter({ title: module.name, description: module.description, order: 1 })];
   for (const paragraph of paragraphs(module.description)) lines.push(paragraph, '');
   lines.push(`Source: [\`${module.source}\`](${repositoryUrl}/blob/${sourceRef}/${module.source})`, '');
   if (module.functions.length) {
     lines.push('## Functions', '');
-    for (const fn of [...module.functions].sort(byName)) lines.push(...functionSection(module, fn, enums));
+    for (const fn of [...module.functions].sort(byName)) lines.push(...functionSection(module, fn, enums, examples?.get(fn.name)));
   }
   if (module.constants.length) {
     // A null value is a constant the server computes when it starts, such as its version: the dump cannot know it.
@@ -162,13 +224,14 @@ function enumsPage(enums) {
 }
 
 // Returns the pages as file name -> Markdown; nothing is written, so a rejected dump leaves the site as it was.
-export function renderLua(dump, { sourceRef = 'develop' } = {}) {
+export function renderLua(dump, { sourceRef = 'develop', examples = {} } = {}) {
   validate(dump);
+  validateExamples(dump, examples);
   const modules = [...dump.modules].sort(byName);
   const enums = [...dump.enums].sort(byName);
   const enumNames = new Set(enums.map(item => item.name));
   const pages = new Map([['index.md', overviewPage(modules)], ['enums.md', enumsPage(enums)]]);
-  for (const module of modules) pages.set(`${module.name}.md`, modulePage(module, enumNames, sourceRef));
+  for (const module of modules) pages.set(`${module.name}.md`, modulePage(module, enumNames, sourceRef, examples[module.name]));
   return pages;
 }
 
@@ -192,10 +255,12 @@ export async function buildLua() {
   } finally {
     await rm(stage, { recursive: true, force: true });
   }
-  const pages = renderLua(dump, { sourceRef: process.env.MOONGATE_DOCS_REF || 'develop' });
+  const examples = await readExamples(path.join(websiteRoot, 'lua/examples'));
+  const pages = renderLua(dump, { sourceRef: process.env.MOONGATE_DOCS_REF || 'develop', examples });
   await writePages(path.join(websiteRoot, 'src/content/docs/lua'), pages);
   const functions = dump.modules.reduce((count, module) => count + module.functions.length, 0);
-  console.log(`Generated the Lua reference: ${dump.modules.length} modules, ${functions} functions, ${dump.enums.length} enums.`);
+  const withExamples = Object.values(examples).reduce((count, bodies) => count + bodies.size, 0);
+  console.log(`Generated the Lua reference: ${dump.modules.length} modules, ${functions} functions (${withExamples} with an example), ${dump.enums.length} enums.`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) await buildLua();

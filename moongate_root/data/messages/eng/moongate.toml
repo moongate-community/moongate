@@ -144,7 +144,7 @@
 30121 = "Puts an item from an item template on the ground where you target: add <template>."
 30122 = "Only an item lying on the ground can be removed."
 30126 = "{0}: {1} is now {2}."
-30127 = "Sets the hits, mana, stamina, hunger or thirst of the mobile you target: set <hits|mana|stamina|hunger|thirst> <value>."
+30127 = "Sets the hits, mana, stamina, hunger or thirst of the mobile you target, or makes it a criminal: set <hits|mana|stamina|hunger|thirst|criminal> <value>."
 
 # Moongate: texts of the item scripts.
 30114 = "This moongate does not seem to go anywhere."
@@ -160,14 +160,15 @@
 30135 = "You have left {0}."
 30136 = "You are now under the protection of the guards of {0}."
 30137 = "You have left the protection of the guards of {0}."
+30138 = "Thou wilt regret thine actions, swine!"
 
-# Moongate: texts of the jail (30138-30142 to the prisoner and on its release note, 30143-30146 of the jail command).
-30138 = "You have been jailed for {0} days."
-30139 = "You have served your sentence. A fine of {0} gold was taken."
-30140 = "You have served your sentence."
-30141 = "You have been released from jail."
-30142 = "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}."
-30143 = "Sends the character you target to a jail cell for some days, or releases it: a gump lists the cells."
-30144 = "The jail is not set up: data/jail.toml is missing."
-30145 = "That is not a character."
-30146 = "The jail gump is missing: templates/gumps/jail_sentence.xml."
+# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 of the jail command).
+30139 = "You have been jailed for {0} days."
+30140 = "You have served your sentence. A fine of {0} gold was taken."
+30141 = "You have served your sentence."
+30142 = "You have been released from jail."
+30143 = "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}."
+30144 = "Sends the character you target to a jail cell for some days, or releases it: a gump lists the cells."
+30145 = "The jail is not set up: data/jail.toml is missing."
+30146 = "That is not a character."
+30147 = "The jail gump is missing: templates/gumps/jail_sentence.xml."
