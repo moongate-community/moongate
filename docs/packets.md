@@ -68,6 +68,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0xF3` | `WorldItemSaPacket` | Outgoing | 24, or 26 from client 7.0.9.0 | — |
 | `0x13` | `EquipRequestPacket` | Incoming | Fixed 10 | `EquipRequestPacketHandler`: puts the held item on the character, or bounces it back |
 | `0x2E` | `WornItemPacket` | Outgoing | Fixed 15 | — |
+| `0x6E` | `MobileAnimationPacket` | Outgoing | Fixed 14 | — |
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
