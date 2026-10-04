@@ -316,7 +316,9 @@ the scripts are no longer called, before the script engine stops.
 
 The distribution's `scripts/mobiles/monster.lua` is the script of the monsters that go for the players,
 after ModernUO's melee AI without the fight: the server has no combat yet. A template takes it with
-`script_id = "monster"`; the shipped `skeleton` and `zombie` do, and so the templates based on them. A
+`script_id = "monster"`; the undead of the graveyards do (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`,
+`spectre`, `lich`), and so the templates based on them. The wraith, the spectre and the lich are casters in
+ModernUO: they walk up and snarl like the others until magic exists. A
 monster is in one of three states:
 
 | State | What it does | It ends when |

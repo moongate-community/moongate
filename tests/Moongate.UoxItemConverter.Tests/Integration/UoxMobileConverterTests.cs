@@ -148,7 +148,8 @@ public sealed class UoxMobileConverterTests : IDisposable
         WriteItemsAndNames();
         _dirs.WriteMobileSource(
             "npc/undead.dfn",
-            "[skeleton]\n{\nID=0x0032\n}\n[zombie]\n{\nID=0x0003\n}\n[boneknight]\n{\nGET=skeleton\n}\n[m_banker]\n{\nID=0x0190\nNPCAI=8\n}\n" +
+            "[skeleton]\n{\nID=0x0032\n}\n[zombie]\n{\nID=0x0003\n}\n[wraith]\n{\nID=0x001a\n}\n[ghoul]\n{\nGET=wraith\n}\n" +
+            "[spectre]\n{\nID=0x001a\n}\n[lich]\n{\nID=0x0018\n}\n[headless]\n{\nID=0x001f\n}\n[boneknight]\n{\nGET=skeleton\n}\n[m_banker]\n{\nID=0x0190\nNPCAI=8\n}\n" +
             "[orc]\n{\nID=0x0011\nNPCAI=2\n}\n"
         );
 
@@ -158,6 +159,10 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Equal(
             ("monster", "monster", "banker"),
             (mobiles["skeleton"].ScriptId, mobiles["zombie"].ScriptId, mobiles["m_banker"].ScriptId)
+        );
+        Assert.All(
+            new[] { "wraith", "ghoul", "spectre", "lich", "headless" },
+            id => Assert.Equal("monster", mobiles[id].ScriptId)
         );
         // A template based on one of them takes the script through its base; the others have none yet.
         Assert.True(string.IsNullOrEmpty(mobiles["boneknight"].ScriptId));

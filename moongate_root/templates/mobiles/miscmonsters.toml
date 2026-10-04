@@ -366,6 +366,7 @@ notoriety = "attackable"
 karma = -450
 fame = 450
 gold = "1d51-1"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d6+14"
 parrying = "1d11+34"

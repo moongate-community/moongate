@@ -31,11 +31,17 @@ internal static class MobileTemplateBuilder
     private const string BankerAi = "8";
 
     // The mobiles a Moongate mobile script is written for, by their UOX3 name; those based on them take it through
-    // base_id. scripts/mobiles/monster.lua is the melee AI without the fight.
+    // base_id. scripts/mobiles/monster.lua is the melee AI without the fight: the undead of the graveyards take it,
+    // the casters among them (wraith, spectre, lich) too until magic exists.
     private static readonly Dictionary<string, string> ScriptIds = new(StringComparer.OrdinalIgnoreCase)
     {
         ["skeleton"] = "monster",
-        ["zombie"] = "monster"
+        ["zombie"] = "monster",
+        ["ghoul"] = "monster",
+        ["headless"] = "monster",
+        ["wraith"] = "monster",
+        ["spectre"] = "monster",
+        ["lich"] = "monster"
     };
 
     /// <summary>

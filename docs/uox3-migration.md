@@ -195,7 +195,8 @@ leather tunic as their parents; they get the leather sleeves (`0x13cd`) and legg
 (`0x13cb`).
 
 A mobile Moongate has a script for gets its `script_id`: a banker (`NPCAI=8`) takes `banker`
-(`scripts/mobiles/banker.lua`), and `skeleton` and `zombie` take `monster` (`scripts/mobiles/monster.lua`);
+(`scripts/mobiles/banker.lua`), and the undead of the graveyards (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`, `spectre`, `lich`) take
+`monster` (`scripts/mobiles/monster.lua`);
 the templates based on them take it through `base_id`.
 
 Dropped, no home yet: the rest of AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
