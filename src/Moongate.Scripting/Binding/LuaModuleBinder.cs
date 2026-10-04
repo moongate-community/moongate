@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using Lua;
-using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Scripting.Data.Binding;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Internal;
@@ -63,55 +62,37 @@ public sealed class LuaModuleBinder
     {
         ArgumentNullException.ThrowIfNull(state);
         ArgumentNullException.ThrowIfNull(moduleInstance);
-        var moduleType = moduleInstance.GetType();
-        var moduleAttribute = moduleType.GetCustomAttribute<ScriptModuleAttribute>(false) ??
-                              throw new InvalidOperationException($"{moduleType.FullName} carries no [ScriptModule].");
+        var description = LuaModuleDescriber.Describe(moduleInstance.GetType());
         var hidden = new LuaTable();
-        var functions = new List<BoundFunction>();
-        var seen = new HashSet<string>(StringComparer.Ordinal);
 
-        foreach (var method in moduleType.GetMethods(
-                     BindingFlags.Public |
-                     BindingFlags.NonPublic |
-                     BindingFlags.Static |
-                     BindingFlags.Instance |
-                     BindingFlags.DeclaredOnly
-                 ))
+        foreach (var function in description.Functions)
         {
-            var attribute = method.GetCustomAttribute<ScriptFunctionAttribute>(false);
-
-            if (attribute is null)
-            {
-                continue;
-            }
-
-            if (!method.IsPublic || method.IsStatic || method.IsGenericMethodDefinition)
-            {
-                throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{method.Name}: a [ScriptFunction] must be a public, non-generic instance method."
-                );
-            }
-
-            var luaName = attribute.Name ?? ToSnakeCase(method.Name);
-
-            if (!seen.Add(luaName))
-            {
-                throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{method.Name}: Lua name '{luaName}' is already used in module '{moduleAttribute.Name}'."
-                );
-            }
-
-            ValidateSignature(moduleType, method);
-            hidden[luaName] = new(CreateFunction(moduleAttribute.Name, luaName, moduleInstance, method));
-            functions.Add(new(luaName, method, attribute.HelpText));
+            hidden[function.LuaName] = new(
+                CreateFunction(description.Name, function.LuaName, moduleInstance, function.Method)
+            );
         }
 
-        var constants = BindConstants(moduleType, moduleAttribute.Name, hidden, seen);
+        foreach (var constant in description.Constants)
+        {
+            hidden[constant.LuaName] = LuaValueConverter.ToLua(constant.Value, constant.Type);
+        }
 
-        var table = ReadOnlyTable.Wrap(hidden, moduleAttribute.Name);
-        state.Environment[moduleAttribute.Name] = new(table);
+        foreach (var enumType in LuaModuleDescriber.EnumsOf(description))
+        {
+            NoteEnum(enumType);
+        }
 
-        return new(moduleAttribute.Name, moduleAttribute.HelpText, moduleType, table, functions, constants);
+        var table = ReadOnlyTable.Wrap(hidden, description.Name);
+        state.Environment[description.Name] = new(table);
+
+        return new(
+            description.Name,
+            description.HelpText,
+            description.ModuleType,
+            table,
+            description.Functions,
+            description.Constants
+        );
     }
 
     /// <summary>
@@ -177,68 +158,6 @@ public sealed class LuaModuleBinder
         }
 
         return builder.ToString();
-    }
-
-    private List<BoundConstant> BindConstants(Type moduleType, string moduleName, LuaTable hidden, HashSet<string> seen)
-    {
-        var constants = new List<BoundConstant>();
-        const BindingFlags flags = BindingFlags.Public |
-                                   BindingFlags.NonPublic |
-                                   BindingFlags.Static |
-                                   BindingFlags.Instance |
-                                   BindingFlags.DeclaredOnly;
-
-        foreach (var member in moduleType.GetMembers(flags))
-        {
-            var attribute = member.GetCustomAttribute<ScriptConstantAttribute>(false);
-
-            if (attribute is null)
-            {
-                continue;
-            }
-
-            var (type, isStaticReadOnly) = member switch
-            {
-                FieldInfo field => (field.FieldType, field.IsStatic && field.IsInitOnly && field.IsPublic),
-                PropertyInfo property => (property.PropertyType,
-                    property.GetMethod is { IsStatic: true, IsPublic: true } &&
-                    property.SetMethod is null),
-                _ => (typeof(void), false)
-            };
-
-            if (!isStaticReadOnly)
-            {
-                throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{member.Name}: a [ScriptConstant] must be a public static readonly field or a public static get-only property."
-                );
-            }
-
-            if (type == typeof(LuaTable) ||
-                type == typeof(LuaValue) ||
-                type == typeof(object) ||
-                !LuaValueConverter.IsSupported(type))
-            {
-                throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{member.Name}: constants of type {type.Name} are not supported; use int, long, double, bool, string or an enum."
-                );
-            }
-
-            var luaName = attribute.Name ?? member.Name;
-
-            if (!seen.Add(luaName))
-            {
-                throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{member.Name}: Lua name '{luaName}' is already used in module '{moduleName}'."
-                );
-            }
-
-            var value = ReadConstant(moduleType, member);
-            NoteEnum(type);
-            hidden[luaName] = LuaValueConverter.ToLua(value, type);
-            constants.Add(new(luaName, type, value, attribute.HelpText));
-        }
-
-        return constants;
     }
 
     private LuaFunction CreateFunction(string moduleName, string luaName, object instance, MethodInfo method)
@@ -339,62 +258,5 @@ public sealed class LuaModuleBinder
         {
             _discoveredEnums.Add(type);
         }
-    }
-
-    /// <summary>
-    ///     Reads a validated constant; a getter that throws becomes a binding error naming the member, with the getter's
-    ///     exception as the cause.
-    /// </summary>
-    private static object? ReadConstant(Type moduleType, MemberInfo member)
-    {
-        try
-        {
-            return member switch
-            {
-                FieldInfo field       => field.GetValue(null),
-                PropertyInfo property => property.GetValue(null),
-                _                     => null
-            };
-        }
-        catch (TargetInvocationException exception) when (exception.InnerException is not null)
-        {
-            throw new InvalidOperationException(
-                $"{moduleType.FullName}.{member.Name}: the constant's getter threw {exception.InnerException.GetType().Name}: {exception.InnerException.Message}",
-                exception.InnerException
-            );
-        }
-    }
-
-    private void ValidateSignature(Type moduleType, MethodInfo method)
-    {
-        var parameters = method.GetParameters();
-
-        for (var i = 0; i < parameters.Length; i++)
-        {
-            var parameter = parameters[i];
-            var isParams = i == parameters.Length - 1 && parameter.GetCustomAttribute<ParamArrayAttribute>() is not null;
-            var type = isParams ? parameter.ParameterType.GetElementType()! : parameter.ParameterType;
-            type = Nullable.GetUnderlyingType(type) ?? type;
-
-            if (!LuaValueConverter.IsSupported(type) || type == typeof(void))
-            {
-                throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{method.Name}: parameter '{parameter.Name}' of type {parameter.ParameterType.Name} cannot be bound."
-                );
-            }
-
-            NoteEnum(type);
-        }
-
-        var returnType = Nullable.GetUnderlyingType(method.ReturnType) ?? method.ReturnType;
-
-        if (!LuaValueConverter.IsSupported(returnType))
-        {
-            throw new InvalidOperationException(
-                $"{moduleType.FullName}.{method.Name}: return type {method.ReturnType.Name} cannot be bound."
-            );
-        }
-
-        NoteEnum(returnType);
     }
 }
