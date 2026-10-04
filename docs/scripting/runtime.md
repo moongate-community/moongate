@@ -43,18 +43,8 @@ allocations, including tables and concatenation, do not have a global memory cap
 Treat scripts and C# plugins as trusted shard content, not as an isolation boundary
 for arbitrary hostile code.
 
-Available libraries are base, `string`, `table`, `math`, restricted `coroutine` and
-restricted `package`. There is no `io`, `os`, `debug`, `dofile`, `loadfile` or
-`rawset`. Filesystem/native package search paths and script-created/resumed
-coroutines are disabled. Use `require` for local modules and `wait` for scheduled
-yielding. See the [library sandbox reference](../../src/Moongate.Scripting/README.md#sandbox)
-for the exact removed functions.
-
-## Hexadecimal table keys
-
-LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
-`{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,
-as `light.lua` does with `add(0x0A27, 0x0B1D, "circle225")`.
+Which libraries a script has, and where the Lua of the server differs from the manual, is told in
+[Lua in Moongate](lua-in-moongate.md).
 
 ## Editor support
 
