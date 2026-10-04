@@ -160,8 +160,14 @@
 30135 = "You have left {0}."
 30136 = "You are now under the protection of the guards of {0}."
 30137 = "You have left the protection of the guards of {0}."
+
+# Moongate: texts of the jail (30138-30142 to the prisoner and on its release note, 30143-30146 of the jail command).
 30138 = "You have been jailed for {0} days."
 30139 = "You have served your sentence. A fine of {0} gold was taken."
 30140 = "You have served your sentence."
 30141 = "You have been released from jail."
 30142 = "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}."
+30143 = "Sends the character you target to a jail cell for some days, or releases it: a gump lists the cells."
+30144 = "The jail is not set up: data/jail.toml is missing."
+30145 = "That is not a character."
+30146 = "The jail gump is missing: templates/gumps/jail_sentence.xml."

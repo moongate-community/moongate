@@ -130,4 +130,8 @@ public static class CommandMessages
     public const int RemoveOnlyGroundItems = 30122;
     public const int StatSet = 30126;
     public const int SetDescription = 30127;
+    public const int JailDescription = 30143;
+    public const int JailNotSetUp = 30144;
+    public const int NotACharacter = 30145;
+    public const int JailGumpMissing = 30146;
 }

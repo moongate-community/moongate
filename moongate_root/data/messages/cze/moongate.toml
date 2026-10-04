@@ -160,8 +160,14 @@
 30135 = "Opouštíš: {0}."
 30136 = "Nyní jsi pod ochranou stráží: {0}."
 30137 = "Opouštíš ochranu stráží: {0}."
+
+# Moongate: texts of the jail (30138-30142 to the prisoner and on its release note, 30143-30146 of the jail command).
 30138 = "Byl jsi uvězněn na {0} dní."
 30139 = "Odpykal sis svůj trest. Byla ti stržena pokuta {0} zlatých."
 30140 = "Odpykal sis svůj trest."
 30141 = "Byl jsi propuštěn z vězení."
 30142 = "{0} si odpykal {1} dní v cele {2}, od {3} do {4}, a zaplatil pokutu {5} zlatých. Uvěznil: {6}."
+30143 = "Pošle vybranou postavu na několik dní do vězeňské cely, nebo ji propustí: gump vypíše cely."
+30144 = "Vězení není nastaveno: chybí data/jail.toml."
+30145 = "To není postava."
+30146 = "Chybí gump vězení: templates/gumps/jail_sentence.xml."
