@@ -43,12 +43,13 @@ public sealed class WeightService : IWeightService
     {
         var total = _items.GetWorn(mobile.Id).Where(worn => worn.Layer != LayerType.Bank).Sum(Of);
 
-        // What its player lifted from the ground or from a chest is in its hand, as in ModernUO.
+        // What its player lifted from the ground, from a chest or out of the bank is in its hand, as in ModernUO;
+        // what it lifted from its own pack is still counted there.
         if (_sessions is not null &&
             _sessions.TryGetByCharacterId(mobile.Id, out var session) &&
             session.Get(ItemSessionKeys.Held) is { } held &&
             _items.TryGet(held.Item, out var inHand) &&
-            _items.GetOwner(inHand) != mobile.Id)
+            (_items.GetOwner(inHand) != mobile.Id || _items.GetWornRoot(inHand)?.Layer == LayerType.Bank))
         {
             total += Of(inHand);
         }
@@ -64,6 +65,7 @@ public sealed class WeightService : IWeightService
     public bool Holds(ItemEntity container, ItemEntity item)
     {
         var added = Of(item);
+        var around = Around(item);
         var visited = new HashSet<Serial>();
 
         for (var current = container; current is not null && visited.Add(current.Id); current = Parent(current))
@@ -71,6 +73,12 @@ public sealed class WeightService : IWeightService
             if (current.Layer == LayerType.Bank)
             {
                 return true;
+            }
+
+            // A container the item is already in gets no heavier: over its limit or not, its items move around.
+            if (around.Contains(current.Id))
+            {
+                continue;
             }
 
             var maximum = MaximumOf(current);
@@ -82,6 +90,18 @@ public sealed class WeightService : IWeightService
         }
 
         return true;
+    }
+
+    // The containers the item is in, at any depth.
+    private HashSet<Serial> Around(ItemEntity item)
+    {
+        var around = new HashSet<Serial>();
+
+        for (var current = Parent(item); current is not null && around.Add(current.Id); current = Parent(current))
+        {
+        }
+
+        return around;
     }
 
     private ItemEntity? Parent(ItemEntity item)
@@ -119,15 +139,19 @@ public sealed class WeightService : IWeightService
 
     private int PileWeight(ItemEntity item)
     {
-        // The template's weight, or the tiledata weight of the graphic the item has now.
-        var unit = _templates.TryGet(item.TemplateId, out var template) && template.Weight is { } own
-            ? own
-            : _tiles.TryGetItem(item.ItemId, out var tile) ? tile.Weight : 0;
+        decimal unit;
 
-        // 255 is tiledata's "cannot be lifted", not a weight.
-        if (unit >= ItemTemplateExtensions.TiledataWeightCannotLift)
+        if (_templates.TryGet(item.TemplateId, out var template) && template.Weight is { } own)
         {
-            return 0;
+            unit = own;
+        }
+        else
+        {
+            // The tiledata weight of the graphic the item has now; 255 there is "cannot be lifted", not a weight.
+            unit = _tiles.TryGetItem(item.ItemId, out var tile) &&
+                   tile.Weight < ItemTemplateExtensions.TiledataWeightCannotLift
+                ? tile.Weight
+                : 0;
         }
 
         return (int)Math.Ceiling(unit * Math.Max(item.Amount, 1));

@@ -61,6 +61,7 @@ public sealed class WeightServiceTests : IAsyncLifetime
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
                 new ItemTemplate { Id = "gold", Weight = 0.02m },
+                new ItemTemplate { Id = "boulder", Weight = 500m },
                 new ItemTemplate { Id = "small_bag", MaxWeight = 10 },
                 new ItemTemplate { Id = "bottomless", MaxWeight = 0 }
             )
@@ -86,6 +87,39 @@ public sealed class WeightServiceTests : IAsyncLifetime
     public void Of_WhatTiledataSaysCannotBeLifted_WeighsNothing()
     {
         Assert.Equal(0, _weight.Of(Item(0x40000020, AnvilGraphic)));
+    }
+
+    [Fact]
+    public void Of_AHeavyTemplate_KeepsItsWeight_OnlyTiledatasCannotLiftIsNoWeight()
+    {
+        Assert.Equal(500, _weight.Of(Item(0x40000021, DaggerGraphic, "boulder")));
+    }
+
+    [Fact]
+    public async Task Carried_CountsTheItemLiftedOutOfTheBank()
+    {
+        Assert.True(_fixture.Sessions.TryGetByCharacterId(Aria, out var session));
+
+        await _fixture.Network.ExecuteOnLoopAsync(() => session!.Set(ItemSessionKeys.Held, new(_ingots.Id)));
+
+        // The 500 ingots are in the hand now, though their row still says the bank.
+        Assert.Equal(509, _weight.Carried(_aria));
+    }
+
+    [Fact]
+    public void Holds_InAContainerAlreadyOverItsLimit_ItsOwnItemsStillMoveAround()
+    {
+        // Put there by a script: the backpack is over its 400 stones.
+        var heavy = Pile(0x40000050, 450);
+        heavy.PutInContainer(_backpack.Id, new Point2D(80, 80));
+        _items.Add([heavy]);
+
+        // To another spot of the backpack, and into the bag inside it, which has room for a stone.
+        Assert.True(_weight.Holds(_backpack, _dagger));
+        Assert.True(_weight.Holds(_bag, _dagger));
+        // Nothing new comes in.
+        Assert.False(_weight.Holds(_backpack, _loose));
+        Assert.False(_weight.Holds(_bag, _loose));
     }
 
     [Fact]

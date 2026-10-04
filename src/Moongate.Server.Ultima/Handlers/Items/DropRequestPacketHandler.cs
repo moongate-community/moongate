@@ -1,9 +1,9 @@
-using Moongate.Server.Core.Types.Accounts;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
@@ -98,6 +98,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             // The hand is freed either way, so the held item must go back where it still is.
             _logger.Debug("Session {SessionId} named {Item} while holding {Held}", session.SessionId, packet.Item, other);
             HeldItemBounce.Return(session, other, _items, _mobiles, _view, _sender, _tooltips);
+            LoadChanged(session, false);
 
             return;
         }
@@ -116,6 +117,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         {
             _logger.Debug("{Item} refuses to be dropped: it bounces back", item);
             HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+            LoadChanged(session, false);
 
             return;
         }

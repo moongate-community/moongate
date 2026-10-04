@@ -12,7 +12,8 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     The stamina a step costs, with ModernUO's numbers: overloaded, 5 and one more every 25 stones over the maximum,
-///     twice running; running, a point every 16 steps and one a step below a tenth of the stamina.
+///     twice running; running, a point every 16 steps and one a step below a tenth of the stamina. A step that would
+///     take the last of the stamina is refused.
 ///     <c>ultima.regeneration.fatigue_enabled</c> turns it off.
 /// </summary>
 public sealed class FatigueService : IFatigueService
@@ -22,7 +23,7 @@ public sealed class FatigueService : IFatigueService
     public const int RunSteps = 16;
     public const int OverloadedWarning = 30133;
 
-    private const int OverloadedLoss = 5;
+    private const int OverloadedLossBase = 5;
     private const int StonesPerLoss = 25;
 
     private readonly IWeightService _weight;
@@ -48,19 +49,23 @@ public sealed class FatigueService : IFatigueService
 
     public bool CanStep(GameSession session, MobileEntity mobile, bool running)
     {
-        if (!Applies(session, mobile) || mobile.Stamina > 0)
+        if (!Applies(session, mobile))
         {
             return true;
         }
 
-        if (Overweight(mobile) > 0)
+        var overloaded = OverloadedLoss(mobile, running);
+
+        // As ModernUO: the step that would take the last of the stamina is not taken, so a point that came back
+        // does not buy a tile.
+        if (overloaded > 0 && mobile.Stamina - overloaded <= 0)
         {
             _speech.TellCliloc(mobile, OverloadedMessage);
 
             return false;
         }
 
-        if (running)
+        if (running && mobile.Stamina - overloaded - SpentLoss(mobile, overloaded) <= 0)
         {
             _speech.TellCliloc(mobile, FatiguedMessage);
 
@@ -77,30 +82,15 @@ public sealed class FatigueService : IFatigueService
             return;
         }
 
-        var loss = 0;
-        var overweight = Overweight(mobile);
-
-        if (overweight > 0)
-        {
-            loss = OverloadedLoss + overweight / StonesPerLoss;
-
-            if (running)
-            {
-                loss *= 2;
-            }
-        }
+        var loss = OverloadedLoss(mobile, running);
 
         if (running)
         {
-            // Nearly spent, every running step costs.
-            if ((mobile.Stamina - loss) * 10 < mobile.StaminaMax)
-            {
-                loss++;
-            }
+            loss += SpentLoss(mobile, loss);
 
             var state = session.Get(MovementSessionKeys.State);
 
-            if (state is not null && ++state.RunSteps > RunSteps)
+            if (state is not null && ++state.RunSteps >= RunSteps)
             {
                 state.RunSteps = 0;
                 loss++;
@@ -139,8 +129,24 @@ public sealed class FatigueService : IFatigueService
         return _config.FatigueEnabled && !mobile.IsNpc && session.AccountType < AccountType.GameMaster;
     }
 
-    private int Overweight(MobileEntity mobile)
+    // What a step costs a mobile that carries more than it may; nothing at the maximum or below.
+    private int OverloadedLoss(MobileEntity mobile, bool running)
     {
-        return _weight.Carried(mobile) - _weight.MaxCarried(mobile);
+        var overweight = _weight.Carried(mobile) - _weight.MaxCarried(mobile);
+
+        if (overweight <= 0)
+        {
+            return 0;
+        }
+
+        var loss = OverloadedLossBase + overweight / StonesPerLoss;
+
+        return running ? loss * 2 : loss;
+    }
+
+    // Nearly spent, every running step costs a point: below a tenth of the stamina, once the other loss is taken.
+    private static int SpentLoss(MobileEntity mobile, int loss)
+    {
+        return (mobile.Stamina - loss) * 10 < mobile.StaminaMax ? 1 : 0;
     }
 }

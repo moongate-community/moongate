@@ -33,8 +33,8 @@ public interface IWeightService
 
     /// <summary>
     ///     Gets whether the container, and every container it is in, still holds its limit of stones with the item in
-    ///     it. The limit is the template's <c>max_weight</c>, 400 without one and none for 0; a bank box has none, and
-    ///     neither has what is in it.
+    ///     it. The limit is the template's <c>max_weight</c>, 400 without one and none for 0; a bank box has none, though
+    ///     a container inside it keeps its own. A container the item is already in is not asked.
     /// </summary>
     bool Holds(ItemEntity container, ItemEntity item);
 }

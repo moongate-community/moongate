@@ -53,15 +53,15 @@ public sealed class FatigueServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Running_CostsAPointEverySeventeenthStep()
+    public async Task Running_CostsAPointEverySixteenSteps()
     {
-        await StepsAsync(16, true);
+        await StepsAsync(15, true);
         Assert.Equal(100, _aria.Stamina);
 
         await StepsAsync(1, true);
         Assert.Equal(99, _aria.Stamina);
 
-        await StepsAsync(17, true);
+        await StepsAsync(16, true);
         Assert.Equal(98, _aria.Stamina);
     }
 
@@ -113,6 +113,33 @@ public sealed class FatigueServiceTests : IAsyncLifetime
 
         Assert.False(await CanStepAsync(false));
         Assert.Equal(FatigueService.OverloadedMessage, Assert.Single(_speech.ToldClilocs).Cliloc);
+    }
+
+    [Fact]
+    public async Task Overloaded_AStepThatWouldTakeTheLastStamina_IsRefused_SoNoPointBuysATile()
+    {
+        // 100 stones over: 9 a step walking.
+        _weight.CarriedStones = 200;
+        _aria.Stamina = 9;
+
+        Assert.False(await CanStepAsync(false));
+        Assert.Equal(FatigueService.OverloadedMessage, Assert.Single(_speech.ToldClilocs).Cliloc);
+        Assert.Equal(9, _aria.Stamina);
+
+        _aria.Stamina = 10;
+        Assert.True(await CanStepAsync(false));
+        // Running costs twice as much.
+        Assert.False(await CanStepAsync(true));
+    }
+
+    [Fact]
+    public async Task Running_WithTheLastPointOfStamina_IsRefused()
+    {
+        _aria.Stamina = 1;
+
+        Assert.False(await CanStepAsync(true));
+        Assert.Equal(FatigueService.FatiguedMessage, Assert.Single(_speech.ToldClilocs).Cliloc);
+        Assert.True(await CanStepAsync(false));
     }
 
     [Fact]
