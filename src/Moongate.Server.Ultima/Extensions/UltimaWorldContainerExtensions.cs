@@ -38,6 +38,8 @@ public static class UltimaWorldContainerExtensions
         container.Register<ILootService, LootService>(Reuse.Singleton);
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
         container.Register<INpcTickService, NpcTickService>(Reuse.Singleton);
+        container.AddMoongateService<IRegenerationService, RegenerationService>(12);
+        container.AddMoongateService<IHungerService, HungerService>(12);
         // After the script engine (70) and its bootstrap: the mobile scripts load into the running engine.
         container.AddMoongateService<NpcScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);

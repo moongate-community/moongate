@@ -3179,7 +3179,7 @@
       }
     ],
     "notes": "A cliloc shown by the client in its language.",
-    "handler": "LookRequestPacketHandler: the name over an object. UseRequestPacketHandler: the too-far message. ItemModule: a cliloc shown by a script."
+    "handler": "LookRequestPacketHandler: the name over an object. UseRequestPacketHandler: the too-far message. ItemModule: a cliloc shown by a script. SpeechService: a cliloc as a system message (mobile.message_cliloc, the food script)."
   },
   "0x54:outgoing": {
     "category": "World",

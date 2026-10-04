@@ -19,14 +19,22 @@ public sealed class NpcTickService : INpcTickService
     private readonly ITimerService _timers;
     private readonly NpcsConfig _config;
     private readonly INpcThinker? _thinker;
+    // Lazy: the regeneration needs the mobiles, which need the sectors, which need this service.
+    private readonly Lazy<IRegenerationService>? _regeneration;
     private readonly Dictionary<Serial, string> _awake = [];
 
     public int AwakeCount => _awake.Count;
 
     public long ThinkCount { get; private set; }
 
-    public NpcTickService(ITimerService timers, NpcsConfig config, INpcThinker? thinker = null)
+    public NpcTickService(
+        ITimerService timers,
+        NpcsConfig config,
+        INpcThinker? thinker = null,
+        Lazy<IRegenerationService>? regeneration = null
+    )
     {
+        _regeneration = regeneration;
         _timers = timers;
         _config = config;
         _thinker = thinker;
@@ -77,6 +85,8 @@ public sealed class NpcTickService : INpcTickService
 
         try
         {
+            // An NPC regenerates while it thinks: asleep, far from every player, it does not.
+            _regeneration?.Value.Tick(npc);
             _thinker?.Think(npc);
         }
         catch (Exception exception)

@@ -24,9 +24,21 @@ public sealed class RecordingMobileStateService : IMobileStateService
 
     public List<(MobileEntity Mobile, int? Body, int? Hue)> Looks { get; } = [];
 
+    /// <summary>
+    ///     When true, the hit points, mana and stamina asked for are written to the mobile, as the real service does.
+    /// </summary>
+    public bool Apply { get; set; }
+
     public bool SetStats(MobileEntity mobile, MobileStatsChange change)
     {
         Stats.Add((mobile, change));
+
+        if (Apply)
+        {
+            mobile.Hits = change.Hits ?? mobile.Hits;
+            mobile.Mana = change.Mana ?? mobile.Mana;
+            mobile.Stamina = change.Stamina ?? mobile.Stamina;
+        }
 
         return Result;
     }

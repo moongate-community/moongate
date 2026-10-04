@@ -58,6 +58,40 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     [Fact]
+    public void Run_WhatUox3CallsFood_GetsTheFoodScript()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [base_food]
+            {
+            type=14
+            weight=100
+            }
+            [0x09d0]
+            {
+            get=base_food
+            name=apple
+            id=0x09d0
+            }
+            [0x1f9e]
+            {
+            name=pitcher of water
+            id=0x1f9e
+            type=105
+            }
+            """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        // UOX3's item type 14 is food, on the block itself or the one it gets its fields from; a drink is not.
+        var items = ReadItems();
+        Assert.Equal("food", items.Values.Single(item => item.Name == "apple").ScriptId);
+        Assert.True(string.IsNullOrEmpty(items.Values.Single(item => item.Name == "pitcher of water").ScriptId));
+    }
+
+    [Fact]
     public void Run_TheBaseFields_AreConverted()
     {
         _dirs.WriteSource(

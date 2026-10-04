@@ -35,6 +35,8 @@ using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
+using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Items;
@@ -57,6 +59,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3 };
 
     private readonly SettableClock _time = new();
+
+    private readonly RecordingMobileStateService _mobileState = new() { Apply = true };
 
     private BroadcastFixture _fixture = null!;
     private ItemTimerService _itemTimers = null!;
@@ -91,7 +95,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
         _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService()));
+        _container.RegisterInstance<IMobileStateService>(_mobileState);
         _container.AddScriptModule<MobileModule>();
+        _container.RegisterScriptEnum<HumanAnimationType>();
         _container.RegisterInstance<IEffectService>(_effects);
         _container.AddScriptModule<EffectModule>();
         _container.RegisterScriptEnum<EffectGraphicType>();
@@ -105,6 +111,45 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
                     return Task.CompletedTask;
                 }
             );
+    }
+
+    [Fact]
+    public async Task TheShippedFoodScript_EatsOnePiece_FillsTheStomach_GivesStamina_AndTellsHowItFeels()
+    {
+        var scripts = await StartItemScriptAsync("food", "potion");
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.Body = 400;
+        aria.Hunger = 8;
+        aria.Stamina = 10;
+        aria.StaminaMax = 50;
+
+        var result = scripts.Run(_potions, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        Assert.Equal((2, 11), (_potions.Amount, aria.Hunger));
+        Assert.InRange(aria.Stamina, 16, 18);
+        Assert.InRange(Assert.Single(_speech.Sounds).Sound, 0x3A, 0x3C);
+        Assert.Contains("Animated 2 34 5 1", _view.Calls);
+        // Eleven of twenty: below fifteen, the third of the client's four texts.
+        Assert.Equal((aria, 500870, ""), Assert.Single(_speech.ToldClilocs));
+    }
+
+    [Fact]
+    public async Task TheShippedFoodScript_AFullPlayer_EatsNothing_AndTheLastBiteStuffsIt()
+    {
+        var scripts = await StartItemScriptAsync("food", "potion");
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.Hunger = 19;
+        _potions.SetProp("food.fill", 6L);
+
+        scripts.Run(_potions, "on_use", 2L);
+        scripts.Run(_potions, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        // The first bite fills it to twenty, the second is refused.
+        Assert.Equal((2, 20), (_potions.Amount, aria.Hunger));
+        Assert.Equal([500872, 500867], _speech.ToldClilocs.Select(told => told.Cliloc));
     }
 
     [Fact]

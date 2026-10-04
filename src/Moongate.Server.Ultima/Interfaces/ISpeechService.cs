@@ -36,4 +36,12 @@ public interface ISpeechService
     /// </summary>
     /// <returns>Whether it was sent: false for an NPC or a player whose client is gone.</returns>
     bool Tell(MobileEntity player, string text);
+
+    /// <summary>
+    ///     Sends a text of the client, by its number, as a system message (0xC1) to the player
+    ///     <paramref name="player" /> only: the client shows it in its own language, with
+    ///     <paramref name="arguments" /> in its <c>~1_NAME~</c> places, split by tabs.
+    /// </summary>
+    /// <returns>Whether it was sent: false for an NPC or a player whose client is gone.</returns>
+    bool TellCliloc(MobileEntity player, int cliloc, string arguments = "");
 }

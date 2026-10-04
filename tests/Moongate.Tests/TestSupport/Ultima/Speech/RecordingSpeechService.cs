@@ -39,6 +39,15 @@ public sealed class RecordingSpeechService : ISpeechService
         return 1;
     }
 
+    public List<(MobileEntity Player, int Cliloc, string Arguments)> ToldClilocs { get; } = [];
+
+    public bool TellCliloc(MobileEntity player, int cliloc, string arguments = "")
+    {
+        ToldClilocs.Add((player, cliloc, arguments));
+
+        return true;
+    }
+
     public bool Tell(MobileEntity player, string text)
     {
         Told.Add((player, text));

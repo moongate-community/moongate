@@ -7,6 +7,9 @@ using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Npcs;
 using Moongate.Ultima.Types;
 
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Tests.TestSupport.Timing;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class NpcTickServiceTests
@@ -95,6 +98,26 @@ public sealed class NpcTickServiceTests
 
         Assert.Equal(2, ticks.ThinkCount);
         Assert.Equal([npc, npc], thinker.Thought);
+    }
+
+    [Fact]
+    public void Fire_AThink_RegeneratesTheNpc()
+    {
+        var timers = new RecordingTimerService();
+        var clock = new SettableClock();
+        var state = new RecordingMobileStateService { Apply = true };
+        var regeneration = new RegenerationService(state, new RegenerationConfig(), clock);
+        var ticks = new NpcTickService(timers, new NpcsConfig(), null, new Lazy<IRegenerationService>(() => regeneration));
+        var npc = Npc(0x100);
+        npc.Hits = 5;
+        npc.HitsMax = 10;
+        ticks.Wake(npc);
+
+        timers.Fire(timers.Timers[0].Id);
+        clock.Advance(TimeSpan.FromSeconds(11));
+        timers.Fire(timers.Timers[0].Id);
+
+        Assert.Equal(6, npc.Hits);
     }
 
     [Fact]

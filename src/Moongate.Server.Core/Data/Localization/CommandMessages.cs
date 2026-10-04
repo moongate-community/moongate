@@ -128,4 +128,6 @@ public static class CommandMessages
     public const int AddFailed = 30120;
     public const int AddDescription = 30121;
     public const int RemoveOnlyGroundItems = 30122;
+    public const int StatSet = 30126;
+    public const int SetDescription = 30127;
 }

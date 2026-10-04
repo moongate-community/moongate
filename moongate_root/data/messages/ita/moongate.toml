@@ -143,6 +143,10 @@
 30120 = "Impossibile aggiungere l'oggetto. Controlla i log del server."
 30121 = "Mette a terra, dove indichi, un oggetto da un modello di oggetto: add <template>."
 30122 = "Si può rimuovere solo un oggetto a terra."
+30126 = "{0}: {1} ora vale {2}."
+30127 = "Imposta vita, mana, stamina o fame del personaggio che scegli: set <hits|mana|stamina|hunger> <valore>."
 
 # Moongate: texts of the item scripts.
 30114 = "Questo moongate non sembra portare da nessuna parte."
+30123 = "Hai fame."
+30124 = "Stai morendo di fame: le tue ferite non guariranno finché non mangi."

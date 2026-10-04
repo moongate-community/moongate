@@ -271,6 +271,30 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Hunger_IsHowFullTheMobileIs_AndSetHungerKeepsItFromZeroToTwenty()
+    {
+        var result = Run(
+            "local full = mobile.hunger(2) " +
+            "return full, mobile.set_hunger(2, 7), mobile.hunger(2), mobile.set_hunger(2, 99), mobile.hunger(2), " +
+            "mobile.set_hunger(2, -4), mobile.hunger(2), mobile.hunger(999), mobile.set_hunger(999, 5)"
+        );
+
+        Assert.Equal([20, 7, 20, 0], new[] { result[0], result[2], result[4], result[6] }.Select(value => value.Read<int>()));
+        Assert.All(new[] { result[1], result[3], result[5] }, value => Assert.True(value.Read<bool>()));
+        Assert.Equal((LuaValue.Nil, false), (result[7], result[8].Read<bool>()));
+        Assert.Equal(0, _aria.Hunger);
+    }
+
+    [Fact]
+    public void MessageCliloc_TellsThePlayerATextOfItsClient()
+    {
+        var result = Run("return mobile.message_cliloc(2, 500867), mobile.message_cliloc(2, 1042958, '3:05'), mobile.message_cliloc(2, 0), mobile.message_cliloc(999, 500867)");
+
+        Assert.Equal([true, true, false, false], result.Select(value => value.Read<bool>()));
+        Assert.Equal([(_aria, 500867, ""), (_aria, 1042958, "3:05")], _speech.ToldClilocs);
+    }
+
+    [Fact]
     public void Message_TellsThePlayer()
     {
         var result = Run("return mobile.message(2, 'That is too far away.')");

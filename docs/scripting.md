@@ -102,6 +102,8 @@ table below is the same surface at a glance.
 | `mobile.teleport(serial, x, y, z, map?)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map, or of `map` (a `MapType`, or its name such as `"Tokuno"`) when given: a player's client is told of the map change (0xBF 0x08) and where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a `z` outside -128 to 127 |
 | `mobile.animate(serial, action, frames?, repeat_count?)` | Plays an animation of the mobile, seen by its own player and those who see it: `action` is a number of its body (0 to 65535), with `frames` (1 to 255, default 5) played `repeat_count` times (1 to 255, default 1). The bodies do not share the numbers, so use the names of the body: `HumanAnimationType` (`Bow`, `Salute`, `Fidget1`, `Spell1`...), `MonsterAnimationType` (`Attack1`, `GetHit`, `Pillage`, `Fidget1`...) or `AnimalAnimationType` (`Eat`, `Alert`, `LieDown`...), as in `mobile.animate(who, HumanAnimationType.Bow)`; a number works too. `false` for a mobile not in the world or a number out of range |
 | `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells; `false` for a sound out of range or a mobile not in the world |
+| `mobile.message_cliloc(serial, cliloc, args?)` | A system message of the client's own texts, by its number, in the language of that client: `mobile.message_cliloc(who, 500867)`; `args` fills its `~1_NAME~` places, split by tabs. `false` for a number not above 0, an NPC or a player not in the world |
+| `mobile.hunger(serial)`, `mobile.set_hunger(serial, value)` | How full the mobile is, from 0 (starving) to 20 (full), and setting it, kept in that range: `mobile.set_hunger(who, mobile.hunger(who) + 3)`. A player loses a point every `ultima.regeneration.hunger_minutes` and, at 0, gets no hit points back. `nil` and `false` for a mobile not in the world |
 | `mobile.message(serial, text)` | A system message, in the lower left of the screen, read only by that player: `mobile.message(who, "That is too far away.")`; cut at 128 characters; `false` for an empty text, an NPC or a player not in the world |
 | `mobile.template(serial)` | The id of the mobile template an NPC was made from, such as `"f_baker"`; `nil` for a player or a mobile not in the world |
 | `mobile.name(serial)`, `mobile.is_player(serial)`, `mobile.direction(serial)` | The mobile's name, whether it is a player's character, and the `DirectionType` it faces; `nil`, `false` and `nil` for a mobile not in the world |
@@ -487,6 +489,19 @@ graphic, such as a brazier, stays as it is. The lights `.decorate` places have t
 light and douse themselves: every 30 seconds the server calls `on_darkness(serial, dark)` on a
 lamp post whose spot turned dark or light (`ultima.world.lamp_post_light`), and `light.lua`
 switches its graphic silently.
+
+`scripts/items/food.lua` is the script of what can be eaten, as ModernUO's `Food`: the converted
+food templates carry `script_id = "food"`. Double clicking a piece eats one: the player's hunger rises
+by the item's prop `food.fill` (3 without it), 20 at most; it gets 6 to 8 points of stamina back, makes
+the sound and, with a human, elf or gargoyle body, the gesture of eating, and reads how full it feels
+in the language of its client (messages 500868 to 500872). A full player reads "You are simply too full
+to eat any more!" (500867) and eats nothing.
+
+Hit points, mana and stamina come back by themselves (see
+[`ultima.regeneration`](server-configuration.md)). A script changes the rate of one mobile with its
+props, in seconds for a point: `mobile.set_prop(who, "regen.hits", 2)` heals it five times faster than
+the default; `nil` gives it the configured rate back. The props are `regen.hits`, `regen.mana` and
+`regen.stamina`.
 
 The two teleporter scripts below share `scripts/common/teleport.lua`, a Lua module they take with
 `local teleport = require("common.teleport")`: `teleport.send(serial, who)` sends a mobile where the

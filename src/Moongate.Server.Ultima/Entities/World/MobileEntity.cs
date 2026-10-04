@@ -198,6 +198,11 @@ public class MobileEntity : IMoongateEntity
     public DirectionType Direction { get; set; } = DirectionType.South;
 
     /// <summary>
+    ///     How full the mobile is, from 0 (starving) to 20 (full): it drops with time for a player and rises by eating.
+    /// </summary>
+    public int Hunger { get; set; } = 20;
+
+    /// <summary>
     ///     Whether the mobile is hidden: the players do not see it, the staff does.
     /// </summary>
     public bool Hidden { get; set; }
