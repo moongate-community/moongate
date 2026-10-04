@@ -39,6 +39,7 @@ public sealed class NpcModuleTests
     private readonly NpcPathService _paths;
     private readonly FakeScriptEngine _engine = new() { CurrentScript = "mobiles/summoner.lua" };
     private readonly StubGameLoop _loop = new();
+    private readonly StubLineOfSightService _sight = new();
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly MobileEntity _orc = new()
     {
@@ -541,12 +542,168 @@ public sealed class NpcModuleTests
         Assert.Equal(LuaValue.Nil, result[2]);
     }
 
+    [Fact]
+    public void Home_IsTheAreaOfTheSpawnRegion_OrNil()
+    {
+        SetHome(1598, 1597, 1602, 1603);
+
+        var result = Run("local home = npc.home(256) return home.x1, home.y1, home.x2, home.y2, npc.home(257), npc.home(2)");
+
+        Assert.Equal([1598, 1597, 1602, 1603], result[..4].Select(value => value.Read<int>()));
+        Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[4], result[5]));
+    }
+
+    [Fact]
+    public void Wander_KeepsToTheHome_AndMoves()
+    {
+        SetHome(1599, 1599, 1601, 1601);
+        var cells = new HashSet<Point3D>();
+
+        for (var step = 0; step < 300; step++)
+        {
+            Run("npc.wander(256)");
+            cells.Add(_orc.Location);
+            Assert.InRange(_orc.Location.X, 1599, 1601);
+            Assert.InRange(_orc.Location.Y, 1599, 1601);
+        }
+
+        Assert.True(cells.Count > 3);
+    }
+
+    [Fact]
+    public void Wander_InAHomeOfOneCell_StaysAndSaysSo()
+    {
+        SetHome(1600, 1600, 1600, 1600);
+
+        Assert.False(Run("return npc.wander(256)")[0].Read<bool>());
+        Assert.Equal(new Point3D(1600, 1600, 0), _orc.Location);
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public void Wander_OutsideTheHome_WalksBackAlongAPath()
+    {
+        SetHome(1590, 1600, 1592, 1600);
+        _finder.Finds(DirectionType.West, DirectionType.West);
+
+        Assert.True(Run("return npc.wander(256)")[0].Read<bool>());
+
+        Assert.Equal(new Point3D(1599, 1600, 0), _orc.Location);
+        Assert.Equal(new Point3D(1592, 1600, 0), Assert.Single(_finder.Searches).To);
+    }
+
+    [Fact]
+    public void Wander_OutsideTheHomeWithNoWayBack_StillSteps()
+    {
+        SetHome(1590, 1600, 1592, 1600);
+        var cells = new HashSet<Point3D>();
+
+        for (var step = 0; step < 100; step++)
+        {
+            Run("npc.wander(256)");
+            cells.Add(_orc.Location);
+        }
+
+        Assert.True(cells.Count > 1);
+    }
+
+    [Fact]
+    public void Wander_WithoutAHome_GoesAnywhere_AndAnUnknownNpcIsFalse()
+    {
+        var cells = new HashSet<Point3D>();
+
+        for (var step = 0; step < 100; step++)
+        {
+            Run("npc.wander(256)");
+            cells.Add(_orc.Location);
+        }
+
+        Assert.True(cells.Count > 3);
+        Assert.False(Run("return npc.wander(2)")[0].Read<bool>());
+    }
+
+    [Fact]
+    public void CanSee_AMobileInRangeAndInSight_FromEyeToEye()
+    {
+        Assert.True(Run("return npc.can_see(256, 2)")[0].Read<bool>());
+
+        Assert.Equal((new Point3D(1600, 1600, 14), new Point3D(1601, 1600, 14)), Assert.Single(_sight.Checks));
+    }
+
+    [Fact]
+    public void CanSee_NotAHiddenMobile_NorOneTooFar_OnAnotherMap_OutOfSight_OrItself()
+    {
+        _player.Hidden = true;
+        var hidden = Run("return npc.can_see(256, 2)")[0].Read<bool>();
+        _player.Hidden = false;
+
+        var tooFar = Run("return npc.can_see(256, 2, 0)")[0].Read<bool>();
+
+        _sight.Allow = false;
+        var outOfSight = Run("return npc.can_see(256, 2)")[0].Read<bool>();
+        // Asked not to look: what it follows once it saw it.
+        var followed = Run("return npc.can_see(256, 2, 16, false)")[0].Read<bool>();
+        _sight.Allow = true;
+
+        Assert.True(_mobiles.MoveTo(_player, MapType.Felucca, new Point3D(1601, 1600, 0)));
+        var otherMap = Run("return npc.can_see(256, 2)")[0].Read<bool>();
+
+        var result = Run("return npc.can_see(256, 256), npc.can_see(256, 999), npc.can_see(2, 256)");
+
+        Assert.Equal((false, false, false, true, false), (hidden, tooFar, outOfSight, followed, otherMap));
+        Assert.All(result, value => Assert.False(value.Read<bool>()));
+    }
+
+    [Fact]
+    public void CanSee_OnHighGround_KeepsTheEyeWithinTheHeightsOfAMap()
+    {
+        Assert.True(_mobiles.MoveTo(_orc, MapType.Trammel, new Point3D(1600, 1600, 120)));
+        Assert.True(_mobiles.MoveTo(_player, MapType.Trammel, new Point3D(1601, 1600, 120)));
+
+        Assert.True(Run("return npc.can_see(256, 2)")[0].Read<bool>());
+
+        Assert.Equal((new Point3D(1600, 1600, 127), new Point3D(1601, 1600, 127)), Assert.Single(_sight.Checks));
+    }
+
+    [Fact]
+    public void PlayersInSight_AreThePlayersItSees_NearestFirst()
+    {
+        var far = new MobileEntity
+        {
+            Id = new Serial(3), Name = "Boris", AccountId = new Serial(0x43), Map = MapType.Trammel,
+            Location = new Point3D(1610, 1600, 0)
+        };
+        var hidden = new MobileEntity
+        {
+            Id = new Serial(4), Name = "Carla", AccountId = new Serial(0x44), Map = MapType.Trammel,
+            Location = new Point3D(1600, 1601, 0), Hidden = true
+        };
+        _mobiles.EnterWorld(far);
+        _mobiles.EnterWorld(hidden);
+
+        var result = Run(
+            "local seen, near = npc.players_in_sight(256, 16), npc.players_in_sight(256, 5) " +
+            "return #seen, seen[1], seen[2], #near, #npc.players_in_sight(2, 16), #npc.players_in_sight(256, 99)"
+        );
+
+        // The other orc is no player; a player asked, or a range out of bounds, gives nothing.
+        Assert.Equal([2, 2, 3, 1, 0, 0], result.Select(value => value.Read<int>()));
+    }
+
+    private void SetHome(long x1, long y1, long x2, long y2)
+    {
+        _orc.SetProp("spawn.x1", x1);
+        _orc.SetProp("spawn.y1", y1);
+        _orc.SetProp("spawn.x2", x2);
+        _orc.SetProp("spawn.y2", y2);
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view, _templates, _npcs, new Lazy<IScriptEngine>(() => _engine), _loop, _sectors, _moveOver, _paths, _finder, _movement));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view, _templates, _npcs, new Lazy<IScriptEngine>(() => _engine), _loop, _sectors, _moveOver, _paths, _finder, _movement, null, _sight));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }
