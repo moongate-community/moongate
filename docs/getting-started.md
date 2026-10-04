@@ -208,7 +208,7 @@ All server-managed paths below are relative to `--root-directory`:
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `logs/errors/<id>.md` | The report of each exception the server logged, ready to paste into a GitHub issue |
 | `plugins/` | One assembly bundle per plugin directory |
-| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting.md#mobile-scripts) `mobiles/<script_id>.lua`, the [item scripts](scripting.md#item-scripts) `items/<script_id>.lua`, the Lua modules they share in `common/`, the gump scripts `gumps/<id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
+| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting/mobile-scripts.md) `mobiles/<script_id>.lua`, the [item scripts](scripting/item-scripts.md) `items/<script_id>.lua`, the Lua modules they share in `common/`, the gump scripts `gumps/<id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
 | `moongate.pid` | Current process identifier |
 | `moongate.pid.lock` | Lock file used to exclude another instance |
 

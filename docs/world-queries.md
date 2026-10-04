@@ -188,7 +188,7 @@ path each one walks and gives its next step (`Next`, then `Stepped` once the ste
 It searches only with no steps left or a changed goal, two seconds after the NPC's last
 search at the soonest, ten when that search did not reach the same goal, and for ten NPCs a
 second in the whole server; an NPC that may not search steps straight towards its goal. The Lua function
-[`npc.walk_to`](scripting.md#walking-a-path) is built on it.
+[`npc.walk_to`](scripting/mobile-scripts.md#walking-a-path) is built on it.
 
 A path sees what the movement sees: a closed door, a crate or any impassable item on the
 ground blocks it, and it goes around; an NPC does not open doors. Other mobiles do not block

@@ -1,0 +1,185 @@
+# Shipped scripts
+
+This page is part of [Writing Lua scripts](../scripting.md). The distribution ships these scripts under
+`scripts/`, and `mgctl init` copies them into the root: each one is an example to read and to change. How a
+script is bound to a template is told in [Mobile scripts](mobile-scripts.md) and [Item scripts](item-scripts.md),
+where `wander.lua` and `potion.lua` are shown in full.
+
+## monster.lua
+
+The distribution's `scripts/mobiles/monster.lua` is the script of the monsters that go for the players,
+after ModernUO's melee AI without the fight: the server has no combat yet. A template takes it with
+`script_id = "monster"`; the undead of the graveyards do (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`,
+`spectre`, `lich`), and so the templates based on them. The wraith, the spectre and the lich are casters in
+ModernUO: they walk up and snarl like the others until magic exists. A
+monster is in one of three states:
+
+| State | What it does | It ends when |
+| --- | --- | --- |
+| wander | Strolls in its home, the area of its spawn region: about a step every two seconds, mostly straight ahead. It strolls with `npc.wander`, which walks it back from outside, as after a chase. One think in twenty it rests 15 to 25 seconds, with its `idle` sound and a fidget | It sees a player |
+| chase | Threatens the player with its `start_attack` sound and an animation, goes into war mode and walks to it with `npc.walk_to`, a step every think, never running. Beside it, it faces it and snarls every three seconds (`attack` sound and an attack animation): it does no harm | The player hides, leaves, is farther than 32 tiles, or cannot be reached for 20 seconds |
+| guard | Stands in war mode for 10 seconds, looking around | It sees a player, or the time is over: back to wander, in peace |
+
+It looks for a player every two seconds while it wanders and every second on guard, and takes the
+nearest one of `npc.players_in_sight`: within 16 tiles and in line of sight, from eye to eye. It never
+sees a hidden player, a game master or an administrator, and it ignores NPCs. Once it chases a player
+it follows it without seeing it (`npc.can_see` with `in_sight` false), up to the leash. A player it could not
+reach is left alone until it moves. What a monster is doing is kept in memory by its serial, not
+saved: after a restart, or once no player is near enough for it to think, it starts again from
+wandering. The numbers (16, 32, the times) are constants at the top of the file.
+
+## orione.lua and vega.lua
+
+The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
+
+## door.lua
+
+The distribution also ships `scripts/items/door.lua`, the script of the `decoration_door`
+template that [`.decorate`](../commands/decorate.md) gives to doors and gates. Double clicking
+a closed door opens it and its linked door (prop `door.link`): the graphic goes to the next
+one, the door swings aside by its `facing` prop and plays the sound of its
+`decoration_type` (metal, wood, gate or secret). Double clicking an open door closes both
+when nobody stands in either doorway. An open door closes by itself after 20 seconds, then
+tries again every 10 seconds while the doorway is taken. A door that cannot swing aside, such
+as one at the edge of the map, stays closed. The open state is the prop `door.open`, with the
+closed spot in `door.x`, `door.y` and `door.z`, saved with the door, and so is the auto-close timer (the door's `close` timer, started with
+`item.start_timer`): a door left open when the server stops closes once the server is back. A door saved
+open by an older version has no timer and stays open until someone uses it. A closed door with the prop `locked` does not
+open for players, who read "That is locked." (message 398, in the server language), unless
+they carry anywhere in their backpack a key whose prop `key.value` is the door's `key.value`
+(message 405: they open it and it stays locked); game masters and administrators open it
+(message 404). The prop comes from the decoration data
+(`props = { facing = "west_cw", locked = true }`), such as the side doors of the New Haven
+bank. `.lock` gives a door a key number and `.key` makes its key.
+
+## light.lua
+
+`scripts/items/light.lua` lights and douses candles, candelabras, lanterns, lamp posts, wall
+sconces and torches: the `decoration_light` template and the light templates of
+`templates/items` use it. Double clicking an unlit light gives it the lit graphic (ModernUO's
+pairs), a light shape if it has none, and sound `0x47`; double clicking a lit one gives the
+unlit graphic and sound `0x3BE`, keeping the shape for the next time. A light without an unlit
+graphic, such as a brazier, stays as it is. The lights `.decorate` places have the prop
+`protected`: only game masters and administrators light or douse them. The town lamp posts
+light and douse themselves: every 30 seconds the server calls `on_darkness(serial, dark)` on a
+lamp post whose spot turned dark or light (`ultima.world.lamp_post_light`), and `light.lua`
+switches its graphic silently.
+
+## food.lua
+
+`scripts/items/food.lua` is the script of what can be eaten, as ModernUO's `Food`: the converted
+food templates carry `script_id = "food"`. Double clicking a piece eats one: the player's hunger rises
+by the item's prop `food.fill` (3 without it), 20 at most; it gets 6 to 8 points of stamina back, makes
+the sound and, with a body of the `Human` kind (`mobile.body_type`), the gesture of eating, and reads how full it feels
+in the language of its client (messages 500868 to 500872). A full player reads "You are simply too full
+to eat any more!" (500867) and eats nothing.
+
+## drink.lua
+
+`scripts/items/drink.lua` is the script of what can be drunk, as ModernUO's beverages: the converted
+drink templates carry `script_id = "drink"`. Double clicking one drinks a sip: the player's thirst rises
+by the item's prop `drink.fill` (3 without it), 20 at most, and it makes the sound and, with a body of
+the `Human` kind, the gesture of drinking. The graphic says how many sips a full container holds: a
+pitcher or a bottle 5, a jug 10, a glass or a mug 1; the sips left are kept in the prop `drink.uses`.
+Once empty, a pitcher, a glass or a mug turns into its empty graphic, is renamed and stays; a bottle or a jug
+is gone. A quenched player reads "You are simply too full to drink any more!" and drinks nothing.
+Refilling, pouring and drunkenness are not there yet.
+
+## Regeneration props
+
+Hit points, mana and stamina come back by themselves (see
+[`ultima.regeneration`](../server-configuration.md)). A script changes the rate of one mobile with its
+props, in seconds for a point: `mobile.set_prop(who, "regen.hits", 2)` heals it five times faster than
+the default; `nil` gives it the configured rate back. The props are `regen.hits`, `regen.mana` and
+`regen.stamina`.
+
+Moving takes stamina from a player (see `fatigue_enabled` in
+[`ultima.regeneration`](../server-configuration.md)): running, and every step when it carries more than
+`mobile.max_weight`. A script that gives or takes items changes what the mobile carries at once; the
+status bar of its player follows at the next status update.
+
+## common/teleport.lua
+
+The two teleporter scripts below share `scripts/common/teleport.lua`, a Lua module they take with
+`local teleport = require("common.teleport")`: `teleport.send(serial, who)` sends a mobile where the
+item's props say (`teleport.x`, `teleport.y`, `teleport.z`, `teleport.map`), with the smoke of
+`source_effect` and `dest_effect` and the sound of `sound_id`, and `teleport.is_on(value)` reads a flag
+the decoration files carry as text. A script of your own that teleports can take it the same way.
+A script keeps the module it took: after `script reload common/teleport.lua`, reload the scripts that
+use it too (see [Reload and ownership](runtime.md#reload-and-ownership)). `mgctl init` adds `scripts/common/` to an
+existing root and keeps the scripts already there; a root whose item scripts are replaced by hand needs
+`scripts/common/` as well, or its teleporters stop.
+
+## teleporter.lua
+
+`scripts/items/teleporter.lua` is the script of the `decoration_teleporter` template that
+[`.decorate`](../commands/decorate.md) gives to ModernUO's `Teleporter`: on `on_move_over` it
+teleports the player to the props `teleport.x`, `teleport.y` and `teleport.z` with
+`mobile.teleport`, shows a puff of smoke where the player left (prop `source_effect`) and
+arrived (prop `dest_effect`), then plays the prop `sound_id` there when the teleporter has one. The prop
+`active = false` turns a teleporter off. Only players travel, unless the prop `creatures` is true: then an NPC that steps on it travels too. A teleporter with the prop `teleport.map`, a `MapType`
+number, takes the player to that map: the client changes map, then gets the season when it differs
+from the one it shows, the light, the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
+the accounts its visibility allows, so players walk onto a teleporter they never see.
+
+## public_moongate.lua
+
+`scripts/items/public_moongate.lua` is the script of the `decoration_public_moongate` template
+that `.decorate` puts on every destination of [`moongates.toml`](../data-files/moongates.md), as
+ModernUO's `PublicMoongate`: on `on_move_over`, and on `on_use` from the next cell, it builds a
+gump with `gump.create`, one page per map of `moongates.facets()` and one button per city, the
+page of the player's own map first, and plays the sound `0x20E`. A button teleports the player
+with `mobile.teleport`, to another map too, and plays `0x1FE` there. A player who walked more
+than a cell away while the gump was open is told so and stays; choosing the city of the gate
+itself does nothing.
+
+## moongate.lua
+
+`scripts/items/moongate.lua` is the script of the `moongate` template, the gate with one
+destination that the command [`moongate`](../commands/moongate.md) puts at a game master's feet, as
+ModernUO's `Moongate`. On `on_move_over`, and on `on_use` from the next cell, it waits one second
+with `timer.after`, then takes the player, if it still stands there, to the props `teleport.x`,
+`teleport.y` and `teleport.z`, on the map of the prop `teleport.map` (a `MapType` number or its
+name; the player's own map without it), and plays `0x1FE`. A gate without the three
+numbers, with a map that does not exist or is not loaded, or with a spot outside the map tells the
+player "This moongate does not seem to go anywhere." (message 30114). Touching the gate again
+during the second starts nothing. When the gate
+stands in a guarded region and the destination does not (`world.is_guarded`), it asks first: a
+gump with OKAY and CANCEL and the sound `0x20E`; OKAY from more than a cell away tells "That is
+too far away." (message 393) with `mobile.message`. ModernUO's rules about sigils, young
+players, murderers, casting, pets and dispelling the gate are not there yet.
+
+## keyword_teleport.lua
+
+`scripts/items/keyword_teleport.lua` is the script of the `decoration_keyword_teleporter`
+template that `.decorate` gives to ModernUO's `KeywordTeleporter`, such as the mantra of a
+shrine: on `on_speech` it teleports the player who says the prop `substring` (found anywhere in
+the text, in any case) or whose client sends the speech keyword of the prop `keyword`, standing
+within `range` cells (0, the default, is the teleporter's own cell). With a `delay`
+(`"0:0:1"`, or a number of seconds) the teleport happens later, if the player still stands in
+range. The destination, the smoke, the sound and `active` are those of the plain teleporter.
+
+## clock.lua
+
+`scripts/items/clock.lua` is the script of the clocks (the item templates `0x104b_clock` and
+`0x104c_clock`, and `decoration_clock` for those `.decorate` places), as ModernUO's `Clock`: on
+`on_use` the player reads over the clock the part of the day ("It's the afternoon") and the time to
+the minute ("1:07 to be exact") where they stand, from `world.time`, as texts of the client sent
+with `item.message_cliloc`.
+
+## fillable.lua
+
+`scripts/items/fillable.lua` is the script of the `decoration_fillable` template that `.decorate`
+gives to the town containers, ModernUO's `FillableContainer`: the crates, boxes, chests and barrels
+of the shops and the bookcases of the libraries. On `on_use`, before the container opens, a
+container whose time has come (prop `fill.next`, as `world.now()` counts) and that holds two things
+or fewer, a pile counting for its amount, gets up to twice what it misses to hold three, each one a
+roll of the loot table of its kind with `item.add_loot`; a bookcase fills up to five books. It then waits 60 to 90 minutes; a fill that could add nothing is tried again at the next opening.
+Nothing runs while nobody opens the container, and the times survive a restart. The kind is the
+prop `content_type`, such as `baker` for the table `fillable_baker` of
+`templates/loots/fillable_containers.toml`; without it the container takes the kind of the nearest
+vendor within 20 tiles, told by `mobile.template`, and keeps it. With no vendor around it stays
+empty and looks again five minutes later. ModernUO starts the wait when an item is taken out, and
+locks and traps the container: those are not there yet. The town tables use
+`templates/loots/randomshields.toml` (one plain shield, ModernUO's `Loot.ShieldTypes`) and the two goods of
+`templates/items/town_goods.toml` (mallet and chisel, arrow shafts) that the converted item files lack.

@@ -158,7 +158,7 @@ items into it, a pile onto a pile of the same kind; the players around see what 
 of another spawned chest. A chest
 cannot be picked up, by all but the staff, and decays 45 minutes after it was made, opened or not,
 with what is left inside; the region then makes a new one 5 to 10 minutes later. The containers of the towns work another way: they stay and
-[fill up when opened](scripting.md#item-scripts). Chests have no lock and no trap yet, each level has one
+[fill up when opened](scripting/shipped-scripts.md#fillablelua). Chests have no lock and no trap yet, each level has one
 look, and the time to decay is fixed, where ModernUO picks 15 to 74 minutes.
 
 ## Water and amphibious NPCs
@@ -172,7 +172,7 @@ template on a spot with no water, since it could never move there.
 ## NPC behaviour
 
 A spawned NPC runs its template's Lua script, if any. The shipped
-[`wander.lua`](scripting.md#mobile-scripts) keeps a spawned NPC inside its home area, stays put
+[`wander.lua`](scripting/mobile-scripts.md) keeps a spawned NPC inside its home area, stays put
 when its area is a single cell, and walks it back when it is outside.
 
 ## For the staff

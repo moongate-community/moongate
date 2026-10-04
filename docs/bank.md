@@ -58,7 +58,7 @@ end
 `on_speech` gets the speech keywords the client found as a fourth argument, an array of numbers;
 `SpeechKeywordType` names the bank's (`Withdraw`, `Balance`, `Bank`, `Check`). Any mobile script
 can open a bank with `bank.open(player)` and ask `bank.is_open(player)`; see
-[Writing Lua scripts](scripting.md#available-host-functions).
+the [`bank` module](https://moongate.sh/lua/bank/).
 
 ## See also
 
