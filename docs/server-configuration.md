@@ -94,6 +94,13 @@ deletion_delay_hours = 24             # Hours before a deleted character may be 
 think_interval_ms = 500               # Milliseconds between two thinks of an NPC near a player.
 sense_range = 8                       # Cells within which an NPC's script senses another mobile.
 
+[ultima.regeneration]
+hits_seconds = 11.0                   # Seconds between two hit points coming back.
+stamina_seconds = 7.0                 # Seconds between two points of stamina coming back.
+mana_seconds = 7.0                    # The same for mana, with no intelligence and no Meditation.
+hunger_enabled = true                 # Players get hungry; starving, they get no hit points back.
+hunger_minutes = 5                    # Minutes between two points of hunger lost by a player.
+
 [ultima.spawns]
 initial_fill = true                   # The first spawn of each region after the start fills it to its max.
 
@@ -209,6 +216,8 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.characters.deletion_delay_hours` | At least 1; default 24. When a player deletes a character (packet `0x83`) it is only marked: it leaves the character list, gives up its slot and no longer counts toward `max_per_account`, and staff can restore it with `character restore` (into the first free slot). After this many hours it becomes eligible for removal; the job that removes it is not built yet. |
 | `ultima.npcs.think_interval_ms` | From 50 to 60000; default 500, ModernUO's passive speed. How often an NPC near a player thinks. Only NPCs within the 5×5 sectors around a player have a think timer; the others sleep and cost nothing. See [NPC tick](game-loop-and-timers.md#npc-tick). |
 | `ultima.npcs.sense_range` | From 1 to 24; default 8. How near, in cells along X or Y, another mobile must come for an NPC's mobile script to sense it with `on_mobile_in_range`. See [Mobile scripts](scripting.md#mobile-scripts). |
+| `ultima.regeneration.hits_seconds`, `stamina_seconds`, `mana_seconds` | Each from 0.1 to 3600; defaults 11, 7 and 7, ModernUO's classic rates. The seconds between two points coming back, one point at a time. Mana is the slowest it gets: intelligence and Meditation shorten it, down to half a second. The players in the world are checked every second; an NPC regenerates while it thinks, so one asleep far from every player does not. A mobile's props `regen.hits`, `regen.mana` and `regen.stamina` (seconds) replace the rate for that mobile. |
+| `ultima.regeneration.hunger_enabled`, `hunger_minutes` | Default `true` and 5 (from 1 to 1440), ModernUO's food decay. Every `hunger_minutes` a player in the world loses a point of hunger, from 20 (full) to 0; game masters and administrators do not. At 5 the player reads that it is hungry, at 0 that it starves, and while at 0 its hit points do not come back. Off, hunger neither drops nor stops anything. NPCs are never hungry. |
 | `ultima.spawns.initial_fill` | Default `true`. The first spawn of each spawn region after the start fills it to its `max` at once, so an empty world is full in about 10 minutes; `false` keeps UOX3's way, where the first spawn also brings only `call` NPCs. Used in game and standalone modes. See [NPC spawns](spawns.md#how-spawning-works). |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,

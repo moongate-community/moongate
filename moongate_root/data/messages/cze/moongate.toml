@@ -143,6 +143,10 @@
 30120 = "Předmět se nepodařilo přidat. Zkontroluj logy serveru."
 30121 = "Položí na zem, kam zamíříš, předmět ze šablony předmětu: add <template>."
 30122 = "Odstranit lze jen předmět ležící na zemi."
+30126 = "{0}: {1} je nyní {2}."
+30127 = "Nastaví životy, manu, výdrž nebo hlad zaměřené bytosti: set <hits|mana|stamina|hunger> <hodnota>."
 
 # Moongate: texts of the item scripts.
 30114 = "Tento moongate zřejmě nikam nevede."
+30123 = "Máš hlad."
+30124 = "Umíráš hlady: tvé rány se nezahojí, dokud se nenajíš."

@@ -78,6 +78,7 @@ base_id = "base_item"
 item_id = 2590
 name = "bowl of flour"
 rarity = "common"
+script_id = "food"
 movable = true
 weight = 4.0
 buy_price = 8

@@ -41,6 +41,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`initial_spawn`](commands/initial_spawn.md) | `initial_spawn` | Yes | Yes | Administrator | Game |
 | [`globallight`](commands/globallight.md) | `globallight [0-31]` | Yes | Yes | GameMaster | Game |
 | [`spawn`](commands/spawn.md) | `spawn <template>`, then target a spot | No | Yes | GameMaster | Game |
+| [`set`](commands/set.md) | `set <hits\|mana\|stamina\|hunger> <value>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`add`](commands/add.md) | `add <template>`, then target a spot | No | Yes | GameMaster | Game |
 | [`remove`](commands/remove.md) | `remove`, then target an NPC or an item on the ground | No | Yes | GameMaster | Game |
 | [`where`](commands/where.md) | `where`, then target anything | No | Yes | GameMaster | Game |
@@ -60,7 +61,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 ### By who uses them
 
 - **Everyone:** `help`, `echo`, `time`.
-- **Game masters:** `character`, `spawn`, `add`, `remove`, `where`, `go`, `moongate`, `fame`, `karma`, `globallight`,
+- **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `where`, `go`, `moongate`, `fame`, `karma`, `globallight`,
   `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`.
 - **Administrators:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, plus everything a

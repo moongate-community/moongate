@@ -143,6 +143,10 @@
 30120 = "Der Gegenstand konnte nicht hinzugefügt werden. Prüfe die Serverprotokolle."
 30121 = "Legt einen Gegenstand aus einer Gegenstandsvorlage dort auf den Boden, wohin du zielst: add <template>."
 30122 = "Nur ein Gegenstand, der auf dem Boden liegt, kann entfernt werden."
+30126 = "{0}: {1} ist jetzt {2}."
+30127 = "Setzt Lebenspunkte, Mana, Ausdauer oder Hunger des gewählten Wesens: set <hits|mana|stamina|hunger> <Wert>."
 
 # Moongate: texts of the item scripts.
 30114 = "Dieses Mondtor scheint nirgendwohin zu führen."
+30123 = "Du hast Hunger."
+30124 = "Du verhungerst: Deine Wunden heilen nicht, bis du etwas isst."

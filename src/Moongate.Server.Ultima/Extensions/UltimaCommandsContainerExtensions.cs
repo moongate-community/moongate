@@ -52,6 +52,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.AddDescription
         );
+        container.RegisterCommand<SetCommand>(
+            "set",
+            "Sets the hits, mana, stamina or hunger of the mobile you target: set <hits|mana|stamina|hunger> <value>.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.SetDescription
+        );
         container.RegisterCommand<RemoveCommand>(
             "remove",
             "Removes the NPC or the item on the ground you target.",

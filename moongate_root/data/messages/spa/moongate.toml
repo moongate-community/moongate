@@ -143,6 +143,10 @@
 30120 = "No se pudo añadir el objeto. Revisa los registros del servidor."
 30121 = "Pone en el suelo, donde apuntas, un objeto de una plantilla de objeto: add <template>."
 30122 = "Solo se puede eliminar un objeto que está en el suelo."
+30126 = "{0}: {1} ahora vale {2}."
+30127 = "Establece la vida, el maná, el aguante o el hambre de la criatura a la que apuntas: set <hits|mana|stamina|hunger> <valor>."
 
 # Moongate: texts of the item scripts.
 30114 = "Este moongate no parece llevar a ninguna parte."
+30123 = "Tienes hambre."
+30124 = "Te mueres de hambre: tus heridas no sanarán hasta que comas."

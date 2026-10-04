@@ -33,6 +33,7 @@ export const contentEntries = [
   { source: 'docs/commands/globallight.md', slug: 'server/commands/globallight', title: 'globallight', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/spawn.md', slug: 'server/commands/spawn', title: 'spawn', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/add.md', slug: 'server/commands/add', title: 'add', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/set.md', slug: 'server/commands/set', title: 'set', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/remove.md', slug: 'server/commands/remove', title: 'remove', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/where.md', slug: 'server/commands/where', title: 'where', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/go.md', slug: 'server/commands/go', title: 'go', group: 'Run a shard', subgroup: 'Commands' },

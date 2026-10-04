@@ -16,6 +16,9 @@ namespace Moongate.UoxItemConverter.Internal;
 /// </summary>
 internal static class ItemTemplateBuilder
 {
+    // UOX3's item type of food (IT_FOOD).
+    private const int FoodType = 14;
+
     // UOX3's IT_SHIELD item type.
     private const int UoxShieldType = 107;
 
@@ -91,6 +94,11 @@ internal static class ItemTemplateBuilder
         if (scripts?.ScriptIdFor(block, (int)itemId.Value) is { } scriptId)
         {
             template.ScriptId = scriptId;
+        }
+        else if (block.Fields.TryGetValue("TYPE", out var type) && UoxNumber.TryParse(type, out var kind) && kind == FoodType)
+        {
+            // What UOX3 lets a player eat: scripts/items/food.lua.
+            template.ScriptId = "food";
         }
 
         // UOX3's visible= is 0 for everyone; 1 (hidden), 2 (magically invisible) and 3 (GM hidden) all keep the

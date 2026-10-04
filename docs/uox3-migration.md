@@ -36,7 +36,9 @@ The three mobile arguments go together (see [Mobiles and name lists](#mobiles-an
 Moongate Lua script gets its `script_id`: the script of the block's `script=`, else the one
 `jse_objectassociations.scp` ([ENVOKE]) gives its graphic, looked up by number in
 `jse_fileassociations.scp` ([SCRIPT_LIST]). Today `item/lights.js` becomes `light`
-(`scripts/items/light.lua`); other scripts are left out. Without it no `script_id` is written.
+(`scripts/items/light.lua`); other scripts are left out. With or without it, what UOX3 calls food
+(item type 14, on the block or on the one it gets its fields from) takes `script_id = "food"`
+(`scripts/items/food.lua`).
 A folder missing either file exits `2`.
 
 `--npc-lists-destination` and `--spawns-destination` go together and need `--mobile-source`.

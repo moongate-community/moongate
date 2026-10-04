@@ -9,6 +9,8 @@ using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Ultima.Types;
 
+using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Speech;
 namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class RegenerationServiceTests
@@ -139,6 +141,30 @@ public sealed class RegenerationServiceTests
         _clock.Advance(TimeSpan.FromSeconds(11));
         _regeneration.Tick(_aria);
         Assert.Equal(51, _aria.Hits);
+    }
+
+    [Fact]
+    public async Task StartAsync_RegistersOneRepeatingTimerEverySecond_ThatTicksThePlayersInTheWorld()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        await fixture.AddAsync(2);
+        Assert.True(fixture.Mobiles.TryGet(new Serial(2), out var player));
+        player.Stamina = 1;
+        player.StaminaMax = 10;
+        var timers = new RecordingTimerService();
+        var service = new RegenerationService(_state, _config, _clock, timers, fixture.Sessions, fixture.Mobiles);
+
+        await service.StartAsync();
+        var timer = Assert.Single(timers.Timers);
+        Assert.Equal(("regeneration", TimeSpan.FromSeconds(1), true), (timer.Name, timer.Interval, timer.Repeat));
+
+        timers.Fire(timer.Id);
+        _clock.Advance(TimeSpan.FromSeconds(7));
+        timers.Fire(timer.Id);
+        Assert.Equal(2, player.Stamina);
+
+        await service.StopAsync();
+        Assert.Equal([timer.Id], timers.Unregistered);
     }
 
     // A tick every second, as the service gives the players.
