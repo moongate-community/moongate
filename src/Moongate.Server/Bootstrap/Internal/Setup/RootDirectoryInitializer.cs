@@ -1,8 +1,6 @@
 using System.Text;
 using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Utils;
-using Moongate.Persistence.Migrations.Services;
-using Moongate.Persistence.Migrations.Types.Migrations;
 using Moongate.Server.Data.Config;
 
 namespace Moongate.Server.Bootstrap.Internal.Setup;
@@ -33,9 +31,7 @@ internal static class RootDirectoryInitializer
         }
 
         var root = Path.GetFullPath(rootDirectory.ResolvePathAndEnvs());
-        var source = new[] { MigrationTarget.Auth, MigrationTarget.World }
-            .Select(target => MigrationCatalog.Load(migrationsDirectory, null, target))
-            .ToArray();
+        var source = BundledMigrations.Load(migrationsDirectory);
 
         if (source.All(catalog => catalog.Scripts.Count == 0))
         {
@@ -62,29 +58,7 @@ internal static class RootDirectoryInitializer
         );
         var destination = Path.Combine(root, "migrations");
 
-        foreach (var catalog in source)
-        {
-            if (!Directory.Exists(destination))
-            {
-                continue;
-            }
-
-            var existing = MigrationCatalog.Load(destination, null, catalog.Target);
-
-            foreach (var script in catalog.Scripts)
-            {
-                var collision = existing.Scripts.FirstOrDefault(item => item.Sequence == script.Sequence);
-
-                if (collision is not null &&
-                    (collision.FileName != script.FileName || collision.Checksum != script.Checksum))
-                {
-                    throw new InvalidOperationException(
-                        $"Existing migration '{collision.FileName}' for {catalog.Target} conflicts with bundled '{script.FileName}'. " +
-                        "No files were replaced. Use an empty root or reconcile the migration catalog manually."
-                    );
-                }
-            }
-        }
+        BundledMigrations.EnsureNoConflicts(source, destination);
 
         foreach (var directory in new[] { "config", "logs", "plugins", "scripts", "migrations/auth", "migrations/world" })
         {
@@ -102,7 +76,7 @@ internal static class RootDirectoryInitializer
 
         foreach (var catalog in source)
         {
-            var target = catalog.Target == MigrationTarget.Auth ? "auth" : "world";
+            var target = BundledMigrations.TargetDirectory(catalog.Target);
 
             foreach (var script in catalog.Scripts)
             {

@@ -187,6 +187,34 @@ startup schema check accepts them. The sample plugin ships
 `0013_world_state.sql` the one-row table `world.state` (`0014_world_state_one_row.sql` makes the database refuse a second row; `0015_mobile_hunger.sql` and `0016_mobile_thirst.sql` add the `hunger` and `thirst` columns of the mobiles), with the props scripts keep for the whole
 shard.
 
+## Apply at startup
+
+By default the server only checks: with pending SQL, or a root that lacks the files a new release
+ships, it stops and tells what to run. For a shard with one operator, or a container whose image is
+replaced on every update, the server can do those two steps itself:
+
+```toml
+[persistence]
+auto_apply_migrations = true
+```
+
+Before the schema check, a start then:
+
+1. Adds to the migrations directory the core SQL bundled with the server that the directory lacks,
+   as `mgctl init` does. A file already there is never replaced; one with the number of a bundled
+   file and another name or content stops the start, with nothing copied.
+2. Applies the pending reviewed SQL of the databases this process uses (auth for a login server,
+   world for a game server, both standalone), through `mgctl migrate apply`: the same advisory lock,
+   the same history, and a draft marked `-- moongate:review-required` still stops it.
+
+Nothing is generated from the entities: only SQL shipped with the release, or put in the directory by
+the operator, runs. The connection's database role must be allowed to change the schema; where the
+runtime role is not, as in the [login and realms example](docker-login-realms.md), keep the option
+off and apply with the schema jobs. There is no automatic way back: take a
+[SQL backup](persistence-operations.md#database-backups) before an update. With
+`auto_generate_migrations` also on, the copy runs and the development start below applies. The option
+conflicts with `auto_sync_schema`.
+
 ## Automatic development migrations
 
 For a disposable development database, the server can generate and apply SQL from

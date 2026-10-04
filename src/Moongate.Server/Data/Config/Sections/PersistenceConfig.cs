@@ -18,6 +18,12 @@ public sealed class PersistenceConfig
 
     public bool AutoGenerateMigrations { get; set; }
 
+    /// <summary>
+    ///     Gets or sets whether a start first adds the bundled core SQL the migrations directory lacks and applies the
+    ///     pending reviewed migrations, as <c>mgctl init</c> and <c>mgctl migrate apply</c> would.
+    /// </summary>
+    public bool AutoApplyMigrations { get; set; }
+
     public string? MigrationsDirectory { get; set; }
 
     public PersistenceDatabaseConfig Accounts { get; set; } =
@@ -94,6 +100,11 @@ public sealed class PersistenceConfig
         if (AutoGenerateMigrations && AutoSyncSchema)
         {
             throw new InvalidOperationException("auto_generate_migrations and auto_sync_schema are mutually exclusive.");
+        }
+
+        if (AutoApplyMigrations && AutoSyncSchema)
+        {
+            throw new InvalidOperationException("auto_apply_migrations and auto_sync_schema are mutually exclusive.");
         }
 
         if (AutoGenerateMigrations && string.IsNullOrWhiteSpace(MigrationsDirectory))

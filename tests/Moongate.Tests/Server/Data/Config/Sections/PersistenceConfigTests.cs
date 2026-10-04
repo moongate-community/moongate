@@ -66,6 +66,18 @@ public sealed class PersistenceConfigTests
     }
 
     [Fact]
+    public void Validate_AutoApplyAndAutoSync_Conflict_AndAutoApplyIsOffByDefault()
+    {
+        var config = new PersistenceConfig { AutoSyncSchema = true, AutoApplyMigrations = true };
+
+        var exception = Assert.Throws<InvalidOperationException>(config.Validate);
+
+        Assert.Contains("auto_apply_migrations", exception.Message);
+        Assert.False(new PersistenceConfig().AutoApplyMigrations);
+        new PersistenceConfig { AutoApplyMigrations = true }.Validate();
+    }
+
+    [Fact]
     public void Validate_AutomaticGenerationRequiresExplicitSourceDirectory()
     {
         var config = new PersistenceConfig { AutoGenerateMigrations = true };
