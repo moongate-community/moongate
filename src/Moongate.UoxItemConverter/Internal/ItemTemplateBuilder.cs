@@ -19,6 +19,13 @@ internal static class ItemTemplateBuilder
     // UOX3's item type of food (IT_FOOD).
     private const int FoodType = 14;
 
+    // What UOX3 files under food and nobody eats as it is: an ingredient, and the fish that ModernUO gives a spell.
+    private static readonly HashSet<string> NotEaten = new(StringComparer.Ordinal)
+    {
+        "0x0a1e_bowl_of_flour",
+        "base_magic_fish"
+    };
+
     // UOX3's IT_SHIELD item type.
     private const int UoxShieldType = 107;
 
@@ -95,7 +102,10 @@ internal static class ItemTemplateBuilder
         {
             template.ScriptId = scriptId;
         }
-        else if (block.Fields.TryGetValue("TYPE", out var type) && UoxNumber.TryParse(type, out var kind) && kind == FoodType)
+        else if (!NotEaten.Contains(id) &&
+                 block.Fields.TryGetValue("TYPE", out var type) &&
+                 UoxNumber.TryParse(type, out var kind) &&
+                 kind == FoodType)
         {
             // What UOX3 lets a player eat: scripts/items/food.lua.
             template.ScriptId = "food";

@@ -17,6 +17,7 @@ using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
+using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Modules;
@@ -286,6 +287,21 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void BodyType_IsTheKindOfBodyOfTheMobile_AsTheBodiesFileSays()
+    {
+        _aria.Body = 400;
+        _orc.Body = 17;
+
+        var result = Run("return mobile.body_type(2), mobile.body_type(256), mobile.body_type(999)");
+
+        Assert.Equal(((int)BodyType.Human, (int)BodyType.Monster, LuaValue.Nil), (result[0].Read<int>(), result[1].Read<int>(), result[2]));
+
+        // A body the file does not list is empty.
+        _orc.Body = 5000;
+        Assert.Equal((int)BodyType.Empty, Run("return mobile.body_type(256)")[0].Read<int>());
+    }
+
+    [Fact]
     public void MessageCliloc_TellsThePlayerATextOfItsClient()
     {
         var result = Run("return mobile.message_cliloc(2, 500867), mobile.message_cliloc(2, 1042958, '3:05'), mobile.message_cliloc(2, 0), mobile.message_cliloc(999, 500867)");
@@ -496,7 +512,7 @@ public sealed class MobileModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view, new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human }, new BodyContent { Body = new(17), Type = BodyType.Monster })));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

@@ -5,6 +5,7 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -14,6 +15,7 @@ public sealed class HungerServiceTests : IAsyncLifetime
     private readonly RecordingTimerService _timers = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RegenerationConfig _config = new();
+    private readonly SettableClock _clock = new();
 
     private BroadcastFixture _fixture = null!;
     private GameSession _staffSession = null!;
@@ -29,7 +31,7 @@ public sealed class HungerServiceTests : IAsyncLifetime
         await _fixture.Network.ExecuteOnLoopAsync(() => _staffSession.Set(SessionKeys.AccountType, AccountType.GameMaster));
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out _aria!));
         Assert.True(_fixture.Mobiles.TryGet(new Serial(3), out _staff!));
-        _hunger = new(_timers, _fixture.Sessions, _fixture.Mobiles, _speech, _config);
+        _hunger = new(_timers, _fixture.Sessions, _fixture.Mobiles, _speech, _config, _clock);
     }
 
     public async Task DisposeAsync()
@@ -43,7 +45,8 @@ public sealed class HungerServiceTests : IAsyncLifetime
         await _hunger.StartAsync();
 
         var timer = Assert.Single(_timers.Timers);
-        Assert.Equal(("hunger", TimeSpan.FromMinutes(5), true), (timer.Name, timer.Interval, timer.Repeat));
+        // A check every minute: each player has its own five minutes.
+        Assert.Equal(("hunger", TimeSpan.FromMinutes(1), true), (timer.Name, timer.Interval, timer.Repeat));
 
         await _hunger.StopAsync();
         Assert.Equal([timer.Id], _timers.Unregistered);
@@ -96,11 +99,41 @@ public sealed class HungerServiceTests : IAsyncLifetime
         Assert.Equal(kept, _aria.Hunger);
     }
 
+    [Fact]
+    public async Task APlayerThatEntersLater_HasItsOwnInterval()
+    {
+        await _hunger.StartAsync();
+        Decay(0);
+
+        _clock.Advance(TimeSpan.FromMinutes(4));
+        await _fixture.AddAsync(4);
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(4), out var late));
+        Fire();
+
+        // A minute later the first player's five minutes are over; the late one has four to go.
+        _clock.Advance(TimeSpan.FromMinutes(1));
+        Fire();
+        Assert.Equal((19, 20), (_aria.Hunger, late.Hunger));
+
+        _clock.Advance(TimeSpan.FromMinutes(4));
+        Fire();
+        Assert.Equal((19, 19), (_aria.Hunger, late.Hunger));
+    }
+
+    // Whole intervals: the first check starts each player's wait, then a check every minute.
     private void Decay(int times)
     {
-        for (var time = 0; time < times; time++)
+        Fire();
+
+        for (var minute = 0; minute < times * _config.HungerMinutes; minute++)
         {
-            _timers.Fire(_timers.Timers[0].Id);
+            _clock.Advance(TimeSpan.FromMinutes(1));
+            Fire();
         }
+    }
+
+    private void Fire()
+    {
+        _timers.Fire(_timers.Timers[0].Id);
     }
 }

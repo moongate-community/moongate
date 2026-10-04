@@ -3,7 +3,6 @@ id = "base_magic_fish"
 base_id = "base_item"
 item_id = 3542
 rarity = "common"
-script_id = "food"
 movable = true
 weight = 1.0
 stackable = true

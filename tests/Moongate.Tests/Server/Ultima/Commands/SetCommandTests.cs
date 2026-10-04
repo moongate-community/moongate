@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -104,7 +105,8 @@ public sealed class SetCommandTests : IAsyncDisposable
             new SessionService(new StubGameLoop()),
             _mobiles,
             new RecordingSpeechService(),
-            new RegenerationConfig()
+            new RegenerationConfig(),
+            new SettableClock()
         );
 
         return new(_targets, _mobiles, _state, hunger, new StubGameLoop());

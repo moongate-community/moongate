@@ -1,7 +1,9 @@
+using System.Runtime.CompilerServices;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Internal.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Serilog;
@@ -9,10 +11,11 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Makes the players hungry: one repeating <c>hunger</c> timer, every
-///     <c>ultima.regeneration.hunger_minutes</c>, takes a point from every player in the world, as ModernUO's food
-///     decay; the staff is left alone, as in UOX3. A player is told when it gets hungry and when it starves. With
-///     <c>hunger_enabled</c> off nothing runs.
+///     Makes the players hungry: one repeating <c>hunger</c> timer looks at the players in the world every minute and
+///     takes a point from each one whose <c>ultima.regeneration.hunger_minutes</c> are over, as ModernUO's food
+///     decay; each player has its own wait, started when it is first seen, so entering the world just before a check
+///     costs nothing. The staff is left alone, as in UOX3. A player is told when it gets hungry and when it starves.
+///     With <c>hunger_enabled</c> off nothing runs.
 /// </summary>
 public sealed class HungerService : IHungerService, IMoongateStartupService
 {
@@ -22,13 +25,19 @@ public sealed class HungerService : IHungerService, IMoongateStartupService
     public const int HungryMessage = 30123;
     public const int StarvingMessage = 30124;
 
+    private static readonly TimeSpan CheckInterval = TimeSpan.FromMinutes(1);
+
     private readonly ILogger _logger = Log.ForContext<HungerService>();
     private readonly ITimerService _timers;
     private readonly ISessionService _sessions;
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
     private readonly RegenerationConfig _config;
+    private readonly TimeProvider _time;
     private readonly ILocalizationService? _localization;
+
+    // The wait of each player, gone with its character: it starts again when the character enters the world.
+    private readonly ConditionalWeakTable<MobileEntity, HungerClock> _clocks = new();
 
     private string? _timerId;
 
@@ -38,9 +47,11 @@ public sealed class HungerService : IHungerService, IMoongateStartupService
         IMobileService mobiles,
         ISpeechService speech,
         RegenerationConfig config,
+        TimeProvider time,
         ILocalizationService? localization = null
     )
     {
+        _time = time;
         _timers = timers;
         _sessions = sessions;
         _mobiles = mobiles;
@@ -53,8 +64,7 @@ public sealed class HungerService : IHungerService, IMoongateStartupService
     {
         if (_config.HungerEnabled)
         {
-            var interval = TimeSpan.FromMinutes(_config.HungerMinutes);
-            _timerId = _timers.RegisterTimer(TimerName, interval, Decay, interval, true);
+            _timerId = _timers.RegisterTimer(TimerName, CheckInterval, Decay, CheckInterval, true);
         }
 
         return Task.CompletedTask;
@@ -71,22 +81,54 @@ public sealed class HungerService : IHungerService, IMoongateStartupService
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    ///     Keeps a hunger from 0 to <see cref="Full" />.
+    /// </summary>
+    public static int Clamp(int hunger)
+    {
+        return Math.Clamp(hunger, 0, Full);
+    }
+
     public void Set(MobileEntity mobile, int hunger)
     {
-        mobile.Hunger = Math.Clamp(hunger, 0, Full);
+        mobile.Hunger = Clamp(hunger);
     }
 
     // A timer callback that throws closes the timer wheel: one bad character must not stop the server.
     private void Decay()
     {
+        var now = _time.GetUtcNow().ToUnixTimeMilliseconds();
+        var wait = (long)TimeSpan.FromMinutes(_config.HungerMinutes).TotalMilliseconds;
+
         foreach (var session in _sessions.GetAll())
         {
             try
             {
                 if (session.AccountType >= AccountType.GameMaster ||
                     !session.CharacterId.IsValid ||
-                    !_mobiles.TryGet(session.CharacterId, out var character) ||
-                    character.Hunger <= 0)
+                    !_mobiles.TryGet(session.CharacterId, out var character))
+                {
+                    continue;
+                }
+
+                var clock = _clocks.GetOrCreateValue(character);
+
+                if (clock.NextAt == 0)
+                {
+                    clock.NextAt = now + wait;
+
+                    continue;
+                }
+
+                if (now < clock.NextAt)
+                {
+                    continue;
+                }
+
+                // One point a check, whatever the gap: a server that paused does not starve its players.
+                clock.NextAt = now + wait;
+
+                if (character.Hunger <= 0)
                 {
                     continue;
                 }

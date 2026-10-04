@@ -1,5 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
@@ -217,6 +219,26 @@ public sealed class RegenerationServiceTests
         _clock.Advance(TimeSpan.FromSeconds(11));
         _regeneration.Tick(_aria);
         Assert.Equal(51, _aria.Hits);
+    }
+
+    [Fact]
+    public async Task Tick_AStarvingGameMaster_StillGetsHitsBack_ItsHungerNeverDrops()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var session = await fixture.AddAsync(2);
+        await fixture.Network.ExecuteOnLoopAsync(() => session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+        Assert.True(fixture.Mobiles.TryGet(new Serial(2), out var staff));
+        staff.AccountId = new Serial(0x42);
+        staff.Hunger = 0;
+        staff.Hits = 5;
+        staff.HitsMax = 10;
+        var service = new RegenerationService(_state, _config, _clock, null, fixture.Sessions, fixture.Mobiles);
+
+        service.Tick(staff);
+        _clock.Advance(TimeSpan.FromSeconds(11));
+        service.Tick(staff);
+
+        Assert.Equal(6, staff.Hits);
     }
 
     [Fact]

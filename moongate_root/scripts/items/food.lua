@@ -32,9 +32,6 @@ local FEELS = {
 }
 local STUFFED = 500872
 
--- The bodies that have the gesture of eating: human, elf and gargoyle, man and woman.
-local EATS_WITH_HANDS = { [400] = true, [401] = true, [605] = true, [606] = true, [666] = true, [667] = true }
-
 local function fill_of(serial)
     local fill = math.floor(tonumber(item.get_prop(serial, "food.fill")) or FILL)
 
@@ -66,7 +63,8 @@ function food.on_use(serial, user)
 
     local stats = mobile.stats(user)
 
-    if EATS_WITH_HANDS[stats.body] then
+    -- Only a human body, of any race, has the gesture of eating.
+    if mobile.body_type(user) == BodyType.Human then
         mobile.animate(user, HumanAnimationType.Eat)
     end
 

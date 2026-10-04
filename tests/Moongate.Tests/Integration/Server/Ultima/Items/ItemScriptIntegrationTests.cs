@@ -22,6 +22,9 @@ using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Ultima.Types;
 using Moongate.Server.Ultima.Types.Effects;
 using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Ultima.Bank;
@@ -96,7 +99,11 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<WorldModule>();
         _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService()));
         _container.RegisterInstance<IMobileStateService>(_mobileState);
+        _container.RegisterInstance<IDataLoaderService>(
+            new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human })
+        );
         _container.AddScriptModule<MobileModule>();
+        _container.RegisterScriptEnum<BodyType>();
         _container.RegisterScriptEnum<HumanAnimationType>();
         _container.RegisterInstance<IEffectService>(_effects);
         _container.AddScriptModule<EffectModule>();

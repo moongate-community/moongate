@@ -1,3 +1,6 @@
+using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Data.Bodies;
+using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using Lua;
 using Moongate.Core.Geometry;
@@ -33,6 +36,7 @@ public sealed class MobileModule
     private readonly ILightService? _light;
     private readonly IMobileStateService? _state;
     private readonly IWorldViewService? _view;
+    private readonly Lazy<FrozenDictionary<int, BodyType>> _bodies;
 
     public MobileModule(
         IMobileService mobiles,
@@ -43,9 +47,14 @@ public sealed class MobileModule
         IRegionService? regions = null,
         ILightService? light = null,
         IMobileStateService? state = null,
-        IWorldViewService? view = null
+        IWorldViewService? view = null,
+        IDataLoaderService? data = null
     )
     {
+        _bodies = new(
+            () => data?.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type) ??
+                  FrozenDictionary<int, BodyType>.Empty
+        );
         _view = view;
         _state = state;
         _mobiles = mobiles;
@@ -551,6 +560,16 @@ public sealed class MobileModule
     }
 
     /// <summary>
+    ///     Gets the kind of body of the mobile, as <c>data/bodies.toml</c> says: <c>mobile.body_type(who) ==
+    ///     BodyType.Human</c>. The kind tells which animations the body has.
+    /// </summary>
+    [ScriptFunction(helpText: "The kind of the mobile's body, a BodyType: Human, Monster, Animal, Sea, Equipment, or Empty for a body bodies.toml does not list; nil for a mobile not in the world.")]
+    public BodyType? BodyType(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? _bodies.Value.GetValueOrDefault(mobile.Body) : null;
+    }
+
+    /// <summary>
     ///     Gets how full the mobile is, from 0 (starving) to 20 (full); <c>mobile.hunger(who)</c>.
     /// </summary>
     [ScriptFunction(helpText: "How full the mobile is, from 0 (starving) to 20 (full); nil for a mobile not in the world.")]
@@ -571,7 +590,7 @@ public sealed class MobileModule
             return false;
         }
 
-        mobile.Hunger = Math.Clamp(hunger, 0, HungerService.Full);
+        mobile.Hunger = HungerService.Clamp(hunger);
 
         return true;
     }

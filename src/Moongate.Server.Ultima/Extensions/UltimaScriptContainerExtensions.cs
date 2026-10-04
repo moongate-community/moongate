@@ -49,6 +49,7 @@ public static class UltimaScriptContainerExtensions
         container.RegisterScriptEnum<EffectGraphicType>();
         container.RegisterScriptEnum<EffectRenderModeType>();
         container.RegisterScriptEnum<EffectLayerType>();
+        container.RegisterScriptEnum<BodyType>();
         container.RegisterScriptEnum<HumanAnimationType>();
         container.RegisterScriptEnum<MonsterAnimationType>();
         container.RegisterScriptEnum<AnimalAnimationType>();

@@ -74,6 +74,17 @@ public sealed class UoxItemConverterCommandTests : IDisposable
             name=apple
             id=0x09d0
             }
+            [0x0a1e]
+            {
+            get=base_food
+            name=bowl of flour
+            id=0x0a1e
+            }
+            [base_magic_fish]
+            {
+            get=base_food
+            id=0x0dd6
+            }
             [0x1f9e]
             {
             name=pitcher of water
@@ -86,7 +97,10 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         Assert.True(Run() == 0, CombinedOutput);
 
         // UOX3's item type 14 is food, on the block itself or the one it gets its fields from; a drink is not.
+        // Nor is what UOX3 files under food and nobody eats: a bowl of flour, the magic fish.
         var items = ReadItems();
+        Assert.True(string.IsNullOrEmpty(items.Values.Single(item => item.Name == "bowl of flour").ScriptId));
+        Assert.True(string.IsNullOrEmpty(items["base_magic_fish"].ScriptId));
         Assert.Equal("food", items.Values.Single(item => item.Name == "apple").ScriptId);
         Assert.True(string.IsNullOrEmpty(items.Values.Single(item => item.Name == "pitcher of water").ScriptId));
     }

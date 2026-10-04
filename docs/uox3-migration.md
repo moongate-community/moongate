@@ -38,7 +38,8 @@ Moongate Lua script gets its `script_id`: the script of the block's `script=`, e
 `jse_fileassociations.scp` ([SCRIPT_LIST]). Today `item/lights.js` becomes `light`
 (`scripts/items/light.lua`); other scripts are left out. With or without it, what UOX3 calls food
 (item type 14, on the block or on the one it gets its fields from) takes `script_id = "food"`
-(`scripts/items/food.lua`).
+(`scripts/items/food.lua`), but for what UOX3 files under food and nobody eats as it is: the bowl of
+flour (`0x0a1e_bowl_of_flour`) and the magic fish (`base_magic_fish`).
 A folder missing either file exits `2`.
 
 `--npc-lists-destination` and `--spawns-destination` go together and need `--mobile-source`.

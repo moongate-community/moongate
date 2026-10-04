@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Mobiles;
 using Moongate.Server.Ultima.Data.Mobiles;
@@ -96,8 +97,9 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
         var change = new MobileStatsChange();
         var changed = false;
 
-        // A player with an empty stomach gets no hit points back, as in UOX3.
-        if (_config.HungerEnabled && !mobile.IsNpc && mobile.Hunger <= 0)
+        // A player with an empty stomach gets no hit points back, as in UOX3; the staff, which never gets hungry,
+        // is left alone.
+        if (_config.HungerEnabled && !mobile.IsNpc && mobile.Hunger <= 0 && !IsStaff(mobile))
         {
             clock.HitsAt = 0;
         }
@@ -225,6 +227,13 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
             double own when double.IsFinite(own) && own > 0.0 => Math.Clamp(own, 0.1, SlowestSeconds),
             _                                                  => seconds
         };
+    }
+
+    private bool IsStaff(MobileEntity mobile)
+    {
+        return _sessions is not null &&
+               _sessions.TryGetByCharacterId(mobile.Id, out var session) &&
+               session.AccountType >= AccountType.GameMaster;
     }
 
     // A timer callback that throws closes the timer wheel: one bad mobile must not stop the server.
