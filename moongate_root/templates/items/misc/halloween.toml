@@ -134,6 +134,7 @@ base_id = "base_item"
 item_id = 2503
 name = "Harvest Wine"
 rarity = "common"
+script_id = "drink"
 weight = 1.0
 hue = 224
 
@@ -143,6 +144,7 @@ base_id = "base_item"
 item_id = 2477
 name = "Murky Milk"
 rarity = "common"
+script_id = "drink"
 weight = 2.0
 hue = 997
 

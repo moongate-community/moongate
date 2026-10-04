@@ -124,20 +124,28 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
             changed = true;
         }
 
-        var stamina = Due(
-            mobile.Stamina,
-            mobile.StaminaMax,
-            clock.StaminaAt,
-            now,
-            Seconds(mobile, StaminaProp, _config.StaminaSeconds),
-            out var staminaAt
-        );
-        clock.StaminaAt = staminaAt;
-
-        if (stamina > 0)
+        // A parched player gets no stamina back, as in UOX3; the staff is left alone here too.
+        if (_config.ThirstEnabled && !mobile.IsNpc && mobile.Thirst <= 0 && !IsStaff(mobile))
         {
-            change.Stamina = mobile.Stamina + stamina;
-            changed = true;
+            clock.StaminaAt = 0;
+        }
+        else
+        {
+            var stamina = Due(
+                mobile.Stamina,
+                mobile.StaminaMax,
+                clock.StaminaAt,
+                now,
+                Seconds(mobile, StaminaProp, _config.StaminaSeconds),
+                out var staminaAt
+            );
+            clock.StaminaAt = staminaAt;
+
+            if (stamina > 0)
+            {
+                change.Stamina = mobile.Stamina + stamina;
+                changed = true;
+            }
         }
 
         if (changed)

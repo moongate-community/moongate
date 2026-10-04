@@ -203,6 +203,11 @@ public class MobileEntity : IMoongateEntity
     public int Hunger { get; set; } = 20;
 
     /// <summary>
+    ///     How quenched the mobile is, from 0 (parched) to 20: it drops with time for a player and rises by drinking.
+    /// </summary>
+    public int Thirst { get; set; } = 20;
+
+    /// <summary>
     ///     Whether the mobile is hidden: the players do not see it, the staff does.
     /// </summary>
     public bool Hidden { get; set; }

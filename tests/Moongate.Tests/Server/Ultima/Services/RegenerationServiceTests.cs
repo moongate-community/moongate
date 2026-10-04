@@ -222,6 +222,34 @@ public sealed class RegenerationServiceTests
     }
 
     [Fact]
+    public void Tick_AParchedPlayer_GetsNoStaminaBack_ButHits_AndAnNpcIsNotThirsty()
+    {
+        var orc = new MobileEntity
+        {
+            Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Hits = 50, HitsMax = 50, Mana = 0, ManaMax = 0,
+            Stamina = 10, StaminaMax = 50, Thirst = 0
+        };
+        _aria.Thirst = 0;
+        _aria.Hits = 50;
+        _aria.Stamina = 50;
+        _regeneration.Tick(_aria);
+        _regeneration.Tick(orc);
+
+        _clock.Advance(TimeSpan.FromSeconds(11));
+        _regeneration.Tick(_aria);
+        _regeneration.Tick(orc);
+
+        Assert.Equal((51, 50, 11), (_aria.Hits, _aria.Stamina, orc.Stamina));
+
+        // With thirst turned off in the configuration, a dry throat changes nothing.
+        _config.ThirstEnabled = false;
+        _regeneration.Tick(_aria);
+        _clock.Advance(TimeSpan.FromSeconds(7));
+        _regeneration.Tick(_aria);
+        Assert.Equal(51, _aria.Stamina);
+    }
+
+    [Fact]
     public async Task Tick_AStarvingGameMaster_StillGetsHitsBack_ItsHungerNeverDrops()
     {
         await using var fixture = await BroadcastFixture.CreateAsync();

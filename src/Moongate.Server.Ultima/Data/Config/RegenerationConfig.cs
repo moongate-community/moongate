@@ -1,7 +1,7 @@
 namespace Moongate.Server.Ultima.Data.Config;
 
 /// <summary>
-///     TOML settings for the regeneration of hit points, mana and stamina, and for hunger.
+///     TOML settings for the regeneration of hit points, mana and stamina, and for hunger and thirst.
 /// </summary>
 public sealed class RegenerationConfig
 {
@@ -30,7 +30,13 @@ public sealed class RegenerationConfig
     public bool HungerEnabled { get; set; } = true;
 
     /// <summary>
-    ///     Gets or sets the minutes between two points of hunger lost by a player in the world; 5 is ModernUO's.
+    ///     Gets or sets whether the players get thirsty: off, thirst neither drops nor stops the stamina.
+    /// </summary>
+    public bool ThirstEnabled { get; set; } = true;
+
+    /// <summary>
+    ///     Gets or sets the minutes between two points of hunger, and of thirst, lost by a player in the world; 5 is
+    ///     ModernUO's.
     /// </summary>
     public int HungerMinutes { get; set; } = 5;
 

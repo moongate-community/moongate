@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 71 done, 🟡 43 partly done, ❌ 154 not built yet.
+**268 systems:** ✅ 72 done, 🟡 42 partly done, ❌ 154 not built yet.
 
-**Coverage: 26%** of the systems done, **35%** counting a partly done system as half.
+**Coverage: 27%** of the systems done, **35%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -52,7 +52,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); nothing gains or loses them yet |
 | Notoriety (innocent, criminal, murderer) | 🟡 | Name colour from the mobile template |
 | Crimes, criminal timer and murder counts | ❌ | |
-| Hunger and thirst | 🟡 | Hunger from 0 to 20: it drops with time, a starving player gets no hit points back, food is eaten; no thirst |
+| Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
 | Hiding and stealth | ❌ | A script can hide a mobile with `mobile.set_hidden`; no skill |
 | Death, corpses, ghosts and resurrection | ❌ | |
@@ -183,7 +183,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Doors | ✅ | Open and close; linked double doors; a closed door blocks the way, staff walks through |
 | Locks and keys | ✅ | Locked doors open for a player carrying their key |
 | Lights | ✅ | Lit and doused; lamp posts light up at night |
-| Potions and food | 🟡 | Food is eaten: hunger, stamina, sound and gesture. A sample potion is drunk and used up, with no effect yet |
+| Potions and food | 🟡 | Food is eaten: hunger, stamina, sound and gesture. Drinks are drunk by sips, and a pitcher or a glass is left empty; no refilling, no drunkenness. A sample potion is drunk and used up, with no effect yet |
 | Books | ❌ | |
 | Maps and treasure maps | ❌ | |
 | Runes, recall and gates | ❌ | |

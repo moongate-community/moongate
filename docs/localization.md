@@ -64,7 +64,7 @@ chosen language stays in English, so a partial translation still works. The log
 reports how many messages fell back:
 
 ```text
-Found 5589 messages in ita, 3 of them in English
+Found 5594 messages in ita, 3 of them in English
 ```
 
 ### Validation at startup
@@ -201,6 +201,8 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30039–30049, 30053–30054, the rest up to 30113, 30121 and 30127 | One per built-in command | Command descriptions in `help` |
 | 30114 | This moongate does not seem to go anywhere. | Texts of the item scripts, read with `localization.get` |
 | 30123, 30124 | You are hungry., You are starving: your wounds will not heal until you eat. | What a player reads as its hunger drops |
+| 30128, 30129 | You are thirsty., You are parched: your stamina will not come back until you drink. | What a player reads as its thirst drops |
+| 30130–30132 | You are simply too full to drink any more!, It is empty., You drink, and feel less thirsty. | The texts of `scripts/items/drink.lua` |
 
 The header of the command texts in `eng/moongate.toml` lists the ids of both sets.
 

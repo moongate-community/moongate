@@ -287,6 +287,21 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Thirst_IsHowQuenchedTheMobileIs_AndSetThirstKeepsItFromZeroToTwenty()
+    {
+        var result = Run(
+            "local full = mobile.thirst(2) " +
+            "return full, mobile.set_thirst(2, 7), mobile.thirst(2), mobile.set_thirst(2, 99), mobile.thirst(2), " +
+            "mobile.set_thirst(2, -4), mobile.thirst(2), mobile.thirst(999), mobile.set_thirst(999, 5)"
+        );
+
+        Assert.Equal([20, 7, 20, 0], new[] { result[0], result[2], result[4], result[6] }.Select(value => value.Read<int>()));
+        Assert.All(new[] { result[1], result[3], result[5] }, value => Assert.True(value.Read<bool>()));
+        Assert.Equal((LuaValue.Nil, false), (result[7], result[8].Read<bool>()));
+        Assert.Equal((0, 20), (_aria.Thirst, _aria.Hunger));
+    }
+
+    [Fact]
     public void BodyType_IsTheKindOfBodyOfTheMobile_AsTheBodiesFileSays()
     {
         _aria.Body = 400;

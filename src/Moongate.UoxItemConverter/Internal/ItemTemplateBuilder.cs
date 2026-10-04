@@ -19,6 +19,12 @@ internal static class ItemTemplateBuilder
     // UOX3's item type of food (IT_FOOD).
     private const int FoodType = 14;
 
+    // UOX3's item type of drinks (IT_DRINK).
+    private const int DrinkType = 105;
+
+    // What UOX3 files under drinks and nobody drinks: an ingredient.
+    private static readonly HashSet<string> NotDrunk = new(StringComparer.Ordinal) { "0x09ec_jar_of_honey" };
+
     // What UOX3 files under food and nobody eats as it is: an ingredient, and the fish that ModernUO gives a spell.
     private static readonly HashSet<string> NotEaten = new(StringComparer.Ordinal)
     {
@@ -109,6 +115,14 @@ internal static class ItemTemplateBuilder
         {
             // What UOX3 lets a player eat: scripts/items/food.lua.
             template.ScriptId = "food";
+        }
+        else if (!NotDrunk.Contains(id) &&
+                 block.Fields.TryGetValue("TYPE", out var drinkType) &&
+                 UoxNumber.TryParse(drinkType, out var drinkKind) &&
+                 drinkKind == DrinkType)
+        {
+            // What UOX3 lets a player drink: scripts/items/drink.lua, in place of UOX3's own pitchers.js.
+            template.ScriptId = "drink";
         }
 
         // UOX3's visible= is 0 for everyone; 1 (hidden), 2 (magically invisible) and 3 (GM hidden) all keep the

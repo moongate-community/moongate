@@ -11,12 +11,12 @@ using Moongate.Server.Ultima.Types.Targeting;
 namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
-///     Sets a number of the mobile the game master targets: <c>set hits|mana|stamina|hunger &lt;value&gt;</c>. Hit
-///     points, mana and stamina stay between 0 and their maximum, hunger between 0 and 20.
+///     Sets a number of the mobile the game master targets: <c>set hits|mana|stamina|hunger|thirst &lt;value&gt;</c>. Hit
+///     points, mana and stamina stay between 0 and their maximum, hunger and thirst between 0 and 20.
 /// </summary>
 public sealed class SetCommand : ICommandExecutor
 {
-    private const string Usage = "set <hits|mana|stamina|hunger> <value>";
+    private const string Usage = "set <hits|mana|stamina|hunger|thirst> <value>";
 
     private readonly ITargetService _targets;
     private readonly IMobileService _mobiles;
@@ -52,7 +52,7 @@ public sealed class SetCommand : ICommandExecutor
         }
 
         if (context.Arguments.Length != 2 ||
-            context.Arguments[0].ToLowerInvariant() is not ("hits" or "mana" or "stamina" or "hunger") ||
+            context.Arguments[0].ToLowerInvariant() is not ("hits" or "mana" or "stamina" or "hunger" or "thirst") ||
             !int.TryParse(context.Arguments[1], out var value) ||
             value < 0)
         {
@@ -101,6 +101,11 @@ public sealed class SetCommand : ICommandExecutor
                     case "stamina":
                         _state.SetStats(mobile, new MobileStatsChange { Stamina = value });
                         now = mobile.Stamina;
+
+                        break;
+                    case "thirst":
+                        _hunger.SetThirst(mobile, value);
+                        now = mobile.Thirst;
 
                         break;
                     default:

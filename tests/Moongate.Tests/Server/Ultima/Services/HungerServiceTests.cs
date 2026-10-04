@@ -53,9 +53,10 @@ public sealed class HungerServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task StartAsync_WithHungerOff_RegistersNothing()
+    public async Task StartAsync_WithHungerAndThirstOff_RegistersNothing()
     {
         _config.HungerEnabled = false;
+        _config.ThirstEnabled = false;
 
         await _hunger.StartAsync();
 
@@ -89,6 +90,65 @@ public sealed class HungerServiceTests : IAsyncLifetime
         Decay(3);
         Assert.Equal(0, _aria.Hunger);
         Assert.Equal(2, _speech.Told.Count);
+    }
+
+    [Fact]
+    public async Task EveryInterval_APlayerAlsoGetsThirstier_TheStaffDoesNot()
+    {
+        await _hunger.StartAsync();
+
+        Decay(3);
+
+        Assert.Equal((17, 20), (_aria.Thirst, _staff.Thirst));
+    }
+
+    [Fact]
+    public async Task APlayer_IsToldWhenItGetsThirsty_AndWhenItIsParched_AndGoesNoLower()
+    {
+        await _hunger.StartAsync();
+        _aria.Thirst = 6;
+
+        Decay(1);
+        Assert.Equal((_aria, "You are thirsty."), Assert.Single(_speech.Told));
+
+        Decay(5);
+        Assert.Equal(0, _aria.Thirst);
+        Assert.Equal("You are parched: your stamina will not come back until you drink.", _speech.Told[^1].Text);
+
+        Decay(3);
+        Assert.Equal(0, _aria.Thirst);
+        Assert.Equal(2, _speech.Told.Count);
+    }
+
+    [Fact]
+    public async Task WithThirstOff_OnlyHungerDrops_AndWithHungerOff_OnlyThirst()
+    {
+        _config.ThirstEnabled = false;
+        await _hunger.StartAsync();
+        Decay(1);
+        Assert.Equal((19, 20), (_aria.Hunger, _aria.Thirst));
+        await _hunger.StopAsync();
+
+        _config.ThirstEnabled = true;
+        _config.HungerEnabled = false;
+        await _hunger.StartAsync();
+        _timers.Fire(_timers.Timers[^1].Id);
+
+        for (var minute = 0; minute < 5; minute++)
+        {
+            _clock.Advance(TimeSpan.FromMinutes(1));
+            _timers.Fire(_timers.Timers[^1].Id);
+        }
+
+        Assert.Equal((19, 19), (_aria.Hunger, _aria.Thirst));
+    }
+
+    [Theory, InlineData(25, 20), InlineData(-3, 0), InlineData(12, 12)]
+    public void SetThirst_KeepsTheThirstFromZeroToTwenty(int asked, int kept)
+    {
+        _hunger.SetThirst(_aria, asked);
+
+        Assert.Equal(kept, _aria.Thirst);
     }
 
     [Theory, InlineData(25, 20), InlineData(-3, 0), InlineData(12, 12)]
