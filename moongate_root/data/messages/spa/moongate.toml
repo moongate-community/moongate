@@ -65,7 +65,7 @@
 30041 = "Guarda el mundo y avisa a todos los jugadores cuando termina."
 30042 = "Envía un mensaje del sistema a todos los jugadores de este mundo: broadcast <texto>."
 30043 = "Crea un PNJ a partir de una plantilla de criatura donde apuntes: spawn <plantilla>."
-30044 = "Elimina el PNJ al que apuntas."
+30044 = "Elimina el PNJ o el objeto en el suelo al que apuntas."
 30045 = "Muestra lo que apuntas: su número de serie, o el mapa y la posición de un punto."
 30046 = "Borrados de personajes pendientes: character pending [serie-de-cuenta]; character restore <serie-de-personaje>."
 30047 = "Repite sus argumentos."
@@ -142,6 +142,7 @@
 30119 = "{0} ({1}) añadido en {2} ({3}, {4}, {5})."
 30120 = "No se pudo añadir el objeto. Revisa los registros del servidor."
 30121 = "Pone en el suelo, donde apuntas, un objeto de una plantilla de objeto: add <template>."
+30122 = "Solo se puede eliminar un objeto que está en el suelo."
 
 # Moongate: texts of the item scripts.
 30114 = "Este moongate no parece llevar a ninguna parte."

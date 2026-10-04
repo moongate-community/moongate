@@ -65,7 +65,7 @@
 30041 = "Uloží svět a po dokončení upozorní všechny hráče."
 30042 = "Pošle systémovou zprávu všem hráčům v tomto světě: broadcast <text>."
 30043 = "Vytvoří NPC ze šablony tvora na zaměřeném místě: spawn <šablona>."
-30044 = "Odstraní zaměřené NPC."
+30044 = "Odstraní zaměřené NPC nebo předmět ležící na zemi."
 30045 = "Ukáže zaměřený cíl: jeho sériové číslo, nebo mapu a polohu místa."
 30046 = "Čekající mazání postav: character pending [číslo-účtu]; character restore <číslo-postavy>."
 30047 = "Zopakuje své argumenty."
@@ -142,6 +142,7 @@
 30119 = "Přidáno {0} ({1}) na {2} ({3}, {4}, {5})."
 30120 = "Předmět se nepodařilo přidat. Zkontroluj logy serveru."
 30121 = "Položí na zem, kam zamíříš, předmět ze šablony předmětu: add <template>."
+30122 = "Odstranit lze jen předmět ležící na zemi."
 
 # Moongate: texts of the item scripts.
 30114 = "Tento moongate zřejmě nikam nevede."

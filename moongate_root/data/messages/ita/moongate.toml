@@ -65,7 +65,7 @@
 30041 = "Salva il mondo e avvisa tutti i giocatori quando ha finito."
 30042 = "Invia un messaggio di sistema a tutti i giocatori di questo mondo: broadcast <testo>."
 30043 = "Crea un PNG da un modello di creatura nel punto che scegli: spawn <modello>."
-30044 = "Rimuove il PNG che scegli."
+30044 = "Rimuove il PNG o l'oggetto a terra che scegli."
 30045 = "Mostra ciò che scegli: il suo seriale, oppure la mappa e la posizione di un punto."
 30046 = "Cancellazioni di personaggi in attesa: character pending [seriale-account]; character restore <seriale-personaggio>."
 30047 = "Ripete i suoi argomenti."
@@ -142,6 +142,7 @@
 30119 = "Aggiunto {0} ({1}) in {2} ({3}, {4}, {5})."
 30120 = "Impossibile aggiungere l'oggetto. Controlla i log del server."
 30121 = "Mette a terra, dove indichi, un oggetto da un modello di oggetto: add <template>."
+30122 = "Si può rimuovere solo un oggetto a terra."
 
 # Moongate: texts of the item scripts.
 30114 = "Questo moongate non sembra portare da nessuna parte."

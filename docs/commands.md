@@ -37,7 +37,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`globallight`](commands/globallight.md) | `globallight [0-31]` | Yes | Yes | GameMaster | Game |
 | [`spawn`](commands/spawn.md) | `spawn <template>`, then target a spot | No | Yes | GameMaster | Game |
 | [`add`](commands/add.md) | `add <template>`, then target a spot | No | Yes | GameMaster | Game |
-| [`remove`](commands/remove.md) | `remove`, then target an NPC | No | Yes | GameMaster | Game |
+| [`remove`](commands/remove.md) | `remove`, then target an NPC or an item on the ground | No | Yes | GameMaster | Game |
 | [`where`](commands/where.md) | `where`, then target anything | No | Yes | GameMaster | Game |
 | [`go`](commands/go.md) | `go [<x>,<y>,<z> [map] \| <place>]` | No | Yes | GameMaster | Game |
 | [`moongate`](commands/moongate.md) | `moongate <x>,<y>,<z> [map]` | No | Yes | GameMaster | Game |
