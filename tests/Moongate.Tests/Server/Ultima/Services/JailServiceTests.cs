@@ -8,7 +8,6 @@ using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
-using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Jail;
 using Moongate.Tests.TestSupport.Persistence;
@@ -657,19 +656,14 @@ public sealed class JailServiceTests : IAsyncLifetime
             loader.With(file);
         }
 
-        var module = new ItemModule(
+        var handling = new ItemHandlingService(
             _items,
             _fixture.Sessions,
             _fixture.Sender,
             _view,
             TestTooltips.Create(_items, _fixture.Mobiles),
-            _fixture.Mobiles,
-            _speech,
-            _fixture.Sectors,
             new FakeItemFactoryService(_templates, _tiles),
-            _serials,
-            tiles: _tiles,
-            templates: _templates
+            _serials
         );
         var jail = new JailService(
             loader,
@@ -682,7 +676,7 @@ public sealed class JailServiceTests : IAsyncLifetime
             _config,
             _itemsConfig,
             _items,
-            module,
+            handling,
             _view,
             _clock
         );

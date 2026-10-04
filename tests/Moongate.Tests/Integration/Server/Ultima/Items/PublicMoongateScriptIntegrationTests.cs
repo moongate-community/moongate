@@ -129,6 +129,7 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
         _container.RegisterDelegate<IGumpScriptService>(_ => gumpScripts!);
         _container.RegisterInstance(TestLocalization.With((2749, "You have moved too far away to use this.")));
         _container.AddScriptModule<LocalizationModule>();
+        _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<MobileModule>();
         _container.AddScriptModule<GumpModule>();

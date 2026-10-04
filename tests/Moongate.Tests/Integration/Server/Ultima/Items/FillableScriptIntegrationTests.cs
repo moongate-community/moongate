@@ -113,6 +113,7 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ITileDataService>(_tiles);
         _container.RegisterInstance<IItemTemplateService>(_templates);
         _container.RegisterInstance<ILootService>(new LootService(loot, factory, _templates, _tiles));
+        _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<MobileModule>();

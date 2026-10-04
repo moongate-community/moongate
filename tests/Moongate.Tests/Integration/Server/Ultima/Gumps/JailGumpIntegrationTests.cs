@@ -115,6 +115,7 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<LogModule>();
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<MobileModule>();
+        _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<GumpModule>();
         _container.AddScriptModule<JailModule>();

@@ -130,6 +130,7 @@ public sealed class MoongateScriptIntegrationTests : IAsyncLifetime
         _container.RegisterDelegate<IGumpScriptService>(_ => gumpScripts!);
         _container.RegisterInstance(TestLocalization.With((393, TooFar), (30114, Nowhere)));
         _container.AddScriptModule<LocalizationModule>();
+        _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<MobileModule>();
         _container.AddScriptModule<WorldModule>();

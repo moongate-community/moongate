@@ -45,7 +45,7 @@ public sealed class ItemModule
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
     private readonly ISectorService _sectors;
-    private readonly IItemFactoryService? _factory;
+    private readonly IItemHandlingService _handling;
     private readonly IItemSerialPool? _serials;
     private readonly IContainerLayoutService? _layouts;
     private readonly ITileDataService? _tiles;
@@ -63,7 +63,7 @@ public sealed class ItemModule
         IMobileService mobiles,
         ISpeechService speech,
         ISectorService sectors,
-        IItemFactoryService? factory = null,
+        IItemHandlingService handling,
         IItemSerialPool? serials = null,
         IContainerLayoutService? layouts = null,
         ITileDataService? tiles = null,
@@ -77,7 +77,7 @@ public sealed class ItemModule
         _equipment = equipment;
         _loot = loot;
         _templates = templates;
-        _factory = factory;
+        _handling = handling;
         _serials = serials;
         _layouts = layouts;
         _tiles = tiles;
@@ -98,20 +98,11 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Makes an item from a template in the mobile's backpack and gives its serial; the owner sees it at once and its next save keeps it. Nil for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack), or when no serial is ready: the server keeps 64 in reserve and refills them in the background, so making more in one go gives nil for the rest; try again later.")]
     public long? Give(long mobile, string template, int? amount = null)
     {
-        if (mobile is <= 0 or > uint.MaxValue ||
-            !_mobiles.TryGet(new Serial((uint)mobile), out var owner) ||
-            _items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
-            Make(template, amount) is not { } item)
-        {
-            return null;
-        }
-
-        var position = _layouts?.RandomGridPosition(backpack.ItemId) ?? new Point2D(44, 65);
-        item.PutInContainer(backpack.Id, position, ContainerSlotUtils.FirstFree(_items.GetContents(backpack.Id)));
-        _items.Add([item]);
-        Refresh(item);
-
-        return item.Id.Value;
+        return mobile is > 0 and <= uint.MaxValue &&
+               _mobiles.TryGet(new Serial((uint)mobile), out var owner) &&
+               _handling.Give(owner, template, amount) is { } item
+            ? item.Id.Value
+            : null;
     }
 
     /// <summary>
@@ -225,20 +216,7 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Takes amount units (default 1) off the item, deleting it at 0, and shows the change to the owner or the players around a ground stack; false for a worn item, an amount below 1, fewer units left or an item a player holds on the cursor.")]
     public bool Consume(long serial, int amount = 1)
     {
-        if (amount < 1 || !TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item) || item.Amount < amount)
-        {
-            return false;
-        }
-
-        if (item.Amount == amount)
-        {
-            return Delete(serial);
-        }
-
-        item.Amount -= amount;
-        Refresh(item);
-
-        return true;
+        return TryGetItem(serial, out var item) && _handling.Consume(item, amount);
     }
 
     /// <summary>
@@ -248,31 +226,7 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Deletes the item; false for a worn item, a held item or a container that still holds items.")]
     public bool Delete(long serial)
     {
-        if (!TryGetItem(serial, out var item) ||
-            item.MobileId is not null ||
-            IsHeld(item) ||
-            _items.GetContents(item.Id).Count > 0)
-        {
-            return false;
-        }
-
-        if (item.GroundLocation is not null)
-        {
-            _view.ItemDisappeared(item);
-            _items.Absorb(item);
-
-            return true;
-        }
-
-        if (OwnerSession(item) is { } session)
-        {
-            _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
-        }
-
-        // Its owner's next save deletes the row, or the world save for an item nobody carries.
-        _items.Absorb(item);
-
-        return true;
+        return TryGetItem(serial, out var item) && _handling.Delete(item);
     }
 
     /// <summary>
@@ -779,31 +733,7 @@ public sealed class ItemModule
     // A new item of the template with a serial of its own, nowhere yet; null when it cannot be made.
     private ItemEntity? Make(string template, int? amount)
     {
-        if (_factory is null || _serials is null || string.IsNullOrWhiteSpace(template))
-        {
-            return null;
-        }
-
-        ItemEntity item;
-
-        try
-        {
-            item = _factory.Create(template, amount);
-        }
-        catch (Exception exception) when (exception is KeyNotFoundException or ArgumentException)
-        {
-            return null;
-        }
-
-        // Taken last: an item that cannot be made must not use up a serial.
-        if (!_serials.TryTake(out var serial))
-        {
-            return null;
-        }
-
-        item.Id = serial;
-
-        return item;
+        return _handling.Make(template, amount);
     }
 
     // The item a serial names when it is a container, or the backpack of the mobile it names.
@@ -877,22 +807,14 @@ public sealed class ItemModule
     // Shows a changed item again: to the players around it on the ground, or to its owner in a container.
     private void Refresh(ItemEntity item)
     {
-        if (item.GroundLocation is not null)
-        {
-            _view.ItemAppeared(item);
-        }
-        else if (OwnerSession(item) is { } session)
-        {
-            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
-            _sender.TrySend(session.SessionId, _tooltips.Info(item));
-        }
+        _handling.Refresh(item);
     }
 
     // Lifted onto a player's cursor: it keeps the place it was taken from until it is dropped, so it must not be
     // drawn there again.
     private bool IsHeld(ItemEntity item)
     {
-        return _sessions.GetAll().Any(session => session.Get(ItemSessionKeys.Held)?.Item == item.Id);
+        return _handling.IsHeld(item);
     }
 
     private GameSession? OwnerSession(ItemEntity item)

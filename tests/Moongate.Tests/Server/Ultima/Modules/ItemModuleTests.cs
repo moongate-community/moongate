@@ -828,16 +828,17 @@ public sealed class ItemModuleTests : IAsyncLifetime
         state.OpenBasicLibrary();
         state.OpenTableLibrary();
         var factory = new FakeItemFactoryService(_templates, _tiles);
+        var tooltips = TestTooltips.Create(_items, _fixture.Mobiles);
         var module = new ItemModule(
             _items,
             _fixture.Sessions,
             _fixture.Sender,
             _view,
-            TestTooltips.Create(_items, _fixture.Mobiles),
+            tooltips,
             _fixture.Mobiles,
             _speech,
             _sectors,
-            factory,
+            new ItemHandlingService(_items, _fixture.Sessions, _fixture.Sender, _view, tooltips, factory, _serials),
             _serials,
             tiles: _tiles,
             templates: _templates,

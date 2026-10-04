@@ -72,6 +72,11 @@ When a sentence ends:
 3. A release note goes in its backpack.
 4. A player is told `You have served your sentence. A fine of 500 gold was taken.`
 
+A sentence is ended before its release runs, so nobody pays twice. When a release fails halfway,
+such as a teleport onto a spot that is gone, the log has `The release of <serial> from jail
+failed` and the prisoner may still stand in its cell with no sentence: move it out by hand with
+[`.go`](commands/go.md) or a teleport. A note that could not be made is in the log too.
+
 `Release` in the gump ends a sentence early: no fine, no note. A prisoner in the world goes back
 at once, a player who is offline at its next login.
 

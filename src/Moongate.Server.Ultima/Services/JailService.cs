@@ -11,7 +11,6 @@ using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
-using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Types.Jail;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -49,7 +48,7 @@ public sealed class JailService : IJailService
     private readonly JailConfig _config;
     private readonly ItemsConfig _itemsConfig;
     private readonly IItemService _items;
-    private readonly ItemModule _itemModule;
+    private readonly IItemHandlingService _handling;
     private readonly IWorldViewService _view;
     private readonly TimeProvider _time;
     private readonly ILocalizationService? _localization;
@@ -81,7 +80,7 @@ public sealed class JailService : IJailService
         JailConfig config,
         ItemsConfig itemsConfig,
         IItemService items,
-        ItemModule itemModule,
+        IItemHandlingService handling,
         IWorldViewService view,
         TimeProvider time,
         ILocalizationService? localization = null
@@ -97,7 +96,7 @@ public sealed class JailService : IJailService
         _config = config;
         _itemsConfig = itemsConfig;
         _items = items;
-        _itemModule = itemModule;
+        _handling = handling;
         _view = view;
         _time = time;
         _localization = localization;
@@ -334,7 +333,7 @@ public sealed class JailService : IJailService
 
             var taken = Math.Min(left, pile.Amount);
 
-            if (_itemModule.Consume(pile.Id.Value, taken))
+            if (_handling.Consume(pile, taken))
             {
                 left -= taken;
             }
@@ -346,27 +345,34 @@ public sealed class JailService : IJailService
     // An NPC without a backpack gets no note.
     private void GiveNote(JailSentenceEntity sentence, MobileEntity prisoner, int fine)
     {
-        if (_itemModule.Give(prisoner.Id.Value, NoteTemplate) is not { } note)
+        if (_handling.Give(prisoner, NoteTemplate) is not { } note)
         {
+            // A player always has a backpack: the template is missing or the reserved serials ran out.
+            if (sentence.IsPlayer)
+            {
+                _logger.Warning("{Prisoner} left the jail without its release note: {Template} could not be made", sentence.Id, NoteTemplate);
+            }
+
             return;
         }
 
-        var text = _localization.Text(
-            NoteMessage,
-            "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}.",
-            sentence.Name,
-            sentence.Days,
-            sentence.Cell,
-            Date(sentence.JailedAt),
-            Date(sentence.ReleaseAt),
-            fine,
-            sentence.JailedBy
+        note.SetProp(
+            NoteTextProp,
+            _localization.Text(
+                NoteMessage,
+                "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}.",
+                sentence.Name,
+                sentence.Days,
+                sentence.Cell,
+                Date(sentence.JailedAt),
+                Date(sentence.ReleaseAt),
+                fine,
+                sentence.JailedBy
+            )
         );
-        // Numbers as Lua has them: the props are read by scripts.
-        _itemModule.SetProp(note, NoteTextProp, text);
-        _itemModule.SetProp(note, "jail.cell", (double)sentence.Cell);
-        _itemModule.SetProp(note, "jail.days", (double)sentence.Days);
-        _itemModule.SetProp(note, "jail.fine", (double)fine);
+        note.SetProp("jail.cell", sentence.Cell);
+        note.SetProp("jail.days", sentence.Days);
+        note.SetProp("jail.fine", fine);
     }
 
     private static string Date(long milliseconds)

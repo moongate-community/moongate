@@ -30,6 +30,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
         container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
+        container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         container.Register<IDecorationsLoader, DecorationsLoader>(Reuse.Singleton);
         container.Register<IDoorGeneratorService, DoorGeneratorService>(Reuse.Singleton);
         container.Register<IDecorationService, DecorationService>(Reuse.Singleton);
