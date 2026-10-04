@@ -106,6 +106,10 @@ fatigue_enabled = true                # Running and moving overloaded cost a pla
 [ultima.spawns]
 initial_fill = true                   # The first spawn of each region after the start fills it to its max.
 
+[ultima.jail]
+fine_gold = 500                       # Gold coins taken from a prisoner when its jail sentence ends; 0 takes nothing.
+max_days = 30                         # The longest sentence the jail gump accepts, in real days.
+
 [persistence]
 auto_sync_schema = false
 auto_apply_migrations = false         # true: a start adds the bundled core SQL and applies what is pending.
@@ -225,6 +229,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.regeneration.thirst_enabled` | Default `true`. Thirst is counted as hunger is, from 20 (quenched) to 0 and at the same pace (`hunger_minutes`): a player in the world loses a point of each together, and the staff none. At 5 the player reads that it is thirsty, at 0 that it is parched, and while at 0 its stamina does not come back, as in UOX3. Off, thirst neither drops nor stops anything. NPCs are never thirsty. |
 | `ultima.regeneration.fatigue_enabled` | Default `true`. What moving costs a player, with ModernUO's numbers. A player carries what it wears and everything inside, the bank left out, and may carry 40 stones and 3.5 a point of strength; its status bar shows both. Carrying more, every step takes 5 points of stamina and one more every 25 stones over, twice as much running; with none left it does not move and reads the client's "too fatigued to move, because you are carrying too much weight". Running takes a point every 16 steps, and a point a step below a tenth of the stamina; with none left a player walks but does not run. Lifting is never refused: a player that puts down something while overloaded is told so. The staff and NPCs pay nothing. Off, a step costs nothing and is never refused. |
 | `ultima.spawns.initial_fill` | Default `true`. The first spawn of each spawn region after the start fills it to its `max` at once, so an empty world is full in about 10 minutes; `false` keeps UOX3's way, where the first spawn also brings only `call` NPCs. Used in game and standalone modes. See [NPC spawns](spawns.md#how-spawning-works). |
+| `ultima.jail.fine_gold`, `ultima.jail.max_days` | Defaults 500 (from 0 to 1,000,000,000) and 30 (from 1 to 3650). The gold taken from a prisoner when its sentence ends, from its backpack and then its bank box, and the longest sentence [`.jail`](commands/jail.md) accepts, in real days; see [Jail](jail.md). |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
 `[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the
