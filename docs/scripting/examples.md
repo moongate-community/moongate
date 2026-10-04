@@ -87,6 +87,14 @@ mobile.set_hunger(who, mobile.hunger(who) + 3)
 mobile.set_thirst(who, mobile.thirst(who) + 3)
 ```
 
+The stones the mobile carries and the stones it may carry before it is overloaded, with
+[`mobile.weight`](https://moongate.sh/lua/mobile/#weight) and
+[`mobile.max_weight`](https://moongate.sh/lua/mobile/#max_weight):
+
+```lua
+if mobile.weight(who) > mobile.max_weight(who) then ... end
+```
+
 A skill as `{ value, cap, lock }`, in points (`50.5`) with `lock` being `up`, `down` or `locked`; a skill
 never trained is 0. And every skill above 0 as a table of name and value:
 

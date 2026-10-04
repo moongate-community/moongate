@@ -628,7 +628,7 @@ public sealed class MobileModule
     ///     Gets the stones the mobile carries: what it wears with their contents, without the bank;
     ///     <c>mobile.weight(who)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The stones the mobile carries: what it wears and everything inside, without the bank box; nil for a mobile not in the world.")]
+    [ScriptFunction(helpText: "The stones the mobile carries: what it wears and everything inside, without the bank box, each pile rounded up as its tooltip says; nil for a mobile not in the world.")]
     public int? Weight(long serial)
     {
         return _weight is not null && TryGetMobile(serial, out var mobile) ? _weight.Carried(mobile) : null;
