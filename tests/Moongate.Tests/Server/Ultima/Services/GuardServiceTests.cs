@@ -64,10 +64,12 @@ public sealed class GuardServiceTests : IAsyncLifetime
             _fixture.Sessions,
             _speech,
             _effects,
-            new StubGameLoop(),
+            _fixture.Network.Loop,
             _config,
             _clock
         );
+        // As the real service: a spawn or a removal started on the loop thread throws.
+        _npcs.OnLoopThread = () => _fixture.Network.Loop.IsOnLoopThread;
         await _guards.StartAsync();
     }
 
@@ -86,9 +88,9 @@ public sealed class GuardServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void TheGuardsKeyword_InAGuardedRegion_BringsAGuardOntoTheCriminal_WithItsEffectSoundAndLine()
+    public async Task TheGuardsKeyword_InAGuardedRegion_BringsAGuardOntoTheCriminal_WithItsEffectSoundAndLine()
     {
-        _guards.Heard(_aria, "qualcosa", GuardsKeyword);
+        await HeardAsync("qualcosa", GuardsKeyword);
 
         Assert.Equal(("guard", MapType.Trammel, new Point3D(60, 50, 0)), Assert.Single(_npcs.Spawns));
         Assert.True(_npcs.Spawned.GetProp("guard.summoned", false));
@@ -104,24 +106,24 @@ public sealed class GuardServiceTests : IAsyncLifetime
      InlineData("GUARDS", true),
      InlineData("I love the vanguards of old", false),
      InlineData("hello", false)]
-    public void ThePlainWord_CallsThemToo_ForAClientThatSendsNoKeyword(string text, bool called)
+    public async Task ThePlainWord_CallsThemToo_ForAClientThatSendsNoKeyword(string text, bool called)
     {
-        _guards.Heard(_aria, text);
+        await HeardAsync(text);
 
         Assert.Equal(called ? 1 : 0, _npcs.Spawns.Count);
     }
 
     [Fact]
-    public void OutsideAGuardedRegion_OrWithGuardsOff_NobodyComes()
+    public async Task OutsideAGuardedRegion_OrWithGuardsOff_NobodyComes()
     {
         Move(_aria, 500, 500);
         Move(_thief, 505, 500);
-        Assert.Equal(0, _guards.Call(_aria));
+        Assert.Equal(0, await CallAsync());
 
         Move(_aria, 50, 50);
         Move(_thief, 60, 50);
         _config.GuardsEnabled = false;
-        _guards.Heard(_aria, "guards", GuardsKeyword);
+        await HeardAsync("guards", GuardsKeyword);
 
         Assert.Empty(_npcs.Spawns);
     }
@@ -130,46 +132,46 @@ public sealed class GuardServiceTests : IAsyncLifetime
     public async Task OnlyACriminalInRange_ThatIsNotStaff_GetsAGuard()
     {
         _thief.Criminal = false;
-        Assert.Equal(0, _guards.Call(_aria));
+        Assert.Equal(0, await CallAsync());
 
         _thief.Criminal = true;
         Move(_thief, 65, 50);
-        Assert.Equal(0, _guards.Call(_aria));
+        Assert.Equal(0, await CallAsync());
 
         Move(_thief, 64, 50);
         await _fixture.Network.ExecuteOnLoopAsync(() => _thiefSession.Set(SessionKeys.AccountType, AccountType.GameMaster));
-        Assert.Equal(0, _guards.Call(_aria));
+        Assert.Equal(0, await CallAsync());
 
         await _fixture.Network.ExecuteOnLoopAsync(() => _thiefSession.Set(SessionKeys.AccountType, AccountType.Regular));
-        Assert.Equal(1, _guards.Call(_aria));
+        Assert.Equal(1, await CallAsync());
     }
 
     [Fact]
-    public void ACriminalWithAGuardOnIt_GetsNoSecondOne_UntilTheGuardLeft()
+    public async Task ACriminalWithAGuardOnIt_GetsNoSecondOne_UntilTheGuardLeft()
     {
-        Assert.Equal(1, _guards.Call(_aria));
-        Assert.Equal(0, _guards.Call(_aria));
+        Assert.Equal(1, await CallAsync());
+        Assert.Equal(0, await CallAsync());
 
         _clock.Advance(TimeSpan.FromSeconds(40));
-        Fire();
+        await FireAsync();
 
-        Assert.Equal(1, _guards.Call(_aria));
+        Assert.Equal(1, await CallAsync());
         Assert.Equal(2, _npcs.Spawns.Count);
     }
 
     [Fact]
-    public void AfterItsTime_TheGuardLeaves_WithTheSameEffectAndSound()
+    public async Task AfterItsTime_TheGuardLeaves_WithTheSameEffectAndSound()
     {
-        _guards.Call(_aria);
+        await CallAsync();
         // The spawn put it in the world.
         _fixture.Mobiles.EnterWorld(_npcs.Spawned);
 
         _clock.Advance(TimeSpan.FromSeconds(39));
-        Fire();
+        await FireAsync();
         Assert.Empty(_npcs.Removals);
 
         _clock.Advance(TimeSpan.FromSeconds(1));
-        Fire();
+        await FireAsync();
 
         Assert.Equal([_npcs.Spawned.Id], _npcs.Removals);
         Assert.Equal(2, _effects.At.Count);
@@ -177,7 +179,7 @@ public sealed class GuardServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void ASummonedGuardLeftByAStoppedServer_IsRemovedAtTheFirstCheck()
+    public async Task ASummonedGuardLeftByAStoppedServer_IsRemovedAtTheFirstCheck()
     {
         var leftover = new MobileEntity { Id = new Serial(0x300), Name = "a guard", TemplateId = "guard", Map = MapType.Trammel };
         leftover.SetProp("guard.summoned", true);
@@ -185,23 +187,23 @@ public sealed class GuardServiceTests : IAsyncLifetime
         _fixture.Mobiles.EnterWorld(leftover);
         _fixture.Mobiles.EnterWorld(standing);
 
-        Fire();
-        Fire();
+        await FireAsync();
+        await FireAsync();
 
         // The guard that stands in town by its spawn stays.
         Assert.Equal([leftover.Id], _npcs.Removals);
     }
 
     [Fact]
-    public void ASpawnThatFails_FreesTheCriminalForTheNextCall()
+    public async Task ASpawnThatFails_FreesTheCriminalForTheNextCall()
     {
         _npcs.SpawnFailure = new KeyNotFoundException("no template");
 
-        Assert.Equal(1, _guards.Call(_aria));
+        Assert.Equal(1, await CallAsync());
         Assert.Empty(_speech.Said);
 
         _npcs.SpawnFailure = null;
-        Assert.Equal(1, _guards.Call(_aria));
+        Assert.Equal(1, await CallAsync());
         Assert.Single(_speech.Said);
     }
 
@@ -210,8 +212,72 @@ public sealed class GuardServiceTests : IAsyncLifetime
         Assert.True(_fixture.Mobiles.MoveTo(mobile, MapType.Trammel, new Point3D(x, y, 0)));
     }
 
-    private void Fire()
+    [Fact]
+    public async Task ACriminalOutsideTheGuardedRegion_IsOutOfTheGuardsReach()
     {
-        _timers.Fire(_timers.Timers[0].Id);
+        // The caller stands in town, the criminal ten tiles away, past the town's edge.
+        Move(_aria, 95, 50);
+        Move(_thief, 105, 50);
+
+        Assert.Equal(0, await CallAsync());
+
+        Move(_thief, 99, 50);
+        Assert.Equal(1, await CallAsync());
+    }
+
+    [Fact]
+    public async Task AGuardThatWasCalled_IsNeverItselfATarget()
+    {
+        var guard = new MobileEntity { Id = new Serial(0x400), Name = "a guard", TemplateId = "guard", Map = MapType.Trammel, Criminal = true };
+        guard.SetProp("guard.summoned", true);
+        _fixture.Mobiles.EnterWorld(guard);
+        Move(guard, 55, 50);
+        _thief.Criminal = false;
+
+        Assert.Equal(0, await CallAsync());
+    }
+
+    [Fact]
+    public async Task AMobileWhoseSummonedPropIsNotABool_DoesNotStopTheGuardsFromLeaving()
+    {
+        var odd = new MobileEntity { Id = new Serial(0x401), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel };
+        odd.SetProp("guard.summoned", "yes please");
+        _fixture.Mobiles.EnterWorld(odd);
+        await CallAsync();
+        _fixture.Mobiles.EnterWorld(_npcs.Spawned);
+
+        _clock.Advance(TimeSpan.FromSeconds(40));
+        await FireAsync();
+
+        Assert.Equal([_npcs.Spawned.Id], _npcs.Removals);
+    }
+
+    // On the game loop, as the speech handler and the timer wheel call the service; then what it started elsewhere
+    // is awaited, and what that posted back to the loop is let run.
+    private async Task<int> CallAsync()
+    {
+        var sent = 0;
+        await _fixture.Network.ExecuteOnLoopAsync(() => sent = _guards.Call(_aria));
+        await SettleAsync();
+
+        return sent;
+    }
+
+    private async Task HeardAsync(string text, IReadOnlyList<int>? keywords = null)
+    {
+        await _fixture.Network.ExecuteOnLoopAsync(() => _guards.Heard(_aria, text, keywords));
+        await SettleAsync();
+    }
+
+    private async Task FireAsync()
+    {
+        await _fixture.Network.ExecuteOnLoopAsync(() => _timers.Fire(_timers.Timers[0].Id));
+        await SettleAsync();
+    }
+
+    private async Task SettleAsync()
+    {
+        await _guards.Running.WaitAsync(TimeSpan.FromSeconds(10));
+        await _fixture.Network.ExecuteOnLoopAsync(() => { });
     }
 }

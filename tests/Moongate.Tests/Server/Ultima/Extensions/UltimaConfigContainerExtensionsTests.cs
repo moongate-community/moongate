@@ -46,12 +46,16 @@ public sealed class UltimaConfigContainerExtensionsTests
 
             [ultima.crime]
             criminal_seconds = 300
+            guards_enabled = false
+            guard_template = "f_guard"
+            guard_seconds = 15
             """
         );
 
         var ultima = container.AddUltimaConfig();
 
-        Assert.Equal(300, container.Resolve<CrimeConfig>().CriminalSeconds);
+        var crime = container.Resolve<CrimeConfig>();
+        Assert.Equal((300, false, "f_guard", 15), (crime.CriminalSeconds, crime.GuardsEnabled, crime.GuardTemplate, crime.GuardSeconds));
         Assert.Equal("/uo", container.Resolve<UltimaConfig>().UltimaPath);
         Assert.Same(ultima.World, container.Resolve<WorldConfig>());
         Assert.Equal("ita", container.Resolve<LocalizationConfig>().Language);

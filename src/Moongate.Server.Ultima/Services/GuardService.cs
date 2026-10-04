@@ -17,7 +17,8 @@ namespace Moongate.Server.Ultima.Services;
 /// <summary>
 ///     Sends a guard for each criminal near the player that called, as ModernUO's guarded regions: an NPC of
 ///     <c>ultima.crime.guard_template</c> appears on the criminal with the teleport effect and sound, says its line,
-///     and leaves the same way after <c>ultima.crime.guard_seconds</c>. A summoned guard bears the prop
+///     and leaves the same way after <c>ultima.crime.guard_seconds</c>. Only a criminal that stands in a guarded
+///     region is reached. Spawns and removals wait for the game loop, so they are started off it. A summoned guard bears the prop
 ///     <c>guard.summoned</c>: one a stopped server left in the world is removed at the first check.
 /// </summary>
 public sealed class GuardService : IGuardService, IMoongateStartupService
@@ -53,6 +54,11 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
 
     private string? _timerId;
     private bool _adopted;
+
+    /// <summary>
+    ///     Gets the spawns and removals still under way, which run off the game loop; done when none is.
+    /// </summary>
+    public Task Running { get; private set; } = Task.CompletedTask;
 
     public GuardService(
         ITimerService timers,
@@ -120,14 +126,46 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
 
         foreach (var mobile in _sectors.GetMobilesInRange(caller.Map, caller.Location, CallRange))
         {
-            if (mobile.Criminal && !IsStaff(mobile) && _mobiles.IsInWorld(mobile.Id) && _wanted.Add(mobile.Id))
+            if (IsWanted(mobile) && _wanted.Add(mobile.Id))
             {
-                _ = SummonAsync(mobile);
+                // What the spawn needs is read here, on the loop; the spawn itself waits for the loop, so it cannot
+                // start on it.
+                var (map, location) = (mobile.Map, mobile.Location);
+                Start(() => SummonAsync(mobile.Id, map, location));
                 sent++;
             }
         }
 
         return sent;
+    }
+
+    // A criminal the guards of this place reach: in the world, standing in a guarded region itself, not staff and not
+    // one of the guards that were called.
+    private bool IsWanted(MobileEntity mobile)
+    {
+        return mobile.Criminal &&
+               _mobiles.IsInWorld(mobile.Id) &&
+               !IsStaff(mobile) &&
+               !IsSummoned(mobile) &&
+               _regions.Find(mobile.Map, mobile.Location)?.Guarded == true;
+    }
+
+    private static bool IsSummoned(MobileEntity mobile)
+    {
+        // Read with care: a script may have put anything under that name.
+        try
+        {
+            return mobile.IsNpc && mobile.TryGetProp<bool>(SummonedProp, out var summoned) && summoned;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    private void Start(Func<Task> work)
+    {
+        Running = Task.WhenAll(Running, Task.Run(work));
     }
 
     // The word alone, not inside another: "guards!" calls, "vanguards" does not.
@@ -155,33 +193,34 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
         return _sessions.TryGetByCharacterId(mobile.Id, out var session) && session.AccountType >= AccountType.GameMaster;
     }
 
-    // The spawn saves the guard first, off the loop: what follows goes back onto it.
-    private async Task SummonAsync(MobileEntity criminal)
+    // Off the loop: the spawn saves the guard, then puts it in the world on the loop and waits for that.
+    private async Task SummonAsync(Serial criminal, MapType map, Point3D location)
     {
         try
         {
             var guard = await _npcs.SpawnAsync(
                 _config.GuardTemplate,
-                criminal.Map,
-                criminal.Location,
+                map,
+                location,
                 new Dictionary<string, object?> { [SummonedProp] = true }
             );
 
             if (!_loop.TryPost(new LoopActionWorkItem(() => Arrived(guard, criminal))))
             {
-                _wanted.Remove(criminal.Id);
+                _logger.Warning("The guard {Guard} came while the server was stopping; the next start removes it", guard.Id);
             }
         }
         catch (Exception exception)
         {
-            _logger.Warning(exception, "No guard of {Template} came for {Criminal}", _config.GuardTemplate, criminal.Id);
-            _loop.TryPost(new LoopActionWorkItem(() => _wanted.Remove(criminal.Id)));
+            _logger.Warning(exception, "No guard of {Template} came for {Criminal}", _config.GuardTemplate, criminal);
+            // On the loop, where the set lives; a loop that is stopping needs it no more.
+            _loop.TryPost(new LoopActionWorkItem(() => _wanted.Remove(criminal)));
         }
     }
 
-    private void Arrived(MobileEntity guard, MobileEntity criminal)
+    private void Arrived(MobileEntity guard, Serial criminal)
     {
-        _guards[guard.Id] = (criminal.Id, Now().AddSeconds(_config.GuardSeconds));
+        _guards[guard.Id] = (criminal, Now().AddSeconds(_config.GuardSeconds));
         Appear(guard.Map, guard.Location);
         _speech.Say(guard, _localization.Text(LineMessage, "Thou wilt regret thine actions, swine!"));
     }
@@ -201,16 +240,17 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
 
             if (!_adopted)
             {
-                // What a stopped server left: summoned guards with nobody to send them away.
+                // Once, at the first check, when the NPCs of the world are loaded: what a stopped server left,
+                // summoned guards with nobody to send them away.
+                _adopted = true;
+
                 foreach (var mobile in _mobiles.Mobiles)
                 {
-                    if (mobile.IsNpc && mobile.GetProp(SummonedProp, false) && !_guards.ContainsKey(mobile.Id))
+                    if (IsSummoned(mobile) && !_guards.ContainsKey(mobile.Id))
                     {
                         _guards[mobile.Id] = (default, now);
                     }
                 }
-
-                _adopted = true;
             }
 
             foreach (var (serial, (criminal, leavesAt)) in _guards.ToArray())
@@ -226,7 +266,8 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
                 if (_mobiles.TryGet(serial, out var guard))
                 {
                     Appear(guard.Map, guard.Location);
-                    _ = RemoveAsync(serial);
+                    // The removal waits for the loop: started here, on the loop, it would be refused.
+                    Start(() => RemoveAsync(serial));
                 }
             }
         }
