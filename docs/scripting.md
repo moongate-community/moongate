@@ -47,6 +47,10 @@ exists but fails compilation/execution aborts server startup.
 
 ## Available host functions
 
+The [Lua API reference](https://moongate.sh/lua/) has a page for each module, with every
+function's signature, parameters and return type; it is generated from the server's code. The
+table below is the same surface at a glance.
+
 | API | Purpose |
 | --- | --- |
 | `engine.name`, `.version`, `.codename`, `.platform` | Read-only engine metadata |
