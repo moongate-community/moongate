@@ -102,7 +102,7 @@ public sealed class WorldModule
     ///     Keeps a value for the whole shard, saved with the world, or removes it for <c>nil</c>;
     ///     <c>world.set_prop("event.day", 12)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Keeps a string, a number or a bool for the whole shard across restarts, nil removes it; false for a table, a function or a blank key.")]
+    [ScriptFunction(helpText: "Keeps a string, a number or a bool for the whole shard across restarts, saved with the world; nil removes it. False for a table, a function or a blank key.")]
     public bool SetProp(string key, object? value = null)
     {
         if (_props is null || string.IsNullOrWhiteSpace(key))
@@ -153,7 +153,7 @@ public sealed class WorldModule
     ///     Gets whether a player or an NPC stands on the tile <paramref name="x" />, <paramref name="y" /> of
     ///     <paramref name="map" />; <c>world.is_occupied(MapType.Trammel, x, y)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Whether a player or an NPC stands on the tile x, y of the map, at any height.")]
+    [ScriptFunction(helpText: "Whether a player or an NPC stands on the tile x, y of the map, at any height, such as a door's doorway.")]
     public bool IsOccupied(MapType map, int x, int y)
     {
         return _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0).Count > 0;
@@ -218,7 +218,7 @@ public sealed class WorldModule
     ///     Gets whether nothing stands between two places of a map, as for a spell or an arrow;
     ///     <c>world.line_of_sight(MapType.Trammel, 1496, 1628, 10, 1500, 1630, 10)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Whether the place x2, y2, z2 is in sight of x1, y1, z1 on the map; false beyond the range a line of sight is checked at, on a map that is not loaded or for a z outside -128 to 127.")]
+    [ScriptFunction(helpText: "Whether the place x2, y2, z2 is in sight of x1, y1, z1 on the map, as for a spell or an arrow; false beyond the range a line of sight is checked at, on a map that is not loaded or for a z outside -128 to 127.")]
     public bool LineOfSight(MapType map, int x1, int y1, int z1, int x2, int y2, int z2)
     {
         if (_sight is null || z1 is < sbyte.MinValue or > sbyte.MaxValue || z2 is < sbyte.MinValue or > sbyte.MaxValue)
@@ -241,7 +241,7 @@ public sealed class WorldModule
     ///     Gets the height a mobile can stand at on a cell, looking down from <paramref name="z" />, such as before
     ///     teleporting someone there; <c>world.standing_z(MapType.Trammel, 1496, 1628, 20)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The height a mobile can stand at on the cell x, y of the map, at or below z; nil when nothing there can be stood on.")]
+    [ScriptFunction(helpText: "The height a mobile can stand at on the cell x, y of the map, at or below z, such as before teleporting someone there; nil when nothing there can be stood on.")]
     public int? StandingZ(MapType map, int x, int y, int z)
     {
         return _movement is not null && _sectors.IsInside(map, x, y) && _movement.TryGetSpawnZ(map, x, y, z, out var found)
@@ -314,7 +314,7 @@ public sealed class WorldModule
     ///     from the column <paramref name="x" />, as the spyglass shows it;
     ///     <c>world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The phase of the moon (MapType.Trammel or MapType.Felucca) seen from the column x, a MoonPhaseType.")]
+    [ScriptFunction(helpText: "The phase of the moon (MapType.Trammel or MapType.Felucca) seen from the column x, a MoonPhaseType; Felucca turns every 10 game minutes, Trammel every 30.")]
     public MoonPhaseType Moon(MapType moon, int x)
     {
         return _clock.GetMoonPhase(moon, x);
@@ -324,7 +324,7 @@ public sealed class WorldModule
     ///     Gets the time of day on <paramref name="map" /> at the column <paramref name="x" />, as a table
     ///     <c>{ hours, minutes }</c>; <c>world.time(MapType.Trammel, x).hours</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The time of day on the map at the column x, as a table { hours, minutes }.")]
+    [ScriptFunction(helpText: "The time of day on the map at the column x, as a table { hours, minutes }; see the setting ultima.world.seconds_per_uo_minute.")]
     public LuaTable Time(MapType map, int x)
     {
         var time = _clock.GetTime(map, x);

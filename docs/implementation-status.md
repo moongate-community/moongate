@@ -65,7 +65,7 @@ See all of them in [Commands](commands.md).
 
 - Combat, death, corpses and skill gain.
 - A built-in AI: NPCs only run their Lua script (`on_think`, `on_speech`, `on_spawn`,
-  `on_mobile_in_range`), which can walk them along a [path](scripting.md#walking-a-path) with
+  `on_mobile_in_range`), which can walk them along a [path](scripting/mobile-scripts.md#walking-a-path) with
   `npc.walk_to`; nothing chases, flees or fights by itself.
 - Recall and gate travel, and mounts.
 - Houses and boats (placement, and multis in movement and line of sight).

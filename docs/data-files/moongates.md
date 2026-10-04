@@ -44,7 +44,7 @@ A map the server does not load is left out, with its gates: its page is not in t
 `.decorate` places nothing there. A destination outside its map is left out too, with a warning in the log. An empty file
 means a shard without public moongates.
 
-Scripts read the list with `moongates.facets()`; see [Scripting](../scripting.md).
+Scripts read the list with `moongates.facets()`; see the [`moongates` module](https://moongate.sh/lua/moongates/).
 
 ## Validation at startup
 

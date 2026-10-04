@@ -54,7 +54,7 @@ public sealed partial class GumpModule
     ///     Opens gump <paramref name="id" /> on the player, its <c>${name}</c> filled from <paramref name="args" />, which
     ///     its script gets back with every answer; <c>gump.open(player, "release_pet", { pet_name = "Fido" })</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Opens a gump of templates/gumps on the player, filled from args; false for an unknown player or gump.")]
+    [ScriptFunction(helpText: "Opens the gump templates/gumps/<id>.xml on the player, its ${name} filled from args; scripts/gumps/<id>.lua gets the answer. From a script it opens on the next turn of the game loop. False for an unknown player or gump.")]
     public bool Open(long player, string id, LuaTable? args = null)
     {
         if (!TryGetSession(player, out var session))
@@ -78,7 +78,7 @@ public sealed partial class GumpModule
     ///     Starts a gump built from Lua; <c>local g = gump.create("pet_list")</c>, then <c>g:text{ x = 20, y = 20,
     ///     text = "Pets" }</c> and the other controls, with the attributes of the XML elements of the same name.
     /// </summary>
-    [ScriptFunction(helpText: "Starts a gump built from Lua: add controls with g:text{...}, g:button{...}, ..., then gump.send.")]
+    [ScriptFunction(helpText: "Starts a gump built from Lua: add controls with g:text{...}, g:button{...}, g:paginate(...), ..., then gump.send. A button's on_click may be a function.")]
     public LuaTable Create(string id, int x = 0, int y = 0)
     {
         if (!GumpId().IsMatch(id))
@@ -93,7 +93,7 @@ public sealed partial class GumpModule
     ///     Opens a gump built with <see cref="Create" /> on the player; its buttons call their <c>on_click</c> function, or
     ///     the function of that name of <c>scripts/gumps/&lt;id&gt;.lua</c>; <c>gump.send(player, g, args)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Opens a gump built with gump.create on the player; false for an unknown player.")]
+    [ScriptFunction(helpText: "Opens a gump built with gump.create on the player, from a script on the next turn of the game loop; false for an unknown player.")]
     public bool Send(long player, LuaTable gump, LuaTable? args = null)
     {
         if (!TryGetSession(player, out var session))
@@ -123,7 +123,7 @@ public sealed partial class GumpModule
     ///     <c>gump.close(player, "release_pet")</c>. Called from a script, the gump closes on the next turn of the game
     ///     loop and the answer is true whether it is open or not.
     /// </summary>
-    [ScriptFunction(helpText: "Closes the player's gump, from a script on the next turn of the game loop; false for an unknown player.")]
+    [ScriptFunction(helpText: "Closes the player's gump, from a script on the next turn of the game loop, so it gives true even for a gump that is not open; false for an unknown player.")]
     public bool Close(long player, string id)
     {
         return TryGetSession(player, out var session) && RunOrPost(() => _gumps.Close(session, id));

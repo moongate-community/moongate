@@ -74,7 +74,7 @@ rules.
 
 POL leaves almost all gameplay to scripts, and Sphere and UOX3 do the same through triggers. All
 three show that the core has to expose these things before combat, magic or crafting can be
-written. The [scripting page](scripting.md#available-host-functions) lists what Lua has today.
+written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has today.
 
 | Step | State | What | Why it comes here |
 | --- | --- | --- | --- |

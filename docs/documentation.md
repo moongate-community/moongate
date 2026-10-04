@@ -32,7 +32,8 @@ External links are not fetched by the validator.
 
 Keep the source text in its existing location:
 
-- `docs/*.md` contains server, reference, and contributor guides.
+- `docs/*.md` contains server, reference, and contributor guides; the Lua guide is `docs/scripting.md`
+  with its pages in `docs/scripting/`.
 - `src/*/README.md` contains library documentation and NuGet examples.
 - The root `README.md` supplies the overview.
 - `website/src/content/docs/index.mdx` is the authored landing page. Its download

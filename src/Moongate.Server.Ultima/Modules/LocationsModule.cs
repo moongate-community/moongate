@@ -27,7 +27,7 @@ public sealed class LocationsModule
     ///     <c>{ path, name, categories, locations }</c>: each category <c>{ name, path }</c>, each location
     ///     <c>{ name, category, map, x, y, z }</c>.
     /// </summary>
-    [ScriptFunction(helpText: "One level of the named places as { path, name, categories, locations }: \"\" for the maps, then map/category/...; each category is { name, path }, each location { name, category, map, x, y, z }. nil for an unknown path.")]
+    [ScriptFunction(helpText: "One level of the named places as { path, name, categories, locations }: \"\" for the maps, then map/category/..., in any case; each category is { name, path }, each location { name, category, map, x, y, z }. nil for an unknown path.")]
     public LuaValue Node(string path = "")
     {
         if (_locations.GetNode(path) is not { } node)

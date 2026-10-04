@@ -7,7 +7,7 @@ namespace Moongate.Scripting.Modules;
 /// <summary>
 ///     Constants describing the host. Registered first by the engine service; never removable.
 /// </summary>
-[ScriptModule("engine", "Identifies the server running the script.")]
+[ScriptModule("engine", "Identifies the server running the script; read only.")]
 public sealed class EngineModule
 {
     /// <summary>

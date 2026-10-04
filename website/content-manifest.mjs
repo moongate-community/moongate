@@ -57,7 +57,6 @@ export const contentEntries = [
   { source: 'docs/admin-api.md', slug: 'server/admin-api', title: 'Administration API', group: 'Run a shard' },
 
   // Scripting and content: shard content without C#.
-  { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Scripting and content' },
   { source: 'docs/templates.md', slug: 'server/templates', title: 'Loading TOML templates', group: 'Scripting and content' },
   { source: 'docs/gumps.md', slug: 'server/gumps', title: 'Gumps', group: 'Scripting and content', subgroup: 'Gumps' },
   { source: 'docs/gump-tutorial.md', slug: 'server/gump-tutorial', title: 'Your first gump', group: 'Scripting and content', subgroup: 'Gumps' },
@@ -83,6 +82,17 @@ export const contentEntries = [
   { source: 'docs/data-files/regions.md', slug: 'server/data-files/regions', title: 'Regions', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/messages.md', slug: 'server/data-files/messages', title: 'Messages', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/uox3-migration.md', slug: 'server/uox3-migration', title: 'Migrate from UOX3', group: 'Scripting and content' },
+
+  // Lua: the scripting guide. The API reference that follows it in the sidebar is generated; see
+  // `generatedSidebarItems` below.
+  { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/events.md', slug: 'server/scripting/events', title: 'Events and timers', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/mobile-scripts.md', slug: 'server/scripting/mobile-scripts', title: 'Mobile scripts', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/item-scripts.md', slug: 'server/scripting/item-scripts', title: 'Item scripts', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/shipped-scripts.md', slug: 'server/scripting/shipped-scripts', title: 'Shipped scripts', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/effects.md', slug: 'server/scripting/effects', title: 'Effects', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/runtime.md', slug: 'server/scripting/runtime', title: 'Reload, budgets and editor', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/examples.md', slug: 'server/scripting/examples', title: 'Short examples', group: 'Lua', subgroup: 'Guide' },
 
   // Extend with C#: plugins and the subsystems they plug into.
   { source: 'docs/plugins.md', slug: 'server/plugins', title: 'Writing a plugin', group: 'Extend with C#', subgroup: 'Plugins' },

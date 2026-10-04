@@ -275,7 +275,7 @@ own, see [TOML value types](toml-types.md).
 | `ItemId` | The base client graphic; runtime physical properties come from `ITileDataService` unless overridden |
 | `Name`, `Comment` | A display name override, and a designer note nobody reads at runtime |
 | `Rarity` | `EnumValueSpec<ItemRarityType>` |
-| `ScriptId` | The global Lua table, defined by `scripts/items/<script_id>.lua`, whose functions handle what happens to the item (`on_use`, `on_move_over`, `on_npc_move_over`, `on_speech`, `on_equip`, `on_unequip`, `on_pickup`, `on_drop`, `on_create`, `on_timer`, `on_darkness`) and answer the questions asked before a move (`can_pick_up`, `can_drop`, `can_equip`, `can_insert`); a lower-case Lua identifier, empty for none. See [Item scripts](scripting.md#item-scripts) |
+| `ScriptId` | The global Lua table, defined by `scripts/items/<script_id>.lua`, whose functions handle what happens to the item (`on_use`, `on_move_over`, `on_npc_move_over`, `on_speech`, `on_equip`, `on_unequip`, `on_pickup`, `on_drop`, `on_create`, `on_timer`, `on_darkness`) and answer the questions asked before a move (`can_pick_up`, `can_drop`, `can_equip`, `can_insert`); a lower-case Lua identifier, empty for none. See [Item scripts](scripting/item-scripts.md) |
 | `Movable` | Unset uses tiledata: movable unless the tiledata weight is 255, the client's "cannot be lifted". Players cannot pick up what is not movable; game masters and administrators can |
 | `Weight` | Stones to two decimals (`weight = 0.02` for a coin); unset uses the whole-stone tiledata weight |
 | `Amount` | `RangeValueSpec<int>`: the stack size of a new item, fixed or `"10-20"`; unset is 1 |
@@ -341,7 +341,7 @@ to 120; a constant is a bare integer.
 | `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |
 | `Loot`, `Gold` | Loot template ids and gold dice rolled into the backpack at spawn; no corpse system yet |
 | `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death`; a mobile script plays them by kind with `npc.play_sound(serial, "idle")` |
-| `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn` and `on_mobile_in_range` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting.md#mobile-scripts) |
+| `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn` and `on_mobile_in_range` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting/mobile-scripts.md) |
 | `Visibility` | As in `ItemTemplate` |
 | `Movement` | `land`, `water` (a dolphin: it spawns and swims on the water only) or `both` (a walrus: it walks and swims, and spawns on land else on the water); unset is `land` |
 | `Tags` | Free script values; child keys add to and override parent keys |
@@ -498,7 +498,7 @@ are stopped by it unseen, and game masters and administrators see a gravestone i
 ModernUO shows it.
 A `Fillable...` kind (crate, box, chest, barrel) or a `LibraryBookcase` takes the template
 `decoration_fillable`, with `script_id = "fillable"`: a
-[container that fills up](scripting.md#item-scripts) when it is opened. Its `content_type`
+[container that fills up](scripting/shipped-scripts.md#fillablelua) when it is opened. Its `content_type`
 (`Inn`, `ThiefGuild`) is kept as the name of its table (`inn`, `thief_guild`), a bookcase is a
 `library`, and one placed as plain decoration by an earlier run becomes fillable where it stands.
 A `PublicMoongate` takes the template `decoration_public_moongate`, with
