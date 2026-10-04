@@ -1,3 +1,6 @@
+using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Tests.TestSupport.Ultima.Speech;
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Core.Geometry;
@@ -90,7 +93,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5595, messages.Count);
+        Assert.Equal(5599, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
@@ -108,6 +111,20 @@ public sealed class RepositoryDataFilesTests
         Assert.False(britain.Housing);
         Assert.Equal(MusicType.Britain1, britain.Music);
         Assert.Equal("temperate", britain.Weather);
+
+        // What a new player reads in the starting town: New Haven is a guarded town on an island without guards.
+        var speech = new RecordingSpeechService();
+        var announcer = new RegionAnnouncer(service, speech);
+        var newcomer = new MobileEntity { Id = new Serial(2), AccountId = new Serial(1), Name = "Newcomer" };
+        announcer.RegionChanged(newcomer, null, Assert.Single(regions, region => region.Map == MapType.Trammel && region.Name == "New Haven"));
+        announcer.LoggedIn(newcomer);
+        Assert.Equal(
+            [
+                "You have entered Haven Island.", "You have entered New Haven.",
+                "You are now under the protection of the guards of New Haven."
+            ],
+            speech.Told.Select(told => told.Text)
+        );
         Assert.Contains(regions, region => region.Map == MapType.Felucca && region.Priority == 0 && region.Weather == "snowy" && region.Contains(4000, 300, 0));
         Assert.All(regions.Where(region => region.Type == RegionType.Dungeon), region => Assert.Equal("none", region.Weather));
         Assert.Equal(new Point3D(1495, 1629, 10), britain.GoLocation);
@@ -152,7 +169,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5595, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5599, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     [Theory,

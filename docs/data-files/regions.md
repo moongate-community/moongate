@@ -31,7 +31,7 @@ housing = false
 | `season` | The season the client shows in the region (`spring`, `summer`, `fall`, `winter`, `desolation`), such as winter in an ice dungeon; it never rotates. Without it, its nearest parent's season applies, else the map's. | none |
 | `weather` | The profile of `weather.toml`. | `none` |
 | `rune_name` | The name of a rune marked here. | none |
-| `guarded` | Whether guards protect the region. | `false` |
+| `guarded` | Whether guards protect the region. Today the player is told so (see [What a player reads](#what-a-player-reads)) and scripts can read it; no guard comes yet. | `false` |
 | `housing` | Whether players may place houses. | `true` |
 | `instant_logout` | Whether a character with no fight in progress leaves the world at once on logout. | `false` |
 | `recall_in`, `recall_out`, `gate_in`, `gate_out`, `mark`, `teleport_in`, `teleport_out` | Whether those travel spells work into, out of or in the region. | `true` |
@@ -86,6 +86,25 @@ On a tie the child wins over its parent, then the region written first. The serv
 keeps the region each player stands in and logs a change at debug level
 (`"Aria" left Britain for Britain Graveyard`); `.where` prints the region of the spot
 you target: `Trammel (1496, 1628, 10) in Britain`.
+
+## What a player reads
+
+Walking into a named place, or being teleported there, a player reads "You have entered Britain.";
+walking out, "You have left Britain." Logging in, it reads where it stands once the login is complete.
+
+A place is a named region that is not a mere part of the region around it. A region whose `parent`
+has the same `type` and the same `guarded` is a part: a field or a shop inside Britain is still
+Britain, and moving between them says nothing. A region that differs from its parent is a place of its
+own: New Haven, a guarded town, lies inside Haven Island, which has no guards, so walking in from the
+island reads "You have entered New Haven." and arriving from elsewhere names the island first, then the
+town. A region of `type = "guarded"`, such as the moongates, only marks guards and is never named. A
+place with the same name, such as the same town on another map, is the same place.
+
+When the protection changes a player reads "You are now under the protection of the guards of
+Britain." or "You have left the protection of the guards of Britain." The guards bear the name of the
+nearest guarded place around the player; where there is none, as at a moongate or in a guarded house of
+a town without guards, the client's own two texts are used (500112, 500113). The four texts are
+messages 30134 to 30137 of `data/messages`.
 
 ## Travel zones
 

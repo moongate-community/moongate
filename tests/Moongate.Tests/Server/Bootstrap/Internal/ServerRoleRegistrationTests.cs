@@ -255,7 +255,9 @@ public sealed class ServerRoleRegistrationTests
                 [container.Resolve<IWeatherService>(), container.Resolve<ILightService>(), container.Resolve<IMusicService>(), container.Resolve<ISeasonService>()],
                 listeners.Take(4)
             );
-            Assert.IsType<RegionEventPublisher>(Assert.Single(listeners.Skip(4)));
+            // The announcer of places, then the scripts last.
+            Assert.Same(container.Resolve<IRegionAnnouncer>(), listeners[4]);
+            Assert.IsType<RegionEventPublisher>(Assert.Single(listeners.Skip(5)));
             Assert.NotNull(container.Resolve<IMobileService>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcScriptService>());
