@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Directories;
 using Moongate.Persistence.Services;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Config;
@@ -29,11 +30,25 @@ internal static class PersistencePreparation
                            container.Resolve<MoongateServerConfig>().Persistence.AutoSyncSchema;
             var autoGenerate = container.IsRegistered<MoongateServerConfig>() &&
                                container.Resolve<MoongateServerConfig>().Persistence.AutoGenerateMigrations;
+            var autoApply = container.IsRegistered<MoongateServerConfig>() &&
+                            container.Resolve<MoongateServerConfig>().Persistence.AutoApplyMigrations;
             Log.Information(
                 "Preparing PostgreSQL persistence; schema mode {SchemaMode}",
                 autoGenerate ? "generate-migrations" :
-                autoSync ? "synchronize" : "validate"
+                autoSync ? "synchronize" :
+                autoApply ? "apply-migrations" : "validate"
             );
+
+            if (autoApply)
+            {
+                await StartupMigrations.PrepareAsync(
+                    container.Resolve<MoongateServerConfig>(),
+                    container.Resolve<DirectoriesConfig>(),
+                    Path.Combine(AppContext.BaseDirectory, "migrations"),
+                    (root, migrations, plugins) => new DevelopmentMigrationRunner(root, migrations, plugins),
+                    cancellationToken
+                );
+            }
 
             try
             {

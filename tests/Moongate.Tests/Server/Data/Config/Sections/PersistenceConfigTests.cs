@@ -66,6 +66,18 @@ public sealed class PersistenceConfigTests
     }
 
     [Fact]
+    public void Validate_AutoApplyAndAutoSync_Conflict_AndAutoApplyIsOffByDefault()
+    {
+        var config = new PersistenceConfig { AutoSyncSchema = true, AutoApplyMigrations = true };
+
+        var exception = Assert.Throws<InvalidOperationException>(config.Validate);
+
+        Assert.Contains("auto_apply_migrations", exception.Message);
+        Assert.False(new PersistenceConfig().AutoApplyMigrations);
+        new PersistenceConfig { AutoApplyMigrations = true }.Validate();
+    }
+
+    [Fact]
     public void Validate_AutomaticGenerationRequiresExplicitSourceDirectory()
     {
         var config = new PersistenceConfig { AutoGenerateMigrations = true };
@@ -88,6 +100,25 @@ public sealed class PersistenceConfigTests
             var restored = TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!;
             Assert.True(restored.Persistence.AutoGenerateMigrations);
             Assert.Equal(config.Persistence.MigrationsDirectory, restored.Persistence.MigrationsDirectory);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void RoundTrip_AutoApplyMigrations_IsReadBackFromItsTomlKey()
+    {
+        var config = new MoongateServerConfig();
+        config.Persistence.AutoApplyMigrations = true;
+        var path = Path.Combine(Path.GetTempPath(), $"moongate-{Guid.NewGuid():N}.toml");
+
+        try
+        {
+            TomlUtils.SerializeToFile(config, path);
+            Assert.Contains("auto_apply_migrations = true", File.ReadAllText(path));
+            Assert.True(TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!.Persistence.AutoApplyMigrations);
         }
         finally
         {

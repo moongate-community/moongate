@@ -107,6 +107,7 @@ initial_fill = true                   # The first spawn of each region after the
 
 [persistence]
 auto_sync_schema = false
+auto_apply_migrations = false         # true: a start adds the bundled core SQL and applies what is pending.
 
 [persistence.accounts]
 connection_string = "postgres://moongate:moongate@localhost:5432/auth"
@@ -178,6 +179,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `network.encryption.client_version` | Raw POL wire version used to derive login keys and select the game cipher family. Required for `Optional` and `Required`; ignored when `Disabled`. Default empty. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. It must contain `tiledata.mul`, the map and statics files of every map in `data/maps.toml`, and `MultiCollection.uop` or `multi.idx` with `multi.mul`; the server stops at startup when one is missing. |
 | `persistence.auto_sync_schema` | Defaults to false. Normal startup checks versioned SQL history; when false it also fails if registered entities require DDL. Generate and review SQL, then apply it with the separate migration runner. Enable only as an explicit development convenience. |
+| `persistence.auto_apply_migrations` | Defaults to false. When true, before the schema check a start does what `mgctl init` and `mgctl migrate apply` do for the migrations: it adds to the migrations directory the core SQL this release ships and the root lacks, replacing nothing, then applies the pending reviewed SQL of the databases this process uses, the SQL of the plugin bundles in `plugins/` included. It never writes SQL from the entities. The database role of the connection must be allowed to change the schema, and `mgctl` must be beside the server, as in every distribution. A file of the root with the number of a shipped one and another name or content stops the start. It conflicts with `auto_sync_schema`. See [Apply at startup](persistence-migrations.md#apply-at-startup). |
 | `persistence.accounts.connection_string` | Accounts/login PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Accounts. |
 | `persistence.realm.connection_string` | This realm's PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Realm. |
 | `redis.connection_string` | Shared Redis endpoint and password in StackExchange.Redis format, or a `$NAME` / `${NAME}` environment reference. Required by every runtime role. |
