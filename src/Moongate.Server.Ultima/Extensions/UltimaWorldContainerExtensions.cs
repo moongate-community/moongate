@@ -140,7 +140,8 @@ public static class UltimaWorldContainerExtensions
         // the weather: the listeners run in this order, so those already follow the new region when it resends them.
         container.AddMoongateService<ISeasonService, SeasonService>(11);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<ISeasonService>(), Reuse.Singleton);
-        container.Register<IRegionChangeListener, RegionAnnouncer>(Reuse.Singleton);
+        container.AddMoongateService<IRegionAnnouncer, RegionAnnouncer>(11);
+        container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IRegionAnnouncer>(), Reuse.Singleton);
         // Last: the scripts hear of the change once the light, the weather and the season of the place were sent.
         container.Register<IRegionChangeListener, RegionEventPublisher>(Reuse.Singleton);
         container.AddMoongateService<IEquipmentService, EquipmentService>();
