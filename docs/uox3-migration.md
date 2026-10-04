@@ -200,7 +200,7 @@ leather tunic as their parents; they get the leather sleeves (`0x13cd`) and legg
 (`0x13cb`).
 
 A mobile Moongate has a script for gets its `script_id`: a banker (`NPCAI=8`) takes `banker`
-(`scripts/mobiles/banker.lua`), and the undead of the graveyards (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`, `spectre`, `lich`) take
+(`scripts/mobiles/banker.lua`), a town guard (`NPCAI=4`) takes `guard` (`scripts/mobiles/guard.lua`), and the undead of the graveyards (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`, `spectre`, `lich`) take
 `monster` (`scripts/mobiles/monster.lua`);
 the templates based on them take it through `base_id`.
 

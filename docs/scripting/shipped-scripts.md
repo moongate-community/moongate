@@ -28,6 +28,26 @@ reach is left alone until it moves. What a monster is doing is kept in memory by
 saved: after a restart, or once no player is near enough for it to think, it starts again from
 wandering. The numbers (16, 32, the times) are constants at the top of the file.
 
+## guard.lua
+
+The distribution's `scripts/mobiles/guard.lua` is the script of the town guards: the ones that stand in
+the towns by their spawn, and the ones a player calls by saying "guards" (see
+[`ultima.crime`](../server-configuration.md)). A template takes it with `script_id = "guard"`; `guard`,
+`m_guard` and `f_guard` do. The server has no combat yet, so a guard only shows itself. A guard is in one
+of two states:
+
+| State | What it does | It ends when |
+| --- | --- | --- |
+| post | Strolls around its post, the area of its spawn region, about a step every four seconds, with `npc.wander`, which also walks it back from outside | It sees a criminal: to arrest |
+| arrest | Goes into war mode; when it is not beside the criminal it appears on it, with a puff of smoke where it stood and where it comes and the teleport sound; says "Thou wilt regret thine actions, swine!" (message 30138). Then it stays on the criminal, facing it, and runs after it with `npc.walk_to` when it moves | The criminal is pardoned or its time is over, hides, leaves the guarded region or goes farther than 24 tiles: back to its post, in peace |
+
+It looks for a criminal every second: the nearest player of `npc.players_in_sight` within 12 tiles
+whose `mobile.criminal` is true and that stands in a guarded region (`world.is_guarded`). It never sees
+a hidden player, a game master or an administrator, and it does not arrest NPCs. A guard that was
+called bears the prop `guard.summoned`: it came onto its criminal and said its line already, so it
+stays on it in silence, and it does not stroll. What a guard is doing is kept in memory by its serial,
+not saved. The numbers (12, 24) are constants at the top of the file.
+
 ## orione.lua and vega.lua
 
 The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
