@@ -224,7 +224,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Dungeon and jail light | ✅ | |
 | Weather by region | ✅ | Rain, snow, storms with thunder, dry indoors; no weather damage |
 | Seasons | ✅ | By map and region, optional rotation with the game days; `.season` |
-| Regions | 🟡 | Found for every player; they set the weather, the music, the season and the dungeon light; no guards or housing rules |
+| Regions | 🟡 | Found for every player; they set the weather, the music, the season and the dungeon light, and a player reads the place it enters or leaves and whether guards protect it; no guards or housing rules |
 | Region music | ✅ | The region's track, else the map's; `.music` |
 | Region rules: safe, no PvP, no housing, instant logout | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |

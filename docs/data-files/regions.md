@@ -31,7 +31,7 @@ housing = false
 | `season` | The season the client shows in the region (`spring`, `summer`, `fall`, `winter`, `desolation`), such as winter in an ice dungeon; it never rotates. Without it, its nearest parent's season applies, else the map's. | none |
 | `weather` | The profile of `weather.toml`. | `none` |
 | `rune_name` | The name of a rune marked here. | none |
-| `guarded` | Whether guards protect the region. | `false` |
+| `guarded` | Whether guards protect the region. Today it only tells the player so (see [What a player reads](#what-a-player-reads)); no guard comes yet. | `false` |
 | `housing` | Whether players may place houses. | `true` |
 | `instant_logout` | Whether a character with no fight in progress leaves the world at once on logout. | `false` |
 | `recall_in`, `recall_out`, `gate_in`, `gate_out`, `mark`, `teleport_in`, `teleport_out` | Whether those travel spells work into, out of or in the region. | `true` |
@@ -86,6 +86,18 @@ On a tie the child wins over its parent, then the region written first. The serv
 keeps the region each player stands in and logs a change at debug level
 (`"Aria" left Britain for Britain Graveyard`); `.where` prints the region of the spot
 you target: `Trammel (1496, 1628, 10) in Britain`.
+
+## What a player reads
+
+Walking into a named place, logging in there or being teleported there, a player reads "You have
+entered Britain."; walking out, "You have left Britain." The place is the outermost region around
+the player: a field or a shop whose `parent` is Britain is still Britain, so moving between them says
+nothing, and neither does a place with the same name, such as the same town on another map.
+
+When the protection changes it reads "You are now under the protection of the guards of Britain." or
+"You have left the protection of the guards of Britain.", again by the outermost region's name; a
+guarded region with no name uses the client's own two texts (500112, 500113). The four texts are
+messages 30134 to 30137 of `data/messages`. A region with no name and no guards says nothing.
 
 ## Travel zones
 
