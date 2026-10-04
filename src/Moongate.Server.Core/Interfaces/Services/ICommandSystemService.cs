@@ -47,7 +47,8 @@ public interface ICommandSystemService : IMoongateStartupService
 
     /// <summary>
     ///     Gets the values the argument being typed can take, from the command's <c>ICommandArgumentCompleter</c>; none for
-    ///     an unknown command, one not available from <paramref name="source" />, or one that completes nothing.
+    ///     an unknown command, one not available from <paramref name="source" />, or one that completes nothing. Values that
+    ///     are empty or hold a space are dropped. For the console: it does not check an account level.
     /// </summary>
     /// <param name="commandName">
     ///     The command name or one of its aliases, in any case.

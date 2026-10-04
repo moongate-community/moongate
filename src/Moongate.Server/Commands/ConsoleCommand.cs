@@ -46,5 +46,4 @@ public sealed class ConsoleCommand : ICommandExecutor, ICommandArgumentCompleter
     {
         return previousArguments.Count == 0 ? ["lock"] : [];
     }
-
 }

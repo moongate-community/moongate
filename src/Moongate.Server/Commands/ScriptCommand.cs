@@ -15,6 +15,17 @@ public sealed class ScriptCommand : ICommandExecutor, ICommandArgumentCompleter
 {
     private const string Usage = "Usage: script reload <file relative to scripts/> | script metrics";
 
+    // The console waits for the listing: no link followed, no unreadable folder, a bounded walk.
+    private const int MaxListedScripts = 500;
+
+    private static readonly EnumerationOptions ScriptFileSearch = new()
+    {
+        RecurseSubdirectories = true,
+        IgnoreInaccessible = true,
+        AttributesToSkip = FileAttributes.ReparsePoint | FileAttributes.Hidden,
+        MaxRecursionDepth = 8
+    };
+
     private readonly IScriptEngine _engine;
     private readonly IGameLoopService _gameLoop;
     private readonly ScriptEngineOptions? _options;
@@ -74,7 +85,9 @@ public sealed class ScriptCommand : ICommandExecutor, ICommandArgumentCompleter
     }
 
     /// <inheritdoc />
-    /// <remarks>After <c>reload</c>, the <c>.lua</c> files under the scripts directory, as <c>reload</c> takes them.</remarks>
+    /// <remarks>
+    ///     After <c>reload</c>, the <c>.lua</c> files under the scripts directory, as <c>reload</c> takes them.
+    /// </remarks>
     public IReadOnlyList<string> GetArgumentCompletions(IReadOnlyList<string> previousArguments)
     {
         return previousArguments switch
@@ -92,8 +105,9 @@ public sealed class ScriptCommand : ICommandExecutor, ICommandArgumentCompleter
             return [];
         }
 
-        return Directory.EnumerateFiles(_options.ScriptsDirectory, "*.lua", SearchOption.AllDirectories)
+        return Directory.EnumerateFiles(_options.ScriptsDirectory, "*.lua", ScriptFileSearch)
                         .Select(path => Path.GetRelativePath(_options.ScriptsDirectory, path).Replace('\\', '/'))
+                        .Take(MaxListedScripts)
                         .ToArray();
     }
 

@@ -93,7 +93,8 @@ public sealed class AccountCommand : ICommandExecutor, ICommandArgumentCompleter
         return previousArguments switch
         {
             [] => ["create", "api-access"],
-            [var action, _, _] when action.Equals("create", StringComparison.OrdinalIgnoreCase) => Enum.GetNames<AccountType>(),
+            [var action, _, _] when action.Equals("create", StringComparison.OrdinalIgnoreCase) =>
+                Enum.GetNames<AccountType>(),
             [var action, _] when action.Equals("api-access", StringComparison.OrdinalIgnoreCase) => ["on", "off"],
             _ => []
         };

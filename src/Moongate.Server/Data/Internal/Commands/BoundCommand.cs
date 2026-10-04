@@ -1,5 +1,5 @@
-using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Interfaces.Commands;
 
 namespace Moongate.Server.Data.Internal.Commands;
 
@@ -17,7 +17,11 @@ internal sealed class BoundCommand
     /// </summary>
     public ICommandArgumentCompleter? Completer { get; }
 
-    public BoundCommand(CommandDefinition definition, Func<CommandContext, Task> handler, ICommandArgumentCompleter? completer = null)
+    public BoundCommand(
+        CommandDefinition definition,
+        Func<CommandContext, Task> handler,
+        ICommandArgumentCompleter? completer = null
+    )
     {
         Definition = definition;
         Handler = handler;

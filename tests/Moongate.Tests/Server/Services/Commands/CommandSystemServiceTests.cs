@@ -64,6 +64,22 @@ public sealed class CommandSystemServiceTests
     }
 
     [Fact]
+    public async Task GetArgumentCompletions_DropsWhatCannotBeTyped_AndANullList()
+    {
+        using var container = new Container();
+        container.RegisterCommand<CompletingCommandExecutor>("pick");
+        var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
+        await service.StartAsync();
+        var executor = container.Resolve<CompletingCommandExecutor>();
+        executor.Values!.AddRange([null!, "", "my door.lua"]);
+
+        Assert.Equal(["first", "second"], service.GetArgumentCompletions("pick", []));
+
+        executor.Values = null;
+        Assert.Empty(service.GetArgumentCompletions("pick", []));
+    }
+
+    [Fact]
     public async Task GetArgumentCompletions_ThatThrows_IsEmpty()
     {
         using var container = new Container();

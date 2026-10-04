@@ -199,7 +199,8 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
 
                 if (key.Key == ConsoleKey.Tab)
                 {
-                    Complete(buffer, secondTab);
+                    // A TAB that completed something starts over: only one that could not arms the listing.
+                    tabbed = !Complete(buffer, secondTab);
 
                     continue;
                 }
@@ -281,7 +282,8 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         }
     }
 
-    private void Complete(StringBuilder buffer, bool list)
+    // Whether the line changed.
+    private bool Complete(StringBuilder buffer, bool list)
     {
         var (text, matches) = ConsoleCompletion.Complete(buffer.ToString(), CandidatesAfter);
 
@@ -289,11 +291,16 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         {
             Replace(buffer, text);
             _history.Reset();
+
+            return true;
         }
-        else if (list && matches.Count > 1)
+
+        if (list && matches.Count > 1)
         {
             _prompt.WriteOutputLine(string.Join("  ", matches), CommandOutputLevel.Information);
         }
+
+        return false;
     }
 
     // The console commands for the first word, then the values the command gives for its next argument.

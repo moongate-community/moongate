@@ -294,6 +294,30 @@ public sealed class ConsoleInputServiceTests
     }
 
     [Fact]
+    public async Task TheTabAfterACompletion_CompletesAgain_InsteadOfListing()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.Enqueue('*');
+        keys.EnqueueText("pic");
+        keys.Enqueue(ConsoleKey.Tab);
+        keys.Enqueue(ConsoleKey.Tab);
+        keys.EnqueueText("x");
+        using var container = CreateContainer();
+        container.RegisterCommand<CompletingCommandExecutor>("pick");
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+
+        // The second TAB found two values to choose from: an ineffective TAB, so nothing listed yet.
+        await WaitForAsync(() => prompt.CurrentInput == "pick x");
+
+        Assert.Empty(prompt.Output);
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
     public async Task UpAndDown_WalkTheSubmittedLines()
     {
         var prompt = new RecordingPromptService();

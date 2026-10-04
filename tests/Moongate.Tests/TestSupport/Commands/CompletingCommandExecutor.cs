@@ -4,12 +4,12 @@ using Moongate.Server.Core.Interfaces.Commands;
 namespace Moongate.Tests.TestSupport.Commands;
 
 /// <summary>
-///     A command that completes its first argument with <see cref="Values" /> and records what it was asked; throws when
+///     A command that completes every argument with <see cref="Values" /> and records what it was asked; throws when
 ///     <see cref="Failure" /> is set.
 /// </summary>
 public sealed class CompletingCommandExecutor : ICommandExecutor, ICommandArgumentCompleter
 {
-    public List<string> Values { get; } = ["first", "second"];
+    public List<string>? Values { get; set; } = ["first", "second"];
 
     public List<IReadOnlyList<string>> Asked { get; } = [];
 
@@ -26,6 +26,6 @@ public sealed class CompletingCommandExecutor : ICommandExecutor, ICommandArgume
     {
         Asked.Add(previousArguments);
 
-        return Failure is null ? Values : throw Failure;
+        return Failure is null ? Values! : throw Failure;
     }
 }

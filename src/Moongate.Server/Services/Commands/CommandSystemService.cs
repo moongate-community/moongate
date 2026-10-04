@@ -189,7 +189,11 @@ public sealed class CommandSystemService : ICommandSystemService
 
         try
         {
-            return command.Completer.GetArgumentCompletions(previousArguments);
+            // A value the parser would split, or none at all, cannot be typed: a careless plugin must not reach the console.
+            return command.Completer.GetArgumentCompletions(previousArguments)
+                          ?.Where(value => !string.IsNullOrEmpty(value) && !value.Any(char.IsWhiteSpace))
+                          .ToArray() ??
+                   [];
         }
         catch (Exception exception)
         {
@@ -213,10 +217,8 @@ public sealed class CommandSystemService : ICommandSystemService
                 handlers.Add(registration, handler);
 
                 // The executors are singletons: this is the instance the handler runs.
-                completers.Add(
-                    registration,
-                    _resolver.Resolve(registration.Definition.ExecutorType, IfUnresolved.ReturnDefault) as ICommandArgumentCompleter
-                );
+                var executor = _resolver.Resolve(registration.Definition.ExecutorType);
+                completers.Add(registration, executor as ICommandArgumentCompleter);
             }
 
             commands.Add(alias, new(registration.Definition, handler, completers[registration]));

@@ -366,7 +366,8 @@ A command can also implement `ICommandArgumentCompleter` to have its arguments c
 the console: `GetArgumentCompletions(previousArguments)` gives the values the argument being typed
 can take, after the arguments already typed (`[]` for the first one), or none. It runs on the
 console's thread, so it returns fixed lists or names read from disk, never game state; an
-exception is logged and completes nothing.
+exception is logged and completes nothing, and a value that is empty or holds a space is dropped,
+since the command parser would split it.
 
 ```csharp
 public IReadOnlyList<string> GetArgumentCompletions(IReadOnlyList<string> previousArguments)
