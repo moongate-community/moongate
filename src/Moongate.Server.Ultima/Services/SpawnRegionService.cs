@@ -456,7 +456,10 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 
     private bool TryGetLandZ(SpawnTemplate template, int x, int y, out int z)
     {
-        var ceiling = template.Z ?? _movement.GetAverageZ(template.Map, x, y) + (template.PrefZ ?? DefaultPrefZ);
+        // Nothing lies under the land, so a ceiling below it would only leave the cell empty: a fixed z never goes under
+        // the ground, as for ModernUO's spawners left at z 0 on Tokuno's hills.
+        var ground = _movement.GetAverageZ(template.Map, x, y);
+        var ceiling = template.Z is { } fixedZ ? Math.Max(fixedZ, ground) : ground + (template.PrefZ ?? DefaultPrefZ);
 
         return _movement.TryGetSpawnZ(template.Map, x, y, ceiling, out z) &&
                !(template.OnlyOutside && IsUnderRoof(template, x, y, z));
