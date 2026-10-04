@@ -68,8 +68,9 @@ equip = false
 
 Food and drink are ordinary entries too: the common set of the shipped file gives three loaves of
 bread and a pitcher of water, so a new character has something against
-[hunger and thirst](../server-configuration.md). They are not part of UOX3's `newbie.dfn`: a file
-converted again needs them added back, as the gold.
+[hunger and thirst](../server-configuration.md). Neither they nor the gold are part of UOX3's
+`newbie.dfn`: `mgctl convert uox` adds the three entries to the common set by itself, for the items
+the source has.
 
 ```toml
 [[set.items]]

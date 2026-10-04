@@ -232,9 +232,9 @@ an item block with no `id=` of its own is followed. Items that resolve to nothin
 dropped and counted. The file is read back and every item must exist. UOX3's own rules
 (the three best skills, four with extended starting skills, and `STARTGOLD`) are not data
 and are not converted. Set `ultima.starting_items.best_skills` in the server
-configuration, and give the `STARTGOLD` coins with a gold entry in the common set, as
-the [shipped file](data-files/starting-items.md) does; its bread and pitcher of water are
-added by hand the same way.
+configuration. The converter adds Moongate's own entries to the common set, for the items the
+source has: 1000 gold coins first, in place of `STARTGOLD`, then three loaves of bread and a
+pitcher of water last (see the [shipped file](data-files/starting-items.md)).
 
 ## Signs of ModernUO
 

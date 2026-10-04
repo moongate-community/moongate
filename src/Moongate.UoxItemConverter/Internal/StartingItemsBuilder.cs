@@ -6,13 +6,21 @@ namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
 ///     Turns the <c>[BESTSKILL n]</c> and <c>[DEFAULT ...]</c> blocks of UOX3's <c>newbie.dfn</c> into
-///     <see cref="StartingItemSet" />s.
+///     <see cref="StartingItemSet" />s, and adds Moongate's own gold, bread and water to the common set.
 /// </summary>
 internal static class StartingItemsBuilder
 {
     private const string SkillPrefix = "BESTSKILL ";
 
     private const string CommonHeader = "DEFAULT ALL";
+
+    // What UOX3 does not keep in newbie.dfn and every new character of Moongate gets: the starting gold, which
+    // UOX3 reads from uox.ini (STARTGOLD), and something against hunger and thirst.
+    private const string GoldHeader = "0x0eed";
+    private const int StartingGold = 1000;
+    private const string BreadHeader = "0x103b";
+    private const int StartingBread = 3;
+    private const string WaterHeader = "0x1f9e";
 
     // UOX3 picks the DEFAULT section by body: MALE and FEMALE are the human bodies only.
     private static readonly Dictionary<string, (RaceType Race, GenderType Gender)> Defaults =
@@ -70,7 +78,48 @@ internal static class StartingItemsBuilder
             }
         }
 
+        AddOwnItems(sets, items);
+
         return sets;
+    }
+
+    // Moongate's own entries of the common set, for the items the source has: the gold first, food and drink last.
+    private static void AddOwnItems(List<StartingItemSet> sets, ItemIndex items)
+    {
+        var gold = OwnEntry(items, GoldHeader, StartingGold);
+        var food = new[] { OwnEntry(items, BreadHeader, StartingBread), OwnEntry(items, WaterHeader, 1) }
+                   .OfType<StartingItemEntry>()
+                   .ToList();
+
+        if (gold is null && food.Count == 0)
+        {
+            return;
+        }
+
+        var common = sets.FirstOrDefault(set => set.Common);
+
+        if (common is null)
+        {
+            common = new() { Common = true };
+            sets.Add(common);
+        }
+
+        if (gold is not null)
+        {
+            common.Items.Insert(0, gold);
+        }
+
+        common.Items.AddRange(food);
+    }
+
+    private static StartingItemEntry? OwnEntry(ItemIndex items, string header, int amount)
+    {
+        if (!items.ItemIdByHeader.TryGetValue(header, out var id))
+        {
+            return null;
+        }
+
+        return new() { Items = [id], Amount = amount == 1 ? null : DiceSpec.FromValue(amount) };
     }
 
     // PACKITEM=item[,amount[,newbie]] and EQUIPITEM=item[,hue[,newbie]].
