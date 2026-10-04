@@ -83,19 +83,33 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         return key.KeyChar == '\0' && key.Key == default && key.Modifiers == 0;
     }
 
+    // A line carrying a password, account create <user> <password>: masked on the prompt and never kept.
+    private static bool IsSensitive(string input)
+    {
+        return TryFindPassword(input, out _, out _);
+    }
+
     private static string MaskSensitiveInput(string input)
+    {
+        return TryFindPassword(input, out var start, out var end)
+            ? input[..start] + new string('*', end - start) + input[end..]
+            : input;
+    }
+
+    private static bool TryFindPassword(string input, out int start, out int end)
     {
         var text = input.AsSpan();
         var position = 0;
         var command = ReadToken(text, ref position);
         var action = ReadToken(text, ref position);
         var username = ReadToken(text, ref position);
+        start = end = 0;
 
         if (!command.Equals("account".AsSpan(), StringComparison.OrdinalIgnoreCase) ||
             !action.Equals("create".AsSpan(), StringComparison.OrdinalIgnoreCase) ||
             username.IsEmpty)
         {
-            return input;
+            return false;
         }
 
         while (position < text.Length && char.IsWhiteSpace(text[position]))
@@ -103,12 +117,11 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
             position++;
         }
 
-        var passwordStart = position;
+        start = position;
         _ = ReadToken(text, ref position);
+        end = position;
 
-        return position == passwordStart
-            ? input
-            : input[..passwordStart] + new string('*', position - passwordStart) + input[position..];
+        return end > start;
     }
 
     private static ReadOnlySpan<char> ReadToken(ReadOnlySpan<char> text, ref int position)
@@ -210,7 +223,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                     _prompt.UpdateInput("");
 
                     // A line the prompt masks carries a password: it is never kept.
-                    if (MaskSensitiveInput(commandLine) == commandLine)
+                    if (!IsSensitive(commandLine))
                     {
                         _history.Add(commandLine);
                     }
@@ -230,6 +243,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                     {
                         buffer.Length--;
                         _prompt.UpdateInput(MaskSensitiveInput(buffer.ToString()));
+                        _history.Reset();
                     }
 
                     continue;
@@ -240,6 +254,9 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                     buffer.Clear();
                     _prompt.UpdateInput("");
 
+                    // A line thrown away, a password with it, does not come back with Down.
+                    _history.Reset();
+
                     continue;
                 }
 
@@ -247,6 +264,9 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                 {
                     buffer.Append(key.KeyChar);
                     _prompt.UpdateInput(MaskSensitiveInput(buffer.ToString()));
+
+                    // An edited line is the one being typed: the next Up keeps it for Down.
+                    _history.Reset();
                 }
             }
         }
@@ -265,12 +285,13 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     {
         var names = _commands.GetRegisteredCommands()
                              .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
-                             .SelectMany(definition => definition.Aliases.Prepend(definition.Name));
+                             .SelectMany(definition => definition.Aliases);
         var (text, matches) = ConsoleCompletion.Complete(buffer.ToString(), names);
 
         if (text != buffer.ToString())
         {
             Replace(buffer, text);
+            _history.Reset();
         }
         else if (list && matches.Count > 1)
         {

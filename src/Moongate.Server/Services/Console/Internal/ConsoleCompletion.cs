@@ -12,12 +12,16 @@ internal static class ConsoleCompletion
     /// <returns>The completed line, and the names that matched in order; none past the first word.</returns>
     public static (string Text, IReadOnlyList<string> Matches) Complete(string line, IEnumerable<string> names)
     {
-        if (line.Any(char.IsWhiteSpace))
+        // Spaces before the name are kept: the command parser skips them.
+        var word = line.TrimStart();
+        var indent = line[..^word.Length];
+
+        if (word.Any(char.IsWhiteSpace))
         {
             return (line, []);
         }
 
-        var matches = names.Where(name => name.StartsWith(line, StringComparison.OrdinalIgnoreCase))
+        var matches = names.Where(name => name.StartsWith(word, StringComparison.OrdinalIgnoreCase))
                            .Distinct(StringComparer.OrdinalIgnoreCase)
                            .Order(StringComparer.Ordinal)
                            .ToList();
@@ -25,13 +29,13 @@ internal static class ConsoleCompletion
         return matches.Count switch
         {
             0 => (line, matches),
-            1 => (matches[0] + " ", matches),
-            _ => (CommonPrefix(matches, line), matches)
+            1 => (indent + matches[0] + " ", matches),
+            _ => (indent + CommonPrefix(matches), matches)
         };
     }
 
-    // The matches all start with the line, so the prefix is at least as long; the line's own text is kept for it.
-    private static string CommonPrefix(List<string> matches, string line)
+    // In the case of the names: "SA" with save and saveall gives "save".
+    private static string CommonPrefix(List<string> matches)
     {
         var length = matches[0].Length;
 
@@ -48,6 +52,6 @@ internal static class ConsoleCompletion
             length = same;
         }
 
-        return line + matches[0][line.Length..length];
+        return matches[0][..length];
     }
 }

@@ -58,6 +58,18 @@ public sealed class ConsoleCompletionTests
     }
 
     [Fact]
+    public void SpacesBeforeTheName_AreKept()
+    {
+        Assert.Equal("  help ", ConsoleCompletion.Complete("  he", Names).Text);
+    }
+
+    [Fact]
+    public void TheCommonPrefix_TakesTheCaseOfTheNames()
+    {
+        Assert.Equal("save", ConsoleCompletion.Complete("SA", ["save", "saveall"]).Text);
+    }
+
+    [Fact]
     public void ANameListedTwice_CountsOnce()
     {
         Assert.Equal("help ", ConsoleCompletion.Complete("h", ["help", "help"]).Text);

@@ -309,6 +309,58 @@ public sealed class ConsoleInputServiceTests
     }
 
     [Fact]
+    public async Task ALineThrownAwayWithEscape_DoesNotComeBackWithDown()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.Enqueue('*');
+        keys.EnqueueText("echo one");
+        keys.Enqueue(ConsoleKey.Enter);
+        using var container = CreateContainer();
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+        await WaitForAsync(() => prompt.Output.Count == 1);
+
+        keys.EnqueueText("account create bob s3cret");
+        keys.Enqueue(ConsoleKey.UpArrow);
+        keys.Enqueue(ConsoleKey.Escape);
+        keys.Enqueue(ConsoleKey.DownArrow);
+        keys.EnqueueText("x");
+        await WaitForAsync(() => prompt.CurrentInput == "x");
+
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
+    public async Task AnEditedRecalledLine_IsKeptForDown_AfterAnotherUp()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.Enqueue('*');
+        keys.EnqueueText("echo one");
+        keys.Enqueue(ConsoleKey.Enter);
+        keys.EnqueueText("echo two");
+        keys.Enqueue(ConsoleKey.Enter);
+        using var container = CreateContainer();
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+        await WaitForAsync(() => prompt.Output.Count == 2);
+
+        keys.Enqueue(ConsoleKey.UpArrow);
+        keys.EnqueueText("!");
+        keys.Enqueue(ConsoleKey.UpArrow);
+        await WaitForAsync(() => prompt.CurrentInput == "echo two");
+        keys.Enqueue(ConsoleKey.DownArrow);
+        await WaitForAsync(() => prompt.CurrentInput == "echo two!");
+
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
     public async Task AnAccountCreateLine_IsNeverKeptInTheHistory()
     {
         var prompt = new RecordingPromptService();

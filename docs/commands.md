@@ -4,7 +4,7 @@ Moongate accepts commands through its interactive server console. Press `*` to
 unlock the prompt after startup; [`console lock`](commands/console.md) locks it again. On the
 console, TAB completes the command name (a second TAB lists the commands that match what you
 typed), Up and Down walk the lines you sent since the start (the last 100; an `account create`
-line, which carries a password, is never kept), and Escape clears the line. In game, type a command with a leading dot,
+line with a password is never kept), and Escape clears the line. In game, type a command with a leading dot,
 such as `.help`. Commands are separated on whitespace; quoted arguments and
 passwords containing spaces are not supported.
 
