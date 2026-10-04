@@ -73,7 +73,7 @@ public sealed class MobileModule
     ///     Gets the id of the template an NPC was made from, such as to tell a baker from a blacksmith;
     ///     <c>mobile.template(who)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The id of the mobile template an NPC was made from; nil for a player or a mobile not in the world.")]
+    [ScriptFunction(helpText: "The id of the mobile template an NPC was made from, such as f_baker; nil for a player or a mobile not in the world.")]
     public string? Template(long serial)
     {
         return TryGetMobile(serial, out var mobile) && !string.IsNullOrEmpty(mobile.TemplateId) ? mobile.TemplateId : null;
@@ -139,7 +139,7 @@ public sealed class MobileModule
     ///     <c>mobile.set_stats(who, { hits = 10, strength = 80 })</c>. Hit points, mana and stamina stay between 0 and
     ///     their maximum. The mobile's player sees the new status and the players around the new health bar.
     /// </summary>
-    [ScriptFunction(helpText: "Changes the mobile's numbers, given as a table with any of those mobile.stats gives but body; hits, mana and stamina stay between 0 and their maximum, also when only the maximum changes. Its player sees its bars or status change, the players around its health bar. False, with nothing changed, for an unknown name, a value that is not a whole number or outside 0 to 65535, an empty table or a mobile not in the world.")]
+    [ScriptFunction(helpText: "Changes the mobile's numbers, given as a table with any of those mobile.stats gives but body; hits, mana and stamina stay between 0 and their maximum, also when only the maximum changes. Its player sees its bars or status change, the players around its health bar. False, with nothing changed, for an unknown name, a value that is not a whole number, a strength, dexterity, intelligence or maximum outside 0 to 65535, an empty table or a mobile not in the world.")]
     public bool SetStats(long serial, LuaTable values)
     {
         if (_state is null || !TryGetMobile(serial, out var mobile))
@@ -601,7 +601,7 @@ public sealed class MobileModule
     /// <summary>
     ///     Gets how quenched the mobile is, from 0 (parched) to 20 (quenched); <c>mobile.thirst(who)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "How quenched the mobile is, from 0 (parched) to 20 (quenched); a player loses a point every ultima.regeneration.hunger_minutes and at 0 gets no stamina back; the staff is left alone. Nil for a mobile not in the world.")]
+    [ScriptFunction(helpText: "How quenched the mobile is, from 0 (parched) to 20 (quenched); a player loses a point every ultima.regeneration.hunger_minutes, counted as for hunger, and at 0 gets no stamina back; the staff is left alone. Nil for a mobile not in the world.")]
     public int? Thirst(long serial)
     {
         return TryGetMobile(serial, out var mobile) ? mobile.Thirst : null;

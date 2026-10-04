@@ -95,7 +95,7 @@ public sealed class ItemModule
     ///     Makes a new item from a template and puts it in the backpack of <paramref name="mobile" />;
     ///     <c>item.give(user, "gold", 100)</c>. The owner sees it at once and its next save keeps it.
     /// </summary>
-    [ScriptFunction(helpText: "Makes an item from a template in the mobile's backpack and gives its serial; the owner sees it at once and its next save keeps it. Nil for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack), or when no serial is ready: the server keeps 64 in reserve, so making more in one go gives nil for the rest; try again later.")]
+    [ScriptFunction(helpText: "Makes an item from a template in the mobile's backpack and gives its serial; the owner sees it at once and its next save keeps it. Nil for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack), or when no serial is ready: the server keeps 64 in reserve and refills them in the background, so making more in one go gives nil for the rest; try again later.")]
     public long? Give(long mobile, string template, int? amount = null)
     {
         if (mobile is <= 0 or > uint.MaxValue ||

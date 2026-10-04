@@ -66,16 +66,25 @@ A system message of the client's own texts, by its number, in the language of th
 mobile.message_cliloc(who, 500867)
 ```
 
+A system message, in the lower left of the screen, read only by that player, with
+[`mobile.message`](https://moongate.sh/lua/mobile/#message):
+
+```lua
+mobile.message(who, "That is too far away.")
+```
+
 The mobile's numbers, changed with [`mobile.set_stats`](https://moongate.sh/lua/mobile/#set_stats):
 
 ```lua
 mobile.set_stats(who, { hits = 10, strength = 80 })
 ```
 
-How full the mobile is, from 0 (starving) to 20 (full), read and set, kept in that range:
+How full the mobile is, from 0 (starving) to 20 (full), read and set, kept in that range; thirst works the
+same way:
 
 ```lua
 mobile.set_hunger(who, mobile.hunger(who) + 3)
+mobile.set_thirst(who, mobile.thirst(who) + 3)
 ```
 
 A skill as `{ value, cap, lock }`, in points (`50.5`) with `lock` being `up`, `down` or `locked`; a skill
@@ -100,6 +109,14 @@ line of sight are not checked:
 
 ```lua
 for _, other in ipairs(npc.nearby(serial, 8)) do ... end
+```
+
+A sound where the NPC stands, by its id or by a kind of its template's `[mobile.sounds]`, with
+[`npc.play_sound`](https://moongate.sh/lua/npc/#play_sound):
+
+```lua
+npc.play_sound(serial, 0x69)
+npc.play_sound(serial, "idle")
 ```
 
 The players an NPC sees, nearest first, `limit` of them at most, with

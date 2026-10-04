@@ -116,7 +116,7 @@ public sealed class NpcModule
     ///     Plays a sound where the NPC stands for the players within 15 cells: a sound id, <c>npc.play_sound(serial, 0x69)</c>,
     ///     or a kind of the NPC template's <c>[mobile.sounds]</c>, <c>npc.play_sound(serial, "idle")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) or a kind of its template's [mobile.sounds] (start_attack, idle, attack, hurt, death) where the NPC stands, for the players within 15 cells; false for an unknown NPC, a sound out of range or a kind its template does not set.")]
+    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) or a kind of its template's [mobile.sounds] (start_attack, idle, attack, hurt, death) where the NPC stands, for the players within 15 cells (0x54); false for an unknown NPC, a sound out of range or a kind its template does not set.")]
     public bool PlaySound(long serial, object sound)
     {
         if (!TryGetNpc(serial, out var npc) || ResolveSound(npc, sound) is not { } id)
@@ -322,7 +322,7 @@ public sealed class NpcModule
     ///     Gets how many tiles lie between the NPC and a place, as the view range counts them;
     ///     <c>npc.distance_to(serial, there.x, there.y) <= 2</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The tiles between the NPC and x, y, the larger of the two differences; nil for an unknown NPC.")]
+    [ScriptFunction(helpText: "The tiles between the NPC and x, y, the larger of the two differences, as the view range counts them; nil for an unknown NPC.")]
     public int? DistanceTo(long serial, int x, int y)
     {
         return TryGetNpc(serial, out var npc) ? Distance(npc.Location, new Point3D(x, y, 0)) : null;
