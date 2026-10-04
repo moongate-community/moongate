@@ -51,4 +51,16 @@ public interface IJailService : IMoongateStartupService, IPersistenceDeletionSou
     ///     the cell with a sentence that starts now, and keeps the place it was first arrested on.
     /// </summary>
     JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by);
+
+    /// <summary>
+    ///     Ends the sentence now with no fine and no note: a prisoner in the world goes back at once, a player who is
+    ///     offline at its next login. False when the mobile has no sentence.
+    /// </summary>
+    bool Pardon(Serial prisoner);
+
+    /// <summary>
+    ///     Releases every prisoner whose sentence is over and who is in the world: the fine is taken, it goes back
+    ///     where it was arrested and gets its release note. The sentence of an NPC that is gone is dropped.
+    /// </summary>
+    void Check();
 }

@@ -1,4 +1,6 @@
 using System.Collections.Concurrent;
+using System.Globalization;
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
 using Moongate.Server.Core.Extensions;
@@ -8,7 +10,9 @@ using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Types.Jail;
+using Moongate.Ultima.Types;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -21,7 +25,13 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class JailService : IJailService
 {
     public const string TimerName = "jail";
+    public const string NoteTemplate = "jail_release_note";
+    public const string NoteTextProp = "jail.text";
     public const int JailedMessage = 30138;
+    public const int ReleasedFinedMessage = 30139;
+    public const int ReleasedMessage = 30140;
+    public const int PardonedMessage = 30141;
+    public const int NoteMessage = 30142;
 
     private const long MillisecondsADay = 86_400_000;
 
@@ -36,6 +46,9 @@ public sealed class JailService : IJailService
     private readonly ISpeechService _speech;
     private readonly ITimerService _timers;
     private readonly JailConfig _config;
+    private readonly ItemsConfig _itemsConfig;
+    private readonly IItemService _items;
+    private readonly ItemModule _itemModule;
     private readonly TimeProvider _time;
     private readonly ILocalizationService? _localization;
 
@@ -64,6 +77,9 @@ public sealed class JailService : IJailService
         ISpeechService speech,
         ITimerService timers,
         JailConfig config,
+        ItemsConfig itemsConfig,
+        IItemService items,
+        ItemModule itemModule,
         TimeProvider time,
         ILocalizationService? localization = null
     )
@@ -76,6 +92,9 @@ public sealed class JailService : IJailService
         _speech = speech;
         _timers = timers;
         _config = config;
+        _itemsConfig = itemsConfig;
+        _items = items;
+        _itemModule = itemModule;
         _time = time;
         _localization = localization;
     }
@@ -194,8 +213,138 @@ public sealed class JailService : IJailService
         }
     }
 
-    private void Check()
+    public bool Pardon(Serial prisoner)
     {
+        if (!_sentences.TryGetValue(prisoner, out var sentence))
+        {
+            return false;
+        }
+
+        sentence.Pardoned = true;
+        sentence.ReleaseAt = Now();
+        Check();
+
+        return true;
+    }
+
+    // A timer callback that throws closes the timer wheel: one bad prisoner must not stop the server.
+    public void Check()
+    {
+        var now = Now();
+
+        foreach (var sentence in _sentences.Values.Where(sentence => sentence.IsOver(now)).ToArray())
+        {
+            try
+            {
+                if (_mobiles.TryGet(sentence.Id, out var prisoner))
+                {
+                    // Ended before anything is taken or given: a release that fails is not done twice.
+                    End(sentence);
+                    Release(sentence, prisoner);
+                }
+                else if (!sentence.IsPlayer)
+                {
+                    // An NPC that is no longer in the world was removed; a player is offline and is released at its login.
+                    End(sentence);
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "The release of {Prisoner} from jail failed", sentence.Id);
+            }
+        }
+    }
+
+    private void End(JailSentenceEntity sentence)
+    {
+        _sentences.Remove(sentence.Id);
+        _ended[sentence.Id] = 0;
+    }
+
+    private void Release(JailSentenceEntity sentence, MobileEntity prisoner)
+    {
+        var fine = sentence.Pardoned ? 0 : TakeGold(prisoner, _config.FineGold);
+        var back = new Point3D(sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ);
+
+        // The map it was arrested on may no longer be loaded.
+        if (!_teleports.Teleport(prisoner, sentence.ReturnMap, back) &&
+            (_file is not { } file || !_teleports.Teleport(prisoner, file.Map, file.Release)))
+        {
+            _logger.Warning("{Prisoner} is released from jail but could not be moved out of its cell", sentence.Id);
+        }
+
+        if (sentence.Pardoned)
+        {
+            _speech.Tell(prisoner, _localization.Text(PardonedMessage, "You have been released from jail."));
+
+            return;
+        }
+
+        GiveNote(sentence, prisoner, fine);
+        _speech.Tell(
+            prisoner,
+            fine > 0
+                ? _localization.Text(ReleasedFinedMessage, "You have served your sentence. A fine of {0} gold was taken.", fine)
+                : _localization.Text(ReleasedMessage, "You have served your sentence.")
+        );
+    }
+
+    // Up to amount coins, from what the prisoner carries first and then from its bank box; what was taken.
+    private int TakeGold(MobileEntity prisoner, int amount)
+    {
+        var left = amount;
+        var piles = _items.GetOwnedBy(prisoner.Id)
+                          .Where(item => item.TemplateId == _itemsConfig.GoldTemplate)
+                          .OrderBy(pile => _items.GetWornRoot(pile)?.Layer == LayerType.Bank)
+                          .ToArray();
+
+        foreach (var pile in piles)
+        {
+            if (left <= 0)
+            {
+                break;
+            }
+
+            var taken = Math.Min(left, pile.Amount);
+
+            if (_itemModule.Consume(pile.Id.Value, taken))
+            {
+                left -= taken;
+            }
+        }
+
+        return amount - left;
+    }
+
+    // An NPC without a backpack gets no note.
+    private void GiveNote(JailSentenceEntity sentence, MobileEntity prisoner, int fine)
+    {
+        if (_itemModule.Give(prisoner.Id.Value, NoteTemplate) is not { } note)
+        {
+            return;
+        }
+
+        var text = _localization.Text(
+            NoteMessage,
+            "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}.",
+            sentence.Name,
+            sentence.Days,
+            sentence.Cell,
+            Date(sentence.JailedAt),
+            Date(sentence.ReleaseAt),
+            fine,
+            sentence.JailedBy
+        );
+        // Numbers as Lua has them: the props are read by scripts.
+        _itemModule.SetProp(note, NoteTextProp, text);
+        _itemModule.SetProp(note, "jail.cell", (double)sentence.Cell);
+        _itemModule.SetProp(note, "jail.days", (double)sentence.Days);
+        _itemModule.SetProp(note, "jail.fine", (double)fine);
+    }
+
+    private static string Date(long milliseconds)
+    {
+        return DateTimeOffset.FromUnixTimeMilliseconds(milliseconds).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
     }
 
     private long Now()

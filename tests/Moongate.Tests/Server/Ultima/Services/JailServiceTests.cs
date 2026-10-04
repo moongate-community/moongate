@@ -4,15 +4,21 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Jail;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Jail;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Speech;
+using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Tests.TestSupport.Ultima.Tooltips;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -29,7 +35,24 @@ public sealed class JailServiceTests : IAsyncLifetime
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingDataAccess<JailSentenceEntity> _data = new();
     private readonly JailConfig _config = new();
-    private readonly SettableClock _clock = new();
+    private readonly SettableClock _clock = new() { Now = new DateTimeOffset(2026, 10, 4, 12, 0, 0, TimeSpan.Zero) };
+    private readonly ItemsConfig _itemsConfig = new() { GoldTemplate = "gold", BackpackTemplate = "backpack" };
+    private readonly ItemService _items = TestItems.Create();
+    private readonly StubItemSerialPool _serials = new();
+    private readonly FakeTileDataService _tiles = new FakeTileDataService()
+                                                 .Item(0x0EED, TileFlagType.Generic, 0)
+                                                 .Item(0x0E75, TileFlagType.Container, 0)
+                                                 .Item(0x0E7C, TileFlagType.Container, 0)
+                                                 .Item(0x14ED, TileFlagType.Generic, 0);
+    private readonly ItemTemplateService _templates = new(
+        new StubDataLoaderService().With(
+            new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
+            new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) },
+            new ItemTemplate { Id = JailService.NoteTemplate, ItemId = new Serial(0x14ED), Name = "a release note" }
+        )
+    );
+
+    private uint _nextItem = 0x40000001;
     private readonly JailFile _file = new()
     {
         Map = MapType.Felucca,
@@ -237,6 +260,309 @@ public sealed class JailServiceTests : IAsyncLifetime
         Assert.Contains(timer.Id, _timers.Unregistered);
     }
 
+    [Fact]
+    public void Check_ASentenceStillRunning_DoesNothing()
+    {
+        _jail.Jail(_aria, 1, 1, _staff);
+        _clock.Advance(TimeSpan.FromHours(23));
+
+        _jail.Check();
+
+        Assert.Single(_jail.Sentences);
+        Assert.Single(_teleports.Teleports);
+    }
+
+    [Fact]
+    public void Check_ASentenceThatIsOver_SendsThePrisonerBackWhereItWas_AndEndsTheSentence()
+    {
+        _jail.Jail(_aria, 1, 1, _staff);
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.Equal((_aria, MapType.Trammel, new Point3D(1600, 1600, 5)), _teleports.Teleports[^1]);
+        Assert.Empty(_jail.Sentences);
+        Assert.Null(_jail.GetSentence(_aria.Id));
+        Assert.Equal([_aria.Id], _jail.Capture());
+
+        _jail.Committed([_aria.Id]);
+
+        Assert.Empty(_jail.Capture());
+    }
+
+    [Fact]
+    public void Check_TakesTheFineFromTheBackpack_AndSaysSo()
+    {
+        var backpack = Backpack(_aria);
+        var gold = Gold(backpack, 800);
+        _jail.Jail(_aria, 1, 1, _staff);
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.Equal(300, gold.Amount);
+        Assert.Equal((_aria, "You have served your sentence. A fine of 500 gold was taken."), _speech.Told[^1]);
+    }
+
+    [Fact]
+    public void Check_TakesWhatTheBackpackLacksFromTheBank()
+    {
+        var carried = Gold(Backpack(_aria), 200);
+        var banked = Gold(Bank(_aria), 1000);
+        _jail.Jail(_aria, 1, 1, _staff);
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.False(_items.TryGet(carried.Id, out _));
+        Assert.Equal(700, banked.Amount);
+    }
+
+    [Fact]
+    public void Check_GoldInSeveralPilesAndABag_TakesExactlyTheFine_BackpackFirst()
+    {
+        var backpack = Backpack(_aria);
+        var bag = Item("backpack", 0x0E75, 1);
+        bag.PutInContainer(backpack.Id, new Point2D(10, 10));
+        _items.Add([bag]);
+        var first = Gold(backpack, 100);
+        var second = Gold(backpack, 150);
+        var inBag = Gold(bag, 120);
+        var banked = Gold(Bank(_aria), 1000);
+        _jail.Jail(_aria, 1, 1, _staff);
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.False(_items.TryGet(first.Id, out _));
+        Assert.False(_items.TryGet(second.Id, out _));
+        Assert.False(_items.TryGet(inBag.Id, out _));
+        Assert.Equal(870, banked.Amount);
+    }
+
+    [Fact]
+    public void Check_NotEnoughGold_TakesWhatThereIsAndStillReleases()
+    {
+        var gold = Gold(Backpack(_aria), 120);
+        _jail.Jail(_aria, 1, 1, _staff);
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.False(_items.TryGet(gold.Id, out _));
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal("You have served your sentence. A fine of 120 gold was taken.", _speech.Told[^1].Text);
+    }
+
+    [Fact]
+    public void Check_AFineOfZero_TakesNothing()
+    {
+        _config.FineGold = 0;
+        var gold = Gold(Backpack(_aria), 800);
+        _jail.Jail(_aria, 1, 1, _staff);
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.Equal(800, gold.Amount);
+        Assert.Equal("You have served your sentence.", _speech.Told[^1].Text);
+    }
+
+    [Fact]
+    public void Check_AnNpcWithoutGoldOrBackpack_IsReleasedWithNoFineAndNoNote()
+    {
+        _jail.Jail(_orc, 1, 1, _staff);
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.Equal((_orc, MapType.Trammel, new Point3D(1700, 1700, 0)), _teleports.Teleports[^1]);
+        Assert.Empty(_jail.Sentences);
+        Assert.Empty(_items.GetOwnedBy(_orc.Id));
+    }
+
+    [Fact]
+    public void Check_GivesTheNoteWithTheTextTheDaysTheCellAndTheFine()
+    {
+        var backpack = Backpack(_aria);
+        Gold(backpack, 800);
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+        _jail.Jail(_aria, 2, 3, _staff);
+        _clock.Advance(TimeSpan.FromDays(3));
+
+        _jail.Check();
+
+        var note = Assert.Single(_items.GetContents(backpack.Id), item => item.TemplateId == JailService.NoteTemplate);
+        Assert.Equal(
+            "Aria served 3 days in cell 2, from 2026-10-04 to 2026-10-07, and paid a fine of 500 gold. Jailed by Giachi.",
+            note.Props![JailService.NoteTextProp]
+        );
+        Assert.Equal((2, 3, 500), (Convert.ToInt32(note.Props["jail.cell"]), Convert.ToInt32(note.Props["jail.days"]), Convert.ToInt32(note.Props["jail.fine"])));
+    }
+
+    [Fact]
+    public async Task Check_AnOfflinePlayer_StaysUntilItIsBack_ThenIsReleasedOnce()
+    {
+        var gold = Gold(Backpack(_aria), 2000);
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+        _serials.Serials.Enqueue(new Serial(0x40000F01));
+        _jail.Jail(_aria, 1, 1, _staff);
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.LeaveWorld(_aria.Id));
+        _clock.Advance(TimeSpan.FromDays(2));
+
+        _jail.Check();
+
+        Assert.Single(_jail.Sentences);
+        Assert.Null(_jail.GetOccupant(1));
+        Assert.Equal(2000, gold.Amount);
+
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(_aria));
+        _jail.Check();
+        _jail.Check();
+
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal(1500, gold.Amount);
+        Assert.Single(_items.GetOwnedBy(_aria.Id), item => item.TemplateId == JailService.NoteTemplate);
+    }
+
+    [Fact]
+    public async Task Check_ARemovedNpc_DropsItsSentence()
+    {
+        _jail.Jail(_orc, 1, 1, _staff);
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.LeaveWorld(_orc.Id));
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal([_orc.Id], _jail.Capture());
+        Assert.Single(_teleports.Teleports);
+    }
+
+    [Fact]
+    public void Check_WhenTheOldMapIsGone_UsesTheReleaseSpot()
+    {
+        _jail.Jail(_aria, 1, 1, _staff);
+        _teleports.RefusedMaps.Add(MapType.Trammel);
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.Equal((_aria, MapType.Felucca, new Point3D(1444, 1697, 10)), _teleports.Teleports[^1]);
+        Assert.Empty(_jail.Sentences);
+    }
+
+    [Fact]
+    public void Check_OnePrisonerFailing_DoesNotStopTheOthers_AndIsNotFinedTwice()
+    {
+        var gold = Gold(Backpack(_aria), 2000);
+        _jail.Jail(_aria, 1, 1, _staff);
+        _jail.Jail(_bruno, 2, 1, _staff);
+        _teleports.ThrowFor = _aria;
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+        _jail.Check();
+
+        Assert.Empty(_jail.Sentences);
+        Assert.Contains(_teleports.Teleports, teleport => teleport.Mobile == _bruno && teleport.Map == MapType.Trammel);
+        Assert.Equal(1500, gold.Amount);
+    }
+
+    [Fact]
+    public async Task Start_ASentenceThatEndedWhileTheServerWasDown_IsReleasedAtTheFirstCheck()
+    {
+        _data.Upserted.Add(
+            new JailSentenceEntity
+            {
+                Id = _bruno.Id, Name = "Bruno", IsPlayer = true, Cell = 1, Days = 2, JailedBy = "Giachi",
+                JailedAt = _clock.Now.ToUnixTimeMilliseconds() - 3 * Day,
+                ReleaseAt = _clock.Now.ToUnixTimeMilliseconds() - Day,
+                ReturnMap = MapType.Trammel, ReturnX = 1500, ReturnY = 1500, ReturnZ = 0
+            }
+        );
+        var jail = await CreateAsync(_file);
+
+        jail.Check();
+
+        Assert.Equal((_bruno, MapType.Trammel, new Point3D(1500, 1500, 0)), Assert.Single(_teleports.Teleports));
+        Assert.Empty(jail.Sentences);
+    }
+
+    [Fact]
+    public void Pardon_AnOnlinePrisoner_GoesBackAtOnceWithNoFineAndNoNote()
+    {
+        var backpack = Backpack(_aria);
+        var gold = Gold(backpack, 800);
+        _jail.Jail(_aria, 1, 3, _staff);
+
+        Assert.True(_jail.Pardon(_aria.Id));
+
+        Assert.Equal((_aria, MapType.Trammel, new Point3D(1600, 1600, 5)), _teleports.Teleports[^1]);
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal(800, gold.Amount);
+        Assert.Single(_items.GetContents(backpack.Id));
+        Assert.Equal("You have been released from jail.", _speech.Told[^1].Text);
+    }
+
+    [Fact]
+    public async Task Pardon_AnOfflinePlayer_FreesTheCellNow_AndReleasesItAtLoginWithNoFine()
+    {
+        var gold = Gold(Backpack(_aria), 800);
+        _jail.Jail(_aria, 1, 3, _staff);
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.LeaveWorld(_aria.Id));
+
+        Assert.True(_jail.Pardon(_aria.Id));
+
+        Assert.Null(_jail.GetOccupant(1));
+        Assert.Single(_jail.Sentences);
+
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(_aria));
+        _jail.Check();
+
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal(800, gold.Amount);
+        Assert.Equal(new Point3D(1600, 1600, 5), _teleports.Teleports[^1].Location);
+    }
+
+    [Fact]
+    public void Pardon_SomeoneNotJailed_IsFalse()
+    {
+        Assert.False(_jail.Pardon(_aria.Id));
+    }
+
+    private ItemEntity Item(string template, int graphic, int amount)
+    {
+        return new() { Id = new Serial(_nextItem++), TemplateId = template, ItemId = graphic, Amount = amount };
+    }
+
+    private ItemEntity Backpack(MobileEntity owner)
+    {
+        var backpack = Item("backpack", 0x0E75, 1);
+        backpack.Equip(owner.Id, LayerType.Backpack);
+        _items.Add([backpack]);
+
+        return backpack;
+    }
+
+    private ItemEntity Bank(MobileEntity owner)
+    {
+        var box = Item("bank", 0x0E7C, 1);
+        box.Equip(owner.Id, LayerType.Bank);
+        _items.Add([box]);
+
+        return box;
+    }
+
+    private ItemEntity Gold(ItemEntity container, int amount)
+    {
+        var gold = Item("gold", 0x0EED, amount);
+        gold.PutInContainer(container.Id, new Point2D(20, 20));
+        _items.Add([gold]);
+
+        return gold;
+    }
+
     private async Task<MobileEntity> AddPlayerAsync(long id, string name, AccountType rank)
     {
         var session = await _fixture.AddAsync(id);
@@ -257,7 +583,34 @@ public sealed class JailServiceTests : IAsyncLifetime
             loader.With(file);
         }
 
-        var jail = new JailService(loader, _data, _fixture.Mobiles, _fixture.Sessions, _teleports, _speech, _timers, _config, _clock);
+        var module = new ItemModule(
+            _items,
+            _fixture.Sessions,
+            _fixture.Sender,
+            new RecordingWorldViewService(),
+            TestTooltips.Create(_items, _fixture.Mobiles),
+            _fixture.Mobiles,
+            _speech,
+            _fixture.Sectors,
+            new FakeItemFactoryService(_templates, _tiles),
+            _serials,
+            tiles: _tiles,
+            templates: _templates
+        );
+        var jail = new JailService(
+            loader,
+            _data,
+            _fixture.Mobiles,
+            _fixture.Sessions,
+            _teleports,
+            _speech,
+            _timers,
+            _config,
+            _itemsConfig,
+            _items,
+            module,
+            _clock
+        );
         await jail.StartAsync();
 
         return jail;
