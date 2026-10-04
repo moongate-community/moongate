@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 75 done, 🟡 41 partly done, ❌ 152 not built yet.
+**268 systems:** ✅ 75 done, 🟡 42 partly done, ❌ 151 not built yet.
 
 **Coverage: 28%** of the systems done, **36%** counting a partly done system as half.
 
@@ -81,7 +81,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
 | NPC combat AI | 🟡 | `monster.lua`: the undead of the graveyards notice a player, walk to it and stand guard when they lose it; no fight yet |
-| Guards in guarded regions | ❌ | |
+| Guards in guarded regions | 🟡 | A player that says "guards" brings a guard onto each criminal near it: it appears, says its line and leaves. No punishment yet, the standing guards do nothing |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
 | Aggressor lists and attack timeouts | ❌ | |
