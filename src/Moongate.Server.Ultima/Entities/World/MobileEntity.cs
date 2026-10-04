@@ -316,6 +316,12 @@ public class MobileEntity : IMoongateEntity
         // Not a column: left in, a change of war mode alone would write the row again.
         copy.WarMode = false;
         copy.Criminal = false;
+
+        // Only a character keeps its time: an NPC comes back innocent.
+        if (IsNpc)
+        {
+            copy.CriminalUntil = null;
+        }
         copy.Skills =
         [
             .. Skills.Select(

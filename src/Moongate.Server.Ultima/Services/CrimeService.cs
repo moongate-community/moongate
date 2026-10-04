@@ -90,6 +90,24 @@ public sealed class CrimeService : ICrimeService, IMoongateStartupService
         }
     }
 
+    public void Restore(MobileEntity mobile)
+    {
+        if (mobile.CriminalUntil is not { } until)
+        {
+            return;
+        }
+
+        if (until <= Now())
+        {
+            mobile.CriminalUntil = null;
+
+            return;
+        }
+
+        mobile.Criminal = true;
+        _criminals.Add(mobile);
+    }
+
     public void Pardon(MobileEntity mobile)
     {
         mobile.CriminalUntil = null;
@@ -127,9 +145,10 @@ public sealed class CrimeService : ICrimeService, IMoongateStartupService
         {
             try
             {
-                if (!_mobiles.IsInWorld(criminal.Id))
+                if (!_mobiles.TryGet(criminal.Id, out var live) || !ReferenceEquals(live, criminal))
                 {
-                    // Gone with time left: its row keeps the time, and its next object gets the flag back.
+                    // Gone with time left, or back as another object: its row keeps the time, and the live object
+                    // gets the flag back. Showing this one again would draw it where it left.
                     _criminals.Remove(criminal);
                 }
                 else if (criminal.CriminalUntil is not { } until || until <= now)

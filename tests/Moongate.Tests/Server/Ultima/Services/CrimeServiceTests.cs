@@ -138,6 +138,63 @@ public sealed class CrimeServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void APlayerBackWithinTheSecond_IsFollowedByItsNewObject_TheOldOneIsDropped()
+    {
+        _crimes.MakeCriminal(_aria);
+        var until = _aria.CriminalUntil;
+        // A relogin loads the character again: another object with the same serial, its time saved.
+        var again = new MobileEntity { Id = _aria.Id, AccountId = _aria.AccountId, Name = "Aria", CriminalUntil = until };
+        _fixture.Mobiles.EnterWorld(again);
+        _view.Calls.Clear();
+        _view.Mobiles.Clear();
+
+        Fire();
+        Assert.True(again.Criminal);
+
+        _clock.Advance(TimeSpan.FromSeconds(120));
+        Fire();
+
+        // Only the live object is shown again: the old one would be drawn where it logged out.
+        Assert.False(again.Criminal);
+        Assert.Equal(2, _view.Calls.Count);
+        Assert.All(_view.Mobiles, shown => Assert.Same(again, shown));
+    }
+
+    [Fact]
+    public void Restore_GivesTheFlagBackFromTheSavedTime_WithoutTellingAnyone()
+    {
+        _aria.CriminalUntil = _clock.GetUtcNow().UtcDateTime.AddSeconds(30);
+
+        _crimes.Restore(_aria);
+
+        Assert.True(_crimes.IsCriminal(_aria));
+        Assert.Empty(_view.Calls);
+        Assert.Empty(_speech.ToldClilocs);
+
+        // And is cleared when its time is over, like any criminal.
+        _clock.Advance(TimeSpan.FromSeconds(30));
+        Fire();
+        Assert.False(_crimes.IsCriminal(_aria));
+
+        // A time already over is dropped at once.
+        _aria.CriminalUntil = _clock.GetUtcNow().UtcDateTime.AddSeconds(-1);
+        _crimes.Restore(_aria);
+        Assert.Equal((false, (DateTime?)null), (_aria.Criminal, _aria.CriminalUntil));
+    }
+
+    [Fact]
+    public void AnNpcsTime_IsNotSaved_SoItComesBackInnocent()
+    {
+        var orc = new MobileEntity { Id = new Serial(0x100), Name = "an orc", TemplateId = "orc" };
+        _fixture.Mobiles.EnterWorld(orc);
+
+        _crimes.MakeCriminal(orc);
+
+        Assert.Null(orc.Snapshot().CriminalUntil);
+        Assert.NotNull(orc.CriminalUntil);
+    }
+
+    [Fact]
     public void AnNpc_CanBeACriminalToo_AndIsNotTold()
     {
         var orc = new MobileEntity { Id = new Serial(0x100), Name = "an orc", TemplateId = "orc" };

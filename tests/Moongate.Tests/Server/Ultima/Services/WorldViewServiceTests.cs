@@ -189,6 +189,20 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void MobileFlagsChanged_OfACriminal_ShowsItGrey()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        aria.Criminal = true;
+        ClearSent();
+
+        _view.MobileFlagsChanged(aria);
+
+        Assert.Equal(2, _sender.Sent.Count);
+        Assert.All(_sender.Sent, packet => Assert.Equal(NotorietyType.Criminal, Assert.IsType<MobileMovingPacket>(packet).Notoriety));
+    }
+
+    [Fact]
     public void MobileAnimated_ShowsTheAnimationToItselfAndThoseWhoSeeIt()
     {
         var aria = Enter(2, 1496, 1628, AriaSession);

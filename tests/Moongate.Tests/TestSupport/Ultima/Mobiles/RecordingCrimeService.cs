@@ -21,6 +21,11 @@ public sealed class RecordingCrimeService : ICrimeService
         Calls.Add($"criminal {mobile.Id.Value}");
     }
 
+    public void Restore(MobileEntity mobile)
+    {
+        Calls.Add($"restore {mobile.Id.Value}");
+    }
+
     public void Pardon(MobileEntity mobile)
     {
         mobile.Criminal = false;

@@ -24,7 +24,7 @@ public sealed class SetCommand : ICommandExecutor
     private readonly IMobileStateService _state;
     private readonly IHungerService _hunger;
     private readonly IGameLoopService _loop;
-    private readonly ICrimeService? _crimes;
+    private readonly ICrimeService _crimes;
     private readonly ILocalizationService? _localization;
 
     public SetCommand(
@@ -33,7 +33,7 @@ public sealed class SetCommand : ICommandExecutor
         IMobileStateService state,
         IHungerService hunger,
         IGameLoopService loop,
-        ICrimeService? crimes = null,
+        ICrimeService crimes,
         ILocalizationService? localization = null
     )
     {
@@ -110,11 +110,11 @@ public sealed class SetCommand : ICommandExecutor
                     case "criminal":
                         if (value == 0)
                         {
-                            _crimes?.Pardon(mobile);
+                            _crimes.Pardon(mobile);
                         }
                         else
                         {
-                            _crimes?.MakeCriminal(mobile);
+                            _crimes.MakeCriminal(mobile);
                         }
 
                         now = mobile.Criminal ? 1 : 0;

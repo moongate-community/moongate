@@ -43,11 +43,15 @@ public sealed class UltimaConfigContainerExtensionsTests
             [ultima.npcs]
             think_interval_ms = 250
             sense_range = 6
+
+            [ultima.crime]
+            criminal_seconds = 300
             """
         );
 
         var ultima = container.AddUltimaConfig();
 
+        Assert.Equal(300, container.Resolve<CrimeConfig>().CriminalSeconds);
         Assert.Equal("/uo", container.Resolve<UltimaConfig>().UltimaPath);
         Assert.Same(ultima.World, container.Resolve<WorldConfig>());
         Assert.Equal("ita", container.Resolve<LocalizationConfig>().Language);

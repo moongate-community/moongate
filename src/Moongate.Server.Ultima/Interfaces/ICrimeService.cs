@@ -21,6 +21,12 @@ public interface ICrimeService
     void MakeCriminal(MobileEntity mobile);
 
     /// <summary>
+    ///     Gives the flag back to a mobile that enters the world with saved time left, telling no one: the packets
+    ///     that show it come after. A time already over is dropped.
+    /// </summary>
+    void Restore(MobileEntity mobile);
+
+    /// <summary>
     ///     Makes the mobile innocent again at once.
     /// </summary>
     void Pardon(MobileEntity mobile);
