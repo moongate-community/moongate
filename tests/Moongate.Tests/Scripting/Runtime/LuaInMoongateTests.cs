@@ -40,11 +40,12 @@ public sealed class LuaInMoongateTests : IDisposable
             local function compiles(code) return load(code) ~= nil end
             return _VERSION,
                 load("do goto done end ::done:: return 'reached'")(),
-                compiles("return 7 // 2"), compiles("return 6 & 3"), compiles("return '\\u{41}'"), compiles("return '\\x41'")
+                compiles("return 7 // 2"), compiles("return 6 & 3"), compiles("return 6 | 3"), compiles("return 1 << 2"),
+                compiles("return '\\u{41}'"), compiles("return '\\x41'")
             """
         );
 
-        Assert.Equal(["Lua 5.2", "reached", false, false, false, true], values);
+        Assert.Equal(["Lua 5.2", "reached", false, false, false, false, false, true], values);
     }
 
     [Fact]
@@ -67,7 +68,7 @@ public sealed class LuaInMoongateTests : IDisposable
     }
 
     [Fact]
-    public async Task AHexadecimalNumberBetweenBrackets_DoesNotCompile_ButItsOtherFormsDo()
+    public async Task AHexadecimalNumberBeforeAClosingBracket_DoesNotCompile_ButItsOtherFormsDo()
     {
         var values = await Run(
             """
@@ -75,13 +76,15 @@ public sealed class LuaInMoongateTests : IDisposable
             local constructor = load("return { [0x0A] = 1 }")
             local wrapped = load("local t = {} t[(0x0A)] = 1 return t[10]")()
             local variable = load("local key = 0x0A local t = {} t[key] = 1 return t[10]")()
-            return index == nil, index_error, constructor == nil, wrapped, variable
+            local argument = load("local function same(value) return value end return same(0x0A)")()
+            local spaced = load("local t = {} t[0x0A ] = 1 return t[10]")()
+            return index == nil, index_error, constructor == nil, wrapped, variable, argument, spaced
             """
         );
 
         Assert.Equal(true, values[0]);
         Assert.Contains("malformed number", (string)values[1]!, StringComparison.Ordinal);
-        Assert.Equal([true, 1d, 1d], values[2..]);
+        Assert.Equal([true, 1d, 1d, 10d, 1d], values[2..]);
     }
 
     [Fact]
@@ -105,6 +108,14 @@ public sealed class LuaInMoongateTests : IDisposable
 
         Assert.Equal(["5", "1.5", "0.30000000000000004", "9.223372036854776E+18", "3", false], values[..6]);
         Assert.Contains("no integer representation", (string)values[6]!, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task InfinityAndNotANumber_AreWrittenAsDotNetWritesThem_AndPercentGWritesEveryDigit()
+    {
+        var values = await Run("""return tostring(1 / 0), tostring(-1 / 0), tostring(0 / 0), string.format("%g", 0.1 + 0.2)""");
+
+        Assert.Equal(["Infinity", "-Infinity", "NaN", "0.30000000000000004"], values);
     }
 
     [Fact]
@@ -144,7 +155,8 @@ public sealed class LuaInMoongateTests : IDisposable
             """
             local added, add_error = pcall(probe.add, 1.5, 1)
             local greeted, greet_error = pcall(probe.greet)
-            return probe.scale(2), probe.add(2, 1), added, add_error, greeted, greet_error
+            local second, second_error = pcall(probe.add, 2)
+            return probe.scale(2), probe.add(2, 1), added, add_error, greeted, greet_error, second, second_error
             """
         );
 
@@ -152,6 +164,26 @@ public sealed class LuaInMoongateTests : IDisposable
         Assert.Contains("bad argument #1 to 'probe.add'", (string)values[3]!, StringComparison.Ordinal);
         Assert.Equal(false, values[4]);
         Assert.Contains("bad argument #1 to 'probe.greet' (name is required)", (string)values[5]!, StringComparison.Ordinal);
+        Assert.Equal(false, values[6]);
+        Assert.Contains("bad argument #2 to 'probe.add' (right is required)", (string)values[7]!, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AHostFunction_DoesNotTurnAStringIntoANumber_NorANumberIntoAString()
+    {
+        var values = await Run(
+            """
+            local text, text_error = pcall(probe.greet, 5)
+            local number, number_error = pcall(probe.add, "2", 1)
+            return text, text_error, number, number_error, "10" + 1, 10 .. ""
+            """
+        );
+
+        Assert.Equal(false, values[0]);
+        Assert.Contains("String expected, got number", (string)values[1]!, StringComparison.Ordinal);
+        Assert.Equal(false, values[2]);
+        Assert.Contains("Int32 expected, got string", (string)values[3]!, StringComparison.Ordinal);
+        Assert.Equal([11d, "10"], values[4..]);
     }
 
     private async Task<object?[]> Run(string body)

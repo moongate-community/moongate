@@ -75,6 +75,19 @@ public sealed class PublishedScriptModulesTests
     }
 
     [Fact]
+    public void TheModulesOfTheScriptingAssembly_AreTheFourTheEngineAndTheServerPublish()
+    {
+        // The reference reflects this assembly, because engine, timer and events are bound by the engine itself and
+        // log by the server. A fifth module here is on the site at once: make sure the server publishes it too.
+        var modules = typeof(LogModule).Assembly
+            .GetTypes()
+            .Where(type => type.GetCustomAttribute<ScriptModuleAttribute>() is not null)
+            .OrderBy(type => type.Name, StringComparer.Ordinal);
+
+        Assert.Equal([typeof(EngineModule), typeof(EventsModule), typeof(LogModule), typeof(TimerModule)], modules);
+    }
+
+    [Fact]
     public void EveryExampleOfTheReference_NamesAPublishedFunction()
     {
         var modules = Published()

@@ -15,8 +15,15 @@ internal static class Program
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
-    private static void Main(string[] args)
+    private static int Main(string[] args)
     {
+        if (args.Length != 1)
+        {
+            Console.Error.WriteLine("Usage: LuaDump <output file>");
+
+            return 1;
+        }
+
         // The world's modules and enums come from the registration the server itself calls. The scripting
         // assembly's own modules are reflected instead: the engine binds engine, timer and events itself and
         // the server registers log, and neither runs without a server.
@@ -36,6 +43,8 @@ internal static class Program
             .OrderBy(type => type.Name, StringComparer.Ordinal);
         var dump = new { modules = modules.Select(ToRow).ToArray(), enums = enums.Select(ToRow).ToArray() };
         File.WriteAllText(args[0], JsonSerializer.Serialize(dump, JsonOptions));
+
+        return 0;
     }
 
     private static object ToRow(ModuleDescription module)

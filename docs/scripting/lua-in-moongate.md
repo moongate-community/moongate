@@ -38,7 +38,7 @@ for the exact removed functions.
 LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
 `{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,
 as `light.lua` does with `add(0x0A27, 0x0B1D, "circle225")`.
-The number in parentheses compiles too: `t[(0x0A27)]`.
+The number in parentheses compiles too, `t[(0x0A27)]`, and so does a space before the bracket: `t[0x0A27 ]`.
 
 ### Strings
 
@@ -51,7 +51,8 @@ false.
 Every number is a double, as in Lua 5.2. A whole value is written without a fraction: `10 / 2` gives `5`. Any
 other value is written with every digit, where the manual's Lua rounds to 14: `0.1 + 0.2` gives
 `0.30000000000000004`. A very large value is written with an exponent: `2 ^ 63` gives
-`9.223372036854776E+18`. `string.format("%d", 3.5)` raises an error: `%d` takes a whole number.
+`9.223372036854776E+18`. `string.format("%g", 0.1 + 0.2)` writes every digit as well. Infinity and the result
+of `0 / 0` are written `Infinity`, `-Infinity` and `NaN`, where the manual's Lua writes `inf` and `nan`. `string.format("%d", 3.5)` raises an error: `%d` takes a whole number.
 
 ## Calling host functions
 
@@ -63,6 +64,9 @@ The server publishes its functions in module tables, such as `npc` and `item`; t
 - An enum is a read-only global table, and `DirectionType.North` is a number. A parameter typed with an enum
   takes the number or the member's name in its exact case: `"North"`, not `"north"`.
 - A parameter typed `integer` needs a whole number: `1.5` raises a `bad argument` error.
+- A host function does not turn a string into a number or a number into a string, as Lua's own operators do
+  (`"10" + 1` is 11): passing `"2"` for an `integer` raises `Int32 expected, got string`, and passing `5` for a
+  `string` raises `String expected, got number`. Use `tonumber` and `tostring`.
 - A parameter the reference marks with `?` may be left out and takes its default. Leaving out another raises
   `bad argument #1 to 'module.function' (name is required)`, with the position and the name of the parameter.
 

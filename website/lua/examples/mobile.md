@@ -1,8 +1,8 @@
 ## animate
 
-The bodies do not share the numbers, so use the names of the body: `HumanAnimationType` (`Bow`, `Salute`,
-`Fidget1`, `Spell1`...), `MonsterAnimationType` (`Attack1`, `GetHit`, `Pillage`, `Fidget1`...) or
-`AnimalAnimationType` (`Eat`, `Alert`, `LieDown`...); a number works too:
+Some of the names: `HumanAnimationType` has `Bow`, `Salute`, `Fidget1`, `Spell1`; `MonsterAnimationType` has
+`Attack1`, `GetHit`, `Pillage`, `Fidget1`; `AnimalAnimationType` has `Eat`, `Alert`, `LieDown`. A number works
+too:
 
 ```lua
 mobile.animate(who, HumanAnimationType.Bow)
@@ -51,9 +51,6 @@ if mobile.weight(who) > mobile.max_weight(who) then ... end
 
 ## skill
 
-A skill is `{ value, cap, lock }`, in points (`50.5`) with `lock` being `up`, `down` or `locked`; a skill never
-trained is 0:
-
 ```lua
 mobile.skill(who, SkillType.Magery).value
 ```
@@ -68,8 +65,7 @@ mobile.skills(who).magery
 
 ## teleport
 
-To another map, by a `MapType` or its name. A player's client is told of the map change (0xBF 0x08) and where
-it stands (0x20):
+A player's client is told of the map change (0xBF 0x08) and where it stands (0x20):
 
 ```lua
 mobile.teleport(who, x, y, z, "Tokuno")

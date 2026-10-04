@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promis
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { parseExamples, renderLua, writePages } from '../scripts/build-lua.mjs';
+import { parseExamples, readExamples, renderLua, writePages } from '../scripts/build-lua.mjs';
 
 const parameter = (name, type = 'integer', optional = false, fallback = null) => ({ name, type, optional, default: fallback });
 const fn = (name, parameters = [], returns = null, help = `Does ${name}.`) => ({ name, help, parameters, returns });
@@ -214,4 +214,29 @@ test('an example is written under its function, after the help text and before t
 test('render rejects examples for a module or a function the server does not publish', () => {
   assert.throws(() => renderLua(sample(), { examples: { ghost: new Map([['x', 'text']]) } }), /Examples for an unknown module: ghost/);
   assert.throws(() => renderLua(sample(), { examples: { npc: new Map([['fly', 'text']]) } }), /Example for an unknown function: npc\.fly/);
+});
+
+test('an examples file is rejected for a code block left open', () => {
+  assert.throws(() => parseExamples('npc', '## say\n\n```lua\nnpc.say(serial, "hi")\n\n## walk_to\n\ntext\n'), /npc: unclosed code block/);
+});
+
+test('an examples file is rejected for a heading that is not a function section', () => {
+  assert.throws(() => parseExamples('npc', '## say\n\n### walk_to\n\ntext\n'), /npc\.say: a heading inside an example/);
+  assert.throws(() => parseExamples('npc', '# Examples\n\n## say\n\ntext\n'), /npc: text before the first function heading/);
+  // A comment inside a code block is not a heading.
+  assert.deepEqual([...parseExamples('npc', '## say\n\n```lua\n# not a heading\n```\n').keys()], ['say']);
+});
+
+test('the example files of a directory are read by module, and a missing directory has none', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'moongate-lua-examples-'));
+  try {
+    await writeFile(path.join(root, 'npc.md'), '## say\n\ntext\n');
+    await writeFile(path.join(root, 'notes.txt'), 'not an examples file');
+    const examples = await readExamples(root);
+    assert.deepEqual(Object.keys(examples), ['npc']);
+    assert.equal(examples.npc.get('say'), 'text');
+    assert.deepEqual(await readExamples(path.join(root, 'missing')), {});
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });

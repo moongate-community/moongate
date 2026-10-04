@@ -75,12 +75,11 @@ public static class LuaFunctionDescriber
             _ when type.IsEnum => Convert.ToInt64(value, CultureInfo.InvariantCulture)
                 .ToString(CultureInfo.InvariantCulture),
             double number       => DoubleLiteral(number),
-            float number        => DoubleLiteral(number),
+            float number        => FloatLiteral(number),
             IFormattable number => number.ToString(null, CultureInfo.InvariantCulture),
             _                   => "nil"
         };
     }
-
 
     /// <summary>
     ///     Names the Lua type scripts see for a CLR type: integer, number, boolean, string, table, an enum's name, or
@@ -155,19 +154,9 @@ public static class LuaFunctionDescriber
     /// </summary>
     private static string DoubleLiteral(double value)
     {
-        if (double.IsNaN(value))
+        if (!double.IsFinite(value))
         {
-            return "0/0";
-        }
-
-        if (double.IsPositiveInfinity(value))
-        {
-            return "math.huge";
-        }
-
-        if (double.IsNegativeInfinity(value))
-        {
-            return "-math.huge";
+            return NonFiniteLiteral(value);
         }
 
         return value.ToString(CultureInfo.InvariantCulture);
@@ -224,8 +213,26 @@ public static class LuaFunctionDescriber
         return builder.ToString();
     }
 
+    /// <summary>
+    ///     Renders a float as it was declared: widened to a double first, <c>0.1f</c> would read 0.10000000149011612.
+    /// </summary>
+    private static string FloatLiteral(float value)
+    {
+        return float.IsFinite(value) ? value.ToString(CultureInfo.InvariantCulture) : NonFiniteLiteral(value);
+    }
+
     private static bool IsNullableValueType(Type type)
     {
         return Nullable.GetUnderlyingType(type) is not null;
+    }
+
+    private static string NonFiniteLiteral(double value)
+    {
+        if (double.IsNaN(value))
+        {
+            return "0/0";
+        }
+
+        return double.IsPositiveInfinity(value) ? "math.huge" : "-math.huge";
     }
 }

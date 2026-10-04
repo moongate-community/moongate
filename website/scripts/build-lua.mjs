@@ -38,10 +38,33 @@ export function parseExamples(module, markdown) {
       body = [];
     } else if (name === null) {
       if (line.trim()) throw new Error(`${module}: text before the first function heading`);
-    } else body.push(line);
+    } else {
+      // Another heading would look like a second function on the page, with an anchor of its own.
+      if (!fenced && /^#{1,6} /.test(line)) throw new Error(`${module}.${name}: a heading inside an example`);
+      body.push(line);
+    }
   }
+  // An open code block would take the parameter table and every function after it.
+  if (fenced) throw new Error(`${module}: unclosed code block`);
   close();
   if (!examples.size) throw new Error(`${module}: no examples`);
+  return examples;
+}
+
+// Reads every <module>.md of the examples directory; a missing directory means no examples.
+export async function readExamples(directory) {
+  let files;
+  try {
+    files = await readdir(directory);
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    return {};
+  }
+  const examples = {};
+  for (const file of files.filter(name => name.endsWith('.md')).sort()) {
+    const module = path.basename(file, '.md');
+    examples[module] = parseExamples(module, await readFile(path.join(directory, file), 'utf8'));
+  }
   return examples;
 }
 
@@ -232,12 +255,7 @@ export async function buildLua() {
   } finally {
     await rm(stage, { recursive: true, force: true });
   }
-  const examples = {};
-  const examplesDirectory = path.join(websiteRoot, 'lua/examples');
-  for (const file of (await readdir(examplesDirectory)).filter(name => name.endsWith('.md')).sort()) {
-    const module = path.basename(file, '.md');
-    examples[module] = parseExamples(module, await readFile(path.join(examplesDirectory, file), 'utf8'));
-  }
+  const examples = await readExamples(path.join(websiteRoot, 'lua/examples'));
   const pages = renderLua(dump, { sourceRef: process.env.MOONGATE_DOCS_REF || 'develop', examples });
   await writePages(path.join(websiteRoot, 'src/content/docs/lua'), pages);
   const functions = dump.modules.reduce((count, module) => count + module.functions.length, 0);

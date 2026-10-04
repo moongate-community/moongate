@@ -1,6 +1,6 @@
 ## find
 
-The items of a template a mobile wears and carries, at any depth:
+The gold a player carries, pile by pile:
 
 ```lua
 for _, coins in ipairs(item.find(user, "gold")) do ... end
@@ -40,6 +40,8 @@ end
 A cursed ring: once worn, it stays on. A worn item has an owner and lies in no container:
 
 ```lua
+ring = {}
+
 function ring.can_pick_up(serial, picker)
     -- worn: it has an owner and lies in no container
     if item.owner(serial) == picker and item.container(serial) == nil then
