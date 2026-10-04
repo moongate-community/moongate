@@ -590,7 +590,7 @@ location = "(5286, 1174, 0)"
 map = "felucca"
 category = "Internal/Jail Cells"
 name = "Cell 7"
-location = "(5286, 1174, 0)"
+location = "(5296, 1174, 0)"
 
 [[location]]
 map = "felucca"
@@ -1658,7 +1658,7 @@ location = "(5286, 1174, 0)"
 map = "trammel"
 category = "Internal/Jail Cells"
 name = "Cell 7"
-location = "(5286, 1174, 0)"
+location = "(5296, 1174, 0)"
 
 [[location]]
 map = "trammel"

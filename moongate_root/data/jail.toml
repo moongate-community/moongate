@@ -1,0 +1,61 @@
+# ==============================================================================
+# Moongate - jail.toml
+#
+# What it is for:
+#   The jail the staff sends characters to with ".jail": its map and its cells.
+#   The gump lists the cells by number; a prisoner arrives on the cell's
+#   location and, when its sentence ends, goes back where it was arrested.
+#   Without this file the jail is off.
+#
+# Fields:
+#   map        the map of the cells: felucca, trammel, ilshenar, malas, tokuno
+#              or termur
+#   release    where a released prisoner goes when the map it was arrested on
+#              is no longer loaded, "(x, y, z)" on the jail's map
+#   [[cell]]   one per cell, in the order the gump lists them
+#   number     the number the gump shows; from 1, each used once
+#   location   where the prisoner arrives, "(x, y, z)"
+# ==============================================================================
+
+map = "felucca"
+release = "(1444, 1697, 10)"
+
+[[cell]]
+number = 1
+location = "(5276, 1164, 0)"
+
+[[cell]]
+number = 2
+location = "(5286, 1164, 0)"
+
+[[cell]]
+number = 3
+location = "(5296, 1164, 0)"
+
+[[cell]]
+number = 4
+location = "(5306, 1164, 0)"
+
+[[cell]]
+number = 5
+location = "(5276, 1174, 0)"
+
+[[cell]]
+number = 6
+location = "(5286, 1174, 0)"
+
+[[cell]]
+number = 7
+location = "(5296, 1174, 0)"
+
+[[cell]]
+number = 8
+location = "(5306, 1174, 0)"
+
+[[cell]]
+number = 9
+location = "(5283, 1184, 0)"
+
+[[cell]]
+number = 10
+location = "(5304, 1184, 0)"
