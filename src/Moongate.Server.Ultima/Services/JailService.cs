@@ -6,6 +6,7 @@ using Moongate.Persistence.Interfaces;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
@@ -238,6 +239,12 @@ public sealed class JailService : IJailService
             {
                 if (_mobiles.TryGet(sentence.Id, out var prisoner))
                 {
+                    // Gold on the cursor cannot be taken: the prisoner waits in its cell until it drops what it holds.
+                    if (OwesAFine(sentence) && HoldsSomething(prisoner))
+                    {
+                        continue;
+                    }
+
                     // Ended before anything is taken or given: a release that fails is not done twice.
                     End(sentence);
                     Release(sentence, prisoner);
@@ -253,6 +260,16 @@ public sealed class JailService : IJailService
                 _logger.Error(exception, "The release of {Prisoner} from jail failed", sentence.Id);
             }
         }
+    }
+
+    private bool OwesAFine(JailSentenceEntity sentence)
+    {
+        return !sentence.Pardoned && _config.FineGold > 0;
+    }
+
+    private bool HoldsSomething(MobileEntity prisoner)
+    {
+        return _sessions.TryGetByCharacterId(prisoner.Id, out var session) && session.Get(ItemSessionKeys.Held) is not null;
     }
 
     private void End(JailSentenceEntity sentence)

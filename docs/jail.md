@@ -51,6 +51,8 @@ The server looks every ten seconds for the sentences that are over.
 - A player who is offline is released within ten seconds of its next login. Its cell is free
   from the moment the sentence is over.
 - The sentence of an NPC that was removed meanwhile is dropped.
+- A prisoner who holds an item on its cursor waits in its cell until it drops it: gold on the
+  cursor cannot be taken, and lifting it is no way around the fine.
 
 Sentences are kept in the table `world.jail_sentences` and written by the world save, so a
 restart forgets none.

@@ -3,6 +3,8 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Internal.Items;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
@@ -467,6 +469,43 @@ public sealed class JailServiceTests : IAsyncLifetime
         Assert.Empty(_jail.Sentences);
         Assert.Contains(_teleports.Teleports, teleport => teleport.Mobile == _bruno && teleport.Map == MapType.Trammel);
         Assert.Equal(1500, gold.Amount);
+    }
+
+    // A pile on the cursor cannot be taken: lifting the gold must not be a way around the fine.
+    [Fact]
+    public async Task Check_APrisonerHoldingSomethingOnItsCursor_WaitsUntilItIsDropped_ThenPaysTheWholeFine()
+    {
+        var gold = Gold(Backpack(_aria), 800);
+        Assert.True(_fixture.Sessions.TryGetByCharacterId(_aria.Id, out var session));
+        _jail.Jail(_aria, 1, 1, _staff);
+        await _fixture.Network.ExecuteOnLoopAsync(() => session.Set(ItemSessionKeys.Held, new HeldItem(gold.Id)));
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.Single(_jail.Sentences);
+        Assert.Equal(800, gold.Amount);
+        Assert.Single(_teleports.Teleports);
+
+        await _fixture.Network.ExecuteOnLoopAsync(() => session.Set(ItemSessionKeys.Held, null));
+        _jail.Check();
+
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal(300, gold.Amount);
+    }
+
+    [Fact]
+    public async Task Pardon_APrisonerHoldingSomethingOnItsCursor_ReleasesItAtOnce()
+    {
+        var gold = Gold(Backpack(_aria), 800);
+        Assert.True(_fixture.Sessions.TryGetByCharacterId(_aria.Id, out var session));
+        _jail.Jail(_aria, 1, 1, _staff);
+        await _fixture.Network.ExecuteOnLoopAsync(() => session.Set(ItemSessionKeys.Held, new HeldItem(gold.Id)));
+
+        Assert.True(_jail.Pardon(_aria.Id));
+
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal(800, gold.Amount);
     }
 
     [Fact]
