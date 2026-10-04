@@ -200,13 +200,14 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         _movement.SpawnZ = (_, _) => ++tries > 100 ? 0 : null;
         await StartAsync(new ScriptedRandom(0), Spawn("forest", minMinutes: 30, maxMinutes: 30));
 
+        // The hundred picks, then the look over the area that finds a spot: the region keeps trying.
         await TickAsync();
         Assert.Empty(_npcs.Spawns);
-        Assert.Equal(100, tries);
+        Assert.Equal(101, tries);
 
         _clock.Advance(TimeSpan.FromSeconds(59));
         await TickAsync();
-        Assert.Equal(100, tries);
+        Assert.Equal(101, tries);
 
         _clock.Advance(TimeSpan.FromSeconds(1));
         await TickAsync();
@@ -340,6 +341,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     {
         var ocean = Spawn("ocean", minMinutes: 30, maxMinutes: 30);
         ocean.MobileIds = ["dolphin"];
+        // Water only where the picks never land: the area has a spot, so the region keeps trying.
+        _movement.SwimZ = (x, y) => x == 12 && y == 12 ? -5 : null;
         await StartAsync(new ScriptedRandom(0), ocean);
 
         await TickAsync();
@@ -413,6 +416,39 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
             here
         );
         Assert.Empty(await _service.RegionsAtAsync(MapType.Trammel, 16, 16));
+    }
+
+    [Fact]
+    public async Task ARegionWithNoSpotInItsWholeArea_IsTurnedOff_AndNeverRetried()
+    {
+        // As ModernUO's wild life spawners of Tokuno left in the open sea.
+        _movement.SpawnZ = (_, _) => null;
+        await StartAsync(new ScriptedRandom(0), Spawn("sea"));
+
+        await TickAsync();
+        // The hundred picks, then each of the nine cells of the area.
+        Assert.Equal(109, _movement.SpawnCeilings.Count);
+
+        _clock.Advance(TimeSpan.FromMinutes(10));
+        await TickAsync();
+
+        Assert.Equal(109, _movement.SpawnCeilings.Count);
+        Assert.Empty(_npcs.Spawns);
+    }
+
+    [Fact]
+    public async Task AWaterRegion_IsLookedOverForWater()
+    {
+        // Water everywhere but at the picked cell, for a swimmer: the region keeps trying.
+        _movement.SpawnZ = (_, _) => null;
+        _movement.SwimZ = (x, y) => x == 10 && y == 10 ? null : -5;
+        var sea = Spawn("sea");
+        sea.MobileIds = ["dolphin"];
+        await StartAsync(new ScriptedRandom(0), sea);
+
+        await TickAsync();
+
+        Assert.True(Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 10, 10)).Retrying);
     }
 
     [Fact]
