@@ -239,6 +239,28 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheShippedDrinkScript_AMugOfAleLeavesAnEmptyMug_AndAnEmptyGlassWithTheScriptGivesNothing()
+    {
+        var scripts = await StartItemScriptAsync("drink", "potion");
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.Thirst = 0;
+        _potions.ItemId = 0x09EE;
+        _potions.Amount = 1;
+
+        scripts.Run(_potions, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((3, 0x0FFF, "empty mug"), (aria.Thirst, _potions.ItemId, _potions.Name));
+
+        // An empty glass that never held a drink: no sip to take.
+        _potions.ItemId = 0x1F83;
+        _potions.SetProp("drink.uses", null);
+        scripts.Run(_potions, "on_use", 2L);
+
+        Assert.Equal((3, "It is empty."), (aria.Thirst, _speech.Told[^1].Text));
+    }
+
+    [Fact]
     public async Task TheShippedPotionScript_DrinksOnePotionAndTellsThePlayer()
     {
         _scripts.Write("items/potion.lua", File.ReadAllText(ShippedScript("items/potion.lua")));

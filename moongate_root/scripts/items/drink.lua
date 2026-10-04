@@ -7,8 +7,8 @@
 --   0 to 20), makes the sound and the gesture of drinking and is told so. A
 --   player that is quenched is told so and drinks nothing. A container holds
 --   some sips: a pitcher or a bottle 5, a jug 10, a glass or a mug 1. Once
---   empty, a pitcher or a glass turns into its empty graphic and stays; a
---   bottle or a jug is gone. An item template uses it with script_id = "drink".
+--   empty, a pitcher, a glass or a mug turns into its empty graphic and stays;
+--   a bottle or a jug is gone. An item template uses it with script_id = "drink".
 --
 -- Props it reads:
 --   drink.fill   how much a sip quenches, from 1 up; 3 without it
@@ -37,6 +37,7 @@ local DRUNK = { id = 30132, english = "You drink, and feel less thirsty." }
 
 local EMPTY_PITCHER = 0x0FF6
 local FIRST_EMPTY_GLASS = 0x1F81
+local EMPTY_MUG = 0x0FFF
 
 -- The containers by graphic: the sips a full one holds and what it is once empty (nothing: it is gone).
 local function container_of(graphic)
@@ -46,6 +47,11 @@ local function container_of(graphic)
         return { sips = 5, empty = EMPTY_PITCHER, name = "empty pitcher" }
     end
 
+    -- An empty glass holds nothing, with or without drink.uses.
+    if graphic >= FIRST_EMPTY_GLASS and graphic < FIRST_EMPTY_GLASS + 4 then
+        return { sips = 0 }
+    end
+
     -- Glasses, four facings a drink: the empty glass keeps the facing.
     if graphic >= 0x1F7D and graphic <= 0x1F94 then
         return { sips = 1, empty = FIRST_EMPTY_GLASS + (graphic - 0x1F7D) % 4, name = "empty glass" }
@@ -53,7 +59,7 @@ local function container_of(graphic)
 
     -- Mugs of ale.
     if graphic == 0x09EE or graphic == 0x09EF then
-        return { sips = 1, empty = FIRST_EMPTY_GLASS, name = "empty glass" }
+        return { sips = 1, empty = EMPTY_MUG, name = "empty mug" }
     end
 
     -- Jugs of cider.
