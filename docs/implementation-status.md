@@ -86,6 +86,8 @@ See all of them in [Commands](commands.md).
   themselves through Redis leases; the login filters them by account level and hands the player
   over with a one-use ticket.
 - The packets the server handles and sends are listed in the [packet reference](packets.md).
+- The modules and functions Lua scripts can call are listed in the
+  [Lua API reference](https://moongate.sh/lua/), generated from the server's code.
 
 ### World
 

@@ -115,4 +115,10 @@ export const contentEntries = [
   { source: 'docs/security-audit.md', slug: 'contributing/security-audit', title: 'Dependency security', group: 'Contributing' },
 ];
 
-export const sidebarGroups = ['Start here', 'Run a shard', 'Scripting and content', 'Extend with C#', 'Libraries', 'Contributing'];
+export const sidebarGroups = ['Start here', 'Run a shard', 'Scripting and content', 'Lua', 'Extend with C#', 'Libraries', 'Contributing'];
+
+// Groups whose pages are generated at build time, so they have no manifest entries: `Lua` holds the API
+// reference that `scripts/build-lua.mjs` writes to `src/content/docs/lua/`.
+export const generatedSidebarItems = {
+  Lua: [{ label: 'API reference', collapsed: true, items: [{ autogenerate: { directory: 'lua' } }] }],
+};

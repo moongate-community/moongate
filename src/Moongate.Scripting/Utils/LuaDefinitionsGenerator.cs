@@ -1,8 +1,6 @@
 using System.Globalization;
-using System.Reflection;
 using System.Text;
-using Lua;
-using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Scripting.Binding;
 using Moongate.Scripting.Data.Binding;
 using Moongate.Scripting.Data.Luarc;
 
@@ -106,7 +104,7 @@ internal static class LuaDefinitionsGenerator
                 builder.Append("---@field ")
                     .Append(constant.LuaName)
                     .Append(' ')
-                    .Append(LuaTypeName(constant.Type))
+                    .Append(LuaFunctionDescriber.LuaTypeName(constant.Type))
                     .Append('\n');
             }
 
@@ -118,7 +116,7 @@ internal static class LuaDefinitionsGenerator
                     .Append('.')
                     .Append(constant.LuaName)
                     .Append(" = ")
-                    .Append(LuaLiteral(constant.Value, constant.Type))
+                    .Append(LuaFunctionDescriber.LuaLiteral(constant.Value, constant.Type))
                     .Append('\n');
             }
 
@@ -185,40 +183,23 @@ internal static class LuaDefinitionsGenerator
             AppendHelp(builder, function.HelpText);
         }
 
-        var parameters = function.Method.GetParameters();
-        var names = new List<string>();
+        var description = LuaFunctionDescriber.Describe(function);
 
-        foreach (var parameter in parameters)
+        // LuaLS resolves @param names positionally against the signature, so the varargs are annotated as "...",
+        // matching the "..." the signature line below emits.
+        foreach (var parameter in description.Parameters)
         {
-            var isParams = parameter.GetCustomAttribute<ParamArrayAttribute>() is not null;
-
-            // LuaLS resolves @param names positionally against the signature: a params parameter must be
-            // annotated as "..." (never its CLR name), matching the "..." the signature line below emits.
-            var type = isParams ? parameter.ParameterType.GetElementType()! : parameter.ParameterType;
-            var name = isParams ? "..." : parameter.Name!;
-            var optional = !isParams && (parameter.HasDefaultValue || IsNullableValueType(parameter.ParameterType))
-                ? "?"
-                : "";
-
-            // The converter also accepts an enum member by name, so a script may pass the string; returns
-            // stay the bare enum because the engine always hands back the number.
-            // A declared Lua type (such as the EventName alias) wins over the one derived from the CLR type.
-            var typeName = parameter.GetCustomAttribute<ScriptParameterTypeAttribute>()?.LuaType ??
-                           ((Nullable.GetUnderlyingType(type) ?? type).IsEnum
-                               ? LuaTypeName(type) + "|string"
-                               : LuaTypeName(type));
-            builder.Append("---@param ").Append(name).Append(optional).Append(' ').Append(typeName).Append('\n');
-            names.Add(name);
+            builder.Append("---@param ")
+                .Append(parameter.Name)
+                .Append(parameter.Optional ? "?" : "")
+                .Append(' ')
+                .Append(parameter.LuaType)
+                .Append('\n');
         }
 
-        if (function.Method.ReturnType != typeof(void))
+        if (description.Returns is not null)
         {
-            var returnType = function.Method.ReturnType;
-            var nullableReference = !returnType.IsValueType &&
-                                    new NullabilityInfoContext().Create(function.Method.ReturnParameter).ReadState ==
-                                    NullabilityState.Nullable;
-            var optional = IsNullableValueType(returnType) || nullableReference ? "?" : "";
-            builder.Append("---@return ").Append(LuaTypeName(returnType)).Append(optional).Append('\n');
+            builder.Append("---@return ").Append(description.Returns).Append('\n');
         }
 
         builder.Append("function ")
@@ -226,7 +207,7 @@ internal static class LuaDefinitionsGenerator
             .Append('.')
             .Append(function.LuaName)
             .Append('(')
-            .Append(string.Join(", ", names))
+            .Append(string.Join(", ", description.Parameters.Select(parameter => parameter.Name)))
             .Append(") end")
             .Append('\n');
         builder.Append('\n');
@@ -246,138 +227,5 @@ internal static class LuaDefinitionsGenerator
         {
             builder.Append("---").Append(line).Append('\n');
         }
-    }
-
-    /// <summary>
-    ///     Renders a double as a Lua token, mapping the three non-finite values to expressions Lua accepts (it has no numeric
-    ///     literal for any of them).
-    /// </summary>
-    private static string DoubleLiteral(double value)
-    {
-        if (double.IsNaN(value))
-        {
-            return "0/0";
-        }
-
-        if (double.IsPositiveInfinity(value))
-        {
-            return "math.huge";
-        }
-
-        if (double.IsNegativeInfinity(value))
-        {
-            return "-math.huge";
-        }
-
-        return value.ToString(CultureInfo.InvariantCulture);
-    }
-
-    /// <summary>
-    ///     Escapes a string constant so it is a single valid Lua string token: backslash, quote and every control character.
-    /// </summary>
-    private static string EscapeLuaString(string text)
-    {
-        var builder = new StringBuilder(text.Length);
-
-        foreach (var character in text)
-        {
-            switch (character)
-            {
-                case '\\':
-                    builder.Append("\\\\");
-
-                    break;
-                case '"':
-                    builder.Append("\\\"");
-
-                    break;
-                case '\n':
-                    builder.Append("\\n");
-
-                    break;
-                case '\r':
-                    builder.Append("\\r");
-
-                    break;
-                case '\t':
-                    builder.Append("\\t");
-
-                    break;
-                default:
-                    if (char.IsControl(character))
-                    {
-                        // Lua's \ddd escape greedily consumes up to three following decimal digits, so an
-                        // unpadded code (e.g. \7 before a literal "1") would read back as a different escape.
-                        // Always emitting three digits keeps every following character its own token.
-                        builder.Append('\\').Append(((int)character).ToString("D3", CultureInfo.InvariantCulture));
-                    }
-                    else
-                    {
-                        builder.Append(character);
-                    }
-
-                    break;
-            }
-        }
-
-        return builder.ToString();
-    }
-
-    private static bool IsNullableValueType(Type type)
-    {
-        return Nullable.GetUnderlyingType(type) is not null;
-    }
-
-    private static string LuaLiteral(object? value, Type type)
-    {
-        return value switch
-        {
-            null        => "nil",
-            string text => "\"" + EscapeLuaString(text) + "\"",
-            bool flag   => flag ? "true" : "false",
-            _ when type.IsEnum => Convert.ToInt64(value, CultureInfo.InvariantCulture)
-                .ToString(CultureInfo.InvariantCulture),
-            double number       => DoubleLiteral(number),
-            float number        => DoubleLiteral(number),
-            IFormattable number => number.ToString(null, CultureInfo.InvariantCulture),
-            _                   => "nil"
-        };
-    }
-
-    private static string LuaTypeName(Type type)
-    {
-        var underlying = Nullable.GetUnderlyingType(type) ?? type;
-
-        if (underlying.IsEnum)
-        {
-            return underlying.Name;
-        }
-
-        if (underlying == typeof(int) || underlying == typeof(long))
-        {
-            return "integer";
-        }
-
-        if (underlying == typeof(double) || underlying == typeof(float))
-        {
-            return "number";
-        }
-
-        if (underlying == typeof(bool))
-        {
-            return "boolean";
-        }
-
-        if (underlying == typeof(string))
-        {
-            return "string";
-        }
-
-        if (underlying == typeof(LuaTable))
-        {
-            return "table";
-        }
-
-        return "any";
     }
 }
