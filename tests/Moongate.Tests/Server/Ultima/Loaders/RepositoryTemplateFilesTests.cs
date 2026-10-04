@@ -181,9 +181,9 @@ public sealed class RepositoryTemplateFilesTests
                      .Entities.ToDictionary(spawn => spawn.Id);
 
         Assert.Equal(446, lists.Length);
-        Assert.Equal(4440, spawns.Count);
+        Assert.Equal(4450, spawns.Count);
         // The treasure chests of ModernUO's spawners: regions of items.
-        var chests = spawns.Values.Where(spawn => spawn.ItemIds.Count > 0).ToList();
+        var chests = spawns.Values.Where(spawn => spawn.ItemIds.Count > 0 && !spawn.Id.StartsWith("felucca_jail_chest_", StringComparison.Ordinal)).ToList();
         Assert.Equal(399, chests.Count);
         Assert.Equal(633, chests.Sum(chest => chest.Max));
         Assert.Equal(
@@ -257,12 +257,54 @@ public sealed class RepositoryTemplateFilesTests
 
         var tables = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
 
-        Assert.Equal(124, tables.Count);
+        Assert.Equal(126, tables.Count);
         // What the town containers fill up with: ModernUO's 35 kinds of place.
         var fillable = tables.Where(table => table.Id.StartsWith("fillable_", StringComparison.Ordinal)).ToList();
         Assert.Equal(35, fillable.Count);
         Assert.All(fillable, table => Assert.NotEmpty(table.Entries));
         Assert.Equal(338, fillable.Sum(table => table.Entries.Count));
+    }
+
+    [Fact]
+    public async Task ShippedJailChestsAndNote_AreWhatTheJailNeeds()
+    {
+        TomlUtils.AddTomlConverter(new Point3DTomlConverter());
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var templates = items.ToDictionary(template => template.Id);
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var tables = loots.ToDictionary(table => table.Id);
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots))
+                          .LoadDataAsync()).Entities.ToArray();
+        var lists = (await new NpcListsLoader(directories, new StubDataLoaderService().With(mobiles)).LoadDataAsync()).Entities.ToArray();
+        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists).With(items)).LoadDataAsync()).Entities;
+        var jail = Assert.Single((await new JailLoader(directories).LoadDataAsync()).Entities);
+
+        Assert.Equal("jail_note", templates[JailService.NoteTemplate].ScriptId);
+        var chest = templates["jail_chest"];
+        Assert.Equal(((bool?)false, (bool?)true, (int?)60), (chest.Movable, chest.Decays, chest.DecayMinutes));
+        Assert.Equal(["jail_bread", "jail_water"], chest.Loot);
+        // One entry each: a chest always has bread and water.
+        Assert.Equal("0x103b_bread_loaf", Assert.Single(tables["jail_bread"].Entries).ItemId);
+        Assert.Equal("0x1f9e_pitcher_of_water", Assert.Single(tables["jail_water"].Entries).ItemId);
+
+        // One region per cell, on one tile of the cell that is not where the prisoner arrives.
+        var regions = spawns.Where(spawn => spawn.ItemIds.Contains("jail_chest")).ToList();
+        Assert.Equal(jail.Cell.Count, regions.Count);
+        Assert.All(
+            regions,
+            region =>
+            {
+                Assert.Equal((jail.Map, 1, 1, 2), (region.Map, region.Max, region.MinMinutes, region.MaxMinutes));
+                var area = Assert.Single(region.Areas);
+                Assert.Equal((area.X1, area.Y1), (area.X2, area.Y2));
+                Assert.InRange(area.X1, 5272, 5310);
+                Assert.InRange(area.Y1, 1160, 1190);
+                Assert.DoesNotContain(jail.Cell, cell => cell.Location.X == area.X1 && cell.Location.Y == area.Y1);
+            }
+        );
+        Assert.Equal(regions.Count, regions.Select(region => (region.Areas[0].X1, region.Areas[0].Y1)).Distinct().Count());
     }
 
     private static DirectoriesConfig Directories()

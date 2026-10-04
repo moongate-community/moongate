@@ -1,0 +1,29 @@
+# ==============================================================================
+# Moongate - templates/loots/jail.toml
+#
+# What it is for:
+#   What the chest of a jail cell holds (item template jail_chest in
+#   templates/items/jail.toml): bread and a pitcher of water. Two tables of one
+#   entry each, so a chest always has both. Change the items or the amounts
+#   here to feed the prisoners something else.
+#
+# Fields:
+#   [[loot]]            one table
+#   [[loot.entries]]    one outcome
+#   weight              the share of the outcome among those of its table
+#   item_id             the item template it gives
+#   amount              how many: a number, or "min-max"
+# ==============================================================================
+
+[[loot]]
+id = "jail_bread"
+[[loot.entries]]
+weight = 1
+item_id = "0x103b_bread_loaf"
+amount = "2-4"
+
+[[loot]]
+id = "jail_water"
+[[loot.entries]]
+weight = 1
+item_id = "0x1f9e_pitcher_of_water"
