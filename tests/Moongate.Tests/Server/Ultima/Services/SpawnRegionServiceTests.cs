@@ -243,20 +243,6 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task AFixedZBelowTheGround_RisesToTheGround()
-    {
-        // As ModernUO's spawner 130 of Tokuno's wild life: left at z 0 on a hill whose ground is at 26.
-        _movement.LandingZ = 26;
-        var buried = Spawn("buried");
-        buried.Z = 16;
-        await StartAsync(new ScriptedRandom(0), buried);
-
-        await TickAsync();
-
-        Assert.Equal([26], _movement.SpawnCeilings);
-    }
-
-    [Fact]
     public async Task ASpawnedNpc_KeepsItsRegionAndHomeArea()
     {
         await StartAsync(new ScriptedRandom(0), Spawn("forest", x1: 10, y1: 20, x2: 30, y2: 40));

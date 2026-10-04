@@ -84,9 +84,8 @@ from the folder and ignores the key, so a `map` that disagrees with its folder c
    fill. The NPCs are saved with the world, so after a restart the regions are already full.
 3. **The spot.** For each NPC the region picks the template first, then tries up to 100 random
    cells of its `areas`, outside `exclude`:
-   - a land mobile stands on the highest surface at most `pref_z` above the ground (or at most `z`,
-     but never below the ground of the cell, since nothing lies under the land), with room for a
-     person above it;
+   - a land mobile stands on the highest surface at most `pref_z` above the ground (or at most `z`),
+     with room for a person above it;
    - a mobile whose template has `movement = "water"` goes on water (not blood, swamp or a
      trough), and one with `both` on land, else on water;
    - with `only_outside`, a spot under a roof (a static more than 10 above it) is refused.
