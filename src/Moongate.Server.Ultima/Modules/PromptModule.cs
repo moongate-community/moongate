@@ -38,7 +38,7 @@ public sealed class PromptModule
     ///     <c>nil</c>.
     /// </summary>
     [ScriptFunction(helpText: "Asks the player for a line of text; the function gets the text, up to 128 characters without the spaces around it, or nil when the player escaped, was asked something else or left. False for an NPC or a player not in the world.")]
-    public bool Ask(long player, LuaValue callback)
+    public bool Ask(long player, [ScriptParameterType("function")] LuaValue callback)
     {
         if (callback.Type != LuaValueType.Function)
         {

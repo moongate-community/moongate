@@ -77,10 +77,24 @@ internal static class Program
                 {
                     name = constant.LuaName,
                     type = LuaFunctionDescriber.LuaTypeName(constant.Type),
-                    value = LuaFunctionDescriber.LuaLiteral(constant.Value, constant.Type),
+                    // A constant read through a property, such as the engine's version, has the value of the
+                    // process that reads it: here that is this tool, so the page says the server sets it.
+                    value = IsComputed(module.ModuleType, constant.LuaName)
+                        ? null
+                        : LuaFunctionDescriber.LuaLiteral(constant.Value, constant.Type),
                     help = constant.HelpText
                 })
         };
+    }
+
+    private static bool IsComputed(Type moduleType, string luaName)
+    {
+        const BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly;
+
+        return moduleType.GetProperties(flags)
+            .Any(property => property.GetCustomAttribute<ScriptConstantAttribute>() is { } attribute &&
+                             (attribute.Name ?? property.Name) == luaName
+            );
     }
 
     private static object ToRow(Type enumType)

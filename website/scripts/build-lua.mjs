@@ -40,9 +40,25 @@ function validate(dump) {
   }
 }
 
-// Help text is prose from C# attributes: keep it from opening an HTML tag.
-const text = value => value.replaceAll('<', '&lt;');
-const cell = value => text(value).replaceAll('|', '\\|').replace(/\s*\n\s*/g, ' ');
+// Everything that comes from a C# attribute is written as HTML, never as Markdown: help text holds Lua such as
+// g:text{...}, ~1_NAME~ and { kind = 'object' }, which Markdown would read as a directive, strike through or
+// print with curled quotes. An HTML block ends at a blank line, so none of these writes one.
+const html = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+const code = value => `<code>${html(value)}</code>`;
+const paragraphs = value => value.trim().split(/\n\s*\n/)
+  .map(paragraph => `<p>${paragraph.split('\n').map(line => html(line.trim())).join('<br>\n')}</p>`);
+const inline = value => html(value.trim()).replace(/\s*\n\s*/g, ' ');
+
+function table(headers, rows) {
+  return [
+    '<table>',
+    `<thead><tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr></thead>`,
+    '<tbody>',
+    ...rows.map(cells => `<tr>${cells.map(cell => `<td>${cell}</td>`).join('')}</tr>`),
+    '</tbody>',
+    '</table>',
+  ];
+}
 
 function frontMatter({ title, description, order, label }) {
   return [
@@ -57,47 +73,46 @@ function frontMatter({ title, description, order, label }) {
   ].join('\n');
 }
 
-// "DirectionType|string" becomes one code span per alternative, the enum linked, the pipe escaped for a table.
-function typeCell(type, enums) {
+// "DirectionType|string" becomes one code span per alternative, with the enum linked to its heading.
+function typeHtml(type, enums) {
   return type.split('|').map(part => {
-    const code = `\`${part}\``;
     const enumName = part.replace(/\?$/, '');
-    return enums.has(enumName) ? `[${code}](${docsBasePath}lua/enums/#${enumName.toLowerCase()})` : code;
-  }).join('\\|');
+    return enums.has(enumName) ? `<a href="${docsBasePath}lua/enums/#${enumName.toLowerCase()}">${code(part)}</a>` : code(part);
+  }).join(' | ');
 }
 
 function functionSection(module, fn, enums) {
   const names = fn.parameters.map(parameter => parameter.name + (parameter.optional ? '?' : ''));
   const signature = `${module.name}.${fn.name}(${names.join(', ')})${fn.returns ? ` -> ${fn.returns}` : ''}`;
-  const lines = [`### ${fn.name}`, '', '```lua', signature, '```', '', text(fn.help.trim()), ''];
+  const lines = [`### ${fn.name}`, '', '```lua', signature, '```', ''];
+  for (const paragraph of paragraphs(fn.help)) lines.push(paragraph, '');
   if (fn.parameters.length) {
-    lines.push('| Parameter | Type | Default |', '| --- | --- | --- |');
-    for (const parameter of fn.parameters) {
-      const name = `\`${parameter.name}\`${parameter.optional ? ' (optional)' : ''}`;
-      const fallback = parameter.optional ? ` \`${parameter.default ?? 'nil'}\` ` : ' ';
-      lines.push(`| ${name} | ${typeCell(parameter.type, enums)} |${fallback}|`);
-    }
-    lines.push('');
+    lines.push(...table(['Parameter', 'Type', 'Default'], fn.parameters.map(parameter => [
+      code(parameter.name) + (parameter.optional ? ' (optional)' : ''),
+      typeHtml(parameter.type, enums),
+      parameter.optional ? code(parameter.default ?? 'nil') : '',
+    ])), '');
   }
+  if (fn.returns) lines.push(`<p>Returns ${typeHtml(fn.returns, enums)}.</p>`, '');
   return lines;
 }
 
 function modulePage(module, enums, sourceRef) {
-  const lines = [
-    frontMatter({ title: module.name, description: module.description, order: 1 }),
-    text(module.description.trim()), '',
-    `Source: [\`${module.source}\`](${repositoryUrl}/blob/${sourceRef}/${module.source})`, '',
-  ];
+  const lines = [frontMatter({ title: module.name, description: module.description, order: 1 })];
+  for (const paragraph of paragraphs(module.description)) lines.push(paragraph, '');
+  lines.push(`Source: [\`${module.source}\`](${repositoryUrl}/blob/${sourceRef}/${module.source})`, '');
   if (module.functions.length) {
     lines.push('## Functions', '');
     for (const fn of [...module.functions].sort(byName)) lines.push(...functionSection(module, fn, enums));
   }
   if (module.constants.length) {
-    lines.push('## Constants', '', '| Name | Type | Value | Description |', '| --- | --- | --- | --- |');
-    for (const constant of [...module.constants].sort(byName)) {
-      lines.push(`| \`${constant.name}\` | ${typeCell(constant.type, enums)} | \`${constant.value}\` | ${cell(constant.help ?? '')} |`);
-    }
-    lines.push('');
+    // A null value is a constant the server computes when it starts, such as its version: the dump cannot know it.
+    lines.push('## Constants', '', ...table(['Name', 'Type', 'Value', 'Description'], [...module.constants].sort(byName).map(constant => [
+      code(constant.name),
+      typeHtml(constant.type, enums),
+      constant.value === null ? 'set when the server starts' : code(constant.value),
+      inline(constant.help ?? ''),
+    ])), '');
   }
   return lines.join('\n');
 }
@@ -111,8 +126,10 @@ function overviewPage(modules) {
     'Every module, function, constant and enum the server publishes to Lua scripts. These pages are generated',
     `from the server's code on every build. To learn how scripts are written and loaded, read`,
     `[Writing Lua scripts](${docsBasePath}server/scripting/).`, '',
-    '## Modules', '', '| Module | Description |', '| --- | --- |',
-    ...modules.map(module => `| [\`${module.name}\`](${docsBasePath}lua/${module.name}/) | ${cell(module.description.trim())} |`), '',
+    '## Modules', '',
+    ...table(['Module', 'Description'], modules.map(module => [
+      `<a href="${docsBasePath}lua/${module.name}/">${code(module.name)}</a>`, inline(module.description),
+    ])), '',
     '## Globals', '',
     '### wait', '', '```lua', 'wait(seconds) -> number', '```', '',
     'Suspends the running coroutine and resumes it on the game loop after the given seconds; it returns the',

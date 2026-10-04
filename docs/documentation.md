@@ -65,6 +65,12 @@ the site agree. Build fails when a module has no description, a function has no 
 name repeats. Each function has an anchor named after it, such as `/lua/npc/#walk_to`. The dump
 requires the .NET 10 SDK.
 
+Help text is written to the pages as HTML, not Markdown, so Lua such as `g:text{...}` or
+`~1_NAME~` prints as written. A constant read through a C# property, such as `engine.version`,
+shows "set when the server starts": its value belongs to the process that reads it. The site is
+built at release time, so `PublishedScriptModulesTests` checks the same requirements in the test
+suite: a pull request that adds a function without help text fails there.
+
 The [Test coverage](test-coverage.md) page is filled from the coverage report in
 `artifacts/coverage` (or `MOONGATE_COVERAGE_DIR`): the importer replaces the
 `<!-- coverage-summary -->` marker with the per-assembly table and copies the HTML

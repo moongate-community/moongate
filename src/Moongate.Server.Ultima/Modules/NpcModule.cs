@@ -244,7 +244,14 @@ public sealed class NpcModule
     ///     script's <c>on_spawn</c> runs then, and so does <paramref name="callback" />, with its serial.
     /// </summary>
     [ScriptFunction(helpText: "Spawns an NPC of a mobile template at x, y, z of the map, a moment later; the optional function gets its serial. False for an unknown template, a spot outside the map or a z outside -128 to 127.")]
-    public bool Spawn(string template, MapType map, int x, int y, int z, LuaValue callback = default)
+    public bool Spawn(
+        string template,
+        MapType map,
+        int x,
+        int y,
+        int z,
+        [ScriptParameterType("function")] LuaValue callback = default
+    )
     {
         if (callback.Type is not (LuaValueType.Nil or LuaValueType.Function))
         {
