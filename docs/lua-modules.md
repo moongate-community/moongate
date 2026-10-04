@@ -185,6 +185,9 @@ parameters with their defaults. So both texts are required for those modules: th
 fails on a module without help text or a function without `helpText`. A module registered by a
 plugin of your own is not listed on the site; its `definitions.lua` entries are still written.
 
+To show an example under a function of a shipped module, add a `## <function>` section to
+`website/lua/examples/<module>.md`; see [Writing documentation](documentation.md).
+
 A callback is taken as a `LuaValue`, which the editor and the site would show as `any`. Mark it
 `[ScriptParameterType("function")] LuaValue callback`, as `timer.after` does, so both show
 `function`.

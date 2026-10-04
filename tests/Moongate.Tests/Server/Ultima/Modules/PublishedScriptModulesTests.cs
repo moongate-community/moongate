@@ -74,6 +74,47 @@ public sealed class PublishedScriptModulesTests
         Assert.Equal("function", described.Parameters.Single(candidate => candidate.Name == parameter).LuaType);
     }
 
+    [Fact]
+    public void EveryExampleOfTheReference_NamesAPublishedFunction()
+    {
+        var modules = Published()
+            .ToDictionary(
+                module => module.Name,
+                module => module.Functions.Select(function => function.LuaName).ToHashSet(StringComparer.Ordinal),
+                StringComparer.Ordinal
+            );
+        var unknown = new List<string>();
+
+        foreach (var file in Directory.EnumerateFiles(Path.Combine(RepositoryRoot(), "website", "lua", "examples"), "*.md"))
+        {
+            var module = Path.GetFileNameWithoutExtension(file);
+            var fenced = false;
+
+            foreach (var line in File.ReadLines(file))
+            {
+                if (line.StartsWith("```", StringComparison.Ordinal))
+                {
+                    fenced = !fenced;
+                }
+
+                // As website/scripts/build-lua.mjs reads them: a "## <function>" line outside a code block.
+                if (fenced || !line.StartsWith("## ", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                var function = line[3..].TrimEnd();
+
+                if (!modules.TryGetValue(module, out var functions) || !functions.Contains(function))
+                {
+                    unknown.Add(module + "." + function);
+                }
+            }
+        }
+
+        Assert.Empty(unknown);
+    }
+
     private static List<ModuleDescription> Published()
     {
         using var container = new Container();
@@ -85,5 +126,22 @@ public sealed class PublishedScriptModulesTests
             .Concat(container.Resolve<IScriptModuleRegistry>().ModuleTypes)
             .Select(LuaModuleDescriber.Describe)
             .ToList();
+    }
+
+    private static string RepositoryRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "Moongate.slnx")))
+        {
+            directory = directory.Parent;
+        }
+
+        if (directory is null)
+        {
+            throw new InvalidOperationException("The repository root was not found above " + AppContext.BaseDirectory);
+        }
+
+        return directory.FullName;
     }
 }

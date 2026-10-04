@@ -79,13 +79,15 @@ Some modules have a page that says more:
 
 ## Where to read next
 
+- [Lua in Moongate](scripting/lua-in-moongate.md): the Lua version, the libraries a script has, and where it
+  differs from the manual.
 - [Events and timers](scripting/events.md): server events, `wait` and repeating timers.
 - [Mobile scripts](scripting/mobile-scripts.md): the functions an NPC's script may define, and walking a path.
 - [Item scripts](scripting/item-scripts.md): the functions an item's script may define, and how one refuses a move.
 - [Shipped scripts](scripting/shipped-scripts.md): what each script of the distribution does: monsters, doors,
   lights, food, teleporters, moongates, clocks and the containers that fill up.
 - [Effects](scripting/effects.md): the options of the `effect` module.
-- [Reload, budgets and editor](scripting/runtime.md): reloading a script, what a script may not do, and
+- [Reload, budgets and editor](scripting/runtime.md): reloading a script, the instruction budgets, and
   completion in an editor.
-- [Short examples](scripting/examples.md): one-line examples of common calls.
-- [Lua API reference](https://moongate.sh/lua/): every function, with its signature.
+- [Lua API reference](https://moongate.sh/lua/): every function, with its signature and, for many, an
+  example.
