@@ -309,7 +309,10 @@ the `modernuo_` files of that map a previous run wrote; the other files of the f
 alone, and a map with nothing to write keeps its files. A region's id names the era, the file and
 the spawner's index in it (`malas_modernuo_post_uoml_south_12`), so it stays the same when a later
 run, with more templates, resolves more mobiles. Use it for maps UOX3 does not cover: on Felucca or
-Trammel it would add ModernUO's spawns on top of UOX3's. A spawner becomes:
+Trammel it would add ModernUO's spawns on top of UOX3's. A region takes the map its spawner
+names, which is not always its folder's: the Yomotsu Mines and the Fan Dancer's Dojo lie in
+ModernUO's `tokuno` folder and on the Malas map, so their regions are in `tokuno/` with
+`map = "malas"`. A spawner becomes:
 
 - `mobile_ids`: its entries, each ModernUO class found among the `--mobiles` templates. The command
   tries an alias of its table first (`Minter` is `banker`, `GreatHart` is `hart`, guildmasters are

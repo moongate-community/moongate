@@ -1,5 +1,6 @@
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
+using Moongate.Ultima.Types;
 using Moongate.UoxItemConverter.Internal;
 
 namespace Moongate.UoxItemConverter.Tests.Integration;
@@ -163,6 +164,29 @@ public sealed class ModernUoChestConverterTests : IDisposable
         Assert.Equal(2, Run());
 
         Assert.Contains("does not exist", _error.ToString());
+    }
+
+    [Fact]
+    public void Run_AChestOnAnotherMapThanItsFolder_KeepsItsOwnMap()
+    {
+        // As the chests of the Fan Dancer's Dojo: in ModernUO's tokuno folder, on the Malas map.
+        Write(
+            "shared/tokuno/FanDancersDojo.json",
+            """
+            [ { "location": [80, 700, 10], "map": "Malas", "count": 1, "minDelay": "00:05:00", "maxDelay": "00:10:00", "homeRange": 2,
+                "entries": [ { "name": "TreasureChestLevel2", "maxCount": 1, "probability": 100 } ] },
+              { "location": [800, 700, 10], "count": 1, "minDelay": "00:05:00", "maxDelay": "00:10:00", "homeRange": 2,
+                "entries": [ { "name": "TreasureChestLevel2", "maxCount": 1, "probability": 100 } ] } ]
+            """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        // The file and the ids stay with the folder; a spawner that names no map takes the folder's.
+        Assert.Equal(
+            [("tokuno_chest_shared_fan_dancers_dojo_0", MapType.Malas), ("tokuno_chest_shared_fan_dancers_dojo_1", MapType.Tokuno)],
+            Read("tokuno").Select(spawn => (spawn.Id, spawn.Map))
+        );
     }
 
     private void Write(string path, string json)

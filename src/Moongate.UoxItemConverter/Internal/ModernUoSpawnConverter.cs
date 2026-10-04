@@ -10,7 +10,8 @@ namespace Moongate.UoxItemConverter.Internal;
 ///     Converts ModernUO's spawners (<c>Distribution/Data/Spawns/&lt;era&gt;/&lt;map&gt;/*.json</c>) of the chosen maps
 ///     into spawn regions, for the maps UOX3 has no spawns for. It reads the <c>shared</c> and <c>post-uoml</c> eras,
 ///     the world of a modern client, and writes <c>&lt;map&gt;/modernuo_&lt;file&gt;.toml</c>, replacing the
-///     <c>modernuo_</c> files of the map it wrote before. A region id names the era, the file and the spawner's index in
+///     <c>modernuo_</c> files of the map it wrote before. A region keeps the map its spawner names, which may differ
+///     from its folder's. A region id names the era, the file and the spawner's index in
 ///     it, so it stays the same when a later run resolves more mobiles.
 /// </summary>
 internal static class ModernUoSpawnConverter
@@ -222,8 +223,9 @@ internal static class ModernUoSpawnConverter
         }
     }
 
-    private static SpawnTemplate Region(JsonElement spawner, string id, MapType map, List<string> mobiles, int max)
+    private static SpawnTemplate Region(JsonElement spawner, string id, MapType folder, List<string> mobiles, int max)
     {
+        var map = MapOf(spawner, folder);
         var min = Minutes(spawner, "minDelay");
         var spawn = new SpawnTemplate
         {
@@ -239,6 +241,18 @@ internal static class ModernUoSpawnConverter
         Place(spawner, spawn);
 
         return spawn;
+    }
+
+    // The map a spawner names, which is not always its folder's: the Yomotsu Mines and the Fan Dancer's Dojo lie in the
+    // tokuno folder and on the Malas map. One that names none takes the folder's.
+    internal static MapType MapOf(JsonElement spawner, MapType folder)
+    {
+        return spawner.TryGetProperty("map", out var value) &&
+               value.ValueKind == JsonValueKind.String &&
+               Enum.TryParse<MapType>(value.GetString(), true, out var map) &&
+               Enum.IsDefined(map)
+            ? map
+            : folder;
     }
 
     // The area a spawner spawns in and the height its spots stay under.

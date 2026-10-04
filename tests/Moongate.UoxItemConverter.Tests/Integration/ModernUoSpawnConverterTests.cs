@@ -71,6 +71,31 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_ASpawnerOnAnotherMapThanItsFolder_KeepsItsOwnMap()
+    {
+        // As the Yomotsu Mines and the Fan Dancer's Dojo: in ModernUO's tokuno folder, on the Malas map.
+        WriteSpawners(
+            "shared/tokuno/YomutsoMines.json",
+            Spawner(100, 80, 0, 5, 2, "00:05:00", "00:10:00", "EarthElemental"),
+            Spawner(700, 1200, 25, 5, 2, "00:05:00", "00:10:00", "GreatHart").Replace("\"map\": \"Malas\"", "\"map\": \"Tokuno\""),
+            Spawner(701, 1201, 25, 5, 2, "00:05:00", "00:10:00", "GreatHart").Replace(", \"map\": \"Malas\",", ",")
+        );
+
+        Assert.True(Run(MapType.Tokuno) == 0, CombinedOutput);
+
+        // The file and the ids stay with the folder; a spawner that names no map takes the folder's.
+        var spawns = Read("tokuno", "modernuo_yomutso_mines");
+        Assert.Equal(
+            [
+                ("tokuno_modernuo_shared_yomutso_mines_0", MapType.Malas, "Malas earthele"),
+                ("tokuno_modernuo_shared_yomutso_mines_1", MapType.Tokuno, "Tokuno great_hart"),
+                ("tokuno_modernuo_shared_yomutso_mines_2", MapType.Tokuno, "Tokuno great_hart")
+            ],
+            spawns.Select(spawn => (spawn.Id, spawn.Map, spawn.Name))
+        );
+    }
+
+    [Fact]
     public void Run_AnEntryCappedBelowTheCount_GetsItsOwnRegion_AndUnknownEntriesKeepTheirShare()
     {
         WriteSpawners(
