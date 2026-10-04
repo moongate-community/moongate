@@ -27,4 +27,12 @@ public sealed class LocalizedMessagePacketTests
         Assert.Equal(Convert.FromHexString("C1" + "0032" + "FFFFFFFF" + "FFFF" + "00" + "03B2" + "0003" + "0007A483"), bytes[..18]);
         Assert.Equal("System"u8.ToArray(), bytes[18..24]);
     }
+
+    [Fact]
+    public void System_WithAHue_WritesThatHue()
+    {
+        var bytes = PacketCodec.Encode(LocalizedMessagePacket.System(500112, "", 0x3F));
+
+        Assert.Equal(Convert.FromHexString("003F"), bytes[10..12]);
+    }
 }

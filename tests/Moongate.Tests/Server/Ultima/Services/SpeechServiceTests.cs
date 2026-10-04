@@ -60,6 +60,25 @@ public sealed class SpeechServiceTests
     }
 
     [Fact]
+    public async Task Tell_AndTellCliloc_WithAHue_SendTheTextInThatColour()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        await fixture.AddAsync(2);
+        Assert.True(fixture.Mobiles.TryGet(new Serial(2), out var mobile));
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+
+        await fixture.Network.ExecuteOnLoopAsync(() =>
+            {
+                speech.Tell(mobile!, "You have entered Britain.", 0x3F);
+                speech.TellCliloc(mobile!, 500113, "", 0x22);
+            }
+        );
+
+        Assert.Equal(0x3F, Assert.IsType<UnicodeSpeechMessagePacket>(fixture.Sender.Sent[0]).Hue.Value);
+        Assert.Equal(0x22, Assert.IsType<LocalizedMessagePacket>(fixture.Sender.Sent[1]).Hue);
+    }
+
+    [Fact]
     public async Task Tell_AnNpc_IsFalseAndSendsNothing()
     {
         await using var fixture = await BroadcastFixture.CreateAsync();

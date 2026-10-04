@@ -35,7 +35,7 @@ public interface ISpeechService
     ///     the lower left of its screen.
     /// </summary>
     /// <returns>Whether it was sent: false for an NPC or a player whose client is gone.</returns>
-    bool Tell(MobileEntity player, string text);
+    bool Tell(MobileEntity player, string text, int? hue = null);
 
     /// <summary>
     ///     Sends a text of the client, by its number, as a system message (0xC1) to the player
@@ -43,5 +43,5 @@ public interface ISpeechService
     ///     <paramref name="arguments" /> in its <c>~1_NAME~</c> places, split by tabs.
     /// </summary>
     /// <returns>Whether it was sent: false for an NPC or a player whose client is gone.</returns>
-    bool TellCliloc(MobileEntity player, int cliloc, string arguments = "");
+    bool TellCliloc(MobileEntity player, int cliloc, string arguments = "", int? hue = null);
 }

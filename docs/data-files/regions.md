@@ -106,6 +106,8 @@ nearest guarded place around the player; where there is none, as at a moongate o
 a town without guards, the client's own two texts are used (500112, 500113). The four texts are
 messages 30134 to 30137 of `data/messages`.
 
+What is entered reads in green, what is left in red, the client's own two texts included.
+
 ## Travel zones
 
 Travel zones are unnamed regions of priority 0 that only limit travel, such as the

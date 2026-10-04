@@ -58,16 +58,20 @@ public sealed class SpeechService : ISpeechService
         return SendAround(map, location, new PlaySoundPacket(sound, location));
     }
 
-    public bool Tell(MobileEntity player, string text)
+    public bool Tell(MobileEntity player, string text, int? hue = null)
     {
         return _sessions.TryGetByCharacterId(player.Id, out var session) &&
-               SpeechMessageHelper.TrySend(_sender, session, SpeechMessageHelper.CreateSystem(text, SpeechHue));
+               SpeechMessageHelper.TrySend(
+                   _sender,
+                   session,
+                   SpeechMessageHelper.CreateSystem(text, hue is { } colour ? new((ushort)colour) : SpeechHue)
+               );
     }
 
-    public bool TellCliloc(MobileEntity player, int cliloc, string arguments = "")
+    public bool TellCliloc(MobileEntity player, int cliloc, string arguments = "", int? hue = null)
     {
         return _sessions.TryGetByCharacterId(player.Id, out var session) &&
-               _sender.TrySend(session.SessionId, LocalizedMessagePacket.System(cliloc, arguments));
+               _sender.TrySend(session.SessionId, LocalizedMessagePacket.System(cliloc, arguments, hue));
     }
 
     // With a speaker, those who do not see it do not hear it or its sounds either, as ModernUO.

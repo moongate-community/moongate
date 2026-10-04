@@ -56,6 +56,22 @@ public sealed class RegionAnnouncerTests
     }
 
     [Fact]
+    public void WhatIsEntered_IsGreen_WhatIsLeft_IsRed_TheClientsOwnTextsToo()
+    {
+        _announcer.RegionChanged(_aria, null, Britain);
+        _announcer.RegionChanged(_aria, Britain, null);
+        _announcer.RegionChanged(_aria, null, Nameless);
+        _announcer.RegionChanged(_aria, Nameless, null);
+
+        Assert.Equal(
+            [RegionAnnouncer.EnterHue, RegionAnnouncer.EnterHue, RegionAnnouncer.LeaveHue, RegionAnnouncer.LeaveHue],
+            _speech.ToldHues
+        );
+        Assert.Equal([RegionAnnouncer.EnterHue, RegionAnnouncer.LeaveHue], _speech.ToldClilocHues);
+        Assert.NotEqual(RegionAnnouncer.EnterHue, RegionAnnouncer.LeaveHue);
+    }
+
+    [Fact]
     public void OutOfATown_ThePlayerReadsThatItLeftItsGuards_AndTheTown()
     {
         _announcer.RegionChanged(_aria, Britain, null);

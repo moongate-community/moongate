@@ -41,16 +41,28 @@ public sealed class RecordingSpeechService : ISpeechService
 
     public List<(MobileEntity Player, int Cliloc, string Arguments)> ToldClilocs { get; } = [];
 
-    public bool TellCliloc(MobileEntity player, int cliloc, string arguments = "")
+    /// <summary>
+    ///     The colour asked for each cliloc told, in order; null for the usual one.
+    /// </summary>
+    public List<int?> ToldClilocHues { get; } = [];
+
+    /// <summary>
+    ///     The colour asked for each text told, in order; null for the usual one.
+    /// </summary>
+    public List<int?> ToldHues { get; } = [];
+
+    public bool TellCliloc(MobileEntity player, int cliloc, string arguments = "", int? hue = null)
     {
         ToldClilocs.Add((player, cliloc, arguments));
+        ToldClilocHues.Add(hue);
 
         return true;
     }
 
-    public bool Tell(MobileEntity player, string text)
+    public bool Tell(MobileEntity player, string text, int? hue = null)
     {
         Told.Add((player, text));
+        ToldHues.Add(hue);
 
         return true;
     }

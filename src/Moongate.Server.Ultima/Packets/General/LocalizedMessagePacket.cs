@@ -40,6 +40,11 @@ public sealed class LocalizedMessagePacket : BasePacket<LocalizedMessagePacket>,
 
     public string Arguments { get; }
 
+    /// <summary>
+    ///     Gets the colour of the text; the usual grey of a label unless a system message asks for another.
+    /// </summary>
+    public int Hue { get; private init; } = LabelHue;
+
     public LocalizedMessagePacket(Serial serial, int graphic, int cliloc, string name, string arguments)
     {
         Serial = serial;
@@ -60,9 +65,9 @@ public sealed class LocalizedMessagePacket : BasePacket<LocalizedMessagePacket>,
     ///     Gets a cliloc shown as a system message, in the lower left of the screen, as ModernUO's
     ///     SendLocalizedMessage: no object, the name "System".
     /// </summary>
-    public static LocalizedMessagePacket System(int cliloc, string arguments = "")
+    public static LocalizedMessagePacket System(int cliloc, string arguments = "", int? hue = null)
     {
-        return new(NoSerial, NoGraphic, cliloc, SystemName, arguments, RegularType);
+        return new(NoSerial, NoGraphic, cliloc, SystemName, arguments, RegularType) { Hue = hue ?? LabelHue };
     }
 
     public void Write(ref PacketWriter writer)
@@ -73,7 +78,7 @@ public sealed class LocalizedMessagePacket : BasePacket<LocalizedMessagePacket>,
         writer.WriteSerial(Serial);
         writer.WriteUInt16BigEndian((ushort)Graphic);
         writer.WriteByte(_type);
-        writer.WriteUInt16BigEndian(LabelHue);
+        writer.WriteUInt16BigEndian((ushort)Hue);
         writer.WriteUInt16BigEndian(LabelFont);
         writer.WriteUInt32BigEndian((uint)Cliloc);
         writer.WriteFixedAscii(new string(Name.Select(c => c is > '\0' and <= '\x7F' ? c : '?').ToArray()), NameLength);

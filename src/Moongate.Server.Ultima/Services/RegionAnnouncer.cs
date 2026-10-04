@@ -30,6 +30,10 @@ public sealed class RegionAnnouncer : IRegionAnnouncer
     public const int GuardedCliloc = 500112;
     public const int UnguardedCliloc = 500113;
 
+    // What is entered reads green, what is left reads red.
+    public const int EnterHue = 0x3F;
+    public const int LeaveHue = 0x22;
+
     private readonly ISpeechService _speech;
     private readonly IMoongateEventBus? _events;
     private readonly IGameLoopService? _loop;
@@ -133,35 +137,35 @@ public sealed class RegionAnnouncer : IRegionAnnouncer
         // Out first, the inner place before the one around it; then in, the outer first.
         if (wasGuarded && (!isGuarded || oldGuards != newGuards))
         {
-            Tell(player, UnguardedMessage, "You have left the protection of the guards of {0}.", oldGuards, UnguardedCliloc);
+            Tell(player, UnguardedMessage, "You have left the protection of the guards of {0}.", oldGuards, UnguardedCliloc, LeaveHue);
         }
 
         foreach (var place in from.Where(place => to.All(other => other.Name != place.Name)))
         {
-            _speech.Tell(player, _localization.Text(LeftMessage, "You have left {0}.", place.Name));
+            _speech.Tell(player, _localization.Text(LeftMessage, "You have left {0}.", place.Name), LeaveHue);
         }
 
         foreach (var place in to.Where(place => from.All(other => other.Name != place.Name)).Reverse())
         {
-            _speech.Tell(player, _localization.Text(EnteredMessage, "You have entered {0}.", place.Name));
+            _speech.Tell(player, _localization.Text(EnteredMessage, "You have entered {0}.", place.Name), EnterHue);
         }
 
         if (isGuarded && (!wasGuarded || oldGuards != newGuards))
         {
-            Tell(player, GuardedMessage, "You are now under the protection of the guards of {0}.", newGuards, GuardedCliloc);
+            Tell(player, GuardedMessage, "You are now under the protection of the guards of {0}.", newGuards, GuardedCliloc, EnterHue);
         }
     }
 
-    private void Tell(MobileEntity player, int message, string english, string? name, int cliloc)
+    private void Tell(MobileEntity player, int message, string english, string? name, int cliloc, int hue)
     {
         if (name is null)
         {
-            _speech.TellCliloc(player, cliloc);
+            _speech.TellCliloc(player, cliloc, "", hue);
 
             return;
         }
 
-        _speech.Tell(player, _localization.Text(message, english, name));
+        _speech.Tell(player, _localization.Text(message, english, name), hue);
     }
 
     // The places around a region, the innermost first. The loader refused loops and lost parents.
