@@ -25,6 +25,7 @@ namespace Moongate.Tests.Server.Ultima.Modules;
 
 public sealed class MobileModuleTests
 {
+    private readonly RecordingCrimeService _crimes = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingMobileStateService _state = new();
@@ -312,6 +313,20 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Criminal_SaysWhetherTheMobileIsOne_AndSetCriminalMakesOrPardonsIt()
+    {
+        var result = Run(
+            "local before = mobile.criminal(2) " +
+            "return before, mobile.set_criminal(2, true), mobile.criminal(2), mobile.set_criminal(2, false), " +
+            "mobile.criminal(2), mobile.criminal(999), mobile.set_criminal(999, true)"
+        );
+
+        Assert.Equal([false, true, true, true, false], result.Take(5).Select(value => value.Read<bool>()));
+        Assert.Equal((LuaValue.Nil, false), (result[5], result[6].Read<bool>()));
+        Assert.Equal(["criminal 2", "pardon 2"], _crimes.Calls);
+    }
+
+    [Fact]
     public void BodyType_IsTheKindOfBodyOfTheMobile_AsTheBodiesFileSays()
     {
         _aria.Body = 400;
@@ -537,7 +552,7 @@ public sealed class MobileModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view, new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human }, new BodyContent { Body = new(17), Type = BodyType.Monster }), new StubWeightService { CarriedStones = 37, MaximumStones = 215 }));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view, new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human }, new BodyContent { Body = new(17), Type = BodyType.Monster }), new StubWeightService { CarriedStones = 37, MaximumStones = 215 }, _crimes));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

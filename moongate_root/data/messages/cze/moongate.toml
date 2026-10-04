@@ -144,7 +144,7 @@
 30121 = "Položí na zem, kam zamíříš, předmět ze šablony předmětu: add <template>."
 30122 = "Odstranit lze jen předmět ležící na zemi."
 30126 = "{0}: {1} je nyní {2}."
-30127 = "Nastaví životy, manu, výdrž, hlad nebo žízeň zaměřené bytosti: set <hits|mana|stamina|hunger|thirst> <hodnota>."
+30127 = "Nastaví životy, manu, výdrž, hlad nebo žízeň zaměřené bytosti, nebo z ní udělá zločince: set <hits|mana|stamina|hunger|thirst|criminal> <hodnota>."
 
 # Moongate: texts of the item scripts.
 30114 = "Tento moongate zřejmě nikam nevede."

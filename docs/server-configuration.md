@@ -103,6 +103,9 @@ thirst_enabled = true                 # Players get thirsty; parched, they get n
 hunger_minutes = 5                    # Minutes between two points of hunger, and of thirst, lost by a player.
 fatigue_enabled = true                # Running and moving overloaded cost a player stamina.
 
+[ultima.crime]
+criminal_seconds = 120                # How long a mobile stays a criminal after its last criminal act.
+
 [ultima.spawns]
 initial_fill = true                   # The first spawn of each region after the start fills it to its max.
 
@@ -224,6 +227,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.regeneration.hunger_enabled`, `hunger_minutes` | Default `true` and 5 (from 1 to 1440), ModernUO's food decay. Every `hunger_minutes`, counted for each player from when it entered the world (one timer looks at the players every minute), a player in the world loses a point of hunger, from 20 (full) to 0; game masters and administrators do not, and never starve. At 5 the player reads that it is hungry, at 0 that it starves, and while at 0 its hit points do not come back. Off, hunger neither drops nor stops anything. NPCs are never hungry. |
 | `ultima.regeneration.thirst_enabled` | Default `true`. Thirst is counted as hunger is, from 20 (quenched) to 0 and at the same pace (`hunger_minutes`): a player in the world loses a point of each together, and the staff none. At 5 the player reads that it is thirsty, at 0 that it is parched, and while at 0 its stamina does not come back, as in UOX3. Off, thirst neither drops nor stops anything. NPCs are never thirsty. |
 | `ultima.regeneration.fatigue_enabled` | Default `true`. What moving costs a player, with ModernUO's numbers. A player carries what it wears and everything inside, the bank left out, and may carry 40 stones and 3.5 a point of strength; its status bar shows both. Carrying more, every step takes 5 points of stamina and one more every 25 stones over, twice as much running; with none left it does not move and reads the client's "too fatigued to move, because you are carrying too much weight". Running takes a point every 16 steps, and a point a step below a tenth of the stamina; with none left a player walks but does not run. Lifting is never refused: a player that puts down something while overloaded is told so. The staff and NPCs pay nothing. Off, a step costs nothing and is never refused. |
+| `ultima.crime.criminal_seconds` | Default 120 (from 1 to 86400), ModernUO's and UOX3's two minutes. A mobile that did a criminal act is a criminal for this long, its name in grey for those who see it; another act starts the time again, and a murderer stays red. The time is saved with a character, so leaving the world does not clear it; an NPC comes back innocent after a restart. A player reads the client's "You've committed a criminal act!!" when it becomes one. Nothing makes a criminal by itself yet: scripts do with `mobile.set_criminal`, the staff with `set criminal`. |
 | `ultima.spawns.initial_fill` | Default `true`. The first spawn of each spawn region after the start fills it to its `max` at once, so an empty world is full in about 10 minutes; `false` keeps UOX3's way, where the first spawn also brings only `call` NPCs. Used in game and standalone modes. See [NPC spawns](spawns.md#how-spawning-works). |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,

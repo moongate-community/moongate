@@ -40,6 +40,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
     private readonly ISeasonService? _seasons;
     private readonly IWorldViewService _view;
     private readonly IWeightService? _weight;
+    private readonly ICrimeService? _crimes;
 
     public CharacterEnterWorldService(
         IMobileService mobiles,
@@ -51,9 +52,11 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         IMotdService motd,
         ILightService? light = null,
         ISeasonService? seasons = null,
-        IWeightService? weight = null
+        IWeightService? weight = null,
+        ICrimeService? crimes = null
     )
     {
+        _crimes = crimes;
         _weight = weight;
         _light = light;
         _seasons = seasons;
@@ -98,6 +101,8 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
                     // Together on the loop: a session retirement then always finds the character live.
                     session.Set(SessionKeys.CharacterId, character.Id);
                     _mobiles.EnterWorld(character);
+                    // Before the packets that show it: a criminal that comes back is grey from the first one.
+                    _crimes?.Restore(character);
 
                     // Its rows are as its last save left them: what another player took or merged since stays out, and
                     // is not shown on the character either.
@@ -178,7 +183,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
             direction,
             character.SkinHue,
             flags,
-            character.Notoriety ?? NotorietyType.Innocent,
+            character.ShownNotoriety,
             _mobiles.GetEquipment(character, play.Equipment)
         );
         var status = _mobiles.GetStatus(character);

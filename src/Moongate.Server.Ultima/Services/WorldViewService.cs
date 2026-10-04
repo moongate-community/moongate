@@ -527,7 +527,7 @@ public sealed class WorldViewService : IWorldViewService
             mobile.Direction,
             mobile.SkinHue,
             _mobiles.GetFlags(mobile),
-            mobile.Notoriety ?? NotorietyType.Innocent,
+            mobile.ShownNotoriety,
             _mobiles.GetEquipment(mobile, worn)
         );
     }
@@ -542,7 +542,7 @@ public sealed class WorldViewService : IWorldViewService
             running,
             mobile.SkinHue,
             _mobiles.GetFlags(mobile),
-            mobile.Notoriety ?? NotorietyType.Innocent
+            mobile.ShownNotoriety
         );
     }
 

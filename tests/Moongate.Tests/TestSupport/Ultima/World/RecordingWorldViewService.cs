@@ -49,8 +49,14 @@ public sealed class RecordingWorldViewService : IWorldViewService
         Record($"Animated {mobile.Id.Value} {action} {frameCount} {repeatCount}");
     }
 
+    /// <summary>
+    ///     The objects whose flags were shown again, in order.
+    /// </summary>
+    public List<MobileEntity> Mobiles { get; } = [];
+
     public void MobileFlagsChanged(MobileEntity mobile)
     {
+        Mobiles.Add(mobile);
         Record($"FlagsChanged {mobile.Id.Value}");
     }
 
