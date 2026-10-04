@@ -398,17 +398,24 @@ public sealed class NpcModule
 
         var here = npc.Location;
 
-        // Outside, as after a chase: back to the nearest cell of home, along a path, else straight. When neither
-        // moves it, it steps at random, so a wall between it and home does not hold it for ever.
+        // Outside, as after a chase: back to the nearest cell of home along a path. With no way found it steps at
+        // random, so a wall between it and home does not hold it for ever; without a path service it goes straight.
         if (!Contains(home, here.X, here.Y))
         {
             var x = Math.Clamp(here.X, home.Start.X, home.End.X);
             var y = Math.Clamp(here.Y, home.Start.Y, home.End.Y);
-            var straight = here.GetDirectionTo(new Point3D(x, y, here.Z)) & DirectionMask;
+            var state = WalkTo(serial, x, y);
 
-            return WalkTo(serial, x, y) == "moving" ||
-                   Take(npc, straight, false) ||
-                   Take(npc, (DirectionType)RandomUtils.Random(Directions), false);
+            if (state == "moving")
+            {
+                return true;
+            }
+
+            var direction = state is null
+                                ? here.GetDirectionTo(new Point3D(x, y, here.Z)) & DirectionMask
+                                : (DirectionType)RandomUtils.Random(Directions);
+
+            return Take(npc, direction, false);
         }
 
         for (var turn = 0; turn < Directions; turn++)
@@ -430,7 +437,7 @@ public sealed class NpcModule
     ///     hidden, not staff and in line of sight from eye to eye; <c>npc.can_see(serial, user)</c>. With
     ///     <paramref name="inSight" /> false the line of sight is not checked: what an NPC keeps following once it saw it.
     /// </summary>
-    [ScriptFunction(helpText: "Whether the NPC sees the mobile: on its map, within range tiles (default 16, 0 to 32), not hidden, not a game master or an administrator, and in line of sight from eye to eye; with in_sight false the line of sight is not checked. False for itself or an unknown NPC or mobile.")]
+    [ScriptFunction(helpText: "Whether the NPC sees the mobile: on its map, within range tiles (default 16, 0 to 32), not hidden, not a game master or an administrator, and in line of sight from eye to eye (never beyond ultima.line_of_sight.max_distance, 25); with in_sight false the line of sight is not checked. False for itself or an unknown NPC or mobile.")]
     public bool CanSee(long serial, long other, int range = DefaultSight, bool inSight = true)
     {
         return range is >= 0 and <= WorldModule.MaximumRange &&
@@ -444,12 +451,12 @@ public sealed class NpcModule
     ///     Gets the players the NPC sees, nearest first, as a list of serials; <c>for _, player in
     ///     ipairs(npc.players_in_sight(serial, 16)) do ... end</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serials of the players the NPC sees within range tiles (default 16, 0 to 32), as npc.can_see says, nearest first. Empty for an unknown NPC or a range out of bounds.")]
-    public LuaTable PlayersInSight(long serial, int range = DefaultSight)
+    [ScriptFunction(helpText: "The serials of the players the NPC sees within range tiles (default 16, 0 to 32), as npc.can_see says, nearest first; with limit, that many at most, so a script that wants the nearest does not pay for a crowd. A line of sight is not checked beyond ultima.line_of_sight.max_distance (25). Empty for an unknown NPC, a range out of bounds or a limit below 1.")]
+    public LuaTable PlayersInSight(long serial, int range = DefaultSight, int limit = int.MaxValue)
     {
         var table = new LuaTable();
 
-        if (_sectors is null || range is < 0 or > WorldModule.MaximumRange || !TryGetNpc(serial, out var npc))
+        if (_sectors is null || limit < 1 || range is < 0 or > WorldModule.MaximumRange || !TryGetNpc(serial, out var npc))
         {
             return table;
         }
@@ -465,6 +472,11 @@ public sealed class NpcModule
             if (Sees(npc, player, range, true))
             {
                 table[index++] = (long)player.Id.Value;
+
+                if (index > limit)
+                {
+                    break;
+                }
             }
         }
 
@@ -618,7 +630,6 @@ public sealed class NpcModule
         return Math.Max(Math.Abs(from.X - to.X), Math.Abs(from.Y - to.Y));
     }
 
-    // As its template says: a water mobile swims, an amphibious one walks and swims.
     private bool Sees(MobileEntity npc, MobileEntity other, int range, bool inSight)
     {
         if (other.Id == npc.Id ||
@@ -663,14 +674,25 @@ public sealed class NpcModule
         return new(spot.X, spot.Y, Math.Min(spot.Z + EyeHeight, sbyte.MaxValue));
     }
 
+    // The props a spawn region gives its NPCs. A script may have written anything there: what is not four numbers
+    // in order is no home, rather than an error on every think.
     private static Rectangle2D? HomeOf(MobileEntity npc)
     {
-        return npc.TryGetProp<long>(HomeX1, out var x1) &&
-               npc.TryGetProp<long>(HomeY1, out var y1) &&
-               npc.TryGetProp<long>(HomeX2, out var x2) &&
-               npc.TryGetProp<long>(HomeY2, out var y2)
-            ? new Rectangle2D(new Point2D((int)x1, (int)y1), new Point2D((int)x2, (int)y2))
-            : null;
+        try
+        {
+            return npc.TryGetProp<long>(HomeX1, out var x1) &&
+                   npc.TryGetProp<long>(HomeY1, out var y1) &&
+                   npc.TryGetProp<long>(HomeX2, out var x2) &&
+                   npc.TryGetProp<long>(HomeY2, out var y2) &&
+                   x1 <= x2 &&
+                   y1 <= y2
+                ? new Rectangle2D(new Point2D((int)x1, (int)y1), new Point2D((int)x2, (int)y2))
+                : null;
+        }
+        catch (Exception exception) when (exception is InvalidCastException or FormatException or OverflowException)
+        {
+            return null;
+        }
     }
 
     // The corners of a home are both inside it.
@@ -695,6 +717,7 @@ public sealed class NpcModule
         };
     }
 
+    // As its template says: a water mobile swims, an amphibious one walks and swims.
     private MovementAbilityType AbilityOf(MobileEntity npc)
     {
         var movement = npc.TemplateId is { } id && _templates.TryGet(id, out var template) ? template.Movement : null;

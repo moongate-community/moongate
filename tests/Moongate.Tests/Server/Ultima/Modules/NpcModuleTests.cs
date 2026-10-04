@@ -593,18 +593,20 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
-    public void Wander_OutsideTheHomeWithNoWayBack_StillSteps()
+    public void Wander_OutsideTheHomeWithNoWayBack_StepsAtRandom_NotOnlyTowardsHome()
     {
         SetHome(1590, 1600, 1592, 1600);
-        var cells = new HashSet<Point3D>();
+        var east = false;
 
-        for (var step = 0; step < 100; step++)
+        // No path is found: a step straight towards home would only ever go west.
+        for (var step = 0; step < 200 && !east; step++)
         {
+            var before = _orc.Location.X;
             Run("npc.wander(256)");
-            cells.Add(_orc.Location);
+            east = _orc.Location.X > before;
         }
 
-        Assert.True(cells.Count > 1);
+        Assert.True(east);
     }
 
     [Fact]
@@ -688,6 +690,27 @@ public sealed class NpcModuleTests
 
         // The other orc is no player; a player asked, or a range out of bounds, gives nothing.
         Assert.Equal([2, 2, 3, 1, 0, 0], result.Select(value => value.Read<int>()));
+
+        // With a limit only the nearest are looked at.
+        _sight.Checks.Clear();
+        var limited = Run("local one = npc.players_in_sight(256, 16, 1) return #one, one[1], #npc.players_in_sight(256, 16, 0), #npc.players_in_sight(256)");
+        Assert.Equal([1, 2, 0, 2], limited.Select(value => value.Read<int>()));
+        Assert.Equal(3, _sight.Checks.Count);
+
+        _sight.Allow = false;
+        Assert.Equal(0, Run("return #npc.players_in_sight(256, 16)")[0].Read<int>());
+    }
+
+    [Fact]
+    public void Home_ThatIsNotFourNumbersInOrder_IsNoHome_NotAnError()
+    {
+        SetHome(1602, 1597, 1598, 1603);
+        var inverted = Run("return npc.home(256), npc.wander(256)");
+
+        _orc.SetProp("spawn.x1", "west");
+        var text = Run("return npc.home(256)");
+
+        Assert.Equal((LuaValue.Nil, LuaValue.Nil), (inverted[0], text[0]));
     }
 
     private void SetHome(long x1, long y1, long x2, long y2)

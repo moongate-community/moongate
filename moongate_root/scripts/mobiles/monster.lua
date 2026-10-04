@@ -87,9 +87,10 @@ local function is_given_up(mind, player)
     return there ~= nil and there.x == given_up.x and there.y == given_up.y
 end
 
--- The nearest player the monster sees, or nil. One it could not reach is left alone until it moves.
+-- The nearest player the monster sees, or nil. One it could not reach is left alone until it moves: the two
+-- nearest are asked for, so the next one is taken then.
 local function look_for_prey(serial, mind)
-    for _, player in ipairs(npc.players_in_sight(serial, PERCEPTION)) do
+    for _, player in ipairs(npc.players_in_sight(serial, PERCEPTION, 2)) do
         if not is_given_up(mind, player) then
             return player
         end

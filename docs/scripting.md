@@ -72,8 +72,8 @@ exists but fails compilation/execution aborts server startup.
 | `npc.delete(serial)` | Deletes the NPC and what it carries, on the next turn of the game loop; `false` for a serial that is not an NPC in the world |
 | `npc.face(serial, x, y)`, `npc.distance_to(serial, x, y)` | Turns the NPC towards a place without stepping, seen by the players in range (`false` for a frozen NPC); and the tiles between the NPC and a place, the larger of the two differences, as the view range counts them |
 | `npc.nearby(serial, range, kind?)` | The serials of the mobiles within `range` tiles (0 to 32) of the NPC, itself left out, nearest first, as a list: the other NPCs, or with `kind` `"players"` the players, with `"all"` everyone. Height and line of sight are not checked: `for _, other in ipairs(npc.nearby(serial, 8)) do ... end`. Empty for a serial that is not an NPC or a range out of bounds |
-| `npc.home(serial)`, `npc.wander(serial)` | The home of an NPC of a spawn region, the area it was spawned in, as `{ x1, y1, x2, y2 }` (`nil` without one); and one stroll step, as ModernUO's wander: two times in three straight ahead, else another way. An NPC with a home keeps to it, and from outside it walks back along a path, else straight, else a step at random so a wall does not hold it. `false` when it did not move, as in a home of one cell |
-| `npc.can_see(serial, other, range?, in_sight?)`, `npc.players_in_sight(serial, range?)` | Whether the NPC sees a mobile: on its map, within `range` tiles (default 16, 0 to 32), not hidden, not a game master or an administrator, and in line of sight from eye to eye; with `in_sight` `false` the line of sight is not checked, for what it keeps following once it saw it. And the players it sees, nearest first, as a list: `local prey = npc.players_in_sight(serial, 16)[1]` |
+| `npc.home(serial)`, `npc.wander(serial)` | The home of an NPC of a spawn region, the area it was spawned in, as `{ x1, y1, x2, y2 }` (`nil` without one); and one stroll step, as ModernUO's wander: two times in three straight ahead, else another way. An NPC with a home keeps to it, and from outside it walks back along a path, with a step at random when none is found so a wall does not hold it. `false` when it did not move, as in a home of one cell |
+| `npc.can_see(serial, other, range?, in_sight?)`, `npc.players_in_sight(serial, range?, limit?)` | Whether the NPC sees a mobile: on its map, within `range` tiles (default 16, 0 to 32), not hidden, not a game master or an administrator, and in line of sight from eye to eye; with `in_sight` `false` the line of sight is not checked, for what it keeps following once it saw it. A line of sight is never checked beyond `ultima.line_of_sight.max_distance` (25), so nothing is seen farther. And the players it sees, nearest first, as a list, `limit` of them at most: `local prey = npc.players_in_sight(serial, 16, 1)[1]` |
 | `npc.walk_to(serial, x, y, z?, range?, running?)` | One step along a path to a place that goes around what stands in the way; call it on every `on_think`. It answers `"moving"` after a step, `"arrived"` once within `range` tiles of the place (default 0), `"blocked"` while it waits to look for another way, `"no_path"` when none was found; `nil` for a serial that is not an NPC. See [Walking a path](#walking-a-path) |
 | `npc.find_path(serial, x, y, z?, partial?)` | The steps from the NPC to a place, as a list of `DirectionType`, for a script that walks them itself with `npc.step`; with `partial`, the steps to the closest place when it cannot be reached. `nil` when there is no path or the place is too far. Each call searches: keep the list |
 | `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
@@ -260,7 +260,6 @@ function wander.on_think(serial)
     thinks[serial] = (thinks[serial] or 0) + 1
 
     if thinks[serial] % 4 == 0 then
-        -- One stroll step, kept in the home area of a spawned NPC.
         npc.wander(serial)
     end
 end
@@ -286,7 +285,8 @@ end
 No template in the repository uses it: add `script_id = "wander"` to a mobile template
 to try it. An NPC spawned by a spawn region carries its home area in the props `spawn.x1`,
 `spawn.y1`, `spawn.x2` and `spawn.y2`, which `npc.home` gives as a table: `npc.wander` only steps
-inside it, and walks the NPC back when it is outside.
+inside it, and walks the NPC back when it is outside. It strolls as ModernUO's creatures do, mostly
+straight ahead, where the script before picked a new direction at every step.
 
 A script's `local` tables live in memory: they start again empty after a restart or a
 reload. To remember something across restarts, keep it in the NPC's props, prefixing the
