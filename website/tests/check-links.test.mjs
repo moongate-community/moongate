@@ -3,7 +3,7 @@ import test from 'node:test';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { validateSite } from '../scripts/check-links.mjs';
+import { luaPageSlugs, validateSite } from '../scripts/check-links.mjs';
 
 async function fixture(t, home) {
   const directory = await mkdtemp(join(tmpdir(), 'docs-site-'));
@@ -68,4 +68,19 @@ test('validates custom-domain root links and rejects stale project-prefixed link
   await writeFile(join(options.directory, 'index.html'), '<a href="/moongate/libraries/api/">Stale</a>');
   const errors = await validateSite(options);
   assert(errors.some(error => error.includes('/moongate/libraries/api/')));
+});
+
+test('the Lua reference pages expected on the site are the generated files', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'moongate-lua-slugs-'));
+  try {
+    for (const file of ['index.md', 'npc.md', 'enums.md']) await writeFile(join(root, file), '');
+    assert.deepEqual((await luaPageSlugs(root)).sort(), ['lua', 'lua/enums', 'lua/npc']);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('checking links before the Lua reference was generated says which step is missing', async () => {
+  const missing = join(tmpdir(), 'moongate-lua-slugs-missing', 'lua');
+  await assert.rejects(luaPageSlugs(missing), /npm run prepare:lua/);
 });

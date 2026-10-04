@@ -87,8 +87,6 @@ See all of them in [Commands](commands.md).
   themselves through Redis leases; the login filters them by account level and hands the player
   over with a one-use ticket.
 - The packets the server handles and sends are listed in the [packet reference](packets.md).
-- The modules and functions Lua scripts can call are listed in the
-  [Lua API reference](https://moongate.sh/lua/), generated from the server's code.
 
 ### World
 
@@ -118,6 +116,8 @@ See all of them in [Commands](commands.md).
   definitions. See [Writing Lua scripts](scripting.md).
 - Modules: `engine`, `log`, `timer`, `events`, and in the Ultima plugin `dice`, `localization`,
   `npc`, `item`, `world`, `mobile`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates` and `locations`.
+  Every function they give scripts is listed in the [Lua API reference](https://moongate.sh/lua/),
+  generated from the server's code.
 - Gumps: XML layouts checked by `gump.xsd`, a Lua script per gump for the answers, slots and whole
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).

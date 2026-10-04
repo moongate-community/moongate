@@ -12,13 +12,15 @@ const luaName = /^[a-z_][a-z0-9_]*$/;
 const constantName = /^[A-Za-z_][A-Za-z0-9_]*$/;
 // The headings a module page already has: a function with one of these names would take its anchor.
 const sectionAnchors = new Set(['functions', 'constants']);
+// The overview and the enums page: a module with one of these names would overwrite it.
+const reservedPages = new Set(['index', 'enums']);
 const byName = (left, right) => (left.name < right.name ? -1 : left.name > right.name ? 1 : 0);
 const blank = text => typeof text !== 'string' || !text.trim();
 
 function validate(dump) {
   const modules = new Set();
   for (const module of dump.modules) {
-    if (!luaName.test(module.name)) throw new Error(`Invalid module name: ${module.name}`);
+    if (!luaName.test(module.name) || reservedPages.has(module.name)) throw new Error(`Invalid module name: ${module.name}`);
     if (modules.has(module.name)) throw new Error(`Duplicate module: ${module.name}`);
     modules.add(module.name);
     if (blank(module.description)) throw new Error(`Module ${module.name} has no description`);

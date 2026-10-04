@@ -146,6 +146,14 @@ test('render rejects names that are not anchors or that repeat', () => {
   assert.throws(() => renderLua(badConstant), /Invalid constant name: log\.LEVEL DEBUG/);
 });
 
+test('render rejects a module named after the overview or the enums page, which it would overwrite', () => {
+  for (const name of ['index', 'enums']) {
+    const taken = sample();
+    taken.modules[0].name = name;
+    assert.throws(() => renderLua(taken), new RegExp(`Invalid module name: ${name}`));
+  }
+});
+
 test('render rejects a parameter or a return without a Lua type', () => {
   const noType = sample();
   noType.modules[0].functions[0].parameters[1].type = '';
