@@ -110,6 +110,13 @@ public sealed class RepositoryTemplateFilesTests
         var common = Assert.Single(sets, set => set.Common);
         var gold = Assert.Single(common.Items, entry => entry.Items.SequenceEqual([new ItemsConfig().GoldTemplate]));
         Assert.Equal(1000, gold.Amount!.Value.Roll());
+
+        // Every new character can eat and drink: three loaves of bread and a pitcher of water, both with a script.
+        var bread = Assert.Single(common.Items, entry => entry.Items.SequenceEqual(["0x103b_bread_loaf"]));
+        Assert.Equal(3, bread.Amount!.Value.Roll());
+        Assert.Single(common.Items, entry => entry.Items.SequenceEqual(["0x1f9e_pitcher_of_water"]));
+        Assert.Equal("food", templates.Single(template => template.Id == "0x103b_bread_loaf").ScriptId);
+        Assert.Equal("drink", templates.Single(template => template.Id == "0x1f9e_pitcher_of_water").ScriptId);
         Assert.False(gold.Equip);
         Assert.Contains(templates, t => t.Id == new ItemsConfig().BackpackTemplate);
         Assert.Contains(templates, t => t.Id == new ItemsConfig().GoldTemplate);

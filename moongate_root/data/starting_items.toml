@@ -801,3 +801,12 @@ equip = false
 [[set.items]]
 items = ["0x0a0f_candle"]
 equip = false
+
+[[set.items]]
+items = ["0x103b_bread_loaf"]
+amount = 3
+equip = false
+
+[[set.items]]
+items = ["0x1f9e_pitcher_of_water"]
+equip = false

@@ -66,6 +66,22 @@ amount = 1000
 equip = false
 ```
 
+Food and drink are ordinary entries too: the common set of the shipped file gives three loaves of
+bread and a pitcher of water, so a new character has something against
+[hunger and thirst](../server-configuration.md). They are not part of UOX3's `newbie.dfn`: a file
+converted again needs them added back, as the gold.
+
+```toml
+[[set.items]]
+items = ["0x103b_bread_loaf"]
+amount = 3
+equip = false
+
+[[set.items]]
+items = ["0x1f9e_pitcher_of_water"]
+equip = false
+```
+
 ## Validation at startup
 
 The server stops when:
