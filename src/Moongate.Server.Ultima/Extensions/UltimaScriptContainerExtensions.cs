@@ -3,6 +3,7 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Types.Effects;
+using Moongate.Server.Ultima.Types.Jail;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Server.Ultima.Types.Weather;
@@ -40,9 +41,11 @@ public static class UltimaScriptContainerExtensions
         container.AddScriptModule<EffectModule>();
         container.AddScriptModule<MoongatesModule>();
         container.AddScriptModule<LocationsModule>();
+        container.AddScriptModule<JailModule>();
         // No module function takes it: registered so on_speech can compare its keywords with names.
         container.RegisterScriptEnum<SpeechKeywordType>();
         container.RegisterScriptEnum<DirectionType>();
+        container.RegisterScriptEnum<JailResultType>();
         container.RegisterScriptEnum<SkillType>();
         container.RegisterScriptEnum<SeasonType>();
         container.RegisterScriptEnum<WeatherKindType>();
