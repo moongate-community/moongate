@@ -5,6 +5,7 @@ notoriety = "attackable"
 [[mobile]]
 id = "zombie"
 name = "a zombie"
+script_id = "monster"
 body = 3
 skin_hue = 0
 strength = "1d25+45"
@@ -191,6 +192,7 @@ death = 386
 [[mobile]]
 id = "skeleton"
 name = "a skeleton"
+script_id = "monster"
 body = 50
 skin_hue = 0
 strength = "1d25+55"

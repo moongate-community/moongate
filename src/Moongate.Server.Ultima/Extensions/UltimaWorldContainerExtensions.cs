@@ -16,6 +16,7 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Types.Weather;
 using Moongate.Ultima.Types;
 using Moongate.Server.Ultima.Types.Effects;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Speech;
 
 namespace Moongate.Server.Ultima.Extensions;
@@ -125,6 +126,9 @@ public static class UltimaWorldContainerExtensions
         container.RegisterScriptEnum<EffectGraphicType>();
         container.RegisterScriptEnum<EffectRenderModeType>();
         container.RegisterScriptEnum<EffectLayerType>();
+        container.RegisterScriptEnum<HumanAnimationType>();
+        container.RegisterScriptEnum<MonsterAnimationType>();
+        container.RegisterScriptEnum<AnimalAnimationType>();
 
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
         container.AddLiveWorldMobiles();
