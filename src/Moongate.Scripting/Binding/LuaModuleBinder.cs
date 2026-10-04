@@ -185,7 +185,7 @@ public sealed class LuaModuleBinder
                         {
                             throw new LuaRuntimeException(
                                 context.State,
-                                new LuaValue($"bad argument #{i + 1} to '{qualified}' ({parameter.Name} is required)")
+                                new LuaValue($"bad argument #{i + 1} to '{qualified}' ({ToSnakeCase(parameter.Name!)} is required)")
                             );
                         }
 

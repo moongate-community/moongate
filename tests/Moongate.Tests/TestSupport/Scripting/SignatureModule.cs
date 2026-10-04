@@ -14,4 +14,10 @@ public sealed class SignatureModule
     {
         return running || z is null || range < 0 || mode.Length == 0 ? null : serial.ToString();
     }
+
+    [ScriptFunction(helpText: "Counts twice.")]
+    public int Twice(int repeatCount, bool inSight = true)
+    {
+        return inSight ? repeatCount * 2 : repeatCount;
+    }
 }

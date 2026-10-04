@@ -26,6 +26,14 @@ public sealed class LuaFunctionDescriberTests
     }
 
     [Fact]
+    public void Describe_NamesParametersInSnakeCase_AsFunctionsAre()
+    {
+        var names = Describe(typeof(SignatureModule), "twice").Parameters.Select(parameter => parameter.Name);
+
+        Assert.Equal(["repeat_count", "in_sight"], names);
+    }
+
+    [Fact]
     public void Describe_ANullableReturn_EndsWithAQuestionMark()
     {
         Assert.Equal("string?", Describe(typeof(SignatureModule), "walk_to").Returns);

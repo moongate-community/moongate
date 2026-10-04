@@ -178,6 +178,16 @@ public sealed class LuaModuleBinderTests : IDisposable
         Assert.Contains("argument #1", exception.Message, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Bind_AMissingArgument_IsNamedInSnakeCase_AsTheDefinitionsNameIt()
+    {
+        _binder.Bind(_state, new SignatureModule());
+
+        var exception = Assert.Throws<LuaRuntimeException>(() => Run("return signature.twice()"));
+
+        Assert.Contains("(repeat_count is required)", exception.Message, StringComparison.Ordinal);
+    }
+
     private LuaValue[] Run(string source)
     {
         return SyncValueTask.Run(_state.DoStringAsync(source, "test"));

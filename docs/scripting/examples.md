@@ -32,7 +32,7 @@ such as the key of a door, with [`world.carries`](https://moongate.sh/lua/world/
 world.carries(user, "key.value", 1234)
 ```
 
-Three things the item functions do not show to everyone:
+Three details the reference does not state:
 
 - [`item.equip`](https://moongate.sh/lua/item/#equip): taken from a chest on the ground, those who look into
   the chest see it go.

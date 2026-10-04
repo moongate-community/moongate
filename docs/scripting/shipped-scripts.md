@@ -3,7 +3,7 @@
 This page is part of [Writing Lua scripts](../scripting.md). The distribution ships these scripts under
 `scripts/`, and `mgctl init` copies them into the root: each one is an example to read and to change. How a
 script is bound to a template is told in [Mobile scripts](mobile-scripts.md) and [Item scripts](item-scripts.md),
-where `wander.lua` and `potion.lua` are shown in full.
+where `wander.lua` and `potion.lua` are listed.
 
 ## monster.lua
 
@@ -122,6 +122,16 @@ number, takes the player to that map: the client changes map, then gets the seas
 from the one it shows, the light, the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
 the accounts its visibility allows, so players walk onto a teleporter they never see.
 
+## keyword_teleport.lua
+
+`scripts/items/keyword_teleport.lua` is the script of the `decoration_keyword_teleporter`
+template that `.decorate` gives to ModernUO's `KeywordTeleporter`, such as the mantra of a
+shrine: on `on_speech` it teleports the player who says the prop `substring` (found anywhere in
+the text, in any case) or whose client sends the speech keyword of the prop `keyword`, standing
+within `range` cells (0, the default, is the teleporter's own cell). With a `delay`
+(`"0:0:1"`, or a number of seconds) the teleport happens later, if the player still stands in
+range. The destination, the smoke, the sound and `active` are those of the plain teleporter.
+
 ## public_moongate.lua
 
 `scripts/items/public_moongate.lua` is the script of the `decoration_public_moongate` template
@@ -148,16 +158,6 @@ stands in a guarded region and the destination does not (`world.is_guarded`), it
 gump with OKAY and CANCEL and the sound `0x20E`; OKAY from more than a cell away tells "That is
 too far away." (message 393) with `mobile.message`. ModernUO's rules about sigils, young
 players, murderers, casting, pets and dispelling the gate are not there yet.
-
-## keyword_teleport.lua
-
-`scripts/items/keyword_teleport.lua` is the script of the `decoration_keyword_teleporter`
-template that `.decorate` gives to ModernUO's `KeywordTeleporter`, such as the mantra of a
-shrine: on `on_speech` it teleports the player who says the prop `substring` (found anywhere in
-the text, in any case) or whose client sends the speech keyword of the prop `keyword`, standing
-within `range` cells (0, the default, is the teleporter's own cell). With a `delay`
-(`"0:0:1"`, or a number of seconds) the teleport happens later, if the player still stands in
-range. The destination, the smoke, the sound and `active` are those of the plain teleporter.
 
 ## clock.lua
 

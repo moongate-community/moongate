@@ -100,7 +100,7 @@ the scripts are no longer called, before the script engine stops.
 The script of the monsters, `monster.lua`, is described with the other
 [shipped scripts](shipped-scripts.md#monsterlua).
 
-### Walking a path
+## Walking a path
 
 `npc.walk_to` lets an NPC reach a place around walls, water and cliffs. The script calls it
 on every tick and the NPC takes one step each time:

@@ -6,7 +6,7 @@ Moongate publishes Linux images to [GitHub Container Registry](https://github.co
 docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 ```
 
-The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships [`mgctl`](mgctl.md), which prepares the root, applies the migrations and converts UOX3 and ModernUO content, the core SQL, the [shard data files](data-files.md), the [templates](templates.md) and the example [scripts](scripting.md). The `sample-plugin` build target adds the sample plugin bundle.
+The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships [`mgctl`](mgctl.md), which prepares the root, applies the migrations and converts UOX3 and ModernUO content, the core SQL, the [shard data files](data-files.md), the [templates](templates.md) and the example [scripts](scripting/shipped-scripts.md). The `sample-plugin` build target adds the sample plugin bundle.
 
 ## Build cache
 
