@@ -65,7 +65,7 @@
 30041 = "Speichert die Welt und benachrichtigt alle Spieler, wenn es fertig ist."
 30042 = "Sendet eine Systemnachricht an alle Spieler dieser Welt: broadcast <Text>."
 30043 = "Erschafft einen NPC aus einer Kreaturvorlage am gewählten Ort: spawn <Vorlage>."
-30044 = "Entfernt den gewählten NPC."
+30044 = "Entfernt den gewählten NPC oder Gegenstand auf dem Boden."
 30045 = "Zeigt das gewählte Ziel: seine Seriennummer oder Karte und Position eines Ortes."
 30046 = "Ausstehende Charakterlöschungen: character pending [Konto-Seriennummer]; character restore <Charakter-Seriennummer>."
 30047 = "Gibt seine Argumente zurück."
@@ -142,6 +142,7 @@
 30119 = "{0} ({1}) hinzugefügt bei {2} ({3}, {4}, {5})."
 30120 = "Der Gegenstand konnte nicht hinzugefügt werden. Prüfe die Serverprotokolle."
 30121 = "Legt einen Gegenstand aus einer Gegenstandsvorlage dort auf den Boden, wohin du zielst: add <template>."
+30122 = "Nur ein Gegenstand, der auf dem Boden liegt, kann entfernt werden."
 
 # Moongate: texts of the item scripts.
 30114 = "Dieses Mondtor scheint nirgendwohin zu führen."

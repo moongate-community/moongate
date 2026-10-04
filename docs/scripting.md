@@ -93,6 +93,7 @@ exists but fails compilation/execution aborts server startup.
 | `prompt.ask(player, fn)`, `prompt.cancel(player)` | Ask the player for a line of text, typed in the journal line, and run `fn(text)` with it: up to 128 characters, without the spaces around it, or `nil` when the player pressed escape, typed only spaces, was asked something else or left. Say what to type first with `mobile.message`. `false` for an NPC or a player not in the world |
 | `item.move_into(serial, container)` | Moves the item into a container, or into the backpack of a mobile when `container` is a mobile's serial; those who saw it lose it and the new owner sees it. `false` for a worn or held item, a target that is not a container, a container put into itself or into what it holds, or an item one mobile carries moved to another mobile (a trade, not supported yet). No weight or item limit is checked, and players who have a container on the ground open do not see it change until they open it again |
 | `mobile.teleport(serial, x, y, z, map?)` | Teleports a mobile, a player or an NPC, to `x`, `y`, `z` of its own map, or of `map` (a `MapType`, or its name such as `"Tokuno"`) when given: a player's client is told of the map change (0xBF 0x08) and where it stands (0x20), the players around the old spot lose the mobile and those around the new one see it; `false` for a mobile not in the world, a map that does not exist or is not loaded, a spot outside the map or a `z` outside -128 to 127 |
+| `mobile.animate(serial, action, frames?, repeat_count?)` | Plays an animation of the mobile, seen by its own player and those who see it: `action` is a number of its body (0 to 65535), with `frames` (1 to 255, default 5) played `repeat_count` times (1 to 255, default 1). The bodies do not share the numbers, so use the names of the body: `HumanAnimationType` (`Bow`, `Salute`, `Fidget1`, `Spell1`...), `MonsterAnimationType` (`Attack1`, `GetHit`, `Pillage`, `Fidget1`...) or `AnimalAnimationType` (`Eat`, `Alert`, `LieDown`...), as in `mobile.animate(who, HumanAnimationType.Bow)`; a number works too. `false` for a mobile not in the world or a number out of range |
 | `mobile.location(serial)`, `mobile.play_sound(serial, sound)` | Where a mobile stands, `{ x, y, z, map }` (`nil` when it is not in the world), and a sound id (0 to 65535) played where it stands for the players within 15 cells; `false` for a sound out of range or a mobile not in the world |
 | `mobile.message(serial, text)` | A system message, in the lower left of the screen, read only by that player: `mobile.message(who, "That is too far away.")`; cut at 128 characters; `false` for an empty text, an NPC or a player not in the world |
 | `mobile.template(serial)` | The id of the mobile template an NPC was made from, such as `"f_baker"`; `nil` for a player or a mobile not in the world |
@@ -310,6 +311,26 @@ so the NPCs use the new functions from their next think; state kept in `local`
 tables of the old file starts again, and the waits its handlers left are cancelled,
 because a script's calls belong to `mobiles/<script_id>.lua`. When the server stops,
 the scripts are no longer called, before the script engine stops.
+
+### The monster script
+
+The distribution's `scripts/mobiles/monster.lua` is the script of the monsters that go for the players,
+after ModernUO's melee AI without the fight: the server has no combat yet. A template takes it with
+`script_id = "monster"`; the shipped `skeleton` and `zombie` do, and so the templates based on them. A
+monster is in one of three states:
+
+| State | What it does | It ends when |
+| --- | --- | --- |
+| wander | Strolls in its home, the area of its spawn region: about a step every two seconds, mostly straight ahead. From outside, as after a chase, it walks back with `npc.walk_to`, and takes a step at random when no way is found. One think in twenty it rests 15 to 25 seconds, with its `idle` sound and a fidget | It sees a player |
+| chase | Threatens the player with its `start_attack` sound and an animation, goes into war mode and walks to it with `npc.walk_to`, a step every think, never running. Beside it, it faces it and snarls every three seconds (`attack` sound and an attack animation): it does no harm | The player hides, leaves, is farther than 32 tiles, or cannot be reached for 20 seconds |
+| guard | Stands in war mode for 10 seconds, looking around | It sees a player, or the time is over: back to wander, in peace |
+
+It looks for a player every two seconds while it wanders and every second on guard, and takes the
+nearest one within 16 tiles and in line of sight (`world.line_of_sight`, from eye to eye). It never
+sees a hidden player, a game master or an administrator, and it ignores NPCs. A player it could not
+reach is left alone until it moves. What a monster is doing is kept in memory by its serial, not
+saved: after a restart, or once no player is near enough for it to think, it starts again from
+wandering. The numbers (16, 32, the times) are constants at the top of the file.
 
 ### Walking a path
 

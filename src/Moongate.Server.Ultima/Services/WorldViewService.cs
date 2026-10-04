@@ -257,6 +257,19 @@ public sealed class WorldViewService : IWorldViewService
         }
     }
 
+    public void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount)
+    {
+        var animation = new MobileAnimationPacket(mobile.Id, action, frameCount, repeatCount);
+
+        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            if (_sessions.TryGetValue(other.Id, out var viewer) && (other.Id == mobile.Id || CanSee(viewer, mobile)))
+            {
+                _sender.TrySend(viewer.SessionId, animation);
+            }
+        }
+    }
+
     public void MobileFlagsChanged(MobileEntity mobile)
     {
         var moving = Moving(mobile, false);

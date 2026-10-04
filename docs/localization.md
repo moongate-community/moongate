@@ -64,7 +64,7 @@ chosen language stays in English, so a partial translation still works. The log
 reports how many messages fell back:
 
 ```text
-Found 5584 messages in ita, 3 of them in English
+Found 5585 messages in ita, 3 of them in English
 ```
 
 ### Validation at startup
@@ -197,7 +197,7 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30000–30004 | Common, Uncommon, Rare, Epic, Legendary | Tooltip rarity |
 | 30005 | [Cursed] | Tooltip loot type |
 | 30006, 30007 | Weight: 1 stone, Weight: {0} stones | Tooltip weight |
-| 30008–30038, 30050–30052, most of 30055–30112 and 30115–30120 | Target canceled., Unknown command: {0}, Usage: {0}, The world has been saved in {0} seconds., {0} now has {1} fame., ... | Command replies and broadcasts (`CommandMessages`) |
+| 30008–30038, 30050–30052, most of 30055–30112, 30115–30120 and 30122 | Target canceled., Unknown command: {0}, Usage: {0}, The world has been saved in {0} seconds., {0} now has {1} fame., ... | Command replies and broadcasts (`CommandMessages`) |
 | 30039–30049, 30053–30054, the rest up to 30113 and 30121 | One per built-in command | Command descriptions in `help` |
 | 30114 | This moongate does not seem to go anywhere. | Texts of the item scripts, read with `localization.get` |
 

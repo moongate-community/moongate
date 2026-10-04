@@ -34,7 +34,6 @@ items = ["0x1eff_fancy_dress"]
 
 [[mobile]]
 id = "f_banker"
-script_id = "banker"
 base_id = "basehuman"
 name_list = "female"
 title = "the Banker"
@@ -43,6 +42,7 @@ race = "human"
 strength = "1d26+49"
 dexterity = "1d6+64"
 intelligence = "1d26+49"
+script_id = "banker"
 [mobile.sounds]
 death = 337
 [[mobile.equipment]]
@@ -1350,7 +1350,6 @@ items = ["armorswampdragon"]
 
 [[mobile]]
 id = "f_gypsybanker"
-script_id = "banker"
 base_id = "basehuman"
 name_list = "female"
 title = "the Gypsy Banker"
@@ -1359,6 +1358,7 @@ race = "human"
 strength = "1d26+49"
 dexterity = "1d6+64"
 intelligence = "1d26+49"
+script_id = "banker"
 [mobile.sounds]
 death = 337
 [[mobile.equipment]]

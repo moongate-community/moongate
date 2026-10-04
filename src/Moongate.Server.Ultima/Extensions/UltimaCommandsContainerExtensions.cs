@@ -54,7 +54,7 @@ public static class UltimaCommandsContainerExtensions
         );
         container.RegisterCommand<RemoveCommand>(
             "remove",
-            "Removes the NPC you target.",
+            "Removes the NPC or the item on the ground you target.",
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.RemoveDescription
