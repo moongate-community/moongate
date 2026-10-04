@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promis
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { renderLua, writePages } from '../scripts/build-lua.mjs';
+import { parseExamples, renderLua, writePages } from '../scripts/build-lua.mjs';
 
 const parameter = (name, type = 'integer', optional = false, fallback = null) => ({ name, type, optional, default: fallback });
 const fn = (name, parameters = [], returns = null, help = `Does ${name}.`) => ({ name, help, parameters, returns });
@@ -175,4 +175,43 @@ test('writing the pages replaces the directory, so a removed module leaves no pa
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+const examplesText = [
+  '## walk_to', '', 'Call it on every think:', '', '```lua', 'local state = npc.walk_to(serial, 1434, 1699)', '```', '',
+  '## say', '', 'A note with `code` and a [link](https://moongate.sh/lua/).', '',
+].join('\n');
+
+test('an examples file is split into one body per function', () => {
+  const examples = parseExamples('npc', examplesText);
+  assert.deepEqual([...examples.keys()], ['walk_to', 'say']);
+  assert.equal(examples.get('walk_to'), 'Call it on every think:\n\n```lua\nlocal state = npc.walk_to(serial, 1434, 1699)\n```');
+  assert.equal(examples.get('say'), 'A note with `code` and a [link](https://moongate.sh/lua/).');
+});
+
+test('a heading inside a code block of an example is not a section', () => {
+  const examples = parseExamples('npc', '## say\n\n```lua\n## not a heading\n```\n');
+  assert.deepEqual([...examples.keys()], ['say']);
+});
+
+test('an examples file is rejected for text before the first section, a repeated section or an empty one', () => {
+  assert.throws(() => parseExamples('npc', 'stray\n\n## say\n\ntext\n'), /npc: text before the first function/);
+  assert.throws(() => parseExamples('npc', '## say\n\na\n\n## say\n\nb\n'), /Duplicate example: npc\.say/);
+  assert.throws(() => parseExamples('npc', '## say\n\n## walk_to\n\ntext\n'), /Empty example: npc\.say/);
+  assert.throws(() => parseExamples('npc', ''), /npc: no examples/);
+});
+
+test('an example is written under its function, after the help text and before the parameters', () => {
+  const page = renderLua(sample(), { examples: { npc: parseExamples('npc', examplesText) } }).get('npc.md');
+  const section = page.slice(page.indexOf('### walk_to'), page.length);
+  const help = section.indexOf('Second line.</p>'), example = section.indexOf('Call it on every think:'), table = section.indexOf('<table>');
+  assert.ok(help > 0 && help < example && example < table);
+  assert.ok(section.includes('```lua\nlocal state = npc.walk_to(serial, 1434, 1699)\n```'));
+  // A function without an example is rendered as before.
+  assert.equal(renderLua(sample(), { examples: {} }).get('log.md'), renderLua(sample()).get('log.md'));
+});
+
+test('render rejects examples for a module or a function the server does not publish', () => {
+  assert.throws(() => renderLua(sample(), { examples: { ghost: new Map([['x', 'text']]) } }), /Examples for an unknown module: ghost/);
+  assert.throws(() => renderLua(sample(), { examples: { npc: new Map([['fly', 'text']]) } }), /Example for an unknown function: npc\.fly/);
 });
