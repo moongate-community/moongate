@@ -143,6 +143,28 @@ public sealed class UoxMobileConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_TheMobilesMoongateHasAScriptFor_GetTheirScriptId()
+    {
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource(
+            "npc/undead.dfn",
+            "[skeleton]\n{\nID=0x0032\n}\n[zombie]\n{\nID=0x0003\n}\n[boneknight]\n{\nGET=skeleton\n}\n[m_banker]\n{\nID=0x0190\nNPCAI=8\n}\n" +
+            "[orc]\n{\nID=0x0011\nNPCAI=2\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var mobiles = ReadMobiles("undead.toml");
+        Assert.Equal(
+            ("monster", "monster", "banker"),
+            (mobiles["skeleton"].ScriptId, mobiles["zombie"].ScriptId, mobiles["m_banker"].ScriptId)
+        );
+        // A template based on one of them takes the script through its base; the others have none yet.
+        Assert.True(string.IsNullOrEmpty(mobiles["boneknight"].ScriptId));
+        Assert.True(string.IsNullOrEmpty(mobiles["orc"].ScriptId));
+    }
+
+    [Fact]
     public void Run_ARandomPickOfTwoCreatures_BecomesTheFirst()
     {
         // UOX3's [dragon] GET=graydragon reddragon: a template has one base, so the first is kept and counted.

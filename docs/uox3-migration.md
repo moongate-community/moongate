@@ -194,7 +194,11 @@ Two known mistakes in UOX3's item data are corrected as the blocks are read
 leather tunic as their parents; they get the leather sleeves (`0x13cd`) and leggings
 (`0x13cb`).
 
-Dropped, no home yet: AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
+A mobile Moongate has a script for gets its `script_id`: a banker (`NPCAI=8`) takes `banker`
+(`scripts/mobiles/banker.lua`), and `skeleton` and `zombie` take `monster` (`scripts/mobiles/monster.lua`);
+the templates based on them take it through `base_id`.
+
+Dropped, no home yet: the rest of AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
 taming and bard skills (`TOTAME`, `CONTROLSLOTS`, `TOPROV`, `TOPEACE`), shops
 (`SHOPKEEPER`, `SHOPLIST`), `PACKITEM`, `CARVE`, `FOOD`, `PRIV`, `SCRIPT` and the other
 tags without a field. The run prints how often each kind of value was dropped.

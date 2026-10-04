@@ -38,7 +38,6 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "m_banker"
-script_id = "banker"
 base_id = "basehuman"
 name_list = "male"
 title = "the Banker"
@@ -47,6 +46,7 @@ race = "human"
 strength = "1d26+49"
 dexterity = "1d6+64"
 intelligence = "1d26+49"
+script_id = "banker"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
@@ -1389,7 +1389,6 @@ items = ["armorswampdragon"]
 
 [[mobile]]
 id = "m_gypsybanker"
-script_id = "banker"
 base_id = "basehuman"
 name_list = "male"
 title = "the Gypsy Banker"
@@ -1398,6 +1397,7 @@ race = "human"
 strength = "1d26+49"
 dexterity = "1d6+64"
 intelligence = "1d26+49"
+script_id = "banker"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]

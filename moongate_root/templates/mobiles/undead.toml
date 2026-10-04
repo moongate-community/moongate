@@ -5,7 +5,6 @@ notoriety = "attackable"
 [[mobile]]
 id = "zombie"
 name = "a zombie"
-script_id = "monster"
 body = 3
 skin_hue = 0
 strength = "1d25+45"
@@ -18,6 +17,7 @@ karma = -600
 fame = 600
 loot = ["bonearmor"]
 gold = "1d13+3"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d26+14"
 parrying = "1d11+19"
@@ -192,7 +192,6 @@ death = 386
 [[mobile]]
 id = "skeleton"
 name = "a skeleton"
-script_id = "monster"
 body = 50
 skin_hue = 0
 strength = "1d25+55"
@@ -205,6 +204,7 @@ karma = -450
 fame = 450
 loot = ["bonearmor"]
 gold = "1d51-1"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+44"
 parrying = "1d11+44"
