@@ -800,6 +800,23 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Null(_ground.Props);
     }
 
+    [Fact]
+    public void InRange_IsWhetherAMobileIsNearAGroundItem_OnItsMap()
+    {
+        Assert.True(_fixture.Mobiles.MoveTo(_owner, MapType.Trammel, new Point3D(1602, 1598, 5)));
+
+        var result = Run(
+            "return item.in_range(0x40000003, 2, 2), item.in_range(0x40000003, 2, 1), item.in_range(0x40000003, 2, 0), " +
+            "item.in_range(0x40000003, 2, -1), item.in_range(0x40000002, 2, 20), item.in_range(0x40000003, 99, 20), item.in_range(12, 2, 20)"
+        );
+
+        // Two tiles away; then too far, a negative range, an item that is carried, an unknown mobile and item.
+        Assert.Equal([true, false, false, false, false, false, false], result.Select(value => value.Read<bool>()));
+
+        Assert.True(_fixture.Mobiles.MoveTo(_owner, MapType.Felucca, new Point3D(1600, 1600, 0)));
+        Assert.False(Run("return item.in_range(0x40000003, 2, 5)")[0].Read<bool>());
+    }
+
     private static ItemEntity Shirt(uint serial)
     {
         return new() { Id = new Serial(serial), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };

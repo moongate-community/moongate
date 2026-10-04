@@ -703,6 +703,27 @@ public sealed class ItemModule
     }
 
     /// <summary>
+    ///     Gets whether a mobile is on the map of a ground item and within <paramref name="range" /> tiles of it, as
+    ///     the view range counts them; <c>item.in_range(serial, user, 2)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the mobile is on the map of a ground item and within range tiles of it, the larger of the two differences; false for an item not on the ground, a mobile not in the world or a negative range.")]
+    public bool InRange(long serial, long mobile, int range)
+    {
+        if (range < 0 ||
+            mobile is <= 0 or > uint.MaxValue ||
+            !TryGetItem(serial, out var item) ||
+            item.Map is not { } map ||
+            item.GroundLocation is not { } spot ||
+            !_mobiles.TryGet(new Serial((uint)mobile), out var who) ||
+            who.Map != map)
+        {
+            return false;
+        }
+
+        return Math.Abs(who.Location.X - spot.X) <= range && Math.Abs(who.Location.Y - spot.Y) <= range;
+    }
+
+    /// <summary>
     ///     Moves a ground item on its map, such as a door swinging; <c>item.move_to(serial, x, y, z)</c>. The players
     ///     around the old spot lose it and those around the new one see it.
     /// </summary>

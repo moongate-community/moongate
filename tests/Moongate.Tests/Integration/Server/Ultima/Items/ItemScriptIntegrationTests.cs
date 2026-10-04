@@ -901,6 +901,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private async Task<ItemScriptService> StartItemScriptAsync(string script, string template)
     {
         _scripts.Write($"items/{script}.lua", File.ReadAllText(ShippedScript($"items/{script}.lua")));
+        // What the teleporter scripts take with require.
+        _scripts.Write("common/teleport.lua", File.ReadAllText(ShippedScript("common/teleport.lua")));
         var engine = NewEngine();
         _engines.Add(engine);
         await engine.StartAsync();
