@@ -90,7 +90,7 @@ written. The [scripting page](scripting.md#available-host-functions) lists what 
 
 | Step | State | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- | --- |
-| 1.1 | ✅ | **Regeneration** of hits, mana and stamina; hunger, and food that is eaten | Nothing depends on anything else; visible in the first fight | |
+| 1.1 | ✅ | **Regeneration** of hits, mana and stamina; hunger and thirst, food that is eaten and drinks that are drunk | Nothing depends on anything else; visible in the first fight | |
 | 1.2 | ❌ | **Skill use, check and gain**; stat gain; caps and locks. Stats and skills are stored; nothing uses them | The progression of the game; every later system calls the skill check | UOX3 `skills.dfn` (61 skills: stat weights, gain curves), ModernUO `skills.json` |
 | 1.3 | ❌ | **Timed effects**: one mechanism for poison, curses, blessings, polymorph, hiding; the buff bar shows them | Magic, potions and combat all need it | |
 | 1.4 | 🟡 | **Containers on the ground**, with item and weight limits; weight and overloading. Done: a container on the ground opens, items go in and out of it, 125 at most; left: the weight limits and overloading | Corpses, vendors, chests and houses need them | |

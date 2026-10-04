@@ -160,6 +160,107 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheShippedDrinkScript_APitcherGivesFiveSips_ThenTurnsIntoAnEmptyPitcher()
+    {
+        var scripts = await StartItemScriptAsync("drink", "potion");
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.Body = 400;
+        aria.Thirst = 2;
+        _potions.ItemId = 0x1F9D;
+        _potions.Amount = 1;
+
+        var result = scripts.Run(_potions, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        // One sip of five: three points, the sound and the gesture of drinking; the pitcher is still a pitcher.
+        Assert.Equal((5, 0x1F9D, 4L), (aria.Thirst, _potions.ItemId, Convert.ToInt64(_potions.GetProp<object>("drink.uses"))));
+        Assert.Equal(0x30, Assert.Single(_speech.Sounds).Sound);
+        Assert.Contains("Animated 2 34 5 1", _view.Calls);
+        Assert.Equal("You drink, and feel less thirsty.", _speech.Told[^1].Text);
+
+        for (var sip = 0; sip < 4; sip++)
+        {
+            scripts.Run(_potions, "on_use", 2L);
+        }
+
+        Assert.Empty(_errors);
+        Assert.Equal((17, 0x0FF6, "empty pitcher"), (aria.Thirst, _potions.ItemId, _potions.Name));
+        Assert.True(_items.TryGet(_potions.Id, out _));
+
+        // An empty pitcher gives nothing.
+        scripts.Run(_potions, "on_use", 2L);
+        Assert.Equal(17, aria.Thirst);
+        Assert.Equal("It is empty.", _speech.Told[^1].Text);
+    }
+
+    [Fact]
+    public async Task TheShippedDrinkScript_ABottleIsGoneWhenEmpty_AndTheItemSaysHowMuchASipGives()
+    {
+        var scripts = await StartItemScriptAsync("drink", "potion");
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.Thirst = 0;
+        _potions.ItemId = 0x099F;
+        _potions.Amount = 1;
+        _potions.SetProp("drink.fill", 1L);
+
+        for (var sip = 0; sip < 5; sip++)
+        {
+            Assert.True(_items.TryGet(_potions.Id, out _));
+            scripts.Run(_potions, "on_use", 2L);
+        }
+
+        Assert.Empty(_errors);
+        Assert.Equal(5, aria.Thirst);
+        Assert.False(_items.TryGet(_potions.Id, out _));
+    }
+
+    [Fact]
+    public async Task TheShippedDrinkScript_AGlassIsOneSip_AndAQuenchedPlayerDrinksNothing()
+    {
+        var scripts = await StartItemScriptAsync("drink", "potion");
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.Thirst = 19;
+        _potions.ItemId = 0x1F92;
+        _potions.Amount = 1;
+
+        scripts.Run(_potions, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((20, 0x1F82, "empty glass"), (aria.Thirst, _potions.ItemId, _potions.Name));
+
+        _potions.ItemId = 0x1F92;
+        _potions.SetProp("drink.uses", null);
+        scripts.Run(_potions, "on_use", 2L);
+
+        // Full: nothing is drunk, the glass keeps its sip.
+        Assert.Equal((0x1F92, "You are simply too full to drink any more!"), (_potions.ItemId, _speech.Told[^1].Text));
+        Assert.Single(_speech.Sounds);
+    }
+
+    [Fact]
+    public async Task TheShippedDrinkScript_AMugOfAleLeavesAnEmptyMug_AndAnEmptyGlassWithTheScriptGivesNothing()
+    {
+        var scripts = await StartItemScriptAsync("drink", "potion");
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.Thirst = 0;
+        _potions.ItemId = 0x09EE;
+        _potions.Amount = 1;
+
+        scripts.Run(_potions, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((3, 0x0FFF, "empty mug"), (aria.Thirst, _potions.ItemId, _potions.Name));
+
+        // An empty glass that never held a drink: no sip to take.
+        _potions.ItemId = 0x1F83;
+        _potions.SetProp("drink.uses", null);
+        scripts.Run(_potions, "on_use", 2L);
+
+        Assert.Equal((3, "It is empty."), (aria.Thirst, _speech.Told[^1].Text));
+    }
+
+    [Fact]
     public async Task TheShippedPotionScript_DrinksOnePotionAndTellsThePlayer()
     {
         _scripts.Write("items/potion.lua", File.ReadAllText(ShippedScript("items/potion.lua")));

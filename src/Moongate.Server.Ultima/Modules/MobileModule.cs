@@ -595,6 +595,32 @@ public sealed class MobileModule
         return true;
     }
 
+    /// <summary>
+    ///     Gets how quenched the mobile is, from 0 (parched) to 20 (quenched); <c>mobile.thirst(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "How quenched the mobile is, from 0 (parched) to 20 (quenched); nil for a mobile not in the world.")]
+    public int? Thirst(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? mobile.Thirst : null;
+    }
+
+    /// <summary>
+    ///     Sets how quenched the mobile is, kept from 0 to 20; <c>mobile.set_thirst(who, mobile.thirst(who) + 3)</c>.
+    ///     A player with 0 gets no stamina back.
+    /// </summary>
+    [ScriptFunction(helpText: "Sets how quenched the mobile is, kept from 0 (parched) to 20 (quenched); false for a mobile not in the world.")]
+    public bool SetThirst(long serial, int thirst)
+    {
+        if (!TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        mobile.Thirst = HungerService.Clamp(thirst);
+
+        return true;
+    }
+
     // Points to the tenths the mobile keeps; null for a value no skill can have.
     private static int? Tenths(double points)
     {

@@ -10,7 +10,7 @@ public sealed class RegenerationConfigTests
         var config = new RegenerationConfig();
 
         Assert.Equal((11.0, 7.0, 7.0), (config.HitsSeconds, config.StaminaSeconds, config.ManaSeconds));
-        Assert.Equal((true, 5), (config.HungerEnabled, config.HungerMinutes));
+        Assert.Equal((true, true, 5), (config.HungerEnabled, config.ThirstEnabled, config.HungerMinutes));
         config.Validate();
     }
 

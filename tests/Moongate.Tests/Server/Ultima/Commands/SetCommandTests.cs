@@ -45,7 +45,9 @@ public sealed class SetCommandTests : IAsyncDisposable
      InlineData("MANA", 5, "an orc: mana is now 5."),
      InlineData("stamina", 0, "an orc: stamina is now 0."),
      // Hunger stays from 0 to 20.
-     InlineData("hunger", 99, "an orc: hunger is now 20.")]
+     InlineData("hunger", 99, "an orc: hunger is now 20."),
+     InlineData("thirst", 99, "an orc: thirst is now 20."),
+     InlineData("thirst", 4, "an orc: thirst is now 4.")]
     public async Task ExecuteAsync_SetsTheNumberOfTheTargetedMobile_AndSaysWhatItIsNow(string what, int value, string said)
     {
         var context = await RunAsync(what, value.ToString());
@@ -68,7 +70,7 @@ public sealed class SetCommandTests : IAsyncDisposable
         var context = await RunAsync(arguments);
 
         Assert.Equal(
-            (CommandOutputLevel.Error, "Usage: set <hits|mana|stamina|hunger> <value>"),
+            (CommandOutputLevel.Error, "Usage: set <hits|mana|stamina|hunger|thirst> <value>"),
             (Assert.Single(context.Output).Level, context.Output[0].Text)
         );
         Assert.Equal(0, _targets.Requests);

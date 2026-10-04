@@ -22,6 +22,7 @@ base_id = "base_item"
 item_id = 2503
 name = "bottle of pink Champaine"
 rarity = "common"
+script_id = "drink"
 decays = false
 
 [[item]]

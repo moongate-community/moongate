@@ -54,7 +54,7 @@ public static class UltimaCommandsContainerExtensions
         );
         container.RegisterCommand<SetCommand>(
             "set",
-            "Sets the hits, mana, stamina or hunger of the mobile you target: set <hits|mana|stamina|hunger> <value>.",
+            "Sets the hits, mana, stamina, hunger or thirst of the mobile you target: set <hits|mana|stamina|hunger|thirst> <value>.",
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.SetDescription

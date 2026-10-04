@@ -144,9 +144,14 @@
 30121 = "Legt einen Gegenstand aus einer Gegenstandsvorlage dort auf den Boden, wohin du zielst: add <template>."
 30122 = "Nur ein Gegenstand, der auf dem Boden liegt, kann entfernt werden."
 30126 = "{0}: {1} ist jetzt {2}."
-30127 = "Setzt Lebenspunkte, Mana, Ausdauer oder Hunger des gewählten Wesens: set <hits|mana|stamina|hunger> <Wert>."
+30127 = "Setzt Lebenspunkte, Mana, Ausdauer, Hunger oder Durst des gewählten Wesens: set <hits|mana|stamina|hunger|thirst> <Wert>."
 
 # Moongate: texts of the item scripts.
 30114 = "Dieses Mondtor scheint nirgendwohin zu führen."
 30123 = "Du hast Hunger."
 30124 = "Du verhungerst: Deine Wunden heilen nicht, bis du etwas isst."
+30128 = "Du hast Durst."
+30129 = "Du verdurstest: Deine Ausdauer kehrt nicht zurück, bis du etwas trinkst."
+30130 = "Du bist zu voll, um noch mehr zu trinken!"
+30131 = "Es ist leer."
+30132 = "Du trinkst und hast weniger Durst."
