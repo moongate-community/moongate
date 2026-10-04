@@ -83,16 +83,35 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
 
         Assert.True(Run(MapType.Tokuno) == 0, CombinedOutput);
 
-        // The file and the ids stay with the folder; a spawner that names no map takes the folder's.
-        var spawns = Read("tokuno", "modernuo_yomutso_mines");
+        // The ids stay with the source folder; each region goes into the folder of its map, where the server reads the
+        // map from. A spawner that names no map takes the folder's.
+        Assert.Equal(
+            [("tokuno_modernuo_shared_yomutso_mines_0", MapType.Malas, "Malas earthele")],
+            Read("malas", "modernuo_yomutso_mines").Select(spawn => (spawn.Id, spawn.Map, spawn.Name))
+        );
         Assert.Equal(
             [
-                ("tokuno_modernuo_shared_yomutso_mines_0", MapType.Malas, "Malas earthele"),
                 ("tokuno_modernuo_shared_yomutso_mines_1", MapType.Tokuno, "Tokuno great_hart"),
                 ("tokuno_modernuo_shared_yomutso_mines_2", MapType.Tokuno, "Tokuno great_hart")
             ],
-            spawns.Select(spawn => (spawn.Id, spawn.Map, spawn.Name))
+            Read("tokuno", "modernuo_yomutso_mines").Select(spawn => (spawn.Id, spawn.Map, spawn.Name))
         );
+    }
+
+    [Theory, InlineData(MapType.Tokuno, MapType.Malas), InlineData(MapType.Malas, MapType.Tokuno)]
+    public void Run_ARegionMovedToAnotherConvertedMap_SurvivesItsOldFiles_WhateverTheOrder(MapType first, MapType second)
+    {
+        WriteSpawners("shared/tokuno/YomutsoMines.json", Spawner(100, 80, 0, 5, 2, "00:05:00", "00:10:00", "EarthElemental"));
+        WriteSpawners("shared/malas/Vendors.json", Spawner(10, 10, 0, 2, 1, "00:05:00", "00:10:00", "Minter"));
+        Directory.CreateDirectory(Path.Combine(Destination, "malas"));
+        File.WriteAllText(Path.Combine(Destination, "malas", "modernuo_gone.toml"), "");
+
+        Assert.True(Run(first, second) == 0, CombinedOutput);
+
+        Assert.Single(Read("malas", "modernuo_yomutso_mines"));
+        Assert.Single(Read("malas", "modernuo_vendors"));
+        Assert.False(File.Exists(Path.Combine(Destination, "malas", "modernuo_gone.toml")));
+        Assert.False(File.Exists(Path.Combine(Destination, "tokuno", "modernuo_yomutso_mines.toml")));
     }
 
     [Fact]
@@ -138,7 +157,7 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
     {
         WriteSpawners(
             "shared/tokuno/TownsLife.json",
-            Spawner(713, 1351, 25, 0, 4, "00:05:00", "00:10:00", "GreatHart").Replace(
+            Spawner(713, 1351, 25, 0, 4, "00:05:00", "00:10:00", "GreatHart").Replace("\"map\": \"Malas\"", "\"map\": \"Tokuno\"").Replace(
                 "\"team\": 0,",
                 "\"team\": 0, \"spawnBounds\": { \"start\": { \"x\": 693, \"y\": 1331, \"z\": -128 }, \"end\": { \"x\": 733, \"y\": 1371, \"z\": 40 } },"
             )
@@ -168,8 +187,8 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
     {
         WriteSpawners(
             "post-uoml/termur/Outdoors.json",
-            Spawner(100, 100, 0, 5, 2, "00:05:00", "00:10:00", "Slith", "GreatHart"),
-            Spawner(200, 200, 0, 5, 2, "00:05:00", "00:10:00", "Slith")
+            Spawner(100, 100, 0, 5, 2, "00:05:00", "00:10:00", "Slith", "GreatHart").Replace("\"map\": \"Malas\"", "\"map\": \"TerMur\""),
+            Spawner(200, 200, 0, 5, 2, "00:05:00", "00:10:00", "Slith").Replace("\"map\": \"Malas\"", "\"map\": \"TerMur\"")
         );
 
         Assert.True(Run(MapType.TerMur) == 0, CombinedOutput);

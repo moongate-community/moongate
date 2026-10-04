@@ -138,6 +138,10 @@
 30115 = "Žádné místo se nejmenuje {0}; samotné go je vypíše."
 30116 = "{0} míst se jmenuje {1}; přidej slova kategorie, například go covetous entrance:"
 30117 = "... a {0} dalších."
+30118 = "Neznámá šablona předmětu: {0}"
+30119 = "Přidáno {0} ({1}) na {2} ({3}, {4}, {5})."
+30120 = "Předmět se nepodařilo přidat. Zkontroluj logy serveru."
+30121 = "Položí na zem, kam zamíříš, předmět ze šablony předmětu: add <template>."
 
 # Moongate: texts of the item scripts.
 30114 = "Tento moongate zřejmě nikam nevede."

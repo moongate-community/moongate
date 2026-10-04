@@ -305,14 +305,16 @@ dotnet run --project src/Moongate.Ctl -- convert modernuo-spawns \
 
 It reads the `shared` and `post-uoml` eras of each map (the world of a modern client) and writes
 the spawn regions into `<map>/modernuo_<file>.toml`, such as `malas/modernuo_doom.toml`, replacing
-the `modernuo_` files of that map a previous run wrote; the other files of the folder are left
-alone, and a map with nothing to write keeps its files. A region's id names the era, the file and
+the `modernuo_` files a previous run wrote in the folders of the maps it converts; the other files
+of the folder are left alone, and a map with nothing to write keeps its files. A region's id names the era, the file and
 the spawner's index in it (`malas_modernuo_post_uoml_south_12`), so it stays the same when a later
 run, with more templates, resolves more mobiles. Use it for maps UOX3 does not cover: on Felucca or
 Trammel it would add ModernUO's spawns on top of UOX3's. A region takes the map its spawner
-names, which is not always its folder's: the Yomotsu Mines and the Fan Dancer's Dojo lie in
-ModernUO's `tokuno` folder and on the Malas map, so their regions are in `tokuno/` with
-`map = "malas"`. A spawner becomes:
+names, which is not always its folder's, and goes into the folder of that map, since the server
+takes a region's map from its folder: the Yomotsu Mines and the Fan Dancer's Dojo lie in
+ModernUO's `tokuno` folder and on the Malas map, so their regions are in
+`malas/modernuo_yomutso_mines.toml` and `malas/modernuo_fan_dancers_dojo.toml`, with ids that
+still start with `tokuno_`. A spawner becomes:
 
 - `mobile_ids`: its entries, each ModernUO class found among the `--mobiles` templates. The command
   tries an alias of its table first (`Minter` is `banker`, `GreatHart` is `hart`, guildmasters are

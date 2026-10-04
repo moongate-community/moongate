@@ -1,0 +1,759 @@
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_0_fandancer"
+map = "malas"
+name = "Malas fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 81
+y1 = 525
+x2 = 111
+y2 = 555
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_1_fandancer"
+map = "malas"
+name = "Malas fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 153
+y1 = 595
+x2 = 193
+y2 = 635
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_1_oni"
+map = "malas"
+name = "Malas oni"
+mobile_ids = ["oni"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 153
+y1 = 595
+x2 = 193
+y2 = 635
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_1_daemon"
+map = "malas"
+name = "Malas daemon"
+mobile_ids = ["daemon"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 153
+y1 = 595
+x2 = 193
+y2 = 635
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_2_headless"
+map = "malas"
+name = "Malas headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 110
+y1 = 405
+x2 = 130
+y2 = 425
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_3_fandancer"
+map = "malas"
+name = "Malas fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 129
+y1 = 646
+x2 = 139
+y2 = 656
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_3_hellhound"
+map = "malas"
+name = "Malas hellhound"
+mobile_ids = ["hellhound"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 129
+y1 = 646
+x2 = 139
+y2 = 656
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_3_hellcat"
+map = "malas"
+name = "Malas hellcat"
+mobile_ids = ["hellcat"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 129
+y1 = 646
+x2 = 139
+y2 = 656
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_4"
+map = "malas"
+name = "Malas headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+item_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 74
+y1 = 516
+x2 = 84
+y2 = 526
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_5_headless"
+map = "malas"
+name = "Malas headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 142
+y1 = 641
+x2 = 152
+y2 = 651
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_5_fandancer"
+map = "malas"
+name = "Malas fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 142
+y1 = 641
+x2 = 152
+y2 = 651
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_6_daemon"
+map = "malas"
+name = "Malas daemon"
+mobile_ids = ["daemon"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 44
+y1 = 468
+x2 = 84
+y2 = 508
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_6_headless"
+map = "malas"
+name = "Malas headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 44
+y1 = 468
+x2 = 84
+y2 = 508
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_8_daemon"
+map = "malas"
+name = "Malas daemon"
+mobile_ids = ["daemon"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 63
+y1 = 531
+x2 = 93
+y2 = 561
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_8_hellhound"
+map = "malas"
+name = "Malas hellhound"
+mobile_ids = ["hellhound"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 63
+y1 = 531
+x2 = 93
+y2 = 561
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_8_succubus"
+map = "malas"
+name = "Malas succubus"
+mobile_ids = ["succubus"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 63
+y1 = 531
+x2 = 93
+y2 = 561
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_9_fandancer"
+map = "malas"
+name = "Malas fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 100
+y1 = 639
+x2 = 120
+y2 = 659
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_9_hellcat"
+map = "malas"
+name = "Malas hellcat"
+mobile_ids = ["hellcat"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 100
+y1 = 639
+x2 = 120
+y2 = 659
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_9_balron"
+map = "malas"
+name = "Malas balron"
+mobile_ids = ["balron"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 100
+y1 = 639
+x2 = 120
+y2 = 659
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_10"
+map = "malas"
+name = "Malas headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+item_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 113
+y1 = 377
+x2 = 133
+y2 = 397
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_11"
+map = "malas"
+name = "Malas fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+item_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 68
+y1 = 312
+x2 = 108
+y2 = 352
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_12_daemon"
+map = "malas"
+name = "Malas daemon"
+mobile_ids = ["daemon"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 95
+y1 = 525
+x2 = 125
+y2 = 555
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_12_hellhound"
+map = "malas"
+name = "Malas hellhound"
+mobile_ids = ["hellhound"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 95
+y1 = 525
+x2 = 125
+y2 = 555
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_12_succubus"
+map = "malas"
+name = "Malas succubus"
+mobile_ids = ["succubus"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 95
+y1 = 525
+x2 = 125
+y2 = 555
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_13_headless"
+map = "malas"
+name = "Malas headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 101
+y1 = 342
+x2 = 121
+y2 = 362
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_14_hellcat"
+map = "malas"
+name = "Malas hellcat"
+mobile_ids = ["hellcat"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 155
+y1 = 640
+x2 = 195
+y2 = 680
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_14_balron"
+map = "malas"
+name = "Malas balron"
+mobile_ids = ["balron"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 155
+y1 = 640
+x2 = 195
+y2 = 680
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_15_hellhound"
+map = "malas"
+name = "Malas hellhound"
+mobile_ids = ["hellhound"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 86
+y1 = 665
+x2 = 126
+y2 = 705
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_15_succubus"
+map = "malas"
+name = "Malas succubus"
+mobile_ids = ["succubus"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 86
+y1 = 665
+x2 = 126
+y2 = 705
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_16"
+map = "malas"
+name = "Malas headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+item_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 89
+y1 = 377
+x2 = 109
+y2 = 397
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_17_headless"
+map = "malas"
+name = "Malas headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 77
+y1 = 447
+x2 = 117
+y2 = 487
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_17_succubus"
+map = "malas"
+name = "Malas succubus"
+mobile_ids = ["succubus"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 77
+y1 = 447
+x2 = 117
+y2 = 487
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_18"
+map = "malas"
+name = "Malas fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+item_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 122
+y1 = 672
+x2 = 162
+y2 = 712
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_19_daemon"
+map = "malas"
+name = "Malas daemon"
+mobile_ids = ["daemon"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 80
+y1 = 479
+x2 = 120
+y2 = 519
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_19_headless"
+map = "malas"
+name = "Malas headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 80
+y1 = 479
+x2 = 120
+y2 = 519
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_20_fandancer"
+map = "malas"
+name = "Malas fandancer"
+mobile_ids = ["fandancer"]
+npc_list_ids = []
+item_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 45
+y1 = 351
+x2 = 95
+y2 = 401
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_20_headless"
+map = "malas"
+name = "Malas headless"
+mobile_ids = ["headless"]
+npc_list_ids = []
+item_ids = []
+max = 3
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 45
+y1 = 351
+x2 = 95
+y2 = 401
+
+[[spawn]]
+id = "tokuno_modernuo_shared_fan_dancers_dojo_20_daemon"
+map = "malas"
+name = "Malas daemon"
+mobile_ids = ["daemon"]
+npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 45
+y1 = 351
+x2 = 95
+y2 = 401

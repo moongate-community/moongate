@@ -123,4 +123,8 @@ public static class CommandMessages
     public const int GoNoPlace = 30115;
     public const int GoSeveralPlaces = 30116;
     public const int GoMorePlaces = 30117;
+    public const int UnknownItemTemplate = 30118;
+    public const int ItemAdded = 30119;
+    public const int AddFailed = 30120;
+    public const int AddDescription = 30121;
 }

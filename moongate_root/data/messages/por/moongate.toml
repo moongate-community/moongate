@@ -138,6 +138,10 @@
 30115 = "Nenhum local se chama {0}; go sozinho lista-os."
 30116 = "{0} locais chamam-se {1}; acrescenta palavras da categoria, como go covetous entrance:"
 30117 = "... e mais {0}."
+30118 = "Modelo de objeto desconhecido: {0}"
+30119 = "{0} ({1}) adicionado em {2} ({3}, {4}, {5})."
+30120 = "Não foi possível adicionar o objeto. Verifica os registos do servidor."
+30121 = "Coloca no chão, onde apontas, um objeto de um modelo de objeto: add <template>."
 
 # Moongate: texts of the item scripts.
 30114 = "Este moongate não parece levar a lado nenhum."

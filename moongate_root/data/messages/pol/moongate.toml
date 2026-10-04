@@ -138,6 +138,10 @@
 30115 = "Żadne miejsce nie nazywa się {0}; samo go je wyświetla."
 30116 = "{0} miejsc nazywa się {1}; dodaj słowa kategorii, na przykład go covetous entrance:"
 30117 = "... i {0} więcej."
+30118 = "Nieznany szablon przedmiotu: {0}"
+30119 = "Dodano {0} ({1}) w {2} ({3}, {4}, {5})."
+30120 = "Nie udało się dodać przedmiotu. Sprawdź logi serwera."
+30121 = "Kładzie na ziemi, tam gdzie wskażesz, przedmiot z szablonu przedmiotu: add <template>."
 
 # Moongate: texts of the item scripts.
 30114 = "Ten moongate zdaje się nigdzie nie prowadzić."

@@ -45,6 +45,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.SpawnDescription
         );
+        container.RegisterCommand<AddCommand>(
+            "add",
+            "Puts an item from an item template on the ground where you target: add <template>.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.AddDescription
+        );
         container.RegisterCommand<RemoveCommand>(
             "remove",
             "Removes the NPC you target.",
