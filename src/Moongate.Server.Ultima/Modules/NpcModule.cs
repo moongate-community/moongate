@@ -285,13 +285,15 @@ public sealed class NpcModule
             return false;
         }
 
-        _ = _npcs.RemoveAsync(npc.Id)
-                 .ContinueWith(
-                     task => _logger.Warning(task.Exception, "npc.delete of {Serial} failed", serial),
-                     CancellationToken.None,
-                     TaskContinuationOptions.OnlyOnFaulted,
-                     TaskScheduler.Default
-                 );
+        // The removal posts to the game loop and waits: a script runs on that loop, so it is started off it.
+        var id = npc.Id;
+        _ = Task.Run(() => _npcs.RemoveAsync(id))
+                .ContinueWith(
+                    task => _logger.Warning(task.Exception, "npc.delete of {Serial} failed", serial),
+                    CancellationToken.None,
+                    TaskContinuationOptions.OnlyOnFaulted,
+                    TaskScheduler.Default
+                );
 
         return true;
     }

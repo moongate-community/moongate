@@ -64,7 +64,7 @@ chosen language stays in English, so a partial translation still works. The log
 reports how many messages fell back:
 
 ```text
-Found 5599 messages in ita, 3 of them in English
+Found 5600 messages in ita, 3 of them in English
 ```
 
 ### Validation at startup
@@ -205,6 +205,7 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30130–30132 | You are simply too full to drink any more!, It is empty., You drink, and feel less thirsty. | The texts of `scripts/items/drink.lua` |
 | 30133 | You are overloaded: you carry {0} stones of {1}. | What a player reads when it puts something down while carrying more than it may |
 | 30134–30137 | You have entered {0}., You have left {0}., You are now under the protection of the guards of {0}., You have left the protection of the guards of {0}. | What a player reads when it walks into or out of a named place, and when the protection of its guards changes |
+| 30138 | Thou wilt regret thine actions, swine! | What a guard says when it comes for a criminal |
 
 The header of the command texts in `eng/moongate.toml` lists the ids of both sets.
 

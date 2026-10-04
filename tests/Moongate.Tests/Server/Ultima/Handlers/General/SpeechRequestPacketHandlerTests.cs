@@ -81,6 +81,19 @@ public sealed class SpeechRequestPacketHandlerTests
     }
 
     [Fact]
+    public async Task Handle_Say_TellsTheGuardsWhatThePlayerSaid_ButNotACommand()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("guards"), CancellationToken.None);
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".help"), CancellationToken.None);
+        await fixture.Handler.WaitForCommandsAsync();
+
+        Assert.Equal([("Alice", "guards")], fixture.Guards.Heard.Select(entry => (entry.Speaker.Name, entry.Text)));
+    }
+
+    [Fact]
     public async Task Handle_Say_TellsTheItemsWhatThePlayerSaid_ButNotACommand()
     {
         await using var fixture = await SpeechHandlerFixture.CreateAsync();

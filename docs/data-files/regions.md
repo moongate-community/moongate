@@ -31,7 +31,7 @@ housing = false
 | `season` | The season the client shows in the region (`spring`, `summer`, `fall`, `winter`, `desolation`), such as winter in an ice dungeon; it never rotates. Without it, its nearest parent's season applies, else the map's. | none |
 | `weather` | The profile of `weather.toml`. | `none` |
 | `rune_name` | The name of a rune marked here. | none |
-| `guarded` | Whether guards protect the region. Today the player is told so (see [What a player reads](#what-a-player-reads)) and scripts can read it; no guard comes yet. | `false` |
+| `guarded` | Whether guards protect the region. Today the player is told so (see [What a player reads](#what-a-player-reads)) and scripts can read it, and a player that says "guards" there brings a guard onto a criminal near it (see [`ultima.crime`](../server-configuration.md)). | `false` |
 | `housing` | Whether players may place houses. | `true` |
 | `instant_logout` | Whether a character with no fight in progress leaves the world at once on logout. | `false` |
 | `recall_in`, `recall_out`, `gate_in`, `gate_out`, `mark`, `teleport_in`, `teleport_out` | Whether those travel spells work into, out of or in the region. | `true` |

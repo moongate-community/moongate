@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using System.Buffers.Binary;
 using System.Text;
 using DryIoc;
@@ -48,6 +49,8 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
 
     public RecordingItemSpeechListener ItemListener { get; } = new();
 
+    public RecordingGuardService Guards { get; } = new();
+
     /// <summary>
     ///     Gets what the handler published on the event bus for the speech of players.
     /// </summary>
@@ -87,7 +90,7 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
                 return Task.CompletedTask;
             }
         );
-        Handler = new(Commands, Sessions, Mobiles, Sender, localization, Listener, events, ItemListener);
+        Handler = new(Commands, Sessions, Mobiles, Sender, localization, Listener, events, ItemListener, Guards);
     }
 
     public static async Task<SpeechHandlerFixture> CreateAsync(ILogger? commandLogger = null, ILocalizationService? localization = null)
