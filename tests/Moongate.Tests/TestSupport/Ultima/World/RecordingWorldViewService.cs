@@ -34,6 +34,16 @@ public sealed class RecordingWorldViewService : IWorldViewService
         Record($"Moved {mobile.Id.Value} {oldLocation.X},{oldLocation.Y},{oldLocation.Z}{(running ? " run" : "")}");
     }
 
+    /// <summary>
+    ///     The mobiles whose session has not finished entering the world; every other one has.
+    /// </summary>
+    public HashSet<Serial> NotEntered { get; } = [];
+
+    public bool HasEntered(Serial mobile)
+    {
+        return !NotEntered.Contains(mobile);
+    }
+
     public void Left(MobileEntity mobile)
     {
         Record($"Left {mobile.Id.Value}");

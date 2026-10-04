@@ -72,6 +72,11 @@ public sealed class WorldViewService : IWorldViewService
         ShowAround(mobile, own);
     }
 
+    public bool HasEntered(Serial mobile)
+    {
+        return _sessions.ContainsKey(mobile);
+    }
+
     // Shows the mobile to the players in range and, when it is a player, everyone and every ground item in range to it.
     private void ShowAround(MobileEntity mobile, Viewer? own)
     {

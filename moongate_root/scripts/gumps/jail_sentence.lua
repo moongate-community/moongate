@@ -8,7 +8,8 @@
 --   character there for the days typed in the gump; a cell that holds someone
 --   shows who, how long is left and a button that releases it with no fine. A
 --   character already in jail has a line of its own at the top, with its
---   release. Staff only: anyone else sees an empty gump.
+--   release; one whose days are over while it is offline is said to be free
+--   at its next login. Staff only: anyone else sees an empty gump.
 --
 -- Functions:
 --   rows(g, player, args)  fills the slot; args.target is the serial of the
@@ -119,7 +120,10 @@ function jail_sentence.rows(g, player, args)
             release(who, args, args.target, args.name)
         end }
         g:label_cropped{ x = 35, y = 0, width = row_width + number_width, height = text_height, hue = taken_hue,
-            text = "In cell " .. sentence.cell .. ", " .. left(sentence.seconds_left) .. " left" }
+            text = sentence.seconds_left > 0
+                and "In cell " .. sentence.cell .. ", " .. left(sentence.seconds_left) .. " left"
+                -- Its days are over and it is not in the world: the jail releases it when it is back.
+                or "Sentence over: free at its next login" }
         top = row_height
     end
 

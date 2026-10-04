@@ -24,6 +24,12 @@ public interface IWorldViewService
     void Entered(MobileEntity mobile, long sessionId, ClientVersion? version, AccountType account = AccountType.Regular);
 
     /// <summary>
+    ///     Gets whether the player's session is registered: its login sequence is over and it has not left. False for
+    ///     an NPC.
+    /// </summary>
+    bool HasEntered(Serial mobile);
+
+    /// <summary>
     ///     Tells the players in range that the mobile, now at its current location, moved from
     ///     <paramref name="oldLocation" /> or turned on the spot.
     /// </summary>

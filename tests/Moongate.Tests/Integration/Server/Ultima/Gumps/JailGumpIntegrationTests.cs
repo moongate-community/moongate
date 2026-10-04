@@ -239,6 +239,19 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
+    // Its sentence is over and it is offline: the jail releases it when it logs in.
+    [Fact]
+    public void ATargetWhoseSentenceIsOver_IsSaidToWaitForItsLogin_NotToHaveAMinuteLeft()
+    {
+        _jail.SentenceList.Add(Sentence(Target, "Lord Pippo", cell: 2, secondsLeft: 0));
+
+        var built = Open(Staff);
+
+        Assert.Contains("Sentence over: free at its next login", built.Strings);
+        Assert.DoesNotContain(built.Strings, text => text.Contains("left"));
+        Assert.Empty(_errors);
+    }
+
     [Fact]
     public void APlayer_SeesNoCell()
     {

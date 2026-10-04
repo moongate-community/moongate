@@ -40,6 +40,7 @@ public sealed class JailServiceTests : IAsyncLifetime
     private readonly SettableClock _clock = new() { Now = new DateTimeOffset(2026, 10, 4, 12, 0, 0, TimeSpan.Zero) };
     private readonly ItemsConfig _itemsConfig = new() { GoldTemplate = "gold", BackpackTemplate = "backpack" };
     private readonly ItemService _items = TestItems.Create();
+    private readonly RecordingWorldViewService _view = new();
     private readonly StubItemSerialPool _serials = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                  .Item(0x0EED, TileFlagType.Generic, 0)
@@ -508,6 +509,40 @@ public sealed class JailServiceTests : IAsyncLifetime
         Assert.Equal(800, gold.Amount);
     }
 
+    // The client is still being sent its login: a teleport now would reach it before it knows where it stands.
+    [Fact]
+    public void Check_APlayerWhoseLoginIsNotOverYet_WaitsForTheNextCheck()
+    {
+        var gold = Gold(Backpack(_aria), 800);
+        _jail.Jail(_aria, 1, 1, _staff);
+        _view.NotEntered.Add(_aria.Id);
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.Single(_jail.Sentences);
+        Assert.Equal(800, gold.Amount);
+        Assert.Single(_teleports.Teleports);
+
+        _view.NotEntered.Clear();
+        _jail.Check();
+
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal(300, gold.Amount);
+    }
+
+    [Fact]
+    public void Check_AnNpc_NeedsNoLogin()
+    {
+        _jail.Jail(_orc, 1, 1, _staff);
+        _view.NotEntered.Add(_orc.Id);
+        _clock.Advance(TimeSpan.FromDays(1));
+
+        _jail.Check();
+
+        Assert.Empty(_jail.Sentences);
+    }
+
     [Fact]
     public async Task Start_ASentenceThatEndedWhileTheServerWasDown_IsReleasedAtTheFirstCheck()
     {
@@ -626,7 +661,7 @@ public sealed class JailServiceTests : IAsyncLifetime
             _items,
             _fixture.Sessions,
             _fixture.Sender,
-            new RecordingWorldViewService(),
+            _view,
             TestTooltips.Create(_items, _fixture.Mobiles),
             _fixture.Mobiles,
             _speech,
@@ -648,6 +683,7 @@ public sealed class JailServiceTests : IAsyncLifetime
             _itemsConfig,
             _items,
             module,
+            _view,
             _clock
         );
         await jail.StartAsync();

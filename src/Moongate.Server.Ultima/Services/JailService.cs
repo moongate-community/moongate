@@ -50,6 +50,7 @@ public sealed class JailService : IJailService
     private readonly ItemsConfig _itemsConfig;
     private readonly IItemService _items;
     private readonly ItemModule _itemModule;
+    private readonly IWorldViewService _view;
     private readonly TimeProvider _time;
     private readonly ILocalizationService? _localization;
 
@@ -81,6 +82,7 @@ public sealed class JailService : IJailService
         ItemsConfig itemsConfig,
         IItemService items,
         ItemModule itemModule,
+        IWorldViewService view,
         TimeProvider time,
         ILocalizationService? localization = null
     )
@@ -96,6 +98,7 @@ public sealed class JailService : IJailService
         _itemsConfig = itemsConfig;
         _items = items;
         _itemModule = itemModule;
+        _view = view;
         _time = time;
         _localization = localization;
     }
@@ -239,6 +242,13 @@ public sealed class JailService : IJailService
             {
                 if (_mobiles.TryGet(sentence.Id, out var prisoner))
                 {
+                    // A player whose login is still being sent: a teleport now would reach its client before it
+                    // knows where it stands. The next check finds it entered.
+                    if (sentence.IsPlayer && !_view.HasEntered(prisoner.Id))
+                    {
+                        continue;
+                    }
+
                     // Gold on the cursor cannot be taken: the prisoner waits in its cell until it drops what it holds.
                     if (OwesAFine(sentence) && HoldsSomething(prisoner))
                     {
