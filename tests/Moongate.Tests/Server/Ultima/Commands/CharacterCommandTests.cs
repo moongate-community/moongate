@@ -21,6 +21,15 @@ public sealed class CharacterCommandTests
     private static readonly DateTime Requested = new(2026, 9, 28, 10, 30, 0, DateTimeKind.Utc);
 
     [Fact]
+    public void GetArgumentCompletions_OffersTheActionsFirst_AndNoSerial()
+    {
+        var command = new CharacterCommand(null!, new CharactersConfig());
+
+        Assert.Equal(["pending", "restore"], command.GetArgumentCompletions([]));
+        Assert.Empty(command.GetArgumentCompletions(["restore"]));
+    }
+
+    [Fact]
     public async Task Pending_ListsEachCharacterWithWhenItCanBeRemoved()
     {
         var characters = new RecordingCharacterService { Characters = [Pending(3, "Bran", 0x2A)] };

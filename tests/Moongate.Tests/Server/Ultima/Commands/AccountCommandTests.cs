@@ -21,6 +21,18 @@ namespace Moongate.Tests.Server.Ultima.Commands;
 
 public sealed class AccountCommandTests
 {
+    [Theory,
+     InlineData(new string[0], new[] { "create", "api-access" }),
+     InlineData(new[] { "create", "alice", "secret" }, new[] { "Regular", "GameMaster", "Administrator" }),
+     InlineData(new[] { "API-ACCESS", "alice" }, new[] { "on", "off" }),
+     InlineData(new[] { "create" }, new string[0]),
+     InlineData(new[] { "create", "alice" }, new string[0]),
+     InlineData(new[] { "create", "alice", "secret", "Regular" }, new string[0])]
+    public void GetArgumentCompletions_OffersTheActionsAndTheirFixedValues_NeverAUserOrAPassword(string[] previous, string[] expected)
+    {
+        Assert.Equal(expected, new AccountCommand(null!).GetArgumentCompletions(previous));
+    }
+
     [Fact]
     public void UltimaPlugin_RegistersAccountCommandForConsoleAndInGameAdministrator()
     {
