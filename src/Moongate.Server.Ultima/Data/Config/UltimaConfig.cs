@@ -27,6 +27,8 @@ public class UltimaConfig : IConfigSection
 
     public SpawnsConfig Spawns { get; set; } = new();
 
+    public JailConfig Jail { get; set; } = new();
+
     /// <summary>
     ///     Validates the sub-tables before server services begin startup.
     /// </summary>
@@ -92,5 +94,12 @@ public class UltimaConfig : IConfigSection
         }
 
         Regeneration.Validate();
+
+        if (Jail is null)
+        {
+            throw new InvalidOperationException("The ultima.jail configuration section cannot be null.");
+        }
+
+        Jail.Validate();
     }
 }
