@@ -77,8 +77,11 @@ internal static class BundledMigrations
                     continue;
                 }
 
+                // Whole or not at all: a start killed half way must not leave a file the next one takes for a conflict.
+                var temporary = path + ".tmp";
                 Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-                File.Copy(Path.Combine(source, target, script.FileName), path);
+                File.Copy(Path.Combine(source, target, script.FileName), temporary, true);
+                File.Move(temporary, path);
                 created.Add(path);
             }
         }

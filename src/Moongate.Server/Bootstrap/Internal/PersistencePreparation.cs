@@ -39,19 +39,13 @@ internal static class PersistencePreparation
                 autoApply ? "apply-migrations" : "validate"
             );
 
-            if (autoApply && container.IsRegistered<DirectoriesConfig>())
+            if (autoApply)
             {
-                var config = container.Resolve<MoongateServerConfig>();
-                var directories = container.Resolve<DirectoriesConfig>();
-                var migrations = config.Persistence.ResolveMigrationsDirectory(Path.Combine(directories.Root, "migrations"))!;
-                var plugins = directories["plugins"];
-
                 await StartupMigrations.PrepareAsync(
-                    config.Persistence,
+                    container.Resolve<MoongateServerConfig>(),
+                    container.Resolve<DirectoriesConfig>(),
                     Path.Combine(AppContext.BaseDirectory, "migrations"),
-                    migrations,
-                    config.Mode,
-                    new DevelopmentMigrationRunner(directories.Root, migrations, plugins),
+                    (root, migrations, plugins) => new DevelopmentMigrationRunner(root, migrations, plugins),
                     cancellationToken
                 );
             }

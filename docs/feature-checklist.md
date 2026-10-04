@@ -358,7 +358,7 @@ Systems most emulators do not have:
 - Login server and game realms as separate processes, discovered through Redis, with one-use
   handoff tickets.
 - PostgreSQL persistence with versioned migrations, applied by `mgctl migrate` while the server is
-  stopped.
+  stopped, or by the server itself at startup when `persistence.auto_apply_migrations` is on.
 - World saves that never stop the game: about 0.1 s on the game loop to copy 173,000 entities, then
   only the changed rows written in the background; see
   [A save does not stop the game](persistence-operations.md#a-save-does-not-stop-the-game).

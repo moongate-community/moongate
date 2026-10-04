@@ -49,6 +49,21 @@ public sealed class BundledMigrationsTests
     }
 
     [Fact]
+    public void CopyMissing_AHalfWrittenFileOfAStartThatWasKilled_IsWrittenAgain_AndLeavesNoTemporaryFile()
+    {
+        using var directory = new TemporaryDirectory();
+        var source = CreateSource(directory);
+        var destination = Path.Combine(directory.Path, "root/migrations");
+        Directory.CreateDirectory(Path.Combine(destination, "world"));
+        File.WriteAllText(Path.Combine(destination, "world/0002_more.sql.tmp"), "SELE");
+
+        BundledMigrations.CopyMissing(source, destination);
+
+        Assert.Equal("SELECT 2;\n", File.ReadAllText(Path.Combine(destination, "world/0002_more.sql")));
+        Assert.Empty(Directory.GetFiles(destination, "*.tmp", SearchOption.AllDirectories));
+    }
+
+    [Fact]
     public void CopyMissing_WithNoBundledMigrations_CopiesNothing()
     {
         using var directory = new TemporaryDirectory();

@@ -107,6 +107,25 @@ public sealed class PersistenceConfigTests
         }
     }
 
+    [Fact]
+    public void RoundTrip_AutoApplyMigrations_IsReadBackFromItsTomlKey()
+    {
+        var config = new MoongateServerConfig();
+        config.Persistence.AutoApplyMigrations = true;
+        var path = Path.Combine(Path.GetTempPath(), $"moongate-{Guid.NewGuid():N}.toml");
+
+        try
+        {
+            TomlUtils.SerializeToFile(config, path);
+            Assert.Contains("auto_apply_migrations = true", File.ReadAllText(path));
+            Assert.True(TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!.Persistence.AutoApplyMigrations);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
     [Theory, InlineData(PersistenceDatabaseTarget.Accounts, "auth"), InlineData(PersistenceDatabaseTarget.Realm, "world")]
     public void Defaults_ResolveLocalDatabaseWithoutEnvironment(PersistenceDatabaseTarget target, string database)
     {
