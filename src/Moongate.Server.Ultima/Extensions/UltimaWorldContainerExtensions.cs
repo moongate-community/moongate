@@ -44,6 +44,8 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<IHungerService, HungerService>(12);
         container.AddMoongateService<ICrimeService, CrimeService>(12);
         container.AddMoongateService<IGuardService, GuardService>(12);
+        // After the data loaders: the cells come from data/jail.toml; its sentences are read from the world database.
+        container.AddMoongateService<IJailService, JailService>(12);
         // After the script engine (70) and its bootstrap: the mobile scripts load into the running engine.
         container.AddMoongateService<NpcScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
@@ -109,6 +111,7 @@ public static class UltimaWorldContainerExtensions
         container.AddLiveWorldMobiles();
         container.AddLiveWorldItems();
         container.AddLiveWorldState();
+        container.AddLiveJailSentences();
 
         container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
         // After the loaders: the maps come from data/maps.toml.

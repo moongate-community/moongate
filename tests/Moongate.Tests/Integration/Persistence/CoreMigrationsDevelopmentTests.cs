@@ -27,7 +27,8 @@ public sealed class CoreMigrationsDevelopmentTests
             PersistenceDatabaseTarget.Realm,
             typeof(MobileEntity),
             typeof(ItemEntity),
-            typeof(WorldStateEntity)
+            typeof(WorldStateEntity),
+            typeof(JailSentenceEntity)
         );
     }
 
@@ -41,7 +42,8 @@ public sealed class CoreMigrationsDevelopmentTests
             "COMMENT ON COLUMN world.items.x IS 'only in the database'",
             typeof(MobileEntity),
             typeof(ItemEntity),
-            typeof(WorldStateEntity)
+            typeof(WorldStateEntity),
+            typeof(JailSentenceEntity)
         );
     }
 

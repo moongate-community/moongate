@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 75 done, 🟡 42 partly done, ❌ 151 not built yet.
+**268 systems:** ✅ 76 done, 🟡 42 partly done, ❌ 150 not built yet.
 
 **Coverage: 28%** of the systems done, **36%** counting a partly done system as half.
 
@@ -288,7 +288,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Hot reload | 🟡 | Lua scripts; not the data or templates |
 | GM help queue (pages) | ❌ | |
 | Help menu and stuck menu | ❌ | |
-| Jails | ❌ | Jail regions are dim, nothing more |
+| Jails | ✅ | A gump lists the cells and who is in them; sentences in real days, a gold fine and a release note at the end, a chest of bread and water in every cell; see [Jail](jail.md) |
 | Who list | ❌ | |
 | Staff tools: property gump, add menu, area commands | 🟡 | The gump of the named places, `.go`, with ModernUO's 558 places; no property gump, add menu or area commands |
 | Named locations and travel menu for staff | ✅ | `.go <place>` and the go gump, with ModernUO's 558 places from `data/locations.toml` |
@@ -363,5 +363,8 @@ Systems most emulators do not have:
   only the changed rows written in the background; see
   [A save does not stop the game](persistence-operations.md#a-save-does-not-stop-the-game).
 - A gRPC administration API with TLS.
+- A [jail](jail.md) run from a gump: the staff picks a cell and the days, and the server does the
+  rest, from the fine and the release note at the end of the sentence to the bread and water in the
+  cell.
 - Plugins that add services, commands, Lua modules, metrics, entities and their own settings.
 - Docker images and a multi-realm example.

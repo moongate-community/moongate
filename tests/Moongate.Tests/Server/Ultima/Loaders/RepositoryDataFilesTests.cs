@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Data.Locations;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
@@ -58,6 +59,7 @@ public sealed class RepositoryDataFilesTests
         container.AddUltimaDataLoader<NamesLoader, NameList>(11);
         container.AddUltimaDataLoader<MoongatesLoader, MoongateFacet>(12);
         container.AddUltimaDataLoader<LocationsLoader, NamedLocation>(13);
+        container.AddUltimaDataLoader<JailLoader, JailFile>(14);
         container.RegisterInstance(new LocalizationConfig { Language = "ita" });
         container.Register<IDataLoaderService, DataLoaderService>(Reuse.Singleton);
         var service = container.Resolve<IDataLoaderService>();
@@ -78,6 +80,15 @@ public sealed class RepositoryDataFilesTests
             [MapType.Felucca, MapType.Trammel, MapType.Ilshenar, MapType.Malas, MapType.Tokuno, MapType.TerMur],
             places.Select(place => place.Map).Distinct()
         );
+        // ModernUO's go menu lists cell 7 on the spot of cell 6: the cells are ten different spots.
+        Assert.All(
+            places.Where(place => place.Category == "Internal/Jail Cells").GroupBy(place => place.Map),
+            cells => Assert.Equal(10, cells.Select(cell => cell.Location).Distinct().Count())
+        );
+        var jail = Assert.Single(service.GetEntities<JailFile>());
+        Assert.Equal(MapType.Felucca, jail.Map);
+        Assert.Equal(Enumerable.Range(1, 10), jail.Cell.Select(cell => cell.Number));
+        Assert.Equal(10, jail.Cell.Select(cell => cell.Location).Distinct().Count());
         Assert.Equal(58, service.GetEntities<SkillContent>().Count);
         Assert.Equal(7, service.GetEntities<ProfessionContent>().Count);
         Assert.Equal(3, service.GetEntities<RaceContent>().Count);
@@ -93,7 +104,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5600, messages.Count);
+        Assert.Equal(5609, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
@@ -169,7 +180,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5600, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5609, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     [Theory,

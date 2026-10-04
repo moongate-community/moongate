@@ -86,7 +86,7 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
-        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30127));
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30144));
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Standalone)]
@@ -176,6 +176,31 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         Assert.NotNull(container.Resolve<GumpModule>());
+    }
+
+    [Fact]
+    public void Register_TheJail_ResolvesWithItsModuleAndItsCommand()
+    {
+        // The jail takes the item module, which takes half the world: a cycle would stop the server at startup.
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Standalone));
+        container.RegisterMoongateEventBus();
+        container.Register<IEventBusService, EventBusService>(Reuse.Singleton);
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        Assert.NotNull(container.Resolve<IJailService>());
+        Assert.NotNull(container.Resolve<JailModule>());
+        Assert.NotNull(container.Resolve<JailCommand>());
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]

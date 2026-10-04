@@ -15,6 +15,16 @@ public sealed class RecordingTeleportService : ITeleportService
     public bool Result { get; set; } = true;
 
     /// <summary>
+    ///     The maps a teleport to is refused, as maps that are not loaded.
+    /// </summary>
+    public HashSet<MapType> RefusedMaps { get; } = [];
+
+    /// <summary>
+    ///     The mobile whose teleport throws.
+    /// </summary>
+    public MobileEntity? ThrowFor { get; set; }
+
+    /// <summary>
     ///     Gets the thread the last teleport was asked on.
     /// </summary>
     public int TeleportedOnThread { get; private set; }
@@ -24,6 +34,11 @@ public sealed class RecordingTeleportService : ITeleportService
         Teleports.Add((mobile, map, location));
         TeleportedOnThread = System.Environment.CurrentManagedThreadId;
 
-        return Result;
+        if (ReferenceEquals(mobile, ThrowFor))
+        {
+            throw new InvalidOperationException("The teleport failed.");
+        }
+
+        return Result && !RefusedMaps.Contains(map);
     }
 }

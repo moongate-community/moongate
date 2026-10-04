@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/jail_sentence.xml
+
+  What it is for:
+    The gump of the jail, opened by .jail on the character the game master
+    targets: the days of the sentence are typed here, and the cells come from
+    jail_sentence.rows in scripts/gumps/jail_sentence.lua, which lists the
+    cells of data/jail.toml with who is inside and pages them. The button of a
+    free cell sends the character there; a right click closes the gump.
+
+  Arguments:
+    target  the serial of the character to jail
+    name    its name, for the title
+    days    the days shown in the field, as text
+-->
+<gump id="jail_sentence" x="80" y="60"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="460" height="370" />
+  <text x="20" y="15" hue="1152">Jail: ${name}</text>
+  <text x="20" y="44">Days:</text>
+  <image_tiled x="70" y="42" width="60" height="24" gump="2624" />
+  <text_entry x="75" y="44" width="50" height="20" hue="1152" entry="1" max_length="4" bind="days">${days}</text_entry>
+  <slot name="rows" x="20" y="75" />
+</gump>

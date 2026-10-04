@@ -171,6 +171,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.GoDescription
         );
+        container.RegisterCommand<JailCommand>(
+            "jail",
+            "Sends the character you target to a jail cell for some days, or releases it: a gump lists the cells.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.JailDescription
+        );
         container.RegisterCommand<MoongateCommand>(
             "moongate",
             "Puts at your feet a moongate to a place of your map or of another: moongate <x>,<y>,<z> [map].",

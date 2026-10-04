@@ -183,3 +183,22 @@ empty and looks again five minutes later. ModernUO starts the wait when an item 
 locks and traps the container: those are not there yet. The town tables use
 `templates/loots/randomshields.toml` (one plain shield, ModernUO's `Loot.ShieldTypes`) and the two goods of
 `templates/items/town_goods.toml` (mallet and chisel, arrow shafts) that the converted item files lack.
+
+## jail_sentence.lua
+
+`scripts/gumps/jail_sentence.lua` is the script of the gump of the [jail](../jail.md)
+(`templates/gumps/jail_sentence.xml`), which [`.jail`](../commands/jail.md) opens on the character
+the game master targets. Its `rows` function fills the slot with the cells of `jail.cells()`, ten
+per page. A free cell has a button that reads the days typed in the gump and calls
+`jail.send(target, cell, days, who)`; days that are empty, not a number, a fraction or beyond
+`jail.max_days()` jail nobody, and the gump opens again with the reason. A cell that holds someone
+shows its name, the time left as `2d 4h`, `5h 10m` or `12m`, and a button that calls
+`jail.release`. A target that is already in jail has its release on a line of its own at the top.
+Every button checks `world.is_staff` again: the rank may have gone while the gump was open.
+
+## jail_note.lua
+
+`scripts/items/jail_note.lua` is the script of the `jail_release_note` template, the note a
+prisoner finds in its backpack when its sentence ends. On `on_use` it opens a gump built in Lua
+with the text of the prop `jail.text`, which the jail wrote: the days served, the cell, the dates
+and the fine paid. A note with no text, such as one made with `.add`, shows nothing.
