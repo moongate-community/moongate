@@ -286,6 +286,99 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AGuardThatWasCalled_HasOneCriminal_AndArrestsNoOtherAfterIt()
+    {
+        _guard.SetProp("guard.summoned", true);
+        _aria.Criminal = true;
+        Assert.True(_fixture.Mobiles.MoveTo(_guard, MapType.Trammel, new Point3D(1605, 1600, 0)));
+        Think(2);
+        _aria.Criminal = false;
+        Think(2);
+        Assert.Equal(["war 256 True", "war 256 False"], _state.Flags);
+
+        // Another criminal comes into sight: the called guard came for one, and is about to leave.
+        await _fixture.AddAsync(3);
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(3), out var bran));
+        bran.AccountId = new Serial(0x43);
+        bran.Criminal = true;
+        Assert.True(_fixture.Mobiles.MoveTo(bran, MapType.Trammel, new Point3D(1610, 1600, 0)));
+        Think(6);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(["war 256 True", "war 256 False"], _state.Flags);
+        Assert.Empty(_teleports.Teleports);
+    }
+
+    [Fact]
+    public void ACriminalThatLeadsTheGuardFarFromItsPost_IsLetGo()
+    {
+        _aria.Criminal = true;
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1601, 1600, 0)));
+        Think(2);
+        Assert.Equal(["war 256 True"], _state.Flags);
+
+        // Step by step the guard was led away: 25 tiles from its post, the criminal still beside it.
+        Assert.True(_fixture.Mobiles.MoveTo(_guard, MapType.Trammel, new Point3D(1625, 1600, 0)));
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1626, 1600, 0)));
+        Think(1);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(["war 256 True", "war 256 False"], _state.Flags);
+    }
+
+    [Fact]
+    public void ACriminalItCannotReach_IsGivenUp_AndLeftAloneUntilItMoves()
+    {
+        _aria.Criminal = true;
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1601, 1600, 0)));
+        Think(2);
+        // The criminal steps where no path leads: the finder finds none.
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1604, 1600, 0)));
+
+        Think(19);
+        Assert.Equal(["war 256 True"], _state.Flags);
+        Think(2);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(["war 256 True", "war 256 False"], _state.Flags);
+
+        // Still there, still out of reach: it is not arrested again.
+        Think(10);
+        Assert.Equal(2, _state.Flags.Count);
+
+        // It moved: the guard tries again.
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1603, 1600, 0)));
+        Think(4);
+        Assert.Equal(3, _state.Flags.Count);
+    }
+
+    [Fact]
+    public void ATeleportThatFails_LeavesNoSmokeWhereTheGuardNeverCame()
+    {
+        _aria.Criminal = true;
+        _teleports.Result = false;
+
+        Think(2);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Single(_teleports.Teleports);
+        Assert.Empty(_effects.At);
+        Assert.DoesNotContain((_guard, TeleportSound), _speech.Sounds);
+    }
+
+    [Fact]
+    public void ItLooksAtTheSky_OnlyForACriminal_NotForEveryPlayerAround()
+    {
+        // An innocent in range costs no line of sight; a criminal does.
+        Think(8);
+        Assert.Empty(_sight.Checks);
+
+        _aria.Criminal = true;
+        Think(2);
+        Assert.NotEmpty(_sight.Checks);
+    }
+
+    [Fact]
     public void WithNobodyToArrest_AStandingGuardStrollsInsideItsPost()
     {
         SetPost(1595, 1595, 1605, 1605);

@@ -39,14 +39,20 @@ of two states:
 | State | What it does | It ends when |
 | --- | --- | --- |
 | post | Strolls around its post, the area of its spawn region, about a step every four seconds, with `npc.wander`, which also walks it back from outside | It sees a criminal: to arrest |
-| arrest | Goes into war mode; when it is not beside the criminal it appears on it, with a puff of smoke where it stood and where it comes and the teleport sound; says "Thou wilt regret thine actions, swine!" (message 30138). Then it stays on the criminal, facing it, and runs after it with `npc.walk_to` when it moves | The criminal is pardoned or its time is over, hides, leaves the guarded region or goes farther than 24 tiles: back to its post, in peace |
+| arrest | Goes into war mode; when it is not beside the criminal it appears on it, with a puff of smoke where it stood and where it comes and the teleport sound; says "Thou wilt regret thine actions, swine!" (message 30138). Then it stays on the criminal, facing it, and runs after it with `npc.walk_to` when it moves | The criminal is pardoned or its time is over, hides, leaves the guarded region, goes farther than 24 tiles from the guard or from its post, or cannot be reached for 10 seconds: back to its post, in peace |
 
-It looks for a criminal every second: the nearest player of `npc.players_in_sight` within 12 tiles
-whose `mobile.criminal` is true and that stands in a guarded region (`world.is_guarded`). It never sees
-a hidden player, a game master or an administrator, and it does not arrest NPCs. A guard that was
-called bears the prop `guard.summoned`: it came onto its criminal and said its line already, so it
-stays on it in silence, and it does not stroll. What a guard is doing is kept in memory by its serial,
-not saved. The numbers (12, 24) are constants at the top of the file.
+It looks for a criminal every second: the nearest player of `npc.nearby` within 12 tiles whose
+`mobile.criminal` is true, that stands in a guarded region (`world.is_guarded`) no farther than 24
+tiles from the guard's post (`npc.home`), and that it sees (`npc.can_see`); only a criminal costs the
+look along the line of sight. The post is the measure, not the guard, so a criminal cannot lead a guard
+out of town step by step. A criminal it could not reach is left alone until it moves. It never sees a
+hidden player, a game master or an administrator, and it does not arrest NPCs. A teleport that is
+refused leaves the guard where it is, to run to the criminal.
+
+A guard that was called bears the prop `guard.summoned`: it came onto its criminal and said its line
+already, so it stays on it in silence and does not stroll, and once that criminal is let go it arrests
+no other and waits to be sent away. What a guard is doing is kept in memory by its serial, not saved.
+The numbers (12, 24, the 10 seconds) are constants at the top of the file.
 
 ## orione.lua and vega.lua
 
