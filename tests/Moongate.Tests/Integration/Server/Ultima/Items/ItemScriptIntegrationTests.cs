@@ -592,12 +592,12 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(TimeSpan.FromSeconds(seconds), Assert.Single(_timers.Timers).Interval);
     }
 
-    [Fact]
-    public async Task TheShippedKeywordTeleporterScript_ARangeWrittenAsText_IsStillARange()
+    [Theory, InlineData("2"), InlineData("2.5"), InlineData(2.5)]
+    public async Task TheShippedKeywordTeleporterScript_ARangeWrittenAsTextOrWithAFraction_IsStillARange(object range)
     {
         // A prop edited by hand: without the conversion every line spoken nearby raised a Lua error.
         var props = Mantra();
-        props["range"] = "2";
+        props["range"] = range;
         var teleporter = PlaceKeywordTeleporter(props);
         var scripts = await StartKeywordTeleporterScriptAsync();
         var aria = AriaAt(1602, 1600);
@@ -901,6 +901,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private async Task<ItemScriptService> StartItemScriptAsync(string script, string template)
     {
         _scripts.Write($"items/{script}.lua", File.ReadAllText(ShippedScript($"items/{script}.lua")));
+        // What the teleporter scripts take with require.
+        _scripts.Write("common/teleport.lua", File.ReadAllText(ShippedScript("common/teleport.lua")));
         var engine = NewEngine();
         _engines.Add(engine);
         await engine.StartAsync();

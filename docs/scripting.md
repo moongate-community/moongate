@@ -82,6 +82,7 @@ exists but fails compilation/execution aborts server startup.
 | `item.item_id(serial)`, `item.set_item_id(serial, graphic)` | The item's graphic, and changing it (0 to 65535), as a door opening: the players around a ground item, or the owner of a carried one, see it change; `false` for an unknown, worn or held item or a graphic out of range; an item inside a container on the ground changes without being shown again |
 | `item.set_light(serial, type)` | The light shape a light source gives, by `LightType` name such as `circle150`, `circle300` or `west_big`; `nil` clears it. The players who see the item are shown it again; the client draws the light only for a lit graphic. `false` for an unknown shape or a worn or held item |
 | `item.location(serial)`, `item.move_to(serial, x, y, z)` | Where a ground item lies, `{ x, y, z, map }`, and moving it on its map: the players around the old spot lose it and those around the new one see it; `nil`/`false` for an item not on the ground, a spot outside the map or a `z` outside -128 to 127; moving restarts a decaying item's decay |
+| `item.in_range(serial, mobile, range)` | Whether a mobile is on the map of a ground item and within `range` tiles of it, the larger of the two differences: `if item.in_range(serial, user, 2) then ... end`; `false` for an item not on the ground, a mobile not in the world or a negative range |
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
 | `item.give(mobile, template, amount?)` | Makes a new item from an item template in the mobile's backpack and gives its serial; the owner sees it at once and its next save keeps it. `nil` for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack) or when the server has no serial ready: it keeps 64 in reserve and refills them in the background, so a script that makes more than that in one go gets `nil` for the rest and must try again later |
 | `item.add_loot(container, table, rolls?)` | Rolls a loot table of `templates/loots` once, or `rolls` times, and puts what it gives into a container, or into the backpack of a mobile; returns how many items it added, `0` for rolls that give nothing, an unknown table or something that is no container; fewer than the roll gave when the container is full (125 items) or the server has no item serial at hand for a moment |
@@ -482,6 +483,16 @@ graphic, such as a brazier, stays as it is. The lights `.decorate` places have t
 light and douse themselves: every 30 seconds the server calls `on_darkness(serial, dark)` on a
 lamp post whose spot turned dark or light (`ultima.world.lamp_post_light`), and `light.lua`
 switches its graphic silently.
+
+The two teleporter scripts below share `scripts/common/teleport.lua`, a Lua module they take with
+`local teleport = require("common.teleport")`: `teleport.send(serial, who)` sends a mobile where the
+item's props say (`teleport.x`, `teleport.y`, `teleport.z`, `teleport.map`), with the smoke of
+`source_effect` and `dest_effect` and the sound of `sound_id`, and `teleport.is_on(value)` reads a flag
+the decoration files carry as text. A script of your own that teleports can take it the same way.
+A script keeps the module it took: after `script reload common/teleport.lua`, reload the scripts that
+use it too (see [Reload and ownership](#reload-and-ownership)). `mgctl init` adds `scripts/common/` to an
+existing root and keeps the scripts already there; a root whose item scripts are replaced by hand needs
+`scripts/common/` as well, or its teleporters stop.
 
 `scripts/items/teleporter.lua` is the script of the `decoration_teleporter` template that
 [`.decorate`](commands/decorate.md) gives to ModernUO's `Teleporter`: on `on_move_over` it

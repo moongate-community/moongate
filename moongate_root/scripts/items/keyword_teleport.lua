@@ -34,10 +34,7 @@
 
 keyword_teleport = {}
 
--- The decoration files carry the flags as text.
-local function is_on(value)
-    return value == true or value == "true"
-end
+local teleport = require("common.teleport")
 
 -- "0:0:1" is one second and "0:1:1.5" a minute and a second and a half; a number, or a number written as text, is
 -- seconds already. Anything else is no delay.
@@ -61,22 +58,12 @@ local function seconds(delay)
     return tonumber(hours) * 3600 + tonumber(minutes) * 60 + tonumber(secs)
 end
 
--- Where the player stands when it is on the teleporter's map and within its range; nil otherwise.
+-- Whether the player is on the teleporter's map and within its range. A range written by hand may be text or
+-- have a fraction: the whole tiles of it count.
 local function in_range(serial, who)
-    local here = item.location(serial)
-    local at = mobile.location(who)
-
-    if not here or not at or here.map ~= at.map then
-        return nil
-    end
-
     local range = tonumber(item.get_prop(serial, "range")) or 0
 
-    if math.abs(at.x - here.x) > range or math.abs(at.y - here.y) > range then
-        return nil
-    end
-
-    return at
+    return item.in_range(serial, who, math.floor(math.max(math.min(range, 32), 0)))
 end
 
 local function matches(serial, text, keywords)
@@ -96,38 +83,9 @@ local function matches(serial, text, keywords)
 end
 
 -- As ModernUO: after the delay the player must still stand in range.
-local function teleport(serial, who)
-    local from = in_range(serial, who)
-
-    if not from then
-        return
-    end
-
-    local x = item.get_prop(serial, "teleport.x")
-    local y = item.get_prop(serial, "teleport.y")
-    local z = item.get_prop(serial, "teleport.z")
-
-    if not (x and y and z) then
-        return
-    end
-
-    -- A nil map keeps the player on its own.
-    local map = item.get_prop(serial, "teleport.map")
-
-    if is_on(item.get_prop(serial, "source_effect")) then
-        effect.at(from.map, from.x, from.y, from.z, EffectGraphicType.Smoke)
-    end
-
-    if mobile.teleport(who, x, y, z, map) then
-        if is_on(item.get_prop(serial, "dest_effect")) then
-            effect.at(map or from.map, x, y, z, EffectGraphicType.Smoke)
-        end
-
-        local sound = tonumber(item.get_prop(serial, "sound_id"))
-
-        if sound and sound > 0 then
-            mobile.play_sound(who, sound)
-        end
+local function teleport_player(serial, who)
+    if in_range(serial, who) then
+        teleport.send(serial, who)
     end
 end
 
@@ -145,9 +103,9 @@ function keyword_teleport.on_speech(serial, speaker, text, keywords)
 
     if wait_for > 0 then
         timer.after(wait_for, function()
-            teleport(serial, speaker)
+            teleport_player(serial, speaker)
         end)
     else
-        teleport(serial, speaker)
+        teleport_player(serial, speaker)
     end
 end

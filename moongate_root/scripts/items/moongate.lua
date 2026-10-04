@@ -42,18 +42,7 @@ local cancel_cliloc = 1011012
 
 -- Where the player stands when it is on the gate's map and within range cells of it; nil otherwise.
 local function near(serial, who, range)
-    local here = item.location(serial)
-    local at = mobile.location(who)
-
-    if not here or not at or here.map ~= at.map then
-        return nil
-    end
-
-    if math.abs(at.x - here.x) > range or math.abs(at.y - here.y) > range then
-        return nil
-    end
-
-    return at
+    return item.in_range(serial, who, range) and mobile.location(who) or nil
 end
 
 -- Who touched a gate and has not travelled yet: touching again meanwhile starts nothing.

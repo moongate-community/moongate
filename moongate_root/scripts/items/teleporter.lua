@@ -24,48 +24,11 @@
 
 teleporter = {}
 
--- The decoration files carry the flags as text.
-local function is_on(value)
-    return value == true or value == "true"
-end
+local teleport = require("common.teleport")
 
 local function travel(serial, who)
-    if item.get_prop(serial, "active") == false then
-        return
-    end
-
-    local x = item.get_prop(serial, "teleport.x")
-    local y = item.get_prop(serial, "teleport.y")
-    local z = item.get_prop(serial, "teleport.z")
-
-    if not (x and y and z) then
-        return
-    end
-
-    -- A nil map keeps the mobile on its own.
-    local map = item.get_prop(serial, "teleport.map")
-
-    -- As ModernUO: the smoke where the mobile leaves is shown before the move, to those who watch it go.
-    local from = mobile.location(who)
-
-    if not from then
-        return
-    end
-
-    if is_on(item.get_prop(serial, "source_effect")) then
-        effect.at(from.map, from.x, from.y, from.z, EffectGraphicType.Smoke)
-    end
-
-    if mobile.teleport(who, x, y, z, map) then
-        if is_on(item.get_prop(serial, "dest_effect")) then
-            effect.at(map or from.map, x, y, z, EffectGraphicType.Smoke)
-        end
-
-        local sound = item.get_prop(serial, "sound_id")
-
-        if sound then
-            mobile.play_sound(who, sound)
-        end
+    if item.get_prop(serial, "active") ~= false then
+        teleport.send(serial, who)
     end
 end
 
@@ -76,7 +39,7 @@ end
 
 -- Called when an NPC steps onto the teleporter: as ModernUO, only one made for creatures takes it.
 function teleporter.on_npc_move_over(serial, who)
-    if is_on(item.get_prop(serial, "creatures")) then
+    if teleport.is_on(item.get_prop(serial, "creatures")) then
         travel(serial, who)
     end
 end
