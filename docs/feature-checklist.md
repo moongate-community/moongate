@@ -80,7 +80,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Weapons and armour: damage, armour, durability, resistances | ❌ | NPC templates carry damage and armour; item templates do not yet |
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
-| NPC combat AI | 🟡 | `monster.lua`: skeletons and zombies notice a player, walk to it and stand guard when they lose it; no fight yet |
+| NPC combat AI | 🟡 | `monster.lua`: the undead of the graveyards notice a player, walk to it and stand guard when they lose it; no fight yet |
 | Guards in guarded regions | ❌ | |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
