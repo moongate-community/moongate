@@ -160,3 +160,8 @@
 30135 = "You have left {0}."
 30136 = "You are now under the protection of the guards of {0}."
 30137 = "You have left the protection of the guards of {0}."
+30138 = "You have been jailed for {0} days."
+30139 = "You have served your sentence. A fine of {0} gold was taken."
+30140 = "You have served your sentence."
+30141 = "You have been released from jail."
+30142 = "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}."

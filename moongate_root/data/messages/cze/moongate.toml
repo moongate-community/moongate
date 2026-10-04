@@ -160,3 +160,8 @@
 30135 = "Opouštíš: {0}."
 30136 = "Nyní jsi pod ochranou stráží: {0}."
 30137 = "Opouštíš ochranu stráží: {0}."
+30138 = "Byl jsi uvězněn na {0} dní."
+30139 = "Odpykal sis svůj trest. Byla ti stržena pokuta {0} zlatých."
+30140 = "Odpykal sis svůj trest."
+30141 = "Byl jsi propuštěn z vězení."
+30142 = "{0} si odpykal {1} dní v cele {2}, od {3} do {4}, a zaplatil pokutu {5} zlatých. Uvěznil: {6}."

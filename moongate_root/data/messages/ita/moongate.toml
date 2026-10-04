@@ -160,3 +160,8 @@
 30135 = "Hai lasciato: {0}."
 30136 = "Ora sei sotto la protezione delle guardie di {0}."
 30137 = "Hai lasciato la protezione delle guardie di {0}."
+30138 = "Sei stato imprigionato per {0} giorni."
+30139 = "Hai scontato la tua pena. È stata prelevata una multa di {0} monete d'oro."
+30140 = "Hai scontato la tua pena."
+30141 = "Sei stato rilasciato dalla prigione."
+30142 = "{0} ha scontato {1} giorni nella cella {2}, dal {3} al {4}, e ha pagato una multa di {5} monete d'oro. Imprigionato da {6}."

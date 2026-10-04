@@ -160,3 +160,8 @@
 30135 = "Du hast {0} verlassen."
 30136 = "Du stehst jetzt unter dem Schutz der Wachen von {0}."
 30137 = "Du hast den Schutz der Wachen von {0} verlassen."
+30138 = "Du wurdest für {0} Tage eingesperrt."
+30139 = "Du hast deine Strafe verbüßt. Eine Geldstrafe von {0} Gold wurde eingezogen."
+30140 = "Du hast deine Strafe verbüßt."
+30141 = "Du wurdest aus dem Gefängnis entlassen."
+30142 = "{0} hat {1} Tage in Zelle {2} verbüßt, vom {3} bis zum {4}, und eine Geldstrafe von {5} Gold bezahlt. Eingesperrt von {6}."
