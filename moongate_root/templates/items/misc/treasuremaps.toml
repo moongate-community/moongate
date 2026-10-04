@@ -80,7 +80,7 @@ name = "Treasure Chest"
 rarity = "common"
 movable = true
 weight = 30.0
-max_weight = 400000
+max_weight = 4000
 
 [[item]]
 id = "treasurechestlevel0"

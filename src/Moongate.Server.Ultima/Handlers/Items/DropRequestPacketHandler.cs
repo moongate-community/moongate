@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
@@ -34,6 +35,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     public const string CanDropFunction = "can_drop";
     public const string CanInsertFunction = "can_insert";
 
+    /// <summary>
+    ///     The client's "That container cannot hold more weight."
+    /// </summary>
+    public const int TooHeavyMessage = 1080016;
+
     private const short OnIcon = -1;
     private const int MaxStack = 60_000;
 
@@ -49,6 +55,9 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private readonly ITooltipService _tooltips;
     private readonly IItemScriptService? _scripts;
     private readonly IBankService? _bank;
+    private readonly IWeightService? _weight;
+    private readonly ISpeechService? _speech;
+    private readonly IFatigueService? _fatigue;
 
     public DropRequestPacketHandler(
         IItemService items,
@@ -59,9 +68,15 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         IPacketSendService sender,
         ITooltipService tooltips,
         IItemScriptService? scripts = null,
-        IBankService? bank = null
+        IBankService? bank = null,
+        IWeightService? weight = null,
+        ISpeechService? speech = null,
+        IFatigueService? fatigue = null
     )
     {
+        _weight = weight;
+        _speech = speech;
+        _fatigue = fatigue;
         _bank = bank;
         _tooltips = tooltips;
         _scripts = scripts;
@@ -83,6 +98,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             // The hand is freed either way, so the held item must go back where it still is.
             _logger.Debug("Session {SessionId} named {Item} while holding {Held}", session.SessionId, packet.Item, other);
             HeldItemBounce.Return(session, other, _items, _mobiles, _view, _sender, _tooltips);
+            LoadChanged(session, false);
 
             return;
         }
@@ -101,6 +117,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         {
             _logger.Debug("{Item} refuses to be dropped: it bounces back", item);
             HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+            LoadChanged(session, false);
 
             return;
         }
@@ -111,8 +128,10 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
         bool AllowsInto(ItemEntity container)
         {
-            // A container its script removed while it was asked receives nothing.
-            return verdict ??= Ask(session, held, container, CanInsertFunction, dropper, (long)item.Id.Value) &&
+            // Its limit of stones first; then its script, and a container the script removed while it was asked
+            // receives nothing.
+            return verdict ??= HoldsTheWeight(session, container, item) &&
+                               Ask(session, held, container, CanInsertFunction, dropper, (long)item.Id.Value) &&
                                _items.TryGet(container.Id, out _);
         }
 
@@ -195,6 +214,31 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         _logger.Debug("{Item} dropped on {Destination} bounces back", item, packet.Destination);
 
         HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+        LoadChanged(session, false);
+    }
+
+    // As ModernUO: a container takes its limit of stones from a player, anything from the staff.
+    private bool HoldsTheWeight(GameSession session, ItemEntity container, ItemEntity item)
+    {
+        if (_weight is null || session.AccountType >= AccountType.GameMaster || _weight.Holds(container, item))
+        {
+            return true;
+        }
+
+        if (_mobiles.TryGet(session.CharacterId, out var mobile))
+        {
+            _speech?.TellCliloc(mobile, TooHeavyMessage);
+        }
+
+        return false;
+    }
+
+    private void LoadChanged(GameSession session, bool warn)
+    {
+        if (_fatigue is not null && _mobiles.TryGet(session.CharacterId, out var mobile))
+        {
+            _fatigue.LoadChanged(session, mobile, warn);
+        }
     }
 
     // The item counts as held while a script is asked, so item.delete, item.consume and the like refuse it and the
@@ -217,6 +261,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private void Dropped(GameSession session, ItemEntity item)
     {
         _scripts?.Queue(item, DropFunction, (long)session.CharacterId.Value);
+        LoadChanged(session, true);
     }
 
     private void TakenOff(MobileEntity? wearer, ItemEntity item)

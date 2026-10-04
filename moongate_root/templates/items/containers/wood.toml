@@ -9,7 +9,7 @@ weight = 5.0
 buy_price = 8
 sell_price = 4
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e7e_small_crate"
@@ -22,7 +22,7 @@ weight = 5.0
 buy_price = 8
 sell_price = 4
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x09aa_wooden_box"
@@ -35,7 +35,7 @@ weight = 7.0
 buy_price = 14
 sell_price = 7
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e7d_wooden_box"
@@ -48,7 +48,7 @@ weight = 7.0
 buy_price = 14
 sell_price = 7
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a2c_chest_of_drawers"
@@ -60,7 +60,7 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a3c_dresser"
@@ -70,7 +70,7 @@ name = "dresser"
 rarity = "common"
 weight = 50.0
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a3d_dresser"
@@ -80,7 +80,7 @@ name = "dresser"
 rarity = "common"
 weight = 5.0
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a44_dresser"
@@ -90,7 +90,7 @@ name = "dresser"
 rarity = "common"
 weight = 5.0
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a45_dresser"
@@ -100,7 +100,7 @@ name = "dresser"
 rarity = "common"
 weight = 5.0
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a34_chest_of_drawers"
@@ -113,7 +113,7 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a30_chest_of_drawers"
@@ -126,7 +126,7 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a38_chest_of_drawers"
@@ -139,7 +139,7 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a4f_armoire"
@@ -152,7 +152,7 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a53_armoire"
@@ -165,7 +165,7 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a4d_armoire"
@@ -178,7 +178,7 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a51_armoire"
@@ -191,7 +191,7 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a97_bookcase"
@@ -204,7 +204,7 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a98_bookcase"
@@ -217,7 +217,7 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a9b_bookcase"
@@ -230,7 +230,7 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a99_bookcase"
@@ -243,7 +243,7 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a9a_bookcase"
@@ -256,7 +256,7 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a9c_bookcase"
@@ -269,7 +269,7 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a9d_wooden_shelf"
@@ -282,7 +282,7 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0a9e_wooden_shelf"
@@ -295,7 +295,7 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e3c_crate"
@@ -308,7 +308,7 @@ weight = 6.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e3d_crate"
@@ -321,7 +321,7 @@ weight = 6.0
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e3e_crate"
@@ -334,7 +334,7 @@ weight = 5.0
 buy_price = 12
 sell_price = 6
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e3f_crate"
@@ -347,7 +347,7 @@ weight = 5.0
 buy_price = 12
 sell_price = 6
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e42_wooden_chest"
@@ -360,7 +360,7 @@ weight = 30.0
 buy_price = 30
 sell_price = 15
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e43_wooden_chest"
@@ -373,4 +373,4 @@ weight = 30.0
 buy_price = 30
 sell_price = 15
 decays = true
-max_weight = 40000
+max_weight = 400

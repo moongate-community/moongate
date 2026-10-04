@@ -41,6 +41,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
     private readonly IBankService? _bank;
     private readonly IItemTemplateService? _templates;
     private readonly ISessionService? _sessions;
+    private readonly IFatigueService? _fatigue;
 
     public LiftRequestPacketHandler(
         IItemService items,
@@ -53,9 +54,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         IItemScriptService? scripts = null,
         IBankService? bank = null,
         IItemTemplateService? templates = null,
-        ISessionService? sessions = null
+        ISessionService? sessions = null,
+        IFatigueService? fatigue = null
     )
     {
+        _fatigue = fatigue;
         _sessions = sessions;
         _templates = templates;
         _bank = bank;
@@ -192,6 +195,12 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         {
             // It stays on until it is dropped; the others see it taken off now.
             _view.WornItemRemoved(wearer, item);
+        }
+
+        // What it lifted from the ground or from a chest is in its hand, and weighs there.
+        if (_fatigue is not null && _mobiles.TryGet(session.CharacterId, out var lifter))
+        {
+            _fatigue.LoadChanged(session, lifter, false);
         }
     }
 

@@ -86,7 +86,7 @@ Verified against real UOX3 data:
 | `newbie` or `newbie=1` | `LootType = newbied` | |
 | `custominttag=name value`, `customstringtag=name text` | `Tags` | Every line, so a block can set several |
 | `color=` or `colour=` | `Hue` | A fixed value, not a range; unset writes no hue, so the server's loader takes the base template's |
-| `weightmax=` | `MaxWeight` | |
+| `weightmax=` | `MaxWeight` | UOX3 counts it in hundredths of a stone, as `weight=`: `weightmax=40000` is 400 stones, whole and rounded up |
 | `visible=1`, `2` or `3` / `visible=0` | `Visibility = game_master` / `regular` | Hidden, magically invisible or GM hidden all keep the item from players; `visible=0` is written out so it overrides a hidden parent; absent leaves it unset |
 
 Everything else has no home in `ItemTemplate` yet and is dropped: the combat stat

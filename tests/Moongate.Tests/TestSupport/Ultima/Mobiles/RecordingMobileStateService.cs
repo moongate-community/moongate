@@ -94,8 +94,11 @@ public sealed class RecordingMobileStateService : IMobileStateService
         mobile.WarMode = warMode;
     }
 
+    public List<(GameSession Session, MobileEntity Target)> Statuses { get; } = [];
+
     public void SendStatus(GameSession session, MobileEntity target)
     {
+        Statuses.Add((session, target));
     }
 
     public void SendSkills(GameSession session, MobileEntity character)

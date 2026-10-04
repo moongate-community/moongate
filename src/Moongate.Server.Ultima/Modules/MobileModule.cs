@@ -37,6 +37,7 @@ public sealed class MobileModule
     private readonly IMobileStateService? _state;
     private readonly IWorldViewService? _view;
     private readonly Lazy<FrozenDictionary<int, BodyType>> _bodies;
+    private readonly IWeightService? _weight;
 
     public MobileModule(
         IMobileService mobiles,
@@ -48,9 +49,11 @@ public sealed class MobileModule
         ILightService? light = null,
         IMobileStateService? state = null,
         IWorldViewService? view = null,
-        IDataLoaderService? data = null
+        IDataLoaderService? data = null,
+        IWeightService? weight = null
     )
     {
+        _weight = weight;
         _bodies = new(
             () => data?.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type) ??
                   FrozenDictionary<int, BodyType>.Empty
@@ -619,6 +622,26 @@ public sealed class MobileModule
         mobile.Thirst = HungerService.Clamp(thirst);
 
         return true;
+    }
+
+    /// <summary>
+    ///     Gets the stones the mobile carries: what it wears with their contents, without the bank;
+    ///     <c>mobile.weight(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The stones the mobile carries: what it wears and everything inside, without the bank box; nil for a mobile not in the world.")]
+    public int? Weight(long serial)
+    {
+        return _weight is not null && TryGetMobile(serial, out var mobile) ? _weight.Carried(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Gets the stones the mobile may carry before it is overloaded, 40 and three and a half a point of strength;
+    ///     <c>if mobile.weight(who) > mobile.max_weight(who) then ... end</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The stones the mobile may carry before it is overloaded: 40 and 3.5 a point of strength; nil for a mobile not in the world.")]
+    public int? MaxWeight(long serial)
+    {
+        return _weight is not null && TryGetMobile(serial, out var mobile) ? _weight.MaxCarried(mobile) : null;
     }
 
     // Points to the tenths the mobile keeps; null for a value no skill can have.

@@ -29,15 +29,20 @@ public sealed class MobileStateService : IMobileStateService
     private readonly IWorldViewService _view;
     private readonly WorldConfig _world;
 
+    // Lazy: the weight service reads the items, whose scripts reach this service through the Lua modules.
+    private readonly Lazy<IWeightService>? _weight;
+
     public MobileStateService(
         IMobileService mobiles,
         ISessionService sessions,
         ISectorService sectors,
         IPacketSendService sender,
         IWorldViewService view,
-        WorldConfig world
+        WorldConfig world,
+        Lazy<IWeightService>? weight = null
     )
     {
+        _weight = weight;
         _mobiles = mobiles;
         _sessions = sessions;
         _sectors = sectors;
@@ -281,7 +286,16 @@ public sealed class MobileStateService : IMobileStateService
             return;
         }
 
-        _sender.TrySend(session.SessionId, new MobileStatusPacket(_mobiles.GetStatus(target), session.CharacterId != target.Id));
+        var own = session.CharacterId == target.Id;
+        var status = _mobiles.GetStatus(target);
+
+        // Only the whole status, the one of the player's own character, has the weights.
+        if (own && _weight?.Value is { } weight)
+        {
+            status = status with { Weight = weight.Carried(target), MaxWeight = weight.MaxCarried(target) };
+        }
+
+        _sender.TrySend(session.SessionId, new MobileStatusPacket(status, !own));
     }
 
     public void SendSkills(GameSession session, MobileEntity character)

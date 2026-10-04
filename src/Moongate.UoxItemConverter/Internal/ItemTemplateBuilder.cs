@@ -147,7 +147,8 @@ internal static class ItemTemplateBuilder
 
         if (block.Fields.TryGetValue("weightmax", out var weightMaxText) && UoxNumber.TryParse(weightMaxText, out var weightMax))
         {
-            template.MaxWeight = weightMax;
+            // Hundredths of a stone, as weight=: weightmax=40000 is 400 stones. Whole stones here, rounded up.
+            template.MaxWeight = (int)Math.Ceiling(weightMax / 100m);
         }
 
         // Only single-parent inheritance maps onto BaseId. get=a b names an alias, not a parent; an unresolved single

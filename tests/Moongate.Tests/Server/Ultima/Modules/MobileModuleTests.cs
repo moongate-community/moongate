@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Weight;
 using Lua;
 using Lua.Standard;
 using Moongate.Core.Geometry;
@@ -302,6 +303,15 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Weight_AndMaxWeight_AreTheStonesTheMobileCarriesAndMayCarry()
+    {
+        var result = Run("return mobile.weight(2), mobile.max_weight(2), mobile.weight(999), mobile.max_weight(999)");
+
+        Assert.Equal((37, 215), (result[0].Read<int>(), result[1].Read<int>()));
+        Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[2], result[3]));
+    }
+
+    [Fact]
     public void BodyType_IsTheKindOfBodyOfTheMobile_AsTheBodiesFileSays()
     {
         _aria.Body = 400;
@@ -527,7 +537,7 @@ public sealed class MobileModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view, new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human }, new BodyContent { Body = new(17), Type = BodyType.Monster })));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view, new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human }, new BodyContent { Body = new(17), Type = BodyType.Monster }), new StubWeightService { CarriedStones = 37, MaximumStones = 215 }));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

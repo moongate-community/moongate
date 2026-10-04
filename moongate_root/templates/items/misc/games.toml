@@ -78,7 +78,7 @@ weight = 5.0
 buy_price = 2
 sell_price = 1
 decays = true
-max_weight = 1000
+max_weight = 10
 
 [[item]]
 id = "0x0fa7_dice_and_cup"

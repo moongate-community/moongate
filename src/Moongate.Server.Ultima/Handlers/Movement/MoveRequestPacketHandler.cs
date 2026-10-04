@@ -38,6 +38,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private readonly TimeProvider _time;
     private readonly IBankService? _bank;
     private readonly IMoveOverService? _moveOver;
+    private readonly IFatigueService? _fatigue;
 
     public MoveRequestPacketHandler(
         IMobileService mobiles,
@@ -45,9 +46,11 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         IPacketSendService sender,
         TimeProvider time,
         IBankService? bank = null,
-        IMoveOverService? moveOver = null
+        IMoveOverService? moveOver = null,
+        IFatigueService? fatigue = null
     )
     {
+        _fatigue = fatigue;
         _bank = bank;
         _moveOver = moveOver;
         _mobiles = mobiles;
@@ -100,7 +103,10 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
 
         var now = NowMs();
 
-        if (now + CreditMs < state.NextStepAt || _mobiles.TryMove(mobile, packet.Direction, AbilityOf(session)) != MoveResultType.Moved)
+        // Too tired to take it: asked before the world is, paid only for a step that was taken.
+        if (now + CreditMs < state.NextStepAt ||
+            _fatigue?.CanStep(session, mobile, packet.Running) == false ||
+            _mobiles.TryMove(mobile, packet.Direction, AbilityOf(session)) != MoveResultType.Moved)
         {
             Reject(session, state, mobile, packet.Sequence);
 
@@ -108,6 +114,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         }
 
         state.NextStepAt = Math.Max(now, state.NextStepAt) + (packet.Running ? RunDelayMs : WalkDelayMs);
+        _fatigue?.Stepped(session, mobile, packet.Running);
         // As ModernUO, a step closes the bank box.
         _bank?.Close(mobile);
         Accept(session, state, mobile, packet.Sequence);

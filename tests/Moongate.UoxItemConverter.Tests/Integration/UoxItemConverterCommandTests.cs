@@ -38,7 +38,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
             id=0x0f6b
             movable=1
             color=0x0010
-            weightmax=10
+            weightmax=40050
             }
             """
         );
@@ -53,7 +53,8 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         Assert.Equal("torch", item.Name);
         Assert.True(item.Movable);
         Assert.Equal(new Hue(0x0010), item.Hue!.Value.Resolve());
-        Assert.Equal(10, item.MaxWeight);
+        // UOX3 counts a container's limit in hundredths of a stone too: 400.5 stones, kept whole and rounded up.
+        Assert.Equal(401, item.MaxWeight);
         Assert.Null(item.BaseId);
     }
 

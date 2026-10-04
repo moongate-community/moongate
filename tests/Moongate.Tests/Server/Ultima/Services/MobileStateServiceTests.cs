@@ -1,3 +1,5 @@
+using Moongate.Tests.TestSupport.Ultima.Weight;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
@@ -23,6 +25,7 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     private readonly RecordingWorldViewService _view = new();
 
     private BroadcastFixture _fixture = null!;
+    private readonly StubWeightService _weight = new() { CarriedStones = 37, MaximumStones = 215 };
     private MobileStateService _service = null!;
     private MobileEntity _aria = null!;
     private GameSession _ariaSession = null!;
@@ -35,7 +38,15 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Aria), out _aria!));
         (_aria.Hits, _aria.HitsMax, _aria.Mana, _aria.ManaMax, _aria.Stamina, _aria.StaminaMax) = (50, 60, 9, 10, 18, 20);
         (_aria.Strength, _aria.Dexterity, _aria.Intelligence) = (60, 20, 10);
-        _service = new(_fixture.Mobiles, _fixture.Sessions, _fixture.Sectors, _fixture.Sender, _view, new WorldConfig());
+        _service = new(
+            _fixture.Mobiles,
+            _fixture.Sessions,
+            _fixture.Sectors,
+            _fixture.Sender,
+            _view,
+            new WorldConfig(),
+            new Lazy<IWeightService>(() => _weight)
+        );
     }
 
     public async Task DisposeAsync()
@@ -388,6 +399,15 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         _service.SendStatus(_ariaSession, _aria);
 
         Assert.Equal([true, false], _fixture.Sender.Sent.Cast<MobileStatusPacket>().Select(packet => packet.Compact));
+    }
+
+    [Fact]
+    public void SendStatus_OfTheOwnCharacter_CarriesWhatItCarriesAndMayCarry()
+    {
+        _service.SendStatus(_ariaSession, _aria);
+
+        var status = Assert.IsType<MobileStatusPacket>(Assert.Single(_fixture.Sender.Sent)).Status;
+        Assert.Equal((37, 215), (status.Weight, status.MaxWeight));
     }
 
     [Fact]
