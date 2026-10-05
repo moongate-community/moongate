@@ -552,18 +552,50 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.Equal((_cat, 500381, ""), Assert.Single(_speech.SaidClilocs));
     }
 
-    // The check is written by the next step of the bank: for now the banker lets the word pass.
     [Fact]
-    public async Task TheBanker_SaysNothingYet_ToTheWordCheck()
+    public async Task TheBanker_WritesACheck_AndSaysItsAmountAfterTheTextOfTheClient()
     {
         var hearing = await StartBankerAsync();
-        _bank.Gold[_aria.Id] = 50_000;
+
+        hearing.Heard(_aria, "check 125000", [(int)SpeechKeywordType.Check]);
+
+        Assert.Empty(_errors);
+        Assert.Equal([(_aria, 125_000)], _bank.Checks);
+        Assert.Equal((_cat, 1042673, ""), Assert.Single(_speech.SaidClilocs));
+        Assert.Equal(["125,000"], _speech.SaidAffixes);
+    }
+
+    [Theory,
+     InlineData(BankResultType.CheckTooSmall, 1010006),
+     InlineData(BankResultType.CheckTooBig, 1010007),
+     InlineData(BankResultType.NotEnoughGold, 500384),
+     InlineData(BankResultType.NoBank, 500384),
+     InlineData(BankResultType.BankFull, 500386)]
+    public async Task TheBanker_RefusesACheck_WithTheWordsOfTheClient(BankResultType refusal, int cliloc)
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Result = refusal;
 
         hearing.Heard(_aria, "check 5000", [(int)SpeechKeywordType.Check]);
 
         Assert.Empty(_errors);
-        Assert.Empty(_speech.SaidClilocs);
-        Assert.Empty(_bank.Withdrawn);
+        Assert.Equal((_cat, cliloc, ""), Assert.Single(_speech.SaidClilocs));
+        Assert.Equal([""], _speech.SaidAffixes);
+    }
+
+    [Fact]
+    public async Task TheBanker_WritesNoCheck_ForACriminal_OrWithoutAnAmount()
+    {
+        var hearing = await StartBankerAsync();
+
+        hearing.Heard(_aria, "check", [(int)SpeechKeywordType.Check]);
+        _clock.Advance(TimeSpan.FromSeconds(1));
+        _aria.Criminal = true;
+        hearing.Heard(_aria, "check 5000", [(int)SpeechKeywordType.Check]);
+
+        Assert.Empty(_errors);
+        Assert.Empty(_bank.Checks);
+        Assert.Equal((_cat, 500389, ""), Assert.Single(_speech.SaidClilocs));
     }
 
     private async Task<NpcHearingService> StartBankerAsync()

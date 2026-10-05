@@ -110,10 +110,20 @@ public sealed class StubBankService : IBankService
         return Result ?? BankResultType.Ok;
     }
 
+    /// <summary>
+    ///     What a cashing that is not refused does to the check, such as changing what it is worth.
+    /// </summary>
+    public Action<ItemEntity>? OnCash { get; set; }
+
     public BankResultType Cash(MobileEntity player, ItemEntity check, out int deposited)
     {
         Cashed.Add((player, check));
         deposited = Result is null ? CashDeposits : 0;
+
+        if (Result is null)
+        {
+            OnCash?.Invoke(check);
+        }
 
         return Result ?? BankResultType.Ok;
     }

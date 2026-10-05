@@ -4,9 +4,10 @@
 -- What it is for:
 --   The bankers, as ModernUO's: a player within 12 tiles says a word and the
 --   banker opens its bank box ("bank"), tells its balance ("balance"), hands
---   out gold ("withdraw 500") or takes it ("deposit 500"). The client turns
---   bank, balance and withdraw into speech keywords in any language ("banca",
---   "saldo", "prelievo"...); the plain word "bank" is read too, for a client
+--   out gold ("withdraw 500"), takes it ("deposit 500") or writes a bank
+--   check for gold of the bank ("check 5000"). The client turns bank,
+--   balance, withdraw and check into speech keywords in any language
+--   ("banca", "saldo", "prelievo"...); the plain word "bank" is read too, for a client
 --   that sends no keywords, and "deposit" is an English word only: the client
 --   has no keyword for it. The amount is the first number of the sentence. A
 --   banker does no business with a criminal. It answers with the client's own
@@ -36,6 +37,10 @@ local withdrawn = 1010005         -- Thou hast withdrawn gold from thy account.
 local balance_is = 1042759        -- Thy current bank balance is ~1_AMOUNT~ gold.
 local deposited = 1042763         -- ~1_AMOUNT~ gold was deposited in your account.
 local bank_full = 500390          -- Your bank box is full.
+local check_too_small = 1010006   -- We cannot create checks for such a paltry amount of gold!
+local check_too_big = 1010007     -- Our policies prevent us from creating checks worth that much!
+local no_room_for_check = 500386  -- There's not enough room in your bankbox for the check!
+local check_written = 1042673     -- Into your bank box I have placed a check in the amount of:
 
 local function has_keyword(keywords, wanted)
     for _, keyword in ipairs(keywords or {}) do
@@ -141,12 +146,28 @@ local function deposit(serial, speaker, amount)
     end
 end
 
+local function write_check(serial, speaker, amount)
+    local result = bank.check(speaker, amount)
+
+    if result == BankResultType.Ok then
+        -- The client writes the amount after the colon of its text.
+        npc.say_cliloc(serial, check_written, "", with_thousands(amount))
+    elseif result == BankResultType.CheckTooSmall then
+        npc.say_cliloc(serial, check_too_small)
+    elseif result == BankResultType.CheckTooBig then
+        npc.say_cliloc(serial, check_too_big)
+    elseif result == BankResultType.NotEnoughGold or result == BankResultType.NoBank then
+        npc.say_cliloc(serial, not_enough)
+    elseif result == BankResultType.BankFull then
+        npc.say_cliloc(serial, no_room_for_check)
+    end
+end
+
 -- Called when a player says something within 15 cells.
 function banker.on_speech(serial, speaker, text, keywords)
     local command = command_of(text, keywords)
 
-    -- Checks are not written yet.
-    if not command or command == "check" then
+    if not command then
         return
     end
 
@@ -176,6 +197,8 @@ function banker.on_speech(serial, speaker, text, keywords)
 
         if command == "withdraw" then
             withdraw(serial, speaker, amount)
+        elseif command == "check" then
+            write_check(serial, speaker, amount)
         else
             deposit(serial, speaker, amount)
         end

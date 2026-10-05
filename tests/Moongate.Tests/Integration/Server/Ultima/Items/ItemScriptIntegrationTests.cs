@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Types.Bank;
 using Lua;
 using DryIoc;
 using Moongate.Core.Geometry;
@@ -58,6 +59,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly RecordingWorldViewService _view = new();
     private readonly StubClockService _clock = new();
     private readonly StubBulletinBoardService _boards = new();
+    private readonly StubBankService _bankStub = new();
     private readonly ItemService _items;
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
     private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3 };
@@ -113,6 +115,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance(TestLocalization.With((398, "C'è una serratura."), (405, "Using your key, you open the door.")));
         _container.AddScriptModule<LocalizationModule>();
         _container.RegisterInstance<IBulletinBoardService>(_boards);
+        _container.RegisterInstance<IBankService>(_bankStub);
+        _container.AddScriptModule<BankModule>();
+        _container.RegisterScriptEnum<BankResultType>();
         _container.AddScriptModule<BoardModule>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -999,6 +1004,70 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         // Handled: nothing else follows the double click.
         Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
         Assert.Equal(board, Assert.Single(_boards.Opened).Board);
+    }
+
+    [Fact]
+    public async Task TheShippedBankCheckScript_CashesTheCheck_AndTellsThePlayerWhatWentIn()
+    {
+        var scripts = await StartItemScriptAsync("bank_check", "bank_check");
+        var check = Check();
+        _bankStub.Worths[check.Id] = 125_000;
+        // The bank takes the whole check: afterwards it is worth nothing.
+        _bankStub.OnCash = item => _bankStub.Worths.Remove(item.Id);
+
+        var result = scripts.Run(check, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        Assert.Equal(check, Assert.Single(_bankStub.Cashed).Check);
+        var told = Assert.Single(_speech.ToldClilocs);
+        Assert.Equal((1042763, "125,000"), (told.Cliloc, told.Arguments));
+    }
+
+    // The box had room for sixty thousand: the check keeps the rest, and the player is told what went in.
+    [Fact]
+    public async Task TheShippedBankCheckScript_CashedInPart_TellsOnlyWhatWentIn()
+    {
+        var scripts = await StartItemScriptAsync("bank_check", "bank_check");
+        var check = Check();
+        _bankStub.Worths[check.Id] = 150_000;
+        _bankStub.OnCash = item => _bankStub.Worths[item.Id] = 90_000;
+
+        scripts.Run(check, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal("60,000", Assert.Single(_speech.ToldClilocs).Arguments);
+    }
+
+    [Theory,
+     InlineData(BankResultType.NotInBank, 1047026),
+     InlineData(BankResultType.NoBank, 1047026),
+     InlineData(BankResultType.BankFull, 500390)]
+    public async Task TheShippedBankCheckScript_NotCashed_TellsThePlayerWhy(BankResultType refusal, int cliloc)
+    {
+        var scripts = await StartItemScriptAsync("bank_check", "bank_check");
+        var check = Check();
+        _bankStub.Worths[check.Id] = 5000;
+        _bankStub.Result = refusal;
+
+        var result = scripts.Run(check, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(true, result.Values[0]);
+        Assert.Equal(cliloc, Assert.Single(_speech.ToldClilocs).Cliloc);
+    }
+
+    // A check held by a player: the bank is a stub here, which says where it lies.
+    private ItemEntity Check()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var player));
+        // A player has an account, and only a player has a bank.
+        player.AccountId = new Serial(0x42);
+        var check = new ItemEntity { Id = new Serial(0x40000091), TemplateId = "bank_check", ItemId = 0x14F0, Amount = 1 };
+        check.PutInContainer(_backpack.Id, new Point2D(50, 50), 1);
+        _items.Add([check]);
+
+        return check;
     }
 
     private async Task<ItemScriptService> StartLightScriptAsync()
