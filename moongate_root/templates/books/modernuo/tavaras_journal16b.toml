@@ -62,12 +62,12 @@ distance - they'll be
 here soon, even at the
 unhurried pace of the
 shuffling dead."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den šestnáctý, později:
+content = """Den šestnáctý, později:
 
 Utíkali jsme. Co jsme
 mohli dělat? Utíkali
@@ -128,11 +128,9 @@ výkřiky v dálce – brzy
 tu budou, i při tom
 neuspěchaném tempu
 šourajících se mrtvých."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Seizième jour, plus
+content = """Seizième jour, plus
 tard :
 
 Nous avons couru. Que
@@ -200,11 +198,9 @@ loin ; ils seront ici
 bientôt, même au rythme
 sans hâte des morts
 traînant les pieds."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Sechzehnter Tag,
+content = """Sechzehnter Tag,
 später:
 
 Wir rannten. Was
@@ -273,11 +269,9 @@ der Ferne – sie werden
 bald hier sein, selbst
 im gemächlichen Tempo
 der schlurfenden Toten."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Sedici, Più
+content = """Giorno Sedici, Più
 Tardi :
 
 Siamo fuggiti. Cosa
@@ -346,11 +340,9 @@ lontananza: saranno qui
 presto, persino al
 passo lento dei morti
 strascicanti."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień szesnasty,
+content = """Dzień szesnasty,
 później:
 
 Uciekliśmy. Cóż
@@ -414,11 +406,9 @@ będą, nawet
 niespiesznym krokiem
 powłóczących nogami
 zmarłych."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Décimo sexto dia, mais
+content = """Décimo sexto dia, mais
 tarde:
 
 Corremos. O que
@@ -487,11 +477,9 @@ ao longe: estarão aqui
 em breve, mesmo no
 passo sem pressa dos
 mortos que se arrastam."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día dieciséis, más
+content = """Día dieciséis, más
 tarde:
 
 Corrimos. ¿Qué podíamos

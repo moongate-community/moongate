@@ -122,12 +122,12 @@ Rytabul again.
     Thus endeth the
 tale of the bold
 stranger."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Smělý cizinec"
-content = """
-    V čase před časem
+content = """    V čase před časem
 shromáždili Vládnoucí
 bohové skupinu umělců,
 řemeslníků a znalců
@@ -241,11 +241,9 @@ již ve světě Rytabul
 neukázal.
     Tak končí příběh
 smělého cizince."""
-
 [translations.fre]
 title = "L’étranger audacieux"
-content = """
-    En un temps d’avant
+content = """    En un temps d’avant
 le temps, les Dieux qui
 Sont réunirent un
 groupe d’artistes,
@@ -369,11 +367,9 @@ se montrât plus jamais
 à Rytabul. Ainsi
 s’achève le récit de
 l’étranger audacieux."""
-
 [translations.ger]
 title = "Der dreiste Fremde"
-content = """
-    In einer Zeit vor
+content = """    In einer Zeit vor
 der Zeit versammelten
 die bestehenden Götter
 eine Schar von
@@ -499,11 +495,9 @@ zeigte.
     So endet die
 Geschichte des dreisten
 Fremden."""
-
 [translations.ita]
 title = "Lo straniero audace"
-content = """
-    In un tempo prima
+content = """    In un tempo prima
 del tempo, gli Dei che
 Sono riunirono un
 gruppo di artisti,
@@ -628,11 +622,9 @@ si mostrò a Rytabul.
     Così termina il
 racconto dello
 straniero audace."""
-
 [translations.pol]
 title = "Zuchwały nieznajomy"
-content = """
-    W czasach sprzed
+content = """    W czasach sprzed
 czasu Bogowie Którzy Są
 zebrali artystów,
 rzemieślników i
@@ -756,11 +748,9 @@ w Rytabul.
     Tak kończy się
 opowieść o zuchwałym
 nieznajomym."""
-
 [translations.por]
 title = "O estranho audaz"
-content = """
-    Num tempo anterior
+content = """    Num tempo anterior
 ao tempo, os Deuses que
 São reuniram um grupo
 de artistas, artesãos e
@@ -880,11 +870,9 @@ apareceu em Rytabul.
     Assim termina a
 história do estranho
 audaz."""
-
 [translations.spa]
 title = "El osado desconocido"
-content = """
-    En un tiempo
+content = """    En un tiempo
 anterior al tiempo, los
 Dioses Supremos
 reunieron a un grupo de

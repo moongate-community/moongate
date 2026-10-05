@@ -49,12 +49,12 @@ patience.  I must take
 my lessons well.  I
 have learned from
 Thee, Master, I have."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Lysanderův zápisník"
-content = """
-Den druhý:
+content = """Den druhý:
 
 Ta žena, Tavara Sewel,
 je nesnesitelná. Celé
@@ -101,11 +101,9 @@ trpělivost. Musím se
 dobře učit. Naučil jsem
 se od Tebe, Mistře,
 naučil."""
-
 [translations.fre]
 title = "Le carnet de Lysander"
-content = """
-Deuxième jour :
+content = """Deuxième jour :
 
 Cette femme, Tavara
 Sewel, est
@@ -159,11 +157,9 @@ patience. Je dois bien
 apprendre mes leçons.
 J’ai appris auprès de
 Toi, Maître, oui."""
-
 [translations.ger]
 title = "Lysanders Notizbuch"
-content = """
-Zweiter Tag:
+content = """Zweiter Tag:
 
 Das Weib Tavara Sewel
 ist unerträglich. Ihr
@@ -218,11 +214,9 @@ Lektionen gut lernen.
 Ich habe von Dir
 gelernt, Meister, das
 habe ich."""
-
 [translations.ita]
 title = "Il taccuino di Lysander"
-content = """
-Giorno Due:
+content = """Giorno Due:
 
 La donna, Tavara Sewel,
 è insopportabile. Tutto
@@ -276,11 +270,9 @@ apprendere bene le mie
 lezioni. Ho imparato da
 Te, Padrone, ho
 imparato."""
-
 [translations.pol]
 title = "Notatnik Lysander"
-content = """
-Dzień drugi:
+content = """Dzień drugi:
 
 Ta kobieta, Tavara
 Sewel, jest nieznośna.
@@ -329,11 +321,9 @@ cierpliwość. Muszę
 dobrze przyswoić nauki.
 Uczyłem się od Ciebie,
 Mistrzu, naprawdę."""
-
 [translations.por]
 title = "Caderno de Lysander"
-content = """
-Segundo dia:
+content = """Segundo dia:
 
 A mulher, Tavara Sewel,
 é insuportável. Toda a
@@ -384,11 +374,9 @@ paciência. Preciso
 aprender bem minhas
 lições. Aprendi com
 Você, Mestre, aprendi."""
-
 [translations.spa]
 title = "Cuaderno de Lysander"
-content = """
-Día dos:
+content = """Día dos:
 
 Esa mujer, Tavara
 Sewel, es insoportable.

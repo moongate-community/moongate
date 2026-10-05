@@ -338,12 +338,12 @@ the sea, I am happy to
 be back on the mainland
 for the final three
 Shrines."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Pouť za ctnostmi"
-content = """
-Svazek 1
+content = """Svazek 1
 Kapitola 1: Začátek
 Začínám svou pouť v krásné
 bance Skara Brae. Mou poutí
@@ -662,11 +662,9 @@ Ačkoli si užívám moře, jsem
 rád, že jsem zpět na
 pevnině pro poslední tři
 svatyně."""
-
 [translations.fre]
 title = "La quête des Vertus"
-content = """
-Volume 1
+content = """Volume 1
 Chapitre 1 : Le départ
 Je commence ma Quête dans
 la belle banque de Skara
@@ -1045,11 +1043,9 @@ j’aime la mer, je suis
 heureux de retrouver le
 continent pour les trois
 derniers Sanctuaires."""
-
 [translations.ger]
 title = "Die Suche nach den Tugenden"
-content = """
-Band 1
+content = """Band 1
 Kapitel 1: Der Aufbruch
 Ich beginne meine Suche in
 der schönen Bank von Skara
@@ -1427,11 +1423,9 @@ genieße, bin ich froh, für
 die letzten drei Schreine
 wieder auf dem Festland zu
 sein."""
-
 [translations.ita]
 title = "La ricerca delle Virtù"
-content = """
-Volume 1
+content = """Volume 1
 Capitolo 1: La partenza
 Comincio la mia Ricerca
 nella bella banca di Skara
@@ -1798,11 +1792,9 @@ piaccia il mare, sono
 felice di essere tornato
 sulla terraferma per gli
 ultimi tre Santuari."""
-
 [translations.pol]
 title = "Wyprawa ku Cnotom"
-content = """
-Tom 1
+content = """Tom 1
 Rozdział 1: Początek
 Zaczynam moją Wyprawę we
 wspaniałym banku Skara
@@ -2134,11 +2126,9 @@ droga wiedzie na Zachód.
 Choć lubię morze, cieszę
 się powrotem na stały ląd,
 ku trzem ostatnim Kaplicom."""
-
 [translations.por]
 title = "Busca das Virtudes"
-content = """
-Volume 1
+content = """Volume 1
 Capítulo 1: O começo
 Inicio minha Busca no belo
 banco de Skara Brae. Minha
@@ -2491,11 +2481,9 @@ Oeste. Embora goste do mar,
 fico feliz de estar de
 volta ao continente para os
 três últimos Santuários."""
-
 [translations.spa]
 title = "La búsqueda de las Virtudes"
-content = """
-Volumen 1. Capítulo 1: El
+content = """Volumen 1. Capítulo 1: El
 comienzo. Inicio mi
 Búsqueda en el excelente
 banco de Skara Brae. Mi

@@ -57,12 +57,12 @@ Master.  I shall honor
 Thee with many
 sacrifices, soon
 enough."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Lysanderův zápisník"
-content = """
-Den sedmý:
+content = """Den sedmý:
 
 Ta ženská Sewel žvaní
 bez konce. A odvažuje se
@@ -112,11 +112,9 @@ Tobě, Mistře. Uctím
 
 Tě mnoha oběťmi již
 brzy."""
-
 [translations.fre]
 title = "Le carnet de Lysander"
-content = """
-Septième jour :
+content = """Septième jour :
 
 La femme Sewel bavarde
 sans fin. Et elle ose
@@ -175,11 +173,9 @@ Maître. Je T’honorerai
 par de nombreux
 sacrifices, bien assez
 tôt."""
-
 [translations.ger]
 title = "Lysanders Notizbuch"
-content = """
-Siebter Tag:
+content = """Siebter Tag:
 
 Das Weib Sewel schwatzt
 unaufhörlich. Und sie
@@ -241,11 +237,9 @@ Ich werde
 
 Dich mit vielen Opfern
 ehren, schon bald."""
-
 [translations.ita]
 title = "Il taccuino di Lysander"
-content = """
-Giorno Sette :
+content = """Giorno Sette :
 
 La donna Sewel blatera
 senza fine. E osa
@@ -300,11 +294,9 @@ Te, Padrone. Ti onorerò
 
 con molti sacrifici,
 abbastanza presto."""
-
 [translations.pol]
 title = "Notatnik Lysander"
-content = """
-Dzień siódmy:
+content = """Dzień siódmy:
 
 Kobieta Sewel paple bez
 końca. I ośmiela się
@@ -355,11 +347,9 @@ Uczczę
 
 Cię licznymi ofiarami,
 już wkrótce."""
-
 [translations.por]
 title = "Caderno de Lysander"
-content = """
-Sétimo dia:
+content = """Sétimo dia:
 
 A mulher Sewel tagarela
 sem parar. E ousa
@@ -413,11 +403,9 @@ Honrarei
 Você com muitos
 sacrifícios, muito em
 breve."""
-
 [translations.spa]
 title = "Cuaderno de Lysander"
-content = """
-Día siete:
+content = """Día siete:
 
 La mujer Sewel parlotea
 sin cesar. ¡Y se atreve

@@ -61,12 +61,12 @@ something within it.
 Do we dare approach?
 We must make a
 decision soon."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den čtrnáctý až
+content = """Den čtrnáctý až
 patnáctý:
 
 Lysander se vrátil... a
@@ -118,11 +118,9 @@ rozum... nebo kvůli
 něčemu v ní. Odvážíme
 se přiblížit? Musíme se
 brzy rozhodnout."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Du quatorzième au
+content = """Du quatorzième au
 quinzième jour :
 
 Lysander est revenu...
@@ -185,11 +183,9 @@ s’y trouve. Osons-nous
 nous approcher ? Nous
 devons prendre une
 décision bientôt."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Vierzehnter bis
+content = """Vierzehnter bis
 fünfzehnter Tag:
 
 Lysander ist
@@ -254,11 +250,9 @@ etwas darin. Wagen wir
 uns heran? Wir müssen
 bald eine Entscheidung
 treffen."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Quattordici -
+content = """Giorno Quattordici -
 Giorno Quindici:
 
 Lysander è tornato...
@@ -320,11 +314,9 @@ qualcosa al suo
 interno. Osiamo
 avvicinarci? Dobbiamo
 decidere presto."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień czternasty —
+content = """Dzień czternasty —
 dzień piętnasty:
 
 Lysander powrócił...
@@ -380,11 +372,9 @@ przez coś w nim. Czy
 ośmielimy się podejść?
 Musimy wkrótce
 zdecydować."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Décimo quarto dia -
+content = """Décimo quarto dia -
 Décimo quinto dia:
 
 Lysander voltou... e,
@@ -443,11 +433,9 @@ dentro dela. Ousamos
 nos aproximar?
 Precisamos tomar uma
 decisão logo."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día catorce - Día
+content = """Día catorce - Día
 quince:
 
 Lysander ha

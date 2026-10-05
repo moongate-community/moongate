@@ -108,12 +108,12 @@ Congrats. I didn't really
 care to log on earlier,
 nor did I come straight
 here. 2pm, Magus"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník"
-content = """
-Učinil jsem, jak mi Mistr
+content = """Učinil jsem, jak mi Mistr
 přikázal.
 
 Pomalovaní lidé byli
@@ -208,11 +208,9 @@ mi nezáleželo na tom
 přihlásit se dřív, ani
 jsem nešel rovnou sem.
 14:00, Magus"""
-
 [translations.fre]
 title = "Journal"
-content = """
-J’ai fait ce que mon
+content = """J’ai fait ce que mon
 Maître m’a ordonné.
 
 Les humains peints ont
@@ -324,11 +322,9 @@ de me connecter plus tôt,
 et je ne suis pas venu
 directement ici non plus.
 14 h, Magus"""
-
 [translations.ger]
 title = "Tagebuch"
-content = """
-Ich habe getan, was mein
+content = """Ich habe getan, was mein
 Meister mir aufgetragen
 hat.
 
@@ -442,11 +438,9 @@ anzumelden, und bin auch
 nicht direkt
 hierhergekommen. 2 Uhr
 nachmittags, Magus"""
-
 [translations.ita]
 title = "Diario"
-content = """
-Ho fatto come il mio
+content = """Ho fatto come il mio
 Padrone mi ha ordinato.
 
 Gli umani dipinti sono
@@ -551,11 +545,9 @@ importava davvero di
 collegarmi prima, né sono
 venuto direttamente qui.
 14:00, Magus"""
-
 [translations.pol]
 title = "Dziennik"
-content = """
-Uczyniłem, jak polecił mi
+content = """Uczyniłem, jak polecił mi
 Mistrz.
 
 Malowani ludzie zostali
@@ -652,11 +644,9 @@ wcześniej się logować,
 ani też nie przyszedłem
 prosto tutaj. 14:00,
 Magus"""
-
 [translations.por]
 title = "Diário"
-content = """
-Fiz conforme meu Mestre
+content = """Fiz conforme meu Mestre
 me instruiu.
 
 Os humanos pintados foram
@@ -754,11 +744,9 @@ Parabéns. Eu realmente
 não fiz questão de entrar
 mais cedo, nem vim direto
 para cá. 14h, Magus"""
-
 [translations.spa]
 title = "Diario"
-content = """
-He hecho lo que mi
+content = """He hecho lo que mi
 Maestro me ha ordenado.
 
 Los humanos pintados han

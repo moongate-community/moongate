@@ -436,12 +436,12 @@ read, for I fear
 indeed for our world
 and for our people in
 these perilous times."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Můj příběh"
-content = """
-Byla chladná noc, měsíc
+content = """Byla chladná noc, měsíc
 svítil bledou tváří nad
 obzorem, usazen na
 věžích hradu Lord
@@ -839,11 +839,9 @@ inkoustem, abys je mohl
 nebezpečných časech
 vskutku obávám o náš
 svět a náš lid."""
-
 [translations.fre]
 title = "Mon histoire"
-content = """
-Ce fut par une nuit
+content = """Ce fut par une nuit
 froide, alors que la
 lune au visage blafard
 brillait au-dessus de
@@ -1305,11 +1303,9 @@ lire, car je crains
 vraiment pour notre
 monde et notre peuple
 en ces temps périlleux."""
-
 [translations.ger]
 title = "Meine Geschichte"
-content = """
-In einer kühlen Nacht,
+content = """In einer kühlen Nacht,
 als der Mond mit
 teigbleichem Gesicht
 über dem Horizont
@@ -1793,11 +1789,9 @@ in diesen gefährlichen
 Zeiten wahrlich um
 unsere Welt und um
 unser Volk."""
-
 [translations.ita]
 title = "La mia storia"
-content = """
-Fu in una notte fredda,
+content = """Fu in una notte fredda,
 quando la luna
 splendeva dal volto
 pallido sopra
@@ -2260,11 +2254,9 @@ davvero per il nostro
 mondo e per la nostra
 gente in questi tempi
 pericolosi."""
-
 [translations.pol]
 title = "Moja opowieść"
-content = """
-Była chłodna noc.
+content = """Była chłodna noc.
 Księżyc świecił bladą
 twarzą nad horyzontem,
 zawieszony na wieżach
@@ -2696,11 +2688,9 @@ tych niebezpiecznych
 czasach naprawdę boję
 się o nasz świat i nasz
 lud."""
-
 [translations.por]
 title = "Minha história"
-content = """
-Foi numa noite fria,
+content = """Foi numa noite fria,
 quando a lua brilhava
 com seu rosto pálido
 acima do horizonte,
@@ -3141,11 +3131,9 @@ ler, pois realmente
 temo por nosso mundo e
 por nosso povo nestes
 tempos perigosos."""
-
 [translations.spa]
 title = "Mi historia"
-content = """
-Fue en una noche fría,
+content = """Fue en una noche fría,
 cuando la luna brillaba
 pálida sobre el
 horizonte, posada sobre

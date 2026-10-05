@@ -178,12 +178,12 @@ battle with the Juka, how
 did they die?  And more
 importantly, where is
 Dasha?"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník"
-content = """
-Tažení za vyvražděním Meer
+content = """Tažení za vyvražděním Meer
 postupuje dobře. Ačkoli se
 našim silám zdánlivě
 stavějí do cesty na každém
@@ -338,11 +338,9 @@ jestliže Meer nezemřeli v
 bitvě s Juka, jak zemřeli?
 A co je důležitější, kde
 je Dasha?"""
-
 [translations.fre]
 title = "Journal"
-content = """
-La campagne pour massacrer
+content = """La campagne pour massacrer
 les Meer avance bien. Bien
 qu’ils semblent s’opposer
 aux forces des nôtres à
@@ -538,11 +536,9 @@ morts dans la bataille
 contre les Juka, comment
 sont-ils morts ? Et
 surtout, où est Dasha ?"""
-
 [translations.ger]
 title = "Tagebuch"
-content = """
-Der Feldzug zum
+content = """Der Feldzug zum
 Abschlachten der Meer
 verläuft gut. Obwohl sie
 den Streitkräften der
@@ -736,11 +732,9 @@ Kampf gegen die Juka
 starben, wie starben sie
 dann? Und noch wichtiger,
 wo ist Dasha?"""
-
 [translations.ita]
 title = "Diario"
-content = """
-La campagna per massacrare
+content = """La campagna per massacrare
 i Meer procede bene.
 Sebbene sembrino opporsi
 alle forze nostre a ogni
@@ -921,11 +915,9 @@ se i Meer non sono morti
 nella battaglia con i
 Juka, come sono morti? E,
 soprattutto, dov'è Dasha?"""
-
 [translations.pol]
 title = "Dziennik"
-content = """
-Kampania mająca wybić Meer
+content = """Kampania mająca wybić Meer
 przebiega pomyślnie. Choć
 zdają się przeciwstawiać
 naszym siłom na każdym
@@ -1089,11 +1081,9 @@ Meer nie zginęli w bitwie
 z Juka, jak umarli? I co
 ważniejsze, gdzie jest
 Dasha?"""
-
 [translations.por]
 title = "Diário"
-content = """
-A campanha para massacrar
+content = """A campanha para massacrar
 os Meer vai bem. Embora
 pareçam se opor às forças
 nossas a cada passo, ainda
@@ -1267,11 +1257,9 @@ morreram na batalha com os
 Juka, como morreram? E,
 mais importante, onde está
 Dasha?"""
-
 [translations.spa]
 title = "Diario"
-content = """
-La campaña para masacrar a
+content = """La campaña para masacrar a
 los Meer va bien. Aunque
 parecen oponerse a las
 fuerzas nuestras a cada

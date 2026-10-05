@@ -68,12 +68,12 @@ ancient stonework
 above us like some
 horrible, eldritch
 curse upon us all."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den jedenáctý až
+content = """Den jedenáctý až
 třináctý:
 
 Zmizeli další dva
@@ -133,11 +133,9 @@ padá z dávného zdiva
 nad námi jako nějaká
 děsivá, nadpřirozená
 kletba na nás všechny."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Du onzième au
+content = """Du onzième au
 treizième jour :
 
 Deux autres ouvriers
@@ -212,11 +210,9 @@ comme quelque horrible
 malédiction
 surnaturelle jetée sur
 nous tous."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Elfter bis dreizehnter
+content = """Elfter bis dreizehnter
 Tag:
 
 Zwei weitere Arbeiter
@@ -298,11 +294,9 @@ herab wie ein
 schrecklicher,
 unheimlicher Fluch
 über uns alle."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Undici - Giorno
+content = """Giorno Undici - Giorno
 Tredici:
 
 Altri due operai sono
@@ -375,11 +369,9 @@ muratura sopra di noi
 come un'orribile,
 arcana maledizione su
 tutti noi."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień jedenasty —
+content = """Dzień jedenasty —
 dzień trzynasty:
 
 Zaginęło jeszcze dwóch
@@ -444,11 +436,9 @@ straszliwa,
 niesamowita klątwa
 rzucona na nas
 wszystkich."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Décimo primeiro dia -
+content = """Décimo primeiro dia -
 Décimo terceiro dia:
 
 Mais dois
@@ -521,11 +511,9 @@ como alguma maldição
 horrível e
 sobrenatural sobre
 todos nós."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día once - Día trece:
+content = """Día once - Día trece:
 
 Han desaparecido otros
 dos trabajadores. Más

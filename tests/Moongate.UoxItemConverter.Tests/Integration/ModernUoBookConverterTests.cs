@@ -37,13 +37,69 @@ public sealed class ModernUoBookConverterTests : IDisposable
         Assert.Equal("Writer", first.Author);
         Assert.Equal(" first\n\nlast\n\n\n\nend", first.Content);
         Assert.Equal("another part", Read("journal2").Content);
-        Assert.Equal("readable_scroll", first.ItemTemplate);
+        Assert.Equal("readable_book", first.ItemTemplate);
+        Assert.Null(first.ItemId);
         Assert.Empty(first.Variables);
         Assert.Empty(first.Attachments);
         Assert.Empty(first.Translations);
         Assert.Contains("content = \"\"\"", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "journal1.toml")));
         Assert.Equal(2, Directory.GetFiles(_directories.DestinationDirectory).Length);
         Assert.Contains("2 books, 4 pages", _output.ToString());
+    }
+
+    // The cover is the graphic ModernUO gives the book: stated, the first of a random pair, or that of the kind of
+    // book it derives from.
+    [Fact]
+    public void Run_ABook_TakesTheGraphicOfItsSource()
+    {
+        _directories.WriteSource("Covers.cs", """
+            namespace Server.Items;
+            public class StatedCover : BaseBook
+            {
+                public static readonly BookContent Content = new("T", "A", new BookPageInfo("x"));
+                public StatedCover() : base(0xFF2, false) { }
+                public StatedCover(Serial serial) : base(serial) { }
+            }
+            public class RandomCover : BaseBook
+            {
+                public static readonly BookContent Content = new("T", "A", new BookPageInfo("x"));
+                public RandomCover() : base(Utility.Random(0xFEF, 2), false) { }
+            }
+            public class DerivedCover : RedBook
+            {
+                public static readonly BookContent Content = new("T", "A", new BookPageInfo("x"));
+                public DerivedCover() : base(false) { }
+            }
+            public class UnknownCover : SomethingElse
+            {
+                public static readonly BookContent Content = new("T", "A", new BookPageInfo("x"));
+            }
+            """);
+
+        Assert.True(Run() == 0, _error.ToString());
+        Assert.Equal(0x0FF2, Read("stated_cover").ItemId);
+        Assert.Equal(0x0FEF, Read("random_cover").ItemId);
+        Assert.Equal(0x0FF1, Read("derived_cover").ItemId);
+        Assert.Null(Read("unknown_cover").ItemId);
+        Assert.All(new[] { "stated_cover", "random_cover", "derived_cover", "unknown_cover" }, id => Assert.Equal("readable_book", Read(id).ItemTemplate));
+        // Written as the graphics are read everywhere else: in hexadecimal.
+        Assert.Contains("item_id = 0x0FF2", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "stated_cover.toml")));
+        Assert.DoesNotContain("item_id", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "unknown_cover.toml")));
+    }
+
+    [Fact]
+    public void Run_ABookOfMorePagesThanTheClientTakes_IsRefused()
+    {
+        var pages = string.Join(", ", Enumerable.Range(1, 256).Select(page => $"new BookPageInfo(\"p{page}\")"));
+        _directories.WriteSource("Long.cs", $$"""
+            class Endless
+            {
+                public static readonly BookContent Content = new("T", "A", {{pages}});
+            }
+            """);
+
+        Assert.Equal(2, Run());
+        Assert.Contains("Endless", _error.ToString());
     }
 
     [Fact]

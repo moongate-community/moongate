@@ -154,12 +154,12 @@ skills in order to
 preserve life and
 
 limb."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Život potulné pěvkyně"
-content = """
-Ačkoli je pravda, že
+content = """Ačkoli je pravda, že
 hudebnice toužící jen
 vytvářet lahodnou hudbu
 pro sebe i ostatní
@@ -290,11 +290,9 @@ tyto dovednosti, aby si
 zachovali život i
 
 zdravé údy."""
-
 [translations.fre]
 title = "La vie d’une ménestrelle itinérante"
-content = """
-S’il est vrai que la
+content = """S’il est vrai que la
 musicienne qui cherche
 seulement à produire une
 douce musique pour
@@ -450,11 +448,9 @@ préserver leur vie et
 leurs
 
 membres."""
-
 [translations.ger]
 title = "Das Leben einer reisenden Spielmannsfrau"
-content = """
-Zwar braucht eine
+content = """Zwar braucht eine
 Musikerin, die nur für
 sich und andere
 liebliche Musik machen
@@ -614,11 +610,9 @@ diesen Fertigkeiten
 üben, um Leib und
 
 Leben zu bewahren."""
-
 [translations.ita]
 title = "La vita di una menestrella itinerante"
-content = """
-Sebbene sia vero che la
+content = """Sebbene sia vero che la
 musicista che cerca solo
 di fare dolce musica per
 sé e per gli altri ha
@@ -767,11 +761,9 @@ queste abilità per
 salvare la vita e le
 
 membra."""
-
 [translations.pol]
 title = "Życie wędrownej minstrelki"
-content = """
-Choć prawdą jest, że
+content = """Choć prawdą jest, że
 muzykantka pragnąca
 jedynie tworzyć słodką
 muzykę dla siebie i
@@ -906,11 +898,9 @@ tych umiejętności, aby
 zachować życie i
 
 kończyny."""
-
 [translations.por]
 title = "A vida de uma menestrel viajante"
-content = """
-Embora seja verdade que
+content = """Embora seja verdade que
 a musicista que busca
 apenas fazer doce música
 para si e para os outros
@@ -1061,11 +1051,9 @@ dessas habilidades para
 preservar a vida e a
 
 integridade do corpo."""
-
 [translations.spa]
 title = "La vida de una juglaresa itinerante"
-content = """
-Si bien es cierto que la
+content = """Si bien es cierto que la
 música que solo desea
 hacer dulces melodías
 para sí misma y para

@@ -155,12 +155,12 @@ Colors: red and black
 Subguilds: Rogues
 (beggars), Assassins,
 Thieves"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Hlavní řemeslnická sdružení"
-content = """
-V zemích Britannia a
+content = """V zemích Britannia a
 mezi jejich obchodními
 partnery legálně působí
 deset hlavních
@@ -295,11 +295,9 @@ Barvy: červená a černá
 Podcechy: Darebáci
 (žebráci), Vrazi,
 Zloději"""
-
 [translations.fre]
 title = "Les principales associations de métiers"
-content = """
-Dix grandes associations
+content = """Dix grandes associations
 de métiers exercent
 légitimement dans les
 terres de Britannia et
@@ -453,11 +451,9 @@ Couleurs : rouge et noir
 Sous-guildes : Fripons
 (mendiants), Assassins,
 Voleurs"""
-
 [translations.ger]
 title = "Die großen Gewerbevereinigungen"
-content = """
-Es gibt zehn große
+content = """Es gibt zehn große
 Gewerbevereinigungen,
 die in den Landen
 Britannias und unter
@@ -611,11 +607,9 @@ Farben: Rot und Schwarz
 Untergilden: Schurken
 (Bettler),
 Meuchelmörder, Diebe"""
-
 [translations.ita]
 title = "Le principali associazioni professionali"
-content = """
-Esistono dieci
+content = """Esistono dieci
 principali associazioni
 professionali che
 operano legittimamente
@@ -764,11 +758,9 @@ Colori: rosso e nero
 Sottogilde: Furfanti
 (mendicanti), Assassini,
 Ladri"""
-
 [translations.pol]
 title = "Główne stowarzyszenia zawodowe"
-content = """
-Na ziemiach Britannia i
+content = """Na ziemiach Britannia i
 wśród jej partnerów
 handlowych działa
 legalnie dziesięć
@@ -915,11 +907,9 @@ Barwy: czerwień i czerń
 Podgildie: Łotry
 (żebracy), Zabójcy,
 Złodzieje"""
-
 [translations.por]
 title = "As principais associações de ofícios"
-content = """
-Existem dez grandes
+content = """Existem dez grandes
 associações de ofícios
 que operam legitimamente
 nas terras de Britannia
@@ -1086,11 +1076,9 @@ Cores: vermelho e preto
 Subguildas: Malandros
 (mendigos), Assassinos,
 Ladrões"""
-
 [translations.spa]
 title = "Las principales asociaciones de oficios"
-content = """
-Hay diez grandes
+content = """Hay diez grandes
 asociaciones de oficios
 que operan legítimamente
 en las tierras de

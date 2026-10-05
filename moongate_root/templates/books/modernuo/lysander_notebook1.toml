@@ -19,12 +19,12 @@ Keepers, praise unto
 Thee, a thousand
 
 fortunes in the night."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Lysanderův zápisník"
-content = """
-Den první:
+content = """Den první:
 
 Konečně stojí přede
 mnou. Dveře Tvé
@@ -42,11 +42,9 @@ Strážci, chvála Tobě,
 tisíc
 
 štěstí v noci."""
-
 [translations.fre]
 title = "Le carnet de Lysander"
-content = """
-Premier jour :
+content = """Premier jour :
 
 Enfin, il se dresse
 devant moi. Les portes
@@ -66,11 +64,9 @@ Gardiens, louanges à
 Toi, mille
 
 fortunes dans la nuit."""
-
 [translations.ger]
 title = "Lysanders Notizbuch"
-content = """
-Erster Tag:
+content = """Erster Tag:
 
 Endlich steht es vor
 mir. Die Türen Deines
@@ -90,11 +86,9 @@ sei Dir, tausend
 
 Glücksgaben in der
 Nacht."""
-
 [translations.ita]
 title = "Il taccuino di Lysander"
-content = """
-Giorno Uno :
+content = """Giorno Uno :
 
 Finalmente si erge
 davanti a me. Le porte
@@ -113,11 +107,9 @@ Custodi, lode a Te,
 mille
 
 fortune nella notte."""
-
 [translations.pol]
 title = "Notatnik Lysander"
-content = """
-Dzień pierwszy:
+content = """Dzień pierwszy:
 
 Nareszcie stoi przede
 mną. Drzwi Twego
@@ -135,11 +127,9 @@ Strażnicy, chwała
 Tobie, tysiąc
 
 pomyślności w nocy."""
-
 [translations.por]
 title = "Caderno de Lysander"
-content = """
-Primeiro dia:
+content = """Primeiro dia:
 
 Enfim, ergue-se diante
 de mim. As portas de
@@ -159,11 +149,9 @@ Guardiões, louvores a
 Você, mil
 
 fortunas na noite."""
-
 [translations.spa]
 title = "Cuaderno de Lysander"
-content = """
-Día uno:
+content = """Día uno:
 
 Al fin se alza ante
 mí. Las puertas de Tu

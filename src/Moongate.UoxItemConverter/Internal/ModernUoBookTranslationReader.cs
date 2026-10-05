@@ -44,7 +44,7 @@ internal static class ModernUoBookTranslationReader
                 author = TextTemplateRenderer.Render(author, values, TextTemplateSyntaxType.Document);
                 content = TextTemplateRenderer.Render(content, values, TextTemplateSyntaxType.Document);
                 if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(content) ||
-                    !BookGumpRenderer.TryBuild(title, author, content, out _))
+                    !BookGumpRenderer.TryBuild(title, author, content, out _) || !BookPagination.TryPaginate(content, out _))
                     throw new InvalidDataException($"Translation exceeds document or packet limits: {language}.");
                 translations.Add(language, translation);
             }

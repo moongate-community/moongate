@@ -59,12 +59,12 @@ expecting the doors to
 be open, rather than
 shocked that they'd
 finally given way."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Denní zápisky Grimmoch Drummel"
-content = """
-Den druhý:
+content = """Den druhý:
 
 Dnes jsme dokázali
 odklidit poslední
@@ -117,11 +117,9 @@ očekával otevřená
 vrata, místo aby ho
 překvapilo, že konečně
 povolila."""
-
 [translations.fre]
 title = "Le journal quotidien de Grimmoch Drummel"
-content = """
-Deuxième jour :
+content = """Deuxième jour :
 
 Nous avons réussi
 aujourd’hui à déblayer
@@ -186,11 +184,9 @@ portes ouvertes, plutôt
 que d’être surpris
 qu’elles aient enfin
 cédé."""
-
 [translations.ger]
 title = "Grimmoch Drummels tägliches Tagebuch"
-content = """
-Zweiter Tag:
+content = """Zweiter Tag:
 
 Heute ist es uns
 gelungen, die letzten
@@ -262,11 +258,9 @@ würden, statt
 überrascht zu sein,
 dass sie endlich
 nachgegeben hatten."""
-
 [translations.ita]
 title = "Il diario quotidiano di Grimmoch Drummel"
-content = """
-Giorno Due :
+content = """Giorno Due :
 
 Siamo riusciti a
 rimuovere oggi le
@@ -331,11 +325,9 @@ fossero aperte, anziché
 essere sorpreso che
 avessero finalmente
 ceduto."""
-
 [translations.pol]
 title = "Dziennik codzienny Grimmoch Drummel"
-content = """
-Dzień drugi:
+content = """Dzień drugi:
 
 Zdołaliśmy dziś wykopać
 resztę gruzu,
@@ -391,11 +383,9 @@ oczekiwał otwartych
 drzwi, zamiast dziwić
 się, że wreszcie
 ustąpiły."""
-
 [translations.por]
 title = "O diário de Grimmoch Drummel"
-content = """
-Segundo dia:
+content = """Segundo dia:
 
 Conseguimos retirar
 hoje o último entulho
@@ -459,11 +449,9 @@ estivessem abertas, em
 vez de ficar surpreso
 por terem finalmente
 cedido."""
-
 [translations.spa]
 title = "El diario de Grimmoch Drummel"
-content = """
-Día dos:
+content = """Día dos:
 
 Hoy conseguimos retirar
 los últimos escombros y

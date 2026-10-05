@@ -72,12 +72,12 @@ shown a little
 mercy and forsight
 we would not be
 in such dire peril."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF2
+[translations]
 [translations.cze]
 title = "Deník Drakov"
-content = """
-Můj Mistře
+content = """Můj Mistře
 
 Tento deník byl
 nalezen u jednoho z
@@ -147,11 +147,9 @@ milosrdenství a
 předvídavosti, nebyli
 bychom v tak vážném
 nebezpečí."""
-
 [translations.fre]
 title = "Le journal de Drakov"
-content = """
-Mon Maître
+content = """Mon Maître
 
 Ce journal a été
 trouvé sur l’un de
@@ -231,11 +229,9 @@ de clémence et de
 prévoyance, ne
 serions-nous pas dans
 un si grand péril."""
-
 [translations.ger]
 title = "Drakovs Tagebuch"
-content = """
-Mein Meister
+content = """Mein Meister
 
 Dieses Tagebuch wurde
 bei einem unserer
@@ -317,11 +313,9 @@ wenig
 Gnade und Voraussicht
 gezeigt, nicht in
 solch großer Gefahr."""
-
 [translations.ita]
 title = "Il diario di Drakov"
-content = """
-Mio Padrone
+content = """Mio Padrone
 
 Questo diario è stato
 trovato su uno dei
@@ -397,11 +391,9 @@ mostrato un po' di
 pietà e lungimiranza
 non saremmo in così
 grave pericolo."""
-
 [translations.pol]
 title = "Dziennik Drakov"
-content = """
-Mój Mistrzu
+content = """Mój Mistrzu
 
 Ten dziennik
 znaleziono przy
@@ -474,11 +466,9 @@ przezorności, nie
 bylibyśmy w tak
 strasznym
 niebezpieczeństwie."""
-
 [translations.por]
 title = "Diário de Drakov"
-content = """
-Meu Mestre
+content = """Meu Mestre
 
 Este diário foi
 encontrado com um de
@@ -553,11 +543,9 @@ misericórdia e
 previdência, não
 estivéssemos em
 perigo tão terrível."""
-
 [translations.spa]
 title = "El diario de Drakov"
-content = """
-Mi Maestro
+content = """Mi Maestro
 
 Se encontró este
 diario en poder de

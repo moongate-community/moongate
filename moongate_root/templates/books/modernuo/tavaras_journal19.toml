@@ -20,12 +20,12 @@ forgive me, but it
 
 must be done. I must
 end this."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den devatenáctý až
+content = """Den devatenáctý až
 jednadvacátý:
 
 Barikáda nevydrží –
@@ -45,11 +45,9 @@ odpustí, ale
 
 musí se to stát. Musím
 to ukončit."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Du dix-neuvième au vingt
+content = """Du dix-neuvième au vingt
 et unième jour :
 
 La barricade ne tiendra
@@ -72,11 +70,9 @@ mais cela
 
 doit être fait. Je dois
 y mettre fin."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Neunzehnter bis
+content = """Neunzehnter bis
 einundzwanzigster Tag:
 
 Die Barrikade wird nicht
@@ -99,11 +95,9 @@ doch es
 
 muss geschehen. Ich muss
 dem ein Ende setzen."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Diciannove -
+content = """Giorno Diciannove -
 Giorno Ventuno :
 
 La barricata non
@@ -125,11 +119,9 @@ perdonino, ma
 bisogna farlo. Devo
 porre fine a tutto
 questo."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień dziewiętnasty —
+content = """Dzień dziewiętnasty —
 dzień dwudziesty
 pierwszy:
 
@@ -150,11 +142,9 @@ wybaczą, ale to
 
 musi być zrobione. Muszę
 to zakończyć."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Décimo nono dia -
+content = """Décimo nono dia -
 Vigésimo primeiro dia:
 
 A barricada não vai
@@ -175,11 +165,9 @@ perdoem, mas isso
 
 precisa ser feito.
 Preciso pôr fim a isso."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día diecinueve - Día
+content = """Día diecinueve - Día
 veintiuno:
 
 La barricada no

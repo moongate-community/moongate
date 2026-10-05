@@ -85,12 +85,12 @@ into his skeletal arms.
   Fortunately, I
 escaped and lived to
 write it all down!"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Příběh tří kmenů"
-content = """
-Kobka zvaná Despise
+content = """Kobka zvaná Despise
 vlastně není kobkou
 jako takovou, ale spíše
 velikou přírodní
@@ -167,11 +167,9 @@ náruče.
 Naštěstí jsem unikl a
 přežil, abych to
 všechno mohl sepsat!"""
-
 [translations.fre]
 title = "Le récit des trois tribus"
-content = """
-Le donjon connu sous le
+content = """Le donjon connu sous le
 nom de Despise n’est en
 fait pas un donjon à
 proprement parler, mais
@@ -262,11 +260,9 @@ squelettiques.
 Heureusement, je
 m’échappai et vécus
 pour tout consigner !"""
-
 [translations.ger]
 title = "Eine Geschichte von drei Stämmen"
-content = """
-Das Verlies, das als
+content = """Das Verlies, das als
 Despise bekannt ist,
 ist in Wahrheit kein
 Verlies als solches,
@@ -356,11 +352,9 @@ Arme floh.
 Glücklicherweise entkam
 ich und lebte, um alles
 niederzuschreiben!"""
-
 [translations.ita]
 title = "Un racconto di tre tribù"
-content = """
-Il sotterraneo noto
+content = """Il sotterraneo noto
 come Despise non è in
 realtà un sotterraneo
 propriamente detto,
@@ -444,11 +438,9 @@ scheletriche.
 Fortunatamente scappai
 e vissi per mettere
 tutto per iscritto!"""
-
 [translations.pol]
 title = "Opowieść o trzech plemionach"
-content = """
-Loch zwany Despise nie
+content = """Loch zwany Despise nie
 jest w istocie lochem
 jako takim, lecz wielką
 naturalną jaskinią.
@@ -529,11 +521,9 @@ ramiona.
 Na szczęście umknąłem i
 przeżyłem, aby wszystko
 spisać!"""
-
 [translations.por]
 title = "Um conto de três tribos"
-content = """
-A masmorra conhecida
+content = """A masmorra conhecida
 como Despise, na
 verdade, não é
 propriamente uma
@@ -618,11 +608,9 @@ esqueléticos.
 Felizmente, escapei e
 vivi para escrever
 tudo!"""
-
 [translations.spa]
 title = "Un relato de tres tribus"
-content = """
-La mazmorra conocida
+content = """La mazmorra conocida
 como Despise no es en
 realidad una mazmorra
 propiamente dicha, sino

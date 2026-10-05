@@ -49,12 +49,12 @@ fulfilled their
 purpose and I kneel
 before Thee, covered
 in their blood."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Lysanderův zápisník"
-content = """
-Den osmý až desátý:
+content = """Den osmý až desátý:
 
 Vzal sis je, Mistře?
 Nemohli najít cestu za
@@ -96,11 +96,9 @@ chvíli žít, dokud
 nenaplní svůj účel a já
 před Tebou nepokleknu
 pokryt jejich krví."""
-
 [translations.fre]
 title = "Le carnet de Lysander"
-content = """
-Du huitième au dixième
+content = """Du huitième au dixième
 jour :
 
 Les as-Tu pris, Maître
@@ -153,11 +151,9 @@ accompli leur dessein
 et que je m’agenouille
 devant Toi, couvert de
 leur sang."""
-
 [translations.ger]
 title = "Lysanders Notizbuch"
-content = """
-Achter bis zehnter Tag:
+content = """Achter bis zehnter Tag:
 
 Hast du sie genommen,
 Meister? Sie können
@@ -210,11 +206,9 @@ ihren Zweck erfüllt
 haben und ich vor Dir
 knie, bedeckt mit ihrem
 Blut."""
-
 [translations.ita]
 title = "Il taccuino di Lysander"
-content = """
-Giorno Otto - Giorno
+content = """Giorno Otto - Giorno
 Dieci :
 
 Li hai presi Tu,
@@ -263,11 +257,9 @@ adempiuto al loro scopo
 e io mi inginocchierò
 davanti a Te, coperto
 del loro sangue."""
-
 [translations.pol]
 title = "Notatnik Lysander"
-content = """
-Dzień ósmy — dzień
+content = """Dzień ósmy — dzień
 dziesiąty:
 
 Czy ich zabrałeś,
@@ -313,11 +305,9 @@ trochę, aż
 spełnią swe zadanie, a
 ja uklęknę przed Tobą,
 pokryty ich krwią."""
-
 [translations.por]
 title = "Caderno de Lysander"
-content = """
-Oitavo dia - Décimo
+content = """Oitavo dia - Décimo
 dia:
 
 Você os levou, Mestre?
@@ -366,11 +356,9 @@ cumprido seu propósito
 e eu me ajoelhe diante
 de Você, coberto de seu
 sangue."""
-
 [translations.spa]
 title = "Cuaderno de Lysander"
-content = """
-Día ocho - Día diez:
+content = """Día ocho - Día diez:
 
 ¿Te los has llevado,
 Maestro? ¡No podrían

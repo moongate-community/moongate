@@ -129,12 +129,12 @@ hath occupied mine
 interest and that of
 Lord British for
 some time now."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Rozvážná výzva k anarchii"
-content = """
-Kéž nikdo nikdy netvrdí,
+content = """Kéž nikdo nikdy netvrdí,
 že mám svár se svým
 lenním pánem Lord
 British, neboť jsme
@@ -249,11 +249,9 @@ mou
 pozornost i pozornost
 Lord British již nějakou
 dobu."""
-
 [translations.fre]
 title = "Un appel politique à l’anarchie"
-content = """
-Que l’on ne dise jamais
+content = """Que l’on ne dise jamais
 que j’ai quelque
 querelle avec mon
 suzerain Lord British,
@@ -383,11 +381,9 @@ question qui occupe mon
 intérêt et celui de Lord
 British depuis quelque
 temps déjà."""
-
 [translations.ger]
 title = "Ein besonnener Aufruf zur Anarchie"
-content = """
-Man sage niemals, ich
+content = """Man sage niemals, ich
 hätte irgendeinen Streit
 mit meinem Lehnsherrn
 Lord British, denn wir
@@ -519,11 +515,9 @@ Interesse und das von
 Lord British nun schon
 seit einiger Zeit
 beschäftigt."""
-
 [translations.ita]
 title = "Un prudente appello all’anarchia"
-content = """
-Non si dica mai che io
+content = """Non si dica mai che io
 abbia alcuna disputa col
 mio sovrano Lord
 British, poiché siamo
@@ -649,11 +643,9 @@ che ha occupato il mio
 interesse e quello di
 Lord British ormai da
 qualche tempo."""
-
 [translations.pol]
 title = "Rozważne wezwanie do anarchii"
-content = """
-Niech nigdy nie padnie
+content = """Niech nigdy nie padnie
 twierdzenie, jakobym
 żywił jakąś urazę do
 mego seniora Lord
@@ -775,11 +767,9 @@ moje
 zainteresowanie oraz
 zainteresowanie Lord
 British."""
-
 [translations.por]
 title = "Um chamado ponderado à anarquia"
-content = """
-Que jamais se diga que
+content = """Que jamais se diga que
 tenho qualquer desavença
 com meu soberano Lord
 British, pois, de fato,
@@ -906,11 +896,9 @@ que ocupa meu
 
 interesse e o de Lord
 British há algum tempo."""
-
 [translations.spa]
 title = "Un llamamiento prudente a la anarquía"
-content = """
-  Que nunca se diga que
+content = """  Que nunca se diga que
 tengo querella alguna
 con mi señor Lord
 British, pues somos, en

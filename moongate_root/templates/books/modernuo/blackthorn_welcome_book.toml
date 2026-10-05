@@ -209,12 +209,12 @@ you will be more than
 
 human.
   You will be freed."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Uvítání"
-content = """
-Buď zdráv, nový
+content = """Buď zdráv, nový
 příslušníku
 Důvěryhodných.
 Tato slova nyní čteš,
@@ -404,11 +404,9 @@ více než
 
 člověk.
 Budeš osvobozen."""
-
 [translations.fre]
 title = "Bienvenue"
-content = """
-Salutations à toi,
+content = """Salutations à toi,
 nouveau membre des
 Fidèles. Si tu lis
 aujourd’hui ces mots,
@@ -628,11 +626,9 @@ qu’un
 
 humain. Tu seras
 libéré."""
-
 [translations.ger]
 title = "Ein Willkommensgruß"
-content = """
-Sei gegrüßt, neues
+content = """Sei gegrüßt, neues
 Mitglied der
 Vertrauten.
 Du liest diese Worte,
@@ -874,11 +870,9 @@ als
 
 ein Mensch sein.
 Du wirst befreit sein."""
-
 [translations.ita]
 title = "Un benvenuto"
-content = """
-Salute a te, nuovo
+content = """Salute a te, nuovo
 membro dei Fidati.
 Leggi ora queste parole
 perché sei stato
@@ -1094,11 +1088,9 @@ verità sarai più che
 
 umano.
 Sarai libero."""
-
 [translations.pol]
 title = "Powitanie"
-content = """
-Witaj, nowy członku
+content = """Witaj, nowy członku
 Zaufanych.
 Czytasz teraz te słowa,
 gdyż uznano cię za
@@ -1308,11 +1300,9 @@ więcej niż
 
 człowiekiem.
 Zostaniesz wyzwolony."""
-
 [translations.por]
 title = "Boas-vindas"
-content = """
-Saudações a você, novo
+content = """Saudações a você, novo
 membro dos Confiáveis.
 Você agora lê estas
 palavras porque foi
@@ -1522,11 +1512,9 @@ que
 
 humano.
 Você será libertado."""
-
 [translations.spa]
 title = "Una bienvenida"
-content = """
-  Te saludo, nuevo
+content = """  Te saludo, nuevo
 miembro de los Leales.
 Lees ahora estas
 palabras porque se te

@@ -33,12 +33,12 @@ well, though they
 have little sound with
 which to sound an
 alarum."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "O lamách"
-content = """
-Lamy jsou zvláštní
+content = """Lamy jsou zvláštní
 zvířata, huňatá a
 vyhledávaná pro svou
 vlnu, avšak podivně
@@ -68,11 +68,9 @@ přitažlivá hlídací
 zvířata, ačkoli mají
 slabý hlas k
 vyhlašování poplachu."""
-
 [translations.fre]
 title = "À propos des lamas"
-content = """
-Les lamas sont de
+content = """Les lamas sont de
 curieuses bêtes,
 hirsutes et
 recherchées pour leur
@@ -111,11 +109,9 @@ créatures de garde,
 bien qu’ils n’aient
 guère de voix pour
 donner l’alarme."""
-
 [translations.ger]
 title = "Über Lamas"
-content = """
-Lamas sind seltsame
+content = """Lamas sind seltsame
 Tiere, zottelig und
 wegen ihrer Wolle
 begehrt, doch von
@@ -150,11 +146,9 @@ obwohl sie kaum einen
 Laut haben, mit dem
 sie Alarm schlagen
 könnten."""
-
 [translations.ita]
 title = "A proposito dei lama"
-content = """
-I lama sono bestie
+content = """I lama sono bestie
 curiose, irsute e
 ricercate per la loro
 lana, eppure
@@ -190,11 +184,9 @@ guardia, sebbene
 abbiano ben poca voce
 con cui dare
 l'allarme."""
-
 [translations.pol]
 title = "O lamach"
-content = """
-Lamy są osobliwymi
+content = """Lamy są osobliwymi
 zwierzętami, kudłatymi
 i cenionymi za wełnę,
 lecz o dziwnie
@@ -225,11 +217,9 @@ atrakcyjnych stróżów,
 choć nie dysponują
 zbyt donośnym głosem,
 by wszczynać alarm."""
-
 [translations.por]
 title = "Sobre as lhamas"
-content = """
-As lhamas são animais
+content = """As lhamas são animais
 curiosos, peludos e
 procurados por sua lã,
 mas de uma disposição
@@ -265,11 +255,9 @@ criaturas de guarda,
 embora tenham pouca
 voz para soar um
 alarme."""
-
 [translations.spa]
 title = "Sobre las llamas"
-content = """
-Las llamas son bestias
+content = """Las llamas son bestias
 curiosas, peludas y
 apreciadas por su
 lana, aunque poseen un

@@ -53,12 +53,12 @@ exterior camp into the
 main antechamber, so
 there's no use moaning
 about it now."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Denní zápisky Grimmoch Drummel"
-content = """
-Den šestý:
+content = """Den šestý:
 
 Včera v noci napadla
 tábor smečka, no, nemám
@@ -103,11 +103,9 @@ přesouvat většinu
 venkovního tábora do
 hlavní předsíně, takže
 teď nemá cenu naříkat."""
-
 [translations.fre]
 title = "Le journal quotidien de Grimmoch Drummel"
-content = """
-Sixième jour :
+content = """Sixième jour :
 
 Le camp a été attaqué la
 nuit dernière par une
@@ -162,11 +160,9 @@ camp extérieur dans
 l’antichambre principale,
 alors cela ne sert plus à
 rien de s’en plaindre."""
-
 [translations.ger]
 title = "Grimmoch Drummels tägliches Tagebuch"
-content = """
-Sechster Tag:
+content = """Sechster Tag:
 
 Letzte Nacht wurde das
 Lager von einem Rudel
@@ -218,11 +214,9 @@ Hauptvorhalle zu
 verlegen, also bringt es
 jetzt nichts, darüber zu
 jammern."""
-
 [translations.ita]
 title = "Il diario quotidiano di Grimmoch Drummel"
-content = """
-Giorno Sei :
+content = """Giorno Sei :
 
 L'accampamento è stato
 attaccato stanotte da un
@@ -273,11 +267,9 @@ dell'accampamento esterno
 nell'anticamera
 principale, quindi adesso
 è inutile lamentarsi."""
-
 [translations.pol]
 title = "Dziennik codzienny Grimmoch Drummel"
-content = """
-Dzień szósty:
+content = """Dzień szósty:
 
 Obóz zaatakowała zeszłej
 nocy wataha, no cóż, nie
@@ -326,11 +318,9 @@ zewnętrznego obozu do
 głównego przedsionka,
 więc teraz nie ma co
 narzekać."""
-
 [translations.por]
 title = "O diário de Grimmoch Drummel"
-content = """
-Sexto dia:
+content = """Sexto dia:
 
 O acampamento foi atacado
 na noite passada por uma
@@ -380,11 +370,9 @@ do acampamento externo
 para a antecâmara
 principal, então não
 adianta reclamar agora."""
-
 [translations.spa]
 title = "El diario de Grimmoch Drummel"
-content = """
-Día seis:
+content = """Día seis:
 
 Anoche el campamento fue
 atacado por una manada

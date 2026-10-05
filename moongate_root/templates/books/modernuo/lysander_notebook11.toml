@@ -46,12 +46,12 @@ ranks this night, a
 member of the
 
 Khaldun at last!"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Lysanderův zápisník"
-content = """
-Den jedenáctý až
+content = """Den jedenáctý až
 třináctý:
 
 Přicházím pro Tebe, můj
@@ -94,11 +94,9 @@ noci vstupuji do Tvých
 příslušník
 
 Khaldun!"""
-
 [translations.fre]
 title = "Le carnet de Lysander"
-content = """
-Du onzième au treizième
+content = """Du onzième au treizième
 jour :
 
 Je viens à Toi, mon
@@ -144,11 +142,9 @@ rangs cette nuit, membre
 des
 
 Khaldun enfin !"""
-
 [translations.ger]
 title = "Lysanders Notizbuch"
-content = """
-Elfter bis dreizehnter
+content = """Elfter bis dreizehnter
 Tag:
 
 Ich komme zu Dir, mein
@@ -197,11 +193,9 @@ Reihen bei, endlich ein
 Mitglied der
 
 Khaldun!"""
-
 [translations.ita]
 title = "Il taccuino di Lysander"
-content = """
-Giorno Undici - Giorno
+content = """Giorno Undici - Giorno
 Tredici:
 
 Vengo a Te, mio Padrone.
@@ -244,11 +238,9 @@ stanotte mi unisco alle
 Tue schiere, membro dei
 
 Khaldun finalmente!"""
-
 [translations.pol]
 title = "Notatnik Lysander"
-content = """
-Dzień jedenasty — dzień
+content = """Dzień jedenasty — dzień
 trzynasty:
 
 Przybywam do Ciebie, mój
@@ -293,11 +285,9 @@ szeregi, nareszcie jako
 członek
 
 Khaldun!"""
-
 [translations.por]
 title = "Caderno de Lysander"
-content = """
-Décimo primeiro dia -
+content = """Décimo primeiro dia -
 Décimo terceiro dia:
 
 Venho buscar Você, meu
@@ -342,11 +332,9 @@ fileiras nesta noite, um
 membro dos
 
 Khaldun enfim!"""
-
 [translations.spa]
 title = "Cuaderno de Lysander"
-content = """
-Día once - Día trece:
+content = """Día once - Día trece:
 
 Vengo por Ti, mi Maestro.
 ¡Vengo! El camino está

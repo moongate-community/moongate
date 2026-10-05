@@ -74,12 +74,12 @@ friends from the sea,
 as I do!
 
 Happy Fishing!"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF2
+[translations]
 [translations.cze]
 title = "Vaše nové akvárium"
-content = """
-Vítejte v nádherném světě
+content = """Vítejte v nádherném světě
 vlastníků akvárií. S
 trochou času a dovednosti
 se vaše akvárium může stát
@@ -146,11 +146,9 @@ přátel s ploutvemi z moře
 jako mně!
 
 Šťastný rybolov!"""
-
 [translations.fre]
 title = "Votre nouvel aquarium"
-content = """
-Bienvenue dans le
+content = """Bienvenue dans le
 merveilleux monde des
 propriétaires d’aquariums.
 Avec un peu de temps et de
@@ -229,11 +227,9 @@ charmants amis des mers à
 nageoires !
 
 Bonne pêche !"""
-
 [translations.ger]
 title = "Euer neues Aquarium"
-content = """
-Willkommen in der
+content = """Willkommen in der
 wunderbaren Welt der
 Aquarienbesitzer. Mit ein
 wenig Zeit und Geschick
@@ -311,11 +307,9 @@ Flossen aus dem Meer zu
 sammeln, wie ich!
 
 Fröhliches Fischen!"""
-
 [translations.ita]
 title = "Il vostro nuovo acquario"
-content = """
-Benvenuti nel meraviglioso
+content = """Benvenuti nel meraviglioso
 mondo di chi possiede un
 acquario. Con un po' di
 tempo e abilità il vostro
@@ -392,11 +386,9 @@ graziosi amici pinnuti del
 mare!
 
 Buona Pesca!"""
-
 [translations.pol]
 title = "Twoje nowe akwarium"
-content = """
-Witaj we wspaniałym
+content = """Witaj we wspaniałym
 świecie posiadaczy
 akwariów. Przy odrobinie
 czasu i wprawy twoje
@@ -463,11 +455,9 @@ tyle samo radości,
 ile mnie!
 
 Udanych połowów!"""
-
 [translations.por]
 title = "Seu novo aquário"
-content = """
-Boas-vindas ao maravilhoso
+content = """Boas-vindas ao maravilhoso
 mundo de ter um aquário.
 Com um pouco de tempo e
 habilidade, seu aquário
@@ -540,11 +530,9 @@ nossos bons amigos com
 barbatanas vindos do mar!
 
 Boa pescaria!"""
-
 [translations.spa]
 title = "Tu nuevo acuario"
-content = """
-Bienvenido al maravilloso
+content = """Bienvenido al maravilloso
 mundo de los acuarios.
 ¡Con un poco de tiempo y
 habilidad, tu acuario

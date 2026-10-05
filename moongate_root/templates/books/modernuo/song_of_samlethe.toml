@@ -46,12 +46,12 @@ six feet deep
 At the end of
 
 Samlethe's day."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Píseň o Samlethe"
-content = """
-První medvěd
+content = """První medvěd
 plaval za dne,
 a v noci se
 spánku oddal.
@@ -98,11 +98,9 @@ v zemi leží,
 na konci
 
 dne Samlethe."""
-
 [translations.fre]
 title = "Une chanson de Samlethe"
-content = """
-Le premier ours
+content = """Le premier ours
 nageait le jour,
 Et la nuit il dormait.
 Il demeurait dans sa
@@ -151,11 +149,9 @@ sous terre
 À la fin du jour de
 
 Samlethe."""
-
 [translations.ger]
 title = "Ein Lied von Samlethe"
-content = """
-Der erste Bär schwamm
+content = """Der erste Bär schwamm
 bei Tag,
 Und nachts schlief er
 ein.
@@ -204,11 +200,9 @@ sechs Fuß tief
 Am Ende von
 
 Samlethes Tag."""
-
 [translations.ita]
 title = "Una canzone di Samlethe"
-content = """
-Il primo orso nuotava
+content = """Il primo orso nuotava
 di giorno,
 E dormiva di notte.
 Se ne stava nella sua
@@ -256,11 +250,9 @@ sotto terra
 Alla fine del
 
 giorno di Samlethe."""
-
 [translations.pol]
 title = "Pieśń o Samlethe"
-content = """
-Pierwszy niedźwiedź
+content = """Pierwszy niedźwiedź
 pływał za dnia,
 A nocą spał.
 Trzymał się swojej
@@ -309,11 +301,9 @@ sześć stóp pod ziemią
 U kresu
 
 dnia Samlethe."""
-
 [translations.por]
 title = "Uma canção de Samlethe"
-content = """
-O primeiro urso
+content = """O primeiro urso
 nadava de dia,
 E dormia durante
 a noite.
@@ -364,11 +354,9 @@ terra
 Ao fim do dia de
 
 Samlethe."""
-
 [translations.spa]
 title = "Una canción de Samlethe"
-content = """
-El primer oso nadaba
+content = """El primer oso nadaba
 de día
 y dormía por la noche.
 En su cueva permanecía

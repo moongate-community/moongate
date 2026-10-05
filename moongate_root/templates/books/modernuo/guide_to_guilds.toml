@@ -153,12 +153,12 @@ field.
   Traders' Guild.
 White bar centered
 down green field."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Beltranův průvodce cechy"
-content = """
-Tato příručka má
+content = """Tato příručka má
 sloužit pouze jako
 zdroj informací těm,
 kdo se zajímají o celý
@@ -310,11 +310,9 @@ Cech kupců.
 Bílé břevno svisle
 uprostřed zeleného
 pole."""
-
 [translations.fre]
 title = "Le guide des guildes de Beltran"
-content = """
-Cet ouvrage de
+content = """Cet ouvrage de
 référence est
 simplement destiné à
 servir de ressource à
@@ -472,11 +470,9 @@ Guilde des Négociants.
 Barre blanche verticale
 au centre d’un fond
 vert."""
-
 [translations.ger]
 title = "Beltrans Gildenführer"
-content = """
-Dieses Nachschlagewerk
+content = """Dieses Nachschlagewerk
 soll lediglich jenen
 als Quelle dienen, die
 sich für das gesamte
@@ -635,11 +631,9 @@ Feld.
 Gilde der Händler.
 Weißer Balken mittig
 auf grünem Feld."""
-
 [translations.ita]
 title = "La guida alle gilde di Beltran"
-content = """
-Quest'opera di
+content = """Quest'opera di
 consultazione è
 destinata semplicemente
 a servire da risorsa
@@ -801,11 +795,9 @@ Gilda dei Commercianti.
 Banda bianca verticale
 al centro di un campo
 verde."""
-
 [translations.pol]
 title = "Przewodnik Beltran po gildiach"
-content = """
-Niniejszy podręcznik ma
+content = """Niniejszy podręcznik ma
 jedynie służyć jako
 źródło wiedzy dla
 ciekawych pełnego
@@ -955,11 +947,9 @@ polu.
 Gildia Handlarzy. Biała
 belka biegnąca przez
 środek zielonego pola."""
-
 [translations.por]
 title = "Guia de guildas de Beltran"
-content = """
-Esta obra de referência
+content = """Esta obra de referência
 pretende apenas servir
 de recurso para os
 curiosos quanto à
@@ -1128,11 +1118,9 @@ Comerciantes.
 Faixa branca
 centralizada ao longo
 de campo verde."""
-
 [translations.spa]
 title = "Guía de gremios de Beltran"
-content = """
-Esta obra de referencia
+content = """Esta obra de referencia
 solo pretende servir de
 recurso a quienes
 sienten curiosidad por

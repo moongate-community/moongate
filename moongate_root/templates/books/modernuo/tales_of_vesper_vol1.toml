@@ -183,12 +183,12 @@ Plaitings,
 Go Not to the
 Snakehills
 Lest You Care to Die"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Klasické příběhy Vesper, svazek 1"
-content = """
-Je nám ctí představit
+content = """Je nám ctí představit
 ti tyto příběhy
 shromážděné z dávných
 věků. V tomto prvním
@@ -359,11 +359,9 @@ Pletenců,
 Nechoď do
 Snakehills,
 Pokud Nechceš Zemřít"""
-
 [translations.fre]
 title = "Contes classiques de Vesper, volume 1"
-content = """
-C’est un Honneur de
+content = """C’est un Honneur de
 vous présenter ces
 Contes recueillis des
 Âges Passés. Dans ce
@@ -548,11 +546,9 @@ Ne va pas aux
 Snakehills
 À moins de Vouloir
 Mourir"""
-
 [translations.ger]
 title = "Klassische Geschichten aus Vesper, Band 1"
-content = """
-Es ist eine Ehre, Euch
+content = """Es ist eine Ehre, Euch
 diese Geschichten
 darzubieten, gesammelt
 aus längst vergangenen
@@ -740,11 +736,9 @@ Geh nicht in die
 Snakehills,
 Wenn dir nicht am
 Sterben liegt."""
-
 [translations.ita]
 title = "Racconti classici di Vesper, volume 1"
-content = """
-È un Onore presentarVi
+content = """È un Onore presentarVi
 questi Racconti
 raccolti dai Tempi
 Passati. In questo
@@ -925,11 +919,9 @@ Non Andare alle
 Snakehills
 A Meno Che Tu non
 Voglia Morire"""
-
 [translations.pol]
 title = "Klasyczne opowieści z Vesper, tom 1"
-content = """
-Zaszczytem jest
+content = """Zaszczytem jest
 przedstawić Wam te
 Opowieści zebrane z
 Dawnych Wieków. W tym
@@ -1096,11 +1088,9 @@ Sploty,
 Nie Idź do Snakehills,
 Chyba że Pragniesz
 Umrzeć"""
-
 [translations.por]
 title = "Contos clássicos de Vesper, volume 1"
-content = """
-É uma Honra apresentar
+content = """É uma Honra apresentar
 a Você estes Contos
 recolhidos de Eras
 Passadas. Neste Volume
@@ -1291,11 +1281,9 @@ Não Vá às
 Snakehills
 A Menos que Queira
 Morrer"""
-
 [translations.spa]
 title = "Relatos clásicos de Vesper, volumen 1"
-content = """
-Es un Honor presentaros
+content = """Es un Honor presentaros
 estos Relatos recogidos
 de Eras Pasadas. En
 este Volumen Inaugural

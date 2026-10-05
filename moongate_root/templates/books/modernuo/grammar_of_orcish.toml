@@ -206,12 +206,12 @@ gol, gom, goth, grunt,
 grut, gu, gub, gub,
 gug, gug, gugh, guk,
 guk,"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Mluvnice skřetí řeči"
-content = """
-Tento svazek i další z
+content = """Tento svazek i další z
 této řady jsou
 podporovány dary od Lord
 Blackthorn, jenž vždy
@@ -398,11 +398,9 @@ gol, gom, goth, grunt,
 grut, gu, gub, gub,
 gug, gug, gugh, guk,
 guk,"""
-
 [translations.fre]
 title = "Grammaire de l’orque"
-content = """
-Ce volume et les autres
+content = """Ce volume et les autres
 de la série sont financés
 par les dons de Lord
 Blackthorn, qui a
@@ -601,11 +599,9 @@ gno, gnu, gol, gom, goth,
 grunt, grut, gu, gub,
 gub, gug, gug, gugh, guk,
 guk,"""
-
 [translations.ger]
 title = "Eine Grammatik des Orkischen"
-content = """
-Dieser Band und die
+content = """Dieser Band und die
 anderen dieser Reihe
 werden durch Spenden von
 Lord Blackthorn
@@ -812,11 +808,9 @@ gol, gom, goth, grunt,
 grut, gu, gub, gub,
 gug, gug, gugh, guk,
 guk,"""
-
 [translations.ita]
 title = "Una grammatica della lingua degli orchi"
-content = """
-Questo volume, e gli
+content = """Questo volume, e gli
 altri della serie, sono
 patrocinati dalle
 donazioni di Lord
@@ -1019,11 +1013,9 @@ gno, gnu, gol, gom, goth,
 grunt, grut, gu, gub,
 gub, gug, gug, gugh, guk,
 guk,"""
-
 [translations.pol]
 title = "Gramatyka języka orków"
-content = """
-Ten tom oraz pozostałe w
+content = """Ten tom oraz pozostałe w
 serii powstały dzięki
 datkom Lord Blackthorn,
 który zawsze wspiera
@@ -1213,11 +1205,9 @@ gno, gnu, gol, gom, goth,
 grunt, grut, gu, gub,
 gub, gug, gug, gugh, guk,
 guk,"""
-
 [translations.por]
 title = "Uma gramática do orc"
-content = """
-Este volume e os demais
+content = """Este volume e os demais
 da série são patrocinados
 por doações de Lord
 Blackthorn, sempre um
@@ -1420,11 +1410,9 @@ gol, gom, goth, grunt,
 grut, gu, gub, gub,
 gug, gug, gugh, guk,
 guk,"""
-
 [translations.spa]
 title = "Una gramática del orco"
-content = """
-Este volumen, y los demás
+content = """Este volumen, y los demás
 de la serie, se financian
 con donaciones de Lord
 Blackthorn, siempre

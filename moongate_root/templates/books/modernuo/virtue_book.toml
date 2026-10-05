@@ -177,12 +177,12 @@ Valor, Justice,
 Sacrifice, Honor,
 Spirituality, and
 Humility."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Ctnost"
-content = """
-V tomto světě žijí lidé
+content = """V tomto světě žijí lidé
 s mnoha různými ideály,
 a to je dobře. Co však
 v lidech naší země
@@ -346,11 +346,9 @@ Soucit, Statečnost,
 Spravedlnost,
 Obětavost, Čest,
 Duchovnost a Pokora."""
-
 [translations.fre]
 title = "La Vertu"
-content = """
-Dans ce monde vivent
+content = """Dans ce monde vivent
 des gens aux idéaux
 très divers, et cela
 est bon. Pourtant,
@@ -538,11 +536,9 @@ Vaillance, Justice,
 Sacrifice, Honneur,
 Spiritualité et
 Humilité."""
-
 [translations.ger]
 title = "Tugend"
-content = """
-In dieser Welt leben
+content = """In dieser Welt leben
 Menschen mit vielen
 verschiedenen Idealen,
 und das ist gut. Doch
@@ -739,11 +735,9 @@ Gerechtigkeit,
 Opferbereitschaft,
 Ehre, Spiritualität und
 Demut."""
-
 [translations.ita]
 title = "Virtù"
-content = """
-In questo mondo vivono
+content = """In questo mondo vivono
 persone dai molti
 ideali diversi, e ciò è
 bene. Eppure che cosa,
@@ -930,11 +924,9 @@ Compassione, Valore,
 Giustizia, Sacrificio,
 Onore, Spiritualità e
 Umiltà."""
-
 [translations.pol]
 title = "Cnota"
-content = """
-Na tym świecie żyją
+content = """Na tym świecie żyją
 ludzie o wielu różnych
 ideałach, i to dobrze.
 Lecz co w mieszkańcach
@@ -1110,11 +1102,9 @@ Współczucie, Męstwo,
 Sprawiedliwość,
 Poświęcenie, Honor,
 Duchowość i Pokora."""
-
 [translations.por]
 title = "Virtude"
-content = """
-Neste mundo vivem
+content = """Neste mundo vivem
 pessoas com muitos
 ideais diferentes, e
 isso é bom. Mas o que
@@ -1296,11 +1286,9 @@ Valor, Justiça,
 Sacrifício, Honra,
 Espiritualidade e
 Humildade."""
-
 [translations.spa]
 title = "Virtud"
-content = """
-En este mundo viven
+content = """En este mundo viven
 personas con muchos
 ideales distintos, y
 eso es bueno. Pero ¿qué

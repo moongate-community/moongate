@@ -112,12 +112,12 @@ like knights still in
 battle, shattered
 armor shining like
 newly born stars."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Boj"
-content = """
-    Chladné podzimní
+content = """    Chladné podzimní
 ráno s mlžným oparem
 chrání tucet statečných
 rytířů a poskytuje jim
@@ -215,11 +215,9 @@ jako rytíři stále v
 bitvě, rozbitá zbroj
 září jako nově zrozené
 hvězdy."""
-
 [translations.fre]
 title = "Le combat"
-content = """
-    Un froid matin
+content = """    Un froid matin
 d’automne à la brume
 vaporeuse protège une
 douzaine de braves
@@ -347,11 +345,9 @@ encore au combat, leurs
 armures brisées
 brillant comme des
 étoiles nouveau-nées."""
-
 [translations.ger]
 title = "Der Kampf"
-content = """
-    Ein kalter
+content = """    Ein kalter
 Herbstmorgen mit
 nebligen Schwaden
 schützt ein Dutzend
@@ -473,11 +469,9 @@ wie Ritter noch in der
 Schlacht, zertrümmerte
 Rüstungen leuchten wie
 neugeborene Sterne."""
-
 [translations.ita]
 title = "Il combattimento"
-content = """
-    Un freddo mattino
+content = """    Un freddo mattino
 d'autunno dalla nebbia
 brumosa protegge una
 dozzina di valorosi
@@ -600,11 +594,9 @@ in battaglia, le
 armature spezzate che
 brillano come stelle
 appena nate."""
-
 [translations.pol]
 title = "Walka"
-content = """
-    Zimny jesienny
+content = """    Zimny jesienny
 poranek z mglistym
 oparem chroni tuzin
 odważnych rycerzy,
@@ -714,11 +706,9 @@ niczym rycerze nadal w
 bitwie, ze strzaskanymi
 zbrojami lśniącymi jak
 nowo narodzone gwiazdy."""
-
 [translations.por]
 title = "A luta"
-content = """
-    Uma fria manhã de
+content = """    Uma fria manhã de
 outono, com névoa
 enevoada, protege uma
 dúzia de bravos
@@ -839,11 +829,9 @@ em batalha, as
 armaduras despedaçadas
 brilhando como estrelas
 recém-nascidas."""
-
 [translations.spa]
 title = "La lucha"
-content = """
-    Una fría mañana de
+content = """    Una fría mañana de
 otoño, con niebla
 brumosa, protege a una
 docena de caballeros

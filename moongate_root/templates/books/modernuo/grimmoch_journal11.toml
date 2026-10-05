@@ -28,12 +28,12 @@ questions comes as
 laughter from behind
 
 the stones."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Denní zápisky Grimmoch Drummel"
-content = """
-Den jedenáctý až
+content = """Den jedenáctý až
 třináctý:
 
 Lysander zmizel a s
@@ -60,11 +60,9 @@ otázky přichází jako
 smích zpoza
 
 kamenů."""
-
 [translations.fre]
 title = "Le journal quotidien de Grimmoch Drummel"
-content = """
-Du onzième au
+content = """Du onzième au
 treizième jour :
 
 Lysander est parti,
@@ -96,11 +94,9 @@ rire qui vient de
 derrière
 
 les pierres."""
-
 [translations.ger]
 title = "Grimmoch Drummels tägliches Tagebuch"
-content = """
-Elfter bis dreizehnter
+content = """Elfter bis dreizehnter
 Tag:
 
 Lysander ist fort und
@@ -131,11 +127,9 @@ meine Fragen kommt als
 Gelächter hinter
 
 den Steinen hervor."""
-
 [translations.ita]
 title = "Il diario quotidiano di Grimmoch Drummel"
-content = """
-Giorno Undici - Giorno
+content = """Giorno Undici - Giorno
 Tredici :
 
 Lysander è scomparso,
@@ -166,11 +160,9 @@ domande giunge come
 una risata da dietro
 
 le pietre."""
-
 [translations.pol]
 title = "Dziennik codzienny Grimmoch Drummel"
-content = """
-Dzień jedenasty —
+content = """Dzień jedenasty —
 dzień trzynasty:
 
 Lysander odszedł, a z
@@ -199,11 +191,9 @@ pytania jest śmiech
 zza
 
 kamieni."""
-
 [translations.por]
 title = "O diário de Grimmoch Drummel"
-content = """
-Décimo primeiro dia -
+content = """Décimo primeiro dia -
 Décimo terceiro dia:
 
 Lysander desapareceu,
@@ -234,11 +224,9 @@ vem como risadas por
 trás
 
 das pedras."""
-
 [translations.spa]
 title = "El diario de Grimmoch Drummel"
-content = """
-Día once - Día trece:
+content = """Día once - Día trece:
 
 Lysander se ha
 marchado, y con él

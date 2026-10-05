@@ -82,12 +82,12 @@ midnight feedings,
 never during the day.
 
 """
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Klasické dětské příběhy, svazek 2"
-content = """
-Tiskárna Clarke
+content = """Tiskárna Clarke
     má tu čest
     představit příběhy
     z dávných věků!
@@ -160,11 +160,9 @@ při půlnočním krmení,
 nikdy za dne.
 
 """
-
 [translations.fre]
 title = "Contes classiques pour enfants, volume 2"
-content = """
-L’imprimerie de Clarke a
+content = """L’imprimerie de Clarke a
 l’honneur de présenter
 des contes des âges
 passés ! Guilhem l’Érudit
@@ -245,11 +243,9 @@ tétées de minuit, jamais
 pendant la journée.
 
 """
-
 [translations.ger]
 title = "Klassische Kindergeschichten, Band 2"
-content = """
-Clarkes Druckerei hat die
+content = """Clarkes Druckerei hat die
 Ehre, Geschichten aus
 längst vergangenen Zeiten
 darzubieten!
@@ -332,11 +328,9 @@ verwendet, niemals am
 Tag.
 
 """
-
 [translations.ita]
 title = "Racconti classici per bambini, volume 2"
-content = """
-La Stamperia di Clarke è
+content = """La Stamperia di Clarke è
 Onorata di Presentare
 Racconti dei Tempi
 Passati!
@@ -415,11 +409,9 @@ le poppate di mezzanotte,
 mai durante il giorno.
 
 """
-
 [translations.pol]
 title = "Klasyczne opowieści dla dzieci, tom 2"
-content = """
-Drukarnia Clarke
+content = """Drukarnia Clarke
     ma zaszczyt
     przedstawić opowieści
     z dawnych wieków!
@@ -498,11 +490,9 @@ karmienia o północy,
 nigdy za dnia.
 
 """
-
 [translations.por]
 title = "Contos infantis clássicos, volume 2"
-content = """
-A gráfica de Clarke
+content = """A gráfica de Clarke
     tem a honra de
     apresentar contos de
     eras passadas!
@@ -583,11 +573,9 @@ meia-noite, nunca durante
 o dia.
 
 """
-
 [translations.spa]
 title = "Cuentos clásicos para niños, volumen 2"
-content = """
-¡La imprenta de Clarke
+content = """¡La imprenta de Clarke
 tiene el honor de
 presentar relatos de
 épocas pasadas! Guilhem

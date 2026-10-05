@@ -160,12 +160,12 @@ odd word \"welsh,\"
 which as far as I
 know means to forgo
 paying a debt."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Květena země Britannia: Nenáročný průvodce"
-content = """
-Často jsem při toulkách
+content = """Často jsem při toulkách
 lesem a vyhýbání se
 medvědům zahlédl
 rostlinu, jakou jsem
@@ -309,11 +309,9 @@ slovem „welsh“, jež,
 pokud vím, znamená
 vyhnout se zaplacení
 dluhu."""
-
 [translations.fre]
 title = "La flore de Britannia : petit guide sans prétention"
-content = """
-Souvent, en errant dans
+content = """Souvent, en errant dans
 les bois pour éviter les
 ours, ai-je aperçu
 quelque plante dont je
@@ -477,11 +475,9 @@ est précédé de cet
 qui, à ma connaissance,
 signifie ne pas payer
 une dette."""
-
 [translations.ger]
 title = "Die Pflanzenwelt Britannias: Ein zwangloser Führer"
-content = """
-Oft habe ich beim
+content = """Oft habe ich beim
 Umherstreifen im Wald,
 während ich Bären
 auswich, eine Pflanze
@@ -649,11 +645,9 @@ das seltsame Wort
 ist, das meines Wissens
 bedeutet, eine Schuld
 nicht zu begleichen."""
-
 [translations.ita]
 title = "La flora di Britannia: una guida informale"
-content = """
-Spesso, vagando nei
+content = """Spesso, vagando nei
 boschi per evitare gli
 orsi, ho scorto una
 pianta mai vista prima e
@@ -810,11 +804,9 @@ dalla strana parola
 «welsh», che per quanto
 ne so significa evitare
 di pagare un debito."""
-
 [translations.pol]
 title = "Flora Britannia: swobodny przewodnik"
-content = """
-Nieraz, wędrując po
+content = """Nieraz, wędrując po
 lesie i unikając
 niedźwiedzi,
 spostrzegałem roślinę,
@@ -966,11 +958,9 @@ jest dziwnym słowem
 wiadomo, oznacza
 uchylanie się od spłaty
 długu."""
-
 [translations.por]
 title = "Flora de Britannia: um guia informal"
-content = """
-Muitas vezes, ao vagar
+content = """Muitas vezes, ao vagar
 pelos bosques evitando
 ursos, avistei alguma
 planta como nunca tinha
@@ -1127,11 +1117,9 @@ nome a estranha palavra
 \"welsh\", que, pelo que
 sei, significa deixar de
 pagar uma dívida."""
-
 [translations.spa]
 title = "Flora de Britannia: una guía informal"
-content = """
-  A menudo, al vagar por
+content = """  A menudo, al vagar por
 el bosque esquivando
 osos, he visto una
 planta como ninguna otra

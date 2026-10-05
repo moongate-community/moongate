@@ -65,12 +65,12 @@ taming animals, and
 
 running away very
 very fast."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Krocení draků"
-content = """
-O dracích vám mnoho
+content = """O dracích vám mnoho
 nepovím. Když jsem se
 jedinkrát přiblížil k
 jednomu s úmyslem ho
@@ -131,11 +131,9 @@ zvířat a
 
 velmi, velmi rychlý
 útěk."""
-
 [translations.fre]
 title = "Apprivoiser les dragons"
-content = """
-Je n’ai pas grand-chose
+content = """Je n’ai pas grand-chose
 à raconter sur les
 dragons. La seule fois
 où j’en approchai un
@@ -209,11 +207,9 @@ apprivoiser les animaux
 et
 
 fuir très, très vite."""
-
 [translations.ger]
 title = "Drachen zähmen"
-content = """
-Ich habe nicht viel
+content = """Ich habe nicht viel
 über Drachen zu
 erzählen. Das einzige
 Mal, als ich mich einem
@@ -286,11 +282,9 @@ Tierzähmens und des
 sehr, sehr schnellen
 Davonlaufens
 beherrscht."""
-
 [translations.ita]
 title = "Addomesticare i draghi"
-content = """
-Non ho molto da
+content = """Non ho molto da
 raccontare sui draghi.
 L'unica volta che mi
 avvicinai a uno con
@@ -360,11 +354,9 @@ animali e
 
 correre via molto,
 molto velocemente."""
-
 [translations.pol]
 title = "Oswajanie smoków"
-content = """
-Niewiele mam do
+content = """Niewiele mam do
 powiedzenia o smokach.
 Jedyny raz, kiedy
 zbliżyłem się do
@@ -431,11 +423,9 @@ zwierząt oraz
 
 bardzo, bardzo szybkie
 uciekanie."""
-
 [translations.por]
 title = "Domando dragões"
-content = """
-Não tenho muito a dizer
+content = """Não tenho muito a dizer
 sobre dragões. Na única
 vez em que me aproximei
 de um com a intenção de
@@ -504,11 +494,9 @@ animais e
 
 correr para longe
 muito, muito depressa."""
-
 [translations.spa]
 title = "Domar dragones"
-content = """
-No tengo mucho que
+content = """No tengo mucho que
 contar sobre los
 dragones. La única vez
 que me acerqué a uno
