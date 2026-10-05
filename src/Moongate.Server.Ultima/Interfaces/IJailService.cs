@@ -66,6 +66,15 @@ public interface IJailService : IMoongateStartupService, IPersistenceDeletionSou
     JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by, string? reason = null);
 
     /// <summary>
+    ///     Gives a sentence to a player who is not in the world, one <see cref="FindAsync" /> gave: it waits with its
+    ///     cell taken, nobody is moved, and <see cref="Check" /> starts it when the player is back, so its days count
+    ///     from the login. The result is then <see cref="JailResultType.Pending" />. A player who is in the world is
+    ///     jailed at once, as by <see cref="Jail" />. A sentence the player already has waits again with the new cell
+    ///     and days, and keeps the place it was first arrested on.
+    /// </summary>
+    JailResultType JailOffline(Serial prisoner, int cell, int days, MobileEntity by, string? reason = null);
+
+    /// <summary>
     ///     Ends the sentence now with no fine and no note: a prisoner in the world goes back at once, a player who is
     ///     offline at its next login. False when the mobile has no sentence.
     /// </summary>

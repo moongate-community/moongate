@@ -289,6 +289,91 @@ public sealed class JailService : IJailService
         return JailResultType.Ok;
     }
 
+    public JailResultType JailOffline(Serial prisoner, int cell, int days, MobileEntity by, string? reason = null)
+    {
+        // It logged in after it was found.
+        if (_mobiles.TryGet(prisoner, out var online))
+        {
+            return Jail(online, cell, days, by, reason);
+        }
+
+        if (_file is not { } file)
+        {
+            return JailResultType.Disabled;
+        }
+
+        if (days < 1 || days > _config.MaxDays)
+        {
+            return JailResultType.BadDays;
+        }
+
+        if (file.Cell.All(candidate => candidate.Number != cell))
+        {
+            return JailResultType.NoSuchCell;
+        }
+
+        // Only who the search by name gave: a script cannot jail any serial it likes.
+        if (!_found.TryGetValue(prisoner, out var found))
+        {
+            return JailResultType.NotInWorld;
+        }
+
+        if (prisoner == by.Id ||
+            (_sessions.TryGetByCharacterId(by.Id, out var mine) && found.AccountType >= mine.AccountType))
+        {
+            return JailResultType.Refused;
+        }
+
+        if (GetOccupant(cell) is { } occupant && occupant.Id != prisoner)
+        {
+            return JailResultType.CellOccupied;
+        }
+
+        if (!_sentences.TryGetValue(prisoner, out var sentence))
+        {
+            // No place to go back to yet: it is taken where the player logs in.
+            sentence = new JailSentenceEntity { Id = prisoner };
+            _sentences[prisoner] = sentence;
+            _ended.TryRemove(prisoner, out _);
+        }
+
+        sentence.Name = found.Name;
+        sentence.IsPlayer = true;
+        sentence.Cell = cell;
+        sentence.Days = days;
+        sentence.JailedBy = by.Name;
+        sentence.Reason = Clean(reason);
+        sentence.Pardoned = false;
+        sentence.Pending = true;
+        sentence.ReleaseAt = 0;
+
+        if (sentence.Reason.Length == 0)
+        {
+            _logger.Information(
+                "{Name:l} ({Serial:l}) will be jailed in cell {Cell} for {Days} days at its next login, by {By:l}",
+                sentence.Name,
+                sentence.Id,
+                cell,
+                days,
+                sentence.JailedBy
+            );
+        }
+        else
+        {
+            _logger.Information(
+                "{Name:l} ({Serial:l}) will be jailed in cell {Cell} for {Days} days at its next login, by {By:l}: {Reason:l}",
+                sentence.Name,
+                sentence.Id,
+                cell,
+                days,
+                sentence.JailedBy,
+                sentence.Reason
+            );
+        }
+
+        return JailResultType.Pending;
+    }
+
     public IReadOnlyCollection<Serial> Capture()
     {
         return _ended.Keys.ToArray();

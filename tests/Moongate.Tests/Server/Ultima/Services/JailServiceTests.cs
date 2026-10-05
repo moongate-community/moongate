@@ -786,6 +786,153 @@ public sealed class JailServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task JailOffline_AFoundPlayer_KeepsASentenceThatWaits_AndMovesNobody()
+    {
+        var aria = await OfflineAsync(_aria);
+
+        Assert.Equal(JailResultType.Pending, _jail.JailOffline(aria, 2, 3, _staff, " Stole a horse "));
+
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal(
+            (aria, "Aria", true, 2, 3, "Giachi", "Stole a horse", true, false),
+            (sentence.Id, sentence.Name, sentence.IsPlayer, sentence.Cell, sentence.Days, sentence.JailedBy, sentence.Reason, sentence.Pending, sentence.Pardoned)
+        );
+        // Its days have not started.
+        Assert.Equal((0L, 0L), (sentence.JailedAt, sentence.ReleaseAt));
+        Assert.Empty(_teleports.Teleports);
+        Assert.Empty(_speech.Told);
+    }
+
+    [Fact]
+    public async Task JailOffline_ReservesTheCell()
+    {
+        var aria = await OfflineAsync(_aria);
+
+        _jail.JailOffline(aria, 2, 3, _staff);
+
+        Assert.Equal(aria, _jail.GetOccupant(2)?.Id);
+        Assert.Equal(JailResultType.CellOccupied, _jail.Jail(_bruno, 2, 1, _staff));
+
+        // However long it waits.
+        _clock.Advance(TimeSpan.FromDays(400));
+        Assert.Equal(aria, _jail.GetOccupant(2)?.Id);
+    }
+
+    [Fact]
+    public async Task JailOffline_ASerialTheJailDidNotFind_IsRefused()
+    {
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.LeaveWorld(_aria.Id));
+
+        Assert.Equal(JailResultType.NotInWorld, _jail.JailOffline(_aria.Id, 2, 3, _staff));
+        Assert.Empty(_jail.Sentences);
+    }
+
+    [Theory, InlineData(AccountType.GameMaster), InlineData(AccountType.Administrator)]
+    public async Task JailOffline_AnAccountOfTheSameRankOrAbove_IsRefused(AccountType rank)
+    {
+        var aria = await OfflineAsync(_aria, rank);
+
+        Assert.Equal(JailResultType.Refused, _jail.JailOffline(aria, 2, 3, _staff));
+        Assert.Empty(_jail.Sentences);
+    }
+
+    [Theory, InlineData(0), InlineData(-1), InlineData(31)]
+    public async Task JailOffline_DaysOutOfRange_AreRefused(int days)
+    {
+        var aria = await OfflineAsync(_aria);
+
+        Assert.Equal(JailResultType.BadDays, _jail.JailOffline(aria, 2, days, _staff));
+        Assert.Empty(_jail.Sentences);
+    }
+
+    [Fact]
+    public async Task JailOffline_AnUnknownCell_IsRefused()
+    {
+        var aria = await OfflineAsync(_aria);
+
+        Assert.Equal(JailResultType.NoSuchCell, _jail.JailOffline(aria, 9, 3, _staff));
+    }
+
+    [Fact]
+    public async Task JailOffline_WithoutTheFile_IsDisabled()
+    {
+        var jail = await CreateAsync(null);
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.LeaveWorld(_aria.Id));
+        Character(_aria.Id.Value, "Aria", "mario", AccountType.Regular);
+        await jail.FindAsync("Aria");
+
+        Assert.Equal(JailResultType.Disabled, jail.JailOffline(_aria.Id, 1, 3, _staff));
+    }
+
+    [Fact]
+    public async Task JailOffline_AnOccupiedCell_IsRefused()
+    {
+        var aria = await OfflineAsync(_aria);
+        _jail.Jail(_bruno, 2, 1, _staff);
+
+        Assert.Equal(JailResultType.CellOccupied, _jail.JailOffline(aria, 2, 3, _staff));
+        Assert.Single(_jail.Sentences);
+    }
+
+    [Fact]
+    public async Task JailOffline_AgainInAnotherCell_MovesTheReservation()
+    {
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 1, 3, _staff, "Stole a horse");
+
+        Assert.Equal(JailResultType.Pending, _jail.JailOffline(aria, 2, 5, _staff));
+
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal((2, 5, "", true), (sentence.Cell, sentence.Days, sentence.Reason, sentence.Pending));
+        Assert.Null(_jail.GetOccupant(1));
+    }
+
+    // Found offline by .jail, back in the world before the game master picked the cell.
+    [Fact]
+    public async Task JailOffline_APlayerWhoLoggedInMeanwhile_IsJailedAtOnce()
+    {
+        var aria = await OfflineAsync(_aria);
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(_aria));
+
+        Assert.Equal(JailResultType.Ok, _jail.JailOffline(aria, 2, 3, _staff));
+
+        Assert.Equal((_aria, MapType.Felucca, Cell2), Assert.Single(_teleports.Teleports));
+        Assert.False(Assert.Single(_jail.Sentences).Pending);
+    }
+
+    [Fact]
+    public async Task JailOffline_ARunningSentenceOfAnOfflinePlayer_WaitsAgain_AndKeepsItsReturnPlace()
+    {
+        _jail.Jail(_aria, 1, 3, _staff);
+        var aria = await OfflineAsync(_aria);
+
+        Assert.Equal(JailResultType.Pending, _jail.JailOffline(aria, 2, 5, _staff));
+
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal((2, 5, true), (sentence.Cell, sentence.Days, sentence.Pending));
+        Assert.Equal((MapType.Trammel, 1600, 1600, 5), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+        Assert.Null(_jail.GetOccupant(1));
+    }
+
+    [Fact]
+    public async Task TheConsole_IsToldWhoWillBeJailedAtItsLogin()
+    {
+        var aria = await OfflineAsync(_aria);
+        Logged();
+
+        _jail.JailOffline(aria, 2, 3, _staff, "Stole a horse");
+        _jail.JailOffline(aria, 1, 1, _staff);
+
+        Assert.Equal(
+            [
+                "Aria (0x00000002) will be jailed in cell 2 for 3 days at its next login, by Giachi: Stole a horse",
+                "Aria (0x00000002) will be jailed in cell 1 for 1 days at its next login, by Giachi"
+            ],
+            Logged()
+        );
+    }
+
+    [Fact]
     public void Pardon_SomeoneNotJailed_IsFalse()
     {
         Assert.False(_jail.Pardon(_aria.Id));
@@ -832,6 +979,16 @@ public sealed class JailServiceTests : IAsyncLifetime
         _accounts.Upserted.Add(new AccountEntity { Id = owner, Username = account, AccountType = rank });
 
         return character;
+    }
+
+    // The player logs out and the jail finds it by its name, as .jail <name> does.
+    private async Task<Serial> OfflineAsync(MobileEntity player, AccountType rank = AccountType.Regular)
+    {
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.LeaveWorld(player.Id));
+        Character(player.Id.Value, player.Name, "mario", rank);
+        Assert.Single(await _jail.FindAsync(player.Name));
+
+        return player.Id;
     }
 
     private async Task<MobileEntity> AddPlayerAsync(long id, string name, AccountType rank)

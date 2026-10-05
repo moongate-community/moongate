@@ -77,6 +77,21 @@ public sealed class StubJailService : IJailService
         return Task.FromResult<IReadOnlyList<JailCandidate>>(Found.ToList());
     }
 
+    /// <summary>
+    ///     What jailing someone who is not in the world gives.
+    /// </summary>
+    public JailResultType OfflineResult { get; set; } = JailResultType.Pending;
+
+    public List<(Serial Prisoner, int Cell, int Days, MobileEntity By)> JailedOffline { get; } = [];
+
+    public JailResultType JailOffline(Serial prisoner, int cell, int days, MobileEntity by, string? reason = null)
+    {
+        JailedOffline.Add((prisoner, cell, days, by));
+        Reasons.Add(reason);
+
+        return OfflineResult;
+    }
+
     public bool Pardon(Serial prisoner)
     {
         Pardoned.Add(prisoner);
