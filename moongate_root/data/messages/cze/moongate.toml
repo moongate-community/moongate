@@ -190,3 +190,9 @@
 # Moongate: texts of the animate command (30158-30159).
 30158 = "Přiměje vybranou postavu nebo NPC provést akci jejího těla: animate <akce>."
 30159 = "{0} provádí akci {1}."
+
+# Moongate: texts of the resurrect command (30160-30163).
+30160 = "Vzkřísí NPC, jehož mrtvolu vybereš: zrodí se znovu tam, kde mrtvola leží."
+30161 = "{0} je zpět."
+30162 = "To není mrtvola."
+30163 = "Tuto mrtvolu nelze vzkřísit."

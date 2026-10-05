@@ -87,7 +87,7 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
-        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30158));
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30160));
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Standalone)]
@@ -209,6 +209,7 @@ public sealed class ServerRoleRegistrationTests
         Assert.NotNull(container.Resolve<IDeathService>());
         Assert.NotNull(container.Resolve<MobileModule>());
         Assert.NotNull(container.Resolve<KillCommand>());
+        Assert.NotNull(container.Resolve<ResurrectCommand>());
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]

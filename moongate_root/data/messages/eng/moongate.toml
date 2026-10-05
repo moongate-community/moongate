@@ -190,3 +190,9 @@
 # Moongate: texts of the animate command (30158-30159).
 30158 = "Makes the character or NPC you target play an action of its body: animate <action>."
 30159 = "{0} plays action {1}."
+
+# Moongate: texts of the resurrect command (30160-30163).
+30160 = "Raises the NPC whose corpse you target: it is born again where the corpse lies."
+30161 = "{0} is back."
+30162 = "That is not a corpse."
+30163 = "That corpse cannot be raised."

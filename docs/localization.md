@@ -64,7 +64,7 @@ chosen language stays in English, so a partial translation still works. The log
 reports how many messages fell back:
 
 ```text
-Found 5621 messages in ita, 3 of them in English
+Found 5625 messages in ita, 3 of them in English
 ```
 
 ### Validation at startup
@@ -209,6 +209,7 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30148, 30149 | You have been jailed for {0} days: {1}, Reason: {0} | What a prisoner reads when a reason was given, and the reason on its release note |
 | 30151 | the remains of {0} | The name of the corpse an NPC leaves |
 | 30152 to 30154 | Kills the NPC you target…, {0} is dead., Players cannot die yet. | The `kill` command |
+| 30160 to 30163 | Raises the NPC whose corpse you target…, {0} is back., That is not a corpse., That corpse cannot be raised. | The `resurrect` command |
 | 30155 to 30157 | You must wait {0} seconds before posting again., That message is not yours., The board is busy: post again in a moment. | What a player reads at a [bulletin board](bulletin-boards.md) |
 | 30150 | No character is named {0}. | What `jail <name>` answers when no player has the name |
 

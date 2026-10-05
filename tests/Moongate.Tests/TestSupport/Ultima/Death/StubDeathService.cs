@@ -1,5 +1,8 @@
+using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Death;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.Death;
 
 namespace Moongate.Tests.TestSupport.Ultima.Death;
 
@@ -17,5 +20,22 @@ public sealed class StubDeathService : IDeathService
         Killed.Add((mobile, killer));
 
         return Kills;
+    }
+
+    /// <summary>
+    ///     What every raising answers.
+    /// </summary>
+    public ResurrectResult Raises { get; set; } = new(ResurrectResultType.NotACorpse, null);
+
+    public List<Serial> Raised { get; } = [];
+
+    public Task<ResurrectResult> ResurrectAsync(Serial corpse, CancellationToken cancellationToken = default)
+    {
+        lock (Raised)
+        {
+            Raised.Add(corpse);
+        }
+
+        return Task.FromResult(Raises);
     }
 }

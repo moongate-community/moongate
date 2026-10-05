@@ -190,3 +190,9 @@
 # Moongate: texts of the animate command (30158-30159).
 30158 = "Hace que el personaje o PNJ que selecciones ejecute una acción de su cuerpo: animate <acción>."
 30159 = "{0} ejecuta la acción {1}."
+
+# Moongate: texts of the resurrect command (30160-30163).
+30160 = "Resucita al PNJ cuyo cadáver selecciones: renace donde yace el cadáver."
+30161 = "{0} ha vuelto."
+30162 = "Eso no es un cadáver."
+30163 = "Ese cadáver no se puede resucitar."

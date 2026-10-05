@@ -23,5 +23,6 @@ To take an NPC away without a corpse, use [`remove`](remove.md).
 
 - [All commands](../commands.md)
 - [Death of NPCs](../death.md)
+- [`resurrect`](resurrect.md)
 - [`remove`](remove.md)
 - [`spawn`](spawn.md)

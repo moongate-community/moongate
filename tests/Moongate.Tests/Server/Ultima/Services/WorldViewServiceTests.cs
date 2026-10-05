@@ -224,6 +224,17 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void MobileAnimated_Backwards_TellsTheClientToPlayTheActionInReverse()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        ClearSent();
+
+        _view.MobileAnimated(aria, 21, 10, 1, false);
+
+        Assert.False(Assert.IsType<MobileAnimationPacket>(Assert.Single(_sender.Sent)).Forward);
+    }
+
+    [Fact]
     public void MobileAnimated_OfAHiddenMobile_IsForItselfAndTheStaffOnly()
     {
         var aria = Enter(2, 1496, 1628, AriaSession);

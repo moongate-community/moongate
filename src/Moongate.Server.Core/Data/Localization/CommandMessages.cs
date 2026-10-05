@@ -140,4 +140,8 @@ public static class CommandMessages
     public const int PlayersCannotDie = 30154;
     public const int AnimateDescription = 30158;
     public const int Animated = 30159;
+    public const int ResurrectDescription = 30160;
+    public const int Resurrected = 30161;
+    public const int NotACorpse = 30162;
+    public const int CorpseCannotBeRaised = 30163;
 }

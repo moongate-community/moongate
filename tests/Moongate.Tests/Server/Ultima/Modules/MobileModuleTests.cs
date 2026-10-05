@@ -324,6 +324,46 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public async Task Resurrect_ACorpse_StartsRaisingIt_OffTheGameLoop()
+    {
+        var corpse = new ItemEntity { Id = new Serial(0x40000900), TemplateId = "corpse", ItemId = 0x2006, Amount = 1 };
+        corpse.PlaceOnGround(MapType.Felucca, new Point3D(3000, 3000, 0));
+        _items.Add([corpse]);
+
+        Assert.True(Run("return mobile.resurrect(0x40000900)")[0].Read<bool>());
+
+        var until = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+
+        while (DateTime.UtcNow < until)
+        {
+            lock (_death.Raised)
+            {
+                if (_death.Raised.Count > 0)
+                {
+                    break;
+                }
+            }
+
+            await Task.Delay(10);
+        }
+
+        lock (_death.Raised)
+        {
+            Assert.Equal([corpse.Id], _death.Raised);
+        }
+    }
+
+    [Fact]
+    public void Resurrect_WhatIsNoCorpse_IsFalse_AndStartsNothing()
+    {
+        // The backpack of the fixture, a mobile, nothing.
+        var result = Run("return mobile.resurrect(0x40000001), mobile.resurrect(2), mobile.resurrect(0x40FFFFFF), mobile.resurrect(-1)");
+
+        Assert.All(result, value => Assert.False(value.Read<bool>()));
+        Assert.Empty(_death.Raised);
+    }
+
+    [Fact]
     public void Kill_WhatTheDeathRefuses_SuchAsAPlayer_IsFalse()
     {
         _death.Kills = false;

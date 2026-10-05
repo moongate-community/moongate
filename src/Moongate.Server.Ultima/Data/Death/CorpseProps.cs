@@ -32,6 +32,16 @@ public static class CorpseProps
     public const string MobileTemplate = "corpse.template";
 
     /// <summary>
+    ///     The name of who died, so that who is raised from the corpse has it again.
+    /// </summary>
+    public const string Name = "corpse.name";
+
+    /// <summary>
+    ///     The spawn region who died belonged to, when it had one: who is raised from the corpse counts for it again.
+    /// </summary>
+    public const string SpawnRegion = "corpse.spawn_region";
+
+    /// <summary>
     ///     The serial of who killed it, when someone did.
     /// </summary>
     public const string Killer = "corpse.killer";
