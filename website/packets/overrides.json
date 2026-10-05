@@ -4379,24 +4379,10 @@
       },
       {
         "offset": "7",
-        "name": "Layer",
-        "type": "byte",
-        "size": "1",
-        "description": "Layer of an item plus one; repeated with the next field for every item"
-      },
-      {
-        "offset": "8",
-        "name": "Item",
-        "type": "uint",
-        "size": "4",
-        "description": "Serial of the item drawn on that layer"
-      },
-      {
-        "offset": "7+5n",
-        "name": "End",
-        "type": "byte",
-        "size": "1",
-        "description": "Zero."
+        "name": "Items",
+        "type": "loop",
+        "size": "variable",
+        "description": "For every item: its layer plus one (1 byte) and its serial (4 bytes); a zero byte ends the list"
       }
     ],
     "notes": "What a corpse is drawn wearing. The items come first, in a container content (0x3C) of the corpse.",
