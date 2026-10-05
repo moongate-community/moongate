@@ -168,7 +168,7 @@
 30141 = "Vous avez purgé votre peine."
 30142 = "Vous avez été libéré de prison."
 30143 = "{0} a purgé {1} jours dans la cellule {2}, du {3} au {4}, et a payé une amende de {5} pièces d'or. Emprisonné par {6}."
-30144 = "Envoie le personnage ciblé dans une cellule de prison pour quelques jours, ou le libère : un gump liste les cellules."
+30144 = "Ouvre le gump de la prison : il liste les cellules, vous emmène dans l'une d'elles, et emprisonne ou libère un personnage."
 30145 = "La prison n'est pas configurée : data/jail.toml est absent."
 30146 = "Ce n'est pas un personnage."
 30147 = "Le gump de la prison est absent : templates/gumps/jail_sentence.xml."

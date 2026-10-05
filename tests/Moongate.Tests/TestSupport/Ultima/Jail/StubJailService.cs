@@ -3,6 +3,7 @@ using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types.Jail;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.TestSupport.Ultima.Jail;
 
@@ -22,6 +23,8 @@ public sealed class StubJailService : IJailService
     public IReadOnlyCollection<JailSentenceEntity> Sentences => SentenceList;
 
     public int MaxDays { get; set; } = 30;
+
+    public MapType? Map { get; set; } = MapType.Felucca;
 
     /// <summary>
     ///     The time a sentence is over at, in Unix milliseconds.

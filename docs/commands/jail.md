@@ -1,10 +1,10 @@
 # jail
 
-Sends the character you target to a jail cell for some days, or releases it.
+Opens the gump of the jail: it lists the cells, takes you into one, and jails or releases a character.
 
 | Syntax | Console | In game | Minimum level | Role |
 | --- | --- | --- | --- | --- |
-| `jail`, then target a character | No | Yes | GameMaster | Game |
+| `jail` | No | Yes | GameMaster | Game |
 
 ```text
 .jail
@@ -14,15 +14,22 @@ In game only. It takes no argument.
 
 ## What happens
 
-You get a target cursor. Target a player or an NPC and the gump of the jail opens on it: type
-the days, press the button of a free cell, and the character is there. A cell that holds someone
-shows who and for how long, with a `Release` button. [Jail](../jail.md) tells the whole story:
-the sentence, the fine, the release note and the chest of rations.
+The gump of the jail opens at once, with the cells and who is inside. From there:
+
+- `Target` gives you a cursor: pick a player or an NPC and the gump opens again on it. Then type
+  the days and press the button of a free cell, and the character is there.
+- `Release`, on a cell that holds someone, ends its sentence with no fine.
+- `Go`, on any cell, takes you into it on the map of the jail. Use it to visit a prisoner:
+  [`.go cell 1`](go.md) leads to the place of that name on your own map, which is an empty room
+  on every map but the jail's. The cells have no door: leave with `.go` or with another `Go`.
+
+[Jail](../jail.md) tells the whole story: the sentence, the fine, the release note and the chest
+of rations.
 
 | You see | Why |
 | --- | --- |
-| `Target canceled.` | You pressed Escape. |
-| `That is not a character.` | You targeted an item or the ground, or the character left meanwhile. |
+| `That is not a character.` | With the cursor of `Target` you picked an item or the ground, or the character left meanwhile. The gump keeps the character it had. |
+| `That cell cannot be reached.` | `Go` could not take you there: the map of the jail is not loaded. |
 | `The jail is not set up: data/jail.toml is missing.` | There is no [`jail.toml`](../data-files/jail.md). |
 | `The jail gump is missing: templates/gumps/jail_sentence.xml.` | The gump file was removed. |
 

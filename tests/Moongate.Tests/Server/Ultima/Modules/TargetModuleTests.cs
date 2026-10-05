@@ -63,15 +63,18 @@ public sealed class TargetModuleTests : IAsyncLifetime
         );
     }
 
-    [Fact]
-    public void Pick_Canceled_TellsTheFunction()
+    [Theory,
+     InlineData(TargetCancelType.Canceled, "canceled"),
+     InlineData(TargetCancelType.Overridden, "overridden"),
+     InlineData(TargetCancelType.Disconnected, "disconnected")]
+    public void Pick_Canceled_TellsTheFunction_AndWhy(TargetCancelType reason, string told)
     {
-        _targets.Result = TargetResult.Canceled(TargetCancelType.Canceled);
+        _targets.Result = TargetResult.Canceled(reason);
 
         Run("target.pick(2, function(picked) end)");
 
         var picked = Assert.IsType<LuaTable>(Assert.Single(Assert.Single(_engine.FunctionCalls).Args));
-        Assert.Equal("canceled", picked["kind"].Read<string>());
+        Assert.Equal(("canceled", told), (picked["kind"].Read<string>(), picked["reason"].Read<string>()));
     }
 
     [Fact]

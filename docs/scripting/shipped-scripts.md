@@ -213,13 +213,16 @@ locks and traps the container: those are not there yet. The town tables use
 ## jail_sentence.lua
 
 `scripts/gumps/jail_sentence.lua` is the script of the gump of the [jail](../jail.md)
-(`templates/gumps/jail_sentence.xml`), which [`.jail`](../commands/jail.md) opens on the character
-the game master targets. Its `rows` function fills the slot with the cells of `jail.cells()`, ten
-per page. A free cell has a button that reads the days typed in the gump and calls
+(`templates/gumps/jail_sentence.xml`), which [`.jail`](../commands/jail.md) opens with no target.
+Its `rows` function fills the slot: first a button that gives the cursor with `target.pick` and opens
+the gump again on the character picked, then the cells of `jail.cells()`, ten per page. With a
+character picked, a free cell has a button that reads the days typed in the gump and calls
 `jail.send(target, cell, days, who)`; days that are empty, not a number, a fraction or beyond
 `jail.max_days()` jail nobody, and the gump opens again with the reason. A cell that holds someone
 shows its name, the time left as `2d 4h`, `5h 10m` or `12m`, and a button that calls
-`jail.release`. A target that is already in jail has its release on a line of its own at the top.
+`jail.release`. Every cell has a button that takes the game master into it with
+`mobile.teleport(who, cell.x, cell.y, cell.z, cell.map)`, on the map of the jail. A target that is
+already in jail has its release on a line of its own at the top.
 Every button checks `world.is_staff` again: the rank may have gone while the gump was open.
 
 ## jail_note.lua

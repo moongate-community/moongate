@@ -168,7 +168,7 @@
 30141 = "Has cumplido tu condena."
 30142 = "Has sido liberado de la cárcel."
 30143 = "{0} cumplió {1} días en la celda {2}, del {3} al {4}, y pagó una multa de {5} monedas de oro. Encarcelado por {6}."
-30144 = "Envía al personaje que elijas a una celda de la cárcel durante unos días, o lo libera: un gump lista las celdas."
+30144 = "Abre el gump de la cárcel: lista las celdas, te lleva a una de ellas, y encarcela o libera a un personaje."
 30145 = "La cárcel no está configurada: falta data/jail.toml."
 30146 = "Eso no es un personaje."
 30147 = "Falta el gump de la cárcel: templates/gumps/jail_sentence.xml."

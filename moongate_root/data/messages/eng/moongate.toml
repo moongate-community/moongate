@@ -168,7 +168,7 @@
 30141 = "You have served your sentence."
 30142 = "You have been released from jail."
 30143 = "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}."
-30144 = "Sends the character you target to a jail cell for some days, or releases it: a gump lists the cells."
+30144 = "Opens the gump of the jail: it lists the cells, takes you into one, and jails or releases a character."
 30145 = "The jail is not set up: data/jail.toml is missing."
 30146 = "That is not a character."
 30147 = "The jail gump is missing: templates/gumps/jail_sentence.xml."

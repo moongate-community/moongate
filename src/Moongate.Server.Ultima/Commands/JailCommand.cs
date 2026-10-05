@@ -8,20 +8,19 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services.Internal;
-using Moongate.Server.Ultima.Types.Targeting;
 
 namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
-///     Opens the gump of the jail on the character the game master targets, a player or an NPC: the gump lists the
-///     cells of <c>data/jail.toml</c>, sends the character to a free one for the days typed, or releases it.
+///     Opens the gump of the jail: it lists the cells of <c>data/jail.toml</c> with who is inside, takes the game
+///     master into one, and, once a character is picked with its target button, a player or an NPC, sends it to a
+///     free cell for the days typed or releases it.
 /// </summary>
 public sealed class JailCommand : ICommandExecutor
 {
     public const string GumpId = "jail_sentence";
 
     private readonly IJailService _jail;
-    private readonly ITargetService _targets;
     private readonly IMobileService _mobiles;
     private readonly IGameLoopService _loop;
     private readonly ILocalizationService? _localization;
@@ -29,7 +28,6 @@ public sealed class JailCommand : ICommandExecutor
 
     public JailCommand(
         IJailService jail,
-        ITargetService targets,
         IMobileService mobiles,
         IGameLoopService loop,
         ILocalizationService? localization = null,
@@ -37,7 +35,6 @@ public sealed class JailCommand : ICommandExecutor
     )
     {
         _jail = jail;
-        _targets = targets;
         _mobiles = mobiles;
         _loop = loop;
         _localization = localization;
@@ -62,30 +59,7 @@ public sealed class JailCommand : ICommandExecutor
             return;
         }
 
-        var target = await _targets.RequestAsync(
-            session,
-            TargetCursorType.Object,
-            TargetFlagsType.Neutral,
-            context.CancellationToken
-        );
-
-        if (target.Kind == TargetResultType.Canceled)
-        {
-            context.Print(_localization.Text(CommandMessages.TargetCanceled, "Target canceled."));
-
-            return;
-        }
-
-        if (target.Kind != TargetResultType.Object ||
-            target.Serial.IsItem ||
-            !_mobiles.TryGet(target.Serial, out var prisoner))
-        {
-            context.PrintError(_localization.Text(CommandMessages.NotACharacter, "That is not a character."));
-
-            return;
-        }
-
-        if (!await OpenGumpAsync(character, prisoner, context.CancellationToken))
+        if (!await OpenGumpAsync(character, context.CancellationToken))
         {
             context.PrintError(
                 _localization.Text(
@@ -97,7 +71,7 @@ public sealed class JailCommand : ICommandExecutor
     }
 
     // The gump opens on the loop, where its script fills the cells.
-    private async Task<bool> OpenGumpAsync(MobileEntity character, MobileEntity prisoner, CancellationToken cancellationToken)
+    private async Task<bool> OpenGumpAsync(MobileEntity character, CancellationToken cancellationToken)
     {
         if (_gumps is null)
         {
@@ -108,9 +82,8 @@ public sealed class JailCommand : ICommandExecutor
         var open = new LoopActionWorkItem(
             () =>
             {
+                // No target yet: the game master picks one from the gump.
                 var args = new LuaTable();
-                args["target"] = (long)prisoner.Id.Value;
-                args["name"] = prisoner.Name;
                 args["days"] = "1";
                 opened = _gumps.Open(character.Id.Value, GumpId, args);
             }
