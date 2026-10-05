@@ -30,6 +30,7 @@ using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
+using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Npcs;
@@ -54,6 +55,7 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
     private readonly StubLineOfSightService _sight = new();
     private readonly StubPathfindingService _finder = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+    private readonly StubDeathService _death = new();
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(new MobileTemplate { Id = "guard", ScriptId = "guard" })
     );
@@ -93,6 +95,7 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ITeleportService>(_teleports);
         _container.RegisterInstance<IEffectService>(_effects);
         _container.RegisterInstance<ICrimeService>(new RecordingCrimeService());
+        _container.RegisterInstance<IDeathService>(_death);
         _container.RegisterInstance<IMobileTemplateService>(_templates);
         _container.RegisterInstance<ILineOfSightService>(_sight);
         _container.RegisterInstance<IPathfindingService>(_finder);
@@ -120,6 +123,7 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<EffectModule>();
         _container.AddScriptModule<LocalizationModule>();
         _container.RegisterScriptEnum<EffectGraphicType>();
+        _container.RegisterScriptEnum<HumanAnimationType>();
         _container.Resolve<IMoongateEventBus>()
                   .Subscribe<ScriptErrorEvent>(
                       (evt, _) =>
@@ -180,6 +184,70 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
         Assert.All(_effects.At, effect => Assert.Equal((int)EffectGraphicType.Smoke, effect.Options.Graphic));
         Assert.Contains((_guard, TeleportSound), _speech.Sounds);
         Assert.Equal((_guard, "Ti pentirai delle tue azioni, canaglia!"), Assert.Single(_speech.Said));
+    }
+
+    [Fact]
+    public void ACriminalNpc_IsGoneForToo_Struck_AndKilledByTheGuard_WhichGoesBackToPeace()
+    {
+        var thief = Npc(0x200, 1601, 1600);
+        thief.Criminal = true;
+
+        // It looks at the second think and says its line; at the next it strikes; a second later it kills.
+        Think(3);
+
+        Assert.Single(_speech.Said);
+        Assert.Contains($"Animated 256 {(int)HumanAnimationType.AttackSlash1H} 5 1", _view.Calls);
+        Assert.Empty(_death.Killed);
+
+        Think(2);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal((thief, (MobileEntity?)_guard), Assert.Single(_death.Killed));
+        Assert.Equal(["war 256 True", "war 256 False"], _state.Flags);
+    }
+
+    [Fact]
+    public void ACriminalNpcItKilled_IsNotGoneForAgain_WhileItStillFalls()
+    {
+        // The death takes a moment: the NPC is still there, and still a criminal.
+        var thief = Npc(0x200, 1601, 1600);
+        thief.Criminal = true;
+
+        Think(20);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Single(_death.Killed);
+        Assert.Single(_speech.Said);
+    }
+
+    [Fact]
+    public void ACriminalPlayer_IsOnlyStoodOn_NeverStruckNorKilled()
+    {
+        // Players do not die yet.
+        _aria.Criminal = true;
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1601, 1600, 0)));
+
+        Think(20);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Empty(_death.Killed);
+        Assert.DoesNotContain(_view.Calls, call => call.StartsWith("Animated", StringComparison.Ordinal));
+        Assert.Equal(["war 256 True"], _state.Flags);
+    }
+
+    [Fact]
+    public void AGuardThatWasCalledForACriminalNpc_KillsIt()
+    {
+        // As GuardService does: the guard appears beside the criminal and has said its line.
+        _guard.SetProp("guard.summoned", true);
+        var thief = Npc(0x200, 1601, 1600);
+        thief.Criminal = true;
+
+        Think(6);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal((thief, (MobileEntity?)_guard), Assert.Single(_death.Killed));
+        Assert.Empty(_speech.Said);
     }
 
     [Fact]
@@ -389,6 +457,17 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
         Assert.NotEqual(new Point3D(1600, 1600, 0), _guard.Location);
         Assert.InRange(_guard.Location.X, 1595, 1605);
         Assert.InRange(_guard.Location.Y, 1595, 1605);
+    }
+
+    private MobileEntity Npc(uint serial, int x, int y)
+    {
+        var npc = new MobileEntity
+        {
+            Id = new Serial(serial), Name = "a thief", Map = MapType.Trammel, Location = new Point3D(x, y, 0)
+        };
+        _fixture.Mobiles.EnterWorld(npc);
+
+        return npc;
     }
 
     private void Think(int times)
