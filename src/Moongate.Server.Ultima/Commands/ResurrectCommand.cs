@@ -3,9 +3,11 @@ using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Death;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types.Death;
 using Moongate.Server.Ultima.Types.Targeting;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Commands;
 
@@ -18,6 +20,7 @@ public sealed class ResurrectCommand : ICommandExecutor
     private readonly IDeathService _death;
     private readonly ITargetService _targets;
     private readonly ILocalizationService? _localization;
+    private readonly ILogger _logger = Log.ForContext<ResurrectCommand>();
 
     public ResurrectCommand(IDeathService death, ITargetService targets, ILocalizationService? localization = null)
     {
@@ -49,7 +52,19 @@ public sealed class ResurrectCommand : ICommandExecutor
             return;
         }
 
-        var result = await _death.ResurrectAsync(target.Serial, context.CancellationToken);
+        ResurrectResult result;
+
+        try
+        {
+            result = await _death.ResurrectAsync(target.Serial, context.CancellationToken);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            // The birth failed, as with no serial left or the database away: the corpse is still there.
+            _logger.Error(exception, "resurrect of {Serial} failed", target.Serial);
+            result = new(ResurrectResultType.CannotBeRaised, null);
+        }
+
         context.Print(
             result.Type switch
             {

@@ -46,6 +46,16 @@ public sealed class ResurrectCommandTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task ExecuteAsync_WhenTheBirthFails_SaysTheCorpseCannotBeRaised()
+    {
+        _death.RaiseFailure = new InvalidOperationException("no serial left");
+
+        var context = await RunAsync();
+
+        Assert.Equal("That corpse cannot be raised.", Assert.Single(context.Output).Text);
+    }
+
+    [Fact]
     public async Task ExecuteAsync_TheCursorPutAway_RaisesNobody()
     {
         _targets.Result = TargetResult.Canceled(TargetCancelType.Canceled);

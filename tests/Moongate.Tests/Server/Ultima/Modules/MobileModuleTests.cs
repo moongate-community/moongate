@@ -324,7 +324,7 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
-    public async Task Resurrect_ACorpse_StartsRaisingIt_OffTheGameLoop()
+    public async Task Resurrect_ACorpse_IsTrue_AndTheRaisingIsStarted()
     {
         var corpse = new ItemEntity { Id = new Serial(0x40000900), TemplateId = "corpse", ItemId = 0x2006, Amount = 1 };
         corpse.PlaceOnGround(MapType.Felucca, new Point3D(3000, 3000, 0));

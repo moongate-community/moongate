@@ -167,14 +167,16 @@ public sealed class DeathService : IDeathService
         }
         catch
         {
-            await OnLoopAsync(() => _raising.Remove(corpse), CancellationToken.None);
+            // Not awaited: a loop that is stopping takes no work, and the failure of the birth is what matters.
+            _loop.TryPost(new LoopActionWorkItem(() => _raising.Remove(corpse)));
 
             throw;
         }
 
-        await OnLoopAsync(() => Rise(corpse, raising, npc), CancellationToken.None);
+        var risen = false;
+        await OnLoopAsync(() => risen = Rise(corpse, raising, npc), CancellationToken.None);
 
-        return new(ResurrectResultType.Raised, npc);
+        return risen ? new(ResurrectResultType.Raised, npc) : new(ResurrectResultType.CannotBeRaised, null);
     }
 
     // On the game loop: what the corpse says of who died, read once; the corpse is marked so nobody else raises it.
@@ -212,18 +214,24 @@ public sealed class DeathService : IDeathService
                 long value => (int)(value & 0xFF),
                 _          => null
             },
-            props.GetValueOrDefault(CorpseProps.SpawnRegion) is string region
-                ? new Dictionary<string, object?> { [SpawnRegionService.RegionProp] = region }
-                : null
+            props.Where(prop => prop.Key.StartsWith(CorpseProps.Kept + CorpseProps.SpawnProps, StringComparison.Ordinal))
+                 .ToDictionary(prop => prop.Key[CorpseProps.Kept.Length..], prop => prop.Value)
         );
 
         return ResurrectResultType.Raised;
     }
 
-    // On the game loop: who was born takes the name and the facing of who died, rises, and the corpse is gone.
-    private void Rise(Serial serial, Raising raising, MobileEntity npc)
+    // On the game loop: who was born takes the name and the facing of who died, rises, and the corpse is gone. False
+    // when who was born is gone already, removed or killed in the turn between its birth and this: nothing is shown
+    // and the corpse stays.
+    private bool Rise(Serial serial, Raising raising, MobileEntity npc)
     {
         _raising.Remove(serial);
+
+        if (!_mobiles.TryGet(npc.Id, out var live) || !ReferenceEquals(live, npc))
+        {
+            return false;
+        }
 
         if (!string.IsNullOrEmpty(raising.Name))
         {
@@ -257,6 +265,8 @@ public sealed class DeathService : IDeathService
             npc.Location,
             npc.Map
         );
+
+        return true;
     }
 
     // The item and everything inside it, at any depth.
@@ -377,9 +387,13 @@ public sealed class DeathService : IDeathService
             corpse.SetProp(CorpseProps.Name, mobile.Name);
         }
 
-        if (mobile.Props?.GetValueOrDefault(SpawnRegionService.RegionProp) is string region)
+        // Its spawn region and its home: who is raised from the corpse has them again.
+        foreach (var (key, value) in mobile.Props ?? [])
         {
-            corpse.SetProp(CorpseProps.SpawnRegion, region);
+            if (key.StartsWith(CorpseProps.SpawnProps, StringComparison.Ordinal))
+            {
+                corpse.SetProp(CorpseProps.Kept + key, value);
+            }
         }
 
         corpse.SetProp(CorpseProps.Direction, (int)mobile.Direction);

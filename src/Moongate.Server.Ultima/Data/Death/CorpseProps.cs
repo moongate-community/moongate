@@ -37,9 +37,16 @@ public static class CorpseProps
     public const string Name = "corpse.name";
 
     /// <summary>
-    ///     The spawn region who died belonged to, when it had one: who is raised from the corpse counts for it again.
+    ///     What comes before the name of each prop of its spawn region who died had, such as <c>spawn.region</c> and
+    ///     the four of its home, kept as <c>corpse.spawn.region</c> and so on: who is raised from the corpse has them
+    ///     again, counts for the region and keeps its home.
     /// </summary>
-    public const string SpawnRegion = "corpse.spawn_region";
+    public const string Kept = "corpse.";
+
+    /// <summary>
+    ///     The start of the props of a mobile that a corpse keeps.
+    /// </summary>
+    public const string SpawnProps = "spawn.";
 
     /// <summary>
     ///     The serial of who killed it, when someone did.

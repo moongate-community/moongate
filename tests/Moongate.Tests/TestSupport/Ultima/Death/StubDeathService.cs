@@ -27,6 +27,11 @@ public sealed class StubDeathService : IDeathService
     /// </summary>
     public ResurrectResult Raises { get; set; } = new(ResurrectResultType.NotACorpse, null);
 
+    /// <summary>
+    ///     What every raising throws; null for none.
+    /// </summary>
+    public Exception? RaiseFailure { get; set; }
+
     public List<Serial> Raised { get; } = [];
 
     public Task<ResurrectResult> ResurrectAsync(Serial corpse, CancellationToken cancellationToken = default)
@@ -36,6 +41,6 @@ public sealed class StubDeathService : IDeathService
             Raised.Add(corpse);
         }
 
-        return Task.FromResult(Raises);
+        return RaiseFailure is null ? Task.FromResult(Raises) : Task.FromException<ResurrectResult>(RaiseFailure);
     }
 }
