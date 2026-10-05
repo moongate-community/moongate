@@ -219,12 +219,12 @@ Tenants of Ethical
 Hedonism, by
 Richard Garriott and
 Herman Miller."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Etický hédonismus: Úvod"
-content = """
-Společnosti často mají
+content = """Společnosti často mají
 společná pravidla
 chování, jejichž
 dodržování očekávají od
@@ -425,11 +425,9 @@ hédonismu, jejímiž
 autory jsou Richard
 Garriott a Herman
 Miller."""
-
 [translations.fre]
 title = "L’hédonisme éthique : une introduction"
-content = """
-Les sociétés possèdent
+content = """Les sociétés possèdent
 souvent des codes de
 conduite communs
 qu’elles attendent de
@@ -663,11 +661,9 @@ l’hédonisme
 éthique, par Richard
 Garriott et Herman
 Miller."""
-
 [translations.ger]
 title = "Ethischer Hedonismus: Eine Einführung"
-content = """
-Gesellschaften haben oft
+content = """Gesellschaften haben oft
 gemeinsame
 Verhaltensregeln, deren
 Befolgung sie von all
@@ -911,11 +907,9 @@ Lehrsätze des Ethischen
 Hedonismus“ von Richard
 Garriott und Herman
 Miller."""
-
 [translations.ita]
 title = "Edonismo etico: un’introduzione"
-content = """
-Le società hanno spesso
+content = """Le società hanno spesso
 codici di condotta
 comuni che si aspettano
 tutti i loro membri
@@ -1142,11 +1136,9 @@ Princìpi dell'Edonismo
 Etico, di Richard
 Garriott e Herman
 Miller."""
-
 [translations.pol]
 title = "Hedonizm etyczny: wprowadzenie"
-content = """
-Społeczeństwa często
+content = """Społeczeństwa często
 mają wspólne kodeksy
 postępowania, których
 przestrzegania oczekują
@@ -1364,11 +1356,9 @@ Hedonizmu
 Etycznego” Richard
 Garriott i Herman
 Miller."""
-
 [translations.por]
 title = "Hedonismo ético: uma introdução"
-content = """
-As sociedades
+content = """As sociedades
 frequentemente têm
 códigos comuns de
 conduta que esperam que
@@ -1589,11 +1579,9 @@ Princípios do Hedonismo
 Ético, de Richard
 Garriott e Herman
 Miller."""
-
 [translations.spa]
 title = "Hedonismo ético: una introducción"
-content = """
-  Las sociedades suelen
+content = """  Las sociedades suelen
 tener códigos comunes de
 conducta que esperan que
 todos sus miembros

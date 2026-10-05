@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Nine - Day Ten:
-
+ 
 The excavation of the
 next set of tunnels
 has ceased, as three
@@ -48,13 +48,13 @@ believe the workers
 must have fled the
 site altogether, as
 Bergen said."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den devátý až desátý:
-
+content = """Den devátý až desátý:
+ 
 Odkrývání další
 soustavy tunelů se
 zastavilo, protože v
@@ -96,13 +96,11 @@ věřit, že dělníci
 z naleziště zcela
 uprchli, jak řekl
 Bergen."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Du neuvième au dixième
+content = """Du neuvième au dixième
 jour :
-
+ 
 Le déblaiement de la
 série de tunnels
 suivante a cessé, car
@@ -154,13 +152,11 @@ les ouvriers
 ont dû fuir le site
 entièrement, comme l’a
 dit Bergen."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Neunter bis zehnter
+content = """Neunter bis zehnter
 Tag:
-
+ 
 Das Freilegen der
 nächsten Tunnel ist
 zum Stillstand
@@ -214,13 +210,11 @@ die Stätte gänzlich
 verlassen haben
 müssen, wie Bergen
 sagte."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Nove - Giorno
+content = """Giorno Nove - Giorno
 Dieci:
-
+ 
 Lo scavo della
 successiva serie di
 cunicoli si è fermato,
@@ -272,13 +266,11 @@ che gli operai
 siano fuggiti del
 tutto dal sito, come
 ha detto Bergen."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień dziewiąty —
+content = """Dzień dziewiąty —
 dzień dziesiąty:
-
+ 
 Odsłanianie kolejnych
 tuneli ustało, gdyż
 nocą zaginęło trzech
@@ -320,12 +312,10 @@ wierzyć, że robotnicy
 musieli zupełnie
 opuścić to miejsce,
 jak powiedział Bergen."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Nono dia - Décimo dia:
-
+content = """Nono dia - Décimo dia:
+ 
 A escavação do próximo
 conjunto de túneis
 parou, pois três dos
@@ -376,12 +366,10 @@ trabalhadores
 devem ter fugido do
 sítio por completo,
 como disse Bergen."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día nueve - Día diez:
-
+content = """Día nueve - Día diez:
+ 
 La excavación del
 siguiente conjunto de
 túneles se ha

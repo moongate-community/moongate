@@ -161,12 +161,12 @@ someday someone
 shall conquer that
 thorny problem and
 enlighten the world."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Cestování mezi dimenzemi: Monografie"
-content = """
-Rozebírat podrobnosti
+content = """Rozebírat podrobnosti
 měsíčních bran a
 způsoby, jimiž deformují
 předivo skutečnosti tak,
@@ -306,11 +306,9 @@ je, že jednoho dne někdo
 tento spletitý problém
 překoná a osvětlí jej
 světu."""
-
 [translations.fre]
 title = "Le voyage dimensionnel, une monographie"
-content = """
-Il n’entre point dans le
+content = """Il n’entre point dans le
 propos de cette petite
 monographie de discuter
 en détail des portes
@@ -469,11 +467,9 @@ qu’un jour quelqu’un
 surmonte cet épineux
 problème et éclaire le
 monde."""
-
 [translations.ger]
 title = "Dimensionsreisen, eine Monographie"
-content = """
-Es liegt außerhalb des
+content = """Es liegt außerhalb des
 Rahmens dieser kleinen
 Monographie, die
 Einzelheiten der
@@ -637,11 +633,9 @@ eines Tages jemand
 dieses schwierige
 Problem lösen und die
 Welt erleuchten wird."""
-
 [translations.ita]
 title = "Viaggio dimensionale, una monografia"
-content = """
-Esula dall'ambito di
+content = """Esula dall'ambito di
 questa breve monografia
 discutere i dettagli dei
 portali lunari e i modi
@@ -803,11 +797,9 @@ che un giorno qualcuno
 risolva quel problema
 spinoso e illumini il
 mondo."""
-
 [translations.pol]
 title = "Podróże między wymiarami, monografia"
-content = """
-Poza zakresem tej
+content = """Poza zakresem tej
 niewielkiej monografii
 leży omawianie
 szczegółów działania
@@ -954,11 +946,9 @@ pragnę, aby pewnego dnia
 ktoś pokonał to zawiłe
 zagadnienie i oświecił
 świat."""
-
 [translations.por]
 title = "Viagem dimensional, uma monografia"
-content = """
-Está além do alcance
+content = """Está além do alcance
 desta pequena monografia
 discutir os detalhes dos
 portais lunares e as
@@ -1108,11 +1098,9 @@ que algum dia alguém
 resolva esse problema
 espinhoso e ilumine o
 mundo."""
-
 [translations.spa]
 title = "Viajes dimensionales: una monografía"
-content = """
-  Queda fuera del
+content = """  Queda fuera del
 alcance de esta breve
 monografía examinar en
 detalle las puertas

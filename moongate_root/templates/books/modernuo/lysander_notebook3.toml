@@ -1,7 +1,7 @@
 title = "Lysander's Notebook"
 author = "L. Gathenwale"
 content = """Day Three - Day Six:
-
+ 
 What are these Beasts
 that dare to defy our
 presence here?  Hast
@@ -44,13 +44,13 @@ under Thy roof.  I can
 feel Thine presence
 even now.  Soon,
 Master.  Soon."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Lysanderův zápisník"
-content = """
-Den třetí až šestý:
-
+content = """Den třetí až šestý:
+ 
 Co jsou zač ty bestie,
 které se odvažují
 vzdorovat naší
@@ -89,13 +89,11 @@ pod Tvou střechou.
 Cítím Tvou přítomnost
 už teď. Brzy, Mistře.
 Brzy."""
-
 [translations.fre]
 title = "Le carnet de Lysander"
-content = """
-Du troisième au sixième
+content = """Du troisième au sixième
 jour :
-
+ 
 Que sont ces Bêtes qui
 osent défier notre
 présence ici ? Les
@@ -137,13 +135,11 @@ Ton toit. Je peux
 sentir Ta présence dès
 maintenant. Bientôt,
 Maître. Bientôt."""
-
 [translations.ger]
 title = "Lysanders Notizbuch"
-content = """
-Dritter bis sechster
+content = """Dritter bis sechster
 Tag:
-
+ 
 Was sind dies für
 Bestien, die es wagen,
 unserer Anwesenheit
@@ -187,13 +183,11 @@ Deinem Dach. Ich kann
 Deine Gegenwart schon
 jetzt fühlen. Bald,
 Meister. Bald."""
-
 [translations.ita]
 title = "Il taccuino di Lysander"
-content = """
-Giorno Tre - Giorno
+content = """Giorno Tre - Giorno
 Sei:
-
+ 
 Che cosa sono queste
 Bestie che osano
 sfidare la nostra
@@ -236,13 +230,11 @@ Tuo tetto. Posso
 sentire la Tua presenza
 anche ora. Presto,
 Padrone. Presto."""
-
 [translations.pol]
 title = "Notatnik Lysander"
-content = """
-Dzień trzeci — dzień
+content = """Dzień trzeci — dzień
 szósty:
-
+ 
 Cóż to za Bestie, które
 ośmielają się
 sprzeciwiać naszej
@@ -283,13 +275,11 @@ pod Twym dachem. Już
 teraz czuję Twą
 obecność. Wkrótce,
 Mistrzu. Wkrótce."""
-
 [translations.por]
 title = "Caderno de Lysander"
-content = """
-Terceiro dia - Sexto
+content = """Terceiro dia - Sexto
 dia:
-
+ 
 Que são estas Feras que
 ousam desafiar nossa
 presença aqui? Foi Você
@@ -331,12 +321,10 @@ Seu teto. Posso sentir
 Sua presença mesmo
 agora. Em breve,
 Mestre. Em breve."""
-
 [translations.spa]
 title = "Cuaderno de Lysander"
-content = """
-Día tres - Día seis:
-
+content = """Día tres - Día seis:
+ 
 ¿Qué son estas Bestias
 que se atreven a
 desafiar nuestra

@@ -138,12 +138,12 @@ charred, then so will
 be the possessions,
 which maketh looting
 difficult!"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Základy zbraní a výzbroje"
-content = """
-    Toto jsou základní
+content = """    Toto jsou základní
 vlastnosti, které je
 třeba zvážit při
 posuzování zbraně a
@@ -265,11 +265,9 @@ ohořelá, budou
 
 takové i její věci, a to
 znesnadňuje plenění!"""
-
 [translations.fre]
 title = "Principes élémentaires des armes et de l’armement"
-content = """
-    Voici les éléments
+content = """    Voici les éléments
 fondamentaux à
 considérer pour évaluer
 une arme, que tout
@@ -401,11 +399,9 @@ même
 de ses possessions, ce
 qui rend le pillage
 difficile !"""
-
 [translations.ger]
 title = "Eine Einführung in Waffen und Bewaffnung"
-content = """
-    Dies sind die
+content = """    Dies sind die
 grundlegenden
 Gesichtspunkte bei der
 Beurteilung einer Waffe,
@@ -545,11 +541,9 @@ werden es auch
 ihre Besitztümer sein,
 was das Plündern
 erschwert!"""
-
 [translations.ita]
 title = "Nozioni di base su armi e armamenti"
-content = """
-    Questi sono gli
+content = """    Questi sono gli
 elementi fondamentali da
 considerare nel valutare
 un'arma, dei quali tutti
@@ -689,11 +683,9 @@ allora lo saranno anche
 i suoi averi, il che
 rende difficile il
 saccheggio!"""
-
 [translations.pol]
 title = "Podstawy oręża i broni"
-content = """
-    Oto podstawowe
+content = """    Oto podstawowe
 kwestie, które należy
 rozważyć, oceniając
 broń, a których winni
@@ -824,11 +816,9 @@ zwęglone, to
 tak samo będzie z
 dobytkiem, a to utrudnia
 grabież!"""
-
 [translations.por]
 title = "Uma introdução a armas e armamentos"
-content = """
-    Estes são os
+content = """    Estes são os
 elementos básicos a
 considerar ao avaliar
 uma arma, dos quais
@@ -964,11 +954,9 @@ estarão
 
 os pertences, o que
 dificulta o saque!"""
-
 [translations.spa]
 title = "Manual básico de armas y armamento"
-content = """
-    Estos son los
+content = """    Estos son los
 elementos básicos que
 deben tenerse en cuenta
 al valorar un arma, y

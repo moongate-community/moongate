@@ -1,3 +1,6 @@
+using Moongate.Server.Ultima.Data.Templates.Books;
+using System.Text.RegularExpressions;
+using System.Globalization;
 using System.Text;
 using Moongate.Core.Utils;
 using Moongate.UoxItemConverter.Data.Internal.Books;
@@ -40,9 +43,9 @@ internal static class ModernUoBookConverter
                 var path = Path.Combine(destination, book.Id + ".toml");
                 RejectLink(path);
                 if (Directory.Exists(path)) throw new InvalidDataException($"Output file is a directory: {path}");
-                var document = new ConvertedBookSource
+                var document = new ConvertedBookSource<BookTranslation>
                 {
-                    Title = EscapeDollars(book.Title), Author = EscapeDollars(book.Author), Content = EscapeDollars(book.Content),
+                    Title = EscapeDollars(book.Title), Author = EscapeDollars(book.Author), Content = EscapeDollars(book.Content), ItemId = book.ItemId,
                     Translations = ModernUoBookTranslationReader.Read(path, book)
                 };
                 files.Add((path, Serialize(document, book.Id)));
@@ -52,40 +55,57 @@ internal static class ModernUoBookConverter
             output.WriteLine($"{books.Count} books, {books.Values.Sum(book => book.PageCount)} pages converted to {destination}");
             return 0;
         }
-        catch (Exception exception) when (exception is InvalidDataException or IOException or UnauthorizedAccessException or DecoderFallbackException)
+        catch (Exception exception) when (exception is InvalidDataException or IOException or UnauthorizedAccessException or DecoderFallbackException or TomlException)
         {
             error.WriteLine($"Book conversion failed: {exception.Message}");
             return 2;
         }
     }
 
-    private static string Serialize(ConvertedBookSource document, string id)
+    private static string Serialize(ConvertedBookSource<BookTranslation> document, string id)
     {
-        var text = TomlUtils.Serialize(document);
+        // Translated bodies stay editable multiline text when that keeps them exactly; else they are plain strings.
+        var text = HexGraphic(TomlUtils.Serialize(new ConvertedBookSource<ConvertedBookTranslation>
+        {
+            Title = document.Title, Author = document.Author, Content = document.Content, ItemTemplate = document.ItemTemplate,
+            ItemId = document.ItemId,
+            Translations = document.Translations?.ToDictionary(pair => pair.Key, pair => new ConvertedBookTranslation
+            {
+                Title = pair.Value.Title, Author = pair.Value.Author, Content = pair.Value.Content
+            }, StringComparer.Ordinal)
+        }));
         if (MatchesSource(text, document)) return text;
 
-        // Basic strings retain leading newlines and CR/CRLF sequences that multiline TOML normalizes.
-        var fields = new Dictionary<string, object>
+        text = HexGraphic(TomlUtils.Serialize(document));
+        if (MatchesSource(text, document)) return text;
+
+        // Escaped strings retain leading newlines and CR/CRLF sequences that multiline TOML normalizes.
+        text = HexGraphic(TomlUtils.Serialize(new ConvertedPlainBookSource
         {
-            ["title"] = document.Title,
-            ["author"] = document.Author,
-            ["content"] = document.Content,
-            ["item_template"] = document.ItemTemplate
-        };
-        if (document.Translations is not null) fields.Add("translations", document.Translations);
-        text = TomlUtils.Serialize(fields);
+            Title = document.Title, Author = document.Author, Content = document.Content, ItemTemplate = document.ItemTemplate,
+            ItemId = document.ItemId, Translations = document.Translations
+        }));
         if (!MatchesSource(text, document))
             throw new InvalidDataException($"{id}: serialized TOML does not preserve the source text.");
         return text;
     }
 
-    private static bool MatchesSource(string text, ConvertedBookSource expected)
+    // A graphic reads as the other graphics of the templates do: item_id = 0x0FF1.
+    private static string HexGraphic(string text)
+    {
+        // Only the field written right after item_template: a line of a body that reads the same is text.
+        return Regex.Replace(text, @"(?<=^item_template = ""[^""\r\n]*""\r?\n)item_id = (\d+)(?=\r?$)",
+            match => $"item_id = 0x{int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture):X4}",
+            RegexOptions.Multiline, TimeSpan.FromSeconds(1));
+    }
+
+    private static bool MatchesSource(string text, ConvertedBookSource<BookTranslation> expected)
     {
         try
         {
-            var actual = TomlUtils.Deserialize<ConvertedBookSource>(text);
+            var actual = TomlUtils.Deserialize<ConvertedBookSource<BookTranslation>>(text);
             return actual is not null && actual.Title == expected.Title && actual.Author == expected.Author &&
-                   actual.Content == expected.Content && actual.ItemTemplate == expected.ItemTemplate &&
+                   actual.Content == expected.Content && actual.ItemTemplate == expected.ItemTemplate && actual.ItemId == expected.ItemId &&
                    (actual.Translations?.Count ?? 0) == (expected.Translations?.Count ?? 0) &&
                    (expected.Translations is null || expected.Translations.All(pair =>
                        actual.Translations is not null && actual.Translations.TryGetValue(pair.Key, out var translation) &&

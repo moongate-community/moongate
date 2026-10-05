@@ -1,67 +1,55 @@
 title = "The daily journal of Grimmoch Drummel"
 author = "Grimmoch"
 content = """Day Twenty-Three :
-
+ 
 We no longer bury the
 dead."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Denní zápisky Grimmoch Drummel"
-content = """
-Den třiadvacátý:
-
+content = """Den třiadvacátý:
+ 
 Mrtvé už
 nepohřbíváme."""
-
 [translations.fre]
 title = "Le journal quotidien de Grimmoch Drummel"
-content = """
-Vingt-troisième jour
+content = """Vingt-troisième jour
 :
-
+ 
 Nous n’enterrons plus
 les morts."""
-
 [translations.ger]
 title = "Grimmoch Drummels tägliches Tagebuch"
-content = """
-Dreiundzwanzigster
+content = """Dreiundzwanzigster
 Tag:
-
+ 
 Wir begraben die
 Toten nicht mehr."""
-
 [translations.ita]
 title = "Il diario quotidiano di Grimmoch Drummel"
-content = """
-Giorno Ventitré :
-
+content = """Giorno Ventitré :
+ 
 Non seppelliamo più i
 morti."""
-
 [translations.pol]
 title = "Dziennik codzienny Grimmoch Drummel"
-content = """
-Dzień dwudziesty
+content = """Dzień dwudziesty
 trzeci:
-
+ 
 Nie grzebiemy już
 zmarłych."""
-
 [translations.por]
 title = "O diário de Grimmoch Drummel"
-content = """
-Vigésimo terceiro
+content = """Vigésimo terceiro
 dia:
-
+ 
 Já não enterramos os
 mortos."""
-
 [translations.spa]
 title = "El diario de Grimmoch Drummel"
-content = """
-Día veintitrés:
-
+content = """Día veintitrés:
+ 
 Ya no enterramos a
 los muertos."""

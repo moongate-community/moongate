@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Six:
-
+ 
 Late last night our
 camp was set upon by
 a pack of wild beasts
@@ -62,13 +62,13 @@ and not a single one
 ever turned to run,
 even in the face of
 certain death."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den šestý:
-
+content = """Den šestý:
+ 
 Pozdě včera večer náš
 tábor napadla smečka
 divokých bestií –
@@ -126,12 +126,10 @@ zuřivost ty bestie měly
 neobrátila na útěk, ani
 tváří v tvář jisté
 smrti."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Sixième jour :
-
+content = """Sixième jour :
+ 
 Tard la nuit dernière,
 notre camp a été
 assailli par une meute
@@ -199,12 +197,10 @@ seule ne se retourna
 jamais pour fuir, même
 devant une mort
 certaine."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Sechster Tag:
-
+content = """Sechster Tag:
+ 
 Spät gestern Nacht
 wurde unser Lager von
 einem Rudel wilder
@@ -275,12 +271,10 @@ keine einzige wandte
 sich je zur Flucht,
 selbst angesichts des
 sicheren Todes."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Sei:
-
+content = """Giorno Sei:
+ 
 Ieri a tarda notte il
 nostro accampamento è
 stato assalito da un
@@ -347,12 +341,10 @@ le bestie, e nemmeno
 una si è mai voltata
 per fuggire, neppure
 davanti a morte certa."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień szósty:
-
+content = """Dzień szósty:
+ 
 Późno wczoraj w nocy
 obóz napadła wataha
 dzikich bestii —
@@ -412,12 +404,10 @@ a ani jedno nigdy nie
 zawróciło do ucieczki,
 nawet wobec pewnej
 śmierci."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Sexto dia:
-
+content = """Sexto dia:
+ 
 Tarde da noite passada,
 nosso acampamento foi
 atacado por uma matilha
@@ -478,12 +468,10 @@ feras: nem uma delas
 chegou a se virar para
 fugir, mesmo diante da
 morte certa."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día seis:
-
+content = """Día seis:
+ 
 Anoche, tarde, una
 manada de bestias
 salvajes atacó nuestro

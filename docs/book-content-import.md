@@ -2,8 +2,8 @@
 
 `mgctl convert modernuo-books` reads the static book texts shipped in ModernUO and writes
 Moongate [readable document templates](data-files/books.md). It parses C# syntax without
-compiling or running emulator code. These documents use the current parchment reading
-interface; native book covers, pages and editing are separate work.
+compiling or running emulator code. These documents are [books](data-files/books.md#books-and-parchments):
+they open the client's own book, read only, each with the cover of its source.
 
 ## Convert the catalog
 
@@ -49,16 +49,24 @@ path and rerun.
 A class becomes a stable `<snake_case_class>.toml` filename. For example,
 `GrammarOfOrcish` becomes `grammar_of_orcish`. Titles are preserved and are never
 used for deduplication: the Grimmoch, Lysander and Tavara installments remain distinct.
-Empty lines, leading spaces, empty pages, spelling and annotations stay as written.
-Lines are joined with a newline and pages with two newlines. This provides readable plain
-text; it does not retain a separate native pagination model.
+Leading spaces, empty pages, spelling and annotations stay as written. Lines are joined with
+a newline and pages with two newlines, so an empty line of the text is a page break; an empty
+line inside a ModernUO page is written as a line of one space, and the book keeps the pages of
+its source. The shipped translations have the same pages as the English text.
 
 The UTF-8 TOML body is multiline when that representation preserves the text exactly;
 leading newlines and CR/CRLF sequences use escaped basic strings when needed. Invalid
 Unicode is rejected, and serialized fields are checked by deserializing them before writing.
 The importer validates the escaped source limit and doubles literal `$` characters so the
 [template formatter](data-files/books.md#variables) displays them literally. Imported books
-require no variable values or attachments and use `item_template = "readable_scroll"`.
+require no variable values or attachments and use `item_template = "readable_book"`.
+
+The cover is the graphic the class gives its base constructor, written as `item_id`: a literal
+(`base(0xFF2, false)`), the first of a random pair (`Utility.Random(0xFEF, 2)` gives `0x0FEF`), or
+that of the kind of book the class derives from (`RedBook`, `BlueBook`, `BrownBook`, `TanBook`). A
+class that tells none gets no `item_id` and shows the red cover of `readable_book`. The shipped
+catalog has 28 brown, 31 red and 3 blue books. A text that needs more than 255 pages of 8 lines,
+in English or in a kept translation, rejects the conversion.
 
 Each shipped book keeps its English source and includes complete title/body overrides for
 Italian (`ita`), French (`fre`), German (`ger`), Spanish (`spa`), Portuguese (`por`),

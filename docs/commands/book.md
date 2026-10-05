@@ -32,7 +32,9 @@ The template is the case-sensitive filename without `.toml`, from
 2. Restart the server normally to load the new template.
 3. Run `.book messaggio` in game as a GameMaster or Administrator.
 
-A double click opens the parchment. The invoking character supplies `$player_name`;
+A double click opens the parchment; with `item_template = "readable_book"` it opens the client's
+book instead ([books and parchments](../data-files/books.md#books-and-parchments)), as
+`grammar_of_orcish` does. The invoking character supplies `$player_name`;
 the configured server language selects translations when present. Text is saved
 at creation and stays unchanged when the document is traded or read by someone else.
 This command also preserves any [attachments](../data-files/books.md#letter-attachments)

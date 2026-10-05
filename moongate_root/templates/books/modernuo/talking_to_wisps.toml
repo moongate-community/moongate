@@ -74,12 +74,12 @@ wisp's glow, and not
 
 language, but this is
 of course unlikely."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Rozmlouvání s bludičkami"
-content = """
-Tento svazek je
+content = """Tento svazek je
 podporován dary od Lord
 Blackthorn, jenž vždy
 podporuje porozumění
@@ -144,11 +144,9 @@ ne
 
 jazyk, ale to je ovšem
 nepravděpodobné."""
-
 [translations.fre]
 title = "Parler aux feux follets"
-content = """
-Ce volume a été financé
+content = """Ce volume a été financé
 par les dons de Lord
 Blackthorn, qui a
 toujours soutenu la
@@ -223,11 +221,9 @@ et non une
 
 langue, mais cela est
 bien sûr peu probable."""
-
 [translations.ger]
 title = "Mit Irrlichtern sprechen"
-content = """
-Dieser Band wurde durch
+content = """Dieser Band wurde durch
 Spenden von Lord
 Blackthorn gefördert,
 der stets das
@@ -304,11 +300,9 @@ Irrlichts ist und keine
 Sprache, doch das ist
 natürlich
 unwahrscheinlich."""
-
 [translations.ita]
 title = "Parlare ai fuochi fatui"
-content = """
-Questo volume è stato
+content = """Questo volume è stato
 patrocinato dalle
 donazioni di Lord
 Blackthorn, da sempre
@@ -382,11 +376,9 @@ fuoco fatuo, e non
 una lingua, ma ciò è
 naturalmente
 improbabile."""
-
 [translations.pol]
 title = "Rozmowy z błędnymi ognikami"
-content = """
-Ten tom powstał dzięki
+content = """Ten tom powstał dzięki
 datkom Lord Blackthorn,
 który zawsze wspiera
 zrozumienie innych
@@ -454,11 +446,9 @@ ognika, a nie
 językiem, lecz jest to
 oczywiście mało
 prawdopodobne."""
-
 [translations.por]
 title = "Conversando com wisps"
-content = """
-Este volume foi
+content = """Este volume foi
 patrocinado por doações
 de Lord Blackthorn,
 sempre um defensor da
@@ -528,11 +518,9 @@ brilho do wisp, e não
 uma língua, mas isso,
 naturalmente, é
 improvável."""
-
 [translations.spa]
 title = "Hablar con los wisps"
-content = """
-Este volumen se financió
+content = """Este volumen se financió
 con donaciones de Lord
 Blackthorn, siempre
 partidario de comprender

@@ -62,7 +62,7 @@ public sealed class BookTemplateService : IBookTemplateService
             return Fail(id, "invalid rendered fields");
         }
 
-        rendered = new() { TemplateId = id, ItemTemplateId = template.ItemTemplate, Title = title, Author = author, Content = content };
+        rendered = new() { TemplateId = id, ItemTemplateId = template.ItemTemplate, Title = title, Author = author, Content = content, ItemId = template.ItemId };
         return true;
     }
 

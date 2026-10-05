@@ -9,7 +9,7 @@ Scholar Shall End
 EachVolume with
 Staid Commentary.
 
-
+ 
 THE RHYME
 Dance in the Star
 Chamber
@@ -19,7 +19,7 @@ Entrees
 In the Glass House
 
 you Sit
-
+ 
 COMMENTARY
     A common feeding
 rhyme for little
@@ -82,12 +82,12 @@ midnight feedings,
 never during the day.
 
 """
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Klasické dětské příběhy, svazek 2"
-content = """
-Tiskárna Clarke
+content = """Tiskárna Clarke
     má tu čest
     představit příběhy
     z dávných věků!
@@ -95,7 +95,7 @@ Tiskárna Clarke
     každý svazek uzavře
     rozvážným komentářem.
 
-
+ 
 ŘÍKANKA
 Tanči v Hvězdné
 komnatě
@@ -105,7 +105,7 @@ pokrmy
 Ve Skleněném domě
 
 sedíš ty
-
+ 
 KOMENTÁŘ
     Tato běžná říkanka,
 kterou doprovázíme krmení
@@ -160,11 +160,9 @@ při půlnočním krmení,
 nikdy za dne.
 
 """
-
 [translations.fre]
 title = "Contes classiques pour enfants, volume 2"
-content = """
-L’imprimerie de Clarke a
+content = """L’imprimerie de Clarke a
 l’honneur de présenter
 des contes des âges
 passés ! Guilhem l’Érudit
@@ -172,7 +170,7 @@ terminera chaque volume
 par un commentaire
 sérieux.
 
-
+ 
 LA COMPTINE
 Danse dans la Chambre des
 Étoiles
@@ -181,7 +179,7 @@ Et mange tes mets
 Dans la Maison de Verre
 
 où tu es assis
-
+ 
 COMMENTAIRE
     Comptine souvent
 chantée pour nourrir les
@@ -245,11 +243,9 @@ tétées de minuit, jamais
 pendant la journée.
 
 """
-
 [translations.ger]
 title = "Klassische Kindergeschichten, Band 2"
-content = """
-Clarkes Druckerei hat die
+content = """Clarkes Druckerei hat die
 Ehre, Geschichten aus
 längst vergangenen Zeiten
 darzubieten!
@@ -258,7 +254,7 @@ wird jeden Band mit einem
 gesetzten Kommentar
 beschließen.
 
-
+ 
 DER REIM
 Tanz in der Sternenkammer
 Und tanz in der Grube
@@ -266,7 +262,7 @@ Und iss deine Speisen
 Im Glashaus, wo du
 
 sitzt
-
+ 
 KOMMENTAR
     Ein gebräuchlicher
 Fütterreim für kleine
@@ -332,11 +328,9 @@ verwendet, niemals am
 Tag.
 
 """
-
 [translations.ita]
 title = "Racconti classici per bambini, volume 2"
-content = """
-La Stamperia di Clarke è
+content = """La Stamperia di Clarke è
 Onorata di Presentare
 Racconti dei Tempi
 Passati!
@@ -344,7 +338,7 @@ Passati!
 Concluderà Ogni Volume
 con un Posato Commento.
 
-
+ 
 LA FILASTROCCA
 Danza nella Camera
 Stellata
@@ -353,7 +347,7 @@ E Mangia le tue Pietanze
 Nella Casa di Vetro
 
 dove Stai
-
+ 
 COMMENTO
     Una comune
 filastrocca per nutrire i
@@ -415,11 +409,9 @@ le poppate di mezzanotte,
 mai durante il giorno.
 
 """
-
 [translations.pol]
 title = "Klasyczne opowieści dla dzieci, tom 2"
-content = """
-Drukarnia Clarke
+content = """Drukarnia Clarke
     ma zaszczyt
     przedstawić opowieści
     z dawnych wieków!
@@ -428,7 +420,7 @@ Drukarnia Clarke
     statecznym
 komentarzem.
 
-
+ 
 RYMOWANKA
 Tańcz w Gwiezdnej
 Komnacie
@@ -438,7 +430,7 @@ Przystawki
 W Szklanym Domu
 
 siedzisz
-
+ 
 KOMENTARZ
     Powszechna rymowanka
 do karmienia małych
@@ -498,11 +490,9 @@ karmienia o północy,
 nigdy za dnia.
 
 """
-
 [translations.por]
 title = "Contos infantis clássicos, volume 2"
-content = """
-A gráfica de Clarke
+content = """A gráfica de Clarke
     tem a honra de
     apresentar contos de
     eras passadas!
@@ -511,7 +501,7 @@ A gráfica de Clarke
     com sóbrios
 comentários.
 
-
+ 
 A RIMA
 Dance na Câmara
 das Estrelas
@@ -521,7 +511,7 @@ pratos principais
 Na Casa de Vidro
 
 você se senta
-
+ 
 COMENTÁRIO
     Uma rima comum para
 alimentar bebezinhos,
@@ -583,11 +573,9 @@ meia-noite, nunca durante
 o dia.
 
 """
-
 [translations.spa]
 title = "Cuentos clásicos para niños, volumen 2"
-content = """
-¡La imprenta de Clarke
+content = """¡La imprenta de Clarke
 tiene el honor de
 presentar relatos de
 épocas pasadas! Guilhem
@@ -595,7 +583,7 @@ el Erudito cerrará cada
 volumen con un comentario
 mesurado.
 
-
+ 
 LA RIMA
 Baila en la Cámara
 Estelar
@@ -604,7 +592,7 @@ y come tus platos
 en la Casa de Cristal
 
 donde te sientas.
-
+ 
 COMENTARIO
     Esta breve cantinela,
 comúnmente utilizada para

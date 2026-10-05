@@ -20,13 +20,26 @@ namespace Moongate.Tests.TestSupport.Ultima.Books;
 
 public static class TestBookDocuments
 {
+    /// <summary>
+    ///     The item templates the shipped documents of <c>templates/books</c> name: what they are written on and what
+    ///     their attachments give. A shipped document that names another item needs it here.
+    /// </summary>
+    public static ItemTemplate[] ShippedItems()
+    {
+        return
+        [
+            new() { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll" },
+            new() { Id = "readable_book", ItemId = new(0x0FF1), Stackable = false, ScriptId = "readable_book" },
+            new() { Id = "jail_release_note", ItemId = new(0x14F0), Stackable = false, ScriptId = "jail_note" },
+            new() { Id = "0x0eed_gold_coin", ItemId = new(0x0EED), Stackable = true }
+        ];
+    }
+
     public static async Task<BookDocumentService> CreateAsync(BroadcastFixture world, IItemService items,
         IItemHandlingService handling, IItemTemplateService itemTemplates, IGameLoopService loop,
         IGumpService? gumps = null)
     {
-        var source = new StubDataLoaderService().With(
-            new ItemTemplate { Id = "readable_scroll", Stackable = false, ScriptId = "readable_scroll" },
-            new ItemTemplate { Id = "jail_release_note", Stackable = false, ScriptId = "jail_note" });
+        var source = new StubDataLoaderService().With(ShippedItems());
         var directories = new DirectoriesConfig(Path.Combine(BookLuaFixture.RepositoryRoot(), "moongate_root"), ["templates"]);
         var books = (await new BooksLoader(directories, source).LoadDataAsync()).Entities.ToArray();
         var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());

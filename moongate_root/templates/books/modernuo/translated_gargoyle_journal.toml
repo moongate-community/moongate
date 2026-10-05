@@ -6,7 +6,7 @@ gargoyle's journal
 following his capture
 and subsequent
 reeducation.
-
+ 
           -Velis
 
 I write this in the
@@ -91,16 +91,16 @@ remains...
 Kai Hohiro, 12pm.
 10.11.2001
 first one to be here"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF2
+[translations]
 [translations.cze]
 title = "Přeložený deník"
-content = """
-Tento text byl přeložen z
+content = """Tento text byl přeložen z
 deníku chrliče po jeho
 zajetí a následné
 převýchově.
-
+ 
           –Velis
 
 Píši v naději, že to
@@ -172,15 +172,13 @@ nezbývá...
 Kai Hohiro, 12:00.
 10.11.2001
 první, kdo tu byl"""
-
 [translations.fre]
 title = "Journal traduit"
-content = """
-Ce texte a été traduit du
+content = """Ce texte a été traduit du
 journal d’une gargouille
 après sa capture et sa
 rééducation.
-
+ 
           — Velis
 
 J’écris ceci dans l’espoir
@@ -264,16 +262,14 @@ aucun choix...
 Kai Hohiro, 12 h.
 10.11.2001
 premier à être ici"""
-
 [translations.ger]
 title = "Übersetztes Tagebuch"
-content = """
-Dieser Text wurde nach der
+content = """Dieser Text wurde nach der
 Gefangennahme und
 anschließenden Umerziehung
 eines Gargoyles aus dessen
 Tagebuch übersetzt.
-
+ 
     -Velis
 
 Ich schreibe dies in der
@@ -360,16 +356,14 @@ Kai Hohiro, 12 Uhr
 mittags.
 10.11.2001
 der Erste hier"""
-
 [translations.ita]
 title = "Diario tradotto"
-content = """
-Questo testo è stato
+content = """Questo testo è stato
 tradotto dal diario di un
 gargoyle dopo la sua
 cattura e la successiva
 rieducazione.
-
+ 
           -Velis
 
 Scrivo nella speranza che
@@ -450,15 +444,13 @@ scelta...
 Kai Hohiro, 12:00.
 10.11.2001
 il primo a essere qui"""
-
 [translations.pol]
 title = "Przetłumaczony dziennik"
-content = """
-Ten tekst przetłumaczono z
+content = """Ten tekst przetłumaczono z
 dziennika gargulca po jego
 pojmaniu i późniejszej
 reedukacji.
-
+ 
     — Velis
 
 Piszę to w nadziei, że
@@ -535,15 +527,13 @@ pozostaje żaden wybór...
 Kai Hohiro, 12:00.
 10.11.2001 pierwszy, który
 tu dotarł"""
-
 [translations.por]
 title = "Diário traduzido"
-content = """
-Este texto foi traduzido
+content = """Este texto foi traduzido
 do diário de uma gárgula
 após sua captura e
 subsequente reeducação.
-
+ 
           -Velis
 
 Escrevo isto na esperança
@@ -624,15 +614,13 @@ escolha...
 Kai Hohiro, 12h.
 10.11.2001
 primeiro a estar aqui"""
-
 [translations.spa]
 title = "Diario traducido"
-content = """
-Este texto se ha traducido
+content = """Este texto se ha traducido
 del diario de una gárgola
 tras su captura y
 posterior reeducación.
-
+ 
           -Velis
 
 Escribo con la esperanza

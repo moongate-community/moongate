@@ -2,7 +2,7 @@ title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Fourteen - Day
 Fifteen:
-
+ 
 Lysander has
 returned... and yet,
 how can I describe the
@@ -61,14 +61,14 @@ something within it.
 Do we dare approach?
 We must make a
 decision soon."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den čtrnáctý až
+content = """Den čtrnáctý až
 patnáctý:
-
+ 
 Lysander se vrátil... a
 přece, jak popsat tu
 hrůzu? Stojí i nyní
@@ -118,13 +118,11 @@ rozum... nebo kvůli
 něčemu v ní. Odvážíme
 se přiblížit? Musíme se
 brzy rozhodnout."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Du quatorzième au
+content = """Du quatorzième au
 quinzième jour :
-
+ 
 Lysander est revenu...
 et pourtant, comment
 décrire cette horreur ?
@@ -185,13 +183,11 @@ s’y trouve. Osons-nous
 nous approcher ? Nous
 devons prendre une
 décision bientôt."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Vierzehnter bis
+content = """Vierzehnter bis
 fünfzehnter Tag:
-
+ 
 Lysander ist
 zurückgekehrt ... und
 doch, wie kann ich den
@@ -254,13 +250,11 @@ etwas darin. Wagen wir
 uns heran? Wir müssen
 bald eine Entscheidung
 treffen."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Quattordici -
+content = """Giorno Quattordici -
 Giorno Quindici:
-
+ 
 Lysander è tornato...
 eppure, come posso
 descriverne l'orrore?
@@ -320,13 +314,11 @@ qualcosa al suo
 interno. Osiamo
 avvicinarci? Dobbiamo
 decidere presto."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień czternasty —
+content = """Dzień czternasty —
 dzień piętnasty:
-
+ 
 Lysander powrócił...
 lecz jak opisać tę
 grozę? Nawet teraz stoi
@@ -380,13 +372,11 @@ przez coś w nim. Czy
 ośmielimy się podejść?
 Musimy wkrótce
 zdecydować."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Décimo quarto dia -
+content = """Décimo quarto dia -
 Décimo quinto dia:
-
+ 
 Lysander voltou... e,
 no entanto, como posso
 descrever o horror
@@ -443,13 +433,11 @@ dentro dela. Ousamos
 nos aproximar?
 Precisamos tomar uma
 decisão logo."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día catorce - Día
+content = """Día catorce - Día
 quince:
-
+ 
 Lysander ha
 regresado... y, sin
 embargo, ¿cómo

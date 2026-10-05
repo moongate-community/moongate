@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Packets.Books;
 using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
@@ -48,7 +49,7 @@ public sealed class RepositoryTemplateFilesTests
     {
         var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
         var books = (await new BooksLoader(Directories(), new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
-        Assert.Equal(64, books.Count);
+        Assert.Equal(65, books.Count);
         Assert.Equal(["jail_release_note", "welcome_letter"], books.Where(book => book.Id is "jail_release_note" or "welcome_letter")
             .Select(book => book.Id).Order(StringComparer.Ordinal));
         var welcome = Assert.Single(books, book => book.Id == "welcome_letter");
@@ -85,6 +86,47 @@ public sealed class RepositoryTemplateFilesTests
             Assert.True(BookGumpRenderer.TryBuild(rendered.Title, rendered.Author, rendered.Content, out _), book.Id);
         }
     }
+
+    // The imported texts are books of the client: each has a cover, and its pages fit the two book packets in
+    // every language, a translated page of more than eight lines going on in the next.
+    [Theory]
+    [InlineData("eng")]
+    [InlineData("ita")]
+    [InlineData("fre")]
+    [InlineData("ger")]
+    [InlineData("spa")]
+    [InlineData("por")]
+    [InlineData("pol")]
+    [InlineData("cze")]
+    public async Task ShippedModernUoBooks_AreBooksWithACover_AndTheirPagesFitTheClient(string language)
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
+        var data = new StubDataLoaderService().With(items);
+        var catalog = ImportedBookIds();
+        var books = (await new BooksLoader(Directories(), data).LoadDataAsync()).Entities
+            .Where(book => catalog.Contains(book.Id)).ToArray();
+        data.With(books);
+        var service = new BookTemplateService(data);
+        Assert.Equal("readable_book", Assert.Single(items, item => item.Id == "readable_book").ScriptId);
+        // ModernUO's own count of pages.
+        Assert.Equal(738, books.Sum(book => book.Content.Split("\n\n").Length));
+
+        foreach (var book in books)
+        {
+            Assert.Equal("readable_book", book.ItemTemplate);
+            Assert.Contains(book.ItemId, new int?[] { 0x0FEF, 0x0FF0, 0x0FF1, 0x0FF2 });
+            Assert.True(service.TryRender(book.Id, new TextTemplateContext(), language, null, out var rendered), book.Id);
+            // The pages of ModernUO, in every language: a blank line inside a page is a line of one space, so only
+            // a page break is an empty line.
+            Assert.Equal(book.Content.Split("\n\n").Length, rendered!.Content.Split("\n\n").Length);
+            Assert.True(BookPagination.TryPaginate(rendered.Content, out var pages), book.Id);
+            Assert.All(pages, page => Assert.InRange(page.Count, 0, BookPagination.LinesPerPage));
+            Assert.Equal(rendered.Content.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries), pages.SelectMany(page => page).SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)));
+            Assert.Equal(pages.Count, new BookPagesPacket(new(0x40000001), pages).PageCount);
+            Assert.Equal(pages.Count, new BookHeaderPacket(new(0x40000001), pages.Count, rendered.Title, rendered.Author).PageCount);
+        }
+    }
+
     [Theory]
     [InlineData("ita")]
     [InlineData("fre")]

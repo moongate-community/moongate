@@ -245,12 +245,12 @@ are said to have an
 
 extraordinarily
 beautiful song."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Ptáci země Britannia"
-content = """
-STŘÍZLÍK je drobný
+content = """STŘÍZLÍK je drobný
 hmyzožravý pták se
 silným hlasem. Veselé
 trylky střízlíků jsou
@@ -459,11 +459,9 @@ němé, ale říká se, že
 mají
 
 neobyčejně krásný zpěv."""
-
 [translations.fre]
 title = "Les oiseaux de Britannia"
-content = """
-Le TROGLODYTE est un
+content = """Le TROGLODYTE est un
 minuscule oiseau
 insectivore à la voix
 puissante. Ses trilles
@@ -698,11 +696,9 @@ généralement muets, mais
 on leur prête un chant
 
 extraordinairement beau."""
-
 [translations.ger]
 title = "Die Vögel Britannias"
-content = """
-Der ZAUNKÖNIG ist ein
+content = """Der ZAUNKÖNIG ist ein
 winziger Insektenfresser
 mit lauter Stimme. Die
 fröhlichen Triller der
@@ -949,11 +945,9 @@ sie hätten einen
 
 außerordentlich schönen
 Gesang."""
-
 [translations.ita]
 title = "Gli uccelli di Britannia"
-content = """
-Lo SCRICCIOLO è un
+content = """Lo SCRICCIOLO è un
 minuscolo uccello
 insettivoro dalla voce
 potente. I lieti trilli
@@ -1186,11 +1180,9 @@ dice che abbiano un
 
 canto straordinariamente
 bello."""
-
 [translations.pol]
 title = "Ptaki Britannia"
-content = """
-STRZYŻYK to maleńki
+content = """STRZYŻYK to maleńki
 owadożerny ptak o
 donośnym głosie. Radosne
 trele strzyżyków są
@@ -1420,11 +1412,9 @@ zwykle milczą, lecz
 podobno mają
 
 niezwykle piękną pieśń."""
-
 [translations.por]
 title = "Aves de Britannia"
-content = """
-A CARRIÇA é uma pequena
+content = """A CARRIÇA é uma pequena
 ave que come insetos e
 tem voz forte. Os
 alegres trinados dessas
@@ -1653,11 +1643,9 @@ possuem um
 canto
 extraordinariamente
 belo."""
-
 [translations.spa]
 title = "Aves de Britannia"
-content = """
-   El CHOCHÍN es un ave
+content = """   El CHOCHÍN es un ave
 diminuta que se alimenta
 de insectos y tiene una
 voz potente. Los alegres

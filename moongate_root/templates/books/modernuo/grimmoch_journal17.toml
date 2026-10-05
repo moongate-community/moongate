@@ -2,7 +2,7 @@ title = "The daily journal of Grimmoch Drummel"
 author = "Grimmoch"
 content = """Day Seventeen - Day
 Twenty-Two :
-
+ 
 The fighting never
 ceases... the blood
 never stops flowing,
@@ -46,14 +46,14 @@ the vault - whether
 his or mine, I can no
 
 longer tell."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Denní zápisky Grimmoch Drummel"
-content = """
-Den sedmnáctý až
+content = """Den sedmnáctý až
 dvaadvacátý:
-
+ 
 Boj nikdy neustává...
 krev nikdy nepřestává
 téct jako řeka mezi
@@ -91,13 +91,11 @@ klenbu naplňuje křik –
 jeho, nebo můj, to už
 
 nedokážu říct."""
-
 [translations.fre]
 title = "Le journal quotidien de Grimmoch Drummel"
-content = """
-Du dix-septième au
+content = """Du dix-septième au
 vingt-deuxième jour :
-
+ 
 Les combats ne cessent
 jamais... le sang ne
 cesse jamais de couler,
@@ -144,13 +142,11 @@ sien ou le mien, je ne
 peux
 
 plus le dire."""
-
 [translations.ger]
 title = "Grimmoch Drummels tägliches Tagebuch"
-content = """
-Siebzehnter bis
+content = """Siebzehnter bis
 zweiundzwanzigster Tag:
-
+ 
 Der Kampf hört nie auf
 ... das Blut fließt
 unaufhörlich wie ein
@@ -196,13 +192,11 @@ Gewölbe – ob seiner oder
 meiner, kann ich nicht
 
 mehr unterscheiden."""
-
 [translations.ita]
 title = "Il diario quotidiano di Grimmoch Drummel"
-content = """
-Giorno Diciassette -
+content = """Giorno Diciassette -
 Giorno Ventidue :
-
+ 
 I combattimenti non
 cessano mai... il sangue
 non smette mai di
@@ -247,13 +241,11 @@ sia il suo o il mio, non
 riesco
 
 più a dirlo."""
-
 [translations.pol]
 title = "Dziennik codzienny Grimmoch Drummel"
-content = """
-Dzień siedemnasty —
+content = """Dzień siedemnasty —
 dzień dwudziesty drugi:
-
+ 
 Walka nigdy nie
 ustaje... krew nigdy nie
 przestaje płynąć, niczym
@@ -295,13 +287,11 @@ komnatę — jego czy mój,
 już nie
 
 potrafię powiedzieć."""
-
 [translations.por]
 title = "O diário de Grimmoch Drummel"
-content = """
-Décimo sétimo dia -
+content = """Décimo sétimo dia -
 Vigésimo segundo dia:
-
+ 
 A luta nunca cessa... o
 sangue nunca para de
 correr, como um rio
@@ -344,13 +334,11 @@ grito enche a cripta; se
 é dele ou meu, já não
 
 sei dizer."""
-
 [translations.spa]
 title = "El diario de Grimmoch Drummel"
-content = """
-Día diecisiete - Día
+content = """Día diecisiete - Día
 veintidós:
-
+ 
 La lucha nunca cesa...
 la sangre nunca deja de
 fluir, como un río entre

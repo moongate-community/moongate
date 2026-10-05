@@ -2,7 +2,7 @@ title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Seventeen - Day
 Eighteen :
-
+ 
 I cannot go on much
 longer.  I know now
 t'was no work of the
@@ -29,14 +29,14 @@ brought down, wasted
 
 away in this ocean of
 blood."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den sedmnáctý až
+content = """Den sedmnáctý až
 osmnáctý:
-
+ 
 Už nemohu dlouho
 pokračovat. Nyní vím, že
 nás tu neuvěznila práce
@@ -58,13 +58,11 @@ A jako písek musíme být
 strženi, obroušeni
 
 v tomto oceánu krve."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Du dix-septième au
+content = """Du dix-septième au
 dix-huitième jour :
-
+ 
 Je ne puis continuer
 beaucoup plus longtemps.
 Je sais maintenant que
@@ -93,13 +91,11 @@ emporter, nous laisser
 user
 
 dans cet océan de sang."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Siebzehnter bis
+content = """Siebzehnter bis
 achtzehnter Tag:
-
+ 
 Ich kann nicht mehr
 lange weitermachen. Ich
 weiß nun, dass es kein
@@ -128,13 +124,11 @@ aufgezehrt
 
 in diesem Ozean aus
 Blut."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Diciassette -
+content = """Giorno Diciassette -
 Giorno Diciotto :
-
+ 
 Non posso andare avanti
 ancora a lungo. Ora so
 che non è stata opera
@@ -160,13 +154,11 @@ abbattuti, consumati
 
 in questo oceano di
 sangue."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień siedemnasty —
+content = """Dzień siedemnasty —
 dzień osiemnasty:
-
+ 
 Nie wytrzymam już długo.
 Teraz wiem, że to nie
 ruch ziemi uwięził nas
@@ -190,13 +182,11 @@ uniknąć starcia,
 zniszczenia
 
 w tym oceanie krwi."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Décimo sétimo dia -
+content = """Décimo sétimo dia -
 Décimo oitavo dia:
-
+ 
 Não posso continuar por
 muito mais tempo. Agora
 sei que não foi uma obra
@@ -222,13 +212,11 @@ evitar sermos
 derrubados, consumidos
 
 neste oceano de sangue."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día diecisiete - Día
+content = """Día diecisiete - Día
 dieciocho:
-
+ 
 No puedo seguir mucho
 más tiempo. Ahora sé que
 no fue obra de la tierra

@@ -1,7 +1,7 @@
 title = "The daily journal of Grimmoch Drummel"
 author = "Grimmoch"
 content = """Day Seven - Day Ten:
-
+ 
 I cannot stand this
 place, I cannot bear it.
 I've got to get out.
@@ -43,13 +43,13 @@ up the stones, block all
 access to this primeval
 crypt, seal it up again
 for all eternity."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Denní zápisky Grimmoch Drummel"
-content = """
-Den sedmý až desátý:
-
+content = """Den sedmý až desátý:
+ 
 Tohle místo nesnesu,
 nedokážu ho snášet.
 Musím se dostat ven. V
@@ -89,13 +89,11 @@ zablokovat všechny
 přístupy do této
 pradávné krypty a znovu
 ji uzavřít na věčnost."""
-
 [translations.fre]
 title = "Le journal quotidien de Grimmoch Drummel"
-content = """
-Du septième au dixième
+content = """Du septième au dixième
 jour :
-
+ 
 Je ne supporte pas cet
 endroit, je ne peux le
 supporter. Il faut que
@@ -145,12 +143,10 @@ cette crypte
 primordiale, la sceller
 de nouveau pour
 l’éternité."""
-
 [translations.ger]
 title = "Grimmoch Drummels tägliches Tagebuch"
-content = """
-Siebter bis zehnter Tag:
-
+content = """Siebter bis zehnter Tag:
+ 
 Ich halte diesen Ort
 nicht aus, ich ertrage
 ihn nicht. Ich muss hier
@@ -197,13 +193,11 @@ jeden Zugang zu dieser
 uralten Gruft versperren
 und sie wieder für alle
 Ewigkeit versiegeln."""
-
 [translations.ita]
 title = "Il diario quotidiano di Grimmoch Drummel"
-content = """
-Giorno Sette - Giorno
+content = """Giorno Sette - Giorno
 Dieci:
-
+ 
 Non sopporto questo
 posto, non lo reggo.
 Devo uscire. Qualcosa di
@@ -247,13 +241,11 @@ questa cripta
 primordiale, sigillarla
 di nuovo per tutta
 l'eternità."""
-
 [translations.pol]
 title = "Dziennik codzienny Grimmoch Drummel"
-content = """
-Dzień siódmy — dzień
+content = """Dzień siódmy — dzień
 dziesiąty:
-
+ 
 Nie znoszę tego miejsca,
 nie mogę go znieść.
 Muszę się wydostać. Coś
@@ -295,12 +287,10 @@ cały dostęp do tej
 pradawnej krypty, znów
 zapieczętować ją na
 wieczność."""
-
 [translations.por]
 title = "O diário de Grimmoch Drummel"
-content = """
-Sétimo dia - Décimo dia:
-
+content = """Sétimo dia - Décimo dia:
+ 
 Não aguento este lugar,
 não suporto. Preciso
 sair. Algo maligno
@@ -344,12 +334,10 @@ bloquear todo acesso a
 esta cripta primeva,
 selá-la de novo por toda
 a eternidade."""
-
 [translations.spa]
 title = "El diario de Grimmoch Drummel"
-content = """
-Día siete - Día diez:
-
+content = """Día siete - Día diez:
+ 
 No soporto este lugar,
 no puedo aguantarlo.
 Tengo que salir. Algo

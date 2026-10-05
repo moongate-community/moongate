@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day One:
-
+ 
 The workers continue
 tirelessly in their
 efforts to unload our
@@ -47,13 +47,13 @@ dreamed of for the
 
 last ten years of my
 life."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den první:
-
+content = """Den první:
+ 
 Dělníci neúnavně
 pokračují ve vykládání
 zásob, i když světlo
@@ -91,12 +91,10 @@ vydají mi vše, o čem
 jsem snila posledních
 
 deset let svého života."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Premier jour :
-
+content = """Premier jour :
+ 
 Les ouvriers
 poursuivent sans
 relâche leurs efforts
@@ -146,12 +144,10 @@ j’ai rêvé durant les
 
 dix dernières années de
 ma vie."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Erster Tag:
-
+content = """Erster Tag:
+ 
 Die Arbeiter setzen
 unermüdlich ihre
 Bemühungen fort, unsere
@@ -203,12 +199,10 @@ während der
 letzten zehn Jahre
 meines Lebens geträumt
 habe."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Uno:
-
+content = """Giorno Uno:
+ 
 Gli operai continuano
 instancabilmente a
 scaricare le nostre
@@ -255,12 +249,10 @@ che ho sognato negli
 
 ultimi dieci anni della
 mia vita."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień pierwszy:
-
+content = """Dzień pierwszy:
+ 
 Robotnicy niestrudzenie
 wyładowują nasze
 zapasy, nawet gdy
@@ -302,12 +294,10 @@ czym marzyłam przez
 
 ostatnich dziesięć lat
 życia."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Primeiro dia:
-
+content = """Primeiro dia:
+ 
 Os trabalhadores
 continuam incansáveis
 em seus esforços para
@@ -354,12 +344,10 @@ sonhei nos
 
 últimos dez anos de
 minha vida."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día uno:
-
+content = """Día uno:
+ 
 Los trabajadores siguen
 descargando nuestros
 suministros sin

@@ -10,11 +10,11 @@ oft Recited as a
 Lullabye for sleepy
 
 Children.
-
+ 
 Preface
 by Guilhem the
 Scholar
-
+ 
   The meaning of this
 verse has oft been
 
@@ -129,7 +129,7 @@ herein printed for
 the first time for
 thy enjoyment and
 perusal!
-
+ 
 In the Wind where
 the Balance
 Is Whispered in
@@ -147,7 +147,7 @@ Whole Days
 Reading Books full of
 Doings
 Printed on Light
-
+ 
 In the Wind where
 the Lovers
 Are Crossed under
@@ -166,7 +166,7 @@ The Boy becomes
 Earth
 And Wanders Till
 Late
-
+ 
 In the Wind are the
 Monsters
 First Born First
@@ -183,12 +183,12 @@ Plaitings,
 Go Not to the
 Snakehills
 Lest You Care to Die"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Klasické příběhy Vesper, svazek 1"
-content = """
-Je nám ctí představit
+content = """Je nám ctí představit
 ti tyto příběhy
 shromážděné z dávných
 věků. V tomto prvním
@@ -197,10 +197,10 @@ báseň často přednášenou
 jako ukolébavku ospalým
 
 dětem.
-
+ 
 Předmluva
 od učence Guilhem
-
+ 
 O významu této básně se
 často
 
@@ -305,7 +305,7 @@ zde vytištěná
 
 poprvé pro tvé potěšení
 a pročtení!
-
+ 
 Ve Wind, kde se
 Rovnováha
 Šeptá na
@@ -323,7 +323,7 @@ Z celých dnů
 Čtou Knihy plné
 Konání
 Tištěné na Světle
-
+ 
 Ve Wind, kde
 Milenci
 Jsou rozděleni
@@ -342,7 +342,7 @@ Chlapec se stává
 Zemí
 A Bloudí Až
 Do Pozdní Doby
-
+ 
 Ve Wind se
 Nestvůry
 Poprvé Rodí Poprvé
@@ -359,11 +359,9 @@ Pletenců,
 Nechoď do
 Snakehills,
 Pokud Nechceš Zemřít"""
-
 [translations.fre]
 title = "Contes classiques de Vesper, volume 1"
-content = """
-C’est un Honneur de
+content = """C’est un Honneur de
 vous présenter ces
 Contes recueillis des
 Âges Passés. Dans ce
@@ -373,10 +371,10 @@ souvent Récités comme
 Berceuse pour les
 
 Enfants ensommeillés.
-
+ 
 Préface
 par Guilhem l’Érudit
-
+ 
 Le sens de ces vers a
 souvent été
 
@@ -499,7 +497,7 @@ ici imprimé pour
 la première fois pour
 votre plaisir et votre
 lecture !
-
+ 
 Dans Wind où
 l’Équilibre
 Est Chuchoté dans les
@@ -515,7 +513,7 @@ Jours Entiers
 Lisant des Livres
 pleins d’Actes
 Imprimés sur la Lumière
-
+ 
 Dans Wind où les Amants
 Se Croisent sous les
 Ombres
@@ -530,7 +528,7 @@ Et devient ainsi Veuve
 Le Garçon devient Terre
 Et Erre jusqu’à une
 Heure Tardive
-
+ 
 Dans Wind les Monstres
 Sont d’abord Nés,
 d’abord
@@ -548,11 +546,9 @@ Ne va pas aux
 Snakehills
 À moins de Vouloir
 Mourir"""
-
 [translations.ger]
 title = "Klassische Geschichten aus Vesper, Band 1"
-content = """
-Es ist eine Ehre, Euch
+content = """Es ist eine Ehre, Euch
 diese Geschichten
 darzubieten, gesammelt
 aus längst vergangenen
@@ -564,11 +560,11 @@ schläfrigen
 Kindern oft als
 Wiegenlied vorgesungen
 wird.
-
+ 
 Vorwort
 von Guilhem dem
 Gelehrten
-
+ 
 Die Bedeutung dieses
 Verses wurde oft
 
@@ -689,7 +685,7 @@ hier zum
 ersten Mal gedruckt, zu
 Eurem Vergnügen und
 Eurer Betrachtung!
-
+ 
 Im Wind, wo das
 Gleichgewicht
 In Gängen geflüstert
@@ -706,7 +702,7 @@ Tagen,
 Lesen Bücher voller
 Taten,
 Auf Licht gedruckt.
-
+ 
 Im Wind, wo die
 Liebenden
 Unter Schatten vom
@@ -722,7 +718,7 @@ Und so zur Witwe,
 
 Wird der Junge zur Erde
 Und wandert bis spät.
-
+ 
 Im Wind werden die
 Ungeheuer
 Zuerst geboren, zuerst
@@ -740,11 +736,9 @@ Geh nicht in die
 Snakehills,
 Wenn dir nicht am
 Sterben liegt."""
-
 [translations.ita]
 title = "Racconti classici di Vesper, volume 1"
-content = """
-È un Onore presentarVi
+content = """È un Onore presentarVi
 questi Racconti
 raccolti dai Tempi
 Passati. In questo
@@ -754,10 +748,10 @@ Versi spesso Recitati
 come Ninna Nanna per
 
 Bambini assonnati.
-
+ 
 Prefazione
 di Guilhem lo Studioso
-
+ 
 Il significato di
 questi versi è stato
 spesso
@@ -877,7 +871,7 @@ stampato per
 la prima volta per il
 vostro diletto e la
 vostra lettura!
-
+ 
 A Wind dove
 l'Equilibrio
 Viene Sussurrato nei
@@ -893,7 +887,7 @@ Giorni Interi
 Leggendo Libri pieni di
 Fatti
 Stampati sulla Luce
-
+ 
 A Wind dove gli Amanti
 Sono Avversati sotto le
 Ombre
@@ -908,7 +902,7 @@ E così diventa Vedova
 Il Ragazzo diventa
 Terra
 E Vaga Fino a Tardi
-
+ 
 A Wind i Mostri sono
 Prima Nati Prima
 
@@ -925,11 +919,9 @@ Non Andare alle
 Snakehills
 A Meno Che Tu non
 Voglia Morire"""
-
 [translations.pol]
 title = "Klasyczne opowieści z Vesper, tom 1"
-content = """
-Zaszczytem jest
+content = """Zaszczytem jest
 przedstawić Wam te
 Opowieści zebrane z
 Dawnych Wieków. W tym
@@ -939,10 +931,10 @@ często Recytowany jako
 Kołysanka dla sennych
 
 Dzieci.
-
+ 
 Przedmowa Guilhem the
 Scholar
-
+ 
 Znaczenie tego wiersza
 często
 
@@ -1051,7 +1043,7 @@ wydrukowany
 po raz pierwszy dla
 Waszej przyjemności i
 lektury!
-
+ 
 W Wind, gdzie Równowagę
 Szepce się na
 Korytarzach
@@ -1065,7 +1057,7 @@ W Szatach z Całych Dni
 Czytający Księgi pełne
 Czynów
 Drukowanych na Świetle
-
+ 
 W Wind, gdzie
 Kochankowie
 Mijają się pod Cieniami
@@ -1080,7 +1072,7 @@ I tak staje się Wdową
 Chłopiec staje się
 Ziemią
 I Wędruje do Późna
-
+ 
 W Wind Potwory są
 Po raz Pierwszy Rodzone
 Po raz Pierwszy
@@ -1096,11 +1088,9 @@ Sploty,
 Nie Idź do Snakehills,
 Chyba że Pragniesz
 Umrzeć"""
-
 [translations.por]
 title = "Contos clássicos de Vesper, volume 1"
-content = """
-É uma Honra apresentar
+content = """É uma Honra apresentar
 a Você estes Contos
 recolhidos de Eras
 Passadas. Neste Volume
@@ -1111,11 +1101,11 @@ como Canção de Ninar
 para Crianças
 
 sonolentas.
-
+ 
 Prefácio
 de Guilhem, o
 Erudito
-
+ 
 O significado deste
 poema foi
 frequentemente
@@ -1235,7 +1225,7 @@ impressa pela
 
 primeira vez para seu
 prazer e sua leitura!
-
+ 
 Em Wind onde
 o Equilíbrio
 É Sussurrado nos
@@ -1253,7 +1243,7 @@ Dias Inteiros
 Lendo Livros cheios de
 Feitos
 Impressos na Luz
-
+ 
 Em Wind onde
 os Amantes
 Se Cruzam sob
@@ -1272,7 +1262,7 @@ O Menino vira
 Terra
 E Vaga Até
 Tarde
-
+ 
 Em Wind os
 Monstros
 Primeiro Nascem
@@ -1291,11 +1281,9 @@ Não Vá às
 Snakehills
 A Menos que Queira
 Morrer"""
-
 [translations.spa]
 title = "Relatos clásicos de Vesper, volumen 1"
-content = """
-Es un Honor presentaros
+content = """Es un Honor presentaros
 estos Relatos recogidos
 de Eras Pasadas. En
 este Volumen Inaugural
@@ -1305,10 +1293,10 @@ recitan como Canción de
 Cuna para
 
 Niños somnolientos.
-
+ 
 Prefacio de Guilhem el
 Erudito
-
+ 
 El significado de estos
 versos ha sido a menudo
 
@@ -1426,7 +1414,7 @@ aquí por
 primera vez para
 vuestro disfrute y
 lectura.
-
+ 
 En Wind, donde el
 Equilibrio
 se susurra en los
@@ -1442,7 +1430,7 @@ Días Enteros,
 leyendo Libros llenos
 de Actos
 impresos sobre la Luz.
-
+ 
 En Wind, donde los
 Amantes
 se cruzan bajo Sombras,
@@ -1458,7 +1446,7 @@ y así se vuelve Viuda,
 el Muchacho se vuelve
 Tierra
 y Vaga Hasta Tarde.
-
+ 
 En Wind nacen los
 Monstruos
 por vez Primera, son

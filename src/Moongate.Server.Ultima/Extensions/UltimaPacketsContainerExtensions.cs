@@ -14,6 +14,7 @@ using Moongate.Server.Ultima.Handlers.Prompts;
 using Moongate.Server.Ultima.Handlers.Skills;
 using Moongate.Server.Ultima.Handlers.Targeting;
 using Moongate.Server.Ultima.Handlers.Tooltips;
+using Moongate.Server.Ultima.Packets.Books;
 using Moongate.Server.Ultima.Packets.BulletinBoards;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.General;
@@ -89,6 +90,10 @@ public static class UltimaPacketsContainerExtensions
         RegisterIgnoredPacket<OpenChatWindowPacket>(container);
         RegisterIgnoredPacket<ClientTypePacket>(container);
         RegisterIgnoredPacket<PublicHouseContentPacket>(container);
+        // Books are read only: what the client sends about one is recognised and dropped.
+        RegisterIgnoredPacket<BookPagesRequestPacket>(container);
+        RegisterIgnoredPacket<BookHeaderChangePacket>(container);
+        RegisterIgnoredPacket<OldBookHeaderChangePacket>(container);
         container.RegisterAsyncPacketHandler<DeleteCharacterPacket, DeleteCharacterPacketHandler>();
         container.RegisterAsyncPacketHandler<CreateCharacterPacket, CreateCharacterPacketHandler>();
         container.RegisterAsyncPacketHandler<CreateCharacterEnhancedPacket, CreateCharacterEnhancedPacketHandler>();

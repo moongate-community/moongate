@@ -103,12 +103,12 @@ for the bridge thus
 created doth burst
 into flame when one
 passeth across it!"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Deceit: Kobka hrůz"
-content = """
-Moji zaměstnavatelé mě
+content = """Moji zaměstnavatelé mě
 často vodili do tohoto
 doupěte ohavných tvorů
 a usoudil jsem, že by
@@ -201,11 +201,9 @@ Měj se však na pozoru,
 neboť takto vytvořený
 most vzplane, když po
 něm někdo přechází!"""
-
 [translations.fre]
 title = "Deceit : un donjon d’horreurs"
-content = """
-Mes employeurs m’ont
+content = """Mes employeurs m’ont
 souvent conduit dans ce
 repaire de créatures
 hideuses, et j’ai pensé
@@ -316,11 +314,9 @@ garde,
 car le pont ainsi créé
 s’embrase lorsque l’on
 le traverse !"""
-
 [translations.ger]
 title = "Deceit: Ein Verlies des Schreckens"
-content = """
-Meine Auftraggeber
+content = """Meine Auftraggeber
 haben mich oft in
 diesen Hort
 abscheulicher Kreaturen
@@ -432,11 +428,9 @@ denn die so erschaffene
 Brücke geht in Flammen
 auf, wenn man sie
 überquert!"""
-
 [translations.ita]
 title = "Deceit: un sotterraneo degli orrori"
-content = """
-I miei datori di lavoro
+content = """I miei datori di lavoro
 mi hanno condotto
 spesso in questo covo
 di creature orribili, e
@@ -544,11 +538,9 @@ poiché il ponte così
 creato prende fuoco
 quando lo si
 attraversa!"""
-
 [translations.pol]
 title = "Deceit: loch grozy"
-content = """
-Moi pracodawcy często
+content = """Moi pracodawcy często
 zabierali mnie do tego
 siedliska ohydnych
 stworzeń, więc
@@ -650,11 +642,9 @@ gdyż powstały w ten
 sposób most staje w
 płomieniach, gdy ktoś
 po nim przechodzi!"""
-
 [translations.por]
 title = "Deceit: uma masmorra de horrores"
-content = """
-Meus empregadores
+content = """Meus empregadores
 muitas vezes me levaram
 a esse covil de
 criaturas horrendas, e
@@ -757,11 +747,9 @@ pois a ponte assim
 criada se incendeia
 quando alguém passa por
 ela!"""
-
 [translations.spa]
 title = "Deceit: una mazmorra de horrores"
-content = """
-  Mis patrones me han
+content = """  Mis patrones me han
 llevado muchas veces a
 esta guarida de
 criaturas horrendas, y

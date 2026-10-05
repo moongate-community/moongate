@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Two:
-
+ 
 Everything we'd
 heard and read of the
 tomb has proved
@@ -77,13 +77,13 @@ progress tomorrow
 once the workers have
 set to excavating the
 hall."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den druhý:
-
+content = """Den druhý:
+ 
 Všechno, co jsme o hrobce
 slyšeli a četli, se
 ukázalo pravdivým – a
@@ -142,12 +142,10 @@ Těším se
 na další zítřejší pokrok,
 až se dělníci pustí do
 odkrývání síně."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Deuxième jour :
-
+content = """Deuxième jour :
+ 
 Tout ce que nous avions
 entendu et lu sur le
 tombeau s’est révélé
@@ -222,12 +220,10 @@ davantage de progrès
 demain, une fois que les
 ouvriers auront commencé
 à déblayer le couloir."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Zweiter Tag:
-
+content = """Zweiter Tag:
+ 
 Alles, was wir über das
 Grab gehört und gelesen
 hatten, hat sich als
@@ -302,12 +298,10 @@ morgen, sobald die
 Arbeiter mit dem
 Freilegen der Halle
 begonnen haben."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Due:
-
+content = """Giorno Due:
+ 
 Tutto ciò che avevamo
 sentito e letto della
 tomba si è dimostrato
@@ -381,12 +375,10 @@ con ansia nuovi progressi
 domani, una volta che gli
 operai si saranno messi a
 scavare la sala."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień drugi:
-
+content = """Dzień drugi:
+ 
 Wszystko, co słyszeliśmy
 i czytaliśmy o grobowcu,
 okazało się prawdą — a
@@ -456,12 +448,10 @@ Czekam
 na dalsze postępy jutro,
 gdy robotnicy przystąpią
 do odsłaniania sali."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Segundo dia:
-
+content = """Segundo dia:
+ 
 Tudo o que ouvimos e
 lemos sobre a tumba se
 mostrou correto, mas nada
@@ -530,12 +520,10 @@ mais progresso amanhã,
 assim que os
 trabalhadores começarem a
 escavar o salão."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día dos:
-
+content = """Día dos:
+ 
 Todo lo que habíamos oído
 y leído sobre la tumba ha
 resultado cierto, y aun

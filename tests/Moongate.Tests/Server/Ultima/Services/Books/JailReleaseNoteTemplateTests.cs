@@ -24,7 +24,7 @@ public sealed class JailReleaseNoteTemplateTests
     {
         await using var fixture = await BookTestFixture.CreateAsync();
         var directories = new DirectoriesConfig(Path.Combine(BookLuaFixture.RepositoryRoot(), "moongate_root"), ["data", "templates"]);
-        var items = new StubDataLoaderService().With(fixture.ItemTemplates.Get("readable_scroll"), fixture.ItemTemplates.Get("jail_release_note"));
+        var items = new StubDataLoaderService().With(TestBookDocuments.ShippedItems());
         var books = (await new BooksLoader(directories, items).LoadDataAsync()).Entities.ToArray();
         var service = new BookTemplateService(new StubDataLoaderService().With(books));
         var messages = (await new MessagesLoader(directories, new LocalizationConfig { Language = language }).LoadDataAsync()).Entities.ToDictionary(message => message.Id, message => message.Text);

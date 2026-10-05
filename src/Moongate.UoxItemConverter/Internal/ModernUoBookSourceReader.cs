@@ -14,6 +14,8 @@ namespace Moongate.UoxItemConverter.Internal;
 /// </summary>
 internal static class ModernUoBookSourceReader
 {
+    private const string BlankLine = " ";
+
     public static IReadOnlyList<ImportedBook> Read(string source, string path)
     {
         var tree = CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Preview), path);
@@ -42,8 +44,11 @@ internal static class ModernUoBookSourceReader
                     if (arguments.Count < 3) throw new InvalidDataException("BookContent needs a title, author and pages.");
                     var title = Literal(arguments[0].Expression);
                     var author = Literal(arguments[1].Expression);
+                    // An empty line of the text is a page break, so an empty line inside a page is written as a
+                    // space: the page stays one page, as in the source.
                     var pages = arguments.Skip(2).Select(argument => string.Join('\n',
-                        Arguments(argument.Expression, "BookPageInfo").Select(line => Literal(line.Expression)))).ToArray();
+                        Arguments(argument.Expression, "BookPageInfo").Select(line => Literal(line.Expression))
+                            .Select(line => line.Length == 0 ? BlankLine : line))).ToArray();
                     var content = string.Join("\n\n", pages);
                     var utf8 = new UTF8Encoding(false, true);
                     utf8.GetByteCount(title);
@@ -56,10 +61,11 @@ internal static class ModernUoBookSourceReader
                         !BookTextValidation.IsValidText(author, BookTextValidation.HeaderLimit) ||
                         !BookTextValidation.IsValidText(content, BookTextValidation.ContentLimit) ||
                         content.Length + content.Count(character => character == '$') > BookTextValidation.ContentLimit ||
-                        !BookGumpRenderer.TryBuild(title, author, content, out _))
+                        !BookGumpRenderer.TryBuild(title, author, content, out _) ||
+                        !BookPagination.TryPaginate(content, out _))
                         throw new InvalidDataException("Book id or text is invalid or exceeds the document limits.");
 
-                    books.Add(new() { Id = id, Title = title, Author = author, Content = content, PageCount = pages.Length });
+                    books.Add(new() { Id = id, Title = title, Author = author, Content = content, PageCount = pages.Length, ItemId = Graphic(owner) });
                 }
             }
             catch (Exception exception) when (exception is InvalidDataException or EncoderFallbackException)
@@ -68,6 +74,44 @@ internal static class ModernUoBookSourceReader
             }
         }
         return books;
+    }
+
+    // The graphic the class gives its base: stated in its constructor, the first of a random pair there, or that of
+    // the kind of book it derives from. Nothing is run: only literals are read.
+    private static int? Graphic(ClassDeclarationSyntax owner)
+    {
+        var constructors = owner.Members.OfType<ConstructorDeclarationSyntax>()
+            .Where(constructor => constructor.Initializer is { } initializer && initializer.IsKind(SyntaxKind.BaseConstructorInitializer))
+            .OrderBy(constructor => constructor.ParameterList.Parameters.Count);
+
+        foreach (var constructor in constructors)
+        {
+            if (constructor.Initializer!.ArgumentList.Arguments.FirstOrDefault()?.Expression is not { } first)
+            {
+                continue;
+            }
+
+            if (first is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name.Identifier.ValueText: "Random" } } random)
+            {
+                first = random.ArgumentList.Arguments.FirstOrDefault()?.Expression ?? first;
+            }
+
+            if (first is LiteralExpressionSyntax literal && literal.IsKind(SyntaxKind.NumericLiteralExpression) &&
+                literal.Token.Value is int value and >= 1 and <= ushort.MaxValue)
+            {
+                return value;
+            }
+        }
+
+        return owner.BaseList?.Types.Select(type => type.Type).OfType<IdentifierNameSyntax>().Select(type => type.Identifier.ValueText)
+            .Select(name => name switch
+            {
+                "BrownBook" => 0x0FEF,
+                "TanBook" => 0x0FF0,
+                "RedBook" => 0x0FF1,
+                "BlueBook" => 0x0FF2,
+                _ => (int?)null
+            }).FirstOrDefault(graphic => graphic is not null);
     }
 
     private static SeparatedSyntaxList<ArgumentSyntax> Arguments(ExpressionSyntax expression, string type)

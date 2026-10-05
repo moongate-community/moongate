@@ -95,12 +95,28 @@ public sealed class BooksLoader : IDataLoader<BookTemplate>
             throw new InvalidDataException($"{book.File}: item_template must select an explicitly nonstackable readable item.");
         }
 
+        if (book.ItemId is < 1 or > ushort.MaxValue)
+        {
+            throw new InvalidDataException($"{book.File}: item_id must be a graphic from 1 to 0xFFFF.");
+        }
+
+        // The client's book has no button to claim them with.
+        if (book.Attachments.Count > 0 && item.ScriptId == BookTextValidation.BookScript)
+        {
+            throw new InvalidDataException($"{book.File}: a book cannot carry attachments; use a scroll.");
+        }
+
         ValidateFields(book.File, book.Title, book.Author, book.Content, names);
         foreach (var (language, translation) in book.Translations)
         {
             if (language is not ("eng" or "ita" or "fre" or "ger" or "spa" or "por" or "pol" or "cze"))
             {
                 throw new InvalidDataException($"{book.File}: unsupported translation language.");
+            }
+
+            if (translation.ItemId is not null)
+            {
+                throw new InvalidDataException($"{book.File}: item_id belongs to the document, not to a translation.");
             }
 
             ValidateFields(book.File, translation.Title ?? book.Title, translation.Author ?? book.Author,

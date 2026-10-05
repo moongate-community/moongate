@@ -112,7 +112,8 @@ public sealed class ServerRoleRegistrationTests
         Assert.Contains(typeof(ClientHardwareInfoPacket), container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys);
     }
 
-    [Theory, InlineData(0x09), InlineData(0xB8), InlineData(0xBF), InlineData(0xD6), InlineData(0xF0)]
+    // 0x66, 0xD4 and 0x93: what the client sends about a book, a page request right after every opening.
+    [Theory, InlineData(0x09), InlineData(0xB8), InlineData(0xBF), InlineData(0xD6), InlineData(0xF0), InlineData(0x66), InlineData(0xD4), InlineData(0x93)]
     public void Register_TheTooltipRequests_AreIncomingPacketsTheFramerKnows(int opCode)
     {
         // A packet with a handler but no incoming registration closes the connection when the client sends it.

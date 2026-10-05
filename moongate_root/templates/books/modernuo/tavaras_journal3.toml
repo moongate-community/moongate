@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Three - Day Five:
-
+ 
 I do not understand
 this place... not as I
 once thought I did.
@@ -51,13 +51,13 @@ carvings while the
 rest of our crew
 continue excavating
 the inner halls."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den třetí až pátý:
-
+content = """Den třetí až pátý:
+ 
 Nerozumím tomuto
 místu... ne tak, jak
 jsem si kdysi myslela.
@@ -101,13 +101,11 @@ zatímco zbytek našich
 pracovníků pokračuje v
 odkrývání vnitřních
 síní."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Du troisième au
+content = """Du troisième au
 cinquième jour :
-
+ 
 Je ne comprends pas cet
 endroit... pas comme je
 croyais jadis le
@@ -162,13 +160,11 @@ reste de notre équipe
 poursuit le déblaiement
 des couloirs
 intérieurs."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Dritter bis fünfter
+content = """Dritter bis fünfter
 Tag:
-
+ 
 Ich verstehe diesen Ort
 nicht ... nicht so, wie
 ich einst dachte. Etwas
@@ -219,13 +215,11 @@ betrachten, während der
 Rest unserer Mannschaft
 die inneren Hallen
 weiter freilegt."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Tre - Giorno
+content = """Giorno Tre - Giorno
 Cinque:
-
+ 
 Non capisco questo
 luogo... non come un
 tempo pensavo di
@@ -277,13 +271,11 @@ pietra mentre il resto
 della squadra continua
 a scavare le sale
 interne."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień trzeci — dzień
+content = """Dzień trzeci — dzień
 piąty:
-
+ 
 Nie rozumiem tego
 miejsca... nie tak, jak
 niegdyś sądziłam. Coś
@@ -329,13 +321,11 @@ rzeźbień, podczas gdy
 reszta załogi nadal
 odsłania wewnętrzne
 sale."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Terceiro dia - Quinto
+content = """Terceiro dia - Quinto
 dia:
-
+ 
 Não entendo este
 lugar... não como antes
 pensava entender. Algo
@@ -384,12 +374,10 @@ enquanto o restante de
 nossa equipe continua
 escavando os salões
 internos."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día tres - Día cinco:
-
+content = """Día tres - Día cinco:
+ 
 No comprendo este
 lugar... no como creía
 comprenderlo. Algo

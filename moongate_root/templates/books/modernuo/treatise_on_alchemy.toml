@@ -100,12 +100,12 @@ never regretted that
 choice. Honestly,
 
 truly. Not once."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Pojednání o alchymii"
-content = """
-    Alchymické umění
+content = """    Alchymické umění
 vyniká svou klamnou
 jednoduchostí. Je
 pravda, že podle našich
@@ -195,11 +195,9 @@ nikdy jsem této volby
 nelitoval. Upřímně,
 
 opravdu. Ani jednou."""
-
 [translations.fre]
 title = "Traité d’alchimie"
-content = """
-    Les arts
+content = """    Les arts
 alchimiques se
 distinguent par leur
 simplicité trompeuse.
@@ -308,11 +306,9 @@ regretté ce choix.
 Honnêtement,
 
 vraiment. Pas une fois."""
-
 [translations.ger]
 title = "Abhandlung über die Alchemie"
-content = """
-    Die alchemistischen
+content = """    Die alchemistischen
 Künste zeichnen sich
 durch ihre trügerische
 Einfachheit aus. Zwar
@@ -417,11 +413,9 @@ nie bereut. Ehrlich,
 
 wirklich. Nicht ein
 einziges Mal."""
-
 [translations.ita]
 title = "Trattato sull’alchimia"
-content = """
-    Le arti alchemiche
+content = """    Le arti alchemiche
 si distinguono per la
 loro ingannevole
 semplicità. È vero che,
@@ -528,11 +522,9 @@ scelta. Onestamente,
 
 davvero. Nemmeno una
 volta."""
-
 [translations.pol]
 title = "Traktat o alchemii"
-content = """
-    Sztuki alchemiczne
+content = """    Sztuki alchemiczne
 wyróżnia zwodnicza
 prostota. Prawdą jest,
 że według obecnego
@@ -628,11 +620,9 @@ zalotów i nigdy nie
 Szczerze,
 
 naprawdę. Ani razu."""
-
 [translations.por]
 title = "Tratado de alquimia"
-content = """
-    As artes alquímicas
+content = """    As artes alquímicas
 se destacam por sua
 simplicidade enganosa.
 É verdade que, segundo
@@ -739,11 +729,9 @@ Honestamente,
 
 de verdade. Nem uma
 vez."""
-
 [translations.spa]
 title = "Tratado de alquimia"
-content = """
-    Las artes
+content = """    Las artes
 alquímicas destacan por
 su engañosa sencillez.
 Es cierto que, según

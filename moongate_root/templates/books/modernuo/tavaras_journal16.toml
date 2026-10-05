@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Sixteen:
-
+ 
 Why do I write?  I
 must... not so much
 because there must be
@@ -71,13 +71,13 @@ as their companions
 tore at Lysander,
 coming towards us in
 droves."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den šestnáctý:
-
+content = """Den šestnáctý:
+ 
 Proč píšu? Musím... ani
 ne tak proto, že musí
 zůstat nějaký záznam o
@@ -144,12 +144,10 @@ jejich druhové trhali
 mága Lysander,
 přicházející k nám v
 zástupech."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Seizième jour :
-
+content = """Seizième jour :
+ 
 Pourquoi est-ce que
 j’écris ? Il le faut...
 moins parce qu’il doit
@@ -225,12 +223,10 @@ nous tandis que leurs
 compagnons déchiraient
 Lysander, venant vers
 nous par hordes."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Sechzehnter Tag:
-
+content = """Sechzehnter Tag:
+ 
 Warum schreibe ich? Ich
 muss ... weniger, weil
 es irgendeine
@@ -310,12 +306,10 @@ zu, während ihre
 Gefährten an Lysander
 rissen, kamen in
 Scharen auf uns zu."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Sedici:
-
+content = """Giorno Sedici:
+ 
 Perché scrivo? Devo...
 non tanto perché debba
 esserci una
@@ -388,12 +382,10 @@ noi mentre i loro
 compagni dilaniavano
 Lysander, venendo verso
 di noi in torme."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień szesnasty:
-
+content = """Dzień szesnasty:
+ 
 Dlaczego piszę?
 Muszę... nie tyle
 dlatego, że musi
@@ -463,12 +455,10 @@ podczas gdy ich
 towarzysze rozdzierali
 Lysander; zbliżali się
 całymi chmarami."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Décimo sexto dia:
-
+content = """Décimo sexto dia:
+ 
 Por que escrevo?
 Preciso... não tanto
 porque deva haver algum
@@ -544,12 +534,10 @@ companheiros
 dilaceravam Lysander,
 vindo até nós em
 bandos."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día dieciséis:
-
+content = """Día dieciséis:
+ 
 ¿Por qué escribo? Debo
 hacerlo... no tanto
 porque tenga que quedar

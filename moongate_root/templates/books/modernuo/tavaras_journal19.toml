@@ -2,7 +2,7 @@ title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Nineteen - Day
 Twenty-One :
-
+ 
 The barricade won't
 hold - never, and
 they'll come, they
@@ -20,14 +20,14 @@ forgive me, but it
 
 must be done. I must
 end this."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den devatenáctý až
+content = """Den devatenáctý až
 jednadvacátý:
-
+ 
 Barikáda nevydrží –
 nikdy, a oni přijdou,
 přicházejí i nyní.
@@ -45,13 +45,11 @@ odpustí, ale
 
 musí se to stát. Musím
 to ukončit."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Du dix-neuvième au vingt
+content = """Du dix-neuvième au vingt
 et unième jour :
-
+ 
 La barricade ne tiendra
 pas, jamais, et ils
 viendront, ils arrivent
@@ -72,13 +70,11 @@ mais cela
 
 doit être fait. Je dois
 y mettre fin."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Neunzehnter bis
+content = """Neunzehnter bis
 einundzwanzigster Tag:
-
+ 
 Die Barrikade wird nicht
 halten – niemals, und
 sie werden kommen, sie
@@ -99,13 +95,11 @@ doch es
 
 muss geschehen. Ich muss
 dem ein Ende setzen."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Diciannove -
+content = """Giorno Diciannove -
 Giorno Ventuno :
-
+ 
 La barricata non
 reggerà: mai, e
 verranno, vengono già
@@ -125,14 +119,12 @@ perdonino, ma
 bisogna farlo. Devo
 porre fine a tutto
 questo."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień dziewiętnasty —
+content = """Dzień dziewiętnasty —
 dzień dwudziesty
 pierwszy:
-
+ 
 Barykada nie wytrzyma —
 nigdy, a oni przyjdą,
 przychodzą nawet teraz.
@@ -150,13 +142,11 @@ wybaczą, ale to
 
 musi być zrobione. Muszę
 to zakończyć."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Décimo nono dia -
+content = """Décimo nono dia -
 Vigésimo primeiro dia:
-
+ 
 A barricada não vai
 resistir, jamais, e eles
 virão, vêm mesmo agora.
@@ -175,13 +165,11 @@ perdoem, mas isso
 
 precisa ser feito.
 Preciso pôr fim a isso."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día diecinueve - Día
+content = """Día diecinueve - Día
 veintiuno:
-
+ 
 La barricada no
 aguantará, nunca, y
 llegarán; ya están

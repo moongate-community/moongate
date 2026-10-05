@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Books;
+using Moongate.Server.Ultima.Packets.Books;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Services.Internal.Books;
 using Serilog;
@@ -36,12 +37,14 @@ public sealed class BookDocumentService : IBookDocumentService
     private readonly IBookAttachmentService? _claims;
     private readonly ILocalizationService? _messages;
     private readonly ISpeechService? _speech;
+    private readonly IPacketSendService? _sender;
     private readonly ILogger _logger = Log.ForContext<BookDocumentService>();
 
     public BookDocumentService(IBookTemplateService templates, BookContextFactory contexts, IItemService items, IMobileService mobiles,
         IItemHandlingService handling, IItemTemplateService itemTemplates, ISessionService sessions, IBankService bank,
-        IGumpService gumps, IGameLoopService loop, Lazy<IScriptEngine> scripts, LocalizationConfig localization, IBookAttachmentPreparationService? attachments = null, IInventoryMutationGuard? inventory = null, IBookAttachmentService? claims = null, ILocalizationService? messages = null, ISpeechService? speech = null)
+        IGumpService gumps, IGameLoopService loop, Lazy<IScriptEngine> scripts, LocalizationConfig localization, IBookAttachmentPreparationService? attachments = null, IInventoryMutationGuard? inventory = null, IBookAttachmentService? claims = null, ILocalizationService? messages = null, ISpeechService? speech = null, IPacketSendService? sender = null)
     {
+        _sender = sender;
         _claims = claims;
         _messages = messages;
         _speech = speech;
@@ -132,6 +135,12 @@ public sealed class BookDocumentService : IBookDocumentService
             return false;
         }
 
+        // A book opens the client's own book; anything else the parchment.
+        if (IsBook(item))
+        {
+            return OpenBook(session, item);
+        }
+
         if (!TryBuild(session, reader, item, out _))
         {
             return false;
@@ -143,6 +152,44 @@ public sealed class BookDocumentService : IBookDocumentService
         }
 
         return OpenNow(session, reader, item);
+    }
+
+    private bool IsBook(ItemEntity item)
+    {
+        return _itemTemplates.TryGet(item.TemplateId, out var template) && template.ScriptId == BookTextValidation.BookScript;
+    }
+
+    // The cover (0xD4), then every page (0x66): the client asks for nothing more.
+    private bool OpenBook(GameSession session, ItemEntity item)
+    {
+        if (_sender is null || item.GetProp<string?>("book.content") is not { } content)
+        {
+            return false;
+        }
+
+        BookPagesPacket pages;
+
+        try
+        {
+            if (!BookPagination.TryPaginate(content, out var paginated))
+            {
+                _logger.Warning("Cannot open book item {Item}: its text needs more than {Pages} pages", item.Id, BookPagination.MaxPages);
+
+                return false;
+            }
+
+            pages = new(item.Id, paginated);
+        }
+        catch (ArgumentException)
+        {
+            _logger.Warning("Cannot open book item {Item}: its pages do not fit one packet", item.Id);
+
+            return false;
+        }
+
+        var header = new BookHeaderPacket(item.Id, pages.PageCount, item.GetProp("book.title", item.Name ?? ""), item.GetProp("book.author", ""));
+
+        return _sender.TrySend(session.SessionId, header) && _sender.TrySend(session.SessionId, pages);
     }
 
     private bool OpenNow(GameSession session, MobileEntity reader, ItemEntity item)

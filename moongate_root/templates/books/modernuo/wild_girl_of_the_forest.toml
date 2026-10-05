@@ -141,12 +141,12 @@ honor, unknowingly
 struck down by the
 orc that she called
 father."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Divoká dívka z lesa"
-content = """
-    Říkala, že se
+content = """    Říkala, že se
 jmenuje Leyla, a vlasy
 měla divoce propletené
 popínavými rostlinami a
@@ -279,11 +279,9 @@ vzpomínané milé,
 nevědomky sražen
 skřetem, kterému ona
 říkala otče."""
-
 [translations.fre]
 title = "La fille sauvage de la forêt"
-content = """
-    Elle s’appelait
+content = """    Elle s’appelait
 Leyla, disait-elle, et
 ses cheveux étaient
 sauvagement tressés de
@@ -439,11 +437,9 @@ le souvenir, abattu
 sans le savoir par
 l’orque qu’elle
 appelait père."""
-
 [translations.ger]
 title = "Das wilde Mädchen des Waldes"
-content = """
-    Ihr Name sei Leyla,
+content = """    Ihr Name sei Leyla,
 sagte sie, und ihr Haar
 war wild mit
 Schlingpflanzen und
@@ -604,11 +600,9 @@ verteidigen,
 unwissentlich von dem
 Ork niedergestreckt,
 den sie Vater nannte."""
-
 [translations.ita]
 title = "La ragazza selvaggia della foresta"
-content = """
-    Si chiamava Leyla,
+content = """    Si chiamava Leyla,
 disse, e i suoi capelli
 erano intrecciati
 selvaggiamente con
@@ -756,11 +750,9 @@ della dama ricordata,
 inconsapevolmente
 abbattuto dall'orco che
 lei chiamava padre."""
-
 [translations.pol]
 title = "Dzika dziewczyna z lasu"
-content = """
-    Powiedziała, że ma
+content = """    Powiedziała, że ma
 na imię Leyla, a włosy
 miała dziko splecione
 pnączami i cierniami.
@@ -899,11 +891,9 @@ zapamiętanej damy,
 nieświadomie powalony
 przez orka, którego ona
 nazywała ojcem."""
-
 [translations.por]
 title = "A menina selvagem da floresta"
-content = """
-    Seu nome era Leyla,
+content = """    Seu nome era Leyla,
 disse ela, e seus
 cabelos estavam
 trançados de forma
@@ -1051,11 +1041,9 @@ sua dama lembrada, sem
 saber que fora abatido
 pelo orc que ela
 chamava de pai."""
-
 [translations.spa]
 title = "La muchacha salvaje del bosque"
-content = """
-    Se llamaba Leyla,
+content = """    Se llamaba Leyla,
 dijo, y su pelo estaba
 trenzado de manera
 salvaje con enredaderas

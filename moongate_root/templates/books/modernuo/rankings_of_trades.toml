@@ -75,12 +75,12 @@ those who have
 shown extreme
 mastery of their
 craft recently."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Hodnosti v řemeslech"
-content = """
-Ačkoli je pravda, že v
+content = """Ačkoli je pravda, že v
 každém řemesle nacházíme
 odlišné tituly a
 vyznamenání udělované
@@ -144,11 +144,9 @@ těm, kteří
 v poslední době
 prokázali mimořádné
 ovládnutí svého řemesla."""
-
 [translations.fre]
 title = "Les grades des métiers"
-content = """
-S’il est vrai que, dans
+content = """S’il est vrai que, dans
 chaque métier, l’on
 trouve différents titres
 et distinctions accordés
@@ -221,11 +219,9 @@ ceux qui ont
 récemment montré une
 maîtrise extrême de leur
 métier."""
-
 [translations.ger]
 title = "Die Rangstufen der Gewerbe"
-content = """
-Zwar findet man in jedem
+content = """Zwar findet man in jedem
 Gewerbe unterschiedliche
 Titel und Ehrungen, die
 den Mitgliedern einer
@@ -303,11 +299,9 @@ außerordentliche
 Beherrschung ihres
 Handwerks bewiesen
 haben."""
-
 [translations.ita]
 title = "I gradi dei mestieri"
-content = """
-Sebbene sia vero che
+content = """Sebbene sia vero che
 all'interno di ciascun
 mestiere si trovano
 diversi titoli e
@@ -379,11 +373,9 @@ coloro che hanno
 mostrato di recente una
 padronanza estrema del
 proprio mestiere."""
-
 [translations.pol]
 title = "Stopnie zawodowe"
-content = """
-Choć prawdą jest, że w
+content = """Choć prawdą jest, że w
 każdym zawodzie spotyka
 się różne tytuły i
 wyróżnienia nadawane
@@ -451,11 +443,9 @@ języku tym, którzy
 ostatnio wykazali
 wyjątkowe mistrzostwo w
 swym rzemiośle."""
-
 [translations.por]
 title = "As graduações dos ofícios"
-content = """
-Embora seja verdade que,
+content = """Embora seja verdade que,
 dentro de cada ofício,
 encontram-se títulos e
 honrarias diferentes
@@ -528,11 +518,9 @@ demonstraram
 recentemente um domínio
 extraordinário de seu
 ofício."""
-
 [translations.spa]
 title = "Los rangos de los oficios"
-content = """
-Si bien es cierto que en
+content = """Si bien es cierto que en
 cada oficio encontramos
 distintos títulos y
 honores concedidos a los

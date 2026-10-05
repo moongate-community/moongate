@@ -12,7 +12,7 @@ Britannia and nearby
 nations. For each
 trade or guild, their
 blazon is given.
-
+ 
   Armourer's Guild.
 Gold bar above black
 bar.
@@ -20,24 +20,24 @@ bar.
   Association of
 Warriors. Blue cross
 on a red field.
-
+ 
   Barters' Guild.
 Green and white
 stripes, diagonal.
 
   Blacksmith's Guild.
 Gold alongside black.
-
+ 
   Federation of
 Rogues and Beggars.
 Red above black.
-
+ 
   Fighters and
 
 Footmen. Blue
 horzontal bar on red
 field.
-
+ 
   Guild of Archers.
 A gold swath parting
 red and blue.
@@ -46,41 +46,41 @@ red and blue.
 Armaments. Swath of
 gold on black field,
 gold accents.
-
+ 
   Guild of Assassins.
 Black and red
 quartered.
 
-
+ 
   Guild of Barbers.
 Red and white
 stripes.
-
+ 
   Guild of Cavalry and
 Horse. Vertical blue
 on a red field.
 
-
+ 
   Guild of
 Fishermen. Blue and
 white, quartered.
-
+ 
   Guild of Mages.
 Purple and blue, in a
 crossed pennant
 
 pattern.
-
+ 
   Guild of
 Provisioners. White
 bar above green bar.
-
+ 
   Guild of Sorcery. A
 field divided
 
 diagonally in blue and
 purple.
-
+ 
   Healers Guild. Gold
 swath dividing green
 from purple, gold
@@ -90,32 +90,32 @@ accents.
 Healers of Virtue.
 Golden ankh on dark
 green.
-
+ 
   Masters of Illusion.
 Blue and purple
 checkers.
 
-
+ 
   Merchants' Guild.
 Gold coins on green
 field.
-
+ 
   Mining Cooperative.
 A gold cross,
 quartering blue and
 
 black.
-
+ 
   Order of Engineers.
 Purple, gold, and blue
 vertical.
-
+ 
   Sailors' Maritime
 Association. A white
 
 bar centered on a blue
 field.
-
+ 
   Seamen's Chapter.
 Blue and white in a
 crossed pennant
@@ -126,39 +126,39 @@ Chefs. White and red
 diagonal fields
 checker on green
 field.
-
+ 
   Society of
 Shipwrights. White
 
 diagonal above blue.
-
+ 
   Society of Thieves.
 Black and red diagonal
 stripes.
-
+ 
   Society of
 Weaponsmakers. Gold
 
 diagonal above black.
-
+ 
   Tailor's Hall. Purple
 above gold above red.
-
+ 
   The Bardic
 Collegium. Purple and
 red checkers on gold
 
 field.
-
+ 
   Traders' Guild.
 White bar centered
 down green field."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Beltranův průvodce cechy"
-content = """
-Tato příručka má
+content = """Tato příručka má
 sloužit pouze jako
 zdroj informací těm,
 kdo se zajímají o celý
@@ -170,7 +170,7 @@ Britannia a sousedních
 zemích. U každého
 řemesla či cechu je
 uveden popis znaku.
-
+ 
 Cech platnéřů.
 Zlaté břevno nad černým
 břevnem.
@@ -178,24 +178,24 @@ břevnem.
 Sdružení válečníků.
 Modrý kříž v červeném
 poli.
-
+ 
 Cech směnárníků.
 Zelené a bílé šikmé
 pruhy.
 
 Cech kovářů.
 Zlatá vedle černé.
-
+ 
 Federace darebáků a
 žebráků.
 Červená nad černou.
-
+ 
 Bojovníci a
 
 pěšáci.
 Modré vodorovné břevno
 v červeném poli.
-
+ 
 Cech lučištníků.
 Zlatý pruh dělící
 červenou a modrou.
@@ -203,39 +203,39 @@ Zlatý pruh dělící
 Cech výzbroje.
 Zlatý pruh v černém
 poli, zlaté ozdoby.
-
+ 
 Cech vrahů.
 Černá a červená,
 čtvrceno.
 
-
+ 
 Cech lazebníků.
 Červené a bílé pruhy.
-
+ 
 Cech jízdy a koní.
 Svislá modrá v červeném
 poli.
 
-
+ 
 Cech rybářů.
 Modrá a bílá, čtvrceno.
-
+ 
 Cech mágů.
 Fialová a modrá ve
 zkříženém praporcovém
 
 vzoru.
-
+ 
 Cech zásobovatelů.
 Bílé břevno nad zeleným
 břevnem.
-
+ 
 Cech čarodějnictví.
 Pole dělené
 
 šikmo modrou a
 fialovou.
-
+ 
 Cech léčitelů.
 Zlatý pruh dělící
 zelenou od fialové,
@@ -245,33 +245,33 @@ Léčitelé ctnosti Lord
 British.
 Zlatý ankh na tmavě
 zelené.
-
+ 
 Mistři iluzí.
 Modrá a fialová
 šachovnice.
 
-
+ 
 Cech obchodníků.
 Zlaté mince v zeleném
 poli.
-
+ 
 Hornické družstvo.
 Zlatý kříž čtvrtící
 modrou a
 
 černou.
-
+ 
 Řád inženýrů.
 Svisle fialová, zlatá a
 modrá.
-
+ 
 Námořní sdružení
 plavců.
 Bílé
 
 břevno uprostřed
 modrého pole.
-
+ 
 Kapitula námořníků.
 Modrá a bílá ve vzoru
 zkřížených praporců.
@@ -281,40 +281,38 @@ Spolek kuchařů a
 Bílá a červená šikmá
 pole tvořící šachovnici
 v zeleném poli.
-
+ 
 Spolek stavitelů lodí.
 Bílá
 
 šikmo nad modrou.
-
+ 
 Spolek zlodějů.
 Černé a červené šikmé
 pruhy.
-
+ 
 Spolek výrobců zbraní.
 Zlatá
 
 šikmo nad černou.
-
+ 
 Krejčovská síň.
 Fialová nad zlatou nad
 červenou.
-
+ 
 Bardské kolegium.
 Fialová a červená
 šachovnice ve zlatém
 
 poli.
-
+ 
 Cech kupců.
 Bílé břevno svisle
 uprostřed zeleného
 pole."""
-
 [translations.fre]
 title = "Le guide des guildes de Beltran"
-content = """
-Cet ouvrage de
+content = """Cet ouvrage de
 référence est
 simplement destiné à
 servir de ressource à
@@ -328,7 +326,7 @@ nations voisines. Pour
 chaque métier ou
 guilde, son blason est
 indiqué.
-
+ 
 Guilde des Armuriers.
 Barre d’or au-dessus
 d’une barre noire.
@@ -336,24 +334,24 @@ d’une barre noire.
 Association des
 Guerriers. Croix bleue
 sur fond rouge.
-
+ 
 Guilde des Troqueurs.
 Bandes diagonales
 vertes et blanches.
 
 Guilde des Forgerons.
 Or à côté de noir.
-
+ 
 Fédération des Fripons
 et des Mendiants. Rouge
 au-dessus de noir.
-
+ 
 Combattants et
 
 Fantassins. Barre
 horizontale bleue sur
 fond rouge.
-
+ 
 Guilde des Archers.
 Bande d’or séparant le
 rouge du bleu.
@@ -361,41 +359,41 @@ rouge du bleu.
 Guilde de l’Armement.
 Bande d’or sur fond
 noir, ornements d’or.
-
+ 
 Guilde des Assassins.
 Écartelé noir et rouge.
 
-
+ 
 Guilde des Barbiers.
 Bandes rouges et
 blanches.
-
+ 
 Guilde de la Cavalerie
 et du Cheval. Bleu
 vertical sur fond
 rouge.
 
-
+ 
 Guilde des Pêcheurs.
 Écartelé bleu et blanc.
-
+ 
 Guilde des Mages.
 Violet et bleu, selon
 un motif de fanions
 
 croisés.
-
+ 
 Guilde des Pourvoyeurs.
 Barre blanche au-dessus
 d’une barre verte.
-
+ 
 Guilde de la
 Sorcellerie. Un champ
 divisé
 
 diagonalement en bleu
 et violet.
-
+ 
 Guilde des Guérisseurs.
 Bande d’or séparant le
 vert du violet,
@@ -404,32 +402,32 @@ ornements d’or.
 Guérisseurs de la Vertu
 de Lord British. Ankh
 d’or sur vert sombre.
-
+ 
 Maîtres de l’Illusion.
 Damier bleu et violet.
 
-
+ 
 Guilde des Marchands.
 Pièces d’or sur fond
 vert.
-
+ 
 Coopérative Minière.
 Une croix d’or
 écartelant le bleu et
 le
 
 noir.
-
+ 
 Ordre des Ingénieurs.
 Violet, or et bleu
 verticaux.
-
+ 
 Association Maritime
 des Marins. Une barre
 
 blanche au centre d’un
 fond bleu.
-
+ 
 Chapitre des Gens de
 Mer. Bleu et blanc
 selon un motif de
@@ -440,43 +438,41 @@ et des Chefs. Champs
 diagonaux blancs et
 rouges en damier sur
 fond vert.
-
+ 
 Société des
 Charpentiers de Marine.
 Blanc
 
 diagonal au-dessus de
 bleu.
-
+ 
 Société des Voleurs.
 Bandes diagonales
 noires et rouges.
-
+ 
 Société des Fabricants
 d’Armes. Or
 
 diagonal au-dessus de
 noir.
-
+ 
 Maison des Tailleurs.
 Violet au-dessus d’or,
 au-dessus de rouge.
-
+ 
 Collège des Bardes.
 Damier violet et rouge
 sur fond
 
 d’or.
-
+ 
 Guilde des Négociants.
 Barre blanche verticale
 au centre d’un fond
 vert."""
-
 [translations.ger]
 title = "Beltrans Gildenführer"
-content = """
-Dieses Nachschlagewerk
+content = """Dieses Nachschlagewerk
 soll lediglich jenen
 als Quelle dienen, die
 sich für das gesamte
@@ -491,7 +487,7 @@ jedem Gewerbe oder
 jeder Gilde wird die
 Wappenbeschreibung
 angegeben.
-
+ 
 Gilde der
 Rüstungsmacher.
 Goldener Balken über
@@ -500,7 +496,7 @@ schwarzem Balken.
 Vereinigung der
 Krieger. Blaues Kreuz
 auf rotem Feld.
-
+ 
 Gilde der
 Tauschhändler. Grüne
 und weiße
@@ -508,17 +504,17 @@ Schrägstreifen.
 
 Gilde der Schmiede.
 Gold neben Schwarz.
-
+ 
 Bund der Schurken und
 Bettler. Rot über
 Schwarz.
-
+ 
 Kämpfer und
 
 Fußsoldaten. Blauer
 Querbalken auf rotem
 Feld.
-
+ 
 Gilde der
 Bogenschützen. Goldener
 Streifen, der Rot und
@@ -528,40 +524,40 @@ Gilde der Bewaffnung.
 Goldener Streifen auf
 schwarzem Feld, goldene
 Verzierungen.
-
+ 
 Gilde der
 Meuchelmörder. Schwarz
 und Rot geviert.
 
-
+ 
 Gilde der Barbiere.
 Rote und weiße
 Streifen.
-
+ 
 Gilde der Reiterei und
 der Pferde. Senkrechtes
 Blau auf rotem Feld.
 
-
+ 
 Gilde der Fischer. Blau
 und Weiß geviert.
-
+ 
 Gilde der Magier.
 Purpur und Blau im
 Muster gekreuzter
 Wimpel
 
 angeordnet.
-
+ 
 Gilde der Versorger.
 Weißer Balken über
 grünem Balken.
-
+ 
 Gilde der Zauberei. Ein
 Feld, schräg geteilt
 
 in Blau und Purpur.
-
+ 
 Gilde der Heiler.
 Goldener Streifen, der
 Grün von Purpur trennt,
@@ -570,33 +566,33 @@ goldene Verzierungen.
 Lord Britishs Heiler
 der Tugend. Goldenes
 Ankh auf Dunkelgrün.
-
+ 
 Meister der Illusion.
 Blau und Purpur
 geschacht.
 
-
+ 
 Gilde der Kaufleute.
 Goldmünzen auf grünem
 Feld.
-
+ 
 Bergbaugenossenschaft.
 Ein goldenes Kreuz, das
 Blau und
 
 Schwarz viertelt.
-
+ 
 Orden der Ingenieure.
 Purpur, Gold und Blau
 senkrecht.
-
+ 
 Seefahrtsvereinigung
 der Matrosen. Ein
 weißer
 
 Balken mittig auf
 blauem Feld.
-
+ 
 Kapitelsverband der
 Seeleute. Blau und Weiß
 im Muster gekreuzter
@@ -607,39 +603,37 @@ und Küchenmeister.
 Weiße und rote schräge
 Felder, geschacht auf
 grünem Feld.
-
+ 
 Gesellschaft der
 Schiffbauer. Weiß
 
 schräg über Blau.
-
+ 
 Gesellschaft der Diebe.
 Schwarze und rote
 Schrägstreifen.
-
+ 
 Gesellschaft der
 Waffenmacher. Gold
 
 schräg über Schwarz.
-
+ 
 Halle der Schneider.
 Purpur über Gold über
 Rot.
-
+ 
 Das Bardenkollegium.
 Purpur und Rot
 geschacht auf goldenem
 
 Feld.
-
+ 
 Gilde der Händler.
 Weißer Balken mittig
 auf grünem Feld."""
-
 [translations.ita]
 title = "La guida alle gilde di Beltran"
-content = """
-Quest'opera di
+content = """Quest'opera di
 consultazione è
 destinata semplicemente
 a servire da risorsa
@@ -653,7 +647,7 @@ vicine
 nazioni. Per ciascun
 mestiere o gilda ne è
 indicato lo stemma.
-
+ 
 Gilda degli Armaioli.
 Banda d'oro sopra banda
 nera.
@@ -662,25 +656,25 @@ Associazione dei
 Guerrieri.
 Croce blu in campo
 rosso.
-
+ 
 Gilda dei Barattatori.
 Strisce verdi e
 bianche, diagonali.
 
 Gilda dei Fabbri.
 Oro affiancato al nero.
-
+ 
 Federazione dei
 Furfanti e dei
 Mendicanti.
 Rosso sopra nero.
-
+ 
 Combattenti e
 
 Fanti.
 Banda blu orizzontale
 in campo rosso.
-
+ 
 Gilda degli Arcieri.
 Una fascia d'oro che
 separa rosso e blu.
@@ -688,43 +682,43 @@ separa rosso e blu.
 Gilda degli Armamenti.
 Fascia d'oro in campo
 nero, dettagli dorati.
-
+ 
 Gilda degli Assassini.
 Nero e rosso
 inquartati.
 
-
+ 
 Gilda dei Barbieri.
 Strisce rosse e
 bianche.
-
+ 
 Gilda della Cavalleria
 e dei Cavalli.
 Blu verticale in campo
 rosso.
 
-
+ 
 Gilda dei Pescatori.
 Blu e bianco,
 inquartati.
-
+ 
 Gilda dei Maghi.
 Viola e blu, in un
 motivo di pennoni
 
 incrociati.
-
+ 
 Gilda dei Fornitori.
 Banda bianca sopra
 banda verde.
-
+ 
 Gilda della
 Stregoneria.
 Un campo diviso
 
 diagonalmente in blu e
 viola.
-
+ 
 Gilda dei Guaritori.
 Fascia d'oro che divide
 verde e viola, dettagli
@@ -734,32 +728,32 @@ Guaritori della Virtù
 di Lord British.
 Ankh dorato su verde
 scuro.
-
+ 
 Maestri dell'Illusione.
 Scacchi blu e viola.
 
-
+ 
 Gilda dei Mercanti.
 Monete d'oro in campo
 verde.
-
+ 
 Cooperativa Mineraria.
 Una croce d'oro che
 inquarta blu e
 
 nero.
-
+ 
 Ordine degli Ingegneri.
 Viola, oro e blu
 verticali.
-
+ 
 Associazione Marittima
 dei Marinai.
 Una banda bianca
 
 al centro di un campo
 blu.
-
+ 
 Capitolo dei Naviganti.
 Blu e bianco in un
 motivo di pennoni
@@ -770,42 +764,40 @@ degli Chef.
 Campi diagonali bianchi
 e rossi a scacchi in
 campo verde.
-
+ 
 Società dei Maestri
 d'Ascia.
 Bianco
 
 diagonale sopra blu.
-
+ 
 Società dei Ladri.
 Strisce diagonali nere
 e rosse.
-
+ 
 Società dei Fabbricanti
 d'Armi.
 Oro
 
 diagonale sopra nero.
-
+ 
 Sala dei Sarti.
 Viola sopra oro sopra
 rosso.
-
+ 
 Il Collegio Bardico.
 Scacchi viola e rossi
 in campo
 
 d'oro.
-
+ 
 Gilda dei Commercianti.
 Banda bianca verticale
 al centro di un campo
 verde."""
-
 [translations.pol]
 title = "Przewodnik Beltran po gildiach"
-content = """
-Niniejszy podręcznik ma
+content = """Niniejszy podręcznik ma
 jedynie służyć jako
 źródło wiedzy dla
 ciekawych pełnego
@@ -817,7 +809,7 @@ Britannia i sąsiednich
 krajach. Dla każdego
 zawodu lub gildii
 podano opis herbu.
-
+ 
 Gildia Płatnerzy. Złota
 belka nad czarną belką.
 
@@ -825,24 +817,24 @@ Stowarzyszenie
 Wojowników. Niebieski
 krzyż na czerwonym
 polu.
-
+ 
 Gildia Handlu
 Wymiennego. Zielone i
 białe pasy ukośne.
 
 Gildia Kowali. Złoto
 obok czerni.
-
+ 
 Federacja Łotrów i
 Żebraków. Czerwień nad
 czernią.
-
+ 
 Wojownicy i
 
 Piechurzy. Niebieska
 belka pozioma na
 czerwonym polu.
-
+ 
 Gildia Łuczników. Złoty
 pas rozdzielający
 czerwień i błękit.
@@ -850,40 +842,40 @@ czerwień i błękit.
 Gildia Uzbrojenia.
 Złoty pas na czarnym
 polu, złote dodatki.
-
+ 
 Gildia Zabójców. Czerń
 i czerwień w czterech
 ćwiartkach.
 
-
+ 
 Gildia Cyrulików.
 Czerwone i białe pasy.
-
+ 
 Gildia Kawalerii i
 Koni. Pionowy błękit na
 czerwonym polu.
 
-
+ 
 Gildia Rybaków. Błękit
 i biel w czterech
 ćwiartkach.
-
+ 
 Gildia Magów. Fiolet i
 błękit w układzie
 skrzyżowanych
 
 proporców.
-
+ 
 Gildia Dostawców. Biała
 belka nad zieloną
 belką.
-
+ 
 Gildia Czarodziejstwa.
 Pole podzielone
 
 ukośnie na błękit i
 fiolet.
-
+ 
 Gildia Uzdrowicieli.
 Złoty pas oddzielający
 zieleń od fioletu,
@@ -892,32 +884,32 @@ złote dodatki.
 Uzdrowiciele Cnoty Lord
 British. Złoty ankh na
 ciemnej zieleni.
-
+ 
 Mistrzowie Iluzji.
 Niebieska i fioletowa
 szachownica.
 
-
+ 
 Gildia Kupców. Złote
 monety na zielonym
 polu.
-
+ 
 Spółdzielnia Górnicza.
 Złoty krzyż dzielący na
 ćwiartki błękit i
 
 czerń.
-
+ 
 Zakon Inżynierów.
 Fiolet, złoto i błękit
 pionowo.
-
+ 
 Morskie Stowarzyszenie
 Żeglarzy. Biała
 
 belka pośrodku
 niebieskiego pola.
-
+ 
 Kapituła Marynarzy.
 Błękit i biel w
 układzie skrzyżowanych
@@ -928,38 +920,36 @@ Szefów Kuchni.
 Szachownica z białych i
 czerwonych pól ukośnych
 na zielonym polu.
-
+ 
 Towarzystwo Szkutników.
 Biała
 
 przekątna nad błękitem.
-
+ 
 Towarzystwo Złodziei.
 Czarne i czerwone pasy
 ukośne.
-
+ 
 Towarzystwo Wytwórców
 Broni. Złota
 
 przekątna nad czernią.
-
+ 
 Dom Krawców. Fiolet nad
 złotem nad czerwienią.
-
+ 
 Kolegium Bardów.
 Fioletowa i czerwona
 szachownica na złotym
 
 polu.
-
+ 
 Gildia Handlarzy. Biała
 belka biegnąca przez
 środek zielonego pola."""
-
 [translations.por]
 title = "Guia de guildas de Beltran"
-content = """
-Esta obra de referência
+content = """Esta obra de referência
 pretende apenas servir
 de recurso para os
 curiosos quanto à
@@ -972,7 +962,7 @@ nações vizinhas. Para
 cada ofício ou guilda,
 é apresentado seu
 brasão.
-
+ 
 Guilda dos Armeiros.
 Faixa dourada acima de
 faixa preta.
@@ -981,7 +971,7 @@ Associação dos
 Guerreiros.
 Cruz azul sobre campo
 vermelho.
-
+ 
 Guilda dos Negociantes
 de Escambo.
 Listras verdes e
@@ -990,18 +980,18 @@ brancas, diagonais.
 Guilda dos Ferreiros.
 Dourado ao lado de
 preto.
-
+ 
 Federação dos Malandros
 e Mendigos.
 Vermelho acima de
 preto.
-
+ 
 Combatentes e
 
 Soldados de Infantaria.
 Faixa horizontal azul
 sobre campo vermelho.
-
+ 
 Guilda dos Arqueiros.
 Uma banda dourada
 separando vermelho e
@@ -1011,42 +1001,42 @@ Guilda dos Armamentos.
 Banda dourada sobre
 campo preto, detalhes
 dourados.
-
+ 
 Guilda dos Assassinos.
 Preto e vermelho
 esquartelados.
 
-
+ 
 Guilda dos Barbeiros.
 Listras vermelhas e
 brancas.
-
+ 
 Guilda da Cavalaria e
 dos Cavalos.
 Azul vertical sobre
 campo vermelho.
 
-
+ 
 Guilda dos Pescadores.
 Azul e branco,
 esquartelados.
-
+ 
 Guilda dos Magos.
 Roxo e azul, num padrão
 de flâmulas
 
 cruzadas.
-
+ 
 Guilda dos Provedores.
 Faixa branca acima de
 faixa verde.
-
+ 
 Guilda da Feitiçaria.
 Um campo dividido
 
 diagonalmente em azul e
 roxo.
-
+ 
 Guilda dos Curandeiros.
 Banda dourada separando
 verde e roxo, detalhes
@@ -1056,33 +1046,33 @@ Curandeiros da Virtude
 de Lord British.
 Ankh dourado sobre
 verde-escuro.
-
+ 
 Mestres da Ilusão.
 Xadrez azul e roxo.
 
-
+ 
 Guilda dos Mercadores.
 Moedas de ouro sobre
 campo verde.
-
+ 
 Cooperativa de
 Mineração.
 Uma cruz dourada,
 esquartelando azul e
 
 preto.
-
+ 
 Ordem dos Engenheiros.
 Roxo, dourado e azul na
 vertical.
-
+ 
 Associação Marítima dos
 Marinheiros.
 Uma faixa branca
 
 centralizada sobre
 campo azul.
-
+ 
 Capítulo dos Marujos.
 Azul e branco num
 padrão de flâmulas
@@ -1094,45 +1084,43 @@ Campos diagonais
 brancos e vermelhos em
 xadrez sobre campo
 verde.
-
+ 
 Sociedade dos
 Construtores Navais.
 Branco
 
 na diagonal acima de
 azul.
-
+ 
 Sociedade dos Ladrões.
 Listras diagonais
 pretas e vermelhas.
-
+ 
 Sociedade dos
 Fabricantes de Armas.
 Dourado
 
 na diagonal acima de
 preto.
-
+ 
 Salão dos Alfaiates.
 Roxo acima de dourado
 acima de vermelho.
-
+ 
 O Colégio dos Bardos.
 Xadrez roxo e vermelho
 sobre campo
 
 dourado.
-
+ 
 Guilda dos
 Comerciantes.
 Faixa branca
 centralizada ao longo
 de campo verde."""
-
 [translations.spa]
 title = "Guía de gremios de Beltran"
-content = """
-Esta obra de referencia
+content = """Esta obra de referencia
 solo pretende servir de
 recurso a quienes
 sienten curiosidad por
@@ -1144,7 +1132,7 @@ y en las naciones
 cercanas. Para cada
 oficio o gremio se
 indica su blasón.
-
+ 
 Gremio de Armeros.
 Franja dorada sobre
 franja negra.
@@ -1152,24 +1140,24 @@ franja negra.
 Asociación de
 Guerreros. Cruz azul
 sobre campo rojo.
-
+ 
 Gremio de Trueque.
 Franjas verdes y
 blancas en diagonal.
 
 Gremio de Herreros.
 Dorado junto a negro.
-
+ 
 Federación de Pícaros y
 Mendigos. Rojo sobre
 negro.
-
+ 
 Combatientes y
 
 Soldados de Infantería.
 Franja azul horizontal
 sobre campo rojo.
-
+ 
 Gremio de Arqueros.
 Banda dorada que separa
 rojo y azul.
@@ -1178,41 +1166,41 @@ Gremio de Armamento.
 Banda dorada sobre
 campo negro, detalles
 dorados.
-
+ 
 Gremio de Asesinos.
 Negro y rojo
 cuartelados.
 
-
+ 
 Gremio de Barberos.
 Franjas rojas y
 blancas.
-
+ 
 Gremio de Caballería y
 Caballos. Azul vertical
 sobre campo rojo.
 
-
+ 
 Gremio de Pescadores.
 Azul y blanco
 cuartelados.
-
+ 
 Gremio de Magos.
 Púrpura y azul formando
 un patrón de banderines
 
 cruzados.
-
+ 
 Gremio de Proveedores.
 Franja blanca sobre
 franja verde.
-
+ 
 Gremio de Hechicería.
 Campo dividido
 
 diagonalmente en azul y
 púrpura.
-
+ 
 Gremio de Sanadores.
 Banda dorada que separa
 verde y púrpura,
@@ -1222,31 +1210,31 @@ Sanadores de la Virtud
 de Lord British. Ankh
 dorado sobre verde
 oscuro.
-
+ 
 Maestros de la Ilusión.
 Damero azul y púrpura.
 
-
+ 
 Gremio de Mercaderes.
 Monedas de oro sobre
 campo verde.
-
+ 
 Cooperativa Minera.
 Cruz dorada que
 cuartela azul y
 
 negro.
-
+ 
 Orden de Ingenieros.
 Púrpura, dorado y azul
 en vertical.
-
+ 
 Asociación Marítima de
 Navegantes. Franja
 
 blanca centrada sobre
 campo azul.
-
+ 
 Capítulo de Marineros.
 Azul y blanco formando
 un patrón de banderines
@@ -1257,32 +1245,32 @@ Chefs. Campos
 diagonales blancos y
 rojos en damero sobre
 campo verde.
-
+ 
 Sociedad de
 Constructores Navales.
 Blanco
 
 diagonal sobre azul.
-
+ 
 Sociedad de Ladrones.
 Franjas negras y rojas
 en diagonal.
-
+ 
 Sociedad de Fabricantes
 de Armas. Dorado
 
 diagonal sobre negro.
-
+ 
 Casa de los Sastres.
 Púrpura sobre dorado
 sobre rojo.
-
+ 
 El Colegio de Bardos.
 Damero púrpura y rojo
 sobre campo
 
 dorado.
-
+ 
 Gremio de Comerciantes.
 Franja blanca centrada
 a lo largo de campo

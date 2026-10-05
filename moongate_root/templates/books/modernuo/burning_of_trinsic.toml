@@ -204,12 +204,12 @@ of our fair citizens.
     - Japheth, Paladin
 Guildmaster of the
 City of Trinsic"""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
 [translations.cze]
 title = "Vypálení Trinsic"
-content = """
-    Byla to nádherná
+content = """    Byla to nádherná
 podívaná, když za
 jarního rána sluneční
 světlo lehce dopadalo
@@ -400,11 +400,9 @@ občanů.
     – Japheth, mistr
 cechu paladinů města
 Trinsic"""
-
 [translations.fre]
 title = "L’incendie de Trinsic"
-content = """
-    Quel spectacle que
+content = """    Quel spectacle que
 le soleil effleurant
 les murailles de grès
 de Trinsic par un matin
@@ -621,11 +619,9 @@ nos bons citoyens. —
 Japheth, maître de la
 guilde des Paladins de
 la ville de Trinsic"""
-
 [translations.ger]
 title = "Der Brand von Trinsic"
-content = """
-    Es war ein schöner
+content = """    Es war ein schöner
 Anblick, wie das
 Sonnenlicht an einem
 Frühlingsmorgen sanft
@@ -839,11 +835,9 @@ heimsuchen.
 Gildenmeister der
 Paladine der Stadt
 Trinsic"""
-
 [translations.ita]
 title = "L’incendio di Trinsic"
-content = """
-    Era uno spettacolo
+content = """    Era uno spettacolo
 da vedere, il sole che
 cadeva lieve sulle mura
 di arenaria di Trinsic
@@ -1061,11 +1055,9 @@ cittadini.
 della Gilda dei
 Paladini della Città di
 Trinsic"""
-
 [translations.pol]
 title = "Spalenie Trinsic"
-content = """
-    Był to widok godny
+content = """    Był to widok godny
 ujrzenia: słoneczne
 światło padające
 łagodnie na mury
@@ -1264,11 +1256,9 @@ obywateli.
     — Japheth, mistrz
 Gildii Paladynów miasta
 Trinsic"""
-
 [translations.por]
 title = "O incêndio de Trinsic"
-content = """
-    Era um espetáculo
+content = """    Era um espetáculo
 digno de se ver, a luz
 do sol pousando
 suavemente sobre as
@@ -1476,11 +1466,9 @@ cidadãos.
     - Japheth, mestre
 da Guilda dos Paladinos
 da Cidade de Trinsic"""
-
 [translations.spa]
 title = "El incendio de Trinsic"
-content = """
-    Era un espectáculo
+content = """    Era un espectáculo
 digno de verse: la luz
 del sol posándose
 suavemente sobre las

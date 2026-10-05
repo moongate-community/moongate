@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Seven:
-
+ 
 T'was written that,
 upon his death, Khal
 Ankur's followers,
@@ -52,13 +52,13 @@ did not press the
 issue, as I suddenly
 felt foolish even at
 my askance."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den sedmý:
-
+content = """Den sedmý:
+ 
 Bylo psáno, že po smrti
 Khal Ankur se jeho
 stoupenci, známí jako
@@ -102,12 +102,10 @@ slyšet. Nenaléhala jsem,
 protože mi náhle
 připadala pošetilá už
 samotná moje otázka."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Septième jour :
-
+content = """Septième jour :
+ 
 Il était écrit qu’à sa
 mort, les fidèles de Khal
 Ankur, ceux que l’on
@@ -161,12 +159,10 @@ insisté, car je me suis
 soudain sentie ridicule
 d’avoir seulement posé la
 question."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Siebter Tag:
-
+content = """Siebter Tag:
+ 
 Es stand geschrieben,
 dass nach Khal Ankurs Tod
 seine Anhänger, die als
@@ -219,12 +215,10 @@ darauf, da ich mich
 plötzlich schon wegen
 meiner Frage töricht
 fühlte."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Sette:
-
+content = """Giorno Sette:
+ 
 È scritto che, alla morte
 di Khal Ankur, i suoi
 seguaci, quelli noti come
@@ -272,12 +266,10 @@ Non ho insistito, poiché
 d'un tratto mi sono
 sentita sciocca anche
 solo per averlo chiesto."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień siódmy:
-
+content = """Dzień siódmy:
+ 
 Napisano, że po śmierci
 Khal Ankur jego wyznawcy,
 zwani Strażnikami Siódmej
@@ -319,12 +311,10 @@ o tym słyszeć. Nie
 nalegałam, bo nagle
 poczułam się głupio już
 od samego pytania."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Sétimo dia:
-
+content = """Sétimo dia:
+ 
 Estava escrito que, após
 sua morte, os seguidores
 de Khal Ankur, conhecidos
@@ -373,12 +363,10 @@ quis saber. Não insisti
 no assunto, pois de
 repente me senti tola até
 por ter perguntado."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día siete:
-
+content = """Día siete:
+ 
 Se escribió que, a su
 muerte, los seguidores de
 Khal Ankur, conocidos

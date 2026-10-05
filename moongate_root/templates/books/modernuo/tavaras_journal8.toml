@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Eight :
-
+ 
 Astounding progress
 was made today, and
 my very head spins
@@ -68,13 +68,13 @@ count him as a friend,
 and am thankful for
 his laughter as well
 as his strength."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Deník: Objevení hrobky"
-content = """
-Den osmý:
-
+content = """Den osmý:
+ 
 Dnes jsme učinili
 ohromující pokrok a
 samým vzrušením se mi
@@ -139,12 +139,10 @@ nyní mohu považovat za
 přítele, a jsem vděčná
 za jeho smích stejně
 jako za jeho sílu."""
-
 [translations.fre]
 title = "Journal : découverte du tombeau"
-content = """
-Huitième jour :
-
+content = """Huitième jour :
+ 
 Des progrès stupéfiants
 ont été accomplis
 aujourd’hui, et ma tête
@@ -218,12 +216,10 @@ parmi mes amis, et je
 suis reconnaissante de
 son rire autant que de
 sa force."""
-
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
-content = """
-Achter Tag:
-
+content = """Achter Tag:
+ 
 Heute wurden
 erstaunliche
 Fortschritte gemacht,
@@ -302,12 +298,10 @@ nun zu meinen Freunden
 zu zählen, und dankbar
 für sein Lachen ebenso
 wie für seine Stärke."""
-
 [translations.ita]
 title = "Diario: scoperta della Tomba"
-content = """
-Giorno Otto :
-
+content = """Giorno Otto :
+ 
 Oggi sono stati fatti
 progressi stupefacenti,
 e mi gira la testa per
@@ -379,12 +373,10 @@ considerarlo ora un
 amico e sono grata per
 le sue risate così come
 per la sua forza."""
-
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
-content = """
-Dzień ósmy:
-
+content = """Dzień ósmy:
+ 
 Dokonaliśmy dziś
 zdumiewających postępów
 i głowa kręci mi się z
@@ -449,12 +441,10 @@ ja. Z dumą zaliczam go
 teraz do przyjaciół i
 jestem wdzięczna za
 jego śmiech oraz siłę."""
-
 [translations.por]
 title = "Diário: descoberta da tumba"
-content = """
-Oitavo dia:
-
+content = """Oitavo dia:
+ 
 Fizemos um progresso
 espantoso hoje, e minha
 cabeça gira com a
@@ -527,12 +517,10 @@ agora considerá-lo um
 amigo e sou grata por
 suas risadas, assim
 como por sua força."""
-
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
-content = """
-Día ocho:
-
+content = """Día ocho:
+ 
 Hoy hemos realizado un
 progreso asombroso, y
 la emoción me hace dar

@@ -106,6 +106,65 @@ public sealed class BooksLoaderTests
         }
     }
 
+    [Fact]
+    public async Task LoadDataAsync_ItemId_IsTheGraphicOfTheItem_AndNoneWithoutIt()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/blue.toml", "item_id = 0x0FF2\n" + Valid);
+        root.CreateFile("templates/books/plain.toml", Valid);
+
+        var books = (await Loader(root).LoadDataAsync()).Entities;
+
+        Assert.Equal(0x0FF2, books.Single(book => book.Id == "blue").ItemId);
+        Assert.Null(books.Single(book => book.Id == "plain").ItemId);
+    }
+
+    [Theory]
+    [InlineData("item_id = 0\n", "")]
+    [InlineData("item_id = 0x10000\n", "")]
+    [InlineData("item_id = -1\n", "")]
+    // The graphic is the item's, whatever the language of its text.
+    [InlineData("", "\n[translations.ita]\ntitle = \"Benvenuto\"\nitem_id = 0x0FF2\n")]
+    public async Task LoadDataAsync_AnItemIdOutOfRange_OrInATranslation_FailsWithPath(string before, string after)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/bad.toml", before + Valid + after);
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Loader(root).LoadDataAsync());
+
+        Assert.Contains("books/bad.toml", error.Message);
+    }
+
+    // A book has no button to claim them with.
+    [Fact]
+    public async Task LoadDataAsync_AttachmentsOnABook_AreRefused_AndAllowedOnAScroll()
+    {
+        const string gift = "\n[[attachments]]\nitem_template = \"bread\"\n";
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/letter.toml", Valid + gift);
+        var items = new StubDataLoaderService().With(
+            new ItemTemplate { Id = "readable_scroll", Stackable = false, ScriptId = "readable_scroll" },
+            new ItemTemplate { Id = "readable_book", Stackable = false, ScriptId = "readable_book" },
+            new ItemTemplate { Id = "bread", Stackable = false });
+        var directories = new DirectoriesConfig(root.Path, ["templates"]);
+
+        Assert.Single((await new BooksLoader(directories, items).LoadDataAsync()).Entities);
+
+        root.CreateFile("templates/books/tome.toml", "item_template = \"readable_book\"\n" + Valid + gift);
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => new BooksLoader(directories, items).LoadDataAsync());
+
+        Assert.Contains("tome.toml", error.Message);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_ABookItem_IsAReadableItem()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/tome.toml", Valid);
+
+        Assert.Single((await Loader(root, script: "readable_book").LoadDataAsync()).Entities);
+    }
+
     private static BooksLoader Loader(TemporaryDirectory root, bool stackable = false, string script = "readable_scroll")
     {
         return new(new DirectoriesConfig(root.Path, ["templates"]),

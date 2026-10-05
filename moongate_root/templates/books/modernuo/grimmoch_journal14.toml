@@ -2,7 +2,7 @@ title = "The daily journal of Grimmoch Drummel"
 author = "Grimmoch"
 content = """Day Fourteen - Day
 Sixteen :
-
+ 
 We are lost... we are
 lost... all is lost.  The
 dead are piled up at
@@ -43,14 +43,14 @@ we could, before the
 undead legions struck
 again.  I cannot go on...
 I cannot go on."""
-item_template = "readable_scroll"
-
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
 [translations.cze]
 title = "Denní zápisky Grimmoch Drummel"
-content = """
-Den čtrnáctý až
+content = """Den čtrnáctý až
 šestnáctý:
-
+ 
 Jsme ztraceni... jsme
 ztraceni... vše je
 ztraceno. Mrtví se kupí u
@@ -89,13 +89,11 @@ pohřbít mohli, než
 nemrtvé legie znovu
 udeřily. Nemohu dál...
 nemohu dál."""
-
 [translations.fre]
 title = "Le journal quotidien de Grimmoch Drummel"
-content = """
-Du quatorzième au
+content = """Du quatorzième au
 seizième jour :
-
+ 
 Nous sommes perdus...
 nous sommes perdus...
 tout est perdu. Les morts
@@ -142,13 +140,11 @@ morts-vivants frappent de
 nouveau. Je ne peux
 continuer... je ne peux
 continuer."""
-
 [translations.ger]
 title = "Grimmoch Drummels tägliches Tagebuch"
-content = """
-Vierzehnter bis
+content = """Vierzehnter bis
 sechzehnter Tag:
-
+ 
 Wir sind verloren ... wir
 sind verloren ... alles
 ist verloren. Die Toten
@@ -195,13 +191,11 @@ wieder zuschlugen. Ich
 kann nicht weitermachen
 ... ich kann nicht
 weitermachen."""
-
 [translations.ita]
 title = "Il diario quotidiano di Grimmoch Drummel"
-content = """
-Giorno Quattordici -
+content = """Giorno Quattordici -
 Giorno Sedici :
-
+ 
 Siamo perduti... siamo
 perduti... tutto è
 perduto. I morti sono
@@ -247,13 +241,11 @@ non morti colpissero
 ancora. Non posso andare
 avanti... Non posso
 andare avanti."""
-
 [translations.pol]
 title = "Dziennik codzienny Grimmoch Drummel"
-content = """
-Dzień czternasty — dzień
+content = """Dzień czternasty — dzień
 szesnasty:
-
+ 
 Jesteśmy zgubieni...
 jesteśmy zgubieni...
 wszystko stracone. Zmarli
@@ -293,13 +285,11 @@ nieumarłe legiony
 uderzyły ponownie. Nie
 mogę dalej... nie mogę
 dalej."""
-
 [translations.por]
 title = "O diário de Grimmoch Drummel"
-content = """
-Décimo quarto dia -
+content = """Décimo quarto dia -
 Décimo sexto dia:
-
+ 
 Estamos perdidos...
 estamos perdidos... tudo
 está perdido. Os mortos
@@ -343,13 +333,11 @@ mortos-vivos atacassem de
 novo. Não consigo
 continuar... Não consigo
 continuar."""
-
 [translations.spa]
 title = "El diario de Grimmoch Drummel"
-content = """
-Día catorce - Día
+content = """Día catorce - Día
 dieciséis:
-
+ 
 Estamos perdidos...
 estamos perdidos... todo
 está perdido. Los muertos
