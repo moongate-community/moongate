@@ -1,12 +1,15 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Death;
+using Moongate.Server.Ultima.Data.Internal.Death;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Types.Death;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -65,6 +68,9 @@ public sealed class DeathService : IDeathService
 
     // Who is between its death and its removal: it does not die twice.
     private readonly HashSet<Serial> _dying = [];
+
+    // The corpses someone is being raised from: nobody is raised twice from one.
+    private readonly HashSet<Serial> _raising = [];
 
     public DeathService(
         IMobileService mobiles,
@@ -140,6 +146,145 @@ public sealed class DeathService : IDeathService
         Finish(mobile, corpse, killer);
 
         return true;
+    }
+
+    public async Task<ResurrectResult> ResurrectAsync(Serial corpse, CancellationToken cancellationToken = default)
+    {
+        Raising? raising = null;
+        var refusal = ResurrectResultType.NotACorpse;
+        await OnLoopAsync(() => refusal = TryBegin(corpse, out raising), cancellationToken);
+
+        if (raising is null)
+        {
+            return new(refusal, null);
+        }
+
+        MobileEntity npc;
+
+        try
+        {
+            npc = await _npcs.SpawnAsync(raising.Template, raising.Map, raising.Location, raising.Props, cancellationToken);
+        }
+        catch
+        {
+            // Not awaited: a loop that is stopping takes no work, and the failure of the birth is what matters.
+            _loop.TryPost(new LoopActionWorkItem(() => _raising.Remove(corpse)));
+
+            throw;
+        }
+
+        var risen = false;
+        await OnLoopAsync(() => risen = Rise(corpse, raising, npc), CancellationToken.None);
+
+        return risen ? new(ResurrectResultType.Raised, npc) : new(ResurrectResultType.CannotBeRaised, null);
+    }
+
+    // On the game loop: what the corpse says of who died, read once; the corpse is marked so nobody else raises it.
+    private ResurrectResultType TryBegin(Serial serial, out Raising? raising)
+    {
+        raising = null;
+
+        if (!_items.TryGet(serial, out var corpse) ||
+            corpse.ItemId != CorpseProps.Graphic ||
+            corpse.Map is not { } map ||
+            corpse.GroundLocation is not { } location ||
+            !_items.IsLyingOnGround(corpse))
+        {
+            return ResurrectResultType.NotACorpse;
+        }
+
+        // Read as they are: a script may have put anything in the props.
+        var props = corpse.Props;
+
+        if (props?.GetValueOrDefault(CorpseProps.MobileTemplate) is not string template ||
+            !_mobileTemplates.TryGet(template, out _) ||
+            !_raising.Add(serial))
+        {
+            return ResurrectResultType.CannotBeRaised;
+        }
+
+        raising = new(
+            template,
+            map,
+            location,
+            props.GetValueOrDefault(CorpseProps.Name) as string,
+            props.GetValueOrDefault(CorpseProps.Direction) switch
+            {
+                int value  => value,
+                long value => (int)(value & 0xFF),
+                _          => null
+            },
+            props.Where(prop => prop.Key.StartsWith(CorpseProps.Kept + CorpseProps.SpawnProps, StringComparison.Ordinal))
+                 .ToDictionary(prop => prop.Key[CorpseProps.Kept.Length..], prop => prop.Value)
+        );
+
+        return ResurrectResultType.Raised;
+    }
+
+    // On the game loop: who was born takes the name and the facing of who died, rises, and the corpse is gone. False
+    // when who was born is gone already, removed or killed in the turn between its birth and this: nothing is shown
+    // and the corpse stays.
+    private bool Rise(Serial serial, Raising raising, MobileEntity npc)
+    {
+        _raising.Remove(serial);
+
+        if (!_mobiles.TryGet(npc.Id, out var live) || !ReferenceEquals(live, npc))
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrEmpty(raising.Name))
+        {
+            npc.Name = raising.Name;
+        }
+
+        if (raising.Direction is { } direction && Enum.IsDefined((DirectionType)(direction & 0x07)))
+        {
+            npc.Direction = (DirectionType)(direction & 0x07);
+        }
+
+        // Shown again as who it was: it was born with a name and a facing of its template.
+        _view.MobileAppeared(npc);
+
+        if (CorpseProps.IsHumanBody(npc.Body))
+        {
+            _view.MobileAnimated(npc, HumanFallAction, HumanFallFrames, 1, false);
+        }
+
+        // Gone meanwhile, as by decay: who was born stays.
+        if (_items.TryGet(serial, out var corpse))
+        {
+            _view.ItemDisappeared(corpse);
+            Absorb(corpse);
+        }
+
+        _logger.Information(
+            "{Name:l} ({Serial:l}) is raised at {Location:l} of {Map}",
+            npc.Name,
+            npc.Id,
+            npc.Location,
+            npc.Map
+        );
+
+        return true;
+    }
+
+    // The item and everything inside it, at any depth.
+    private void Absorb(ItemEntity item)
+    {
+        foreach (var content in _items.GetContents(item.Id).ToArray())
+        {
+            Absorb(content);
+        }
+
+        _items.Absorb(item);
+    }
+
+    private async Task OnLoopAsync(Action action, CancellationToken cancellationToken)
+    {
+        var work = new LoopActionWorkItem(action);
+        await _loop.PostAsync(work, cancellationToken);
+        await work.Completion;
     }
 
     // A human, elf or gargoyle body plays its fall itself and leaves its corpse when the fall is over. The death packet
@@ -236,6 +381,21 @@ public sealed class DeathService : IDeathService
         corpse.Name = _localization.Text(RemainsMessage, "the remains of {0}", mobile.Name ?? "");
         corpse.Hue = mobile.SkinHue;
         corpse.SetProp(CorpseProps.Body, mobile.Body);
+
+        if (!string.IsNullOrEmpty(mobile.Name))
+        {
+            corpse.SetProp(CorpseProps.Name, mobile.Name);
+        }
+
+        // Its spawn region and its home: who is raised from the corpse has them again.
+        foreach (var (key, value) in mobile.Props ?? [])
+        {
+            if (key.StartsWith(CorpseProps.SpawnProps, StringComparison.Ordinal))
+            {
+                corpse.SetProp(CorpseProps.Kept + key, value);
+            }
+        }
+
         corpse.SetProp(CorpseProps.Direction, (int)mobile.Direction);
 
         if (mobile.TemplateId is { } template)

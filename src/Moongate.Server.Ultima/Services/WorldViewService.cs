@@ -265,9 +265,9 @@ public sealed class WorldViewService : IWorldViewService
         }
     }
 
-    public void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount)
+    public void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount, bool forward = true)
     {
-        var animation = new MobileAnimationPacket(mobile.Id, action, frameCount, repeatCount);
+        var animation = new MobileAnimationPacket(mobile.Id, action, frameCount, repeatCount, forward);
 
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
         {

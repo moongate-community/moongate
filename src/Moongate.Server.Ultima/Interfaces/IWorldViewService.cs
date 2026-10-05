@@ -60,7 +60,7 @@ public interface IWorldViewService
     ///     Shows an animation of the mobile (0x6E) to its own player and to the players who see it: the action of its
     ///     body, played <paramref name="repeatCount" /> times with <paramref name="frameCount" /> frames.
     /// </summary>
-    void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount);
+    void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount, bool forward = true);
 
     /// <summary>
     ///     Tells the mobile's own player and the players who see it that its flags changed, such as war mode or

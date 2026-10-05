@@ -66,6 +66,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.RemoveDescription
         );
+        container.RegisterCommand<ResurrectCommand>(
+            "resurrect",
+            "Raises the NPC whose corpse you target: it is born again where the corpse lies.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.ResurrectDescription
+        );
         container.RegisterCommand<AnimateCommand>(
             "animate",
             "Makes the character or NPC you target play an action of its body: animate <action>.",

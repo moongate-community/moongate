@@ -196,3 +196,9 @@
 30161 = "Moongate {0} \"{1}\" ({2}), compilé le {3}."
 30162 = "Affiche depuis combien de temps le serveur tourne et depuis quand."
 30163 = "En marche depuis {0}, depuis le {1}."
+
+# Moongate: texts of the resurrect command (30164-30167).
+30164 = "Ressuscite le PNJ dont vous ciblez le cadavre : il renaît là où gît le cadavre."
+30165 = "{0} est de retour."
+30166 = "Ce n'est pas un cadavre."
+30167 = "Ce cadavre ne peut pas être ressuscité."

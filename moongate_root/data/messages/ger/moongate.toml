@@ -196,3 +196,9 @@
 30161 = "Moongate {0} \"{1}\" ({2}), gebaut am {3}."
 30162 = "Zeigt, wie lange der Server schon läuft und seit wann."
 30163 = "Läuft seit {0}, seit dem {1}."
+
+# Moongate: texts of the resurrect command (30164-30167).
+30164 = "Erweckt den NPC, dessen Leiche du anvisierst: Er entsteht dort neu, wo die Leiche liegt."
+30165 = "{0} ist zurück."
+30166 = "Das ist keine Leiche."
+30167 = "Diese Leiche kann nicht erweckt werden."

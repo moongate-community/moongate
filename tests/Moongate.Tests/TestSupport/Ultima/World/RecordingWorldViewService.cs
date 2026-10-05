@@ -59,9 +59,9 @@ public sealed class RecordingWorldViewService : IWorldViewService
         Record($"MobileDied {mobile.Id.Value} {corpse.Value}");
     }
 
-    public void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount)
+    public void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount, bool forward = true)
     {
-        Record($"Animated {mobile.Id.Value} {action} {frameCount} {repeatCount}");
+        Record($"Animated {mobile.Id.Value} {action} {frameCount} {repeatCount}{(forward ? "" : " backwards")}");
     }
 
     /// <summary>

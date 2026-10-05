@@ -7,6 +7,8 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Server.Ultima.Data.Death;
+using Serilog;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Core.Utils;
@@ -678,6 +680,34 @@ public sealed class MobileModule
         }
 
         return _death.Kill(mobile, by);
+    }
+
+    /// <summary>
+    ///     Raises who died from its corpse; <c>mobile.resurrect(corpse)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Raises the NPC a corpse is of, on a later turn of the game loop: one of the same template is born where the corpse lies, with the name and the facing of who died and the equipment of its template, and the corpse is gone with what was left inside. False, and nothing is started, for what is not an item with the corpse graphic; a corpse that names no template is left as it is.")]
+    public bool Resurrect(long corpse)
+    {
+        if (_death is null ||
+            _items is null ||
+            corpse is <= 0 or > uint.MaxValue ||
+            !_items.TryGet(new Serial((uint)corpse), out var item) ||
+            item.ItemId != CorpseProps.Graphic)
+        {
+            return false;
+        }
+
+        // The birth of an NPC waits for the database: a script runs on the game loop, so it is started off it.
+        var serial = item.Id;
+        _ = Task.Run(() => _death.ResurrectAsync(serial))
+                .ContinueWith(
+                    task => Log.ForContext<MobileModule>().Warning(task.Exception, "mobile.resurrect of {Serial} failed", serial),
+                    CancellationToken.None,
+                    TaskContinuationOptions.OnlyOnFaulted,
+                    TaskScheduler.Default
+                );
+
+        return true;
     }
 
     /// <summary>

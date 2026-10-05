@@ -196,3 +196,9 @@
 30161 = "Moongate {0} \"{1}\" ({2}), built {3}."
 30162 = "Shows how long the server has been running and since when."
 30163 = "Up for {0}, since {1}."
+
+# Moongate: texts of the resurrect command (30164-30167).
+30164 = "Raises the NPC whose corpse you target: it is born again where the corpse lies."
+30165 = "{0} is back."
+30166 = "That is not a corpse."
+30167 = "That corpse cannot be raised."

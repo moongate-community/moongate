@@ -47,6 +47,8 @@ in the place of the amount, as the client expects of the corpse graphic.
 | `corpse.body` | The body of who died |
 | `corpse.direction` | The way it faced, a direction number |
 | `corpse.template` | The mobile template of who died, when it had one |
+| `corpse.name` | The name of who died |
+| `corpse.spawn.region`, `corpse.spawn.x1` … | What its spawn region gave who died: the region and the four corners of its home |
 | `corpse.killer` | The serial of who killed it, when someone did |
 | `corpse.worn` | What who died wore that went into the corpse, as `serial:layer` pairs split by commas |
 | `corpse.hair`, `corpse.hair_hue` | The hair graphic of who died and its hue, when it had hair |
@@ -109,6 +111,28 @@ function orc.on_death(serial, corpse, killer)
         item.add_loot(corpse, "bonearmor")
     end
 end
+```
+
+## Raising who died
+
+A corpse can give its NPC back: a game master targets it with [`.resurrect`](commands/resurrect.md),
+or a script calls `mobile.resurrect(corpse)`.
+
+1. An NPC of the corpse's mobile template (`corpse.template`) is born where the corpse lies.
+2. It takes the name and the facing of who died and, when it came from a spawn region, that region
+   and its home, so it counts for the region and wanders where the old one did.
+3. A human, elf or gargoyle body rises with its fall played backwards.
+4. The corpse is gone, with what was left inside.
+
+It is a new NPC of the same kind, not the old one back: it comes with the equipment and the loot of
+its template, and has another serial. Its script runs `on_spawn` before it takes the name of who
+died. One removed or killed in the moment between its birth and its rising is not shown rising, and
+the corpse stays. What was taken from the corpse stays taken. A corpse of an NPC
+made without a template, or whose template no longer exists, cannot be raised and stays where it is.
+
+```lua
+-- True when the serial is a corpse: the NPC is born on a later turn of the game loop.
+mobile.resurrect(corpse)
 ```
 
 ## What is not there yet

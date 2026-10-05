@@ -144,4 +144,8 @@ public static class CommandMessages
     public const int VersionText = 30161;
     public const int UptimeDescription = 30162;
     public const int UptimeText = 30163;
+    public const int ResurrectDescription = 30164;
+    public const int Resurrected = 30165;
+    public const int NotACorpse = 30166;
+    public const int CorpseCannotBeRaised = 30167;
 }

@@ -5,6 +5,7 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Death;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Items;
@@ -428,6 +429,195 @@ public sealed class DeathServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Kill_KeepsOnTheCorpseTheNameOfWhoDied_AndWhatItsSpawnRegionGaveIt()
+    {
+        _orc.SetProp("spawn.region", "felucca_12");
+        _orc.SetProp("spawn.x1", 1690);
+        _orc.SetProp("mood", "angry");
+
+        _death.Kill(_orc);
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.Equal(
+            ("an orc", "felucca_12", 1690),
+            (corpse.GetProp<string>("corpse.name"), corpse.GetProp<string>("corpse.spawn.region"), corpse.GetProp<int>("corpse.spawn.x1"))
+        );
+        // Only what its region gave it.
+        Assert.False(corpse.Props!.ContainsKey("corpse.mood"));
+    }
+
+    [Fact]
+    public async Task Resurrect_ACorpse_BringsAnNpcOfItsTemplateBack_WithItsNameItsFacingAndItsRegion_AndTheCorpseIsGone()
+    {
+        _orc.SetProp("spawn.region", "felucca_12");
+        // Its home: without the four of them it would wander anywhere.
+        foreach (var (key, value) in new[] { ("spawn.x1", 1690), ("spawn.y1", 1691), ("spawn.x2", 1710), ("spawn.y2", 1711) })
+        {
+            _orc.SetProp(key, value);
+        }
+
+        _death.Kill(_orc);
+        var born = await BornAsync(0x0011);
+        _view.Calls.Clear();
+
+        var result = await _death.ResurrectAsync(new Serial(CorpseSerial));
+
+        Assert.Equal((ResurrectResultType.Raised, born), (result.Type, result.Mobile));
+        Assert.Equal(("orc", MapType.Felucca, Spot), Assert.Single(_npcs.Spawns));
+        Assert.Equal(("an orc", DirectionType.East, "felucca_12"), (born.Name, born.Direction, born.GetProp<string>("spawn.region")));
+        Assert.Equal(
+            [1690, 1691, 1710, 1711],
+            new[] { "spawn.x1", "spawn.y1", "spawn.x2", "spawn.y2" }.Select(key => born.GetProp<int>(key))
+        );
+        // Shown again as who it was; a monster does not play a fall backwards.
+        Assert.Equal(["MobileAppeared 901", $"Disappeared {CorpseSerial}"], _view.Calls);
+        // The corpse and what nobody took: the NPC comes with the things of its template.
+        Assert.All(
+            new[] { new Serial(CorpseSerial), _gold.Id, _sword.Id },
+            serial => Assert.False(_items.TryGet(serial, out _))
+        );
+    }
+
+    [Fact]
+    public async Task Resurrect_AHumanBody_RisesWithItsFallPlayedBackwards()
+    {
+        _death.Kill(_orc);
+        await BornAsync(0x0191);
+        _view.Calls.Clear();
+
+        await _death.ResurrectAsync(new Serial(CorpseSerial));
+
+        Assert.Contains(
+            $"Animated 901 {DeathService.HumanFallAction} {DeathService.HumanFallFrames} 1 backwards",
+            _view.Calls
+        );
+    }
+
+    [Fact]
+    public async Task Resurrect_WhatIsNotACorpseOnTheGround_IsRefused_AndNobodyIsBorn()
+    {
+        var results = new[]
+        {
+            // An item that is no corpse, a mobile, nothing at all.
+            await _death.ResurrectAsync(_gold.Id),
+            await _death.ResurrectAsync(_orc.Id),
+            await _death.ResurrectAsync(new Serial(0x40FFFFFF))
+        };
+
+        Assert.All(results, result => Assert.Equal((ResurrectResultType.NotACorpse, null), (result.Type, result.Mobile)));
+        Assert.Empty(_npcs.Spawns);
+    }
+
+    [Theory, InlineData(null), InlineData("gone_template")]
+    public async Task Resurrect_ACorpseThatNamesNoTemplateThatExists_IsRefused_AndStaysWhereItIs(string? template)
+    {
+        _orc.TemplateId = template;
+        _death.Kill(_orc);
+
+        var result = await _death.ResurrectAsync(new Serial(CorpseSerial));
+
+        Assert.Equal(ResurrectResultType.CannotBeRaised, result.Type);
+        Assert.Empty(_npcs.Spawns);
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out _));
+    }
+
+    [Fact]
+    public async Task Resurrect_ACorpseSomeoneIsAlreadyBeingRaisedFrom_IsRefused()
+    {
+        _death.Kill(_orc);
+        await BornAsync(0x0011);
+        _npcs.Gate = new TaskCompletionSource();
+        var first = _death.ResurrectAsync(new Serial(CorpseSerial));
+
+        var second = await _death.ResurrectAsync(new Serial(CorpseSerial));
+        _npcs.Gate.SetResult();
+
+        Assert.Equal(ResurrectResultType.CannotBeRaised, second.Type);
+        Assert.Equal(ResurrectResultType.Raised, (await first).Type);
+        Assert.Single(_npcs.Spawns);
+    }
+
+    [Fact]
+    public async Task Resurrect_WhenTheBirthFails_LeavesTheCorpse_ThatCanBeRaisedAgain()
+    {
+        _death.Kill(_orc);
+        _npcs.SpawnFailure = new InvalidOperationException("no serial left");
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _death.ResurrectAsync(new Serial(CorpseSerial)));
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out _));
+        _npcs.SpawnFailure = null;
+        await BornAsync(0x0011);
+        Assert.Equal(ResurrectResultType.Raised, (await _death.ResurrectAsync(new Serial(CorpseSerial))).Type);
+    }
+
+    [Fact]
+    public async Task Resurrect_ACorpseWhosePropsAScriptSpoiled_StillRaisesWithWhatReads()
+    {
+        _death.Kill(_orc);
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        corpse.SetProp("corpse.name", 12);
+        corpse.SetProp("corpse.direction", "north");
+        var born = await BornAsync(0x0011);
+        born.Direction = DirectionType.West;
+
+        var result = await _death.ResurrectAsync(new Serial(CorpseSerial));
+
+        Assert.Equal(ResurrectResultType.Raised, result.Type);
+        // Its own name and facing stay.
+        Assert.Equal(("an ettin", DirectionType.West), (born.Name, born.Direction));
+    }
+
+    [Fact]
+    public async Task Resurrect_WhenWhoWasBornIsGoneBeforeItRises_ShowsNothing_AndLeavesTheCorpse()
+    {
+        // Removed or killed in the turn between its birth and its rising.
+        _death.Kill(_orc);
+        _npcs.Spawned = new MobileEntity { Id = new Serial(901), Name = "an ettin", TemplateId = "orc", Body = 0x0190 };
+        _view.Calls.Clear();
+
+        var result = await _death.ResurrectAsync(new Serial(CorpseSerial));
+
+        Assert.Equal((ResurrectResultType.CannotBeRaised, null), (result.Type, result.Mobile));
+        Assert.Empty(_view.Calls);
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out _));
+        // The corpse is not left marked.
+        await BornAsync(0x0011);
+        Assert.Equal(ResurrectResultType.Raised, (await _death.ResurrectAsync(new Serial(CorpseSerial))).Type);
+    }
+
+    [Fact]
+    public async Task Resurrect_WhenTheCorpseIsGoneBeforeWhoWasBornRises_KeepsWhoWasBorn()
+    {
+        _death.Kill(_orc);
+        var born = await BornAsync(0x0011);
+        _npcs.Gate = new TaskCompletionSource();
+        var raising = _death.ResurrectAsync(new Serial(CorpseSerial));
+
+        // As by decay, while the NPC is being born.
+        _items.Remove([new Serial(CorpseSerial)]);
+        _view.Calls.Clear();
+        _npcs.Gate.SetResult();
+
+        Assert.Equal(born, (await raising).Mobile);
+        Assert.Equal(["MobileAppeared 901"], _view.Calls);
+        Assert.Equal("an orc", born.Name);
+    }
+
+    [Fact]
+    public async Task Resurrect_ACorpseInsideAContainer_IsNotACorpseOnTheGround()
+    {
+        _death.Kill(_orc);
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        var chest = new ItemEntity { Id = new Serial(0x40000800), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        chest.PlaceOnGround(MapType.Felucca, Spot);
+        _items.Add([chest]);
+        _items.MoveToContainer(corpse, chest.Id, new Point2D(10, 10));
+
+        Assert.Equal(ResurrectResultType.NotACorpse, (await _death.ResurrectAsync(corpse.Id)).Type);
+    }
+
+    [Fact]
     public void Kill_APlayer_IsRefused_AndNothingHappens()
     {
         Assert.False(_death.Kill(_aria));
@@ -455,6 +645,24 @@ public sealed class DeathServiceTests : IAsyncLifetime
 
         var line = Assert.Single(_log.Events).RenderMessage();
         Assert.Equal("an orc (0x00000384) died at (1700, 1700, 5) of Felucca, killed by Aria", line);
+    }
+
+    // The NPC the next birth gives, in the world as a born one is.
+    private async Task<MobileEntity> BornAsync(int body)
+    {
+        var born = new MobileEntity { Id = new Serial(901), Name = "an ettin", TemplateId = "orc", Body = body };
+        _npcs.Spawned = born;
+        await _fixture.Network.ExecuteOnLoopAsync(
+            () =>
+            {
+                _fixture.Mobiles.Delete(born.Id);
+                born.Map = MapType.Felucca;
+                born.Location = Spot;
+                _fixture.Mobiles.EnterWorld(born);
+            }
+        );
+
+        return born;
     }
 
     private ItemEntity Worn(MobileEntity owner, string template, int graphic, LayerType layer)
