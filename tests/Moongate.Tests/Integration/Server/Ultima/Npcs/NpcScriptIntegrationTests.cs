@@ -16,9 +16,12 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
@@ -36,6 +39,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly StubBankService _bank = new();
+    private readonly SettableClock _clock = new();
     private readonly List<ScriptErrorEvent> _errors = [];
     private readonly List<LuaScriptEngineService> _engines = [];
     private readonly SectorService _sectors = TestSectors.Create();
@@ -76,6 +80,11 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         _container.AddScriptModule<DiceModule>();
         _container.RegisterInstance<IBankService>(_bank);
         _container.AddScriptModule<BankModule>();
+        _container.RegisterInstance<TimeProvider>(_clock);
+        _container.RegisterInstance<ITeleportService>(new RecordingTeleportService());
+        _container.RegisterInstance<ICrimeService>(new RecordingCrimeService());
+        _container.AddScriptModule<MobileModule>();
+        _container.RegisterScriptEnum<BankResultType>();
         _container.RegisterScriptEnum<SpeechKeywordType>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -305,8 +314,11 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         var hearing = new NpcHearingService(scripts, _sectors);
 
         hearing.Heard(_aria, "apri la banca", [(int)SpeechKeywordType.Bank]);
+        // A moment later: within the same moment the bankers take the words as one request.
+        _clock.Advance(TimeSpan.FromSeconds(1));
         hearing.Heard(_aria, "Bank, please");
-        hearing.Heard(_aria, "hello", [(int)SpeechKeywordType.Balance]);
+        _clock.Advance(TimeSpan.FromSeconds(1));
+        hearing.Heard(_aria, "hello");
 
         Assert.Empty(_errors);
         Assert.Equal([_aria, _aria], _bank.Opened);
@@ -352,6 +364,221 @@ public sealed class NpcScriptIntegrationTests : IDisposable
 
         Assert.Empty(_errors);
         Assert.Equal(DirectionType.East, _cat.Direction);
+    }
+
+    [Fact]
+    public async Task TheBanker_TellsTheBalance_WithItsThousands()
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Gold[_aria.Id] = 1_234_567;
+
+        hearing.Heard(_aria, "balance", [(int)SpeechKeywordType.Balance]);
+
+        Assert.Empty(_errors);
+        Assert.Equal((_cat, 1042759, "1,234,567"), Assert.Single(_speech.SaidClilocs));
+    }
+
+    [Theory,
+     InlineData("withdraw 500", 500),
+     InlineData("I wish to withdraw 500 gold", 500),
+     InlineData("500 withdraw", 500),
+     InlineData("prelevo 1200", 1200)]
+    public async Task TheBanker_Withdraws_TheFirstNumberOfTheSentence(string said, int amount)
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Gold[_aria.Id] = 5000;
+
+        hearing.Heard(_aria, said, [(int)SpeechKeywordType.Withdraw]);
+
+        Assert.Empty(_errors);
+        Assert.Equal([(_aria, amount)], _bank.Withdrawn);
+        Assert.Equal((_cat, 1010005, ""), Assert.Single(_speech.SaidClilocs));
+    }
+
+    [Theory,
+     InlineData(BankResultType.TooMuch, 500381),
+     InlineData(BankResultType.NotEnoughGold, 500384),
+     InlineData(BankResultType.NoBank, 500384),
+     InlineData(BankResultType.BackpackFull, 1048147)]
+    public async Task TheBanker_RefusesAWithdrawal_WithTheWordsOfTheClient(BankResultType refusal, int cliloc)
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Result = refusal;
+
+        hearing.Heard(_aria, "withdraw 500", [(int)SpeechKeywordType.Withdraw]);
+
+        Assert.Empty(_errors);
+        Assert.Equal((_cat, cliloc, ""), Assert.Single(_speech.SaidClilocs));
+    }
+
+    // No amount, none above zero, or one no bank could hold: the banker says nothing, and no gold moves.
+    [Theory,
+     InlineData("withdraw"),
+     InlineData("withdraw 0"),
+     InlineData("withdraw 99999999999"),
+     InlineData("withdraw some gold"),
+     // Digits of another script are no amount, and must not stop the script.
+     InlineData("withdraw \u0665\u0660\u0660")]
+    public async Task TheBanker_HearsNoAmount_AndDoesNothing(string said)
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Gold[_aria.Id] = 5000;
+
+        hearing.Heard(_aria, said, [(int)SpeechKeywordType.Withdraw]);
+
+        Assert.Empty(_errors);
+        Assert.Empty(_bank.Withdrawn);
+        Assert.Empty(_speech.SaidClilocs);
+    }
+
+    [Theory,
+     InlineData("deposit 300"),
+     InlineData("I would deposit 300 coins"),
+     InlineData("DEPOSIT 300"),
+     // The word at the very end of the sentence.
+     InlineData("300 deposit"),
+     InlineData("300 gold, to deposit")]
+    public async Task TheBanker_Deposits_OnTheWordDeposit(string said)
+    {
+        var hearing = await StartBankerAsync();
+
+        hearing.Heard(_aria, said);
+
+        Assert.Empty(_errors);
+        Assert.Equal([(_aria, 300)], _bank.Deposited);
+        Assert.Equal((_cat, 1042763, "300"), Assert.Single(_speech.SaidClilocs));
+    }
+
+    // The word alone, not a word that holds it.
+    [Fact]
+    public async Task TheBanker_DoesNotDeposit_OnAWordThatHoldsDeposit()
+    {
+        var hearing = await StartBankerAsync();
+
+        hearing.Heard(_aria, "the depository has 300 crates");
+
+        Assert.Empty(_bank.Deposited);
+        Assert.Empty(_speech.SaidClilocs);
+    }
+
+    [Theory, InlineData(BankResultType.NotEnoughGold, 500384), InlineData(BankResultType.BankFull, 500390)]
+    public async Task TheBanker_RefusesADeposit_WithTheWordsOfTheClient(BankResultType refusal, int cliloc)
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Result = refusal;
+
+        hearing.Heard(_aria, "deposit 300");
+
+        Assert.Equal((_cat, cliloc, ""), Assert.Single(_speech.SaidClilocs));
+    }
+
+    // A player who never opened its bank has no box to deposit into: the banker opens it, and the player asks again.
+    [Fact]
+    public async Task TheBanker_OpensTheBank_OfWhoDepositsWithoutHavingOne()
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Result = BankResultType.NoBank;
+
+        hearing.Heard(_aria, "deposit 300");
+
+        Assert.Equal([_aria], _bank.Opened);
+        Assert.Empty(_speech.SaidClilocs);
+    }
+
+    [Theory,
+     InlineData("bank", SpeechKeywordType.Bank, 500378),
+     InlineData("balance", SpeechKeywordType.Balance, 500389),
+     InlineData("withdraw 500", SpeechKeywordType.Withdraw, 500389)]
+    public async Task TheBanker_DoesNoBusinessWithACriminal(string said, SpeechKeywordType keyword, int cliloc)
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Gold[_aria.Id] = 5000;
+        _aria.Criminal = true;
+
+        hearing.Heard(_aria, said, [(int)keyword]);
+        _clock.Advance(TimeSpan.FromSeconds(1));
+        hearing.Heard(_aria, "deposit 300");
+
+        Assert.Empty(_errors);
+        Assert.Equal([(_cat, cliloc, ""), (_cat, 500389, "")], _speech.SaidClilocs);
+        Assert.Empty(_bank.Opened);
+        Assert.Empty(_bank.Withdrawn);
+        Assert.Empty(_bank.Deposited);
+    }
+
+    // Two bankers behind one counter hear the same words: the gold moves once.
+    [Fact]
+    public async Task TwoBankersInRange_AnswerOnce()
+    {
+        var hearing = await StartBankerAsync();
+        _mobiles.EnterWorld(
+            new MobileEntity { Id = new Serial(0x101), Name = "a teller", TemplateId = "cat", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) }
+        );
+        _bank.Gold[_aria.Id] = 5000;
+
+        hearing.Heard(_aria, "withdraw 500", [(int)SpeechKeywordType.Withdraw]);
+
+        Assert.Empty(_errors);
+        Assert.Equal([(_aria, 500)], _bank.Withdrawn);
+        Assert.Single(_speech.SaidClilocs);
+    }
+
+    [Fact]
+    public async Task TheBanker_DoesNotHearWhoStandsFartherThanTwelveTiles()
+    {
+        var hearing = await StartBankerAsync();
+        _aria.Location = new Point3D(1613, 1600, 0);
+        _bank.Gold[_aria.Id] = 5000;
+
+        hearing.Heard(_aria, "withdraw 500", [(int)SpeechKeywordType.Withdraw]);
+        hearing.Heard(_aria, "bank", [(int)SpeechKeywordType.Bank]);
+
+        Assert.Empty(_bank.Withdrawn);
+        Assert.Empty(_bank.Opened);
+        Assert.Empty(_speech.SaidClilocs);
+    }
+
+    // A number of ten digits that is still an amount: the bank answers it like any other, here that it is too much.
+    [Fact]
+    public async Task TheBanker_AnswersAnAmountOfTenDigits()
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Result = BankResultType.TooMuch;
+
+        hearing.Heard(_aria, "withdraw 1000000000", [(int)SpeechKeywordType.Withdraw]);
+
+        Assert.Empty(_errors);
+        Assert.Equal([(_aria, 1_000_000_000)], _bank.Withdrawn);
+        Assert.Equal((_cat, 500381, ""), Assert.Single(_speech.SaidClilocs));
+    }
+
+    // The check is written by the next step of the bank: for now the banker lets the word pass.
+    [Fact]
+    public async Task TheBanker_SaysNothingYet_ToTheWordCheck()
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Gold[_aria.Id] = 50_000;
+
+        hearing.Heard(_aria, "check 5000", [(int)SpeechKeywordType.Check]);
+
+        Assert.Empty(_errors);
+        Assert.Empty(_speech.SaidClilocs);
+        Assert.Empty(_bank.Withdrawn);
+    }
+
+    private async Task<NpcHearingService> StartBankerAsync()
+    {
+        _scripts.Write("mobiles/banker.lua", File.ReadAllText(ShippedScript("mobiles/banker.lua")));
+        var templates = new MobileTemplateService(
+            new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "banker" })
+        );
+        var engine = NewEngine();
+        _engines.Add(engine);
+        await engine.StartAsync();
+        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        await scripts.StartAsync();
+
+        return new NpcHearingService(scripts, _sectors);
     }
 
     public void Dispose()

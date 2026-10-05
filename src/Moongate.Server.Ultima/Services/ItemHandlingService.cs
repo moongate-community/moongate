@@ -26,6 +26,7 @@ public sealed class ItemHandlingService : IItemHandlingService
     private readonly IItemFactoryService? _factory;
     private readonly IItemSerialPool? _serials;
     private readonly IContainerLayoutService? _layouts;
+    private readonly IContainerCapacityService? _capacity;
 
     public ItemHandlingService(
         IItemService items,
@@ -35,9 +36,11 @@ public sealed class ItemHandlingService : IItemHandlingService
         ITooltipService tooltips,
         IItemFactoryService? factory = null,
         IItemSerialPool? serials = null,
-        IContainerLayoutService? layouts = null
+        IContainerLayoutService? layouts = null,
+        IContainerCapacityService? capacity = null
     )
     {
+        _capacity = capacity;
         _items = items;
         _sessions = sessions;
         _sender = sender;
@@ -79,7 +82,9 @@ public sealed class ItemHandlingService : IItemHandlingService
 
     public ItemEntity? Give(MobileEntity owner, string template, int? amount = null)
     {
+        // The room is asked before the item is made: a gift that does not fit uses no serial.
         if (_items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
+            _capacity?.HasRoomFor(backpack, 1) == false ||
             Make(template, amount) is not { } item)
         {
             return null;

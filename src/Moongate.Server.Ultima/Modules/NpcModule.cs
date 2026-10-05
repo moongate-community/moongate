@@ -113,6 +113,23 @@ public sealed class NpcModule
     }
 
     /// <summary>
+    ///     Makes the NPC say a text of the client overhead, by its cliloc number; <c>npc.say_cliloc(serial, 1042759,
+    ///     "1,200")</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The NPC says a text of the client overhead, by its cliloc number, to the players within 15 cells: each player reads it in the language of its client, which npc.say cannot do. args fills the placeholders of the text (~1_AMOUNT~ and the like), several of them separated by a tab. False for an unknown NPC or a number that is no cliloc.")]
+    public bool SayCliloc(long serial, long cliloc, string args = "")
+    {
+        if (!TryGetNpc(serial, out var npc) || cliloc is < 1 or > int.MaxValue)
+        {
+            return false;
+        }
+
+        _speech.SayCliloc(npc, (int)cliloc, args ?? "");
+
+        return true;
+    }
+
+    /// <summary>
     ///     Plays a sound where the NPC stands for the players within 15 cells: a sound id, <c>npc.play_sound(serial, 0x69)</c>,
     ///     or a kind of the NPC template's <c>[mobile.sounds]</c>, <c>npc.play_sound(serial, "idle")</c>.
     /// </summary>

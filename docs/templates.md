@@ -290,7 +290,7 @@ own, see [TOML value types](toml-types.md).
 | `Tags` | Free script values in an `[item.tags]` table; a child's explicit tags replace the entire base map |
 | `Visibility` | The lowest account type that sees the item: `regular`, `game_master` or `administrator`, as `realm_directory.minimum_account_type`. Unset by default, so a template inherits it through `BaseId`; an item with none anywhere is visible to everyone. `IsVisibleTo(accountType)` answers for one viewer |
 | `Hue` | `HueSpec`, `0` meaning the art's native coloring; a quoted `"min-max"` range picks one per spawn |
-| `MaxItems`, `MaxWeight` | Nullable; set only on a container template. `MaxWeight` is the stones a player may put in the container, counting what is in the containers inside it: 400 when unset, no limit for 0. The staff is not limited, nor is a bank box; an item already inside moves around whatever the container weighs |
+| `MaxItems`, `MaxWeight` | Nullable; set only on a container template. `MaxWeight` is the stones a player may put in the container, counting what is in the containers inside it: 400 when unset, no limit for 0. The staff is not limited, nor is a bank box; an item already inside moves around whatever the container weighs `MaxItems` is the items a player may put in the container, counted with what is inside its bags and against every container around it; joining a pile adds none, the staff is exempt, and unset means no limit. A [bank box](bank.md) takes `ultima.bank.max_items` instead. |
 
 Fields that the client's `tiledata.mul` also carries (weight, stackability, layer,
 movability) are overrides: unset means tiledata, as in POL and ModernUO. The extensions

@@ -58,6 +58,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private readonly IWeightService? _weight;
     private readonly ISpeechService? _speech;
     private readonly IFatigueService? _fatigue;
+    private readonly IContainerCapacityService? _capacity;
 
     public DropRequestPacketHandler(
         IItemService items,
@@ -71,9 +72,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         IBankService? bank = null,
         IWeightService? weight = null,
         ISpeechService? speech = null,
-        IFatigueService? fatigue = null
+        IFatigueService? fatigue = null,
+        IContainerCapacityService? capacity = null
     )
     {
+        _capacity = capacity;
         _weight = weight;
         _speech = speech;
         _fatigue = fatigue;
@@ -135,6 +138,12 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
                                _items.TryGet(container.Id, out _);
         }
 
+        // Put down as an item of its own, it needs a place in the container; joining a pile it needs none.
+        bool PlacesInto(ItemEntity container)
+        {
+            return HasTheRoom(session, container, item) && AllowsInto(container);
+        }
+
         // Taken off the paperdoll: players who came into range while it was held still see it worn.
         var wearer = item.MobileId is { } wearerId && _mobiles.TryGet(wearerId, out var worn) ? worn : null;
 
@@ -189,7 +198,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
                 return;
             }
         }
-        else if (mobile is not null && TryPlaceOnTheGround(mobile, item, packet, AllowsInto, out var chest))
+        else if (mobile is not null && TryPlaceOnTheGround(mobile, item, packet, PlacesInto, out var chest))
         {
             // Its row still says the character carries it: the character's leave saves where it lies now.
             _items.Release(item, session.CharacterId);
@@ -201,7 +210,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
             return;
         }
-        else if (TryPlace(session, item, packet, AllowsInto))
+        else if (TryPlace(session, item, packet, PlacesInto))
         {
             TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
@@ -228,6 +237,22 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         if (_mobiles.TryGet(session.CharacterId, out var mobile))
         {
             _speech?.TellCliloc(mobile, TooHeavyMessage);
+        }
+
+        return false;
+    }
+
+    // A container takes as many items as its limit says from a player, any number from the staff.
+    private bool HasTheRoom(GameSession session, ItemEntity container, ItemEntity item)
+    {
+        if (_capacity is null || session.AccountType >= AccountType.GameMaster || _capacity.HasRoom(container, item))
+        {
+            return true;
+        }
+
+        if (_mobiles.TryGet(session.CharacterId, out var mobile))
+        {
+            _speech?.TellCliloc(mobile, IContainerCapacityService.FullMessage);
         }
 
         return false;

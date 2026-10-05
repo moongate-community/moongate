@@ -48,6 +48,19 @@ public sealed class SpeechService : ISpeechService
         return SendAround(speaker.Map, speaker.Location, message, speaker);
     }
 
+    public int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "")
+    {
+        var message = LocalizedMessagePacket.Spoken(
+            speaker.Id,
+            Math.Clamp(speaker.Body, 0, ushort.MaxValue),
+            cliloc,
+            speaker.Name,
+            arguments
+        );
+
+        return SendAround(speaker.Map, speaker.Location, message, speaker);
+    }
+
     public int PlaySound(MobileEntity source, int sound)
     {
         return SendAround(source.Map, source.Location, new PlaySoundPacket(sound, source.Location), source);

@@ -87,6 +87,27 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void SayCliloc_MakesTheNpcSayATextOfTheClient_WithItsArguments()
+    {
+        var result = Run("return npc.say_cliloc(256, 1042759, '1,200'), npc.say_cliloc(256, 1010005)");
+
+        Assert.Equal([true, true], result.Select(value => value.Read<bool>()));
+        Assert.Equal([(_orc, 1042759, "1,200"), (_orc, 1010005, "")], _speech.SaidClilocs);
+    }
+
+    [Theory,
+     InlineData("return npc.say_cliloc(2, 1042759)"),
+     InlineData("return npc.say_cliloc(999, 1042759)"),
+     InlineData("return npc.say_cliloc(256, 0)"),
+     InlineData("return npc.say_cliloc(256, -5)"),
+     InlineData("return npc.say_cliloc(256, 99999999999)")]
+    public void SayCliloc_NotAnNpcInTheWorld_OrNotAText_IsFalseAndSilent(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+        Assert.Empty(_speech.SaidClilocs);
+    }
+
+    [Fact]
     public void Say_ALongText_IsCutTo128Characters()
     {
         Run("return npc.say(256, string.rep('a', 200))");

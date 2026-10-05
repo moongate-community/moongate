@@ -41,7 +41,8 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - Read the game time and the moon phases where they stand: `.time`.
 - Meet NPCs that wander around their home, greet and answer, and, when their script says so, walk to a
   place or follow someone around what stands in the way.
-- Open the bank box at a banker by saying *bank*, in any client language.
+- Open the bank box at a banker by saying *bank*, in any client language; ask the *balance*,
+  *withdraw* and *deposit* gold by speech. The box holds a limited number of items: [Bank](bank.md).
 - Get hit points, mana and stamina back with time, get hungry and thirsty, eat and drink; tire by running or by carrying too much.
 - Open the treasure chests of the dungeons and the shop crates that fill up; read a clock; switch war mode.
 - Dye clothes: dyes give a dye tub the hue picked in the client's hue picker, and the tub gives it to the clothing.

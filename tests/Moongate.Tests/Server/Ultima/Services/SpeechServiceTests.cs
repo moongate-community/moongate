@@ -42,6 +42,29 @@ public sealed class SpeechServiceTests
     }
 
     [Fact]
+    public async Task SayCliloc_ReachesThePlayersWhoHearTheSpeaker_AsATextOfTheClient()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var near = await fixture.AddAsync(2);
+        await fixture.AddAsync(3);
+        Place(fixture, 2, 115, 100);
+        Place(fixture, 3, 116, 100);
+        var banker = new MobileEntity
+        {
+            Id = new Serial(0x100), Name = "Bank Teller", Body = 0x0190, Map = MapType.Trammel, Location = new Point3D(100, 100, 0)
+        };
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+        var sent = 0;
+
+        await fixture.Network.ExecuteOnLoopAsync(() => sent = speech.SayCliloc(banker, 1042759, "1,200"));
+
+        Assert.Equal(1, sent);
+        Assert.Equal([near.SessionId], fixture.Sender.SentSessionIds);
+        var message = Assert.IsType<LocalizedMessagePacket>(Assert.Single(fixture.Sender.Sent));
+        Assert.Equal((banker.Id, 0x0190, 1042759, "Bank Teller", "1,200"), (message.Serial, message.Graphic, message.Cliloc, message.Name, message.Arguments));
+    }
+
+    [Fact]
     public async Task Tell_SendsASystemMessageToThatPlayerOnly()
     {
         await using var fixture = await BroadcastFixture.CreateAsync();

@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Weight;
 using System.Net;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -66,7 +67,22 @@ public sealed class BookTestFixture : IAsyncDisposable
         var factory = new FakeItemFactoryService(ItemTemplates, tiles);
         var tooltips = TestTooltips.Create(Items, world.Mobiles);
         Handling = new(Items, world.Sessions, world.Sender, new RecordingWorldViewService(), tooltips, factory, Serials);
-        Bank = new(Items, factory, world.Sessions, world.Mobiles, world.Sender, tooltips, null!, world.Network.Loop);
+        // The books only ask the bank whether an item is reachable: its gold is not used here.
+        Bank = new(
+            Items,
+            factory,
+            world.Sessions,
+            world.Mobiles,
+            world.Sender,
+            tooltips,
+            null!,
+            world.Network.Loop,
+            Handling,
+            new ContainerCapacityService(Items, ItemTemplates, new BankConfig()),
+            new StubWeightService(),
+            new ItemsConfig(),
+            new BankConfig()
+        );
         var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
         Contexts = new(world.Sessions, new AdminServerInfoProvider(ServerMode.Game, realm), realm, new MotdServerIdentity("Moongate"), world.Network.Loop);
         Books = new(new BookTemplateService(Data), Contexts, Items, world.Mobiles, Handling, ItemTemplates, world.Sessions,

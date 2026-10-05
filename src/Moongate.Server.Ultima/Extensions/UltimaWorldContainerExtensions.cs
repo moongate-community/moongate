@@ -45,6 +45,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
         container.Register<INpcTickService, NpcTickService>(Reuse.Singleton);
         container.Register<IWeightService, WeightService>(Reuse.Singleton);
+        container.Register<IContainerCapacityService, ContainerCapacityService>(Reuse.Singleton);
         container.Register<IFatigueService, FatigueService>(Reuse.Singleton);
         container.AddMoongateService<IRegenerationService, RegenerationService>(12);
         container.AddMoongateService<IHungerService, HungerService>(12);
