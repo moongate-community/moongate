@@ -15,7 +15,7 @@ number of seconds from a command, and neither takes a fine or feeds its prisoner
 
 ```text
 Jail
-Days: [ 3 ]
+Days: [ 3 ]   Reason: [ Stole a horse          ]
 
 [>] Target: Lord Pippo
 Jail                              Release  Go
@@ -27,11 +27,17 @@ Jail                              Release  Go
 
 1. Press `Target` and pick the character with the cursor: a player or an NPC. The gump opens
    again with its name. Until then the cells are only listed: no cell has a button to jail.
-2. Type the days of the sentence.
+2. Type the days of the sentence and, if you want, its reason: up to 60 characters in the gump.
+   Picking a character already in jail fills the field with its reason, so moving it to another
+   cell keeps it.
 3. Press the button of a free cell.
 
-The character stands in that cell at once and is told `You have been jailed for 3 days.`; you
-are told `Lord Pippo is in cell 3 for 3 days.`
+The character stands in that cell at once and is told `You have been jailed for 3 days: Stole a
+horse`, or `You have been jailed for 3 days.` with no reason; you are told `Lord Pippo is in cell 3
+for 3 days.` The reason is kept with the sentence as one line of plain text, written in the
+[console](#in-the-console-and-the-log) and on the [release note](#the-release-note): line breaks
+become spaces, `<` and `>` are taken out, and what goes beyond 100 characters is cut. The gump
+field takes 60; the 100 are the limit for a script that calls `jail.send`.
 
 - A cell holds one prisoner. A cell that holds someone shows its name and the time left, and has
   no button to jail.
@@ -99,8 +105,10 @@ The note is the item `jail_release_note`. A double click shows what the jail wro
 
 ```text
 Lord Pippo served 3 days in cell 2, from 2026-10-04 to 2026-10-07, and paid a fine of 500 gold.
-Jailed by Giachi.
+Jailed by Giachi. Reason: Stole a horse
 ```
+
+The reason is there when one was given (message 30149).
 
 The fine on the note is the gold really taken. The text is written in the server's language
 (message 30143 of [`messages`](data-files/messages.md)), with the dates in UTC. The note also
@@ -129,7 +137,7 @@ them at once.
 The server says who goes in and who comes out, at the information level:
 
 ```text
-Lord Pippo (0x00000A12) is jailed in cell 3 for 3 days by Giachi
+Lord Pippo (0x00000A12) is jailed in cell 3 for 3 days by Giachi: Stole a horse
 Lord Pippo (0x00000A12) is released from cell 3 after 3 days, with a fine of 500 gold
 Gino (0x00000B07) is released early from cell 2
 The sentence of an orc (0x0000E258) in cell 1 is dropped: it is no longer in the world
@@ -160,7 +168,7 @@ ModernUO and UOX3 use. To add a cell, add its `[[cell]]` there and its chest reg
 The [`jail` module](https://moongate.sh/lua/jail/) is what the gump uses:
 
 ```lua
-if jail.send(target, 2, 3, who) == JailResultType.Ok then
+if jail.send(target, 2, 3, who, "Stole a horse") == JailResultType.Ok then
     mobile.message(who, "Done.")
 end
 
@@ -180,7 +188,7 @@ script [`jail_sentence.lua`](scripting/shipped-scripts.md#jail_sentencelua) does
 
 - Forbid anything in jail: there are no spells, skills or recall to forbid.
 - Jail a player who is offline.
-- Keep the reason of an arrest or a record of past sentences.
+- Keep a record of past sentences: the reason lives with the sentence and on its note.
 - Jail a whole account: a sentence is of one character.
 
 ## See also

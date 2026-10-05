@@ -172,3 +172,5 @@
 30145 = "Vězení není nastaveno: chybí data/jail.toml."
 30146 = "To není postava."
 30147 = "Chybí gump vězení: templates/gumps/jail_sentence.xml."
+30148 = "Byl jsi uvězněn na {0} dní: {1}"
+30149 = "Důvod: {0}"

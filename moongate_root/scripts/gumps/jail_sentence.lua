@@ -6,8 +6,8 @@
 --   opened by .jail: it fills the "rows" slot. First the target: a button that
 --   gives the cursor to pick the character to jail, and its name. Then the
 --   cells of data/jail.toml, ten per page. A free cell has a button that sends
---   the character picked there for the days typed in the gump; with nobody
---   picked it has none. A cell that holds someone shows who, how long is left
+--   the character picked there for the days typed in the gump, with the
+--   reason typed beside them; with nobody picked it has none. A cell that holds someone shows who, how long is left
 --   and a button that releases it with no fine. Every cell has a button that
 --   takes the game master into it, on the map of the jail. A character already
 --   in jail has a line of its own at the top, with its release; one whose days
@@ -17,8 +17,8 @@
 -- Functions:
 --   rows(g, player, args)  fills the slot; args.target is the serial of the
 --                          character to jail and args.name its name, both
---                          absent until one is picked; args.days the days
---                          shown in the field
+--                          absent until one is picked; args.days and
+--                          args.reason what the two fields show
 -- ==============================================================================
 
 jail_sentence = {}
@@ -54,8 +54,16 @@ local function left(seconds)
     return math.max(minutes, 1) .. "m"
 end
 
-local function open(player, args, days)
-    gump.open(player, "jail_sentence", { target = args.target, name = args.name, days = days or args.days or "1" })
+-- The gump again, with what was typed in its two fields when the answer of a button has them.
+local function open(player, args, response)
+    local text = response and response.text or {}
+
+    gump.open(player, "jail_sentence", {
+        target = args.target,
+        name = args.name,
+        days = text[1] or args.days or "1",
+        reason = text[2] or args.reason or ""
+    })
 end
 
 local function refusal(result)
@@ -84,8 +92,6 @@ local function pick(who, response, args)
         return
     end
 
-    local days = response.text[1] or args.days
-
     target.pick(who, function(picked)
         if not world.is_staff(who) then
             return
@@ -94,7 +100,18 @@ local function pick(who, response, args)
         local name = picked.kind == "object" and mobile.name(picked.serial) or nil
 
         if name then
-            open(who, { target = picked.serial, name = name }, days)
+            local text = response.text or {}
+            local reason = text[2] or ""
+
+            -- Someone already in jail comes with its reason, so that moving it to another cell keeps it; a reason
+            -- typed before the pick wins.
+            if reason == "" then
+                local sentence = jail.sentence(picked.serial)
+
+                reason = sentence and sentence.reason or ""
+            end
+
+            open(who, { target = picked.serial, name = name, days = text[1], reason = reason })
             return
         end
 
@@ -102,7 +119,7 @@ local function pick(who, response, args)
             -- Put away by the player: the gump comes back as it was. Taken by another cursor, such as a second
             -- .jail, or lost with the player: nothing is opened over what came after.
             if picked.reason == "canceled" then
-                open(who, args, days)
+                open(who, args, response)
             end
 
             return
@@ -110,7 +127,7 @@ local function pick(who, response, args)
 
         -- An item, the ground or someone gone is not a character.
         mobile.message(who, "That is not a character.")
-        open(who, args, days)
+        open(who, args, response)
     end)
 end
 
@@ -124,7 +141,7 @@ local function go(who, response, args, cell)
         mobile.message(who, "That cell cannot be reached.")
     end
 
-    open(who, args, response.text[1])
+    open(who, args, response)
 end
 
 local function send(who, response, args, cell)
@@ -139,11 +156,18 @@ local function send(who, response, args, cell)
     -- No number, a fraction or a sentence out of range: asked again, with one day in the field.
     if not days or days ~= math.floor(days) or days < 1 or days > jail.max_days() then
         mobile.message(who, refusal(JailResultType.BadDays))
-        open(who, args, "1")
+        open(who, { target = args.target, name = args.name, days = "1", reason = response.text[2] })
         return
     end
 
-    local result = jail.send(args.target, cell, days, who)
+    -- An empty field is no reason.
+    local reason = response.text[2]
+
+    if reason == "" then
+        reason = nil
+    end
+
+    local result = jail.send(args.target, cell, days, who, reason)
 
     if result == JailResultType.Ok then
         mobile.message(who, args.name .. " is in cell " .. cell .. " for " .. math.floor(days) .. " days.")
@@ -151,7 +175,7 @@ local function send(who, response, args, cell)
     end
 
     mobile.message(who, refusal(result))
-    open(who, args, typed)
+    open(who, args, response)
 end
 
 local function release(who, args, prisoner, name)

@@ -77,6 +77,11 @@ public class JailSentenceEntity : IMoongateEntity
     public string JailedBy { get; set; } = "";
 
     /// <summary>
+    ///     Why the prisoner was jailed, as the game master typed it; empty when no reason was given.
+    /// </summary>
+    public string Reason { get; set; } = "";
+
+    /// <summary>
     ///     Whether the staff ended the sentence early: no fine and no note at the release.
     /// </summary>
     public bool Pardoned { get; set; }

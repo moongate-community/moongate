@@ -31,7 +31,14 @@ public sealed class JailService : IJailService
     public const int ReleasedFinedMessage = 30140;
     public const int ReleasedMessage = 30141;
     public const int PardonedMessage = 30142;
+    public const int JailedForMessage = 30148;
     public const int NoteMessage = 30143;
+    public const int NoteReasonMessage = 30149;
+
+    /// <summary>
+    ///     The longest reason kept with a sentence; what is typed beyond it is cut.
+    /// </summary>
+    public const int MaxReasonLength = 100;
 
     private const long MillisecondsADay = 86_400_000;
 
@@ -113,6 +120,8 @@ public sealed class JailService : IJailService
 
         foreach (var sentence in await _table.GetAllAsync())
         {
+            // A row saved before the reason existed has none.
+            sentence.Reason ??= "";
             _sentences[sentence.Id] = sentence;
         }
 
@@ -143,7 +152,7 @@ public sealed class JailService : IJailService
         return _sentences.Values.FirstOrDefault(sentence => sentence.Cell == cell && !sentence.IsOver(now));
     }
 
-    public JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by)
+    public JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by, string? reason = null)
     {
         if (_file is not { } file)
         {
@@ -202,16 +211,37 @@ public sealed class JailService : IJailService
         sentence.JailedAt = now;
         sentence.ReleaseAt = now + days * MillisecondsADay;
         sentence.JailedBy = by.Name;
+        sentence.Reason = Clean(reason);
         sentence.Pardoned = false;
-        _speech.Tell(prisoner, _localization.Text(JailedMessage, "You have been jailed for {0} days.", days));
-        _logger.Information(
-            "{Name:l} ({Serial:l}) is jailed in cell {Cell} for {Days} days by {By:l}",
-            sentence.Name,
-            sentence.Id,
-            cell,
-            days,
-            sentence.JailedBy
-        );
+
+        if (sentence.Reason.Length == 0)
+        {
+            _speech.Tell(prisoner, _localization.Text(JailedMessage, "You have been jailed for {0} days.", days));
+            _logger.Information(
+                "{Name:l} ({Serial:l}) is jailed in cell {Cell} for {Days} days by {By:l}",
+                sentence.Name,
+                sentence.Id,
+                cell,
+                days,
+                sentence.JailedBy
+            );
+        }
+        else
+        {
+            _speech.Tell(
+                prisoner,
+                _localization.Text(JailedForMessage, "You have been jailed for {0} days: {1}", days, sentence.Reason)
+            );
+            _logger.Information(
+                "{Name:l} ({Serial:l}) is jailed in cell {Cell} for {Days} days by {By:l}: {Reason:l}",
+                sentence.Name,
+                sentence.Id,
+                cell,
+                days,
+                sentence.JailedBy,
+                sentence.Reason
+            );
+        }
 
         return JailResultType.Ok;
     }
@@ -390,23 +420,52 @@ public sealed class JailService : IJailService
             return;
         }
 
-        note.SetProp(
-            NoteTextProp,
-            _localization.Text(
-                NoteMessage,
-                "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}.",
-                sentence.Name,
-                sentence.Days,
-                sentence.Cell,
-                Date(sentence.JailedAt),
-                Date(sentence.ReleaseAt),
-                fine,
-                sentence.JailedBy
-            )
+        var text = _localization.Text(
+            NoteMessage,
+            "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}.",
+            sentence.Name,
+            sentence.Days,
+            sentence.Cell,
+            Date(sentence.JailedAt),
+            Date(sentence.ReleaseAt),
+            fine,
+            sentence.JailedBy
         );
+
+        // A row saved before the reason existed has none.
+        if (!string.IsNullOrEmpty(sentence.Reason))
+        {
+            text += " " + _localization.Text(NoteReasonMessage, "Reason: {0}", sentence.Reason);
+        }
+
+        note.SetProp(NoteTextProp, text);
         note.SetProp("jail.cell", sentence.Cell);
         note.SetProp("jail.days", sentence.Days);
         note.SetProp("jail.fine", fine);
+    }
+
+    // One line of plain text, no longer than the limit: what is typed goes on a note, which reads markup, into a
+    // message and into the log.
+    private static string Clean(string? reason)
+    {
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            return "";
+        }
+
+        var plain = reason.Replace('<', ' ').Replace('>', ' ');
+        var line = string.Join(' ', plain.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+        line = new(line.Where(letter => !char.IsControl(letter)).ToArray());
+
+        if (line.Length <= MaxReasonLength)
+        {
+            return line;
+        }
+
+        // A character of two code units is not cut in half.
+        var length = char.IsHighSurrogate(line[MaxReasonLength - 1]) ? MaxReasonLength - 1 : MaxReasonLength;
+
+        return line[..length].TrimEnd();
     }
 
     private static string Date(long milliseconds)

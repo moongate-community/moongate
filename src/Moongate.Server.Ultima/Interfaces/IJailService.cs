@@ -54,9 +54,10 @@ public interface IJailService : IMoongateStartupService, IPersistenceDeletionSou
 
     /// <summary>
     ///     Sends the mobile to the cell for that many days and keeps where it was. A mobile already in jail moves to
-    ///     the cell with a sentence that starts now, and keeps the place it was first arrested on.
+    ///     the cell with a sentence that starts now, and keeps the place it was first arrested on. The reason, when
+    ///     there is one, is kept with the sentence as one line, told to the prisoner and written on its release note.
     /// </summary>
-    JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by);
+    JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by, string? reason = null);
 
     /// <summary>
     ///     Ends the sentence now with no fine and no note: a prisoner in the world goes back at once, a player who is
