@@ -65,6 +65,24 @@ public sealed class SpeechServiceTests
     }
 
     [Fact]
+    public async Task SayCliloc_WithAnAffix_SendsTheTextWithWhatIsAppended()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        await fixture.AddAsync(2);
+        Place(fixture, 2, 105, 100);
+        var banker = new MobileEntity
+        {
+            Id = new Serial(0x100), Name = "Bank Teller", Body = 0x0190, Map = MapType.Trammel, Location = new Point3D(100, 100, 0)
+        };
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+
+        await fixture.Network.ExecuteOnLoopAsync(() => speech.SayCliloc(banker, 1042673, "", "5,000"));
+
+        var message = Assert.IsType<LocalizedMessageAffixPacket>(Assert.Single(fixture.Sender.Sent));
+        Assert.Equal((banker.Id, 0x0190, 1042673, "Bank Teller", "5,000"), (message.Serial, message.Graphic, message.Cliloc, message.Name, message.Affix));
+    }
+
+    [Fact]
     public async Task Tell_SendsASystemMessageToThatPlayerOnly()
     {
         await using var fixture = await BroadcastFixture.CreateAsync();

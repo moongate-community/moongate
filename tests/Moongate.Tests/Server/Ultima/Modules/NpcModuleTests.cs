@@ -95,6 +95,15 @@ public sealed class NpcModuleTests
         Assert.Equal([(_orc, 1042759, "1,200"), (_orc, 1010005, "")], _speech.SaidClilocs);
     }
 
+    [Fact]
+    public void SayCliloc_WithAnAffix_AppendsItToTheText()
+    {
+        Run("npc.say_cliloc(256, 1042673, '', '5,000') npc.say_cliloc(256, 1010005)");
+
+        Assert.Equal([(_orc, 1042673, ""), (_orc, 1010005, "")], _speech.SaidClilocs);
+        Assert.Equal(["5,000", ""], _speech.SaidAffixes);
+    }
+
     [Theory,
      InlineData("return npc.say_cliloc(2, 1042759)"),
      InlineData("return npc.say_cliloc(999, 1042759)"),
