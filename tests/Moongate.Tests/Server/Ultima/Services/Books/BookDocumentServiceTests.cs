@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Server.Ultima.Services.Internal.Books;
@@ -14,6 +15,41 @@ namespace Moongate.Tests.Server.Ultima.Services.Books;
 
 public sealed class BookDocumentServiceTests
 {
+    // The cover of a book is told by its source: the item it is written on takes that graphic.
+    [Fact]
+    public async Task Give_ASourceWithAnItemId_GivesAnItemOfThatGraphic()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        f.Data.With(
+            new BookTemplate { Id = "tome", Title = "Tome", Content = "Text", ItemTemplate = "readable_book", ItemId = 0x0FF2 },
+            new BookTemplate { Id = "plain", Title = "Plain", Content = "Text", ItemTemplate = "readable_book" });
+
+        await f.OnLoopAsync(() =>
+        {
+            var tome = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "tome"));
+            f.Serials.Serials.Enqueue(new(0x40000F01));
+            var plain = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "plain"));
+
+            Assert.Equal(("readable_book", 0x0FF2), (tome.TemplateId, tome.ItemId));
+            Assert.Equal(0x0FF1, plain.ItemId);
+        });
+    }
+
+    [Fact]
+    public async Task Write_ASourceWithAnItemId_SetsTheGraphicOfTheItemWrittenOn()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        f.Data.With(f.Source, new BookTemplate { Id = "tome", Title = "Tome", Content = "Text", ItemTemplate = "readable_book", ItemId = 0x0FF2 });
+
+        await f.OnLoopAsync(() =>
+        {
+            var letter = f.Give();
+
+            Assert.True(f.Books.Write(letter, f.Player, "tome"));
+            Assert.Equal(0x0FF2, letter.ItemId);
+        });
+    }
+
     [Theory]
     [InlineData("own", true)]
     [InlineData("nested", true)]

@@ -11,6 +11,20 @@ public sealed class BookTemplateServiceTests
     private static readonly TextTemplateContext Context = new() { PlayerName = "Pippo", ServerName = "Moongate", UsersOnline = 3 };
 
     [Fact]
+    public void TryRender_CarriesTheItemIdOfTheSource_WhateverTheLanguage()
+    {
+        var service = Service(new BookTemplate
+        {
+            Id = "tome", Title = "Tome", Content = "Text", ItemId = 0x0FF2,
+            Translations = new() { ["ita"] = new() { Title = "Tomo" } }
+        });
+
+        Assert.True(service.TryRender("tome", Context, "ita", null, out var rendered));
+
+        Assert.Equal(("Tomo", 0x0FF2), (rendered!.Title, rendered.ItemId));
+    }
+
+    [Fact]
     public void TryRender_TranslationAndLiteralCustomValues_UsesCreationContext()
     {
         var service = Service(new BookTemplate

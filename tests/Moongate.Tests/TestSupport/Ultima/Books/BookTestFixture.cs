@@ -68,6 +68,7 @@ public sealed class BookTestFixture : IAsyncDisposable
             new ItemTemplate { Id = "backpack", ItemId = new(0x0E75) },
             new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll", Weight = 1m },
             new ItemTemplate { Id = "jail_release_note", ItemId = new(0x14F0), Stackable = false, ScriptId = "jail_note" },
+            new ItemTemplate { Id = "readable_book", ItemId = new(0x0FF1), Stackable = false, ScriptId = "readable_book", Weight = 1m },
             new ItemTemplate { Id = BankService.CheckTemplate, ItemId = new(0x14F0), Stackable = false },
             new ItemTemplate { Id = "gold", ItemId = new(0xEED), Stackable = true, Weight = 0.02m },
             new ItemTemplate { Id = "unrelated", ItemId = new(0x14ED), Stackable = false });
@@ -77,7 +78,8 @@ public sealed class BookTestFixture : IAsyncDisposable
         ItemTemplates = new(Data);
         Data.With(new Moongate.Server.Ultima.Data.Containers.ContainerContent
             { Name = "backpack", Gump = 0x3C, Items = [0xE75], Default = true });
-        var tiles = new FakeTileDataService().Item(0x0E75, TileFlagType.Container, 0).Item(0x14ED, TileFlagType.None, 1).Item(0x14F0, TileFlagType.None, 1);
+        var tiles = new FakeTileDataService().Item(0x0E75, TileFlagType.Container, 0).Item(0x14ED, TileFlagType.None, 1).Item(0x14F0, TileFlagType.None, 1)
+            .Item(0x0FF1, TileFlagType.None, 1).Item(0x0FF2, TileFlagType.None, 1);
         var factory = new FakeItemFactoryService(ItemTemplates, tiles);
         var tooltips = TestTooltips.Create(Items, world.Mobiles);
         Handling = new(Items, world.Sessions, world.Sender, new RecordingWorldViewService(), tooltips, factory, Serials, inventory: Inventory);

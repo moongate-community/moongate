@@ -15,5 +15,10 @@ internal static class BookDocumentText
         item.SetProp("book.author", rendered.Author);
         item.SetProp("book.content", rendered.Content);
         item.Name = rendered.Title;
+
+        if (rendered.ItemId is { } graphic)
+        {
+            item.ItemId = graphic;
+        }
     }
 }
