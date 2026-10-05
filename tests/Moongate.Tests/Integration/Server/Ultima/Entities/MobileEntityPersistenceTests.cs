@@ -69,6 +69,38 @@ public sealed class MobileEntityPersistenceTests
     }
 
     [Fact]
+    public async Task StatLocks_RoundTrip_AsSmallints_AndAreUpForAMobileThatHasNone()
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
+        await using var coordinator = fixture.Create(typeof(MobileEntity));
+        await coordinator.InitializeAsync();
+        var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
+
+        await orm.Insert(
+                     new MobileEntity
+                     {
+                         Id = new(1), AccountId = new(42), Name = "Aria",
+                         StrLock = StatLockType.Down, DexLock = StatLockType.Locked
+                     }
+                 )
+                 .ExecuteAffrowsAsync();
+        await orm.Insert(new MobileEntity { Id = new(2), AccountId = new(43), Name = "Boris" }).ExecuteAffrowsAsync();
+        var aria = await orm.Select<MobileEntity>().Where(entity => entity.Name == "Aria").FirstAsync();
+        var boris = await orm.Select<MobileEntity>().Where(entity => entity.Name == "Boris").FirstAsync();
+
+        Assert.Equal((StatLockType.Down, StatLockType.Locked, StatLockType.Up), (aria.StrLock, aria.DexLock, aria.IntLock));
+        Assert.Equal((StatLockType.Up, StatLockType.Up, StatLockType.Up), (boris.StrLock, boris.DexLock, boris.IntLock));
+        Assert.Equal(
+            "smallint",
+            await database.ScalarAsync<string>(
+                "SELECT data_type FROM information_schema.columns WHERE table_schema = 'world' " +
+                "AND table_name = 'mobiles' AND column_name = 'str_lock'"
+            )
+        );
+    }
+
+    [Fact]
     public async Task CreationFields_RoundTrip_WithHuesAsIntegersAndEnumsAsSmallints()
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();

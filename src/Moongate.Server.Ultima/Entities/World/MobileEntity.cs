@@ -203,6 +203,30 @@ public class MobileEntity : IMoongateEntity
     public int Hunger { get; set; } = 20;
 
     /// <summary>
+    ///     Which way the strength may move: up to rise by use, down to be lowered for another stat, or locked.
+    /// </summary>
+    [Column(MapType = typeof(byte))]
+    public StatLockType StrLock { get; set; } = StatLockType.Up;
+
+    /// <summary>
+    ///     Which way the dexterity may move.
+    /// </summary>
+    [Column(MapType = typeof(byte))]
+    public StatLockType DexLock { get; set; } = StatLockType.Up;
+
+    /// <summary>
+    ///     Which way the intelligence may move.
+    /// </summary>
+    [Column(MapType = typeof(byte))]
+    public StatLockType IntLock { get; set; } = StatLockType.Up;
+
+    /// <summary>
+    ///     When each stat was last tried for a rise. It is not a column: the wait does not outlive a restart.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public Dictionary<StatType, DateTimeOffset> StatTriedAt { get; } = [];
+
+    /// <summary>
     ///     How quenched the mobile is, from 0 (parched) to 20: it drops with time for a player and rises by drinking.
     /// </summary>
     public int Thirst { get; set; } = 20;
