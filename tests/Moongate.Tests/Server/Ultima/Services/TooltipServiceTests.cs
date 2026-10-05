@@ -126,7 +126,7 @@ public sealed class TooltipServiceTests
     [Fact]
     public void Build_AnItemWithAWorth_SaysItsValue_WithItsThousands()
     {
-        var check = Item("unknown", 0x14F0);
+        var check = Item("bank_check", 0x14F0);
         check.SetProp("label_number", 1041361L);
         check.SetProp("bank.worth", 1_250_000L);
 
@@ -139,13 +139,35 @@ public sealed class TooltipServiceTests
     [Fact]
     public void Build_TwoChecksOfDifferentWorth_DoNotShareATooltip()
     {
-        var first = Item("unknown", 0x14F0);
+        var first = Item("bank_check", 0x14F0);
         first.SetProp("bank.worth", 5000L);
-        var second = Item("unknown", 0x14F0);
+        var second = Item("bank_check", 0x14F0);
         second.SetProp("bank.worth", 6000L);
 
         Assert.Contains(_tooltips.Build(first).Entries, line => line.Arguments == "5,000");
         Assert.Contains(_tooltips.Build(second).Entries, line => line.Arguments == "6,000");
+    }
+
+    // The prop on anything else is worth nothing, as the bank says: only a check shows a value.
+    [Fact]
+    public void Build_WhatIsNotACheck_EvenWithAWorth_HasNoValueLine()
+    {
+        var sword = Item("unknown", 0x0F5E);
+        sword.SetProp("bank.worth", 5000L);
+
+        Assert.DoesNotContain(_tooltips.Build(sword).Entries, line => line.Cliloc == 1060738);
+    }
+
+    [Theory]
+    [InlineData(0L)]
+    [InlineData(-5L)]
+    [InlineData("a lot")]
+    public void Build_ACheckOfNoWorth_HasNoValueLine(object worth)
+    {
+        var check = Item("bank_check", 0x14F0);
+        check.SetProp("bank.worth", worth);
+
+        Assert.DoesNotContain(_tooltips.Build(check).Entries, line => line.Cliloc == 1060738);
     }
 
     [Fact]

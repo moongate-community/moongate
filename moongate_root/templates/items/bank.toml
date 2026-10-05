@@ -7,8 +7,9 @@
 #   by its owner standing where it was opened. And the bank check a banker
 #   writes for gold of the bank: its worth is the prop bank.worth, shown on
 #   its tooltip, and a double click inside the open bank box turns it back
-#   into coins (scripts/items/bank_check.lua). It has no name of its own: the
-#   bank gives it the client's "A bank check".
+#   into coins (scripts/items/bank_check.lua). The check a banker writes
+#   shows the client's "A bank check"; one made any other way shows the name
+#   below and, having no worth, is only paper.
 #
 # Fields:
 #   base_id     inherits base_item
@@ -31,6 +32,7 @@ weight = 0.0
 id = "bank_check"
 base_id = "base_item"
 item_id = 0x14F0
+name = "bank check"
 hue = 0x34
 rarity = "common"
 weight = 1.0

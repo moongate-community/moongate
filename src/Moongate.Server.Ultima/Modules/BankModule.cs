@@ -86,7 +86,7 @@ public sealed class BankModule
     /// <summary>
     ///     Gets the gold in the bank of <paramref name="player" />; <c>bank.balance(speaker)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The gold in the player's bank: the coins anywhere inside its bank box, bags included; 0 for a player who never opened its bank; nil for an NPC or a player not in the world. The box need not be open.")]
+    [ScriptFunction(helpText: "The gold in the player's bank: the coins anywhere inside its bank box, bags included, and what the bank checks there are worth; 0 for a player who never opened its bank; nil for an NPC or a player not in the world. The box need not be open.")]
     public int? Balance(long player)
     {
         return TryGetPlayer(player, out var mobile) ? _bank.Balance(mobile) : null;
@@ -96,7 +96,7 @@ public sealed class BankModule
     ///     Moves coins from the bank of <paramref name="player" /> to its backpack;
     ///     <c>bank.withdraw(speaker, 500) == BankResultType.Ok</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Moves amount coins from the player's bank to its backpack, onto a gold pile already there when it fits, and gives a BankResultType: Ok, BadAmount (not a whole number above 0), TooMuch (more than ultima.bank.max_withdraw), NoBank (the player never opened its bank: bank.open makes it), NotEnoughGold, BackpackFull (no backpack, no room for a new pile, or a backpack already at its weight: one that is not takes the gold whatever it weighs, and the player may walk away overloaded), Busy (try again in a moment) or NoPlayer (an NPC or a player not in the world). All or nothing: a refusal moves no coin. The box need not be open, and the function does not check where the player stands or who it is: a banker script checks the distance and mobile.criminal first.")]
+    [ScriptFunction(helpText: "Moves amount coins from the player's bank to its backpack, onto a gold pile already there when it fits; the coins of the bank go first and the bank checks give the rest, one used up is gone and the last keeps what is left. Gives a BankResultType: Ok, BadAmount (not a whole number above 0), TooMuch (more than ultima.bank.max_withdraw), NoBank (the player never opened its bank: bank.open makes it), NotEnoughGold, BackpackFull (no backpack, no room for a new pile, or a backpack already at its weight: one that is not takes the gold whatever it weighs, and the player may walk away overloaded), Busy (try again in a moment) or NoPlayer (an NPC or a player not in the world). All or nothing: a refusal moves no coin. The box need not be open, and the function does not check where the player stands or who it is: a banker script checks the distance and mobile.criminal first.")]
     public BankResultType Withdraw(long player, double amount)
     {
         if (!TryGetPlayer(player, out var mobile))

@@ -190,6 +190,13 @@ use it too (see [Reload and ownership](runtime.md#reload-and-ownership)). `mgctl
 existing root and keeps the scripts already there; a root whose item scripts are replaced by hand needs
 `scripts/common/` as well, or its teleporters stop.
 
+## common/numbers.lua
+
+`scripts/common/numbers.lua` is how the shipped scripts write a number a player reads:
+`numbers.with_thousands(1234567)` gives `"1,234,567"`. The banker and the bank check take it with
+`local numbers = require("common.numbers")`, and a script of your own can do the same. A root whose
+scripts are replaced by hand needs it too, or its bankers and its bank checks stop.
+
 ## teleporter.lua
 
 `scripts/items/teleporter.lua` is the script of the `decoration_teleporter` template that

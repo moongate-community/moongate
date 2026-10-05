@@ -22,6 +22,8 @@
 --                                               bank word said within 12
 -- ==============================================================================
 
+local numbers = require("common.numbers")
+
 banker = {}
 
 -- How far a banker hears its customers, in tiles.
@@ -94,20 +96,6 @@ local function amount_in(text)
     return amount
 end
 
--- "1234567" as "1,234,567".
-local function with_thousands(amount)
-    local digits = tostring(math.floor(amount))
-
-    while true do
-        local grouped, found = digits:gsub("^(%d+)(%d%d%d)", "%1,%2")
-        digits = grouped
-
-        if found == 0 then
-            return digits
-        end
-    end
-end
-
 local function near(serial, speaker)
     local here = npc.location(serial)
     local there = mobile.location(speaker)
@@ -135,7 +123,7 @@ local function deposit(serial, speaker, amount)
     local result = bank.deposit(speaker, amount)
 
     if result == BankResultType.Ok then
-        npc.say_cliloc(serial, deposited, with_thousands(amount))
+        npc.say_cliloc(serial, deposited, numbers.with_thousands(amount))
     elseif result == BankResultType.NotEnoughGold then
         npc.say_cliloc(serial, not_enough)
     elseif result == BankResultType.BankFull then
@@ -151,7 +139,7 @@ local function write_check(serial, speaker, amount)
 
     if result == BankResultType.Ok then
         -- The client writes the amount after the colon of its text.
-        npc.say_cliloc(serial, check_written, "", with_thousands(amount))
+        npc.say_cliloc(serial, check_written, "", numbers.with_thousands(amount))
     elseif result == BankResultType.CheckTooSmall then
         npc.say_cliloc(serial, check_too_small)
     elseif result == BankResultType.CheckTooBig then
@@ -187,7 +175,7 @@ function banker.on_speech(serial, speaker, text, keywords)
     if command == "bank" then
         bank.open(speaker)
     elseif command == "balance" then
-        npc.say_cliloc(serial, balance_is, with_thousands(bank.balance(speaker) or 0))
+        npc.say_cliloc(serial, balance_is, numbers.with_thousands(bank.balance(speaker) or 0))
     else
         local amount = amount_in(text)
 

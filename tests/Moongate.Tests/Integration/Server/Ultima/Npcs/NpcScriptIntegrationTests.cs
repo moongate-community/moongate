@@ -304,6 +304,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     public async Task TheShippedBankerScript_OpensTheBankOnTheBankKeywordInAnyLanguage_OrTheWordBank()
     {
         _scripts.Write("mobiles/banker.lua", File.ReadAllText(ShippedScript("mobiles/banker.lua")));
+        _scripts.Write("common/numbers.lua", File.ReadAllText(ShippedScript("common/numbers.lua")));
         var templates = new MobileTemplateService(
             new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "banker" })
         );
@@ -329,6 +330,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     {
         // Every NPC is born facing south: one that never walks would stay so.
         _scripts.Write("mobiles/banker.lua", File.ReadAllText(ShippedScript("mobiles/banker.lua")));
+        _scripts.Write("common/numbers.lua", File.ReadAllText(ShippedScript("common/numbers.lua")));
         var templates = new MobileTemplateService(
             new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "banker" })
         );
@@ -601,6 +603,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     private async Task<NpcHearingService> StartBankerAsync()
     {
         _scripts.Write("mobiles/banker.lua", File.ReadAllText(ShippedScript("mobiles/banker.lua")));
+        _scripts.Write("common/numbers.lua", File.ReadAllText(ShippedScript("common/numbers.lua")));
         var templates = new MobileTemplateService(
             new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "banker" })
         );

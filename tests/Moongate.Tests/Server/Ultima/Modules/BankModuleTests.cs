@@ -1,4 +1,3 @@
-using Moongate.Tests.TestSupport.Ultima.Items;
 using Lua;
 using Lua.Standard;
 using Moongate.Core.Geometry;
@@ -7,11 +6,12 @@ using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
-using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Bank;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
