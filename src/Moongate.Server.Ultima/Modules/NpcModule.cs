@@ -116,15 +116,15 @@ public sealed class NpcModule
     ///     Makes the NPC say a text of the client overhead, by its cliloc number; <c>npc.say_cliloc(serial, 1042759,
     ///     "1,200")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The NPC says a text of the client overhead, by its cliloc number, to the players within 15 cells: each player reads it in the language of its client, which npc.say cannot do. args fills the placeholders of the text (~1_AMOUNT~ and the like), several of them separated by a tab. False for an unknown NPC or a number that is no cliloc.")]
-    public bool SayCliloc(long serial, long cliloc, string args = "")
+    [ScriptFunction(helpText: "The NPC says a text of the client overhead, by its cliloc number, to the players within 15 cells: each player reads it in the language of its client, which npc.say cannot do. args fills the placeholders of the text (~1_AMOUNT~ and the like), several of them separated by a tab. affix is written after the text, for the texts that end with a colon and expect a value of the server, such as a banker's 1042673; it is ASCII, anything else shows as a question mark. False for an unknown NPC or a number that is no cliloc.")]
+    public bool SayCliloc(long serial, long cliloc, string args = "", string affix = "")
     {
         if (!TryGetNpc(serial, out var npc) || cliloc is < 1 or > int.MaxValue)
         {
             return false;
         }
 
-        _speech.SayCliloc(npc, (int)cliloc, args ?? "");
+        _speech.SayCliloc(npc, (int)cliloc, args ?? "", affix ?? "");
 
         return true;
     }

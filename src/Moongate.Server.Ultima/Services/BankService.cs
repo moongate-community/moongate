@@ -7,6 +7,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Bank;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
@@ -29,9 +30,24 @@ public sealed class BankService : IBankService
     public const string BankTemplate = "bank_box";
 
     /// <summary>
+    ///     The item template of a bank check.
+    /// </summary>
+    public const string CheckTemplate = "bank_check";
+
+    /// <summary>
+    ///     The client text that names a check: "A bank check".
+    /// </summary>
+    public const int CheckLabel = 1041361;
+
+    /// <summary>
     ///     The most coins of one pile.
     /// </summary>
     public const int PileMaximum = 60_000;
+
+    /// <summary>
+    ///     The most piles one cashing of a check makes; the check keeps what is beyond them.
+    /// </summary>
+    public const int CashPilesMaximum = 125;
 
     private static readonly Hue MessageHue = new(0x03B2);
     private static readonly TimeSpan ShowAgainAfter = TimeSpan.FromSeconds(1);
@@ -154,7 +170,14 @@ public sealed class BankService : IBankService
             return null;
         }
 
-        return BoxOf(player.Id) is { } box ? (int)Math.Min(GoldIn(box).Sum(pile => (long)pile.Amount), int.MaxValue) : 0;
+        if (BoxOf(player.Id) is not { } box)
+        {
+            return 0;
+        }
+
+        var gold = GoldIn(box).Sum(pile => (long)pile.Amount) + ChecksIn(box).Sum(check => WorthOf(check) ?? 0);
+
+        return (int)Math.Min(gold, int.MaxValue);
     }
 
     public BankResultType Withdraw(MobileEntity player, int amount)
@@ -180,8 +203,10 @@ public sealed class BankService : IBankService
         }
 
         var piles = GoldIn(box);
+        var checks = ChecksIn(box);
 
-        if (piles.Sum(pile => (long)pile.Amount) < amount)
+        // The coins first; when they are not enough the checks give the rest.
+        if (piles.Sum(pile => (long)pile.Amount) + checks.Sum(check => WorthOf(check) ?? 0) < amount)
         {
             return BankResultType.NotEnoughGold;
         }
@@ -211,7 +236,7 @@ public sealed class BankService : IBankService
         }
 
         // Nothing can refuse from here on.
-        Take(piles, amount);
+        TakeFromChecks(checks, Take(piles, amount));
 
         if (onto is not null)
         {
@@ -314,6 +339,180 @@ public sealed class BankService : IBankService
         }
     }
 
+    public long? WorthOf(ItemEntity item)
+    {
+        // Only a check is a check: the prop on anything else is worth nothing.
+        return item.TemplateId == CheckTemplate && item.TryGetProp<long>(ItemPropKeys.BankWorth, out var worth) && worth > 0
+            ? worth
+            : null;
+    }
+
+    public BankResultType WriteCheck(MobileEntity player, int amount)
+    {
+        if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        if (amount < 1)
+        {
+            return BankResultType.BadAmount;
+        }
+
+        if (amount < _config.MinCheck)
+        {
+            return BankResultType.CheckTooSmall;
+        }
+
+        if (amount > _config.MaxCheck)
+        {
+            return BankResultType.CheckTooBig;
+        }
+
+        if (BoxOf(player.Id) is not { } box)
+        {
+            return BankResultType.NoBank;
+        }
+
+        // A check is paid with coins: the gold is counted before the room, so a full box does not hide a short balance.
+        var piles = GoldIn(box);
+
+        if (piles.Sum(pile => (long)pile.Amount) < amount)
+        {
+            return BankResultType.NotEnoughGold;
+        }
+
+        // A pile the check uses up leaves its place to the check.
+        var left = amount;
+        var freed = 0;
+
+        foreach (var pile in piles)
+        {
+            if (left < pile.Amount)
+            {
+                break;
+            }
+
+            left -= pile.Amount;
+            freed++;
+        }
+
+        if (freed == 0 && !_capacity.HasRoomFor(box, 1))
+        {
+            return BankResultType.BankFull;
+        }
+
+        if (_handling.Make(CheckTemplate) is not { } check)
+        {
+            return BankResultType.Busy;
+        }
+
+        // Nothing can refuse from here on.
+        Take(piles, amount);
+        check.SetProp(ItemPropKeys.BankWorth, (long)amount);
+        check.SetProp(ItemPropKeys.LabelNumber, (long)CheckLabel);
+        Put(check, box);
+
+        return BankResultType.Ok;
+    }
+
+    public BankResultType Cash(MobileEntity player, ItemEntity check, out int deposited)
+    {
+        deposited = 0;
+
+        if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        if (BoxOf(player.Id) is not { } box)
+        {
+            return BankResultType.NoBank;
+        }
+
+        if (WorthOf(check) is not { } worth || !IsInside(check, box) || _handling.IsHeld(check))
+        {
+            return BankResultType.NotInBank;
+        }
+
+        // The piles of the box are topped up first; what is left makes piles of its own.
+        var there = TopPilesOf(box);
+        var topUp = (int)Math.Min(worth, there.Sum(pile => (long)(PileMaximum - pile.Amount)));
+        var left = worth - topUp;
+        var wanted = (int)Math.Min(left / PileMaximum + (left % PileMaximum > 0 ? 1 : 0), CashPilesMaximum + 1);
+
+        // Cashed whole, the check leaves its place to one of the piles. With room for fewer piles the box takes what
+        // fits and the check keeps the rest; so it does beyond the piles of one cashing, which a box with no limit
+        // would otherwise take by the thousand in one turn of the loop.
+        var whole = wanted <= CashPilesMaximum && _capacity.HasRoomFor(box, Math.Max(0, wanted - 1));
+        var newPiles = wanted;
+
+        if (!whole)
+        {
+            for (newPiles = Math.Min(wanted - 1, CashPilesMaximum);
+                 newPiles > 0 && !_capacity.HasRoomFor(box, newPiles);
+                 newPiles--)
+            {
+            }
+        }
+
+        var going = whole ? worth : topUp + (long)newPiles * PileMaximum;
+
+        if (going == 0)
+        {
+            return BankResultType.BankFull;
+        }
+
+        var made = new List<ItemEntity>(newPiles);
+
+        for (var remaining = going - topUp; remaining > 0; remaining -= PileMaximum)
+        {
+            if (_handling.Make(_itemsConfig.GoldTemplate, (int)Math.Min(remaining, PileMaximum)) is not { } pile)
+            {
+                return BankResultType.Busy;
+            }
+
+            made.Add(pile);
+        }
+
+        // Nothing can refuse from here on. The check goes first: its place is the one a pile takes.
+        if (whole)
+        {
+            _handling.Delete(check);
+        }
+        else
+        {
+            check.SetProp(ItemPropKeys.BankWorth, worth - going);
+            _handling.Refresh(check);
+        }
+
+        foreach (var pile in there)
+        {
+            if (topUp == 0)
+            {
+                break;
+            }
+
+            var added = Math.Min(topUp, PileMaximum - pile.Amount);
+
+            if (added > 0)
+            {
+                pile.Amount += added;
+                topUp -= added;
+                _handling.Refresh(pile);
+            }
+        }
+
+        foreach (var pile in made)
+        {
+            Put(pile, box);
+        }
+
+        deposited = (int)Math.Min(going, int.MaxValue);
+
+        return BankResultType.Ok;
+    }
+
     // The gold piles inside a container, at any depth, the smallest first: taking from them empties the small ones.
     // A pile on a cursor is not there to take.
     private List<ItemEntity> GoldIn(ItemEntity container)
@@ -358,7 +557,8 @@ public sealed class BankService : IBankService
                      .ToList();
     }
 
-    private void Take(List<ItemEntity> piles, int amount)
+    // Takes the coins pile by pile; what the piles could not give.
+    private int Take(List<ItemEntity> piles, int amount)
     {
         foreach (var pile in piles)
         {
@@ -374,6 +574,88 @@ public sealed class BankService : IBankService
                 amount -= taken;
             }
         }
+
+        return amount;
+    }
+
+    // Takes the rest from the checks, the smallest first: one used up is gone, the last one keeps what is left.
+    private void TakeFromChecks(List<ItemEntity> checks, int amount)
+    {
+        foreach (var check in checks)
+        {
+            if (amount == 0)
+            {
+                break;
+            }
+
+            var worth = WorthOf(check) ?? 0;
+            var taken = (int)Math.Min(amount, worth);
+            amount -= taken;
+
+            if (taken == worth)
+            {
+                _handling.Delete(check);
+            }
+            else
+            {
+                check.SetProp(ItemPropKeys.BankWorth, worth - taken);
+                _handling.Refresh(check);
+            }
+        }
+    }
+
+    // The checks inside a container, at any depth, the smallest first. One on a cursor is not there to take.
+    private List<ItemEntity> ChecksIn(ItemEntity container)
+    {
+        var checks = new List<ItemEntity>();
+        var visited = new HashSet<Serial>();
+        Collect(container);
+
+        return checks.OrderBy(check => WorthOf(check)).ThenBy(check => check.Id.Value).ToList();
+
+        void Collect(ItemEntity inside)
+        {
+            if (!visited.Add(inside.Id))
+            {
+                return;
+            }
+
+            foreach (var item in _items.GetContents(inside.Id))
+            {
+                if (WorthOf(item) is not null)
+                {
+                    if (!_handling.IsHeld(item))
+                    {
+                        checks.Add(item);
+                    }
+                }
+                else
+                {
+                    Collect(item);
+                }
+            }
+        }
+    }
+
+    // Whether the item lies inside the container, at any depth.
+    private bool IsInside(ItemEntity item, ItemEntity container)
+    {
+        var visited = new HashSet<Serial>();
+
+        for (var current = item; current.ContainerId is { } parent && visited.Add(current.Id);)
+        {
+            if (parent == container.Id)
+            {
+                return true;
+            }
+
+            if (!_items.TryGet(parent, out current!))
+            {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     private void Put(ItemEntity pile, ItemEntity container)

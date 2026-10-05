@@ -19,9 +19,10 @@ public interface ISpeechService
     /// <summary>
     ///     Makes the mobile say a text of the client, by its cliloc number, to the players who hear it: each reads it
     ///     in the language of its client. <paramref name="arguments" /> fills the text's placeholders, tab separated.
-    ///     The number of players reached.
+    ///     <paramref name="affix" />, when not empty, is written by the client after the text. The number of players
+    ///     reached.
     /// </summary>
-    int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "");
+    int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "", string affix = "");
 
     /// <summary>
     ///     Plays <paramref name="sound" /> once where <paramref name="source" /> stands (0x54), for the players within 15

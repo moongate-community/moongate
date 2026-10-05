@@ -30,5 +30,14 @@ public enum BankResultType
     NoBank = 7,
 
     /// <summary>No serial was ready for a new pile: the same request works a moment later.</summary>
-    Busy = 8
+    Busy = 8,
+
+    /// <summary>The check asked for is worth less than a banker writes.</summary>
+    CheckTooSmall = 9,
+
+    /// <summary>The check asked for is worth more than a banker writes.</summary>
+    CheckTooBig = 10,
+
+    /// <summary>Not a bank check, or one that is not inside the player's bank box.</summary>
+    NotInBank = 11
 }

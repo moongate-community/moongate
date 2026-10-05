@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Lua;
 using Lua.Standard;
 using Moongate.Core.Geometry;
@@ -21,6 +22,7 @@ public sealed class BankModuleTests
 {
     private readonly StubBankService _bank = new();
     private readonly SettableClock _clock = new();
+    private readonly ItemService _items = TestItems.Create();
     private BankModule? _module;
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly MobileEntity _aria = new() { Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
@@ -106,6 +108,67 @@ public sealed class BankModuleTests
         Assert.Empty(_bank.Withdrawn);
     }
 
+    [Fact]
+    public void Check_AsksTheBankForACheck_AndGivesItsAnswer()
+    {
+        Assert.True(Run("return bank.check(2, 5000) == BankResultType.Ok")[0].Read<bool>());
+        Assert.Equal([(_aria, 5000)], _bank.Checks);
+
+        _bank.Result = BankResultType.CheckTooSmall;
+
+        Assert.True(Run("return bank.check(2, 10) == BankResultType.CheckTooSmall")[0].Read<bool>());
+    }
+
+    [Theory, InlineData("999, 5000", "NoPlayer"), InlineData("2, 2.5", "BadAmount"), InlineData("2, 99999999999", "BadAmount")]
+    public void Check_ForWhoIsNotAPlayer_OrAnAmountThatIsNone_AsksNothing(string arguments, string answer)
+    {
+        Assert.True(Run($"return bank.check({arguments}) == BankResultType.{answer}")[0].Read<bool>());
+        Assert.Empty(_bank.Checks);
+    }
+
+    [Fact]
+    public void Cash_CashesTheCheck_AndGivesTheAnswerOfTheBank()
+    {
+        var check = Check(0x40000500, 5000);
+
+        Assert.True(Run("return bank.cash(2, 0x40000500) == BankResultType.Ok")[0].Read<bool>());
+        Assert.Equal((_aria, check), Assert.Single(_bank.Cashed));
+
+        _bank.Result = BankResultType.BankFull;
+
+        Assert.True(Run("return bank.cash(2, 0x40000500) == BankResultType.BankFull")[0].Read<bool>());
+    }
+
+    [Theory, InlineData("2, 0x4000FFFF", "NotInBank"), InlineData("2, -1", "NotInBank"), InlineData("999, 0x40000500", "NoPlayer")]
+    public void Cash_AnItemThatIsNotThere_OrForWhoIsNotAPlayer_AsksNothing(string arguments, string answer)
+    {
+        Check(0x40000500, 5000);
+
+        Assert.True(Run($"return bank.cash({arguments}) == BankResultType.{answer}")[0].Read<bool>());
+        Assert.Empty(_bank.Cashed);
+    }
+
+    [Fact]
+    public void Worth_IsWhatACheckIsWorth_AndNilForAnythingElse()
+    {
+        Check(0x40000500, 5000);
+        _items.Add([new ItemEntity { Id = new Serial(0x40000501), TemplateId = "sword", ItemId = 0x0F5E, Amount = 1 }]);
+
+        var result = Run("return bank.worth(0x40000500), bank.worth(0x40000501), bank.worth(0x4000FFFF), bank.worth(-1)");
+
+        Assert.Equal(5000, result[0].Read<int>());
+        Assert.Equal([LuaValue.Nil, LuaValue.Nil, LuaValue.Nil], result[1..]);
+    }
+
+    private ItemEntity Check(uint serial, long worth)
+    {
+        var check = new ItemEntity { Id = new Serial(serial), TemplateId = "bank_check", ItemId = 0x14F0, Amount = 1 };
+        _items.Add([check]);
+        _bank.Worths[check.Id] = worth;
+
+        return check;
+    }
+
     // Several bankers hear the same words in the same moment: the first one that asks serves the player.
     [Fact]
     public void Attend_IsTrueForTheFirstWhoAsksForAPlayer_AndAgainAMomentLater()
@@ -124,7 +187,7 @@ public sealed class BankModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
-        binder.Bind(state, _module ??= new BankModule(_bank, _mobiles, _clock));
+        binder.Bind(state, _module ??= new BankModule(_bank, _mobiles, _clock, _items));
         binder.BindEnum(state, typeof(BankResultType));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
