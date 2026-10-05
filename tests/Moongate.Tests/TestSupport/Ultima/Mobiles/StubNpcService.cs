@@ -83,6 +83,13 @@ public sealed class StubNpcService : INpcService
         return Task.FromResult(Removes);
     }
 
+    public bool Remove(Serial serial)
+    {
+        Removals.Add(serial);
+
+        return Removes;
+    }
+
     private void RefuseTheLoopThread()
     {
         if (OnLoopThread?.Invoke() == true)

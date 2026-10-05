@@ -1,0 +1,30 @@
+# ==============================================================================
+# Moongate - templates/items/corpse.toml
+#
+# What it is for:
+#   The corpse an NPC leaves where it dies: a container on the ground that
+#   holds what the NPC carried and wore, opened with a double click like a
+#   chest. The server gives every corpse the body, the facing and the hue of
+#   who died, and the name "the remains of <name>". Once its time is over it
+#   is gone, with what nobody took.
+#
+# Fields:
+#   base_id        inherits base_item
+#   item_id        0x2006, the graphic of every corpse: the client draws the
+#                  body it is told in the place of the amount
+#   movable        false: a corpse cannot be picked up
+#   decays         true, with decay_minutes: an item that cannot be picked up
+#                  decays only when its template gives both
+#   decay_minutes  how long the corpse of an NPC lies: 7, as in ModernUO, UOX3
+#                  and Sphere
+# ==============================================================================
+
+[[item]]
+id = "corpse"
+base_id = "base_item"
+item_id = 0x2006
+name = "a corpse"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 7

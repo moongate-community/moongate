@@ -69,6 +69,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x13` | `EquipRequestPacket` | Incoming | Fixed 10 | `EquipRequestPacketHandler`: puts the held item on the character, or bounces it back |
 | `0x2E` | `WornItemPacket` | Outgoing | Fixed 15 | — |
 | `0x6E` | `MobileAnimationPacket` | Outgoing | Fixed 14 | — |
+| `0xAF` | `DeathAnimationPacket` | Outgoing | Fixed 13 | — |
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x95` | `HuePickerPacket` | Outgoing | Fixed 9 | — |
@@ -277,6 +278,14 @@ client cannot recolour anything by sending `0x95` on its own (UOX3 recolours wha
 packet names). The hue is masked with `0x3FFF` and kept from 2 to 1001, as ModernUO's
 `ClipDyedHue`. A client that closes the picker sends nothing, so the callback may never run: whoever
 opens a picker checks again, in the callback, what was true when it opened.
+
+`IDeathService` kills an NPC ([Death of NPCs](death.md)). The players who see it are sent, in
+this order, the corpse (`0xF3`, or `0x1A` to an old client), the death (`0xAF`: the mobile, its
+corpse, four zero bytes, as ModernUO) and, when the NPC is removed, `0x1D`. The client plays the
+death animation of the body by itself; the server names none. A corpse is the graphic `0x2006` and
+tells the client its body in the place of the amount and the way it lies in the light byte, as
+ServUO does: the item itself keeps amount 1, and both come from its props `corpse.body` and
+`corpse.direction`.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.

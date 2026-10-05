@@ -14,6 +14,7 @@ using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -26,6 +27,7 @@ namespace Moongate.Tests.Server.Ultima.Modules;
 public sealed class MobileModuleTests
 {
     private readonly RecordingCrimeService _crimes = new();
+    private readonly StubDeathService _death = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingMobileStateService _state = new();
@@ -313,6 +315,23 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Kill_HandsTheMobileAndItsKillerToTheDeath_AndGivesItsAnswer()
+    {
+        var result = Run($"return mobile.kill({_orc.Id.Value}, 2), mobile.kill({_orc.Id.Value}), mobile.kill(999)");
+
+        Assert.Equal([true, true, false], result.Select(value => value.Read<bool>()));
+        Assert.Equal([(_orc, (MobileEntity?)_aria), (_orc, null)], _death.Killed);
+    }
+
+    [Fact]
+    public void Kill_WhatTheDeathRefuses_SuchAsAPlayer_IsFalse()
+    {
+        _death.Kills = false;
+
+        Assert.False(Run("return mobile.kill(2)")[0].Read<bool>());
+    }
+
+    [Fact]
     public void Criminal_SaysWhetherTheMobileIsOne_AndSetCriminalMakesOrPardonsIt()
     {
         var result = Run(
@@ -552,7 +571,7 @@ public sealed class MobileModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view, new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human }, new BodyContent { Body = new(17), Type = BodyType.Monster }), new StubWeightService { CarriedStones = 37, MaximumStones = 215 }, _crimes));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view, new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human }, new BodyContent { Body = new(17), Type = BodyType.Monster }), new StubWeightService { CarriedStones = 37, MaximumStones = 215 }, _crimes, _death));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

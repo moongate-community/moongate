@@ -39,6 +39,7 @@ public sealed class MobileModule
     private readonly Lazy<FrozenDictionary<int, BodyType>> _bodies;
     private readonly IWeightService? _weight;
     private readonly ICrimeService? _crimes;
+    private readonly IDeathService? _death;
 
     public MobileModule(
         IMobileService mobiles,
@@ -52,9 +53,11 @@ public sealed class MobileModule
         IWorldViewService? view = null,
         IDataLoaderService? data = null,
         IWeightService? weight = null,
-        ICrimeService? crimes = null
+        ICrimeService? crimes = null,
+        IDeathService? death = null
     )
     {
+        _death = death;
         _crimes = crimes;
         _weight = weight;
         _bodies = new(
@@ -654,6 +657,27 @@ public sealed class MobileModule
     public bool? Criminal(long serial)
     {
         return _crimes is not null && TryGetMobile(serial, out var mobile) ? _crimes.IsCriminal(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Kills an NPC, which dies where it stands and leaves its corpse; <c>mobile.kill(orc, user)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Kills an NPC: it leaves its corpse with what it carried and wore, the players around see and hear it die, its script runs on_death(npc, corpse, killer) and it leaves the world; killer is the serial of who did it, kept on the corpse, or nil. False for a player, which does not die yet, or a mobile not in the world.")]
+    public bool Kill(long serial, long? killer = null)
+    {
+        if (_death is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        MobileEntity? by = null;
+
+        if (killer is { } id)
+        {
+            TryGetMobile(id, out by!);
+        }
+
+        return _death.Kill(mobile, by);
     }
 
     /// <summary>

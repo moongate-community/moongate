@@ -175,3 +175,9 @@
 30148 = "You have been jailed for {0} days: {1}"
 30149 = "Reason: {0}"
 30150 = "No character is named {0}."
+
+# Moongate: texts of death (30151 the name of a corpse, 30152-30154 of the kill command).
+30151 = "the remains of {0}"
+30152 = "Kills the NPC you target: it dies where it stands and leaves its corpse."
+30153 = "{0} is dead."
+30154 = "Players cannot die yet."

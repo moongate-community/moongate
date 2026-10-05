@@ -105,6 +105,27 @@ public sealed class NpcServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Remove_OnTheGameLoop_TakesTheNpcOffAtOnce_AndRefusesWhatIsNoNpc()
+    {
+        var npcs = await CreateAsync();
+        await npcs.SpawnAsync("orc", MapType.Trammel, new Point3D(1496, 1628, 0));
+        var removed = new List<bool>();
+
+        await _fixture.ExecuteOnLoopAsync(
+            () =>
+            {
+                removed.Add(npcs.Remove(_orc.Id));
+                removed.Add(npcs.Remove(_orc.Id));
+                removed.Add(npcs.Remove(new Serial(0x00FFFFFF)));
+            }
+        );
+
+        Assert.Equal([true, false, false], removed);
+        Assert.False(_mobiles.IsInWorld(_orc.Id));
+        Assert.All([_shirt.Id, _backpack.Id, _gold.Id], serial => Assert.False(_items.TryGet(serial, out _)));
+    }
+
+    [Fact]
     public async Task RemoveAsync_TakesTheNpcOffTheScreensAndQueuesItsDeletion()
     {
         var npcs = await CreateAsync();

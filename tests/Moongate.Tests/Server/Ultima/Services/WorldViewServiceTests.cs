@@ -461,6 +461,84 @@ public sealed class WorldViewServiceTests
         Assert.True(shown.HighSeas);
     }
 
+    [Theory, InlineData(true), InlineData(false)]
+    public void ACorpse_TellsTheClientItsBodyInThePlaceOfTheAmount_AndTheWayItLies(bool newClient)
+    {
+        var corpse = Ground(0x40000050, 1500, 1628);
+        corpse.ItemId = 0x2006;
+        corpse.SetProp("corpse.body", 0x0011);
+        corpse.SetProp("corpse.direction", 2);
+        var aria = Mobile(2, 1496, 1628);
+        _mobiles.EnterWorld(aria);
+
+        _view.Entered(aria, AriaSession, newClient ? null : new ClientVersion(6, 0, 14, 2));
+
+        var shown = Assert.Single(_sender.Sent);
+        Assert.Equal(
+            (0x0011, 2),
+            shown is WorldItemSaPacket sa ? (sa.Amount, sa.Light) : (((WorldItemPacket)shown).Amount, ((WorldItemPacket)shown).Light)
+        );
+        // The item itself is one corpse, not seventeen.
+        Assert.Equal(1, corpse.Amount);
+    }
+
+    [Fact]
+    public void ACorpseWhosePropsAScriptSpoiled_IsShownAsAPlainItem_NotAnError()
+    {
+        var corpse = Ground(0x40000050, 1500, 1628);
+        corpse.ItemId = 0x2006;
+        corpse.SetProp("corpse.body", "an orc");
+        corpse.SetProp("corpse.direction", -3);
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        var shown = Assert.IsType<WorldItemSaPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal((1, 0), (shown.Amount, shown.Light));
+    }
+
+    [Fact]
+    public void WhatIsNotACorpse_KeepsItsAmount_WhateverItsProps()
+    {
+        var gold = Ground(0x40000050, 1500, 1628);
+        gold.Amount = 30;
+        gold.SetProp("corpse.body", 0x0011);
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal(30, Assert.IsType<WorldItemSaPacket>(Assert.Single(_sender.Sent)).Amount);
+    }
+
+    [Fact]
+    public void MobileDied_ShowsTheDeathToThoseWhoSeeIt_NotToItself()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        Enter(4, 3000, 3000, CarlaSession);
+        ClearSent();
+
+        _view.MobileDied(aria, new Serial(0x40000010));
+
+        var death = Assert.IsType<DeathAnimationPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal((aria.Id, new Serial(0x40000010)), (death.Mobile, death.Corpse));
+        Assert.Equal([BorisSession], _sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void MobileDied_OfAHiddenMobile_IsForTheStaffOnly()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var carla = Mobile(4, 1497, 1628);
+        _mobiles.EnterWorld(carla);
+        _view.Entered(carla, CarlaSession, null, AccountType.GameMaster);
+        aria.Hidden = true;
+        ClearSent();
+
+        _view.MobileDied(aria, default);
+
+        Assert.Equal([CarlaSession], _sender.SentSessionIds);
+    }
+
     [Fact]
     public void Entered_AnOldClient_GetsTheOldPacket()
     {
