@@ -90,7 +90,38 @@ public sealed class RepositoryDataFilesTests
         Assert.Equal(Enumerable.Range(1, 10), jail.Cell.Select(cell => cell.Number));
         Assert.Equal(10, jail.Cell.Select(cell => cell.Location).Distinct().Count());
         Assert.Equal(58, service.GetEntities<SkillContent>().Count);
-        Assert.Equal(10, service.GetEntities<SkillContent>().Single(skill => skill.Id == SkillType.Hiding).Delay);
+        // The skills ModernUO lets a player use directly, with its waits; the others give none.
+        Assert.Equal(
+            new Dictionary<SkillType, double>
+            {
+                [SkillType.Anatomy] = 1,
+                [SkillType.AnimalLore] = 1,
+                [SkillType.ItemIdentification] = 1,
+                [SkillType.ArmsLore] = 1,
+                [SkillType.Begging] = 30,
+                [SkillType.Peacemaking] = 1,
+                [SkillType.Cartography] = 1,
+                [SkillType.DetectingHidden] = 30,
+                [SkillType.Discordance] = 1,
+                [SkillType.EvaluatingIntelligence] = 1,
+                [SkillType.ForensicEvaluation] = 1,
+                [SkillType.Hiding] = 10,
+                [SkillType.Provocation] = 1,
+                [SkillType.Inscription] = 1,
+                [SkillType.Poisoning] = 10,
+                [SkillType.SpiritSpeak] = 1,
+                [SkillType.Stealing] = 30,
+                [SkillType.AnimalTaming] = 30,
+                [SkillType.TasteIdentification] = 1,
+                [SkillType.Tracking] = 10,
+                [SkillType.Meditation] = 10,
+                [SkillType.Stealth] = 10,
+                [SkillType.RemoveTrap] = 10
+            },
+            service.GetEntities<SkillContent>()
+                   .Where(skill => skill.Delay is not null)
+                   .ToDictionary(skill => skill.Id, skill => skill.Delay.GetValueOrDefault())
+        );
         Assert.Equal(7, service.GetEntities<ProfessionContent>().Count);
         Assert.Equal(3, service.GetEntities<RaceContent>().Count);
         Assert.NotEmpty(Assert.Single(service.GetEntities<BannedNamesContent>()).Words);
