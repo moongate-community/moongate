@@ -10,7 +10,8 @@
     </PropertyGroup>
     <ItemGroup>
         <AssemblyMetadata Include="Codename" Value="$(Codename)"/>
-        <!-- Written at every build: the header and the version command say when and how the binaries were built. -->
+        <!-- Written at every build: the header and the version command say when and how the binaries were built.
+             The time changes at each build, so this project is compiled again even when nothing else changed. -->
         <AssemblyMetadata Include="BuildTime" Value="$([System.DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ'))"/>
         <AssemblyMetadata Include="BuildConfiguration" Value="$(Configuration)"/>
         <EmbeddedResource Include="../Moongate.Server/Assets/header.txt" Link="Assets/header.txt"/>

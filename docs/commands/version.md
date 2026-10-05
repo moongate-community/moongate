@@ -30,8 +30,8 @@ Version: 0.14.0 (Release) Codename: "Lilly"
         Built: 2026-10-05 14:32 UTC
 ```
 
-`mgctl init` shows them too, for the `mgctl` it was built with; `mgctl --version` prints the bare
-number, `0.14.0`, for scripts.
+`mgctl init` shows them too, for `mgctl` itself: it is built on its own, so its `Built:` can differ
+by a minute from the server's. `mgctl --version` prints the bare number, `0.14.0`, for scripts.
 
 A build that does not say how or when it was made reads `(unknown)` and `built unknown`.
 

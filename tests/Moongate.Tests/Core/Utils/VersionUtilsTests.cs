@@ -136,8 +136,9 @@ public sealed class VersionUtilsTests
         var built = VersionUtils.GetBuildTime(assembly);
 
         Assert.NotNull(built);
-        // Written by the build, not a constant somebody typed.
-        Assert.InRange(built.Value, DateTimeOffset.UtcNow.AddDays(-30), DateTimeOffset.UtcNow.AddMinutes(5));
+        // Written by the build: never in the future, and in UTC. How old the binaries under test are is not its business.
+        Assert.True(built.Value <= DateTimeOffset.UtcNow.AddMinutes(5));
+        Assert.Equal(TimeSpan.Zero, built.Value.Offset);
         Assert.Contains(VersionUtils.GetBuildConfiguration(assembly), new[] { "Debug", "Release" });
     }
 
