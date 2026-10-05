@@ -21,6 +21,7 @@ using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
+using Serilog;
 
 namespace Moongate.Tests.Server.Ultima.Services;
 
@@ -63,6 +64,9 @@ public sealed class JailServiceTests : IAsyncLifetime
     };
 
     private BroadcastFixture _fixture = null!;
+    private readonly CapturingLogSink _log = new();
+    private int _read;
+
     private MobileEntity _aria = null!;
     private MobileEntity _bruno = null!;
     private MobileEntity _staff = null!;
@@ -563,6 +567,42 @@ public sealed class JailServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void TheConsole_IsToldWhoIsJailed_WhoIsReleasedWithItsFine_AndWhoIsReleasedEarly()
+    {
+        var backpack = Backpack(_aria);
+        Gold(backpack, 800);
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+
+        _jail.Jail(_aria, 2, 3, _staff);
+        _jail.Jail(_orc, 1, 1, _staff);
+        Assert.Equal(
+            ["Aria (0x00000002) is jailed in cell 2 for 3 days by Giachi", $"an orc ({_orc.Id}) is jailed in cell 1 for 1 days by Giachi"],
+            Logged()
+        );
+
+        Logged();
+        Assert.True(_jail.Pardon(_orc.Id));
+        Assert.Equal([$"an orc ({_orc.Id}) is released early from cell 1"], Logged());
+
+        Logged();
+        _clock.Advance(TimeSpan.FromDays(3));
+        _jail.Check();
+        Assert.Equal(["Aria (0x00000002) is released from cell 2 after 3 days, with a fine of 500 gold"], Logged());
+        Assert.All(_log.Events, entry => Assert.Equal(Serilog.Events.LogEventLevel.Information, entry.Level));
+    }
+
+    [Fact]
+    public void TheConsole_IsToldWhenACharacterIsMovedToAnotherCell()
+    {
+        _jail.Jail(_aria, 2, 3, _staff);
+        Logged();
+
+        Assert.Equal(JailResultType.Ok, _jail.Jail(_aria, 1, 5, _staff));
+
+        Assert.Equal(["Aria (0x00000002) is jailed in cell 1 for 5 days by Giachi"], Logged());
+    }
+
+    [Fact]
     public void Pardon_AnOnlinePrisoner_GoesBackAtOnceWithNoFineAndNoNote()
     {
         var backpack = Backpack(_aria);
@@ -678,10 +718,22 @@ public sealed class JailServiceTests : IAsyncLifetime
             _items,
             handling,
             _view,
-            _clock
+            _clock,
+            logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
         await jail.StartAsync();
+        // What the start itself says is not what the tests look at.
+        Logged();
 
         return jail;
+    }
+
+    // The lines written since the last call.
+    private string[] Logged()
+    {
+        var lines = _log.Events.Skip(_read).Select(entry => entry.RenderMessage()).ToArray();
+        _read = _log.Events.Count;
+
+        return lines;
     }
 }

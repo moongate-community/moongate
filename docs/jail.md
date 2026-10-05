@@ -124,6 +124,20 @@ two later. To feed the prisoners something else, change the two loot tables. An 
 gets the chests at its next spawn check; [`.initial_spawn`](commands/initial_spawn.md) fills
 them at once.
 
+## In the console and the log
+
+The server says who goes in and who comes out, at the information level:
+
+```text
+Lord Pippo (0x00000A12) is jailed in cell 3 for 3 days by Giachi
+Lord Pippo (0x00000A12) is released from cell 3 after 3 days, with a fine of 500 gold
+Gino (0x00000B07) is released early from cell 2
+The sentence of an orc (0x0000E258) in cell 1 is dropped: it is no longer in the world
+```
+
+A character moved to another cell is said to be jailed again, in the new cell. The fine is the
+gold really taken. The last line is an NPC that was removed while it served.
+
 ## Settings
 
 ```toml

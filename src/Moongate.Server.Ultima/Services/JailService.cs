@@ -37,7 +37,7 @@ public sealed class JailService : IJailService
 
     private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(10);
 
-    private readonly ILogger _logger = Log.ForContext<JailService>();
+    private readonly ILogger _logger;
     private readonly IDataLoaderService _data;
     private readonly IDataAccess<JailSentenceEntity> _table;
     private readonly IMobileService _mobiles;
@@ -85,9 +85,11 @@ public sealed class JailService : IJailService
         IItemHandlingService handling,
         IWorldViewService view,
         TimeProvider time,
-        ILocalizationService? localization = null
+        ILocalizationService? localization = null,
+        ILogger? logger = null
     )
     {
+        _logger = logger ?? Log.ForContext<JailService>();
         _data = data;
         _table = table;
         _mobiles = mobiles;
@@ -106,7 +108,8 @@ public sealed class JailService : IJailService
 
     public async Task StartAsync()
     {
-        _file = _data.GetEntities<JailFile>().FirstOrDefault();
+        var files = _data.GetEntities<JailFile>();
+        _file = files.Count > 0 ? files[0] : null;
 
         foreach (var sentence in await _table.GetAllAsync())
         {
@@ -201,6 +204,14 @@ public sealed class JailService : IJailService
         sentence.JailedBy = by.Name;
         sentence.Pardoned = false;
         _speech.Tell(prisoner, _localization.Text(JailedMessage, "You have been jailed for {0} days.", days));
+        _logger.Information(
+            "{Name:l} ({Serial:l}) is jailed in cell {Cell} for {Days} days by {By:l}",
+            sentence.Name,
+            sentence.Id,
+            cell,
+            days,
+            sentence.JailedBy
+        );
 
         return JailResultType.Ok;
     }
@@ -264,6 +275,12 @@ public sealed class JailService : IJailService
                 {
                     // An NPC that is no longer in the world was removed; a player is offline and is released at its login.
                     End(sentence);
+                    _logger.Information(
+                        "The sentence of {Name:l} ({Serial:l}) in cell {Cell} is dropped: it is no longer in the world",
+                        sentence.Name,
+                        sentence.Id,
+                        sentence.Cell
+                    );
                 }
             }
             catch (Exception exception)
@@ -303,10 +320,25 @@ public sealed class JailService : IJailService
 
         if (sentence.Pardoned)
         {
+            _logger.Information(
+                "{Name:l} ({Serial:l}) is released early from cell {Cell}",
+                sentence.Name,
+                sentence.Id,
+                sentence.Cell
+            );
             _speech.Tell(prisoner, _localization.Text(PardonedMessage, "You have been released from jail."));
 
             return;
         }
+
+        _logger.Information(
+            "{Name:l} ({Serial:l}) is released from cell {Cell} after {Days} days, with a fine of {Fine} gold",
+            sentence.Name,
+            sentence.Id,
+            sentence.Cell,
+            sentence.Days,
+            fine
+        );
 
         GiveNote(sentence, prisoner, fine);
         _speech.Tell(
