@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Handlers.Movement;
 using Moongate.Server.Ultima.Handlers.Prompts;
 using Moongate.Server.Ultima.Handlers.Targeting;
 using Moongate.Server.Ultima.Handlers.Tooltips;
+using Moongate.Server.Ultima.Packets.BulletinBoards;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.Gumps;
@@ -69,6 +70,7 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterPacketHandler<WarModeRequestPacket, WarModeRequestPacketHandler>();
         container.RegisterIncomingPacket<UpdateRangePacket>();
         container.RegisterPacketHandler<UpdateRangePacket, UpdateRangePacketHandler>();
+        container.RegisterIncomingPacket<BulletinBoardRequestPacket>();
         container.RegisterIncomingPacket<ExtendedCommandPacket>();
         container.RegisterPacketHandler<ExtendedCommandPacket, ExtendedCommandPacketHandler>();
         container.RegisterIncomingPacket<QueryPropertiesPacket>();
