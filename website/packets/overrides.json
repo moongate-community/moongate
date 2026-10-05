@@ -4793,5 +4793,221 @@
     ],
     "notes": "The arrows beside strength, dexterity and intelligence in the status window. Sent after the status when a player enters the world, and again with the three locks when one changes, as ModernUO.",
     "handler": "CharacterEnterWorldService: sends the stat locks of the character during world entry. MobileStateService.SetStatLock: sends them again to the player when one changes."
+  },
+  "0xD4:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Books",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the book."
+      },
+      {
+        "offset": "7",
+        "name": "Flag",
+        "type": "byte",
+        "size": "1",
+        "description": "1."
+      },
+      {
+        "offset": "8",
+        "name": "Writable",
+        "type": "byte",
+        "size": "1",
+        "description": "0: the book is read only."
+      },
+      {
+        "offset": "9",
+        "name": "Pages",
+        "type": "ushort",
+        "size": "2",
+        "description": "How many pages the book has."
+      },
+      {
+        "offset": "11",
+        "name": "Title and author",
+        "type": "loop",
+        "size": "variable",
+        "description": "The title, then the author: for each the length of its bytes with the zero that ends it (ushort), then the text in UTF-8 and its zero. The title is cut to 60 bytes and the author to 30."
+      }
+    ],
+    "notes": "Opens the client's book on its cover. The pages follow in 0x66.",
+    "handler": "BookDocumentService.Open: sent for a document whose item template has script_id readable_book."
+  },
+  "0x66:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Books",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the book."
+      },
+      {
+        "offset": "7",
+        "name": "Pages",
+        "type": "ushort",
+        "size": "2",
+        "description": "How many pages follow: all of them."
+      },
+      {
+        "offset": "9",
+        "name": "Page",
+        "type": "loop",
+        "size": "variable",
+        "description": "For each page: its number from 1 (ushort), how many lines it has (ushort, 8 at most), then each line in UTF-8 ended by a zero."
+      }
+    ],
+    "notes": "The pages of a book, sent right after its header (0xD4). The saved text is split at its empty lines, and a page of more than 8 lines goes on in the next.",
+    "handler": "BookDocumentService.Open, with the pages of BookPagination."
+  },
+  "0x66:incoming": {
+    "category": "Items",
+    "tags": [
+      "Books",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the book."
+      },
+      {
+        "offset": "7",
+        "name": "Pages",
+        "type": "loop",
+        "size": "variable",
+        "description": "The page count, then for each page its number, its line count (0xFFFF asks for the page) and the lines a player wrote."
+      }
+    ],
+    "notes": "A page the client asks for, or the lines a player wrote. Books are read only and every page is sent at the opening: the packet is recognised and dropped.",
+    "handler": "IgnoredPacketHandler."
+  },
+  "0xD4:incoming": {
+    "category": "Items",
+    "tags": [
+      "Books",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the book."
+      },
+      {
+        "offset": "7",
+        "name": "Title and author",
+        "type": "loop",
+        "size": "variable",
+        "description": "Flags and page count, then the title and the author a player wrote, each with its length."
+      }
+    ],
+    "notes": "The title and author a player wrote. Books are read only: the packet is recognised and dropped.",
+    "handler": "IgnoredPacketHandler."
+  },
+  "0x93:incoming": {
+    "category": "Items",
+    "tags": [
+      "Books",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the book."
+      },
+      {
+        "offset": "5",
+        "name": "Rest",
+        "type": "loop",
+        "size": "94",
+        "description": "Flags, page count, the title in 60 bytes and the author in 30."
+      }
+    ],
+    "notes": "The title and author a player wrote, as the older clients send them. Books are read only: the packet is recognised and dropped.",
+    "handler": "IgnoredPacketHandler."
   }
 }
