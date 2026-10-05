@@ -31,6 +31,8 @@ public class UltimaConfig : IConfigSection
 
     public JailConfig Jail { get; set; } = new();
 
+    public BulletinBoardsConfig BulletinBoards { get; set; } = new();
+
     /// <summary>
     ///     Validates the sub-tables before server services begin startup.
     /// </summary>
@@ -110,5 +112,12 @@ public class UltimaConfig : IConfigSection
         }
 
         Jail.Validate();
+
+        if (BulletinBoards is null)
+        {
+            throw new InvalidOperationException("The ultima.bulletin_boards configuration section cannot be null.");
+        }
+
+        BulletinBoards.Validate();
     }
 }
