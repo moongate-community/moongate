@@ -18,9 +18,11 @@ the skill, as `21 0` for Hiding.
    `scripts/skills/<skill>.lua`, with the names of `data/skills.toml` (`hiding`, `animal_lore`).
 4. A skill without a script answers "That skill cannot be used directly." (500014), and asks no
    wait.
-5. The number `on_use` returns is the seconds before the character may use another skill, from 0
-   to 3600; one second when it returns none. An `on_use` that calls `wait()` is still running when
-   the wait is set: it asks 10 seconds, and what it returns later is not read.
+5. The character then waits before another skill: the number `on_use` returns, in seconds from 0 to
+   3600; when it returns none, the `delay` of the skill in
+   [`data/skills.toml`](data-files/skills.md); one second when the file gives none either. An
+   `on_use` that calls `wait()` is still running when the wait is set: it asks the `delay` of the
+   skill, 10 seconds at least, and what it returns later is not read.
 
 The wait is of the character and one for all its skills, as in ModernUO. It is not saved: it does
 not outlive a restart.
@@ -33,9 +35,14 @@ function hiding.on_use(user)
     if skill.check(user, "hiding", 0, 100) then
         mobile.set_hidden(user, true)
     end
-
-    return 10
 end
+```
+
+```toml
+# data/skills.toml
+[[skill]]
+id = "hiding"
+delay = 10.0
 ```
 
 The scripts are loaded at startup, as the [item scripts](scripting/item-scripts.md) are; the other

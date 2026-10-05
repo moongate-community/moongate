@@ -5,8 +5,8 @@
 #   The skills of the shard and how they grow. Each id names a SkillType, whose
 #   value is the number the client uses (0-57), so the entries must stay in that
 #   order: the first is alchemy (0), the last is throwing (57). The server uses this
-#   file to validate the skills chosen at character creation and to decide which
-#   stats rise when a skill is used.
+#   file to validate the skills chosen at character creation, to decide how fast a
+#   skill rises and how long a character waits after using it.
 #
 # Fields:
 #   id               the skill, by name; its SkillType value is the client id
@@ -18,6 +18,9 @@
 #   *_scale          the chance, in percent, that a skill gain also raises that stat
 #   *_gain           how much a skill gain favours that stat when it rises
 #   gain_factor      how fast the skill itself rises (1.0 is normal)
+#   delay            optional: the seconds a character waits before another skill
+#                    after using this one, from 0 to 3600. Without it, and when the
+#                    script of the skill returns no number, one second
 # ==============================================================================
 
 [[skill]]
@@ -349,6 +352,7 @@ str_gain = 0.0
 dex_gain = 0.8
 int_gain = 0.2
 gain_factor = 1.0
+delay = 10.0
 
 [[skill]]
 id = "provocation"

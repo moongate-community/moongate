@@ -4,7 +4,10 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Loaders;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Services;
@@ -19,13 +22,13 @@ public sealed class SkillUseService : ISkillUseService
     public const int CannotUseCliloc = 500014;
 
     /// <summary>
-    ///     The seconds to wait after a skill whose script returns none, or fails.
+    ///     The seconds to wait after a skill when neither its script nor <c>skills.toml</c> gives any.
     /// </summary>
     public const double DefaultDelaySeconds = 1;
 
     /// <summary>
-    ///     The seconds to wait after a skill whose script is still running, having called <c>wait()</c>: what it
-    ///     returns later is not read.
+    ///     The least seconds to wait after a skill whose script is still running, having called <c>wait()</c>: what
+    ///     it returns later is not read.
     /// </summary>
     public const double SuspendedDelaySeconds = 10;
 
@@ -39,12 +42,12 @@ public sealed class SkillUseService : ISkillUseService
     /// </summary>
     public const double MustWaitMessageSeconds = 1;
 
-    private const double MaximumDelaySeconds = 3600;
 
     private readonly IMobileService _mobiles;
     private readonly ISkillScriptService _scripts;
     private readonly ISpeechService _speech;
     private readonly TimeProvider _time;
+    private readonly Lazy<Dictionary<SkillType, SkillContent>> _data;
     private readonly IJailService? _jail;
     private readonly ILocalizationService? _localization;
 
@@ -53,10 +56,12 @@ public sealed class SkillUseService : ISkillUseService
         ISkillScriptService scripts,
         ISpeechService speech,
         TimeProvider time,
+        IDataLoaderService data,
         IJailService? jail = null,
         ILocalizationService? localization = null
     )
     {
+        _data = new(() => data.GetEntities<SkillContent>().ToDictionary(content => content.Id));
         _jail = jail;
         _localization = localization;
         _mobiles = mobiles;
@@ -108,15 +113,19 @@ public sealed class SkillUseService : ISkillUseService
             return false;
         }
 
+        // What the script returned, else what skills.toml says of the skill, else a second.
+        var ofTheSkill = _data.Value.TryGetValue(skill, out var content) ? content.Delay : null;
         user.NextSkillAt = now.AddSeconds(
-            result.Kind == ScriptResultKind.Suspended ? SuspendedDelaySeconds : DelayOf(result.Values)
+            result.Kind == ScriptResultKind.Suspended
+                ? Math.Max(SuspendedDelaySeconds, ofTheSkill ?? 0)
+                : DelayOf(result.Values) ?? ofTheSkill ?? DefaultDelaySeconds
         );
 
         return true;
     }
 
-    // The seconds the script returned, from none to an hour; one when it returned nothing that is a number.
-    private static double DelayOf(IReadOnlyList<object?> values)
+    // The seconds the script returned, from none to an hour; null when it returned nothing that is a number.
+    private static double? DelayOf(IReadOnlyList<object?> values)
     {
         var seconds = values.Count > 0
                           ? values[0] switch
@@ -129,6 +138,6 @@ public sealed class SkillUseService : ISkillUseService
                           }
                           : double.NaN;
 
-        return double.IsNaN(seconds) ? DefaultDelaySeconds : Math.Clamp(seconds, 0, MaximumDelaySeconds);
+        return double.IsNaN(seconds) ? null : Math.Clamp(seconds, 0, SkillsLoader.MaximumDelaySeconds);
     }
 }

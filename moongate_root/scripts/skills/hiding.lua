@@ -6,21 +6,20 @@
 --   house: a player who uses the skill is tried at it, from 0 points, where
 --   it may just succeed, to 100, where it never fails. On a success it is
 --   hidden, out of war mode; on a failure it is seen, also when it was hidden.
---   Either way it waits 10 seconds before another skill. Its first step shows
---   it again (the server does that): there is no Stealth yet.
+--   Either way it waits before another skill the delay of hiding in
+--   data/skills.toml, 10 seconds. Its first step shows it again (the server
+--   does that): there is no Stealth yet.
 --
 --   A skill script is a table named after the skill, as data/skills.toml
 --   names it, in scripts/skills/<skill>.lua.
 --
 -- Functions:
---   on_use(user)   the player user uses the skill; returns the seconds to wait
---                  before another skill
+--   on_use(user)   the player user uses the skill. It may return the seconds to
+--                  wait before another skill, in place of the delay of
+--                  data/skills.toml; this one returns none
 -- ==============================================================================
 
 hiding = {}
-
--- The seconds before another skill.
-local DELAY = 10
 
 -- The client's own texts.
 local HIDDEN = 501240   -- You have hidden yourself well.
@@ -36,6 +35,4 @@ function hiding.on_use(user)
         mobile.set_hidden(user, false)
         mobile.message_cliloc(user, FAILED)
     end
-
-    return DELAY
 end

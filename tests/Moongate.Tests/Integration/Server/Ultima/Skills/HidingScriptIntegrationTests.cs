@@ -75,10 +75,11 @@ public sealed class HidingScriptIntegrationTests : IAsyncLifetime
                 new StubBankService()
             )
         );
+        var data = new StubDataLoaderService().With(new SkillContent { Id = SkillType.Hiding, GainFactor = 1.0, Delay = 10 });
         _container.RegisterInstance<ISkillService>(
             new SkillService(
                 _state,
-                new StubDataLoaderService().With(new SkillContent { Id = SkillType.Hiding, GainFactor = 1.0 }),
+                data,
                 new SkillsConfig(),
                 _random
             )
@@ -115,7 +116,7 @@ public sealed class HidingScriptIntegrationTests : IAsyncLifetime
         await _engine.StartAsync();
         var skillScripts = new SkillScriptService(_engine, _loop, options);
         await skillScripts.StartAsync();
-        _use = new(_fixture.Mobiles, skillScripts, _speech, _time);
+        _use = new(_fixture.Mobiles, skillScripts, _speech, _time, data);
     }
 
     public async Task DisposeAsync()
@@ -155,7 +156,7 @@ public sealed class HidingScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Hiding_AsksTenSecondsBeforeAnotherSkill()
+    public void Hiding_AsksTheDelayOfTheSkillsFileBeforeAnotherSkill()
     {
         _use.Use(_session, SkillType.Hiding);
 
