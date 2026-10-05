@@ -136,7 +136,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Scripted behaviour | ✅ | Lua mobile scripts: `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range` |
 | Sleeping away from players | ✅ | NPCs think only near a player |
 | Wandering | 🟡 | `wander.lua` keeps spawned NPCs in their home area |
-| Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*; no vendor keywords yet |
+| Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*, *balance* and *withdraw*; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
 | Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. No fleeing, NPCs do not open doors, and mobiles do not block a path |
@@ -157,7 +157,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Vendors: buy, sell, restock | ❌ | Item prices are in the templates; nothing buys or sells |
-| Banker and bank box | ✅ | The *bank* keyword in any client language; open while the player stands still; see [Bank](bank.md) |
+| Banker and bank box | ✅ | The *bank* keyword in any client language; open while the player stands still; balance, withdraw and deposit by speech; a limit of items; see [Bank](bank.md) |
 | Stable master, veterinarian | ❌ | |
 | Skill trainers | ❌ | |
 | Healers that resurrect | ❌ | |
@@ -265,7 +265,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Gold | 🟡 | Starting gold and NPC loot; nothing to spend it on |
-| Banking and bank checks | 🟡 | The bank box; no withdraw, balance or checks |
+| Banking and bank checks | 🟡 | The bank box with its limit of items; balance, withdraw and deposit by speech; criminals refused; no checks yet; see [Bank](bank.md) |
 | House costs and limits | ❌ | |
 | Account-wide gold | ❌ | |
 | Vendor search and auctions | ❌ | |
