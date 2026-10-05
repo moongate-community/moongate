@@ -1,0 +1,31 @@
+title = "The daily journal of Grimmoch Drummel"
+author = "Grimmoch"
+content = """Day Eleven - Day
+Thirteen :
+
+Lysander is gone, and
+two more workers
+with him.  Good
+riddance to the first.
+He knows something.
+
+He heard them too, I
+know he did - and yet
+he scowled at me
+when I mentioned
+them.  I cannot stop
+the noise in my head,
+the scratching, the
+clawing tears at my
+
+senses.  What is it?
+What does Lysander
+seek that I can only
+turn from?  Where
+has he gone?  The
+only answer to my
+questions comes as
+laughter from behind
+
+the stones."""
+item_template = "readable_scroll"

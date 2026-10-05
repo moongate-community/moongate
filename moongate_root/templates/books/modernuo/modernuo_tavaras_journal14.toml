@@ -1,0 +1,64 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day Fourteen - Day
+Fifteen:
+
+Lysander has
+returned... and yet,
+how can I describe the
+horror of it?  He
+stands across the
+
+chamber from me
+even now, a changed
+man.  His hair hangs
+in grimy knots across
+his face, his clothes
+filthy and torn in
+places... and the blood
+- covered in blood, his
+
+skin shining in
+scarlet reflections of
+the torchlight.  He
+will let no one
+approach; a thick,
+rusted dagger in his
+hand warding off any
+attempts to overcome
+
+him.  And the blood,
+which runs down in
+great rivulets from
+his arms and hands -
+it is not his own, and
+this is enough to keep
+us at a wary distance.
+Morg Bergen wishes
+
+to subdue him
+quickly, but there is
+something in
+Lysander's eyes - and
+I remember the power
+of his spells, even as
+he swings the jagged
+dagger back and forth
+
+in a wide swath
+before him.
+Something about the
+sight of it makes my
+stomach churn.
+Something has
+happened, something
+that changes
+
+everything.  Lysander
+has lost his sanity to
+this tomb... or to
+something within it.
+Do we dare approach?
+We must make a
+decision soon."""
+item_template = "readable_scroll"

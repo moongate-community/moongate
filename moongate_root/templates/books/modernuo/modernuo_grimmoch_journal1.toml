@@ -1,0 +1,47 @@
+title = "The daily journal of Grimmoch Drummel"
+author = "Grimmoch"
+content = """Day One :
+
+'Tis a grand sight, this
+primeval tomb, I agree
+with Tavara on that.
+And we've a good crew
+here, they've strong
+backs and a good
+
+attitude.  I'm a bit
+concerned by those
+that worked as guides
+for us, however.  All
+seemed well enough
+until we revealed the
+immense stone doors
+of the tomb structure
+
+itself.  Seemed to send
+a shiver up their
+spines and get them all
+stirred up with
+whispering.  I'll
+watch the lot of them
+with a close eye, but
+I'm confident we won't
+
+have any real
+problems on the dig.
+I'm especially proud to
+see Thomas standing
+out - he was a good
+hire, despite the
+warnings from his
+previous employers.
+
+He's drummed up the
+workers into a
+furious pace - we've
+nearly halved the
+estimate on the
+timeline for
+excavating the Tomb's
+entrance."""
+item_template = "readable_scroll"

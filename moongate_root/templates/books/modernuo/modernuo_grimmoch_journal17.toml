@@ -1,0 +1,49 @@
+title = "The daily journal of Grimmoch Drummel"
+author = "Grimmoch"
+content = """Day Seventeen - Day
+Twenty-Two :
+
+The fighting never
+ceases... the blood
+never stops flowing,
+like a river through
+the bloated corpses of
+
+the dead.  And yet
+there are still more.
+Always more, with
+the red fire gleaming
+in their eyes.  My
+arm aches, I've taken
+to the sword as my
+bow seems to do little
+
+good... the dull ache in
+my arm... so many
+swings, cleaving a
+mountain of decaying
+flesh.  And Thomas...
+he was there, in the
+thick of it... Thomas
+was beside me...
+
+his face cleaved in
+twain - and yet beside
+me, fighting with us
+against the horde until
+he was cut down once
+again.  And I swear I
+see him even now,
+there in the dark
+
+corner of the
+antechamber, his eyes
+flickering in the last
+dying embers of the
+fire... and he stares at
+me, and a scream fills
+the vault - whether
+his or mine, I can no
+
+longer tell."""
+item_template = "readable_scroll"

@@ -1,0 +1,71 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day Eight :
+
+Astounding progress
+was made today, and
+my very head spins
+with the excitement
+of it.  Upon full
+excavation of the far
+
+western hall, another
+large antechamber
+was revealed.  By the
+larger, mosaic style of
+the wall carvings and
+their framing, as well
+as the numerous
+vellum scrolls and
+
+tomes held within, the
+room appears to have
+been a great museum
+or library of sorts.
+The sheer amount of
+written information
+encased within this
+room would surely
+
+take me decades to
+study e'en if I could
+immediately decipher
+the strange text with
+which it was written.
+My sheer joy at the
+discovery was quickly
+noted by the brute
+
+known as Morg
+Bergen, who, even in
+his simple way,
+seemed just as
+delighted as I that
+some progress had
+been made.  I must
+confess, upon his
+
+inclusion in our party
+at the beginning of
+this journey I was
+somewhat suspect of
+his nature, but he has
+a startlingly quick wit
+about him for such a
+massive, calloused
+
+warrior.  While
+Lysander and e'en
+Grimmoch always
+seem to investigate the
+tomb with a scowling
+determination, Bergen
+seems to feel the same
+thrill of discovery as
+
+I.  I am proud to now
+count him as a friend,
+and am thankful for
+his laughter as well
+as his strength."""
+item_template = "readable_scroll"

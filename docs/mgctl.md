@@ -12,6 +12,7 @@ executables, `migration-runner/Moongate.MigrationRunner` and `mg-uoxconv`; there
 | `mgctl migrate status\|apply --target auth\|world` | Lists or applies the versioned SQL; see [Persistence migrations](persistence-migrations.md) |
 | `mgctl convert uox ...` | Converts UOX3 `.dfn` content into TOML; see [Migrate from UOX3](uox3-migration.md) |
 | `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters\|modernuo-locations\|modernuo-chests ...` | Converts ModernUO's spawners, signs, teleporters, named places and treasure chests; see [Migrate from UOX3](uox3-migration.md#signs-of-modernuo) |
+| `mgctl convert modernuo-books --source <folder> --destination <folder>` | Imports static book texts; see [Import book texts](book-content-import.md) |
 | `mgctl completion bash\|zsh\|fish` | Prints the script that completes mgctl with TAB; see [TAB completion](#tab-completion) |
 
 `mgctl --help` lists the commands and `mgctl <command> --help` the options of one.

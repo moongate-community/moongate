@@ -21,6 +21,7 @@ app.Add("convert modernuo-signs", ConvertCommands.ModernUoSigns);
 app.Add("convert modernuo-teleporters", ConvertCommands.ModernUoTeleporters);
 app.Add("convert modernuo-locations", ConvertCommands.ModernUoLocations);
 app.Add("convert modernuo-chests", ConvertCommands.ModernUoChests);
+app.Add("convert modernuo-books", ConvertCommands.ModernUoBooks);
 app.Add("completion", CompletionCommands.Completion);
 await app.RunAsync(arguments);
 

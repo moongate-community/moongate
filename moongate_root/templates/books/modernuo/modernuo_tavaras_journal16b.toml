@@ -1,0 +1,65 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day Sixteen, Later :
+
+We ran. What could
+we do?  We ran back
+towards the entrance,
+cutting at them when
+we could.  T'was a
+nightmare, and yet
+
+nothing to prepare us
+for what would come.
+We were almost there,
+the entrance to this
+abhorred crypt in
+sight.  Then the earth
+shook with such a
+force that we were
+
+dropped to our hands
+and knees, stumbling
+in the darkness with
+those... those things
+surely behind us.
+The noise of falling
+rock and crumbling
+stone drowned out our
+
+piteous cries.  No sign
+of the entrance
+remained.
+We owe our lives to
+Bergen, whose wits
+returned quickly.
+That he could make us
+hurry back into the
+
+main antechamber...
+actually run back
+towards those eldritch
+dead that stalked us.
+But we did, the
+strength of his
+convictions enough for
+us in the moment.
+
+And at our campsite
+we erected our last
+defense, a pitiable
+wall of wood and
+stone, anything at
+hand that might block
+the tide of those
+nightmare creatures.
+
+And I sit against it
+even now.  I can hear
+their moans, their
+wailing cries in the
+distance - they'll be
+here soon, even at the
+unhurried pace of the
+shuffling dead."""
+item_template = "readable_scroll"

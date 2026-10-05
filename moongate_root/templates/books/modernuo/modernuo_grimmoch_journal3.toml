@@ -1,0 +1,59 @@
+title = "The daily journal of Grimmoch Drummel"
+author = "Grimmoch"
+content = """Day Three - Day Five:
+
+I might have
+written too hastily in
+my first entry - this
+place doesn't seem too
+bent on giving up any
+secrets.   Though the
+
+main antechamber is
+open to us, the main
+exit hall is blocked by
+yet another pile of
+rubble.  Doesn't look a
+bit like anything
+caused by a quake or
+instability in the
+
+stonework... I swear it
+looks as if someone
+actually piled the
+stones up themselves,
+some time after the
+tomb was built.  The
+stones aren't of the
+same set nor quality
+
+of the carved work
+that surrounds them
+- if anything, they
+resemble the grade of
+common rock we saw
+in great quantities on
+the trip here.  Which
+makes it feel all the
+
+more like someone
+hauled them in and
+deliberately covered
+this passage.  But then
+why not decorate them
+in the same ornate
+manner as the rest of
+the stone in this
+
+place?  Lysander
+wouldn't hear a word
+of what I had to say -
+to him, it was a quake
+some time in the
+history of the tomb,
+and that was it, shut
+up and move on.  So I
+
+shut up, and got back
+to work."""
+item_template = "readable_scroll"

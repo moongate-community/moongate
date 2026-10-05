@@ -1,0 +1,46 @@
+title = "The daily journal of Grimmoch Drummel"
+author = "Grimmoch"
+content = """Day Seven - Day Ten:
+
+I cannot stand this
+place, I cannot bear it.
+I've got to get out.
+Something evil lurks
+in this ancient place,
+something best left
+
+alone.  I hear them,
+yet none of the others
+do.  And yet they
+must.  Hands, claws,
+scratching at stone,
+the awful scratching
+and the piteous cries
+that sound almost like
+
+laughter.  I can hear
+them above even the
+cracks of the
+workmen's picks, and
+at night they are all I
+can hear.  And yet the
+others hear nothing.
+We must leave this
+
+place, we must.
+Three workers have
+gone missing - Tavara
+expects they've
+abandoned us - and I
+count them lucky if
+they have.  I don't care
+what the others say,
+
+we must leave this
+place.  We must do as
+those before and pile
+up the stones, block all
+access to this primeval
+crypt, seal it up again
+for all eternity."""
+item_template = "readable_scroll"

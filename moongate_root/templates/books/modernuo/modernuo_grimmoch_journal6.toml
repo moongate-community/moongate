@@ -1,0 +1,56 @@
+title = "The daily journal of Grimmoch Drummel"
+author = "Grimmoch"
+content = """Day Six :
+
+The camp was
+attacked last night by
+a pack of, well, I don't
+have a clue.  I've never
+seen the like of these
+beasts anywhere.
+
+Huge things, with
+fangs the size of your
+forefinger, covered in
+hair and with the
+strangest arched back
+I've ever seen.  And so
+many of them.  We
+were forced back into
+
+the Tomb for the
+night, just to keep our
+hides on us.  And
+today Gathenwale
+practically orders us
+all to move the entire
+exterior camp into the
+Tomb.  Now, I don't
+
+disagree that we'd be
+well off to use the
+place as a point of
+fortification... but I
+don't like it one bit, in
+any case.  I don't like
+the look of this place,
+nor the sound of it.
+
+The way the wind
+gets into the
+passageways,
+whistling up the
+strangest noises.
+Deep, sustained echoes
+of the wind, not so
+much flute-like as...
+
+well, it sounds
+ridiculous.  In any
+case, we've set to work
+moving the bulk of the
+exterior camp into the
+main antechamber, so
+there's no use moaning
+about it now."""
+item_template = "readable_scroll"

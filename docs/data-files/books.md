@@ -80,6 +80,14 @@ The creation language is `[localization].language`. Supported overrides are
 `eng`, `ita`, `fre`, `ger`, `spa`, `por`, `pol` and `cze`. An absent language
 uses the top-level fields.
 
+## Imported book texts
+
+The shipped `templates/books/modernuo` catalog contains 62 static books imported from
+ModernUO. For example, `book.give(player, "modernuo_grammar_of_orcish")` creates a readable
+copy with its original title, author and text. [Import book texts](../book-content-import.md)
+documents the converter, source comparison and reruns. These entries use the current
+parchment interface.
+
 ## Letter attachments
 
 Add attachments to a document source, outside any translation table:

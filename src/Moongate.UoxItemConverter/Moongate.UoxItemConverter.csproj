@@ -5,6 +5,7 @@
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0"/>
         <ProjectReference Include="../Moongate.Server.Ultima/Moongate.Server.Ultima.csproj"/>
         <InternalsVisibleTo Include="Moongate.UoxItemConverter.Tests"/>
         <InternalsVisibleTo Include="mgctl"/>

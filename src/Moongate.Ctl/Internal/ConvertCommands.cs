@@ -181,4 +181,18 @@ internal static class ConvertCommands
     {
         return ModernUoChestConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
     }
+
+    /// <summary>
+    ///     Converts ModernUO's static BookContent definitions into readable document TOML without executing scripts.
+    /// </summary>
+    /// <param name="source">
+    ///     The Projects/UOContent folder of ModernUO, or a folder containing static book C# definitions.
+    /// </param>
+    /// <param name="destination">
+    ///     The book templates folder to receive modernuo_*.toml files; existing generated names are replaced.
+    /// </param>
+    public static int ModernUoBooks(string source, string destination)
+    {
+        return ModernUoBookConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+    }
 }
