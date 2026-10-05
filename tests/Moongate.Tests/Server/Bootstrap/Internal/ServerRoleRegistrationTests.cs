@@ -201,6 +201,7 @@ public sealed class ServerRoleRegistrationTests
         Assert.NotNull(container.Resolve<IJailService>());
         Assert.NotNull(container.Resolve<JailModule>());
         Assert.NotNull(container.Resolve<JailCommand>());
+        Assert.NotNull(container.Resolve<IBulletinBoardService>());
         // The death takes the NPC scripts, whose engine takes the mobile module, which takes the death.
         Assert.NotNull(container.Resolve<IDeathService>());
         Assert.NotNull(container.Resolve<MobileModule>());
