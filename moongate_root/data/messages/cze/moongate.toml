@@ -213,3 +213,11 @@
 30172 = "Tyto přílohy nelze vyzvednout."
 30173 = "Tvůj batoh je zaneprázdněný. Zkus to za chvíli."
 30174 = "Přílohy se nepodařilo doručit. Zkus to za chvíli."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "Bankovní šek na {0} zlatých je ve tvém batohu."
+30176 = "Šek nebyl vytvořen: nemáš batoh, nebo je plný."
+30177 = "Vloží do tvého batohu bankovní šek na uvedenou částku (1 až 2000000000)."
+30178 = "{1} zlatých je v batohu postavy {0}."
+30179 = "{0} nemá batoh, nebo je plný."
+30180 = "Vloží hromádku zlata (1 až 60000) do batohu postavy nebo NPC, které označíš."

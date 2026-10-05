@@ -213,3 +213,11 @@
 30172 = "These attachments cannot be claimed."
 30173 = "Your backpack is busy. Try again shortly."
 30174 = "The attachments could not be delivered. Try again shortly."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "A bank check worth {0} gold is in your backpack."
+30176 = "No check was made: you have no backpack, or it is full."
+30177 = "Puts in your backpack a bank check worth the gold you say (1 to 2000000000)."
+30178 = "{1} gold is in the backpack of {0}."
+30179 = "{0} has no backpack, or it is full."
+30180 = "Puts a pile of gold (1 to 60000) in the backpack of the character or NPC you target."

@@ -97,6 +97,8 @@ to a banker and it takes 5000 coins of your bank and puts a check in your bank b
   another double click goes on.
 - Anywhere else a double click says `That must be in your bank box to use it.`
 
+A game master makes a check of any worth with [`create_check`](commands/create_check.md).
+
 A check is the item template `bank_check` of `templates/items/bank.toml`, with its worth in the
 prop `bank.worth`; its script is `scripts/items/bank_check.lua`. The name it shows is the
 client's own, `A bank check`.

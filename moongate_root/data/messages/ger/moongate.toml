@@ -213,3 +213,11 @@
 30172 = "Diese Anhänge können nicht abgeholt werden."
 30173 = "Dein Rucksack ist beschäftigt. Versuche es gleich erneut."
 30174 = "Die Anhänge konnten nicht geliefert werden. Versuche es gleich erneut."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "Ein Bankscheck über {0} Gold ist in deinem Rucksack."
+30176 = "Kein Scheck erstellt: Du hast keinen Rucksack, oder er ist voll."
+30177 = "Legt einen Bankscheck über den genannten Betrag (1 bis 2000000000) in deinen Rucksack."
+30178 = "{1} Gold ist im Rucksack von {0}."
+30179 = "{0} hat keinen Rucksack, oder er ist voll."
+30180 = "Legt einen Stapel Gold (1 bis 60000) in den Rucksack der Figur oder des NPCs, den du auswählst."

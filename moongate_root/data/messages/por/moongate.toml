@@ -213,3 +213,11 @@
 30172 = "Estes anexos não podem ser retirados."
 30173 = "Sua mochila está ocupada. Tente novamente em breve."
 30174 = "Não foi possível entregar os anexos. Tente novamente em breve."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "Um cheque bancário de {0} moedas de ouro está na tua mochila."
+30176 = "Nenhum cheque criado: não tens mochila, ou está cheia."
+30177 = "Põe na tua mochila um cheque bancário do valor que indicares (de 1 a 2000000000)."
+30178 = "{1} moedas de ouro estão na mochila de {0}."
+30179 = "{0} não tem mochila, ou está cheia."
+30180 = "Põe uma pilha de ouro (de 1 a 60000) na mochila da personagem ou do NPC que selecionares."

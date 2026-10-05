@@ -185,6 +185,20 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.KeyDescription
         );
+        container.RegisterCommand<CreateCheckCommand>(
+            "create_check",
+            "Puts in your backpack a bank check worth the gold you say (1 to 2000000000).",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.CreateCheckDescription
+        );
+        container.RegisterCommand<AddGoldCommand>(
+            "add_gold",
+            "Puts a pile of gold (1 to 60000) in the backpack of the character or NPC you target.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.AddGoldDescription
+        );
         container.RegisterCommand<GoCommand>(
             "go",
             "Takes you to a place: go alone lists the named ones, go <place> goes to one, go <x>,<y>,<z> [map] to a spot.",

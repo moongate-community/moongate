@@ -148,4 +148,10 @@ public static class CommandMessages
     public const int Resurrected = 30165;
     public const int NotACorpse = 30166;
     public const int CorpseCannotBeRaised = 30167;
+    public const int CheckCreated = 30175;
+    public const int CheckNotCreated = 30176;
+    public const int CreateCheckDescription = 30177;
+    public const int GoldAdded = 30178;
+    public const int GoldNotAdded = 30179;
+    public const int AddGoldDescription = 30180;
 }

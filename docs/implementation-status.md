@@ -66,6 +66,7 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - Read, post, reply and remove on the bulletin boards of the towns, each with its own messages;
   threads expire and a full board lets its oldest thread go: [Bulletin boards](bulletin-boards.md).
 - Set fame and karma, inspect what a target cursor picks: `.fame`, `.karma`, `.where`.
+- Make gold and bank checks out of nothing: `.add_gold`, `.create_check`.
 - Restore a character waiting to be deleted: `.character`.
 
 An administrator also places the decoration, fills the spawn regions again (`.initial_spawn`),

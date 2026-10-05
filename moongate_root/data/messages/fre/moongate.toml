@@ -213,3 +213,11 @@
 30172 = "Ces pièces jointes ne peuvent pas être récupérées."
 30173 = "Votre sac est occupé. Réessayez bientôt."
 30174 = "Les pièces jointes ne peuvent pas être livrées. Réessayez bientôt."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "Un chèque bancaire de {0} pièces d'or est dans votre sac à dos."
+30176 = "Aucun chèque créé : vous n'avez pas de sac à dos, ou il est plein."
+30177 = "Met dans votre sac à dos un chèque bancaire de la valeur indiquée (de 1 à 2000000000)."
+30178 = "{1} pièces d'or sont dans le sac à dos de {0}."
+30179 = "{0} n'a pas de sac à dos, ou il est plein."
+30180 = "Met une pile d'or (de 1 à 60000) dans le sac à dos du personnage ou du PNJ que vous ciblez."

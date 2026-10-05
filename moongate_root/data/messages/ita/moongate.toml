@@ -213,3 +213,11 @@
 30172 = "Questi allegati non possono essere ritirati."
 30173 = "Il tuo zaino è occupato. Riprova tra poco."
 30174 = "Non è stato possibile consegnare gli allegati. Riprova tra poco."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "Nel tuo zaino c'è un assegno bancario da {0} monete d'oro."
+30176 = "Nessun assegno creato: non hai uno zaino, oppure è pieno."
+30177 = "Mette nel tuo zaino un assegno bancario del valore che indichi (da 1 a 2000000000)."
+30178 = "{1} monete d'oro sono nello zaino di {0}."
+30179 = "{0} non ha uno zaino, oppure è pieno."
+30180 = "Mette una pila d'oro (da 1 a 60000) nello zaino del personaggio o dell'NPC che selezioni."

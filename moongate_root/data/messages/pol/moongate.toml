@@ -213,3 +213,11 @@
 30172 = "Tych załączników nie można odebrać."
 30173 = "Twój plecak jest zajęty. Spróbuj ponownie za chwilę."
 30174 = "Nie udało się dostarczyć załączników. Spróbuj ponownie za chwilę."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "Czek bankowy na {0} sztuk złota jest w twoim plecaku."
+30176 = "Nie utworzono czeku: nie masz plecaka albo jest pełny."
+30177 = "Wkłada do twojego plecaka czek bankowy na podaną kwotę (od 1 do 2000000000)."
+30178 = "{1} sztuk złota jest w plecaku postaci {0}."
+30179 = "{0} nie ma plecaka albo jest on pełny."
+30180 = "Wkłada stos złota (od 1 do 60000) do plecaka wskazanej postaci lub NPC."
