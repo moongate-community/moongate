@@ -61,9 +61,15 @@ public sealed class RecordingSpeechService : ISpeechService
         return true;
     }
 
-    public int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "")
+    /// <summary>
+    ///     What was appended to each client text said, in order; empty for none.
+    /// </summary>
+    public List<string> SaidAffixes { get; } = [];
+
+    public int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "", string affix = "")
     {
         SaidClilocs.Add((speaker, cliloc, arguments));
+        SaidAffixes.Add(affix);
 
         return 1;
     }

@@ -68,17 +68,20 @@ public sealed class BookTestFixture : IAsyncDisposable
             new ItemTemplate { Id = "backpack", ItemId = new(0x0E75) },
             new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll", Weight = 1m },
             new ItemTemplate { Id = "jail_release_note", ItemId = new(0x14F0), Stackable = false, ScriptId = "jail_note" },
+            new ItemTemplate { Id = BankService.CheckTemplate, ItemId = new(0x14F0), Stackable = false },
             new ItemTemplate { Id = "gold", ItemId = new(0xEED), Stackable = true, Weight = 0.02m },
             new ItemTemplate { Id = "unrelated", ItemId = new(0x14ED), Stackable = false });
         Reservations = new(world.Network.Loop);
         Inventory = new(new Lazy<IItemService>(() => Items!), Reservations);
         Items = TestItems.Create(world.Sectors, loop: world.Network.Loop, inventory: Inventory);
         ItemTemplates = new(Data);
+        Data.With(new Moongate.Server.Ultima.Data.Containers.ContainerContent
+            { Name = "backpack", Gump = 0x3C, Items = [0xE75], Default = true });
         var tiles = new FakeTileDataService().Item(0x0E75, TileFlagType.Container, 0).Item(0x14ED, TileFlagType.None, 1).Item(0x14F0, TileFlagType.None, 1);
         var factory = new FakeItemFactoryService(ItemTemplates, tiles);
         var tooltips = TestTooltips.Create(Items, world.Mobiles);
         Handling = new(Items, world.Sessions, world.Sender, new RecordingWorldViewService(), tooltips, factory, Serials, inventory: Inventory);
-        Bank = new(Items, factory, world.Sessions, world.Mobiles, world.Sender, tooltips, null!, world.Network.Loop,
+        Bank = new(Items, factory, world.Sessions, world.Mobiles, world.Sender, tooltips, new ContainerLayoutService(Data), world.Network.Loop,
             Handling, new ContainerCapacityService(Items, ItemTemplates, new BankConfig()), new StubWeightService(), new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" }, new BankConfig(), inventory: Inventory, reservations: Reservations);
         var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
         Contexts = new(world.Sessions, new AdminServerInfoProvider(ServerMode.Game, realm), realm, new MotdServerIdentity("Moongate"), world.Network.Loop);

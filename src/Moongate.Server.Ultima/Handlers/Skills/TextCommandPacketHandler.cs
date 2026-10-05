@@ -14,6 +14,8 @@ namespace Moongate.Server.Ultima.Handlers.Skills;
 /// </summary>
 public sealed class TextCommandPacketHandler : IPacketHandler<TextCommandPacket>
 {
+    private const int LoggedTextLength = 32;
+
     private readonly ILogger _logger = Log.ForContext<TextCommandPacketHandler>();
     private readonly ISkillUseService _skills;
 
@@ -35,12 +37,19 @@ public sealed class TextCommandPacketHandler : IPacketHandler<TextCommandPacket>
             return;
         }
 
-        var number = packet.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+        var text = packet.Text.AsSpan();
+        var digits = text.IndexOfAnyExceptInRange('0', '9');
+        var number = digits < 0 ? text : text[..digits];
 
         if (!byte.TryParse(number, NumberStyles.None, CultureInfo.InvariantCulture, out var skill) ||
             !Enum.IsDefined((SkillType)skill))
         {
-            _logger.Debug("Session {SessionId} asked to use the skill {Text}, which is none", session.SessionId, packet.Text);
+            // The text is the client's, as long as a packet can be: the log takes its start.
+            _logger.Debug(
+                "Session {SessionId} asked to use the skill {Text}, which is none",
+                session.SessionId,
+                packet.Text.Length > LoggedTextLength ? packet.Text[..LoggedTextLength] : packet.Text
+            );
 
             return;
         }

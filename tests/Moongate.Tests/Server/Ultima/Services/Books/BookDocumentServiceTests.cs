@@ -72,6 +72,50 @@ public sealed class BookDocumentServiceTests
         await pending;
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Claim_ReservedInventoryRefusesBankChecksBeforeAnySideEffect(bool cash)
+    {
+        await using var f = await BookAttachmentTestFixture.CreateAsync();
+        f.Store.Block = true;
+        var bank = new ItemEntity { Id = new(0x40003000), TemplateId = "backpack", ItemId = 0xE75 };
+        var gold = new ItemEntity { Id = new(0x40003001), TemplateId = "gold", ItemId = 0xEED, Amount = 20000 };
+        var check = new ItemEntity { Id = new(0x40003002), TemplateId = BankService.CheckTemplate, ItemId = 0x14F0 };
+        await f.Books.OnLoopAsync(() =>
+        {
+            f.Books.Player.AccountId = new(1);
+            bank.Equip(f.Books.Player.Id, LayerType.Bank);
+            gold.PutInContainer(bank.Id, new(10, 10), 0);
+            check.PutInContainer(bank.Id, new(20, 20), 1);
+            check.SetProp(ItemPropKeys.BankWorth, 5000L);
+            f.Books.Items.Add([bank, gold, check]);
+        });
+        var pending = await f.BeginAsync();
+        await f.Store.Entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        await f.Books.OnLoopAsync(() =>
+        {
+            var serials = f.Books.Serials.Serials.Count;
+            if (cash)
+            {
+                Assert.Equal(Moongate.Server.Ultima.Types.Bank.BankResultType.Busy,
+                    f.Books.Bank.Cash(f.Books.Player, check, out var deposited));
+                Assert.Equal(0, deposited);
+            }
+            else
+            {
+                Assert.Equal(Moongate.Server.Ultima.Types.Bank.BankResultType.Busy,
+                    f.Books.Bank.WriteCheck(f.Books.Player, 5000));
+            }
+            Assert.Equal(20000, gold.Amount);
+            Assert.Equal(5000L, check.GetProp<long>(ItemPropKeys.BankWorth));
+            Assert.True(f.Books.Items.TryGet(check.Id, out _));
+            Assert.Equal(serials, f.Books.Serials.Serials.Count);
+        });
+        f.Store.Continue.TrySetResult();
+        await pending;
+    }
+
     [Fact]
     public async Task Give_AttachmentsFreezeWithoutCreatingRewardItemsOrChangingLetterWeight()
     {

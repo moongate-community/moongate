@@ -4606,5 +4606,93 @@
     ],
     "notes": "What a client asks of a bulletin board. A request is answered only when the item is a board, the character stands within two tiles of it on its map, and the message is one of that board; game masters and above are answered from anywhere. A post whose lengths run past the packet is refused.",
     "handler": "BulletinBoardRequestPacketHandler: answers with sub-command 0x01 or 0x02, posts (the new message enters the poster's list with 0x25) or removes (0x1D for each message gone)."
+  },
+  "0xCC:outgoing": {
+    "category": "Speech",
+    "tags": [
+      "Speech",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the mobile that speaks."
+      },
+      {
+        "offset": "7",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Its body."
+      },
+      {
+        "offset": "9",
+        "name": "Type",
+        "type": "byte",
+        "size": "1",
+        "description": "Message type; 0, regular speech."
+      },
+      {
+        "offset": "10",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Colour of the text; 0x03B2."
+      },
+      {
+        "offset": "12",
+        "name": "Font",
+        "type": "ushort",
+        "size": "2",
+        "description": "Font; 3."
+      },
+      {
+        "offset": "14",
+        "name": "Cliloc",
+        "type": "uint",
+        "size": "4",
+        "description": "Number of the client text."
+      },
+      {
+        "offset": "18",
+        "name": "Affix type",
+        "type": "byte",
+        "size": "1",
+        "description": "0: the affix is appended to the text."
+      },
+      {
+        "offset": "19",
+        "name": "Name",
+        "type": "ascii",
+        "size": "30",
+        "description": "Name of the speaker, zero filled."
+      },
+      {
+        "offset": "49",
+        "name": "Affix and arguments",
+        "type": "loop",
+        "size": "variable",
+        "description": "The affix in ASCII ended by a zero; then the arguments of the cliloc in big-endian UTF-16, tab separated, ended by a zero of two bytes."
+      }
+    ],
+    "notes": "A client text with a text of the server written after it: \"Into your bank box I have placed a check in the amount of:\" and the amount. The client shows the cliloc in its own language.",
+    "handler": "SpeechService.SayCliloc with an affix: npc.say_cliloc(npc, cliloc, args, affix), used by banker.lua."
   }
 }

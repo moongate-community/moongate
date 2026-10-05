@@ -31,6 +31,7 @@ public sealed class TextCommandPacketHandlerTests : IAsyncLifetime
     [InlineData("21 0", SkillType.Hiding)]
     [InlineData("21", SkillType.Hiding)]
     [InlineData("0 0", SkillType.Alchemy)]
+    [InlineData("21\t0", SkillType.Hiding)]
     public void Handle_AUseSkillCommand_UsesTheSkillItsTextStartsWith(string text, SkillType expected)
     {
         Handle(TextCommandPacket.UseSkill, text);
@@ -41,6 +42,7 @@ public sealed class TextCommandPacketHandlerTests : IAsyncLifetime
     [Theory]
     [InlineData("")]
     [InlineData("hiding")]
+    [InlineData(" 21 0")]
     [InlineData("-1 0")]
     [InlineData("9999 0")]
     [InlineData("99999999999999999999")]

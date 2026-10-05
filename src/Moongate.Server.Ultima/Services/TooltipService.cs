@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Geometry;
@@ -39,6 +40,7 @@ public sealed class TooltipService : ITooltipService
     private const int HighItemNameCliloc = 1078872;
     private const int HighItemGraphic = 0x4000;
     private const int AmountAndNameCliloc = 1050039; // ~1_NUMBER~ ~2_ITEMNAME~
+    private const int ValueCliloc = 1060738; // value: ~1_val~
     private const int MobileNameCliloc = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 
     private const byte CannotLiftWeight = 255;
@@ -128,6 +130,7 @@ public sealed class TooltipService : ITooltipService
 
         var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own) ? own : (LootType?)null;
         var labelNumber = item.TryGetProp<int>(ItemPropKeys.LabelNumber, out var label) ? label : (int?)null;
+        var worth = item.TryGetProp<long>(ItemPropKeys.BankWorth, out var value) ? value : (long?)null;
         var key = new ItemTooltipKey(
             item.TemplateId,
             item.ItemId,
@@ -136,13 +139,14 @@ public sealed class TooltipService : ITooltipService
             item.Rarity,
             lootType,
             item.Movable,
-            labelNumber
+            labelNumber,
+            worth
         );
 
-        return Cached(_itemTooltips, key, () => BuildItem(item, lootType, labelNumber));
+        return Cached(_itemTooltips, key, () => BuildItem(item, lootType, labelNumber, worth));
     }
 
-    private PropertyList BuildItem(ItemEntity item, LootType? ownLootType, int? labelNumber)
+    private PropertyList BuildItem(ItemEntity item, LootType? ownLootType, int? labelNumber, long? worth)
     {
         var list = new PropertyList();
         _templates.TryGet(item.TemplateId, out var template);
@@ -173,6 +177,12 @@ public sealed class TooltipService : ITooltipService
         {
             var weight = (int)Math.Ceiling((template?.EffectiveWeight(_tiles) ?? TiledataWeight(item)) * item.Amount);
             list.AddText(weight == 1 ? _localization.Text(OneStoneMessage, "Weight: 1 stone") : _localization.Text(StonesMessage, "Weight: {0} stones", weight));
+        }
+
+        // A bank check: what it is worth, as ModernUO.
+        if (worth is { } gold)
+        {
+            list.Add(ValueCliloc, gold.ToString("N0", CultureInfo.InvariantCulture));
         }
 
         var rarity = _localization.Text(RarityMessageBase + (int)item.Rarity, item.Rarity.ToString());

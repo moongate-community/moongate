@@ -73,6 +73,26 @@ public sealed class SkillUseServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Use_TooSoonAgainAndAgain_SaysToWaitOnceASecond()
+    {
+        _scripts.Result = ScriptResult.Completed([10.0]);
+        _skills.Use(_session, SkillType.Hiding);
+
+        // A macro in a loop: three tries at once, one a second later.
+        _skills.Use(_session, SkillType.Hiding);
+        _skills.Use(_session, SkillType.Hiding);
+        _time.Advance(TimeSpan.FromSeconds(0.9));
+        _skills.Use(_session, SkillType.Hiding);
+        Assert.Single(_speech.ToldClilocs);
+
+        _time.Advance(TimeSpan.FromSeconds(0.1));
+        _skills.Use(_session, SkillType.Hiding);
+
+        Assert.Equal(2, _speech.ToldClilocs.Count);
+        Assert.Single(_scripts.Used);
+    }
+
+    [Fact]
     public void Use_AScriptThatReturnsNothing_WaitsOneSecond()
     {
         _skills.Use(_session, SkillType.Hiding);

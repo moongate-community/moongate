@@ -21,6 +21,11 @@ public static class ItemPropKeys
     public const string LabelNumber = "label_number";
 
     /// <summary>
+    ///     What a bank check is worth in gold: shown on its tooltip, and what cashing it gives.
+    /// </summary>
+    public const string BankWorth = "bank.worth";
+
+    /// <summary>
     ///     The current durability of a weapon or armour.
     /// </summary>
     public const string Durability = "durability";
