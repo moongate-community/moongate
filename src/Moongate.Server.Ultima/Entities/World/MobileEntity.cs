@@ -239,6 +239,12 @@ public class MobileEntity : IMoongateEntity
         Criminal ? NotorietyType.Criminal : Notoriety ?? NotorietyType.Innocent;
 
     /// <summary>
+    ///     When the mobile may use a skill again. It is not a column: the wait does not outlive a restart.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public DateTimeOffset? NextSkillAt { get; set; }
+
+    /// <summary>
     ///     Whether the mobile is in war mode. It is not a column: a mobile comes back in peace.
     /// </summary>
     [Column(IsIgnore = true)]

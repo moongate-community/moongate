@@ -202,3 +202,6 @@
 30165 = "{0} je zpět."
 30166 = "To není mrtvola."
 30167 = "Tuto mrtvolu nelze vzkřísit."
+
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "Ve vězení nemůžeš používat dovednosti."

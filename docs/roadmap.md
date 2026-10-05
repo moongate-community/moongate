@@ -91,7 +91,7 @@ written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has to
 | Step | State | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- | --- |
 | 1.1 | ✅ | **Regeneration** of hits, mana and stamina; hunger and thirst, food that is eaten and drinks that are drunk | Nothing depends on anything else; visible in the first fight | |
-| 1.2 | ❌ | **Skill use, check and gain**; stat gain; caps and locks. Stats and skills are stored; nothing uses them | The progression of the game; every later system calls the skill check | UOX3 `skills.dfn` (61 skills: stat weights, gain curves), ModernUO `skills.json` |
+| 1.2 | 🟡 | **Skill use, check and gain**; stat gain; caps and locks. Done: a [skill](skills.md) is used from the client, checked by `skill.check` and gained under the skill cap and the total cap; Hiding is shipped. Left: locks from the client, stat gain and its caps | The progression of the game; every later system calls the skill check | UOX3 `skills.dfn` (61 skills: stat weights, gain curves), ModernUO `skills.json` |
 | 1.3 | ❌ | **Timed effects**: one mechanism for poison, curses, blessings, polymorph, hiding; the buff bar shows them | Magic, potions and combat all need it | |
 | 1.4 | ✅ | **Containers on the ground**, with item and weight limits; weight and overloading: a container on the ground opens, items go in and out of it, 125 at most and up to its limit of stones; a player carries 40 stones and 3.5 a point of strength, and moving overloaded or running costs stamina | Corpses, vendors, chests and houses need them | |
 | 1.5 | 🟡 | **Context menus and old-style menus**. Done: the text prompt (`prompt.ask`) | Vendors, pets, crafting and guilds open through them | |
