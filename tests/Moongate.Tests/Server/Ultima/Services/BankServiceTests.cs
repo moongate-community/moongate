@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Tests.TestSupport.Ultima.Weight;
@@ -39,6 +40,7 @@ public sealed class BankServiceTests : IAsyncLifetime
     private readonly RecordingFatigueService _fatigue = new();
     private readonly BankConfig _config = new();
     private ContainerCapacityService _capacity = null!;
+    private ContainerLayoutService _layouts = null!;
     private uint _nextItem = 0x40001000;
 
     public BankServiceTests()
@@ -46,8 +48,8 @@ public sealed class BankServiceTests : IAsyncLifetime
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
                 new ItemTemplate { Id = BankService.BankTemplate, ItemId = new Serial(0x0E7C), Name = "bank box", Movable = false },
-                new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
-                new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) },
+                new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED), Weight = 0.02m },
+                new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75), MaxWeight = 400 },
                 new ItemTemplate { Id = "bag", ItemId = new Serial(0x0E76) },
                 new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) }
             )
@@ -68,26 +70,9 @@ public sealed class BankServiceTests : IAsyncLifetime
         var layouts = new ContainerLayoutService(
             new StubDataLoaderService().With(new ContainerContent { Name = "metal chest", Gump = 0x004A, Items = [0x0E7C], Default = true })
         );
-        var tooltips = TestTooltips.Create(_items, _fixture.Mobiles);
+        _layouts = layouts;
         _capacity = new ContainerCapacityService(_items, _templates, _config);
-        var handling = new ItemHandlingService(_items, _fixture.Sessions, _fixture.Sender, new RecordingWorldViewService(), tooltips, _factory, _serials, layouts, _capacity);
-        _bank = new(
-            _items,
-            _factory,
-            _fixture.Sessions,
-            _fixture.Mobiles,
-            _fixture.Sender,
-            tooltips,
-            layouts,
-            _fixture.Network.Loop,
-            handling,
-            _capacity,
-            _weight,
-            new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" },
-            _config,
-            fatigue: _fatigue,
-            time: _time
-        );
+        _bank = BankWith(_weight);
 
         for (uint index = 0; index < 32; index++)
         {
@@ -409,6 +394,34 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.Empty(_items.GetContents(backpack.Id));
     }
 
+    // As ModernUO: sixty thousand coins weigh three times what a backpack holds, and the banker hands them out all the
+    // same. Its customer walks away overloaded.
+    [Fact]
+    public async Task Withdraw_MoreGoldThanTheBackpackHolds_IsHandedOutAllTheSame()
+    {
+        var bank = BankWith(RealWeights());
+        Gold(await BoxAsync(), 60_000);
+        var backpack = Backpack();
+
+        Assert.Equal(BankResultType.Ok, bank.Withdraw(_aria, 60_000));
+
+        Assert.Equal(60_000, Assert.Single(_items.GetContents(backpack.Id)).Amount);
+        Assert.Equal(0, bank.Balance(_aria));
+    }
+
+    // Twenty thousand coins are the four hundred stones a backpack holds: it takes nothing more.
+    [Fact]
+    public async Task Withdraw_IntoABackpackAlreadyAtItsWeight_IsRefused_AndNothingMoves()
+    {
+        var bank = BankWith(RealWeights());
+        var pile = Gold(await BoxAsync(), 5000);
+        var carried = Gold(Backpack(), 20_000);
+
+        Assert.Equal(BankResultType.BackpackFull, bank.Withdraw(_aria, 100));
+
+        Assert.Equal((5000, 20_000), (pile.Amount, carried.Amount));
+    }
+
     [Fact]
     public async Task Withdraw_WithoutABackpack_IsRefused()
     {
@@ -579,6 +592,36 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.Null(_bank.Balance(orc));
         Assert.Equal(BankResultType.NoPlayer, _bank.Withdraw(orc, 10));
         Assert.Equal(BankResultType.NoPlayer, _bank.Deposit(orc, 10));
+    }
+
+    // The bank with the weights a test wants: the stub says yes to everything, the real one weighs the gold.
+    private BankService BankWith(IWeightService weight)
+    {
+        var tooltips = TestTooltips.Create(_items, _fixture.Mobiles);
+        var handling = new ItemHandlingService(_items, _fixture.Sessions, _fixture.Sender, new RecordingWorldViewService(), tooltips, _factory, _serials, _layouts, _capacity);
+
+        return new(
+            _items,
+            _factory,
+            _fixture.Sessions,
+            _fixture.Mobiles,
+            _fixture.Sender,
+            tooltips,
+            _layouts,
+            _fixture.Network.Loop,
+            handling,
+            _capacity,
+            weight,
+            new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" },
+            _config,
+            fatigue: _fatigue,
+            time: _time
+        );
+    }
+
+    private WeightService RealWeights()
+    {
+        return new(_items, _templates, new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0));
     }
 
     private async Task<ItemEntity> BoxAsync()

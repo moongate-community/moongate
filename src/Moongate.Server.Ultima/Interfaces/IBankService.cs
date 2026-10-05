@@ -42,7 +42,8 @@ public interface IBankService : ISessionClosedListener
 
     /// <summary>
     ///     Moves that many coins from the player's bank to its backpack, onto a pile already there when it fits. All
-    ///     or nothing: a refusal moves nothing. The player need not have the box open.
+    ///     or nothing: a refusal moves nothing. The player need not have the box open. A backpack already at its weight
+    ///     takes nothing; any other takes the gold whatever it weighs, as ModernUO.
     /// </summary>
     BankResultType Withdraw(MobileEntity player, int amount);
 

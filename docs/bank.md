@@ -53,6 +53,9 @@ Within 12 tiles of a banker, with the box open or not:
   when it has the room, a pile holding 60000 at most, and make a new pile otherwise.
 - A deposit takes coins from the backpack and its bags; in the bank they top up the piles of the
   box, then make piles of 60000.
+- Gold weighs, a coin 0.02 stones: as in ModernUO the banker hands out what you ask even when it
+  is more than you can carry, and you walk away overloaded. Only a backpack already at its weight
+  takes nothing.
 - Both are all or nothing: a refusal moves no coin.
 - The banker's lines are the client's own texts, so every player reads them in its language.
 - When several bankers hear you, one answers and the gold moves once.
@@ -63,7 +66,7 @@ Within 12 tiles of a banker, with the box open or not:
 | `I will not do business with a criminal!` | A criminal asked for anything else. |
 | `Thou canst not withdraw so much at one time!` | More than `max_withdraw`. |
 | `Ah, art thou trying to fool me? Thou hast not so much gold!` | The bank, or the backpack for a deposit, has less than that. |
-| `Your backpack can't hold anything else.` | The backpack cannot take the weight of the gold, or has no room for a new pile. |
+| `Your backpack can't hold anything else.` | The backpack is already at its weight, or has no room for a new pile. |
 | `Your bank box is full.` | The deposit needs a new pile and the box holds its [limit of items](#how-much-it-holds). |
 
 A player who says *deposit* before ever opening its bank gets the box made and shown instead, and

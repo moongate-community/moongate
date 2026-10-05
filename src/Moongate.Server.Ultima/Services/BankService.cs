@@ -186,7 +186,9 @@ public sealed class BankService : IBankService
             return BankResultType.NotEnoughGold;
         }
 
-        if (BackpackOf(player.Id) is not { } backpack || !_weight.Holds(backpack, Coins(amount)))
+        // As ModernUO: a backpack that is already at its weight takes nothing, any other takes the gold whatever it
+        // weighs, and its owner walks away overloaded. Sixty thousand coins weigh more than a backpack holds.
+        if (BackpackOf(player.Id) is not { } backpack || !_weight.Holds(backpack, Coins(1)))
         {
             return BankResultType.BackpackFull;
         }
@@ -385,7 +387,7 @@ public sealed class BankService : IBankService
         _handling.Refresh(pile);
     }
 
-    // That many coins as an item nobody holds yet, to ask a container whether it holds their weight.
+    // That many coins as an item nobody holds yet, to ask a container whether it still holds anything.
     private ItemEntity Coins(int amount)
     {
         return new() { TemplateId = _itemsConfig.GoldTemplate, ItemId = 0x0EED, Amount = amount };
