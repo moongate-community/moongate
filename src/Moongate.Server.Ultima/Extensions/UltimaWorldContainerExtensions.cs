@@ -34,6 +34,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
         container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         container.Register<IBookTemplateService, BookTemplateService>(Reuse.Singleton);
+        container.Register<IBookAttachmentPreparationService, BookAttachmentPreparationService>(Reuse.Singleton);
         container.Register<BookContextFactory>(Reuse.Singleton);
         container.Register<IBookDocumentService, BookDocumentService>(Reuse.Singleton);
         container.Register<IDecorationsLoader, DecorationsLoader>(Reuse.Singleton);
