@@ -59,7 +59,11 @@ public sealed class BookUpgradeTests
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
         Assert.False(items.Single(item => item.Id == "jail_release_note").Stackable);
         Assert.Equal("our custom chest", items.Single(item => item.Id == "jail_chest").Name);
-        Assert.Equal(2, (await new BooksLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.Count);
+        // Every book template shipped with the server loads against the upgraded items; how many there are is not the
+        // test's business, the two the upgrade is about are.
+        var books = (await new BooksLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
+        Assert.Contains(books, book => book.Id == "jail_release_note");
+        Assert.Contains(books, book => book.Id == "welcome_letter");
         Assert.Contains("-- operator customization", mergedScript);
         Assert.Contains("function jail_note.custom() return 42 end", mergedScript);
         await using var fixture = await BookLuaFixture.CreateAsync(jailScript: mergedScript);
