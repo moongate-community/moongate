@@ -181,3 +181,8 @@
 30152 = "Mata al PNJ que selecciones: muere donde está y deja su cadáver."
 30153 = "{0} ha muerto."
 30154 = "Los jugadores todavía no pueden morir."
+
+# Moongate: texts of the bulletin boards (30155-30157, to who posts or removes).
+30155 = "Debes esperar {0} segundos antes de volver a publicar."
+30156 = "Ese mensaje no es tuyo."
+30157 = "El tablón está ocupado: publica de nuevo en un momento."

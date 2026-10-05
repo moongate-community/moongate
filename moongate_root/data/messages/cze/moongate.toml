@@ -181,3 +181,8 @@
 30152 = "Zabije vybrané NPC: zemře na místě a zanechá mrtvolu."
 30153 = "{0} je mrtev."
 30154 = "Hráči zatím nemohou zemřít."
+
+# Moongate: texts of the bulletin boards (30155-30157, to who posts or removes).
+30155 = "Před dalším příspěvkem musíš počkat {0} sekund."
+30156 = "Ta zpráva není tvoje."
+30157 = "Nástěnka je zaneprázdněná: zkus to za chvíli znovu."

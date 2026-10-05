@@ -57,6 +57,13 @@ public static class CorpseProps
     public const string BeardHue = "corpse.beard_hue";
 
     /// <summary>
+    ///     When the corpse may be drawn dressed, in Unix milliseconds; missing once that time is over. The client plays
+    ///     the death on the mobile with what it wears, and what the corpse is drawn wearing is taken off the mobile at
+    ///     once: told before the fall is over, the client lets it die naked.
+    /// </summary>
+    public const string DressAt = "corpse.dress_at";
+
+    /// <summary>
     ///     Gets whether the body is a human, elf or gargoyle one, male or female: the bodies whose corpse the client
     ///     draws dressed, and that die with a voice of their own.
     /// </summary>

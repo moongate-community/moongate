@@ -28,6 +28,11 @@ public sealed class DecorationService : IDecorationService, IDisposable
     public const string FillableTemplate = "decoration_fillable";
     public const string ContentTypeProp = "content_type";
     public const string ClockTemplate = "decoration_clock";
+
+    /// <summary>
+    ///     The template of a bulletin board the files place: its script opens it, as <c>bulletin_board.lua</c>.
+    /// </summary>
+    public const string BulletinBoardTemplate = "bulletin_board";
     public const string DoorTemplate = "decoration_door";
     public const string LightTemplate = "decoration_light";
     public const string TeleporterTemplate = "decoration_teleporter";
@@ -55,6 +60,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
     private const string LibraryBookcaseType = "LibraryBookcase";
     private const string LibraryContentType = "library";
     private const string ClockType = "Clock";
+    private const string BulletinBoardType = "BulletinBoard";
     private const int GeneratedDoorGraphic = 0x06A5;
     private const int PublicMoongateGraphic = 0x0F6C;
 
@@ -423,10 +429,20 @@ public sealed class DecorationService : IDecorationService, IDisposable
     }
 
     // The template of a kind that was placed as plain decoration before its script was written: a container that
-    // fills up, a clock. Null for the others.
+    // fills up, a clock, a bulletin board. Null for the others.
     private static string? LaterTemplateOf(string type)
     {
-        return IsFillable(type) ? FillableTemplate : type == ClockType ? ClockTemplate : null;
+        if (IsFillable(type))
+        {
+            return FillableTemplate;
+        }
+
+        return type switch
+        {
+            ClockType         => ClockTemplate,
+            BulletinBoardType => BulletinBoardTemplate,
+            _                 => null
+        };
     }
 
     // A world decorated before the script of a kind was written has its items as plain decoration: the one on the spot

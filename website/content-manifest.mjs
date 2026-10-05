@@ -63,6 +63,7 @@ export const contentEntries = [
   { source: 'docs/gump-tutorial.md', slug: 'server/gump-tutorial', title: 'Your first gump', group: 'Scripting and content', subgroup: 'Gumps' },
   { source: 'docs/bank.md', slug: 'server/bank', title: 'Bank', group: 'Scripting and content' },
   { source: 'docs/jail.md', slug: 'server/jail', title: 'Jail', group: 'Scripting and content' },
+  { source: 'docs/bulletin-boards.md', slug: 'server/bulletin-boards', title: 'Bulletin boards', group: 'Scripting and content' },
   { source: 'docs/spawns.md', slug: 'server/spawns', title: 'NPC spawns', group: 'Scripting and content' },
   { source: 'docs/toml-types.md', slug: 'server/toml-types', title: 'TOML value types', group: 'Scripting and content' },
   { source: 'docs/localization.md', slug: 'server/localization', title: 'Localization', group: 'Scripting and content' },

@@ -42,6 +42,7 @@ public sealed class WorldViewService : IWorldViewService
     private readonly ITooltipService _tooltips;
     private readonly WorldConfig _world;
     private readonly IItemTemplateService? _templates;
+    private readonly TimeProvider _time;
     private readonly ILogger _logger;
 
     // Read on every use: the configured range of the live world (ultima.world.view_range).
@@ -55,9 +56,11 @@ public sealed class WorldViewService : IWorldViewService
         ITooltipService tooltips,
         WorldConfig world,
         ILogger? logger = null,
-        IItemTemplateService? templates = null
+        IItemTemplateService? templates = null,
+        TimeProvider? time = null
     )
     {
+        _time = time ?? TimeProvider.System;
         _logger = logger ?? Log.ForContext<WorldViewService>();
         _templates = templates;
         _tooltips = tooltips;
@@ -567,6 +570,13 @@ public sealed class WorldViewService : IWorldViewService
         if (corpse.ItemId != CorpseProps.Graphic ||
             WholeProp(corpse, CorpseProps.Body) is not { } body ||
             !CorpseProps.IsHumanBody(body))
+        {
+            return;
+        }
+
+        // Who died is still falling on the screens: its clothes stay on it until the fall is over.
+        if (corpse.Props?.GetValueOrDefault(CorpseProps.DressAt) is long or int or double &&
+            corpse.GetProp<long>(CorpseProps.DressAt) > _time.GetUtcNow().ToUnixTimeMilliseconds())
         {
             return;
         }
