@@ -92,7 +92,8 @@ A board shows the name of its item, or `bulletin board` when it has none.
 
 ## For scripts
 
-The [`board` module](https://moongate.sh/lua/board/) opens a board on a player:
+The [`board` module](https://moongate.sh/lua/board/) opens a board on a player, and lets a script
+write on one, read it and remove from it:
 
 ```lua
 function bulletin_board.on_use(serial, user)
@@ -104,6 +105,38 @@ end
 
 Any item whose template has `script_id = "bulletin_board"` is a board. `board.open` does not
 check the distance: `on_use` already asks for two tiles and sight.
+
+```lua
+local notice = board.post(notice_board, "The town crier", "Hear ye", {
+    "The bank of Britain is closed today.",
+    "",
+    "Come back tomorrow."
+})
+
+for _, message in ipairs(board.messages(notice_board)) do
+    log.info(message.name .. ": " .. message.subject)
+end
+
+board.remove(notice)
+```
+
+- `board.post(board, name, subject, lines [, thread])` posts in the name given and gives the
+  serial of the message, or `nil` when nothing was posted: no name, no subject, no line of text,
+  an item that is not a board, or no serial ready for the message (the same call works a moment
+  later). The lines end at the first `nil` among them. With `thread`, the serial of a message of that board, it is a
+  reply. A script's post does not wait and has no poster: the message shows a bare body beside
+  its text, and in the board's window only the staff removes it. The name is cut at 30
+  characters; the subject, the lines and the size of the board follow the rules of a player's
+  post.
+- `board.messages(board)` gives the messages as an array of `{ serial, thread, poster, name,
+  subject, lines, posted_at }`, the threads from the oldest, each followed by its replies.
+  `thread` is `nil` on a first message, `poster` is `nil` for a message a script posted, and
+  `posted_at` is in seconds, as `world.now()`.
+- `board.remove(message)` removes a message, and its replies when it starts a thread; `false`
+  when there is none. It asks nobody: a script that removes for a player checks `poster` first.
+
+The module does not check who calls it: a script for the staff checks `world.is_staff` first. A
+player who has the board open sees what a script posted or removed when it opens the board again.
 
 ## The packets
 
@@ -126,7 +159,6 @@ goes leaves it with 0x1D. The date is the day only, in English: `Oct 05, 2026`. 
 ## What it does not do yet
 
 - Bounty boards, the boards of houses and the escort posts of UOX3.
-- Posts by scripts: `board.post`, `board.messages` and `board.remove` are the next step.
 - Moderation beyond removal: no locked thread, no pinned message, nobody banned from a board.
 - A record of the messages removed.
 

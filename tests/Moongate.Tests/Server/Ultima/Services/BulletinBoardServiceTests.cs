@@ -306,6 +306,89 @@ public sealed class BulletinBoardServiceTests
     }
 
     [Fact]
+    public void PostAs_PostsInTheNameGiven_WithNoPosterCharacter()
+    {
+        var result = _service.PostAs(_board, "  The town crier  ", "Hear ye", ["The bank is closed today.", ""]);
+
+        Assert.Equal(BulletinPostResultType.Ok, result.Type);
+        var message = Assert.Single(_service.GetMessages(_board.Id));
+        Assert.Same(message, result.Message);
+        Assert.Equal(
+            (Serial.Zero, "The town crier", "Hear ye", Serial.Zero, _clock.Now.ToUnixTimeMilliseconds()),
+            (message.PosterId, message.PosterName, message.Subject, message.ThreadId, message.PostedAt)
+        );
+        Assert.Equal(["The bank is closed today."], message.Lines());
+        // A body the client can draw beside the message, wearing nothing.
+        Assert.Equal((BulletinBoardService.ScriptBody, 0, ""), (message.PosterBody, message.PosterHue, message.PosterEquipment));
+    }
+
+    [Fact]
+    public void PostAs_DoesNotWait()
+    {
+        _service.PostAs(_board, "The town crier", "One", ["x"]);
+
+        Assert.Equal(BulletinPostResultType.Ok, _service.PostAs(_board, "The town crier", "Two", ["x"]).Type);
+        Assert.Equal(2, _service.Messages.Count);
+        Assert.Equal(0, _service.Waits);
+    }
+
+    [Fact]
+    public void PostAs_AReply_GoesUnderItsThread_AndKeepsItAlive()
+    {
+        var thread = Post(_aria, "Horse", ["x"]).Message!;
+        _clock.Advance(TimeSpan.FromDays(6));
+
+        var reply = _service.PostAs(_board, "The stable master", "Re: Horse", ["Sold."], thread.Id).Message!;
+
+        Assert.Equal(thread.Id, reply.ThreadId);
+        Assert.Equal(_clock.Now.ToUnixTimeMilliseconds(), thread.LastReplyAt);
+    }
+
+    [Theory,
+     InlineData("", "Hear ye", "x"),
+     InlineData("   ", "Hear ye", "x"),
+     InlineData("The town crier", "", "x"),
+     InlineData("The town crier", "Hear ye", "")]
+    public void PostAs_WithoutANameASubjectOrALine_PostsNothing(string name, string subject, string line)
+    {
+        Assert.Equal(BulletinPostResultType.Empty, _service.PostAs(_board, name, subject, [line]).Type);
+        Assert.Empty(_service.Messages);
+    }
+
+    [Fact]
+    public void PostAs_CutsTheNameTheSubjectAndTheLines_AsAPlayersPost()
+    {
+        var message = _service.PostAs(_board, new string('n', 100), new string('s', 100), [new string('l', 200)]).Message!;
+
+        Assert.Equal(
+            (BulletinBoardService.MaxName, BulletinBoardService.MaxSubject, BulletinBoardService.MaxLine),
+            (message.PosterName.Length, message.Subject.Length, message.Lines()[0].Length)
+        );
+    }
+
+    [Fact]
+    public void PostAs_OnAFullBoard_LetsTheOldestThreadGo()
+    {
+        _config.MaxMessages = 1;
+        var old = Post(_aria, "Old", ["x"]).Message!;
+
+        var result = _service.PostAs(_board, "The town crier", "New", ["x"]);
+
+        Assert.Equal([old.Id], result.Dropped);
+        Assert.Equal([result.Message!.Id], _service.Messages.Select(message => message.Id));
+    }
+
+    // Nobody posted it: only the staff removes what a script wrote.
+    [Fact]
+    public void CanRemove_AScriptsPost_OnlyTheStaff()
+    {
+        var message = _service.PostAs(_board, "The town crier", "Hear ye", ["x"]).Message!;
+
+        Assert.False(_service.CanRemove(message, _aria, AccountType.Regular));
+        Assert.True(_service.CanRemove(message, _staff, AccountType.GameMaster));
+    }
+
+    [Fact]
     public void Remove_AReply_TakesOnlyIt()
     {
         var thread = Post(_aria, "Horse", ["x"]).Message!;

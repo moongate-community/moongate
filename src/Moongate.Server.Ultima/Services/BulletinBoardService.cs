@@ -44,6 +44,16 @@ public sealed class BulletinBoardService : IBulletinBoardService
     public const int NotYoursMessage = 30156;
     public const int BusyMessage = 30157;
 
+    /// <summary>
+    ///     The body the client draws beside a message a script posted: a human, wearing nothing.
+    /// </summary>
+    public const int ScriptBody = 0x0190;
+
+    /// <summary>
+    ///     The longest name a script posts under.
+    /// </summary>
+    public const int MaxName = 30;
+
     public const int MaxSubject = 60;
     public const int MaxLine = 80;
     public const int MaxLines = 32;
@@ -189,16 +199,7 @@ public sealed class BulletinBoardService : IBulletinBoardService
         IReadOnlyList<string> lines
     )
     {
-        var title = Clean(subject, MaxSubject);
-        var text = lines.Take(MaxLines).Select(line => Clean(line, MaxLine)).ToList();
-
-        // The empty lines a client leaves under the text are not part of it.
-        while (text.Count > 0 && text[^1].Length == 0)
-        {
-            text.RemoveAt(text.Count - 1);
-        }
-
-        if (title.Length == 0 || text.Count == 0)
+        if (!TryClean(subject, lines, out var title, out var text))
         {
             return new() { Type = BulletinPostResultType.Empty };
         }
@@ -211,26 +212,88 @@ public sealed class BulletinBoardService : IBulletinBoardService
             return new() { Type = BulletinPostResultType.TooSoon, WaitSeconds = wait };
         }
 
+        var message = new BulletinMessageEntity
+        {
+            PosterId = poster.Id,
+            PosterName = poster.Name,
+            PosterBody = poster.Body,
+            PosterHue = poster.SkinHue.Value,
+            PosterEquipment = BulletinEquipment.Format(Worn(poster))
+        };
+        var result = Put(board.Id, thread, message, title, text, now);
+
+        if (result.Type == BulletinPostResultType.Ok)
+        {
+            if (thread is null)
+            {
+                _lastThread[(board.Id, poster.Id)] = now;
+            }
+
+            _lastPost[(board.Id, poster.Id)] = now;
+        }
+
+        return result;
+    }
+
+    public BulletinPostResult PostAs(
+        ItemEntity board,
+        string name,
+        string subject,
+        IReadOnlyList<string> lines,
+        Serial replyTo = default
+    )
+    {
+        var poster = Clean(name, MaxName);
+
+        if (poster.Length == 0 || !TryClean(subject, lines, out var title, out var text))
+        {
+            return new() { Type = BulletinPostResultType.Empty };
+        }
+
+        // No character posted it: nobody waits, and the client draws a bare body beside the message.
+        var message = new BulletinMessageEntity { PosterName = poster, PosterBody = ScriptBody };
+
+        return Put(board.Id, ThreadOf(board.Id, replyTo), message, title, text, Now());
+    }
+
+    // The subject and the lines as they are kept; false when there is no subject or no line of text.
+    private static bool TryClean(string subject, IReadOnlyList<string> lines, out string title, out List<string> text)
+    {
+        title = Clean(subject, MaxSubject);
+        text = lines.Take(MaxLines).Select(line => Clean(line, MaxLine)).ToList();
+
+        // The empty lines a client leaves under the text are not part of it.
+        while (text.Count > 0 && text[^1].Length == 0)
+        {
+            text.RemoveAt(text.Count - 1);
+        }
+
+        return title.Length > 0 && text.Count > 0;
+    }
+
+    // The message goes on the board with a serial of its own, under its thread, and the board is brought back to
+    // its size.
+    private BulletinPostResult Put(
+        Serial board,
+        BulletinMessageEntity? thread,
+        BulletinMessageEntity message,
+        string title,
+        List<string> text,
+        long now
+    )
+    {
         if (!_serials.TryTake(out var serial))
         {
             return new() { Type = BulletinPostResultType.Busy };
         }
 
-        var message = new BulletinMessageEntity
-        {
-            Id = serial,
-            BoardId = board.Id,
-            ThreadId = thread?.Id ?? Serial.Zero,
-            PosterId = poster.Id,
-            PosterName = poster.Name,
-            Subject = title,
-            Body = string.Join('\n', text),
-            PostedAt = now,
-            LastReplyAt = now,
-            PosterBody = poster.Body,
-            PosterHue = poster.SkinHue.Value,
-            PosterEquipment = BulletinEquipment.Format(Worn(poster))
-        };
+        message.Id = serial;
+        message.BoardId = board;
+        message.ThreadId = thread?.Id ?? Serial.Zero;
+        message.Subject = title;
+        message.Body = string.Join('\n', text);
+        message.PostedAt = now;
+        message.LastReplyAt = now;
         _messages[serial] = message;
         _removed.TryRemove(serial, out _);
 
@@ -238,14 +301,8 @@ public sealed class BulletinBoardService : IBulletinBoardService
         {
             thread.LastReplyAt = now;
         }
-        else
-        {
-            _lastThread[(board.Id, poster.Id)] = now;
-        }
 
-        _lastPost[(board.Id, poster.Id)] = now;
-
-        return new() { Type = BulletinPostResultType.Ok, Message = message, Dropped = MakeRoom(board.Id, message) };
+        return new() { Type = BulletinPostResultType.Ok, Message = message, Dropped = MakeRoom(board, message) };
     }
 
     public bool CanRemove(BulletinMessageEntity message, MobileEntity by, AccountType rank)
