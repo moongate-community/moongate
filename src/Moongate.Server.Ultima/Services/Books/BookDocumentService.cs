@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
@@ -27,12 +28,16 @@ public sealed class BookDocumentService : IBookDocumentService
     private readonly IGameLoopService _loop;
     private readonly Lazy<IScriptEngine> _scripts;
     private readonly LocalizationConfig _localization;
+    private readonly IBookAttachmentPreparationService? _attachments;
+    private readonly IInventoryMutationGuard? _inventory;
     private readonly ILogger _logger = Log.ForContext<BookDocumentService>();
 
     public BookDocumentService(IBookTemplateService templates, BookContextFactory contexts, IItemService items, IMobileService mobiles,
         IItemHandlingService handling, IItemTemplateService itemTemplates, ISessionService sessions, IBankService bank,
-        IGumpService gumps, IGameLoopService loop, Lazy<IScriptEngine> scripts, LocalizationConfig localization)
+        IGumpService gumps, IGameLoopService loop, Lazy<IScriptEngine> scripts, LocalizationConfig localization, IBookAttachmentPreparationService? attachments = null, IInventoryMutationGuard? inventory = null)
     {
+        _attachments = attachments;
+        _inventory = inventory;
         _templates = templates;
         _contexts = contexts;
         _items = items;
@@ -49,10 +54,26 @@ public sealed class BookDocumentService : IBookDocumentService
 
     public ItemEntity? Give(MobileEntity recipient, string templateId, IReadOnlyDictionary<string, object?>? values = null, string? recordedPlayerName = null)
     {
-        if (!_loop.IsOnLoopThread || !IsLive(recipient) ||
+        if (!_loop.IsOnLoopThread || !IsLive(recipient) || _inventory?.AllowsOwner(recipient.Id) == false ||
             !_templates.TryRender(templateId, _contexts.Capture(recipient, recordedPlayerName), _localization.Language, values, out var rendered) ||
             rendered is null)
         {
+            return null;
+        }
+
+        string? payload;
+        try
+        {
+            if (!_templates.TryGet(rendered.TemplateId, out var source) ||
+                (source.Attachments.Count > 0 && _attachments is null))
+            {
+                return null;
+            }
+            payload = _attachments?.Prepare(source);
+        }
+        catch (Exception exception) when (exception is InvalidDataException or KeyNotFoundException or ArgumentException)
+        {
+            _logger.Warning(exception, "Cannot prepare document attachments for {Template}", templateId);
             return null;
         }
 
@@ -62,19 +83,34 @@ public sealed class BookDocumentService : IBookDocumentService
             return null;
         }
 
+        if (payload is not null)
+        {
+            item.SetProp(BookAttachmentCodec.PropKey, payload);
+        }
         Apply(item, rendered);
         return item;
     }
 
     public bool Write(ItemEntity item, MobileEntity recipient, string templateId, IReadOnlyDictionary<string, object?>? values = null, string? recordedPlayerName = null)
     {
-        if (!_loop.IsOnLoopThread || !IsLive(recipient) || !IsReadable(item) ||
+        if (!_loop.IsOnLoopThread || !IsLive(recipient) || !IsReadable(item) || _inventory?.Allows(item) == false ||
             !_templates.TryRender(templateId, _contexts.Capture(recipient, recordedPlayerName), _localization.Language, values, out var rendered) ||
             rendered is null)
         {
             return false;
         }
 
+        if (item.Props?.TryGetValue(BookAttachmentCodec.PropKey, out var payload) == true)
+        {
+            if (payload is not string text || !BookAttachmentCodec.TryDecode(text, out _))
+            {
+                return false;
+            }
+        }
+        else if (!_templates.TryGet(rendered.TemplateId, out var source) || source.Attachments.Count > 0)
+        {
+            return false;
+        }
         Apply(item, rendered);
         return true;
     }

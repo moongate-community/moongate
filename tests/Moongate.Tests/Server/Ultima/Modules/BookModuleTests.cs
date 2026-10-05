@@ -7,6 +7,20 @@ namespace Moongate.Tests.Server.Ultima.Modules;
 public sealed class BookModuleTests
 {
     [Fact]
+    public async Task Give_PreparationFailureReturnsNilBeforeLetterOrSerialAllocation()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        await f.OnLoopAsync(() =>
+        {
+            f.Source.Attachments.Add(new() { ItemTemplate = "missing" });
+            var module = new BookModule(f.Books, f.Items, f.World.Mobiles);
+            Assert.Null(module.Give(2, "welcome_letter", new LuaTable { ["contact_name"] = "Vega" }));
+            Assert.Single(f.Items.Items);
+            Assert.Single(f.Serials.Serials);
+        });
+    }
+
+    [Fact]
     public async Task GiveWriteOpen_WithLuaValues_WorkSynchronously()
     {
         await using var fixture = await BookTestFixture.CreateAsync();

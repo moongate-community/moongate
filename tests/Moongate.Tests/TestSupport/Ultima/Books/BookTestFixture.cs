@@ -61,8 +61,9 @@ public sealed class BookTestFixture : IAsyncDisposable
         Session = session;
         Data.With(Source).With(
             new ItemTemplate { Id = "backpack", ItemId = new(0x0E75) },
-            new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll" },
+            new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll", Weight = 1m },
             new ItemTemplate { Id = "jail_release_note", ItemId = new(0x14F0), Stackable = false, ScriptId = "jail_note" },
+            new ItemTemplate { Id = "gold", ItemId = new(0xEED), Stackable = true, Weight = 0.02m },
             new ItemTemplate { Id = "unrelated", ItemId = new(0x14ED), Stackable = false });
         Reservations = new(world.Network.Loop);
         Inventory = new(new Lazy<IItemService>(() => Items!), Reservations);
@@ -76,7 +77,7 @@ public sealed class BookTestFixture : IAsyncDisposable
         var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
         Contexts = new(world.Sessions, new AdminServerInfoProvider(ServerMode.Game, realm), realm, new MotdServerIdentity("Moongate"), world.Network.Loop);
         Books = new(new BookTemplateService(Data), Contexts, Items, world.Mobiles, Handling, ItemTemplates, world.Sessions,
-            Bank, realGumps ? new GumpService(world.Sender) : Gumps, world.Network.Loop, new(() => Engine), new());
+            Bank, realGumps ? new GumpService(world.Sender) : Gumps, world.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory);
     }
 
     public static async Task<BookTestFixture> CreateAsync(bool realGumps = false)

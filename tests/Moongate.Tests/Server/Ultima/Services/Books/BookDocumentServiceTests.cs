@@ -1,3 +1,7 @@
+using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Server.Ultima.Services.Internal.Books;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Internal.Items;
@@ -10,6 +14,91 @@ namespace Moongate.Tests.Server.Ultima.Services.Books;
 
 public sealed class BookDocumentServiceTests
 {
+    [Fact]
+    public async Task Give_AttachmentsFreezeWithoutCreatingRewardItemsOrChangingLetterWeight()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        await f.OnLoopAsync(() =>
+        {
+            f.Source.Attachments.Add(new() { ItemTemplate = "gold", Amount = DiceSpec.Parse("100"), Hue = HueSpec.FromValue(42) });
+            var letter = f.Give();
+            Assert.Equal(2, f.Items.Items.Count);
+            Assert.Equal(1m, new WeightService(f.Items, f.ItemTemplates, new FakeTileDataService().Item(0x14ED, TileFlagType.None, 1)).Of(letter));
+            var payload = Assert.IsType<string>(letter.Props!["book.attachments"]);
+            Assert.True(BookAttachmentCodec.TryDecode(payload, out var batch));
+            Assert.Equal(100, Assert.Single(batch!.Items).Amount);
+            Assert.Equal(42, Assert.Single(batch.Items).Hue);
+            f.Source.Attachments[0].Amount = DiceSpec.Parse("200");
+            Assert.Equal(payload, letter.GetProp<string>("book.attachments"));
+        });
+    }
+
+    [Fact]
+    public async Task Write_PlainLetterCannotAcquireNewRewardsAndExistingBatchSurvivesRewriting()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        await f.OnLoopAsync(() =>
+        {
+            var plain = f.Give();
+            f.Source.Attachments.Add(new() { ItemTemplate = "gold", Amount = DiceSpec.Parse("100") });
+            f.Source.Content = "Changed body";
+            Assert.False(f.Books.Write(plain, f.Player, "welcome_letter", new Dictionary<string, object?> { ["contact_name"] = "Vega" }));
+            Assert.Equal("Dear Pippo,\n\nBring this to Vega.", plain.GetProp<string>("book.content"));
+            f.Serials.Serials.Enqueue(new(0x40001000));
+            var gift = f.Give();
+            var original = gift.GetProp<string>("book.attachments");
+            f.Source.Attachments[0].Amount = DiceSpec.Parse("999");
+            Assert.True(f.Books.Write(gift, f.Other, "welcome_letter", new Dictionary<string, object?> { ["contact_name"] = "Vega" }));
+            Assert.Equal(original, gift.GetProp<string>("book.attachments"));
+        });
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Write_MalformedPayloadCannotRegenerate(bool wrongKind)
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        await f.OnLoopAsync(() =>
+        {
+            var letter = f.Give();
+            letter.Props!["book.attachments"] = wrongKind ? 42 : "{}";
+            f.Source.Content = "Replaced";
+            Assert.False(f.Books.Write(letter, f.Player, "welcome_letter", new Dictionary<string, object?> { ["contact_name"] = "Vega" }));
+            Assert.Equal("Dear Pippo,\n\nBring this to Vega.", letter.GetProp<string>("book.content"));
+        });
+    }
+
+    [Fact]
+    public async Task Write_ClaimedLetterNeverReplenishesRewards()
+    {
+        await using var f = await BookAttachmentTestFixture.CreateAsync();
+        var payload = f.Letter.GetProp<string>(BookAttachmentCodec.PropKey);
+        Assert.Equal(Moongate.Server.Ultima.Types.Books.BookAttachmentClaimResultType.Claimed, await await f.BeginAsync());
+        await f.Books.OnLoopAsync(() =>
+        {
+            f.Books.Source.Attachments.Add(new() { ItemTemplate = "gold", Amount = DiceSpec.Parse("999") });
+            Assert.True(f.Books.Books.Write(f.Letter, f.Books.Player, "welcome_letter", new Dictionary<string, object?> { ["contact_name"] = "Vega" }));
+            Assert.Equal(payload, f.Letter.GetProp<string>(BookAttachmentCodec.PropKey));
+            Assert.False(f.Service.CanClaim(f.Letter, f.Books.Session));
+            Assert.Equal(3, f.Books.Items.Items.Count);
+        });
+    }
+
+    [Fact]
+    public async Task Write_ReservedInventoryLeavesTextIntact()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        await f.OnLoopAsync(() =>
+        {
+            var letter = f.Give();
+            f.Reservations.TryReserve(f.Player.Id, Task.CompletedTask);
+            f.Source.Content = "Replaced";
+            Assert.False(f.Books.Write(letter, f.Player, "welcome_letter", new Dictionary<string, object?> { ["contact_name"] = "Vega" }));
+            Assert.Equal("Dear Pippo,\n\nBring this to Vega.", letter.GetProp<string>("book.content"));
+        });
+    }
+
     [Fact]
     public async Task Give_InvalidValues_CreatesNothingAndConsumesNoSerial()
     {
@@ -37,6 +126,7 @@ public sealed class BookDocumentServiceTests
             Assert.Equal("Dear Pippo,\n\nBring this to Vega.", note.GetProp<string>("book.content"));
             Assert.Equal(fixture.Backpack.Id, note.ContainerId);
             Assert.Empty(fixture.Serials.Serials);
+            Assert.False(note.Props!.ContainsKey(BookAttachmentCodec.PropKey));
         });
     }
 
