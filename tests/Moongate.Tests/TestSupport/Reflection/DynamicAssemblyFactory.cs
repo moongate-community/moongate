@@ -5,7 +5,12 @@ namespace Moongate.Tests.TestSupport.Reflection;
 
 public static class DynamicAssemblyFactory
 {
-    public static Assembly Create(Version version, string? informationalVersion = null, string? codename = null)
+    public static Assembly Create(
+        Version version,
+        string? informationalVersion = null,
+        string? codename = null,
+        IReadOnlyDictionary<string, string>? metadata = null
+    )
     {
         var name = new AssemblyName($"Moongate.Tests.Dynamic.{Guid.NewGuid():N}")
         {
@@ -23,6 +28,12 @@ public static class DynamicAssemblyFactory
         {
             var constructor = typeof(AssemblyMetadataAttribute).GetConstructor([typeof(string), typeof(string)])!;
             assembly.SetCustomAttribute(new(constructor, ["Codename", codename]));
+        }
+
+        foreach (var (key, value) in metadata ?? new Dictionary<string, string>())
+        {
+            var constructor = typeof(AssemblyMetadataAttribute).GetConstructor([typeof(string), typeof(string)])!;
+            assembly.SetCustomAttribute(new(constructor, [key, value]));
         }
 
         return assembly;

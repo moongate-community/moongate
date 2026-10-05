@@ -149,10 +149,7 @@ await ConsoleApp.RunAsync(
         {
             var headerContent = ResourceUtils.GetEmbeddedResourceString(typeof(Program).Assembly, "Assets/header.txt");
 
-            headerContent = headerContent.Replace("{Version}", VersionUtils.GetVersion(typeof(Program).Assembly));
-            headerContent = headerContent.Replace("{Codename}", VersionUtils.GetCodename(typeof(Program).Assembly));
-
-            Console.WriteLine(headerContent);
+            Console.WriteLine(VersionUtils.FormatHeader(headerContent, typeof(Program).Assembly));
         }
 
         Console.WriteLine($"Moongate Server starting with root directory: {serverArgs.RootDirectory}");

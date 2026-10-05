@@ -21,6 +21,9 @@
 
     <ItemGroup>
         <AssemblyMetadata Include="Codename" Value="$(Codename)"/>
+        <!-- Written at every build: the header and the version command say when and how the binaries were built. -->
+        <AssemblyMetadata Include="BuildTime" Value="$([System.DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ'))"/>
+        <AssemblyMetadata Include="BuildConfiguration" Value="$(Configuration)"/>
         <InternalsVisibleTo Include="Moongate.Tests"/>
     </ItemGroup>
 
