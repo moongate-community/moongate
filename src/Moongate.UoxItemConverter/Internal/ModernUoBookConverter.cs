@@ -42,7 +42,8 @@ internal static class ModernUoBookConverter
                 if (Directory.Exists(path)) throw new InvalidDataException($"Output file is a directory: {path}");
                 var document = new ConvertedBookSource
                 {
-                    Title = EscapeDollars(book.Title), Author = EscapeDollars(book.Author), Content = EscapeDollars(book.Content)
+                    Title = EscapeDollars(book.Title), Author = EscapeDollars(book.Author), Content = EscapeDollars(book.Content),
+                    Translations = ModernUoBookTranslationReader.Read(path, book)
                 };
                 files.Add((path, Serialize(document, book.Id)));
             }
@@ -64,13 +65,15 @@ internal static class ModernUoBookConverter
         if (MatchesSource(text, document)) return text;
 
         // Basic strings retain leading newlines and CR/CRLF sequences that multiline TOML normalizes.
-        text = TomlUtils.Serialize(new Dictionary<string, string>
+        var fields = new Dictionary<string, object>
         {
             ["title"] = document.Title,
             ["author"] = document.Author,
             ["content"] = document.Content,
             ["item_template"] = document.ItemTemplate
-        });
+        };
+        if (document.Translations is not null) fields.Add("translations", document.Translations);
+        text = TomlUtils.Serialize(fields);
         if (!MatchesSource(text, document))
             throw new InvalidDataException($"{id}: serialized TOML does not preserve the source text.");
         return text;
@@ -82,7 +85,12 @@ internal static class ModernUoBookConverter
         {
             var actual = TomlUtils.Deserialize<ConvertedBookSource>(text);
             return actual is not null && actual.Title == expected.Title && actual.Author == expected.Author &&
-                   actual.Content == expected.Content && actual.ItemTemplate == expected.ItemTemplate;
+                   actual.Content == expected.Content && actual.ItemTemplate == expected.ItemTemplate &&
+                   (actual.Translations?.Count ?? 0) == (expected.Translations?.Count ?? 0) &&
+                   (expected.Translations is null || expected.Translations.All(pair =>
+                       actual.Translations is not null && actual.Translations.TryGetValue(pair.Key, out var translation) &&
+                       translation.Title == pair.Value.Title && translation.Author == pair.Value.Author &&
+                       translation.Content == pair.Value.Content));
         }
         catch (TomlException)
         {
