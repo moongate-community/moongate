@@ -13,6 +13,11 @@ namespace Moongate.Server.Ultima.Loaders;
 /// </summary>
 public class SkillsLoader : IDataLoader<SkillContent>
 {
+    /// <summary>
+    ///     The longest wait a skill may ask, in seconds.
+    /// </summary>
+    public const double MaximumDelaySeconds = 3600;
+
     private readonly DirectoriesConfig _directoriesConfig;
 
     private readonly ILogger _logger = Log.ForContext<SkillsLoader>();
@@ -52,6 +57,14 @@ public class SkillsLoader : IDataLoader<SkillContent>
                 throw new InvalidDataException(
                     $"{skillsFilePath}: entry {index} has id {(int)skills[index].Id}, expected {index}. " +
                     "Skill ids must start at 0 and follow the order of the file."
+                );
+            }
+
+            if (skills[index].Delay is < 0 or > MaximumDelaySeconds or double.NaN)
+            {
+                throw new InvalidDataException(
+                    $"{skillsFilePath}: skill {skills[index].Id} has delay {skills[index].Delay}, " +
+                    $"expected from 0 to {MaximumDelaySeconds} seconds."
                 );
             }
         }

@@ -159,7 +159,8 @@ the skill.
 - Failed: the player is shown, also when it was hidden, and reads "You can't seem to hide here."
   (501241).
 
-Either way it waits 10 seconds before another skill. Its first step shows it again, with "You have
+Either way it waits before another skill the `delay` of `hiding` in
+[`data/skills.toml`](../data-files/skills.md), 10 seconds. Its first step shows it again, with "You have
 been revealed!" (500814): the server does that for every hidden player of a regular account, since
 there is no Stealth yet; a turn on the spot does not. The staff hides to watch and stays hidden.
 Speaking, being hit and the sight of who stands near do not show it yet.

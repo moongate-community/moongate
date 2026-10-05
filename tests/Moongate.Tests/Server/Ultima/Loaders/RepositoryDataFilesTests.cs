@@ -90,6 +90,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Equal(Enumerable.Range(1, 10), jail.Cell.Select(cell => cell.Number));
         Assert.Equal(10, jail.Cell.Select(cell => cell.Location).Distinct().Count());
         Assert.Equal(58, service.GetEntities<SkillContent>().Count);
+        Assert.Equal(10, service.GetEntities<SkillContent>().Single(skill => skill.Id == SkillType.Hiding).Delay);
         Assert.Equal(7, service.GetEntities<ProfessionContent>().Count);
         Assert.Equal(3, service.GetEntities<RaceContent>().Count);
         Assert.NotEmpty(Assert.Single(service.GetEntities<BannedNamesContent>()).Words);

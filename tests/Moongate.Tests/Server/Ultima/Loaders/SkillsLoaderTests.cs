@@ -79,6 +79,31 @@ public sealed class SkillsLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_ReadsTheDelayOfASkill_AndLeavesItUnsetWhereTheFileHasNone()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/skills.toml", Alchemy + Anatomy + "delay = 10.5\n");
+
+        var result = await CreateLoader(root).LoadDataAsync();
+
+        Assert.Null(result.Entities[0].Delay);
+        Assert.Equal(10.5, result.Entities[1].Delay);
+    }
+
+    [Theory]
+    [InlineData("-1.0")]
+    [InlineData("3600.5")]
+    public async Task LoadDataAsync_ADelayOutOfRange_ThrowsInvalidDataException(string delay)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/skills.toml", Alchemy + $"delay = {delay}\n");
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+
+        Assert.Contains("alchemy", error.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task LoadDataAsync_IdsOutOfOrder_ThrowsInvalidDataException()
     {
         using var root = new TemporaryDirectory();
