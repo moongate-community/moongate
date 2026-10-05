@@ -184,3 +184,560 @@ Go Not to the
 Snakehills
 Lest You Care to Die"""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Klasické příběhy Vesper, svazek 1"
+content = """
+Je nám ctí představit ti tyto příběhy shromážděné z dávných věků. V tomto prvním svazku předkládáme báseň často přednášenou jako ukolébavku ospalým
+
+dětem.
+
+Předmluva
+od učence Guilhem
+
+O významu této básně se často
+
+rozprávělo v učených síních, neboť její tajemná zpěvná melodie působí na uši dospělých podivně znepokojivě, zatímco dětem zřejmě pomáhá klidně
+
+spát. Snad je to pouhý pozůstatek delší balady, která kdysi existovala, neboť vnitřní náznaky ukazují, že dříve vyprávěla delší příběh o nešťastných milencích a
+
+kouzelném pokusu, který se nezdařil. Básnická volnost a lidová tradice však slova zkreslily, takže se místo děje nyní označuje jen „ve větru“,
+
+což sice slouží líbivému metaforickému účelu, ale posluchači to nesdělí žádnou skutečnou polohu!
+Další možností je, že jde o jakýsi
+
+mýtus o stvoření vysvětlující vznik různých humanoidních tvorů, kteří se toulají zeměmi Britannia. Není třeba velké představivosti, abychom
+
+„dívka se stává stromem“ v prostřední sloce označili za možné vysvětlení vzniku smrtonoše, neboť kolem Minoc se smrtonošům mezi dřevorubci
+
+často říká „tvůrci vdov“. Předpokládá se, že tyto bytosti mají magický původ, ale báseň patrně naznačuje dávného tvůrce a používá starobylý
+
+kouzelnický výraz „splétání pramenů éteru“, který tak často nacházíme ve starých textech. Zmínku o „snakehills“ lze navíc
+
+s užitkem chápat jako odkaz na skutečné místo, například místní označení Serpent's Spine.
+Běžnější výklad praví, že
+
+stejně jako mnohé dětské říkanky jde o prosté vysvětlení smrti, v němž vítr unáší chlapce a dívky, když spí, aby zachoval
+
+rovnováhu světa. Pro děti byly napsány pozoruhodné příběhy o dobrodružstvích v „Snakehills“, které se považují za posmrtný svět, kde
+
+duch žije dál. Pochmurná ukolébavka, to jistě, ale rozhodně ne horší než „kdybych zemřel, než se vzbudím“.
+V každém případě je to stará oblíbená píseň, zde vytištěná
+
+poprvé pro tvé potěšení a pročtení!
+
+Ve Wind, kde se
+Rovnováha
+Šeptá na
+Chodbách
+
+Ve Wind, kde
+Magie
+Proudí celou
+Nocí
+Tam žijí Mágové a
+Mágové
+V rouchách zhotovených
+Z celých dnů
+
+Čtou Knihy plné
+Konání
+Tištěné na Světle
+
+Ve Wind, kde
+Milenci
+Jsou rozděleni
+Pod Stíny
+
+Kde se Scházejí
+a Rozcházejí
+Na Příkaz
+Osudu
+Dívka se stává
+Stromem,
+A tak se stává
+Vdovou
+
+Chlapec se stává
+Zemí
+A Bloudí Až
+Do Pozdní Doby
+
+Ve Wind se
+Nestvůry
+Poprvé Rodí Poprvé
+
+Tvoří
+Když Zpěv a
+Éter
+Mísí Zásahy a
+Blízkost
+Boj se cesty do Wind,
+Boj se Jeho
+Pletenců,
+
+Nechoď do
+Snakehills,
+Pokud Nechceš Zemřít"""
+
+[translations.fre]
+title = "Contes classiques de Vesper, volume 1"
+content = """
+C’est un Honneur de vous présenter ces Contes recueillis des Âges Passés. Dans ce Volume Inaugural, nous présentons ces Vers souvent Récités comme Berceuse pour les
+
+Enfants ensommeillés.
+
+Préface
+par Guilhem l’Érudit
+
+Le sens de ces vers a souvent été
+
+discuté dans les assemblées savantes, car leur mystérieuse mélodie chantonnante trouble étrangement les oreilles adultes, alors que les enfants semblent la trouver reposante en
+
+s’endormant. Peut-être n’est-elle que le vestige d’une ballade plus longue qui existait jadis, car certains indices internes indiquent qu’elle racontait autrefois une histoire plus longue d’amants malheureux et d’une
+
+expérience magique qui avait mal tourné. Cependant, la licence poétique et la transmission populaire ont déformé les mots, si bien que le lieu du récit n’est plus désormais que « dans le vent »,
+
+ce qui, tout en remplissant une fonction agréablement métaphorique, n’indique à l’auditeur aucun lieu réel ! Une autre possibilité est qu’il s’agisse d’une
+
+forme de mythe de création expliquant la genèse des diverses créatures humanoïdes qui parcourent les terres de Britannia. Il ne faut pas beaucoup d’imagination pour considérer
+
+la « fille devient arbre » de la strophe centrale comme une possible explication du faucheur, car dans les environs de Minoc, les faucheurs sont souvent appelés dans la communauté des
+
+bûcherons « faiseurs de veuves ». On suppose que ces créatures sont d’origine occulte, mais les vers semblent évoquer un créateur ancien et emploient l’antique
+
+terminologie magique de « tresser les fils de l’éther », si souvent présente dans les textes anciens. En outre, la référence aux « Snakehills » peut
+
+utilement être comprise comme une référence à un lieu réel, par exemple un nom local désignant Serpent’s Spine. Une interprétation plus courante veut que,
+
+comme beaucoup de comptines, ce soit une simple explication de la mort, dans laquelle le vent emporte les garçons et les filles pendant leur sommeil afin de préserver l’
+
+équilibre du monde. Des récits remarquables ont été écrits pour les enfants sur des aventures dans les « Snakehills », que l’on suppose être un Au-delà où
+
+l’esprit continue à vivre. Une sombre berceuse, certes, mais assurément pas pire que « de peur de mourir avant mon réveil ». Dans tous les cas, c’est un vieux favori, ici imprimé pour
+
+la première fois pour votre plaisir et votre lecture !
+
+Dans Wind où l’Équilibre
+Est Chuchoté dans les Couloirs
+
+Dans Wind où la Magie
+Coule Toute la Nuit
+Vivent des Mages et des Mages
+Aux Robes faites de Jours Entiers
+
+Lisant des Livres pleins d’Actes
+Imprimés sur la Lumière
+
+Dans Wind où les Amants
+Se Croisent sous les Ombres
+
+Où ils se Rencontrent et sont Séparés
+Par les Ordres du Destin
+La Fille devient Arbre,
+Et devient ainsi Veuve
+
+Le Garçon devient Terre
+Et Erre jusqu’à une Heure Tardive
+
+Dans Wind les Monstres
+Sont d’abord Nés, d’abord
+
+Créés
+Quand les Chants et l’Éther
+Mêlent Ingérence et Proximité
+Crains d’aller à Wind,
+Crains d’en Trouver les Tresses,
+
+Ne va pas aux Snakehills
+À moins de Vouloir Mourir"""
+
+[translations.ger]
+title = "Klassische Geschichten aus Vesper, Band 1"
+content = """
+Es ist eine Ehre, Euch diese Geschichten darzubieten, gesammelt aus längst vergangenen Zeiten. In diesem ersten Band bieten wir diesen Vers, der schläfrigen
+
+Kindern oft als Wiegenlied vorgesungen wird.
+
+Vorwort
+von Guilhem dem Gelehrten
+
+Die Bedeutung dieses Verses wurde oft
+
+in gelehrten Hallen erörtert, denn seine geheimnisvolle, singsangartige Melodie ist für erwachsene Ohren seltsam beunruhigend, während Kinder sie im
+
+Schlaf beruhigend zu finden scheinen. Vielleicht ist er nur der Überrest einer einst vorhandenen längeren Ballade, denn es gibt innere Hinweise, dass er einst eine längere Geschichte von unglückseligen Liebenden und einem
+
+fehlgeschlagenen magischen Versuch erzählte. Doch dichterische Freiheit und volkstümliche Überlieferung haben die Worte so verzerrt, dass der Schauplatz der Geschichte nun nicht mehr als „im Wind“ ist,
+
+was zwar einem angenehm bildhaften Zweck dient, dem Zuhörer jedoch keinen wirklichen Ort nennt!
+Eine andere Möglichkeit ist, dass dies eine
+
+Art Schöpfungsmythos ist, der die Entstehung der verschiedenen menschenähnlichen Geschöpfe erklärt, die durch Britannias Lande streifen. Es braucht keine große Vorstellungskraft, um
+
+das „Mädchen wird Baum“ der mittleren Strophe als mögliche Erklärung für den Schnitter zu bezeichnen, denn in der Gegend um Minoc werden Schnitter unter den Holzfällern
+
+oft „Witwenmacher“ genannt. Dass diese Geschöpfe arkanen Ursprungs sind, wird angenommen, doch der Vers scheint einen Schöpfer vor langer Zeit anzudeuten und verwendet die altertümliche
+
+magische Wendung vom „Flechten der Ätherstränge“, die so oft in alten Texten vorkommt. Darüber hinaus lässt sich der Hinweis auf
+
+„snakehills“ mit Gewinn als Hinweis auf einen wirklichen Ort betrachten, etwa als örtliche Bezeichnung für Serpent's Spine.
+Eine verbreitetere Deutung ist,
+
+dass es wie viele Kinderreime eine einfache Erklärung für den Tod ist, bei der der Wind Jungen und Mädchen im Schlaf hinwegrafft, um das
+
+Gleichgewicht der Welt zu erhalten. Bemerkenswerte Geschichten wurden für Kinder über Abenteuer in „den Snakehills“ geschrieben, die als Jenseits gelten, in dem
+
+der Geist weiterlebt. Gewiss ein düsteres Wiegenlied, doch sicher nicht schlimmer als „falls ich sterbe, ehe ich erwache“.
+In jedem Fall ist es ein alter Liebling, hier zum
+
+ersten Mal gedruckt, zu Eurem Vergnügen und Eurer Betrachtung!
+
+Im Wind, wo das Gleichgewicht
+In Gängen geflüstert wird
+
+Im Wind, wo die Magie
+Die ganze Nacht hindurch fließt,
+Da leben Magier und Magier
+Mit Roben aus ganzen Tagen,
+
+Lesen Bücher voller Taten,
+Auf Licht gedruckt.
+
+Im Wind, wo die Liebenden
+Unter Schatten vom Unglück verfolgt sind,
+
+Wo sie sich treffen und getrennt werden
+Durch die Befehle des Schicksals,
+Wird das Mädchen zum Baum
+Und so zur Witwe,
+
+Wird der Junge zur Erde
+Und wandert bis spät.
+
+Im Wind werden die Ungeheuer
+Zuerst geboren, zuerst
+
+erschaffen,
+Wenn Singen und Äther
+Sich mischen, einmischend und nah.
+Fürchte den Gang nach Wind,
+Fürchte, seine Flechtwerke zu finden,
+
+Geh nicht in die Snakehills,
+Wenn dir nicht am Sterben liegt."""
+
+[translations.ita]
+title = "Racconti classici di Vesper, volume 1"
+content = """
+È un Onore presentarVi questi Racconti raccolti dai Tempi Passati. In questo Volume Inaugurale presentiamo questi Versi spesso Recitati come Ninna Nanna per
+
+Bambini assonnati.
+
+Prefazione
+di Guilhem lo Studioso
+
+Il significato di questi versi è stato spesso
+
+discusso nelle sale degli studiosi, poiché la loro misteriosa melodia cantilenante risulta stranamente inquietante all'orecchio adulto, sebbene i bambini sembrino trovarla rasserenante mentre
+
+dormono. Forse è soltanto il residuo di una ballata più lunga un tempo esistente, poiché vi sono indizi interni che un tempo narrasse una storia più lunga di amanti sfortunati e di un
+
+esperimento magico finito male. Tuttavia la licenza poetica e l'elaborazione popolare hanno distorto le parole finché oggi il luogo del racconto non è altro che «nel vento»,
+
+il che, pur servendo a uno scopo piacevolmente metaforico, non informa l'ascoltatore di alcun luogo reale!
+Un'altra possibilità è che si tratti di una
+
+forma di mito della creazione che spiega la genesi delle varie creature umanoidi che percorrono le terre di Britannia. Non occorre uno sforzo d'immaginazione per indicare
+
+il «la ragazza diventa albero» della strofa centrale come possibile spiegazione del mietitore, poiché nella zona intorno a Minoc i mietitori vengono spesso chiamati dalla comunità dei boscaioli
+
+«creatori di vedove». Si presume che queste creature siano di origine arcana, ma i versi sembrano suggerire un creatore di molto tempo fa e usano l'antica
+
+terminologia magica dell'«intrecciare fili d'etere», che si trova così spesso nei testi antichi. Inoltre, il riferimento alle «snakehills» può
+
+essere utilmente considerato un riferimento a un luogo reale, forse un termine locale per Serpent's Spine.
+Un'interpretazione più comune è che,
+
+come molte filastrocche, si tratti di una semplice spiegazione della morte, in cui il vento rapisce bambini e bambine mentre dormono per mantenere l'
+
+equilibrio del mondo. Racconti notevoli sono stati scritti per bambini su avventure nelle «Snakehills», che si presume siano un Aldilà dove
+
+lo spirito continua a vivere. Una ninna nanna cupa, senza dubbio, ma certo non peggiore di «se dovessi morire prima di svegliarmi».
+In ogni caso è un vecchio favorito, qui stampato per
+
+la prima volta per il vostro diletto e la vostra lettura!
+
+A Wind dove l'Equilibrio
+Viene Sussurrato nei Corridoi
+
+A Wind dove la Magia
+Scorre per Tutta la Notte
+Vivono Maghi e Maghi
+Con Vesti fatte di Giorni Interi
+
+Leggendo Libri pieni di Fatti
+Stampati sulla Luce
+
+A Wind dove gli Amanti
+Sono Avversati sotto le Ombre
+
+Dove Si Incontrano e vengono Separati
+Dagli Ordini del Fato
+La Ragazza diventa Albero,
+E così diventa Vedova
+
+Il Ragazzo diventa Terra
+E Vaga Fino a Tardi
+
+A Wind i Mostri sono
+Prima Nati Prima
+
+Creati
+Quando Canto ed Etere
+Si Mescolano Intromettendosi e Vicini
+Temi di andare a Wind,
+Temi di Trovare i suoi Intrecci,
+
+Non Andare alle Snakehills
+A Meno Che Tu non Voglia Morire"""
+
+[translations.pol]
+title = "Klasyczne opowieści z Vesper, tom 1"
+content = """
+Zaszczytem jest przedstawić Wam te Opowieści zebrane z Dawnych Wieków. W tym Pierwszym Tomie przedstawiamy Wiersz często Recytowany jako Kołysanka dla sennych
+
+Dzieci.
+
+Przedmowa Guilhem the Scholar
+
+Znaczenie tego wiersza często
+
+omawiano w salach uczonych, gdyż jego tajemnicza, śpiewna melodia dziwnie niepokoi dorosłe uszy, choć dzieci zdaje się uspokajać podczas
+
+snu. Być może to tylko pozostałość istniejącej niegdyś dłuższej ballady, gdyż wewnętrzne wskazówki sugerują, że dawniej opowiadała dłuższą historię o nieszczęśliwych kochankach i
+
+magicznym doświadczeniu, które poszło źle. Jednak swoboda poetycka i ludowa tradycja zniekształciły słowa tak, że miejsce opowieści jest dziś zaledwie „w wietrze”,
+
+co wprawdzie daje przyjemną metaforę, lecz nie informuje słuchacza o żadnym rzeczywistym miejscu!
+Inna możliwość to jakaś
+
+postać mitu stworzenia wyjaśniającego pochodzenie rozmaitych humanoidalnych stworzeń wędrujących po ziemiach Britannia. Niewiele trzeba wyobraźni, by uznać
+
+„dziewczyna staje się drzewem” ze środkowej zwrotki za możliwe wyjaśnienie pochodzenia żniwiarza, gdyż w okolicach Minoc żniwiarzy często zwie się wśród drwali
+
+„twórcami wdów”. Zakłada się, że te stworzenia mają pochodzenie magiczne, lecz wiersz sugeruje dawnego twórcę i używa archaicznej
+
+terminologii magicznej „splatania pasm eteru”, tak często spotykanej w starych tekstach. Ponadto odniesienie do „snakehills” można
+
+z pożytkiem uznać za wskazanie rzeczywistego miejsca, być może miejscowej nazwy Serpent's Spine.
+Powszechniejsza interpretacja głosi, że
+
+jak wiele rymowanek dziecięcych jest to proste wyjaśnienie śmierci: wiatr porywa chłopców i dziewczęta, gdy śpią, by zachować
+
+równowagę świata. Dla dzieci napisano znane opowieści o przygodach w „Snakehills”, uznawanych za Zaświaty, gdzie
+
+dusza żyje dalej. Ponura to kołysanka, z pewnością, lecz chyba nie gorsza niż „abym nie umarł, nim się obudzę”.
+Tak czy inaczej, jest to stary ulubiony utwór, tutaj wydrukowany
+
+po raz pierwszy dla Waszej przyjemności i lektury!
+
+W Wind, gdzie Równowagę
+Szepce się na Korytarzach
+
+W Wind, gdzie Magia Płynie
+Przez Całą Noc,
+Żyją Magowie i Magowie
+W Szatach z Całych Dni
+
+Czytający Księgi pełne Czynów
+Drukowanych na Świetle
+
+W Wind, gdzie Kochankowie
+Mijają się pod Cieniami
+
+Gdzie Spotykają się i Rozstają
+Na Rozkaz Losu,
+Dziewczyna staje się Drzewem,
+I tak staje się Wdową
+
+Chłopiec staje się Ziemią
+I Wędruje do Późna
+
+W Wind Potwory są
+Po raz Pierwszy Rodzone
+Po raz Pierwszy
+
+Tworzone, gdy Śpiew i Eter
+Mieszają Mącąc i Blisko,
+Bój się iść do Wind,
+Bój się Znaleźć jego Sploty,
+
+Nie Idź do Snakehills,
+Chyba że Pragniesz Umrzeć"""
+
+[translations.por]
+title = "Contos clássicos de Vesper, volume 1"
+content = """
+É uma Honra apresentar a Você estes Contos recolhidos de Eras Passadas. Neste Volume Inaugural, apresentamos este Poema, frequentemente Recitado como Canção de Ninar para Crianças
+
+sonolentas.
+
+Prefácio
+de Guilhem, o
+Erudito
+
+O significado deste poema foi frequentemente
+
+discutido nos salões dos eruditos, pois sua misteriosa melodia cantilenante é estranhamente perturbadora aos ouvidos adultos, embora as crianças pareçam achá-la relaxante enquanto
+
+dormem. Talvez seja apenas o resquício de uma balada mais longa que existiu outrora, pois há indícios internos de que antes contava uma história mais longa sobre amantes desafortunados e um
+
+experimento mágico que deu errado. Contudo, a licença poética e a transmissão popular distorceram as palavras até que agora o local do conto é apenas \"no vento\",
+
+o que, embora sirva a um propósito agradavelmente metafórico, não informa ao ouvinte nenhum local real!
+Outra possibilidade é que seja alguma
+
+forma de mito da criação explicando a origem das várias criaturas humanoides que vagam pelas terras de Britannia. Não é preciso forçar a imaginação para apontar
+
+o \"a menina vira árvore\" da estrofe do meio como uma possível explicação para o ceifador, pois, na região em torno de Minoc, os ceifadores são frequentemente chamados entre a comunidade de lenhadores
+
+de \"fazedores de viúvas\". Supõe-se que essas criaturas tenham origem arcana, mas o poema parece sugerir um criador de muito tempo atrás e usa a antiga
+
+terminologia mágica de \"trançar fios de éter\", tão frequente nos textos antigos. Além disso, a referência a \"snakehills\" pode
+
+ser proveitosamente considerada uma referência a um local real, talvez um termo local para a Serpent's Spine.
+Uma interpretação mais comum é que,
+
+como muitas cantigas infantis, seja uma explicação simples para a morte, em que o vento arrebata meninos e meninas enquanto dormem, para manter o
+
+equilíbrio do mundo. Histórias notáveis de aventuras nas \"Snakehills\" foram escritas para crianças; presume-se que sejam um Outro Mundo onde
+
+o espírito continua a viver. Uma canção de ninar sombria, sem dúvida, mas certamente não pior que \"se eu morrer antes de acordar\".
+Em qualquer caso, é uma antiga favorita, aqui impressa pela
+
+primeira vez para seu prazer e sua leitura!
+
+Em Wind onde
+o Equilíbrio
+É Sussurrado nos
+Corredores
+
+Em Wind onde
+a Magia
+Flui por toda a
+Noite
+Vivem Magos e
+Magos
+Com Vestes feitas de
+Dias Inteiros
+
+Lendo Livros cheios de
+Feitos
+Impressos na Luz
+
+Em Wind onde
+os Amantes
+Se Cruzam sob
+Sombras
+
+Onde se Encontram e
+se Separam
+Pelas Ordens do
+Destino
+A Menina vira
+Árvore,
+E assim se torna
+Viúva
+
+O Menino vira
+Terra
+E Vaga Até
+Tarde
+
+Em Wind os
+Monstros
+Primeiro Nascem Primeiro
+
+São Criados
+Quando Cânticos e
+Éter
+Misturam Intromissão e
+Proximidade
+Tema ir a Wind,
+Tema Encontrar suas
+Tranças,
+
+Não Vá às
+Snakehills
+A Menos que Queira Morrer"""
+
+[translations.spa]
+title = "Relatos clásicos de Vesper, volumen 1"
+content = """
+Es un Honor presentaros estos Relatos recogidos de Eras Pasadas. En este Volumen Inaugural presentamos estos Versos que a menudo se recitan como Canción de Cuna para
+
+Niños somnolientos.
+
+Prefacio de Guilhem el Erudito
+
+El significado de estos versos ha sido a menudo
+
+debatido en los salones de los eruditos, pues su misteriosa melodía cantarina resulta extrañamente inquietante para los oídos adultos, aunque los niños parecen encontrarla relajante mientras
+
+duermen. Quizá sea solo el vestigio de una balada más larga que existió antaño, pues hay indicios internos de que antes narraba una historia más extensa de amantes desdichados y un
+
+experimento mágico que salió mal. Sin embargo, la licencia poética y la tradición popular han deformado las palabras hasta que el lugar de la historia ya no es más que «en el viento»,
+
+lo cual, aunque sirve a un agradable fin metafórico, no informa al oyente de ningún lugar real. Otra posibilidad es que sea alguna
+
+forma de mito de creación que explique el origen de las distintas criaturas humanoides que recorren las tierras de Britannia. No hace falta forzar la imaginación para identificar
+
+el «la muchacha se vuelve árbol» de la estrofa central como una posible explicación del reaper, pues en la región de Minoc los leñadores suelen referirse a los reapers
+
+como «hacedores de viudas». Se supone que estas criaturas tienen origen arcano, pero los versos parecen sugerir un creador remoto y emplean la antigua
+
+terminología mágica de «trenzar hebras de éter», tan frecuente en textos antiguos. Además, la referencia a «Snakehills» puede
+
+interpretarse provechosamente como alusión a un lugar real, quizá un término local para Serpent's Spine. Una interpretación más común es que,
+
+como tantas canciones infantiles, sea una explicación sencilla de la muerte, en la que el viento arrebata a niños y niñas mientras duermen para mantener el
+
+equilibrio del mundo. Se han escrito para niños relatos destacados sobre aventuras en «Snakehills», que se presume un Más Allá donde
+
+el espíritu sigue viviendo. Una canción de cuna sombría, sin duda, pero no peor que «no sea que muera antes de despertar». En cualquier caso, es una vieja favorita, impresa aquí por
+
+primera vez para vuestro disfrute y lectura.
+
+En Wind, donde el Equilibrio
+se susurra en los Pasillos,
+
+En Wind, donde la Magia Fluye
+durante toda la Noche,
+viven Magos y Magos
+con Túnicas hechas de Días Enteros,
+
+leyendo Libros llenos de Actos
+impresos sobre la Luz.
+
+En Wind, donde los Amantes
+se cruzan bajo Sombras,
+
+donde se Encuentran y se Separan
+por las Órdenes del Destino,
+la Muchacha se vuelve Árbol
+y así se vuelve Viuda,
+
+el Muchacho se vuelve Tierra
+y Vaga Hasta Tarde.
+
+En Wind nacen los Monstruos
+por vez Primera, son
+
+Creados cuando Cánticos y Éter
+mezclan Entrometimiento y Cercanía.
+Temed ir a Wind,
+temed Encontrar sus Trenzados,
+
+No vayáis a Snakehills
+a menos que deseéis Morir."""

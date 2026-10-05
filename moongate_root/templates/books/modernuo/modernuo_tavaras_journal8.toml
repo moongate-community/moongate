@@ -69,3 +69,150 @@ and am thankful for
 his laughter as well
 as his strength."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Deník: Objevení hrobky"
+content = """
+Den osmý:
+
+Dnes jsme učinili ohromující pokrok a samým vzrušením se mi točí hlava. Po úplném odkrytí vzdálené
+
+západní síně byla odhalena další velká předsíň. Podle většího, mozaikovitého stylu nástěnných řezeb a jejich rámování i četných pergamenových svitků a
+
+knih uvnitř se zdá, že místnost bývala jakýmsi velkým muzeem či knihovnou. Samotné množství písemných informací uzavřených v této místnosti by mi jistě
+
+trvalo desetiletí prostudovat, i kdybych okamžitě dokázala rozluštit podivný text, jímž byly napsány. Mé čiré radosti z objevu si rychle všiml ten hrubián
+
+známý jako Morg Bergen, který i svým prostým způsobem vypadal stejně potěšen jako já, že jsme učinili nějaký pokrok. Musím přiznat, že při jeho
+
+zařazení do naší skupiny na počátku této cesty jsem poněkud pochybovala o jeho povaze, ale má překvapivě bystrý úsudek na tak mohutného, otrlého
+
+válečníka. Zatímco Lysander a dokonce i Grimmoch jako by hrobku zkoumali vždy se zachmuřeným odhodláním, Bergen zřejmě cítí stejné vzrušení z objevování jako
+
+já. Jsem hrdá, že jej nyní mohu považovat za přítele, a jsem vděčná za jeho smích stejně jako za jeho sílu."""
+
+[translations.fre]
+title = "Journal : découverte du tombeau"
+content = """
+Huitième jour :
+
+Des progrès stupéfiants ont été accomplis aujourd’hui, et ma tête en tourne d’excitation. Après le déblaiement complet du couloir le plus
+
+occidental, une autre grande antichambre a été révélée. À en juger par le style plus ample, en mosaïque, des sculptures murales et de leurs encadrements, ainsi que par les nombreux rouleaux de vélin et les
+
+grimoires qu’elle contient, cette salle semble avoir été une sorte de grand musée ou de bibliothèque. La seule quantité de renseignements écrits enfermés dans cette salle me demanderait sûrement
+
+des décennies d’étude, même si je pouvais déchiffrer immédiatement les étranges caractères dont ils sont faits. Ma joie pure devant cette découverte a vite été remarquée par la brute
+
+nommée Morg Bergen, qui, même à sa manière simple, paraissait aussi ravi que moi de voir des progrès accomplis. Je dois avouer que, lors de son
+
+arrivée dans notre groupe au début de ce voyage, je me méfiais quelque peu de sa nature, mais il a un esprit étonnamment vif pour un guerrier si massif, aux mains
+
+calleuses. Si Lysander, et même Grimmoch, semblent toujours examiner le tombeau avec une détermination renfrognée, Bergen semble éprouver le même frisson de découverte que
+
+moi. Je suis fière de le compter désormais parmi mes amis, et je suis reconnaissante de son rire autant que de sa force."""
+
+[translations.ger]
+title = "Tagebuch: Entdeckung des Grabes"
+content = """
+Achter Tag:
+
+Heute wurden erstaunliche Fortschritte gemacht, und mir schwirrt vor Aufregung der Kopf. Nach dem vollständigen Freilegen der weit
+
+westlich gelegenen Halle wurde eine weitere große Vorhalle sichtbar. Nach dem größeren, mosaikartigen Stil der Wandschnitzereien und ihrer Einfassungen sowie den zahlreichen Pergamentrollen und
+
+Folianten darin scheint der Raum eine Art großes Museum oder Bibliothek gewesen zu sein. Die bloße Menge an schriftlichen Informationen, die dieser Raum enthält, würde mich gewiss
+
+Jahrzehnte an Studien kosten, selbst wenn ich die seltsame Schrift, in der sie niedergeschrieben wurden, sofort entziffern könnte. Meine reine Freude über die Entdeckung wurde rasch von dem groben Kerl
+
+namens Morg Bergen bemerkt, der selbst auf seine einfache Weise ebenso erfreut wie ich zu sein schien, dass Fortschritte gemacht worden waren. Ich muss gestehen, als er
+
+zu Beginn dieser Reise in unsere Gruppe aufgenommen wurde, war ich seinem Wesen gegenüber etwas misstrauisch, doch für einen so gewaltigen, abgebrühten
+
+Krieger besitzt er einen erstaunlich schnellen Verstand. Während Lysander und selbst Grimmoch das Grab immer mit finsterer Entschlossenheit zu untersuchen scheinen, scheint Bergen dieselbe Begeisterung über Entdeckungen zu empfinden wie
+
+ich. Ich bin stolz, ihn nun zu meinen Freunden zu zählen, und dankbar für sein Lachen ebenso wie für seine Stärke."""
+
+[translations.ita]
+title = "Diario: scoperta della Tomba"
+content = """
+Giorno Otto :
+
+Oggi sono stati fatti progressi stupefacenti, e mi gira la testa per l'emozione. Completato lo scavo della lontana sala
+
+occidentale, è stata rivelata un'altra grande anticamera. Dal più ampio stile a mosaico delle incisioni sui muri e delle loro cornici, così come dalle numerose pergamene e dai
+
+tomi contenuti al suo interno, la stanza sembra essere stata un grande museo o una sorta di biblioteca. La sola quantità d'informazioni scritte racchiuse in questa stanza richiederebbe certamente
+
+decenni di studio, persino se potessi decifrare immediatamente gli strani caratteri in cui erano scritte. La mia gioia pura per la scoperta è stata subito notata dal bruto
+
+noto come Morg Bergen che, anche nella sua semplicità, sembrava felice quanto me dei progressi fatti. Devo confessare che, quando è stato
+
+incluso nel nostro gruppo all'inizio di questo viaggio, ero alquanto sospettosa della sua natura, ma ha un'intelligenza sorprendentemente pronta per un guerriero così massiccio e incallito.
+
+Mentre Lysander e persino Grimmoch sembrano sempre indagare la tomba con cupa determinazione, Bergen sembra provare lo stesso brivido della scoperta che provo
+
+io. Sono orgogliosa di considerarlo ora un amico e sono grata per le sue risate così come per la sua forza."""
+
+[translations.pol]
+title = "Dziennik: odkrycie Grobowca"
+content = """
+Dzień ósmy:
+
+Dokonaliśmy dziś zdumiewających postępów i głowa kręci mi się z podniecenia. Po całkowitym odsłonięciu dalekiej
+
+zachodniej sali ukazał się kolejny wielki przedsionek. Sądząc z większych, mozaikowych rzeźbień ściennych i ich obramowań, a także licznych pergaminowych zwojów oraz
+
+tomów wewnątrz, sala była chyba wielkim muzeum lub rodzajem biblioteki. Sama ilość przechowywanych tu zapisanych informacji z pewnością
+
+wymagałaby dziesięcioleci studiów, nawet gdybym od razu umiała odczytać dziwny tekst, którym je zapisano. Moją niezmierną radość z odkrycia szybko zauważył osiłek
+
+zwany Morg Bergen, który, choć na swój prosty sposób, zdawał się równie zachwycony jak ja dokonanymi postępami. Muszę przyznać, że gdy
+
+dołączył do naszej grupy na początku wyprawy, nieco podejrzliwie oceniałam jego naturę, lecz ma zdumiewająco bystry umysł jak na tak ogromnego, zgrubiałego
+
+wojownika. Choć Lysander i nawet Grimmoch zawsze zdają się badać grobowiec z ponurą determinacją, Bergen zdaje się czuć taki sam dreszcz odkrywania jak
+
+ja. Z dumą zaliczam go teraz do przyjaciół i jestem wdzięczna za jego śmiech oraz siłę."""
+
+[translations.por]
+title = "Diário: descoberta da tumba"
+content = """
+Oitavo dia:
+
+Fizemos um progresso espantoso hoje, e minha cabeça gira com a empolgação. Com a escavação completa do distante salão
+
+oeste, outra grande antecâmara foi revelada. Pelo estilo maior, semelhante a um mosaico, das esculturas nas paredes e de suas molduras, assim como pelos numerosos pergaminhos de velino e
+
+tomos guardados em seu interior, a sala parece ter sido uma espécie de grande museu ou biblioteca. A enorme quantidade de informações escritas contidas nesta sala certamente
+
+levaria décadas para eu estudar, mesmo se pudesse decifrar imediatamente o estranho texto em que foram escritas. Minha pura alegria com a descoberta foi rapidamente notada pelo brutamontes
+
+conhecido como Morg Bergen, que, mesmo de seu jeito simples, pareceu tão contente quanto eu por termos feito algum progresso. Preciso confessar que, quando de sua
+
+inclusão em nosso grupo no início desta jornada, eu desconfiava um tanto de sua natureza, mas ele tem uma inteligência surpreendentemente rápida para um guerreiro tão enorme e calejado.
+
+Enquanto Lysander e até Grimmoch sempre parecem investigar a tumba com uma determinação carrancuda, Bergen parece sentir a mesma emoção da descoberta que
+
+eu. Tenho orgulho de agora considerá-lo um amigo e sou grata por suas risadas, assim como por sua força."""
+
+[translations.spa]
+title = "Diario: descubrimiento de la tumba"
+content = """
+Día ocho:
+
+Hoy hemos realizado un progreso asombroso, y la emoción me hace dar vueltas la cabeza. Al terminar de excavar el lejano corredor
+
+occidental, apareció otra gran antecámara. Por el estilo más amplio y de mosaico de las tallas de las paredes y sus marcos, así como por los numerosos pergaminos y
+
+tomos que contiene, la sala parece haber sido una especie de gran museo o biblioteca. La enorme cantidad de información escrita encerrada aquí sin duda me
+
+llevaría décadas de estudio, incluso si pudiera descifrar de inmediato el extraño texto con el que está escrita. Mi alegría ante el descubrimiento fue advertida enseguida por el bruto
+
+llamado Morg Bergen, quien, incluso en su sencillez, parecía tan encantado como yo de que hubiéramos avanzado. Debo confesar que, al
+
+incorporarse a nuestro grupo al inicio de este viaje, desconfiaba un poco de su naturaleza, pero tiene una agudeza sorprendente para un guerrero tan enorme y
+
+curtido. Mientras Lysander e incluso Grimmoch parecen investigar siempre la tumba con determinación ceñuda, Bergen parece sentir la misma emoción del descubrimiento que
+
+yo. Me enorgullece contarlo ahora como amigo, y agradezco tanto su risa como su fuerza."""

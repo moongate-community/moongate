@@ -101,3 +101,207 @@ choice. Honestly,
 
 truly. Not once."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Pojednání o alchymii"
+content = """
+Alchymické umění vyniká svou klamnou jednoduchostí. Je pravda, že podle našich dosavadních nejlepších znalostí existuje pouze osm účinných lektvarů, které lze
+
+vyrobit (zdůrazňuji však, že nové objevy mohou vždy čekat). Jemná rovnováha při míchání lektvarů je však vskutku obtížná a
+
+vyžaduje velkou dovednost.
+Uvedu ti příklad jednodušších lektvarů, které dokáže vytvořit člověk dobře obeznámený s jemnostmi alchymie:
+
+Černá perla, ta vzácná látka často nalézaná bez ohlášení na povrchu země, může při správném rozdrcení v hmoždíři
+
+paličkou poskytnout jemný prášek. Tento prášek, smísený ve správném poměru pomocí alchymického umění, může dát podivuhodně osvěžující nápoj.
+
+Odporný krvavý mech, který úzkostlivé hospodyňky tak opatrně seškrabávají z okenních parapetů, je jen drobným příbuzným divočejšího druhu, který při správné
+
+přípravě poskytuje kouzelnou tekutinu, jež může na čas učinit pijáka hbitějším a obratnějším člověkem.
+Pozor však na smrtící
+
+rulík, neboť poskytuje klamně sladký jed, který může být pro pijáka velmi smrtelný a který také vrazi používají k potírání svých čepelí.
+
+Naštěstí je toto druhé umění travičství málo známé!
+Alchymie má svým studentům opravdu mnoho co nabídnout. Pověsti o dlouholetých alchymistech, kteří ztrácejí
+
+vlasy a získávají nezdravou bledost, nemluvě o nevzhledných skvrnách na kdysi krásné kůži, jsou bohužel pravdivé. Radosti mysli však
+
+vynahradí úplnou ztrátu zájmu, který o tebe ostatní mohou mít jako o předmět námluv, a nikdy jsem této volby nelitoval. Upřímně,
+
+opravdu. Ani jednou."""
+
+[translations.fre]
+title = "Traité d’alchimie"
+content = """
+Les arts alchimiques se distinguent par leur simplicité trompeuse. Il est vrai qu’au meilleur de nos connaissances actuelles, seules huit potions valables peuvent
+
+être confectionnées (bien que je souligne que de nouvelles découvertes peuvent toujours nous attendre). Cependant, le délicat équilibre de la préparation des potions est véritablement difficile et
+
+exige une grande habileté. Pour vous donner un exemple des potions les plus simples que peuvent créer ceux qui connaissent bien les subtilités de l’alchimie :
+
+La perle noire, cette substance rare que l’on trouve souvent, sans qu’elle s’annonce, à la surface du sol, correctement broyée au mortier et au
+
+pilon, peut donner une fine poudre. Cette poudre, dans les proportions convenables et mélangée par les arts alchimiques, peut produire une boisson merveilleusement rafraîchissante.
+
+La répugnante mousse de sang que les ménagères méticuleuses raclent si délicatement sur leurs rebords de fenêtre n’est qu’une petite cousine de la version plus sauvage qui, convenablement
+
+préparée, donne un liquide magique capable, pour un temps, de rendre celui qui le boit plus agile et plus adroit. Cependant, prenez garde à la mortelle
+
+belladone, car elle donne un poison au goût trompeusement doux qui peut être extrêmement fatal au buveur et dont les assassins se servent aussi pour enduire leurs lames.
+
+Heureusement, ce dernier art de l’empoisonnement est peu connu ! Il y a, en vérité, beaucoup de récompenses pour l’étudiant en alchimie. Les rumeurs voulant que les alchimistes chevronnés perdent
+
+leurs cheveux et acquièrent une pâleur malsaine, sans parler de taches disgracieuses sur leur peau jadis belle, sont malheureusement vraies. Pourtant, les joies de l’esprit
+
+compensent la perte totale de l’intérêt que les autres peuvent vous porter comme objet de cour, et je n’ai jamais regretté ce choix. Honnêtement,
+
+vraiment. Pas une fois."""
+
+[translations.ger]
+title = "Abhandlung über die Alchemie"
+content = """
+Die alchemistischen Künste zeichnen sich durch ihre trügerische Einfachheit aus. Zwar gibt es nach unserem derzeitigen besten Wissen nur acht brauchbare Tränke, die
+
+hergestellt werden können (obwohl ich betone, dass stets neue Entdeckungen warten mögen). Doch das feine Gleichgewicht bei der Herstellung der Tränke ist wahrlich schwierig und
+
+erfordert großes Können.
+Um Euch ein Beispiel der einfacheren Tränke zu geben, die jene herstellen können, welche in den Feinheiten der Alchemie bewandert sind:
+
+Schwarze Perlen, jene seltene Substanz, die man oft unvermutet auf der Erdoberfläche liegen findet, können, richtig mit Mörser und
+
+Stößel zermahlen, ein feines Pulver ergeben. Dieses Pulver kann, wenn es in den richtigen Verhältnissen durch die alchemistischen Künste vermischt wird, ein wunderbar erfrischendes Getränk ergeben.
+
+Das widerliche Blutmoos, das penible Hausfrauen so behutsam von Fensterbrettern kratzen, ist nur ein winziger Verwandter der wilderen Spielart, die bei richtiger
+
+Zubereitung eine magische Flüssigkeit ergibt, welche den Trinker eine Zeit lang flinker und geschickter machen kann.
+Doch hütet Euch vor dem tödlichen
+
+Nachtschatten, denn er ergibt ein trügerisch süß schmeckendes Gift, das für den Trinker höchst tödlich sein kann und tatsächlich auch von Meuchelmördern zum Bestreichen ihrer Klingen benutzt wird.
+
+Glücklicherweise ist diese letztere Kunst des Vergiftens wenig bekannt!
+Es gibt wahrlich viel, das den Schüler der Alchemie belohnt. Die Gerüchte, dass langjährige Alchemisten
+
+ihr Haar verlieren und eine ungesunde Blässe bekommen, ganz zu schweigen von unschönen Flecken auf ihrer einst schönen Haut, sind leider wahr. Doch die Freuden des Geistes
+
+wiegen den völligen Verlust des Interesses auf, das andere an Euch als Gegenstand des Werbens haben mögen, und ich habe diese Wahl nie bereut. Ehrlich,
+
+wirklich. Nicht ein einziges Mal."""
+
+[translations.ita]
+title = "Trattato sull’alchimia"
+content = """
+Le arti alchemiche si distinguono per la loro ingannevole semplicità. È vero che, secondo le nostre migliori conoscenze attuali, vi sono soltanto otto pozioni valide che si possono
+
+preparare (sebbene sottolinei che nuove scoperte possono sempre attenderci). Tuttavia il delicato equilibrio della preparazione delle pozioni è davvero difficile e
+
+richiede grande abilità.
+Per darvi un esempio delle pozioni più semplici che possono essere create da chi conosce bene le sottigliezze dell'alchimia:
+
+La perla nera, quella rara sostanza che spesso si trova senza preavviso sulla superficie del terreno, quando viene opportunamente pestata con mortaio e
+
+pestello può produrre una polvere fine. Tale polvere nelle giuste proporzioni, mescolata mediante le arti alchemiche, può produrre una bevanda meravigliosamente rinfrescante.
+
+Il ripugnante muschio sanguigno che le casalinghe scrupolose raschiano tanto cautamente dai davanzali non è che un minuscolo cugino della varietà più selvatica, che se opportunamente
+
+preparata produce un liquido magico che per un certo tempo può rendere chi lo beve più agile e destro.
+Tuttavia guardatevi dalla mortale
+
+belladonna, poiché produce un veleno dal sapore ingannevolmente dolce che può rivelarsi assai fatale al bevitore, ed è infatti usato anche dagli assassini per rivestire le loro lame.
+
+Fortunatamente, quest'ultima arte dell'avvelenamento è poco conosciuta!
+Vi è davvero molto che ricompensa lo studioso di alchimia. Le voci sugli alchimisti di lunga data che perdono
+
+i capelli e acquistano un pallore malsano, per non parlare di sgradevoli macchie sulla pelle un tempo bella, sono purtroppo vere. Eppure le gioie della mente
+
+compensano la completa perdita d'interesse che gli altri possano nutrire per voi come oggetto di corteggiamento, e non ho mai rimpianto quella scelta. Onestamente,
+
+davvero. Nemmeno una volta."""
+
+[translations.pol]
+title = "Traktat o alchemii"
+content = """
+Sztuki alchemiczne wyróżnia zwodnicza prostota. Prawdą jest, że według obecnego stanu naszej wiedzy istnieje tylko osiem właściwych mikstur, które można
+
+sporządzić (choć podkreślam, że zawsze mogą czekać nowe odkrycia). Jednak utrzymanie delikatnej równowagi przy mieszaniu mikstur jest naprawdę trudne i
+
+wymaga wielkiej wprawy.
+Podam przykład prostszych mikstur, które mogą tworzyć osoby biegłe w subtelnościach alchemii:
+
+Czarna perła, ta rzadka substancja, którą często znajduje się niespodziewanie na powierzchni ziemi, odpowiednio roztarta moździerzem i
+
+tłuczkiem może dać drobny proszek. Ten proszek, zmieszany we właściwych proporcjach za pomocą sztuk alchemicznych, daje cudownie odświeżający napój.
+
+Odrażający krwawy mech, tak ostrożnie zdrapywany z parapetów przez skrupulatne gospodynie, jest tylko małym kuzynem dzikiej odmiany, która odpowiednio
+
+przygotowana daje magiczny płyn, czyniący pijącego na pewien czas zwinniejszym i zręczniejszym.
+Strzeż się jednak śmiercionośnej
+
+wilczej jagody, gdyż daje truciznę o zwodniczo słodkim smaku, która może okazać się bardzo zabójcza dla pijącego, a w istocie służy też zabójcom do powlekania ostrzy.
+
+Na szczęście ta ostatnia sztuka trucicielstwa jest mało znana!
+Zaprawdę, wiele nagród czeka ucznia alchemii. Pogłoski, że wieloletni alchemicy tracą
+
+włosy i nabierają niezdrowej bladości, nie wspominając o brzydkich plamach na niegdyś pięknej skórze, są niestety prawdziwe. Lecz radości umysłu
+
+wynagradzają zupełną utratę zainteresowania tobą jako obiektem zalotów i nigdy nie żałowałem tego wyboru. Szczerze,
+
+naprawdę. Ani razu."""
+
+[translations.por]
+title = "Tratado de alquimia"
+content = """
+As artes alquímicas se destacam por sua simplicidade enganosa. É verdade que, segundo nosso melhor conhecimento atual, existem apenas oito poções válidas que podem
+
+ser feitas (embora eu ressalte que novas descobertas sempre podem estar à espera). Contudo, o delicado equilíbrio da preparação das poções é realmente difícil e
+
+exige grande habilidade.
+Para dar a você um exemplo das poções mais simples que podem ser criadas por quem conhece bem as sutilezas da alquimia:
+
+A pérola negra, essa substância rara frequentemente encontrada sem alarde sobre a superfície do chão, quando devidamente triturada com almofariz e
+
+pilão, pode produzir um pó fino. Esse pó, nas proporções corretas e misturado por meio das artes alquímicas, pode produzir uma bebida maravilhosamente refrescante.
+
+O repugnante musgo de sangue, raspado com tanto cuidado dos peitoris das janelas por donas de casa meticulosas, é apenas um minúsculo primo da versão mais selvagem, que, quando devidamente
+
+preparada, produz um líquido mágico que, por algum tempo, pode tornar quem o bebe um indivíduo mais ágil e destro.
+Contudo, tome cuidado com a mortal
+
+beladona, pois ela produz um veneno de sabor enganosamente doce que pode se mostrar extremamente fatal para quem o bebe e, de fato, também é usado por assassinos para revestir suas lâminas.
+
+Felizmente, essa última arte de envenenar é pouco conhecida!
+Há muito que recompensa o estudante da alquimia, de fato. Os rumores de que alquimistas de longa data perdem
+
+os cabelos e adquirem uma palidez doentia, sem falar em manchas desagradáveis na pele antes bela, infelizmente são verdadeiros. Ainda assim, as alegrias da mente
+
+compensam a perda completa de interesse que os outros possam ter por você como objeto de cortejo, e nunca me arrependi dessa escolha. Honestamente,
+
+de verdade. Nem uma vez."""
+
+[translations.spa]
+title = "Tratado de alquimia"
+content = """
+Las artes alquímicas destacan por su engañosa sencillez. Es cierto que, según nuestros mejores conocimientos actuales, solo hay ocho pociones válidas que pueden
+
+elaborarse, aunque insisto en que siempre pueden aguardarnos nuevos descubrimientos. Sin embargo, el delicado equilibrio que exige preparar pociones es verdaderamente difícil y
+
+requiere gran habilidad. Os daré un ejemplo de las pociones más sencillas que pueden crear quienes conocen bien las sutilezas de la alquimia:
+
+La perla negra, esa rara sustancia que a menudo encontramos sin anuncio alguno sobre la superficie del suelo, puede producir un fino polvo si se tritura adecuadamente con mortero y
+
+mano. Dicho polvo, en las proporciones debidas y mezclado mediante las artes alquímicas, puede producir una bebida maravillosamente refrescante.
+
+El repugnante musgo de sangre que las amas de casa escrupulosas raspan con tanto cuidado de los alféizares no es más que un pequeño pariente de la variedad silvestre que, preparada
+
+correctamente, produce un líquido mágico capaz de volver al bebedor más ágil y diestro durante un tiempo. Sin embargo, cuidado con la mortífera
+
+belladona, pues produce un veneno de sabor engañosamente dulce que puede resultar fatal para quien lo beba y que los asesinos también usan para recubrir sus hojas.
+
+¡Por fortuna, este último arte del envenenamiento es poco conocido! En verdad, mucho recompensa al estudiante de alquimia. Los rumores de que los alquimistas veteranos pierden
+
+el pelo y adquieren una palidez enfermiza, por no hablar de las manchas desagradables sobre su piel antes hermosa, son, lamentablemente, ciertos. Pero las alegrías del intelecto
+
+compensan la pérdida total del interés que otros puedan tener en cortejaros, y nunca me he arrepentido de esa elección. Honestamente,
+
+de verdad. Ni una vez."""

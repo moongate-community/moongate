@@ -156,3 +156,567 @@ Subguilds: Rogues
 (beggars), Assassins,
 Thieves"""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Hlavní řemeslnická sdružení"
+content = """
+V zemích Britannia a mezi jejich obchodními partnery legálně působí deset hlavních řemeslnických sdružení. Mnohé z těchto cechů se dělí na místní nebo
+
+specializované podcechy, které používají stejné barvy, avšak obměňují heraldický vzor.
+Existuje mnoho menších řemeslnických sdružení s uzavřeným členstvím,
+
+do nichž lze vstoupit pouze na pozvání. Beltranův průvodce cechy je rozhodujícím dílem o celém rozsahu cechů a dalších sdružení v zemi Britannia a
+
+vřele jej doporučuji.
+V následujícím textu jsem se pokusil shromáždit známé informace o těchto ceších. Nabízím ti
+
+jméno, obvyklé členstvo, heraldické barvy, známé specializované organizace uvnitř většího cechu a veškeré známé vazby na jiné
+
+cechy, které často vznikají z obchodních důvodů.
+
+Cech tajemných umění
+Členové: alchymisté a čarodějové
+
+Barvy: modrá a fialová
+Podcechy: Iluzionisté, Mágové, Čarodějové
+Vazby: Cech léčitelů
+
+Cech válečníků
+Členové:
+
+námezdní bojovníci, vojáci, strážci, mistři zbraní, paladinové.
+Barvy: modrá a červená
+Podcechy: Jízda, Bojovníci, Válečníci
+Vazby: Liga
+
+hraničářů
+
+Liga hraničářů
+Členové: hraničáři, výrobci luků, cvičitelé zvířat
+Barvy: červená, zlatá a modrá
+
+
+Cech léčitelů
+Členové: léčitelé
+Barvy: zelená, zlatá a fialová
+Vazby: Cech tajemných umění
+
+Hornické družstvo
+Členové: horníci
+Barvy: modrá a černá šachovnice se zlatým křížem
+Vazby: Řád inženýrů
+
+Sdružení obchodníků
+Členové: hostinští, krčmáři, klenotníci, zásobovatelé
+Barvy: zlaté mince v
+
+zeleném poli pro Obchodníky. Bílá a zelená pro ostatní.
+Podcechy: Směnárníci, Zásobovatelé, Kupci, Obchodníci
+
+Řád inženýrů
+Členové: dráteníci a inženýři
+Barvy: modré, zlaté a fialové svislé pruhy
+Vazby: Hornické družstvo
+
+Spolek oděvníků
+Členové: krejčí a tkalci
+Barvy: fialové, zlaté a červené vodorovné pruhy
+
+Námořní cech
+
+Členové: rybáři, námořníci, kartografové, stavitelé lodí
+Barvy: modrá a bílá
+Podcechy: Rybáři, Námořníci, Stavitelé lodí
+
+Bardské kolegium
+Členové: bardové, hudebníci, vypravěči a další umělci
+Barvy: fialová, červená a zlatá šachovnice
+
+Spolek zlodějů
+Členové: žebráci, kapsáři, vrazi a lupiči
+Barvy: červená a černá
+Podcechy: Darebáci (žebráci), Vrazi, Zloději"""
+
+[translations.fre]
+title = "Les principales associations de métiers"
+content = """
+Dix grandes associations de métiers exercent légitimement dans les terres de Britannia et chez ses partenaires commerciaux. Nombre de ces guildes sont divisées en sous-guildes locales ou
+
+spécialisées, qui utilisent les mêmes couleurs mais font varier le motif héraldique. Beaucoup d’associations de métiers plus petites réservent leur adhésion,
+
+et l’on ne peut les rejoindre que sur invitation. Le guide des guildes de Beltran est l’ouvrage de référence sur l’ensemble des guildes et des autres associations de Britannia, et je le
+
+recommande vivement. Dans ce qui suit, j’ai tenté de rassembler les renseignements connus concernant ces guildes. Je vous propose
+
+leur nom, leurs membres habituels, leurs couleurs héraldiques, les organisations spécialisées connues au sein de la grande guilde et toute affiliation connue à d’autres
+
+guildes, souvent motivée par le commerce.
+
+La Guilde des Arts Occultes
+Membres : alchimistes et sorciers
+
+Couleurs : bleu et violet
+Sous-guildes : Illusionnistes, Mages, Sorciers
+Affiliations : Guilde des Guérisseurs
+
+La Guilde des Guerriers
+Membres :
+
+mercenaires, soldats, gardes, maîtres d’armes, paladins.
+Couleurs : bleu et rouge
+Sous-guildes : Cavalerie, Combattants, Guerriers
+Affiliations : Ligue
+
+des Rôdeurs
+
+Ligue des Rôdeurs
+Membres : rôdeurs, facteurs d’arcs, dresseurs d’animaux
+Couleurs : rouge, or et bleu
+
+
+Guilde des Guérisseurs
+Membres : guérisseurs
+Couleurs : vert, or et violet
+Affiliations : Guilde des Arts Occultes
+
+Coopérative Minière
+Membres : mineurs
+Couleurs : damier bleu et noir, avec une croix d’or
+Affiliations : Ordre des Ingénieurs
+
+Association des Marchands
+Membres : aubergistes, taverniers, joailliers, pourvoyeurs
+Couleurs : pièces d’or sur
+
+fond vert pour les Marchands. Blanc et vert pour les autres.
+Sous-guildes : Troqueurs, Pourvoyeurs, Négociants, Marchands
+
+Ordre des Ingénieurs
+Membres : bricoleurs et ingénieurs
+Couleurs : barres verticales bleues, d’or et violettes
+Affiliations : Coopérative Minière
+
+Société des Habilleurs
+Membres : tailleurs et tisserands
+Couleurs : barres horizontales violettes, d’or et rouges
+
+Guilde Maritime
+
+Membres : pêcheurs, marins, cartographes, charpentiers de marine
+Couleurs : bleu et blanc
+Sous-guildes : Pêcheurs, Marins, Charpentiers de Marine
+
+Collège des Bardes
+Membres : bardes, musiciens, conteurs et autres artistes
+Couleurs : damier violet, rouge et or
+
+Société des Voleurs
+Membres : mendiants, coupe-bourses, assassins et brigands
+Couleurs : rouge et noir
+Sous-guildes : Fripons (mendiants), Assassins, Voleurs"""
+
+[translations.ger]
+title = "Die großen Gewerbevereinigungen"
+content = """
+Es gibt zehn große Gewerbevereinigungen, die in den Landen Britannias und unter seinen Handelspartnern rechtmäßig tätig sind. Viele dieser Gilden sind in örtliche oder
+
+fachliche Untergilden geteilt, die dieselben Farben verwenden, aber das Wappenmuster abwandeln.
+Es gibt viele kleinere Gewerbevereinigungen mit geschlossener Mitgliedschaft,
+
+denen man nur auf Einladung beitreten kann. Beltrans Gildenführer ist das maßgebliche Werk über das gesamte Spektrum der Gilden und anderer Vereinigungen in Britannia, und ich
+
+empfehle ihn nachdrücklich.
+Im Folgenden habe ich versucht, die bekannten Informationen über diese Gilden zusammenzutragen. Ich biete Euch
+
+den Namen, die übliche Mitgliedschaft, die Wappenfarben, bekannte Fachverbände innerhalb der größeren Gilde und alle bekannten Verbindungen zu anderen
+
+Gilden, die oft aus Gründen des Handels entstehen.
+
+Die Gilde der Arkanen Künste
+Mitglieder: Alchemisten und Zauberer
+
+Farben: Blau und Purpur
+Untergilden: Illusionisten, Magier, Zauberer
+Verbindungen: Gilde der Heiler
+
+Die Gilde der Krieger
+Mitglieder:
+
+Söldner, Soldaten, Wachen, Waffenmeister, Paladine.
+Farben: Blau und Rot
+Untergilden: Reiterei, Kämpfer, Krieger
+Verbindungen: Bund
+
+der Waldläufer
+
+Bund der Waldläufer
+Mitglieder: Waldläufer, Bogenmacher, Tiertrainer
+Farben: Rot, Gold und Blau
+
+
+Gilde der Heiler
+Mitglieder: Heiler
+Farben: Grün, Gold und Purpur
+Verbindungen: Gilde der Arkanen Künste
+
+Bergbaugenossenschaft
+Mitglieder: Bergleute
+Farben: Blau und Schwarz geschacht, mit goldenem Kreuz
+Verbindungen: Orden der Ingenieure
+
+Vereinigung der Kaufleute
+Mitglieder: Herbergswirte, Schankwirte, Juweliere, Versorger
+Farben: Goldmünzen auf
+
+grünem Feld für Kaufleute. Weiß und Grün für die anderen.
+Untergilden: Tauschhändler, Versorger, Händler, Kaufleute
+
+Orden der Ingenieure
+Mitglieder: Kesselflicker und Ingenieure
+Farben: Blaue, goldene und purpurne senkrechte Balken
+Verbindungen: Bergbaugenossenschaft
+
+Gesellschaft der Tuchmacher
+Mitglieder: Schneider und Weber
+Farben: Purpurne, goldene und rote waagerechte Balken
+
+Seefahrtsgilde
+
+Mitglieder: Fischer, Matrosen, Kartenmacher, Schiffbauer
+Farben: Blau und Weiß
+Untergilden: Fischer, Matrosen, Schiffbauer
+
+Bardenkollegium
+Mitglieder: Barden, Musiker, Erzähler und andere Künstler
+Farben: Purpur, Rot und Gold geschacht
+
+Gesellschaft der Diebe
+Mitglieder: Bettler, Beutelschneider, Meuchelmörder und Räuber
+Farben: Rot und Schwarz
+Untergilden: Schurken (Bettler), Meuchelmörder, Diebe"""
+
+[translations.ita]
+title = "Le principali associazioni professionali"
+content = """
+Esistono dieci principali associazioni professionali che operano legittimamente nelle terre di Britannia e fra i suoi partner commerciali. Molte di queste gilde sono divise in sottogilde locali o
+
+specialistiche, che usano gli stessi colori ma variano il motivo araldico.
+Vi sono molte associazioni professionali minori a numero chiuso,
+
+e vi si può entrare solo su invito. La guida alle gilde di Beltran è il testo definitivo sull'intera gamma di gilde e altre associazioni di Britannia, e lo
+
+raccomando caldamente.
+In quanto segue ho tentato di raccogliere le informazioni note su queste gilde. Vi offro
+
+il nome, i membri tipici, i colori araldici, le organizzazioni specialistiche note all'interno della gilda maggiore e ogni affiliazione nota con altre
+
+gilde, che spesso si verifica per ragioni commerciali.
+
+La Gilda delle Arti Arcane
+Membri: alchimisti e maghi
+
+Colori: blu e viola
+Sottogilde: Illusionisti, Maghi, Stregoni
+Affiliazioni: Gilda dei Guaritori
+
+La Gilda dei Guerrieri
+Membri:
+
+mercenari, soldati, guardie, maestri d'armi, paladini.
+Colori: Blu e rosso
+Sottogilde: Cavalleria, Combattenti, Guerrieri
+Affiliazioni: Lega
+
+dei Ranger
+
+Lega dei Ranger
+Membri: ranger, costruttori d'archi, addestratori di animali
+Colori: Rosso, oro e blu
+
+
+Gilda dei Guaritori
+Membri: guaritori
+Colori: Verde, oro e viola
+Affiliazioni: Gilda delle Arti Arcane
+
+Cooperativa Mineraria
+Membri: minatori
+Colori: scacchi blu e neri, con una croce d'oro
+Affiliazioni: Ordine degli Ingegneri
+
+Associazione dei Mercanti
+Membri: locandieri, tavernieri, gioiellieri, fornitori
+Colori: monete d'oro in
+
+campo verde per i Mercanti. Bianco e verde per gli altri.
+Sottogilde: Barattatori, Fornitori, Commercianti, Mercanti
+
+Ordine degli Ingegneri
+Membri: stagnini e ingegneri
+Colori: Bande verticali blu, oro e viola
+Affiliazioni: Cooperativa Mineraria
+
+Società dei Confezionatori
+Membri: sarti e tessitori
+Colori: Bande orizzontali viola, oro e rosse
+
+Gilda Marittima
+
+Membri: pescatori, marinai, cartografi, maestri d'ascia
+Colori: blu e bianco
+Sottogilde: Pescatori, Marinai, Maestri d'Ascia
+
+Collegio Bardico
+Membri: bardi, musicisti, narratori e altri artisti
+Colori: Scacchiera viola, rossa e oro
+
+Società dei Ladri
+Membri: mendicanti, tagliaborse, assassini e briganti
+Colori: rosso e nero
+Sottogilde: Furfanti (mendicanti), Assassini, Ladri"""
+
+[translations.pol]
+title = "Główne stowarzyszenia zawodowe"
+content = """
+Na ziemiach Britannia i wśród jej partnerów handlowych działa legalnie dziesięć głównych stowarzyszeń zawodowych. Wiele z tych gildii dzieli się na lokalne lub
+
+wyspecjalizowane podgildie, używające tych samych barw, lecz różnych wzorów heraldycznych.
+Istnieje wiele pomniejszych stowarzyszeń zawodowych o zamkniętym członkostwie,
+
+do których można wstąpić tylko za zaproszeniem. „Przewodnik Beltran po gildiach” to miarodajny opis wszystkich gildii i innych stowarzyszeń Britannia, i
+
+gorąco go polecam.
+Poniżej podjąłem próbę zebrania znanych informacji o tych gildiach. Podaję wam
+
+nazwę, typowych członków, barwy heraldyczne, znane organizacje specjalistyczne w obrębie większej gildii oraz wszelkie znane powiązania z innymi
+
+gildiami, często wynikające z przyczyn handlowych.
+
+Gildia Sztuk Tajemnych
+Członkowie: alchemicy i czarodzieje
+
+Barwy: błękit i fiolet
+Podgildie: Iluzjoniści, Magowie, Czarodzieje
+Powiązania: Gildia Uzdrowicieli
+
+Gildia Wojowników
+Członkowie:
+
+najemnicy, żołnierze, strażnicy, mistrzowie broni, paladyni.
+Barwy: błękit i czerwień
+Podgildie: Kawaleria, Bojownicy, Wojownicy
+Powiązania: Liga
+
+Tropicieli
+
+Liga Tropicieli
+Członkowie: tropiciele, łuczarze, treserzy zwierząt
+Barwy: czerwień, złoto i błękit
+
+
+Gildia Uzdrowicieli
+Członkowie: uzdrowiciele
+Barwy: zieleń, złoto i fiolet
+Powiązania: Gildia Sztuk Tajemnych
+
+Spółdzielnia Górnicza
+Członkowie: górnicy
+Barwy: niebieska i czarna szachownica ze złotym krzyżem
+Powiązania: Zakon Inżynierów
+
+Stowarzyszenie Kupców
+Członkowie: gospodarze zajazdów, karczmarze, jubilerzy, dostawcy
+Barwy: złote monety na
+
+zielonym polu dla Kupców. Biel i zieleń dla pozostałych.
+Podgildie: Handlarze Wymienni, Dostawcy, Handlarze, Kupcy
+
+Zakon Inżynierów
+Członkowie: majsterkowicze i inżynierowie
+Barwy: niebieskie, złote i fioletowe pasy pionowe
+Powiązania: Spółdzielnia Górnicza
+
+Towarzystwo Wytwórców Odzieży
+Członkowie: krawcy i tkacze
+Barwy: fioletowe, złote i czerwone pasy poziome
+
+Gildia Morska
+
+Członkowie: rybacy, żeglarze, kartografowie, szkutnicy
+Barwy: błękit i biel
+Podgildie: Rybacy, Żeglarze, Szkutnicy
+
+Kolegium Bardów
+Członkowie: bardowie, muzycy, opowiadacze i inni artyści
+Barwy: fioletowa, czerwona i złota szachownica
+
+Towarzystwo Złodziei
+Członkowie: żebracy, kieszonkowcy, zabójcy i rozbójnicy
+Barwy: czerwień i czerń
+Podgildie: Łotry (żebracy), Zabójcy, Złodzieje"""
+
+[translations.por]
+title = "As principais associações de ofícios"
+content = """
+Existem dez grandes associações de ofícios que operam legitimamente nas terras de Britannia e entre seus parceiros comerciais. Muitas dessas guildas se dividem em subguildas locais ou
+
+especializadas, que usam as mesmas cores, mas variam o padrão heráldico.
+Há muitas associações menores de ofícios que têm participação restrita,
+
+e só é possível ingressar nelas por convite. O Guia de guildas de Beltran é o texto definitivo sobre a variedade completa de guildas e outras associações de Britannia, e eu o
+
+recomendo calorosamente.
+No que segue, tentei reunir as informações conhecidas a respeito dessas guildas. Ofereço a você
+
+o nome, os membros típicos, as cores heráldicas, as organizações especializadas conhecidas dentro da guilda maior e quaisquer afiliações conhecidas a outras
+
+guildas, que frequentemente ocorrem por razões comerciais.
+
+A Guilda das Artes Arcanas
+Membros: alquimistas e feiticeiros
+
+Cores: azul e roxo
+Subguildas: Ilusionistas, Magos, Feiticeiros
+Afiliações: Guilda dos Curandeiros
+
+A Guilda dos Guerreiros
+Membros:
+
+mercenários,
+soldados, guardas,
+mestres de armas,
+paladinos.
+Cores: azul e vermelho
+Subguildas: Cavalaria,
+Combatentes, Guerreiros
+Afiliações: Liga
+
+dos Patrulheiros
+
+Liga dos Patrulheiros
+Membros: patrulheiros,
+fabricantes de arcos,
+domadores de animais
+Cores: vermelho, dourado e
+azul
+
+
+Guilda dos Curandeiros
+Membros: curandeiros
+Cores: verde, dourado e roxo
+Afiliações: Guilda das
+Artes Arcanas
+
+Cooperativa de Mineração
+Membros: mineiros
+Cores: xadrez azul e preto,
+com uma cruz dourada
+Afiliações: Ordem dos
+Engenheiros
+
+Associação dos
+Mercadores
+Membros:
+estalajadeiros,
+taverneiros,
+joalheiros,
+provedores
+Cores: moedas de ouro sobre um
+
+campo verde para
+os Mercadores. Branco
+e verde para os
+outros.
+Subguildas: Negociantes de Escambo,
+Provedores,
+Comerciantes, Mercadores
+
+Ordem dos Engenheiros
+Membros: artífices e
+engenheiros
+Cores: faixas verticais azuis,
+douradas e roxas
+Afiliações: Cooperativa de
+Mineração
+
+Sociedade dos Fabricantes de Roupas
+Membros: alfaiates e
+tecelões
+Cores: faixas horizontais
+roxas, douradas e
+vermelhas
+
+Guilda Marítima
+
+Membros: pescadores,
+marinheiros, cartógrafos,
+construtores navais
+Cores: azul e branco
+Subguildas:
+Pescadores, Marinheiros,
+Construtores Navais
+
+Colégio dos Bardos
+Membros: bardos,
+músicos,
+contadores de histórias e outros
+artistas
+Cores: xadrez roxo,
+vermelho e dourado
+
+Sociedade dos Ladrões
+Membros: mendigos,
+batedores de carteira, assassinos
+e salteadores
+Cores: vermelho e preto
+Subguildas: Malandros
+(mendigos), Assassinos,
+Ladrões"""
+
+[translations.spa]
+title = "Las principales asociaciones de oficios"
+content = """
+Hay diez grandes asociaciones de oficios que operan legítimamente en las tierras de Britannia y entre sus socios comerciales. Muchos de estos gremios se dividen en subgremios locales o
+
+especializados, que usan los mismos colores pero varían el diseño heráldico. Existen muchas asociaciones menores cuyos miembros forman un círculo cerrado,
+
+y solo se puede entrar en ellas por invitación. La Guía de gremios de Beltran es el texto definitivo sobre todos los gremios y demás asociaciones de Britannia, y lo
+
+recomiendo de todo corazón. En las páginas siguientes he intentado reunir la información conocida sobre estos gremios. Os ofrezco
+
+el nombre, sus miembros habituales, los colores heráldicos, las organizaciones especializadas conocidas dentro del gremio mayor y los vínculos conocidos con otros
+
+gremios, que a menudo se deben a motivos comerciales.
+
+Gremio de Artes Arcanas. Miembros: alquimistas y hechiceros.
+
+Colores: azul y púrpura. Subgremios: Ilusionistas, Magos, Hechiceros. Vínculos: Gremio de Sanadores.
+
+Gremio de Guerreros. Miembros:
+
+mercenarios, soldados, guardias, maestros de armas, paladines. Colores: azul y rojo. Subgremios: Caballería, Combatientes, Guerreros. Vínculos: Liga
+
+de Exploradores.
+
+Liga de Exploradores. Miembros: exploradores, fabricantes de arcos, adiestradores de animales. Colores: rojo, dorado y azul.
+
+
+Gremio de Sanadores. Miembros: sanadores. Colores: verde, dorado y púrpura. Vínculos: Gremio de Artes Arcanas.
+
+Cooperativa Minera. Miembros: mineros. Colores: damero azul y negro, con cruz dorada. Vínculos: Orden de Ingenieros.
+
+Asociación de Mercaderes. Miembros: posaderos, taberneros, joyeros, proveedores. Colores: monedas de oro sobre
+
+campo verde para los Mercaderes. Blanco y verde para los demás. Subgremios: Trueque, Proveedores, Comerciantes, Mercaderes.
+
+Orden de Ingenieros. Miembros: artesanos e ingenieros. Colores: franjas verticales azules, doradas y púrpuras. Vínculos: Cooperativa Minera.
+
+Sociedad de Confeccionistas. Miembros: sastres y tejedores. Colores: franjas horizontales púrpuras, doradas y rojas.
+
+Gremio Marítimo.
+
+Miembros: pescadores, marineros, cartógrafos, constructores navales. Colores: azul y blanco. Subgremios: Pescadores, Navegantes, Constructores Navales.
+
+Colegio de Bardos. Miembros: bardos, músicos, narradores y otros artistas. Colores: damero púrpura, rojo y dorado.
+
+Sociedad de Ladrones. Miembros: mendigos, cortabolsas, asesinos y bandidos. Colores: rojo y negro. Subgremios: Pícaros (mendigos), Asesinos, Ladrones."""

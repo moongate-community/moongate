@@ -62,3 +62,136 @@ Do we dare approach?
 We must make a
 decision soon."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Deník: Objevení hrobky"
+content = """
+Den čtrnáctý až patnáctý:
+
+Lysander se vrátil... a přece, jak popsat tu hrůzu? Stojí i nyní naproti mně na druhé straně
+
+komnaty, proměněný člověk. Vlasy mu visí přes tvář ve špinavých chuchvalcích, šaty má zaneřáděné a místy potrhané... a krev – celý pokrytý krví, jeho
+
+kůže září šarlatovými odlesky pochodní. Nenechá nikoho přiblížit se; silnou rezavou dýkou v ruce odráží všechny pokusy
+
+zmocnit se ho. A krev, která mu stéká z paží a rukou ve velkých potůčcích – není jeho vlastní, a to stačí, abychom si udržovali ostražitý odstup. Morg Bergen si přeje
+
+rychle jej přemoci, ale Lysander má v očích něco – a já si pamatuji sílu jeho kouzel, i když mává zubatou dýkou sem a tam
+
+v širokém oblouku před sebou. Něco na tom pohledu mi obrací žaludek. Něco se stalo, něco, co mění
+
+všechno. Lysander v této hrobce ztratil rozum... nebo kvůli něčemu v ní. Odvážíme se přiblížit? Musíme se brzy rozhodnout."""
+
+[translations.fre]
+title = "Journal : découverte du tombeau"
+content = """
+Du quatorzième au quinzième jour :
+
+Lysander est revenu... et pourtant, comment décrire cette horreur ? Il se tient de l’autre côté de la
+
+salle en ce moment même, un homme changé. Ses cheveux pendent en nœuds crasseux sur son visage, ses vêtements sont sales et déchirés par endroits... et le sang, couvert de sang, sa
+
+peau brillant de reflets écarlates à la lueur des torches. Il ne laisse personne s’approcher ; une dague épaisse et rouillée à la main, il repousse toute tentative pour le
+
+maîtriser. Et le sang qui coule en grands ruisselets de ses bras et de ses mains n’est pas le sien ; cela suffit à nous maintenir à une distance prudente. Morg Bergen souhaite
+
+le maîtriser rapidement, mais il y a quelque chose dans les yeux de Lysander, et je me souviens de la puissance de ses sorts, alors même qu’il balance sa dague ébréchée
+
+en larges arcs devant lui. Quelque chose dans cette vision me soulève le cœur. Quelque chose est arrivé, quelque chose qui change
+
+tout. Lysander a perdu la raison dans ce tombeau... ou à cause de quelque chose qui s’y trouve. Osons-nous nous approcher ? Nous devons prendre une décision bientôt."""
+
+[translations.ger]
+title = "Tagebuch: Entdeckung des Grabes"
+content = """
+Vierzehnter bis fünfzehnter Tag:
+
+Lysander ist zurückgekehrt ... und doch, wie kann ich den Schrecken beschreiben? Noch jetzt steht er auf der anderen Seite der
+
+Kammer mir gegenüber, ein veränderter Mann. Sein Haar hängt in schmutzigen Knoten über sein Gesicht, seine Kleider sind dreckig und stellenweise zerrissen ... und das Blut – mit Blut bedeckt, seine
+
+Haut glänzt scharlachrot im Widerschein des Fackellichts. Er lässt niemanden herankommen; ein dicker, verrosteter Dolch in seiner Hand wehrt jeden Versuch ab, ihn zu überwältigen.
+
+Und das Blut, das in großen Rinnsalen von seinen Armen und Händen läuft – es ist nicht sein eigenes, und das genügt, uns auf vorsichtiger Entfernung zu halten. Morg Bergen möchte
+
+ihn schnell bezwingen, doch da ist etwas in Lysanders Augen – und ich erinnere mich an die Macht seiner Zauber, selbst als er den gezackten Dolch hin und her
+
+in weitem Bogen vor sich schwingt. Etwas an diesem Anblick lässt meinen Magen rebellieren. Etwas ist geschehen, etwas, das
+
+alles verändert. Lysander hat seinen Verstand an dieses Grab verloren ... oder an etwas darin. Wagen wir uns heran? Wir müssen bald eine Entscheidung treffen."""
+
+[translations.ita]
+title = "Diario: scoperta della Tomba"
+content = """
+Giorno Quattordici - Giorno Quindici:
+
+Lysander è tornato... eppure, come posso descriverne l'orrore? Sta dall'altro lato della
+
+stanza rispetto a me anche ora, un uomo cambiato. I capelli gli pendono in nodi sudici sul volto, gli abiti sono sporchi e strappati in alcuni punti... e il sangue: coperto di sangue, la sua
+
+pelle brilla nei riflessi scarlatti della luce delle torce. Non lascia avvicinare nessuno; un grosso pugnale arrugginito nella mano respinge ogni tentativo di sopraffarlo.
+
+E il sangue, che scorre in grandi rivoli dalle sue braccia e dalle sue mani, non è il suo, e questo basta a tenerci a prudente distanza. Morg Bergen desidera
+
+soggiogarlo rapidamente, ma c'è qualcosa negli occhi di Lysander, e ricordo la potenza dei suoi incantesimi, anche mentre agita il pugnale seghettato avanti e indietro
+
+in un ampio arco davanti a sé. Qualcosa in quella vista mi fa rivoltare lo stomaco. È successo qualcosa, qualcosa che cambia
+
+ogni cosa. Lysander ha perso il senno a causa di questa tomba... o di qualcosa al suo interno. Osiamo avvicinarci? Dobbiamo decidere presto."""
+
+[translations.pol]
+title = "Dziennik: odkrycie Grobowca"
+content = """
+Dzień czternasty — dzień piętnasty:
+
+Lysander powrócił... lecz jak opisać tę grozę? Nawet teraz stoi po przeciwnej stronie
+
+komnaty, odmieniony. Włosy opadają mu na twarz brudnymi kołtunami, ubranie jest brudne i miejscami podarte... a krew — cały pokryty krwią, jego
+
+skóra lśni szkarłatnymi odbiciami światła pochodni. Nikomu nie pozwala się zbliżyć; grubym, zardzewiałym sztyletem w dłoni odpiera wszelkie próby obezwładnienia
+
+go. A krew spływająca wielkimi strugami z ramion i dłoni nie jest jego własna, i to wystarcza, byśmy ostrożnie trzymali się z dala. Morg Bergen chce
+
+szybko go poskromić, lecz w oczach Lysander jest coś — i pamiętam moc jego zaklęć, nawet gdy wymachuje poszarpanym sztyletem tam i z powrotem,
+
+zataczając przed sobą szeroki łuk. Coś w tym widoku przewraca mi żołądek. Coś się stało, coś, co zmienia
+
+wszystko. Lysander stracił zmysły przez ten grobowiec... albo przez coś w nim. Czy ośmielimy się podejść? Musimy wkrótce zdecydować."""
+
+[translations.por]
+title = "Diário: descoberta da tumba"
+content = """
+Décimo quarto dia - Décimo quinto dia:
+
+Lysander voltou... e, no entanto, como posso descrever o horror disso? Mesmo agora ele está do outro lado da
+
+câmara, diante de mim, um homem transformado. Seus cabelos caem em nós imundos sobre o rosto, suas roupas estão sujas e rasgadas em vários pontos... e o sangue: coberto de sangue, sua
+
+pele reluzindo em reflexos escarlates à luz das tochas. Ele não deixa ninguém se aproximar; uma adaga grossa e enferrujada em sua mão afasta qualquer tentativa de dominá-lo.
+
+E o sangue, que escorre em grandes filetes de seus braços e mãos, não é dele, e isso basta para nos manter a uma distância cautelosa. Morg Bergen quer
+
+subjugá-lo rapidamente, mas há algo nos olhos de Lysander; e lembro do poder de seus feitiços, mesmo enquanto ele balança a adaga serrilhada de um lado para outro
+
+num amplo arco diante de si. Algo nessa visão faz meu estômago se revirar. Algo aconteceu, algo que muda
+
+tudo. Lysander perdeu a sanidade para esta tumba... ou para algo dentro dela. Ousamos nos aproximar? Precisamos tomar uma decisão logo."""
+
+[translations.spa]
+title = "Diario: descubrimiento de la tumba"
+content = """
+Día catorce - Día quince:
+
+Lysander ha regresado... y, sin embargo, ¿cómo describir el horror? Incluso ahora está al otro lado de la
+
+cámara, frente a mí, convertido en otro hombre. Su pelo cuelga en nudos mugrientos sobre el rostro; sus ropas están sucias y desgarradas... y la sangre: está cubierto de sangre, su
+
+piel brilla con reflejos escarlata a la luz de las antorchas. No deja que nadie se acerque; una daga gruesa y oxidada en su mano rechaza cualquier intento de reducirlo.
+
+Y la sangre, que desciende en grandes regueros de sus brazos y manos, no es suya, y eso basta para mantenernos a una distancia prudente. Morg Bergen desea
+
+dominarlo deprisa, pero hay algo en los ojos de Lysander; y recuerdo el poder de sus hechizos, incluso mientras balancea la daga mellada de un lado a otro
+
+en un amplio arco frente a él. Algo en esa visión me revuelve el estómago. Algo ha ocurrido, algo que lo cambia
+
+todo. Lysander ha perdido la razón por esta tumba... o por algo que hay dentro. ¿Nos atrevemos a acercarnos? Debemos decidir pronto."""

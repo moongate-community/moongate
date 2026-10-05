@@ -162,3 +162,315 @@ shall conquer that
 thorny problem and
 enlighten the world."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Cestování mezi dimenzemi: Monografie"
+content = """
+Rozebírat podrobnosti měsíčních bran a způsoby, jimiž deformují předivo skutečnosti tak,
+
+aby umožnily průchod živého těla z místa na místo, ze světa do světa či dokonce z dimenze do dimenze, přesahuje rozsah této malé monografie.
+Dovol mi místo toho
+
+obrátit tvou pozornost, laskavý čtenáři, k podivným vlastnostem, které sdílejí určití jedinci v naší říši.
+Již dlouho je
+
+známo, že modrá měsíční brána umožňuje cestování z místa na místo, a nikdo nemá s touto cestou potíže. Je však také známo, byť jen hrstce lidí, že někteří
+
+jedinci nedokážou projít černými měsíčními branami, umožňujícími cestování z jedné dimenze do druhé.
+Významný mág a šlechtic naší říše Lord Blackthorn mi jednou
+
+při rozmluvě pověděl, že jeho tajemné bádání ukázalo, že jde o zachování éteru. Totiž při předpokladu, že hmota
+
+v dané dimenzi může být pouhým průřezem éterické hmoty existující v mnoha dimenzích, je zřejmé, že tato éterická
+
+struktura nemůže vstoupit do dimenzí, v nichž je již přítomna.
+Představ si jedince (a Lord Blackthorn naznačil, že je
+
+jedním z nich), který již v nějaké podobě existuje v mnoha dimenzích; takový jedinec by nedokázal přejít do další dimenze, protože TAM JIŽ
+
+JE.
+Důsledky této skutečnosti jsou ohromující a zasluhují další studium. Teoretikům tohoto oboru je dobře známo, že rozdělení
+
+éterické struktury jedince jsou již obsažena v časové rovině, neboť příčinnost si vynucuje dělení éteru. To je základní mechanismus,
+
+jímž fungují bílé měsíční brány, umožňující cestování časem.
+Protože přítomnost dřívějšího vlastního já nebrání cestování časem (ačkoli
+
+setkání s tímto dřívějším já může být po magické stránce nebezpečné), musí éterická struktura vykazovat jistou tuhost bránící mnohonásobným podobám
+
+struktur projevit se v témže kontextu.
+Pohlížíme-li na čas a příčinné větvení jako na síť, pak snad vhodnou obdobou dimenzionálních
+
+matic je krystalická struktura s pevnými vazbami. Jediný způsob, jímž by jedinec jako Lord Blackthorn, existující v mnoha
+
+dimenzionálních maticích, mohl přecházet mezi světy černou měsíční branou, by vyžadoval, aby celá krystalická struktura dimenze dokonale odpovídala
+
+éterické rezonanci cílové dimenze.
+Otázka, proč jsou určití jedinci již zopakováni v mnoha krystalických maticích, je taková, pro niž
+
+v těchto svých chabých teoriích nedovedu poskytnout žádné schéma. Mou nejvroucnější nadějí je, že jednoho dne někdo tento spletitý problém překoná a osvětlí jej světu."""
+
+[translations.fre]
+title = "Le voyage dimensionnel, une monographie"
+content = """
+Il n’entre point dans le propos de cette petite monographie de discuter en détail des portes lunaires et des façons dont elles déforment la trame de la réalité
+
+afin de permettre le passage de la chair vivante d’un lieu à un autre, d’un monde à un autre, ou même d’une dimension à une autre. Permettez-moi plutôt de
+
+porter votre attention, aimable lecteur, sur les caractéristiques curieuses que partagent certains individus de notre royaume. Il est connu depuis longtemps
+
+que la porte lunaire bleue permet de voyager d’un lieu à un autre, et nul n’éprouve de difficulté à suivre cette voie. Pourtant, l’on sait aussi, quoique seulement quelques-uns, que certains
+
+individus sont incapables de franchir les portes lunaires noires qui permettent de voyager d’une dimension à une autre. Le célèbre mage et pair de notre royaume, Lord Blackthorn, me
+
+confia un jour au cours d’une conversation que ses recherches occultes avaient indiqué qu’il s’agissait d’une question de conservation de l’éther. À savoir, si l’on postule que la matière
+
+au sein d’une dimension donnée n’est peut-être qu’une coupe de la matière éthérique qui existe dans plusieurs dimensions, il devient évident que cette structure éthérique
+
+ne peut entrer dans des dimensions où elle est déjà présente. Imaginez un individu (et Lord Blackthorn laissa entendre qu’il était
+
+l’un d’eux) qui existe déjà sous quelque forme dans plusieurs dimensions ; cet individu serait incapable de passer dans une autre dimension parce qu’IL S’Y TROUVE
+
+DÉJÀ. Les implications de ceci sont stupéfiantes et méritent de plus amples études. Les théoriciens de ce domaine savent bien que les divisions dans la
+
+structure éthérique d’un individu sont déjà implicites au niveau temporel, puisque la causalité impose des divisions à l’éther. Tel est le mécanisme fondamental
+
+qui fait fonctionner les portes lunaires blanches et permet le voyage dans le temps. Puisque le voyage dans le temps n’est pas interdit par la présence d’un soi antérieur (bien que
+
+rencontrer ce soi antérieur puisse s’avérer périlleux sur le plan occulte), il doit exister une certaine rigidité de la structure éthérique qui empêche plusieurs instanciations de
+
+structures de se manifester dans le même contexte. Si l’on considère le temps et la bifurcation causale comme une toile, peut-être l’analogie appropriée aux matrices
+
+dimensionnelles serait-elle celle d’une structure cristalline, aux liaisons rigides. La seule façon pour un individu tel que Lord Blackthorn, qui existe dans plusieurs
+
+matrices dimensionnelles, de passer d’un monde à l’autre par une porte lunaire noire serait que toute la structure cristalline de la dimension corresponde parfaitement à la
+
+résonance éthérique de la dimension de destination. Je ne puis proposer aucun schéma expliquant pourquoi certains individus sont déjà reproduits dans plusieurs matrices cristallines dans ces
+
+pauvres théories. Mon espoir le plus cher est qu’un jour quelqu’un surmonte cet épineux problème et éclaire le monde."""
+
+[translations.ger]
+title = "Dimensionsreisen, eine Monographie"
+content = """
+Es liegt außerhalb des Rahmens dieser kleinen Monographie, die Einzelheiten der Mondtore und die Art und Weise zu besprechen, wie sie das Gefüge der Wirklichkeit
+
+so verformen, dass lebendes Fleisch von Ort zu Ort, von Welt zu Welt oder gar von Dimension zu Dimension gelangen kann.
+Gestattet mir stattdessen,
+
+Eure Aufmerksamkeit, geneigter Leser, auf die merkwürdigen Eigenschaften zu lenken, die gewisse Einzelpersonen in unserem Reich gemeinsam haben.
+Seit Langem ist
+
+bekannt, dass das blaue Mondtor Reisen von Ort zu Ort erlaubt und niemand Schwierigkeiten hat, diesen Weg zu nehmen. Doch ist auch bekannt, wenngleich nur wenigen, dass gewisse
+
+Einzelpersonen die schwarzen Mondtore, die Reisen von einer Dimension in eine andere erlauben, nicht durchschreiten können.
+Der berühmte Magier und Edelmann unseres Reiches, Lord Blackthorn, sagte mir einst
+
+im Gespräch, seine arkanen Forschungen hätten ergeben, dass die Frage eine der Erhaltung des Äthers sei. Nämlich: Geht man von der Annahme aus, dass Materie
+
+innerhalb einer bestimmten Dimension nur ein Querschnitt ätherischer Materie sein könnte, die in mehreren Dimensionen besteht, so wird offensichtlich, dass diese ätherische
+
+Struktur nicht in Dimensionen eintreten kann, in denen sie bereits vorhanden ist.
+Stellt Euch eine Person vor (und Lord Blackthorn deutete an, er sei
+
+eine solche), die in irgendeiner Form bereits in mehreren Dimensionen besteht; diese Person könnte nicht in eine andere Dimension hinüberwechseln, weil SIE BEREITS DORT IST.
+
+Die Folgerungen daraus sind überwältigend und verdienen weitere Untersuchung. Den Theoretikern dieses Gebiets ist wohlbekannt, dass Teilungen in der
+
+ätherischen Struktur einer Person auf zeitlicher Ebene bereits angelegt sind, da die Kausalität dem Äther Teilungen aufzwingt. Dies ist der grundlegende Wirkungsmechanismus,
+
+nach dem weiße Mondtore funktionieren und Zeitreisen erlauben.
+Da Zeitreisen nicht durch die Gegenwart eines früheren Selbst verhindert werden (obwohl
+
+eine Begegnung mit diesem früheren Selbst arkan gefährlich sein kann), muss die ätherische Struktur eine gewisse Starrheit besitzen, die verhindert, dass mehrere Ausprägungen von
+
+Strukturen im selben Zusammenhang auftreten.
+Betrachtet man Zeit und kausale Verzweigung als Netz, dann ist der passende Vergleich für Dimensionsmatrizen vielleicht
+
+der einer Kristallstruktur mit starren Verbindungen. Die einzige Möglichkeit, wie eine Person wie Lord Blackthorn, die in mehreren
+
+Dimensionsmatrizen besteht, durch ein schwarzes Mondtor zwischen Welten wechseln könnte, wäre, dass die gesamte Kristallstruktur der Dimension vollkommen der
+
+ätherischen Resonanz der Zieldimension entspricht.
+Für die Frage, warum gewisse Personen bereits in mehreren Kristallmatrizen vervielfacht sind, vermag ich
+
+in diesen dürftigen Theorien kein Modell zu liefern. Es ist meine innigste Hoffnung, dass eines Tages jemand dieses schwierige Problem lösen und die Welt erleuchten wird."""
+
+[translations.ita]
+title = "Viaggio dimensionale, una monografia"
+content = """
+Esula dall'ambito di questa breve monografia discutere i dettagli dei portali lunari e i modi in cui essi distorcono il tessuto della realtà in
+
+modo tale da consentire il passaggio di carne vivente da un luogo all'altro, da un mondo all'altro o, invero, da una dimensione all'altra.
+Consentitemi invece di
+
+richiamare la vostra attenzione, Gentile Lettore, sulle curiose caratteristiche condivise da certi individui nel nostro regno.
+Da lungo tempo è
+
+noto che il portale lunare blu consente di viaggiare da un luogo all'altro, e nessuno incontra difficoltà nel percorrere questa via. Eppure è anche noto, sebbene solo a pochi, che certi
+
+individui sono incapaci di attraversare i portali lunari neri che permettono di viaggiare da una dimensione all'altra.
+Il celebre mago e nobile del nostro regno, Lord Blackthorn, una volta
+
+mi disse conversando che le sue ricerche arcane indicavano che la questione riguardava la conservazione dell'etere. Vale a dire, dato il postulato che la materia
+
+entro una data dimensione possa essere soltanto una sezione trasversale della materia eterea che esiste in più dimensioni, diviene evidente che detta struttura eterea
+
+non può entrare nelle dimensioni nelle quali è già presente.
+Immaginate un individuo (e Lord Blackthorn lasciò intendere di essere
+
+uno di questi) che già esista, in qualche forma, in più dimensioni; detto individuo non potrebbe passare in un'altra dimensione perché EGLI È
+
+GIÀ LÌ.
+Le implicazioni sono sbalorditive e meritano ulteriori studi. È ben noto ai teorici del campo che le divisioni nella
+
+struttura eterea di un individuo sono già implicite a livello temporale, poiché la causalità impone divisioni all'etere. Questo è il meccanismo operativo fondamentale
+
+attraverso cui funzionano i portali lunari bianchi, consentendo i viaggi nel tempo.
+Poiché il viaggio nel tempo non è impedito dalla presenza di un io precedente (sebbene
+
+incontrare detto io precedente possa rivelarsi arcanamente pericoloso), deve esserci una qualche rigidità nella struttura eterea che impedisce a molteplici istanze di
+
+strutture di manifestarsi nello stesso contesto.
+Se si considera il tempo e la biforcazione causale come una rete, forse l'analogia appropriata per le matrici
+
+dimensionali è quella di una struttura cristallina, con legami rigidi. L'unico modo in cui un individuo quale Lord Blackthorn, che esiste in molteplici
+
+matrici dimensionali, può attraversare mondi tramite un portale lunare nero sarebbe che l'intera struttura cristallina della dimensione corrispondesse perfettamente alla
+
+risonanza eterea della dimensione di destinazione.
+Il problema del perché certi individui siano già replicati in più matrici cristalline è qualcosa per cui non riesco a
+
+fornire alcuno schema in queste povere teorie. La mia speranza più cara è che un giorno qualcuno risolva quel problema spinoso e illumini il mondo."""
+
+[translations.pol]
+title = "Podróże między wymiarami, monografia"
+content = """
+Poza zakresem tej niewielkiej monografii leży omawianie szczegółów działania bram księżycowych oraz sposobów, w jakie zniekształcają tkankę rzeczywistości w
+
+taki sposób, by umożliwić żywemu ciału przejście z miejsca na miejsce, ze świata do świata, a nawet z wymiaru do wymiaru.
+Pozwól mi zamiast tego
+
+zwrócić twoją uwagę, łaskawy czytelniku, na osobliwe cechy wspólne pewnym osobom w naszym królestwie.
+Od dawna
+
+wiadomo, że niebieska brama księżycowa pozwala podróżować z miejsca na miejsce i nikt nie ma trudności z wyborem tej drogi. Lecz wiadomo również, choć tylko nielicznym, że pewne
+
+osoby nie potrafią przechodzić przez czarne bramy księżycowe, pozwalające podróżować między wymiarami.
+Słynny mag i dostojnik naszego królestwa, Lord Blackthorn, powiedział mi niegdyś
+
+w rozmowie, że jego badania tajemne wskazują, iż chodzi o zachowanie eteru. Mianowicie, jeśli przyjmiemy postulat, że materia
+
+w danym wymiarze może być jedynie przekrojem materii eterycznej istniejącej w wielu wymiarach, staje się oczywiste, że owa eteryczna
+
+struktura nie może wejść do wymiarów, w których jest już obecna.
+Wyobraź sobie osobę (a Lord Blackthorn zasugerował, iż jest
+
+jedną z takich), która istnieje już w jakiejś postaci w wielu wymiarach; osoba ta nie mogłaby przejść do innego wymiaru, gdyż ONA JUŻ
+
+TAM JEST.
+Wynikające z tego wnioski są zdumiewające i zasługują na dalsze badania. Teoretycy w tej dziedzinie dobrze wiedzą, że podziały
+
+eterycznej struktury osoby są już zawarte na poziomie czasowym, gdyż przyczynowość wymusza podziały eteru. To podstawowy mechanizm
+
+działania białych bram księżycowych, umożliwiających podróże w czasie.
+Skoro podróży w czasie nie wyklucza obecność wcześniejszego siebie (choć
+
+spotkanie owego wcześniejszego siebie może okazać się niebezpieczne z punktu widzenia magii), struktura eteryczna musi posiadać pewną sztywność, która uniemożliwia wielokrotnym wcieleniom
+
+struktur ujawnianie się w tym samym kontekście.
+Jeśli czas i rozwidlenia przyczynowe uznamy za sieć, być może właściwą analogią dla matryc
+
+wymiarowych jest struktura krystaliczna o sztywnych wiązaniach. Jedynym sposobem, w jaki osoba taka jak Lord Blackthorn, istniejąca w wielu
+
+matrycach wymiarowych, mogłaby przechodzić między światami przez czarną bramę księżycową, byłaby sytuacja, w której cała krystaliczna struktura wymiaru doskonale odpowiada
+
+eterycznemu rezonansowi wymiaru docelowego.
+Problemu, dlaczego pewne osoby są już powielone w wielu krystalicznych matrycach, nie potrafię
+
+wyjaśnić żadnym schematem w tych ubogich teoriach. Najgoręcej pragnę, aby pewnego dnia ktoś pokonał to zawiłe zagadnienie i oświecił świat."""
+
+[translations.por]
+title = "Viagem dimensional, uma monografia"
+content = """
+Está além do alcance desta pequena monografia discutir os detalhes dos portais lunares e as maneiras pelas quais distorcem o tecido da realidade de
+
+tal modo a permitir a passagem de carne viva de um lugar a outro, de um mundo a outro ou, de fato, de uma dimensão a outra.
+Em vez disso, permita-me
+
+chamar sua atenção, gentil leitor, para as curiosas características compartilhadas por certos indivíduos em nosso reino.
+Há muito se
+
+sabe que o portal lunar azul permite viajar de um lugar a outro, e ninguém tem dificuldade em seguir esse caminho. Contudo, também se sabe, embora apenas por poucos, que certos
+
+indivíduos são incapazes de atravessar os portais lunares negros que permitem viajar de uma dimensão a outra.
+O renomado mago e nobre de nosso reino, Lord Blackthorn, certa vez
+
+me disse numa conversa que suas pesquisas arcanas indicavam que a questão era de conservação do éter. Ou seja, dado o postulado de que a matéria
+
+dentro de uma determinada dimensão pode ser apenas uma seção transversal de matéria etérea que existe em múltiplas dimensões, torna-se evidente que essa estrutura
+
+etérea não pode entrar em dimensões nas quais já está presente.
+Imagine um indivíduo (e Lord Blackthorn insinuou que era
+
+um deles) que já existe de alguma forma em múltiplas dimensões; esse indivíduo não poderia passar para outra dimensão porque ELE JÁ ESTÁ
+
+LÁ.
+As implicações disso são espantosas e merecem mais estudo. Os teóricos da área sabem bem que divisões na
+
+estrutura etérea de um indivíduo já estão implícitas no nível temporal, pois a causalidade impõe divisões ao éter. Este é o mecanismo básico de funcionamento
+
+pelo qual operam os portais lunares brancos, permitindo viagens no tempo.
+Como a viagem no tempo não é impedida pela presença de um eu anterior (embora
+
+encontrar esse eu anterior possa se mostrar perigoso em termos arcanos), deve haver alguma rigidez na estrutura etérea que impeça múltiplas instanciações de
+
+estruturas de se manifestarem no mesmo contexto.
+Se considerarmos o tempo e a bifurcação causal como uma teia, talvez a analogia apropriada para matrizes dimensionais
+
+seja a de uma estrutura cristalina, com ligações rígidas. A única maneira pela qual um indivíduo como Lord Blackthorn, que existe em múltiplas
+
+matrizes dimensionais, pode atravessar mundos por um portal lunar negro seria se toda a estrutura cristalina da dimensão correspondesse perfeitamente à
+
+ressonância etérea da dimensão de destino.
+O problema de por que certos indivíduos já estão replicados em múltiplas matrizes cristalinas é algo para o qual
+
+não consigo oferecer nenhum esquema nestas pobres teorias. É minha mais fervorosa esperança que algum dia alguém resolva esse problema espinhoso e ilumine o mundo."""
+
+[translations.spa]
+title = "Viajes dimensionales: una monografía"
+content = """
+  Queda fuera del alcance de esta breve monografía examinar en detalle las puertas lunares y la manera en que deforman el tejido de la realidad
+
+para permitir que la carne viva pase de un lugar a otro, de un mundo a otro e incluso de una dimensión a otra. En cambio, permíteme
+
+dirigir tu atención, amable lector, a las curiosas características que comparten ciertos individuos de nuestro reino. Desde hace mucho se
+
+sabe que la puerta lunar azul permite viajar de un lugar a otro, y nadie tiene dificultades para seguir ese camino. Pero también se sabe, aunque solo entre unos pocos, que ciertos
+
+individuos no pueden atravesar las puertas lunares negras que permiten viajar de una dimensión a otra. El célebre mago y noble de nuestro reino, Lord Blackthorn, me
+
+dijo en una conversación que sus investigaciones arcanas señalaban que la cuestión era de conservación del éter. Es decir, si se postula que la materia
+
+de una dimensión determinada quizá no sea más que una sección de materia etérea existente en varias dimensiones, resulta evidente que dicha estructura
+
+etérea no puede entrar en dimensiones en las que ya está presente. Imagina a un individuo —y Lord Blackthorn insinuó que él era
+
+uno de ellos— que ya existe de algún modo en varias dimensiones: ese individuo no podría pasar a otra dimensión porque YA ESTÁ
+
+ALLÍ. Las implicaciones son asombrosas y merecen más estudio. Los teóricos de este campo saben bien que las divisiones de la
+
+estructura etérea de un individuo ya están implícitas en el plano temporal, puesto que la causalidad impone divisiones al éter. Este es el mecanismo básico
+
+por el que funcionan las puertas lunares blancas, que permiten viajar en el tiempo. Puesto que la presencia de un yo anterior no impide viajar en el tiempo —aunque
+
+encontrarse con ese yo anterior puede resultar peligroso en lo arcano—, debe de existir cierta rigidez en la estructura etérea que impida que varias manifestaciones de las mismas
+
+estructuras aparezcan en un mismo contexto. Si se conciben el tiempo y las bifurcaciones causales como una red, quizá la analogía adecuada para las matrices
+
+dimensionales sea la de una estructura cristalina de enlaces rígidos. La única forma en que un individuo como Lord Blackthorn, que existe en varias
+
+matrices dimensionales, podría pasar de un mundo a otro por una puerta lunar negra sería que toda la estructura cristalina de la dimensión coincidiera a la perfección con
+
+la resonancia etérea de la dimensión de destino. El problema de por qué ciertos individuos ya están reproducidos en varias matrices cristalinas es una cuestión para la que
+
+no logro ofrecer esquema alguno con estas pobres teorías. Mi mayor esperanza es que algún día alguien resuelva ese espinoso problema e ilumine al mundo."""

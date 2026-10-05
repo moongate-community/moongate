@@ -63,3 +63,136 @@ ever turned to run,
 even in the face of
 certain death."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Deník: Objevení hrobky"
+content = """
+Den šestý:
+
+Pozdě včera večer náš tábor napadla smečka divokých bestií – ohromných tvorů s rychlostí a zuřivostí, jakou jsem nikdy
+
+dříve neviděla. Ani Grimmoch, znalý všemožné divoké zvěře, si nebyl jist jejich povahou – ačkoli to přičítám temnotě zastírající
+
+jejich pohyby spíše než jeho lovecké dovednosti. Útoky celou noc neustávaly a nakonec jsme byli nuceni uprchnout do samotné
+
+hrobky a hledat útočiště před těmi hladovými tvory – ani kouzla mága Lysander nedokázala těm ohavným věcem zabránit útočit ve velkých počtech. Hrobka se
+
+dobře osvědčila jako improvizovaná pevnost a podařilo se nám strávit noc bez újmy. Ranní světlo zřejmě bestie rozehnalo, neboť jsme ani jedinou z
+
+nich neviděli, když jsme vycházeli z hrobky – ani tělo těch několika, které jsme zabili před útěkem. Lysander zadal pracovníkům přesun zásob a vybavení do
+
+hrobky pro případ, že by se tvorové rozhodli vrátit. Takovou divokou zuřivost ty bestie měly – a ani jediná se nikdy neobrátila na útěk, ani tváří v tvář jisté smrti."""
+
+[translations.fre]
+title = "Journal : découverte du tombeau"
+content = """
+Sixième jour :
+
+Tard la nuit dernière, notre camp a été assailli par une meute de bêtes sauvages : des créatures colossales, d’une vitesse et d’une férocité que je n’avais jamais
+
+vues. Même Grimmoch, pourtant versé dans toutes sortes de faune sauvage, ignorait leur nature, bien que j’en attribue la faute à l’obscurité dissimulant
+
+leurs mouvements plutôt qu’à son talent de chasseur. Les attaques ne cessèrent pas de toute la nuit, et nous fûmes finalement contraints de fuir à l’intérieur du Tombeau
+
+lui-même pour nous abriter de ces créatures voraces ; même les sorts de Lysander ne pouvaient empêcher ces choses ignobles d’attaquer en grand nombre. Le Tombeau fit
+
+une bonne forteresse improvisée, et nous réussîmes à passer la nuit sans blessures. La lumière du matin semblait avoir dispersé les bêtes, car pas une seule
+
+n’était en vue lorsque nous sortîmes du Tombeau, pas même une carcasse des quelques-unes tuées avant notre fuite. Lysander mit l’équipe au travail pour transporter nos provisions et notre matériel dans
+
+le Tombeau, au cas où les créatures décideraient de revenir. Quelle furie sauvage animaient ces bêtes ; et pas une seule ne se retourna jamais pour fuir, même devant une mort certaine."""
+
+[translations.ger]
+title = "Tagebuch: Entdeckung des Grabes"
+content = """
+Sechster Tag:
+
+Spät gestern Nacht wurde unser Lager von einem Rudel wilder Bestien überfallen – gewaltigen Geschöpfen von einer Schnelligkeit und Bösartigkeit, wie ich sie noch nie
+
+zuvor gesehen habe. Selbst Grimmoch, der sich mit allen Arten wilder Tiere gut auskennt, war sich ihres Wesens unsicher – doch ich mache eher die Dunkelheit verantwortlich, die
+
+ihre Bewegungen verhüllte, als sein Können als Jäger. Die Angriffe ließen die ganze Nacht nicht nach, und schließlich mussten wir ins Grab
+
+selbst fliehen, um vor den gefräßigen Geschöpfen Zuflucht zu suchen – selbst Lysanders Zauber konnten die abscheulichen Dinge nicht davon abhalten, in großer Zahl anzugreifen. Das Grab bewährte
+
+sich gut als behelfsmäßige Festung, und es gelang uns, die Nacht unversehrt zu verbringen. Das Morgenlicht schien die Bestien zerstreut zu haben, denn nicht eine einzige von
+
+ihnen war zu sehen, als wir das Grab verließen – nicht einmal ein Kadaver der wenigen, die getötet worden waren, bevor wir flohen. Lysander ließ die Mannschaft unsere Vorräte und Ausrüstung ins
+
+Grab bringen, für den Fall, dass die Geschöpfe sich zur Rückkehr entschlossen. Welch wilde Wut die Bestien besaßen – und keine einzige wandte sich je zur Flucht, selbst angesichts des sicheren Todes."""
+
+[translations.ita]
+title = "Diario: scoperta della Tomba"
+content = """
+Giorno Sei:
+
+Ieri a tarda notte il nostro accampamento è stato assalito da un branco di bestie selvagge, creature colossali dalla velocità e ferocia che mai
+
+avevo visto prima. Persino Grimmoch, esperto di ogni genere di fauna, era incerto sulla loro natura, sebbene ne attribuisca la colpa all'oscurità che nascondeva
+
+i loro movimenti piuttosto che alla sua abilità di cacciatore. Gli attacchi non sono cessati per tutta la notte, e alla fine siamo stati costretti a fuggire nella Tomba
+
+stessa per trovare rifugio dalle creature fameliche: persino gli incantesimi di Lysander non riuscivano a impedire che quelle bestie ripugnanti attaccassero in gran numero. La Tomba si è comportata
+
+bene come fortezza improvvisata e siamo riusciti a trascorrere la notte incolumi. La luce del mattino sembra aver disperso le bestie, poiché non se ne vedeva neppure una
+
+quando siamo usciti dalla Tomba, nemmeno una carcassa delle poche uccise prima della nostra fuga. Lysander ha messo al lavoro la squadra, spostando le nostre provviste e l'equipaggiamento nella
+
+Tomba, nel caso le creature scegliessero di tornare. Tanta selvaggia furia avevano le bestie, e nemmeno una si è mai voltata per fuggire, neppure davanti a morte certa."""
+
+[translations.pol]
+title = "Dziennik: odkrycie Grobowca"
+content = """
+Dzień szósty:
+
+Późno wczoraj w nocy obóz napadła wataha dzikich bestii — olbrzymich stworzeń o szybkości i zaciekłości, jakich nigdy wcześniej
+
+nie widziałam. Nawet Grimmoch, obeznany z wszelkimi dzikimi zwierzętami, nie był pewien ich natury — choć przypisuję to ciemności skrywającej
+
+ich ruchy, a nie niedostatkom jego kunsztu łowieckiego. Ataki nie ustawały całą noc, aż w końcu musieliśmy uciec do samego Grobowca,
+
+by schronić się przed żarłocznymi stworzeniami — nawet zaklęcia Lysander nie mogły powstrzymać licznych napaści tych plugawych istot. Grobowiec sprawdził się
+
+jako improwizowana twierdza i udało nam się spędzić noc bez szwanku. Poranne światło zdawało się rozpędzić bestie, gdyż ani jednej
+
+nie widzieliśmy, wychodząc z Grobowca — nawet trupa którejś z nielicznych zabitych przed naszą ucieczką. Lysander zapędził załogę do pracy przy przenoszeniu zapasów i sprzętu do
+
+Grobowca, na wypadek gdyby stworzenia postanowiły wrócić. Tak dzika była ich furia — a ani jedno nigdy nie zawróciło do ucieczki, nawet wobec pewnej śmierci."""
+
+[translations.por]
+title = "Diário: descoberta da tumba"
+content = """
+Sexto dia:
+
+Tarde da noite passada, nosso acampamento foi atacado por uma matilha de feras selvagens, criaturas gigantescas com uma velocidade e ferocidade que eu nunca
+
+vira antes. Até Grimmoch, bem versado em todos os tipos de vida selvagem, não sabia ao certo o que eram, embora eu atribua isso à escuridão que encobria
+
+seus movimentos, e não à sua habilidade de caçador. Os ataques não cessaram durante toda a noite e, por fim, fomos obrigados a fugir para dentro da própria Tumba
+
+para buscar refúgio das criaturas vorazes; nem mesmo os feitiços de Lysander conseguiam impedir aquelas coisas repugnantes de atacar em grande número. A Tumba funcionou
+
+bem como fortaleza improvisada, e conseguimos passar a noite ilesos. A luz da manhã parece ter dispersado as feras, pois nenhuma delas
+
+podia ser vista quando saímos da Tumba, nem mesmo uma carcaça das poucas que foram mortas antes de fugirmos. Lysander pôs a equipe a trabalhar, transferindo nossos suprimentos e equipamentos para
+
+a Tumba, caso as criaturas decidissem voltar. Que fúria selvagem tinham as feras: nem uma delas chegou a se virar para fugir, mesmo diante da morte certa."""
+
+[translations.spa]
+title = "Diario: descubrimiento de la tumba"
+content = """
+Día seis:
+
+Anoche, tarde, una manada de bestias salvajes atacó nuestro campamento: criaturas gigantescas de una rapidez y ferocidad que nunca
+
+había visto. Incluso Grimmoch, conocedor de toda clase de fauna, no supo determinar su naturaleza, aunque lo atribuyo a la oscuridad que ocultaba
+
+sus movimientos más que a su destreza como cazador. Los ataques no cesaron en toda la noche, y al final nos vimos obligados a huir al interior de la Tumba
+
+para refugiarnos de las criaturas voraces: ni siquiera los hechizos de Lysander podían impedir que esas cosas inmundas atacaran en gran número. La Tumba cumplió
+
+bien su papel de fortaleza improvisada y pudimos pasar la noche ilesos. La luz de la mañana pareció dispersar a las bestias, pues no se veía ni una sola
+
+al salir de la Tumba, ni siquiera el cadáver de las pocas que murieron antes de que huyéramos. Lysander puso a la cuadrilla a trabajar, trasladando suministros y equipo al interior de
+
+la Tumba por si las criaturas decidían regresar. ¡Qué furia salvaje tenían aquellas bestias! Ni una sola se volvió para huir, ni siquiera ante una muerte segura."""

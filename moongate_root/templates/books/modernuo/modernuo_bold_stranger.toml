@@ -123,3 +123,240 @@ Rytabul again.
 tale of the bold
 stranger."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Smělý cizinec"
+content = """
+V čase před časem shromáždili Vládnoucí bohové skupinu umělců, řemeslníků a znalců učenosti (neboť ano, umění existovalo i v těch časech), aby stvořili
+
+svět Sosaria. Této skupině dali bohové maličký svět Rytabul, v němž měli zkoušet svá díla a posoudit, zda dosahují jakosti požadované pro skutečný svět,
+
+do kterého měla být vložena. A třebaže bohové byli na zlato skoupí, tato malá družina pracovala dlouho a pilně a byla při svých úkolech šťastná.
+
+Malý kout světa Rytabul si zabral umělec Selrahc Pomalý. Ačkoli nebyl nejrychlejší ze shromážděných pracovníků, bohové se na
+
+jeho dílo usmívali, ba darovali mu mystický talisman hlásající, že jeho práce je nejlepší mezi novými umělci. A tak Selrahc konal své dílo a vytvářel
+
+stovky návrhů, jež měly jednoho dne dodat světu Sosaria barvu a rozmanitost.
+Jednoho dne se před umělcem Selrahc objevil cizinec. Měl holou hruď a nosil
+
+kalhoty nejjasnější zeleně; kamkoli přišel, rostliny vyrůstaly v jeho stopách. To působilo umělci Selrahc nekonečné obtíže: cizinec mu ustavičně
+
+nahlížel přes rameno a rostliny rašily tam, kde Selrahc potřeboval provozovat své umění. I přistoupil Selrahc k cizinci a vyzval jej,
+
+aby promluvil. Avšak muž v zeleném zůstával mlčenlivý. Selrahc prosil cizince, aby mu sdělil své jméno a laskavě nechal umělce Selrahc pracovat.
+
+Tajuplný cizinec však zůstával němý.
+To umělce Selrahc mocně rozhněvalo. Kdo byl tento mlčenlivý muž, který překážel v úkolech, jež sami bohové
+
+svěřili umělci Selrahc? Ve snaze tohoto vetřelce zahanbit mu Selrahc ukradl zelené kalhoty a ponechal jej nahého, vystaveného
+
+poznámkám o jeho mužství; a přece cizinec nepromluvil a neodešel z tohoto maličkého kouta světa Rytabul.
+Roztrpčen až na nejzazší
+
+mez uchopil Selrahc válečnou sekeru a mocně udeřil mlčenlivého muže, znovu a znovu, až mlčenlivý cizinec utekl, aniž pronesl jediné slovo, a nikdy se
+
+již ve světě Rytabul neukázal.
+Tak končí příběh smělého cizince."""
+
+[translations.fre]
+title = "L’étranger audacieux"
+content = """
+En un temps d’avant le temps, les Dieux qui Sont réunirent un groupe d’artistes, d’artisans et de maîtres du savoir (car, oui, même en ces jours-là, l’art existait) afin de créer le
+
+monde de Sosaria. Les dieux donnèrent à ce groupe un minuscule monde, Rytabul, où éprouver leurs œuvres et voir si elles possédaient la qualité souhaitée pour le véritable monde dans
+
+lequel elles seraient placées. Et quoique les dieux fussent avares de leur or, cette petite équipe travailla longtemps et durement, heureuse de ses tâches.
+
+Un petit coin de Rytabul avait été revendiqué par l’artisan Selrahc le Lent. Bien qu’il ne fût pas le plus rapide des ouvriers rassemblés, les dieux souriaient à
+
+son travail, allant jusqu’à lui remettre un talisman mystique proclamant ses œuvres les meilleures parmi celles des nouveaux artisans. Ainsi Selrahc vaquait à ses occupations, créant
+
+des centaines de dessins qui donneraient un jour couleur et variété à Sosaria. Un jour, un étranger apparut devant Selrahc. Il avait le torse nu et portait
+
+un pantalon du vert le plus éclatant ; partout où il allait, des plantes poussaient dans ses traces. Cela causait à Selrahc des ennuis sans fin, car l’étranger ne cessait de
+
+regarder par-dessus son épaule, et les plantes germaient aux endroits dont Selrahc avait besoin pour exercer son art. Selrahc s’approcha donc de l’étranger et lui demanda
+
+de parler. Mais cet homme en vert demeura silencieux. Selrahc supplia l’étranger de donner son nom, et de bien vouloir le laisser travailler.
+
+Mais cet étranger mystérieux resta muet. Selrahc en fut terriblement irrité. Qui était cet homme silencieux qui entravait les tâches que les dieux
+
+eux-mêmes avaient confiées à Selrahc ? Pour tenter d’embarrasser cet intrus, Selrahc lui vola son pantalon vert, le laissant nu et exposé aux
+
+commentaires sur sa virilité même ; pourtant, l’étranger ne parlait toujours pas et ne quittait pas ce minuscule coin de Rytabul. Poussé à bout,
+
+Selrahc prit sa hache de guerre et frappa vigoureusement le silencieux, encore et encore, jusqu’à ce que l’étranger muet s’enfuît, sans avoir jamais prononcé un mot, et ne
+
+se montrât plus jamais à Rytabul. Ainsi s’achève le récit de l’étranger audacieux."""
+
+[translations.ger]
+title = "Der dreiste Fremde"
+content = """
+In einer Zeit vor der Zeit versammelten die bestehenden Götter eine Schar von Künstlern, Handwerkern und Wissensmeistern (denn ja, auch damals gab es Kunst), um die
+
+Welt Sosaria zu erschaffen. Die Götter gaben dieser Schar eine winzige Welt, Rytabul, in der sie ihre Werke erproben und prüfen sollten, ob diese die gewünschte Güte für die wahre Welt besaßen, in
+
+der sie ihren Platz finden würden. Und obwohl die Götter mit ihrem Gold knauserten, arbeitete diese kleine Schar lange und fleißig und war glücklich mit ihren Aufgaben.
+
+Ein kleiner Winkel Rytabuls war vom Künstler Selrahc dem Langsamen beansprucht worden. Obwohl er nicht der schnellste unter den versammelten Arbeitern war, schenkten die Götter
+
+seinem Werk ihre Gunst und überreichten ihm sogar einen mystischen Talisman, der sein Werk zum besten unter den neueren Künstlern erklärte. Und so ging Selrahc seinem Geschäft nach und schuf
+
+Hunderte von Entwürfen, die Sosaria eines Tages Farbe und Vielfalt verleihen sollten.
+Eines Tages erschien Selrahc ein Fremder. Seine Brust war bloß, und er trug
+
+Hosen vom hellsten Grün; wohin er auch ging, wuchsen Pflanzen in seinen Fußspuren. Dies bereitete Selrahc endlose Mühe, denn der Fremde blickte ihm ständig
+
+über die Schulter, und die Pflanzen sprossen an Stellen, die Selrahc für die Ausübung seiner Kunst benötigte. So trat Selrahc an den Fremden heran und forderte
+
+ihn auf zu sprechen. Doch dieser Mann in Grün schwieg. Selrahc flehte den Fremden an, seinen Namen zu nennen und Selrahc doch bitte bei seiner Arbeit zu lassen.
+
+Doch der geheimnisvolle Fremde blieb stumm.
+Dies erzürnte Selrahc gewaltig. Wer war dieser schweigende Mann, der sich in Aufgaben einmischte, welche die Götter
+
+selbst Selrahc anvertraut hatten? Um diesen Eindringling zu beschämen, stahl Selrahc ihm die grünen Hosen und ließ ihn nackt und den Bemerkungen über
+
+seine Männlichkeit ausgesetzt zurück; doch noch immer wollte der Fremde weder sprechen noch diesen winzigen Winkel Rytabuls verlassen.
+Bis aufs Äußerste
+
+gereizt, nahm Selrahc seine Streitaxt und schlug gewaltig auf den Schweigenden ein, wieder und wieder, bis der stumme Fremde davonlief, ohne je ein Wort gesagt zu haben, und sich nie
+
+wieder in Rytabul zeigte.
+So endet die Geschichte des dreisten Fremden."""
+
+[translations.ita]
+title = "Lo straniero audace"
+content = """
+In un tempo prima del tempo, gli Dei che Sono riunirono un gruppo di artisti, artigiani e maestri del sapere (poiché, sì, anche a quei tempi esisteva l'arte) per creare il
+
+mondo di Sosaria. A questo gruppo gli dei diedero un minuscolo mondo, Rytabul, dove provare le proprie opere, per vedere se fossero della qualità desiderata per il vero mondo nel
+
+quale sarebbero state collocate. E sebbene gli dei fossero avari del loro oro, questa piccola squadra lavorò a lungo e duramente, ed era felice dei propri compiti.
+
+Un piccolo angolo di Rytabul era stato reclamato dall'artigiano Selrahc il Lento. Sebbene non fosse il più rapido dei lavoratori riuniti, gli dei sorridevano al
+
+suo lavoro, donandogli persino un talismano mistico che proclamava la sua opera la migliore fra quelle degli artigiani più nuovi. E così Selrahc badava ai suoi affari, creando
+
+centinaia di disegni che un giorno avrebbero aggiunto colore e varietà a Sosaria.
+Un giorno uno straniero apparve a Selrahc. Aveva il petto nudo e indossava
+
+calzoni del verde più brillante, e ovunque andasse, le piante crescevano sulle sue orme. Ciò causava a Selrahc guai senza fine: lo straniero gli
+
+guardava sempre da sopra la spalla e le piante spuntavano nei luoghi di cui Selrahc aveva bisogno per esercitare la sua arte. E così Selrahc si avvicinò allo straniero e lo invitò a
+
+parlare. Ma quell'uomo in verde rimase silenzioso. Selrahc supplicò lo straniero di dire il proprio nome e di lasciarlo, per cortesia, al suo lavoro.
+
+Ma quel misterioso straniero rimase muto.
+Questo fece infuriare Selrahc. Chi era quell'uomo silenzioso che intralciava i compiti che gli dei
+
+stessi avevano affidato a Selrahc? Nel tentativo di mettere in imbarazzo quell'intruso, Selrahc gli rubò i calzoni verdi, lasciandolo nudo ed esposto a
+
+commenti sulla sua stessa virilità; e ancora lo straniero non parlava, non lasciava quel minuscolo angolo di Rytabul.
+Esasperato oltre ogni
+
+limite, Selrahc prese la sua ascia da guerra e colpì con gran forza il silenzioso, ancora e ancora, finché lo straniero silenzioso fuggì, senza mai aver detto una parola, e mai più
+
+si mostrò a Rytabul.
+Così termina il racconto dello straniero audace."""
+
+[translations.pol]
+title = "Zuchwały nieznajomy"
+content = """
+W czasach sprzed czasu Bogowie Którzy Są zebrali artystów, rzemieślników i mistrzów wiedzy (albowiem, tak, nawet w owych czasach istniała sztuka), by stworzyli
+
+świat Sosaria. Tej grupie bogowie dali maleńki świat Rytabul, aby mogła tam wypróbować swe dzieła i sprawdzić, czy ich jakość odpowiada wymaganiom prawdziwego świata, w
+
+którym miały się znaleźć. I choć bogowie skąpili złota, ta mała załoga pracowała długo i ciężko, znajdując radość w swych zadaniach.
+
+Mały zakątek Rytabul obrał sobie rzemieślnik Selrahc the Slow. Choć nie był najszybszy spośród zgromadzonych pracowników, bogowie spoglądali przychylnie na
+
+jego dzieła i wręczyli mu nawet mistyczny talizman, głoszący, że jego praca jest najlepsza wśród nowszych rzemieślników. Tak więc Selrahc zajmował się swym rzemiosłem, tworząc
+
+setki wzorów, które pewnego dnia miały dodać barw i różnorodności światu Sosaria.
+Pewnego dnia przed Selrahc zjawił się nieznajomy. Miał nagą pierś i nosił
+
+spodnie najjaskrawszej zieleni, a gdziekolwiek stąpał, w jego śladach wyrastały rośliny. Przysparzało to Selrahc niekończących się kłopotów: nieznajomy stale
+
+zaglądał mu przez ramię, a rośliny kiełkowały w miejscach potrzebnych Selrahc do uprawiania jego sztuki. Selrahc podszedł więc do nieznajomego i nakazał
+
+mu przemówić. Lecz ów mężczyzna w zieleni milczał. Selrahc błagał nieznajomego, by podał swe imię i zechciał zostawić Selrahc przy jego pracy.
+
+Ale tajemniczy nieznajomy pozostał niemy.
+Rozgniewało to Selrahc niepomiernie. Kim był ten milczący mężczyzna, który przeszkadzał w zadaniach powierzonych Selrahc przez samych
+
+bogów? Próbując zawstydzić intruza, Selrahc ukradł mu zielone spodnie, pozostawiając go nagim i narażonym na
+
+uwagi o jego męskości, a nieznajomy nadal nie przemawiał i nie opuszczał tego maleńkiego zakątka Rytabul.
+Rozdrażniony do samych
+
+granic wytrzymałości, Selrahc chwycił topór wojenny i raz za razem zadawał milczącemu potężne ciosy, aż cichy nieznajomy uciekł, nie powiedziawszy ani słowa, i nigdy
+
+więcej nie pojawił się w Rytabul.
+Tak kończy się opowieść o zuchwałym nieznajomym."""
+
+[translations.por]
+title = "O estranho audaz"
+content = """
+Num tempo anterior ao tempo, os Deuses que São reuniram um grupo de artistas, artesãos e mestres do saber (pois, sim, mesmo naqueles dias a arte existia) para criar o
+
+mundo de Sosaria. A esse grupo, os deuses deram um pequeno mundo, Rytabul, no qual testar suas obras para ver se tinham a qualidade desejada para o verdadeiro mundo em
+
+que seriam colocadas. E, embora os deuses fossem mesquinhos com seu ouro, essa pequena equipe trabalhou arduamente por muito tempo e se alegrava com suas tarefas.
+
+Um pequeno canto de Rytabul fora reclamado pelo artesão Selrahc, o Lento. Embora não fosse o mais rápido dos trabalhadores reunidos, os deuses sorriam para
+
+seu trabalho, chegando a presenteá-lo com um talismã místico que proclamava sua obra a melhor entre os artesãos mais novos. E assim Selrahc seguiu com seu ofício, criando
+
+centenas de projetos que um dia acrescentariam cor e variedade a Sosaria.
+Um dia, um estranho apareceu a Selrahc. Tinha o peito nu e vestia
+
+calças do verde mais vivo, e, por onde passava, plantas cresciam em suas pegadas. Isso causava problemas sem fim a Selrahc, com o estranho sempre
+
+espiando por cima de seu ombro e as plantas brotando nos lugares de que Selrahc precisava para exercer sua arte. Assim, Selrahc se aproximou do estranho e lhe pediu
+
+que falasse. Mas esse homem de verde permaneceu em silêncio. Selrahc implorou ao estranho que dissesse seu nome e que, por favor, deixasse Selrahc trabalhar.
+
+Mas esse estranho misterioso permaneceu mudo.
+Isso enfureceu Selrahc enormemente. Quem era esse homem silencioso, interferindo nas tarefas que os próprios deuses
+
+haviam confiado a Selrahc? Na tentativa de constranger o intruso, Selrahc roubou suas calças verdes, deixando-o nu e exposto a
+
+comentários sobre sua própria virilidade, e ainda assim o estranho não falava, não deixava aquele pequeno canto de Rytabul.
+Exasperado até seus
+
+limites, Selrahc pegou seu machado de guerra e golpeou vigorosamente o silencioso, vez após vez, até que o estranho silencioso fugiu, sem jamais dizer uma palavra, e nunca mais
+
+apareceu em Rytabul.
+Assim termina a história do estranho audaz."""
+
+[translations.spa]
+title = "El osado desconocido"
+content = """
+    En un tiempo anterior al tiempo, los Dioses Supremos reunieron a un grupo de artistas, artesanos y maestros del saber —pues sí, incluso en aquellos días existía el arte— para crear el
+
+mundo de Sosaria. Los dioses entregaron a aquel grupo un mundo diminuto, Rytabul, donde probar sus obras y comprobar si tenían la calidad deseada para el verdadero mundo en
+
+el que habrían de colocarse. Y, aunque los dioses eran muy tacaños con su oro, aquel pequeño grupo trabajó duramente durante mucho tiempo y fue feliz en sus tareas.
+
+    El artesano Selrahc el Lento se había reservado un pequeño rincón de Rytabul. Aunque no era el más rápido de los trabajadores reunidos, los dioses veían con agrado
+
+su labor e incluso le entregaron un talismán místico que proclamaba su trabajo el mejor entre los artesanos más nuevos. Así, Selrahc siguió con sus ocupaciones, creando
+
+cientos de diseños que algún día añadirían color y variedad a Sosaria. Un día, un desconocido apareció ante Selrahc. Llevaba el pecho descubierto y vestía
+
+unos pantalones del verde más brillante; y, adondequiera que iba, brotaban plantas tras sus pasos. Esto causaba incontables problemas a Selrahc, pues el desconocido siempre
+
+miraba por encima de su hombro y las plantas brotaban en los lugares que Selrahc necesitaba para ejercer su arte. Por eso Selrahc se acercó al desconocido y le pidió
+
+que hablara. Pero aquel hombre de verde permaneció en silencio. Selrahc le rogó que dijera su nombre y que, por favor, lo dejara trabajar.
+
+Sin embargo, el misterioso desconocido siguió mudo. Esto enfureció sobremanera a Selrahc. ¿Quién era aquel hombre silencioso que interfería en las tareas que los propios dioses
+
+habían confiado a Selrahc? En un intento de avergonzar al intruso, Selrahc le robó los pantalones verdes, dejándolo desnudo y expuesto a
+
+comentarios sobre su virilidad. Aun así, el desconocido no habló ni abandonó aquel pequeño rincón de Rytabul. Exasperado hasta el
+
+límite, Selrahc tomó su hacha de guerra y golpeó con fuerza al silencioso una y otra vez, hasta que el desconocido huyó sin haber dicho una sola palabra y nunca
+
+volvió a mostrarse en Rytabul. Así termina el relato del osado desconocido."""

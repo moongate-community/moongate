@@ -189,6 +189,100 @@ public sealed class ModernUoBookConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_ExistingTranslations_PreservesEveryFieldWhileRefreshingEnglish()
+    {
+        _directories.WriteSource("A.cs", Book("Known", "before"));
+        Assert.Equal(0, Run());
+        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_known.toml");
+        var edited = Read("modernuo_known");
+        edited.Translations.Add("ita", new BookTranslation { Title = "Titolo", Content = "\n\nCorpo\r\nletterale $$5" });
+        edited.Translations.Add("fre", new BookTranslation { Author = "Autrice" });
+        File.WriteAllText(path, TomlUtils.Serialize(edited));
+        _directories.WriteSource("A.cs", Book("Known", "after"));
+
+        Assert.True(Run() == 0, _error.ToString());
+        var book = Read("modernuo_known");
+        Assert.Equal("after", book.Content);
+        Assert.Equal(2, book.Translations.Count);
+        Assert.Equal("Titolo", book.Translations["ita"].Title);
+        Assert.Equal("\n\nCorpo\r\nletterale $$5", book.Translations["ita"].Content);
+        Assert.Null(book.Translations["ita"].Author);
+        Assert.Equal("Autrice", book.Translations["fre"].Author);
+        Assert.Null(book.Translations["fre"].Title);
+        Assert.Null(book.Translations["fre"].Content);
+        var before = File.ReadAllBytes(path);
+        Assert.Equal(0, Run());
+        Assert.Equal(before, File.ReadAllBytes(path));
+    }
+
+    [Theory]
+    [InlineData("eng")]
+    [InlineData("ita")]
+    [InlineData("fre")]
+    [InlineData("ger")]
+    [InlineData("spa")]
+    [InlineData("por")]
+    [InlineData("pol")]
+    [InlineData("cze")]
+    public void Run_SupportedTranslation_PreservesLiteralDollarsAndUsesNewEnglishFallback(string language)
+    {
+        _directories.WriteSource("A.cs", Book("Known", "before"));
+        Assert.Equal(0, Run());
+        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_known.toml");
+        File.AppendAllText(path, $"\n[translations.{language}]\ntitle = \"Price $$5\"\n");
+        _directories.WriteSource("A.cs", Book("Known", "after"));
+
+        Assert.True(Run() == 0, _error.ToString());
+        Assert.Equal("Price $$5", Read("modernuo_known").Translations[language].Title);
+        Assert.Equal("after", Read("modernuo_known").Content);
+    }
+
+    [Theory]
+    [InlineData("rus", "content = \"text\"")]
+    [InlineData("ita", "content = \"\"")]
+    [InlineData("ita", "title = \"\"")]
+    [InlineData("ita", "content = \"$unknown\"")]
+    [InlineData("ita", "content = \"$player_name\"")]
+    [InlineData("ita", "content = \"bad\\u0000text\"")]
+    [InlineData("ita", "content = \"bad\\uD800text\"")]
+    [InlineData("ita", "content = 123")]
+    [InlineData("ita", "content = \"unterminated")]
+    public void Run_InvalidExistingTranslation_RejectsBeforeChangingEarlierBooks(string language, string fields)
+    {
+        _directories.WriteSource("A.cs", Book("Earlier", "kept"));
+        _directories.WriteSource("Z.cs", Book("Known", "before"));
+        Assert.Equal(0, Run());
+        var earlier = Path.Combine(_directories.DestinationDirectory, "modernuo_earlier.toml");
+        var previous = File.ReadAllBytes(earlier);
+        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_known.toml");
+        File.AppendAllText(path, $"\n[translations.{language}]\n{fields}\n");
+        var invalid = File.ReadAllBytes(path);
+        _directories.WriteSource("A.cs", Book("Earlier", "changed"));
+
+        Assert.Equal(2, Run());
+        Assert.Equal(previous, File.ReadAllBytes(earlier));
+        Assert.Equal(invalid, File.ReadAllBytes(path));
+        Assert.Contains("modernuo_known", _error.ToString());
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    public void Run_ExistingTranslationExceedsTextOrPacketLimit_RejectsBeforeWriting(bool header, bool packet)
+    {
+        _directories.WriteSource("A.cs", Book("Known", "before"));
+        Assert.Equal(0, Run());
+        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_known.toml");
+        var text = header ? new string('x', 129) : packet ? new string('&', 16000) : new string('x', 16385);
+        File.AppendAllText(path, $"\n[translations.ita]\n{(header ? "title" : "content")} = {Literal(text)}\n");
+        var previous = File.ReadAllBytes(path);
+
+        Assert.Equal(2, Run());
+        Assert.Equal(previous, File.ReadAllBytes(path));
+    }
+
+    [Fact]
     public void Run_CollidingClassIds_RejectsBothInsteadOfOverwriting()
     {
         _directories.WriteSource("A.cs", Book("MyBook", "first"));

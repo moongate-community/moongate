@@ -47,3 +47,122 @@ member of the
 
 Khaldun at last!"""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Lysanderův zápisník"
+content = """
+Den jedenáctý až třináctý:
+
+Přicházím pro Tebe, můj Mistře. Přicházím! Cesta je volná, nalezl jsem Tvou stezku a omyl ji krví
+
+dvou dělníků, kteří mě zahlédli. Ach, jak sladké bylo rozříznout je, vidět krev vytékat v mohutných proudech, stát v ní, vyžívat se v ní. Kéž bych měl čas
+
+na tu ženskou Sewel. Ale na ni bude času dost. Naučil jsem se Tvé trpělivosti, Mistře. Přicházím pro Tebe. Kráčím Tvými síněmi v pokání, své poslední kroky v tomto
+
+odporném živém těle. Přicházím pro Tebe a Tvé dary, můj Mistře. Sláva Tobě, Khal Ankur, Strážce Sedmé smrti, Mistře, vůdce
+
+Vyvolených, Khaldun. Chvála Tvému jménu, Mistře života a smrti, Pane všeho. Khal Ankur, Mistře, Proroku, této noci vstupuji do Tvých řad, konečně jako příslušník
+
+Khaldun!"""
+
+[translations.fre]
+title = "Le carnet de Lysander"
+content = """
+Du onzième au treizième jour :
+
+Je viens à Toi, mon Maître. Je viens ! La voie est libre, j’ai trouvé Ton chemin et l’ai lavé dans le sang
+
+des deux ouvriers qui m’ont aperçu. Ah, comme il était doux de les éventrer, de voir le sang se déverser à grands flots, de m’y tenir, de m’en délecter. Si seulement j’avais du temps
+
+pour la femme Sewel. Mais il y aura assez de temps pour elle. J’ai appris Ta Patience, Maître. Je viens à Toi. Je parcours Tes couloirs en pénitence, mes derniers pas dans cette
+
+répugnante enveloppe vivante. Je viens à Toi et à Tes Dons, mon Maître. Gloire à Toi, Khal Ankur, Gardien de la Septième Mort, Maître, Guide des
+
+Élus, les Khaldun. Louanges à Ton Nom, Maître de la Vie et de la Mort, Seigneur de Tout. Khal Ankur, Maître, Prophète, je rejoins Tes rangs cette nuit, membre des
+
+Khaldun enfin !"""
+
+[translations.ger]
+title = "Lysanders Notizbuch"
+content = """
+Elfter bis dreizehnter Tag:
+
+Ich komme zu Dir, mein Meister. Ich komme! Der Weg ist frei, ich habe Deinen Pfad gefunden und ihn mit dem Blut
+
+der beiden Arbeiter gewaschen, die mich erblickten. Ach, wie süß war es, sie aufzuschneiden, das Blut in großen Strömen herausquellen zu sehen, darin zu stehen, darin zu schwelgen. Hätte ich nur Zeit
+
+für das Weib Sewel gehabt. Doch für sie wird noch genug Zeit bleiben. Ich habe Deine Geduld gelernt, Meister. Ich komme zu Dir. Ich gehe Deine Hallen in Buße, meine letzten Schritte in dieser
+
+abstoßenden lebenden Hülle. Ich komme zu Dir und Deinen Gaben, mein Meister. Ehre sei Dir, Khal Ankur, Hüter des Siebten Todes, Meister, Führer der
+
+Erwählten, der Khaldun. Lob sei Deinem Namen, Meister über Leben und Tod, Herr über Alles. Khal Ankur, Meister, Prophet, ich trete in dieser Nacht Deinen Reihen bei, endlich ein Mitglied der
+
+Khaldun!"""
+
+[translations.ita]
+title = "Il taccuino di Lysander"
+content = """
+Giorno Undici - Giorno Tredici:
+
+Vengo a Te, mio Padrone. Vengo! La via è sgombra, ho trovato il Tuo sentiero e l'ho lavato nel sangue
+
+dei due operai che mi hanno scorto. Ah, com'è stato dolce squarciarli, vedere il sangue riversarsi in grandi torrenti, starci dentro, gioirne. Se solo avessi tempo
+
+per la donna Sewel. Ma ci sarà tempo abbastanza per lei. Ho imparato la Tua Pazienza, Padrone. Vengo a Te. Percorro i Tuoi corridoi in penitenza, i miei ultimi passi in questa
+
+ripugnante forma vivente. Vengo a Te e ai Tuoi Doni, mio Padrone. Gloria a Te, Khal Ankur, Custode della Settima Morte, Padrone, Guida degli
+
+Eletti, i Khaldun. Lodi nel Tuo Nome, Padrone della Vita e della Morte, Signore di Tutto. Khal Ankur, Padrone, Profeta, stanotte mi unisco alle Tue schiere, membro dei
+
+Khaldun finalmente!"""
+
+[translations.pol]
+title = "Notatnik Lysander"
+content = """
+Dzień jedenasty — dzień trzynasty:
+
+Przybywam do Ciebie, mój Mistrzu. Przybywam! Droga jest wolna, odnalazłem Twą ścieżkę i obmyłem ją krwią
+
+dwóch robotników, którzy mnie dostrzegli. Ach, jak słodko było rozciąć ich, zobaczyć, jak krew wypływa wielkimi strumieniami, stanąć w niej, upajać się nią. Gdybym tylko miał czas
+
+na tę kobietę Sewel. Ale wystarczy czasu i dla niej. Nauczyłem się Twej Cierpliwości, Mistrzu. Przybywam do Ciebie. Kroczę po Twych salach w pokucie, stawiając ostatnie kroki w tej
+
+odrażającej żywej powłoce. Przybywam do Ciebie i po Twe Dary, mój Mistrzu. Chwała Tobie, Khal Ankur, Strażniku Siódmej Śmierci, Mistrzu, Przywódco
+
+Wybranych, Khaldun. Chwała Twemu Imieniu, Mistrzu Życia i Śmierci, Panie Wszystkiego. Khal Ankur, Mistrzu, Proroku, tej nocy wstępuję w Twe szeregi, nareszcie jako członek
+
+Khaldun!"""
+
+[translations.por]
+title = "Caderno de Lysander"
+content = """
+Décimo primeiro dia - Décimo terceiro dia:
+
+Venho buscar Você, meu Mestre. Eu venho! O caminho está livre, encontrei Sua trilha e a lavei no sangue
+
+dos dois trabalhadores que me avistaram. Ah, como foi doce abri-los com um corte, ver o sangue jorrar em grandes torrentes, ficar de pé nele, deleitar-me nele. Se ao menos eu tivesse tempo
+
+para a mulher Sewel. Mas haverá tempo suficiente para ela. Aprendi Sua Paciência, Mestre. Venho buscar Você. Percorro Seus salões em penitência, meus últimos passos neste
+
+corpo vivo repulsivo. Venho buscar Você e Suas Dádivas, meu Mestre. Glória a Você, Khal Ankur, Guardião da Sétima Morte, Mestre, Líder dos
+
+Escolhidos, os Khaldun. Louvores em Seu Nome, Mestre da Vida e da Morte, Senhor de Tudo. Khal Ankur, Mestre, Profeta, junto-me às Suas fileiras nesta noite, um membro dos
+
+Khaldun enfim!"""
+
+[translations.spa]
+title = "Cuaderno de Lysander"
+content = """
+Día once - Día trece:
+
+Vengo por Ti, mi Maestro. ¡Vengo! El camino está despejado; he encontrado Tu senda y la he lavado con la sangre
+
+de los dos trabajadores que me vieron. Ah, qué dulce fue abrirlos, ver brotar la sangre en grandes torrentes, estar de pie en ella, deleitarme en ella. Si tan solo tuviera tiempo
+
+para la mujer Sewel. Pero habrá tiempo suficiente para ella. He aprendido Tu Paciencia, Maestro. Vengo por Ti. Recorro Tus pasillos en penitencia, mis últimos pasos en este
+
+repulsivo cuerpo vivo. Vengo por Ti y por Tus Dones, mi Maestro. Gloria a Ti, Khal Ankur, Guardián de la Séptima Muerte, Maestro, Líder de los
+
+Elegidos, los Khaldun. Alabanzas en Tu Nombre, Maestro de la Vida y la Muerte, Señor de Todo. Khal Ankur, Maestro, Profeta, esta noche me uno a Tus filas, miembro de los
+
+Khaldun al fin."""

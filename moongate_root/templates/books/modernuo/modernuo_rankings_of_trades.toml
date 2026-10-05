@@ -76,3 +76,233 @@ shown extreme
 mastery of their
 craft recently."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Hodnosti v řemeslech"
+content = """
+Ačkoli je pravda, že v každém řemesle nacházíme odlišné tituly a vyznamenání udělované členům daného cechu, přesto potřebujeme pro rozvoj obchodu
+
+a porozumění společné názvosloví hodností.
+Těm, kdo neznají jemné rozdíly mezi
+
+členem Námořního sdružení plavců o třech uzlech a druhým thaumaturgem, poslouží tato kniha jako jednoduchý úvod do obecného žargonu užívaného,
+
+když členové různých cechů a řemeslnických organizací obchodují mezi sebou a musí stanovit vzájemnou úroveň kvalifikace.
+Začátečník
+
+Projevil zájem naučit se řemeslu a trochu skromného nadání.
+Novic
+Procvičuje základní dovednosti, dosud však nebyl přijat do plnoprávného
+
+postavení.
+Učeň
+Student daného oboru.
+Tovaryš
+Oprávněn provozovat obor pod dohledem učitele.
+
+Znalec
+Plnoprávný člen cechu.
+Adept
+Člen cechu způsobilý vyučovat ostatní.
+Mistr
+
+Uznán za způsobilého vést cechovní síň či podnik.
+Velmistr
+Zřídka trvalý titul, v běžné řeči udělovaný těm, kteří
+
+v poslední době prokázali mimořádné ovládnutí svého řemesla."""
+
+[translations.fre]
+title = "Les grades des métiers"
+content = """
+S’il est vrai que, dans chaque métier, l’on trouve différents titres et distinctions accordés aux membres d’une guilde donnée, nous devons néanmoins, pour améliorer le commerce
+
+et la compréhension, disposer de titres communs. Pour ceux qui ignoreraient les distinctions subtiles entre un
+
+membre à trois nœuds de l’Association Maritime des Marins et un second thaumaturge, ce livre servira de simple introduction au jargon commun utilisé
+
+lorsque les membres de guildes et d’organisations de métiers différentes doivent commercer entre eux et établir leurs qualifications respectives.
+Néophyte
+
+A manifesté de l’intérêt pour l’apprentissage du métier et quelque maigre talent.
+Novice
+Pratique les compétences de base, mais n’a pas été admis comme membre
+
+à part entière.
+Apprenti
+Un étudiant de la discipline.
+Compagnon
+Autorisé à pratiquer la discipline sous les yeux d’un tuteur.
+
+Expert
+Un membre à part entière de la guilde.
+Adepte
+Un membre de la guilde qualifié pour enseigner aux autres.
+Maître
+
+Reconnu comme qualifié pour diriger une maison ou une entreprise.
+Grand maître
+Rarement un titre permanent, accordé dans le langage courant à ceux qui ont
+
+récemment montré une maîtrise extrême de leur métier."""
+
+[translations.ger]
+title = "Die Rangstufen der Gewerbe"
+content = """
+Zwar findet man in jedem Gewerbe unterschiedliche Titel und Ehrungen, die den Mitgliedern einer bestimmten Gilde verliehen werden, doch zur Verbesserung des Handels
+
+und des Verständnisses müssen wir eine gemeinsame Benennung haben.
+Für jene, denen die feineren Unterschiede zwischen einem
+
+Drei-Knoten-Mitglied der Seefahrtsvereinigung der Matrosen und einem zweiten Thaumaturgen unbekannt sein mögen, soll dieses Buch eine einfache Einführung in die gemeinsame Fachsprache bieten,
+
+die verwendet wird, wenn Mitglieder verschiedener Gilden und Gewerbeverbände miteinander handeln und ihre Befähigungen im Verhältnis zueinander feststellen müssen.
+Neuling
+
+Hat Interesse am Erlernen des Handwerks und eine geringe Begabung gezeigt.
+Anfänger
+Übt grundlegende Fertigkeiten, ist aber noch nicht zum vollwertigen
+
+Stand zugelassen.
+Lehrling
+Ein Schüler des Fachs.
+Geselle
+Berechtigt, das Fach unter den Augen eines Lehrers auszuüben.
+
+Experte
+Ein vollwertiges Mitglied der Gilde.
+Adept
+Ein Mitglied der Gilde, das befähigt ist, andere zu unterrichten.
+Meister
+
+Als befähigt anerkannt, eine Halle oder ein Geschäft zu leiten.
+Großmeister
+Selten ein dauerhafter Titel; im allgemeinen Sprachgebrauch jenen verliehen, die
+
+jüngst eine außerordentliche Beherrschung ihres Handwerks bewiesen haben."""
+
+[translations.ita]
+title = "I gradi dei mestieri"
+content = """
+Sebbene sia vero che all'interno di ciascun mestiere si trovano diversi titoli e riconoscimenti conferiti ai membri di una data gilda, nondimeno, per il miglioramento del commercio
+
+e della comprensione, dobbiamo avere una nomenclatura comune.
+Per coloro che ignorassero le sottili distinzioni fra un
+
+membro a tre nodi dell'Associazione Marittima dei Marinai e un secondo taumaturgo, questo libro fungerà da semplice introduzione al gergo comune usato
+
+quando membri di diverse gilde e organizzazioni professionali devono commerciare fra loro e stabilire le rispettive qualifiche.
+Neofita
+
+Ha mostrato interesse nell'apprendere il mestiere e un modesto talento.
+Novizio
+Pratica le abilità fondamentali, ma non è stato ammesso al pieno
+
+rango.
+Apprendista
+Uno studente della disciplina.
+Lavorante
+Autorizzato a praticare la disciplina sotto gli occhi di un tutore.
+
+Esperto
+Un membro a pieno titolo della gilda.
+Adepto
+Un membro della gilda qualificato a insegnare agli altri.
+Maestro
+
+Riconosciuto come qualificato a dirigere una sala o un'attività.
+Gran Maestro
+Raramente un titolo permanente, conferito nel linguaggio comune a coloro che hanno
+
+mostrato di recente una padronanza estrema del proprio mestiere."""
+
+[translations.pol]
+title = "Stopnie zawodowe"
+content = """
+Choć prawdą jest, że w każdym zawodzie spotyka się różne tytuły i wyróżnienia nadawane członkom danej gildii, dla usprawnienia handlu
+
+i wzajemnego zrozumienia musimy jednak mieć wspólne nazewnictwo tytułów.
+Dla tych, którzy nie znają subtelnych różnic między
+
+członkiem Morskiego Stowarzyszenia Żeglarzy z trzema węzłami a drugim taumaturgiem, książka ta będzie prostym wprowadzeniem do wspólnej gwary używanej,
+
+gdy członkowie różnych gildii i stowarzyszeń zawodowych muszą handlować ze sobą i ustalać względne kwalifikacje.
+Neofita
+
+Wykazał zainteresowanie nauką rzemiosła i pewien skromny talent.
+Nowicjusz
+Ćwiczy podstawowe umiejętności, lecz nie uzyskał jeszcze pełnego
+
+statusu.
+Uczeń
+Osoba ucząca się dyscypliny.
+Czeladnik
+Upoważniony do praktykowania dyscypliny pod okiem nauczyciela.
+
+Ekspert
+Pełnoprawny członek gildii.
+Adept
+Członek gildii uprawniony do nauczania innych.
+Mistrz
+
+Uznany za uprawnionego do prowadzenia warsztatu lub przedsiębiorstwa.
+Wielki mistrz
+Rzadko tytuł stały, nadawany w powszechnym języku tym, którzy
+
+ostatnio wykazali wyjątkowe mistrzostwo w swym rzemiośle."""
+
+[translations.por]
+title = "As graduações dos ofícios"
+content = """
+Embora seja verdade que, dentro de cada ofício, encontram-se títulos e honrarias diferentes concedidos aos membros de uma determinada guilda, ainda assim, para melhorar o comércio
+
+e a compreensão, precisamos de títulos comuns.
+Para aqueles que desconhecem as distinções mais sutis entre um
+
+membro de três nós da Associação Marítima dos Marinheiros e um segundo taumaturgo, este livro servirá como uma simples introdução ao jargão comum usado
+
+quando membros de diferentes guildas e organizações de ofícios precisam negociar entre si e estabelecer credenciais relativas.
+Neófito
+
+Demonstrou interesse em aprender o ofício e algum modesto talento.
+Novato
+Está praticando habilidades básicas, mas ainda não foi admitido como membro
+
+pleno.
+Aprendiz
+Um estudante da disciplina.
+Oficial
+Autorizado a praticar a disciplina sob a supervisão de um tutor.
+
+Especialista
+Um membro pleno da guilda.
+Adepto
+Um membro da guilda qualificado para ensinar os outros.
+Mestre
+
+Reconhecido como qualificado para dirigir um salão ou negócio.
+Grão-Mestre
+Raramente um título permanente, concedido na linguagem comum àqueles que
+
+demonstraram recentemente um domínio extraordinário de seu ofício."""
+
+[translations.spa]
+title = "Los rangos de los oficios"
+content = """
+Si bien es cierto que en cada oficio encontramos distintos títulos y honores concedidos a los miembros de un gremio, para mejorar el comercio
+
+y la comprensión debemos compartir una nomenclatura. Para quienes desconozcan las distinciones más sutiles entre un
+
+miembro de tres nudos de la Asociación Marítima de Navegantes y un segundo taumaturgo, este libro servirá de introducción sencilla a la jerga común empleada
+
+cuando miembros de distintos gremios y organizaciones de oficios deben comerciar entre sí y establecer sus credenciales relativas. Neófito:
+
+ha mostrado interés por aprender el oficio y cierto talento modesto. Novato: practica las habilidades básicas, pero aún no ha sido admitido como miembro de pleno
+
+derecho. Aprendiz: estudiante de la disciplina. Oficial: autorizado a practicar la disciplina bajo la mirada de un tutor.
+
+Experto: miembro de pleno derecho del gremio. Adepto: miembro del gremio cualificado para enseñar a otros. Maestro:
+
+reconocido como cualificado para dirigir una casa o un negocio. Gran maestro: rara vez es un título permanente; se concede en el habla común a quienes han
+
+demostrado recientemente un dominio extraordinario de su oficio."""

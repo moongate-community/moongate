@@ -34,3 +34,85 @@ have little sound with
 which to sound an
 alarum."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "O lamách"
+content = """
+Lamy jsou zvláštní zvířata, huňatá a vyhledávaná pro svou vlnu, avšak podivně povýšené povahy, která se odráží v jejich očích. Žijí v horských
+
+oblastech, ačkoli kdo je poprvé ochočil, se ztratilo v mlhách dějin.
+Je dobře známo, že lamy lze opravdu ochočit a používat jako pastevní
+
+zvířata pro jejich maso a samozřejmě i vlnu. Méně známé však je, že jejich mrzutá povaha a sklon plivat na ty, které nemají rády,
+
+z nich činí také přitažlivá hlídací zvířata, ačkoli mají slabý hlas k vyhlašování poplachu."""
+
+[translations.fre]
+title = "À propos des lamas"
+content = """
+Les lamas sont de curieuses bêtes, hirsutes et recherchées pour leur laine, mais d’un tempérament étrangement arrogant qui se reflète dans leurs yeux. Ils vivent dans des régions montagneuses,
+
+quoique le nom de ceux qui les ont apprivoisés les premiers se perde dans les brumes de l’histoire. Il est bien connu que les lamas peuvent bel et bien être apprivoisés et utilisés comme animaux de pâturage,
+
+pour leur viande et, bien sûr, pour leur laine. Cependant, l’on sait moins que leur humeur acariâtre et leur tendance à cracher sur ceux qu’ils n’aiment pas
+
+en font aussi d’intéressantes créatures de garde, bien qu’ils n’aient guère de voix pour donner l’alarme."""
+
+[translations.ger]
+title = "Über Lamas"
+content = """
+Lamas sind seltsame Tiere, zottelig und wegen ihrer Wolle begehrt, doch von einer merkwürdig hochmütigen Art, die sich in ihren Augen spiegelt. Sie leben in bergigen
+
+Gegenden, doch wer sie zuerst gezähmt haben mag, ist im Nebel der Geschichte verloren.
+Es ist wohlbekannt, dass Lamas tatsächlich gezähmt und als Weidetiere,
+
+wegen ihres Fleisches und natürlich wegen ihrer Wolle gehalten werden können. Weniger bekannt ist jedoch, dass ihre störrische Art und ihre Neigung, jene anzuspucken, die sie nicht mögen,
+
+sie auch zu reizvollen Wachtieren machen, obwohl sie kaum einen Laut haben, mit dem sie Alarm schlagen könnten."""
+
+[translations.ita]
+title = "A proposito dei lama"
+content = """
+I lama sono bestie curiose, irsute e ricercate per la loro lana, eppure dall'indole curiosamente arrogante che si riflette nei loro occhi. Vivono in zone montuose,
+
+sebbene chi possa averli addomesticati per primo si perda nelle nebbie della storia.
+È un fatto ben noto che i lama possono davvero essere addomesticati e usati come animali da pascolo,
+
+per la carne e naturalmente per la lana. Eppure è meno noto che la loro indole scontrosa e la tendenza a sputare su chi non gradiscono
+
+li rendono anche apprezzate creature da guardia, sebbene abbiano ben poca voce con cui dare l'allarme."""
+
+[translations.pol]
+title = "O lamach"
+content = """
+Lamy są osobliwymi zwierzętami, kudłatymi i cenionymi za wełnę, lecz o dziwnie aroganckim usposobieniu, widocznym w ich oczach. Żyją na terenach górzystych,
+
+choć kto pierwszy je oswoił, zaginęło w mrokach historii.
+Powszechnie wiadomo, że lamy można istotnie oswoić i hodować jako zwierzęta wypasane
+
+dla mięsa i oczywiście wełny. Mniej znany jest fakt, że ich złośliwe usposobienie oraz skłonność do plucia na tych, których nie lubią,
+
+czynią z nich również atrakcyjnych stróżów, choć nie dysponują zbyt donośnym głosem, by wszczynać alarm."""
+
+[translations.por]
+title = "Sobre as lhamas"
+content = """
+As lhamas são animais curiosos, peludos e procurados por sua lã, mas de uma disposição curiosamente arrogante que se reflete em seus olhos. Vivem em regiões montanhosas,
+
+embora quem as tenha domesticado pela primeira vez tenha se perdido nas brumas da história.
+É fato conhecido que as lhamas podem realmente ser domesticadas e usadas como animais de pastoreio,
+
+por sua carne e, naturalmente, por sua lã. Porém, é menos conhecido que seu temperamento rabugento e sua tendência de cuspir naqueles de quem não gostam
+
+também as tornam atraentes como criaturas de guarda, embora tenham pouca voz para soar um alarme."""
+
+[translations.spa]
+title = "Sobre las llamas"
+content = """
+Las llamas son bestias curiosas, peludas y apreciadas por su lana, aunque poseen un carácter extrañamente arrogante que se refleja en sus ojos. Viven en zonas
+
+montañosas, pero quién las domesticó por primera vez se ha perdido en las brumas de la historia. Es bien sabido que las llamas pueden domesticarse y criarse como animales de
+
+pastoreo, por su carne y, desde luego, por su lana. Sin embargo, es menos conocido que su temperamento arisco y su tendencia a escupir a quienes les desagradan
+
+también las hacen atractivas como animales guardianes, aunque apenas disponen de sonidos con los que dar la alarma."""

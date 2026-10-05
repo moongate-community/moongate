@@ -47,3 +47,122 @@ his or mine, I can no
 
 longer tell."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Denní zápisky Grimmoch Drummel"
+content = """
+Den sedmnáctý až dvaadvacátý:
+
+Boj nikdy neustává... krev nikdy nepřestává téct jako řeka mezi nafouklými těly
+
+mrtvých. A přece jich stále přibývá. Vždy další, s rudým ohněm zářícím v očích. Bolí mě ruka, chopil jsem se meče, protože můj luk zřejmě mnoho
+
+nezmůže... tupá bolest v ruce... tolik úderů, prosekávání hory rozkládajícího se masa. A Thomas... byl tam, uprostřed toho všeho... Thomas byl vedle mě...
+
+tvář rozpolcenou – a přece vedle mě, bojoval s námi proti hordě, dokud nebyl znovu sražen. A přísahám, že ho vidím i teď, tam v temném
+
+koutě předsíně; oči mu blikají v posledních dohasínajících uhlících ohně... a zírá na mě a klenbu naplňuje křik – jeho, nebo můj, to už
+
+nedokážu říct."""
+
+[translations.fre]
+title = "Le journal quotidien de Grimmoch Drummel"
+content = """
+Du dix-septième au vingt-deuxième jour :
+
+Les combats ne cessent jamais... le sang ne cesse jamais de couler, comme une rivière parmi les cadavres gonflés
+
+des morts. Et pourtant, il en vient encore. Toujours davantage, le feu rouge brillant dans leurs yeux. Mon bras me fait mal ; j’ai pris l’épée, car mon arc semble peu
+
+utile... cette douleur sourde dans mon bras... tant de coups, fendant une montagne de chair en décomposition. Et Thomas... il était là, au plus fort des combats... Thomas était à côté de moi...
+
+son visage fendu en deux, et pourtant à côté de moi, combattant avec nous contre la horde jusqu’à ce qu’il soit abattu une nouvelle fois. Et je jure que je le vois encore à présent, là, dans le coin sombre
+
+de l’antichambre, ses yeux vacillant dans les dernières braises mourantes du feu... et il me fixe, et un cri emplit la voûte ; le sien ou le mien, je ne peux
+
+plus le dire."""
+
+[translations.ger]
+title = "Grimmoch Drummels tägliches Tagebuch"
+content = """
+Siebzehnter bis zweiundzwanzigster Tag:
+
+Der Kampf hört nie auf ... das Blut fließt unaufhörlich wie ein Fluss durch die aufgequollenen Leichen der
+
+Toten. Und doch kommen noch mehr. Immer mehr, mit dem roten Feuer in ihren Augen. Mein Arm schmerzt, ich greife nun zum Schwert, da mein Bogen wenig
+
+auszurichten scheint ... der dumpfe Schmerz in meinem Arm ... so viele Hiebe, die einen Berg verwesenden Fleisches spalten. Und Thomas ... er war da, mitten darin ... Thomas war neben mir ...
+
+sein Gesicht entzwei gespalten – und doch neben mir, kämpfte mit uns gegen die Horde, bis er erneut niedergehauen wurde. Und ich schwöre, ich sehe ihn selbst jetzt noch, dort in der dunklen
+
+Ecke der Vorhalle, seine Augen flackern in der letzten erlöschenden Glut des Feuers ... und er starrt mich an, und ein Schrei erfüllt das Gewölbe – ob seiner oder meiner, kann ich nicht
+
+mehr unterscheiden."""
+
+[translations.ita]
+title = "Il diario quotidiano di Grimmoch Drummel"
+content = """
+Giorno Diciassette - Giorno Ventidue :
+
+I combattimenti non cessano mai... il sangue non smette mai di scorrere, come un fiume fra i cadaveri gonfi dei
+
+morti. Eppure ce ne sono ancora. Sempre di più, con il fuoco rosso che brilla nei loro occhi. Mi duole il braccio, ho preso la spada, poiché il mio arco sembra servire a
+
+poco... il dolore sordo nel braccio... tanti fendenti, a squarciare una montagna di carne in putrefazione. E Thomas... era lì, nel cuore della mischia... Thomas era accanto a me...
+
+il volto spaccato in due, eppure accanto a me, a combattere con noi contro l'orda finché non è stato abbattuto di nuovo. E giuro che lo vedo anche ora, là nell'angolo buio
+
+dell'anticamera, i suoi occhi che tremolano nelle ultime braci morenti del fuoco... e mi fissa, e un urlo riempie la volta; che sia il suo o il mio, non riesco
+
+più a dirlo."""
+
+[translations.pol]
+title = "Dziennik codzienny Grimmoch Drummel"
+content = """
+Dzień siedemnasty — dzień dwudziesty drugi:
+
+Walka nigdy nie ustaje... krew nigdy nie przestaje płynąć, niczym rzeka pośród rozdętych ciał
+
+zmarłych. A jednak wciąż jest ich więcej. Zawsze więcej, z czerwonym ogniem błyszczącym w oczach. Boli mnie ramię; chwyciłem miecz, gdyż mój łuk niewiele chyba
+
+pomaga... tępy ból w ramieniu... tyle zamachów, rozcinających górę rozkładającego się mięsa. A Thomas... był tam, w samym środku... Thomas był obok mnie...
+
+jego twarz rozłupana na dwoje — a jednak obok mnie, walczący z nami przeciw hordzie, dopóki znów go nie powalono. I przysięgam, że widzę go nawet teraz, tam w ciemnym
+
+kącie przedsionka, jego oczy migoczą w ostatnich gasnących węglach ognia... i wpatruje się we mnie, a krzyk wypełnia sklepioną komnatę — jego czy mój, już nie
+
+potrafię powiedzieć."""
+
+[translations.por]
+title = "O diário de Grimmoch Drummel"
+content = """
+Décimo sétimo dia - Vigésimo segundo dia:
+
+A luta nunca cessa... o sangue nunca para de correr, como um rio entre os cadáveres inchados dos
+
+mortos. E, ainda assim, há mais. Sempre mais, com o fogo vermelho brilhando em seus olhos. Meu braço dói; passei a usar a espada, pois meu arco parece pouco
+
+adiantar... a dor surda no braço... tantos golpes, abrindo caminho numa montanha de carne em decomposição. E Thomas... ele estava lá, no meio de tudo... Thomas estava ao meu lado...
+
+com o rosto dividido em dois, e, ainda assim, ao meu lado, lutando conosco contra a horda até ser derrubado mais uma vez. E juro que o vejo até agora, ali no canto escuro
+
+da antecâmara, seus olhos tremeluzindo nas últimas brasas moribundas do fogo... e ele me encara, e um grito enche a cripta; se é dele ou meu, já não
+
+sei dizer."""
+
+[translations.spa]
+title = "El diario de Grimmoch Drummel"
+content = """
+Día diecisiete - Día veintidós:
+
+La lucha nunca cesa... la sangre nunca deja de fluir, como un río entre los cuerpos hinchados de
+
+los muertos. Y aun así llegan más. Siempre más, con fuego rojo brillando en sus ojos. Me duele el brazo; he recurrido a la espada, pues mi arco parece servir de
+
+poco... el dolor sordo en el brazo... tantos golpes, hendiendo una montaña de carne en descomposición. Y Thomas... estaba allí, en medio de todo... Thomas estaba a mi lado...
+
+con la cara partida en dos, y aun así a mi lado, luchando con nosotros contra la horda hasta que volvió a caer. Y juro que lo veo incluso ahora, allí, en el rincón oscuro
+
+de la antecámara; sus ojos titilan entre las últimas brasas moribundas del fuego... y me mira fijamente, y un grito llena la bóveda: si es suyo o mío, ya no
+
+puedo distinguirlo."""

@@ -132,3 +132,259 @@ that we are harming
 ourselves in the
 process."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "O rozmanitosti naší země"
+content = """
+Ačkoli odsuzuji pustošení, jež páchají pomýlené a bojovné rasy, s nimiž sdílíme naši krásnou zemi Britannia, a spolu s obyvatelstvem truchlím nad zbytečnými
+
+úmrtími způsobenými jejich nájezdy, nemohu schvalovat politiku plošného vyvražďování těchto ras, která se zdá být zvykem naší vojenské vrstvy.
+
+Nemůžeme snad na krysí lidi, ještěří lidi a skřety pohlížet jako na další rozumné bytosti, s nimiž sdílíme planetu? Proč je musíme zabíjet hned, jak je spatříme, místo abychom
+
+se s nimi pokusili navázat rozhovor? Nemáme přece zásadu střílet na bludičky, když nás poctí svou přítomností (ne že by je šíp mohl nějak
+
+probodnout!).
+Považovat tyto tvory za havěť znamená popírat jejich zjevnou inteligenci a nesmíme podceňovat následky, které jejich vyvražďování
+
+může mít. Považujeme-li zabití bližního člověka za zločin, musíme tak pohlížet i na zabití skřeta.
+Zároveň, pokud ještěří člověk
+
+zabije člověka, neměli bychom mu odpustit jeho nevědomost a pošetilost? Nevzdávejme se mravní převahy tím, že klesneme k bestialitě.
+
+Netvrdím nyní, že bychom se při napadení neměli bránit, neboť i mezi lidmi vidíme válku, hladomor a násilí (ačkoli
+
+dlužíme vděčnost našemu pánu Lord British za to, že nás uchránil před jejich nejhoršími podobami!). Výpady, jako byla nedávná tragédie, která nás stála
+
+život paladina Japheth, mistra cechu paladinů Trinsic, jsou však pošetilostí.
+S paladinem Japheth jsem se setkal a jako všichni paladinové i on hořel vnitřním ohněm. Avšak
+
+třebaže jsem si jej nesmírně vážil, nikdo nemohl popřít nenávist, která mu zableskla v očích při pouhé zmínce o skřetech. A tak přenesl svůj boj do
+
+skřetích táborů a tam zemřel, neschopen povznést se nad vlastní zážitky z dětství popsané v jeho knize „Vypálení Trinsic“. Jaká škoda, že i naši
+
+nejmocnější muži podléhají takové nevědomosti!
+Což neexistují pověsti o skřetech, kteří přijímají lidské děti a vychovávají je jako vlastní? Příběhy o
+
+složitých společnostech vybudovaných v podzemí rasami, jež považujeme za zvířecí?
+Neopakujme chybu paladina Japheth a přestaňme pronásledovat
+
+nelidské rasy, než zjistíme, že tím škodíme sami sobě."""
+
+[translations.fre]
+title = "De la diversité de notre pays"
+content = """
+Si je déplore les déprédations des races égarées et belliqueuses avec lesquelles nous partageons notre belle Britannia et pleure, avec la population, les morts inutiles
+
+que causent leurs raids, je ne puis approuver la politique de massacre général de ces races qui semble être la coutume de nos gens d’armes.
+
+Ne pouvons-nous considérer les hommes-rats, les hommes-lézards et les orques comme nos semblables intelligents, avec lesquels nous partageons une planète ? Pourquoi devons-nous les tuer à vue au lieu de
+
+tenter d’engager le dialogue ? Il n’existe aucune politique consistant à tirer sur les feux follets lorsqu’ils nous font l’honneur de leur présence (encore qu’une flèche ne puisse guère les
+
+transpercer !). Voir dans ces créatures de la vermine revient à nier leur intelligence manifeste, et nous ne pouvons sous-estimer les répercussions que leur massacre
+
+peut avoir. Si nous considérons le meurtre de nos semblables humains comme un crime, il doit en aller de même pour la mise à mort d’un orque. Dans le même temps, si un homme-lézard
+
+tue un humain, ne devrions-nous point pardonner son ignorance et sa sottise ? N’abandonnons pas notre supériorité morale en nous abaissant à la bestialité.
+
+Or, je ne dis point que nous devrions manquer de nous défendre en cas d’attaque, car même parmi les humains nous voyons la guerre, la famine et les agressions (bien que nous
+
+ayons une dette de gratitude envers notre Lord British, qui nous préserve de leurs pires manifestations !). Cependant, des incursions telles que la récente tragédie qui nous a coûté
+
+la vie de Japheth, maître de la guilde des Paladins de Trinsic, sont une folie. J’avais rencontré Japheth, et comme tous les paladins, il brûlait d’un feu intérieur. Pourtant,
+
+quoique j’eusse pour lui le plus grand respect, nul ne pouvait nier la haine qui étincelait dans ses yeux à la seule mention des orques. Ainsi porta-t-il la bataille jusqu’aux
+
+camps orques, et y mourut, incapable de s’élever au-dessus des expériences de son enfance décrites dans son livre, « L’incendie de Trinsic ». Quelle honte que même nos
+
+hommes les plus puissants soient la proie de cette ignorance ! N’existe-t-il point des légendes d’orques adoptant des enfants humains pour les élever comme les leurs ? Des récits de
+
+sociétés complexes bâties sous terre par des races que nous considérons comme bestiales ? Ne répétons pas l’erreur de Japheth des Paladins, et cessons de persécuter les
+
+races non humaines, avant de découvrir que nous nous faisons du mal à nous-mêmes par la même occasion."""
+
+[translations.ger]
+title = "Über die Vielfalt unseres Landes"
+content = """
+Obwohl ich die Verwüstungen durch die fehlgeleiteten und kriegerischen Völker beklage, mit denen wir unser schönes Britannia teilen, und mit dem Volk um die unnötigen
+
+Toten ihrer Raubzüge trauere, kann ich die Politik des unterschiedslosen Abschlachtens dieser Völker nicht billigen, die bei unseren Kriegern üblich zu sein scheint.
+
+Können wir die Rattenmenschen, Echsenmenschen und Orks nicht als intelligente Mitgeschöpfe betrachten, mit denen wir einen Planeten teilen? Warum müssen wir sie beim ersten Anblick töten, anstatt
+
+zu versuchen, mit ihnen ins Gespräch zu kommen? Es gibt keine Vorschrift, auf Irrlichter zu schießen, wenn sie uns mit ihrer Gegenwart beehren (nicht, dass ein Pfeil viel ausrichten könnte, um
+
+sie zu durchbohren!).
+Diese Geschöpfe als Ungeziefer anzusehen, leugnet ihre offensichtliche Intelligenz, und wir dürfen die Folgen nicht unterschätzen, die ihr Abschlachten
+
+haben mag. Betrachten wir das Töten von Mitmenschen als Verbrechen, so müssen wir auch das Töten eines Orks so betrachten.
+Wenn zugleich ein Echsenmensch
+
+einen Menschen erschlägt, sollten wir ihm nicht seine Unwissenheit und Torheit verzeihen? Geben wir unsere moralische Überlegenheit nicht auf, indem wir zu tierischer Grausamkeit herabsinken.
+
+Nun sage ich nicht, wir sollten uns bei einem Angriff nicht verteidigen, denn selbst unter Menschen sehen wir Krieg, Hunger und Überfälle (wenngleich wir
+
+unserem Lord British Dank dafür schulden, dass er uns vor dem Schlimmsten bewahrt!). Doch Vorstöße wie das jüngste Unglück, das uns
+
+das Leben Japheths, des Gildenmeisters von Trinsics Paladinen, kostete, sind Torheit.
+Ich war Japheth begegnet, und wie alle Paladine brannte in ihm ein inneres Feuer. Doch
+
+obwohl ich ihm die größte Achtung entgegenbrachte, konnte niemand den Hass leugnen, der beim bloßen Erwähnen von Orks in seinen Augen aufblitzte. Und so trug er seinen Kampf in
+
+die Orklager und starb dort, unfähig, sich über die eigenen Kindheitserfahrungen zu erheben, die er in seinem Buch „Der Brand von Trinsic“ schilderte. Es ist eine Schande, dass selbst unsere
+
+mächtigsten Männer dieser Unwissenheit zum Opfer fallen!
+Gibt es nicht Sagen von Orks, die Menschenkinder annehmen, um sie wie ihre eigenen aufzuziehen? Geschichten von
+
+vielschichtigen Gesellschaften, die unter der Erde von Völkern errichtet werden, die wir für tierisch halten?
+Wiederholen wir nicht den Fehler Japheths von den Paladinen und hören wir auf, die
+
+nichtmenschlichen Völker zu verfolgen, ehe wir entdecken, dass wir dabei uns selbst schaden."""
+
+[translations.ita]
+title = "Sulla diversità della nostra terra"
+content = """
+Sebbene io deplori le devastazioni delle razze traviate e bellicose con cui condividiamo la nostra bella Britannia e, insieme al popolo, pianga le inutili
+
+morti causate dalle loro incursioni, non posso approvare la politica di sterminio di queste razze che sembra essere l'abitudine della nostra componente militare.
+
+Non possiamo considerare gli uomini ratto, gli uomini lucertola e gli orchi come altri esseri intelligenti con cui condividiamo un pianeta? Perché dobbiamo ucciderli a vista, anziché
+
+tentare di dialogare con loro? Non esiste alcuna politica di tirare frecce ai fuochi fatui quando ci onorano della loro presenza (non che una freccia possa far molto per
+
+trafiggerli!).
+Considerare queste creature come parassiti nega la loro evidente intelligenza, e non possiamo sottovalutare le ripercussioni che il loro massacro
+
+può avere. Se consideriamo un crimine l'uccisione di altri esseri umani, allo stesso modo dobbiamo considerare l'uccisione di un orco.
+Al contempo, se un uomo lucertola
+
+uccide un umano, non dovremmo perdonarne l'ignoranza e la stoltezza? Non rinunciamo alla nostra superiorità morale scendendo alla bestialità.
+
+Ora, non dico che dovremmo mancare di difenderci in caso di attacco, poiché persino fra gli umani vediamo la guerra, vediamo la carestia e vediamo l'aggressione (sebbene
+
+dobbiamo gratitudine al nostro Lord British per averci preservato dal peggio di tutto questo!). Tuttavia, incursioni quali la recente tragedia che ci è costata
+
+la vita di Japheth, Maestro della Gilda dei Paladini di Trinsic, sono follia.
+Avevo conosciuto Japheth e, come tutti i paladini, ardeva di un fuoco interiore. Eppure,
+
+sebbene nutrissi per lui il massimo rispetto, nessuno poteva negare l'odio che balenava nei suoi occhi al solo menzionare gli orchi. E così portò la sua battaglia negli
+
+accampamenti degli orchi e vi morì, incapace di superare le proprie esperienze infantili descritte nel suo libro, «L'incendio di Trinsic». È un peccato che persino i nostri
+
+uomini più possenti cadano preda di questa ignoranza!
+Non esistono forse leggende di orchi che adottano bambini umani per allevarli come propri? Racconti di
+
+società complesse costruite sottoterra da razze che consideriamo bestiali?
+Non ripetiamo l'errore di Japheth dei Paladini, e smettiamo di perseguitare le
+
+razze non umane, prima di scoprire che nel farlo danneggiamo noi stessi."""
+
+[translations.pol]
+title = "O różnorodności naszej ziemi"
+content = """
+Choć ubolewam nad grabieżami błędnie postępujących, wojowniczych ras, z którymi dzielimy naszą piękną Britannia, i wraz z ludem opłakuję niepotrzebne
+
+śmierci powodowane ich najazdami, nie mogę pochwalić polityki masowej rzezi tych ras, która zdaje się zwyczajem naszych wojskowych.
+
+Czy nie możemy uznać szczurołaków, jaszczuroludzi i orków za inne rozumne istoty, z którymi dzielimy planetę? Dlaczego musimy zabijać ich na widok, zamiast
+
+próbować nawiązać rozmowę? Nie ma zwyczaju strzelania do błędnych ogników, kiedy zaszczycają nas swą obecnością (nie żeby strzała mogła łatwo je
+
+przebić!).
+Traktowanie tych stworzeń jak szkodników zaprzecza ich oczywistej inteligencji, a nie możemy lekceważyć skutków, jakie ich rzeź
+
+może przynieść. Jeśli uznajemy zabicie drugiego człowieka za zbrodnię, tak samo musimy traktować zabicie orka.
+Jednocześnie, jeśli jaszczurolud
+
+zabije człowieka, czyż nie powinniśmy wybaczyć mu niewiedzy i głupoty? Nie wyrzekajmy się wyższości moralnej, zniżając się do bestialstwa.
+
+Nie twierdzę przy tym, że nie powinniśmy bronić się przed atakiem, gdyż nawet wśród ludzi widzimy wojny, głód i napaści (choć
+
+winniśmy wdzięczność naszemu Lord British za ochronę przed najgorszymi z nich!). Jednak wypady takie jak niedawna tragedia, która kosztowała nas
+
+życie Japheth, mistrza Gildii Paladynów Trinsic, są głupotą.
+Spotkałem Japheth i, jak wszyscy paladyni, płonął wewnętrznym ogniem. Jednak
+
+choć darzyłem go największym szacunkiem, nikt nie mógł zaprzeczyć nienawiści błyskającej w jego oczach na samą wzmiankę o orkach. Dlatego przeniósł swą walkę do
+
+orczych obozów i tam zginął, nie potrafiąc wznieść się ponad doświadczenia dzieciństwa opisane w swej książce „Spalenie Trinsic”. Wstyd, że nawet nasi
+
+najpotężniejsi mężowie padają ofiarą tej niewiedzy!
+Czyż nie istnieją legendy o orkach przygarniających ludzkie dzieci, by wychować je jak własne? Opowieści o
+
+złożonych społeczeństwach zbudowanych pod ziemią przez rasy, które uważamy za zwierzęce?
+Nie powtarzajmy błędu Japheth z Paladynów i przestańmy prześladować
+
+nieludzkie rasy, nim odkryjemy, że przy tym krzywdzimy samych siebie."""
+
+[translations.por]
+title = "Sobre a diversidade de nossa terra"
+content = """
+Embora eu deplore as depredações das raças mal orientadas e beligerantes com as quais compartilhamos nossa bela Britannia e, junto com a população, lamente as mortes desnecessárias
+
+que suas incursões causam, não posso apoiar a política de extermínio dessas raças que parece ser o hábito de nossos soldados.
+
+Não podemos considerar os homens-rato, os homens-lagarto e os orcs como outros seres inteligentes com os quais compartilhamos um planeta? Por que precisamos matá-los assim que os vemos, em vez de
+
+tentar dialogar com eles? Não existe uma política de disparar contra wisps quando nos agraciam com sua presença (não que uma flecha pudesse fazer muito para
+
+perfurá-los!).
+Considerar essas criaturas como pragas nega sua inteligência evidente, e não podemos subestimar as repercussões que seu extermínio
+
+pode ter. Se consideramos um crime matar outros humanos, também devemos considerar assim a morte de um orc.
+Ao mesmo tempo, caso um homem-lagarto
+
+mate um humano, não devemos perdoar sua ignorância e tolice? Não abandonemos nossa superioridade moral descendo à bestialidade.
+
+Agora, não digo que devamos deixar de nos defender em caso de ataque, pois mesmo entre humanos vemos guerras, fome e agressões (embora
+
+devamos gratidão a nosso Lord British por nos preservar do pior desses males!). Contudo, incursões como a recente tragédia que nos custou
+
+a vida de Japheth, mestre da Guilda dos Paladinos de Trinsic, são uma insensatez.
+Eu conheci Japheth e, como todos os paladinos, ele ardia com um fogo interior. Ainda assim,
+
+embora eu tivesse por ele o maior respeito, ninguém podia negar o ódio que lampejava em seus olhos à simples menção dos orcs. E assim levou sua batalha aos
+
+acampamentos orcs e morreu lá, incapaz de superar suas próprias experiências de infância retratadas em seu livro \"O incêndio de Trinsic\". É uma vergonha que até nossos
+
+homens mais poderosos sejam vítimas dessa ignorância!
+Não existem lendas de orcs que adotam crianças humanas para criá-las como suas? Histórias de
+
+sociedades complexas construídas no subsolo por raças que consideramos bestiais?
+Não repitamos o erro de Japheth dos Paladinos e deixemos de perseguir as
+
+raças não humanas, antes de descobrir que estamos prejudicando a nós mesmos nesse processo."""
+
+[translations.spa]
+title = "Sobre la diversidad de nuestra tierra"
+content = """
+  Aunque deploro las depredaciones de las razas descarriadas y belicosas con las que compartimos nuestra hermosa Britannia y, junto al pueblo, lloro las muertes innecesarias
+
+que causan sus incursiones, no puedo aprobar la política de exterminio indiscriminado de esas razas que parece habitual entre nuestros soldados.
+
+  ¿No podemos considerar a los hombres rata, los hombres lagarto y los orcos como otros seres inteligentes con los que compartimos un planeta? ¿Por qué debemos matarlos en cuanto los vemos, en lugar de
+
+intentar entablar un diálogo con ellos? No existe una política de disparar contra los fuegos fatuos cuando nos honran con su presencia —¡y tampoco es que una flecha pudiera hacer mucho por
+
+atravesarlos!—. Considerar alimañas a estas criaturas supone negar su evidente inteligencia, y no podemos subestimar las repercusiones que su matanza
+
+puede tener. Si consideramos un delito matar a otros humanos, también debemos considerar así la muerte de un orco. Al mismo tiempo, si un hombre lagarto
+
+mata a un humano, ¿no deberíamos perdonar su ignorancia y necedad? No renunciemos a nuestra superioridad moral descendiendo a la bestialidad.
+
+  No digo, sin embargo, que debamos dejar de defendernos en caso de ataque, pues incluso entre los humanos vemos guerras, hambre y agresiones —aunque
+
+debemos gratitud a nuestro Lord British por habernos librado de lo peor de estos males—. Pero incursiones como la reciente tragedia que nos costó
+
+la vida de Japheth, maestro del gremio de paladines de Trinsic, son una insensatez. Había conocido a Japheth y, como todos los paladines, ardía con un fuego interior. Pero,
+
+pese al enorme respeto que le profesaba, nadie podía negar el odio que brillaba en sus ojos ante la mera mención de los orcos. Así llevó su lucha a
+
+los campamentos orcos y murió allí, incapaz de superar las experiencias de su infancia que describía en su libro «El incendio de Trinsic». ¡Es una vergüenza que incluso nuestros
+
+hombres más poderosos caigan presa de esta ignorancia! ¿Acaso no existen leyendas de orcos que adoptan niños humanos para criarlos como propios? ¿Relatos de
+
+sociedades complejas construidas bajo tierra por razas que consideramos bestiales? No repitamos el error de Japheth de los paladines y dejemos de perseguir a las
+
+razas no humanas antes de descubrir que, al hacerlo, nos estamos perjudicando a nosotros mismos."""

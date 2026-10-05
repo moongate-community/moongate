@@ -142,3 +142,268 @@ struck down by the
 orc that she called
 father."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Divoká dívka z lesa"
+content = """
+Říkala, že se jmenuje Leyla, a vlasy měla divoce propletené popínavými rostlinami a trním. Divil jsem se, že ji nezraňují, ale když jsem se zeptal, jen
+
+pokrčila rameny a nechala oči znovu bloudit lesem. Ačkoli jsem měl ruce pevně spoutané jejími provazy, svrběly mě touhou vztáhnout je a učesat
+
+tu nezkrocenou zlatou hřívu, špinavou a plnou listí.
+Za nocí osvětlených táborovými ohni mi vyprávěla, že kdysi pocházela z města Trinsic.
+
+Tvrdila, že ji unesli a vychovali skřeti, což jsem pokládal za nepravděpodobný příběh, neboť každý ví, že skřeti si libují v pojídání masa poctivých lidí. Když jsem jí to řekl,
+
+zasmála se podivným smíchem a vesele připustila, že ona poctivá není, neboť často unášela lidi z karavan, aby jejich bezvědomá těla oloupila
+
+o majetek!
+Při tom jsem se začal obávat o život a její úsměv jako by odhaloval zuby ostřejší, než by člověk měl mít, neboť příběh o skřetí výchově
+
+mi zasel strach až do morku kostí. „Sníš mě?“ zeptal jsem se roztřeseně a bál se odpovědi.
+Naklonila ke mně hlavu jako divoké zvíře, které slyší
+
+slovo, jemuž nerozumí, a upřenost jejích očí dovolovala nahlédnout do hlubších končin Propasti. Nakonec však zabručela a řekla „Ne“
+
+hlasem, který mi připomínal dítě. „Ne,“ řekla, „protože mi připomínáš chlapce, kterého jsem kdysi znala, když jsem byla dívka hrající si ve městě velikých pískovcových
+
+hradeb, než mě odvedli. Měl vlasy pískové barvy jako ty a jako dítě jsem snila, že ho držím za ruku a dělíme se o ochucenou tříšť. Jmenoval se Japheth.“
+
+Příštího rána mě pustila, zbaveného váčku i šatů, a přikázala mi běžet lesem a obávat se opětovného dopadení, neboť její srdce by už jistě
+
+neobměklo. Byl to děsivý běh a na cestu do Yew jsem se dostal s pokožkou plnou podlitin a škrábanců, ale ji jsem znovu neviděl.
+
+Často jsem přemýšlel o chlapci jménem Japheth a o tom, zda si pamatuje dívku, která žila v pískovcových hradbách. Jediný Japheth, kterého znám, je
+
+mistr cechu paladinů, jenž loni zemřel v boji mezi skřety, a ačkoli opravdu měl vlasy pískové barvy, nedovedu si ho představit po boku divoké dívky,
+
+jejíž jazyk okusil lidské maso.
+Cesty osudu jsou však vskutku podivné a myslím, že je možné, že tento paladin zemřel
+
+při obraně cti své vzpomínané milé, nevědomky sražen skřetem, kterému ona říkala otče."""
+
+[translations.fre]
+title = "La fille sauvage de la forêt"
+content = """
+Elle s’appelait Leyla, disait-elle, et ses cheveux étaient sauvagement tressés de lianes et d’épines. Je m’étonnais qu’elles ne lui fassent pas mal, mais lorsque je le demandai, elle se contenta de
+
+hausser les épaules et laissa de nouveau ses yeux parcourir les bois. Bien que mes mains fussent solidement attachées par ses cordes, je brûlais d’envie de les tendre pour peigner
+
+cette indocile crinière dorée, sale et pleine de feuilles. Elle venait jadis de la ville de Trinsic, me dit-elle au fil de nuits éclairées par les feux de camp.
+
+Elle prétendait avoir été enlevée et élevée par des orques, ce que je jugeai peu vraisemblable, car chacun sait que les orques prennent plaisir à manger la chair des honnêtes gens. Quand je lui dis cela,
+
+elle eut un rire étrange et avoua gaiement qu’elle n’était pas honnête, car souvent elle avait enlevé des gens aux caravanes pour piller leurs possessions sur leur corps
+
+inconscient ! À ces mots, je commençai à craindre pour ma vie, et son sourire parut rempli de dents plus acérées qu’un humain ne devrait en avoir, car son récit d’éducation orque avait
+
+fait pénétrer la peur jusqu’à la moelle de mes os. « Me mangerez-vous ? » demandai-je, tout tremblant, craignant la réponse. Et elle pencha la tête vers moi comme un animal sauvage face à un
+
+mot qu’il ne comprend pas ; la fixité de ses yeux offrait un aperçu des profondeurs les plus reculées de l’Abîme. Mais elle finit par grogner et dit « Non » d’une
+
+voix qui me rappelait un enfant. « Non, dit-elle, car tu me rappelles un garçon que je connaissais autrefois, lorsque j’étais une fillette qui jouait dans une ville aux grandes murailles de grès,
+
+avant d’être emmenée. Il avait les cheveux couleur de sable, comme toi, et enfant je rêvais de lui tenir la main et de partager une glace parfumée. Il s’appelait Japheth. »
+
+Le lendemain matin, elle me laissa partir, dépouillé de ma bourse et de mes vêtements, et m’ordonna de courir à travers les bois et de craindre d’être repris, car assurément son cœur ne
+
+s’attendrirait plus. Ce fut une course effroyable, et j’atteignis la route de Yew avec des marques et des égratignures partout sur la peau, mais je ne la revis pas.
+
+Souvent je me suis interrogé sur ce garçon nommé Japheth, et sur la possibilité qu’il se souvienne d’une fillette qui vivait entre des murs de grès. Le seul Japheth que je connaisse est le
+
+maître de la guilde des Paladins, mort l’année dernière en combattant parmi les orques ; et, bien qu’il eût effectivement les cheveux couleur de sable, je ne puis l’imaginer à côté d’une fille sauvage
+
+dont la langue a goûté la chair humaine. Pourtant, les voies du destin sont vraiment étranges, et je suppose qu’il est possible que ce paladin soit mort en
+
+défendant l’honneur de la dame dont il gardait le souvenir, abattu sans le savoir par l’orque qu’elle appelait père."""
+
+[translations.ger]
+title = "Das wilde Mädchen des Waldes"
+content = """
+Ihr Name sei Leyla, sagte sie, und ihr Haar war wild mit Schlingpflanzen und Dornen verflochten. Ich wunderte mich, dass sie ihr nicht wehtaten, doch als ich fragte,
+
+zuckte sie nur die Schultern und ließ ihren Blick erneut durch den Wald schweifen. Obwohl meine Hände fest von ihren Seilen gebunden waren, juckte es mich, die Hand auszustrecken und
+
+diese widerspenstige goldene Mähne zu kämmen, schmutzig und voller Blätter.
+Ihre Herkunft, sagte sie mir in von Lagerfeuern erhellten Nächten, sei einst die Stadt Trinsic gewesen.
+
+Sie behauptete, von Orks entführt und aufgezogen worden zu sein, was ich für eine unwahrscheinliche Geschichte hielt, denn jeder weiß, dass Orks mit Vergnügen das Fleisch ehrbarer Leute essen. Als ich ihr dies sagte,
+
+lachte sie ein unheimliches Lachen und gab fröhlich zu, dass sie nicht ehrbar sei, denn oft hatte sie Leute aus Karawanen fortgeraubt, um ihre Besitztümer von einem
+
+bewusstlosen Körper zu plündern!
+Da begann ich um mein Leben zu fürchten, und ihr Lächeln schien voller Zähne, die schärfer waren, als ein Mensch sie haben sollte, denn die Geschichte ihrer orkischen Erziehung hatte
+
+mir die Furcht bis ins Mark der Knochen getrieben. „Wirst du mich essen?“, fragte ich zitternd, die Antwort fürchtend.
+Und sie legte den Kopf schief und sah mich an wie ein wildes Tier, das vor einem
+
+Wort steht, das es nicht versteht, und die Starrheit in ihren Augen bot einen Blick in die tieferen Bereiche des Abgrunds. Doch schließlich grunzte sie und sagte „Nein“ mit einer
+
+Stimme, die mich an ein Kind erinnerte. „Nein“, sagte sie, „denn du erinnerst mich an einen Jungen, den ich einst kannte, als ich ein Mädchen war, das in einer Stadt mit großen
+
+Sandsteinmauern spielte, ehe ich fortgenommen wurde. Er hatte sandfarbenes Haar wie du, und als Kind träumte ich davon, seine Hand zu halten und Fruchteis mit ihm zu teilen. Sein Name war Japheth.“
+
+Am nächsten Morgen ließ sie mich gehen, meines Beutels und meiner Kleider beraubt, und hieß mich durch den Wald laufen und eine erneute Gefangennahme fürchten, denn gewiss würde ihr Herz nicht
+
+noch einmal weich werden. Es war ein furchtbarer Lauf, und ich erreichte die Straße nach Yew mit Striemen und Kratzern überall auf meiner Haut, doch ich sah sie nicht wieder.
+
+Oft habe ich über den Jungen namens Japheth nachgedacht und darüber, ob er sich an ein Mädchen erinnert, das in Sandsteinmauern lebte. Der einzige Japheth, den ich kenne, ist der
+
+Gildenmeister der Paladine, der letztes Jahr im Krieg unter den Orks starb, und obwohl er tatsächlich sandfarbenes Haar hatte, kann ich ihn mir nicht Seite an Seite mit einem verwilderten Mädchen vorstellen,
+
+dessen Zunge Menschenfleisch gekostet hat.
+Doch die Pfade des Schicksals sind wahrlich seltsam, und ich nehme an, es ist möglich, dass dieser Paladin starb,
+
+um die Ehre seiner erinnerten Geliebten zu verteidigen, unwissentlich von dem Ork niedergestreckt, den sie Vater nannte."""
+
+[translations.ita]
+title = "La ragazza selvaggia della foresta"
+content = """
+Si chiamava Leyla, disse, e i suoi capelli erano intrecciati selvaggiamente con rampicanti e spine. Mi meravigliava che non le facessero male, ma quando glielo chiesi si limitò a
+
+scrollare le spalle e lasciò che gli occhi vagassero ancora una volta per i boschi. Sebbene le mie mani fossero ben legate dalle sue corde, fremevo dal desiderio di allungarle e pettinare
+
+quella chioma dorata ribelle, sporca e piena di foglie.
+La sua origine, mi disse durante notti illuminate dai fuochi da campo, era un tempo la città di Trinsic.
+
+Affermava di essere stata rapita e allevata dagli orchi, cosa che giudicai improbabile, poiché tutti sanno che gli orchi si dilettano a mangiare la carne della gente onesta. Quando glielo dissi,
+
+rise di una risata fatata e ammise allegramente che lei onesta non era, poiché spesso aveva rapito persone dalle carovane per depredare i loro averi da un
+
+corpo privo di sensi!
+A questo cominciai a temere per la mia vita, e il suo sorriso sembrò pieno di denti più affilati di quanto un umano dovrebbe avere, poiché il racconto dell'allevamento fra gli orchi aveva
+
+instillato la paura nel midollo delle mie ossa. «Mi mangerai?» chiesi tremando, temendo la risposta.
+E lei piegò il capo verso di me come un animale selvatico di fronte a una
+
+parola che non comprende, e la fissità dei suoi occhi fu uno scorcio nelle profondità più remote dell'Abisso. Ma infine grugnì e disse «No» con una
+
+voce che mi ricordò una bambina. «No», disse, «poiché mi ricordi un ragazzo che conoscevo un tempo, quando ero una bambina che giocava in una città dalle grandi mura d'arenaria,
+
+prima che mi portassero via. Aveva capelli color sabbia come te, e da bambina sognavo di tenergli la mano e condividere ghiaccio aromatizzato. Si chiamava Japheth.»
+
+Il mattino seguente mi lasciò andare, spogliato della borsa e degli abiti, e mi ordinò di correre nei boschi e di temere d'essere ricatturato, poiché certamente il suo cuore non si sarebbe
+
+intenerito di nuovo. Fu una corsa paurosa, e arrivai alla strada per Yew con lividi e graffi sparsi su tutta la pelle, ma non la vidi più.
+
+Spesso mi sono chiesto del ragazzo chiamato Japheth e se ricordi una bambina che viveva fra mura d'arenaria. L'unico Japheth che conosco è il
+
+Maestro della Gilda dei Paladini morto l'anno scorso combattendo fra gli orchi, e sebbene avesse davvero capelli color sabbia non riesco a immaginarlo accanto a una ragazza ferina
+
+la cui lingua ha assaggiato carne umana.
+Eppure le vie del fato sono davvero strane, e suppongo sia possibile che questo paladino sia morto
+
+difendendo l'onore della dama ricordata, inconsapevolmente abbattuto dall'orco che lei chiamava padre."""
+
+[translations.pol]
+title = "Dzika dziewczyna z lasu"
+content = """
+Powiedziała, że ma na imię Leyla, a włosy miała dziko splecione pnączami i cierniami. Dziwiłem się, że nie sprawiają jej bólu, lecz gdy spytałem, tylko
+
+wzruszyła ramionami i znów powiodła oczami po lesie. Choć ręce miałem mocno związane jej sznurami, świerzbiło mnie, by sięgnąć i rozczesać
+
+tę niesforną złotą grzywę, brudną i pełną liści.
+Opowiedziała mi przy nocnych ogniskach, że pochodziła niegdyś z miasta Trinsic.
+
+Twierdziła, że porwali ją i wychowali orkowie, co uznałem za mało prawdopodobne, gdyż wszyscy wiedzą, że orkowie z upodobaniem jedzą mięso uczciwych ludzi. Gdy jej to powiedziałem,
+
+zaśmiała się nieziemsko i wesoło przyznała, że uczciwa nie jest, gdyż często porywała ludzi z karawan, by ograbiać z dobytku ich
+
+nieprzytomne ciała!
+Wtedy zacząłem bać się o życie, a jej uśmiech zdawał się pełen zębów ostrzejszych, niż człowiek mieć powinien, gdyż opowieść o wychowaniu przez orków
+
+przeraziła mnie do szpiku kości. „Czy mnie zjesz?” — spytałem, drżąc i bojąc się odpowiedzi.
+Przechyliła głowę ku mnie, jak dzikie zwierzę słyszące
+
+słowo, którego nie rozumie, a nieruchomość jej oczu była spojrzeniem w najgłębsze rejony Otchłani. Lecz w końcu chrząknęła i powiedziała: „Nie”,
+
+głosem przypominającym mi dziecko. „Nie” — rzekła — „gdyż przypominasz mi chłopca, którego kiedyś znałam, kiedy byłam dziewczynką bawiącą się w mieście wielkich murów z
+
+piaskowca, zanim mnie zabrano. Miał piaskowe włosy jak ty, a jako dziecko marzyłam o trzymaniu go za rękę i dzieleniu się smakowym lodem. Miał na imię Japheth”.
+
+Następnego ranka puściła mnie, pozbawionego sakiewki i ubrań, kazała biec przez las i bać się ponownego schwytania, bo jej serce z pewnością już nie
+
+zmięknie. Był to straszny bieg; dotarłem na drogę do Yew ze skórą pełną pręg i zadrapań, lecz nie zobaczyłem jej ponownie.
+
+Często zastanawiałem się nad chłopcem imieniem Japheth i nad tym, czy pamięta dziewczynkę, która żyła w murach z piaskowca. Jedyny Japheth, jakiego znam, to
+
+mistrz Gildii Paladynów, który zginął w zeszłym roku w walce pośród orków, i choć istotnie miał piaskowe włosy, nie potrafię wyobrazić go sobie u boku zdziczałej dziewczyny,
+
+której język poznał smak ludzkiego mięsa.
+Lecz drogi losu są doprawdy dziwne i przypuszczam, że możliwe jest, iż ten paladyn zginął
+
+w obronie honoru zapamiętanej damy, nieświadomie powalony przez orka, którego ona nazywała ojcem."""
+
+[translations.por]
+title = "A menina selvagem da floresta"
+content = """
+Seu nome era Leyla, disse ela, e seus cabelos estavam trançados de forma selvagem com trepadeiras e espinhos. Admirei-me de que não a machucassem, mas, quando perguntei, ela apenas
+
+deu de ombros e deixou os olhos vagarem outra vez pelo bosque. Embora minhas mãos estivessem firmemente presas por suas cordas, eu ansiava por estender a mão e pentear
+
+aquela indomável cabeleira dourada, suja e cheia de folhas.
+Sua origem, contou-me durante noites iluminadas por fogueiras, era a cidade de Trinsic.
+
+Ela alegou ter sido sequestrada e criada por orcs, o que julguei uma história improvável, pois todos sabem que orcs se deleitam em comer a carne de gente honesta. Quando lhe disse isso,
+
+ela deu uma risada sobrenatural e admitiu alegremente que honesta não era, pois muitas vezes havia raptado pessoas de caravanas para saquear seus pertences de um
+
+corpo inconsciente!
+Com isso, comecei a temer por minha vida, e seu sorriso parecia cheio de dentes mais afiados do que um humano deveria ter, pois a história da criação por orcs havia
+
+levado o medo até a medula de meus ossos. \"Você vai me comer?\", perguntei, trêmulo, temendo a resposta.
+E ela inclinou a cabeça para mim, como um animal selvagem diante de uma
+
+palavra que não entende, e a fixidez de seus olhos era um vislumbre das regiões mais profundas do Abismo. Mas, por fim, ela grunhiu e disse \"Não\", numa
+
+voz que me lembrou uma criança. \"Não\", disse ela, \"pois você me lembra um menino que conheci uma vez, quando eu era uma menina que brincava numa cidade de grandes muralhas de arenito,
+
+antes de ser levada. Ele tinha cabelos cor de areia como você, e eu sonhava, quando criança, em segurar sua mão e compartilhar gelo saborizado. Seu nome era Japheth.\"
+
+Na manhã seguinte, ela me deixou ir, despojado de minha bolsa e de minhas roupas, e me mandou correr pelo bosque e temer ser recapturado, pois certamente seu coração não
+
+se abrandaria outra vez. Foi uma corrida aterrorizante, e cheguei à estrada para Yew com vergões e arranhões espalhados por toda a pele, mas não a vi novamente.
+
+Muitas vezes me perguntei sobre o menino chamado Japheth e se ele se lembra de uma menina que vivia entre muralhas de arenito. O único Japheth que conheço é o
+
+mestre da Guilda dos Paladinos que morreu no ano passado guerreando entre os orcs e, embora realmente tivesse cabelos cor de areia, não consigo imaginá-lo lado a lado com uma menina selvagem
+
+cuja língua já provou carne humana.
+Contudo, os caminhos do destino são realmente estranhos, e suponho que seja possível que esse paladino tenha morrido
+
+defendendo a honra de sua dama lembrada, sem saber que fora abatido pelo orc que ela chamava de pai."""
+
+[translations.spa]
+title = "La muchacha salvaje del bosque"
+content = """
+Se llamaba Leyla, dijo, y su pelo estaba trenzado de manera salvaje con enredaderas y espinas. Me maravilló que no le hicieran daño, pero cuando se lo pregunté, solo
+
+se encogió de hombros y dejó vagar de nuevo los ojos por el bosque. Aunque tenía las manos firmemente atadas con sus cuerdas, ansiaba alargar los brazos y peinar
+
+aquella melena dorada y rebelde, sucia y llena de hojas. Me contó, durante noches iluminadas por hogueras, que su origen había sido la ciudad de Trinsic.
+
+Afirmaba haber sido secuestrada y criada por orcos, relato que juzgué poco probable, pues todos saben que los orcos disfrutan comiendo la carne de la gente honrada. Cuando se lo dije,
+
+soltó una risa extraña y admitió alegremente que honrada no era, pues a menudo había arrebatado personas de las caravanas para saquear sus posesiones de un
+
+cuerpo inconsciente. Entonces empecé a temer por mi vida, y su sonrisa parecía llena de dientes más afilados de lo que un humano debería tener, pues la historia de su crianza orca había
+
+infundido miedo hasta la médula de mis huesos. «¿Vas a comerme?», pregunté, temblando y temiendo la respuesta. Ella inclinó la cabeza hacia mí, como un animal salvaje ante una
+
+palabra que no comprende, y la fijeza de sus ojos era un vistazo a las regiones más profundas del Abismo. Pero al fin gruñó y dijo «No» con una
+
+voz que me recordó a una niña. «No», dijo, «porque me recuerdas a un muchacho que conocí una vez, cuando yo era una niña que jugaba en una ciudad de grandes muros de arenisca,
+
+antes de que me llevaran. Tenía el pelo color arena como tú, y de niña soñaba con tomarle la mano y compartir hielo de sabores. Se llamaba Japheth».
+
+A la mañana siguiente me dejó marchar, despojado de bolsa y ropa, y me ordenó correr por el bosque y temer que me capturara de nuevo, pues su corazón sin duda no volvería a
+
+ablandarse. Fue una carrera aterradora, y llegué al camino de Yew con verdugones y arañazos por toda la piel, pero no volví a verla.
+
+A menudo me he preguntado por el muchacho llamado Japheth y por si recuerda a una niña que vivía entre muros de arenisca. El único Japheth que conozco es el
+
+Maestro del Gremio de Paladines que murió el año pasado luchando entre los orcos; y, aunque tenía el pelo color arena, no puedo imaginarlo al lado de una muchacha salvaje
+
+cuya lengua ha probado la carne humana. Sin embargo, los caminos del destino son verdaderamente extraños, y supongo que es posible que este paladín muriera
+
+defendiendo el honor de la dama que recordaba, derribado sin saberlo por el orco al que ella llamaba padre."""

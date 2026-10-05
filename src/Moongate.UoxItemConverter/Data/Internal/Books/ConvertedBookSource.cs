@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Data.Templates.Books;
 using Tomlyn;
 using Tomlyn.Serialization;
 
@@ -15,4 +16,7 @@ internal sealed class ConvertedBookSource
     public required string Content { get; init; }
 
     public string ItemTemplate { get; init; } = "readable_scroll";
+
+    [TomlIgnore(Condition = TomlIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, BookTranslation>? Translations { get; init; }
 }

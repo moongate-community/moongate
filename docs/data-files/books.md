@@ -84,7 +84,10 @@ uses the top-level fields.
 
 The shipped `templates/books/modernuo` catalog contains 62 static books imported from
 ModernUO. For example, `book.give(player, "modernuo_grammar_of_orcish")` creates a readable
-copy with its original title, author and text. [Import book texts](../book-content-import.md)
+copy in the configured creation language. Every imported book retains the English source
+and has title/body translations in Italian, French, German, Spanish, Portuguese, Polish
+and Czech; author names remain unchanged. Reimport preserves existing translation fields.
+[Import book texts](../book-content-import.md)
 documents the converter, source comparison and reruns. These entries use the current
 parchment interface.
 

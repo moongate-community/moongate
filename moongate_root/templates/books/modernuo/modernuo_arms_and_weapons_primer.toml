@@ -139,3 +139,278 @@ be the possessions,
 which maketh looting
 difficult!"""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Základy zbraní a výzbroje"
+content = """
+Toto jsou základní vlastnosti, které je třeba zvážit při posuzování zbraně a které by všichni válečníci, již se považují za něco víc než pouhé námezdné bojovníky, měli
+
+znát.
+První a nejzjevnější je míra zranění, jež může zbraň způsobit nechráněnému tělu. Ač právě tato vlastnost nejprve upoutá
+
+pozornost nováčka, pokládat ji za jedinou hodnotu zbraně je smrtelnou chybou. Třebaže jako prostředek k působení zranění může být vskutku ničivá,
+
+zbraň musí v boji sloužit též jako pevný štít.
+Druhou věcí, jíž je tedy třeba věnovat pozornost, je míra ochrany,
+
+kterou může zbraň poskytnout. Bedlivě si prohlédněte záštitu, jde-li o čepel, nebo pevnost jejího dřeva, jde-li o tyčovou zbraň.
+S tím často souvisí
+
+váha zbraně, neboť těžkou zbraní se hůře pohybuje při krytí úderů, byť tvému protivníkovi může způsobit větší zranění.
+
+Je-li zbraň příliš těžká, aby s ní její držitel mohl volně pohybovat, měl by si vybrat jinou a nesnažit se prokazovat svou zdatnost velikostí meče.
+
+Dosah zbraně zvyšuje její obranné schopnosti i užitečnost na otevřeném prostranství, neboť dovoluje napadat protivníka bez nutnosti
+
+přiblížit se. Avšak pamatuj na meze své zbraně! Zbraň s velkým dosahem může být v těsné blízkosti k ničemu, protože pro její pohyb chybí prostor. Pokud
+
+se k tobě a tvé halapartně přiblíží nepřítel s dýkou, nejlépe učiníš, když utečeš.
+Nakonec je nutno vždy přihlížet ke stavu
+
+zbraně. Může to být podivuhodná kouzelná čepel nesrovnatelné ostrosti a sama od sebe může vyrazit ke krytí úderů. Také však může být tak chatrně
+
+zhotovena nebo natolik poškozena, že se při prvním střetu s ocelí roztříští v neužitečné střepy.
+Vyhledej dobrého kováře, jestliže se tvá
+
+zbraň poškodí, ale měj na paměti, že jeho péče může stav pouze zhoršit.
+Ačkoli mágové jisté zdatnosti často vytvářejí
+
+kouzelné zbraně, které zvyšují dovednost, jsou nadpřirozeně ostré nebo při dopadu spalují nepřítele, podle mého soudu je největším darem, který mohou pevnému
+
+meči propůjčit, odolnost proti poškození, neboť rozdíl můžeš vyrovnat vlastní dovedností. S výjimkou ohnivé koule; je-li však mrtvola ohořelá, budou
+
+takové i její věci, a to znesnadňuje plenění!"""
+
+[translations.fre]
+title = "Principes élémentaires des armes et de l’armement"
+content = """
+Voici les éléments fondamentaux à considérer pour évaluer une arme, que tout guerrier s’estimant davantage qu’un simple mercenaire devrait
+
+connaître. Le premier, et le plus évident, est la quantité de dommages que l’arme peut infliger à une chair sans protection. Bien que ce soit ce qui attire d’abord
+
+l’attention du novice, c’est une erreur mortelle que d’y voir la seule valeur d’une arme. Si elle peut être véritablement dévastatrice lorsqu’il s’agit de causer des blessures, une
+
+arme doit également servir de solide bouclier au combat. Ainsi, le deuxième point auquel il faut prêter attention est le degré de protection
+
+qu’une arme peut offrir. Examinez de près sa garde, s’il s’agit d’une lame, ou la solidité de son bois, s’il s’agit d’une arme d’hast. Souvent, cela est lié
+
+au poids de l’arme, car une arme lourde est plus difficile à manœuvrer pour parer, même si elle peut faire davantage de mal à votre adversaire.
+
+Si une arme est trop lourde pour que celui qui la porte la meuve librement, il doit en choisir une autre, et ne point chercher à prouver sa vaillance par la taille de son épée.
+
+La portée d’une arme accroît à la fois ses capacités défensives et son utilité dans les espaces ouverts, puisqu’elle permet d’attaquer l’adversaire sans avoir à
+
+s’approcher. Mais connaissez les limites de votre arme ! Une arme de grande portée peut être inutile dans un espace exigu, faute de place pour la manœuvrer. Si
+
+cet ennemi armé d’une dague s’approche de vous et de votre hallebarde, mieux vaut fuir. Enfin, il faut toujours tenir compte de l’état de
+
+l’arme. Ce peut être une merveilleuse lame magique d’un tranchant incomparable, qui bondit pour parer les coups comme si elle avait sa propre volonté. Elle peut aussi être de construction si fragile,
+
+ou si endommagée, qu’au premier choc contre l’acier elle se brisera en éclats inutiles. Cherchez un bon forgeron si votre
+
+arme est endommagée, mais sachez que ses soins risquent simplement d’aggraver les choses. Si les mages de quelque talent créent souvent
+
+des armes magiques qui améliorent l’habileté, sont d’un tranchant surnaturel ou incinèrent l’ennemi en s’abattant sur lui, à mon sens le plus grand don qu’ils puissent accorder à une solide
+
+épée est de la rendre résistante aux dommages, car votre propre habileté peut compenser le reste. Sauf pour la boule de feu ; mais si le cadavre est carbonisé, il en sera de même
+
+de ses possessions, ce qui rend le pillage difficile !"""
+
+[translations.ger]
+title = "Eine Einführung in Waffen und Bewaffnung"
+content = """
+Dies sind die grundlegenden Gesichtspunkte bei der Beurteilung einer Waffe, deren sich alle Krieger, die sich für mehr als bloße Söldner halten,
+
+bewusst sein sollten.
+Der erste und offensichtlichste ist das Maß an Schaden, den eine Waffe ungeschütztem Fleisch zufügen kann. Zwar ist es dies, was zunächst
+
+die Aufmerksamkeit des Neulings auf sich zieht, doch ist es ein tödlicher Fehler, darin den einzigen Wert einer Waffe zu sehen. So verheerend sie als Mittel zum Verwunden auch sein mag, eine
+
+Waffe muss im Kampf zugleich als zuverlässiger Schild dienen.
+Der zweite Punkt, dem Aufmerksamkeit gebührt, ist daher das Maß an Schutz,
+
+den eine Waffe bieten kann. Achtet genau auf ihre Parierstange, wenn es eine Klinge ist, oder auf die Festigkeit ihres Holzes, wenn es eine Stangenwaffe ist.
+Damit hängt oft
+
+das Gewicht der Waffe zusammen, denn eine schwere Waffe lässt sich schwerer zum Abwehren bewegen, mag sie Eurem Gegner auch größeren Schaden zufügen.
+
+Ist eine Waffe zu schwer, als dass ihr Träger sie frei bewegen könnte, so sollte er eine andere wählen und nicht versuchen, sein Können durch die Größe seines Schwertes zu beweisen.
+
+Die Reichweite einer Waffe erhöht sowohl ihre Fähigkeit zur Verteidigung als auch ihren Nutzen auf freiem Gelände, da sie Angriffe auf den Gegner erlaubt, ohne sich ihm
+
+nähern zu müssen. Doch kennt die Grenzen Eurer Waffe! Denn eine Waffe mit großer Reichweite mag auf engem Raum nutzlos sein, weil der Platz fehlt, sie zu bewegen. Sollte
+
+der dolchbewehrte Feind Euch und Eurer Hellebarde nahekommen, ist Flucht das Beste.
+Zuletzt muss stets der Zustand der
+
+Waffe bedacht werden. Sie mag eine wundersame magische Klinge von unvergleichlicher Schärfe sein und wie mit eigenem Willen vorschnellen, um Schläge abzuwehren. Doch könnte sie ebenso von derart schwacher
+
+Machart oder so schwer beschädigt sein, dass sie beim ersten Zusammenprall mit Stahl in nutzlose Splitter zerbricht.
+Sucht einen guten Schmied auf, wenn Eure
+
+Waffe Schaden nimmt, doch bedenkt, dass seine Behandlung die Sache auch nur verschlimmern könnte.
+Zwar erschaffen kundige Magier oft
+
+magische Waffen, die das Können steigern, übernatürlich scharf sind oder den Feind bei ihrem Niedersausen verbrennen, doch meines Erachtens ist die größte Gabe, die sie einem soliden
+
+Schwert verleihen können, Widerstandsfähigkeit gegen Schäden, denn Euer eigenes Können kann den Unterschied ausgleichen. Abgesehen vom Feuerball; doch wenn die Leiche verkohlt ist, dann werden es auch
+
+ihre Besitztümer sein, was das Plündern erschwert!"""
+
+[translations.ita]
+title = "Nozioni di base su armi e armamenti"
+content = """
+Questi sono gli elementi fondamentali da considerare nel valutare un'arma, dei quali tutti i guerrieri che si reputano qualcosa più di semplici mercenari dovrebbero essere
+
+consapevoli.
+Primo e più evidente è il danno che l'arma può infliggere alla carne priva di protezione. Sebbene sia questo ad attirare per primo
+
+l'attenzione del novizio, è un errore mortale considerarlo l'unico pregio di un'arma. Per quanto possa dimostrarsi davvero devastante come mezzo per infliggere danni, un'
+
+arma deve anche fungere da saldo scudo quando si è impegnati in combattimento.
+Dunque il secondo aspetto cui prestare attenzione è la protezione
+
+che un'arma può offrire. Osservatene attentamente la guardia, se si tratta di una lama, o la robustezza del legno, se è un'arma in asta.
+Spesso a questo si lega
+
+il peso dell'arma, poiché un'arma pesante è più difficile da manovrare per parare, sebbene possa infliggere danni maggiori al vostro avversario.
+
+Se un'arma è troppo pesante perché chi la impugna possa muoverla liberamente, costui dovrebbe sceglierne un'altra e non tentare di dimostrare la propria prodezza con le dimensioni della spada.
+
+La portata di un'arma ne accresce sia la capacità difensiva sia l'utilità negli spazi aperti, poiché permette di attaccare l'avversario senza dover
+
+avvicinarsi. Ma siate consapevoli dei limiti della vostra arma! Un'arma dalla grande portata può infatti essere inutile negli spazi angusti, per mancanza di spazio per manovrarla. Se
+
+quel nemico armato di pugnale si avvicina a voi e alla vostra alabarda, meglio fuggire.
+Infine, un fattore da considerare sempre è lo stato dell'
+
+arma. Può essere una meravigliosa lama magica d'eccezionale affilatura e può scattare a parare i colpi quasi avesse una volontà propria. Può anche essere di fattura tanto fragile,
+
+o danneggiata a tal punto, che al primo urto contro l'acciaio si frantumerà in inutili schegge.
+Cercate un buon fabbro se la vostra
+
+arma viene danneggiata, ma sappiate che le sue cure possono semplicemente peggiorare la situazione.
+Sebbene i maghi di una certa abilità creino spesso
+
+armi magiche che accrescono la destrezza, sono affilate oltre ogni limite naturale o inceneriscono il nemico mentre si abbattono su di lui, a mio giudizio il più grande dono che possano conferire a una salda
+
+spada è renderla resistente ai danni, poiché la vostra abilità può compensare la differenza. Eccetto la palla di fuoco, ma se il cadavere è carbonizzato, allora lo saranno anche
+
+i suoi averi, il che rende difficile il saccheggio!"""
+
+[translations.pol]
+title = "Podstawy oręża i broni"
+content = """
+Oto podstawowe kwestie, które należy rozważyć, oceniając broń, a których winni być
+
+świadomi wszyscy wojownicy uważający się za coś więcej niż najemników.
+Pierwszą i najbardziej oczywistą jest rozmiar szkód, jakie broń może wyrządzić nieosłoniętemu ciału. Choć to właśnie on najpierw przykuwa
+
+uwagę nowicjusza, uznanie go za jedyną miarę wartości broni jest śmiertelnym błędem. Choć broń może okazać się prawdziwie niszczycielska jako narzędzie zadawania ran,
+
+musi też służyć za mocną tarczę w walce.
+Dlatego drugą kwestią wymagającą uwagi jest zakres ochrony,
+
+jaką broń może zapewnić. Przyjrzyj się uważnie jej jelcowi, jeśli jest to ostrze, albo wytrzymałości drewna, jeśli jest to broń drzewcowa.
+Często wiąże się z tym
+
+ciężar broni, gdyż ciężkim orężem trudniej manewrować przy parowaniu, choć może on zadać twemu przeciwnikowi większe obrażenia.
+
+Jeśli broń jest zbyt ciężka, by władający nią mógł swobodnie ją poruszać, powinien wybrać inną i nie próbować dowodzić swego kunsztu rozmiarem miecza.
+
+Zasięg broni zwiększa zarówno jej zdolność obronną, jak i przydatność na otwartej przestrzeni, pozwala bowiem zaatakować przeciwnika bez potrzeby
+
+zbliżania się. Lecz znaj ograniczenia swego oręża! Broń o wielkim zasięgu może być bezużyteczna w ciasnocie, gdzie brak miejsca, by nią manewrować. Jeśli
+
+wróg dzierżący sztylet zbliży się do ciebie i twej halabardy, najlepiej uciekać.
+Ostatnim czynnikiem, który zawsze należy brać pod uwagę, jest stan
+
+broni. Może to być cudowne magiczne ostrze o niezrównanej ostrości, które samo, jakby obdarzone własnym rozumem, odskakuje, by parować ciosy. Może jednak być tak licho
+
+wykonane albo tak poważnie uszkodzone, że gdy po raz pierwszy zadźwięczy o stal, rozpadnie się na bezużyteczne odłamki.
+Szukaj dobrego kowala, jeśli twoja
+
+broń zostanie uszkodzona, lecz pamiętaj, że jego zabiegi mogą jedynie pogorszyć sprawę.
+Choć magowie o pewnych zdolnościach często tworzą
+
+magiczną broń, która zwiększa biegłość, jest nadnaturalnie ostra lub spopiela padającego wroga, moim zdaniem największym darem, jakim mogą obdarzyć mocny
+
+miecz, jest odporność na uszkodzenia, gdyż własnym kunsztem możesz nadrobić różnicę. Z wyjątkiem kuli ognia, lecz jeśli zwłoki są zwęglone, to
+
+tak samo będzie z dobytkiem, a to utrudnia grabież!"""
+
+[translations.por]
+title = "Uma introdução a armas e armamentos"
+content = """
+Estes são os elementos básicos a considerar ao avaliar uma arma, dos quais todos os guerreiros que se julgam mais do que meros mercenários deveriam estar
+
+cientes.
+Primeiro e mais evidente é a quantidade de dano que a arma pode causar à carne desprotegida. Embora seja isso que primeiro chama
+
+a atenção do novato, é um erro mortal considerá-lo o único valor de uma arma. Embora possa realmente ser devastadora como meio de causar dano, uma
+
+arma também deve servir de escudo resistente quando se está em combate.
+Portanto, a segunda questão à qual se deve prestar atenção é a quantidade de proteção
+
+que uma arma pode oferecer. Examine com cuidado a guarda, se for uma lâmina, ou a resistência da madeira, se for uma arma de haste.
+Frequentemente relacionado a isso
+
+está o peso da arma, pois uma arma pesada é mais difícil de manobrar para bloquear golpes, embora possa causar mais dano ao seu oponente.
+
+Se uma arma for pesada demais para quem a empunha movê-la livremente, deve-se escolher outra, em vez de tentar provar sua destreza pelo tamanho da espada.
+
+O alcance de uma arma aumenta sua capacidade defensiva e a torna mais útil em espaços abertos, pois permite atacar o oponente sem a necessidade de
+
+se aproximar. Mas conheça as limitações da sua arma! Pois uma arma de grande alcance pode ser inútil em espaços apertados, por falta de espaço para manobrá-la. Se
+
+aquele inimigo que empunha uma adaga se aproximar de você e de sua alabarda, é melhor fugir.
+Por fim, um fator que sempre deve ser considerado é o estado da
+
+arma. Ela pode ser uma maravilhosa lâmina mágica de extraordinário fio e pode saltar para bloquear golpes como se tivesse vontade própria. Também pode ser de construção tão frágil,
+
+ou estar danificada a tal ponto, que, na primeira vez em que bater contra o aço, se despedaçará em fragmentos inúteis.
+Procure um bom ferreiro caso sua
+
+arma fique danificada, mas saiba que seus cuidados podem simplesmente piorar a situação.
+Embora magos de certa habilidade frequentemente criem
+
+armas mágicas que aprimoram a destreza, têm um fio sobrenatural ou incineram o inimigo enquanto ele cai, a meu ver o maior presente que podem conceder a uma boa
+
+espada é torná-la resistente a danos, pois sua própria habilidade pode compensar a diferença. Exceto pela bola de fogo, mas, se o cadáver estiver carbonizado, também estarão
+
+os pertences, o que dificulta o saque!"""
+
+[translations.spa]
+title = "Manual básico de armas y armamento"
+content = """
+    Estos son los elementos básicos que deben tenerse en cuenta al valorar un arma, y que todo guerrero que se considere algo más que un mero mercenario debería
+
+conocer. Primero, y de la manera más evidente, está el daño que el arma puede infligir a la carne desprotegida. Aunque esto sea lo primero que atraiga
+
+la atención del novato, es un error mortal considerarlo el único valor de un arma. Por devastadora que pueda resultar a la hora de causar daño, un
+
+arma también debe servir de firme escudo durante el combate. Por tanto, el segundo aspecto al que hay que prestar atención es la protección
+
+que puede ofrecer un arma. Examina con cuidado su guarda, si es una hoja, o la solidez de su madera, si es un arma de asta. A menudo, con esto se relaciona
+
+el peso del arma, pues un arma pesada es más difícil de maniobrar para detener golpes, aunque pueda causar más daño a tu adversario.
+
+    Si el arma es demasiado pesada para que quien la empuña la mueva con libertad, debería escoger otra y no intentar demostrar su destreza mediante el tamaño de su espada.
+
+    El alcance de un arma aumenta su capacidad defensiva y la hace más útil en espacios abiertos, pues permite atacar al adversario sin necesidad de
+
+acercarse. ¡Pero conoce las limitaciones de tu arma! Un arma de gran alcance puede resultar inútil en un lugar estrecho, por falta de espacio para maniobrar. Si
+
+ese enemigo que empuña una daga se acerca a ti y a tu alabarda, lo mejor es huir. Por último, un factor que siempre debe tenerse en cuenta es el estado del
+
+arma. Puede ser una prodigiosa hoja mágica de filo extraordinario, capaz de alzarse para detener golpes como si tuviera voluntad propia. También puede estar tan mal
+
+construida, o tan deteriorada, que la primera vez que choque contra el acero se haga añicos inservibles. Acude a un buen herrero si tu
+
+arma sufre daños, pero ten presente que sus cuidados pueden empeorar las cosas. Aunque los magos de cierta habilidad suelen crear
+
+armas mágicas que acrecientan la destreza, poseen un filo sobrenatural o incineran al enemigo al abatirlo, a mi juicio el mayor don que pueden otorgar a una buena
+
+espada es hacerla resistente a los daños, pues tu propia destreza puede compensar la diferencia. Salvo en lo de la bola de fuego, claro; pero si el cadáver queda carbonizado, también lo estarán
+
+sus pertenencias, ¡y eso dificulta el saqueo!"""

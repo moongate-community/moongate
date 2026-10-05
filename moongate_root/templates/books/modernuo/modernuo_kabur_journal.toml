@@ -179,3 +179,379 @@ did they die?  And more
 importantly, where is
 Dasha?"""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Deník"
+content = """
+Tažení za vyvražděním Meer postupuje dobře. Ačkoli se našim silám zdánlivě stavějí do cesty na každém kroku, v boji je stále porážíme. Špehové Meer byli nalezeni a
+
+zabiti před naší pevností. Hlupáci nás podceňují. Za námi stojí moc Lord Exodus. Brzy se naučí sloužit Juka a já ponesu hlavu
+
+té děvky Dasha na kůlu, aby pod ní mohli všichni naši válečníci sdílet vítězství.
+
+Jeden z válečníků Juka dnes zemřel. Během našich výcvikových
+
+cvičení promluvil ve prospěch válečníků Meer, řekl, že jsou opravdu mocní a budou pro Juka výzvou. Juka ve strachu není Juka. Dopřál jsem
+
+mu smrt zbabělce, mimo bitvu.
+
+Kolem naší pevnosti byli nalezeni další špehové Meer. Mnozí byli spatřeni a unikli hněvu našich
+
+válečníků. Ti, kteří byli zajati a mučeni, nám nic nevyzradili, ani když byli vystaveni kouzlům samic. Vím, že Meer proti nám musí mít plány, jestliže
+
+posílají tolik špehů. Možná pošlu vojska Juka vpadnout do jejich táborů jako varování.
+
+Dnes jsem se setkal s bojovnicí Dasha v bitvě. Její
+
+snaha vtáhnout mě do Černého souboje byla pošetilá. Kdyby nás v jeskyni nepřerušili, ukončil bych její život, ale budu muset počkat na další bitvu. Lord
+
+Exodus nařídil více hlídek kolem naší pevnosti. Jestli lze soudit podle bojovnice Dasha, Meer brzy udeří.
+
+Před naší pevností stojí více Meer,
+
+než jsem kdy viděl najednou. Jistě hledají pomstu za zničení svého lesa. Mnozí Juka jsou připraveni u úpatí hory čelit jejich silám, ale
+
+dnes může přijít poslední bitva. Exodus mě povolal, musím se připravit.
+
+Soumrak pominul a Juka nyní žijí v novém věku, v pozdějším čase. Právě jsem
+
+se vrátil z průzkumu nového světa obklopujícího pevnost Juka. Během útoku Meer se šílenec Adranath pokusil zničit naši pevnost
+
+velkou magií. Náhle znehybněl a pevnost obklopilo světlo. Vše zmizelo z dohledu. Když jsem nabyl smyslů, neviděl jsem žádnou stopu po Meer kromě bojovnice Dasha.
+
+Od chvíle, kdy ji tato nová bytost Blackthorn srazila výbuchem z vrcholu pevnosti, nebyla nalezena.
+Les zmizel, nyní jej nahradily travnaté pláně. V dálce jsem
+
+viděl lidi, kteří měli těla pokrytá značkami. Toto místo obývají i chrliči. Exodus mi vysvětlil, že Juka i naše pevnost byli přesunuti
+
+vpřed v čase. Svět, který jsme znali, nyní leží tisíce let v minulosti. Lord Exodus říká, že zachránil Juka před vyhynutím. Nechci mu věřit. Zeptal jsem se tohoto
+
+cizince na Meer, ale říká mi, že zbývá zničit nového nepřítele. Zdá se, že se naši nepřátelé rozpadli v prach stejně jako les.
+
+Promluvil jsem s jinými Juka a mám podezření, že mi byla řečena pravda. Všichni Juka měli silné sny. V našich snech Meer vpadli do naší pevnosti a odehrála se velká bitva.
+
+Všichni Juka i všichni Meer zahynuli a pevnost zničila kouzla Adranath. Nechtěl bych věřit, že by nás Meer kdy mohli zničit, ale nyní se zdá, že jsme viděli
+
+vizi svého osudu, nyní ztraceného v čase. Musím si tedy klást otázku: jestliže Meer nezemřeli v bitvě s Juka, jak zemřeli? A co je důležitější, kde je Dasha?"""
+
+[translations.fre]
+title = "Journal"
+content = """
+La campagne pour massacrer les Meer avance bien. Bien qu’ils semblent s’opposer aux forces des nôtres à chaque tournant, nous les vainquons toujours au combat. Des espions des Meer ont été trouvés et
+
+tués à l’extérieur de la forteresse des nôtres. Ces imbéciles nous sous-estiment. Nous avons derrière nous la puissance du Seigneur Exodus. Bientôt ils apprendront à servir les Juka, et je porterai la tête de
+
+la garce, Dasha, sur une pique sous laquelle tous les guerriers des nôtres partageront le triomphe.
+
+Un des guerriers des Juka est mort aujourd’hui. Pendant les exercices
+
+d’entraînement des nôtres, il a parlé en faveur des guerriers des Meer, disant qu’ils étaient véritablement puissants et constitueraient un défi pour les Juka. Un Juka qui a peur n’est pas un Juka. Je lui ai donné
+
+la mort d’un lâche, hors du combat.
+
+D’autres espions des Meer ont été trouvés autour de la forteresse des nôtres. Beaucoup ont été vus et ont échappé à la colère des
+
+guerriers des nôtres. Ceux qui ont été capturés et torturés ne nous ont rien révélé, même soumis aux sorts des femelles. Je sais que les Meer doivent avoir des plans contre nous s’
+
+ils envoient tant d’espions. Il se peut que j’envoie les troupes des Juka envahir les camps des leurs en guise d’avertissement.
+
+J’ai rencontré Dasha au combat en ce jour. Les
+
+efforts qui sont les siens pour m’entraîner dans un Duel Noir étaient insensés. Si nous n’avions pas été interrompus dans la grotte, j’aurais mis fin à la vie qui est la sienne, mais je devrai attendre une autre bataille. Le Seigneur
+
+Exodus a ordonné davantage de patrouilles autour de la forteresse des nôtres. Si Dasha en est un indice, les Meer frapperont bientôt.
+
+Plus de Meer se tiennent à l’extérieur de la forteresse des nôtres
+
+que je n’en ai jamais vu à la fois. Ils doivent chercher à venger la destruction de leur forêt. Beaucoup de Juka se tiennent prêts au pied de la montagne pour affronter les forces des leurs, mais
+
+aujourd’hui sera peut-être la bataille finale. Exodus m’a convoqué, je dois me préparer.
+
+Le crépuscule est passé, et les Juka vivent maintenant dans un nouvel âge, un temps plus tardif. Je viens
+
+de revenir de l’exploration du nouveau monde qui entoure la forteresse des Juka. Pendant l’attaque des Meer, le fou Adranath a tenté de détruire la forteresse des nôtres
+
+par une grande magie. D’un coup, il fut immobile et la lumière entoura la forteresse. Tout disparut à la vue. Quand j’ai retrouvé les sens qui sont les miens, je n’ai vu aucune trace des Meer, hormis Dasha.
+
+Elle n’a pas été retrouvée depuis que cet être nouveau, Blackthorn, l’a projetée du haut de la forteresse.
+La forêt avait disparu, remplacée maintenant par des prairies. Au loin, je
+
+pouvais voir des humains qui avaient couvert les corps des leurs de marques. Même des Gargouilles peuplent cet endroit. Exodus m’a expliqué que les Juka et la forteresse des nôtres ont été tirés
+
+en avant dans le temps. Le monde que nous connaissions se trouve maintenant des milliers d’années dans le passé. Le Seigneur Exodus dit qu’il a sauvé les Juka de l’extinction. Je ne veux pas le croire. J’ai interrogé cet
+
+étranger sur les Meer, mais il me dit qu’un nouvel ennemi reste à détruire. Il semble que les ennemis des nôtres soient retournés à la poussière comme la forêt.
+
+J’ai parlé avec d’autres Juka et je soupçonne qu’on m’a dit la vérité. Tous les Juka ont fait des rêves puissants. Dans les rêves des nôtres, les Meer envahissaient la forteresse des nôtres et une grande bataille avait lieu.
+
+Tous les Juka et tous les Meer périssaient, et la forteresse était détruite par les sorts d’Adranath. Je ne voudrais pas croire que les Meer puissent jamais nous détruire, mais il semble maintenant que nous ayons vu une
+
+vision du destin des nôtres, désormais perdu dans le temps. Je dois maintenant me demander : si les Meer ne sont pas morts dans la bataille contre les Juka, comment sont-ils morts ? Et surtout, où est Dasha ?"""
+
+[translations.ger]
+title = "Tagebuch"
+content = """
+Der Feldzug zum Abschlachten der Meer verläuft gut. Obwohl sie den Streitkräften der Unsrigen bei jedem Schritt entgegenzutreten scheinen, besiegen wir sie dennoch im Kampf. Spione der Meer wurden gefunden und
+
+außerhalb der Festung der Unsrigen getötet. Die Narren unterschätzen uns. Wir haben die Macht von Lord Exodus hinter uns. Bald werden sie lernen, den Juka zu dienen, und ich werde den Kopf
+
+der Dirne Dasha auf einem Spieß tragen, unter dem alle Krieger der Unsrigen den Triumph teilen werden.
+
+Einer der Krieger der Juka starb heute. Während der Übungsmanöver
+
+der Unsrigen sprach er zugunsten der Krieger der Meer und sagte, sie seien tatsächlich mächtig und würden den Juka eine Herausforderung bieten. Ein Juka in Furcht ist kein Juka. Ich gab
+
+ihm den Tod eines Feiglings, außerhalb des Kampfes.
+
+Weitere Spione der Meer wurden um die Festung der Unsrigen gefunden. Viele wurden gesehen und entkamen dem Zorn der
+
+Krieger der Unsrigen. Jene, die gefangen und gefoltert wurden, verrieten uns nichts, selbst als sie den Zaubern der Weiblichen unterworfen wurden. Ich weiß, dass die Meer Pläne gegen uns haben müssen, wenn
+
+sie so viele Spione entsenden. Vielleicht werde ich die Truppen der Juka als Warnung in die Lager der Ihrigen einfallen lassen.
+
+Ich bin Dasha heute im Kampf begegnet. Die
+
+Bemühungen der Ihrigen, mich in ein Schwarzes Duell zu ziehen, waren töricht. Wären wir in der Höhle nicht unterbrochen worden, hätte ich das Leben der Ihrigen beendet, doch ich muss auf einen weiteren Kampf warten. Lord
+
+Exodus hat mehr Patrouillen um die Festung der Unsrigen befohlen. Wenn Dasha ein Anzeichen ist, werden die Meer bald zuschlagen.
+
+Mehr Meer stehen vor der Festung der Unsrigen,
+
+als ich je auf einmal gesehen habe. Sie müssen Rache für die Zerstörung ihres Waldes suchen. Viele Juka stehen am Fuß des Berges bereit, den Streitkräften der Ihrigen entgegenzutreten, doch
+
+heute könnte der letzte Kampf sein. Exodus hat mich gerufen, ich muss mich vorbereiten.
+
+Die Dämmerung ist vergangen, und die Juka leben nun in einem neuen Zeitalter, einer späteren Zeit. Ich bin
+
+gerade von der Erkundung der neuen Welt zurückgekehrt, die die Festung der Juka umgibt. Während des Angriffs der Meer versuchte der Wahnsinnige Adranath, die Festung der Unsrigen
+
+mit großer Magie zu zerstören. Auf einmal war er reglos, und Licht umgab die Festung. Alles verschwand aus dem Blick. Als ich die Sinne der Meinigen wiedererlangte, sah ich kein Zeichen der Meer außer Dasha.
+
+Sie ist nicht mehr gefunden worden, seit dieses neue Wesen, Blackthorn, sie von der Spitze der Festung schleuderte.
+Der Wald war fort und nun durch Grasland ersetzt. In weiter Ferne
+
+konnte ich Menschen sehen, die die Körper der Ihrigen mit Zeichen bedeckt hatten. Sogar Gargoyles bevölkern diesen Ort. Exodus hat mir erklärt, dass die Juka und die Festung der Unsrigen
+
+in der Zeit vorwärtsgezogen wurden. Die Welt, die wir kannten, liegt nun Tausende von Jahren in der Vergangenheit. Lord Exodus sagt, er habe die Juka vor dem Aussterben gerettet. Ich will ihm nicht glauben. Ich fragte diesen
+
+Fremden nach den Meer, doch er sagt mir, es bleibe ein neuer Feind zu vernichten. Es scheint, die Feinde der Unsrigen sind wie der Wald zu Staub vergangen.
+
+Ich habe mit anderen Juka gesprochen und vermute, dass mir die Wahrheit gesagt wurde. Alle Juka hatten mächtige Träume. In den Träumen der Unsrigen drangen die Meer in die Festung der Unsrigen ein, und ein großer Kampf fand statt.
+
+Alle Juka und alle Meer kamen um, und die Festung wurde durch Adranaths Zauber zerstört. Ich möchte nicht glauben, dass die Meer uns je vernichten könnten, doch nun scheint es, wir haben eine
+
+Vision des Schicksals der Unsrigen gesehen, das nun in der Zeit verloren ist. Ich muss mich nun fragen: Wenn die Meer nicht im Kampf gegen die Juka starben, wie starben sie dann? Und noch wichtiger, wo ist Dasha?"""
+
+[translations.ita]
+title = "Diario"
+content = """
+La campagna per massacrare i Meer procede bene. Sebbene sembrino opporsi alle forze nostre a ogni passo, li sconfiggiamo ancora in combattimento. Spie dei Meer sono state trovate e
+
+uccise fuori dalla fortezza nostra. Gli sciocchi ci sottovalutano. Abbiamo il potere di Lord Exodus alle spalle. Presto impareranno a servire i Juka e io porterò la testa della
+
+sgualdrina, Dasha, su una picca sotto cui tutti i guerrieri nostri possano condividere il trionfo.
+
+Uno dei guerrieri dei Juka è morto oggi. Durante le esercitazioni
+
+d'addestramento nostre si è espresso a favore dei guerrieri dei Meer, dicendo che erano davvero potenti e che avrebbero rappresentato una sfida per i Juka. Un Juka che ha paura non è un Juka. Gli ho dato
+
+la morte di un codardo, fuori dalla battaglia.
+
+Altre spie dei Meer sono state trovate intorno alla fortezza nostra. Molte sono state viste e sono sfuggite all'ira dei
+
+guerrieri nostri. Quelle catturate e torturate non ci hanno rivelato nulla, neppure sottoposte agli incantesimi delle femmine. So che i Meer devono avere piani contro di noi se
+
+mandano tante spie. Potrei inviare le truppe dei Juka a invadere gli accampamenti loro come avvertimento.
+
+Ho incontrato Dasha in battaglia questo giorno. Gli
+
+sforzi suoi di attirarmi in un Duello Nero erano stolti. Se non fossimo stati interrotti nella grotta avrei posto fine alla vita sua, ma dovrò aspettare un'altra battaglia. Lord
+
+Exodus ha ordinato più pattuglie intorno alla fortezza nostra. Se Dasha è un indizio, i Meer attaccheranno presto.
+
+Fuori dalla fortezza nostra ci sono più Meer
+
+di quanti ne abbia mai visti insieme. Devono cercare vendetta per la distruzione della loro foresta. Molti Juka sono pronti ai piedi della montagna ad affrontare le forze loro, ma
+
+oggi potrebbe essere la battaglia finale. Exodus mi ha convocato, devo prepararmi.
+
+Il crepuscolo è trascorso e i Juka vivono ora in una nuova epoca, un tempo successivo. Sono
+
+appena tornato dall'esplorazione del nuovo mondo che circonda la fortezza dei Juka. Durante l'attacco dei Meer, il folle Adranath ha tentato di distruggere la fortezza nostra
+
+con una grande magia. D'un tratto è rimasto immobile e la luce ha circondato la fortezza. Tutto è svanito alla vista. Quando ho recuperato i sensi miei non ho visto traccia dei Meer, tranne Dasha.
+
+Non è stata più trovata da quando questo nuovo essere, Blackthorn, l'ha scaraventata giù dalla cima della fortezza.
+La foresta era scomparsa, ora sostituita da praterie. In lontananza
+
+potevo vedere umani che avevano coperto i corpi loro di segni. Persino i Gargoyle popolano questo luogo. Exodus mi ha spiegato che i Juka e la fortezza nostra sono stati trascinati
+
+avanti nel tempo. Il mondo che conoscevamo è ora migliaia di anni nel passato. Lord Exodus dice che ha salvato i Juka dall'estinzione. Non voglio credergli. Ho chiesto a questo
+
+straniero dei Meer, ma mi dice che rimane un nuovo nemico da distruggere. Sembra che i nemici nostri siano svaniti in polvere come la foresta.
+
+Ho parlato con altri Juka e sospetto che mi sia stata detta la verità. Tutti i Juka hanno fatto sogni intensi. Nei sogni nostri i Meer invadevano la fortezza nostra e aveva luogo una grande battaglia.
+
+Tutti i Juka e tutti i Meer morivano e la fortezza veniva distrutta dagli incantesimi di Adranath. Non vorrei credere che i Meer potessero mai distruggerci, ma ora sembra che abbiamo visto una
+
+visione del destino nostro, ormai perduto nel tempo. Ora devo chiedermi: se i Meer non sono morti nella battaglia con i Juka, come sono morti? E, soprattutto, dov'è Dasha?"""
+
+[translations.pol]
+title = "Dziennik"
+content = """
+Kampania mająca wybić Meer przebiega pomyślnie. Choć zdają się przeciwstawiać naszym siłom na każdym kroku, wciąż pokonujemy ich w walce. Szpiegów Meer znaleziono i
+
+zabito poza naszą twierdzą. Głupcy nas nie doceniają. Wspiera nas moc Lord Exodus. Wkrótce nauczą się służyć Juka, a ja poniosę głowę
+
+tej dziewki, Dasha, na kolcu, aby wszyscy nasi wojownicy mogli pod nią dzielić triumf.
+
+Jeden z wojowników Juka zginął dziś. Podczas naszych ćwiczeń
+
+szkoleniowych wypowiedział się przychylnie o wojownikach Meer, mówiąc, że są istotnie potężni i będą wyzwaniem dla Juka. Juka odczuwający strach nie jest Juka. Dałem
+
+mu śmierć tchórza, poza bitwą.
+
+Więcej szpiegów Meer znaleziono wokół naszej twierdzy. Wielu dostrzeżono, lecz uniknęli gniewu
+
+naszych wojowników. Ci, których pojmano i torturowano, nie zdradzili nam niczego, nawet poddani zaklęciom samic. Wiem, że Meer muszą coś knuć przeciw nam, skoro
+
+wysyłają tylu szpiegów. Być może wyślę oddziały Juka, by ostrzegawczo najechały ich obozy.
+
+Spotkałem dziś Dasha w walce. Jej
+
+próby wciągnięcia mnie w Czarny Pojedynek były głupie. Gdyby nie przerwano nam w jaskini, zakończyłbym jej życie, lecz będę musiał zaczekać na kolejną bitwę. Lord
+
+Exodus rozkazał zwiększyć liczbę patroli wokół naszej twierdzy. Jeśli Dasha jest jakąś wskazówką, Meer wkrótce uderzą.
+
+Przed naszą twierdzą stoi więcej Meer,
+
+niż kiedykolwiek widziałem naraz. Muszą szukać zemsty za zniszczenie swego lasu. Wielu Juka czeka w gotowości u podnóża góry, by stawić czoła ich siłom, lecz
+
+dziś może rozegrać się ostatnia bitwa. Exodus mnie wezwał, muszę się przygotować.
+
+Zmierzch minął, a Juka żyją teraz w nowej epoce, w późniejszych czasach. Właśnie
+
+wróciłem z rozpoznania nowego świata otaczającego twierdzę Juka. Podczas ataku Meer szaleniec Adranath próbował zniszczyć naszą twierdzę
+
+potężną magią. Nagle znieruchomiał, a światło otoczyło twierdzę. Wszystko zniknęło z widoku. Kiedy odzyskałem zmysły, nie dostrzegłem śladu Meer prócz Dasha.
+
+Nie znaleziono jej, odkąd ta nowa istota, Blackthorn, strąciła ją magicznym uderzeniem ze szczytu twierdzy. Las zniknął, zastąpiony teraz przez łąki. W oddali
+
+widziałem ludzi, którzy pokryli ciała znakami. Nawet gargulce zamieszkują to miejsce. Exodus wyjaśnił mi, że Juka i nasza twierdza zostali przeniesieni
+
+naprzód w czasie. Świat, który znaliśmy, jest teraz tysiące lat w przeszłości. Lord Exodus mówi, że ocalił Juka przed zagładą. Nie chcę mu wierzyć. Spytałem tego
+
+nieznajomego o Meer, lecz mówi mi, że pozostał nowy wróg do zniszczenia. Zdaje się, że nasi wrogowie obrócili się w proch, jak las.
+
+Rozmawiałem z innymi Juka i podejrzewam, że powiedziano mi prawdę. Wszyscy Juka mieli potężne sny. W naszych snach Meer najechali naszą twierdzę i rozegrała się wielka bitwa.
+
+Wszyscy Juka i wszyscy Meer zginęli, a twierdza została zniszczona przez zaklęcia Adranath. Nie chciałbym wierzyć, że Meer kiedykolwiek mogliby nas zniszczyć, lecz teraz zdaje się, że ujrzeliśmy
+
+wizję naszego losu, utraconego teraz w czasie. Muszę więc zapytać: jeśli Meer nie zginęli w bitwie z Juka, jak umarli? I co ważniejsze, gdzie jest Dasha?"""
+
+[translations.por]
+title = "Diário"
+content = """
+A campanha para massacrar os Meer vai bem. Embora pareçam se opor às forças nossas a cada passo, ainda os derrotamos em combate. Espiões dos Meer foram encontrados e
+
+mortos fora da fortaleza nossa. Os tolos nos subestimam. Temos o poder de Lord Exodus nos apoiando. Logo aprenderão a servir aos Juka, e carregarei a cabeça da
+
+rameira Dasha numa estaca, para que todos os guerreiros nossos compartilhem o triunfo sob ela.
+
+Um dos guerreiros dos Juka morreu hoje. Durante os exercícios de treinamento
+
+nossos, falou a favor dos guerreiros dos Meer, dizendo que eram de fato poderosos e seriam um desafio para os Juka. Um Juka com medo não é um Juka. Dei a
+
+ele a morte de um covarde, fora de batalha.
+
+Mais espiões dos Meer foram encontrados ao redor da fortaleza nossa. Muitos foram vistos e escaparam da ira dos
+
+guerreiros nossos. Aqueles que foram capturados e torturados nada nos revelaram, mesmo quando submetidos aos feitiços das fêmeas. Sei que os Meer devem ter planos contra nós se
+
+enviam tantos espiões. Talvez eu envie as tropas dos Juka para invadir os acampamentos deles como aviso.
+
+Encontrei Dasha em batalha neste dia. Os
+
+esforços dela para me atrair a um Duelo Negro foram tolos. Se não tivéssemos sido interrompidos na caverna, eu teria encerrado a vida dela, mas terei de esperar por outra batalha. Lord
+
+Exodus ordenou mais patrulhas ao redor da fortaleza nossa. Se Dasha serve de indicação, os Meer atacarão em breve.
+
+Mais Meer estão fora da fortaleza nossa
+
+do que jamais vi de uma só vez. Devem buscar vingança pela destruição da floresta deles. Muitos Juka estão prontos na base da montanha para enfrentar as forças deles, mas
+
+hoje pode ser a batalha final. Exodus me convocou; preciso me preparar.
+
+O crepúsculo passou, e os Juka agora vivem numa nova era, num tempo posterior. Acabo de
+
+voltar de explorar o novo mundo que cerca a fortaleza dos Juka. Durante o ataque dos Meer, o louco Adranath tentou destruir a fortaleza nossa
+
+com grande magia. De repente ele ficou imóvel, e uma luz cercou a fortaleza. Tudo desapareceu de vista. Quando recobrei os sentidos meus, não vi sinal dos Meer, exceto Dasha.
+
+Ela não foi encontrada desde que este novo ser, Blackthorn, a lançou do alto da fortaleza com uma explosão.
+A floresta havia sumido, agora substituída por campos de grama. Ao longe eu
+
+podia ver humanos que haviam coberto os corpos deles com marcas. Até Gárgulas povoam este lugar. Exodus me explicou que os Juka e a fortaleza nossa foram levados
+
+adiante no tempo. O mundo que conhecíamos agora está milhares de anos no passado. Lord Exodus diz que salvou os Juka da extinção. Não quero acreditar nele. Perguntei a esse
+
+estranho sobre os Meer, mas ele me diz que resta destruir um novo inimigo. Parece que os inimigos nossos viraram pó como a floresta.
+
+Falei com outros Juka e suspeito que me disseram a verdade. Todos os Juka tiveram sonhos poderosos. Nos sonhos nossos, os Meer invadiram a fortaleza nossa e uma grande batalha aconteceu.
+
+Todos os Juka e todos os Meer pereceram, e a fortaleza foi destruída pelos feitiços de Adranath. Eu não gostaria de acreditar que os Meer jamais pudessem nos destruir, mas agora parece que vimos uma
+
+visão do destino nosso, agora perdido no tempo. Preciso agora me perguntar: se os Meer não morreram na batalha com os Juka, como morreram? E, mais importante, onde está Dasha?"""
+
+[translations.spa]
+title = "Diario"
+content = """
+La campaña para masacrar a los Meer va bien. Aunque parecen oponerse a las fuerzas nuestras a cada paso, seguimos derrotándolos en combate. Se han encontrado espías de los Meer y
+
+se les ha dado muerte fuera de la fortaleza nuestra. Los necios nos subestiman. Tenemos detrás el poder de Lord Exodus. Pronto aprenderán a servir a los Juka y llevaré la cabeza de
+
+esa mujerzuela, Dasha, en una pica para que todos los guerreros nuestros compartan el triunfo bajo ella.
+
+Hoy ha muerto uno de los guerreros de los Juka. Durante los ejercicios
+
+de entrenamiento nuestros habló a favor de los guerreros de los Meer, diciendo que eran realmente poderosos y que representarían un desafío para los Juka. Un Juka con miedo no es un Juka. Le di
+
+la muerte de un cobarde, fuera de batalla.
+
+Se han encontrado más espías de los Meer alrededor de la fortaleza nuestra. Muchos han sido vistos y han escapado a la ira de los
+
+guerreros nuestros. Los capturados y torturados no nos han revelado nada, ni siquiera sometidos a los hechizos de las hembras. Sé que los Meer deben de tener planes contra nosotros si
+
+envían tantos espías. Puede que envíe a las tropas de los Juka a invadir los campamentos suyos como advertencia.
+
+Hoy me he enfrentado a Dasha en batalla. Los
+
+esfuerzos suyos por atraerme a un Duelo Negro fueron necios. De no habernos interrumpido en la cueva, habría puesto fin a la vida suya, pero tendré que esperar a otra batalla. Lord
+
+Exodus ha ordenado más patrullas alrededor de la fortaleza nuestra. Si Dasha sirve de indicio, los Meer atacarán pronto.
+
+Hay más Meer fuera de la fortaleza nuestra
+
+de los que jamás he visto juntos. Deben buscar venganza por la destrucción de su bosque. Muchos Juka están preparados al pie de la montaña para enfrentarse a las fuerzas suyas, pero
+
+hoy podría ser la batalla final. Exodus me ha convocado; debo prepararme.
+
+Ha pasado el crepúsculo y los Juka viven ahora en una nueva era, en un tiempo posterior. Acabo de
+
+volver de explorar el nuevo mundo que rodea la fortaleza de los Juka. Durante el ataque de los Meer, el loco Adranath intentó destruir la fortaleza nuestra
+
+con gran magia. De pronto se quedó inmóvil y una luz rodeó la fortaleza. Todo desapareció de la vista. Cuando recuperé los sentidos míos, no vi señal de los Meer, salvo Dasha.
+
+No se la ha encontrado desde que este nuevo ser, Blackthorn, la hizo saltar por los aires desde lo alto de la fortaleza. El bosque había desaparecido, sustituido por praderas. A lo lejos
+
+podía ver humanos que habían cubierto los cuerpos suyos de marcas. Incluso las gárgolas pueblan este lugar. Exodus me ha explicado que los Juka y la fortaleza nuestra han sido arrastrados
+
+hacia el futuro. El mundo que conocíamos quedó miles de años atrás. Lord Exodus dice que ha ha salvado a los Juka de la extinción. No quiero creerlo. Pregunté a este
+
+desconocido por los Meer, pero me dice que queda un nuevo enemigo al que destruir. Parece que los enemigos nuestros se han convertido en polvo, como el bosque.
+
+He hablado con otros Juka y sospecho que me han dicho la verdad. Todos los Juka tuvieron sueños poderosos. En los sueños nuestros, los Meer invadían la fortaleza nuestra y se libraba una gran batalla.
+
+Todos los Juka y todos los Meer perecían, y la fortaleza era destruida por los hechizos de Adranath. No me gustaría creer que los Meer pudieran destruirnos jamás, pero ahora parece que hemos visto una
+
+visión del destino nuestro, ahora perdido en el tiempo. Debo preguntarme: si los Meer no murieron en la batalla con los Juka, ¿cómo murieron? Y, lo que es más importante, ¿dónde está Dasha?"""
