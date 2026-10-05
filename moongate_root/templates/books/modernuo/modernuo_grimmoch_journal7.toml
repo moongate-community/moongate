@@ -44,3 +44,108 @@ access to this primeval
 crypt, seal it up again
 for all eternity."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Denní zápisky Grimmoch Drummel"
+content = """
+Den sedmý až desátý:
+
+Tohle místo nesnesu, nedokážu ho snášet. Musím se dostat ven. V tomhle dávném místě číhá něco zlého, něco, co je nejlepší nechat
+
+na pokoji. Slyším je, ale nikdo z ostatních ne. A přece je musí slyšet. Ruce, drápy, škrábání do kamene, to strašné škrábání a žalostné výkřiky, které znějí skoro jako
+
+smích. Slyším je i přes rány dělnických krumpáčů a v noci neslyším nic jiného. A ostatní přesto neslyší nic. Musíme opustit tohle
+
+místo, musíme. Tři dělníci zmizeli – Tavara předpokládá, že nás opustili – a pokud ano, mají podle mě štěstí. Nezajímá mě, co říkají ostatní,
+
+musíme opustit tohle místo. Musíme udělat totéž co ti před námi, navršit kameny, zablokovat všechny přístupy do této pradávné krypty a znovu ji uzavřít na věčnost."""
+
+[translations.fre]
+title = "Le journal quotidien de Grimmoch Drummel"
+content = """
+Du septième au dixième jour :
+
+Je ne supporte pas cet endroit, je ne peux le supporter. Il faut que je sorte. Quelque chose de maléfique rôde dans ce lieu ancien, quelque chose qu’il vaudrait mieux laisser
+
+tranquille. Je les entends, et pourtant aucun des autres ne les entend. Et pourtant ils le doivent. Des mains, des griffes, grattant la pierre, cet horrible grattement et ces cris pitoyables qui ressemblent presque à des
+
+rires. Je les entends même par-dessus les coups de pioche des ouvriers, et la nuit je n’entends plus que cela. Pourtant, les autres n’entendent rien. Nous devons quitter cet
+
+endroit, nous le devons. Trois ouvriers ont disparu ; Tavara pense qu’ils nous ont abandonnés, et s’ils l’ont fait, je les estime heureux. Je me moque de ce que disent les autres,
+
+nous devons quitter cet endroit. Nous devons faire comme ceux d’avant et entasser les pierres, bloquer tout accès à cette crypte primordiale, la sceller de nouveau pour l’éternité."""
+
+[translations.ger]
+title = "Grimmoch Drummels tägliches Tagebuch"
+content = """
+Siebter bis zehnter Tag:
+
+Ich halte diesen Ort nicht aus, ich ertrage ihn nicht. Ich muss hier heraus. Etwas Böses lauert an diesem uralten Ort, etwas, das man besser in
+
+Ruhe lässt. Ich höre sie, doch keiner der anderen hört sie. Und doch müssen sie es. Hände, Klauen, die an Stein kratzen, das furchtbare Kratzen und die jämmerlichen Schreie, die fast wie
+
+Gelächter klingen. Ich kann sie sogar über den Schlägen der Spitzhacken der Arbeiter hören, und nachts sind sie alles, was ich höre. Und doch hören die anderen nichts. Wir müssen diesen
+
+Ort verlassen, wir müssen. Drei Arbeiter werden vermisst – Tavara vermutet, sie hätten uns verlassen – und ich halte sie für glücklich, wenn es so ist. Mir ist gleich, was die anderen sagen,
+
+wir müssen diesen Ort verlassen. Wir müssen es wie jene vor uns tun und die Steine aufschichten, jeden Zugang zu dieser uralten Gruft versperren und sie wieder für alle Ewigkeit versiegeln."""
+
+[translations.ita]
+title = "Il diario quotidiano di Grimmoch Drummel"
+content = """
+Giorno Sette - Giorno Dieci:
+
+Non sopporto questo posto, non lo reggo. Devo uscire. Qualcosa di malvagio si annida in questo luogo antico, qualcosa che sarebbe meglio lasciare
+
+in pace. Li sento, ma nessuno degli altri li sente. Eppure devono sentirli. Mani, artigli, che graffiano la pietra, l'orribile graffiare e le grida pietose che sembrano quasi
+
+risate. Li sento persino al di sopra dei colpi dei picconi degli operai, e di notte non sento altro. Eppure gli altri non sentono nulla. Dobbiamo lasciare questo
+
+posto, dobbiamo. Tre operai sono scomparsi: Tavara suppone che ci abbiano abbandonati, e se lo hanno fatto li ritengo fortunati. Non mi importa cosa dicono gli altri,
+
+dobbiamo lasciare questo posto. Dobbiamo fare come quelli prima di noi e ammucchiare le pietre, bloccare ogni accesso a questa cripta primordiale, sigillarla di nuovo per tutta l'eternità."""
+
+[translations.pol]
+title = "Dziennik codzienny Grimmoch Drummel"
+content = """
+Dzień siódmy — dzień dziesiąty:
+
+Nie znoszę tego miejsca, nie mogę go znieść. Muszę się wydostać. Coś złego czai się w tym pradawnym miejscu, coś, co najlepiej zostawić
+
+w spokoju. Słyszę ich, choć nikt inny nie słyszy. A przecież muszą. Dłonie, pazury drapiące kamień, okropne drapanie i żałosne krzyki brzmiące niemal jak
+
+śmiech. Słyszę je nawet ponad trzaskiem kilofów robotników, a nocą słyszę tylko je. A jednak pozostali nie słyszą nic. Musimy opuścić to
+
+miejsce, musimy. Trzech robotników zaginęło — Tavara sądzi, że nas opuścili — i uważam ich za szczęściarzy, jeśli tak zrobili. Nie obchodzi mnie, co mówią inni,
+
+musimy stąd odejść. Musimy zrobić to, co nasi poprzednicy: usypać kamienie, zablokować cały dostęp do tej pradawnej krypty, znów zapieczętować ją na wieczność."""
+
+[translations.por]
+title = "O diário de Grimmoch Drummel"
+content = """
+Sétimo dia - Décimo dia:
+
+Não aguento este lugar, não suporto. Preciso sair. Algo maligno espreita neste lugar antigo, algo que é melhor deixar
+
+em paz. Eu os ouço, mas nenhum dos outros ouve. E, no entanto, devem ouvir. Mãos, garras, arranhando pedra, os terríveis arranhões e os gritos lastimosos que quase parecem
+
+risadas. Consigo ouvi-los até acima das pancadas das picaretas dos trabalhadores e, à noite, são tudo o que posso ouvir. E, no entanto, os outros não ouvem nada. Precisamos deixar este
+
+lugar, precisamos. Três trabalhadores desapareceram; Tavara acha que nos abandonaram, e os considero sortudos se foi isso. Não me importa o que os outros dizem,
+
+precisamos deixar este lugar. Precisamos fazer como os que vieram antes e empilhar as pedras, bloquear todo acesso a esta cripta primeva, selá-la de novo por toda a eternidade."""
+
+[translations.spa]
+title = "El diario de Grimmoch Drummel"
+content = """
+Día siete - Día diez:
+
+No soporto este lugar, no puedo aguantarlo. Tengo que salir. Algo maligno acecha en este sitio antiguo, algo que más vale dejar
+
+en paz. Los oigo, pero ninguno de los demás los oye. Y, sin embargo, deben oírlos. Manos, garras, rascando la piedra, ese horrible rascar y los gritos lastimeros que casi parecen
+
+risas. Los oigo incluso por encima de los golpes de los picos de los trabajadores, y de noche son lo único que escucho. Pero los demás no oyen nada. Debemos abandonar este
+
+lugar, debemos hacerlo. Han desaparecido tres trabajadores; Tavara supone que nos han abandonado, y los considero afortunados si así ha sido. Me da igual lo que digan los demás:
+
+debemos abandonar este lugar. Debemos hacer como quienes estuvieron antes y amontonar las piedras, bloquear todo acceso a esta cripta primigenia, sellarla otra vez para toda la eternidad."""

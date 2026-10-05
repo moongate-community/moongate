@@ -178,3 +178,352 @@ Sacrifice, Honor,
 Spirituality, and
 Humility."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Ctnost"
+content = """
+V tomto světě žijí lidé s mnoha různými ideály, a to je dobře. Co však v lidech naší země rozlišuje dobré od zlého, vážené
+
+od opovrhovaného? Ctnost, pravím, a ctnost je logickým důsledkem toho, že lidé chtějí žít společně v soudržné společnosti.
+Neboť bez Ctností
+
+jako pravidel chování, která lidé zachovávají ve vzájemných vztazích, předivo této společnosti slábne. Má-li společnost růst a prospívat všem,
+
+musí každý dopřát ostatním společný základ ohleduplnosti.
+Tento základ nazývám Ctnosti. Neboť ačkoli by jeden člověk mohl získat osobní výhodu porušením takového
+
+řádu, společnost jako celek by utrpěla.
+Existují tři Základní ctnosti, které by měly lidi vést k osvícení. Jsou to: Pravda, Láska a Odvaha. Mezi všemi
+
+nekonečnými důvody, z nichž člověk může vycházet při jednání, jako chamtivost či dobročinnost, závist či lítost, tyto tři Základní ctnosti vynikají.
+Ve skutečnosti všechny ostatní
+
+ctnosti i neřesti lze prokázat jako vystavěné z těchto principů a jejich opačných zkažených podob: Lži, Nenávisti a Zbabělosti. Tyto tři Principy lze
+
+kombinovat osmi způsoby, které nazvu osmi ctnostmi. Osm ctností, na nichž bychom měli stavět svou společnost, následuje.
+Samotná Pravda se stává
+
+Poctivostí, neboť jak můžeme bez poctivosti mezi našimi lidmi vybudovat důvěru potřebnou k dosažení co největších úspěchů?
+Samotná Láska se stává
+
+Soucitem, neboť někdy všichni budeme potřebovat soucit druhých a nejspíše se soucitu dostane těm, kteří jej projevili.
+
+Samotná Odvaha se stává Statečností; bez statečnosti naši lidé nikdy nevstoupí do neznámého či riskantního a nikdy ničeho nedosáhnou.
+
+Pravda zmírněná Láskou nám dává Spravedlnost, neboť jen při láskyplném hledání pravdy lze udílet poctivou Spravedlnost, místo abychom vytvářeli chladný a bezcitný lid.
+
+Láska a Odvaha nám dávají Obětavost, neboť lidé, kteří se navzájem milují, budou ochotni přinášet osobní oběti na pomoc jiným v nouzi, což jednoho dne mohou
+
+sami potřebovat oplatit.
+Odvaha a Pravda nám dávají Čest; velcí rytíři dobře vědí, že rytířskou čest lze nalézt dodržováním tohoto řádu chování.
+
+Spojení Pravdy, Lásky a Odvahy naznačuje ctnost Duchovnosti, ctnost, která vede člověka k sebepozorování, k úvahám o svém místě v tomto světě
+
+a o tom, zda jeho skutky budou zaznamenány jako dar světu, nebo jako pohroma.
+Poslední Ctnost je složitější. Osmou kombinací je totiž ta bez
+
+Pravdy, Lásky či Odvahy, která může existovat pouze ve stavu veliké Pýchy, což ovšem není vůbec ctnost. Snad je tento žert osudu zkouškou, zda člověk dokáže
+
+pochopit, že pravou ctností je Pokora. Mám pocit, že lidé v Magincia to nechápou natolik, že bych nebyl překvapen, kdyby je v budoucnu čekal nějaký zlý
+
+osud.
+Tak z nekonečných možností, z nichž vzešly Tři principy Pravdy, Lásky a Odvahy, vzniká
+
+Osm ctností: Poctivost, Soucit, Statečnost, Spravedlnost, Obětavost, Čest, Duchovnost a Pokora."""
+
+[translations.fre]
+title = "La Vertu"
+content = """
+Dans ce monde vivent des gens aux idéaux très divers, et cela est bon. Pourtant, qu’est-ce qui, parmi les gens de notre pays, distingue le bien du mal, ce qui est aimé
+
+de ce qui est méprisé ? La vertu, dis-je, et la vertu est la conséquence logique d’un peuple qui souhaite vivre uni dans une société. Car sans les Vertus
+
+comme code de conduite que les gens respectent dans leurs relations mutuelles, la trame de cette société s’affaiblira. Pour qu’une société grandisse et prospère pour tous,
+
+chacun doit accorder aux autres une base commune de considération. Je nomme cette base les Vertus. Car, si une personne peut obtenir un avantage personnel en enfreignant un tel
+
+code, la société entière en souffrirait. Trois Vertus Principales devraient guider les gens vers la lumière. Ce sont la Vérité, l’Amour et le Courage. Parmi toutes les
+
+raisons infinies pouvant fonder une action, telles que la cupidité ou la charité, l’envie ou la pitié, les trois Vertus Principales se distinguent. En fait, toutes les autres
+
+vertus et tous les vices peuvent être démontrés comme découlant de ces principes et de leurs corruptions opposées : le Mensonge, la Haine et la Lâcheté. Ces trois Principes peuvent
+
+être combinés de huit façons, que je nommerai les huit vertus. Voici les huit vertus sur lesquelles nous devrions bâtir notre société.
+La Vérité seule devient l’
+
+Honnêteté, car sans honnêteté entre nos gens, comment bâtir la confiance nécessaire pour maximiser nos réussites ?
+L’Amour seul devient la
+
+Compassion, car à un moment ou à un autre, nous aurons tous besoin de la compassion d’autrui, et la compassion sera très probablement montrée à ceux qui en ont montré.
+
+Le Courage seul devient la Vaillance ; sans vaillance, notre peuple ne s’aventurera jamais vers l’inconnu ou le risque, et n’accomplira jamais rien.
+
+La Vérité tempérée par l’Amour nous donne la Justice, car seule une recherche aimante de la vérité permet de rendre une Justice équitable plutôt que de créer un peuple froid et insensible.
+
+L’Amour et le Courage nous donnent le Sacrifice, car des gens qui s’aiment seront prêts à faire des sacrifices personnels pour aider ceux qui sont dans le besoin, et pourraient un jour avoir besoin
+
+de la même chose en retour.
+Le Courage et la Vérité nous donnent l’Honneur ; les grands chevaliers savent bien que l’honneur chevaleresque peut se trouver dans le respect de ce code de conduite.
+
+La combinaison de la Vérité, de l’Amour et du Courage suggère la vertu de Spiritualité, celle qui amène à l’introspection, à s’interroger sur sa place dans ce monde
+
+et à se demander si ses actes seront consignés comme un don au monde ou comme un fléau. La dernière Vertu est plus compliquée. Car la huitième combinaison est celle qui est dépourvue de
+
+Vérité, d’Amour ou de Courage, ce qui ne peut exister que dans un état de grand Orgueil, lequel, bien sûr, n’est nullement une vertu. Peut-être ce tour du destin est-il une épreuve pour voir si l’on peut
+
+comprendre que la vraie vertu est celle de l’Humilité. Je pense que les habitants de Magincia manquent à ce point de le voir que je ne serais pas surpris qu’un mauvais
+
+sort les attende dans l’avenir. Ainsi, des possibilités infinies qui ont fait naître les Trois Principes de Vérité, d’Amour et de Courage, viennent les
+
+Huit Vertus : Honnêteté, Compassion, Vaillance, Justice, Sacrifice, Honneur, Spiritualité et Humilité."""
+
+[translations.ger]
+title = "Tugend"
+content = """
+In dieser Welt leben Menschen mit vielen verschiedenen Idealen, und das ist gut. Doch was ist es in den Menschen unseres Landes, das die Guten von den Bösen, die Geschätzten
+
+von den Verachteten scheidet? Tugend, sage ich, ist es, und Tugend ist die vernünftige Folge eines Volkes, das in einer verbundenen Gesellschaft zusammenleben will.
+Denn ohne Tugenden
+
+als Verhaltensregeln, die Menschen in ihren Beziehungen zueinander einhalten, wird das Gefüge dieser Gesellschaft geschwächt. Damit eine Gesellschaft zum Wohl aller wächst und gedeiht,
+
+muss jeder den anderen eine gemeinsame Grundlage der Rücksicht gewähren.
+Ich nenne diese Grundlage die Tugenden. Denn obwohl ein Einzelner einen persönlichen Vorteil erlangen könnte, indem er solche
+
+Regeln bricht, würde die Gesellschaft als Ganzes leiden.
+Es gibt drei Grundtugenden, die Menschen zur Erleuchtung führen sollten. Diese sind Wahrheit, Liebe und Mut. Unter all den
+
+unendlich vielen Gründen, aus denen man eine Handlung beginnen kann, etwa Gier oder Wohltätigkeit, Neid oder Mitleid, ragen die drei Grundtugenden hervor.
+Tatsächlich lassen sich alle anderen
+
+Tugenden und Laster aus diesen Prinzipien und ihren entgegengesetzten Verderbnissen Falschheit, Hass und Feigheit herleiten. Diese drei Prinzipien können
+
+auf acht Arten verbunden werden, die ich die acht Tugenden nennen werde. Die acht Tugenden, auf denen wir unsere Gesellschaft errichten sollten, folgen nun.
+Wahrheit allein wird zu
+
+Ehrlichkeit, denn ohne Ehrlichkeit unter unserem Volk: Wie können wir das Vertrauen aufbauen, das nötig ist, um unsere Erfolge zu mehren?
+Liebe allein wird zu
+
+Mitgefühl, denn irgendwann werden wir alle das Mitgefühl anderer brauchen, und höchstwahrscheinlich wird Mitgefühl jenen entgegengebracht, die es selbst gezeigt haben.
+
+Mut allein wird zu Tapferkeit; ohne Tapferkeit wird unser Volk niemals ins Unbekannte oder ins Gefährliche vorstoßen und niemals etwas erreichen.
+
+Wahrheit, durch Liebe gemildert, gibt uns Gerechtigkeit, denn nur in einer liebevollen Suche nach Wahrheit kann man faire Gerechtigkeit üben, statt ein kaltes und gefühlloses Volk zu schaffen.
+
+Liebe und Mut geben uns Opferbereitschaft, denn ein Volk, dessen Menschen einander lieben, wird bereit sein, persönliche Opfer zu bringen, um anderen in Not zu helfen, was eines Tages
+
+umgekehrt nötig sein mag.
+Mut und Wahrheit geben uns Ehre; große Ritter wissen wohl, dass ritterliche Ehre durch das Einhalten dieser Verhaltensregeln gefunden werden kann.
+
+Die Verbindung von Wahrheit, Liebe und Mut legt die Tugend der Spiritualität nahe, die Tugend, die einen zur Innenschau bringt, dazu, über seinen Platz in dieser Welt nachzudenken
+
+und darüber, ob seine Taten als Geschenk an die Welt oder als Plage aufgezeichnet werden.
+Die letzte Tugend ist schwieriger. Denn die achte Verbindung ist jene ohne
+
+Wahrheit, Liebe oder Mut, die nur in einem Zustand großen Stolzes bestehen kann, was natürlich überhaupt keine Tugend ist. Vielleicht ist dieser Streich des Schicksals eine Prüfung, ob man
+
+erkennen kann, dass die wahre Tugend die Demut ist. Ich finde, dass die Menschen von Magincia dies so wenig erkennen, dass es mich nicht überraschen würde, wenn ein böses
+
+Schicksal ihre Zukunft erwartete.
+So entstehen aus den unendlichen Möglichkeiten, welche die Drei Prinzipien Wahrheit, Liebe und Mut hervorbrachten,
+
+die Acht Tugenden Ehrlichkeit, Mitgefühl, Tapferkeit, Gerechtigkeit, Opferbereitschaft, Ehre, Spiritualität und Demut."""
+
+[translations.ita]
+title = "Virtù"
+content = """
+In questo mondo vivono persone dai molti ideali diversi, e ciò è bene. Eppure che cosa, nella gente della nostra terra, distingue il bene dal male, ciò che è apprezzato
+
+da ciò che è disprezzato? La virtù, dico io, e la virtù è l'esito logico di un popolo che desidera vivere insieme in una società unita.
+Poiché senza Virtù
+
+come codice di condotta che le persone mantengono nei rapporti reciproci, il tessuto di quella società si indebolirà. Perché una società cresca e prosperi per tutti,
+
+ciascuno deve concedere agli altri una base comune di considerazione.
+Chiamo questa base le Virtù. Poiché, sebbene una persona possa ottenere un vantaggio personale infrangendo un simile
+
+codice, la società nel suo insieme ne soffrirebbe.
+Vi sono tre Virtù Fondamentali che dovrebbero guidare la gente all'illuminazione. Sono: Verità, Amore e Coraggio. Fra tutte le
+
+infinite ragioni che si possono avere per fondare un'azione, come avidità o carità, invidia o pietà, le tre Virtù Fondamentali spiccano.
+In effetti, si può dimostrare che tutte le altre
+
+virtù e tutti i vizi sono costruiti a partire da questi princìpi e dalle loro corruzioni opposte: Falsità, Odio e Codardia. Questi tre Princìpi si possono
+
+combinare in otto modi, che chiamerò le otto virtù. Seguono le otto virtù sulle quali dovremmo fondare la nostra società.
+La sola Verità diviene
+
+Onestà, poiché senza onestà fra la nostra gente, come possiamo costruire la fiducia necessaria a massimizzare i nostri successi.
+Il solo Amore diviene
+
+compassione, poiché prima o poi tutti avremo bisogno della compassione altrui, e molto probabilmente la compassione verrà mostrata a chi l'ha mostrata.
+
+Il solo Coraggio diviene Valore; senza valore la nostra gente non si avventurerà mai nell'ignoto o nel rischio e non realizzerà mai nulla.
+
+La Verità temperata dall'Amore ci dà Giustizia, poiché soltanto in un'amorevole ricerca della verità si può dispensare una Giustizia equa, anziché creare un popolo freddo e insensibile.
+
+Amore e Coraggio ci danno Sacrificio, poiché un popolo i cui membri si amano sarà disposto a fare sacrifici personali per aiutare gli altri nel bisogno, cosa di cui un giorno si potrebbe
+
+avere bisogno in cambio.
+Coraggio e Verità ci danno Onore; i grandi cavalieri sanno bene che l'onore cavalleresco si può trovare aderendo a questo codice di condotta.
+
+Combinare Verità, Amore e Coraggio suggerisce la virtù della Spiritualità, la virtù che induce all'introspezione, a domandarsi quale sia il proprio posto in questo mondo
+
+e se le proprie azioni verranno ricordate come un dono al mondo o una piaga.
+L'ultima Virtù è più complicata. Poiché l'ottava combinazione è quella priva di
+
+Verità, Amore o Coraggio, che può esistere soltanto in uno stato di grande Orgoglio, che naturalmente non è affatto una virtù. Forse questo scherzo del fato è una prova per vedere se si può
+
+comprendere che la vera virtù è quella dell'Umiltà. Sento che la gente di Magincia non riesce a vederlo a tal punto che non mi stupirei se qualche cattiva
+
+sorte l'attendesse in futuro.
+Così dalle infinite possibilità che hanno generato i Tre Princìpi di Verità, Amore e Coraggio, vengono le
+
+Otto Virtù di Onestà, Compassione, Valore, Giustizia, Sacrificio, Onore, Spiritualità e Umiltà."""
+
+[translations.pol]
+title = "Cnota"
+content = """
+Na tym świecie żyją ludzie o wielu różnych ideałach, i to dobrze. Lecz co w mieszkańcach naszej ziemi odróżnia dobro od zła, cenione
+
+od pogardzanego? Powiadam, że Cnota, a cnota jest logicznym następstwem istnienia ludzi pragnących wspólnie żyć w zjednoczonym społeczeństwie.
+Gdyż bez Cnót
+
+jako kodeksu postępowania, którego ludzie przestrzegają we wzajemnych stosunkach, tkanka społeczeństwa osłabnie. Aby społeczeństwo rosło i prosperowało dla dobra wszystkich,
+
+każdy musi zapewnić pozostałym wspólną podstawę względów.
+Tę podstawę nazywam Cnotami. Choć bowiem ktoś może odnieść osobistą korzyść przez złamanie takiego
+
+kodeksu, społeczeństwo jako całość ucierpi.
+Istnieją trzy Główne Cnoty, które powinny prowadzić ludzi do oświecenia. Są to: Prawda, Miłość i Odwaga. Spośród wszystkich
+
+niezliczonych powodów, na których można oprzeć czyn, takich jak chciwość lub dobroczynność, zawiść lub litość, wyróżniają się trzy Główne Cnoty.
+W istocie wszystkie pozostałe
+
+cnoty i wady można wykazać jako zbudowane z tych zasad oraz przeciwnych im wypaczeń: Fałszu, Nienawiści i Tchórzostwa. Te trzy Zasady można
+
+łączyć na osiem sposobów, które nazwę ośmioma cnotami. Oto osiem cnót, na których powinniśmy budować społeczeństwo.
+Sama Prawda staje się
+
+Uczciwością, bo bez uczciwości między naszymi ludźmi jak zbudować zaufanie potrzebne do osiągnięcia największych sukcesów?
+Sama Miłość staje się
+
+Współczuciem, gdyż wszyscy kiedyś potrzebować będziemy współczucia innych, a najpewniej okazane zostanie ono tym, którzy sami je okazywali.
+
+Sama Odwaga staje się Męstwem; bez męstwa nasi ludzie nigdy nie sięgną ku nieznanemu czy ryzykownemu i nigdy nic nie osiągną.
+
+Prawda złagodzona Miłością daje nam Sprawiedliwość, gdyż tylko w pełnym miłości poszukiwaniu prawdy można wymierzać uczciwą Sprawiedliwość, zamiast tworzyć lud zimny i bezduszny.
+
+Miłość i Odwaga dają Poświęcenie, gdyż ludzie, którzy się kochają, będą gotowi do osobistych poświęceń, aby pomóc potrzebującym, a pewnego dnia sami mogą
+
+potrzebować tego w zamian.
+Odwaga i Prawda dają Honor; wielcy rycerze dobrze wiedzą, że rycerski honor można odnaleźć, przestrzegając tego kodeksu postępowania.
+
+Połączenie Prawdy, Miłości i Odwagi sugeruje cnotę Duchowości, skłaniającą do introspekcji, zastanawiania się nad swoim miejscem na tym świecie
+
+oraz nad tym, czy nasze czyny zostaną zapisane jako dar dla świata, czy plaga.
+Ostatnia Cnota jest bardziej złożona. Ósme połączenie jest bowiem pozbawione
+
+Prawdy, Miłości i Odwagi, co może istnieć tylko w stanie wielkiej Pychy, która oczywiście wcale nie jest cnotą. Być może ta sztuczka losu sprawdza, czy potrafimy
+
+zrozumieć, że prawdziwą cnotą jest Pokora. Czuję, że mieszkańcy Magincia tak bardzo tego nie dostrzegają, iż nie zdziwiłbym się, gdyby jakiś zły
+
+los czekał ich w przyszłości.
+Tak więc z nieskończonych możliwości, które zrodziły Trzy Zasady Prawdy, Miłości i Odwagi, wywodzi się
+
+Osiem Cnót: Uczciwość, Współczucie, Męstwo, Sprawiedliwość, Poświęcenie, Honor, Duchowość i Pokora."""
+
+[translations.por]
+title = "Virtude"
+content = """
+Neste mundo vivem pessoas com muitos ideais diferentes, e isso é bom. Mas o que há no povo de nossa terra que distingue o bem do mal, o estimado
+
+do desprezado? A Virtude, digo eu, e a virtude é o resultado lógico de um povo que deseja viver junto numa sociedade unida.
+Pois, sem Virtudes
+
+como um código de conduta que as pessoas mantenham em suas relações umas com as outras, o tecido dessa sociedade se enfraquecerá. Para uma sociedade crescer e prosperar para todos,
+
+cada um deve conceder aos outros uma base comum de consideração.
+Chamo essa base de Virtudes. Pois, embora uma pessoa possa obter vantagem pessoal ao violar tal
+
+código, a sociedade como um todo sofreria.
+Há três Virtudes Principais que devem guiar as pessoas à iluminação. São elas: Verdade, Amor e Coragem. Entre todas as
+
+infinitas razões que alguém pode ter para fundamentar uma ação, como cobiça ou caridade, inveja ou piedade, as três Virtudes Principais se destacam.
+De fato, todas as outras
+
+virtudes e vícios podem ser demonstrados como derivados desses princípios e de suas corrupções opostas: Falsidade, Ódio e Covardia. Esses três Princípios podem
+
+ser combinados de oito maneiras, que chamarei de oito virtudes. Seguem as oito virtudes sobre as quais devemos construir nossa sociedade.
+A Verdade, sozinha, torna-se
+
+Honestidade, pois, sem honestidade entre nosso povo, como podemos construir a confiança necessária para maximizar nossos sucessos?
+O Amor, sozinho, torna-se
+
+compaixão, pois, em algum momento, todos precisaremos da compaixão dos outros, e é mais provável que a compaixão seja demonstrada àqueles que a demonstraram.
+
+A Coragem, sozinha, torna-se Valor; sem valor, nosso povo jamais se aventurará pelo desconhecido ou pelo arriscado e jamais realizará nada.
+
+A Verdade temperada pelo Amor nos dá Justiça, pois somente numa busca amorosa pela verdade se pode distribuir Justiça de forma justa, em vez de criar um povo frio e insensível.
+
+O Amor e a Coragem nos dão Sacrifício, pois um povo cujos membros se amam estará disposto a fazer sacrifícios pessoais para ajudar os outros em necessidade, o que um dia poderá ser
+
+necessário em retribuição.
+A Coragem e a Verdade nos dão Honra; os grandes cavaleiros sabem bem que a honra cavalheiresca pode ser encontrada ao aderir a este código de conduta.
+
+Combinar Verdade, Amor e Coragem sugere a virtude da Espiritualidade, a virtude que leva alguém a ser introspectivo, a se perguntar sobre seu lugar neste mundo
+
+e se seus feitos serão registrados como uma dádiva ao mundo ou uma praga.
+A última Virtude é mais complicada. Pois a oitava combinação é aquela desprovida de
+
+Verdade, Amor ou Coragem, que só pode existir num estado de grande Orgulho, que, naturalmente, não é virtude alguma. Talvez esse truque do destino seja um teste para ver se alguém pode
+
+perceber que a verdadeira virtude é a Humildade. Sinto que o povo de Magincia não consegue enxergar isso a tal ponto que eu não ficaria surpreso se algum destino
+
+funesto aguardasse seu futuro.
+Assim, das infinitas possibilidades que geraram os Três Princípios da Verdade, do Amor e da Coragem, vêm as
+
+Oito Virtudes da Honestidade, Compaixão, Valor, Justiça, Sacrifício, Honra, Espiritualidade e Humildade."""
+
+[translations.spa]
+title = "Virtud"
+content = """
+En este mundo viven personas con muchos ideales distintos, y eso es bueno. Pero ¿qué hay en las gentes de nuestra tierra que distingue lo bueno de lo malo, lo apreciado
+
+de lo desdeñado? La Virtud, digo yo; y la virtud es el resultado lógico de un pueblo que desea vivir unido en sociedad. Pues sin Virtudes
+
+como código de conducta que las personas mantengan en sus relaciones mutuas, el tejido de esa sociedad se debilitará. Para que una sociedad crezca y prospere para todos,
+
+cada uno debe conceder a los demás una base común de consideración. Llamo Virtudes a esta base. Porque, aunque una persona pueda obtener ventaja propia quebrantando semejante
+
+código, la sociedad en su conjunto sufriría. Hay tres Virtudes Principales que deben guiar a las personas hacia la iluminación. Son la Verdad, el Amor y el Coraje. De entre las
+
+infinitas razones que pueden motivar una acción, como la codicia o la caridad, la envidia o la piedad, destacan las tres Virtudes Principales. De hecho, puede demostrarse que todas las demás
+
+virtudes y vicios se construyen a partir de estos principios y de sus corrupciones opuestas: la Falsedad, el Odio y la Cobardía. Estos tres Principios pueden
+
+combinarse de ocho maneras, que llamaré las ocho virtudes. A continuación se presentan las ocho virtudes sobre las que debemos construir nuestra sociedad. La Verdad sola se convierte en
+
+Honestidad, pues sin honestidad entre nuestras gentes, ¿cómo podemos construir la confianza necesaria para maximizar nuestros éxitos? El Amor solo se convierte en
+
+Compasión, pues en algún momento todos necesitaremos la compasión ajena, y lo más probable es que se muestre compasión a quienes la han mostrado.
+
+El Coraje solo se convierte en Valor; sin valor, nuestras gentes nunca se adentrarán en lo desconocido ni en lo arriesgado, y nunca lograrán nada.
+
+La Verdad templada por el Amor nos da Justicia, pues solo buscando la verdad con amor puede impartirse una Justicia equitativa, en lugar de crear un pueblo frío e insensible.
+
+El Amor y el Coraje nos dan Sacrificio, pues quienes se aman estarán dispuestos a hacer sacrificios personales para ayudar a otros que lo necesiten, ayuda que algún día podrían
+
+necesitar a su vez. El Coraje y la Verdad nos dan Honor; los grandes caballeros saben bien que el honor caballeresco se encuentra al seguir este código de conducta.
+
+Combinar Verdad, Amor y Coraje sugiere la virtud de la Espiritualidad, que nos lleva a la introspección, a preguntarnos por nuestro lugar en este mundo
+
+y por si nuestros actos se recordarán como un regalo al mundo o como una plaga. La última Virtud es más complicada. Porque la octava combinación carece de
+
+Verdad, Amor y Coraje, y solo puede existir en un estado de gran Orgullo, que, desde luego, no es ninguna virtud. Quizá este truco del destino sea una prueba para ver si uno puede
+
+comprender que la verdadera virtud es la Humildad. Siento que las gentes de Magincia son tan incapaces de verlo que no me sorprendería que algún destino
+
+funesto aguardara su futuro. Así, de las infinitas posibilidades que dieron origen a los Tres Principios de Verdad, Amor y Coraje, surgen las
+
+Ocho Virtudes de Honestidad, Compasión, Valor, Justicia, Sacrificio, Honor, Espiritualidad y Humildad."""

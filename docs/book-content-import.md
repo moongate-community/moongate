@@ -59,12 +59,32 @@ Unicode is rejected, and serialized fields are checked by deserializing them bef
 The importer validates the escaped source limit and doubles literal `$` characters so the
 [template formatter](data-files/books.md#variables) displays them literally. Imported books
 require no variable values or attachments and use `item_template = "readable_scroll"`.
+
+Each shipped book keeps its English source and includes complete title/body overrides for
+Italian (`ita`), French (`fre`), German (`ger`), Spanish (`spa`), Portuguese (`por`),
+Polish (`pol`) and Czech (`cze`). Author names remain unchanged. The existing document
+service chooses `[localization].language` when creating the item; missing translation
+fields fall back to the English source. Changing that setting does not rewrite issued books.
+
 Rerunning replaces matching generated filenames, keeps unrelated files such as the welcome
 letter, and does not remove files from an older catalog. Put custom edits in a differently
 named template if they must survive reruns.
 
+Existing `translations.<language>` fields in matching generated files are preserved when
+reimporting. All eight supported language codes, including optional `eng` overrides, are
+accepted; partial overrides use the refreshed English fields as fallback. The importer
+validates the existing TOML, Unicode, literal template text, source/rendered bounds and
+reading packets before writing any file. Invalid translations stop conversion with exit
+code 2 and leave existing output unchanged. Other edited fields are regenerated from
+ModernUO; unrelated files remain untouched. Existing translations are retained verbatim
+when upstream English changes, so review their meaning after importing a different
+upstream revision. No network translation service runs during import.
+
 The ordinary `mgctl init` workflow copies missing shipped files into existing roots and
 preserves files already present. Newly added sources load at the next normal startup.
+For an existing root whose catalog predates these translations, copy the desired
+`[translations.<language>]` tables from the shipped catalog into its matching files.
+Neither `mgctl init` nor a reimport invents missing translations in existing files.
 Existing issued documents keep their saved text. No converter connects to the world database
 or restarts the server.
 

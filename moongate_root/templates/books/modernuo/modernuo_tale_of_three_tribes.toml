@@ -86,3 +86,194 @@ into his skeletal arms.
 escaped and lived to
 write it all down!"""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Příběh tří kmenů"
+content = """
+Kobka zvaná Despise vlastně není kobkou jako takovou, ale spíše velikou přírodní jeskyní. Nehostinná a nepřívětivá k návštěvníkům, plná
+
+vlhkých míst, kde hojně roste smrtící vybuchující červeně skvrnitá muchomůrka.
+Podle nejstarších historických textů bývala kdysi
+
+jeskyně domovem tří odlišných kmenů, které mezi sebou uzavřely dohodu. Kupodivu tyto tři kmeny tvořili
+
+draci, ještěří lidé a krysí lidé. Ačkoli dnes ty dvě poslední rasy považuje za rozumné bytosti jen málokdo kromě radikálů spojených s Lord Blackthorn,
+
+zřejmě během let opravdu poklesly z vyvinutějšího stavu.
+Říká se, že tyto tři rasy přebývaly v rozsáhlé jeskyni v poměrné shodě,
+
+stavěly, když to potřebovaly, a podle potřeby mezi sebou obchodovaly.
+Časem se však něco stalo a byly nuceny stáhnout se
+
+ze své společnosti, takže dnes v kobce můžeš najít jedince každého druhu, ale už nikdy jako civilizaci.
+Říká se také, že
+
+jednoho dne se mohou tři kmeny vrátit do Despise, aby ji znovu společně obývaly.
+Do té doby jako připomínka nezbývá nic kromě podivně inteligentního kostlivce,
+
+magicky očarovaného, který mluví, když dostává otázky. Od něj jsem jednoho dne získal tyto příběhy, když mě pronásledovaly zlé nestvůry a já uprchl
+
+do jeho kostnaté náruče.
+Naštěstí jsem unikl a přežil, abych to všechno mohl sepsat!"""
+
+[translations.fre]
+title = "Le récit des trois tribus"
+content = """
+Le donjon connu sous le nom de Despise n’est en fait pas un donjon à proprement parler, mais plutôt une grande grotte naturelle. Inhospitalière et hostile aux visiteurs, elle est remplie
+
+d’endroits humides où pousse en abondance le mortel Champignon Explosif à Taches Rouges. Selon les plus anciens textes historiques, dans les jours
+
+passés, la grotte abritait jadis trois tribus distinctes qui s’étaient accommodées les unes des autres. Étrangement, ces trois tribus se composaient de
+
+dragons, d’hommes-lézards et d’hommes-rats. Si aujourd’hui peu de gens, hormis les extrémistes associés à Lord Blackthorn, considèrent ces deux dernières races comme des êtres intelligents,
+
+il semble qu’elles soient effectivement déchues d’un état plus évolué au fil des années. On dit que ces trois races habitaient dans une relative harmonie au sein de la vaste grotte,
+
+construisant ce dont elles avaient besoin et commerçant entre elles si nécessaire. Mais, avec le temps, quelque chose arriva, et elles furent contraintes de se retirer de
+
+leur société, si bien qu’aujourd’hui l’on peut trouver des individus de chaque espèce dans le donjon, mais plus jamais de civilisation. On dit aussi qu’
+
+un jour les trois tribus pourraient revenir à Despise pour l’habiter ensemble de nouveau. Jusque-là, il n’en demeure aucun témoignage, hormis un squelette étrangement intelligent,
+
+ensorcelé par magie, qui parle lorsqu’on lui pose des questions et de qui j’obtins ces récits un jour où, poursuivi par des monstres maléfiques, je m’enfuis
+
+dans ses bras squelettiques. Heureusement, je m’échappai et vécus pour tout consigner !"""
+
+[translations.ger]
+title = "Eine Geschichte von drei Stämmen"
+content = """
+Das Verlies, das als Despise bekannt ist, ist in Wahrheit kein Verlies als solches, sondern eine große natürliche Höhle. Ungastlich und Besuchern feindlich, ist sie voller
+
+feuchter Stellen, an denen der tödliche Explodierende Rotgefleckte Giftpilz reichlich wächst.
+Nach den ältesten geschichtlichen Schriften war die Höhle in vergangenen
+
+Tagen einst die Heimat dreier getrennter Stämme, die zu einer Verständigung miteinander gekommen waren. Seltsamerweise bestanden die drei Stämme aus
+
+Drachen, Echsenmenschen und Rattenmenschen. Zwar betrachten heute nur wenige außer den mit Lord Blackthorn verbundenen Extremisten die beiden letzteren als intelligente Wesen,
+
+doch offenbar sind sie im Lauf der Jahre tatsächlich von einem höher entwickelten Zustand herabgesunken.
+Man sagt, diese drei Völker wohnten in verhältnismäßiger Eintracht in der gewaltigen Höhle,
+
+bauten, wenn es nötig war, und handelten bei Bedarf miteinander.
+Doch mit der Zeit geschah etwas, und sie waren gezwungen, sich aus
+
+ihrer Gesellschaft zurückzuziehen, sodass Ihr heute einzelne Angehörige jeder Art im Verlies finden könnt, doch nie mehr als Zivilisation.
+Man sagt auch,
+
+die drei Stämme könnten eines Tages nach Despise zurückkehren, um es wieder gemeinsam zu bewohnen.
+Bis dahin bleibt als Zeugnis nichts außer einem seltsam intelligenten Skelett,
+
+magisch verzaubert, das spricht, wenn man Fragen stellt, und von dem ich diese Geschichten eines Tages erfuhr, als böse Ungeheuer mich verfolgten und ich
+
+in seine knöchernen Arme floh.
+Glücklicherweise entkam ich und lebte, um alles niederzuschreiben!"""
+
+[translations.ita]
+title = "Un racconto di tre tribù"
+content = """
+Il sotterraneo noto come Despise non è in realtà un sotterraneo propriamente detto, bensì una grande grotta naturale. Inospitale e poco amichevole verso i visitatori, è piena
+
+di luoghi umidi dove cresce in abbondanza il mortale Fungo Rosso Maculato Esplosivo.
+Secondo i più antichi testi storici, nei tempi
+
+passati la grotta fu un tempo dimora di tre tribù distinte che avevano raggiunto un'intesa reciproca. Curiosamente, le tre tribù erano composte da
+
+draghi, uomini lucertola e uomini ratto. Sebbene oggi pochi, salvo gli estremisti associati a Lord Blackthorn, considerino questi ultimi due esseri intelligenti,
+
+a quanto pare sono davvero decaduti da uno stato più evoluto nel corso degli anni.
+Si dice che queste tre razze dimorassero in relativa armonia nella vasta grotta,
+
+costruendo quando ne avevano necessità e commerciando fra loro se occorreva.
+Ma col tempo accadde qualcosa e furono costrette ad abbandonare
+
+la loro società, finché oggi si possono trovare individui di ciascuna specie nel sotterraneo, ma mai più come civiltà.
+Si dice anche che
+
+un giorno le tre tribù possano tornare a Despise, per abitarla di nuovo insieme.
+Fino ad allora nulla rimane a testimonianza di questo, salvo uno scheletro stranamente intelligente,
+
+incantato magicamente, che parla quando gli si fanno domande e dal quale ottenni questi racconti un giorno, quando ero inseguito da mostri malvagi e fuggii
+
+fra le sue braccia scheletriche.
+Fortunatamente scappai e vissi per mettere tutto per iscritto!"""
+
+[translations.pol]
+title = "Opowieść o trzech plemionach"
+content = """
+Loch zwany Despise nie jest w istocie lochem jako takim, lecz wielką naturalną jaskinią. Niegościnny i nieprzyjazny odwiedzającym, pełen jest
+
+wilgotnych miejsc, gdzie obficie rośnie śmiercionośny wybuchający czerwony muchomor plamisty.
+Według najstarszych tekstów historycznych w dawnych
+
+czasach jaskinia była domem trzech osobnych plemion, które porozumiały się ze sobą. Co dziwne, te trzy plemiona składały się ze
+
+smoków, jaszczuroludzi i szczurołaków. Choć dziś mało kto poza skrajnymi zwolennikami Lord Blackthorn uznaje dwie ostatnie rasy za istoty rozumne,
+
+najwyraźniej przez lata istotnie cofnęły się z bardziej rozwiniętego stanu.
+Powiadają, że te trzy rasy żyły we względnej zgodzie w ogromnej jaskini,
+
+budując, gdy było to potrzebne, i handlując między sobą w razie konieczności.
+Lecz z czasem coś się wydarzyło i musiały wycofać się ze
+
+swej społeczności, aż dziś można znaleźć w lochu osobniki każdego gatunku, lecz już nigdy jako cywilizację.
+Mówi się również, że
+
+pewnego dnia trzy plemiona mogą powrócić do Despise, by znów wspólnie je zamieszkać.
+Do tego czasu nie pozostaje żaden znak tego wszystkiego prócz dziwnie inteligentnego szkieletu,
+
+magicznie zaklętego, który odpowiada na zadawane pytania. Od niego usłyszałem te opowieści pewnego dnia, kiedy ścigały mnie złe potwory, a ja uciekłem
+
+w jego kościste ramiona.
+Na szczęście umknąłem i przeżyłem, aby wszystko spisać!"""
+
+[translations.por]
+title = "Um conto de três tribos"
+content = """
+A masmorra conhecida como Despise, na verdade, não é propriamente uma masmorra, mas uma grande caverna natural. Inóspita e hostil aos visitantes, é cheia
+
+de lugares úmidos onde o mortal Cogumelo Explosivo de Manchas Vermelhas cresce em abundância.
+Segundo os mais antigos textos históricos, nos dias
+
+passados a caverna já foi lar de três tribos distintas que haviam chegado a um entendimento entre si. Curiosamente, as três tribos eram de
+
+dragões, homens-lagarto e homens-rato. Embora hoje poucos, além de extremistas associados a Lord Blackthorn, considerem essas duas últimas raças seres inteligentes,
+
+aparentemente elas realmente decaíram de um estado mais evoluído ao longo dos anos.
+Diz-se que essas três raças viviam em relativa harmonia dentro da vasta caverna,
+
+construindo quando precisavam e comerciando entre si quando necessário.
+Mas, com o tempo, algo aconteceu, e elas foram obrigadas a se afastar de
+
+sua sociedade, até que hoje você pode encontrar indivíduos de cada espécie dentro da masmorra, mas nunca mais uma civilização.
+Também se diz que
+
+um dia as três tribos poderão voltar a Despise para novamente habitá-la juntas.
+Até lá, nada resta como sinal disso, salvo um esqueleto estranhamente inteligente,
+
+encantado por magia, que fala quando lhe fazem perguntas e de quem obtive essas histórias um dia, quando fui perseguida por monstros malignos e fugi
+
+para seus braços esqueléticos.
+Felizmente, escapei e vivi para escrever tudo!"""
+
+[translations.spa]
+title = "Un relato de tres tribus"
+content = """
+La mazmorra conocida como Despise no es en realidad una mazmorra propiamente dicha, sino una gran cueva natural. Inhóspita y hostil para los visitantes, está llena
+
+de lugares húmedos donde crece en abundancia el mortífero Hongo Explosivo de Manchas Rojas. Según los textos históricos más antiguos, en tiempos
+
+pasados la cueva fue hogar de tres tribus diferentes que habían llegado a un acuerdo entre sí. Curiosamente, las tres tribus eran de
+
+dragones, hombres lagarto y hombres rata. Aunque hoy pocos, salvo los extremistas asociados a Lord Blackthorn, consideran inteligentes a estos dos últimos,
+
+al parecer han decaído de un estado más evolucionado con el paso de los años. Se dice que las tres razas vivían en relativa armonía dentro de la enorme cueva,
+
+construyendo cuando lo necesitaban y comerciando entre sí cuando hacía falta. Pero, con el tiempo, algo sucedió y se vieron obligadas a abandonar
+
+su sociedad, hasta el punto de que hoy podemos encontrar individuos de cada especie dentro de la mazmorra, pero nunca más como una civilización. También se dice que
+
+algún día las tres tribus podrían regresar a Despise para habitarla juntas de nuevo. Hasta entonces, no queda testimonio de ello salvo un esqueleto extrañamente inteligente,
+
+encantado por magia, que habla cuando se le hacen preguntas, y de quien obtuve estos relatos un día en que me perseguían monstruos malignos y huí
+
+hacia sus brazos esqueléticos. ¡Por fortuna, escapé y viví para escribirlo todo!"""

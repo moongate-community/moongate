@@ -45,3 +45,108 @@ timeline for
 excavating the Tomb's
 entrance."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Denní zápisky Grimmoch Drummel"
+content = """
+Den první:
+
+Je to velkolepý pohled, tahle pradávná hrobka; v tom s Tavara souhlasím. A máme tu dobré pracovníky, silná záda a správný
+
+přístup. Trochu mě ale znepokojují ti, co nám dělali průvodce. Všechno vypadalo docela dobře, než jsme odkryli ohromná kamenná vrata samotné
+
+hrobky. Jako by jim z toho přeběhl mráz po zádech; všichni se rozrušili a začali šeptat. Budu je bedlivě sledovat, ale věřím, že nás
+
+na vykopávkách nečekají žádné opravdové potíže. Zvlášť mě těší, jak vyniká Thomas – najmout ho bylo dobré rozhodnutí navzdory varování jeho předchozích zaměstnavatelů.
+
+Rozproudil mezi dělníky zběsilé tempo – náš odhad času potřebného k odkrytí vstupu do hrobky jsme skoro zkrátili na polovinu."""
+
+[translations.fre]
+title = "Le journal quotidien de Grimmoch Drummel"
+content = """
+Premier jour :
+
+Quel spectacle grandiose que ce tombeau primordial ; je suis d’accord avec Tavara là-dessus. Et nous avons ici une bonne équipe, des dos solides et un bon
+
+état d’esprit. Ceux qui nous ont servi de guides m’inquiètent toutefois un peu. Tout paraissait assez bien aller jusqu’à ce que nous mettions au jour les immenses portes de pierre du tombeau
+
+lui-même. Cela semble leur avoir donné un frisson dans le dos et les avoir tous plongés dans des chuchotements agités. Je les surveillerai de près, mais je suis convaincu que nous n’aurons
+
+aucun véritable problème sur le chantier. Je suis particulièrement fier de voir Thomas se distinguer : ce fut une bonne recrue, malgré les avertissements de ses employeurs précédents.
+
+Il a poussé les ouvriers à un rythme effréné ; nous avons presque réduit de moitié le délai estimé pour dégager l’entrée du Tombeau."""
+
+[translations.ger]
+title = "Grimmoch Drummels tägliches Tagebuch"
+content = """
+Erster Tag:
+
+Ein großartiger Anblick, dieses uralte Grab, da stimme ich Tavara zu. Und wir haben hier eine gute Mannschaft, starke Rücken und eine gute
+
+Einstellung. Ein wenig Sorge bereiten mir allerdings diejenigen, die uns als Führer dienten. Alles schien gut genug, bis wir die gewaltigen Steintüren des Grabbaus
+
+selbst freilegten. Das schien ihnen einen Schauer über den Rücken zu jagen und sie alle zu aufgeregtem Flüstern zu bringen. Ich werde sie genau im Auge behalten, bin aber zuversichtlich, dass wir
+
+keine wirklichen Schwierigkeiten bei der Ausgrabung haben werden. Besonders stolz bin ich, Thomas hervorstechen zu sehen – ihn einzustellen war gut, trotz der Warnungen seiner früheren Arbeitgeber.
+
+Er hat die Arbeiter zu einem ungeheuren Tempo angetrieben – wir haben die geschätzte Zeit zum Freilegen des Grabeingangs beinahe halbiert."""
+
+[translations.ita]
+title = "Il diario quotidiano di Grimmoch Drummel"
+content = """
+Giorno Uno :
+
+È uno spettacolo grandioso, questa tomba primordiale; su questo sono d'accordo con Tavara. E abbiamo una buona squadra, gente dalla schiena forte e dal buon
+
+carattere. Sono un po' preoccupato, però, da quelli che ci hanno fatto da guide. Sembrava andare tutto abbastanza bene finché non abbiamo scoperto le immense porte di pietra della tomba
+
+stessa. Sembravano aver fatto correre un brivido lungo la loro schiena, e tutti si sono agitati fra i bisbigli. Li terrò d'occhio molto da vicino, ma sono sicuro che non
+
+avremo veri problemi nello scavo. Sono particolarmente orgoglioso di vedere Thomas distinguersi: è stato un buon acquisto, nonostante gli avvertimenti dei suoi precedenti datori di lavoro.
+
+Ha spronato gli operai a un ritmo furioso: abbiamo quasi dimezzato la stima dei tempi per riportare alla luce l'ingresso della Tomba."""
+
+[translations.pol]
+title = "Dziennik codzienny Grimmoch Drummel"
+content = """
+Dzień pierwszy:
+
+To wspaniały widok, ten pradawny grobowiec; zgadzam się co do tego z Tavara. I mamy tu dobrą załogę, silne plecy i dobre
+
+nastawienie. Nieco martwią mnie jednak ci, którzy pracowali jako nasi przewodnicy. Wszystko zdawało się w porządku, dopóki nie odsłoniliśmy ogromnych kamiennych drzwi samej budowli
+
+grobowca. Jakby dreszcz przeszedł im po grzbietach; wszyscy zaczęli poruszeni szeptać. Będę ich uważnie obserwować, lecz jestem pewien, że nie
+
+będziemy mieli prawdziwych problemów przy wykopaliskach. Szczególnie cieszy mnie, że Thomas się wyróżnia — dobrze zrobiliśmy, zatrudniając go, mimo ostrzeżeń poprzednich pracodawców.
+
+Pobudził robotników do szalonego tempa — niemal o połowę skróciliśmy przewidywany czas odsłaniania wejścia do Grobowca."""
+
+[translations.por]
+title = "O diário de Grimmoch Drummel"
+content = """
+Primeiro dia:
+
+É uma visão grandiosa, esta tumba primeva; nisso concordo com Tavara. E temos uma boa equipe aqui, com costas fortes e boa
+
+atitude. Porém, estou um pouco preocupado com os que trabalharam como nossos guias. Tudo parecia bem até revelarmos as imensas portas de pedra da própria estrutura da tumba.
+
+Parece que isso lhes causou um arrepio na espinha e os deixou todos agitados, cochichando. Vou ficar de olho em todos eles, mas estou confiante de que não
+
+teremos nenhum problema real na escavação. Tenho especial orgulho de ver Thomas se destacar: foi uma boa contratação, apesar dos avisos de seus empregadores anteriores.
+
+Ele colocou os trabalhadores num ritmo frenético: quase reduzimos pela metade a estimativa de tempo para escavar a entrada da Tumba."""
+
+[translations.spa]
+title = "El diario de Grimmoch Drummel"
+content = """
+Día uno:
+
+Esta tumba primigenia es una visión grandiosa; en eso coincido con Tavara. Y tenemos una buena cuadrilla, hombres de espalda fuerte y buena
+
+actitud. Sin embargo, me preocupan un poco quienes nos sirvieron de guías. Todo parecía ir bastante bien hasta que descubrimos las inmensas puertas de piedra de la propia
+
+tumba. Parecieron sentir un escalofrío y empezaron a agitarse entre susurros. Los vigilaré muy de cerca, pero confío en que no tendremos
+
+problemas de verdad en la excavación. Me enorgullece especialmente ver destacar a Thomas: fue una buena contratación, pese a las advertencias de sus antiguos empleadores.
+
+Ha hecho que los trabajadores mantengan un ritmo frenético: hemos reducido casi a la mitad el plazo previsto para excavar la entrada de la tumba."""

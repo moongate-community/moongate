@@ -339,3 +339,838 @@ be back on the mainland
 for the final three
 Shrines."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Pouť za ctnostmi"
+content = """
+Svazek 1
+Kapitola 1: Začátek
+Začínám svou pouť v krásné bance Skara Brae. Mou poutí je pěšky navštívit osm svatyní země Britannia. Ačkoli to může znít snadně,
+
+ztěžuje ji skutečnost, že jsem se vzdal svých schopností a světského majetku. Místo toho mám k živobytí jen prosté šaty, loď k plavbě po mořích a deník, do něhož budu zaznamenávat
+
+svá dobrodružství. Vzhůru ke svatyni Duchovnosti!
+
+Kapitola 2: Cesta k Duchovnosti
+
+Protože jsem se vzdal
+
+magie jako způsobu cestování, musím najít cestu z tohoto ostrovního města na pevninu. Naštěstí jsem si mohl výměnou vyjednat jízdu s převozníkem. Po dosažení pevniny jsem sledoval
+
+cestu, dokud se neobrátila na sever, já však musím pokračovat na východ. Zastavil jsem se, abych poslouchal příjemné ptačí švitoření, a užíval si klidu daleko od rušného života. Když jsem došel k
+
+bludišti z živých plotů, vzpomněl jsem si na dávný příběh o mágu Relvinian a obrátil se na jih, abych je obešel. Nemaje zbraní a vzdav se výcviku, uposlechl jsem znamení, jež pravilo:
+
+„Vstup a staň se jedním z duchů.“ Řeka mě přinutila obrátit se na jih a poté pokračovat na východ.
+
+Kapitola 3: Duchovnost
+
+Duchovnost stojí v čele
+
+ctností. Je rozjímáním o všech ostatních ctnostech a jejich pochopením. Bez Duchovnosti nelze ctnosti zcela následovat, neboť je oddaností a věrností
+
+vůči nim.
+
+Kapitola 4: Nalézání Cti
+
+Další návštěva povede do svatyně Cti, která leží dosti daleko na jih. Na
+
+východ ode mne je cesta, po níž půjdu do města Trinsic. V hostinci Poutníků jsem našel teplý pokoj a ráno se probudil svěží, abych za zvuků přírody chystal
+
+pokračování svých cest. Poděkoval jsem laskavému hostinskému, vyšel z Trinsic a vydal se na jih. Krátce jsem rozmlouval s člověkem, jenž měl štěstí vlastnit dům v této krásné krajině, a popřál mi mnoho štěstí
+
+na cestách. Svou rezavou čepelí jsem se prosekal hustou džunglí kolem trosek zapomenuté říše, nyní obydlené jen nemrtvými. Mnoho mongbatů mi překáželo v cestě, ale nakonec jsem
+
+dorazil do svatyně Cti.
+
+Kapitola 5: Čest
+
+Mnozí spojují Čest s bitvou, lze ji však uplatnit v jakékoli oblasti
+
+života. Čest znamená dodržovat pravidla, nečestnost znamená podvádět, hledat nespravedlivou výhodu. Zavázal jsem se vždy žít se Ctí.
+
+Kapitola 6: Hledání Statečnosti
+
+Nyní se musím vydat na své spolehlivé malé lodi Hollandia na jih a na východ, k malému ostrovu, kam cestovalo jen málo lidí. Zatím nevím, co na moři potkám, a proto prosím ctnosti, aby mi
+
+dopřály bezpečí. Tak začíná má plavba. Dokázal jsem nepozorovaně proplout kolem několika vodních elementálů, což od mého kormidelníka vyžadovalo značné navigační úsilí. Dorazil jsem však bez
+
+nehody.
+
+Kapitola 7: Statečnost
+
+Svatyni Statečnosti chrání mnoho bestií, příliš jedovatých a odporných, než abych je sám
+
+porazil. Člověk musí prokázat Statečnost, aby se přiblížil ke svatyni! Statečnost se často projevuje ochotou bojovat v bitvě, která může být prohraná, ale v niž člověk věří. Vyžaduje Statečnost hájit své
+
+stanovisko proti mnoha vrahům a porušovatelům zákona v našich zemích. Můžeš prohrát, avšak projevíš Statečnost tím, že bojuješ proti tomu, čemu je nutno odporovat. Bojuj bitvy, v něž věříš, ne pouze ty,
+
+o nichž si myslíš, že je dokážeš vyhrát.
+
+Kapitola 8: Plavba k Pokoře
+
+Má cesta bude pokračovat na východ ke
+
+svatyni Pokory. Vyplouvám se svou lodí ze západní strany ostrova Statečnosti, kde jsem odvážně unikl mnoha obřím hadům, kteří mě pronásledovali se svým jedem a
+
+syčícími jazyky. Krásné modré vlny omývaly příď lodi a delfíni si hráli a vesele mě vedli dál. Plavba je dlouhá a voda neklidná, ale nakonec jsme narazili na pevninu. Rychle jsem běžel,
+
+dychtiv najít cíl své dnešní cesty.
+
+Kapitola 9: Pokora
+
+Svatyně Pokory je překvapivě prostá; je to pouhý hájek kamenných
+
+sloupů s ankhem a kamenem Pokory uprostřed. Pokoru bych charakterizoval právě touto poutí: návratem ke svým kořenům v tomto světě. Zřekl jsem se svého majetku a bohatství,
+
+abych se spoléhal jen na svou bystrost a instinkty. Již nemám to, co mě v očích druhých činí slavným, ale pouze to, co potřebuji k přežití. Nemohu už spoléhat sám na sebe,
+
+při přežití se musím spoléhat na ostatní. Má cesta k Pokoře mě přiměla ještě silněji si uvědomit, jak požehnaný jsem byl.
+
+Kapitola 10: Vzhůru k Poctivosti
+
+Nyní se cesta obrátí na jih k ostrovu Ledu. Mé plavby a výpravy do džungle mě však
+
+značně unavily, a proto se na noc utábořím zde u řeky poblíž svatyně Pokory. Příštího rána se probouzím svěží a posílený, ale také napadený! Bezhlavý si všiml
+
+mého probuzení a zuřivě útočí. Můj spolehlivý sekáček byl okamžitě v ruce, ale má neobratnost se zbraní zdržela smrt tvora. Spustil jsem Hollandia na vodu a
+
+vyplul k ostrovu Ledu hledat svatyni Poctivosti. Při plavbě rozsáhlými oceány toužím po společnosti bližního člověka. Snad potkám nějakého cestovatele, s nímž bych mohl
+
+prohodit několik slov. Brzy jsem přistával s lodí na severním konci ostrova Ledu. Rychle jsem se prodíral sněhem mrazivé tundry a snažil se udržet v teple. Svatyně
+
+Poctivosti mě přivítala a cítil jsem, jak mě celého prostupuje teplo.
+
+Kapitola 11: Poctivost
+
+Poctivost znamená vždy ctít a
+
+bránit pravdu. Poctivost navíc vyžaduje, abychom byli spravedliví a upřímní ke svým bližním a nevyužívali nepatřičné výhody. Poctivost je ctnost, která v dnešním světě často chybí. Zdá se,
+
+že lidé chtějí získat bohatství bez ohledu na Poctivost vůči jiným lidem. Poctivost je základ, na němž stojí důvěra. Pokud se základ rozpadne, vše na něm postavené
+
+musí padnout. Chladné prostředí, v němž leží svatyně Poctivosti, svědčí o její hodnotě v dnešní společnosti. Symbolický chlad a odlehlost nám ukazují, že pouze ti
+
+nejoddanější úsilí o Poctivost jí dosáhnou. Kéž jsme všichni poctiví vůči svým bližním a pamatujeme, že s nimi máme zacházet tak, jak bychom chtěli, aby se zacházelo s námi.
+
+Kapitola 12: Cesta k Obětavosti.
+
+Dostal jsem se na západní stranu ostrova Ledu. Odtud spouštím Hollandia na vodu a plavím se trochu na sever
+
+a na západ. Přistávám s lodí těsně východně od svatyně Obětavosti, takže má cesta vede na západ. Ačkoli si užívám moře, jsem rád, že jsem zpět na pevnině pro poslední tři svatyně."""
+
+[translations.fre]
+title = "La quête des Vertus"
+content = """
+Volume 1
+Chapitre 1 : Le départ
+Je commence ma Quête dans la belle banque de Skara Brae. Ma Quête consiste à me rendre à pied aux huit sanctuaires de Britannia. Si cela peut paraître facile, elle
+
+est entravée par le fait que j’ai renoncé à mes capacités et à mes possessions matérielles. Tout ce qui me reste pour vivre est un ensemble de vêtements simples, un navire pour parcourir les mers et mon journal, où consigner
+
+mes aventures. En avant vers le Sanctuaire de la Spiritualité !
+
+Chapitre 2 : La route de la Spiritualité
+
+Puisque j’ai renoncé à la
+
+magie comme moyen de transport, je dois trouver un moyen de gagner le continent depuis cette ville insulaire. Heureusement, j’ai pu négocier un passage avec le passeur. Une fois sur le continent, j’ai suivi la
+
+route jusqu’à ce qu’elle tourne vers le Nord ; pourtant, je dois continuer vers l’Est. Je me suis arrêté pour écouter les agréables pépiements des oiseaux et savourer la paix, loin de la vie trépidante. En arrivant au
+
+Labyrinthe de Haies, je me suis rappelé une histoire concernant le mage Relvinian dans les temps anciens et j’ai tourné vers le Sud pour le contourner. Sans armes et ayant renoncé à mon entraînement, j’ai tenu compte du panneau disant :
+
+« Entrez et devenez l’un des Fantômes. » La Rivière m’a forcé à tourner vers le Sud, puis à continuer vers l’Est.
+
+Chapitre 3 : La Spiritualité
+
+La Spiritualité est la première
+
+des Vertus. Elle est la méditation et la compréhension de toutes les autres Vertus. Sans Spiritualité, l’on ne peut suivre complètement les Vertus, car Elle est le dévouement et l’adhésion
+
+à celles-ci.
+
+Chapitre 4 : Trouver l’Honneur
+
+Ma prochaine visite sera au Sanctuaire de l’Honneur, qui se trouve à bonne distance au Sud. Il y a une
+
+route à l’Est que je suivrai jusqu’à la ville de Trinsic. J’ai trouvé une chambre chaude à l’Auberge du Voyageur, et je me suis réveillé reposé le matin pour entendre les sons de la nature tandis que je me préparais à
+
+poursuivre mes voyages. J’ai remercié l’aimable aubergiste et suis sorti de Trinsic en direction du Sud. J’ai brièvement conversé avec un homme assez chanceux pour posséder une maison dans cette belle campagne, et il m’a souhaité bonne fortune
+
+dans mes voyages. Je me suis servi de ma lame rouillée pour me frayer un chemin dans des jungles épaisses, passant les ruines d’un royaume oublié, désormais peuplé uniquement de Morts-Vivants. Maint mongbat a entravé mon voyage, mais enfin je
+
+suis arrivé au Sanctuaire de l’Honneur.
+
+Chapitre 5 : L’Honneur
+
+Beaucoup associent l’Honneur à la bataille, mais on peut l’appliquer à tout aspect de la
+
+Vie. L’Honneur est de respecter les règles ; le déshonneur, de tricher, de rechercher un avantage déloyal. J’ai juré de toujours vivre avec Honneur.
+
+Chapitre 6 : Chercher la Vaillance
+
+Je dois maintenant embarquer sur mon fidèle petit navire, le Hollandia, vers le Sud et l’Est, jusqu’à une petite île où peu se sont aventurés. Je ne sais pas encore ce que je rencontrerai en mer, aussi demandé-je aux Vertus
+
+de m’accorder la sécurité. Ainsi commence ma traversée. J’ai réussi à passer inaperçu près de quelques élémentaires d’eau, ce qui a demandé de bonnes manœuvres à mon timonier. Cependant, je suis arrivé sans
+
+incident.
+
+Chapitre 7 : La Vaillance
+
+Le Sanctuaire de la Vaillance est protégé par de nombreuses bêtes bien trop venimeuses et ignobles pour que je puisse les
+
+vaincre. Il faut faire preuve de Vaillance pour approcher le Sanctuaire ! La Vaillance se manifeste souvent dans la volonté de livrer une bataille peut-être perdue pour une cause à laquelle on croit. Il faut de la Vaillance pour tenir
+
+bon contre les nombreux meurtriers et hors-la-loi de nos terres. Vous pouvez perdre, mais vous faites preuve de Vaillance en combattant ce à quoi il faut s’opposer. Livrez les combats auxquels vous croyez, pas seulement les
+
+combats que vous pensez pouvoir gagner.
+
+Chapitre 8 : Le voyage vers l’Humilité
+
+Mon périple continuera vers l’Est en direction du
+
+Sanctuaire de l’Humilité. Je mets mon bateau à l’eau sur la côte Ouest de l’Île de la Vaillance, où je me suis échappé audacieusement des nombreux Serpents Géants qui me poursuivaient avec leur venin toxique et leurs
+
+langues sifflantes. De belles vagues bleues balayaient la proue du bateau tandis que des dauphins jouaient, me guidant joyeusement. La traversée est longue et l’eau agitée, mais enfin nous avons atteint la terre. Vite, j’ai couru,
+
+impatient de trouver ma destination finale de la journée.
+
+Chapitre 9 : L’Humilité
+
+Le Sanctuaire de l’Humilité est étonnamment spartiate ; ce n’est qu’un bosquet de piliers
+
+de pierre avec un ankh et la pierre de l’Humilité en son centre. Je définirais l’Humilité comme cette Quête : revenir à mes racines dans ce monde. J’ai rejeté mes possessions et ma richesse
+
+pour ne compter que sur ma ruse et mes instincts. Je ne possède plus ce qui me rend Glorieux aux yeux des autres, mais seulement ce dont j’ai besoin pour survivre. Je ne peux plus compter sur moi seul, je
+
+dois compter sur autrui pour ma survie. Mon voyage vers l’Humilité n’a fait que me rendre encore plus conscient des Bienfaits qui m’ont été accordés.
+
+Chapitre 10 : En avant vers l’Honnêteté
+
+Le voyage se dirigera maintenant vers le Sud, vers l’Île de Glace. Cependant, mes traversées et mes excursions dans la jungle m’ont
+
+beaucoup fatigué, aussi camperai-je cette nuit au bord d’une rivière près du Sanctuaire de l’Humilité. Je me réveille le lendemain reposé et revigoré, mais aussi attaqué ! Un Être Sans Tête a remarqué
+
+mon réveil et attaque férocement. Mon fidèle couperet se retrouve aussitôt dans ma main, mais mon manque d’habileté avec cette arme retarde la mort de la créature. J’ai mis le Hollandia à l’eau et
+
+fait voile vers l’Île de Glace, à la recherche du Sanctuaire de l’Honnêteté. Tandis que je parcours les vastes océans, je me surprends à désirer la compagnie de mes semblables. J’espère rencontrer quelque voyageur avec qui je pourrai
+
+échanger quelques mots. Peu après, je débarquais à l’extrémité Nord de l’Île de Glace. J’ai rapidement cheminé dans la neige à travers la toundra glaciale, en essayant de rester au chaud. Le Sanctuaire
+
+de l’Honnêteté m’a souhaité la bienvenue tandis que je sentais la chaleur rayonner dans tout mon être.
+
+Chapitre 11 : L’Honnêteté
+
+L’Honnêteté consiste à soutenir et
+
+défendre la vérité en tout temps. De plus, l’Honnêteté nous impose d’être justes et sincères envers nos semblables, sans prendre d’avantage indu. L’Honnêteté est une Vertu qui manque souvent dans le monde d’aujourd’hui. Il semble
+
+que les gens cherchent à acquérir des richesses sans se soucier de l’Honnêteté envers les autres. L’Honnêteté est le fondement sur lequel se bâtit la confiance. Si ce fondement s’effrite, tout ce qui est construit
+
+dessus doit s’écrouler. Le milieu froid qui abrite le Sanctuaire de l’Honnêteté témoigne de sa valeur dans la société actuelle. Le froid symbolique et l’emplacement isolé nous montrent que seuls ceux qui sont
+
+les plus dévoués à la recherche de l’Honnêteté l’atteindront. Puissions-nous tous être Honnêtes envers nos semblables et nous rappeler de les traiter comme nous aimerions être traités.
+
+Chapitre 12 : La voie du Sacrifice.
+
+Je me suis rendu sur la côte Ouest de l’Île de Glace. De là, je mets le Hollandia à l’eau et navigue légèrement vers le Nord
+
+et l’Ouest. Je débarque juste à l’Est du Sanctuaire du Sacrifice ; ma route va donc vers l’Ouest. Bien que j’aime la mer, je suis heureux de retrouver le continent pour les trois derniers Sanctuaires."""
+
+[translations.ger]
+title = "Die Suche nach den Tugenden"
+content = """
+Band 1
+Kapitel 1: Der Aufbruch
+Ich beginne meine Suche in der schönen Bank von Skara Brae. Mein Ziel ist es, zu Fuß zu den acht Schreinen Britannias zu reisen. Obwohl dies einfach klingen mag, wird es
+
+erschwert, weil ich meine Fähigkeiten und weltlichen Besitztümer aufgegeben habe. Stattdessen habe ich zum Leben nur schlichte Kleidung, ein Schiff, um die Meere zu befahren, und mein Tagebuch, in dem ich
+
+meine Abenteuer aufzeichne. Vorwärts zum Schrein der Spiritualität!
+
+Kapitel 2: Der Weg zur Spiritualität
+
+Da ich auf
+
+Magie als Reiseweise verzichtet habe, muss ich von dieser Inselstadt einen Weg zum Festland finden. Glücklicherweise konnte ich beim Fährmann eine Überfahrt eintauschen. Als ich das Festland erreichte, folgte ich der
+
+Straße, bis sie nach Norden abbog, doch ich muss weiter nach Osten. Ich hielt inne, um den angenehmen Lauten der zwitschernden Vögel zu lauschen, und genoss die Ruhe fern vom geschäftigen Leben. Beim Erreichen
+
+des Heckenlabyrinths erinnerte ich mich an eine Geschichte über den Magier Relvinian in alten Tagen und wandte mich nach Süden, um es zu umgehen. Da ich keine Waffen besaß und meiner Ausbildung entsagt hatte, beachtete ich das Schild, auf dem stand:
+
+„Tritt ein und werde einer unter Geistern.“ Der Fluss zwang mich, nach Süden abzubiegen und dann weiter nach Osten zu gehen.
+
+Kapitel 3: Spiritualität
+
+Die Spiritualität steht an der Spitze
+
+der Tugenden. Sie ist das Nachsinnen über alle anderen Tugenden und ihr Verständnis. Ohne Spiritualität kann man den Tugenden nicht vollständig folgen, denn sie ist die Hingabe und Treue
+
+zu ihnen.
+
+Kapitel 4: Ehre finden
+
+Mein nächster Besuch gilt dem Schrein der Ehre, der ein gutes Stück südlich liegt. Es gibt eine
+
+Straße östlich von mir, der ich zur Stadt Trinsic folgen werde. Ich fand ein warmes Zimmer im Traveller's Inn und erwachte am Morgen erfrischt, um den Lauten der Natur zu lauschen, während ich mich vorbereitete,
+
+meine Reisen fortzusetzen. Ich dankte dem freundlichen Wirt und verließ Trinsic nach Süden. Kurz unterhielt ich mich mit jemandem, der das Glück hatte, ein Haus in der schönen Landschaft zu besitzen, und er wünschte mir Glück
+
+auf meinen Reisen. Mit meiner rostigen Klinge schlug ich mich durch dichte Dschungel, vorbei an den Ruinen eines vergessenen Reiches, das nun nur von Untoten bewohnt wird. So mancher Mongbat behinderte meine Reise, doch schließlich
+
+erreichte ich den Schrein der Ehre.
+
+Kapitel 5: Ehre
+
+Viele verbinden Ehre mit Kampf, doch sie kann in jedem Bereich des
+
+Lebens angewandt werden. Ehre bedeutet, die Regeln einzuhalten, Unehre bedeutet zu betrügen, einen unfairen Vorteil zu suchen. Ich gelobte, mein Leben stets in Ehre zu führen.
+
+Kapitel 6: Tapferkeit suchen
+
+Nun muss ich auf meinem treuen kleinen Schiff, der Hollandia, nach Süden und Osten zu einer kleinen Insel aufbrechen, die wenige besucht haben. Noch weiß ich nicht, was mir auf See begegnen wird, und so bitte ich die Tugenden,
+
+mir Sicherheit zu gewähren. So beginnt meine Fahrt. Es gelang mir, unbemerkt an einigen Wasserelementaren vorbeizusegeln, was meinem Steuermann einiges an Navigation abverlangte. Doch ich kam ohne
+
+Zwischenfall an.
+
+Kapitel 7: Tapferkeit
+
+Der Schrein der Tapferkeit wird von vielen Bestien bewacht, die viel zu giftig und abscheulich sind, als dass ich sie
+
+besiegen könnte. Man muss Tapferkeit zeigen, um sich dem Schrein zu nähern! Tapferkeit zeigt sich oft in der Bereitschaft, einen womöglich verlorenen Kampf zu führen, an den man glaubt. Es braucht Tapferkeit, seinen
+
+Stand gegen die vielen Mörder und Gesetzesbrecher in unseren Landen zu halten. Ihr mögt verlieren, doch Ihr zeigt Tapferkeit, indem Ihr gegen das kämpft, dem entgegengetreten werden muss. Führt die Kämpfe, an die Ihr glaubt, nicht nur die
+
+Kämpfe, die Ihr zu gewinnen glaubt.
+
+Kapitel 8: Die Fahrt zur Demut
+
+Meine Reise wird nach Osten zum
+
+Schrein der Demut weitergehen. Ich lasse mein Boot an der Westseite der Insel der Tapferkeit zu Wasser, wo ich meine waghalsige Flucht vor den vielen Riesenschlangen vollbrachte, die mich mit ihrem giftigen Gift und
+
+ihren zischenden Zungen verfolgten. Schöne blaue Wellen spülten über den Bug des Bootes, während Delfine spielten und mich fröhlich weiterführten. Die Fahrt ist lang und das Wasser unruhig, doch endlich war Land erreicht. Schnell lief ich los,
+
+eifrig, mein letztes Ziel für den Tag zu finden.
+
+Kapitel 9: Demut
+
+Der Schrein der Demut ist überraschend schlicht; er ist nur ein Hain von Steinsäulen
+
+mit einem Ankh und dem Stein der Demut in seiner Mitte. Ich würde Demut als diese Suche beschreiben: die Rückkehr zu meinen Wurzeln in dieser Welt. Ich habe meinen Besitz und meinen Reichtum aufgegeben,
+
+um mich allein auf meinen Scharfsinn und meine Instinkte zu verlassen. Ich habe nicht länger das, was mich für andere ruhmreich macht, sondern nur noch das, was ich zum Überleben brauche. Ich kann mich nicht länger auf mich selbst verlassen, ich
+
+muss mich für mein Überleben auf andere verlassen. Meine Reise zur Demut hat mich nur noch mehr erkennen lassen, wie gesegnet ich gewesen bin.
+
+Kapitel 10: Weiter zur Ehrlichkeit
+
+Nun wird die Reise nach Süden zur Eisinsel führen. Doch meine Fahrten und Streifzüge durch den Dschungel haben
+
+mich recht müde gemacht, deshalb werde ich hier neben einem Fluss nahe dem Schrein der Demut über Nacht lagern. Am nächsten Morgen erwache ich erfrischt und gestärkt, aber auch unter Angriff! Ein Kopfloser hat
+
+mein Erwachen bemerkt und greift bösartig an. Mein treues Hackmesser war augenblicklich in meiner Hand, doch mein mangelndes Geschick mit der Waffe verzögerte den Tod der Kreatur. Ich ließ die Hollandia zu Wasser und
+
+setzte Segel zur Eisinsel, auf der Suche nach dem Schrein der Ehrlichkeit. Während ich die weiten Ozeane befahre, sehne ich mich nach der Gesellschaft meiner Mitmenschen. Hoffentlich treffe ich auf einen Reisenden, mit dem ich
+
+ein paar Worte wechseln kann. Bald darauf landete ich mein Boot am Nordende der Eisinsel. Rasch bahnte ich mir durch den Schnee einen Weg über die eisige Tundra und versuchte, mich warm zu halten. Der Schrein
+
+der Ehrlichkeit hieß mich willkommen, und ich fühlte Wärme durch meinen ganzen Körper strömen.
+
+Kapitel 11: Ehrlichkeit
+
+Ehrlichkeit bedeutet, die Wahrheit stets zu wahren und
+
+zu verteidigen. Darüber hinaus verlangt Ehrlichkeit, dass wir unseren Mitmenschen gegenüber fair und wahrhaftig sind und keinen ungebührlichen Vorteil ausnutzen. Ehrlichkeit ist eine Tugend, die der heutigen Welt oft fehlt. Es scheint,
+
+als seien die Menschen darauf aus, Reichtum zu erlangen, ohne Rücksicht auf Ehrlichkeit gegenüber anderen. Ehrlichkeit ist das Fundament, auf dem Vertrauen gebaut wird. Zerbröckelt das Fundament, muss alles, was
+
+darauf errichtet wurde, fallen. Die kalte Umgebung, die den Schrein der Ehrlichkeit beherbergt, zeugt von seinem Wert in der heutigen Gesellschaft. Die sinnbildliche Kälte und abgeschiedene Lage zeigen uns, dass nur jene,
+
+die sich dem Streben nach Ehrlichkeit am stärksten widmen, sie erreichen werden. Mögen wir alle ehrlich zu unseren Mitmenschen sein und daran denken, sie so zu behandeln, wie wir behandelt werden möchten.
+
+Kapitel 12: Der Pfad zur Opferbereitschaft.
+
+Ich machte mich auf den Weg zur Westseite der Eisinsel. Von dort lasse ich die Hollandia zu Wasser und segele ein wenig nach Norden
+
+und Westen. Ich lande mein Boot knapp östlich des Schreins der Opferbereitschaft, also führt mein Weg nach Westen. Obwohl ich das Meer genieße, bin ich froh, für die letzten drei Schreine wieder auf dem Festland zu sein."""
+
+[translations.ita]
+title = "La ricerca delle Virtù"
+content = """
+Volume 1
+Capitolo 1: La partenza
+Comincio la mia Ricerca nella bella banca di Skara Brae. La mia Ricerca consiste nel viaggiare a piedi fino agli otto santuari di Britannia. Sebbene possa sembrare facile,
+
+è ostacolata dal fatto che ho rinunciato alle mie abilità e ai miei beni terreni. Tutto ciò con cui posso vivere sono invece un completo di abiti semplici, una nave per solcare i mari e il mio diario in cui annotare
+
+le mie avventure. Avanti, dunque, verso il Santuario della Spiritualità!
+
+Capitolo 2: La strada verso la Spiritualità
+
+Poiché ho rinunciato alla
+
+magia come mezzo di viaggio, devo trovare un modo per raggiungere la terraferma da questa città insulare. Fortunatamente ho potuto ottenere un passaggio dal traghettatore mediante baratto. Raggiunta la terraferma, ho seguito la
+
+strada finché non ha piegato a Nord, ma io devo proseguire verso Est. Mi sono fermato ad ascoltare il piacevole canto degli uccelli e ho goduto della pace lontano dalla vita frenetica. Raggiunto
+
+il Labirinto di Siepi, ho ricordato una storia sul mago Relvinian nei tempi antichi e ho svoltato a Sud per aggirarlo. Non possedendo armi e avendo rinunciato al mio addestramento, ho dato ascolto al cartello che diceva:
+
+«Entra e Diventa Uno fra i Fantasmi». Il Fiume mi ha costretto a piegare a Sud e poi a proseguire verso Est.
+
+Capitolo 3: Spiritualità
+
+La Spiritualità è la guida
+
+delle Virtù. È la meditazione e la comprensione di tutte le altre Virtù. Senza Spiritualità non si possono seguire interamente le Virtù, poiché Essa è la dedizione e l'adesione
+
+alle stesse.
+
+Capitolo 4: Trovare l'Onore
+
+La mia prossima visita sarà al Santuario dell'Onore, che si trova a una discreta distanza verso Sud. Vi è una
+
+strada a Est che seguirò fino alla città di Trinsic. Ho trovato una stanza calda alla Locanda del Viaggiatore e mi sono svegliato riposato al mattino, udendo i suoni della natura mentre mi preparavo a
+
+proseguire i miei viaggi. Ho ringraziato il gentile locandiere e mi sono diretto fuori da Trinsic, verso Sud. Ho conversato brevemente con una persona tanto fortunata da possedere una casa nella splendida campagna, e mi ha augurato buona fortuna
+
+nei miei viaggi. Ho usato la mia lama arrugginita per farmi strada nelle fitte giungle, oltre le rovine di un regno dimenticato ora abitato soltanto dai Non Morti. Molti mongbat hanno ostacolato il mio viaggio, ma finalmente sono
+
+arrivato al Santuario dell'Onore.
+
+Capitolo 5: Onore
+
+Molti collegano l'Onore alla battaglia, ma esso può applicarsi a qualsiasi aspetto della
+
+Vita. L'Onore consiste nel rispettare le regole, il disonore nel barare, nel cercare un vantaggio sleale. Ho fatto voto di vivere sempre con Onore.
+
+Capitolo 6: Cercare il Valore
+
+Devo ora imbarcarmi sulla mia fidata piccola nave, la Hollandia, verso Sud ed Est, fino a una piccola isola dove pochi hanno viaggiato. Non so ancora cosa incontrerò in mare, quindi prego le Virtù
+
+di concedermi sicurezza. Così comincia il mio viaggio. Sono riuscito a passare inosservato accanto ad alcuni elementali dell'acqua, il che ha richiesto parecchia abilità di navigazione al mio timoniere. Tuttavia sono arrivato senza
+
+incidenti.
+
+Capitolo 7: Valore
+
+Il Santuario del Valore è protetto da molte bestie troppo velenose e ripugnanti perché io possa
+
+sconfiggerle. Bisogna mostrare Valore per avvicinarsi al Santuario! Il Valore si manifesta spesso nella disponibilità a combattere una battaglia che forse si perderà, ma in cui si crede. Ci vuole Valore per resistere
+
+ai molti assassini e fuorilegge nelle nostre terre. Potete perdere, ma mostrate Valore nel combattere ciò cui ci si deve opporre. Combattete le battaglie in cui credete, non soltanto le
+
+battaglie che pensate di poter vincere.
+
+Capitolo 8: Il viaggio verso l'Umiltà
+
+Il mio viaggio proseguirà verso Est, alla volta del
+
+Santuario dell'Umiltà. Metto in acqua la barca dal lato Ovest dell'Isola del Valore, dove ho compiuto la mia audace fuga dai molti Serpenti Giganti che mi inseguivano col loro tossico veleno e le
+
+lingue sibilanti. Belle onde azzurre lambivano la prua della barca mentre i delfini giocavano, guidandomi allegramente avanti. Il viaggio è lungo e l'acqua turbolenta, ma infine si è raggiunta terra. Sono corso rapidamente,
+
+ansioso di trovare la mia destinazione finale per quel giorno.
+
+Capitolo 9: Umiltà
+
+Il Santuario dell'Umiltà è sorprendentemente spartano: è soltanto un boschetto di pilastri
+
+di pietra con un ankh e la pietra dell'Umiltà al centro. Descriverei l'Umiltà come questa Ricerca: ritornare alle mie radici in questo mondo. Ho rifiutato i miei averi e la mia ricchezza
+
+per fare affidamento soltanto sull'astuzia e sugli istinti. Non ho più ciò che mi rende Glorioso agli occhi degli altri, ma soltanto ciò che mi serve per sopravvivere. Non posso più fare affidamento su me stesso, io
+
+devo fare affidamento sugli altri per sopravvivere. Il mio viaggio verso l'Umiltà mi ha soltanto fatto comprendere ancor più quanto io sia stato Benedetto.
+
+Capitolo 10: Avanti verso l'Onestà
+
+Ora il viaggio piegherà a Sud, verso l'Isola del Ghiaccio. Tuttavia i miei viaggi e le escursioni nella giungla mi hanno reso
+
+piuttosto stanco, quindi stanotte mi accamperò qui accanto a un fiume vicino al Santuario dell'Umiltà. Mi sveglio il mattino seguente riposato e rinvigorito, ma anche sotto attacco! Un Senza Testa ha notato
+
+il mio risveglio e attacca ferocemente. La mia fidata mannaia è stata subito nella mia mano, ma la mia scarsa abilità con l'arma ha ritardato la morte della creatura. Ho messo in acqua la Hollandia e
+
+ho fatto vela per l'Isola del Ghiaccio, cercando il Santuario dell'Onestà. Mentre solco i vasti oceani, mi ritrovo a desiderare la compagnia dei miei simili. Spero d'incontrare qualche viaggiatore con cui possa
+
+scambiare qualche parola. Poco dopo facevo approdare la barca all'estremità Nord dell'Isola del Ghiaccio. Mi sono fatto rapidamente strada nella neve attraverso la gelida tundra, tentando di tenermi caldo. Il Santuario
+
+dell'Onestà mi ha dato il benvenuto mentre sentivo il calore irradiarsi dentro di me.
+
+Capitolo 11: Onestà
+
+L'Onestà consiste nel sostenere e
+
+difendere sempre la verità. Inoltre, l'Onestà ci impone di essere equi e sinceri con i nostri simili, senza approfittarne indebitamente. L'Onestà è una Virtù spesso assente nel mondo odierno. Sembra
+
+che le persone cerchino di ottenere ricchezza senza curarsi dell'Onestà verso gli altri. L'Onestà è la base sulla quale si costruisce la fiducia. Se la base crolla, tutto ciò che vi è costruito
+
+sopra deve cadere. L'ambiente freddo che ospita il Santuario dell'Onestà testimonia il suo valore nella società odierna. Il freddo simbolico e la posizione isolata ci mostrano che soltanto i
+
+più dediti a perseguire l'Onestà la raggiungeranno. Che tutti possiamo essere Onesti con i nostri simili e ricordare di trattarli come vorremmo essere trattati.
+
+Capitolo 12: Il sentiero verso il Sacrificio.
+
+Mi sono diretto al lato Ovest dell'Isola del Ghiaccio. Da lì metto in acqua la Hollandia e navigo un poco verso Nord
+
+e Ovest. Faccio approdare la barca appena a Est del Santuario del Sacrificio, quindi la mia strada è verso Ovest. Sebbene mi piaccia il mare, sono felice di essere tornato sulla terraferma per gli ultimi tre Santuari."""
+
+[translations.pol]
+title = "Wyprawa ku Cnotom"
+content = """
+Tom 1
+Rozdział 1: Początek
+Zaczynam moją Wyprawę we wspaniałym banku Skara Brae. Celem Wyprawy jest dotarcie pieszo do ośmiu kaplic Britannia. Choć może brzmieć to łatwo,
+
+utrudnia je fakt, że wyrzekłem się swych zdolności i doczesnego dobytku. Mam jedynie zwykłe ubranie, statek do żeglowania po morzach i dziennik do zapisywania
+
+przygód. Naprzód, ku Kaplicy Duchowości!
+
+Rozdział 2: Droga do Duchowości
+
+Ponieważ wyrzekłem się
+
+magii jako sposobu podróżowania, muszę znaleźć drogę z tego wyspiarskiego miasta na stały ląd. Na szczęście zdołałem wytargować przeprawę od przewoźnika. Dotarłszy na ląd, szedłem
+
+drogą, aż skręciła na Północ, lecz ja muszę dalej iść na Wschód. Przystanąłem, by posłuchać przyjemnego śpiewu ptaków, i cieszyłem się spokojem z dala od zabieganego życia. Dotarłszy
+
+do Hedge Maze, przypomniałem sobie dawną opowieść o magu Relvinian i skręciłem na Południe, by go obejść. Nie mając broni i wyrzekłszy się wyuczonego kunsztu, posłuchałem znaku mówiącego:
+
+„Wejdź i stań się jednym z duchów”. Rzeka zmusiła mnie do skręcenia na Południe, a następnie podążania dalej na Wschód.
+
+Rozdział 3: Duchowość
+
+Duchowość przewodzi
+
+Cnotom. Jest rozmyślaniem nad wszystkimi pozostałymi Cnotami i ich zrozumieniem. Bez Duchowości nie można w pełni podążać za Cnotami, gdyż jest Ona oddaniem i wiernością
+
+wobec nich.
+
+Rozdział 4: Odnalezienie Honoru
+
+Kolejno odwiedzę Kaplicę Honoru, leżącą dość daleko na Południu. Na
+
+Wschód ode mnie jest droga, którą pójdę do miasta Trinsic. Znalazłem ciepły pokój w Traveller's Inn i rano obudziłem się wypoczęty, słysząc odgłosy przyrody, gdy przygotowywałem się
+
+do dalszej podróży. Podziękowałem uprzejmemu gospodarzowi, opuściłem Trinsic i ruszyłem na Południe. Krótko rozmawiałem z człowiekiem mającym szczęście posiadać dom w pięknej okolicy, a on życzył mi powodzenia
+
+w podróży. Zardzewiałym ostrzem torowałem drogę przez gęste dżungle obok ruin zapomnianego królestwa, zamieszkanego dziś tylko przez Nieumarłych. Niejeden mongbat utrudniał mi marsz, lecz w końcu
+
+dotarłem do Kaplicy Honoru.
+
+Rozdział 5: Honor
+
+Wielu łączy Honor z walką, lecz można go stosować w każdym aspekcie
+
+Życia. Honor to przestrzeganie zasad, hańba to oszukiwanie i szukanie nieuczciwej przewagi. Ślubowałem zawsze żyć z Honorem.
+
+Rozdział 6: Poszukiwanie Męstwa
+
+Muszę teraz wyruszyć na moim niezawodnym małym statku Hollandia na Południe i Wschód, ku małej wyspie, do której niewielu dotarło. Nie wiem jeszcze, co spotka mnie na morzu, więc proszę Cnoty,
+
+by zapewniły mi bezpieczeństwo. Tak zaczyna się moja podróż. Zdołałem niezauważony przepłynąć obok kilku żywiołaków wody, co wymagało niemałego kunsztu nawigacyjnego od mojego sternika. Dotarłem jednak bez
+
+przygód.
+
+Rozdział 7: Męstwo
+
+Kaplicę Męstwa chroni wiele bestii, zbyt jadowitych i plugawych, bym mógł je
+
+pokonać. Trzeba okazać Męstwo, by zbliżyć się do Kaplicy! Męstwo często przejawia się w gotowości do podjęcia być może przegranej walki, w którą się wierzy. Trzeba Męstwa, by nie
+
+ustąpić przed licznymi mordercami i przestępcami naszych ziem. Możesz przegrać, lecz okazujesz Męstwo, walcząc z tym, czemu należy się sprzeciwić. Podejmuj walki, w które wierzysz, nie tylko
+
+te, które sądzisz, że możesz wygrać.
+
+Rozdział 8: Podróż ku Pokorze
+
+Podróż będzie trwać dalej na Wschód, ku
+
+Kaplicy Pokory. Spuszczam łódź na wodę po Zachodniej stronie Wyspy Męstwa, skąd zuchwale uszedłem wielu Olbrzymim Wężom, ścigającym mnie z trującym jadem i
+
+syczącymi językami. Piękne błękitne fale obmywały dziób łodzi, a bawiące się delfiny radośnie prowadziły mnie naprzód. Podróż jest długa, a woda wzburzona, lecz w końcu osiągnąłem ląd. Szybko pobiegłem,
+
+pragnąc znaleźć mój ostatni cel tego dnia.
+
+Rozdział 9: Pokora
+
+Kaplica Pokory jest zaskakująco skromna: to zaledwie gaj kamiennych
+
+kolumn z ankh i kamieniem Pokory pośrodku. Pokorę opisałbym tak jak tę Wyprawę: powrót do mych korzeni w tym świecie. Odrzuciłem dobytek i bogactwo,
+
+by polegać jedynie na sprycie i instynkcie. Nie mam już tego, co czyni mnie Wspaniałym w oczach innych, lecz tylko to, czego potrzebuję do przetrwania. Nie mogę już polegać na sobie,
+
+muszę zawierzyć innym, aby przetrwać. Moja droga ku Pokorze uświadomiła mi jeszcze bardziej, jak bardzo byłem Błogosławiony.
+
+Rozdział 10: Naprzód ku Uczciwości
+
+Teraz podróż zwróci się na Południe, ku Wyspie Lodu. Jednak moje morskie podróże i wyprawy w dżunglę sprawiły, że
+
+jestem bardzo zmęczony, więc na noc rozbiję obóz nad rzeką blisko Kaplicy Pokory. Następnego ranka budzę się wypoczęty i pełen sił, lecz także atakowany! Bezgłowy dostrzegł
+
+moje przebudzenie i zaciekle atakuje. Mój niezawodny tasak natychmiast znalazł się w dłoni, lecz brak wprawy w tej broni opóźnił śmierć stwora. Spuściłem Hollandia na wodę i
+
+pożeglowałem ku Wyspie Lodu, szukając Kaplicy Uczciwości. Płynąc po bezkresnych oceanach, łapię się na pragnieniu ludzkiego towarzystwa. Mam nadzieję spotkać jakiegoś podróżnika, z którym będę mógł
+
+zamienić kilka słów. Wkrótce przybiłem łodzią do północnego krańca Wyspy Lodu. Szybko przeszedłem przez śnieg po lodowatej tundrze, starając się zachować ciepło. Kaplica
+
+Uczciwości powitała mnie, gdy poczułem ciepło promieniujące przez całe ciało.
+
+Rozdział 11: Uczciwość
+
+Uczciwość to podtrzymywanie i
+
+obrona prawdy w każdej chwili. Ponadto Uczciwość wymaga, byśmy byli sprawiedliwi i prawdomówni wobec bliźnich, nie wykorzystywali ich niewłaściwie. Uczciwość jest Cnotą, której często brak w dzisiejszym świecie. Zdaje się,
+
+że ludzie dążą do bogactwa, nie zważając na Uczciwość wobec innych. Uczciwość jest fundamentem, na którym buduje się zaufanie. Jeśli fundament się kruszy, wszystko zbudowane
+
+na nim musi runąć. Zimne otoczenie Kaplicy Uczciwości świadczy o jej wartości w dzisiejszym społeczeństwie. Symboliczne zimno i odosobnienie pokazują nam, że tylko
+
+najbardziej oddani dążeniu do Uczciwości ją osiągną. Obyśmy wszyscy byli Uczciwi wobec bliźnich i pamiętali, by traktować ich tak, jak sami chcielibyśmy być traktowani.
+
+Rozdział 12: Ścieżka Poświęcenia.
+
+Dotarłem do Zachodniej strony Wyspy Lodu. Stamtąd spuszczam Hollandia na wodę i płynę nieco na Północ
+
+i Zachód. Przybijam łodzią tuż na Wschód od Kaplicy Poświęcenia, więc moja droga wiedzie na Zachód. Choć lubię morze, cieszę się powrotem na stały ląd, ku trzem ostatnim Kaplicom."""
+
+[translations.por]
+title = "Busca das Virtudes"
+content = """
+Volume 1
+Capítulo 1: O começo
+Inicio minha Busca no belo banco de Skara Brae. Minha Busca é viajar a pé aos oito santuários de Britannia. Embora isso possa parecer fácil,
+
+fica mais difícil porque renunciei às minhas habilidades e posses materiais. Em vez disso, tudo o que tenho para viver é um conjunto de roupas simples, um navio para navegar pelos mares e meu diário, no qual registrar
+
+minhas aventuras. Avante, rumo ao Santuário da Espiritualidade!
+
+Capítulo 2: A estrada para a
+Espiritualidade
+
+Como renunciei à
+
+magia como forma de viagem, preciso encontrar um caminho até o continente a partir desta cidade insular. Felizmente, consegui negociar uma travessia com o barqueiro. Ao chegar ao continente, segui a
+
+estrada até que ela virasse para o Norte, mas eu precisava continuar para Leste. Fiz uma pausa para ouvir os sons agradáveis dos pássaros cantando e desfrutei da paz longe da vida agitada. Ao chegar ao
+
+Labirinto de Sebes, lembrei-me de uma história sobre o mago Relvinian nos tempos antigos e virei para o Sul para contorná-lo. Sem possuir armas e tendo renunciado ao meu treinamento, dei ouvidos à placa que dizia:
+
+\"Entre e torne-se um entre os fantasmas.\" O Rio me obrigou a virar para o Sul e depois continuar para Leste.
+
+Capítulo 3: Espiritualidade
+
+A Espiritualidade é a líder
+
+das Virtudes. É a meditação e a compreensão de todas as outras Virtudes. Sem Espiritualidade, não se pode seguir completamente as Virtudes, pois Ela é a dedicação e a adesão
+
+a elas.
+
+Capítulo 4: Encontrando a Honra
+
+Minha próxima visita será ao Santuário da Honra, que fica a uma boa distância ao Sul. Há uma
+
+estrada a meu Leste que seguirei até a cidade de Trinsic. Encontrei um quarto aconchegante na Estalagem do Viajante e acordei revigorado pela manhã, ouvindo os sons da natureza enquanto me preparava para
+
+continuar minhas jornadas. Agradeci ao bondoso estalajadeiro e saí de Trinsic rumo ao Sul. Conversei brevemente com alguém que tinha a sorte de possuir uma casa na bela zona rural, e ele me desejou boa fortuna
+
+em minhas viagens. Usei minha lâmina enferrujada para abrir caminho por selvas densas, passando por ruínas de um reino esquecido, agora habitado apenas pelos Mortos-Vivos. Muitos mongbats atrapalharam minha jornada, mas finalmente
+
+cheguei ao Santuário da Honra.
+
+Capítulo 5: Honra
+
+Muitos relacionam Honra e batalha, mas ela pode ser usada em qualquer aspecto da
+
+Vida. A Honra é respeitar as regras; a desonra é trapacear, buscar a vantagem injusta. Jurei viver sempre com Honra.
+
+Capítulo 6: Buscando o Valor
+
+Agora devo embarcar em meu confiável pequeno navio, o Hollandia, rumo ao Sul e ao Leste, para uma pequena ilha onde poucos viajaram. Ainda não sei o que encontrarei no mar, então peço às Virtudes que
+
+me concedam segurança. Assim começa minha viagem. Consegui navegar sem ser notado por alguns elementais da água, o que exigiu bastante habilidade de navegação de meu timoneiro. Contudo, cheguei sem
+
+incidentes.
+
+Capítulo 7: Valor
+
+O Santuário do Valor é protegido por muitas feras venenosas e repugnantes demais para eu
+
+derrotar. É preciso demonstrar Valor para se aproximar do Santuário! O Valor muitas vezes se revela na disposição de lutar uma batalha em que se acredita, mesmo que possa ser perdida. É preciso Valor para manter sua
+
+posição contra os muitos assassinos e transgressores da lei em nossas terras. Você pode perder, mas demonstra Valor ao lutar contra aquilo a que é preciso se opor. Lute as lutas em que acredita, não apenas as
+
+lutas que acha que pode vencer.
+
+Capítulo 8: A viagem para a
+Humildade
+
+Minha jornada continuará para Leste, rumo ao
+
+Santuário da Humildade. Lanço meu barco do lado Oeste da Ilha do Valor, onde fiz minha fuga ousada das muitas Serpentes Gigantes que me perseguiam com seu veneno e suas
+
+línguas sibilantes. Belas ondas azuis lavavam a proa do barco enquanto golfinhos brincavam, guiando-me alegremente. A viagem é longa e a água, turbulenta, mas enfim alcancei terra. Corri depressa,
+
+ansioso para encontrar meu destino final do dia.
+
+Capítulo 9: Humildade
+
+O Santuário da Humildade é surpreendentemente espartano; é apenas um conjunto de colunas de
+
+pedra com um ankh e a pedra da Humildade no centro. Eu caracterizaria a Humildade como esta Busca: voltar às minhas raízes neste mundo. Rejeitei minhas posses e minha riqueza
+
+para depender apenas de minha astúcia e meus instintos. Já não tenho aquilo que me torna Glorioso para os outros, mas apenas o necessário para sobreviver. Já não posso depender de mim mesmo; eu
+
+preciso depender dos outros para sobreviver. Minha jornada rumo à Humildade só me fez perceber ainda mais como fui Abençoado.
+
+Capítulo 10: Avante para a
+Honestidade
+
+Agora a jornada seguirá para o Sul, rumo à Ilha de Gelo. Contudo, minhas viagens e incursões pela selva me deixaram
+
+bastante cansado, por isso acamparei aqui ao lado de um rio perto do Santuário da Humildade durante a noite. Acordo na manhã seguinte revigorado e cheio de energia, mas também sob ataque! Um Sem-Cabeça percebeu
+
+que despertei e ataca ferozmente. Meu fiel cutelo estava em minha mão num instante, mas minha falta de habilidade com a arma atrasou a morte da criatura. Lancei o Hollandia e
+
+parti para a Ilha de Gelo, buscando o Santuário da Honestidade. Enquanto navego pelos vastos oceanos, sinto vontade de ter a companhia de meus semelhantes. Espero encontrar algum viajante com quem possa
+
+trocar algumas palavras. Logo desembarquei meu barco na ponta Norte da Ilha de Gelo. Rapidamente abri caminho pela neve, atravessando a tundra gélida enquanto tentava me manter aquecido. O Santuário
+
+da Honestidade me deu boas-vindas, enquanto senti o calor irradiar por todo o meu ser.
+
+Capítulo 11: Honestidade
+
+A Honestidade é sustentar e
+
+defender a verdade em todos os momentos. Além disso, a Honestidade exige que sejamos justos e sinceros com nossos semelhantes, sem tirar vantagens indevidas. A Honestidade é uma Virtude frequentemente ausente no mundo de hoje. Parece
+
+que as pessoas querem enriquecer sem se importar com a Honestidade para com os outros. A Honestidade é o alicerce sobre o qual a confiança é construída. Se o alicerce desmorona, tudo o que se construiu
+
+sobre ele deve cair. O ambiente frio que abriga o Santuário da Honestidade é uma prova de seu valor na sociedade de hoje. O frio simbólico e o local isolado nos mostram que somente os
+
+mais dedicados à busca da Honestidade a alcançarão. Que todos sejamos Honestos com nossos semelhantes e lembremos de tratá-los como gostaríamos de ser tratados.
+
+Capítulo 12: O caminho para o
+Sacrifício.
+
+Fui até o lado Oeste da Ilha de Gelo. De lá, lanço o Hollandia e navego ligeiramente para o Norte
+
+e o Oeste. Desembarco meu barco logo a Leste do Santuário do Sacrifício, então meu caminho é para Oeste. Embora goste do mar, fico feliz de estar de volta ao continente para os três últimos Santuários."""
+
+[translations.spa]
+title = "La búsqueda de las Virtudes"
+content = """
+Volumen 1. Capítulo 1: El comienzo. Inicio mi Búsqueda en el excelente banco de Skara Brae. Mi Búsqueda consiste en viajar a pie a los ocho santuarios de Britannia. Aunque pueda parecer fácil,
+
+se ve dificultada porque he renunciado a mis habilidades y posesiones mundanas. En su lugar, todo lo que tengo para vivir son unas ropas sencillas, un barco con el que surcar los mares y mi diario para registrar
+
+mis aventuras. ¡Adelante, hacia el Santuario de la Espiritualidad!
+
+Capítulo 2: El camino a la Espiritualidad.
+
+Puesto que he renunciado a la
+
+magia como forma de viajar, debo encontrar una manera de llegar al continente desde esta ciudad isleña. Por fortuna, pude negociar un viaje con el barquero. Al llegar al continente seguí el
+
+camino hasta que giró al norte, pero yo debo continuar hacia el este. Me detuve a escuchar el agradable canto de los pájaros y disfruté de la paz lejos de la vida ajetreada. Al llegar
+
+al laberinto de setos recordé una historia sobre el mago Relvinian en tiempos antiguos y giré al sur para rodearlo. Como no poseo armas y he renunciado a mi entrenamiento, hice caso del letrero que decía:
+
+«Entra y conviértete en uno más entre los fantasmas». El río me obligó a girar al sur y después continuar hacia el este.
+
+Capítulo 3: Espiritualidad.
+
+La Espiritualidad encabeza
+
+las Virtudes. Es la meditación y la comprensión de todas las demás Virtudes. Sin Espiritualidad no se pueden seguir por completo las Virtudes, pues es la dedicación y la adhesión
+
+a ellas.
+
+Capítulo 4: Encontrar el Honor.
+
+Mi próxima visita será al Santuario del Honor, que se encuentra a bastante distancia hacia el sur. Hay un
+
+camino al este que seguiré hasta la ciudad de Trinsic. Encontré una habitación cálida en Traveller's Inn y desperté descansado por la mañana, oyendo los sonidos de la naturaleza mientras me preparaba para
+
+continuar mis viajes. Agradecí su amabilidad al posadero, salí de Trinsic y me dirigí al sur. Conversé brevemente con alguien afortunado de poseer una casa en aquella hermosa campiña, y me deseó buena fortuna
+
+en mis viajes. Usé mi hoja oxidada para abrirme paso por selvas densas, junto a ruinas de un reino olvidado que ahora solo habitan los muertos vivientes. Muchos mongbats entorpecieron mi viaje, pero al fin
+
+llegué al Santuario del Honor.
+
+Capítulo 5: Honor.
+
+Muchos vinculan el Honor con la batalla, pero puede aplicarse a cualquier aspecto de la
+
+vida. Honor es respetar las reglas; deshonor es hacer trampas, buscar una ventaja injusta. Juré vivir siempre con Honor.
+
+Capítulo 6: En busca del Valor.
+
+Ahora debo embarcar en mi fiel y pequeño navío, el Hollandia, hacia el sur y el este, rumbo a una pequeña isla que pocos han visitado. Aún no sé qué encontraré en el mar, así que ruego a las Virtudes
+
+que me concedan seguridad. Así empieza mi travesía. Conseguí pasar sin ser visto junto a algunos elementales de agua, lo que exigió bastante habilidad a mi timonel. Sin embargo, llegué sin
+
+incidentes.
+
+Capítulo 7: Valor.
+
+El Santuario del Valor está protegido por muchas bestias demasiado venenosas y terribles para que yo pueda
+
+vencerlas. ¡Hay que mostrar Valor para acercarse al Santuario! El Valor suele manifestarse en la voluntad de librar una batalla que quizá esté perdida, pero en la que se cree. Hace falta Valor para mantenerse
+
+firme ante tantos asesinos e infractores de nuestras tierras. Puedes perder, pero demuestras Valor al luchar contra aquello a lo que hay que oponerse. Libra las batallas en las que crees, no solo las
+
+que piensas que puedes ganar.
+
+Capítulo 8: La travesía hacia la Humildad.
+
+Mi viaje continuará hacia el este, en dirección al
+
+Santuario de la Humildad. Boto mi barco desde el lado oeste de la Isla del Valor, donde escapé audazmente de las muchas serpientes gigantes que me perseguían con su ponzoña y sus
+
+lenguas siseantes. Hermosas olas azules bañaban la proa mientras jugaban los delfines, guiándome alegremente. La travesía es larga y el agua turbulenta, pero al fin avisté tierra. Corrí enseguida,
+
+ansioso por encontrar mi destino final del día.
+
+Capítulo 9: Humildad.
+
+El Santuario de la Humildad es sorprendentemente austero; apenas es un conjunto de pilares de
+
+piedra con un ankh y la piedra de la Humildad en el centro. Describiría la Humildad como esta Búsqueda: regresar a mis raíces en este mundo. He rechazado mis posesiones y mi riqueza
+
+para depender solo de mi astucia y mis instintos. Ya no tengo lo que me hace Glorioso ante los demás, sino únicamente lo necesario para sobrevivir. Ya no puedo depender de mí mismo;
+
+debo depender de otros para sobrevivir. Mi viaje hacia la Humildad solo me ha hecho comprender aún más lo Bendecido que he sido.
+
+Capítulo 10: Hacia la Honestidad.
+
+Ahora el viaje girará al sur, hacia la Isla del Hielo. Pero mis travesías y excursiones por la selva me han dejado
+
+muy cansado, así que pasaré la noche acampado junto a un río cerca del Santuario de la Humildad. A la mañana siguiente despierto descansado y lleno de energía, ¡pero también bajo ataque! Un ser sin cabeza ha advertido
+
+que me he despertado y me ataca ferozmente. Mi fiel cuchilla de carnicero apareció en mi mano al instante, pero mi falta de destreza con el arma demoró la muerte de la criatura. Boté el Hollandia y
+
+zarpé hacia la Isla del Hielo, en busca del Santuario de la Honestidad. Mientras navego por los vastos océanos, deseo la compañía de mis semejantes. Espero encontrar algún viajero con quien pueda
+
+intercambiar unas palabras. Poco después desembarcaba en el extremo norte de la Isla del Hielo. Me abrí paso rápidamente por la nieve de la helada tundra, intentando mantenerme caliente. El Santuario
+
+de la Honestidad me dio la bienvenida mientras sentía el calor extenderse por todo mi cuerpo.
+
+Capítulo 11: Honestidad.
+
+La Honestidad consiste en sostener y
+
+defender la verdad en todo momento. Además, la Honestidad exige ser justos y sinceros con nuestros semejantes, sin aprovecharnos indebidamente de ellos. Es una Virtud que suele faltar en el mundo actual. Parece
+
+que la gente busca enriquecerse sin considerar la Honestidad hacia los demás. La Honestidad es el cimiento sobre el que se construye la confianza. Si ese cimiento se desmorona, todo lo construido
+
+encima debe caer. El frío entorno donde se encuentra el Santuario de la Honestidad es testimonio de su valor en la sociedad actual. El frío simbólico y su ubicación aislada nos muestran que solo quienes
+
+estén más dedicados a perseguir la Honestidad la alcanzarán. Seamos todos Honestos con nuestros semejantes y recordemos tratarlos como querríamos que nos trataran.
+
+Capítulo 12: La senda del Sacrificio.
+
+Me dirigí al lado oeste de la Isla del Hielo. Desde allí boto el Hollandia y navego un poco hacia el norte
+
+y el oeste. Desembarco justo al este del Santuario del Sacrificio, así que mi camino va hacia el oeste. Aunque disfruto del mar, me alegra regresar al continente para visitar los tres últimos Santuarios."""

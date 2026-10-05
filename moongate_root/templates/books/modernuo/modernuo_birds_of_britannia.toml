@@ -246,3 +246,554 @@ are said to have an
 extraordinarily
 beautiful song."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Ptáci země Britannia"
+content = """
+STŘÍZLÍK je drobný hmyzožravý pták se silným hlasem. Veselé trylky střízlíků jsou neobyčejně rozmanité a melodické.
+VLAŠTOVKU
+
+snadno poznáme podle vidličnatého ocasu. Vlaštovky chytají hmyz za letu a jejich zpěv je pisklavý a štěbetavý.
+PĚNICE je výjimečný pěvec,
+
+jehož bohaté písně spojují nejlepší vlastnosti střízlíků a vlaštovek.
+BRHLÍK šplhá po stromech hlavou dolů a hledá hmyz v
+
+kůře. Zpívá opakující se řadu tónů s nosovým zabarvením.
+Hbitá SÝKORA ČERNOPRULÁ má bzučivé volání „chick-a-dee-dee“,
+
+od něhož pochází její jméno. Její zpěv tvoří řada pískaných tónů.
+DROZD je hnědý pták se skvrnitou hrudí, který se živí červy a
+
+hlemýždi a krásně zpívá. Drozdům slouží kámen jako kovadlina, na níž rozbíjejí ulity hlemýžďů.
+Malý SLAVÍK je
+
+rovněž znám svým krásným zpěvem, jímž se ozývá i v noci.
+ŠPAČEK je malý tmavý pták se žlutým zobákem a pisklavým, vysokým zpěvem.
+
+Špačci dokážou napodobovat zvuky jiných ptáků.
+SKŘIVAN zpívá za letu řadu vysokých melodických trylků.
+
+PĚNKAVA je malý semenožravý pták s kuželovitým zobákem a hudebním, trylkovaným zpěvem.
+KŘIVKA je druh pěnkavy s podivným
+
+zkříženým zobákem, jímž vybírá semena z borových šišek.
+KANÁR je druh pěnkavy, často chovaný jako domácí mazlíček. Horníci si kanáry často brávali
+
+pod zem, aby je varovali před přítomností nebezpečných výparů ve vzduchu.
+VRABEC si splétá hnízdo z trávy a jeho
+
+hlas je nehudební cvrlikání.
+PIPILO je druh vrabce, který svým posluchačům neustále připomíná, aby pili čaj.
+ŤUHÝK je
+
+šedý pták s hákovitým zobákem. Ťuhýci mají ve zvyku napichovat kořist na trny.
+DATEL má špičatý zobák vhodný
+
+k vyklovávání dřeva, aby se dostal k hmyzu uvnitř.
+LEDŇÁČEK se potápí pro ryby, které chytá dlouhým špičatým zobákem.
+
+RYBÁK každoročně táhne na velké vzdálenosti, z jednoho konce země Britannia na druhý. Rybáci se vrhají ze vzduchu do vody pro ryby.
+KULÍK je
+
+pták, který odvádí pozornost dravců předstíráním zlomeného křídla.
+ČEJKA je druh kulíka s dlouhou černou chocholkou.
+JESTŘÁB je
+
+dravcem živícím se malými ptáky, myšmi, veverkami a dalšími drobnými živočichy. Malí jestřábi jsou známi jako luňáci.
+HOLUB je semenožravý pták
+
+s pověstí mírumilovného tvora. Holubi zpívají hlubokým vrkáním.
+PAPOUŠEK je pestře zbarvený pták s hákovitým zobákem, oblíbený
+
+společník pirátů. Papoušky lze naučit napodobovat lidský hlas.
+KUKAČKA je záludný pták, který klade vejce do hnízd pěnic a jiných
+
+malých ptáků. Kukačky mají nevídanou schopnost sledovat čas a zpívají jednou na počátku každé hodiny.
+KUKAČKA KOHOUTÍ je
+
+neobvyklý pták s dlouhým ocasem, jenž rychle běhá po zemi a loví ještěrky a hady.
+RORÝS je velmi hbitý pták, který
+
+tráví téměř celý život ve vzduchu. S široce otevřeným zobákem chytají rorýsi hmyz za letu.
+KOLIBŘÍK je
+
+křížencem rorýse a víly. Tito drobní, pestře zbarvení ptáci se kouzlem vznášejí u květů a živí se jejich nektarem.
+
+SOVA je údajně moudrý pták, který je na rozdíl od většiny ptáků činný v noci. Sovy výtečně vidí za tmy a ozývají se hlubokým houkáním. Jejich křídla
+
+jsou za letu tichá.
+LELEK je podivný pták podobný sově, o němž se soudí, že se živí kozím mlékem. Tito tajemní ptáci vydávají v noci drnčivé
+
+zvuky, a proto se jim také říká noční chrastítka.
+KACHNA je pták, který častěji plave než létá a má nosový hlas,
+
+popisovaný jako „kvákání“.
+LABUŤ je druh kachny s dlouhým krkem, celá bílá. Labutě bývají němé, ale říká se, že mají
+
+neobyčejně krásný zpěv."""
+
+[translations.fre]
+title = "Les oiseaux de Britannia"
+content = """
+Le TROGLODYTE est un minuscule oiseau insectivore à la voix puissante. Ses trilles joyeux sont extraordinairement variés et mélodieux. L’HIRONDELLE
+
+se reconnaît aisément à sa queue fourchue. Les hirondelles attrapent les insectes en vol et ont des chants stridents et gazouillants. La FAUVETTE est une chanteuse exceptionnelle,
+
+dont les longs chants réunissent les meilleures qualités des troglodytes et des hirondelles. La SITTELLE descend les arbres la tête la première, cherchant les insectes dans
+
+l’écorce. Elle chante une série répétitive de notes au timbre nasal. L’agile MÉSANGE À TÊTE NOIRE a un cri bourdonnant, « chick-a-dee-dee »,
+
+dont elle tire son nom. Son chant est une suite de notes sifflées. La GRIVE est un oiseau brun à la poitrine tachetée qui mange des vers et
+
+des escargots, et dont la voix chantante est magnifique. Les grives se servent d’une pierre comme d’une enclume pour briser les coquilles des escargots. Le petit ROSSIGNOL est
+
+également connu pour son beau chant, qu’il fait entendre même la nuit. L’ÉTOURNEAU est un petit oiseau sombre au bec jaune et au chant aigu et strident.
+
+Les étourneaux peuvent imiter les sons des autres oiseaux. L’ALOUETTE DES CHAMPS chante en vol une succession de trilles aigus et mélodieux.
+
+Le PINSON est un petit oiseau granivore au bec conique et au gazouillis musical. Le BEC-CROISÉ est une sorte de pinson au curieux
+
+bec croisé, dont il se sert pour extraire les graines des pommes de pin. Le CANARI est une sorte de pinson que l’on garde souvent comme animal de compagnie. Les mineurs emportaient souvent des canaris
+
+sous terre pour les avertir de la présence de vapeurs dangereuses dans l’air. Le MOINEAU tisse un nid d’herbe et possède un
+
+pépiement peu musical. Le TOHI est une sorte de moineau qui rappelle sans cesse à ceux qui l’écoutent de boire leur thé. La PIE-GRIÈCHE est un
+
+oiseau gris au bec crochu. Les pies-grièches ont l’habitude d’empaler leurs proies sur des épines. Le PIC possède un bec pointu
+
+qui lui permet de frapper le bois pour atteindre les insectes qui s’y trouvent. Le MARTIN-PÊCHEUR plonge à la recherche de poissons, qu’il attrape avec son long bec pointu.
+
+La STERNE migre sur de grandes distances, d’un bout à l’autre de Britannia chaque année. Les sternes plongent depuis les airs pour attraper des poissons. Le PLOUVIER est un
+
+oiseau qui détourne l’attention des prédateurs en feignant d’avoir une aile brisée. Le VANNEAU est une sorte de pluvier doté d’une longue huppe noire. L’ÉPERVIER est un
+
+prédateur qui se nourrit de petits oiseaux, de souris, d’écureuils et d’autres petits animaux. Les petits éperviers sont appelés milans. La COLOMBE est un oiseau granivore
+
+réputé paisible. Les colombes ont un roucoulement grave. Le PERROQUET est un oiseau aux couleurs vives et au bec crochu, apprécié comme
+
+compagnon par les pirates. On peut apprendre aux perroquets à imiter la voix humaine. Le COUCOU est un oiseau sournois qui pond ses œufs dans les nids des fauvettes et d’autres
+
+petits oiseaux. Les coucous ont l’étrange faculté de mesurer le temps et chantent une fois au début de chaque heure. Le GÉOCOUCOU est un
+
+oiseau singulier à longue queue, qui court rapidement sur le sol à la recherche de lézards et de serpents. Le MARTINET est un oiseau très agile qui
+
+passe presque toute sa vie dans les airs. La bouche grande ouverte, les martinets capturent des insectes en plein vol. Le COLIBRI est un
+
+croisement de martinet et de fée. Ces oiseaux minuscules aux couleurs vives restent magiquement en vol stationnaire près des fleurs et vivent du nectar qu’elles leur offrent.
+
+La CHOUETTE est un oiseau réputé sage, actif la nuit, contrairement à la plupart des oiseaux. Les chouettes ont une excellente vision nocturne et poussent des hululements graves. Leurs ailes
+
+sont silencieuses en vol. Le TÈTE-CHÈVRE est un étrange oiseau semblable à une chouette, que l’on croit nourri du lait des chèvres. Ces oiseaux mystérieux produisent des sons discordants
+
+la nuit, raison pour laquelle on les appelle aussi engoulevents. Le CANARD est un oiseau qui nage plus souvent qu’il ne vole, et possède une voix nasale
+
+que l’on décrit comme un « coin-coin ». Le CYGNE est une sorte de canard au long cou, entièrement blanc. Les cygnes sont généralement muets, mais on leur prête un chant
+
+extraordinairement beau."""
+
+[translations.ger]
+title = "Die Vögel Britannias"
+content = """
+Der ZAUNKÖNIG ist ein winziger Insektenfresser mit lauter Stimme. Die fröhlichen Triller der Zaunkönige sind außerordentlich vielfältig und melodisch.
+Die SCHWALBE
+
+ist leicht an ihrem gegabelten Schwanz zu erkennen. Schwalben fangen Insekten im Flug und singen quietschende, zwitschernde Lieder.
+Der WALDSÄNGER ist ein außergewöhnlicher Sänger,
+
+dessen ausgedehnte Lieder die besten Eigenschaften von Zaunkönigen und Schwalben vereinen.
+Der KLEIBER klettert kopfüber Bäume hinab und sucht in der
+
+Rinde nach Insekten. Er singt eine sich wiederholende Folge von Tönen mit nasalem Klang.
+Die flinke SCHWARZKOPFMEISE hat einen schnarrenden Ruf,
+„chick-a-dee-dee“,
+
+von dem sich ihr Name herleitet. Ihr Gesang besteht aus einer Reihe gepfiffener Töne.
+Die DROSSEL ist ein brauner Vogel mit gefleckter Brust, der Würmer und
+
+Schnecken frisst und eine schöne Singstimme besitzt. Drosseln benutzen einen Stein als Amboss, um Schneckenhäuser zu zertrümmern.
+Die kleine NACHTIGALL ist
+
+ebenfalls für ihren schönen Gesang bekannt, den sie selbst nachts erklingen lässt.
+Der STAR ist ein kleiner dunkler Vogel mit gelbem Schnabel und einem quietschenden, hohen Gesang.
+
+Stare können die Laute anderer Vögel nachahmen.
+Die FELDLERCHE singt im Flug eine Folge hoher, melodischer Triller.
+
+Der FINK ist ein kleiner Samenfresser mit kegelförmigem Schnabel und einem musikalischen, trällernden Gesang.
+Der KREUZSCHNABEL ist eine Finkenart mit einem seltsamen
+
+gekreuzten Schnabel, mit dem er Samen aus Kiefernzapfen holt.
+Der KANARIENVOGEL ist eine Finkenart, die häufig als Haustier gehalten wird. Bergleute nahmen Kanarienvögel oft
+
+mit unter Tage, damit sie vor gefährlichen Dämpfen in der Luft warnten.
+Der SPATZ flicht ein Nest aus Gras und hat ein
+
+unmusikalisches Piepsen zur Stimme.
+Die GRUNDAMMER ist eine Spatzenart, die ihre Zuhörer ständig daran erinnert, ihren Tee zu trinken.
+Der WÜRGER ist ein
+
+grauer Vogel mit Hakenschnabel. Würger pflegen ihre Beute auf Dornen aufzuspießen.
+Der SPECHT besitzt einen spitzen Schnabel, der
+
+geeignet ist, ins Holz zu hacken, um an die Insekten darin zu gelangen.
+Der EISVOGEL taucht nach Fischen, die er mit seinem langen, spitzen Schnabel fängt.
+
+Die SEESCHWALBE zieht über große Entfernungen, jedes Jahr von einem Ende Britannias zum anderen. Seeschwalben stoßen aus der Luft herab, um Fische zu fangen.
+Der REGENPFEIFER ist ein
+
+Vogel, der Raubtiere ablenkt, indem er einen gebrochenen Flügel vortäuscht.
+Der KIEBITZ ist eine Regenpfeiferart mit einer langen schwarzen Haube.
+Der HABICHT ist ein
+
+Raubvogel, der kleine Vögel, Mäuse, Eichhörnchen und andere kleine Tiere frisst. Kleine Habichte sind als Milane bekannt.
+Die TAUBE ist ein samenfressender Vogel mit
+
+einem friedlichen Ruf. Tauben haben einen tiefen, gurrenden Gesang.
+Der PAPAGEI ist ein bunt gefärbter Vogel mit Hakenschnabel, der von Piraten als
+
+Begleiter geschätzt wird. Papageien können lernen, die menschliche Stimme nachzuahmen.
+Der KUCKUCK ist ein listiger Vogel, der seine Eier in die Nester von Waldsängern und anderen
+
+kleinen Vögeln legt. Kuckucke besitzen die unheimliche Fähigkeit, die Zeit zu kennen, und singen einmal zu Beginn jeder Stunde.
+Der RENNKUCKUCK ist
+
+ein ungewöhnlicher Vogel mit langem Schwanz, der auf der Jagd nach Eidechsen und Schlangen flink am Boden entlangläuft.
+Der MAUERSEGLER ist ein sehr wendiger Vogel, der
+
+fast sein ganzes Leben in der Luft verbringt. Mit weit geöffnetem Maul fangen Mauersegler Insekten mitten im Flug.
+Der KOLIBRI ist eine
+
+Kreuzung aus einem Mauersegler und einer Fee. Diese winzigen, bunt gefärbten Vögel schweben auf magische Weise vor Blumen und leben von deren Nektar.
+
+Die EULE gilt als weiser Vogel und ist, anders als die meisten Vögel, nachts tätig. Eulen haben hervorragende Nachtsicht und tiefe, heulende Rufe. Ihre Flügel
+
+sind im Flug lautlos.
+Der ZIEGENMELKER ist ein seltsamer, eulenähnlicher Vogel, von dem man glaubt, er lebe von Ziegenmilch. Diese geheimnisvollen Vögel erzeugen nachts schrille
+
+Laute, weshalb sie auch Nachtschwalben genannt werden.
+Die ENTE ist ein Vogel, der häufiger schwimmt als fliegt und dessen nasale Stimme
+
+als „Quaken“ beschrieben wird.
+Der SCHWAN ist eine langhalsige Entenart, die ganz weiß ist. Schwäne sind gewöhnlich stumm, doch sagt man, sie hätten einen
+
+außerordentlich schönen Gesang."""
+
+[translations.ita]
+title = "Gli uccelli di Britannia"
+content = """
+Lo SCRICCIOLO è un minuscolo uccello insettivoro dalla voce potente. I lieti trilli degli scriccioli sono straordinariamente vari e melodiosi.
+La RONDINE
+
+si riconosce facilmente dalla coda biforcuta. Le rondini catturano gli insetti in volo e hanno canti striduli e cinguettanti.
+Il SILVIDE è un cantore eccezionale,
+
+i cui lunghi canti uniscono le migliori qualità degli scriccioli e delle rondini.
+Il PICCHIO MURATORE scende lungo gli alberi a testa in giù, cercando insetti nella
+
+corteccia. Canta una serie ripetitiva di note dal timbro nasale.
+L'agile CINCIA ha un richiamo ronzante, «chick-a-dee-dee»,
+
+da cui deriva il suo nome. Il suo canto è una serie di note fischiate.
+Il TORDO è un uccello bruno dal petto maculato, che mangia vermi e
+
+chiocciole e ha una bellissima voce. I tordi usano una pietra come incudine per rompere i gusci delle chiocciole.
+Il piccolo USIGNOLO è
+
+anch'esso noto per il suo bel canto, che esegue persino di notte.
+Lo STORNO è un piccolo uccello scuro dal becco giallo e dal canto stridulo e acuto.
+
+Gli storni possono imitare i suoni di altri uccelli.
+L'ALLODOLA canta in volo una serie di trilli acuti e melodiosi.
+
+Il FRINGUELLO è un piccolo uccello granivoro dal becco conico e dal canto musicale e gorgheggiante.
+Il CROCIERE è un tipo di fringillide con uno strano
+
+becco incrociato, che usa per estrarre i semi dalle pigne.
+Il CANARINO è un tipo di fringillide spesso tenuto come animale da compagnia. I minatori portavano spesso i canarini
+
+sottoterra con sé, perché li avvertissero della presenza di vapori pericolosi nell'aria.
+Il PASSERO intreccia un nido d'erba e ha per voce un
+
+cinguettio poco musicale.
+Il PIPILO è un tipo di passero che ricorda continuamente a chi lo ascolta di bere il tè.
+L'AVERLA è un
+
+uccello grigio dal becco adunco. Le averle hanno l'abitudine di infilzare le prede sulle spine.
+Il PICCHIO ha un becco appuntito che è
+
+adatto a beccare il legno per raggiungere gli insetti al suo interno.
+Il MARTIN PESCATORE si tuffa in cerca di pesci, che cattura col lungo becco appuntito.
+
+La STERNA migra per grandi distanze, da un'estremità all'altra di Britannia ogni anno. Le sterne si tuffano dall'aria per catturare i pesci.
+Il PIVIERE è un
+
+uccello che distrae i predatori fingendo di avere un'ala rotta.
+La PAVONCELLA è un tipo di piviere dotato di un lungo ciuffo nero.
+Il FALCO è un
+
+predatore che si nutre di piccoli uccelli, topi, scoiattoli e altri piccoli animali. I falchi piccoli sono chiamati nibbi.
+La COLOMBA è un uccello granivoro dalla
+
+fama pacifica. Le colombe hanno un canto basso e tubante.
+Il PAPPAGALLO è un uccello dai colori vivaci e dal becco adunco, prediletto come
+
+compagno dai pirati. Ai pappagalli si può insegnare a imitare la voce umana.
+Il CUCULO è un uccello subdolo che depone le uova nei nidi dei silvidi e di altri
+
+piccoli uccelli. I cuculi hanno la straordinaria capacità di tenere il conto del tempo, cantando una volta all'inizio di ogni ora.
+Il CORRIDORE DELLA STRADA è
+
+un uccello insolito dalla lunga coda, che corre rapidamente sul terreno a caccia di lucertole e serpenti.
+Il RONDONE è un uccello molto agile che
+
+trascorre quasi tutta la vita in aria. Con la bocca spalancata, i rondoni catturano gli insetti nel mezzo del volo.
+Il COLIBRÌ è un
+
+incrocio tra un rondone e una fata. Questi minuscoli uccelli dai colori vivaci si librano magicamente vicino ai fiori e vivono del nettare che questi forniscono.
+
+Il GUFO è un uccello ritenuto saggio, attivo di notte, a differenza della maggior parte degli uccelli. I gufi hanno un'eccellente vista notturna e richiami bassi e ululanti. Le loro ali
+
+sono silenziose in volo.
+Il SUCCIACAPRE è uno strano uccello simile a un gufo che si crede viva del latte delle capre. Questi misteriosi uccelli emettono suoni stridenti
+
+di notte, ragion per cui vengono chiamati anche stridori notturni.
+L'ANATRA è un uccello che nuota più spesso di quanto voli e ha una voce nasale
+
+che viene descritta come un «qua qua».
+Il CIGNO è un tipo di anatra dal collo lungo, interamente bianco. I cigni sono di solito senza voce, ma si dice che abbiano un
+
+canto straordinariamente bello."""
+
+[translations.pol]
+title = "Ptaki Britannia"
+content = """
+STRZYŻYK to maleńki owadożerny ptak o donośnym głosie. Radosne trele strzyżyków są niezwykle urozmaicone i melodyjne.
+JASKÓŁKĘ
+
+łatwo rozpoznać po rozwidlonym ogonie. Jaskółki chwytają owady w locie, a ich śpiew jest piskliwy i szczebiotliwy.
+POKRZEWKA jest wyjątkowym śpiewakiem,
+
+którego rozbudowane pieśni łączą najlepsze cechy strzyżyków i jaskółek.
+KOWALIK schodzi po drzewach głową w dół, szukając owadów w
+
+korze. Śpiewa powtarzalną serię dźwięków o nosowym brzmieniu.
+Zwinna SIKORA CZARNOGŁOWA wydaje brzęczące wołanie
+„chick-a-dee-dee”,
+
+od którego pochodzi jej nazwa. Jej pieśń jest szeregiem gwizdanych dźwięków.
+DROZD to brązowy ptak o nakrapianej piersi, żywiący się robakami i
+
+ślimakami, obdarzony pięknym śpiewnym głosem. Drozdy używają kamienia jako kowadła do rozbijania muszli ślimaków.
+Mały SŁOWIK
+
+również słynie z pięknej pieśni, którą śpiewa nawet nocą.
+SZPAK to mały ciemny ptak o żółtym dziobie i piskliwym, wysokim śpiewie.
+
+Szpaki potrafią naśladować odgłosy innych ptaków.
+SKOWRONEK śpiewa w locie serię wysokich, melodyjnych treli.
+
+ZIĘBA to mały ptak żywiący się nasionami, o stożkowatym dziobie i muzycznym, świergotliwym śpiewie.
+KRZYŻODZIÓB jest rodzajem zięby o dziwnym
+
+skrzyżowanym dziobie, którym wydobywa nasiona z sosnowych szyszek.
+KANAREK jest rodzajem zięby, często trzymanym dla towarzystwa. Górnicy często zabierali kanarki
+
+pod ziemię, by ostrzegały ich przed obecnością niebezpiecznych oparów w powietrzu.
+WRÓBEL splata gniazdo z trawy, a jego głosem jest
+
+niemuzykalne ćwierkanie.
+PIPILO jest rodzajem wróbla, który nieustannie przypomina słuchaczom, by pili herbatę.
+DZIERZBA jest
+
+szarym ptakiem o haczykowatym dziobie. Dzierzby mają zwyczaj nabijać swą zdobycz na ciernie.
+DZIĘCIOŁ ma spiczasty dziób,
+
+odpowiedni do dłubania w drewnie, by dostać się do ukrytych w nim owadów.
+ZIMORODEK nurkuje po ryby, które chwyta swym długim, spiczastym dziobem.
+
+RYBITWA co roku przemierza wielkie odległości, z jednego krańca Britannia na drugi. Rybitwy nurkują z powietrza, by łowić ryby.
+SIEWECZKA jest
+
+ptakiem, który odwraca uwagę drapieżników, udając, że ma złamane skrzydło.
+CZAJKA jest rodzajem sieweczki o długim, czarnym czubie.
+JASTRZĄB jest
+
+drapieżnikiem żywiącym się małymi ptakami, myszami, wiewiórkami i innymi drobnymi zwierzętami. Małe jastrzębie zwane są kaniami.
+GOŁĄB to ptak żywiący się nasionami,
+
+cieszący się pokojową sławą. Pieśnią gołębi jest niskie gruchanie.
+PAPUGA jest jaskrawo ubarwionym ptakiem o haczykowatym dziobie, chętnie wybieranym na
+
+towarzysza przez piratów. Papugi można nauczyć naśladowania ludzkiego głosu.
+KUKUŁKA jest przebiegłym ptakiem, który składa jaja w gniazdach pokrzewek i innych
+
+małych ptaków. Kukułki mają niezwykłą zdolność odmierzania czasu, odzywając się raz na początku każdej godziny.
+KUKAWKA KALIFORNIJSKA jest
+
+niezwykłym ptakiem o długim ogonie, który szybko biega po ziemi, polując na jaszczurki i węże.
+JERZYK jest bardzo zwinnym ptakiem, który
+
+spędza niemal całe życie w powietrzu. Z szeroko otwartymi dziobami jerzyki chwytają owady w locie.
+KOLIBER jest
+
+krzyżówką jerzyka i wróżki. Te maleńkie, jaskrawo ubarwione ptaki magicznie zawisają przy kwiatach i żywią się dostarczanym przez nie nektarem.
+
+SOWA to ptak uchodzący za mądrego, aktywny nocą, w przeciwieństwie do większości ptaków. Sowy mają doskonały wzrok nocny i odzywają się niskim pohukiwaniem. Ich skrzydła
+
+są bezgłośne w locie.
+LELEK jest dziwnym ptakiem podobnym do sowy, o którym sądzi się, że żywi się mlekiem kóz. Te tajemnicze ptaki wydają nocą zgrzytliwe
+
+odgłosy, dlatego zwie się je również nocnymi grzechotnikami.
+KACZKA to ptak, który częściej pływa, niż lata, a jej nosowy głos
+
+określa się jako „kwakanie”.
+ŁABĘDŹ jest rodzajem długoszyjej kaczki o całkowicie białym upierzeniu. Łabędzie zwykle milczą, lecz podobno mają
+
+niezwykle piękną pieśń."""
+
+[translations.por]
+title = "Aves de Britannia"
+content = """
+A CARRIÇA é uma pequena ave que come insetos e tem voz forte. Os alegres trinados dessas aves são extraordinariamente variados e melodiosos.
+A ANDORINHA
+
+é facilmente reconhecida por sua cauda bifurcada. As andorinhas apanham insetos em voo e têm cantos agudos e gorjeantes.
+A TOUTINEGRA é uma cantora excepcional,
+
+cujos longos cantos combinam as melhores qualidades das carriças e das andorinhas.
+A TREPADEIRA desce pelas árvores de cabeça para baixo, procurando insetos na
+
+casca. Ela canta uma série repetitiva de notas com timbre nasal.
+O ágil CHAPIM tem um chamado zumbido de
+\"chick-a-dee-dee\",
+
+do qual deriva seu nome. Seu canto é uma série de notas assobiadas.
+O TORDO é uma ave marrom de peito pintado, que come minhocas e
+
+caracóis e tem uma bela voz para cantar. Os tordos usam uma pedra como bigorna para quebrar as conchas dos caracóis.
+O pequeno ROUXINOL
+
+também é conhecido por seu belo canto, que entoa até à noite.
+O ESTORNINHO é uma pequena ave escura de bico amarelo e canto agudo e estridente.
+
+Os estorninhos podem imitar os sons de outras aves.
+A COTOVIA canta, durante o voo, uma série de trinados agudos e melodiosos.
+
+O TENTILHÃO é uma pequena ave que come sementes, de bico cônico e canto musical e gorjeante.
+O CRUZA-BICO é um tipo de tentilhão com um estranho
+
+bico cruzado, que usa para extrair sementes das pinhas.
+O CANÁRIO é um tipo de tentilhão frequentemente criado como animal de estimação. Os mineiros costumavam levar canários
+
+para o subsolo, para alertá-los sobre a presença de vapores perigosos no ar.
+O PARDAL tece um ninho de capim e tem um
+
+pio pouco musical como voz.
+O TOWHEE é um tipo de pardal que lembra continuamente aos ouvintes que bebam seu chá.
+O PICAÇO é uma
+
+ave cinzenta de bico curvo. Os picaços têm o hábito de empalar suas presas em espinhos.
+O PICA-PAU tem um bico pontudo
+
+adequado para bicar a madeira e alcançar os insetos em seu interior.
+O MARTIM-PESCADOR mergulha em busca de peixes, que apanha com seu bico longo e pontudo.
+
+A ANDORINHA-DO-MAR migra por grandes distâncias, de uma ponta de Britannia à outra, todos os anos. Essas aves mergulham do ar para apanhar peixes.
+A TARAMBOLA é uma
+
+ave que distrai predadores fingindo ter uma asa quebrada.
+O ABIBE é um tipo de tarambola que tem uma longa crista preta.
+O GAVIÃO é um
+
+predador que se alimenta de pequenas aves, camundongos, esquilos e outros animais pequenos. Os gaviões pequenos são conhecidos como milhafres.
+A POMBA é uma ave que come sementes e tem
+
+reputação de pacífica. As pombas têm um arrulho grave como canto.
+O PAPAGAIO é uma ave de cores vivas e bico curvo, apreciada como
+
+companheira pelos piratas. Os papagaios podem ser ensinados a imitar a voz humana.
+O CUCO é uma ave astuta que põe ovos nos ninhos das toutinegras e de outras
+
+aves pequenas. Os cucos têm uma capacidade extraordinária de acompanhar o tempo, cantando uma vez no início de cada hora.
+O PAPA-LÉGUAS é
+
+uma ave incomum de cauda longa, que corre velozmente pelo chão à caça de lagartos e cobras.
+O ANDORINHÃO é uma ave muito ágil que
+
+passa quase toda a vida no ar. Com a boca bem aberta, os andorinhões apanham insetos em pleno voo.
+O BEIJA-FLOR é um
+
+cruzamento entre um andorinhão e uma fada. Essas pequenas aves de cores vivas pairam magicamente perto das flores e vivem do néctar que elas fornecem.
+
+A CORUJA é uma ave tida como sábia, que, ao contrário da maioria das aves, é ativa à noite. As corujas têm excelente visão noturna e chamados graves. Suas asas
+
+são silenciosas durante o voo.
+O CHUPA-CABRAS é uma estranha ave semelhante à coruja, que se acredita viver do leite das cabras. Essas aves misteriosas emitem sons estridentes
+
+à noite e, por essa razão, também são chamadas de bacuraus.
+O PATO é uma ave que nada com mais frequência do que voa e tem uma voz nasal
+
+descrita como um \"quá-quá\".
+O CISNE é um tipo de pato de pescoço longo, inteiramente branco. Os cisnes costumam não ter voz, mas dizem que possuem um
+
+canto extraordinariamente belo."""
+
+[translations.spa]
+title = "Aves de Britannia"
+content = """
+   El CHOCHÍN es un ave diminuta que se alimenta de insectos y tiene una voz potente. Los alegres trinos de los chochines son extraordinariamente variados y melodiosos. La GOLONDRINA
+
+se reconoce fácilmente por su cola ahorquillada. Las golondrinas capturan insectos al vuelo y tienen cantos chirriantes y gorjeantes. La CURRUCA es una cantora excepcional,
+
+cuyos extensos cantos reúnen las mejores cualidades de chochines y golondrinas. El TREPADOR desciende por los árboles con la cabeza por delante, buscando insectos en la
+
+corteza. Canta una serie repetitiva de notas de tono nasal. El ágil CARBONERO emite un zumbante
+
+reclamo de «chick-a-dee-dee», del que deriva su nombre inglés. Su canto es una sucesión de notas silbadas. El ZORZAL es un ave parda de pecho moteado que come gusanos y
+
+caracoles y tiene una hermosa voz. Los zorzales utilizan una piedra como yunque para romper las conchas de los caracoles. El pequeño RUISEÑOR
+
+también es conocido por su bello canto, que entona incluso por la noche. El ESTORNINO es un ave pequeña y oscura de pico amarillo y canto agudo y chirriante.
+
+Los estorninos pueden imitar los sonidos de otras aves. La ALONDRA entona una sucesión de trinos agudos y melodiosos mientras vuela.
+
+    El PINZÓN es un ave pequeña que se alimenta de semillas, con pico cónico y un gorjeo musical. El PIQUITUERTO es una especie de pinzón con un extraño
+
+pico cruzado, que utiliza para extraer las semillas de las piñas. El CANARIO es una especie de pinzón que suele tenerse como mascota. Los mineros a menudo llevaban canarios
+
+bajo tierra para que les advirtieran de la presencia de vapores peligrosos en el aire. El GORRIÓN teje un nido de hierba y tiene
+
+un gorjeo poco musical. El TOQUÍ es una especie de gorrión que recuerda continuamente a quienes lo escuchan que se beban el té. El ALCAUDÓN es un
+
+ave gris de pico ganchudo. Los alcaudones acostumbran a ensartar a sus presas en espinas. El PÁJARO CARPINTERO tiene un pico puntiagudo
+
+adecuado para picotear la madera y alcanzar los insectos que contiene. El MARTÍN PESCADOR se zambulle en busca de peces, que atrapa con su largo pico puntiagudo.
+
+    El CHARRÁN migra grandes distancias, de un extremo de Britannia al otro cada año. Los charranes se lanzan desde el aire para capturar peces. El CHORLITO es un
+
+ave que distrae a los depredadores fingiendo tener un ala rota. La AVEFRÍA es una especie de chorlito de larga cresta negra. El HALCÓN es un
+
+depredador que se alimenta de aves pequeñas, ratones, ardillas y otros animales pequeños. A los halcones pequeños se los conoce como milanos. La PALOMA es un ave granívora
+
+de reputación pacífica. Las palomas tienen un arrullo grave. El LORO es un ave de vivos colores y pico ganchudo, apreciada como
+
+compañera por los piratas. Se puede enseñar a los loros a imitar la voz humana. El CUCO es un ave astuta que pone sus huevos en los nidos de currucas y otras
+
+aves pequeñas. Los cucos tienen una extraña capacidad para llevar la cuenta del tiempo y cantan una vez al comienzo de cada hora. El CORRECAMINOS es
+
+un ave singular de larga cola que corre velozmente por el suelo en busca de lagartos y serpientes. El VENCEJO es un ave muy ágil que
+
+pasa casi toda su vida en el aire. Con la boca bien abierta, los vencejos capturan insectos en pleno vuelo. El COLIBRÍ es un
+
+cruce entre un vencejo y un hada. Estas aves diminutas y de vivos colores se mantienen mágicamente suspendidas junto a las flores y viven del néctar que estas proporcionan.
+
+    El BÚHO es un ave de fama sabia que está activa por la noche, a diferencia de la mayoría de las aves. Los búhos tienen una excelente visión nocturna y un ulular grave. Sus alas
+
+son silenciosas en vuelo. El CHOTACABRAS es un extraño pájaro parecido al búho del que se cree que vive de la leche de las cabras. Estas aves misteriosas producen sonidos estridentes
+
+por la noche, razón por la que también reciben el nombre de nightjars. El PATO es un ave que nada más de lo que vuela y tiene una voz nasal
+
+descrita como un «cuac». El CISNE es una especie de pato de largo cuello y plumaje enteramente blanco. Los cisnes suelen carecer de voz, pero se dice que tienen un
+
+canto de extraordinaria belleza."""

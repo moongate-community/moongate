@@ -72,3 +72,150 @@ tore at Lysander,
 coming towards us in
 droves."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Deník: Objevení hrobky"
+content = """
+Den šestnáctý:
+
+Proč píšu? Musím... ani ne tak proto, že musí zůstat nějaký záznam o tomhle... o tom, co se tu stalo... jako
+
+kvůli vlastnímu rozumu. Přikládání pera k papíru mě uklidňuje, soustřeďuje, i v tomto šílenství. Lysander je mrtev. Tolik jich je mrtvých. A jsme tu uvězněni,
+
+navždy uvězněni v této noční můře. Nedovolil nám projít; divoký ve své psychóze, zuřivý, plivající, pokrytý krví, mával starobylou dýkou na každého, kdo
+
+se přiblížil. Nesouvisle blábolil, proklínal nás těmi nejnenávistnějšími kletbami, proroctvím, zkázou seslanou na nás. Bergen to nehodlal snášet. Nakonec skočil na
+
+Lysander s mohutnou sekerou u boku. Ale neměl ukončit život šíleného mága... ne... byli to oni... ty ruce, pokryté hrobovou hlínou, červy,
+
+špínou. Zvedli se za zády Lysander. Ten zvědavý výraz v mágově tváři, když Bergen smykem zastavil... byl to pro něj téměř okamžik příčetnosti, jistě, když se
+
+snažil pochopit, co mohlo válečníka tak náhle zarazit. A potom se na něj vrhli. Kostnaté ruce, paže a tváře s volným zkaženým masem
+
+visícím ze žlutých kostí. Nelidští, avšak kdysi lidé, potácející se k nám, zatímco jejich druhové trhali Lysander, přicházející k nám v zástupech."""
+
+[translations.fre]
+title = "Journal : découverte du tombeau"
+content = """
+Seizième jour :
+
+Pourquoi est-ce que j’écris ? Il le faut... moins parce qu’il doit rester une trace de ceci... de ce qui s’est passé ici... que
+
+pour préserver ma raison. Poser la plume sur le papier m’apaise, me recentre, même dans cette folie. Lysander est mort. Tant d’autres sont morts. Et nous sommes piégés ici,
+
+piégés pour toujours dans ce cauchemar. Il ne voulait pas nous laisser passer ; égaré dans sa psychose, furieux, crachant, couvert de sang, il brandissait l’antique dague contre quiconque
+
+s’approchait. Il divaguait sans cohérence, nous maudissait, les plus haineuses malédictions, des prophéties de ruine sur nous. Bergen ne voulut rien entendre. Enfin, il bondit sur
+
+Lysander, sa hache massive à son côté. Mais ce ne serait pas lui qui mettrait fin au mage fou... non... ce furent elles... ces mains couvertes de terre de tombe, d’asticots,
+
+de crasse. Elles se dressèrent derrière Lysander. Cette expression de curiosité sur le visage du mage lorsque Bergen s’immobilisa en dérapant... ce fut presque un instant de lucidité pour lui, assurément, que de
+
+tenter de comprendre ce qui avait pu arrêter net le guerrier. Et puis ils furent sur lui. Des mains squelettiques, des bras et des visages à la chair flasque et corrompue
+
+pendant aux os jaunis. Inhumains, mais jadis humains, titubant vers nous tandis que leurs compagnons déchiraient Lysander, venant vers nous par hordes."""
+
+[translations.ger]
+title = "Tagebuch: Entdeckung des Grabes"
+content = """
+Sechzehnter Tag:
+
+Warum schreibe ich? Ich muss ... weniger, weil es irgendeine Aufzeichnung hiervon geben muss ... von dem, was hier geschehen ist ... als
+
+um meines eigenen Verstandes willen. Die Feder aufs Papier zu setzen beruhigt mich, sammelt mich, selbst in diesem Wahnsinn. Lysander ist tot. So viele sind tot. Und wir sind hier gefangen,
+
+für immer gefangen in diesem Albtraum. Er ließ uns nicht vorbei, wild in seinem Wahn, rasend, spuckend, mit Blut bedeckt, schwang er den uralten Dolch nach jedem, der
+
+sich näherte. Er faselte zusammenhanglos, verfluchte uns mit den hasserfülltesten Flüchen, Prophezeiungen, Verderben über uns. Bergen wollte nichts davon hören. Schließlich sprang er auf
+
+Lysander zu, seine gewaltige Axt an der Seite. Doch nicht er sollte das Ende des wahnsinnigen Magiers sein ... nein ... sie waren es ... jene Hände, bedeckt mit Graberde, Maden,
+
+Schmutz. Sie erhoben sich hinter Lysander. Dieser neugierige Ausdruck auf dem Gesicht des Magiers, als Bergen rutschend zum Stehen kam ... gewiss war es für ihn beinahe ein Augenblick der Vernunft,
+
+als er zu begreifen versuchte, was den Krieger mitten im Lauf aufgehalten haben könnte. Und dann waren sie über ihm. Skeletthände, Arme und Gesichter, mit losem, verwestem Fleisch,
+
+das von gelben Knochen hing. Unmenschlich und doch einst menschlich, taumelten sie auf uns zu, während ihre Gefährten an Lysander rissen, kamen in Scharen auf uns zu."""
+
+[translations.ita]
+title = "Diario: scoperta della Tomba"
+content = """
+Giorno Sedici:
+
+Perché scrivo? Devo... non tanto perché debba esserci una testimonianza di questo... di ciò che è accaduto qui... quanto
+
+per la mia sanità mentale. L'atto di posare la penna sulla carta mi calma, mi concentra, persino in questa follia. Lysander è morto. Tanti sono morti. E siamo intrappolati qui,
+
+intrappolati per sempre in questo incubo. Non ci lasciava passare; scatenato nella sua psicosi, furioso, sputando, coperto di sangue, agitava l'antico pugnale contro chiunque
+
+si avvicinasse. Balbettava incoerentemente, ci malediceva con le maledizioni più odiose, profezie, sciagure su di noi. Bergen non ne voleva sapere. Infine si è lanciato contro
+
+Lysander, la sua enorme ascia al fianco. Ma non sarebbe stato lui la fine del mago folle... no... sarebbero stati loro... quelle mani, coperte della terra della tomba, vermi,
+
+sudiciume. Sono sorte dietro Lysander. Quello sguardo curioso sul volto del mago quando Bergen si è fermato di colpo... era quasi un momento di lucidità per lui, sicuramente, per
+
+tentare di comprendere cosa avesse potuto arrestare il guerriero. E poi gli sono stati addosso. Mani scheletriche, braccia e volti con carne flaccida e corrotta
+
+che pendeva da ossa gialle. Inumani, eppure un tempo umani, barcollavano verso di noi mentre i loro compagni dilaniavano Lysander, venendo verso di noi in torme."""
+
+[translations.pol]
+title = "Dziennik: odkrycie Grobowca"
+content = """
+Dzień szesnasty:
+
+Dlaczego piszę? Muszę... nie tyle dlatego, że musi pozostać jakiś zapis tego... tego, co tu się stało... ile
+
+dla własnych zmysłów. Przykładanie pióra do papieru uspokaja mnie, skupia, nawet w tym szaleństwie. Lysander nie żyje. Tylu nie żyje. A my jesteśmy tu uwięzieni,
+
+na zawsze uwięzieni w tym koszmarze. Nie pozwalał nam przejść; dziki w swym obłędzie, wściekły, plujący, pokryty krwią, wymachiwał pradawnym sztyletem ku każdemu, kto
+
+się zbliżał. Bełkotał bezładnie, przeklinał nas najnienawistniejszymi klątwami, proroctwami, zagładą dla nas. Bergen nie chciał tego znosić. Wreszcie skoczył na
+
+Lysander z ogromnym toporem przy boku. Lecz to nie on miał położyć kres szalonemu magowi... nie... to oni... te dłonie pokryte grobową ziemią, robactwem,
+
+brudem. Wyłoniły się za Lysander. To zaciekawienie na twarzy maga, gdy Bergen zatrzymał się gwałtownie... dla niego niemal chwila rozsądku, zapewne, gdy
+
+próbował pojąć, co mogło zatrzymać wojownika w miejscu. A potem dopadli go. Kościste dłonie, ramiona i twarze z luźnym, zepsutym mięsem
+
+zwisającym z żółtych kości. Nieludzcy, lecz niegdyś ludzie, zataczali się ku nam, podczas gdy ich towarzysze rozdzierali Lysander; zbliżali się całymi chmarami."""
+
+[translations.por]
+title = "Diário: descoberta da tumba"
+content = """
+Décimo sexto dia:
+
+Por que escrevo? Preciso... não tanto porque deva haver algum registro disto... do que aconteceu aqui... mas
+
+por minha própria sanidade. O ato de colocar a pena sobre o papel me acalma, me dá foco, mesmo nesta loucura. Lysander está morto. Tantos estão mortos. E estamos presos aqui,
+
+presos para sempre neste pesadelo. Ele não nos deixava passar; descontrolado em sua psicose, furioso, cuspindo, coberto de sangue, brandia a adaga antiga contra qualquer um que
+
+se aproximasse. Balbuciava incoerentemente, nos amaldiçoava com as maldições mais odiosas, profecias, condenações contra nós. Bergen não aceitou aquilo. Finalmente, saltou contra
+
+Lysander, com seu enorme machado ao lado. Mas não seria ele a pôr fim ao mago louco... não... foram eles... aquelas mãos, cobertas de terra da sepultura, larvas,
+
+imundície. Eles se ergueram atrás de Lysander. Aquele olhar de curiosidade no rosto do mago enquanto Bergen derrapava até parar... foi quase um momento de sanidade para ele, certamente, tentar
+
+compreender o que poderia ter feito o guerreiro parar tão abruptamente. E então estavam sobre ele. Mãos esqueléticas, braços e rostos com carne solta e apodrecida
+
+pendendo dos ossos amarelos. Inumanos, mas outrora humanos, cambaleando em nossa direção enquanto seus companheiros dilaceravam Lysander, vindo até nós em bandos."""
+
+[translations.spa]
+title = "Diario: descubrimiento de la tumba"
+content = """
+Día dieciséis:
+
+¿Por qué escribo? Debo hacerlo... no tanto porque tenga que quedar algún registro de esto... de lo que ha sucedido aquí... como
+
+por mi propia cordura. Poner la pluma sobre el papel me calma, me concentra, incluso en esta locura. Lysander está muerto. Tantos están muertos. Y estamos atrapados aquí,
+
+atrapados para siempre en esta pesadilla. No nos dejaba pasar; descontrolado en su psicosis, furioso, escupiendo, cubierto de sangre, blandía la antigua daga contra cualquiera que se
+
+acercara. Balbuceaba incoherencias, nos maldecía con las maldiciones más odiosas, profecías, condenas sobre nosotros. Bergen no estaba dispuesto a soportarlo. Por fin se lanzó contra
+
+Lysander, con su enorme hacha al costado. Pero él no sería quien acabara con el mago enloquecido... no... fueron ellos... aquellas manos, cubiertas de tierra de la tumba, gusanos,
+
+inmundicia. Se alzaron detrás de Lysander. Aquella mirada de curiosidad en el rostro del mago cuando Bergen se detuvo en seco... fue casi un momento de cordura para él, sin duda, al
+
+intentar comprender qué había hecho detenerse al guerrero. Y entonces cayeron sobre él. Manos esqueléticas, brazos y rostros con carne floja y corrompida
+
+colgando de huesos amarillos. Inhumanos, pero humanos antaño, avanzando a trompicones hacia nosotros mientras sus compañeros despedazaban a Lysander, llegando por docenas."""

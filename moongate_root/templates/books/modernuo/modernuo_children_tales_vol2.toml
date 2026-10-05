@@ -83,3 +83,256 @@ never during the day.
 
 """
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Klasické dětské příběhy, svazek 2"
+content = """
+Tiskárna Clarke
+má tu čest
+představit příběhy
+z dávných věků!
+Učenec Guilhem
+každý svazek uzavře
+rozvážným komentářem.
+
+
+ŘÍKANKA
+Tanči v Hvězdné
+komnatě
+A tanči v Jámě
+A jez své
+pokrmy
+Ve Skleněném domě
+
+sedíš ty
+
+KOMENTÁŘ
+Tato běžná říkanka, kterou doprovázíme krmení malých dětí, je údajně součástí souboru
+
+legendárních příběhů o světě před Sosaria (beletristická zpracování těchto příběhů naleznete v podivuhodných bájích, které sepsal Fabio Chudý a které rovněž vydává
+
+tentýž nakladatel).
+Podle těchto starých příběhů, přežívajících především v kopcích a odlehlých vesnicích, kde je Lord British dosud vzdáleným a bájným
+
+vládcem, se dávní bohové (jaká fantazie!) scházeli v mystických místnostech, aby rozmlouvali o postupu tvoření světa. Jednoduchý rozbor ukazuje, že tyto místnosti jsou pouhými
+
+mytologickými zobecněními.
+„Hvězdná komnata“ je zjevně odkazem na oblohu. „Jáma“ je nepochybně podsvětím obdobným
+
+Snakehills z jiných příběhů a „Skleněný dům“ je bezpochyby pozorovací stanoviště, z něhož bohové sledovali svůj výtvor. Vše je jednoduché, nahlížíme-li to z této
+
+perspektivy; zbývá pouze záhadná zmínka o večeřích. Kupodivu se říkanka všude užívá pouze při půlnočním krmení, nikdy za dne.
+
+"""
+
+[translations.fre]
+title = "Contes classiques pour enfants, volume 2"
+content = """
+L’imprimerie de Clarke a l’honneur de présenter des contes des âges passés ! Guilhem l’Érudit terminera chaque volume par un commentaire sérieux.
+
+
+LA COMPTINE
+Danse dans la Chambre des Étoiles
+Et danse dans la Fosse
+Et mange tes mets
+Dans la Maison de Verre
+
+où tu es assis
+
+COMMENTAIRE
+Comptine souvent chantée pour nourrir les tout-petits, ce petit air ferait partie du corpus des
+
+récits légendaires concernant le monde d’avant Sosaria (voir les merveilleuses fables de Fabio le Pauvre pour des versions romancées de ces histoires, également disponibles chez ce
+
+même éditeur). Selon ces vieux récits, qui survivent surtout dans les collines et les villages reculés où Lord British demeure un
+
+souverain lointain et mythique, les dieux d’autrefois (quelle notion fantaisiste !) se réunissaient pour discuter des progrès de la création du monde dans des salles mystiques. Une simple analyse révèle que ces salles ne sont que des
+
+généralisations mythologiques. La « Chambre des Étoiles » est manifestement une référence au ciel. La « Fosse » est assurément un monde souterrain analogue aux
+
+Snakehills d’autres récits, et la « Maison de Verre » est sans nul doute le point de vue d’où les dieux observaient leur création. Tout est simple lorsque l’on adopte cette
+
+perspective ; ne reste que la mystérieuse référence aux repas. Curieusement, cette comptine n’est partout utilisée que pour les tétées de minuit, jamais pendant la journée.
+
+"""
+
+[translations.ger]
+title = "Klassische Kindergeschichten, Band 2"
+content = """
+Clarkes Druckerei hat die Ehre, Geschichten aus längst vergangenen Zeiten darzubieten!
+Guilhem der Gelehrte wird jeden Band mit einem gesetzten Kommentar beschließen.
+
+
+DER REIM
+Tanz in der Sternenkammer
+Und tanz in der Grube
+Und iss deine Speisen
+Im Glashaus, wo du
+
+sitzt
+
+KOMMENTAR
+Ein gebräuchlicher Fütterreim für kleine Säuglinge; man glaubt, dieses Liedchen gehöre zum Bestand der
+
+Sagen über die Welt vor Sosaria (siehe die wunderbaren Fabeln von Fabio dem Armen für erzählerische Fassungen dieser Geschichten, die ebenfalls bei diesem
+
+Verlag erhältlich sind).
+Nach diesen alten Geschichten, die sich vor allem in den Hügeln und entlegenen Dörfern erhalten haben, wo Lord British noch immer ein ferner und sagenhafter
+
+Herrscher ist, kamen die alten Götter (eine phantastische Vorstellung!) in mystischen Räumen zusammen, um über den Fortschritt der Weltschöpfung zu beraten. Eine einfache Untersuchung zeigt, dass diese Räume bloß
+
+mythologische Verallgemeinerungen sind.
+„Die Sternenkammer“ ist eindeutig eine Anspielung auf den Himmel. „Die Grube“ ist gewiss eine Unterwelt, vergleichbar mit den
+
+Snakehills anderer Geschichten, und „das Glashaus“ ist ohne Zweifel der Aussichtspunkt, von dem aus die Götter ihre Schöpfung betrachteten. Aus dieser Sicht ist alles einfach und lässt
+
+nur den geheimnisvollen Hinweis auf Mahlzeiten ungeklärt. Seltsamerweise wird der Reim überall ausschließlich bei Mitternachtsfütterungen verwendet, niemals am Tag.
+
+"""
+
+[translations.ita]
+title = "Racconti classici per bambini, volume 2"
+content = """
+La Stamperia di Clarke è Onorata di Presentare Racconti dei Tempi Passati!
+Guilhem lo Studioso Concluderà Ogni Volume con un Posato Commento.
+
+
+LA FILASTROCCA
+Danza nella Camera Stellata
+E Danza nella Fossa
+E Mangia le tue Pietanze
+Nella Casa di Vetro
+
+dove Stai
+
+COMMENTO
+Una comune filastrocca per nutrire i bebè; si ritiene che questa canzoncina faccia parte del corpus di
+
+racconti leggendari sul mondo prima di Sosaria (si vedano le meravigliose favole di Fabio il Povero per versioni romanzate di queste storie, anch'esse disponibili presso questo
+
+stesso editore).
+Secondo questi vecchi racconti, che sopravvivono soprattutto sulle colline e nei villaggi remoti dove Lord British è ancora un
+
+sovrano lontano e mitico, gli dei antichi (un'idea fantasiosa!) si riunivano per discutere del progresso nella creazione del mondo in stanze mistiche. Una semplice analisi rivela che queste stanze sono mere
+
+generalizzazioni mitologiche.
+«La Camera Stellata» è chiaramente un riferimento al cielo. «La Fossa» è certamente un Oltretomba analogo alle
+
+Snakehills di altri racconti, e «la Casa di Vetro» è senza dubbio il punto d'osservazione da cui gli dei contemplavano la loro creazione. Tutto è semplice visto da questa
+
+prospettiva, lasciando soltanto il misterioso riferimento ai pasti. Curiosamente, la filastrocca viene usata universalmente solo per le poppate di mezzanotte, mai durante il giorno.
+
+"""
+
+[translations.pol]
+title = "Klasyczne opowieści dla dzieci, tom 2"
+content = """
+Drukarnia Clarke
+ma zaszczyt
+przedstawić opowieści
+z dawnych wieków!
+Guilhem Uczony
+zakończy każdy tom
+statecznym komentarzem.
+
+
+RYMOWANKA
+Tańcz w Gwiezdnej
+Komnacie
+I tańcz w Otchłani
+I zjadaj swoje
+Przystawki
+W Szklanym Domu
+
+siedzisz
+
+KOMENTARZ
+Powszechna rymowanka do karmienia małych niemowląt; uważa się, że ta krótka piosenka stanowi część zbioru
+
+legendarnych opowieści o świecie sprzed Sosaria (patrz wspaniałe bajki Fabio Ubogiego z literackimi wersjami tych historii, również dostępne u tego
+
+samego wydawcy).
+Według tych starych opowieści, które przetrwały głównie na wzgórzach i w odległych wioskach, gdzie Lord British nadal jest dalekim, mitycznym
+
+władcą, dawni bogowie (co za fantastyczna myśl!) spotykali się w mistycznych komnatach, by omawiać postępy tworzenia świata. Prosta analiza ujawnia, że te komnaty to tylko
+
+mitologiczne uogólnienia.
+„Gwiezdna Komnata” to wyraźne odniesienie do nieba. „Otchłań” z pewnością jest podziemnym światem analogicznym do
+
+Snakehills z innych opowieści, a „Szklany Dom” niewątpliwie jest punktem, z którego bogowie obserwowali swe stworzenie. Wszystko jest proste, jeśli spojrzymy z tej
+
+perspektywy; pozostaje tylko tajemnicze odniesienie do posiłków. Co dziwne, rymowanki tej używa się wszędzie wyłącznie podczas karmienia o północy, nigdy za dnia.
+
+"""
+
+[translations.por]
+title = "Contos infantis clássicos, volume 2"
+content = """
+A gráfica de Clarke
+tem a honra de
+apresentar contos de
+eras passadas!
+Guilhem, o Erudito,
+encerrará cada volume
+com sóbrios comentários.
+
+
+A RIMA
+Dance na Câmara
+das Estrelas
+E dance no Poço
+E coma seus
+pratos principais
+Na Casa de Vidro
+
+você se senta
+
+COMENTÁRIO
+Uma rima comum para alimentar bebezinhos, acredita-se que esta pequena cantiga faça parte do conjunto de
+
+contos lendários sobre o mundo anterior a Sosaria (veja as maravilhosas fábulas de Fabio, o Pobre, para versões ficcionalizadas dessas histórias, também disponíveis nesta
+
+mesma editora).
+Segundo esses contos antigos, que sobrevivem sobretudo nas colinas e nos vilarejos remotos onde Lord British ainda é um governante distante e mítico,
+
+os deuses de outrora (que ideia fantasiosa!) se reuniam para discutir o progresso da criação do mundo em salas místicas. Uma análise simples revela que essas salas são meras
+
+generalizações mitológicas.
+A \"Câmara das Estrelas\" é claramente uma referência ao céu. \"O Poço\" certamente é um Submundo análogo às
+
+Snakehills de outros contos, e \"a Casa de Vidro\" é, sem dúvida, o ponto de observação de onde os deuses contemplavam sua criação. Tudo é simples quando visto dessa
+
+perspectiva, restando apenas a misteriosa referência aos jantares. Curiosamente, a rima é usada em toda parte somente nas mamadas da meia-noite, nunca durante o dia.
+
+"""
+
+[translations.spa]
+title = "Cuentos clásicos para niños, volumen 2"
+content = """
+¡La imprenta de Clarke tiene el honor de presentar relatos de épocas pasadas! Guilhem el Erudito cerrará cada volumen con un comentario mesurado.
+
+
+LA RIMA
+Baila en la Cámara Estelar
+y baila en el Foso
+y come tus platos
+en la Casa de Cristal
+
+donde te sientas.
+
+COMENTARIO
+    Esta breve cantinela, comúnmente utilizada para alimentar a los bebés, se considera parte del conjunto de
+
+relatos legendarios acerca del mundo anterior a Sosaria. Véanse las maravillosas fábulas de Fabio el Pobre para versiones noveladas de esas historias, también disponibles en esta
+
+misma editorial. Según esos antiguos relatos, que sobreviven sobre todo en las colinas y aldeas remotas donde Lord British sigue siendo un gobernante lejano y mítico,
+
+los dioses de antaño —¡qué noción tan fantasiosa!— se reunían en salas místicas para comentar el progreso de la creación del mundo. Un análisis sencillo revela que esas salas no son más que
+
+generalizaciones mitológicas. «La Cámara Estelar» es claramente una referencia al cielo. «El Foso» es, sin duda, un inframundo análogo a las
+
+Snakehills de otros relatos, y «la Casa de Cristal» es indudablemente el lugar desde el que los dioses observaban su creación. Todo resulta sencillo desde esta
+
+perspectiva, y solo queda la misteriosa referencia a las comidas. Curiosamente, la rima se utiliza en todas partes únicamente para las tomas de medianoche, nunca durante el día.
+
+"""

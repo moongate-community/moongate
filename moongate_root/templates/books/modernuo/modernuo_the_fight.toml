@@ -113,3 +113,217 @@ battle, shattered
 armor shining like
 newly born stars."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Boj"
+content = """
+Chladné podzimní ráno s mlžným oparem chrání tucet statečných rytířů a poskytuje jim úkryt před zvědavými zraky hluboko v předhůří
+
+živého údolí. Draci se vznášejí jako nelítostní válečníci, krouží znovu a znovu a potom řvou jako hrom, povzbuzujíce všechny, kdo naslouchají. Draci rychle přistávají
+
+vedle hrdých válečníků, sklánějí krky a roztahují křídla, zdvihají černé drápy a dovolují chrabrým bojovníkům vyjet a zvítězit v nastalé bitvě. Sílící
+
+větry utišují zvuky boje a oni bojují, hájí své místo jako matky chránící děti, lesklé zbroje zablesknou, když
+
+každý z nich padá.
+Chladný podzimní večer s mlžným oparem kolébá tucet ztýraných mrtvých těl rytířů, zvrásňuje je proudy větru vanoucími hluboko
+
+v předhůří pustého údolí. Draci plachtí jako tiší andělé, krouží znovu a znovu a potom volají jako banshee; kvílivé výkřiky smutku.
+
+Draci těžce přistávají vedle pokojných těl, sklánějí krky a roztahují křídla, zdvihají černé drápy a dovolují chrabrým bojovníkům vyjet
+
+a zvítězit v nastalé bitvě. Sílící větry utišují zvuky boje a oni bojují, hájí své místo jako matky chránící děti, lesklé
+
+zbroje zablesknou, když každý z nich padá.
+Chladný podzimní večer s mlžným oparem kolébá tucet ztýraných mrtvých těl rytířů, zvrásňuje je proudy
+
+větru vanoucími hluboko v předhůří pustého údolí. Draci plachtí jako tiší andělé, krouží znovu a znovu a potom volají jako banshee; kvílivé
+
+výkřiky smutku. Draci těžce přistávají vedle pokojných těl, sklánějí krky a roztahují křídla, zdvihají černé drápy a svírají
+
+posvátnou zem, nový věčný domov. Umírající větry hvízdají mezi mrtvými v pochmurném průvodu a oni leží, svírajíce zbraně, aby se chránili
+
+jako rytíři stále v bitvě, rozbitá zbroj září jako nově zrozené hvězdy."""
+
+[translations.fre]
+title = "Le combat"
+content = """
+Un froid matin d’automne à la brume vaporeuse protège une douzaine de braves chevaliers, leur offrant un abri caché aux regards indiscrets, au cœur des contreforts de la
+
+vallée vibrante. Les dragons planent comme de farouches guerriers, tournant encore et encore, puis rugissant comme le tonnerre, ralliant tous ceux qui écoutent. Les dragons se posent vivement
+
+près des fiers guerriers, courbant leurs cous et déployant leurs ailes, levant leurs griffes noires et permettant aux vaillants combattants de chevaucher au loin et de remporter une bataille qui s’est levée. Les
+
+vents croissants étouffent les sons du combat, et ils se battent, tenant leur terrain comme des mères protégeant leurs enfants, les armures éclatantes lançant des reflets lorsque
+
+chacun tombe. Un froid soir d’automne à la brume vaporeuse berce une douzaine de cadavres meurtris de chevaliers, les plissant dans les courants de vent qui parcourent profondément
+
+les contreforts de la vallée désolée. Les dragons glissent comme des anges silencieux, tournant encore et encore, puis appelant comme des banshees : cris plaintifs de deuil.
+
+Les dragons se posent lourdement près des corps paisibles, courbant leurs cous et déployant leurs ailes, levant leurs griffes noires et permettant aux vaillants combattants de chevaucher au loin
+
+et de remporter une bataille qui s’est levée. Les vents croissants étouffent les sons du combat, et ils se battent, tenant leur terrain comme des mères protégeant leurs enfants, les armures éclatantes
+
+lançant des reflets lorsque chacun tombe. Un froid soir d’automne à la brume vaporeuse berce une douzaine de cadavres meurtris de chevaliers, les plissant dans les courants de
+
+vent qui parcourent profondément les contreforts de la vallée désolée. Les dragons glissent comme des anges silencieux, tournant encore et encore, puis appelant comme des banshees : cris plaintifs
+
+de deuil. Les dragons se posent lourdement près des corps paisibles, courbant leurs cous et déployant leurs ailes, levant leurs griffes noires et pinçant le
+
+sol sacré et nouveau foyer éternel. Les vents mourants sifflent parmi les morts en sombre procession, et ils gisent, serrant leurs armes pour se protéger,
+
+comme des chevaliers encore au combat, leurs armures brisées brillant comme des étoiles nouveau-nées."""
+
+[translations.ger]
+title = "Der Kampf"
+content = """
+Ein kalter Herbstmorgen mit nebligen Schwaden schützt ein Dutzend tapferer Ritter und gewährt tief in den Ausläufern des
+
+lebendigen Tals ein verborgenes Obdach vor neugierigen Blicken. Drachen steigen wie wilde Krieger empor, kreisen immerzu und brüllen dann wie Donner, um alle zu sammeln, die lauschen. Die Drachen landen rasch
+
+neben den stolzen Kriegern, beugen die Hälse und breiten die Flügel aus, heben schwarze Klauen und lassen wackere Kämpfer hinausreiten und eine aufgekommene Schlacht gewinnen. Die
+
+zunehmenden Winde lassen die Kampfgeräusche verstummen, und sie kämpfen und halten stand wie Mütter, die ihre Kinder schützen; helle Rüstungen blitzen auf, während
+
+jeder fällt.
+Ein kalter Herbstabend mit nebligen Schwaden wiegt ein Dutzend zerschlagener Ritterleichen und faltet sie in Windströmungen, die tief
+
+in die Ausläufer des verlassenen Tals dringen. Drachen gleiten wie stumme Engel, kreisen immerzu und rufen dann wie Banshees; klagende Schreie der Trauer.
+
+Die Drachen landen schwer neben den friedlichen Körpern, beugen die Hälse und breiten die Flügel aus, heben schwarze Klauen und lassen wackere Kämpfer hinausreiten
+
+und eine aufgekommene Schlacht gewinnen. Die zunehmenden Winde lassen die Kampfgeräusche verstummen, und sie kämpfen und halten stand wie Mütter, die ihre Kinder schützen; helle
+
+Rüstungen blitzen auf, während jeder fällt.
+Ein kalter Herbstabend mit nebligen Schwaden wiegt ein Dutzend zerschlagener Ritterleichen und faltet sie in Strömungen von
+
+Winden, die tief in die Ausläufer des verlassenen Tals dringen. Drachen gleiten wie stumme Engel, kreisen immerzu und rufen dann wie Banshees; klagende
+
+Schreie der Trauer. Die Drachen landen schwer neben den friedlichen Körpern, beugen die Hälse und breiten die Flügel aus, heben schwarze Klauen und kneifen in den
+
+heiligen Boden und die neue ewige Heimat. Die sterbenden Winde pfeifen in düsterem Zug zwischen den Toten, und sie liegen da, umklammern Waffen, um sich zu schützen,
+
+wie Ritter noch in der Schlacht, zertrümmerte Rüstungen leuchten wie neugeborene Sterne."""
+
+[translations.ita]
+title = "Il combattimento"
+content = """
+Un freddo mattino d'autunno dalla nebbia brumosa protegge una dozzina di valorosi cavalieri, offrendo riparo nascosto da occhi indiscreti nel cuore delle pendici della
+
+valle vibrante. I draghi si librano come fieri guerrieri, girando in cerchio ancora e ancora, poi ruggendo come tuoni, chiamando a raccolta chiunque ascolti. I draghi atterrano rapidi
+
+accanto ai fieri guerrieri, piegando i colli ed estendendo le ali, sollevando gli artigli neri e permettendo ai valorosi combattenti di cavalcare avanti e vincere una battaglia appena scoppiata. I
+
+venti crescenti soffocano i suoni del combattimento ed essi combattono, mantenendo la posizione come madri che proteggono i figli, le armature lucenti che balenano mentre
+
+ciascuno cade.
+Una fredda sera d'autunno dalla nebbia brumosa culla una dozzina di corpi martoriati di cavalieri, avvolgendoli nelle correnti dei venti che scorrono nel cuore
+
+delle pendici della valle desolata. I draghi planano come angeli silenziosi, girando in cerchio ancora e ancora, poi chiamando come banshee: grida strazianti di lutto.
+
+I draghi atterrano pesanti accanto ai corpi in pace, piegando i colli ed estendendo le ali, sollevando gli artigli neri e permettendo ai valorosi combattenti di cavalcare avanti
+
+e vincere una battaglia appena scoppiata. I venti crescenti soffocano i suoni del combattimento ed essi combattono, mantenendo la posizione come madri che proteggono i figli, le armature lucenti
+
+che balenano mentre ciascuno cade.
+Una fredda sera d'autunno dalla nebbia brumosa culla una dozzina di corpi martoriati di cavalieri, avvolgendoli nelle correnti dei
+
+venti che scorrono nel cuore delle pendici della valle desolata. I draghi planano come angeli silenziosi, girando in cerchio ancora e ancora, poi chiamando come banshee: grida strazianti
+
+di lutto. I draghi atterrano pesanti accanto ai corpi in pace, piegando i colli ed estendendo le ali, sollevando gli artigli neri e afferrando il
+
+suolo sacro e la nuova dimora eterna. I venti morenti fischiano fra i morti in una processione solenne, ed essi giacciono, stringendo le armi per proteggersi
+
+come cavalieri ancora in battaglia, le armature spezzate che brillano come stelle appena nate."""
+
+[translations.pol]
+title = "Walka"
+content = """
+Zimny jesienny poranek z mglistym oparem chroni tuzin odważnych rycerzy, dając ukryte schronienie przed wścibskimi oczami głęboko u podnóża gór
+
+tętniącej życiem doliny. Smoki szybują jak zaciekli wojownicy, krążąc wciąż dookoła, potem ryczą jak grzmot, zagrzewając wszystkich, którzy słuchają. Smoki lądują szybko
+
+obok dumnych wojowników, zginając szyje i rozpościerając skrzydła, unosząc czarne szpony i pozwalając dzielnym bojownikom wyruszyć oraz wygrać rozpętaną bitwę.
+
+Narastające wiatry zagłuszają odgłosy walki, a oni walczą, trwając na pozycji niczym matki chroniące dzieci, z jasnymi zbrojami błyskającymi, gdy
+
+każdy pada.
+Zimny jesienny wieczór z mglistym oparem kołysze tuzin poszarpanych ciał rycerzy, otulając je podmuchami wiatrów biegnących głęboko
+
+u podnóża gór opustoszałej doliny. Smoki suną jak milczące anioły, krążąc wciąż dookoła, potem wołają jak banshee; zawodzące krzyki żałoby.
+
+Smoki lądują ciężko obok spokojnych ciał, zginając szyje i rozpościerając skrzydła, unosząc czarne szpony i pozwalając dzielnym bojownikom wyruszyć
+
+oraz wygrać rozpętaną bitwę. Narastające wiatry zagłuszają odgłosy walki, a oni walczą, trwając na pozycji niczym matki chroniące dzieci, z jasnymi
+
+zbrojami błyskającymi, gdy każdy pada.
+Zimny jesienny wieczór z mglistym oparem kołysze tuzin poszarpanych ciał rycerzy, otulając je podmuchami
+
+wiatrów biegnących głęboko u podnóża gór opustoszałej doliny. Smoki suną jak milczące anioły, krążąc wciąż dookoła, potem wołają jak banshee; zawodzące
+
+krzyki żałoby. Smoki lądują ciężko obok spokojnych ciał, zginając szyje i rozpościerając skrzydła, unosząc czarne szpony i szczypiąc
+
+świętą ziemię i nowy wieczny dom. Gasnące wiatry gwiżdżą wśród zmarłych w ponurym orszaku, a oni leżą, ściskając broń dla własnej ochrony
+
+niczym rycerze nadal w bitwie, ze strzaskanymi zbrojami lśniącymi jak nowo narodzone gwiazdy."""
+
+[translations.por]
+title = "A luta"
+content = """
+Uma fria manhã de outono, com névoa enevoada, protege uma dúzia de bravos cavaleiros, oferecendo abrigo oculto contra olhos curiosos nas profundezas dos contrafortes do
+
+vale vibrante. Dragões voam como guerreiros ferozes, circulando sem parar, depois rugindo como trovões, convocando todos os que ouvem. Os dragões pousam velozmente
+
+ao lado dos orgulhosos guerreiros, curvando os pescoços e estendendo as asas, erguendo as garras negras e permitindo que os valentes combatentes avancem montados e vençam uma batalha recém-surgida. Os
+
+ventos crescentes silenciam os sons do combate, e eles lutam, mantendo sua posição como mães que protegem seus filhos, as armaduras brilhantes lampejando enquanto
+
+cada um cai.
+Uma fria noite de outono, com névoa enevoada, embala uma dúzia de cadáveres destroçados de cavaleiros, dobrando-os em correntes de vento que percorrem as profundezas
+
+dos contrafortes do vale desolado. Dragões planam como anjos silenciosos, circulando sem parar, depois clamando como banshees; gritos pungentes de luto.
+
+Os dragões pousam pesadamente ao lado dos corpos em paz, curvando os pescoços e estendendo as asas, erguendo as garras negras e permitindo que os valentes combatentes avancem montados
+
+e vençam uma batalha recém-surgida. Os ventos crescentes silenciam os sons do combate, e eles lutam, mantendo sua posição como mães que protegem seus filhos, as
+
+armaduras brilhantes lampejando enquanto cada um cai.
+Uma fria noite de outono, com névoa enevoada, embala uma dúzia de cadáveres destroçados de cavaleiros, dobrando-os em correntes de
+
+vento que percorrem as profundezas dos contrafortes do vale desolado. Dragões planam como anjos silenciosos, circulando sem parar, depois clamando como banshees; gritos pungentes
+
+de luto.
+Os dragões pousam pesadamente ao lado dos corpos em paz, curvando os pescoços e estendendo as asas, erguendo as garras negras e apertando o
+
+solo sagrado e novo lar eterno. Os ventos que morrem assobiam entre os mortos em sombria procissão, e eles jazem, agarrando armas para se proteger
+
+como cavaleiros ainda em batalha, as armaduras despedaçadas brilhando como estrelas recém-nascidas."""
+
+[translations.spa]
+title = "La lucha"
+content = """
+Una fría mañana de otoño, con niebla brumosa, protege a una docena de caballeros valientes, ofreciendo refugio oculto a miradas indiscretas en lo profundo de las estribaciones del
+
+valle lleno de vida. Los dragones se elevan como fieros guerreros, dando vueltas y vueltas, y después rugen como truenos, convocando a todos los que escuchan. Los dragones aterrizan rápidamente
+
+junto a los orgullosos guerreros, doblando los cuellos y extendiendo las alas, alzando garras negras y dejando que los valientes combatientes cabalguen hacia delante y ganen una batalla surgida. Los
+
+vientos crecientes silencian los sonidos del combate, y luchan, manteniéndose firmes como madres que protegen a sus hijos, con armaduras brillantes que centellean mientras
+
+cada uno cae. Una fría tarde de otoño, con niebla brumosa, acuna una docena de cadáveres maltrechos de caballeros, plegándolos entre corrientes de viento que recorren las profundas
+
+estribaciones del valle desolado. Los dragones planean como ángeles silenciosos, dando vueltas y vueltas, y después llaman como banshees: gritos lastimeros de duelo.
+
+Los dragones aterrizan pesadamente junto a los cuerpos serenos, doblando los cuellos y extendiendo las alas, alzando garras negras y dejando que los valientes combatientes cabalguen hacia delante
+
+y ganen una batalla surgida. Los vientos crecientes silencian los sonidos del combate, y luchan, manteniéndose firmes como madres que protegen a sus hijos, con brillantes
+
+armaduras que centellean mientras cada uno cae. Una fría tarde de otoño, con niebla brumosa, acuna una docena de cadáveres maltrechos de caballeros, plegándolos entre corrientes de
+
+viento que recorren las profundas estribaciones del valle desolado. Los dragones planean como ángeles silenciosos, dando vueltas y vueltas, y después llaman como banshees: gritos lastimeros
+
+de duelo. Los dragones aterrizan pesadamente junto a los cuerpos serenos, doblando los cuellos y extendiendo las alas, alzando garras negras y pellizcando el
+
+suelo sagrado y nuevo hogar eterno. Los vientos moribundos silban entre los muertos en una procesión sombría, y ellos yacen, aferrando armas para protegerse
+
+como caballeros aún en batalla, con armaduras destrozadas que brillan como estrellas recién nacidas."""

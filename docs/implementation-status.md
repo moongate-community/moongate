@@ -148,7 +148,7 @@ See all of them in [Commands](commands.md).
   `base_id` inheritance, and the XML gumps of `templates/gumps`. See
   [Loading TOML templates](templates.md) and [Gumps](gumps.md).
 - Plain document sources in `templates/books`, with named variables resolved and saved on individual
-  scrolls at creation. [Letter attachments](data-files/books.md#letter-attachments) are frozen per letter and delivered once to its backpack bearer, with deferred weight and atomic capacity checks. The converter ships [62 static lore books](book-content-import.md) from ModernUO. Native book pages/editing remain separate work; see [Readable text templates](data-files/books.md).
+  scrolls at creation. [Letter attachments](data-files/books.md#letter-attachments) are frozen per letter and delivered once to its backpack bearer, with deferred weight and atomic capacity checks. The converter ships [62 lore books in eight languages](book-content-import.md) from ModernUO. Native book pages/editing remain separate work; see [Readable text templates](data-files/books.md).
 - Client files read from `ultima.ultima_path`: tile data, maps (MUL or UOP) and multis.
 - Messages in 8 languages, ported from UOX3; a language can be split into several toml
   files. See [Localization](localization.md).

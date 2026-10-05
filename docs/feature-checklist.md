@@ -184,7 +184,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Locks and keys | ✅ | Locked doors open for a player carrying their key |
 | Lights | ✅ | Lit and doused; lamp posts light up at night |
 | Potions and food | 🟡 | Food is eaten: hunger, stamina, sound and gesture. Drinks are drunk by sips, and a pitcher or a glass is left empty; no refilling, no drunkenness. A sample potion is drunk and used up, with no effect yet |
-| Books | 🟡 | Readable scrolls from [TOML text templates](data-files/books.md), frozen recipient variables and saved title/author/body and [once-only letter attachments](data-files/books.md#letter-attachments); [62 imported lore books](book-content-import.md); native book covers, pages and editing remain separate work |
+| Books | 🟡 | Readable scrolls from [TOML text templates](data-files/books.md), frozen recipient variables and saved title/author/body and [once-only letter attachments](data-files/books.md#letter-attachments); [62 lore books in eight languages](book-content-import.md); native book covers, pages and editing remain separate work |
 | Maps and treasure maps | ❌ | |
 | Runes, recall and gates | ❌ | |
 | Moongates and teleporters | 🟡 | Walk-on teleporters and those that answer a word, also across maps, placed by `.decorate` with ModernUO's world and dungeon ones; public moongates with a destination gump; plain moongates with one destination (`.moongate`); no Gate Travel |

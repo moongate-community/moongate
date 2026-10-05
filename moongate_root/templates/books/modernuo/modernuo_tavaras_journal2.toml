@@ -78,3 +78,164 @@ once the workers have
 set to excavating the
 hall."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Deník: Objevení hrobky"
+content = """
+Den druhý:
+
+Všechno, co jsme o hrobce slyšeli a četli, se ukázalo pravdivým – a přece mě nic nemohlo připravit na to vidět ji
+
+vlastníma očima. Hrobka Khal Ankur konečně vydala svá tajemství! Složitá kamenná výzdoba pokrývající vrata hrobky zřejmě pokračuje celými
+
+katakombami; každá chodba a místnost poskytuje zdánlivě nekonečné množství informací k zaznamenání pro mě i mé společníky. Bude trvat
+
+roky, než sepíšeme celou hrobku, potvrdí-li se legendy o její ohromné velikosti. Bohužel byla velká část jejího vnitřku poškozena či úplně
+
+zničena, zda seismickou činností v okolním úbočí hory, nebo pouze pomalou prací samotného Času, to nevím. Velká část
+
+zdiva popraskala nebo se zcela zhroutila, zvláště poblíž vstupních podpěr hlavní síně. Už v první velké místnosti, kterou jsme objevili, je náš průchod
+
+zcela zatarasen: mohutná hromada balvanů a kamenů blokuje každý východ z předsíně. Co mohlo způsobit
+
+takto místní narušení podpůrných konstrukcí, lze jen hádat – ale jistě bude vyžadovat celoodpolední námahu odstranit byť jen zlomek. Těším se
+
+na další zítřejší pokrok, až se dělníci pustí do odkrývání síně."""
+
+[translations.fre]
+title = "Journal : découverte du tombeau"
+content = """
+Deuxième jour :
+
+Tout ce que nous avions entendu et lu sur le tombeau s’est révélé exact ; pourtant, rien n’aurait pu me préparer à le voir
+
+de mes propres yeux. Le Tombeau de Khal Ankur a enfin livré ses secrets ! Les sculptures complexes qui couvraient les portes du tombeau semblent se poursuivre dans
+
+l’ensemble des catacombes, chaque couloir et chaque salle fournissant une quantité apparemment infinie de renseignements que mes compagnons et moi devons consigner. Il faudra
+
+des années pour répertorier la totalité du Tombeau, si les légendes de sa taille immense se révèlent vraies. Hélas, une grande partie de l’intérieur du Tombeau a été endommagée ou entièrement
+
+détruite ; par l’activité sismique des montagnes environnantes ou simplement par les lents efforts du Temps lui-même, je l’ignore. Une grande partie des
+
+ouvrages de pierre est fissurée ou entièrement effondrée, particulièrement près des soutiens de l’entrée du grand couloir. Notre passage est d’ailleurs déjà entièrement bloqué dans la
+
+première grande salle que nous ayons découverte, un énorme amas de blocs et de pierres obstruant toute sortie de l’antichambre. Ce qui a pu causer
+
+un bouleversement si localisé des structures de soutien, l’on ne peut que le supposer ; mais il faudra assurément les efforts de tout un après-midi pour en dégager ne serait-ce qu’une fraction. J’espère
+
+davantage de progrès demain, une fois que les ouvriers auront commencé à déblayer le couloir."""
+
+[translations.ger]
+title = "Tagebuch: Entdeckung des Grabes"
+content = """
+Zweiter Tag:
+
+Alles, was wir über das Grab gehört und gelesen hatten, hat sich als richtig erwiesen – und doch konnte nichts mich auf seinen Anblick
+
+mit meinen eigenen Augen vorbereiten. Das Grab Khal Ankurs hat endlich seine Geheimnisse preisgegeben! Die kunstvolle Steinmetzarbeit, die die Grabtüren bedeckte, scheint sich durch
+
+die gesamten Katakomben fortzusetzen; jeder Gang und jeder Raum liefert meinen Gefährten und mir eine scheinbar endlose Menge an Informationen, die wir aufzeichnen können. Es wird
+
+Jahre dauern, das gesamte Grab zu verzeichnen, wenn sich die Sagen über seine gewaltige Größe als wahr erweisen. Leider ist ein guter Teil des Grabinneren beschädigt oder völlig
+
+zerstört worden; ob durch Beben im umgebenden Berghang oder lediglich durch das langsame Wirken der Zeit selbst, weiß ich nicht. Ein guter Teil der
+
+Steinbauten ist gerissen oder ganz eingestürzt, besonders nahe den Eingangsstützen der Haupthalle. Tatsächlich ist unser Durchgang bereits vollständig im
+
+ersten großen Raum versperrt, den wir entdeckt haben: Ein gewaltiger Haufen aus Felsblöcken und Steinen versperrt jeden Ausgang aus der Vorhalle. Was
+
+einen so örtlich begrenzten Zusammenbruch der Stützstrukturen verursacht haben mag, kann man nur vermuten – doch gewiss wird es einen ganzen Nachmittag Arbeit brauchen, auch nur einen Bruchteil davon zu entfernen. Ich freue mich
+
+auf weitere Fortschritte morgen, sobald die Arbeiter mit dem Freilegen der Halle begonnen haben."""
+
+[translations.ita]
+title = "Diario: scoperta della Tomba"
+content = """
+Giorno Due:
+
+Tutto ciò che avevamo sentito e letto della tomba si è dimostrato corretto, eppure nulla poteva prepararmi a vederla
+
+con i miei occhi. La Tomba di Khal Ankur ha finalmente svelato i suoi segreti! Le complesse decorazioni in pietra che coprivano le porte della tomba sembrano continuare in
+
+tutte le catacombe, ogni corridoio e stanza rivelando una quantità apparentemente infinita d'informazioni da annotare per me e i miei compagni. Ci vorranno
+
+anni per catalogare l'intera Tomba, se le leggende sulle sue enormi dimensioni si dimostreranno vere. Purtroppo gran parte dell'interno della Tomba è stata danneggiata o completamente
+
+distrutta, non so se da attività sismica sul fianco della montagna circostante o soltanto dall'opera lenta del Tempo stesso. Gran parte della
+
+muratura si è incrinata o è crollata del tutto, specialmente vicino ai sostegni dell'ingresso della sala principale. In effetti, il nostro passaggio è già stato completamente bloccato nella
+
+prima grande stanza che abbiamo scoperto: un enorme mucchio di massi e pietre sbarra ogni uscita dall'anticamera. Che cosa possa aver causato
+
+un cedimento così localizzato delle strutture di sostegno si può soltanto immaginare, ma occorrerà certamente un intero pomeriggio di lavoro per rimuoverne anche una frazione. Attendo
+
+con ansia nuovi progressi domani, una volta che gli operai si saranno messi a scavare la sala."""
+
+[translations.pol]
+title = "Dziennik: odkrycie Grobowca"
+content = """
+Dzień drugi:
+
+Wszystko, co słyszeliśmy i czytaliśmy o grobowcu, okazało się prawdą — a jednak nic nie mogło przygotować mnie na ujrzenie go
+
+własnymi oczami. Grobowiec Khal Ankur nareszcie oddał swe tajemnice! Misterne kamienne zdobienia pokrywające drzwi grobowca zdają się ciągnąć przez
+
+całe katakumby; każdy korytarz i każda sala dostarczają pozornie nieskończonej ilości informacji do zapisania mnie i moim towarzyszom. Zajmie
+
+lata skatalogowanie całego Grobowca, jeśli legendy o jego olbrzymich rozmiarach okażą się prawdziwe. Niestety, znaczna część jego wnętrza została uszkodzona albo zupełnie
+
+zniszczona; czy przez wstrząsy w otaczającym zboczu góry, czy tylko przez powolne działanie samego Czasu, nie wiem. Wiele
+
+kamiennych elementów popękało albo całkiem się zawaliło, szczególnie przy podporach wejścia do głównej sali. Nasze przejście zostało już w istocie zupełnie zablokowane w
+
+pierwszym dużym pomieszczeniu, które odkryliśmy: ogromna sterta głazów i kamieni zamyka wszelkie wyjście z przedsionka. Co mogło wywołać
+
+tak miejscowe naruszenie konstrukcji wspierających, można jedynie zgadywać — lecz z pewnością praca przez całe popołudnie usunie zaledwie ułamek gruzu. Czekam
+
+na dalsze postępy jutro, gdy robotnicy przystąpią do odsłaniania sali."""
+
+[translations.por]
+title = "Diário: descoberta da tumba"
+content = """
+Segundo dia:
+
+Tudo o que ouvimos e lemos sobre a tumba se mostrou correto, mas nada poderia me preparar para vê-la
+
+com meus próprios olhos. A Tumba de Khal Ankur revelou seus segredos enfim! O intrincado trabalho em pedra que cobria as portas da tumba parece continuar por
+
+todas as catacumbas, cada corredor e sala oferecendo uma quantidade aparentemente interminável de informações para meus companheiros e eu registrarmos. Levará
+
+anos para catalogar toda a Tumba, se as lendas de seu tamanho imenso se mostrarem verdadeiras. Infelizmente, boa parte do interior da Tumba foi danificada ou totalmente
+
+destruída; se por atividade sísmica na encosta montanhosa ao redor ou apenas pela lenta ação do próprio Tempo, eu não sei. Boa parte da
+
+alvenaria rachou ou desabou inteiramente, especialmente perto dos apoios de entrada do salão principal. Nossa passagem, de fato, já foi inteiramente bloqueada na
+
+primeira grande sala que descobrimos, uma enorme pilha de rochedos e pedras bloqueando qualquer saída da antecâmara. O que pode ter causado
+
+uma ruptura tão localizada das estruturas de sustentação, só se pode imaginar, mas certamente levará uma tarde inteira de esforço para remover sequer uma fração dela. Espero
+
+mais progresso amanhã, assim que os trabalhadores começarem a escavar o salão."""
+
+[translations.spa]
+title = "Diario: descubrimiento de la tumba"
+content = """
+Día dos:
+
+Todo lo que habíamos oído y leído sobre la tumba ha resultado cierto, y aun así nada podía prepararme para verla
+
+con mis propios ojos. ¡La Tumba de Khal Ankur ha revelado al fin sus secretos! La intrincada obra de piedra que cubría las puertas parece continuar a lo largo de
+
+todas las catacumbas; cada corredor y cada sala ofrece una cantidad aparentemente interminable de información que mis compañeros y yo debemos registrar. Harán falta
+
+años para catalogar toda la Tumba, si las leyendas sobre su tamaño inmenso son ciertas. Lamentablemente, buena parte del interior está dañada o completamente
+
+destruida, ya sea por actividad sísmica en la ladera circundante o por los lentos esfuerzos del propio Tiempo; no lo sé. Gran parte de la
+
+mampostería está agrietada o derrumbada por completo, especialmente junto a los soportes de entrada del corredor principal. De hecho, nuestro paso ya ha quedado completamente bloqueado en la
+
+primera gran sala que hemos descubierto: una enorme pila de peñascos y piedras bloquea toda salida de la antecámara. Qué pudo causar
+
+una alteración tan localizada de las estructuras de soporte solo puede conjeturarse, pero sin duda hará falta el trabajo de toda una tarde para retirar siquiera una fracción. Espero
+
+que mañana avancemos más, una vez que los trabajadores empiecen a excavar el corredor."""

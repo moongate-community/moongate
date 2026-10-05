@@ -78,12 +78,44 @@ public sealed class RepositoryTemplateFilesTests
         {
             Assert.Empty(book.Variables);
             Assert.Empty(book.Attachments);
-            Assert.Empty(book.Translations);
-            Assert.True(service.TryRender(book.Id, new TextTemplateContext { PlayerName = "Changed reader" }, "ita", null, out var rendered), book.Id);
+            Assert.Equal(["cze", "fre", "ger", "ita", "pol", "por", "spa"], book.Translations.Keys.Order(StringComparer.Ordinal));
+            Assert.True(service.TryRender(book.Id, new TextTemplateContext { PlayerName = "Changed reader" }, "eng", null, out var rendered), book.Id);
             Assert.Equal((book.Title, book.Author, book.Content), (rendered!.Title, rendered.Author, rendered.Content));
             Assert.True(BookGumpRenderer.TryBuild(rendered.Title, rendered.Author, rendered.Content, out _), book.Id);
         }
     }
+    [Theory]
+    [InlineData("ita")]
+    [InlineData("fre")]
+    [InlineData("ger")]
+    [InlineData("spa")]
+    [InlineData("por")]
+    [InlineData("pol")]
+    [InlineData("cze")]
+    public async Task ShippedModernUoTranslations_RenderCompleteCatalogInEachLanguage(string language)
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
+        var data = new StubDataLoaderService().With(items);
+        var books = (await new BooksLoader(Directories(), data).LoadDataAsync()).Entities
+            .Where(book => book.Id.StartsWith("modernuo_", StringComparison.Ordinal)).ToArray();
+        data.With(books);
+        var service = new BookTemplateService(data);
+        Assert.Equal(62, books.Length);
+        foreach (var book in books)
+        {
+            Assert.True(book.Translations.TryGetValue(language, out var translation), $"{book.Id}: {language} missing");
+            Assert.False(string.IsNullOrWhiteSpace(translation!.Title), book.Id);
+            Assert.False(string.IsNullOrWhiteSpace(translation.Content), book.Id);
+            Assert.Null(translation.Author);
+            Assert.True(service.TryRender(book.Id, new TextTemplateContext { PlayerName = "Another reader" }, language, null, out var rendered), book.Id);
+            Assert.Equal(translation.Title, rendered!.Title);
+            Assert.Equal(translation.Content, rendered.Content);
+            Assert.Equal(book.Author, rendered.Author);
+            Assert.NotEqual(book.Content, rendered.Content);
+            Assert.True(BookGumpRenderer.TryBuild(rendered.Title, rendered.Author, rendered.Content, out _), $"{book.Id}: {language}");
+        }
+    }
+
     [Fact]
     public async Task ShippedMotd_Loads()
     {

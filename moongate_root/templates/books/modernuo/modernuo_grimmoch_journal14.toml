@@ -44,3 +44,108 @@ undead legions struck
 again.  I cannot go on...
 I cannot go on."""
 item_template = "readable_scroll"
+
+[translations.cze]
+title = "Denní zápisky Grimmoch Drummel"
+content = """
+Den čtrnáctý až šestnáctý:
+
+Jsme ztraceni... jsme ztraceni... vše je ztraceno. Mrtví se kupí u mých nohou. Bergen a já jsme v tom
+
+šílenství nějak dokázali sestavit barikádu a zatarasit přístup do předsíně tábora. Ví stejně dobře jako já, že ji nemůžeme udržet navždy. Mrtví přicházejí. Vzali
+
+Lysander před našima očima. Je mi líto duše i takového šílence – nikdo by neměl takto zemřít. A přesto jich tolik zemřelo. Jsme uvězněni v této
+
+hrůze. Tolik lidí zemřelo, a pro co? Na jakou kletbu jsme narazili? Nemohu to snést, to sténání, naříkavé výkřiky mrtvých. Ubohý Thomas, rozsekaný
+
+jejich čepelemi. Měli jsme jen hodinu na řádný pohřeb těch, které jsme pohřbít mohli, než nemrtvé legie znovu udeřily. Nemohu dál... nemohu dál."""
+
+[translations.fre]
+title = "Le journal quotidien de Grimmoch Drummel"
+content = """
+Du quatorzième au seizième jour :
+
+Nous sommes perdus... nous sommes perdus... tout est perdu. Les morts sont entassés à mes pieds. Dans la folie ambiante, Bergen et moi avons tant bien que mal réussi à
+
+assembler une barricade, barrant l’accès à l’antichambre du camp. Il sait aussi bien que moi que nous ne pourrons la tenir éternellement. Les morts arrivent. Ils ont pris
+
+Lysander sous nos yeux. Je plains l’âme même d’un tel fou : personne ne devrait mourir ainsi. Et pourtant, tant d’autres sont morts. Nous sommes piégés ici dans cette
+
+horreur. Tant de morts, et pour quoi ? Sur quelle malédiction sommes-nous tombés ? Je ne puis le supporter, les gémissements, les hurlements plaintifs des morts. Pauvre Thomas, taillé en pièces
+
+par leurs lames. Nous n’avons eu qu’une heure pour enterrer convenablement ceux que nous pouvions, avant que les légions de morts-vivants frappent de nouveau. Je ne peux continuer... je ne peux continuer."""
+
+[translations.ger]
+title = "Grimmoch Drummels tägliches Tagebuch"
+content = """
+Vierzehnter bis sechzehnter Tag:
+
+Wir sind verloren ... wir sind verloren ... alles ist verloren. Die Toten türmen sich zu meinen Füßen. Bergen und mir ist es irgendwie gelungen, in
+
+diesem Wahnsinn eine Barrikade zusammenzubauen, die den Zugang zur Vorhalle unseres Lagers versperrt. Er weiß so gut wie ich, dass wir sie nicht ewig halten können. Die Toten kommen. Sie nahmen
+
+Lysander vor unseren Augen. Selbst die Seele eines solchen Wahnsinnigen bemitleide ich – niemand sollte auf solche Weise sterben. Und doch sind so viele so gestorben. Wir sind hier in diesem
+
+Schrecken gefangen. So viele sind gestorben, und wofür? Über welchen Fluch sind wir gestolpert? Ich ertrage es nicht, das Stöhnen, die klagenden Schreie der Toten. Armer Thomas, in Stücke gehauen
+
+von ihren Klingen. Wir hatten nur eine Stunde, um jene ordentlich zu begraben, bei denen wir es konnten, ehe die Legionen der Untoten wieder zuschlugen. Ich kann nicht weitermachen ... ich kann nicht weitermachen."""
+
+[translations.ita]
+title = "Il diario quotidiano di Grimmoch Drummel"
+content = """
+Giorno Quattordici - Giorno Sedici :
+
+Siamo perduti... siamo perduti... tutto è perduto. I morti sono ammucchiati ai miei piedi. Bergen e io siamo in qualche modo riusciti, in mezzo
+
+alla follia, a mettere insieme una barricata, sbarrando l'accesso all'anticamera dell'accampamento. Sa bene quanto me che non possiamo resistere per sempre. I morti arrivano. Hanno preso
+
+Lysander davanti ai nostri occhi. Provo pietà per l'anima persino di un simile pazzo: nessuno dovrebbe morire in questo modo. Eppure tanti sono morti così. Siamo intrappolati qui in questo
+
+orrore. Tanti sono morti, e per cosa? In quale maledizione ci siamo imbattuti? Non lo sopporto, i gemiti, i lamenti dei morti. Povero Thomas, fatto a pezzi
+
+dalle loro lame. Abbiamo avuto solo un'ora per seppellire degnamente quelli che potevamo, prima che le legioni dei non morti colpissero ancora. Non posso andare avanti... Non posso andare avanti."""
+
+[translations.pol]
+title = "Dziennik codzienny Grimmoch Drummel"
+content = """
+Dzień czternasty — dzień szesnasty:
+
+Jesteśmy zgubieni... jesteśmy zgubieni... wszystko stracone. Zmarli piętrzą się u moich stóp. Bergen i ja jakimś cudem zdołaliśmy w
+
+tym szaleństwie sklecić barykadę, blokującą dostęp do przedsionka obozu. Wie równie dobrze jak ja, że nie utrzymamy jej wiecznie. Zmarli nadchodzą. Zabrali
+
+Lysander na naszych oczach. Żal mi duszy nawet takiego szaleńca — nikt nie powinien umierać w ten sposób. A jednak tylu zginęło. Tkwimy tu uwięzieni w tym
+
+koszmarze. Tylu umarło, i po co? Na jaką klątwę natrafiliśmy? Nie mogę tego znieść, tych jęków i zawodzących krzyków zmarłych. Biedny Thomas, posiekany
+
+ich ostrzami. Mieliśmy tylko godzinę, by należycie pochować tych, których zdołaliśmy, nim nieumarłe legiony uderzyły ponownie. Nie mogę dalej... nie mogę dalej."""
+
+[translations.por]
+title = "O diário de Grimmoch Drummel"
+content = """
+Décimo quarto dia - Décimo sexto dia:
+
+Estamos perdidos... estamos perdidos... tudo está perdido. Os mortos estão empilhados aos meus pés. Bergen e eu, de algum modo, conseguimos,
+
+em meio à loucura, montar uma barricada, impedindo o acesso à antecâmara do acampamento. Ele sabe tão bem quanto eu que não podemos mantê-la para sempre. Os mortos vêm. Levaram
+
+Lysander diante dos nossos olhos. Tenho pena da alma até mesmo de um louco assim: ninguém deveria morrer dessa maneira. E, no entanto, tantos morreram. Estamos presos aqui neste
+
+horror. Tantos morreram, e para quê? Em que maldição fomos tropeçar? Não suporto isso, os gemidos, os gritos lastimosos dos mortos. Pobre Thomas, cortado em pedaços
+
+por suas lâminas. Tivemos apenas uma hora para enterrar devidamente aqueles que pudemos, antes que as legiões de mortos-vivos atacassem de novo. Não consigo continuar... Não consigo continuar."""
+
+[translations.spa]
+title = "El diario de Grimmoch Drummel"
+content = """
+Día catorce - Día dieciséis:
+
+Estamos perdidos... estamos perdidos... todo está perdido. Los muertos se amontonan a mis pies. Bergen y yo logramos de algún modo, en medio
+
+de la locura, construir una barricada que impide el acceso a la antecámara del campamento. Sabe tan bien como yo que no podremos mantenerla para siempre. Los muertos llegan. Se llevaron a
+
+Lysander ante nuestros ojos. Compadezco el alma incluso de semejante loco: nadie debería morir de esa manera. Y, sin embargo, tantos han muerto así. Estamos atrapados en este
+
+horror. Tantos han muerto, ¿y para qué? ¿Con qué maldición hemos tropezado? No puedo soportarlo, los gemidos, los lamentos de los muertos. Pobre Thomas, hecho pedazos
+
+por sus hojas. Solo tuvimos una hora para enterrar dignamente a quienes pudimos antes de que las legiones de muertos vivientes atacaran de nuevo. No puedo seguir... no puedo seguir."""
