@@ -265,7 +265,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Gold | 🟡 | Starting gold and NPC loot; nothing to spend it on |
-| Banking and bank checks | ✅ | The bank box with its limit of items; balance, withdraw, deposit and check by speech; bank checks cashed by a double click in the box; criminals refused; see [Bank](bank.md) |
+| Banking and bank checks | ✅ | The bank box with its limit of items; balance, withdraw, deposit and check by speech; bank checks cashed by a double click in the box; gold and checks dropped on the banker are deposited; criminals refused; see [Bank](bank.md) |
 | House costs and limits | ❌ | |
 | Account-wide gold | ❌ | |
 | Vendor search and auctions | ❌ | |

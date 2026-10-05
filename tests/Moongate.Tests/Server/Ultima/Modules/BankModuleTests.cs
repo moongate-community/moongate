@@ -149,6 +149,28 @@ public sealed class BankModuleTests
     }
 
     [Fact]
+    public void DepositItem_HandsTheItemToTheBank_AndGivesItsAnswer()
+    {
+        var check = Check(0x40000500, 5000);
+
+        Assert.True(Run("return bank.deposit_item(2, 0x40000500) == BankResultType.Ok")[0].Read<bool>());
+        Assert.Equal((_aria, check), Assert.Single(_bank.DepositedItems));
+
+        _bank.Result = BankResultType.BankFull;
+
+        Assert.True(Run("return bank.deposit_item(2, 0x40000500) == BankResultType.BankFull")[0].Read<bool>());
+    }
+
+    [Theory, InlineData("2, 0x4000FFFF", "NotMoney"), InlineData("2, -1", "NotMoney"), InlineData("999, 0x40000500", "NoPlayer")]
+    public void DepositItem_AnItemThatIsNotThere_OrForWhoIsNotAPlayer_AsksNothing(string arguments, string answer)
+    {
+        Check(0x40000500, 5000);
+
+        Assert.True(Run($"return bank.deposit_item({arguments}) == BankResultType.{answer}")[0].Read<bool>());
+        Assert.Empty(_bank.DepositedItems);
+    }
+
+    [Fact]
     public void Worth_IsWhatACheckIsWorth_AndNilForAnythingElse()
     {
         Check(0x40000500, 5000);

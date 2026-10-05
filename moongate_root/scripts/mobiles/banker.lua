@@ -20,6 +20,10 @@
 --   on_speech(serial, speaker, text, keywords)  a player speaks within 15
 --                                               cells: the banker answers a
 --                                               bank word said within 12
+--   on_drag_drop(serial, giver, item)           a player drops an item on the
+--                                               banker: gold and bank checks
+--                                               go into its bank, anything
+--                                               else is given back
 -- ==============================================================================
 
 local numbers = require("common.numbers")
@@ -43,6 +47,7 @@ local check_too_small = 1010006   -- We cannot create checks for such a paltry a
 local check_too_big = 1010007     -- Our policies prevent us from creating checks worth that much!
 local no_room_for_check = 500386  -- There's not enough room in your bankbox for the check!
 local check_written = 1042673     -- Into your bank box I have placed a check in the amount of:
+local not_interested = 501550     -- I am not interested in this.
 
 local function has_keyword(keywords, wanted)
     for _, keyword in ipairs(keywords or {}) do
@@ -191,4 +196,32 @@ function banker.on_speech(serial, speaker, text, keywords)
             deposit(serial, speaker, amount)
         end
     end
+end
+
+-- Called when a player drops an item on the banker from 2 tiles or closer. Gold and bank checks go into the
+-- player's bank; true tells the server the item was taken, anything else gives it back.
+function banker.on_drag_drop(serial, giver, given)
+    npc.look_at(serial, giver)
+
+    if mobile.criminal(giver) then
+        npc.say_cliloc(serial, criminal_business)
+        return false
+    end
+
+    local before = bank.balance(giver) or 0
+    local result = bank.deposit_item(giver, given)
+
+    if result == BankResultType.Ok then
+        npc.say_cliloc(serial, deposited, numbers.with_thousands((bank.balance(giver) or 0) - before))
+        return true
+    elseif result == BankResultType.BankFull then
+        npc.say_cliloc(serial, bank_full)
+    elseif result == BankResultType.NotMoney then
+        npc.say_cliloc(serial, not_interested)
+    elseif result == BankResultType.NoBank then
+        -- No bank box yet: it is made and shown, and the player hands the gold again.
+        bank.open(giver)
+    end
+
+    return false
 end

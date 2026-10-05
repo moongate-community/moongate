@@ -43,7 +43,7 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
   place or follow someone around what stands in the way.
 - Open the bank box at a banker by saying *bank*, in any client language; ask the *balance*,
   *withdraw* and *deposit* gold by speech, have a bank *check* written and cash it with a double
-  click. The box holds a limited number of items: [Bank](bank.md).
+  click, or drop gold and checks on the banker to deposit them. The box holds a limited number of items: [Bank](bank.md).
 - Get hit points, mana and stamina back with time, get hungry and thirsty, eat and drink; tire by running or by carrying too much.
 - Open the treasure chests of the dungeons and the shop crates that fill up; read a clock; switch war mode.
 - Dye clothes: dyes give a dye tub the hue picked in the client's hue picker, and the tub gives it to the clothing.
