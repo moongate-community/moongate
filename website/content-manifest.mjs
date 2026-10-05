@@ -90,6 +90,7 @@ export const contentEntries = [
   { source: 'docs/data-files/weather.md', slug: 'server/data-files/weather', title: 'Weather', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/regions.md', slug: 'server/data-files/regions', title: 'Regions', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/messages.md', slug: 'server/data-files/messages', title: 'Messages', group: 'Scripting and content', subgroup: 'Data files' },
+  { source: 'docs/book-content-import.md', slug: 'server/book-content-import', title: 'Import book texts', group: 'Scripting and content' },
   { source: 'docs/uox3-migration.md', slug: 'server/uox3-migration', title: 'Migrate from UOX3', group: 'Scripting and content' },
 
   // Lua: the scripting guide. The API reference that follows it in the sidebar is generated; see
