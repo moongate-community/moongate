@@ -53,6 +53,12 @@ public interface IJailService : IMoongateStartupService, IPersistenceDeletionSou
     JailSentenceEntity? GetOccupant(int cell);
 
     /// <summary>
+    ///     Finds the player characters of that name, without case, in the world or not, and remembers them: they
+    ///     are the ones that can be jailed while offline. Characters pending deletion are left out. Any thread.
+    /// </summary>
+    Task<IReadOnlyList<JailCandidate>> FindAsync(string name, CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     Sends the mobile to the cell for that many days and keeps where it was. A mobile already in jail moves to
     ///     the cell with a sentence that starts now, and keeps the place it was first arrested on. The reason, when
     ///     there is one, is kept with the sentence as one line, told to the prisoner and written on its release note.

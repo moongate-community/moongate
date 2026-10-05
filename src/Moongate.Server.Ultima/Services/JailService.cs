@@ -8,6 +8,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Jail;
+using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -47,6 +48,8 @@ public sealed class JailService : IJailService
     private readonly ILogger _logger;
     private readonly IDataLoaderService _data;
     private readonly IDataAccess<JailSentenceEntity> _table;
+    private readonly IDataAccess<MobileEntity> _characters;
+    private readonly IDataAccess<AccountEntity> _accounts;
     private readonly IMobileService _mobiles;
     private readonly ISessionService _sessions;
     private readonly ITeleportService _teleports;
@@ -65,6 +68,9 @@ public sealed class JailService : IJailService
     // The sentences that ended since the last world save, which deletes their rows.
     private readonly ConcurrentDictionary<Serial, byte> _ended = new();
 
+    // Who FindAsync gave: the only serials that can be jailed while they are not in the world.
+    private readonly ConcurrentDictionary<Serial, JailCandidate> _found = new();
+
     private JailFile? _file;
     private string? _timerId;
 
@@ -81,6 +87,8 @@ public sealed class JailService : IJailService
     public JailService(
         IDataLoaderService data,
         IDataAccess<JailSentenceEntity> table,
+        IDataAccess<MobileEntity> characters,
+        IDataAccess<AccountEntity> accounts,
         IMobileService mobiles,
         ISessionService sessions,
         ITeleportService teleports,
@@ -99,6 +107,8 @@ public sealed class JailService : IJailService
         _logger = logger ?? Log.ForContext<JailService>();
         _data = data;
         _table = table;
+        _characters = characters;
+        _accounts = accounts;
         _mobiles = mobiles;
         _sessions = sessions;
         _teleports = teleports;
@@ -150,6 +160,39 @@ public sealed class JailService : IJailService
         var now = Now();
 
         return _sentences.Values.FirstOrDefault(sentence => sentence.Cell == cell && !sentence.IsOver(now));
+    }
+
+    public async Task<IReadOnlyList<JailCandidate>> FindAsync(string name, CancellationToken cancellationToken = default)
+    {
+        var wanted = name.Trim().ToLowerInvariant();
+
+        if (wanted.Length == 0)
+        {
+            return [];
+        }
+
+        var characters = await _characters.QueryAsync(
+            mobile => mobile.AccountId != null && mobile.DeletionRequestedAt == null && mobile.Name.ToLower() == wanted,
+            cancellationToken
+        );
+        var found = new List<JailCandidate>();
+
+        foreach (var character in characters.OrderBy(character => character.Id.Value))
+        {
+            if (await _accounts.GetByIdAsync(character.AccountId!.Value, cancellationToken) is not { } account)
+            {
+                continue;
+            }
+
+            var candidate = new JailCandidate
+            {
+                Id = character.Id, Name = character.Name, Account = account.Username, AccountType = account.AccountType
+            };
+            _found[candidate.Id] = candidate;
+            found.Add(candidate);
+        }
+
+        return found;
     }
 
     public JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by, string? reason = null)

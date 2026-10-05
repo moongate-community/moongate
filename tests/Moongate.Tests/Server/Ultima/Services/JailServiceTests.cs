@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Jail;
@@ -36,6 +37,8 @@ public sealed class JailServiceTests : IAsyncLifetime
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingDataAccess<JailSentenceEntity> _data = new();
+    private readonly RecordingDataAccess<MobileEntity> _characters = new();
+    private readonly RecordingDataAccess<AccountEntity> _accounts = new();
     private readonly JailConfig _config = new();
     private readonly SettableClock _clock = new() { Now = new DateTimeOffset(2026, 10, 4, 12, 0, 0, TimeSpan.Zero) };
     private readonly ItemsConfig _itemsConfig = new() { GoldTemplate = "gold", BackpackTemplate = "backpack" };
@@ -730,6 +733,59 @@ public sealed class JailServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Find_GivesThePlayersOfThatName_WithTheirAccountAndRank()
+    {
+        Character(200, "Pippo", "mario", AccountType.Regular);
+        Character(201, "Gino", "luigi", AccountType.Regular);
+
+        var found = Assert.Single(await _jail.FindAsync("Pippo"));
+
+        Assert.Equal(
+            (new Serial(200), "Pippo", "mario", AccountType.Regular),
+            (found.Id, found.Name, found.Account, found.AccountType)
+        );
+    }
+
+    [Fact]
+    public async Task Find_IgnoresCaseAndTheSpacesAround()
+    {
+        Character(200, "Pippo", "mario", AccountType.Regular);
+
+        Assert.Equal(new Serial(200), Assert.Single(await _jail.FindAsync("  pIPPO ")).Id);
+    }
+
+    [Fact]
+    public async Task Find_LeavesOutNpcsAndCharactersPendingDeletion()
+    {
+        _characters.Upserted.Add(new MobileEntity { Id = new Serial(300), Name = "Pippo" });
+        Character(200, "Pippo", "mario", AccountType.Regular).DeletionRequestedAt = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        Assert.Empty(await _jail.FindAsync("Pippo"));
+    }
+
+    [Fact]
+    public async Task Find_SeveralOfTheSameName_GivesThemAllInSerialOrder()
+    {
+        Character(210, "Pippo", "luigi", AccountType.GameMaster);
+        Character(200, "Pippo", "mario", AccountType.Regular);
+
+        var found = await _jail.FindAsync("pippo");
+
+        Assert.Equal(
+            [(new Serial(200), "mario", AccountType.Regular), (new Serial(210), "luigi", AccountType.GameMaster)],
+            found.Select(candidate => (candidate.Id, candidate.Account, candidate.AccountType))
+        );
+    }
+
+    [Theory, InlineData(""), InlineData("   ")]
+    public async Task Find_AnEmptyName_FindsNobody(string name)
+    {
+        Character(200, "", "mario", AccountType.Regular);
+
+        Assert.Empty(await _jail.FindAsync(name));
+    }
+
+    [Fact]
     public void Pardon_SomeoneNotJailed_IsFalse()
     {
         Assert.False(_jail.Pardon(_aria.Id));
@@ -767,6 +823,17 @@ public sealed class JailServiceTests : IAsyncLifetime
         return gold;
     }
 
+    // A player character of the world database, with its account: it is not in the world.
+    private MobileEntity Character(uint id, string name, string account, AccountType rank)
+    {
+        var owner = new Serial(5000 + id);
+        var character = new MobileEntity { Id = new Serial(id), Name = name, AccountId = owner, Map = MapType.Trammel };
+        _characters.Upserted.Add(character);
+        _accounts.Upserted.Add(new AccountEntity { Id = owner, Username = account, AccountType = rank });
+
+        return character;
+    }
+
     private async Task<MobileEntity> AddPlayerAsync(long id, string name, AccountType rank)
     {
         var session = await _fixture.AddAsync(id);
@@ -799,6 +866,8 @@ public sealed class JailServiceTests : IAsyncLifetime
         var jail = new JailService(
             loader,
             _data,
+            _characters,
+            _accounts,
             _fixture.Mobiles,
             _fixture.Sessions,
             _teleports,

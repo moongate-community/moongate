@@ -60,6 +60,23 @@ public sealed class StubJailService : IJailService
         return Result;
     }
 
+    /// <summary>
+    ///     Who a search by name gives, whatever the name.
+    /// </summary>
+    public List<JailCandidate> Found { get; } = [];
+
+    /// <summary>
+    ///     The names searched, in order.
+    /// </summary>
+    public List<string> Searched { get; } = [];
+
+    public Task<IReadOnlyList<JailCandidate>> FindAsync(string name, CancellationToken cancellationToken = default)
+    {
+        Searched.Add(name);
+
+        return Task.FromResult<IReadOnlyList<JailCandidate>>(Found.ToList());
+    }
+
     public bool Pardon(Serial prisoner)
     {
         Pardoned.Add(prisoner);
