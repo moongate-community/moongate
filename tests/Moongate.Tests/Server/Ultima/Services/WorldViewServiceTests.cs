@@ -509,6 +509,86 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void AHumanCorpse_IsFollowedByWhatItIsDrawnWearing_ItsHairAndItsBeard()
+    {
+        var corpse = HumanCorpse();
+        var shirt = Inside(corpse, 0x40000061, 0x1517);
+        shirt.Hue = new Hue(0x0026);
+        Inside(corpse, 0x40000062, 0x0EED);
+        corpse.SetProp("corpse.worn", $"{shirt.Id.Value}:{(int)LayerType.Shirt}");
+        corpse.SetProp("corpse.hair", 0x203B);
+        corpse.SetProp("corpse.hair_hue", 0x0455);
+        corpse.SetProp("corpse.beard", 0x203E);
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal(
+            [typeof(WorldItemSaPacket), typeof(ContainerContentPacket), typeof(CorpseEquipmentPacket)],
+            _sender.Sent.Select(packet => packet.GetType())
+        );
+        var content = _sender.Sent.OfType<ContainerContentPacket>().Single();
+        var equipment = _sender.Sent.OfType<CorpseEquipmentPacket>().Single();
+        var hair = _mobiles.HairSerial(corpse.Id);
+        var beard = _mobiles.BeardSerial(corpse.Id);
+        // The gold lies in the corpse but nobody wore it.
+        Assert.Equal(
+            [(shirt.Id, 0x1517, (ushort)0x0026), (hair, 0x203B, (ushort)0x0455), (beard, 0x203E, (ushort)0)],
+            content.Items.Select(entry => (entry.Serial, entry.ItemId, entry.Hue.Value))
+        );
+        Assert.All(content.Items, entry => Assert.Equal(corpse.Id, entry.Container));
+        Assert.Equal(corpse.Id, equipment.Corpse);
+        Assert.Equal(
+            [(LayerType.Shirt, shirt.Id), (LayerType.Hair, hair), (LayerType.FacialHair, beard)],
+            equipment.Items.Select(item => (item.Layer, item.Serial))
+        );
+    }
+
+    [Fact]
+    public void AHumanCorpse_IsNotDrawnWearingWhatWasTakenOutOfIt()
+    {
+        var corpse = HumanCorpse();
+        var shirt = Inside(corpse, 0x40000061, 0x1517);
+        var cloak = Inside(corpse, 0x40000062, 0x1515);
+        corpse.SetProp("corpse.worn", $"{shirt.Id.Value}:{(int)LayerType.Shirt},{cloak.Id.Value}:{(int)LayerType.Cloak}");
+        _items.PlaceOnGround(shirt, MapType.Trammel, new Point3D(3000, 3000, 0));
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal([(LayerType.Cloak, cloak.Id)], _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => (item.Layer, item.Serial)));
+    }
+
+    [Fact]
+    public void AHumanCorpseWithNothingToDraw_OrTheCorpseOfAMonster_IsFollowedByNothing()
+    {
+        HumanCorpse();
+        var orc = Ground(0x40000070, 1501, 1628);
+        orc.ItemId = 0x2006;
+        orc.SetProp("corpse.body", 0x0011);
+        var sword = Inside(orc, 0x40000071, 0x0F5E);
+        orc.SetProp("corpse.worn", $"{sword.Id.Value}:{(int)LayerType.OneHanded}");
+        orc.SetProp("corpse.hair", 0x203B);
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Empty(_sender.Sent.OfType<CorpseEquipmentPacket>());
+        Assert.Empty(_sender.Sent.OfType<ContainerContentPacket>());
+    }
+
+    [Fact]
+    public void AHumanCorpseWhoseWornPropAScriptSpoiled_IsDrawnWithWhatStillReads()
+    {
+        var corpse = HumanCorpse();
+        var shirt = Inside(corpse, 0x40000061, 0x1517);
+        var cloak = Inside(corpse, 0x40000062, 0x1515);
+        // Rubbish, a layer that does not exist, a second item on a taken layer, a serial that is not inside.
+        corpse.SetProp("corpse.worn", $"x:y,{cloak.Id.Value}:200,{shirt.Id.Value}:5,{cloak.Id.Value}:5,999:6,");
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal([(LayerType.Shirt, shirt.Id)], _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => (item.Layer, item.Serial)));
+    }
+
+    [Fact]
     public void MobileDied_ShowsTheDeathToThoseWhoSeeIt_NotToItself()
     {
         var aria = Enter(2, 1496, 1628, AriaSession);
@@ -993,6 +1073,24 @@ public sealed class WorldViewServiceTests
         Enter(2, 1496, 1628, AriaSession);
 
         Assert.Equal([2, 0], _sender.Sent.OfType<WorldItemSaPacket>().Select(packet => packet.Light));
+    }
+
+    private ItemEntity HumanCorpse()
+    {
+        var corpse = Ground(0x40000060, 1500, 1628);
+        corpse.ItemId = 0x2006;
+        corpse.SetProp("corpse.body", 0x0190);
+
+        return corpse;
+    }
+
+    private ItemEntity Inside(ItemEntity container, uint serial, int graphic)
+    {
+        var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = graphic, Amount = 1 };
+        item.PutInContainer(container.Id, new Point2D(40, 60));
+        _items.Add([item]);
+
+        return item;
     }
 
     private ItemEntity Ground(uint serial, int x, int y, string template = "gold")

@@ -31,9 +31,6 @@ public sealed class DeathService : IDeathService
     // Where an item lands in a corpse when the container layouts are not there to say.
     private static readonly Point2D DefaultSpot = new(60, 110);
 
-    // Human, elf and gargoyle, male and female: the bodies that die with a voice of their own.
-    private static readonly HashSet<int> HumanBodies = [0x190, 0x191, 0x25D, 0x25E, 0x29A, 0x29B];
-
     private readonly IMobileService _mobiles;
     private readonly IItemService _items;
     private readonly IItemHandlingService _handling;
@@ -190,9 +187,34 @@ public sealed class DeathService : IDeathService
         corpse.PlaceOnGround(mobile.Map, mobile.Location);
         _items.Add([corpse]);
 
+        var worn = new List<string>();
+
         foreach (var item in Dropped(mobile))
         {
+            // Read before the move takes it away.
+            if (item.MobileId == mobile.Id && item.Layer is { } layer)
+            {
+                worn.Add($"{item.Id.Value}:{(int)layer}");
+            }
+
             _items.MoveToContainer(item, corpse.Id, _layouts?.RandomGridPosition(CorpseProps.Graphic) ?? DefaultSpot);
+        }
+
+        if (worn.Count > 0)
+        {
+            corpse.SetProp(CorpseProps.Worn, string.Join(',', worn));
+        }
+
+        if (mobile.HairStyle > 0)
+        {
+            corpse.SetProp(CorpseProps.Hair, mobile.HairStyle);
+            corpse.SetProp(CorpseProps.HairHue, (int)mobile.HairHue.Value);
+        }
+
+        if (mobile.BeardStyle > 0)
+        {
+            corpse.SetProp(CorpseProps.Beard, mobile.BeardStyle);
+            corpse.SetProp(CorpseProps.BeardHue, (int)mobile.BeardHue.Value);
         }
 
         return corpse;
@@ -244,7 +266,7 @@ public sealed class DeathService : IDeathService
             return sound;
         }
 
-        if (!HumanBodies.Contains(mobile.Body))
+        if (!CorpseProps.IsHumanBody(mobile.Body))
         {
             return null;
         }

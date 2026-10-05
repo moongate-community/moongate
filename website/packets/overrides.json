@@ -4348,5 +4348,58 @@
     ],
     "notes": "Makes the client play the death of the mobile and tie it to its corpse; the client picks the animation of the body.",
     "handler": "DeathService: sent to the players who see an NPC die, after its corpse and before its removal."
+  },
+  "0x89:outgoing": {
+    "category": "Mobiles",
+    "tags": [
+      "Mobiles",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Packet length."
+      },
+      {
+        "offset": "3",
+        "name": "Corpse",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the corpse"
+      },
+      {
+        "offset": "7",
+        "name": "Layer",
+        "type": "byte",
+        "size": "1",
+        "description": "Layer of an item plus one; repeated with the next field for every item"
+      },
+      {
+        "offset": "8",
+        "name": "Item",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the item drawn on that layer"
+      },
+      {
+        "offset": "7+5n",
+        "name": "End",
+        "type": "byte",
+        "size": "1",
+        "description": "Zero."
+      }
+    ],
+    "notes": "What a corpse is drawn wearing. The items come first, in a container content (0x3C) of the corpse.",
+    "handler": "WorldViewService: sent after the corpse of a human, elf or gargoyle body, with what who died wore that is still inside, its hair and its beard."
   }
 }

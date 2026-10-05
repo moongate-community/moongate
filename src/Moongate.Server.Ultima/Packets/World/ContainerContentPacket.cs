@@ -47,6 +47,21 @@ public sealed class ContainerContentPacket : BasePacket<ContainerContentPacket>,
         Length = HeaderLength + Items.Count * (gridBytes ? GridItemLength : ItemLength);
     }
 
+    private ContainerContentPacket(ContainerItemEntry[] entries, bool gridBytes)
+    {
+        Items = entries;
+        GridBytes = gridBytes;
+        Length = HeaderLength + entries.Length * (gridBytes ? GridItemLength : ItemLength);
+    }
+
+    /// <summary>
+    ///     Gets the packet of entries made by hand, such as the hair of a corpse, which is no item.
+    /// </summary>
+    public static ContainerContentPacket Of(IEnumerable<ContainerItemEntry> entries, bool gridBytes)
+    {
+        return new(entries.ToArray(), gridBytes);
+    }
+
     public void Write(ref PacketWriter writer)
     {
         writer.EnsureCapacity(Length);

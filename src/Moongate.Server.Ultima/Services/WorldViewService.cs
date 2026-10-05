@@ -1,3 +1,4 @@
+using System.Globalization;
 using Moongate.Core.Geometry;
 using Moongate.Core.Utils;
 using Moongate.Core.Primitives;
@@ -8,6 +9,7 @@ using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Death;
 using Moongate.Server.Ultima.Data.Internal.World;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
@@ -546,8 +548,90 @@ public sealed class WorldViewService : IWorldViewService
 
         _sender.TrySend(viewer.SessionId, WorldItem(item, viewer.Version, viewer.Account));
         _sender.TrySend(viewer.SessionId, _tooltips.Info(item));
+        SendCorpseDress(viewer, item);
 
         return true;
+    }
+
+    // As ModernUO: after the corpse of a human body, what it is drawn wearing. First the items (0x3C), then their
+    // layers (0x89): what who died wore that is still inside, and its hair and beard, which are no items and get the
+    // virtual serials a mobile's do.
+    private void SendCorpseDress(Viewer viewer, ItemEntity corpse)
+    {
+        if (corpse.ItemId != CorpseProps.Graphic ||
+            WholeProp(corpse, CorpseProps.Body) is not { } body ||
+            !CorpseProps.IsHumanBody(body))
+        {
+            return;
+        }
+
+        var inside = _items.GetContents(corpse.Id).ToDictionary(item => item.Id);
+        var entries = new List<ContainerItemEntry>();
+        var worn = new List<CorpseWornItem>();
+        var layers = new HashSet<LayerType>();
+
+        foreach (var (serial, layer) in WornOf(corpse))
+        {
+            // One item a layer; taken out of the corpse, or hidden from this viewer, it is not drawn.
+            if (inside.TryGetValue(serial, out var item) && viewer.Account >= VisibilityOf(item) && layers.Add(layer))
+            {
+                entries.Add(new(item.Id, item.ItemId, item.Amount, item.GridX ?? 0, item.GridY ?? 0, 0, corpse.Id, item.Hue));
+                worn.Add(new(layer, item.Id));
+            }
+        }
+
+        AddHair(corpse, CorpseProps.Hair, CorpseProps.HairHue, LayerType.Hair, _mobiles.HairSerial(corpse.Id), entries, worn);
+        AddHair(corpse, CorpseProps.Beard, CorpseProps.BeardHue, LayerType.FacialHair, _mobiles.BeardSerial(corpse.Id), entries, worn);
+
+        if (worn.Count == 0)
+        {
+            return;
+        }
+
+        var grid = GameSessionClientExtensions.UsesContainerGrid(viewer.Version);
+        _sender.TrySend(viewer.SessionId, ContainerContentPacket.Of(entries, grid));
+        _sender.TrySend(viewer.SessionId, new CorpseEquipmentPacket(corpse.Id, worn));
+    }
+
+    private static void AddHair(
+        ItemEntity corpse,
+        string graphicProp,
+        string hueProp,
+        LayerType layer,
+        Serial serial,
+        List<ContainerItemEntry> entries,
+        List<CorpseWornItem> worn
+    )
+    {
+        if (WholeProp(corpse, graphicProp) is not { } graphic || graphic == 0)
+        {
+            return;
+        }
+
+        entries.Add(new(serial, graphic, 1, 0, 0, 0, corpse.Id, new Hue((ushort)(WholeProp(corpse, hueProp) ?? 0))));
+        worn.Add(new(layer, serial));
+    }
+
+    // The "serial:layer" pairs of the corpse's worn prop; what a script spoiled is left out.
+    private static IEnumerable<(Serial Serial, LayerType Layer)> WornOf(ItemEntity corpse)
+    {
+        if (corpse.Props?.GetValueOrDefault(CorpseProps.Worn) is not string text)
+        {
+            yield break;
+        }
+
+        foreach (var pair in text.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            var parts = pair.Split(':');
+
+            if (parts.Length == 2 &&
+                uint.TryParse(parts[0], NumberStyles.None, CultureInfo.InvariantCulture, out var serial) &&
+                byte.TryParse(parts[1], NumberStyles.None, CultureInfo.InvariantCulture, out var layer) &&
+                Enum.IsDefined((LayerType)layer))
+            {
+                yield return (new Serial(serial), (LayerType)layer);
+            }
+        }
     }
 
     // The item's own visibility, else its template's; everyone sees an item with neither.
