@@ -88,10 +88,41 @@ skill and saves it.
 | Down | Does not rise, and may be lowered to make room for another that rises when the total is at its cap. |
 | Locked | Does not rise and is never lowered. |
 
-A skill or a lock that does not exist is ignored. Strength, dexterity and intelligence have their
-own locks and their own gain, which come with the next slice.
+A skill or a lock that does not exist is ignored.
 
 `ultima.skills.gain_enabled = false` stops every gain: the checks still pass and fail.
+
+## The stats
+
+A successful check of a player can also raise strength, dexterity or intelligence, as ModernUO's
+classic rule, whether or not the skill itself rose (a failed check never does). The fields
+`str_gain`, `dex_gain` and `int_gain` of the skill in `data/skills.toml` say how much the skill
+favours each stat; a stat whose number is 0 is never tried by that skill.
+
+1. For each stat the skill favours and whose lock is up, a roll with the chance `gain / 33.3` (a
+   gain of 0.8 is 2.4%).
+2. A stat that passes is tried once in `stat_gain_minutes` (10): the wait starts when it is tried,
+   even if nothing rises. It is not saved: after a restart a stat can be tried at once.
+3. The more the three stats add up to near `stat_cap` (225), the more often the player *gives way*:
+   one point is taken from a stat locked down (above 10 points), the lower of the two when both
+   can. Once the total is at the cap it always gives way.
+4. If the total is then below `stat_cap`, the stat is up and below `stat_max` (100), it rises by one.
+
+The maximum of its bar moves with it: strength the hit points, dexterity the stamina and
+intelligence the mana, and the player sees the whole status again. NPCs never gain stats.
+
+Strength, dexterity and intelligence have a lock each, as the skills do, saved with the character:
+the arrows beside them in the status window (`0xBF` subcommand `0x1A` from the client, and `0x19` at
+login to the client).
+
+| Lock | The stat |
+| --- | --- |
+| Up | May rise when a skill is tried. |
+| Down | Does not rise; gives a point away when another rises and the total is at the cap. |
+| Locked | Does not rise and is never lowered. |
+
+Existing characters are all up after the upgrade; the migration `0024_mobile_stat_locks.sql` adds
+the three columns.
 
 ## See also
 

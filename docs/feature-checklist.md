@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 78 done, 🟡 47 partly done, ❌ 143 not built yet.
+**268 systems:** ✅ 79 done, 🟡 46 partly done, ❌ 143 not built yet.
 
 **Coverage: 29%** of the systems done, **37%** counting a partly done system as half.
 
@@ -45,7 +45,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Creation: races, professions, starting items, starting cities | ✅ | [Personalized starting letters](data-files/starting-items.md#personalized-starting-letters) saved in the same creation transaction |
-| Stats | 🟡 | Rolled, stored and set by scripts; no gain, caps or locks |
+| Stats | ✅ | Rolled, stored and set by scripts; a successful skill raises them as ModernUO's classic rule, to 100 each and 225 in all, with the locks of the status window |
 | Skills | 🟡 | Stored, shown in the skill window and set by scripts; [used, checked and gained](skills.md), with the locks of the skill window (up, down, locked). Stat locks are not built |
 | Hit points, mana and stamina regeneration | ✅ | A point at a time, ModernUO's classic rates; mana by intelligence and Meditation; rates per mobile from scripts |
 | Titles | 🟡 | Fame and karma titles in the paperdoll; no skill titles |
@@ -60,7 +60,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Murder reports and bounty boards | ❌ | |
 | Virtues | ❌ | |
 | Status bar | ✅ | Name, stats, hit points, mana, stamina, gold, weight |
-| Extended status (resistances, luck, caps, stat locks) | ❌ | |
+| Extended status (resistances, luck, caps) | ❌ | The stat locks are built, see Stats |
 | Staff privileges (move anything, see hidden, invulnerable) | 🟡 | Hidden ground items and hidden mobiles are shown only to staff, and `.go` takes a game master anywhere; no move anything or invulnerability |
 | Gargoyle flying | ❌ | |
 | Movement cost and stamina use by weight | ✅ | Running costs a point every 16 steps; overloaded, every step costs 5 and more, and with no stamina left the step is refused. No mounts yet |
@@ -125,7 +125,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Carving corpses | ❌ | |
 | Resource regions (ore, wood, fish per area, regrowing) | ❌ | |
 | Resource processing: smelting, looms, spinning wheels, hides | ❌ | |
-| Skill classes and caps (skill total, stat total) | 🟡 | The skill total stops at `ultima.skills.total_cap` (700.0) and lowers the skills locked down; no stat total, no classes |
+| Skill classes and caps (skill total, stat total) | 🟡 | The skill total stops at `ultima.skills.total_cap` (700.0) and the stat total at `ultima.skills.stat_cap` (225), both lowering what is locked down; no classes |
 | Training objects: dummies, pickpocket dips, archery buttes | ❌ | |
 
 ## NPCs
