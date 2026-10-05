@@ -33,6 +33,8 @@ public class UltimaConfig : IConfigSection
 
     public BulletinBoardsConfig BulletinBoards { get; set; } = new();
 
+    public BankConfig Bank { get; set; } = new();
+
     /// <summary>
     ///     Validates the sub-tables before server services begin startup.
     /// </summary>
@@ -119,5 +121,12 @@ public class UltimaConfig : IConfigSection
         }
 
         BulletinBoards.Validate();
+
+        if (Bank is null)
+        {
+            throw new InvalidOperationException("The ultima.bank configuration section cannot be null.");
+        }
+
+        Bank.Validate();
     }
 }

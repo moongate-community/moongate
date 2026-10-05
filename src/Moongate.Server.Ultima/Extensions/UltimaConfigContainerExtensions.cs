@@ -33,6 +33,7 @@ public static class UltimaConfigContainerExtensions
         container.RegisterInstance(ultima.Spawns);
         container.RegisterInstance(ultima.Jail);
         container.RegisterInstance(ultima.BulletinBoards);
+        container.RegisterInstance(ultima.Bank);
 
         return ultima;
     }
