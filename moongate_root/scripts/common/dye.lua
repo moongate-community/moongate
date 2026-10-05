@@ -19,7 +19,8 @@
 local dye = {}
 
 -- The client's own texts.
-dye.TOO_FAR = 500446 -- That is too far away.
+dye.TOO_FAR = 500446     -- That is too far away.
+dye.CANNOT_DYE = 1042083 -- You can not dye that.
 
 local RANGE = 1
 

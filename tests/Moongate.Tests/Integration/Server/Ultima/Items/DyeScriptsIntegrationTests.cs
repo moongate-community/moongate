@@ -9,6 +9,8 @@ using Moongate.Scripting.Services;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Internal.Items;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
@@ -381,6 +383,35 @@ public sealed class DyeScriptsIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADyeTub_OnAnItemHeldOnTheCursor_SaysItCannotBeDyed()
+    {
+        _tub.Hue = new Hue(0x0026);
+        await HoldAsync(_shirt);
+        _targets.Result = TargetResult.ForObject(_shirt.Id);
+
+        Use(_tub);
+
+        Assert.Empty(_errors);
+        Assert.Equal([SelectClothing, CannotDye], Told());
+        Assert.Equal(0, _shirt.Hue.Value);
+        Assert.Empty(_speech.Sounds);
+    }
+
+    [Fact]
+    public async Task Dyes_OnATubHeldOnTheCursor_SayItCannotBeDyed()
+    {
+        await HoldAsync(_tub);
+        _targets.Result = TargetResult.ForObject(_tub.Id);
+        _pickers.Result = 0x0026;
+
+        Use(_dyes);
+
+        Assert.Empty(_errors);
+        Assert.Equal([SelectTub, CannotDye], Told());
+        Assert.Equal(0, _tub.Hue.Value);
+    }
+
+    [Fact]
     public void ADyeTub_WhenTheCursorIsPutAway_DoesNothingMore()
     {
         _targets.Result = TargetResult.Canceled(TargetCancelType.Canceled);
@@ -422,6 +453,14 @@ public sealed class DyeScriptsIntegrationTests : IAsyncLifetime
     private List<int> Told()
     {
         return _speech.ToldClilocs.Where(told => told.Player.Id == _aria.Id).Select(told => told.Cliloc).ToList();
+    }
+
+    // Aria lifts the item: it keeps its place until it is dropped.
+    private Task HoldAsync(ItemEntity item)
+    {
+        Assert.True(_fixture.Sessions.TryGetByCharacterId(_aria.Id, out var session));
+
+        return _fixture.Network.ExecuteOnLoopAsync(() => session.Set(ItemSessionKeys.Held, new HeldItem(item.Id)));
     }
 
     private void OnTheGround(ItemEntity item, int tilesAway)

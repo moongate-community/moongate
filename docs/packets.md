@@ -271,8 +271,8 @@ running."
 
 `IHuePickerService` shows a player the client's hue picker (`0x95`) with a graphic in it and hands
 the hue picked to a callback on the game loop. A player has one picker at a time: a new one ends the
-old with no hue, and so does a closing session. Picker ids count up per session, as ModernUO's, and
-are not the serial of an item: an answer with another id, or with no picker open, is ignored, so a
+old with no hue, and so does a closing session. Picker ids count up per session and are not the serial of an
+item, as in ModernUO: an answer with another id, or with no picker open, is ignored, so a
 client cannot recolour anything by sending `0x95` on its own (UOX3 recolours whatever serial the
 packet names). The hue is masked with `0x3FFF` and kept from 2 to 1001, as ModernUO's
 `ClipDyedHue`. A client that closes the picker sends nothing, so the callback may never run: whoever

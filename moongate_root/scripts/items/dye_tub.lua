@@ -24,7 +24,6 @@ local SOUND = 0x23E
 -- The client's own texts.
 local SELECT_CLOTHING = 500859  -- Select the clothing to dye.
 local WORN = 500861             -- Can't Dye clothing that is being worn.
-local CANNOT_DYE = 1042083      -- You can not dye that.
 
 -- Called when a player double clicks the tub.
 function dye_tub.on_use(serial, user)
@@ -38,7 +37,7 @@ function dye_tub.on_use(serial, user)
         local what = picked.serial
 
         if not item.dyeable(what) then
-            dye.tell(user, CANNOT_DYE)
+            dye.tell(user, dye.CANNOT_DYE)
             return
         end
 
@@ -52,9 +51,13 @@ function dye_tub.on_use(serial, user)
             return
         end
 
-        if item.set_hue(what, item.hue(serial) or 0) then
-            item.play_sound(serial, SOUND)
+        -- An item held on the cursor takes no hue.
+        if not item.set_hue(what, item.hue(serial) or 0) then
+            dye.tell(user, dye.CANNOT_DYE)
+            return
         end
+
+        item.play_sound(serial, SOUND)
     end)
 
     return true

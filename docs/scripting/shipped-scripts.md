@@ -125,7 +125,8 @@ the converted templates of the dyes (`0x0fa9_dyes`) and of the tub (`0x0fab_dyin
 What can be dyed is an item whose template says [`dyeable = true`](../templates.md), as the clothing
 converted from UOX3 does. It must not be worn, and the player must reach it, the tub and the dyes:
 carried, or on the ground within 1 tile. Neither the dyes nor the tub is used up, and a tub never
-dyed has hue 0, which takes the colour off.
+dyed has hue 0, which takes the colour off. An item held on the cursor is not dyed ("You can not dye
+that."), and one inside a container on the ground counts as too far: take it first.
 
 The texts are the client's own, read in its language:
 

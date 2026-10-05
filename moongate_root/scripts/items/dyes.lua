@@ -61,7 +61,10 @@ function dyes.on_use(serial, user)
                 return
             end
 
-            item.set_hue(tub, hue)
+            -- A tub held on the cursor takes no hue.
+            if not item.set_hue(tub, hue) then
+                dye.tell(user, dye.CANNOT_DYE)
+            end
         end)
     end)
 
