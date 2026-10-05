@@ -49,6 +49,16 @@ runs `scripts/items/readable_scroll.lua`. A double click opens a parchment gump
 with a scrollable body. Stored text is plain; HTML characters are escaped only
 when displayed, and line breaks are preserved.
 
+## Delivery at character creation
+
+The shipped [starting items](starting-items.md#personalized-starting-letters)
+common set delivers `welcome_letter` to each new character's backpack with
+`contact_name = "Vega"`. Set `book_template` and `book_values` in a starting-item
+entry to deliver any catalog document. Values and the new character's name are
+resolved once, and text is persisted with the character and starting items in
+one transaction. Existing roots must add the entry to their preserved
+`data/starting_items.toml`.
+
 ## Fields
 
 | Field | Meaning |

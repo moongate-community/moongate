@@ -1,7 +1,8 @@
 # Starting items
 
 `starting_items.toml` holds the items a new character gets. The shipped file is written
-by [`mgctl convert uox`](../uox3-migration.md#starting-items) from UOX3's `newbie.dfn`.
+from UOX3's `newbie.dfn`, with shard-specific entries such as the welcome letter.
+[`mgctl convert uox`](../uox3-migration.md#starting-items) can regenerate its UOX3 entries.
 `IStartingItemsService.GiveAsync` applies it to a new character.
 
 A character gets every `[[set]]` with `common = true`, plus every set whose filters it
@@ -31,6 +32,8 @@ equip = true
 | `amount` | How many, as dice; unset is 1 |
 | `hue` | The hue to give the item; unset keeps its own |
 | `equip` | `true` puts the item on the character, `false` in the backpack |
+| `book_template` | Optional id from `templates/books/<id>.toml`; writes its text on the created item |
+| `book_values` | Inline table of the document's declared custom values; strings, finite numbers or bools |
 | `newbie` | `false` makes the item drop on death; unset or `true` makes it `Newbied` (kept) |
 
 `GiveAsync` works in one transaction on the world database; if anything fails, the
@@ -83,6 +86,46 @@ items = ["0x1f9e_pitcher_of_water"]
 equip = false
 ```
 
+## Personalized starting letters
+
+The shipped common set gives every new character a welcome letter in the backpack.
+Its source is [`templates/books/welcome_letter.toml`](books.md), and its recipient
+name is the new character's name, even before that character enters the world.
+
+Add this entry **inside your existing common set**, alongside its other
+`[[set.items]]` entries:
+
+```toml
+[[set.items]]
+items = ["readable_scroll"]
+equip = false
+book_template = "welcome_letter"
+book_values = { contact_name = "Vega" }
+```
+
+Use `book_template` without the `.toml` suffix. Supply every declared custom
+variable, with no extra keys. Numbers use invariant formatting, bools become
+`true` or `false`, and inserted strings are literal: `$player_name` inside a
+custom value is not expanded again. Built-in values come from the creation
+context; do not put them in `book_values`.
+
+Title, author and body use `[localization].language` and are saved as
+`book.template`, `book.title`, `book.author` and `book.content` before the item is
+persisted. The displayed name follows the rendered title. Trading the letter,
+renaming its recipient or editing the source cannot change its saved text.
+`amount` creates separate, nonstacking copies; normal hue, newbie and backpack
+placement rules still apply.
+
+All item ids in the entry must explicitly resolve to `stackable = false` and
+use `script_id = "readable_scroll"` or `"jail_note"`. Text entries must have
+`equip = false`. If rendering fails during character creation, the character,
+backpack and all starting items are rolled back in the same transaction.
+
+An existing root keeps its edited `data/starting_items.toml` when you run
+`mgctl init`: add the entry above yourself and restart the server. Removing it
+disables the letter. `mgctl convert uox` regenerates starting items without this
+shard-specific binding; add it again after converting.
+
 ## Validation at startup
 
 The server stops when:
@@ -92,7 +135,10 @@ The server stops when:
 - an entry has no items, names an item that is not an item template, or has an
   `amount` that can roll below 1 or above 65535;
 - `ultima.items.backpack_template` or `ultima.items.gold_template` is not an item template;
-- the gold template does not stack.
+- the gold template does not stack;
+- a text entry references an unknown document, is equipped, uses an unsuitable
+  item, supplies invalid/missing/extra values or cannot render valid text;
+- an entry supplies `book_values` without `book_template`.
 
 ## See also
 

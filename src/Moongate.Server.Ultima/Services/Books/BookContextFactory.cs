@@ -8,7 +8,7 @@ using Moongate.Server.Ultima.Entities.World;
 namespace Moongate.Server.Ultima.Services.Books;
 
 /// <summary>
-///     Captures the same built-in values as MOTD on the game loop.
+///     Captures the same built-in values as MOTD; live character names are read on the game loop.
 /// </summary>
 public sealed class BookContextFactory
 {
@@ -34,6 +34,15 @@ public sealed class BookContextFactory
             throw new InvalidOperationException("Document context must be captured on the game loop.");
         }
 
+        return CaptureForCreation(recordedPlayerName ?? recipient.Name);
+    }
+
+    /// <summary>
+    ///     Captures an immutable name for a character that is not live yet. Session reads and the admin snapshot are
+    ///     thread-safe, so transactional character creation can call this off the game loop.
+    /// </summary>
+    public TextTemplateContext CaptureForCreation(string playerName)
+    {
         var info = _serverInfo.GetSnapshot();
         return new()
         {
@@ -41,7 +50,7 @@ public sealed class BookContextFactory
             RealmName = _realm.Descriptor.Name,
             Version = info.Version,
             Codename = info.Codename,
-            PlayerName = recordedPlayerName ?? recipient.Name,
+            PlayerName = playerName,
             UsersOnline = _sessions.GetAll().Count(session => session.CharacterId.IsValid && session.NetworkSession.Client is { IsConnected: true })
         };
     }

@@ -44,7 +44,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| Creation: races, professions, starting items, starting cities | ✅ | |
+| Creation: races, professions, starting items, starting cities | ✅ | [Personalized starting letters](data-files/starting-items.md#personalized-starting-letters) saved in the same creation transaction |
 | Stats | 🟡 | Rolled, stored and set by scripts; no gain, caps or locks |
 | Skills | 🟡 | Stored, shown in the skill window and set by scripts; no use, gain or locks |
 | Hit points, mana and stamina regeneration | ✅ | A point at a time, ModernUO's classic rates; mana by intelligence and Meditation; rates per mobile from scripts |
