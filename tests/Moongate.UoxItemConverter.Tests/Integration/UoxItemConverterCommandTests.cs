@@ -147,6 +147,71 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     [Fact]
+    public void Run_DyesTheDyeTubAndWhatUox3CallsDyeable_GetTheirScriptsAndTheFlag()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [base_clothing]
+            {
+            id=0x1f03
+            dyeable=1
+            }
+            [0x1517]
+            {
+            get=base_clothing
+            name=shirt
+            id=0x1517
+            }
+            [0x204e]
+            {
+            get=base_clothing
+            name=death shroud
+            id=0x204e
+            dyeable=0
+            }
+            [0x2b68]
+            {
+            name=snowy cloak
+            id=0x2b68
+            dye=1
+            }
+            [0x0fa9]
+            {
+            name=dyes
+            id=0x0fa9
+            type=208
+            }
+            [0x0fab]
+            {
+            name=dying tub
+            id=0x0fab
+            }
+            [0x0f5e]
+            {
+            name=broadsword
+            id=0x0f5e
+            }
+            """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems();
+        var byName = items.Values.Where(item => item.Id != "base_clothing").ToDictionary(item => item.Name!);
+        Assert.True(items["base_clothing"].Dyeable);
+        // The shirt has it from its base, written once.
+        Assert.Null(byName["shirt"].Dyeable);
+        Assert.False(byName["death shroud"].Dyeable);
+        Assert.True(byName["snowy cloak"].Dyeable);
+        Assert.Null(byName["broadsword"].Dyeable);
+        // UOX3 types the dyes in the block and the tub by its graphic, in itemtypes.dfn.
+        Assert.Equal("dyes", byName["dyes"].ScriptId);
+        Assert.Equal("dye_tub", byName["dying tub"].ScriptId);
+        Assert.True(string.IsNullOrEmpty(byName["broadsword"].ScriptId));
+    }
+
+    [Fact]
     public void Run_TheBaseFields_AreConverted()
     {
         _dirs.WriteSource(

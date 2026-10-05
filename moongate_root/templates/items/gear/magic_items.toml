@@ -165,6 +165,7 @@ name = "a mask of orcish kin"
 rarity = "common"
 weight = 4.0
 layer = "helm"
+dyeable = false
 buy_price = 50
 sell_price = 25
 decays = true

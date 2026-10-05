@@ -5,6 +5,7 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Ultima.Handlers.Characters;
 using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Handlers.Gumps;
+using Moongate.Server.Ultima.Handlers.HuePicking;
 using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Handlers.Movement;
@@ -44,6 +45,8 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterAsyncPacketHandler<UnicodeSpeechRequestPacket, SpeechRequestPacketHandler>();
         container.RegisterIncomingPacket<TargetResponsePacket>();
         container.RegisterPacketHandler<TargetResponsePacket, TargetResponsePacketHandler>();
+        container.RegisterIncomingPacket<HuePickerResponsePacket>();
+        container.RegisterPacketHandler<HuePickerResponsePacket, HuePickerResponsePacketHandler>();
         container.RegisterIncomingPacket<TextPromptResponsePacket>();
         container.RegisterPacketHandler<TextPromptResponsePacket, TextPromptResponsePacketHandler>();
         container.RegisterIncomingPacket<GumpResponsePacket>();

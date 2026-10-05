@@ -40,7 +40,7 @@ public sealed class ItemModuleTests : IAsyncLifetime
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
-            new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) },
+            new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E), Dyeable = true, ScriptId = "blade" },
             new ItemTemplate { Id = "bag", ItemId = new Serial(0x0E76) },
             new ItemTemplate { Id = "shirt", ItemId = new Serial(0x1517), Layer = LayerType.Shirt },
             // The graphic does not stack by its tiledata, the template says it does.
@@ -394,6 +394,24 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Equal(0, result[1].Read<int>());
         Assert.Equal(_backpack.Id.Value, result[2].Read<uint>());
         Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[3], result[4]));
+    }
+
+    [Fact]
+    public void Dyeable_IsWhatTheTemplateOfTheItemSays()
+    {
+        // The sword's template is dyeable, the potion has no template, 12 is no item.
+        var result = Run("return item.dyeable(0x40000004), item.dyeable(0x40000002), item.dyeable(12)");
+
+        Assert.Equal([true, false, false], result.Select(value => value.Read<bool>()));
+    }
+
+    [Fact]
+    public void Script_IsTheScriptOfTheTemplate_OrNil()
+    {
+        var result = Run("return item.script(0x40000004), item.script(0x40000002), item.script(12)");
+
+        Assert.Equal("blade", result[0].Read<string>());
+        Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[1], result[2]));
     }
 
     [Fact]

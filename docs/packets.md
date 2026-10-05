@@ -71,6 +71,8 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x6E` | `MobileAnimationPacket` | Outgoing | Fixed 14 | — |
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
+| `0x95` | `HuePickerPacket` | Outgoing | Fixed 9 | — |
+| `0x95` | `HuePickerResponsePacket` | Incoming | Fixed 9 | `HuePickerResponsePacketHandler`: gives the hue picked to the player's open picker |
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0x12`, `0xB8`, `0xE1`, `0xF0` | `TextCommandPacket`, `ProfileRequestPacket`, `ClientTypePacket`, `ProtocolExtensionPacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip; the others are ignored for now |
@@ -266,6 +268,15 @@ waiting for a target does not hold back the session's packets; its output arrive
 A player runs one command at a time: another one meanwhile is refused with "A command is already
 running."
 `.where` (game masters) prints what a target picks.
+
+`IHuePickerService` shows a player the client's hue picker (`0x95`) with a graphic in it and hands
+the hue picked to a callback on the game loop. A player has one picker at a time: a new one ends the
+old with no hue, and so does a closing session. Picker ids count up per session, as ModernUO's, and
+are not the serial of an item: an answer with another id, or with no picker open, is ignored, so a
+client cannot recolour anything by sending `0x95` on its own (UOX3 recolours whatever serial the
+packet names). The hue is masked with `0x3FFF` and kept from 2 to 1001, as ModernUO's
+`ClipDyedHue`. A client that closes the picker sends nothing, so the callback may never run: whoever
+opens a picker checks again, in the callback, what was true when it opened.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.

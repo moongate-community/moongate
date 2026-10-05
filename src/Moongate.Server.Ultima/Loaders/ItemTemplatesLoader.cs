@@ -132,6 +132,7 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         child.Stackable ??= parent.Stackable;
         child.Layer ??= parent.Layer;
         child.TwoHandedWeapon ??= parent.TwoHandedWeapon;
+        child.Dyeable ??= parent.Dyeable;
         child.BuyPrice ??= parent.BuyPrice;
         child.SellPrice ??= parent.SellPrice;
         child.Decays ??= parent.Decays;

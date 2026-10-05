@@ -21,6 +21,8 @@ internal static class ItemTemplateBuilder
 
     // UOX3's item type of drinks (IT_DRINK).
     private const int DrinkType = 105;
+    private const int DyesType = 208;
+    private const uint DyeTubGraphic = 0x0FAB;
 
     // What UOX3 files under drinks and nobody drinks: an ingredient.
     private static readonly HashSet<string> NotDrunk = new(StringComparer.Ordinal) { "0x09ec_jar_of_honey" };
@@ -123,6 +125,25 @@ internal static class ItemTemplateBuilder
         {
             // What UOX3 lets a player drink: scripts/items/drink.lua, in place of UOX3's own pitchers.js.
             template.ScriptId = "drink";
+        }
+        else if (block.Fields.TryGetValue("TYPE", out var dyesType) &&
+                 UoxNumber.TryParse(dyesType, out var dyesKind) &&
+                 dyesKind == DyesType)
+        {
+            // UOX3's dyes are hard-coded: scripts/items/dyes.lua.
+            template.ScriptId = "dyes";
+        }
+        else if (block.Header.StartsWith("0x", StringComparison.OrdinalIgnoreCase) && itemId.Value == DyeTubGraphic)
+        {
+            // UOX3 types the tub by its graphic, in itemtypes.dfn, not in its block: scripts/items/dye_tub.lua.
+            template.ScriptId = "dye_tub";
+        }
+
+        // dyeable= and dye= are the same tag in UOX3; 0 takes it away from what a base gave.
+        if ((block.Fields.TryGetValue("dyeable", out var dyeableText) || block.Fields.TryGetValue("dye", out dyeableText)) &&
+            UoxNumber.TryParse(dyeableText, out var dyeable))
+        {
+            template.Dyeable = dyeable != 0;
         }
 
         // UOX3's visible= is 0 for everyone; 1 (hidden), 2 (magically invisible) and 3 (GM hidden) all keep the

@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 76 done, 🟡 42 partly done, ❌ 150 not built yet.
+**268 systems:** ✅ 76 done, 🟡 43 partly done, ❌ 149 not built yet.
 
 **Coverage: 28%** of the systems done, **36%** counting a partly done system as half.
 
@@ -188,7 +188,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Maps and treasure maps | ❌ | |
 | Runes, recall and gates | ❌ | |
 | Moongates and teleporters | 🟡 | Walk-on teleporters and those that answer a word, also across maps, placed by `.decorate` with ModernUO's world and dungeon ones; public moongates with a destination gump; plain moongates with one destination (`.moongate`); no Gate Travel |
-| Dyes and dye tubs | ❌ | |
+| Dyes and dye tubs | 🟡 | Dyes give a dye tub the hue picked in the client's hue picker, the tub gives it to what is dyeable, as clothing is; no leather, furniture, black or metallic tubs |
 | Hair stylist, hair dye and disguise kit | ❌ | |
 | Secure trade | ❌ | |
 | Magic items and item properties | ❌ | |

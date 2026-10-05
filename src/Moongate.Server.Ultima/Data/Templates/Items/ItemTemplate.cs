@@ -102,6 +102,12 @@ public class ItemTemplate
     public bool? TwoHandedWeapon { get; set; }
 
     /// <summary>
+    ///     Whether a dye tub can give the item its hue, as UOX3's <c>dyeable</c>: clothing is, a death robe is not.
+    ///     Unset is not dyeable.
+    /// </summary>
+    public bool? Dyeable { get; set; }
+
+    /// <summary>
     ///     The price vendors sell the item for; unset means vendors do not sell it.
     /// </summary>
     public int? BuyPrice { get; set; }
