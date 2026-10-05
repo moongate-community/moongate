@@ -91,4 +91,35 @@ public sealed class StubBankService : IBankService
 
         return BankResultType.Ok;
     }
+
+    public List<(MobileEntity Player, int Amount)> Checks { get; } = [];
+
+    public List<(MobileEntity Player, ItemEntity Check)> Cashed { get; } = [];
+
+    /// <summary>
+    ///     What cashing a check deposits; the worth of each item, for those that are checks.
+    /// </summary>
+    public int CashDeposits { get; set; }
+
+    public Dictionary<Serial, long> Worths { get; } = [];
+
+    public BankResultType WriteCheck(MobileEntity player, int amount)
+    {
+        Checks.Add((player, amount));
+
+        return Result ?? BankResultType.Ok;
+    }
+
+    public BankResultType Cash(MobileEntity player, ItemEntity check, out int deposited)
+    {
+        Cashed.Add((player, check));
+        deposited = Result is null ? CashDeposits : 0;
+
+        return Result ?? BankResultType.Ok;
+    }
+
+    public long? WorthOf(ItemEntity item)
+    {
+        return Worths.TryGetValue(item.Id, out var worth) ? worth : null;
+    }
 }

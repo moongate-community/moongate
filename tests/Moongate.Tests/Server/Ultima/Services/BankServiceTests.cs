@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -51,7 +52,8 @@ public sealed class BankServiceTests : IAsyncLifetime
                 new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED), Weight = 0.02m },
                 new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75), MaxWeight = 400 },
                 new ItemTemplate { Id = "bag", ItemId = new Serial(0x0E76) },
-                new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) }
+                new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) },
+                new ItemTemplate { Id = BankService.CheckTemplate, ItemId = new Serial(0x14F0) }
             )
         );
         _templates = templates;
@@ -622,6 +624,269 @@ public sealed class BankServiceTests : IAsyncLifetime
     private WeightService RealWeights()
     {
         return new(_items, _templates, new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0));
+    }
+
+    [Fact]
+    public async Task WriteCheck_TurnsCoinsOfTheBankIntoACheckInTheBox()
+    {
+        var box = await BoxAsync();
+        var pile = Gold(box, 20_000);
+
+        Assert.Equal(BankResultType.Ok, _bank.WriteCheck(_aria, 5000));
+
+        Assert.Equal(15_000, pile.Amount);
+        var check = Assert.Single(_items.GetContents(box.Id), item => item.TemplateId == BankService.CheckTemplate);
+        Assert.True(check.TryGetProp<long>(ItemPropKeys.BankWorth, out var worth));
+        Assert.Equal(5000, worth);
+        // Its name is the client's "A bank check".
+        Assert.True(check.TryGetProp<int>(ItemPropKeys.LabelNumber, out var label));
+        Assert.Equal(BankService.CheckLabel, label);
+        Assert.Equal(20_000, _bank.Balance(_aria));
+    }
+
+    [Theory, InlineData(4999, BankResultType.CheckTooSmall), InlineData(1_000_001, BankResultType.CheckTooBig), InlineData(0, BankResultType.BadAmount)]
+    public async Task WriteCheck_OutOfTheBoundsOfTheSettings_IsRefused(int amount, BankResultType refusal)
+    {
+        Gold(await BoxAsync(), 60_000);
+
+        Assert.Equal(refusal, _bank.WriteCheck(_aria, amount));
+        Assert.Equal(60_000, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task WriteCheck_TheSmallestAndTheLargest_AreWritten()
+    {
+        _config.MaxCheck = 50_000;
+        Gold(await BoxAsync(), 60_000);
+
+        Assert.Equal(BankResultType.Ok, _bank.WriteCheck(_aria, 5000));
+        Assert.Equal(BankResultType.Ok, _bank.WriteCheck(_aria, 50_000));
+    }
+
+    // A check is paid with coins: another check is not money for it.
+    [Fact]
+    public async Task WriteCheck_IsPaidWithCoinsOnly()
+    {
+        var box = await BoxAsync();
+        Gold(box, 4000);
+        Check(box, 50_000);
+
+        Assert.Equal(BankResultType.NotEnoughGold, _bank.WriteCheck(_aria, 5000));
+        Assert.Equal(54_000, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task WriteCheck_IntoAFullBox_IsRefused_WhenTheCoinsThatPayItFreeNoPlace()
+    {
+        _config.MaxItems = 2;
+        var box = await BoxAsync();
+        In(box, "sword");
+        var pile = Gold(box, 20_000);
+
+        Assert.Equal(BankResultType.BankFull, _bank.WriteCheck(_aria, 5000));
+        Assert.Equal(20_000, pile.Amount);
+    }
+
+    // The pile that pays the check is used up: the check takes its place.
+    [Fact]
+    public async Task WriteCheck_IntoAFullBox_IsWritten_WhenAPileIsUsedUp()
+    {
+        _config.MaxItems = 2;
+        var box = await BoxAsync();
+        In(box, "sword");
+        Gold(box, 5000);
+
+        Assert.Equal(BankResultType.Ok, _bank.WriteCheck(_aria, 5000));
+
+        Assert.Equal(2, _items.GetContents(box.Id).Count);
+        Assert.Equal(5000, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task WriteCheck_WhenNoSerialIsReady_IsBusy_AndNothingMoves()
+    {
+        var pile = Gold(await BoxAsync(), 20_000);
+        _serials.Serials.Clear();
+
+        Assert.Equal(BankResultType.Busy, _bank.WriteCheck(_aria, 5000));
+        Assert.Equal(20_000, pile.Amount);
+    }
+
+    [Fact]
+    public void WriteCheck_WithNoBankBoxYet_SaysSo()
+    {
+        Assert.Equal(BankResultType.NoBank, _bank.WriteCheck(_aria, 5000));
+    }
+
+    [Fact]
+    public async Task Cash_TurnsACheckInTheBoxIntoCoins_ToppingUpThePilesThere()
+    {
+        var box = await BoxAsync();
+        var pile = Gold(box, 59_000);
+        var check = Check(box, 125_000);
+
+        Assert.Equal(BankResultType.Ok, _bank.Cash(_aria, check, out var deposited));
+
+        Assert.Equal(125_000, deposited);
+        Assert.False(_items.TryGet(check.Id, out _));
+        Assert.Equal(60_000, pile.Amount);
+        Assert.Equal([4000, 60_000, 60_000, 60_000], _items.GetContents(box.Id).Select(item => item.Amount).Order());
+        Assert.Equal(184_000, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task Cash_ACheckInsideABagOfTheBox_Works()
+    {
+        var box = await BoxAsync();
+        var check = Check(In(box, "bag"), 5000);
+
+        Assert.Equal(BankResultType.Ok, _bank.Cash(_aria, check, out var deposited));
+        Assert.Equal((5000, 5000), (deposited, _bank.Balance(_aria)));
+    }
+
+    // Written and cashed again and again: the bank holds the same gold to the coin.
+    [Fact]
+    public async Task WriteCheck_ThenCash_ManyTimes_KeepsTheGoldOfTheBank()
+    {
+        var box = await BoxAsync();
+        Gold(box, 60_000);
+        Gold(box, 37_123);
+
+        for (var round = 0; round < 5; round++)
+        {
+            Assert.Equal(BankResultType.Ok, _bank.WriteCheck(_aria, 5000 + round * 7001));
+            Assert.Equal(97_123, _bank.Balance(_aria));
+            var check = _items.GetContents(box.Id).Single(item => item.TemplateId == BankService.CheckTemplate);
+            Assert.Equal(BankResultType.Ok, _bank.Cash(_aria, check, out _));
+            Assert.Equal(97_123, _bank.Balance(_aria));
+        }
+
+        Assert.DoesNotContain(_items.GetContents(box.Id), item => item.TemplateId == BankService.CheckTemplate);
+        Assert.Equal(97_123, _items.GetContents(box.Id).Sum(item => item.Amount));
+    }
+
+    // Room for one more pile only: it takes sixty thousand, and the check keeps the rest.
+    [Fact]
+    public async Task Cash_IntoABoxWithRoomForPartOfIt_DepositsWhatFits_AndTheCheckKeepsTheRest()
+    {
+        _config.MaxItems = 3;
+        var box = await BoxAsync();
+        In(box, "sword");
+        var check = Check(box, 150_000);
+
+        Assert.Equal(BankResultType.Ok, _bank.Cash(_aria, check, out var deposited));
+
+        Assert.Equal(60_000, deposited);
+        Assert.True(check.TryGetProp<long>(ItemPropKeys.BankWorth, out var left));
+        Assert.Equal(90_000, left);
+        Assert.Equal(150_000, _bank.Balance(_aria));
+        Assert.Equal(3, _items.GetContents(box.Id).Count);
+    }
+
+    [Fact]
+    public async Task Cash_IntoABoxWithRoomForNothing_IsRefused_AndTheCheckIsWhole()
+    {
+        _config.MaxItems = 2;
+        var box = await BoxAsync();
+        In(box, "sword");
+        var check = Check(box, 150_000);
+
+        Assert.Equal(BankResultType.BankFull, _bank.Cash(_aria, check, out var deposited));
+
+        Assert.Equal(0, deposited);
+        Assert.True(check.TryGetProp<long>(ItemPropKeys.BankWorth, out var worth));
+        Assert.Equal(150_000, worth);
+    }
+
+    // The check goes away and one pile takes its place.
+    [Fact]
+    public async Task Cash_ACheckOfOnePile_InAFullBox_Works()
+    {
+        _config.MaxItems = 2;
+        var box = await BoxAsync();
+        In(box, "sword");
+        var check = Check(box, 60_000);
+
+        Assert.Equal(BankResultType.Ok, _bank.Cash(_aria, check, out var deposited));
+        Assert.Equal(60_000, deposited);
+        Assert.Equal(2, _items.GetContents(box.Id).Count);
+    }
+
+    [Fact]
+    public async Task Cash_ACheckThatIsNotInThePlayersBox_IsRefused()
+    {
+        await BoxAsync();
+        var inBackpack = Check(Backpack(), 5000);
+
+        Assert.Equal(BankResultType.NotInBank, _bank.Cash(_aria, inBackpack, out var deposited));
+        Assert.Equal(0, deposited);
+        Assert.True(_items.TryGet(inBackpack.Id, out _));
+        Assert.Equal(0, _bank.Balance(_aria));
+    }
+
+    // A prop anybody could set on anything: only a check is a check.
+    [Fact]
+    public async Task Cash_WhatIsNotACheck_EvenWithAWorth_IsRefused()
+    {
+        var box = await BoxAsync();
+        var sword = In(box, "sword");
+        sword.SetProp(ItemPropKeys.BankWorth, 1_000_000L);
+
+        Assert.Equal(BankResultType.NotInBank, _bank.Cash(_aria, sword, out _));
+        Assert.Equal(0, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task Balance_CountsTheChecks()
+    {
+        var box = await BoxAsync();
+        Gold(box, 1200);
+        Check(box, 5000);
+        Check(In(box, "bag"), 7000);
+
+        Assert.Equal(13_200, _bank.Balance(_aria));
+    }
+
+    // The coins first; then the check gives the difference and keeps the rest.
+    [Fact]
+    public async Task Withdraw_TakesFromAChecks_WhenTheCoinsAreNotEnough()
+    {
+        var box = await BoxAsync();
+        var pile = Gold(box, 300);
+        var check = Check(box, 5000);
+        var backpack = Backpack();
+
+        Assert.Equal(BankResultType.Ok, _bank.Withdraw(_aria, 1000));
+
+        Assert.False(_items.TryGet(pile.Id, out _));
+        Assert.True(check.TryGetProp<long>(ItemPropKeys.BankWorth, out var left));
+        Assert.Equal(4300, left);
+        Assert.Equal(1000, Assert.Single(_items.GetContents(backpack.Id)).Amount);
+        Assert.Equal(4300, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task Withdraw_ThatEmptiesACheck_DeletesIt()
+    {
+        var box = await BoxAsync();
+        var small = Check(box, 5000);
+        var large = Check(box, 9000);
+        Backpack();
+
+        Assert.Equal(BankResultType.Ok, _bank.Withdraw(_aria, 6000));
+
+        Assert.False(_items.TryGet(small.Id, out _));
+        Assert.True(large.TryGetProp<long>(ItemPropKeys.BankWorth, out var left));
+        Assert.Equal(8000, left);
+    }
+
+    private ItemEntity Check(ItemEntity container, long worth)
+    {
+        var check = In(container, BankService.CheckTemplate);
+        check.ItemId = 0x14F0;
+        check.SetProp(ItemPropKeys.BankWorth, worth);
+
+        return check;
     }
 
     private async Task<ItemEntity> BoxAsync()
