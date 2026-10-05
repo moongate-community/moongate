@@ -38,6 +38,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly FakeScriptEngine _engine = new();
     private readonly StubGameLoop _loop = new();
     private readonly RecordingTimerService _timers = new();
+    private readonly RecordingCrimeService _crimes = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                  .Item(0x0EED, TileFlagType.Generic, 0)
                                                  .Item(0x0E75, TileFlagType.Container, 0)
@@ -108,6 +109,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
             _loop,
             new Lazy<IScriptEngine>(() => _engine),
             _timers,
+            crimes: _crimes,
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -615,6 +617,27 @@ public sealed class DeathServiceTests : IAsyncLifetime
         _items.MoveToContainer(corpse, chest.Id, new Point2D(10, 10));
 
         Assert.Equal(ResurrectResultType.NotACorpse, (await _death.ResurrectAsync(corpse.Id)).Type);
+    }
+
+    [Fact]
+    public void Kill_ACriminal_PardonsIt_SoABodyThatStillFallsIsWantedNoMore()
+    {
+        // A human body stays in the world while it falls: the next guard would turn on it.
+        _orc.Body = 0x0190;
+        _orc.Criminal = true;
+
+        _death.Kill(_orc);
+
+        Assert.False(_orc.Criminal);
+        Assert.Equal(["pardon 900"], _crimes.Calls);
+    }
+
+    [Fact]
+    public void Kill_WhoIsNoCriminal_PardonsNobody()
+    {
+        _death.Kill(_orc);
+
+        Assert.Empty(_crimes.Calls);
     }
 
     [Fact]

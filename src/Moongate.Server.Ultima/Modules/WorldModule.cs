@@ -250,6 +250,29 @@ public sealed class WorldModule
     }
 
     /// <summary>
+    ///     Gets a free tile one step from a spot, such as where to appear beside someone instead of on it;
+    ///     <c>local spot = world.spot_beside(there.map, there.x, there.y, there.z)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "A tile one step from x, y, z of the map that a walking mobile standing there could step onto, so not one behind a wall, with nobody on it, as { map, x, y, z }: where to appear beside someone instead of on it. The first found going round from a random direction; nil when none is free, the spot is outside the map or the map is not loaded.")]
+    public LuaTable? SpotBeside(MapType map, int x, int y, int z)
+    {
+        if (_movement is null ||
+            !_sectors.IsInside(map, x, y) ||
+            Services.Internal.SpotBeside.Find(_movement, _sectors, map, new Point3D(x, y, z)) is not { } spot)
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        table["map"] = (int)map;
+        table["x"] = spot.X;
+        table["y"] = spot.Y;
+        table["z"] = spot.Z;
+
+        return table;
+    }
+
+    /// <summary>
     ///     Gets the weather a player stands in as <c>{ kind, density, temperature }</c>;
     ///     <c>world.weather(who).kind == WeatherKindType.Rain</c>.
     /// </summary>

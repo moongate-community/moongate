@@ -4,17 +4,22 @@
 -- What it is for:
 --   A mobile script for the guards of the towns, the ones that stand there by
 --   their spawn and the ones a player calls by saying "guards". The server has no
---   combat yet, so a guard only shows itself: it does no harm. A mobile template
---   uses it with script_id = "guard" (guard, m_guard and f_guard do).
+--   combat yet: a guard kills a criminal that is an NPC with one blow, as
+--   ModernUO's does, and only stands on one that is a player, since players do
+--   not die yet. A mobile template uses it with script_id = "guard" (guard,
+--   m_guard and f_guard do).
 --
 --   The guard is in one of two states:
 --     post    it strolls around its post, the area of its spawn region. Every
---             second it looks for a criminal: a player whose name is grey, within
+--             second it looks for a criminal: a player or an NPC whose name is grey, within
 --             12 tiles and in sight, standing in a guarded region no farther than
 --             24 tiles from the post.
---     arrest  it saw one: it goes into war mode, appears on it with the teleport
+--     arrest  it saw one: it goes into war mode, appears beside it with the teleport
 --             effect and sound when it is not beside it, and says its line. Then
---             it stays on it, running after it when it moves. When the criminal
+--             it stays on it, running after it when it moves. Beside an NPC it
+--             strikes, and a second later the NPC is dead (mobile.kill, with
+--             the guard as its killer and its corpse left there); the guard
+--             goes back to its post. When the criminal
 --             is pardoned, hides, leaves the guarded region, goes farther than 24
 --             tiles from the guard or from its post, or cannot be reached for 10
 --             seconds, the guard goes back to peace and walks back to its post. A
@@ -46,6 +51,10 @@ local GIVE_UP_THINKS = 20
 
 -- How far apart two heights of one storey are.
 local STOREY = 16
+
+-- How a guard strikes, and how many thinks pass between the blow and the death: a second.
+local STRIKE = HumanAnimationType.AttackSlash1H
+local STRIKE_THINKS = 2
 
 -- The teleport of a guard, as ModernUO's.
 local TELEPORT_SOUND = 0x1FE
@@ -112,11 +121,14 @@ local function is_given_up(mind, who)
     return there ~= nil and there.x == given_up.x and there.y == given_up.y
 end
 
--- The nearest criminal the guard sees, or nil. The players around are asked what they are first: only a criminal
--- costs a look along the line of sight.
+-- The nearest criminal the guard sees, player or NPC, or nil. Those around are asked what they are first: only a
+-- criminal costs a look along the line of sight. One it has just killed is still there while it falls: not again.
 local function look_for_criminal(serial, mind)
-    for _, who in ipairs(npc.nearby(serial, SIGHT, "players")) do
-        if is_wanted(serial, who) and not is_given_up(mind, who) and npc.can_see(serial, who, SIGHT) then
+    for _, who in ipairs(npc.nearby(serial, SIGHT, "all")) do
+        if who ~= mind.killed
+            and is_wanted(serial, who)
+            and not is_given_up(mind, who)
+            and npc.can_see(serial, who, SIGHT) then
             return who
         end
     end
@@ -131,19 +143,23 @@ end
 local function start_arrest(serial, mind, here, criminal)
     mind.state = "arrest"
     mind.target = criminal
+    mind.strike = nil
     mind.stalled = 0
     mind.given_up = nil
     mobile.set_war_mode(serial, true)
 
     local there = mobile.location(criminal)
 
-    -- Not beside it: the guard is gone from where it stood and stands on the criminal, as ModernUO's. A teleport
-    -- that is refused leaves it where it is, to run there.
-    if (npc.distance_to(serial, there.x, there.y) > 1 or math.abs(there.z - here.z) > STOREY)
-        and mobile.teleport(serial, there.x, there.y, there.z) then
-        puff(here)
-        puff(there)
-        npc.play_sound(serial, TELEPORT_SOUND)
+    -- Not beside it: the guard is gone from where it stood and stands beside the criminal, on a free tile a step
+    -- from it, or on it when there is none. A teleport that is refused leaves it where it is, to run there.
+    if npc.distance_to(serial, there.x, there.y) > 1 or math.abs(there.z - here.z) > STOREY then
+        local spot = world.spot_beside(there.map, there.x, there.y, there.z) or there
+
+        if mobile.teleport(serial, spot.x, spot.y, spot.z) then
+            puff(here)
+            puff({ map = there.map, x = spot.x, y = spot.y, z = spot.z })
+            npc.play_sound(serial, TELEPORT_SOUND)
+        end
     end
 
     -- A guard that was called said it when it came.
@@ -199,8 +215,27 @@ local function arrest(serial, mind, here)
         mind.stalled = 0
         npc.face(serial, there.x, there.y)
 
+        -- A player is only stood on: players do not die yet.
+        if mobile.is_player(criminal) then
+            return
+        end
+
+        -- The blow, then the death a second later.
+        if mind.strike == nil then
+            mind.strike = mind.thinks
+            mobile.animate(serial, STRIKE)
+        elseif mind.thinks - mind.strike >= STRIKE_THINKS then
+            mobile.kill(criminal, serial)
+            -- Dead or not, it is done with this one: it falls for a moment and is still a criminal meanwhile.
+            mind.killed = criminal
+            back_to_post(serial, mind)
+        end
+
         return
     end
+
+    -- It got away from the blow.
+    mind.strike = nil
 
     if npc.walk_to(serial, there.x, there.y, there.z, 1, true) == "moving" then
         mind.stalled = 0

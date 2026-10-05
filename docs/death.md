@@ -2,7 +2,9 @@
 
 An NPC can die: it falls where it stands, leaves its corpse with what it carried, and is gone from
 the world. Nothing fights yet, so an NPC dies when a game master kills it with
-[`.kill`](commands/kill.md) or a script calls `mobile.kill`. Players do not die yet.
+[`.kill`](commands/kill.md), a script calls `mobile.kill`, or a [town
+guard](scripting/shipped-scripts.md#guardlua) reaches it while it is a criminal. Players do not die
+yet.
 
 ## What happens
 
