@@ -10,6 +10,35 @@ namespace Moongate.Tests.Integration.Server.Ultima.Books;
 
 public sealed class ReadableScrollIntegrationTests
 {
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RealJailScript_NewAndLegacyNotes_DisplaySavedPlainText(bool legacy)
+    {
+        await using var fixture = await BookLuaFixture.CreateAsync();
+        var documents = fixture.Documents;
+        await documents.OnLoopAsync(() =>
+        {
+            var note = documents.Give();
+            note.TemplateId = "jail_release_note";
+            note.SetProp("jail.text", "Legacy <note>");
+            if (legacy)
+            {
+                note.RemoveProp("book.content");
+            }
+            documents.Items.PlaceOnGround(note, MapType.Trammel, new Point3D(1600, 1600, 0));
+            var used = fixture.ItemScripts.Run(note, "on_use", 3L);
+            Assert.Equal(ScriptResultKind.Completed, used.Kind);
+            Assert.Equal(true, Assert.Single(used.Values));
+            Assert.Empty(documents.Gumps.Opened);
+        });
+        await documents.OnLoopAsync(() =>
+        {
+            var strings = Assert.Single(documents.Gumps.Opened).Gump.Layout.Build().Strings;
+            Assert.Contains(legacy ? "Legacy &lt;note&gt;" : "Dear Pippo,<br><br>Bring this to Vega.", strings);
+        });
+        Assert.Empty(fixture.Errors);
+    }
     [Fact]
     public async Task RealLua_GiveAndDoubleClick_SendGumpOnNextLoopTurn()
     {

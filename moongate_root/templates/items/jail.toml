@@ -12,7 +12,7 @@
 #   base_id        inherits base_item
 #   item_id        the note: a sheet of paper; the chest: a wooden chest
 #   script_id      jail_note (scripts/items/jail_note.lua) shows the text of
-#                  the note on a double click
+#                  saved book.content or legacy jail.text on a double click
 #   movable        false: players cannot pick the chest up
 #   decays         true, with decay_minutes: an item that cannot be picked up
 #                  decays only when its template gives both
@@ -28,6 +28,7 @@ item_id = 0x14F0
 name = "a release note"
 rarity = "common"
 script_id = "jail_note"
+stackable = false
 
 [[item]]
 id = "jail_chest"

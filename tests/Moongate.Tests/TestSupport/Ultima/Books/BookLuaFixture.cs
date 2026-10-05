@@ -34,6 +34,7 @@ public sealed class BookLuaFixture : IAsyncDisposable
         var fixture = new BookLuaFixture(await BookTestFixture.CreateAsync(realGumps));
         var root = RepositoryRoot();
         fixture._scripts.Write("items/readable_scroll.lua", await File.ReadAllTextAsync(Path.Combine(root, "moongate_root/scripts/items/readable_scroll.lua")));
+        fixture._scripts.Write("items/jail_note.lua", await File.ReadAllTextAsync(Path.Combine(root, "moongate_root/scripts/items/jail_note.lua")));
         fixture._scripts.Write("init.lua", """
             function make_letter()
                 return book.give(2, "welcome_letter", { contact_name = "Vega" })
