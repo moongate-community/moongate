@@ -136,7 +136,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Scripted behaviour | ✅ | Lua mobile scripts: `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range` |
 | Sleeping away from players | ✅ | NPCs think only near a player |
 | Wandering | 🟡 | `wander.lua` keeps spawned NPCs in their home area |
-| Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*, *balance* and *withdraw*; no vendor keywords yet |
+| Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*, *balance* and *withdraw*, and the word *deposit*, which has no keyword; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
 | Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. No fleeing, NPCs do not open doors, and mobiles do not block a path |
