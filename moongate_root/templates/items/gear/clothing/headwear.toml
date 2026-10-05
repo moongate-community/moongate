@@ -5,6 +5,7 @@ item_id = 0
 name = "base_hat"
 rarity = "common"
 layer = "helm"
+dyeable = true
 decays = true
 
 [[item]]

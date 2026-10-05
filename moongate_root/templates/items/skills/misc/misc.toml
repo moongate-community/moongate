@@ -70,6 +70,7 @@ rarity = "common"
 movable = false
 weight = 20.0
 stackable = false
+dyeable = false
 decays = false
 
 [[item]]

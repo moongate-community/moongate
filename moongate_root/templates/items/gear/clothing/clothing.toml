@@ -4,6 +4,7 @@ base_id = "base_item"
 item_id = 0
 name = "base clothing"
 rarity = "common"
+dyeable = true
 decays = true
 
 [[item]]
@@ -218,6 +219,7 @@ name = "resurrection robe"
 rarity = "common"
 weight = 3.0
 layer = "outer_torso"
+dyeable = false
 buy_price = 0
 sell_price = 0
 decays = true

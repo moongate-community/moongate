@@ -56,6 +56,26 @@ public sealed class ItemTemplatesLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_Dyeable_IsInheritedFromTheBase_UnlessTheTemplateSaysOtherwise()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/items/clothes.toml",
+            "[[item]]\nid = \"base_clothing\"\nitem_id = 0x1517\ndyeable = true\n\n" +
+            "[[item]]\nid = \"shirt\"\nbase_id = \"base_clothing\"\nitem_id = 0x1517\n\n" +
+            "[[item]]\nid = \"death_robe\"\nbase_id = \"base_clothing\"\nitem_id = 0x204E\ndyeable = false\n\n" +
+            "[[item]]\nid = \"sword\"\nitem_id = 0x0F5E\n"
+        );
+
+        var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        Assert.Equal(
+            ((bool?)true, (bool?)false, (bool?)null),
+            (templates["shirt"].Dyeable, templates["death_robe"].Dyeable, templates["sword"].Dyeable)
+        );
+    }
+
+    [Fact]
     public async Task LoadDataAsync_ResolvesBaseIdThroughThreeLevels_AndReadsSubfolders()
     {
         using var root = new TemporaryDirectory();

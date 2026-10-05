@@ -111,6 +111,40 @@ Once empty, a pitcher, a glass or a mug turns into its empty graphic, is renamed
 is gone. A quenched player reads "You are simply too full to drink any more!" and drinks nothing.
 Refilling, pouring and drunkenness are not there yet.
 
+## dyes.lua and dye_tub.lua
+
+`scripts/items/dyes.lua` and `scripts/items/dye_tub.lua` dye clothes in two steps, as ModernUO does;
+the converted templates of the dyes (`0x0fa9_dyes`) and of the tub (`0x0fab_dying_tub`) carry
+`script_id = "dyes"` and `script_id = "dye_tub"`.
+
+1. Double click the dyes and pick a dye tub: the client's hue picker opens with the tub in it, and
+   the tub takes the hue picked, from 2 to 1001, as its own hue.
+2. Double click the tub and pick what to dye: it takes the hue of the tub, with the sound of dyeing
+   (`0x23E`).
+
+What can be dyed is an item whose template says [`dyeable = true`](../templates.md), as the clothing
+converted from UOX3 does. It must not be worn, and the player must reach it, the tub and the dyes:
+carried, or on the ground within 1 tile. Neither the dyes nor the tub is used up, and a tub never
+dyed has hue 0, which takes the colour off. An item held on the cursor is not dyed ("You can not dye
+that."), and one inside a container on the ground counts as too far: take it first.
+
+The texts are the client's own, read in its language:
+
+| Text | Cliloc |
+| --- | --- |
+| Select the dye tub to use the dyes on. | 500856 |
+| Use this on a dye tub. | 500857 |
+| Select the clothing to dye. | 500859 |
+| Can't Dye clothing that is being worn. | 500861 |
+| You can not dye that. | 1042083 |
+| That is too far away. | 500446 |
+
+The player may answer the hue picker much later, or never. When the answer comes the script checks
+again that the dyes and the tub are within reach, and the server takes an answer only for the picker
+it opened: the other emulators take it as it comes. `scripts/common/dye.lua` holds what the two
+scripts share (`dye.reach`, `dye.worn`, `dye.tell`). The special tubs (leather, furniture, black,
+metallic) and the hair dyes are not there yet.
+
 ## Regeneration props
 
 Hit points, mana and stamina come back by themselves (see

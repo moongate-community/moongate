@@ -78,6 +78,19 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedItemTemplates_HaveTheDyesTheDyeTubAndDyeableClothing()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        Assert.Equal(("dyes", "dye_tub"), (templates["0x0fa9_dyes"].ScriptId, templates["0x0fab_dying_tub"].ScriptId));
+        // Clothing has it from its base; a weapon does not.
+        Assert.True(templates["base_clothing"].Dyeable);
+        Assert.True(templates["0x1541_body_sash"].Dyeable);
+        Assert.Null(templates["0x13b2"].Dyeable);
+        Assert.Contains(templates.Values, template => template.Dyeable == false);
+    }
+
+    [Fact]
     public async Task ShippedItemTemplates_MarkTwoHandedWeaponsButNotShieldsOrTorches()
     {
         var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);

@@ -4231,5 +4231,83 @@
     ],
     "notes": "Plays an animation of a mobile.",
     "handler": "WorldViewService: mobile.animate of a script, to the mobile's own player and those who see it."
+  },
+  "0x95:outgoing": {
+    "category": "Dyeing",
+    "tags": [
+      "Dyeing",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Picker id",
+        "type": "int",
+        "size": "4",
+        "description": "Id the answer must carry; the picker's own, not an item serial"
+      },
+      {
+        "offset": "5",
+        "name": "Unused",
+        "type": "ushort",
+        "size": "2",
+        "description": "Zero."
+      },
+      {
+        "offset": "7",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Item graphic shown in the picker"
+      }
+    ],
+    "notes": "Opens the client's hue picker with a graphic in it.",
+    "handler": "HuePickerService: sent when a script opens a picker, as the dyes do on a dye tub."
+  },
+  "0x95:incoming": {
+    "category": "Dyeing",
+    "tags": [
+      "Dyeing",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Picker id",
+        "type": "int",
+        "size": "4",
+        "description": "Id of the picker answered"
+      },
+      {
+        "offset": "5",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Ignored."
+      },
+      {
+        "offset": "7",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Hue picked; masked with 0x3FFF and kept from 2 to 1001"
+      }
+    ],
+    "notes": "The hue the player picked in the hue picker. Nothing is sent when the picker is closed.",
+    "handler": "HuePickerResponsePacketHandler: gives the hue to the player's open picker; ignored when the id is not the one of the open picker."
   }
 }

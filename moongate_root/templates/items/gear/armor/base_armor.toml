@@ -1368,6 +1368,7 @@ name = "metal kite shield"
 rarity = "common"
 movable = true
 layer = "two_handed"
+dyeable = true
 decays = true
 
 [[item]]

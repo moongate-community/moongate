@@ -8,6 +8,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Data.Items;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
@@ -181,6 +182,24 @@ public sealed class ItemModule
     public string? Template(long serial)
     {
         return TryGetItem(serial, out var item) ? item.TemplateId : null;
+    }
+
+    /// <summary>
+    ///     Gets the script of the item's template; <c>item.script(serial) == "dye_tub"</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The script_id of the item's template, such as 'door' or 'dye_tub'; nil for an item whose template has no script, or an unknown item.")]
+    public string? Script(long serial)
+    {
+        return TryGetTemplate(serial, out var template) && !string.IsNullOrEmpty(template.ScriptId) ? template.ScriptId : null;
+    }
+
+    /// <summary>
+    ///     Gets whether a dye tub can give the item its hue; <c>item.dyeable(serial)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the item's template is dyeable, as clothing is: a dye tub can give it its hue; false for an unknown item.")]
+    public bool Dyeable(long serial)
+    {
+        return TryGetTemplate(serial, out var template) && template.Dyeable == true;
     }
 
     /// <summary>
@@ -795,6 +814,13 @@ public sealed class ItemModule
         }
 
         return _tiles.TryGetItem(item.ItemId, out var tile) && (tile.Flags & TileFlagType.Generic) != 0;
+    }
+
+    private bool TryGetTemplate(long serial, [NotNullWhen(true)] out ItemTemplate? template)
+    {
+        template = null;
+
+        return TryGetItem(serial, out var item) && _templates is not null && _templates.TryGet(item.TemplateId, out template);
     }
 
     private bool TryGetItem(long serial, [NotNullWhen(true)] out ItemEntity? item)

@@ -23,6 +23,7 @@ name = "fur boots"
 rarity = "common"
 weight = 3.0
 layer = "shoes"
+dyeable = true
 buy_price = 45
 sell_price = 22
 decays = true

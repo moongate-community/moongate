@@ -44,6 +44,10 @@ type 105) takes `script_id = "drink"` (`scripts/items/drink.lua`) the same way, 
 `pitchers.js`, but for the jar of honey (`0x09ec_jar_of_honey`).
 A folder missing either file exits `2`.
 
+The dyes (item type 208) take `script_id = "dyes"` and the dye tub `script_id = "dye_tub"`
+(`scripts/items/dyes.lua`, `scripts/items/dye_tub.lua`). UOX3 types the tub by its graphic `0x0FAB`
+in `itemtypes.dfn`, not in its block, so the converter does the same: a block named by that graphic.
+
 `--npc-lists-destination` and `--spawns-destination` go together and need `--mobile-source`.
 They convert the `[NPCLIST name]` blocks under `npc/` into `templates/npc_lists` (entries
 `20|gorilla` keep their weight, `NPCLIST=trolls` becomes a nested list) and the
@@ -81,6 +85,7 @@ Verified against real UOX3 data:
 | `pileable=` | `Stackable` | |
 | `layer=` | `Layer` | The UOX3 layer number as a `LayerType` name |
 | `layer=2` without `type=107` (shield) or `dir=` (light) | `two_handed_weapon = true` | As UOX3 decides at equip time. An unlit torch (`0x0F64`) has neither, so UOX3, and the converter, treat it as two-handed; the shipped templates leave it off |
+| `dyeable=` or `dye=` | `Dyeable` | The same tag in UOX3; `0` writes `dyeable = false`, which takes it away from what a base gave |
 | `value=buy sell` | `BuyPrice`, `SellPrice` | One number sets both |
 | `decay=` | `Decays` | `1` is true, anything else false |
 | `newbie` or `newbie=1` | `LootType = newbied` | |
