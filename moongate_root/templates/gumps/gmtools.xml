@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/gmtools.xml
+
+  What it is for:
+    The gump of the game master's tools, opened by .gmtools: a sidebar of tools on
+    the left and the commands of the selected tool on the right. The frame is
+    here; both columns come from scripts/gumps/gmtools.lua: gmtools.tools draws
+    the sidebar and gmtools.panel the panel of the selected tool.
+
+  Arguments:
+    tool  the tool to show, such as "weather"; none for the first one
+-->
+<gump id="gmtools" x="80" y="60"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="560" height="300" />
+  <text x="20" y="15" hue="1152">GM tools</text>
+  <image_tiled x="165" y="45" width="4" height="230" gump="2624" />
+  <slot name="tools" x="20" y="50" />
+  <slot name="panel" x="190" y="50" />
+</gump>
