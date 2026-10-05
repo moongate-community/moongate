@@ -222,6 +222,6 @@
 30179 = "{0} no tiene mochila, o está llena."
 30180 = "Pone una pila de oro (de 1 a 60000) en la mochila del personaje o PNJ que selecciones."
 
-# Moongate: texts of the gmtools command (30181-30182).
-30181 = "Abre el gump de las herramientas del game master: una barra lateral de herramientas y sus comandos, primero el clima."
-30182 = "Falta el gump gmtools: templates/gumps/gmtools.xml."
+# Moongate: texts of the gmtools command (30185-30186).
+30185 = "Abre el gump de las herramientas del game master: una barra lateral de herramientas y sus comandos, primero el clima."
+30186 = "Falta el gump gmtools: templates/gumps/gmtools.xml."

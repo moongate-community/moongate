@@ -214,7 +214,7 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30168 | You may not use skills in jail. | What a prisoner reads when it uses a [skill](skills.md) |
 | 30150 | No character is named {0}. | What `jail <name>` answers when no player has the name |
 | 30160 to 30163 | Shows the version the server runs…, Moongate {0} "{1}" ({2}), built {3}., Shows how long the server has been running…, Up for {0}, since {1}. | The `version` and `uptime` commands |
-| 30181, 30182 | Opens the gump of the game master's tools…, The gmtools gump is missing: templates/gumps/gmtools.xml. | The `gmtools` command |
+| 30185, 30186 | Opens the gump of the game master's tools…, The gmtools gump is missing: templates/gumps/gmtools.xml. | The `gmtools` command |
 
 The header of the command texts in `eng/moongate.toml` lists the ids of both sets.
 

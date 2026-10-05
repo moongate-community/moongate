@@ -222,6 +222,6 @@
 30179 = "{0} non ha uno zaino, oppure è pieno."
 30180 = "Mette una pila d'oro (da 1 a 60000) nello zaino del personaggio o dell'NPC che selezioni."
 
-# Moongate: texts of the gmtools command (30181-30182).
-30181 = "Apre il gump degli strumenti del game master: una barra laterale di strumenti e i loro comandi, per ora il meteo."
-30182 = "Manca il gump gmtools: templates/gumps/gmtools.xml."
+# Moongate: texts of the gmtools command (30185-30186).
+30185 = "Apre il gump degli strumenti del game master: una barra laterale di strumenti e i loro comandi, per ora il meteo."
+30186 = "Manca il gump gmtools: templates/gumps/gmtools.xml."

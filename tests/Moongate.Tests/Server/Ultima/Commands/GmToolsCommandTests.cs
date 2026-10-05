@@ -55,7 +55,7 @@ public sealed class GmToolsCommandTests : IAsyncDisposable
     {
         var context = await RunAsync(
             withTemplate: false,
-            localization: TestLocalization.With((30182, "Manca il gump gmtools: templates/gumps/gmtools.xml."))
+            localization: TestLocalization.With((30186, "Manca il gump gmtools: templates/gumps/gmtools.xml."))
         );
 
         Assert.Equal("Manca il gump gmtools: templates/gumps/gmtools.xml.", Assert.Single(context.Output).Text);
