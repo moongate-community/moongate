@@ -264,6 +264,32 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.Empty(_aria.Skills);
     }
 
+    [Theory]
+    [InlineData(StatType.Str, StatLockType.Down)]
+    [InlineData(StatType.Dex, StatLockType.Locked)]
+    [InlineData(StatType.Int, StatLockType.Down)]
+    public void SetStatLock_KeepsTheLockOfThatStatOnly_AndSendsNothing(StatType stat, StatLockType statLock)
+    {
+        Assert.True(_service.SetStatLock(_aria, stat, statLock));
+
+        Assert.Equal(
+            (stat == StatType.Str ? statLock : StatLockType.Up, stat == StatType.Dex ? statLock : StatLockType.Up,
+             stat == StatType.Int ? statLock : StatLockType.Up),
+            (_aria.StrLock, _aria.DexLock, _aria.IntLock)
+        );
+        // The client already shows the lock it asked for.
+        Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public void SetStatLock_AnUnknownStatOrLock_ChangesNothing()
+    {
+        Assert.False(_service.SetStatLock(_aria, (StatType)3, StatLockType.Down));
+        Assert.False(_service.SetStatLock(_aria, StatType.Str, (StatLockType)3));
+
+        Assert.Equal((StatLockType.Up, StatLockType.Up, StatLockType.Up), (_aria.StrLock, _aria.DexLock, _aria.IntLock));
+    }
+
     [Fact]
     public void SetName_RenamesIt_AndTellsItsPlayerAndThoseAround()
     {

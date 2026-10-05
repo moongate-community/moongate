@@ -69,6 +69,15 @@ public sealed class RecordingMobileStateService : IMobileStateService
         return Result;
     }
 
+    public List<(MobileEntity Mobile, StatType Stat, StatLockType Lock)> StatLocksSet { get; } = [];
+
+    public bool SetStatLock(MobileEntity mobile, StatType stat, StatLockType statLock)
+    {
+        StatLocksSet.Add((mobile, stat, statLock));
+
+        return Result;
+    }
+
     public bool SetName(MobileEntity mobile, string name)
     {
         Names.Add((mobile, name));

@@ -65,6 +65,15 @@ public interface IMobileStateService
     bool SetSkillLock(MobileEntity mobile, SkillType skill, SkillLockType skillLock);
 
     /// <summary>
+    ///     Sets which way a stat may move: up to rise by use, down to be lowered for another stat, or locked, as the
+    ///     player chooses in the status window. Nothing is sent: the client already shows the lock it asked for.
+    /// </summary>
+    /// <returns>
+    ///     False, with nothing changed, for a stat or a lock that does not exist.
+    /// </returns>
+    bool SetStatLock(MobileEntity mobile, StatType stat, StatLockType statLock);
+
+    /// <summary>
     ///     Gives the mobile another name, trimmed; its player's status and the players around are told.
     /// </summary>
     /// <returns>

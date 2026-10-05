@@ -87,7 +87,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             [
                 typeof(LoginConfirmPacket), typeof(MapChangePacket), typeof(SeasonChangePacket),
                 typeof(GlobalLightLevelPacket), typeof(PersonalLightLevelPacket), typeof(MobileUpdatePacket),
-                typeof(MobileIncomingPacket), typeof(MobileStatusPacket), typeof(WarModePacket),
+                typeof(MobileIncomingPacket), typeof(MobileStatusPacket), typeof(StatLockInfoPacket), typeof(WarModePacket),
                 typeof(LoginCompletePacket), typeof(CurrentTimePacket)
             ],
             sender.Sent.Select(packet => packet.GetType())
@@ -99,7 +99,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         Assert.Same(characters.ForPlay!.Character, live);
         var entered = Assert.Single(_entered);
         Assert.Equal(sender.Sent.Count, entered.SentBefore);
-        Assert.Equal([11], _motd.SentBefore);
+        Assert.Equal([12], _motd.SentBefore);
         Assert.Equal("Aria", entered.Event.Character.Name);
         Assert.True(fixture.Client.IsConnected);
     }

@@ -179,6 +179,32 @@ public sealed class MobileStateService : IMobileStateService
         return true;
     }
 
+    public bool SetStatLock(MobileEntity mobile, StatType stat, StatLockType statLock)
+    {
+        if (!Enum.IsDefined(stat) || !Enum.IsDefined(statLock))
+        {
+            return false;
+        }
+
+        switch (stat)
+        {
+            case StatType.Str:
+                mobile.StrLock = statLock;
+
+                break;
+            case StatType.Dex:
+                mobile.DexLock = statLock;
+
+                break;
+            default:
+                mobile.IntLock = statLock;
+
+                break;
+        }
+
+        return true;
+    }
+
     public bool SetName(MobileEntity mobile, string name)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Trim().Length > IMobileStateService.MaxNameLength)
