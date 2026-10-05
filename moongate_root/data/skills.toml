@@ -20,7 +20,10 @@
 #   gain_factor      how fast the skill itself rises (1.0 is normal)
 #   delay            optional: the seconds a character waits before another skill
 #                    after using this one, from 0 to 3600. Without it, and when the
-#                    script of the skill returns no number, one second
+#                    script of the skill returns no number, one second. The skills
+#                    a player uses directly have ModernUO's waits; where ModernUO's
+#                    wait depends on the outcome (meditation, spirit_speak, hiding)
+#                    this is the usual one, and the script returns the others
 # ==============================================================================
 
 [[skill]]
@@ -52,6 +55,7 @@ str_gain = 0.15
 dex_gain = 0.15
 int_gain = 0.7
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "animal_lore"
@@ -67,6 +71,7 @@ str_gain = 0.0
 dex_gain = 0.0
 int_gain = 1.0
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "item_identification"
@@ -82,6 +87,7 @@ str_gain = 0.0
 dex_gain = 0.0
 int_gain = 1.0
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "arms_lore"
@@ -97,6 +103,7 @@ str_gain = 0.75
 dex_gain = 0.15
 int_gain = 0.1
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "parrying"
@@ -127,6 +134,7 @@ str_gain = 0.0
 dex_gain = 0.0
 int_gain = 0.0
 gain_factor = 1.0
+delay = 30.0
 
 [[skill]]
 id = "blacksmithy"
@@ -172,6 +180,7 @@ str_gain = 0.0
 dex_gain = 0.0
 int_gain = 0.0
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "camping"
@@ -217,6 +226,7 @@ str_gain = 0.0
 dex_gain = 0.75
 int_gain = 0.75
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "cooking"
@@ -247,6 +257,7 @@ str_gain = 0.0
 dex_gain = 0.4
 int_gain = 0.6
 gain_factor = 1.0
+delay = 30.0
 
 [[skill]]
 id = "discordance"
@@ -262,6 +273,7 @@ str_gain = 0.0
 dex_gain = 0.25
 int_gain = 0.25
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "evaluating_intelligence"
@@ -277,6 +289,7 @@ str_gain = 0.0
 dex_gain = 0.0
 int_gain = 1.0
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "healing"
@@ -322,6 +335,7 @@ str_gain = 0.0
 dex_gain = 0.2
 int_gain = 0.8
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "herding"
@@ -368,6 +382,7 @@ str_gain = 0.0
 dex_gain = 0.45
 int_gain = 0.05
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "inscription"
@@ -383,6 +398,7 @@ str_gain = 0.0
 dex_gain = 0.2
 int_gain = 0.8
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "lockpicking"
@@ -488,6 +504,7 @@ str_gain = 0.0
 dex_gain = 0.4
 int_gain = 1.6
 gain_factor = 1.0
+delay = 10.0
 
 [[skill]]
 id = "archery"
@@ -518,6 +535,7 @@ str_gain = 0.0
 dex_gain = 0.0
 int_gain = 1.0
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "stealing"
@@ -533,6 +551,7 @@ str_gain = 0.0
 dex_gain = 1.0
 int_gain = 0.0
 gain_factor = 1.0
+delay = 30.0
 
 [[skill]]
 id = "tailoring"
@@ -563,6 +582,7 @@ str_gain = 1.4
 dex_gain = 0.2
 int_gain = 0.4
 gain_factor = 1.0
+delay = 30.0
 
 [[skill]]
 id = "taste_identification"
@@ -578,6 +598,7 @@ str_gain = 0.2
 dex_gain = 0.0
 int_gain = 0.8
 gain_factor = 1.0
+delay = 1.0
 
 [[skill]]
 id = "tinkering"
@@ -608,6 +629,7 @@ str_gain = 0.0
 dex_gain = 1.25
 int_gain = 1.25
 gain_factor = 1.0
+delay = 10.0
 
 [[skill]]
 id = "veterinary"
@@ -728,6 +750,7 @@ str_gain = 0.0
 dex_gain = 0.0
 int_gain = 0.0
 gain_factor = 1.0
+delay = 10.0
 
 [[skill]]
 id = "stealth"
@@ -743,6 +766,7 @@ str_gain = 0.0
 dex_gain = 0.0
 int_gain = 0.0
 gain_factor = 1.0
+delay = 10.0
 
 [[skill]]
 id = "remove_trap"
@@ -758,6 +782,7 @@ str_gain = 0.0
 dex_gain = 0.0
 int_gain = 0.0
 gain_factor = 1.0
+delay = 10.0
 
 [[skill]]
 id = "necromancy"
