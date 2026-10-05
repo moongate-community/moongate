@@ -1,0 +1,7 @@
+title = "The daily journal of Grimmoch Drummel"
+author = "Grimmoch"
+content = """Day Twenty-Three :
+
+We no longer bury the
+dead."""
+item_template = "readable_scroll"

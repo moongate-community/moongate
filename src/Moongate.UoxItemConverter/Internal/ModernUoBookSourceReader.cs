@@ -49,7 +49,8 @@ internal static class ModernUoBookSourceReader
                         string.IsNullOrWhiteSpace(content) ||
                         !BookTextValidation.IsValidText(title, BookTextValidation.HeaderLimit) ||
                         !BookTextValidation.IsValidText(author, BookTextValidation.HeaderLimit) ||
-                        !BookTextValidation.IsValidText(content, BookTextValidation.ContentLimit))
+                        !BookTextValidation.IsValidText(content, BookTextValidation.ContentLimit) ||
+                        !BookGumpRenderer.TryBuild(title, author, content, out _))
                         throw new InvalidDataException("Book id or text is invalid or exceeds the document limits.");
 
                     books.Add(new() { Id = id, Title = title, Author = author, Content = content, PageCount = pages.Length });

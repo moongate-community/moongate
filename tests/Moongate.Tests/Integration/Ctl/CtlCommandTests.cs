@@ -20,7 +20,8 @@ public sealed class CtlCommandTests
         foreach (var command in new[]
                  {
                      "init", "migrate status", "migrate apply", "convert uox", "convert modernuo-spawns",
-                     "convert modernuo-signs", "convert modernuo-teleporters", "convert modernuo-locations", "convert modernuo-chests"
+                     "convert modernuo-signs", "convert modernuo-teleporters", "convert modernuo-locations", "convert modernuo-chests",
+                     "convert modernuo-books"
                  })
         {
             Assert.Contains(command, result.Output);

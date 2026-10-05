@@ -2,6 +2,7 @@ using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Commands;
+using Moongate.Server.Ultima.Data.Books;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
@@ -47,13 +48,41 @@ public sealed class RepositoryTemplateFilesTests
     {
         var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
         var books = (await new BooksLoader(Directories(), new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
-        Assert.Equal(["jail_release_note", "welcome_letter"], books.Select(book => book.Id).Order(StringComparer.Ordinal));
+        Assert.Equal(64, books.Count);
+        Assert.Equal(["jail_release_note", "welcome_letter"], books.Where(book => !book.Id.StartsWith("modernuo_", StringComparison.Ordinal))
+            .Select(book => book.Id).Order(StringComparer.Ordinal));
         var welcome = Assert.Single(books, book => book.Id == "welcome_letter");
         Assert.Equal(["contact_name"], welcome.Variables);
         Assert.Equal("readable_scroll", welcome.ItemTemplate);
         Assert.Equal(false, items.Single(item => item.Id == "readable_scroll").Stackable);
         Assert.Equal(0x14EDu, items.Single(item => item.Id == "readable_scroll").ItemId.Value);
         Assert.Equal(7, books.Single(book => book.Id == "jail_release_note").Translations.Count);
+    }
+
+    [Fact]
+    public async Task ShippedModernUoBookTemplates_RenderAllBooksAndKeepJournalPartsDistinct()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
+        var data = new StubDataLoaderService().With(items);
+        var books = (await new BooksLoader(Directories(), data).LoadDataAsync()).Entities
+            .Where(book => book.Id.StartsWith("modernuo_", StringComparison.Ordinal)).ToArray();
+        Assert.Equal(62, books.Length);
+        Assert.Equal(9, books.Count(book => book.Id.StartsWith("modernuo_grimmoch_journal", StringComparison.Ordinal)));
+        Assert.Equal(6, books.Count(book => book.Id.StartsWith("modernuo_lysander_notebook", StringComparison.Ordinal)));
+        Assert.Equal(13, books.Count(book => book.Id.StartsWith("modernuo_tavaras_journal", StringComparison.Ordinal)));
+        Assert.Equal("Yorick of Yew", books.Single(book => book.Id == "modernuo_grammar_of_orcish").Author);
+        Assert.Equal(7457, books.Single(book => book.Id == "modernuo_my_story").Content.Length);
+        data.With(books);
+        var service = new BookTemplateService(data);
+        foreach (var book in books)
+        {
+            Assert.Empty(book.Variables);
+            Assert.Empty(book.Attachments);
+            Assert.Empty(book.Translations);
+            Assert.True(service.TryRender(book.Id, new TextTemplateContext { PlayerName = "Changed reader" }, "ita", null, out var rendered), book.Id);
+            Assert.Equal((book.Title, book.Author, book.Content), (rendered!.Title, rendered.Author, rendered.Content));
+            Assert.True(BookGumpRenderer.TryBuild(rendered.Title, rendered.Author, rendered.Content, out _), book.Id);
+        }
     }
     [Fact]
     public async Task ShippedMotd_Loads()

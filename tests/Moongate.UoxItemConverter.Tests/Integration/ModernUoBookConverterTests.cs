@@ -41,6 +41,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
         Assert.Empty(first.Variables);
         Assert.Empty(first.Attachments);
         Assert.Empty(first.Translations);
+        Assert.Contains("content = \"\"\"", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "modernuo_journal1.toml")));
         Assert.Equal(2, Directory.GetFiles(_directories.DestinationDirectory).Length);
         Assert.Contains("2 books, 4 pages", _output.ToString());
     }
@@ -111,6 +112,16 @@ public sealed class ModernUoBookConverterTests : IDisposable
         var title = header ? new string('x', 129) : "Title";
         var content = header ? "text" : new string('x', 16385);
         _directories.WriteSource("Large.cs", $"class Large {{ public static readonly BookContent Content = new({Literal(title)}, \"Writer\", new BookPageInfo({Literal(content)})); }}");
+
+        Assert.Equal(2, Run());
+        Assert.Contains("Large.cs", _error.ToString());
+        Assert.False(Directory.Exists(_directories.DestinationDirectory));
+    }
+
+    [Fact]
+    public void Run_TextThatOverflowsTheEscapedReadingPacket_RejectsBeforeWriting()
+    {
+        _directories.WriteSource("Large.cs", Book("Large", new string('&', 16000)));
 
         Assert.Equal(2, Run());
         Assert.Contains("Large.cs", _error.ToString());

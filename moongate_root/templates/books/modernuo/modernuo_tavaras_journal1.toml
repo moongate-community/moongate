@@ -1,0 +1,50 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day One:
+
+The workers continue
+tirelessly in their
+efforts to unload our
+supplies even as light
+fades.  I feel I should
+lend a hand in the
+
+effort, and yet I
+cannot bear to take my
+attention away from
+the magnificent stone
+doors of the tomb.
+Every inch of their
+massive frame is
+covered with
+
+intricately carved
+design work - 'tis
+truly a sight to see.
+I've spent the day
+sketching and
+cataloging what I can
+of them while my
+companions set up our
+
+camp and make
+preparations for
+tomorrow's work.
+Though the stonework
+symbols inspire me to
+new flights of fancy,
+some of the workers
+seem strangely
+
+fearful of them.  I
+cannot wait 'til the
+morrow when those
+ancient works of stone
+shall swing open and
+deliver unto me
+everything I have
+dreamed of for the
+
+last ten years of my
+life."""
+item_template = "readable_scroll"

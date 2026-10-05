@@ -1,0 +1,55 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day Seven:
+
+T'was written that,
+upon his death, Khal
+Ankur's followers,
+those known as the
+Keepers of the
+Seventh Death, sealed
+
+themselves within the
+Sanctum they had
+carved from the
+mountains in his
+honor.  The Zealots of
+his order entombed
+the lesser followers
+alive, then, when all
+
+but two remained, slit
+their throats and
+joined Khal Ankur in
+death.  Surely this is
+not surprising for a
+Cult that worshipped
+death and sacrifice so
+vehemently as it is
+
+said that the Keepers
+did - and yet, to be in
+this Tomb, to know
+that somewhere in its
+depths hundreds upon
+hundreds of bodies
+lay, sealed alive at
+their own behest...
+
+I must confess that
+the very thought of it
+troubles my dreams at
+night.  I've asked
+Lysander if we might
+reestablish the camp
+outside the Tomb,
+setting up night
+
+watches and some sort
+of fortification, but
+he'll have none of it.  I
+did not press the
+issue, as I suddenly
+felt foolish even at
+my askance."""
+item_template = "readable_scroll"

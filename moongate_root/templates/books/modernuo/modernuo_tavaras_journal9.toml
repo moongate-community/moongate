@@ -1,0 +1,51 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day Nine - Day Ten:
+
+The excavation of the
+next set of tunnels
+has ceased, as three
+of the workers have
+gone missing in the
+night.  Bergen voiced
+
+the opinion that they
+had most likely
+abandoned our group
+altogether and headed
+back, as they were of
+the number that
+seemed especially
+disturbed by the
+
+Tomb.  Lysander had
+other ideas, however.
+In the middle of our
+discussion on the
+matter, he went into a
+wild tirade on the
+possibility that they
+had somehow
+
+infiltrated the tomb's
+interior without us.
+The pure, hateful
+venom in his voice
+when he spoke of the
+workers shocked me,
+as I had always
+thought him to be a
+
+levelheaded man of
+great learning.  As we
+are still at work
+digging out the rubble
+that blocks all access
+to the inner chambers,
+I cannot help but
+believe the workers
+
+must have fled the
+site altogether, as
+Bergen said."""
+item_template = "readable_scroll"

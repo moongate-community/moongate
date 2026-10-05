@@ -1,0 +1,54 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day Three - Day Five:
+
+I do not understand
+this place... not as I
+once thought I did.
+Something palatable
+seems to hinder our
+every attempt to
+
+investigate this
+ancient site.
+Excavation work on
+the first major
+hallway finished only
+yesterday - the
+amount of stone and
+rubble blocking the
+
+egress was
+astounding, it stands
+in immense piles
+outside the Tomb's
+entrance, as if we
+were digging the
+tunnels of this
+abhorred place
+
+ourselves!  The
+satisfaction of
+completing our efforts
+was quickly thwarted,
+however, as we
+discovered the end of
+the hallway we had
+just revealed was
+
+blocked by yet another
+colossal pile of stone.
+I've had a few of the
+workers set up
+primitive scaffolding
+in the main
+antechamber so that I
+can spend my time
+
+pouring over the detail
+work on the stone
+carvings while the
+rest of our crew
+continue excavating
+the inner halls."""
+item_template = "readable_scroll"

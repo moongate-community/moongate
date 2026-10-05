@@ -1,0 +1,62 @@
+title = "The daily journal of Grimmoch Drummel"
+author = "Grimmoch"
+content = """Day Two :
+
+We managed to dig out
+the last of the
+remaining rubble
+today, revealing the
+entirety of the giant
+stone doors that sealed
+
+ol' Khal Ankur and
+his folk up ages ago.
+Actually getting them
+open was another
+matter altogether,
+however.  As the
+workers set to the
+task with picks and
+
+crowbars, I could have
+sworn I saw Lysander
+Gathenwale fiddling
+with something in that
+musty old tome of his.
+ I've no great
+knowledge of things
+magical, but the way
+
+his hand moved over
+that book, and the look
+of concentration on his
+face as he whispered
+something to himself
+looked like every
+description of an
+incantation I've ever
+
+heard.  The strange
+thing is, this set of
+doors that an entire
+crew of excavators
+was laboring over for
+hours, right when
+Gathenwale finishes
+with his mumbling...
+
+well, I swore the doors
+just gave open at the
+exact moment he
+spoke his last bit of
+whisper and shut the
+tome tight in his
+hands.  When he
+looked up, it was
+
+almost as if he was
+expecting the doors to
+be open, rather than
+shocked that they'd
+finally given way."""
+item_template = "readable_scroll"

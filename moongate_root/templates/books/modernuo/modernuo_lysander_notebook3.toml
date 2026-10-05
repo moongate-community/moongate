@@ -1,0 +1,47 @@
+title = "Lysander's Notebook"
+author = "L. Gathenwale"
+content = """Day Three - Day Six:
+
+What are these Beasts
+that dare to defy our
+presence here?  Hast
+Thou sent them,
+Master?  To tear
+apart these foolish
+
+ones that accompany
+me?  That repugnant
+pustule, Drummel, put
+forth his absurd little
+theories as to the
+nature of the Beasts
+that attacked our
+camp, but I'll have
+
+none of his words.  He
+asks too many
+questions.  He is a
+taint upon the grounds
+of Thy Sanctum,
+Master - I will deal
+with him after the
+Sewel woman.
+
+Speaking of Sewel, I
+have convinced that
+empty-headed harlot
+that we should move
+our encampment
+within the
+antechamber.  She
+thinks I worry for
+
+her safety.  I come
+for thee, Master.  I
+make my camp in Thy
+chambers.  I sleep
+under Thy roof.  I can
+feel Thine presence
+even now.  Soon,
+Master.  Soon."""
+item_template = "readable_scroll"

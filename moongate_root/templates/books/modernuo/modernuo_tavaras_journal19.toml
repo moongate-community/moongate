@@ -1,0 +1,23 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day Nineteen - Day
+Twenty-One :
+
+The barricade won't
+hold - never, and
+they'll come, they
+come even now.  I
+would tear the last of
+
+it down, let them in to
+devour us all, if only
+to stop the screaming
+- the awful, wailing
+cries that fill the tomb
+with their presence.
+May my ancestors
+forgive me, but it
+
+must be done. I must
+end this."""
+item_template = "readable_scroll"

@@ -92,6 +92,14 @@ internal static class CompletionCatalog
             ]
         ),
         new(
+            "convert modernuo-books",
+            "Convert ModernUO's static book texts into readable document templates",
+            [
+                new("--source", "The Projects/UOContent folder of ModernUO", CompletionValueType.Directory),
+                new("--destination", "The book templates folder", CompletionValueType.Directory)
+            ]
+        ),
+        new(
             "completion",
             "Print the completion script of a shell",
             [],

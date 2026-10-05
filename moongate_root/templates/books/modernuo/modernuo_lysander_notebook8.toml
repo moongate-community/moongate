@@ -1,0 +1,52 @@
+title = "Lysander's Notebook"
+author = "L. Gathenwale"
+content = """Day Eight - Day Ten :
+
+Have you taken them,
+Master?  They could
+not have found a way
+past the stones that
+block our path!  The
+three workers, My
+
+Master, where have
+they gone?  Curses
+upon them!  I'll cut
+them all to pieces if
+they show their faces
+again, then burn the
+rest alive upon a pyre,
+for all to see, as a
+
+warning of Thy
+Power.  How could
+they have gotten past
+me?  I sleep against
+the very walls, to
+hear Thy Words, to
+feel Thy Breath.  I
+can find no egress
+
+from the chambers
+that the Sewel woman
+does not know of nor
+have men working at
+excavating.  Where
+have they gone,
+Master?  Have you
+taken them, or do they
+
+truly flee from Thy
+Presence?  I will kill
+them if they show
+their faces again.
+Give me Strength, my
+Master, to let them
+live a while longer,
+until they have
+
+fulfilled their
+purpose and I kneel
+before Thee, covered
+in their blood."""
+item_template = "readable_scroll"

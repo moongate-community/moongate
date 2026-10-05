@@ -1,6 +1,5 @@
 using System.Text;
 using Moongate.Core.Utils;
-using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.UoxItemConverter.Data.Internal.Books;
 
 namespace Moongate.UoxItemConverter.Internal;
@@ -40,7 +39,7 @@ internal static class ModernUoBookConverter
                 var path = Path.Combine(destination, book.Id + ".toml");
                 RejectLink(path);
                 if (Directory.Exists(path)) throw new InvalidDataException($"Output file is a directory: {path}");
-                var document = new BookTemplateSource
+                var document = new ConvertedBookSource
                 {
                     Title = EscapeDollars(book.Title), Author = EscapeDollars(book.Author), Content = EscapeDollars(book.Content)
                 };

@@ -1,0 +1,22 @@
+title = "Lysander's Notebook"
+author = "L. Gathenwale"
+content = """Day One :
+
+At last, it stands
+before me.  The doors
+of Thy Sanctum will
+open to me now, after
+all these years of
+searching.  I give
+
+myself unto Thee,
+Khal Ankur, I have
+come for Thy secrets
+and I will kneel
+prostrate before Thee.
+ Blessed are the
+Keepers, praise unto
+Thee, a thousand
+
+fortunes in the night."""
+item_template = "readable_scroll"
