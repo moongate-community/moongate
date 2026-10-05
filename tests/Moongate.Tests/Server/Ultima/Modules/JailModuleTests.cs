@@ -155,6 +155,60 @@ public sealed class JailModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Send_ASerialNotInTheWorld_GoesToTheOfflineJail_AndGivesItsAnswer()
+    {
+        _jail.OfflineResult = JailResultType.Pending;
+
+        var result = Run("return jail.send(200, 1, 3, 3, 'Stole a horse') == JailResultType.Pending");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal((new Serial(200), 1, 3, new Serial(3)), Assert.Single(_jail.JailedOffline) switch { var sent => (sent.Prisoner, sent.Cell, sent.Days, sent.By.Id) });
+        Assert.Equal(["Stole a horse"], _jail.Reasons);
+        Assert.Empty(_jail.Jailed);
+    }
+
+    [Theory, InlineData("200, 1, 3, 99"), InlineData("-1, 1, 3, 3"), InlineData("0, 1, 3, 3"), InlineData("99999999999, 1, 3, 3")]
+    public void Send_ByNotInTheWorld_OrASerialThatIsNone_NeverReachesTheOfflineJail(string arguments)
+    {
+        _jail.OfflineResult = JailResultType.Pending;
+
+        Assert.True(Run($"return jail.send({arguments}) == JailResultType.NotInWorld")[0].Read<bool>());
+        Assert.Empty(_jail.JailedOffline);
+    }
+
+    [Theory, InlineData("200, 1.5, 3, 3", "NoSuchCell"), InlineData("200, 1, 2.5, 3", "BadDays")]
+    public void Send_ToSomeoneOffline_StillChecksTheNumbers(string arguments, string answer)
+    {
+        _jail.OfflineResult = JailResultType.Pending;
+
+        Assert.True(Run($"return jail.send({arguments}) == JailResultType.{answer}")[0].Read<bool>());
+        Assert.Empty(_jail.JailedOffline);
+    }
+
+    [Fact]
+    public void Sentence_OfOneThatWaits_SaysPending_AndItsWholeLength()
+    {
+        _jail.SentenceList.Add(new() { Id = new Serial(2), Name = "Gino", Cell = 2, Days = 3, JailedBy = "Giachi", Pending = true });
+
+        var result = Run("local s = jail.sentence(2) return s.pending, s.seconds_left, jail.cells()[2].pending, jail.cells()[2].seconds_left");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(3 * 86_400, result[1].Read<int>());
+        Assert.True(result[2].Read<bool>());
+        Assert.Equal(3 * 86_400, result[3].Read<int>());
+    }
+
+    [Fact]
+    public void Sentence_OfOneThatRuns_IsNotPending()
+    {
+        _jail.SentenceList.Add(Sentence(2, cell: 2, secondsLeft: 90));
+
+        var result = Run("return jail.sentence(2).pending, jail.cells()[2].pending");
+
+        Assert.Equal([false, false], result.Select(value => value.Read<bool>()));
+    }
+
+    [Fact]
     public void Release_PardonsAPrisoner_AndIsFalseForSomeoneFree()
     {
         _jail.SentenceList.Add(Sentence(2, cell: 2, secondsLeft: 90));

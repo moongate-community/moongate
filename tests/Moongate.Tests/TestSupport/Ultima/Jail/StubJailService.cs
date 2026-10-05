@@ -78,9 +78,9 @@ public sealed class StubJailService : IJailService
     }
 
     /// <summary>
-    ///     What jailing someone who is not in the world gives.
+    ///     What jailing someone who is not in the world gives: as the jail answers for a serial it did not find.
     /// </summary>
-    public JailResultType OfflineResult { get; set; } = JailResultType.Pending;
+    public JailResultType OfflineResult { get; set; } = JailResultType.NotInWorld;
 
     public List<(Serial Prisoner, int Cell, int Days, MobileEntity By)> JailedOffline { get; } = [];
 
