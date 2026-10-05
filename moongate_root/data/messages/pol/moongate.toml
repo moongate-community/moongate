@@ -190,3 +190,9 @@
 # Moongate: texts of the animate command (30158-30159).
 30158 = "Każe wskazanej postaci lub NPC wykonać akcję jej ciała: animate <akcja>."
 30159 = "{0} wykonuje akcję {1}."
+
+# Moongate: texts of the version and uptime commands (30160-30163).
+30160 = "Pokazuje wersję serwera, czy jest to kompilacja Debug czy Release, oraz kiedy została zbudowana."
+30161 = "Moongate {0} \"{1}\" ({2}), zbudowany {3}."
+30162 = "Pokazuje, jak długo serwer działa i od kiedy."
+30163 = "Działa od {0}, od {1}."

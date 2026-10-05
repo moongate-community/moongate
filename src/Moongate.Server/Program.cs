@@ -212,6 +212,20 @@ await ConsoleApp.RunAsync(
                             AccountType.Regular,
                             CommandMessages.HelpDescriptionText
                         )
+                        .RegisterCommand<VersionCommand>(
+                            "version",
+                            "Shows the version the server runs, whether it is a Debug or a Release build, and when it was built.",
+                            CommandSourceType.Console | CommandSourceType.InGame,
+                            AccountType.Regular,
+                            CommandMessages.VersionDescription
+                        )
+                        .RegisterCommand<UptimeCommand>(
+                            "uptime",
+                            "Shows how long the server has been running and since when.",
+                            CommandSourceType.Console | CommandSourceType.InGame,
+                            AccountType.Regular,
+                            CommandMessages.UptimeDescription
+                        )
                         .RegisterCommand<ConsoleCommand>(
                             "console",
                             "Locks the console input again, as at startup: console lock.",
