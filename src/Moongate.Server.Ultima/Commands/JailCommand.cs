@@ -4,6 +4,7 @@ using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
@@ -14,7 +15,9 @@ namespace Moongate.Server.Ultima.Commands;
 /// <summary>
 ///     Opens the gump of the jail: it lists the cells of <c>data/jail.toml</c> with who is inside, takes the game
 ///     master into one, and, once a character is picked with its target button, a player or an NPC, sends it to a
-///     free cell for the days typed or releases it.
+///     free cell for the days typed or releases it. <c>jail &lt;name&gt;</c> opens it on the player of that name, in
+///     the world or not: one who is offline is jailed at its next login. Several players of one name are listed in
+///     the gump.
 /// </summary>
 public sealed class JailCommand : ICommandExecutor
 {
@@ -59,7 +62,23 @@ public sealed class JailCommand : ICommandExecutor
             return;
         }
 
-        if (!await OpenGumpAsync(character, context.CancellationToken))
+        // A name of several words comes as several arguments.
+        var name = string.Join(' ', context.Arguments).Trim();
+        IReadOnlyList<JailCandidate> found = [];
+
+        if (name.Length > 0)
+        {
+            found = await _jail.FindAsync(name, context.CancellationToken);
+
+            if (found.Count == 0)
+            {
+                context.PrintError(_localization.Text(CommandMessages.JailNobodyNamed, "No character is named {0}.", name));
+
+                return;
+            }
+        }
+
+        if (!await OpenGumpAsync(character, found, context.CancellationToken))
         {
             context.PrintError(
                 _localization.Text(
@@ -71,7 +90,11 @@ public sealed class JailCommand : ICommandExecutor
     }
 
     // The gump opens on the loop, where its script fills the cells.
-    private async Task<bool> OpenGumpAsync(MobileEntity character, CancellationToken cancellationToken)
+    private async Task<bool> OpenGumpAsync(
+        MobileEntity character,
+        IReadOnlyList<JailCandidate> found,
+        CancellationToken cancellationToken
+    )
     {
         if (_gumps is null)
         {
@@ -82,9 +105,20 @@ public sealed class JailCommand : ICommandExecutor
         var open = new LoopActionWorkItem(
             () =>
             {
-                // No target yet: the game master picks one from the gump.
                 var args = new LuaTable();
                 args["days"] = "1";
+
+                if (found.Count == 1)
+                {
+                    args["target"] = (long)found[0].Id.Value;
+                    args["name"] = found[0].Name;
+                }
+                else if (found.Count > 1)
+                {
+                    // Several of one name: the game master picks which from the gump.
+                    args["candidates"] = Candidates(found);
+                }
+
                 opened = _gumps.Open(character.Id.Value, GumpId, args);
             }
         );
@@ -92,5 +126,21 @@ public sealed class JailCommand : ICommandExecutor
         await open.Completion;
 
         return opened;
+    }
+
+    private static LuaTable Candidates(IReadOnlyList<JailCandidate> found)
+    {
+        var candidates = new LuaTable();
+
+        for (var index = 0; index < found.Count; index++)
+        {
+            var entry = new LuaTable();
+            entry["serial"] = (long)found[index].Id.Value;
+            entry["name"] = found[index].Name;
+            entry["account"] = found[index].Account;
+            candidates[index + 1] = entry;
+        }
+
+        return candidates;
     }
 }

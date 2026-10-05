@@ -173,7 +173,7 @@ public static class UltimaCommandsContainerExtensions
         );
         container.RegisterCommand<JailCommand>(
             "jail",
-            "Opens the gump of the jail: it lists the cells, takes you into one, and jails or releases a character.",
+            "Opens the gump of the jail: it lists the cells, takes you into one, and jails or releases a character; jail <name> opens it on the player of that name, online or not.",
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.JailDescription

@@ -162,15 +162,16 @@
 30137 = "Vous avez quitté la protection des gardes de {0}."
 30138 = "Tu regretteras tes actes, canaille !"
 
-# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 of the jail command).
+# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 and 30150 of the jail command, 30148-30149 the reason of a sentence).
 30139 = "Vous avez été emprisonné pour {0} jours."
 30140 = "Vous avez purgé votre peine. Une amende de {0} pièces d'or a été prélevée."
 30141 = "Vous avez purgé votre peine."
 30142 = "Vous avez été libéré de prison."
 30143 = "{0} a purgé {1} jours dans la cellule {2}, du {3} au {4}, et a payé une amende de {5} pièces d'or. Emprisonné par {6}."
-30144 = "Ouvre le gump de la prison : il liste les cellules, vous emmène dans l'une d'elles, et emprisonne ou libère un personnage."
+30144 = "Ouvre le gump de la prison : il liste les cellules, vous emmène dans l'une d'elles, et emprisonne ou libère un personnage ; jail <nom> l'ouvre sur le joueur de ce nom, en ligne ou non."
 30145 = "La prison n'est pas configurée : data/jail.toml est absent."
 30146 = "Ce n'est pas un personnage."
 30147 = "Le gump de la prison est absent : templates/gumps/jail_sentence.xml."
 30148 = "Vous avez été emprisonné pour {0} jours : {1}"
 30149 = "Motif : {0}"
+30150 = "Aucun personnage ne s'appelle {0}."

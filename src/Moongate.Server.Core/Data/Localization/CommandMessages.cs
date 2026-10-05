@@ -134,4 +134,5 @@ public static class CommandMessages
     public const int JailNotSetUp = 30145;
     public const int NotACharacter = 30146;
     public const int JailGumpMissing = 30147;
+    public const int JailNobodyNamed = 30150;
 }
