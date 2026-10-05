@@ -4,8 +4,10 @@ using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules.Internal;
+using Moongate.Server.Ultima.Types.Weather;
 using Moongate.Server.Ultima.Types.World;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -279,11 +281,7 @@ public sealed class WorldModule
     [ScriptFunction(helpText: "The weather where the player stands, as a table { kind (a WeatherKindType), density, temperature }; nil for an NPC or a player not in the world.")]
     public LuaTable? Weather(long player)
     {
-        if (_weather is null ||
-            _mobiles is null ||
-            player is <= 0 or > uint.MaxValue ||
-            !_mobiles.TryGet(new Serial((uint)player), out var mobile) ||
-            mobile.IsNpc)
+        if (!TryGetWeatherPlayer(player, out var mobile))
         {
             return null;
         }
@@ -295,6 +293,33 @@ public sealed class WorldModule
         table["temperature"] = state.Temperature;
 
         return table;
+    }
+
+    /// <summary>
+    ///     Gets the name of the weather profile a player stands in, such as <c>temperate</c>;
+    ///     <c>world.weather_profile(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The name of the weather profile where the player stands (its region's, else its map's), as data/weather.toml names it; nil for an NPC or a player not in the world.")]
+    public string? WeatherProfile(long player)
+    {
+        return TryGetWeatherPlayer(player, out var mobile) ? _weather!.ProfileOf(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Forces a kind of weather on the profile a player stands in until the next game hour, as the weather command
+    ///     does; <c>world.set_weather(who, WeatherKindType.Rain)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Forces a WeatherKindType (None, Rain, Snow or Storm) on the profile where the player stands, which every region using that profile gets, until the next game hour. False for an NPC or a player not in the world; a kind that does not exist is a script error.")]
+    public bool SetWeather(long player, WeatherKindType kind)
+    {
+        if (!TryGetWeatherPlayer(player, out var mobile))
+        {
+            return false;
+        }
+
+        _weather!.Force(_weather.ProfileOf(mobile), kind);
+
+        return true;
     }
 
     /// <summary>
@@ -369,5 +394,17 @@ public sealed class WorldModule
         }
 
         return table;
+    }
+
+    // A player in the world, when the weather service is there.
+    private bool TryGetWeatherPlayer(long player, out MobileEntity mobile)
+    {
+        mobile = null!;
+
+        return _weather is not null &&
+               _mobiles is not null &&
+               player is > 0 and <= uint.MaxValue &&
+               _mobiles.TryGet(new Serial((uint)player), out mobile!) &&
+               !mobile.IsNpc;
     }
 }
