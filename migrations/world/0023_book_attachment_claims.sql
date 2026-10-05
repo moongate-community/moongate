@@ -27,8 +27,9 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER book_attachment_claim_letter_exists
-    BEFORE INSERT OR UPDATE ON world.book_attachment_claims
+CREATE CONSTRAINT TRIGGER book_attachment_claim_letter_exists
+    AFTER INSERT OR UPDATE ON world.book_attachment_claims
+    DEFERRABLE INITIALLY IMMEDIATE
     FOR EACH ROW EXECUTE FUNCTION world.validate_book_attachment_claim_letter();
 
 -- A world save can delete an old container, cascade through a moved letter, and restore the live letter later in the

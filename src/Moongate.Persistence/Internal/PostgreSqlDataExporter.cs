@@ -105,6 +105,8 @@ internal static class PostgreSqlDataExporter
             await writer.FlushAsync(cancellationToken).ConfigureAwait(false);
 
             await writer.WriteLineAsync("BEGIN;").ConfigureAwait(false);
+            // Validate deferrable references and integrity triggers after every table has been restored.
+            await writer.WriteLineAsync("SET CONSTRAINTS ALL DEFERRED;").ConfigureAwait(false);
             await writer.WriteLineAsync().ConfigureAwait(false);
 
             if (tables.Count > 0)

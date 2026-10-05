@@ -9,6 +9,24 @@ namespace Moongate.Tests.Integration.Server.Ultima.Books;
 public sealed class BookAttachmentStoreTests
 {
     [Fact]
+    public async Task Receipt_PopulatedBackupRestore_PreservesClaimAndSavedLetter()
+    {
+        await using var fixture = await BookAttachmentStoreFixture.CreateAsync();
+        var claim = fixture.Claim();
+        await fixture.Store.CommitAsync(claim);
+        await using var output = new MemoryStream();
+        await Moongate.Persistence.Internal.PostgreSqlDataExporter.ExportAsync(
+            fixture.Host.Database.ConnectionString, output, DateTimeOffset.UtcNow, CancellationToken.None);
+        var script = System.Text.Encoding.UTF8.GetString(output.ToArray());
+        await SqlDumpReplayer.ReplayAsync(fixture.Host.Database.ConnectionString, script);
+        Assert.Equal(BookAttachmentCommitState.Committed, await fixture.Store.ReconcileAsync(claim));
+        Assert.Contains(claim.Letter.Id, await fixture.Store.LoadClaimedIdsAsync());
+        Assert.Equal("Welcome Pippo", (await fixture.Items.GetByIdAsync(claim.Letter.Id))!.GetProp<string>("book.content"));
+        Assert.Equal(100, (await fixture.Items.GetByIdAsync(claim.Items[0].Id))!.Amount);
+        Assert.Single(await fixture.Receipts.GetAllAsync());
+    }
+
+    [Fact]
     public async Task Receipt_ReferencesMissingLetter_IsRefused()
     {
         await using var fixture = await BookAttachmentStoreFixture.CreateAsync();
