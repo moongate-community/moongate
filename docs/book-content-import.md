@@ -53,7 +53,10 @@ Empty lines, leading spaces, empty pages, spelling and annotations stay as writt
 Lines are joined with a newline and pages with two newlines. This provides readable plain
 text; it does not retain a separate native pagination model.
 
-The UTF-8 TOML body is multiline. The importer doubles literal `$` characters so the
+The UTF-8 TOML body is multiline when that representation preserves the text exactly;
+leading newlines and CR/CRLF sequences use escaped basic strings when needed. Invalid
+Unicode is rejected, and serialized fields are checked by deserializing them before writing.
+The importer validates the escaped source limit and doubles literal `$` characters so the
 [template formatter](data-files/books.md#variables) displays them literally. Imported books
 require no variable values or attachments and use `item_template = "readable_scroll"`.
 Rerunning replaces matching generated filenames, keeps unrelated files such as the welcome

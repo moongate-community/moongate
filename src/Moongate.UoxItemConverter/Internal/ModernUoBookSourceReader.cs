@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -44,19 +45,24 @@ internal static class ModernUoBookSourceReader
                     var pages = arguments.Skip(2).Select(argument => string.Join('\n',
                         Arguments(argument.Expression, "BookPageInfo").Select(line => Literal(line.Expression)))).ToArray();
                     var content = string.Join("\n\n", pages);
+                    var utf8 = new UTF8Encoding(false, true);
+                    utf8.GetByteCount(title);
+                    utf8.GetByteCount(author);
+                    utf8.GetByteCount(content);
                     var id = "modernuo_" + JsonNamingPolicy.SnakeCaseLower.ConvertName(name);
                     if (!TextTemplateTokens.IsValidName(id) || string.IsNullOrWhiteSpace(title) ||
                         string.IsNullOrWhiteSpace(content) ||
                         !BookTextValidation.IsValidText(title, BookTextValidation.HeaderLimit) ||
                         !BookTextValidation.IsValidText(author, BookTextValidation.HeaderLimit) ||
                         !BookTextValidation.IsValidText(content, BookTextValidation.ContentLimit) ||
+                        content.Length + content.Count(character => character == '$') > BookTextValidation.ContentLimit ||
                         !BookGumpRenderer.TryBuild(title, author, content, out _))
                         throw new InvalidDataException("Book id or text is invalid or exceeds the document limits.");
 
                     books.Add(new() { Id = id, Title = title, Author = author, Content = content, PageCount = pages.Length });
                 }
             }
-            catch (InvalidDataException exception)
+            catch (Exception exception) when (exception is InvalidDataException or EncoderFallbackException)
             {
                 throw new InvalidDataException($"{path}: {name}: {exception.Message}", exception);
             }

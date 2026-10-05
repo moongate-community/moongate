@@ -1,6 +1,7 @@
 using System.Text;
 using Moongate.Core.Utils;
 using Moongate.UoxItemConverter.Data.Internal.Books;
+using Tomlyn;
 
 namespace Moongate.UoxItemConverter.Internal;
 
@@ -43,7 +44,7 @@ internal static class ModernUoBookConverter
                 {
                     Title = EscapeDollars(book.Title), Author = EscapeDollars(book.Author), Content = EscapeDollars(book.Content)
                 };
-                files.Add((path, TomlUtils.Serialize(document).ReplaceLineEndings("\n")));
+                files.Add((path, Serialize(document, book.Id)));
             }
             Directory.CreateDirectory(destination);
             foreach (var file in files) File.WriteAllText(file.Path, file.Text, new UTF8Encoding(false));
@@ -54,6 +55,38 @@ internal static class ModernUoBookConverter
         {
             error.WriteLine($"Book conversion failed: {exception.Message}");
             return 2;
+        }
+    }
+
+    private static string Serialize(ConvertedBookSource document, string id)
+    {
+        var text = TomlUtils.Serialize(document);
+        if (MatchesSource(text, document)) return text;
+
+        // Basic strings retain leading newlines and CR/CRLF sequences that multiline TOML normalizes.
+        text = TomlUtils.Serialize(new Dictionary<string, string>
+        {
+            ["title"] = document.Title,
+            ["author"] = document.Author,
+            ["content"] = document.Content,
+            ["item_template"] = document.ItemTemplate
+        });
+        if (!MatchesSource(text, document))
+            throw new InvalidDataException($"{id}: serialized TOML does not preserve the source text.");
+        return text;
+    }
+
+    private static bool MatchesSource(string text, ConvertedBookSource expected)
+    {
+        try
+        {
+            var actual = TomlUtils.Deserialize<ConvertedBookSource>(text);
+            return actual is not null && actual.Title == expected.Title && actual.Author == expected.Author &&
+                   actual.Content == expected.Content && actual.ItemTemplate == expected.ItemTemplate;
+        }
+        catch (TomlException)
+        {
+            return false;
         }
     }
 

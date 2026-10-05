@@ -128,6 +128,66 @@ public sealed class ModernUoBookConverterTests : IDisposable
         Assert.False(Directory.Exists(_directories.DestinationDirectory));
     }
 
+    [Theory]
+    [InlineData(8193)]
+    [InlineData(9000)]
+    public void Run_DollarEscapingExceedsSourceLimit_RejectsBeforeChangingEarlierOutput(int count)
+    {
+        _directories.WriteSource("A.cs", Book("Earlier", "kept"));
+        Assert.Equal(0, Run());
+        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_earlier.toml");
+        var previous = File.ReadAllBytes(path);
+        _directories.WriteSource("A.cs", Book("Earlier", "changed"));
+        _directories.WriteSource("Z.cs", Book("Dollars", new string('$', count)));
+
+        Assert.Equal(2, Run());
+        Assert.Equal(previous, File.ReadAllBytes(path));
+        Assert.Single(Directory.GetFiles(_directories.DestinationDirectory));
+    }
+
+    [Fact]
+    public void Run_DollarEscapingAtSourceLimit_PreservesRenderedText()
+    {
+        var content = new string('$', 8192);
+        _directories.WriteSource("A.cs", Book("Dollars", content));
+
+        Assert.True(Run() == 0, _error.ToString());
+        Assert.Equal(16384, Read("modernuo_dollars").Content.Length);
+        Assert.Equal(content, TextTemplateRenderer.Render(Read("modernuo_dollars").Content,
+            new Dictionary<string, string>(), TextTemplateSyntaxType.Document));
+    }
+
+    [Theory]
+    [InlineData("\n\nfirst")]
+    [InlineData("a\rb\r\nc")]
+    [InlineData("\nfirst")]
+    [InlineData("face \U0001F600")]
+    public void Run_LeadingBlankPagesAndLineEndings_PreservesDecodedText(string content)
+    {
+        _directories.WriteSource("A.cs", Book("Special", content));
+
+        Assert.True(Run() == 0, _error.ToString());
+        Assert.Equal(content, Read("modernuo_special").Content);
+    }
+
+    [Theory]
+    [InlineData("\\uD800", "Title", "Writer")]
+    [InlineData("text", "\\uD800", "Writer")]
+    [InlineData("text", "Title", "\\uDC00")]
+    public void Run_InvalidUnicode_RejectsBeforeChangingEarlierOutput(string content, string title, string author)
+    {
+        _directories.WriteSource("A.cs", Book("Earlier", "kept"));
+        Assert.Equal(0, Run());
+        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_earlier.toml");
+        var previous = File.ReadAllBytes(path);
+        _directories.WriteSource("A.cs", Book("Earlier", "changed"));
+        _directories.WriteSource("Z.cs", $"class Bad {{ public static readonly BookContent Content = new(\"{title}\", \"{author}\", new BookPageInfo(\"{content}\")); }}");
+
+        Assert.Equal(2, Run());
+        Assert.Equal(previous, File.ReadAllBytes(path));
+        Assert.Single(Directory.GetFiles(_directories.DestinationDirectory));
+    }
+
     [Fact]
     public void Run_CollidingClassIds_RejectsBothInsteadOfOverwriting()
     {
