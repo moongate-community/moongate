@@ -1018,11 +1018,28 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
 
         Assert.Empty(_npcScripts.Calls);
         AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+        // The player is told why nothing happened: "That is too far away."
+        Assert.Equal(DropRequestPacketHandler.TooFarMessage, Assert.Single(_speech.ToldClilocs).Cliloc);
 
         await _fixture.ExecuteOnLoopAsync(() => _session.Set(ItemSessionKeys.Held, new(_coins.Id)));
         await DropAsync(_coins.Id, 0, 0, near.Id);
 
         Assert.Single(_npcScripts.Calls);
+        Assert.Single(_speech.ToldClilocs);
+    }
+
+    // As ModernUO: the staff gives from any distance.
+    [Fact]
+    public async Task Handle_OnAnNpcFarAway_ByTheStaff_IsAsked()
+    {
+        var far = Npc(1505);
+        await HoldingAsync(_coins);
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        await DropAsync(_coins.Id, 0, 0, far.Id);
+
+        Assert.Single(_npcScripts.Calls);
+        Assert.Empty(_speech.ToldClilocs);
     }
 
     [Fact]

@@ -82,7 +82,7 @@ asks again.
 ## Gold handed to the banker
 
 Drop a pile of gold or a bank check on a banker, from 2 tiles or closer, and it goes into your
-bank: the banker says `1,250 gold was deposited in your account.`, with the worth of a check.
+bank (from farther you read `That is too far away.`; the staff gives from any distance): the banker says `1,250 gold was deposited in your account.`, with the worth of a check.
 
 - Gold tops up the gold piles of the box, and what is left is a pile of its own; a check goes in
   as it is. All or nothing: a refusal gives the item back to where you lifted it from.

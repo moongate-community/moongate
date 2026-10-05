@@ -49,6 +49,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     public const int GiveRange = 2;
 
     /// <summary>
+    ///     The client's "That is too far away."
+    /// </summary>
+    public const int TooFarMessage = 500446;
+
+    /// <summary>
     ///     The client's "That container cannot hold more weight."
     /// </summary>
     public const int TooHeavyMessage = 1080016;
@@ -270,9 +275,17 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             !_mobiles.TryGet(destination, out var npc) ||
             !npc.IsNpc ||
             !_mobiles.TryGet(session.CharacterId, out var giver) ||
-            giver.Map != npc.Map ||
-            !giver.Location.InRange(npc.Location, GiveRange))
+            giver.Map != npc.Map)
         {
+            return false;
+        }
+
+        // As ModernUO: a player gives from 2 tiles, the staff from anywhere. The client lets go of an item a tile
+        // farther than that, so the player is told why it came back.
+        if (session.AccountType < AccountType.GameMaster && !giver.Location.InRange(npc.Location, GiveRange))
+        {
+            _speech?.TellCliloc(giver, TooFarMessage);
+
             return false;
         }
 
