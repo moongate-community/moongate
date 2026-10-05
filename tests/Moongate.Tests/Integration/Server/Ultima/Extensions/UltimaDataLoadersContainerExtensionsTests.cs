@@ -3,6 +3,7 @@ using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data.Books;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal;
 using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Data.Templates.Items;
@@ -28,6 +29,7 @@ public sealed class UltimaDataLoadersContainerExtensionsTests
         root.CreateFile("data/starting_items.toml", "[[set]]\ncommon = true\n[[set.items]]\nitems = [\"readable_scroll\"]\nbook_template = \"welcome_letter\"\n");
         using var container = new Container();
         container.RegisterInstance(new DirectoriesConfig(root.Path, ["templates", "data"]));
+        container.RegisterInstance(new LocalizationConfig());
         container.AddUltimaDataLoaders();
         var registrations = container.Resolve<List<DataLoaderRegistration>>();
         registrations.RemoveAll(registration => registration.EntityType != typeof(ItemTemplate) &&

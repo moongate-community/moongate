@@ -3,6 +3,7 @@ using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Books;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Interfaces.Books;
 using Moongate.Server.Ultima.Services.Books;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
@@ -20,16 +21,18 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly IDataLoaderService _dataLoaderService;
     private readonly IBookTemplateService _books;
+    private readonly LocalizationConfig _localization;
 
     private readonly ILogger _logger = Log.ForContext<StartingItemsLoader>();
 
     private string startingItemsFilePath => Path.Join(_directoriesConfig["data"], "starting_items.toml");
 
-    public StartingItemsLoader(DirectoriesConfig directoriesConfig, IDataLoaderService dataLoaderService, IBookTemplateService books)
+    public StartingItemsLoader(DirectoriesConfig directoriesConfig, IDataLoaderService dataLoaderService, IBookTemplateService books, LocalizationConfig localization)
     {
         _directoriesConfig = directoriesConfig;
         _dataLoaderService = dataLoaderService;
         _books = books;
+        _localization = localization;
     }
 
     public Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -81,7 +84,7 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
                     if (entry.Equip || entry.Items.Any(id => templates[id].Stackable != false ||
                         !BookTextValidation.IsReadableScript(templates[id].ScriptId)) ||
                         !_books.TryRender(book, new TextTemplateContext { PlayerName = "Player", ServerName = "Server", RealmName = "Realm", Version = "Version", Codename = "Codename" },
-                            "eng", entry.BookValues, out _))
+                            _localization.Language, entry.BookValues, out _))
                     {
                         throw new InvalidDataException($"{where} has an invalid book binding '{book}'.");
                     }

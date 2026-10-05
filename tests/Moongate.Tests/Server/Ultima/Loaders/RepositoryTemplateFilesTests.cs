@@ -139,7 +139,7 @@ public sealed class RepositoryTemplateFilesTests
         var templates = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var data = new StubDataLoaderService().With(templates);
         data.With((await new BooksLoader(directories, data).LoadDataAsync()).Entities.ToArray());
-        var loader = new StartingItemsLoader(directories, data, new BookTemplateService(data));
+        var loader = new StartingItemsLoader(directories, data, new BookTemplateService(data), new LocalizationConfig());
         await loader.InitializeAsync();
 
         var sets = (await loader.LoadDataAsync()).Entities;

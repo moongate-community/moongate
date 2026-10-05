@@ -1,3 +1,4 @@
+using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Core.Primitives;
 using Moongate.Core.Serialization.Toml;
@@ -5,6 +6,9 @@ using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Data.Books;
+using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Interfaces.Books;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services.Books;
 using Moongate.Tests.TestSupport.Directories;
@@ -107,6 +111,40 @@ public sealed class StartingItemsLoaderTests
         Assert.Equal(expected, rendered!.Content);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task LoadDataAsync_ValidatesTheConfiguredLanguageInsteadOfUnusedEnglish(bool oversizedItalian)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/starting_items.toml", "[[set]]\ncommon = true\n[[set.items]]\nitems = [\"scroll\"]\nbook_template = \"letter\"\n");
+        var book = new BookTemplate
+        {
+            Id = "letter",
+            Title = oversizedItalian ? "Welcome" : new string('x', 129),
+            Content = "Hello",
+            Translations = new() { ["ita"] = new() { Title = oversizedItalian ? new string('x', 129) : "Benvenuto" } }
+        };
+        var data = new StubDataLoaderService().With(new ItemTemplate { Id = "scroll", Stackable = false, ScriptId = "readable_scroll" }).With(book);
+        using var container = new Container();
+        container.RegisterInstance(new DirectoriesConfig(root.Path, ["data"]));
+        container.RegisterInstance<IDataLoaderService>(data);
+        container.RegisterInstance<IBookTemplateService>(new BookTemplateService(data));
+        container.RegisterInstance(new LocalizationConfig { Language = "ita" });
+        container.Register<StartingItemsLoader>();
+        var loader = container.Resolve<StartingItemsLoader>();
+
+        if (oversizedItalian)
+        {
+            var error = await Assert.ThrowsAsync<InvalidDataException>(() => loader.LoadDataAsync());
+            Assert.Contains("starting_items.toml", error.Message);
+        }
+        else
+        {
+            Assert.Single((await loader.LoadDataAsync()).Entities);
+        }
+    }
+
     private static StartingItemsLoader CreateLoader(TemporaryDirectory root)
     {
         var data = new StubDataLoaderService().With(
@@ -115,6 +153,6 @@ public sealed class StartingItemsLoaderTests
                 new ItemTemplate { Id = "scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll" },
                 new ItemTemplate { Id = "stacked_scroll", ItemId = new(0x14ED), Stackable = true, ScriptId = "readable_scroll" }
             ).With(new BookTemplate { Id = "welcome_letter", ItemTemplate = "scroll", Title = "Welcome $player_name", Content = "Meet $contact_name", Variables = ["contact_name"] });
-        return new(new DirectoriesConfig(root.Path, ["data"]), data, new BookTemplateService(data));
+        return new(new DirectoriesConfig(root.Path, ["data"]), data, new BookTemplateService(data), new LocalizationConfig());
     }
 }
