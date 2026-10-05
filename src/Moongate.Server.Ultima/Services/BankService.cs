@@ -52,6 +52,7 @@ public sealed class BankService : IBankService
     private readonly IWeightService _weight;
     private readonly ItemsConfig _itemsConfig;
     private readonly BankConfig _config;
+    private readonly IFatigueService? _fatigue;
     private readonly ILocalizationService? _localization;
     private readonly TimeProvider _time;
 
@@ -69,6 +70,7 @@ public sealed class BankService : IBankService
         IWeightService weight,
         ItemsConfig itemsConfig,
         BankConfig config,
+        IFatigueService? fatigue = null,
         ILocalizationService? localization = null,
         TimeProvider? time = null
     )
@@ -87,6 +89,7 @@ public sealed class BankService : IBankService
         _weight = weight;
         _itemsConfig = itemsConfig;
         _config = config;
+        _fatigue = fatigue;
         _localization = localization;
     }
 
@@ -218,6 +221,8 @@ public sealed class BankService : IBankService
             Put(made!, backpack);
         }
 
+        LoadChanged(player);
+
         return BankResultType.Ok;
     }
 
@@ -293,7 +298,18 @@ public sealed class BankService : IBankService
             Put(pile, box);
         }
 
+        LoadChanged(player);
+
         return BankResultType.Ok;
+    }
+
+    // Gold weighs: the player's status shows its new load, and it is warned when it is now overloaded.
+    private void LoadChanged(MobileEntity player)
+    {
+        if (_fatigue is not null && _sessions.TryGetByCharacterId(player.Id, out var session))
+        {
+            _fatigue.LoadChanged(session, player, true);
+        }
     }
 
     // The gold piles inside a container, at any depth, the smallest first: taking from them empties the small ones.

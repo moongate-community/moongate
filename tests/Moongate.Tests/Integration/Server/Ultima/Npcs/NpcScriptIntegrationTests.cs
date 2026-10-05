@@ -416,7 +416,9 @@ public sealed class NpcScriptIntegrationTests : IDisposable
      InlineData("withdraw"),
      InlineData("withdraw 0"),
      InlineData("withdraw 99999999999"),
-     InlineData("withdraw some gold")]
+     InlineData("withdraw some gold"),
+     // Digits of another script are no amount, and must not stop the script.
+     InlineData("withdraw \u0665\u0660\u0660")]
     public async Task TheBanker_HearsNoAmount_AndDoesNothing(string said)
     {
         var hearing = await StartBankerAsync();
@@ -429,7 +431,13 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.Empty(_speech.SaidClilocs);
     }
 
-    [Theory, InlineData("deposit 300"), InlineData("I would deposit 300 coins"), InlineData("DEPOSIT 300")]
+    [Theory,
+     InlineData("deposit 300"),
+     InlineData("I would deposit 300 coins"),
+     InlineData("DEPOSIT 300"),
+     // The word at the very end of the sentence.
+     InlineData("300 deposit"),
+     InlineData("300 gold, to deposit")]
     public async Task TheBanker_Deposits_OnTheWordDeposit(string said)
     {
         var hearing = await StartBankerAsync();
@@ -528,6 +536,20 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.Empty(_bank.Withdrawn);
         Assert.Empty(_bank.Opened);
         Assert.Empty(_speech.SaidClilocs);
+    }
+
+    // A number of ten digits that is still an amount: the bank answers it like any other, here that it is too much.
+    [Fact]
+    public async Task TheBanker_AnswersAnAmountOfTenDigits()
+    {
+        var hearing = await StartBankerAsync();
+        _bank.Result = BankResultType.TooMuch;
+
+        hearing.Heard(_aria, "withdraw 1000000000", [(int)SpeechKeywordType.Withdraw]);
+
+        Assert.Empty(_errors);
+        Assert.Equal([(_aria, 1_000_000_000)], _bank.Withdrawn);
+        Assert.Equal((_cat, 500381, ""), Assert.Single(_speech.SaidClilocs));
     }
 
     // The check is written by the next step of the bank: for now the banker lets the word pass.

@@ -61,8 +61,8 @@ local function command_of(text, keywords)
 
     local said = text:lower()
 
-    -- The word alone: "depository" deposits nothing.
-    if said:find("%f[%a]deposit%f[%A]") then
+    -- The word alone: "depository" deposits nothing. The space lets the word end the sentence.
+    if (said .. " "):find("%f[%a]deposit%f[%A]") then
         return "deposit"
     elseif said:find("bank", 1, true) then
         return "bank"
@@ -73,15 +73,20 @@ end
 
 -- The first number of the sentence, wherever it stands; nil with none, and for one no bank could hold.
 local function amount_in(text)
-    local digits = text:match("%d+")
+    -- The ten digits of the client's keyboard: %d would also take the digits of other scripts, which are no number here.
+    local digits = text:match("[0-9]+")
 
-    if not digits or #digits > 9 then
+    if not digits or #digits > 10 then
         return nil
     end
 
     local amount = tonumber(digits)
 
-    return amount > 0 and amount or nil
+    if not amount or amount < 1 or amount > 2000000000 then
+        return nil
+    end
+
+    return amount
 end
 
 -- "1234567" as "1,234,567".

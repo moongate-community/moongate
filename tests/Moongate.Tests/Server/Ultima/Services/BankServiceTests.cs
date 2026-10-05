@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Tests.TestSupport.Ultima.Weight;
 using Moongate.Server.Ultima.Types.Bank;
@@ -35,6 +36,7 @@ public sealed class BankServiceTests : IAsyncLifetime
     private readonly ItemTemplateService _templates;
     private readonly StubItemSerialPool _serials = new();
     private readonly StubWeightService _weight = new();
+    private readonly RecordingFatigueService _fatigue = new();
     private readonly BankConfig _config = new();
     private ContainerCapacityService _capacity = null!;
     private uint _nextItem = 0x40001000;
@@ -83,6 +85,7 @@ public sealed class BankServiceTests : IAsyncLifetime
             _weight,
             new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" },
             _config,
+            fatigue: _fatigue,
             time: _time
         );
 
@@ -437,6 +440,33 @@ public sealed class BankServiceTests : IAsyncLifetime
         _bank.Withdraw(_aria, 500);
 
         Assert.Contains(_fixture.Sender.Sent.Skip(before).OfType<ContainerItemUpdatePacket>(), packet => packet.Item.Amount == 500);
+    }
+
+    // The gold weighs: the player's status shows its new load, and it is warned when it is now overloaded.
+    [Fact]
+    public async Task Withdraw_AndDeposit_ShowThePlayerItsWeightAgain()
+    {
+        Gold(await BoxAsync(), 5000);
+        Backpack();
+
+        _bank.Withdraw(_aria, 500);
+
+        Assert.Equal((_aria, true), Assert.Single(_fatigue.Loads) switch { var load => (load.Mobile, load.Warn) });
+
+        _bank.Deposit(_aria, 200);
+
+        Assert.Equal(2, _fatigue.Loads.Count);
+    }
+
+    [Fact]
+    public async Task ARefusedWithdrawal_ShowsNoWeight()
+    {
+        Gold(await BoxAsync(), 100);
+        Backpack();
+
+        _bank.Withdraw(_aria, 500);
+
+        Assert.Empty(_fatigue.Loads);
     }
 
     [Fact]
