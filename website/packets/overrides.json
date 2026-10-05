@@ -2143,8 +2143,8 @@
         "description": "Subcommand data."
       }
     ],
-    "notes": "Subcommand 0x10 asks for one tooltip; the others are ignored for now. Outgoing 0xBF/0x08 is a separate map subcommand.",
-    "handler": "ExtendedCommandPacketHandler: subcommand 0x10 answers the tooltip"
+    "notes": "Subcommand 0x10 asks for one tooltip and 0x1A sets the lock of a stat (a byte for the stat, 0 strength, 1 dexterity, 2 intelligence, and a byte for the lock, 0 up, 1 down, 2 locked); the others are ignored for now. Outgoing 0xBF/0x08 and 0xBF/0x19 are separate subcommands.",
+    "handler": "ExtendedCommandPacketHandler: subcommand 0x10 answers the tooltip; subcommand 0x1A sets the stat lock of the character in the world (a lock past locked reads as up)"
   },
   "0xC8:incoming": {
     "category": "World",
@@ -4733,5 +4733,65 @@
     ],
     "notes": "The player moves the lock arrow of a skill in the skill window. Nothing is sent back: the client already shows it.",
     "handler": "SkillLockPacketHandler: IMobileStateService.SetSkillLock on the character in the world; a skill or lock that does not exist is ignored."
+  },
+  "0xBF/0x19:outgoing": {
+    "category": "Skills",
+    "tags": [
+      "Skills",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes, 12."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "ushort",
+        "size": "2",
+        "description": "Value 0x19"
+      },
+      {
+        "offset": "5",
+        "name": "Type",
+        "type": "byte",
+        "size": "1",
+        "description": "2: the locks of the stats"
+      },
+      {
+        "offset": "6",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The player's own character"
+      },
+      {
+        "offset": "10",
+        "name": "Unused",
+        "type": "byte",
+        "size": "1",
+        "description": "Zero."
+      },
+      {
+        "offset": "11",
+        "name": "Locks",
+        "type": "bitfield",
+        "size": "1",
+        "description": "Two bits each, strength << 4, dexterity << 2, intelligence: 0 up, 1 down, 2 locked"
+      }
+    ],
+    "notes": "The arrows beside strength, dexterity and intelligence in the status window. Sent after the status when a player enters the world, and again with the three locks when one changes, as ModernUO.",
+    "handler": "CharacterEnterWorldService: sends the stat locks of the character during world entry. MobileStateService.SetStatLock: sends them again to the player when one changes."
   }
 }

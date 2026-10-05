@@ -179,6 +179,42 @@ public sealed class MobileStateService : IMobileStateService
         return true;
     }
 
+    public bool SetStatLock(MobileEntity mobile, StatType stat, StatLockType statLock)
+    {
+        if (!Enum.IsDefined(stat) || !Enum.IsDefined(statLock))
+        {
+            return false;
+        }
+
+        var before = (mobile.StrLock, mobile.DexLock, mobile.IntLock);
+
+        switch (stat)
+        {
+            case StatType.Str:
+                mobile.StrLock = statLock;
+
+                break;
+            case StatType.Dex:
+                mobile.DexLock = statLock;
+
+                break;
+            default:
+                mobile.IntLock = statLock;
+
+                break;
+        }
+
+        // As ModernUO: the three locks, to its own player, when one changed.
+        if (before != (mobile.StrLock, mobile.DexLock, mobile.IntLock) &&
+            _mobiles.IsInWorld(mobile.Id) &&
+            _sessions.TryGetByCharacterId(mobile.Id, out var own))
+        {
+            _sender.TrySend(own.SessionId, new StatLockInfoPacket(mobile.Id, mobile.StrLock, mobile.DexLock, mobile.IntLock));
+        }
+
+        return true;
+    }
+
     public bool SetName(MobileEntity mobile, string name)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Trim().Length > IMobileStateService.MaxNameLength)
