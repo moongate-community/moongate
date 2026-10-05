@@ -221,3 +221,9 @@
 30178 = "{1} zlatých je v batohu postavy {0}."
 30179 = "{0} nemá batoh, nebo je plný."
 30180 = "Vloží hromádku zlata (1 až 60000) do batohu postavy nebo NPC, které označíš."
+
+# Moongate: book command (30181-30184).
+30181 = "Dokument {0} není v templates/books."
+30182 = "Dokument {0} je ve tvém batohu."
+30183 = "Dokument {0} nelze vytvořit. Zkontroluj jeho hodnoty a dostupnost batohu."
+30184 = "Vloží dokument z templates/books do tvého batohu: book <template> [name=value ...]."

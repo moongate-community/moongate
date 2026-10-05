@@ -4,7 +4,8 @@ Put one plain-text document in `<root>/templates/books/<name>.toml`. The file
 `welcome_letter.toml` has id `welcome_letter`; subdirectories are allowed but
 filename stems must be unique. On this machine the server root is `~/moongate`.
 
-The server loads these sources at startup. A script creates a personalized
+The server loads these sources at startup. A GameMaster can create one with
+[`.book <template> [name=value ...]`](../commands/book.md). A script creates a personalized
 scroll with `book.give`, or inscribes an existing readable item with `book.write`.
 Title, author and body are resolved once and saved on that individual item.
 Trading it, reading it as another player, renaming the recipient, editing the

@@ -221,3 +221,9 @@
 30178 = "{1} gold is in the backpack of {0}."
 30179 = "{0} has no backpack, or it is full."
 30180 = "Puts a pile of gold (1 to 60000) in the backpack of the character or NPC you target."
+
+# Moongate: book command (30181-30184).
+30181 = "No document {0} in templates/books."
+30182 = "Document {0} is in your backpack."
+30183 = "Document {0} could not be created. Check its values and backpack availability."
+30184 = "Gives a document from templates/books to your backpack: book <template> [name=value ...]."

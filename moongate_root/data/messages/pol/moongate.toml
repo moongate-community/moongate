@@ -221,3 +221,9 @@
 30178 = "{1} sztuk złota jest w plecaku postaci {0}."
 30179 = "{0} nie ma plecaka albo jest on pełny."
 30180 = "Wkłada stos złota (od 1 do 60000) do plecaka wskazanej postaci lub NPC."
+
+# Moongate: book command (30181-30184).
+30181 = "Brak dokumentu {0} w templates/books."
+30182 = "Dokument {0} jest w twoim plecaku."
+30183 = "Nie udało się utworzyć dokumentu {0}. Sprawdź jego wartości i dostępność plecaka."
+30184 = "Wkłada dokument z templates/books do twojego plecaka: book <template> [name=value ...]."

@@ -221,3 +221,9 @@
 30178 = "{1} monete d'oro sono nello zaino di {0}."
 30179 = "{0} non ha uno zaino, oppure è pieno."
 30180 = "Mette una pila d'oro (da 1 a 60000) nello zaino del personaggio o dell'NPC che selezioni."
+
+# Moongate: book command (30181-30184).
+30181 = "Nessun documento {0} in templates/books."
+30182 = "Il documento {0} è nel tuo zaino."
+30183 = "Impossibile creare il documento {0}. Controlla i valori e la disponibilità dello zaino."
+30184 = "Mette un documento da templates/books nel tuo zaino: book <template> [name=value ...]."

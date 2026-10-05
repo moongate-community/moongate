@@ -63,6 +63,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`lock`](commands/lock.md) | `lock`, then target a door | No | Yes | GameMaster | Game |
 | [`unlock`](commands/unlock.md) | `unlock`, then target a door | No | Yes | GameMaster | Game |
 | [`key`](commands/key.md) | `key`, then target a door | No | Yes | GameMaster | Game |
+| [`book`](commands/book.md) | `book <template> [name=value ...]` | No | Yes | GameMaster | Game |
 | [`create_check`](commands/create_check.md) | `create_check <1..2000000000>` | No | Yes | GameMaster | Game |
 | [`add_gold`](commands/add_gold.md) | `add_gold <1..60000>`, then target a mobile | No | Yes | GameMaster | Game |
 
@@ -70,7 +71,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 
 - **Everyone:** `help`, `echo`, `time`.
 - **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `resurrect`, `animate`, `where`, `go`, `moongate`, `fame`, `karma`, `globallight`,
-  `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `create_check`, `add_gold`.
+  `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`.
 - **Administrators:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, plus everything a
   game master uses.

@@ -221,3 +221,9 @@
 30178 = "{1} Gold ist im Rucksack von {0}."
 30179 = "{0} hat keinen Rucksack, oder er ist voll."
 30180 = "Legt einen Stapel Gold (1 bis 60000) in den Rucksack der Figur oder des NPCs, den du auswählst."
+
+# Moongate: book command (30181-30184).
+30181 = "Kein Dokument {0} in templates/books."
+30182 = "Dokument {0} ist in deinem Rucksack."
+30183 = "Dokument {0} konnte nicht erstellt werden. Prüfe seine Werte und ob dein Rucksack verfügbar ist."
+30184 = "Legt ein Dokument aus templates/books in deinen Rucksack: book <template> [name=value ...]."

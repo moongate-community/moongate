@@ -221,3 +221,9 @@
 30178 = "{1} pièces d'or sont dans le sac à dos de {0}."
 30179 = "{0} n'a pas de sac à dos, ou il est plein."
 30180 = "Met une pile d'or (de 1 à 60000) dans le sac à dos du personnage ou du PNJ que vous ciblez."
+
+# Moongate: book command (30181-30184).
+30181 = "Aucun document {0} dans templates/books."
+30182 = "Le document {0} est dans votre sac à dos."
+30183 = "Impossible de créer le document {0}. Vérifiez ses valeurs et la disponibilité du sac à dos."
+30184 = "Met un document de templates/books dans votre sac à dos : book <template> [name=value ...]."

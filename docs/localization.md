@@ -214,6 +214,7 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30168 | You may not use skills in jail. | What a prisoner reads when it uses a [skill](skills.md) |
 | 30150 | No character is named {0}. | What `jail <name>` answers when no player has the name |
 | 30160 to 30163 | Shows the version the server runs…, Moongate {0} "{1}" ({2}), built {3}., Shows how long the server has been running…, Up for {0}, since {1}. | The `version` and `uptime` commands |
+| 30181 to 30184 | No document {0} in templates/books., Document {0} is in your backpack., ... | The [`book` command](commands/book.md) replies and help description |
 
 The header of the command texts in `eng/moongate.toml` lists the ids of both sets.
 

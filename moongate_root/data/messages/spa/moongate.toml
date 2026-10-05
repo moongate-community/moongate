@@ -221,3 +221,9 @@
 30178 = "{1} monedas de oro están en la mochila de {0}."
 30179 = "{0} no tiene mochila, o está llena."
 30180 = "Pone una pila de oro (de 1 a 60000) en la mochila del personaje o PNJ que selecciones."
+
+# Moongate: book command (30181-30184).
+30181 = "No hay ningún documento {0} en templates/books."
+30182 = "El documento {0} está en tu mochila."
+30183 = "No se pudo crear el documento {0}. Comprueba sus valores y la disponibilidad de la mochila."
+30184 = "Pone un documento de templates/books en tu mochila: book <template> [name=value ...]."
