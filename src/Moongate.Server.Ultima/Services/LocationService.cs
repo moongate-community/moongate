@@ -12,6 +12,7 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class LocationService : ILocationService
 {
     private const char Separator = '/';
+    private const string CenterName = "Center";
 
     private readonly IDataLoaderService _data;
     private readonly ISectorService _sectors;
@@ -166,7 +167,10 @@ public sealed class LocationService : ILocationService
     {
         if (node.Locations.Count > 0)
         {
-            return node.Locations[0];
+            // ModernUO lists a town's places by name, so the first is whatever the alphabet puts there, such as
+            // the upper floor of a castle: its "Center" is where someone going to the town means to stand.
+            return node.Locations.FirstOrDefault(place => string.Equals(place.Name, CenterName, StringComparison.OrdinalIgnoreCase)) ??
+                   node.Locations[0];
         }
 
         foreach (var category in node.Categories)

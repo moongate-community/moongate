@@ -38,7 +38,7 @@ places is on a loaded map, `.go` alone prints the usage.
 - its name: `.go minoc`;
 - its categories and its name, as many of the last ones as it takes when several places share a
   name: `.go covetous entrance`, `.go dungeons covetous level 1`;
-- a category, which stands for its first place: `.go covetous`, `.go britain`.
+- a category, which stands for its place called `Center` when it has one, else for its first place: `.go britain`, `.go covetous`.
 
 Your own map comes first: a place of it, else a category of it, and only then a place or a
 category of another map, which takes you to that map. When nothing is named exactly so, the

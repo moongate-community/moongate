@@ -168,6 +168,21 @@ public sealed class LocationServiceTests
     }
 
     [Fact]
+    public void Find_ACategoryWithAPlaceCalledCenter_GivesThatOne_NotItsFirst()
+    {
+        // ModernUO lists Britain's places by name: the first is a castle's upper floor.
+        var service = Service(
+            Place(MapType.Felucca, "Towns/Britain", "Blackthorn Castle"),
+            Place(MapType.Felucca, "Towns/Britain", "Center"),
+            Place(MapType.Felucca, "Towns/Britain", "Park")
+        );
+
+        Assert.Equal("Center", Assert.Single(service.Find("britain", MapType.Felucca)).Name);
+        // Named itself, the castle is still reached.
+        Assert.Equal("Blackthorn Castle", Assert.Single(service.Find("blackthorn castle", MapType.Felucca)).Name);
+    }
+
+    [Fact]
     public void Find_ACategoryNoPlaceIsNamedAs_GivesItsFirstPlace()
     {
         var service = Service(
