@@ -13,7 +13,7 @@ the skill, as `21 0` for Hiding.
 1. A prisoner of the [jail](jail.md) reads "You may not use skills in jail." (message 30168); the
    staff is never refused.
 2. A character still waiting after its last skill reads "You must wait a few moments to use
-   another skill." (cliloc 500118).
+   another skill." (cliloc 500118), once a second at most.
 3. The script of the skill runs: `on_use(user)` of the table named after the skill in
    `scripts/skills/<skill>.lua`, with the names of `data/skills.toml` (`hiding`, `animal_lore`).
 4. A skill without a script answers "That skill cannot be used directly." (500014), and asks no

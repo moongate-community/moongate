@@ -34,6 +34,11 @@ public sealed class SkillUseService : ISkillUseService
     /// </summary>
     public const int NoSkillsInJailMessage = 30168;
 
+    /// <summary>
+    ///     The seconds between two "You must wait" told to one character.
+    /// </summary>
+    public const double MustWaitMessageSeconds = 1;
+
     private const double MaximumDelaySeconds = 3600;
 
     private readonly IMobileService _mobiles;
@@ -81,7 +86,12 @@ public sealed class SkillUseService : ISkillUseService
 
         if (user.NextSkillAt is { } next && now < next)
         {
-            _speech.TellCliloc(user, MustWaitCliloc);
+            // As ModernUO, a macro in a loop is not answered at every try.
+            if (user.NextSkillMessageAt is not { } quiet || now >= quiet)
+            {
+                user.NextSkillMessageAt = now.AddSeconds(MustWaitMessageSeconds);
+                _speech.TellCliloc(user, MustWaitCliloc);
+            }
 
             return false;
         }

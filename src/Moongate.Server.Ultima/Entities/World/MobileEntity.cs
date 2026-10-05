@@ -245,6 +245,12 @@ public class MobileEntity : IMoongateEntity
     public DateTimeOffset? NextSkillAt { get; set; }
 
     /// <summary>
+    ///     When the mobile may be told again to wait before another skill. It is not a column.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public DateTimeOffset? NextSkillMessageAt { get; set; }
+
+    /// <summary>
     ///     Whether the mobile is in war mode. It is not a column: a mobile comes back in peace.
     /// </summary>
     [Column(IsIgnore = true)]
