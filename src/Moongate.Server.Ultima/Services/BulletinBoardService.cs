@@ -67,9 +67,19 @@ public sealed class BulletinBoardService : IBulletinBoardService
     // The messages removed since the last world save, which deletes their rows.
     private readonly ConcurrentDictionary<Serial, byte> _removed = new();
 
+    // When each character last started a thread and last posted on each board. Kept apart from the messages: one
+    // who removes its own post still waits.
+    private readonly Dictionary<(Serial Board, Serial Poster), long> _lastThread = new();
+    private readonly Dictionary<(Serial Board, Serial Poster), long> _lastPost = new();
+
     private string? _timerId;
 
     public IReadOnlyCollection<BulletinMessageEntity> Messages => _messages.Values;
+
+    /// <summary>
+    ///     Gets how many waits between posts are remembered; the hourly sweep forgets those that are over.
+    /// </summary>
+    public int Waits => _lastPost.Count + _lastThread.Count;
 
     public BulletinBoardService(
         IDataAccess<BulletinMessageEntity> table,
@@ -228,6 +238,12 @@ public sealed class BulletinBoardService : IBulletinBoardService
         {
             thread.LastReplyAt = now;
         }
+        else
+        {
+            _lastThread[(board.Id, poster.Id)] = now;
+        }
+
+        _lastPost[(board.Id, poster.Id)] = now;
 
         return new() { Type = BulletinPostResultType.Ok, Message = message, Dropped = MakeRoom(board.Id, message) };
     }
@@ -280,6 +296,8 @@ public sealed class BulletinBoardService : IBulletinBoardService
     // A timer callback that throws closes the timer wheel: one bad board must not stop the server.
     public void Sweep()
     {
+        ForgetOldWaits();
+
         foreach (var board in _messages.Values.Select(message => message.BoardId).Distinct().ToArray())
         {
             try
@@ -336,21 +354,33 @@ public sealed class BulletinBoardService : IBulletinBoardService
     }
 
     // The seconds the poster still waits on this board: for a new thread since its last new thread there, for a
-    // reply since its last post of any kind there.
+    // reply since its last post of any kind there. Never longer than the setting, whatever the clock did.
     private int Wait(Serial board, Serial poster, bool newThread, long now)
     {
-        var mine = _messages.Values.Where(message => message.BoardId == board && message.PosterId == poster);
-        var (posts, seconds) = newThread ? (mine.Where(message => message.IsThread), _config.ThreadSeconds) : (mine, _config.ReplySeconds);
-        var last = posts.Select(message => (long?)message.PostedAt).Max();
+        var (times, seconds) = newThread ? (_lastThread, _config.ThreadSeconds) : (_lastPost, _config.ReplySeconds);
 
-        if (last is null)
+        if (!times.TryGetValue((board, poster), out var last))
         {
             return 0;
         }
 
-        var left = seconds * 1000L - (now - last.Value);
+        var left = Math.Min(seconds * 1000L - (now - last), seconds * 1000L);
 
         return left <= 0 ? 0 : (int)((left + 999) / 1000);
+    }
+
+    // The waits nobody can still be held by: older than the longest wait the settings allow.
+    private void ForgetOldWaits()
+    {
+        var oldest = Now() - BulletinBoardsConfig.MaximumWaitSeconds * 1000L;
+
+        foreach (var times in new[] { _lastThread, _lastPost })
+        {
+            foreach (var key in times.Where(entry => entry.Value < oldest).Select(entry => entry.Key).ToArray())
+            {
+                times.Remove(key);
+            }
+        }
     }
 
     // A board beyond its size lets go its thread left longest without a reply, whole; never the one just posted to,

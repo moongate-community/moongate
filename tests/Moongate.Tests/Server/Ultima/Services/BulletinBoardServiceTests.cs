@@ -233,6 +233,52 @@ public sealed class BulletinBoardServiceTests
         Assert.Equal(BulletinPostResultType.Ok, Post(_aria, "Re: Horse", ["Still here."], thread.Id).Type);
     }
 
+    // Otherwise post, remove, post again: on a full board every round lets go a thread of somebody else.
+    [Fact]
+    public void Post_AfterRemovingItsOwnThread_StillWaits()
+    {
+        var thread = Post(_aria, "Horse", ["x"]).Message!;
+        _clock.Advance(TimeSpan.FromSeconds(10));
+        _service.Remove(thread.Id);
+
+        var result = Post(_aria, "Cart", ["x"]);
+
+        Assert.Equal((BulletinPostResultType.TooSoon, 110), (result.Type, result.WaitSeconds));
+        Assert.Empty(_service.Messages);
+    }
+
+    [Fact]
+    public void Post_AReplyAfterRemovingItsOwnReply_StillWaits()
+    {
+        var thread = Post(_bruno, "Horse", ["x"]).Message!;
+        var reply = Post(_aria, "Re: Horse", ["x"], thread.Id).Message!;
+        _clock.Advance(TimeSpan.FromSeconds(10));
+        _service.Remove(reply.Id);
+
+        Assert.Equal((BulletinPostResultType.TooSoon, 20), Post(_aria, "Re: Horse", ["again"], thread.Id) switch { var result => (result.Type, result.WaitSeconds) });
+    }
+
+    // A clock set back must not make a poster wait longer than the setting says.
+    [Fact]
+    public void TheWait_IsNeverLongerThanTheSetting_EvenWhenTheClockGoesBack()
+    {
+        Post(_aria, "Horse", ["x"]);
+        _clock.Advance(TimeSpan.FromHours(-3));
+
+        Assert.Equal((BulletinPostResultType.TooSoon, 120), Post(_aria, "Cart", ["x"]) switch { var result => (result.Type, result.WaitSeconds) });
+    }
+
+    [Fact]
+    public void Sweep_ForgetsTheWaitsThatAreOver()
+    {
+        Post(_aria, "Horse", ["x"]);
+        _clock.Advance(TimeSpan.FromDays(2));
+
+        _service.Sweep();
+
+        Assert.Equal(0, _service.Waits);
+    }
+
     [Fact]
     public void TheWait_IsOfOneCharacterOnOneBoard()
     {
