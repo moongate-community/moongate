@@ -219,6 +219,15 @@ gump with OKAY and CANCEL and the sound `0x20E`; OKAY from more than a cell away
 too far away." (message 393) with `mobile.message`. ModernUO's rules about sigils, young
 players, murderers, casting, pets and dispelling the gate are not there yet.
 
+## bulletin_board.lua
+
+`scripts/items/bulletin_board.lua` is the script of the [bulletin boards](../bulletin-boards.md)
+(the item template `bulletin_board` that `.decorate` places, and `0x1e5e_bulletin_board` and
+`0x1e5f_bulletin_board` for a board added by hand). Its `on_use` calls `board.open(serial, user)`
+and returns `true`: the player's client gets the board and the list of its messages, and from
+there reads, posts, replies and removes its own. Any item template with this script is a board,
+each item with its own messages.
+
 ## clock.lua
 
 `scripts/items/clock.lua` is the script of the clocks (the item templates `0x104b_clock` and

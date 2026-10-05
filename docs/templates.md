@@ -494,7 +494,8 @@ client as its name, unless the item has a name of its own. A teleporter's `point
 `teleport.y` and `teleport.z`, and its `map_dest` the prop `teleport.map`, a `MapType` number.
 A `KeywordTeleporter` takes the template `decoration_keyword_teleporter`, with
 `script_id = "keyword_teleport"` and `visibility = "game_master"`, and keeps its `substring`, `keyword`, `range` and `delay` as props.
-A `Clock` takes the template `decoration_clock`, with `script_id = "clock"`, and tells the time on a
+A `BulletinBoard` takes the template `bulletin_board`, with `script_id = "bulletin_board"`, and
+opens on a double click: see [Bulletin boards](bulletin-boards.md). A `Clock` takes the template `decoration_clock`, with `script_id = "clock"`, and tells the time on a
 double click; one placed as plain decoration by an earlier run becomes a clock where it stands. A
 `Blocker` is plain decoration whose graphic draws nothing and cannot be walked through: players
 are stopped by it unseen, and game masters and administrators see a gravestone in its place, as

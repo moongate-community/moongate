@@ -59,6 +59,8 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
   cells: [`.jail`](commands/jail.md). The sentence ends by itself, with a fine and a release note.
   `.jail <name>` jails a player who is offline: the cell is kept and the days start at its login;
   see [Jail](jail.md).
+- Read, post, reply and remove on the bulletin boards of the towns, each with its own messages;
+  threads expire and a full board lets its oldest thread go: [Bulletin boards](bulletin-boards.md).
 - Set fame and karma, inspect what a target cursor picks: `.fame`, `.karma`, `.where`.
 - Restore a character waiting to be deleted: `.character`.
 
@@ -121,14 +123,14 @@ See all of them in [Commands](commands.md).
 - Sandboxed Lua 5.2 with an instruction budget, `wait`, timers, events, hot reload and editor
   definitions. See [Writing Lua scripts](scripting.md).
 - Modules: `engine`, `log`, `timer`, `events`, and in the Ultima plugin `dice`, `localization`,
-  `npc`, `item`, `world`, `mobile`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations` and `jail`.
+  `npc`, `item`, `world`, `mobile`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations`, `jail` and `board`.
   Every function they give scripts is listed in the [Lua API reference](https://moongate.sh/lua/),
   generated from the server's code.
 - Gumps: XML layouts checked by `gump.xsd`, a Lua script per gump for the answers, slots and whole
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
-  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `jail_note.lua`, `gumps/go.lua`, `gumps/jail_sentence.lua`, `wander.lua`, `monster.lua`, `guard.lua`,
+  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `jail_note.lua`, `bulletin_board.lua`, `gumps/go.lua`, `gumps/jail_sentence.lua`, `wander.lua`, `monster.lua`, `guard.lua`,
   `banker.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
   and `gumps/tutorial_list.lua`.
 - Not yet: timers on mobiles, combat and skill events.
