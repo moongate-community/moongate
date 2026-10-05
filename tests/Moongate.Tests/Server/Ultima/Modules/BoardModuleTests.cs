@@ -99,7 +99,7 @@ public sealed class BoardModuleTests : IAsyncLifetime
         Assert.Equal(new Serial(0x40001000), Assert.Single(_boards.PostedAs).ReplyTo);
     }
 
-    // What is not a string in the lines is no line: a number is written as text, a table or a nil is left out.
+    // What is not a string in the lines is no line: a number is written as text, a table is left out.
     [Fact]
     public void Post_TakesTheLinesThatAreText_AndNumbersAsText()
     {

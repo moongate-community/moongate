@@ -44,7 +44,7 @@ A staff script clears what a script posted more than a day ago:
 
 ```lua
 for _, message in ipairs(board.messages(notice_board)) do
-    if not message.poster and os.time() - message.posted_at > 86400 then
+    if not message.poster and world.now() - message.posted_at > 86400 then
         board.remove(message.serial)
     end
 end

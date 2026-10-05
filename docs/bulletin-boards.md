@@ -122,7 +122,8 @@ board.remove(notice)
 
 - `board.post(board, name, subject, lines [, thread])` posts in the name given and gives the
   serial of the message, or `nil` when nothing was posted: no name, no subject, no line of text,
-  or an item that is not a board. With `thread`, the serial of a message of that board, it is a
+  an item that is not a board, or no serial ready for the message (the same call works a moment
+  later). The lines end at the first `nil` among them. With `thread`, the serial of a message of that board, it is a
   reply. A script's post does not wait and has no poster: the message shows a bare body beside
   its text, and in the board's window only the staff removes it. The name is cut at 30
   characters; the subject, the lines and the size of the board follow the rules of a player's
@@ -130,7 +131,7 @@ board.remove(notice)
 - `board.messages(board)` gives the messages as an array of `{ serial, thread, poster, name,
   subject, lines, posted_at }`, the threads from the oldest, each followed by its replies.
   `thread` is `nil` on a first message, `poster` is `nil` for a message a script posted, and
-  `posted_at` is in seconds, as `os.time()`.
+  `posted_at` is in seconds, as `world.now()`.
 - `board.remove(message)` removes a message, and its replies when it starts a thread; `false`
   when there is none. It asks nobody: a script that removes for a player checks `poster` first.
 
