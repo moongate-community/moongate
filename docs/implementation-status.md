@@ -32,6 +32,7 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - Open the paperdoll, dress and undress (two-handed weapons included).
 - Read tooltips and names of what is in view.
 - Read personalized scrolls from [text templates](data-files/books.md): their text stays fixed when traded.
+  [Starting items](data-files/starting-items.md#personalized-starting-letters) can deliver them transactionally; the shipped common set includes a welcome letter.
 - Open doors, and locked doors when carrying their key; light and douse lights.
 - See day and night pass, dark dungeons, and the weather, the season and the music of each region
   (rain, snow, storms).

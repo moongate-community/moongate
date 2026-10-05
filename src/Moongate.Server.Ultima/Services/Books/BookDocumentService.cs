@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Books;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Services.Internal.Books;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services.Books;
@@ -179,11 +180,7 @@ public sealed class BookDocumentService : IBookDocumentService
 
     private void Apply(ItemEntity item, RenderedBook rendered)
     {
-        item.SetProp("book.template", rendered.TemplateId);
-        item.SetProp("book.title", rendered.Title);
-        item.SetProp("book.author", rendered.Author);
-        item.SetProp("book.content", rendered.Content);
-        item.Name = rendered.Title;
+        BookDocumentText.Apply(item, rendered);
         _handling.Refresh(item);
     }
 }

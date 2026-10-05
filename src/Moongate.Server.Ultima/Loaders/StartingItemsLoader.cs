@@ -2,6 +2,10 @@ using Moongate.Core.Directories;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data;
 using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Data.Books;
+using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Interfaces.Books;
+using Moongate.Server.Ultima.Services.Books;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Serilog;
@@ -16,15 +20,19 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
 {
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly IDataLoaderService _dataLoaderService;
+    private readonly IBookTemplateService _books;
+    private readonly LocalizationConfig _localization;
 
     private readonly ILogger _logger = Log.ForContext<StartingItemsLoader>();
 
     private string startingItemsFilePath => Path.Join(_directoriesConfig["data"], "starting_items.toml");
 
-    public StartingItemsLoader(DirectoriesConfig directoriesConfig, IDataLoaderService dataLoaderService)
+    public StartingItemsLoader(DirectoriesConfig directoriesConfig, IDataLoaderService dataLoaderService, IBookTemplateService books, LocalizationConfig localization)
     {
         _directoriesConfig = directoriesConfig;
         _dataLoaderService = dataLoaderService;
+        _books = books;
+        _localization = localization;
     }
 
     public Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -41,9 +49,8 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
     {
         var file = await TomlUtils.DeserializeFromFileAsync<StartingItemsFile>(startingItemsFilePath, null, cancellationToken) ??
                    new StartingItemsFile();
-        var templateIds = _dataLoaderService.GetEntities<ItemTemplate>()
-                                            .Select(template => template.Id)
-                                            .ToHashSet(StringComparer.Ordinal);
+        var templates = _dataLoaderService.GetEntities<ItemTemplate>().ToDictionary(template => template.Id, StringComparer.Ordinal);
+        var templateIds = templates.Keys.ToHashSet(StringComparer.Ordinal);
 
         for (var i = 0; i < file.Set.Count; i++)
         {
@@ -70,6 +77,21 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
                 if (entry.Items.FirstOrDefault(item => !templateIds.Contains(item)) is { } missing)
                 {
                     throw new InvalidDataException($"{where} gives item '{missing}', which is not an item template.");
+                }
+
+                if (entry.BookTemplate is { } book)
+                {
+                    if (entry.Equip || entry.Items.Any(id => templates[id].Stackable != false ||
+                        !BookTextValidation.IsReadableScript(templates[id].ScriptId)) ||
+                        !_books.TryRender(book, new TextTemplateContext { PlayerName = "Player", ServerName = "Server", RealmName = "Realm", Version = "Version", Codename = "Codename" },
+                            _localization.Language, entry.BookValues, out _))
+                    {
+                        throw new InvalidDataException($"{where} has an invalid book binding '{book}'.");
+                    }
+                }
+                else if (entry.BookValues.Count != 0)
+                {
+                    throw new InvalidDataException($"{where} has book_values without book_template.");
                 }
 
                 if (entry.Amount is { } amount && amount.Min < 1)

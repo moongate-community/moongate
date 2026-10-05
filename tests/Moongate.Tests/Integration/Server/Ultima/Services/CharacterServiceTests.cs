@@ -1,6 +1,8 @@
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Utils;
+using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Types.Persistence;
@@ -19,6 +21,8 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Books;
+using Moongate.Tests.TestSupport.Ultima.Books;
 using Moongate.Server.Ultima.Types.Characters;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Persistence;
@@ -218,6 +222,50 @@ public sealed class CharacterServiceTests : IAsyncLifetime
         await Assert.ThrowsAsync<KeyNotFoundException>(() => service.CreateAsync(Account, Request()));
 
         Assert.Empty(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account));
+        Assert.Empty(_created);
+    }
+
+    [Theory]
+    [InlineData("eng", "Welcome Aria", "Dear Aria, meet Vega $server_name.")]
+    [InlineData("ita", "Benvenuto Aria", "Ciao Aria, incontra Vega $server_name.")]
+    public async Task CreateAsync_ConfiguredLetter_IsSavedInTheBackpackWithTheRecipientName(string language, string title, string body)
+    {
+        var service = CreateService(book: "welcome_letter", language: language);
+        var result = await service.CreateAsync(Account, Request());
+        Assert.True(result.IsCreated);
+        var created = Assert.Single(_created).Character;
+        var backpack = Assert.Single(_created[0].Items, item => item.TemplateId == "backpack");
+        var letter = Assert.Single(await _items.QueryAsync(item => item.ContainerId == backpack.Id), item => item.TemplateId == "readable_scroll");
+        Assert.Equal(title, letter.Name);
+        Assert.Equal("welcome_letter", letter.GetProp<string>("book.template"));
+        Assert.Equal(title, letter.GetProp<string>("book.title"));
+        Assert.Equal("British", letter.GetProp<string>("book.author"));
+        Assert.Equal(body, letter.GetProp<string>("book.content"));
+        created.Name = "Renamed";
+        await _mobiles.UpsertAsync(created);
+        Assert.Equal(body, Assert.Single(await _items.QueryAsync(item => item.Id == letter.Id)).GetProp<string>("book.content"));
+    }
+
+    [Theory]
+    [InlineData("missing", "{ contact_name = \"Vega\" }")]
+    [InlineData("welcome_letter", "{}")]
+    [InlineData("welcome_letter", "{ contact_name = \"Vega\", extra = 1 }")]
+    public async Task CreateAsync_InvalidLetter_RollsBackTheCharacterAndAllItsItems(string book, string values)
+    {
+        var service = CreateService(book: book, values: values);
+        await Assert.ThrowsAsync<InvalidDataException>(() => service.CreateAsync(Account, Request()));
+        Assert.Empty(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account));
+        Assert.Empty(await _items.QueryAsync(_ => true));
+        Assert.Empty(_created);
+    }
+
+    [Fact]
+    public async Task CreateAsync_RecipientExpansionExceedsHeaderLimit_RollsBackEarlierItems()
+    {
+        var service = CreateService(book: "welcome_letter", oversizedTitle: true);
+        await Assert.ThrowsAsync<InvalidDataException>(() => service.CreateAsync(Account, Request()));
+        Assert.Empty(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account));
+        Assert.Empty(await _items.QueryAsync(_ => true));
         Assert.Empty(_created);
     }
 
@@ -504,14 +552,15 @@ public sealed class CharacterServiceTests : IAsyncLifetime
         Assert.Equal(["Aria", "Bran"], characters.Select(character => character.Name));
     }
 
-    private CharacterService CreateService(int maxPerAccount = 7, string startingItem = "bottle")
+    private CharacterService CreateService(int maxPerAccount = 7, string startingItem = "bottle", string? book = null, string values = "{ contact_name = \"Vega $server_name\" }", string language = "eng", bool oversizedTitle = false)
     {
         var loaders = new StubDataLoaderService()
                       .With(
                           Template("backpack", 0x0E75),
                           Template("gold", 0x0EED),
                           Template("bottle", 0x0F0E),
-                          Template("shirt", 0x1517)
+                          Template("shirt", 0x1517),
+                          new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll" }
                       )
                       .With(new ContainerContent { Name = "default", Bounds = new(new Point2D(44, 65), new Point2D(186, 159)), Default = true })
                       .With(
@@ -550,11 +599,22 @@ public sealed class CharacterServiceTests : IAsyncLifetime
                           }
                       )
                       .With(new BannedNamesContent());
+        if (book is not null)
+        {
+            loaders.GetEntities<StartingItemSet>().Single().Items.Add(TomlUtils.Deserialize<StartingItemEntry>(
+                "items = [\"readable_scroll\"]\nbook_template = \"" + book + "\"\nbook_values = " + values)!);
+        }
+        loaders.With(new BookTemplate { Id = "welcome_letter", Title = "Welcome $player_name", Author = "British", Content = "Dear $player_name, meet $contact_name." });
+        var source = loaders.GetEntities<BookTemplate>().Single();
+        source.Variables = ["contact_name"];
+        source.Translations["ita"] = new BookTranslation { Title = "Benvenuto $player_name", Content = "Ciao $player_name, incontra $contact_name." };
+        if (oversizedTitle) source.Title = new string('x', 127) + "$player_name";
         var tiles = new FakeTileDataService()
                     .Item(0x0E75, TileFlagType.Container, 0, layer: (byte)LayerType.Backpack)
                     .Item(0x0EED, TileFlagType.Generic, 0)
                     .Item(0x0F0E, TileFlagType.None, 0)
-                    .Item(0x1517, TileFlagType.Wearable, 0, layer: (byte)LayerType.Shirt);
+                    .Item(0x1517, TileFlagType.Wearable, 0, layer: (byte)LayerType.Shirt)
+                    .Item(0x14ED, TileFlagType.None, 1);
         var templates = new ItemTemplateService(loaders);
         var startingItems = new StartingItemsService(
             loaders,
@@ -564,7 +624,8 @@ public sealed class CharacterServiceTests : IAsyncLifetime
             tiles,
             _host.Owner,
             new StartingItemsConfig(),
-            new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" }
+            new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" },
+            new BookTemplateService(loaders), TestBookContexts.Create(), new LocalizationConfig { Language = language }
         );
 
         return new CharacterService(

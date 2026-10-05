@@ -14,4 +14,10 @@ public sealed record StartingItemsRequest(
     IReadOnlyDictionary<SkillType, int> Skills,
     Hue ShirtHue,
     Hue PantsHue
-);
+)
+{
+    /// <summary>
+    ///     The new character's name, captured before it enters the live world.
+    /// </summary>
+    public string PlayerName { get; init; } = "";
+}

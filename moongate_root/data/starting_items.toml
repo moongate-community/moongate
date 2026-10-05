@@ -18,6 +18,8 @@
 #   hue     the hue to give the item; unset keeps its own
 #   equip   true puts it on the character, false in the backpack
 #   newbie  whether it stays on death; unset is the server's default
+#   book_template  optional templates/books text source resolved at creation
+#   book_values    explicit custom variables for the text source
 # ==============================================================================
 
 [[set]]
@@ -811,3 +813,9 @@ equip = false
 [[set.items]]
 items = ["0x1f9e_pitcher_of_water"]
 equip = false
+
+[[set.items]]
+items = ["readable_scroll"]
+equip = false
+book_template = "welcome_letter"
+book_values = { contact_name = "Vega" }

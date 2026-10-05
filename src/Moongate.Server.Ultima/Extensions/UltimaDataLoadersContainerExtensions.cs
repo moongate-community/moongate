@@ -48,7 +48,6 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
         container.AddUltimaDataLoader<NamesLoader, NameList>(11);
         container.AddUltimaDataLoader<ItemTemplatesLoader, ItemTemplate>(12);
-        container.AddUltimaDataLoader<StartingItemsLoader, StartingItemSet>(13);
         container.AddUltimaDataLoader<LootTemplatesLoader, LootTemplate>(14);
         container.AddUltimaDataLoader<MobileTemplatesLoader, MobileTemplate>(15);
         container.AddUltimaDataLoader<MotdLoader, MotdLine>(16);
@@ -61,6 +60,8 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<LocationsLoader, NamedLocation>(22);
         container.AddUltimaDataLoader<JailLoader, JailFile>(23);
         container.AddUltimaDataLoader<BooksLoader, BookTemplate>(24);
+        // Starting items may reference already validated book templates.
+        container.AddUltimaDataLoader<StartingItemsLoader, StartingItemSet>(25);
 
         return container;
     }

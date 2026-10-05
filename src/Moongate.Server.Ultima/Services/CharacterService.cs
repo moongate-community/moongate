@@ -350,7 +350,7 @@ public sealed class CharacterService : ICharacterService
             character.Skills.ToDictionary(skill => skill.Skill, skill => skill.Base / 10),
             ClothingHue(request.ShirtHue),
             ClothingHue(request.PantsHue)
-        );
+        ) { PlayerName = character.Name };
     }
 
     /// <summary>
