@@ -192,6 +192,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
                 ? status
                 : status with { Weight = _weight.Carried(character), MaxWeight = _weight.MaxCarried(character) }
         );
+        yield return new StatLockInfoPacket(character.Id, character.StrLock, character.DexLock, character.IntLock);
         yield return new WarModePacket(false);
         yield return new LoginCompletePacket();
         yield return new CurrentTimePacket(TimeOnly.FromDateTime(DateTime.UtcNow));

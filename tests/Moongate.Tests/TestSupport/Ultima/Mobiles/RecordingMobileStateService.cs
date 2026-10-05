@@ -27,7 +27,8 @@ public sealed class RecordingMobileStateService : IMobileStateService
     public List<(MobileEntity Mobile, int? Body, int? Hue)> Looks { get; } = [];
 
     /// <summary>
-    ///     When true, the hit points, mana and stamina asked for are written to the mobile, as the real service does.
+    ///     When true, the stats, hit points, mana and stamina asked for, and the maximums of the bars, are written to the
+    ///     mobile, as the real service does.
     /// </summary>
     public bool Apply { get; set; }
 
@@ -37,6 +38,12 @@ public sealed class RecordingMobileStateService : IMobileStateService
 
         if (Apply)
         {
+            mobile.Strength = change.Strength ?? mobile.Strength;
+            mobile.Dexterity = change.Dexterity ?? mobile.Dexterity;
+            mobile.Intelligence = change.Intelligence ?? mobile.Intelligence;
+            mobile.HitsMax = change.HitsMax ?? mobile.HitsMax;
+            mobile.ManaMax = change.ManaMax ?? mobile.ManaMax;
+            mobile.StaminaMax = change.StaminaMax ?? mobile.StaminaMax;
             mobile.Hits = change.Hits ?? mobile.Hits;
             mobile.Mana = change.Mana ?? mobile.Mana;
             mobile.Stamina = change.Stamina ?? mobile.Stamina;
@@ -65,6 +72,15 @@ public sealed class RecordingMobileStateService : IMobileStateService
     public bool SetSkillLock(MobileEntity mobile, SkillType skill, SkillLockType skillLock)
     {
         LocksSet.Add((mobile, skill, skillLock));
+
+        return Result;
+    }
+
+    public List<(MobileEntity Mobile, StatType Stat, StatLockType Lock)> StatLocksSet { get; } = [];
+
+    public bool SetStatLock(MobileEntity mobile, StatType stat, StatLockType statLock)
+    {
+        StatLocksSet.Add((mobile, stat, statLock));
 
         return Result;
     }

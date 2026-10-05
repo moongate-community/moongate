@@ -78,7 +78,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0x12` | `TextCommandPacket` | Incoming | Variable | `TextCommandPacketHandler`: kind `0x24` [uses the skill](skills.md) whose number starts the text; the other kinds are ignored for now (Debug log) |
 | `0xB8`, `0xE1`, `0xF0` | `ProfileRequestPacket`, `ClientTypePacket`, `ProtocolExtensionPacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip; the others are ignored for now |
+| `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip, `0x1A` sets the lock of a stat; the others are ignored for now |
 | `0xD6` | `QueryPropertiesPacket` | Incoming | Variable, at most 500 serials | `QueryPropertiesPacketHandler`: one `0xD6` per object the character sees |
 | `0xD6` | `PropertyListPacket` | Outgoing | Variable | — |
 | `0xDC` | `PropertyListInfoPacket` | Outgoing | Fixed 9 | — |
@@ -90,6 +90,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0xC7` | `ParticleEffectPacket` | Outgoing | Fixed 49 | — |
 | `0x1B` | `LoginConfirmPacket` | Outgoing | Fixed 37 | — |
 | `0xBF` | `MapChangePacket` | Outgoing | Variable, 6 (subcommand `0x08`) | — |
+| `0xBF` | `StatLockInfoPacket` | Outgoing | Variable, 12 (subcommand `0x19`) | — |
 | `0xBC` | `SeasonChangePacket` | Outgoing | Fixed 3 | — |
 | `0x4F` | `GlobalLightLevelPacket` | Outgoing | Fixed 2 | — |
 | `0x4E` | `PersonalLightLevelPacket` | Outgoing | Fixed 6 | — |
