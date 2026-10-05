@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -19,6 +20,8 @@ namespace Moongate.Tests.Server.Ultima.Modules;
 public sealed class BankModuleTests
 {
     private readonly StubBankService _bank = new();
+    private readonly SettableClock _clock = new();
+    private BankModule? _module;
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly MobileEntity _aria = new() { Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
 
@@ -103,12 +106,25 @@ public sealed class BankModuleTests
         Assert.Empty(_bank.Withdrawn);
     }
 
+    // Several bankers hear the same words in the same moment: the first one that asks serves the player.
+    [Fact]
+    public void Attend_IsTrueForTheFirstWhoAsksForAPlayer_AndAgainAMomentLater()
+    {
+        var result = Run("return bank.attend(2), bank.attend(2), bank.attend(999)");
+
+        Assert.Equal([true, false, false], result.Select(value => value.Read<bool>()));
+
+        _clock.Advance(TimeSpan.FromMilliseconds(600));
+
+        Assert.True(Run("return bank.attend(2)")[0].Read<bool>());
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
-        binder.Bind(state, new BankModule(_bank, _mobiles));
+        binder.Bind(state, _module ??= new BankModule(_bank, _mobiles, _clock));
         binder.BindEnum(state, typeof(BankResultType));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));

@@ -12,13 +12,54 @@ namespace Moongate.Server.Ultima.Modules;
 [ScriptModule("bank", "Opens the players' bank boxes, as a banker does.")]
 public sealed class BankModule
 {
+    // Long enough for every banker that heard the same words in one turn of the loop, short for a player's next ones.
+    private static readonly TimeSpan AttendedFor = TimeSpan.FromMilliseconds(500);
+
     private readonly IBankService _bank;
     private readonly IMobileService _mobiles;
+    private readonly TimeProvider _time;
 
-    public BankModule(IBankService bank, IMobileService mobiles)
+    // When each player was last attended to: several bankers hear the same words, one serves.
+    private readonly Dictionary<Serial, DateTimeOffset> _attended = new();
+
+    public BankModule(IBankService bank, IMobileService mobiles, TimeProvider? time = null)
     {
         _bank = bank;
         _mobiles = mobiles;
+        _time = time ?? TimeProvider.System;
+    }
+
+    /// <summary>
+    ///     Gets whether the caller is the one that serves <paramref name="player" /> now: true for the first that
+    ///     asks, false for the others in the same moment; <c>if not bank.attend(speaker) then return end</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the caller is the one that serves the player now: true for the first that asks, false for whoever asks again within half a second. Several bankers behind one counter hear the same words in the same moment: each asks, one answers, and the gold moves once. False for an NPC or a player not in the world.")]
+    public bool Attend(long player)
+    {
+        if (!TryGetPlayer(player, out var mobile))
+        {
+            return false;
+        }
+
+        var now = _time.GetUtcNow();
+
+        if (_attended.TryGetValue(mobile.Id, out var last) && now - last < AttendedFor && now >= last)
+        {
+            return false;
+        }
+
+        // The players who left are forgotten as the list is used.
+        if (_attended.Count > 256)
+        {
+            foreach (var gone in _attended.Where(entry => now - entry.Value >= AttendedFor).Select(entry => entry.Key).ToArray())
+            {
+                _attended.Remove(gone);
+            }
+        }
+
+        _attended[mobile.Id] = now;
+
+        return true;
     }
 
     /// <summary>
