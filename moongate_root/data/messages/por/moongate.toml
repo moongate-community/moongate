@@ -202,3 +202,6 @@
 30165 = "{0} voltou."
 30166 = "Isso não é um cadáver."
 30167 = "Esse cadáver não pode ser ressuscitado."
+
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "Não podes usar perícias na prisão."

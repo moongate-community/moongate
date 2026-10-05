@@ -3,7 +3,10 @@ using Moongate.Scripting.Data.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Timing;
+using Moongate.Tests.TestSupport.Ultima.Jail;
 using Moongate.Tests.TestSupport.Ultima.Skills;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Ultima.Types;
@@ -15,6 +18,7 @@ public sealed class SkillUseServiceTests : IAsyncLifetime
     private readonly SettableClock _time = new();
     private readonly StubSkillScriptService _scripts = new();
     private readonly RecordingSpeechService _speech = new();
+    private readonly StubJailService _jail = new();
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
@@ -26,7 +30,14 @@ public sealed class SkillUseServiceTests : IAsyncLifetime
         _fixture = await BroadcastFixture.CreateAsync();
         _session = await _fixture.AddAsync(2);
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out _aria!));
-        _skills = new(_fixture.Mobiles, _scripts, _speech, _time);
+        _skills = new(
+            _fixture.Mobiles,
+            _scripts,
+            _speech,
+            _time,
+            _jail,
+            TestLocalization.With((SkillUseService.NoSkillsInJailMessage, "Niente abilità in prigione."))
+        );
     }
 
     public async Task DisposeAsync()
@@ -114,13 +125,35 @@ public sealed class SkillUseServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Use_AScriptThatWaitsOrFails_StillAsksItsSecond()
+    public void Use_AScriptThatIsStillRunning_AsksTenSeconds_SoItIsNotStartedAgainMeanwhile()
     {
+        // on_use called wait(): what it returns later is not read.
         _scripts.Result = ScriptResult.Suspended;
 
         Assert.True(_skills.Use(_session, SkillType.Hiding));
 
-        Assert.Equal(_time.GetUtcNow().AddSeconds(1), _aria.NextSkillAt);
+        Assert.Equal(_time.GetUtcNow().AddSeconds(10), _aria.NextSkillAt);
+    }
+
+    [Fact]
+    public void Use_APrisoner_IsRefused_AndRunsNoScript()
+    {
+        _jail.SentenceList.Add(new() { Id = _aria.Id, Cell = 1 });
+
+        Assert.False(_skills.Use(_session, SkillType.Hiding));
+
+        Assert.Empty(_scripts.Used);
+        Assert.Equal([(_aria, "Niente abilità in prigione.")], _speech.Told);
+        Assert.Null(_aria.NextSkillAt);
+    }
+
+    [Fact]
+    public async Task Use_AJailedGameMaster_StillUsesItsSkills()
+    {
+        _jail.SentenceList.Add(new() { Id = _aria.Id, Cell = 1 });
+        await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        Assert.True(_skills.Use(_session, SkillType.Hiding));
     }
 
     [Fact]

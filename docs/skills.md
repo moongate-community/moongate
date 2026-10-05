@@ -10,14 +10,17 @@ it is built.
 The client sends a text command (packet `0x12`, kind `0x24`) whose text starts with the number of
 the skill, as `21 0` for Hiding.
 
-1. A character still waiting after its last skill reads "You must wait a few moments to use
+1. A prisoner of the [jail](jail.md) reads "You may not use skills in jail." (message 30168); the
+   staff is never refused.
+2. A character still waiting after its last skill reads "You must wait a few moments to use
    another skill." (cliloc 500118).
-2. The script of the skill runs: `on_use(user)` of the table named after the skill in
+3. The script of the skill runs: `on_use(user)` of the table named after the skill in
    `scripts/skills/<skill>.lua`, with the names of `data/skills.toml` (`hiding`, `animal_lore`).
-3. A skill without a script answers "That skill cannot be used directly." (500014), and asks no
+4. A skill without a script answers "That skill cannot be used directly." (500014), and asks no
    wait.
-4. The number `on_use` returns is the seconds before the character may use another skill, from 0
-   to 3600; one second when it returns none.
+5. The number `on_use` returns is the seconds before the character may use another skill, from 0
+   to 3600; one second when it returns none. An `on_use` that calls `wait()` is still running when
+   the wait is set: it asks 10 seconds, and what it returns later is not read.
 
 The wait is of the character and one for all its skills, as in ModernUO. It is not saved: it does
 not outlive a restart.

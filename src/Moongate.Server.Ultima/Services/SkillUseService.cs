@@ -1,6 +1,9 @@
 using System.Globalization;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Ultima.Types;
 
@@ -20,15 +23,37 @@ public sealed class SkillUseService : ISkillUseService
     /// </summary>
     public const double DefaultDelaySeconds = 1;
 
+    /// <summary>
+    ///     The seconds to wait after a skill whose script is still running, having called <c>wait()</c>: what it
+    ///     returns later is not read.
+    /// </summary>
+    public const double SuspendedDelaySeconds = 10;
+
+    /// <summary>
+    ///     "You may not use skills in jail."
+    /// </summary>
+    public const int NoSkillsInJailMessage = 30168;
+
     private const double MaximumDelaySeconds = 3600;
 
     private readonly IMobileService _mobiles;
     private readonly ISkillScriptService _scripts;
     private readonly ISpeechService _speech;
     private readonly TimeProvider _time;
+    private readonly IJailService? _jail;
+    private readonly ILocalizationService? _localization;
 
-    public SkillUseService(IMobileService mobiles, ISkillScriptService scripts, ISpeechService speech, TimeProvider time)
+    public SkillUseService(
+        IMobileService mobiles,
+        ISkillScriptService scripts,
+        ISpeechService speech,
+        TimeProvider time,
+        IJailService? jail = null,
+        ILocalizationService? localization = null
+    )
     {
+        _jail = jail;
+        _localization = localization;
         _mobiles = mobiles;
         _scripts = scripts;
         _speech = speech;
@@ -41,6 +66,14 @@ public sealed class SkillUseService : ISkillUseService
             !_mobiles.TryGet(session.CharacterId, out var user) ||
             !_mobiles.IsInWorld(user.Id))
         {
+            return false;
+        }
+
+        // As ModernUO's jail region: a prisoner uses no skill. The staff is never held to it.
+        if (session.AccountType < AccountType.GameMaster && _jail?.GetSentence(user.Id) is not null)
+        {
+            _speech.Tell(user, _localization.Text(NoSkillsInJailMessage, "You may not use skills in jail."));
+
             return false;
         }
 
@@ -65,7 +98,9 @@ public sealed class SkillUseService : ISkillUseService
             return false;
         }
 
-        user.NextSkillAt = now.AddSeconds(DelayOf(result.Values));
+        user.NextSkillAt = now.AddSeconds(
+            result.Kind == ScriptResultKind.Suspended ? SuspendedDelaySeconds : DelayOf(result.Values)
+        );
 
         return true;
     }
