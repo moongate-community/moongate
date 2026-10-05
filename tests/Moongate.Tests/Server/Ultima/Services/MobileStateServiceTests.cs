@@ -229,6 +229,41 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.Empty(_fixture.Sender.Sent);
     }
 
+    [Theory]
+    [InlineData(SkillLockType.Down)]
+    [InlineData(SkillLockType.Locked)]
+    [InlineData(SkillLockType.Up)]
+    public void SetSkillLock_KeepsTheLockOfTheSkill_AndSendsNothing(SkillLockType skillLock)
+    {
+        Assert.True(_service.SetSkillLock(_aria, SkillType.Hiding, skillLock));
+
+        var known = Assert.Single(_aria.Skills);
+        Assert.Equal((SkillType.Hiding, skillLock, 0), (known.Skill, known.Lock, known.Base));
+        // The client already shows the lock it asked for.
+        Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public void SetSkillLock_OfASkillTheMobileHas_ChangesOnlyTheLock()
+    {
+        _service.SetSkill(_aria, SkillType.Hiding, 505, 900);
+        _fixture.Sender.Sent.Clear();
+
+        Assert.True(_service.SetSkillLock(_aria, SkillType.Hiding, SkillLockType.Down));
+
+        var known = Assert.Single(_aria.Skills);
+        Assert.Equal((505, 900, SkillLockType.Down), (known.Base, known.Cap, known.Lock));
+    }
+
+    [Fact]
+    public void SetSkillLock_AnUnknownSkillOrLock_ChangesNothing()
+    {
+        Assert.False(_service.SetSkillLock(_aria, (SkillType)200, SkillLockType.Down));
+        Assert.False(_service.SetSkillLock(_aria, SkillType.Hiding, (SkillLockType)3));
+
+        Assert.Empty(_aria.Skills);
+    }
+
     [Fact]
     public void SetName_RenamesIt_AndTellsItsPlayerAndThoseAround()
     {

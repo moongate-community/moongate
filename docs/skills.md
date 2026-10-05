@@ -76,8 +76,20 @@ A try in between, passed or failed, may raise the skill of a player. NPCs never 
   (700.0 points). The nearer the total is to it, the more often a gain first lowers another skill
   whose lock is down by the same amount; at the cap, a skill rises only when one could be lowered.
 
-A lock is stored with each skill and is up for every skill of a new character. The client cannot
-change it yet: that is the next slice, with the gain of strength, dexterity and intelligence.
+## The locks
+
+Each skill has a lock, up for every skill of a new character: the arrow beside it in the skill
+window. The player moves it and the client tells the server (packet `0x3A`), which keeps it with the
+skill and saves it.
+
+| Lock | The skill |
+| --- | --- |
+| Up | May rise when it is tried. |
+| Down | Does not rise, and may be lowered to make room for another that rises when the total is at its cap. |
+| Locked | Does not rise and is never lowered. |
+
+A skill or a lock that does not exist is ignored. Strength, dexterity and intelligence have their
+own locks and their own gain, which come with the next slice.
 
 `ultima.skills.gain_enabled = false` stops every gain: the checks still pass and fail.
 

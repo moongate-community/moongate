@@ -4694,5 +4694,44 @@
     ],
     "notes": "A client text with a text of the server written after it: \"Into your bank box I have placed a check in the amount of:\" and the amount. The client shows the cliloc in its own language.",
     "handler": "SpeechService.SayCliloc with an affix: npc.say_cliloc(npc, cliloc, args, affix), used by banker.lua."
+  },
+  "0x3A:incoming": {
+    "category": "Skills",
+    "tags": [
+      "Skills",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Skill",
+        "type": "ushort",
+        "size": "2",
+        "description": "Number of the skill, 0 to 57"
+      },
+      {
+        "offset": "5",
+        "name": "Lock",
+        "type": "enum",
+        "size": "1",
+        "description": "0 up, 1 down, 2 locked"
+      }
+    ],
+    "notes": "The player moves the lock arrow of a skill in the skill window. Nothing is sent back: the client already shows it.",
+    "handler": "SkillLockPacketHandler: IMobileStateService.SetSkillLock on the character in the world; a skill or lock that does not exist is ignored."
   }
 }

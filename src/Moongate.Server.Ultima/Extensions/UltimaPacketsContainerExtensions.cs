@@ -79,6 +79,8 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterIncomingPacket<QueryPropertiesPacket>();
         container.RegisterPacketHandler<QueryPropertiesPacket, QueryPropertiesPacketHandler>();
         RegisterIgnoredPacket<AttackRequestPacket>(container);
+        container.RegisterIncomingPacket<SkillLockPacket>();
+        container.RegisterPacketHandler<SkillLockPacket, SkillLockPacketHandler>();
         container.RegisterIncomingPacket<TextCommandPacket>();
         container.RegisterPacketHandler<TextCommandPacket, TextCommandPacketHandler>();
         RegisterIgnoredPacket<ProfileRequestPacket>(container);

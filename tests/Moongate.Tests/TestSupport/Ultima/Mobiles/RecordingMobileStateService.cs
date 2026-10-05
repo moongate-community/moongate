@@ -20,6 +20,8 @@ public sealed class RecordingMobileStateService : IMobileStateService
 
     public List<(MobileEntity Mobile, SkillType Skill, int Value, int? Cap)> SkillsSet { get; } = [];
 
+    public List<(MobileEntity Mobile, SkillType Skill, SkillLockType Lock)> LocksSet { get; } = [];
+
     public List<(MobileEntity Mobile, string Name)> Names { get; } = [];
 
     public List<(MobileEntity Mobile, int? Body, int? Hue)> Looks { get; } = [];
@@ -56,6 +58,13 @@ public sealed class RecordingMobileStateService : IMobileStateService
     public bool SetSkill(MobileEntity mobile, SkillType skill, int value, int? cap = null)
     {
         SkillsSet.Add((mobile, skill, value, cap));
+
+        return Result;
+    }
+
+    public bool SetSkillLock(MobileEntity mobile, SkillType skill, SkillLockType skillLock)
+    {
+        LocksSet.Add((mobile, skill, skillLock));
 
         return Result;
     }

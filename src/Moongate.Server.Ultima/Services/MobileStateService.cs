@@ -159,6 +159,26 @@ public sealed class MobileStateService : IMobileStateService
         return true;
     }
 
+    public bool SetSkillLock(MobileEntity mobile, SkillType skill, SkillLockType skillLock)
+    {
+        if (!Enum.IsDefined(skill) || !Enum.IsDefined(skillLock))
+        {
+            return false;
+        }
+
+        var known = mobile.Skills.FirstOrDefault(entry => entry.Skill == skill);
+
+        if (known is null)
+        {
+            known = new() { Skill = skill, Cap = DefaultSkillCap };
+            mobile.Skills.Add(known);
+        }
+
+        known.Lock = skillLock;
+
+        return true;
+    }
+
     public bool SetName(MobileEntity mobile, string name)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Trim().Length > IMobileStateService.MaxNameLength)

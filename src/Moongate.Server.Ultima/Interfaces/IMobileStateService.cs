@@ -56,6 +56,15 @@ public interface IMobileStateService
     bool SetSkill(MobileEntity mobile, SkillType skill, int value, int? cap = null);
 
     /// <summary>
+    ///     Sets which way a skill may move: up, down or locked, as the player chooses in the skill window. The skill is
+    ///     added when the mobile has none yet. Nothing is sent: the client already shows the lock it asked for.
+    /// </summary>
+    /// <returns>
+    ///     False, with nothing changed, for a skill or a lock that does not exist.
+    /// </returns>
+    bool SetSkillLock(MobileEntity mobile, SkillType skill, SkillLockType skillLock);
+
+    /// <summary>
     ///     Gives the mobile another name, trimmed; its player's status and the players around are told.
     /// </summary>
     /// <returns>

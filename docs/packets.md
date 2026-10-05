@@ -98,6 +98,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x11` | `MobileStatusPacket` | Outgoing | Variable, 91 (version 5), or 43 (version 0) for another mobile | — |
 | `0xA1`, `0xA2`, `0xA3` | `MobileHitsPacket`, `MobileManaPacket`, `MobileStaminaPacket` | Outgoing | Fixed 9 | Sent by `MobileStateService`; the hits go to the players around as a share of 100 |
 | `0x3A` | `SkillsPacket` | Outgoing | Variable, minimum 6 | The whole skill list, or one skill that changed |
+| `0x3A` | `SkillLockPacket` | Incoming | Variable, minimum 6 | `SkillLockPacketHandler`: sets the lock of a skill of the character (up, down or locked); a skill or lock that does not exist is ignored |
 | `0x72` | `WarModePacket` | Outgoing | Fixed 5 | — |
 | `0x5B` | `CurrentTimePacket` | Outgoing | Fixed 4 | — |
 | `0x65` | `WeatherPacket` | Outgoing | Fixed 4 | — |
