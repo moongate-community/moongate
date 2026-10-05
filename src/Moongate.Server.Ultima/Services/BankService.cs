@@ -5,6 +5,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Bank;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
@@ -12,6 +13,8 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Speech;
+using Moongate.Server.Ultima.Types.Bank;
+using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -24,6 +27,11 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class BankService : IBankService
 {
     public const string BankTemplate = "bank_box";
+
+    /// <summary>
+    ///     The most coins of one pile.
+    /// </summary>
+    public const int PileMaximum = 60_000;
 
     private static readonly Hue MessageHue = new(0x03B2);
     private static readonly TimeSpan ShowAgainAfter = TimeSpan.FromSeconds(1);
@@ -39,6 +47,11 @@ public sealed class BankService : IBankService
     private readonly ITooltipService _tooltips;
     private readonly IContainerLayoutService _layouts;
     private readonly IGameLoopService _loop;
+    private readonly IItemHandlingService _handling;
+    private readonly IContainerCapacityService _capacity;
+    private readonly IWeightService _weight;
+    private readonly ItemsConfig _itemsConfig;
+    private readonly BankConfig _config;
     private readonly ILocalizationService? _localization;
     private readonly TimeProvider _time;
 
@@ -51,6 +64,11 @@ public sealed class BankService : IBankService
         ITooltipService tooltips,
         IContainerLayoutService layouts,
         IGameLoopService loop,
+        IItemHandlingService handling,
+        IContainerCapacityService capacity,
+        IWeightService weight,
+        ItemsConfig itemsConfig,
+        BankConfig config,
         ILocalizationService? localization = null,
         TimeProvider? time = null
     )
@@ -64,6 +82,11 @@ public sealed class BankService : IBankService
         _tooltips = tooltips;
         _layouts = layouts;
         _loop = loop;
+        _handling = handling;
+        _capacity = capacity;
+        _weight = weight;
+        _itemsConfig = itemsConfig;
+        _config = config;
         _localization = localization;
     }
 
@@ -119,6 +142,242 @@ public sealed class BankService : IBankService
         }
 
         return session.AccountType >= AccountType.GameMaster || box.MobileId == character.Id && IsOpen(character);
+    }
+
+    public int? Balance(MobileEntity player)
+    {
+        if (player.IsNpc)
+        {
+            return null;
+        }
+
+        return BoxOf(player.Id) is { } box ? (int)Math.Min(GoldIn(box).Sum(pile => (long)pile.Amount), int.MaxValue) : 0;
+    }
+
+    public BankResultType Withdraw(MobileEntity player, int amount)
+    {
+        if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        if (amount < 1)
+        {
+            return BankResultType.BadAmount;
+        }
+
+        if (amount > _config.MaxWithdraw)
+        {
+            return BankResultType.TooMuch;
+        }
+
+        if (BoxOf(player.Id) is not { } box)
+        {
+            return BankResultType.NoBank;
+        }
+
+        var piles = GoldIn(box);
+
+        if (piles.Sum(pile => (long)pile.Amount) < amount)
+        {
+            return BankResultType.NotEnoughGold;
+        }
+
+        if (BackpackOf(player.Id) is not { } backpack || !_weight.Holds(backpack, Coins(amount)))
+        {
+            return BankResultType.BackpackFull;
+        }
+
+        // The gold joins a pile of the backpack that has the room; else it is a pile of its own, which needs a place.
+        var onto = TopPilesOf(backpack).FirstOrDefault(pile => pile.Amount + amount <= PileMaximum);
+        ItemEntity? made = null;
+
+        if (onto is null)
+        {
+            if (!_capacity.HasRoomFor(backpack, 1))
+            {
+                return BankResultType.BackpackFull;
+            }
+
+            if ((made = _handling.Make(_itemsConfig.GoldTemplate, amount)) is null)
+            {
+                return BankResultType.Busy;
+            }
+        }
+
+        // Nothing can refuse from here on.
+        Take(piles, amount);
+
+        if (onto is not null)
+        {
+            onto.Amount += amount;
+            _handling.Refresh(onto);
+        }
+        else
+        {
+            Put(made!, backpack);
+        }
+
+        return BankResultType.Ok;
+    }
+
+    public BankResultType Deposit(MobileEntity player, int amount)
+    {
+        if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        if (amount < 1)
+        {
+            return BankResultType.BadAmount;
+        }
+
+        if (BoxOf(player.Id) is not { } box)
+        {
+            return BankResultType.NoBank;
+        }
+
+        var carried = BackpackOf(player.Id) is { } backpack ? GoldIn(backpack) : [];
+
+        if (carried.Sum(pile => (long)pile.Amount) < amount)
+        {
+            return BankResultType.NotEnoughGold;
+        }
+
+        // The piles of the box are topped up first; what is left makes piles of its own, which need their places.
+        var there = TopPilesOf(box);
+        var left = amount - Math.Min(amount, there.Sum(pile => PileMaximum - pile.Amount));
+        var newPiles = (left + PileMaximum - 1) / PileMaximum;
+
+        if (!_capacity.HasRoomFor(box, newPiles))
+        {
+            return BankResultType.BankFull;
+        }
+
+        var made = new List<ItemEntity>(newPiles);
+
+        for (var remaining = left; remaining > 0; remaining -= PileMaximum)
+        {
+            if (_handling.Make(_itemsConfig.GoldTemplate, Math.Min(remaining, PileMaximum)) is not { } pile)
+            {
+                return BankResultType.Busy;
+            }
+
+            made.Add(pile);
+        }
+
+        // Nothing can refuse from here on.
+        Take(carried, amount);
+        var toTopUp = amount - left;
+
+        foreach (var pile in there)
+        {
+            if (toTopUp == 0)
+            {
+                break;
+            }
+
+            var added = Math.Min(toTopUp, PileMaximum - pile.Amount);
+
+            if (added > 0)
+            {
+                pile.Amount += added;
+                toTopUp -= added;
+                _handling.Refresh(pile);
+            }
+        }
+
+        foreach (var pile in made)
+        {
+            Put(pile, box);
+        }
+
+        return BankResultType.Ok;
+    }
+
+    // The gold piles inside a container, at any depth, the smallest first: taking from them empties the small ones.
+    // A pile on a cursor is not there to take.
+    private List<ItemEntity> GoldIn(ItemEntity container)
+    {
+        var piles = new List<ItemEntity>();
+        var visited = new HashSet<Serial>();
+        Collect(container);
+
+        return piles.OrderBy(pile => pile.Amount).ThenBy(pile => pile.Id.Value).ToList();
+
+        void Collect(ItemEntity inside)
+        {
+            if (!visited.Add(inside.Id))
+            {
+                return;
+            }
+
+            foreach (var item in _items.GetContents(inside.Id))
+            {
+                if (item.TemplateId == _itemsConfig.GoldTemplate)
+                {
+                    if (!_handling.IsHeld(item))
+                    {
+                        piles.Add(item);
+                    }
+                }
+                else
+                {
+                    Collect(item);
+                }
+            }
+        }
+    }
+
+    // The gold piles lying in the container itself, the fullest first: gold joins them before it makes a new pile.
+    private List<ItemEntity> TopPilesOf(ItemEntity container)
+    {
+        return _items.GetContents(container.Id)
+                     .Where(item => item.TemplateId == _itemsConfig.GoldTemplate && item.Amount < PileMaximum && !_handling.IsHeld(item))
+                     .OrderByDescending(item => item.Amount)
+                     .ThenBy(item => item.Id.Value)
+                     .ToList();
+    }
+
+    private void Take(List<ItemEntity> piles, int amount)
+    {
+        foreach (var pile in piles)
+        {
+            if (amount == 0)
+            {
+                break;
+            }
+
+            var taken = Math.Min(amount, pile.Amount);
+
+            if (_handling.Consume(pile, taken))
+            {
+                amount -= taken;
+            }
+        }
+    }
+
+    private void Put(ItemEntity pile, ItemEntity container)
+    {
+        pile.PutInContainer(
+            container.Id,
+            _layouts.RandomGridPosition(container.ItemId),
+            ContainerSlotUtils.FirstFree(_items.GetContents(container.Id))
+        );
+        _items.Add([pile]);
+        _handling.Refresh(pile);
+    }
+
+    // That many coins as an item nobody holds yet, to ask a container whether it holds their weight.
+    private ItemEntity Coins(int amount)
+    {
+        return new() { TemplateId = _itemsConfig.GoldTemplate, ItemId = 0x0EED, Amount = amount };
+    }
+
+    private ItemEntity? BackpackOf(Serial player)
+    {
+        return _items.GetWorn(player).FirstOrDefault(item => item.Layer == LayerType.Backpack);
     }
 
     private ItemEntity? BoxOf(Serial player)

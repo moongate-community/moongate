@@ -27,5 +27,8 @@ public enum BankResultType
     NoPlayer = 6,
 
     /// <summary>The player has no bank box yet: it is made the first time the bank is opened.</summary>
-    NoBank = 7
+    NoBank = 7,
+
+    /// <summary>No serial was ready for a new pile: the same request works a moment later.</summary>
+    Busy = 8
 }

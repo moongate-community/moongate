@@ -1,3 +1,7 @@
+using Moongate.Tests.TestSupport.Ultima.World;
+using Moongate.Tests.TestSupport.Ultima.Weight;
+using Moongate.Server.Ultima.Types.Bank;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
@@ -28,15 +32,26 @@ public sealed class BankServiceTests : IAsyncLifetime
     private GameSession _session = null!;
     private MobileEntity _aria = null!;
     private BankService _bank = null!;
+    private readonly ItemTemplateService _templates;
+    private readonly StubItemSerialPool _serials = new();
+    private readonly StubWeightService _weight = new();
+    private readonly BankConfig _config = new();
+    private ContainerCapacityService _capacity = null!;
+    private uint _nextItem = 0x40001000;
 
     public BankServiceTests()
     {
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
-                new ItemTemplate { Id = BankService.BankTemplate, ItemId = new Serial(0x0E7C), Name = "bank box", Movable = false }
+                new ItemTemplate { Id = BankService.BankTemplate, ItemId = new Serial(0x0E7C), Name = "bank box", Movable = false },
+                new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
+                new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) },
+                new ItemTemplate { Id = "bag", ItemId = new Serial(0x0E76) },
+                new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) }
             )
         );
-        _factory = new(templates, new FakeTileDataService());
+        _templates = templates;
+        _factory = new(templates, new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0));
     }
 
     public async Task InitializeAsync()
@@ -46,10 +61,35 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
         _aria = aria;
         _aria.Location = new Point3D(1600, 1600, 0);
+        // A player: an NPC has no account, and no bank.
+        _aria.AccountId = new Serial(1002);
         var layouts = new ContainerLayoutService(
             new StubDataLoaderService().With(new ContainerContent { Name = "metal chest", Gump = 0x004A, Items = [0x0E7C], Default = true })
         );
-        _bank = new(_items, _factory, _fixture.Sessions, _fixture.Mobiles, _fixture.Sender, TestTooltips.Create(_items, _fixture.Mobiles), layouts, _fixture.Network.Loop, time: _time);
+        var tooltips = TestTooltips.Create(_items, _fixture.Mobiles);
+        _capacity = new ContainerCapacityService(_items, _templates, _config);
+        var handling = new ItemHandlingService(_items, _fixture.Sessions, _fixture.Sender, new RecordingWorldViewService(), tooltips, _factory, _serials, layouts, _capacity);
+        _bank = new(
+            _items,
+            _factory,
+            _fixture.Sessions,
+            _fixture.Mobiles,
+            _fixture.Sender,
+            tooltips,
+            layouts,
+            _fixture.Network.Loop,
+            handling,
+            _capacity,
+            _weight,
+            new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" },
+            _config,
+            time: _time
+        );
+
+        for (uint index = 0; index < 32; index++)
+        {
+            _serials.Serials.Enqueue(new Serial(0x40002000 + index));
+        }
     }
 
     public async Task DisposeAsync()
@@ -234,5 +274,315 @@ public sealed class BankServiceTests : IAsyncLifetime
         await _fixture.Network.ExecuteOnLoopAsync(() => result = action());
 
         return result;
+    }
+
+    [Fact]
+    public async Task Balance_IsTheGoldInTheBox_BagsIncluded_AndNothingElse()
+    {
+        var box = await BoxAsync();
+        Gold(box, 1200);
+        Gold(box, 300);
+        Gold(In(box, "bag"), 4000);
+        In(box, "sword");
+        Gold(Backpack(), 999);
+
+        Assert.Equal(5500, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public void Balance_WithNoBankBoxYet_IsZero()
+    {
+        Assert.Equal(0, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task Withdraw_MovesTheCoinsToTheBackpack()
+    {
+        var box = await BoxAsync();
+        var pile = Gold(box, 1200);
+        var backpack = Backpack();
+
+        Assert.Equal(BankResultType.Ok, _bank.Withdraw(_aria, 500));
+
+        Assert.Equal(700, pile.Amount);
+        var carried = Assert.Single(_items.GetContents(backpack.Id));
+        Assert.Equal(("gold", 500), (carried.TemplateId, carried.Amount));
+        Assert.Equal(700, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task Withdraw_TakesPileByPile_TheSmallestFirst_AndDeletesTheEmptyOnes()
+    {
+        var box = await BoxAsync();
+        var large = Gold(box, 1000);
+        var small = Gold(box, 200);
+        var inBag = Gold(In(box, "bag"), 300);
+        Backpack();
+
+        Assert.Equal(BankResultType.Ok, _bank.Withdraw(_aria, 600));
+
+        Assert.False(_items.TryGet(small.Id, out _));
+        Assert.False(_items.TryGet(inBag.Id, out _));
+        Assert.Equal(900, large.Amount);
+    }
+
+    [Fact]
+    public async Task Withdraw_JoinsAGoldPileOfTheBackpack_WhenItFits()
+    {
+        Gold(await BoxAsync(), 5000);
+        var carried = Gold(Backpack(), 100);
+
+        Assert.Equal(BankResultType.Ok, _bank.Withdraw(_aria, 500));
+
+        Assert.Equal(600, carried.Amount);
+        Assert.Single(_items.GetContents(carried.ContainerId!.Value));
+    }
+
+    // A pile holds 60000: what would go past it makes a pile of its own, and no coin is lost.
+    [Fact]
+    public async Task Withdraw_NextToAPileThatIsNearlyFull_MakesANewPile()
+    {
+        Gold(await BoxAsync(), 5000);
+        var backpack = Backpack();
+        var carried = Gold(backpack, 59_800);
+
+        Assert.Equal(BankResultType.Ok, _bank.Withdraw(_aria, 500));
+
+        Assert.Equal(59_800, carried.Amount);
+        Assert.Equal([500, 59_800], _items.GetContents(backpack.Id).Select(item => item.Amount).Order());
+    }
+
+    [Theory, InlineData(0), InlineData(-5)]
+    public async Task Withdraw_AnAmountThatIsNone_IsRefused(int amount)
+    {
+        Gold(await BoxAsync(), 5000);
+        Backpack();
+
+        Assert.Equal(BankResultType.BadAmount, _bank.Withdraw(_aria, amount));
+        Assert.Equal(5000, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task Withdraw_MoreThanABankerHandsOut_IsRefused()
+    {
+        _config.MaxWithdraw = 1000;
+        Gold(await BoxAsync(), 5000);
+        Backpack();
+
+        Assert.Equal(BankResultType.TooMuch, _bank.Withdraw(_aria, 1001));
+        Assert.Equal(BankResultType.Ok, _bank.Withdraw(_aria, 1000));
+    }
+
+    [Fact]
+    public async Task Withdraw_MoreThanThereIs_IsRefused_AndNothingMoves()
+    {
+        var pile = Gold(await BoxAsync(), 400);
+        var backpack = Backpack();
+
+        Assert.Equal(BankResultType.NotEnoughGold, _bank.Withdraw(_aria, 401));
+
+        Assert.Equal(400, pile.Amount);
+        Assert.Empty(_items.GetContents(backpack.Id));
+    }
+
+    [Fact]
+    public void Withdraw_WithNoBankBoxYet_SaysSo()
+    {
+        Backpack();
+
+        Assert.Equal(BankResultType.NoBank, _bank.Withdraw(_aria, 100));
+    }
+
+    [Fact]
+    public async Task Withdraw_IntoABackpackThatCannotHoldTheWeight_IsRefused_AndNothingMoves()
+    {
+        var pile = Gold(await BoxAsync(), 5000);
+        var backpack = Backpack();
+        _weight.HoldsResult = false;
+
+        Assert.Equal(BankResultType.BackpackFull, _bank.Withdraw(_aria, 500));
+
+        Assert.Equal(5000, pile.Amount);
+        Assert.Empty(_items.GetContents(backpack.Id));
+    }
+
+    [Fact]
+    public async Task Withdraw_WithoutABackpack_IsRefused()
+    {
+        Gold(await BoxAsync(), 5000);
+
+        Assert.Equal(BankResultType.BackpackFull, _bank.Withdraw(_aria, 500));
+        Assert.Equal(5000, _bank.Balance(_aria));
+    }
+
+    // No serial for the new pile: the gold stays where it was.
+    [Fact]
+    public async Task Withdraw_WhenNoSerialIsReady_IsBusy_AndNothingMoves()
+    {
+        var pile = Gold(await BoxAsync(), 5000);
+        Backpack();
+        _serials.Serials.Clear();
+
+        Assert.Equal(BankResultType.Busy, _bank.Withdraw(_aria, 500));
+        Assert.Equal(5000, pile.Amount);
+    }
+
+    [Fact]
+    public async Task Withdraw_ShowsThePlayerItsBackpackGold()
+    {
+        Gold(await BoxAsync(), 5000);
+        Backpack();
+        var before = _fixture.Sender.Sent.Count;
+
+        _bank.Withdraw(_aria, 500);
+
+        Assert.Contains(_fixture.Sender.Sent.Skip(before).OfType<ContainerItemUpdatePacket>(), packet => packet.Item.Amount == 500);
+    }
+
+    [Fact]
+    public async Task Deposit_MovesTheCoinsFromTheBackpackAndItsBags_IntoTheBox()
+    {
+        var box = await BoxAsync();
+        var backpack = Backpack();
+        var loose = Gold(backpack, 300);
+        var inBag = Gold(In(backpack, "bag"), 500);
+
+        Assert.Equal(BankResultType.Ok, _bank.Deposit(_aria, 600));
+
+        Assert.Equal(600, _bank.Balance(_aria));
+        Assert.Equal(600, Assert.Single(_items.GetContents(box.Id)).Amount);
+        // The smaller pile went whole, the other gave the rest.
+        Assert.False(_items.TryGet(loose.Id, out _));
+        Assert.Equal(200, inBag.Amount);
+    }
+
+    [Fact]
+    public async Task Deposit_TopsUpThePilesOfTheBox_ThenMakesPilesOfSixtyThousand()
+    {
+        var box = await BoxAsync();
+        var there = Gold(box, 59_000);
+        var backpack = Backpack();
+        Gold(backpack, 60_000);
+        Gold(backpack, 60_000);
+        Gold(backpack, 5000);
+
+        Assert.Equal(BankResultType.Ok, _bank.Deposit(_aria, 125_000));
+
+        Assert.Equal(60_000, there.Amount);
+        Assert.Equal([4000, 60_000, 60_000, 60_000], _items.GetContents(box.Id).Select(item => item.Amount).Order());
+        Assert.Empty(_items.GetContents(backpack.Id));
+    }
+
+    [Fact]
+    public async Task Deposit_MoreThanIsCarried_IsRefused_AndNothingMoves()
+    {
+        await BoxAsync();
+        var carried = Gold(Backpack(), 400);
+
+        Assert.Equal(BankResultType.NotEnoughGold, _bank.Deposit(_aria, 401));
+
+        Assert.Equal(400, carried.Amount);
+        Assert.Equal(0, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task Deposit_IntoAFullBox_IsRefused_AndNothingMoves()
+    {
+        _config.MaxItems = 2;
+        var box = await BoxAsync();
+        In(box, "sword");
+        In(box, "sword");
+        var carried = Gold(Backpack(), 400);
+
+        Assert.Equal(BankResultType.BankFull, _bank.Deposit(_aria, 400));
+
+        Assert.Equal(400, carried.Amount);
+    }
+
+    // The gold joins a pile that is there: a full box takes it.
+    [Fact]
+    public async Task Deposit_IntoAFullBoxWithAGoldPile_TopsItUp()
+    {
+        _config.MaxItems = 2;
+        var box = await BoxAsync();
+        In(box, "sword");
+        var there = Gold(box, 100);
+        Gold(Backpack(), 400);
+
+        Assert.Equal(BankResultType.Ok, _bank.Deposit(_aria, 400));
+        Assert.Equal(500, there.Amount);
+    }
+
+    [Fact]
+    public async Task Deposit_WhenNoSerialIsReady_IsBusy_AndNothingMoves()
+    {
+        await BoxAsync();
+        var carried = Gold(Backpack(), 400);
+        _serials.Serials.Clear();
+
+        Assert.Equal(BankResultType.Busy, _bank.Deposit(_aria, 400));
+        Assert.Equal(400, carried.Amount);
+    }
+
+    [Theory, InlineData(0), InlineData(-1)]
+    public async Task Deposit_AnAmountThatIsNone_IsRefused(int amount)
+    {
+        await BoxAsync();
+        Gold(Backpack(), 400);
+
+        Assert.Equal(BankResultType.BadAmount, _bank.Deposit(_aria, amount));
+    }
+
+    [Fact]
+    public void Deposit_WithNoBankBoxYet_SaysSo()
+    {
+        Gold(Backpack(), 400);
+
+        Assert.Equal(BankResultType.NoBank, _bank.Deposit(_aria, 100));
+    }
+
+    [Fact]
+    public void AnNpc_HasNoBank()
+    {
+        var orc = new MobileEntity { Id = new Serial(900), Name = "an orc" };
+
+        Assert.Null(_bank.Balance(orc));
+        Assert.Equal(BankResultType.NoPlayer, _bank.Withdraw(orc, 10));
+        Assert.Equal(BankResultType.NoPlayer, _bank.Deposit(orc, 10));
+    }
+
+    private async Task<ItemEntity> BoxAsync()
+    {
+        await OnLoopAsync(() => _bank.Open(_aria));
+        await OnLoopAsync(() => true);
+
+        return Assert.Single(_items.GetWorn(_aria.Id), item => item.Layer == LayerType.Bank);
+    }
+
+    private ItemEntity Backpack()
+    {
+        var backpack = new ItemEntity { Id = new Serial(_nextItem++), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        backpack.Equip(_aria.Id, LayerType.Backpack);
+        _items.Add([backpack]);
+
+        return backpack;
+    }
+
+    private ItemEntity In(ItemEntity container, string template)
+    {
+        var item = new ItemEntity { Id = new Serial(_nextItem++), TemplateId = template, ItemId = 0x0E76, Amount = 1 };
+        item.PutInContainer(container.Id, new Point2D(50, 50), 0);
+        _items.Add([item]);
+
+        return item;
+    }
+
+    private ItemEntity Gold(ItemEntity container, int amount)
+    {
+        var gold = In(container, "gold");
+        gold.ItemId = 0x0EED;
+        gold.Amount = amount;
+
+        return gold;
     }
 }
