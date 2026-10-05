@@ -14,6 +14,16 @@ public sealed class AdminServerInfo
     public string? RealmId { get; }
     public TimeSpan Uptime { get; }
 
+    /// <summary>
+    ///     Gets the configuration the server was built in, Debug or Release; empty when its build did not say.
+    /// </summary>
+    public string Configuration { get; init; } = "";
+
+    /// <summary>
+    ///     Gets when the server was built, in UTC; null when its build did not say.
+    /// </summary>
+    public DateTimeOffset? BuiltAt { get; init; }
+
     public AdminServerInfo(
         string version,
         string codename,

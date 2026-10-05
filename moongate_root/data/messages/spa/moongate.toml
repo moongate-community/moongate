@@ -191,8 +191,14 @@
 30158 = "Hace que el personaje o PNJ que selecciones ejecute una acción de su cuerpo: animate <acción>."
 30159 = "{0} ejecuta la acción {1}."
 
-# Moongate: texts of the resurrect command (30160-30163).
-30160 = "Resucita al PNJ cuyo cadáver selecciones: renace donde yace el cadáver."
-30161 = "{0} ha vuelto."
-30162 = "Eso no es un cadáver."
-30163 = "Ese cadáver no se puede resucitar."
+# Moongate: texts of the version and uptime commands (30160-30163).
+30160 = "Muestra la versión del servidor, si es una compilación Debug o Release, y cuándo se compiló."
+30161 = "Moongate {0} \"{1}\" ({2}), compilado el {3}."
+30162 = "Muestra cuánto tiempo lleva encendido el servidor y desde cuándo."
+30163 = "Encendido desde hace {0}, desde el {1}."
+
+# Moongate: texts of the resurrect command (30164-30167).
+30164 = "Resucita al PNJ cuyo cadáver selecciones: renace donde yace el cadáver."
+30165 = "{0} ha vuelto."
+30166 = "Eso no es un cadáver."
+30167 = "Ese cadáver no se puede resucitar."

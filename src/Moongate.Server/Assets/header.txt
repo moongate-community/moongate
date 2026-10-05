@@ -6,4 +6,5 @@
 |       |   '. '-.   \      /  |    \ |  \     |   |       |      |      |
 '       '     `'--'   \____/   '     \'   \____|   '       '      '      '-----'
 
-                 Version: {Version} Codename: "{Codename}"
+            Version: {Version} ({Configuration}) Codename: "{Codename}"
+                    Built: {BuildTime}

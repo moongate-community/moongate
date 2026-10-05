@@ -191,8 +191,14 @@
 30158 = "Lässt die anvisierte Figur oder den NPC eine Aktion ihres Körpers ausführen: animate <Aktion>."
 30159 = "{0} führt Aktion {1} aus."
 
-# Moongate: texts of the resurrect command (30160-30163).
-30160 = "Erweckt den NPC, dessen Leiche du anvisierst: Er entsteht dort neu, wo die Leiche liegt."
-30161 = "{0} ist zurück."
-30162 = "Das ist keine Leiche."
-30163 = "Diese Leiche kann nicht erweckt werden."
+# Moongate: texts of the version and uptime commands (30160-30163).
+30160 = "Zeigt die Version des Servers, ob es ein Debug- oder Release-Build ist, und wann er gebaut wurde."
+30161 = "Moongate {0} \"{1}\" ({2}), gebaut am {3}."
+30162 = "Zeigt, wie lange der Server schon läuft und seit wann."
+30163 = "Läuft seit {0}, seit dem {1}."
+
+# Moongate: texts of the resurrect command (30164-30167).
+30164 = "Erweckt den NPC, dessen Leiche du anvisierst: Er entsteht dort neu, wo die Leiche liegt."
+30165 = "{0} ist zurück."
+30166 = "Das ist keine Leiche."
+30167 = "Diese Leiche kann nicht erweckt werden."

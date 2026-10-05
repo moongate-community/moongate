@@ -60,10 +60,8 @@ internal static class InitCommand
             if (!noHeader)
             {
                 var assembly = typeof(InitCommand).Assembly;
-                var header = ResourceUtils.GetEmbeddedResourceString(assembly, "Assets/header.txt")
-                    .Replace("{Version}", VersionUtils.GetVersion(assembly), StringComparison.Ordinal)
-                    .Replace("{Codename}", VersionUtils.GetCodename(assembly), StringComparison.Ordinal);
-                Console.WriteLine(header);
+                var header = ResourceUtils.GetEmbeddedResourceString(assembly, "Assets/header.txt");
+                Console.WriteLine(VersionUtils.FormatHeader(header, assembly));
             }
 
             Console.WriteLine("Root setup");

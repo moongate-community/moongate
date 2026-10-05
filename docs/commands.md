@@ -28,6 +28,8 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | --- | --- | --- | --- | --- | --- |
 | [`help`](commands/help.md) | `help [command]` | Yes | Yes | Regular | Every role |
 | [`echo`, `e`](commands/echo.md) | `echo <text>` | Yes | Yes | Regular | Every role |
+| [`version`](commands/version.md) | `version` | Yes | Yes | Regular | Every role |
+| [`uptime`](commands/uptime.md) | `uptime` | Yes | Yes | Regular | Every role |
 | [`time`](commands/time.md) | `time` | No | Yes | Regular | Game |
 | [`console`](commands/console.md) | `console lock` | Yes | No | — | Every role |
 | [`script`](commands/script.md) | `script reload <file>` / `script metrics` | Yes | No | — | Game |

@@ -191,8 +191,14 @@
 30158 = "Faz a personagem ou NPC que selecionares executar uma ação do seu corpo: animate <ação>."
 30159 = "{0} executa a ação {1}."
 
-# Moongate: texts of the resurrect command (30160-30163).
-30160 = "Ressuscita o NPC cujo cadáver selecionares: renasce onde jaz o cadáver."
-30161 = "{0} voltou."
-30162 = "Isso não é um cadáver."
-30163 = "Esse cadáver não pode ser ressuscitado."
+# Moongate: texts of the version and uptime commands (30160-30163).
+30160 = "Mostra a versão do servidor, se é uma compilação Debug ou Release, e quando foi compilada."
+30161 = "Moongate {0} \"{1}\" ({2}), compilado em {3}."
+30162 = "Mostra há quanto tempo o servidor está ligado e desde quando."
+30163 = "Ligado há {0}, desde {1}."
+
+# Moongate: texts of the resurrect command (30164-30167).
+30164 = "Ressuscita o NPC cujo cadáver selecionares: renasce onde jaz o cadáver."
+30165 = "{0} voltou."
+30166 = "Isso não é um cadáver."
+30167 = "Esse cadáver não pode ser ressuscitado."
