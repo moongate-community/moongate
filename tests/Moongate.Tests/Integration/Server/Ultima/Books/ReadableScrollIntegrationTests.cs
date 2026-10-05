@@ -2,6 +2,13 @@ using Moongate.Core.Geometry;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Handlers.Items;
+using Moongate.Server.Ultima.Packets.General;
+using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Titles;
+using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Server.Ultima.Packets.Gumps;
 using Moongate.Tests.TestSupport.Ultima.Books;
 using Moongate.Ultima.Types;
@@ -54,6 +61,32 @@ public sealed class ReadableScrollIntegrationTests
             var used = fixture.ItemScripts.Run(note, "on_use", 2L);
             Assert.Equal(ScriptResultKind.Completed, used.Kind);
             Assert.Equal(true, Assert.Single(used.Values));
+            Assert.Empty(documents.World.Sender.Sent.OfType<CompressedGumpPacket>());
+        });
+        await documents.OnLoopAsync(() => Assert.Single(documents.World.Sender.Sent.OfType<CompressedGumpPacket>()));
+        Assert.Empty(fixture.Errors);
+    }
+
+    [Fact]
+    public async Task RealDoubleClick_ScrollInNearbyChest_SendsSavedTextOnNextLoopTurn()
+    {
+        await using var fixture = await BookLuaFixture.CreateAsync(realGumps: true);
+        var documents = fixture.Documents;
+        await documents.OnLoopAsync(() =>
+        {
+            var note = documents.Give();
+            var chest = new ItemEntity { Id = new(0x40000020), ItemId = 0x0E43, Amount = 1 };
+            documents.Items.Add([chest]);
+            documents.Items.PlaceOnGround(chest, MapType.Trammel, new Point3D(1601, 1600, 0));
+            documents.Items.MoveToContainer(note, chest.Id, new Point2D(20, 20));
+            var handler = new UseRequestPacketHandler(
+                documents.Items, documents.World.Mobiles, documents.Data, new WorldConfig(), new FakeTileDataService(),
+                new ContainerLayoutService(documents.Data), documents.World.Sender,
+                TestTooltips.Create(documents.Items, documents.World.Mobiles), new FameKarmaTitleService(documents.Data),
+                fixture.ItemScripts, documents.Bank);
+
+            handler.Handle(documents.Session, new UseRequestPacket { Target = note.Id });
+
             Assert.Empty(documents.World.Sender.Sent.OfType<CompressedGumpPacket>());
         });
         await documents.OnLoopAsync(() => Assert.Single(documents.World.Sender.Sent.OfType<CompressedGumpPacket>()));

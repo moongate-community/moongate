@@ -261,3 +261,5 @@ script [`jail_sentence.lua`](scripting/shipped-scripts.md#jail_sentencelua) does
 - [`jail`](commands/jail.md): the command.
 - [`jail.toml`](data-files/jail.md): the cells.
 - [Gumps](gumps.md) and [NPC spawns](spawns.md).
+
+When upgrading an existing root, `mgctl init` preserves its jail item and script files. Complete the [two required file merges](data-files/books.md#existing-roots) before starting the upgraded server.

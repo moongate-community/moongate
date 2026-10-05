@@ -129,7 +129,40 @@ truncating the text.
 
 Restart after editing a source. Only newly created or explicitly rewritten
 documents use it. Run `mgctl init` after upgrading to copy missing shipped
-files into your root; existing edited files are preserved.
+files into your root; existing edited files are preserved. For an existing root,
+complete the two edits below **before starting the upgraded server**.
+
+### Existing roots
+
+`mgctl init` adds the new book sources, scroll template and scroll script, but
+preserves your existing `templates/items/jail.toml` and
+`scripts/items/jail_note.lua`. It cannot merge these changes automatically.
+Back up both files and merge these edits while retaining your custom fields,
+comments and other functions:
+
+1. In `templates/items/jail.toml`, add this field to the `[[item]]` with
+   `id = "jail_release_note"` (or change its existing value):
+
+```toml
+stackable = false
+```
+
+2. In `scripts/items/jail_note.lua`, replace the existing `on_use` function
+   with this delegate. Keep the `jail_note = {}` declaration and any other
+   custom functions:
+
+```lua
+function jail_note.on_use(serial, user)
+    book.open(serial, user)
+    return true
+end
+```
+
+Without the first edit, the new jail book source fails startup validation.
+Without the second, the old script reads only `jail.text` and cannot display new
+notes saved as `book.content`. The delegate handles both saved formats. Move any
+custom release-note wording into `templates/books/jail_release_note.toml`;
+already issued notes keep their saved text. Start the server after both merges.
 
 ## Jail notes and native books
 

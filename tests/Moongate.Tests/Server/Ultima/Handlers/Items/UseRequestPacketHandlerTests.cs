@@ -313,6 +313,27 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(!reached, _sender.Sent.OfType<LocalizedMessagePacket>().Any(message => message.Cliloc == 500446));
     }
 
+    [Theory]
+    [InlineData("near", true)]
+    [InlineData("far", false)]
+    [InlineData("map", false)]
+    [InlineData("held", false)]
+    public async Task Handle_AScriptedItemInsideAGroundChest_UsesTheReachableRoot(string state, bool reached)
+    {
+        var (chest, note) = GroundChest(state == "far" ? 1003 : 1001);
+        note.TemplateId = "readable_scroll";
+        _scripts.Scripted.Add("readable_scroll");
+        _scripts.Result = ScriptResult.Completed([true]);
+        if (state == "map") _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(1001, 1000, 0));
+        if (state == "held") _items.Hide(chest);
+        await StartAsync(Aria);
+
+        await UseAsync(note.Id);
+
+        Assert.Equal(reached ? ["0x40000021 on_use 2"] : [], _scripts.Calls);
+        Assert.Equal(reached ? 0 : 1, _sender.Sent.OfType<LocalizedMessagePacket>().Count(message => message.Cliloc == 500446));
+    }
+
     [Theory, InlineData(1002, true), InlineData(1003, false)]
     public async Task Handle_AContainerOnTheGround_OpensOnlyWithinTwoTiles(int x, bool reached)
     {
