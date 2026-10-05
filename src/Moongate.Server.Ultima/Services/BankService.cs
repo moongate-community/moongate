@@ -44,6 +44,11 @@ public sealed class BankService : IBankService
     /// </summary>
     public const int PileMaximum = 60_000;
 
+    /// <summary>
+    ///     The most piles one cashing of a check makes; the check keeps what is beyond them.
+    /// </summary>
+    public const int CashPilesMaximum = 125;
+
     private static readonly Hue MessageHue = new(0x03B2);
     private static readonly TimeSpan ShowAgainAfter = TimeSpan.FromSeconds(1);
 
@@ -434,16 +439,19 @@ public sealed class BankService : IBankService
         var there = TopPilesOf(box);
         var topUp = (int)Math.Min(worth, there.Sum(pile => (long)(PileMaximum - pile.Amount)));
         var left = worth - topUp;
-        var wanted = (int)((left + PileMaximum - 1) / PileMaximum);
+        var wanted = (int)Math.Min(left / PileMaximum + (left % PileMaximum > 0 ? 1 : 0), CashPilesMaximum + 1);
 
         // Cashed whole, the check leaves its place to one of the piles. With room for fewer piles the box takes what
-        // fits and the check keeps the rest.
-        var whole = _capacity.HasRoomFor(box, Math.Max(0, wanted - 1));
+        // fits and the check keeps the rest; so it does beyond the piles of one cashing, which a box with no limit
+        // would otherwise take by the thousand in one turn of the loop.
+        var whole = wanted <= CashPilesMaximum && _capacity.HasRoomFor(box, Math.Max(0, wanted - 1));
         var newPiles = wanted;
 
         if (!whole)
         {
-            for (newPiles = wanted - 1; newPiles > 0 && !_capacity.HasRoomFor(box, newPiles); newPiles--)
+            for (newPiles = Math.Min(wanted - 1, CashPilesMaximum);
+                 newPiles > 0 && !_capacity.HasRoomFor(box, newPiles);
+                 newPiles--)
             {
             }
         }

@@ -72,7 +72,6 @@ Within 12 tiles of a banker, with the box open or not:
 | `Ah, art thou trying to fool me? Thou hast not so much gold!` | The bank, or the backpack for a deposit, has less than that. |
 | `Your backpack can't hold anything else.` | The backpack is already at its weight, or has no room for a new pile. |
 | `Your bank box is full.` | The deposit needs a new pile and the box holds its [limit of items](#how-much-it-holds). |
-
 | `We cannot create checks for such a paltry amount of gold!` | A check below [`min_check`](#settings). |
 | `Our policies prevent us from creating checks worth that much!` | A check above [`max_check`](#settings). |
 | `There's not enough room in your bankbox for the check!` | The box is full and the coins that pay the check use up no pile. |
@@ -94,6 +93,8 @@ to a banker and it takes 5000 coins of your bank and puts a check in your bank b
   you read `5,000 gold was deposited in your account.`
 - A box with room for part of the gold takes what fits and the check keeps the rest; with room for
   nothing you read `Your bank box is full.`
+- One cashing makes 125 piles at most, 7,500,000 coins: a check worth more keeps the rest, and
+  another double click goes on.
 - Anywhere else a double click says `That must be in your bank box to use it.`
 
 A check is the item template `bank_check` of `templates/items/bank.toml`, with its worth in the

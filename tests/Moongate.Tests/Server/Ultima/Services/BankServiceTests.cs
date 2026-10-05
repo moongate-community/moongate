@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Tests.TestSupport.Ultima.Movement;
@@ -822,6 +823,108 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.Equal(0, deposited);
         Assert.True(_items.TryGet(inBackpack.Id, out _));
         Assert.Equal(0, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task Cash_ACheckInSomeoneElsesBox_IsRefused()
+    {
+        var box = await BoxAsync();
+        var check = Check(box, 5000);
+        await _fixture.AddAsync(3);
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(3), out var bob));
+        bob.AccountId = new Serial(1003);
+        await OnLoopAsync(() => _bank.Open(bob));
+        await OnLoopAsync(() => true);
+
+        Assert.Equal(BankResultType.NotInBank, _bank.Cash(bob, check, out var deposited));
+
+        Assert.Equal(0, deposited);
+        Assert.Equal(0, _bank.Balance(bob));
+        Assert.Equal(5000, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task Cash_ACheckOnTheGround_IsRefused()
+    {
+        await BoxAsync();
+        var check = new ItemEntity
+        {
+            Id = new Serial(_nextItem++), TemplateId = BankService.CheckTemplate, ItemId = 0x14F0, Amount = 1
+        };
+        check.SetProp(ItemPropKeys.BankWorth, 5000L);
+        _items.Add([check]);
+
+        Assert.Equal(BankResultType.NotInBank, _bank.Cash(_aria, check, out var deposited));
+
+        Assert.Equal(0, deposited);
+        Assert.True(_items.TryGet(check.Id, out _));
+        Assert.Equal(0, _bank.Balance(_aria));
+    }
+
+    // Lifted from the box, it still has its place there: it is neither cashed nor counted.
+    [Fact]
+    public async Task Cash_ACheckHeldOnACursor_IsRefused_AndIsNotCounted()
+    {
+        var box = await BoxAsync();
+        var check = Check(box, 5000);
+        await OnLoopAsync(
+            () =>
+            {
+                _session.Set(ItemSessionKeys.Held, new HeldItem(check.Id));
+
+                return true;
+            }
+        );
+
+        Assert.Equal(BankResultType.NotInBank, _bank.Cash(_aria, check, out var deposited));
+
+        Assert.Equal(0, deposited);
+        Assert.Equal(0, _bank.Balance(_aria));
+        Assert.True(check.TryGetProp<long>(ItemPropKeys.BankWorth, out var worth));
+        Assert.Equal(5000, worth);
+    }
+
+    // A box with no limit and a check of thousands of piles: one cashing makes so many piles and no more, so the
+    // game loop is not held for seconds; the check keeps the rest for the next double click.
+    [Fact]
+    public async Task Cash_AHugeCheckIntoABoxWithNoLimit_MakesOnlySoManyPiles_AndTheCheckKeepsTheRest()
+    {
+        _config.MaxItems = 0;
+        var box = await BoxAsync();
+        var check = Check(box, 12_000_000);
+
+        for (uint index = 0; index < 300; index++)
+        {
+            _serials.Serials.Enqueue(new Serial(0x40003000 + index));
+        }
+
+        Assert.Equal(BankResultType.Ok, _bank.Cash(_aria, check, out var deposited));
+
+        Assert.Equal(BankService.CashPilesMaximum * BankService.PileMaximum, deposited);
+        Assert.True(check.TryGetProp<long>(ItemPropKeys.BankWorth, out var left));
+        Assert.Equal(12_000_000 - deposited, left);
+        Assert.Equal(BankService.CashPilesMaximum + 1, _items.GetContents(box.Id).Count);
+        Assert.Equal(12_000_000, _bank.Balance(_aria));
+    }
+
+    // A worth no banker writes, set by a script: cashed as any huge check, with no overflow.
+    [Fact]
+    public async Task Cash_ACheckOfAnAbsurdWorth_IsCashedBySoManyPiles()
+    {
+        _config.MaxItems = 0;
+        var box = await BoxAsync();
+        var check = Check(box, long.MaxValue);
+
+        for (uint index = 0; index < 300; index++)
+        {
+            _serials.Serials.Enqueue(new Serial(0x40003000 + index));
+        }
+
+        Assert.Equal(BankResultType.Ok, _bank.Cash(_aria, check, out var deposited));
+
+        Assert.Equal(BankService.CashPilesMaximum * BankService.PileMaximum, deposited);
+        Assert.True(check.TryGetProp<long>(ItemPropKeys.BankWorth, out var left));
+        Assert.Equal(long.MaxValue - deposited, left);
     }
 
     // A prop anybody could set on anything: only a check is a check.
