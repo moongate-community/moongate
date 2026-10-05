@@ -27,10 +27,10 @@ public sealed class JailModule
 
     /// <summary>
     ///     Gets the cells in the order of the file; <c>for _, cell in ipairs(jail.cells()) do ... end</c>. Each is
-    ///     <c>{ number, x, y, z }</c>, and an occupied one also has <c>prisoner</c>, <c>name</c> and
+    ///     <c>{ number, x, y, z, map }</c>, and an occupied one also has <c>prisoner</c>, <c>name</c> and
     ///     <c>seconds_left</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The cells of the jail in file order, as an array of { number, x, y, z }; a cell that holds a prisoner also has prisoner (its serial), name and seconds_left. An empty array when there is no data/jail.toml. A cell whose sentence is over is free, even while its prisoner is offline.")]
+    [ScriptFunction(helpText: "The cells of the jail in file order, as an array of { number, x, y, z, map } (map is the MapType number of the jail, for mobile.teleport); a cell that holds a prisoner also has prisoner (its serial), name and seconds_left. An empty array when there is no data/jail.toml. A cell whose sentence is over is free, even while its prisoner is offline.")]
     public LuaTable Cells()
     {
         var cells = new LuaTable();
@@ -44,6 +44,11 @@ public sealed class JailModule
             entry["x"] = cell.Location.X;
             entry["y"] = cell.Location.Y;
             entry["z"] = cell.Location.Z;
+
+            if (_jail.Map is { } map)
+            {
+                entry["map"] = (int)map;
+            }
 
             if (_jail.GetOccupant(cell.Number) is { } occupant)
             {

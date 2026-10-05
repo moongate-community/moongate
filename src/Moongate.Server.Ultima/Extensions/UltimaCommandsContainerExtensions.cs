@@ -173,7 +173,7 @@ public static class UltimaCommandsContainerExtensions
         );
         container.RegisterCommand<JailCommand>(
             "jail",
-            "Sends the character you target to a jail cell for some days, or releases it: a gump lists the cells.",
+            "Opens the gump of the jail: it lists the cells, takes you into one, and jails or releases a character.",
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.JailDescription

@@ -11,6 +11,7 @@ using Moongate.Server.Ultima.Types.Jail;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Jail;
 using Moongate.Tests.TestSupport.Ultima.Speech;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Modules;
 
@@ -46,9 +47,12 @@ public sealed class JailModuleTests : IAsyncLifetime
             local cells = jail.cells()
             local free, taken = cells[1], cells[2]
             return #cells, free.number, free.x, free.y, free.z, free.prisoner, free.name, free.seconds_left,
-                taken.number, taken.prisoner, taken.name, taken.seconds_left
+                taken.number, taken.prisoner, taken.name, taken.seconds_left, free.map
             """
         );
+
+        // The map of the jail, for mobile.teleport: Felucca.
+        Assert.Equal((int)MapType.Felucca, result[12].Read<int>());
 
         Assert.Equal([2, 1, 5276, 1164, 0], result[..5].Select(value => value.Read<int>()));
         Assert.All(result[5..8], value => Assert.Equal(LuaValue.Nil, value));

@@ -16,6 +16,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Data.Regions;
+using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
@@ -23,6 +24,7 @@ using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Jail;
+using Moongate.Server.Ultima.Types.Targeting;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Gumps;
@@ -31,6 +33,7 @@ using Moongate.Tests.TestSupport.Ultima.Jail;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Speech;
+using Moongate.Tests.TestSupport.Ultima.Targeting;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
@@ -57,6 +60,9 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
     private readonly StubJailService _jail = new();
     private readonly SettableClock _clock = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+
+    private readonly RecordingTeleportService _teleports = new();
+    private readonly StubTargetService _targets = new();
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
@@ -104,7 +110,9 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ISectorService>(_fixture.Sectors);
         _container.RegisterInstance<IClockService>(new StubClockService());
         _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
-        _container.RegisterInstance<ITeleportService>(new RecordingTeleportService());
+        _container.RegisterInstance<ITeleportService>(_teleports);
+        _container.RegisterInstance<ITargetService>(_targets);
+        _container.RegisterDelegate<IScriptEngine>(_ => _engine);
         _container.RegisterInstance<IJailService>(_jail);
         _container.RegisterInstance<TimeProvider>(_clock);
         _container.RegisterInstance<IGumpService>(_gumps);
@@ -119,6 +127,7 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<GumpModule>();
         _container.AddScriptModule<JailModule>();
+        _container.AddScriptModule<TargetModule>();
         _container.RegisterScriptEnum<JailResultType>();
         _container.Resolve<IMoongateEventBus>()
                   .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -143,14 +152,14 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
 
         var built = Open(Staff);
 
-        Assert.Contains("Jail: Lord Pippo", built.Strings);
+        Assert.Contains("Target: Lord Pippo", built.Strings);
         Assert.Contains("1", built.Strings);
         Assert.Contains("Cell 1", built.Strings);
         Assert.Contains("Cell 12", built.Strings);
         Assert.Contains("Gino - 2d 4h left", built.Strings);
         Assert.Contains("free", built.Strings);
-        // One button per cell: eleven that jail, one that releases.
-        Assert.Equal(12, built.Buttons.Count);
+        // The target button, then two per cell: eleven that jail and one that releases, and a go for each.
+        Assert.Equal(25, built.Buttons.Count);
         Assert.Contains("{ textentrylimited ", built.Layout);
         // Ten cells a page.
         Assert.Contains("{ page 2 }", built.Layout);
@@ -173,7 +182,7 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
     {
         Open(Staff);
 
-        Answer(0, 3, "5");
+        Answer(0, Jail(3), "5");
 
         var (prisoner, cell, days, by) = Assert.Single(_jail.Jailed);
         Assert.Equal((new Serial((uint)Target), 3, 5, new Serial((uint)Staff)), (prisoner.Id, cell, days, by.Id));
@@ -187,7 +196,7 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
     {
         Open(Staff);
 
-        Answer(0, 1, days);
+        Answer(0, Jail(1), days);
 
         Assert.Empty(_jail.Jailed);
         Assert.Equal("Type the days as a whole number from 1 to 30.", Assert.Single(_speech.Told).Text);
@@ -201,7 +210,7 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         Open(Staff);
         _jail.Result = JailResultType.CellOccupied;
 
-        Answer(0, 1, "4");
+        Answer(0, Jail(1), "4");
 
         Assert.Equal("That cell is taken.", Assert.Single(_speech.Told).Text);
         Assert.Contains("4", _gumps.Opened[1].Gump.Layout.Build().Strings);
@@ -214,7 +223,8 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         _jail.SentenceList.Add(Sentence(Player, "Gino", cell: 2, secondsLeft: 3600));
         Open(Staff);
 
-        Answer(0, 2, "1");
+        // The cell that holds someone has its release where a free one has its jail button.
+        Answer(0, Jail(2), "1");
 
         Assert.Equal([new Serial((uint)Player)], _jail.Pardoned);
         Assert.Equal("Gino is released.", Assert.Single(_speech.Told).Text);
@@ -233,8 +243,8 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         Assert.Contains("In cell 2, 1h 0m left", built.Strings);
         Assert.Contains("here now", built.Strings);
 
-        // The first button is the release of the target; the cells follow.
-        Answer(0, 1, "1");
+        // After the target button comes the release of the target; the cells follow.
+        Answer(0, 2, "1");
 
         Assert.Equal([new Serial((uint)Target)], _jail.Pardoned);
         Assert.Empty(_errors);
@@ -270,9 +280,110 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         Open(Staff);
         await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.Regular));
 
-        Answer(0, 1, "3");
+        Answer(0, Jail(1), "3");
+        Answer(0, Go(1), "3");
+        Answer(0, TargetButton, "3");
 
         Assert.Empty(_jail.Jailed);
+        Assert.Empty(_teleports.Teleports);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void WithoutATarget_TheCellsAreListed_ButNobodyCanBeJailed()
+    {
+        _jail.SentenceList.Add(Sentence(Player, "Gino", cell: 2, secondsLeft: 3600));
+
+        var built = Open(Staff, false);
+
+        Assert.Contains("Target: nobody. Press the button to pick one.", built.Strings);
+        Assert.Contains("Gino - 1h 0m left", built.Strings);
+        Assert.Contains("free", built.Strings);
+        // The target button, a go for each cell and the release of Gino: no button that jails.
+        Assert.Equal(14, built.Buttons.Count);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void Go_TakesTheGameMasterIntoTheCell_OnTheMapOfTheJail_AndOpensTheGumpAgain()
+    {
+        Open(Staff);
+
+        Answer(0, Go(3), "5");
+
+        Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Staff), out var staff));
+        Assert.Equal((staff, MapType.Felucca, new Point3D(5279, 1164, 0)), Assert.Single(_teleports.Teleports));
+        Assert.Empty(_jail.Jailed);
+        // With the same target and the days that were typed.
+        var again = _gumps.Opened[1].Gump.Layout.Build().Strings;
+        Assert.Contains("Target: Lord Pippo", again);
+        Assert.Contains("5", again);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void Go_WorksWithoutATarget_ToVisitTheCells()
+    {
+        Open(Staff, false);
+
+        // Target, then one go per cell: no cell holds anyone.
+        Answer(0, 1 + 4, "1");
+
+        Assert.Equal(new Point3D(5280, 1164, 0), Assert.Single(_teleports.Teleports).Location);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void TheTargetButton_GivesTheCursor_AndTheCharacterPickedBecomesTheOneToJail()
+    {
+        _targets.Result = TargetResult.ForObject(new Serial((uint)Player));
+        Open(Staff, false);
+
+        Answer(0, TargetButton, "7");
+
+        var again = _gumps.Opened[1].Gump.Layout.Build();
+        Assert.Contains("Target: Player", again.Strings);
+        Assert.Contains("7", again.Strings);
+        // Now it can be jailed: a jail button and a go for each cell.
+        Assert.Equal(25, again.Buttons.Count);
+
+        Answer(1, Jail(4), "7");
+        Assert.Equal((new Serial((uint)Player), 4, 7), (_jail.Jailed[0].Prisoner.Id, _jail.Jailed[0].Cell, _jail.Jailed[0].Days));
+        Assert.Empty(_errors);
+    }
+
+    // A second .jail, or any other command with a cursor, takes the first cursor away: its gump must not come back
+    // on top of the new one.
+    [Theory, InlineData(TargetCancelType.Overridden), InlineData(TargetCancelType.Disconnected)]
+    public void TheTargetButton_WhoseCursorIsTakenAway_DoesNotOpenTheGumpAgain(TargetCancelType reason)
+    {
+        _targets.Result = TargetResult.Canceled(reason);
+        Open(Staff);
+
+        Answer(0, TargetButton, "1");
+
+        Assert.Single(_gumps.Opened);
+        Assert.Empty(_speech.Told);
+        Assert.Empty(_errors);
+    }
+
+    [Theory, InlineData("item"), InlineData("gone"), InlineData("ground"), InlineData("canceled")]
+    public void TheTargetButton_OnWhatIsNotACharacter_KeepsTheTargetItHad(string what)
+    {
+        _targets.Result = what switch
+        {
+            "item"   => TargetResult.ForObject(new Serial(0x40000001)),
+            "gone"   => TargetResult.ForObject(new Serial(777)),
+            "ground" => TargetResult.ForLocation(MapType.Trammel, new Point3D(1, 1, 0)),
+            _        => TargetResult.Canceled(TargetCancelType.Canceled)
+        };
+        Open(Staff);
+
+        Answer(0, TargetButton, "1");
+
+        Assert.Contains("Target: Lord Pippo", _gumps.Opened[1].Gump.Layout.Build().Strings);
+        // A cursor put away says nothing; a wrong pick says why.
+        Assert.Equal(what == "canceled" ? [] : ["That is not a character."], _speech.Told.Select(told => told.Text));
         Assert.Empty(_errors);
     }
 
@@ -317,11 +428,30 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         };
     }
 
-    private GumpBuildResult Open(long player)
+    // The buttons answer in the order the script makes them: the target button, then for each cell its jail button
+    // (or the release of who is inside) and its go. So it is with a target and nobody of its own in jail.
+    private const int TargetButton = 1;
+
+    private static int Jail(int cell)
+    {
+        return 2 * cell;
+    }
+
+    private static int Go(int cell)
+    {
+        return 2 * cell + 1;
+    }
+
+    private GumpBuildResult Open(long player, bool withTarget = true)
     {
         var args = new LuaTable();
-        args["target"] = Target;
-        args["name"] = "Lord Pippo";
+
+        if (withTarget)
+        {
+            args["target"] = Target;
+            args["name"] = "Lord Pippo";
+        }
+
         args["days"] = "1";
 
         Assert.True(_module.Open(player, "jail_sentence", args));

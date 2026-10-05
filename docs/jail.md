@@ -11,21 +11,24 @@ number of seconds from a command, and neither takes a fine or feeds its prisoner
 
 ## Send someone to jail
 
-[`.jail`](commands/jail.md), for game masters and above, gives a target cursor. Target the
-character and the gump of the jail opens:
+[`.jail`](commands/jail.md), for game masters and above, opens the gump of the jail:
 
 ```text
-Jail: Lord Pippo
+Jail
 Days: [ 3 ]
 
-[>] Cell 1   free
-    Cell 2   Gino - 2d 4h left   [Release]
-[>] Cell 3   free
+[>] Target: Lord Pippo
+Jail                              Release  Go
+[>] Cell 1   free                          [>]
+    Cell 2   Gino - 2d 4h left    [x]      [>]
+[>] Cell 3   free                          [>]
     ...
 ```
 
-1. Type the days of the sentence.
-2. Press the button of a free cell.
+1. Press `Target` and pick the character with the cursor: a player or an NPC. The gump opens
+   again with its name. Until then the cells are only listed: no cell has a button to jail.
+2. Type the days of the sentence.
+3. Press the button of a free cell.
 
 The character stands in that cell at once and is told `You have been jailed for 3 days.`; you
 are told `Lord Pippo is in cell 3 for 3 days.`
@@ -38,7 +41,17 @@ are told `Lord Pippo is in cell 3 for 3 days.`
 - Target a character that is already in jail and the gump has its release at the top; the button
   of a free cell moves it there, with a sentence that starts now. It still goes back where it
   was first arrested.
+- `Target` again picks someone else; a cursor put away with Escape keeps the character the gump
+  had. A cursor that another one replaces, such as that of a second `.jail`, opens nothing.
 - A right click closes the gump.
+
+## Visit the cells
+
+`Go`, on every cell of the gump, takes you into it, on the map of the jail, and leaves the gump
+open; it needs no target. It is the way to see a prisoner: the places `Cell 1` to `Cell 10` of
+[`locations.toml`](data-files/locations.md) exist on Felucca and on Trammel, and
+[`.go cell 1`](commands/go.md) takes the one of the map you stand on, an empty room everywhere but
+on the jail's map. The cells are closed rooms: leave with `.go` or with another `Go`.
 
 ## The sentence
 

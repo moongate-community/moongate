@@ -3,17 +3,21 @@
 --
 -- What it is for:
 --   The script of the gump of the jail (templates/gumps/jail_sentence.xml),
---   opened by .jail on a character: it fills the "rows" slot with the cells of
---   data/jail.toml, ten per page. A free cell has a button that sends the
---   character there for the days typed in the gump; a cell that holds someone
---   shows who, how long is left and a button that releases it with no fine. A
---   character already in jail has a line of its own at the top, with its
---   release; one whose days are over while it is offline is said to be free
---   at its next login. Staff only: anyone else sees an empty gump.
+--   opened by .jail: it fills the "rows" slot. First the target: a button that
+--   gives the cursor to pick the character to jail, and its name. Then the
+--   cells of data/jail.toml, ten per page. A free cell has a button that sends
+--   the character picked there for the days typed in the gump; with nobody
+--   picked it has none. A cell that holds someone shows who, how long is left
+--   and a button that releases it with no fine. Every cell has a button that
+--   takes the game master into it, on the map of the jail. A character already
+--   in jail has a line of its own at the top, with its release; one whose days
+--   are over while it is offline is said to be free at its next login. Staff
+--   only: anyone else sees an empty gump.
 --
 -- Functions:
 --   rows(g, player, args)  fills the slot; args.target is the serial of the
---                          character, args.name its name, args.days the days
+--                          character to jail and args.name its name, both
+--                          absent until one is picked; args.days the days
 --                          shown in the field
 -- ==============================================================================
 
@@ -22,10 +26,13 @@ jail_sentence = {}
 local per_page = 10
 local row_height = 22
 
--- The frame is 460 wide and the slot starts at 20: texts are cut here instead of running over the edge.
+-- The frame is 460 wide and the slot starts at 20: texts are cut here instead of running over the edge. From the
+-- left: the button that jails, the cell, who is inside, the release and the go.
 local number_width = 60
-local row_width = 250
+local row_width = 225
 local text_height = 20
+local release_x = 335
+local go_x = 395
 
 local free_hue = 68
 local taken_hue = 38
@@ -71,6 +78,55 @@ local function refusal(result)
     return "The jail refused."
 end
 
+-- The cursor to pick who is jailed: the gump opens again on the character picked, or on the one it had.
+local function pick(who, response, args)
+    if not world.is_staff(who) then
+        return
+    end
+
+    local days = response.text[1] or args.days
+
+    target.pick(who, function(picked)
+        if not world.is_staff(who) then
+            return
+        end
+
+        local name = picked.kind == "object" and mobile.name(picked.serial) or nil
+
+        if name then
+            open(who, { target = picked.serial, name = name }, days)
+            return
+        end
+
+        if picked.kind == "canceled" then
+            -- Put away by the player: the gump comes back as it was. Taken by another cursor, such as a second
+            -- .jail, or lost with the player: nothing is opened over what came after.
+            if picked.reason == "canceled" then
+                open(who, args, days)
+            end
+
+            return
+        end
+
+        -- An item, the ground or someone gone is not a character.
+        mobile.message(who, "That is not a character.")
+        open(who, args, days)
+    end)
+end
+
+-- Into the cell, on the map of the jail: a place of the same name may exist on another map.
+local function go(who, response, args, cell)
+    if not world.is_staff(who) then
+        return
+    end
+
+    if not mobile.teleport(who, cell.x, cell.y, cell.z, cell.map) then
+        mobile.message(who, "That cell cannot be reached.")
+    end
+
+    open(who, args, response.text[1])
+end
+
 local function send(who, response, args, cell)
     -- The rank may have gone while the gump was open.
     if not world.is_staff(who) then
@@ -111,21 +167,35 @@ function jail_sentence.rows(g, player, args)
         return
     end
 
-    local top = 0
-    local sentence = jail.sentence(args.target)
+    -- Who is jailed, and the button that picks it.
+    g:button{ x = 0, y = 0, up = 4005, down = 4007, on_click = function(who, response)
+        pick(who, response, args)
+    end }
+    g:label_cropped{ x = 35, y = 0, width = row_width + number_width + 100, height = text_height,
+        hue = args.target and free_hue or taken_hue,
+        text = args.target and "Target: " .. args.name or "Target: nobody. Press the button to pick one." }
+
+    local top = row_height
+    local sentence = args.target and jail.sentence(args.target)
 
     -- The character is already in jail: its release comes first, the cells move it elsewhere.
     if sentence then
-        g:button{ x = 0, y = 0, up = 4017, down = 4019, on_click = function(who)
+        g:button{ x = 0, y = top, up = 4017, down = 4019, on_click = function(who)
             release(who, args, args.target, args.name)
         end }
-        g:label_cropped{ x = 35, y = 0, width = row_width + number_width, height = text_height, hue = taken_hue,
+        g:label_cropped{ x = 35, y = top, width = row_width + number_width, height = text_height, hue = taken_hue,
             text = sentence.seconds_left > 0
                 and "In cell " .. sentence.cell .. ", " .. left(sentence.seconds_left) .. " left"
                 -- Its days are over and it is not in the world: the jail releases it when it is back.
                 or "Sentence over: free at its next login" }
-        top = row_height
+        top = top + row_height
     end
+
+    -- What the three columns of buttons do.
+    g:label_cropped{ x = 0, y = top, width = 35, height = text_height, text = "Jail" }
+    g:label_cropped{ x = release_x - 10, y = top, width = 55, height = text_height, text = "Release" }
+    g:label_cropped{ x = go_x + 5, y = top, width = 30, height = text_height, text = "Go" }
+    top = top + row_height
 
     g:pager{ previous = { x = 0, y = top + per_page * row_height + 10 }, next = { x = 390, y = top + per_page * row_height + 10 } }
 
@@ -137,15 +207,23 @@ function jail_sentence.rows(g, player, args)
         if cell.prisoner and cell.prisoner ~= args.target then
             g:label_cropped{ x = 100, y = y, width = row_width, height = text_height, hue = taken_hue,
                 text = cell.name .. " - " .. left(cell.seconds_left) .. " left" }
-            g:button{ x = 360, y = y, up = 4017, down = 4019, on_click = function(who)
+            g:button{ x = release_x, y = y, up = 4017, down = 4019, on_click = function(who)
                 release(who, args, cell.prisoner, cell.name)
             end }
         else
-            g:button{ x = 0, y = y, up = 4005, down = 4007, on_click = function(who, response)
-                send(who, response, args, cell.number)
-            end }
+            -- Nobody picked, nobody to send.
+            if args.target then
+                g:button{ x = 0, y = y, up = 4005, down = 4007, on_click = function(who, response)
+                    send(who, response, args, cell.number)
+                end }
+            end
+
             g:label_cropped{ x = 100, y = y, width = row_width, height = text_height, hue = free_hue,
                 text = cell.prisoner and "here now" or "free" }
         end
+
+        g:button{ x = go_x, y = y, up = 4005, down = 4007, on_click = function(who, response)
+            go(who, response, args, cell)
+        end }
     end
 end

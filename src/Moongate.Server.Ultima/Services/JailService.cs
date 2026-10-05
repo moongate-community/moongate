@@ -65,6 +65,8 @@ public sealed class JailService : IJailService
 
     public IReadOnlyList<JailCell> Cells => _file?.Cell ?? [];
 
+    public MapType? Map => _file?.Map;
+
     public IReadOnlyCollection<JailSentenceEntity> Sentences => _sentences.Values;
 
     public int MaxDays => _config.MaxDays;

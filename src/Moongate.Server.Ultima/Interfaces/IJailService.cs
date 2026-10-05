@@ -4,6 +4,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Types.Jail;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
@@ -25,6 +26,11 @@ public interface IJailService : IMoongateStartupService, IPersistenceDeletionSou
     ///     Gets the cells in file order; none without a jail.
     /// </summary>
     IReadOnlyList<JailCell> Cells { get; }
+
+    /// <summary>
+    ///     Gets the map the cells are on; null when there is no <c>data/jail.toml</c>.
+    /// </summary>
+    MapType? Map { get; }
 
     /// <summary>
     ///     Gets the live sentences, which the world save writes.
