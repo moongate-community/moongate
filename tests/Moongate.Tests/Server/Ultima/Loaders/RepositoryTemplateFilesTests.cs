@@ -49,7 +49,7 @@ public sealed class RepositoryTemplateFilesTests
         var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
         var books = (await new BooksLoader(Directories(), new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
         Assert.Equal(64, books.Count);
-        Assert.Equal(["jail_release_note", "welcome_letter"], books.Where(book => !book.Id.StartsWith("modernuo_", StringComparison.Ordinal))
+        Assert.Equal(["jail_release_note", "welcome_letter"], books.Where(book => book.Id is "jail_release_note" or "welcome_letter")
             .Select(book => book.Id).Order(StringComparer.Ordinal));
         var welcome = Assert.Single(books, book => book.Id == "welcome_letter");
         Assert.Equal(["contact_name"], welcome.Variables);
@@ -64,14 +64,15 @@ public sealed class RepositoryTemplateFilesTests
     {
         var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
         var data = new StubDataLoaderService().With(items);
+        var catalog = ImportedBookIds();
         var books = (await new BooksLoader(Directories(), data).LoadDataAsync()).Entities
-            .Where(book => book.Id.StartsWith("modernuo_", StringComparison.Ordinal)).ToArray();
+            .Where(book => catalog.Contains(book.Id)).ToArray();
         Assert.Equal(62, books.Length);
-        Assert.Equal(9, books.Count(book => book.Id.StartsWith("modernuo_grimmoch_journal", StringComparison.Ordinal)));
-        Assert.Equal(6, books.Count(book => book.Id.StartsWith("modernuo_lysander_notebook", StringComparison.Ordinal)));
-        Assert.Equal(13, books.Count(book => book.Id.StartsWith("modernuo_tavaras_journal", StringComparison.Ordinal)));
-        Assert.Equal("Yorick of Yew", books.Single(book => book.Id == "modernuo_grammar_of_orcish").Author);
-        Assert.Equal(7457, books.Single(book => book.Id == "modernuo_my_story").Content.Length);
+        Assert.Equal(9, books.Count(book => book.Id.StartsWith("grimmoch_journal", StringComparison.Ordinal)));
+        Assert.Equal(6, books.Count(book => book.Id.StartsWith("lysander_notebook", StringComparison.Ordinal)));
+        Assert.Equal(13, books.Count(book => book.Id.StartsWith("tavaras_journal", StringComparison.Ordinal)));
+        Assert.Equal("Yorick of Yew", books.Single(book => book.Id == "grammar_of_orcish").Author);
+        Assert.Equal(7457, books.Single(book => book.Id == "my_story").Content.Length);
         data.With(books);
         var service = new BookTemplateService(data);
         foreach (var book in books)
@@ -96,8 +97,9 @@ public sealed class RepositoryTemplateFilesTests
     {
         var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
         var data = new StubDataLoaderService().With(items);
+        var catalog = ImportedBookIds();
         var books = (await new BooksLoader(Directories(), data).LoadDataAsync()).Entities
-            .Where(book => book.Id.StartsWith("modernuo_", StringComparison.Ordinal)).ToArray();
+            .Where(book => catalog.Contains(book.Id)).ToArray();
         data.With(books);
         var service = new BookTemplateService(data);
         Assert.Equal(62, books.Length);
@@ -431,6 +433,14 @@ public sealed class RepositoryTemplateFilesTests
             }
         );
         Assert.Equal(regions.Count, regions.Select(region => (region.Areas[0].X1, region.Areas[0].Y1)).Distinct().Count());
+    }
+
+    // The imported ModernUO catalog is the folder templates/books/modernuo: a book's id is its file name.
+    private static HashSet<string> ImportedBookIds()
+    {
+        var folder = Path.Combine(FindRepositoryRoot(), "moongate_root", "templates", "books", "modernuo");
+
+        return Directory.EnumerateFiles(folder, "*.toml").Select(file => Path.GetFileNameWithoutExtension(file)!).ToHashSet(StringComparer.Ordinal);
     }
 
     private static DirectoriesConfig Directories()

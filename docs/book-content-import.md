@@ -46,8 +46,8 @@ All parsing, validation and serialization finish before any output file is chang
 A filesystem failure during the writes can leave some files updated; correct the reported
 path and rerun.
 
-A class becomes a stable `modernuo_<snake_case_class>.toml` filename. For example,
-`GrammarOfOrcish` becomes `modernuo_grammar_of_orcish`. Titles are preserved and are never
+A class becomes a stable `<snake_case_class>.toml` filename. For example,
+`GrammarOfOrcish` becomes `grammar_of_orcish`. Titles are preserved and are never
 used for deduplication: the Grimmoch, Lysander and Tavara installments remain distinct.
 Empty lines, leading spaces, empty pages, spelling and annotations stay as written.
 Lines are joined with a newline and pages with two newlines. This provides readable plain
@@ -90,13 +90,16 @@ preserves files already present. Newly added sources load at the next normal sta
 For an existing root whose catalog predates these translations, copy the desired
 `[translations.<language>]` tables from the shipped catalog into its matching files.
 Neither `mgctl init` nor a reimport invents missing translations in existing files.
+A root that holds the catalog under its first names, `modernuo_<book>.toml`, gets the books again
+under the names without the prefix: delete the `modernuo_*.toml` files of `templates/books/modernuo`
+by hand, or every book is there twice, and use the new ids in `book.give` and `.book`.
 Existing issued documents keep their saved text. No converter connects to the world database
 or restarts the server.
 
 To create a readable copy from Lua:
 
 ```lua
-book.give(player, "modernuo_grammar_of_orcish")
+book.give(player, "grammar_of_orcish")
 ```
 
 ## What the other emulators use

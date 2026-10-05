@@ -32,16 +32,16 @@ public sealed class ModernUoBookConverterTests : IDisposable
             """);
 
         Assert.True(Run() == 0, _error.ToString());
-        var first = Read("modernuo_journal1");
+        var first = Read("journal1");
         Assert.Equal("Journal", first.Title);
         Assert.Equal("Writer", first.Author);
         Assert.Equal(" first\n\nlast\n\n\n\nend", first.Content);
-        Assert.Equal("another part", Read("modernuo_journal2").Content);
+        Assert.Equal("another part", Read("journal2").Content);
         Assert.Equal("readable_scroll", first.ItemTemplate);
         Assert.Empty(first.Variables);
         Assert.Empty(first.Attachments);
         Assert.Empty(first.Translations);
-        Assert.Contains("content = \"\"\"", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "modernuo_journal1.toml")));
+        Assert.Contains("content = \"\"\"", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "journal1.toml")));
         Assert.Equal(2, Directory.GetFiles(_directories.DestinationDirectory).Length);
         Assert.Contains("2 books, 4 pages", _output.ToString());
     }
@@ -61,7 +61,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
             """");
 
         Assert.True(Run() == 0, _error.ToString());
-        var book = Read("modernuo_uo_journal16b");
+        var book = Read("uo_journal16b");
         Assert.Equal("A \"quoted\" title", book.Title);
         Assert.Equal("A\\B", book.Author);
         Assert.Equal("cafè\nprice $$5; $$player_name; $${unknown}\nhttp://example.test/path\nraw \\ text", book.Content);
@@ -80,7 +80,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
     {
         _directories.WriteSource("A.cs", Book("Earlier", "kept"));
         Assert.True(Run() == 0, _error.ToString());
-        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_earlier.toml");
+        var path = Path.Combine(_directories.DestinationDirectory, "earlier.toml");
         var previous = File.ReadAllBytes(path);
         _directories.WriteSource("A.cs", Book("Earlier", "changed"));
         _directories.WriteSource("Z.cs", "class Bad { public static readonly BookContent Content = " + initializer + "; }");
@@ -135,7 +135,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
     {
         _directories.WriteSource("A.cs", Book("Earlier", "kept"));
         Assert.Equal(0, Run());
-        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_earlier.toml");
+        var path = Path.Combine(_directories.DestinationDirectory, "earlier.toml");
         var previous = File.ReadAllBytes(path);
         _directories.WriteSource("A.cs", Book("Earlier", "changed"));
         _directories.WriteSource("Z.cs", Book("Dollars", new string('$', count)));
@@ -152,8 +152,8 @@ public sealed class ModernUoBookConverterTests : IDisposable
         _directories.WriteSource("A.cs", Book("Dollars", content));
 
         Assert.True(Run() == 0, _error.ToString());
-        Assert.Equal(16384, Read("modernuo_dollars").Content.Length);
-        Assert.Equal(content, TextTemplateRenderer.Render(Read("modernuo_dollars").Content,
+        Assert.Equal(16384, Read("dollars").Content.Length);
+        Assert.Equal(content, TextTemplateRenderer.Render(Read("dollars").Content,
             new Dictionary<string, string>(), TextTemplateSyntaxType.Document));
     }
 
@@ -167,7 +167,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
         _directories.WriteSource("A.cs", Book("Special", content));
 
         Assert.True(Run() == 0, _error.ToString());
-        Assert.Equal(content, Read("modernuo_special").Content);
+        Assert.Equal(content, Read("special").Content);
     }
 
     [Theory]
@@ -178,7 +178,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
     {
         _directories.WriteSource("A.cs", Book("Earlier", "kept"));
         Assert.Equal(0, Run());
-        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_earlier.toml");
+        var path = Path.Combine(_directories.DestinationDirectory, "earlier.toml");
         var previous = File.ReadAllBytes(path);
         _directories.WriteSource("A.cs", Book("Earlier", "changed"));
         _directories.WriteSource("Z.cs", $"class Bad {{ public static readonly BookContent Content = new(\"{title}\", \"{author}\", new BookPageInfo(\"{content}\")); }}");
@@ -193,15 +193,15 @@ public sealed class ModernUoBookConverterTests : IDisposable
     {
         _directories.WriteSource("A.cs", Book("Known", "before"));
         Assert.Equal(0, Run());
-        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_known.toml");
-        var edited = Read("modernuo_known");
+        var path = Path.Combine(_directories.DestinationDirectory, "known.toml");
+        var edited = Read("known");
         edited.Translations.Add("ita", new BookTranslation { Title = "Titolo", Content = "\n\nCorpo\r\nletterale $$5" });
         edited.Translations.Add("fre", new BookTranslation { Author = "Autrice" });
         File.WriteAllText(path, TomlUtils.Serialize(edited));
         _directories.WriteSource("A.cs", Book("Known", "after"));
 
         Assert.True(Run() == 0, _error.ToString());
-        var book = Read("modernuo_known");
+        var book = Read("known");
         Assert.Equal("after", book.Content);
         Assert.Equal(2, book.Translations.Count);
         Assert.Equal("Titolo", book.Translations["ita"].Title);
@@ -228,13 +228,13 @@ public sealed class ModernUoBookConverterTests : IDisposable
     {
         _directories.WriteSource("A.cs", Book("Known", "before"));
         Assert.Equal(0, Run());
-        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_known.toml");
+        var path = Path.Combine(_directories.DestinationDirectory, "known.toml");
         File.AppendAllText(path, $"\n[translations.{language}]\ntitle = \"Price $$5\"\n");
         _directories.WriteSource("A.cs", Book("Known", "after"));
 
         Assert.True(Run() == 0, _error.ToString());
-        Assert.Equal("Price $$5", Read("modernuo_known").Translations[language].Title);
-        Assert.Equal("after", Read("modernuo_known").Content);
+        Assert.Equal("Price $$5", Read("known").Translations[language].Title);
+        Assert.Equal("after", Read("known").Content);
     }
 
     [Theory]
@@ -252,9 +252,9 @@ public sealed class ModernUoBookConverterTests : IDisposable
         _directories.WriteSource("A.cs", Book("Earlier", "kept"));
         _directories.WriteSource("Z.cs", Book("Known", "before"));
         Assert.Equal(0, Run());
-        var earlier = Path.Combine(_directories.DestinationDirectory, "modernuo_earlier.toml");
+        var earlier = Path.Combine(_directories.DestinationDirectory, "earlier.toml");
         var previous = File.ReadAllBytes(earlier);
-        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_known.toml");
+        var path = Path.Combine(_directories.DestinationDirectory, "known.toml");
         File.AppendAllText(path, $"\n[translations.{language}]\n{fields}\n");
         var invalid = File.ReadAllBytes(path);
         _directories.WriteSource("A.cs", Book("Earlier", "changed"));
@@ -262,7 +262,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
         Assert.Equal(2, Run());
         Assert.Equal(previous, File.ReadAllBytes(earlier));
         Assert.Equal(invalid, File.ReadAllBytes(path));
-        Assert.Contains("modernuo_known", _error.ToString());
+        Assert.Contains("known", _error.ToString());
     }
 
     [Theory]
@@ -273,7 +273,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
     {
         _directories.WriteSource("A.cs", Book("Known", "before"));
         Assert.Equal(0, Run());
-        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_known.toml");
+        var path = Path.Combine(_directories.DestinationDirectory, "known.toml");
         var text = header ? new string('x', 129) : packet ? new string('&', 16000) : new string('x', 16385);
         File.AppendAllText(path, $"\n[translations.ita]\n{(header ? "title" : "content")} = {Literal(text)}\n");
         var previous = File.ReadAllBytes(path);
@@ -298,7 +298,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
     {
         _directories.WriteSource("A.cs", Book("Known", "first"));
         Assert.True(Run() == 0, _error.ToString());
-        var path = Path.Combine(_directories.DestinationDirectory, "modernuo_known.toml");
+        var path = Path.Combine(_directories.DestinationDirectory, "known.toml");
         var before = File.ReadAllBytes(path);
         var unrelated = Path.Combine(_directories.DestinationDirectory, "welcome_letter.toml");
         File.WriteAllText(unrelated, "custom letter");
@@ -308,7 +308,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
         Assert.Equal("custom letter", File.ReadAllText(unrelated));
         _directories.WriteSource("A.cs", Book("Known", "second"));
         Assert.True(Run() == 0, _error.ToString());
-        Assert.Equal("second", Read("modernuo_known").Content);
+        Assert.Equal("second", Read("known").Content);
         Assert.Equal("custom letter", File.ReadAllText(unrelated));
     }
 
@@ -319,11 +319,11 @@ public sealed class ModernUoBookConverterTests : IDisposable
         Assert.True(Run() == 0, _error.ToString());
         _directories.WriteSource("A.cs", Book("First", "changed"));
         _directories.WriteSource("Z.cs", Book("Last", "new"));
-        Directory.CreateDirectory(Path.Combine(_directories.DestinationDirectory, "modernuo_last.toml"));
+        Directory.CreateDirectory(Path.Combine(_directories.DestinationDirectory, "last.toml"));
 
         Assert.Equal(2, Run());
-        Assert.Equal("kept", Read("modernuo_first").Content);
-        Assert.Contains("modernuo_last.toml", _error.ToString());
+        Assert.Equal("kept", Read("first").Content);
+        Assert.Contains("last.toml", _error.ToString());
     }
 
     [Fact]
@@ -333,7 +333,7 @@ public sealed class ModernUoBookConverterTests : IDisposable
         _directories.WriteSource("A.cs", Book("Known", "new"));
         Directory.CreateDirectory(_directories.DestinationDirectory);
         var target = _directories.WriteSource("outside.txt", "preserved");
-        File.CreateSymbolicLink(Path.Combine(_directories.DestinationDirectory, "modernuo_known.toml"), target);
+        File.CreateSymbolicLink(Path.Combine(_directories.DestinationDirectory, "known.toml"), target);
 
         Assert.Equal(2, Run());
         Assert.Equal("preserved", File.ReadAllText(target));

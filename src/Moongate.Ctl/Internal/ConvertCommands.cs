@@ -189,7 +189,7 @@ internal static class ConvertCommands
     ///     The Projects/UOContent folder of ModernUO, or a folder containing static book C# definitions.
     /// </param>
     /// <param name="destination">
-    ///     The book templates folder to receive modernuo_*.toml files; existing generated names are replaced.
+    ///     The book templates folder to receive one TOML file a book, named after its class; existing generated names are replaced.
     /// </param>
     public static int ModernUoBooks(string source, string destination)
     {

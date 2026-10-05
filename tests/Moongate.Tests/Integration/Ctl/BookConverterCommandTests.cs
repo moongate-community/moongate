@@ -25,7 +25,7 @@ public sealed class BookConverterCommandTests
         var result = await CtlProcess.RunAsync("convert", "modernuo-books", "--source", source, "--destination", destination);
 
         Assert.True(result.ExitCode == 0, result.Output);
-        var book = TomlUtils.DeserializeFromFile<BookTemplateSource>(Path.Combine(destination, "modernuo_sample_book.toml"));
+        var book = TomlUtils.DeserializeFromFile<BookTemplateSource>(Path.Combine(destination, "sample_book.toml"));
         Assert.Equal("First line\nSecond line", book!.Content);
         Assert.Contains("1 books, 1 pages", result.Output);
     }

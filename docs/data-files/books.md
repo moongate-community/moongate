@@ -84,7 +84,7 @@ uses the top-level fields.
 ## Imported book texts
 
 The shipped `templates/books/modernuo` catalog contains 62 static books imported from
-ModernUO. For example, `book.give(player, "modernuo_grammar_of_orcish")` creates a readable
+ModernUO. For example, `book.give(player, "grammar_of_orcish")` creates a readable
 copy in the configured creation language. Every imported book retains the English source
 and has title/body translations in Italian, French, German, Spanish, Portuguese, Polish
 and Czech; author names remain unchanged. Reimport preserves existing translation fields.

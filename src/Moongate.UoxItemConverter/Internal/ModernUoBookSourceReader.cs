@@ -49,7 +49,7 @@ internal static class ModernUoBookSourceReader
                     utf8.GetByteCount(title);
                     utf8.GetByteCount(author);
                     utf8.GetByteCount(content);
-                    var id = "modernuo_" + JsonNamingPolicy.SnakeCaseLower.ConvertName(name);
+                    var id = JsonNamingPolicy.SnakeCaseLower.ConvertName(name);
                     if (!TextTemplateTokens.IsValidName(id) || string.IsNullOrWhiteSpace(title) ||
                         string.IsNullOrWhiteSpace(content) ||
                         !BookTextValidation.IsValidText(title, BookTextValidation.HeaderLimit) ||
