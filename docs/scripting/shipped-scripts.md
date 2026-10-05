@@ -332,3 +332,10 @@ text, such as one made with `.add`, shows nothing.
 `readable_scroll` template is used by the [text catalog](../data-files/books.md).
 Create a personalized letter with `book.give(player, "welcome_letter", { contact_name = "Vega" })`.
 Its saved title, author and body remain fixed when another player reads it.
+
+## readable_book.lua
+
+`scripts/items/readable_book.lua` delegates double click to `book.open` as the scroll does; for an
+item of the `readable_book` template `book.open` sends the client's book, its cover and every page,
+instead of the parchment ([books and parchments](../data-files/books.md#books-and-parchments)).
+The imported ModernUO texts use it: `book.give(player, "grammar_of_orcish")`.

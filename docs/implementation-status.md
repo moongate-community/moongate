@@ -136,7 +136,7 @@ See all of them in [Commands](commands.md).
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
-  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `jail_note.lua`, `readable_scroll.lua`, `bulletin_board.lua`, `gumps/go.lua`, `gumps/jail_sentence.lua`, `wander.lua`, `monster.lua`, `guard.lua`,
+  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `jail_note.lua`, `readable_book.lua`, `readable_scroll.lua`, `bulletin_board.lua`, `gumps/go.lua`, `gumps/jail_sentence.lua`, `wander.lua`, `monster.lua`, `guard.lua`,
   `banker.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
   and `gumps/tutorial_list.lua`.
 - Not yet: timers on mobiles, combat and skill events.

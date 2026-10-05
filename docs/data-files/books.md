@@ -50,6 +50,38 @@ runs `scripts/items/readable_scroll.lua`. A double click opens a parchment gump
 with a scrollable body. Stored text is plain; HTML characters are escaped only
 when displayed, and line breaks are preserved.
 
+## Books and parchments
+
+The item decides how a document opens:
+
+| Item template | `script_id` | A double click opens |
+| --- | --- | --- |
+| `readable_scroll` (0x14ED) | `readable_scroll` | The parchment gump, with a scrollable body |
+| `readable_book` (0x0FF1) | `readable_book` | The client's own book: a cover with title and author, and pages to turn |
+
+A book is read only. Its pages come from the saved text when it is opened:
+
+- An empty line of the text is a page break.
+- A page holds 8 lines. A longer one, as a translated page often is, goes on in the page after it:
+  nothing is cut.
+- A line of more than 78 characters is cut at a space.
+- A book holds 255 pages; a text that needs more does not open, and the log says so.
+- On the cover the title is cut to 60 bytes and the author to 30, as the client's fields hold.
+
+Set `item_id` in the source to give the item another graphic, such as the cover of a book:
+`0x0FEF` brown, `0x0FF0` tan, `0x0FF1` red, `0x0FF2` blue.
+
+```toml
+title = "A Grammar of Orcish"
+author = "Yorick of Yew"
+item_template = "readable_book"
+item_id = 0x0FEF
+content = """..."""
+```
+
+A book cannot carry [attachments](#letter-attachments): it has no button to claim them with, so
+such a source is refused at startup. Use a scroll for a letter with a gift.
+
 ## Delivery at character creation
 
 The shipped [starting items](starting-items.md#personalized-starting-letters)
@@ -68,14 +100,15 @@ one transaction. Existing roots must add the entry to their preserved
 | `author` | Optional, defaults to empty; supports variables |
 | `content` | Required, nonblank multiline source body; supports variables |
 | `variables` | Optional array of required custom value names |
-| `item_template` | Existing item template; default `readable_scroll` |
+| `item_template` | Existing item template; default `readable_scroll`; `readable_book` for [a book](#books-and-parchments) |
+| `item_id` | Optional graphic of the created item, 1 to 0xFFFF; absent, the item keeps its template's. Not allowed in a translation |
 | `attachments` | Optional reward entries; see [Letter attachments](#letter-attachments) |
 | `translations.<language>` | Optional `title`, `author` and `content` overrides; each missing field falls back to the top-level value |
 
 Ids and variable names use lowercase letters, digits and underscores, beginning
 with a letter. Custom declarations cannot repeat or shadow built-ins. The
 selected item template must explicitly set `stackable = false` and use
-`script_id = "readable_scroll"` or `"jail_note"`; inherited values count.
+`script_id = "readable_scroll"`, `"readable_book"` or `"jail_note"`; inherited values count.
 
 The creation language is `[localization].language`. Supported overrides are
 `eng`, `ita`, `fre`, `ger`, `spa`, `por`, `pol` and `cze`. An absent language
@@ -89,8 +122,8 @@ copy in the configured creation language. Every imported book retains the Englis
 and has title/body translations in Italian, French, German, Spanish, Portuguese, Polish
 and Czech; author names remain unchanged. Reimport preserves existing translation fields.
 [Import book texts](../book-content-import.md)
-documents the converter, source comparison and reruns. These entries use the current
-parchment interface.
+documents the converter, source comparison and reruns. These entries are
+[books](#books-and-parchments), each with the cover ModernUO gives it.
 
 ## Letter attachments
 
@@ -242,7 +275,7 @@ notes saved as `book.content`. The delegate handles both saved formats. Move any
 custom release-note wording into `templates/books/jail_release_note.toml`;
 already issued notes keep their saved text. Start the server after both merges.
 
-## Jail notes and native books
+## Jail notes
 
 `jail_release_note.toml` carries the existing wording in eight languages.
 The jail supplies the days, cell, UTC dates, actual fine, staff name and optional
@@ -250,5 +283,4 @@ reason. Its `player_name` is the name recorded with the sentence. Old notes with
 only `jail.text` remain readable, and `jail.cell`, `jail.days` and `jail.fine`
 remain available.
 
-Native book covers, pages, book packets and editing are the next slice. This
-catalog and saved plain text provide their foundation.
+Books players write, copy or sign are not built: a [book](#books-and-parchments) is read only.
