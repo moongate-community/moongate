@@ -1,8 +1,8 @@
-using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
+using Moongate.Server.Ultima.Data.Books;
 using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces.Motd;
+using Moongate.Server.Ultima.Services.Text;
+using Moongate.Server.Ultima.Types.Text;
 
 namespace Moongate.Server.Ultima.Services.Motd;
 
@@ -20,29 +20,23 @@ public sealed class MotdRenderer
 
     public static void RegisterBuiltins(IMotdVariableRegistry variables)
     {
-        variables.Register("version", (context, _) => ValueTask.FromResult(context.Version));
-        variables.Register("codename", (context, _) => ValueTask.FromResult(context.Codename));
-        variables.Register("server_name", (context, _) => ValueTask.FromResult(context.ServerName));
-        variables.Register("realm_name", (context, _) => ValueTask.FromResult(context.RealmName));
-        variables.Register("player_name", (context, _) => ValueTask.FromResult(context.PlayerName));
-        variables.Register("users_online", (context, _) => ValueTask.FromResult(context.UsersOnline.ToString(CultureInfo.InvariantCulture)));
+        foreach (var name in TextTemplateBuiltins.Values(new TextTemplateContext()).Keys)
+        {
+            variables.Register(name, (context, _) => ValueTask.FromResult(TextTemplateBuiltins.Values(new TextTemplateContext
+            {
+                ServerName = context.ServerName,
+                RealmName = context.RealmName,
+                Version = context.Version,
+                Codename = context.Codename,
+                PlayerName = context.PlayerName,
+                UsersOnline = context.UsersOnline
+            })[name]));
+        }
     }
 
-    public async ValueTask<string> RenderAsync(MotdLine line, MotdContext context, CancellationToken cancellationToken)
+    public ValueTask<string> RenderAsync(MotdLine line, MotdContext context, CancellationToken cancellationToken)
     {
-        var output = new StringBuilder(line.Template.Length);
-        var position = 0;
-
-        foreach (Match token in MotdTemplateTokens.Find(line.Template))
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            output.Append(line.Template, position, token.Index - position);
-            output.Append(await _variables.ResolveAsync(token.Groups[1].Value, context, cancellationToken));
-            position = token.Index + token.Length;
-        }
-
-        output.Append(line.Template, position, line.Template.Length - position);
-
-        return output.ToString();
+        return TextTemplateRenderer.RenderAsync(line.Template,
+            (name, token) => _variables.ResolveAsync(name, context, token), TextTemplateSyntaxType.Motd, cancellationToken);
     }
 }

@@ -20,6 +20,7 @@ using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Books;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
@@ -28,6 +29,7 @@ using Moongate.Server.Ultima.Types.Targeting;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Gumps;
+using Moongate.Tests.TestSupport.Ultima.Books;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Jail;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -127,6 +129,11 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<MobileModule>();
         _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
+        var noteTemplates = new ItemTemplateService(new StubDataLoaderService().With(
+            new ItemTemplate { Id = "jail_release_note", ScriptId = "jail_note", Stackable = false }));
+        _container.RegisterInstance<IBookDocumentService>(await TestBookDocuments.CreateAsync(
+            _fixture, _items, _container.Resolve<IItemHandlingService>(), noteTemplates, _loop, _gumps));
+        _container.AddScriptModule<BookModule>();
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<GumpModule>();
         _container.AddScriptModule<JailModule>();
@@ -590,6 +597,11 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         };
         note.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
         _items.Add([note]);
+        await _fixture.Network.ExecuteOnLoopAsync(() =>
+        {
+            Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Staff), out var reader));
+            _fixture.Mobiles.MoveTo(reader, MapType.Trammel, new Point3D(1600, 1600, 0));
+        });
         var scripts = new ItemScriptService(
             _engine,
             new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "jail_release_note", ScriptId = "jail_note" })),
@@ -598,7 +610,8 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         );
         await scripts.StartAsync();
 
-        scripts.Run(note, "on_use", Staff);
+        var used = scripts.Run(note, "on_use", Staff);
+        Assert.Equal(true, Assert.Single(used.Values));
 
         Assert.Contains("Lord Pippo served 3 days in cell 2.", Assert.Single(_gumps.Opened).Gump.Layout.Build().Strings);
         Assert.Empty(_errors);

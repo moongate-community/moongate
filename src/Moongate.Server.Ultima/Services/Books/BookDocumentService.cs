@@ -1,0 +1,189 @@
+using Moongate.Scripting.Interfaces;
+using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Books;
+using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Books;
+using Moongate.Server.Ultima.Services.Internal;
+using Serilog;
+
+namespace Moongate.Server.Ultima.Services.Books;
+
+/// <inheritdoc />
+public sealed class BookDocumentService : IBookDocumentService
+{
+    private readonly IBookTemplateService _templates;
+    private readonly BookContextFactory _contexts;
+    private readonly IItemService _items;
+    private readonly IMobileService _mobiles;
+    private readonly IItemHandlingService _handling;
+    private readonly IItemTemplateService _itemTemplates;
+    private readonly ISessionService _sessions;
+    private readonly IBankService _bank;
+    private readonly IGumpService _gumps;
+    private readonly IGameLoopService _loop;
+    private readonly Lazy<IScriptEngine> _scripts;
+    private readonly LocalizationConfig _localization;
+    private readonly ILogger _logger = Log.ForContext<BookDocumentService>();
+
+    public BookDocumentService(IBookTemplateService templates, BookContextFactory contexts, IItemService items, IMobileService mobiles,
+        IItemHandlingService handling, IItemTemplateService itemTemplates, ISessionService sessions, IBankService bank,
+        IGumpService gumps, IGameLoopService loop, Lazy<IScriptEngine> scripts, LocalizationConfig localization)
+    {
+        _templates = templates;
+        _contexts = contexts;
+        _items = items;
+        _mobiles = mobiles;
+        _handling = handling;
+        _itemTemplates = itemTemplates;
+        _sessions = sessions;
+        _bank = bank;
+        _gumps = gumps;
+        _loop = loop;
+        _scripts = scripts;
+        _localization = localization;
+    }
+
+    public ItemEntity? Give(MobileEntity recipient, string templateId, IReadOnlyDictionary<string, object?>? values = null, string? recordedPlayerName = null)
+    {
+        if (!_loop.IsOnLoopThread || !IsLive(recipient) ||
+            !_templates.TryRender(templateId, _contexts.Capture(recipient, recordedPlayerName), _localization.Language, values, out var rendered) ||
+            rendered is null)
+        {
+            return null;
+        }
+
+        var item = _handling.Give(recipient, rendered.ItemTemplateId);
+        if (item is null)
+        {
+            return null;
+        }
+
+        Apply(item, rendered);
+        return item;
+    }
+
+    public bool Write(ItemEntity item, MobileEntity recipient, string templateId, IReadOnlyDictionary<string, object?>? values = null, string? recordedPlayerName = null)
+    {
+        if (!_loop.IsOnLoopThread || !IsLive(recipient) || !IsReadable(item) ||
+            !_templates.TryRender(templateId, _contexts.Capture(recipient, recordedPlayerName), _localization.Language, values, out var rendered) ||
+            rendered is null)
+        {
+            return false;
+        }
+
+        Apply(item, rendered);
+        return true;
+    }
+
+    public bool Open(ItemEntity item, MobileEntity reader)
+    {
+        if (!_loop.IsOnLoopThread || !IsLive(reader) ||
+            !_sessions.TryGetByCharacterId(reader.Id, out var session) || !CanRead(session, reader, item))
+        {
+            return false;
+        }
+
+        if (!TryBuild(item, out _))
+        {
+            return false;
+        }
+
+        if (_scripts.Value.IsRunningScript)
+        {
+            return _loop.TryPost(new LoopActionWorkItem(() => OpenNow(session, reader, item)));
+        }
+
+        return OpenNow(session, reader, item);
+    }
+
+    private bool OpenNow(GameSession session, MobileEntity reader, ItemEntity item)
+    {
+        if (!IsLive(reader) || !_sessions.TryGetByCharacterId(reader.Id, out var current) ||
+            !ReferenceEquals(current, session) || !CanRead(session, reader, item) || !TryBuild(item, out var gump) || gump is null)
+        {
+            return false;
+        }
+
+        _gumps.Open(session, gump);
+        return true;
+    }
+
+    private bool TryBuild(ItemEntity item, out Moongate.Server.Ultima.Data.Gumps.GumpInstance? gump)
+    {
+        var content = item.GetProp<string?>("book.content") ?? item.GetProp<string?>("jail.text");
+        gump = null;
+        if (content is null)
+        {
+            return false;
+        }
+
+        if (!BookGumpRenderer.TryBuild(item.GetProp("book.title", item.Name ?? ""), item.GetProp("book.author", ""), content, out gump))
+        {
+            _logger.Warning("Cannot display document item {Item}: invalid fields or packet capacity", item.Id);
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool CanRead(GameSession session, MobileEntity reader, ItemEntity item)
+    {
+        if (session.NetworkSession.Client is not { IsConnected: true } || !IsReadable(item) || !_bank.CanAccess(session, reader, item))
+        {
+            return false;
+        }
+
+        if (_items.GetOwner(item) is { } owner)
+        {
+            return owner == reader.Id;
+        }
+
+        return _items.GetGroundRoot(item) is { } root && !_handling.IsHeld(root) &&
+            _items.IsLyingOnGround(root) && _items.CanReach(reader, root);
+    }
+
+    private bool IsLive(MobileEntity mobile)
+    {
+        return _mobiles.TryGet(mobile.Id, out var live) && ReferenceEquals(live, mobile);
+    }
+
+    private bool IsReadable(ItemEntity item)
+    {
+        return _items.TryGet(item.Id, out var live) && ReferenceEquals(live, item) && item.Amount == 1 &&
+            !IsHeldInChain(item) && _itemTemplates.TryGet(item.TemplateId, out var template) &&
+            template.Stackable == false && BookTextValidation.IsReadableScript(template.ScriptId);
+    }
+
+    private bool IsHeldInChain(ItemEntity item)
+    {
+        var seen = new HashSet<Moongate.Core.Primitives.Serial>();
+        var current = item;
+        while (true)
+        {
+            if (!seen.Add(current.Id) || _handling.IsHeld(current))
+            {
+                return true;
+            }
+
+            if (current.ContainerId is not { } parent || !_items.TryGet(parent, out var container))
+            {
+                return false;
+            }
+
+            current = container;
+        }
+    }
+
+    private void Apply(ItemEntity item, RenderedBook rendered)
+    {
+        item.SetProp("book.template", rendered.TemplateId);
+        item.SetProp("book.title", rendered.Title);
+        item.SetProp("book.author", rendered.Author);
+        item.SetProp("book.content", rendered.Content);
+        item.Name = rendered.Title;
+        _handling.Refresh(item);
+    }
+}

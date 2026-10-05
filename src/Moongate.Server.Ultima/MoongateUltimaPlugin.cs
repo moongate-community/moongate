@@ -62,6 +62,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         directoriesConfig.CreateDirectoryIfNotExists("templates/npc_lists/");
         directoriesConfig.CreateDirectoryIfNotExists("templates/spawns/");
         directoriesConfig.CreateDirectoryIfNotExists("templates/gumps/");
+        directoriesConfig.CreateDirectoryIfNotExists("templates/books/");
         directoriesConfig.CreateDirectoryIfNotExists("scripts/items/");
         directoriesConfig.CreateDirectoryIfNotExists("scripts/mobiles/");
         directoriesConfig.CreateDirectoryIfNotExists("scripts/gumps/");

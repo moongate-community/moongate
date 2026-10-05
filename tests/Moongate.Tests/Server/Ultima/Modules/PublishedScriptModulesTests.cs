@@ -17,6 +17,19 @@ namespace Moongate.Tests.Server.Ultima.Modules;
 public sealed class PublishedScriptModulesTests
 {
     [Fact]
+    public void BookModule_PublishesTheThreeFunctionsWithExamples()
+    {
+        var module = Assert.Single(Published(), candidate => candidate.Name == "book");
+        Assert.Equal(["give", "open", "write"], module.Functions.Select(function => function.LuaName).Order(StringComparer.Ordinal));
+        var path = Path.Combine(RepositoryRoot(), "website/lua/examples/book.md");
+        Assert.True(File.Exists(path), "The book module needs its published examples.");
+        var examples = File.ReadAllText(path);
+        foreach (var name in new[] { "give", "write", "open" })
+        {
+            Assert.Contains("## " + name, examples);
+        }
+    }
+    [Fact]
     public void EveryModuleAndFunction_HasTheTextTheReferencePrints()
     {
         var missing = new List<string>();

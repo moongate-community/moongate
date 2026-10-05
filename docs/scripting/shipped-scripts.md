@@ -278,6 +278,14 @@ Every button checks `world.is_staff` again: the rank may have gone while the gum
 ## jail_note.lua
 
 `scripts/items/jail_note.lua` is the script of the `jail_release_note` template, the note a
-prisoner finds in its backpack when its sentence ends. On `on_use` it opens a gump built in Lua
-with the text of the prop `jail.text`, which the jail wrote: the days served, the cell, the dates
-and the fine paid. A note with no text, such as one made with `.add`, shows nothing.
+prisoner finds in its backpack when its sentence ends. On `on_use` it delegates to
+`book.open`, displaying saved `book.content` or legacy `jail.text`: the days served, cell, dates
+and fine paid. The shared parchment escapes plain text and scrolls long bodies. A note with no
+text, such as one made with `.add`, shows nothing.
+
+## readable_scroll.lua
+
+`scripts/items/readable_scroll.lua` delegates double click to `book.open`. The unstackable
+`readable_scroll` template is used by the [text catalog](../data-files/books.md).
+Create a personalized letter with `book.give(player, "welcome_letter", { contact_name = "Vega" })`.
+Its saved title, author and body remain fixed when another player reads it.

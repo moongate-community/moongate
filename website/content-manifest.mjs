@@ -73,6 +73,7 @@ export const contentEntries = [
   { source: 'docs/data-files/moongates.md', slug: 'server/data-files/moongates', title: 'Moongates', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/locations.md', slug: 'server/data-files/locations', title: 'Locations', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/jail.md', slug: 'server/data-files/jail', title: 'Jail', group: 'Scripting and content', subgroup: 'Data files' },
+  { source: 'docs/data-files/books.md', slug: 'server/data-files/books', title: 'Readable text templates', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/skills.md', slug: 'server/data-files/skills', title: 'Skills', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/professions.md', slug: 'server/data-files/professions', title: 'Professions', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/races.md', slug: 'server/data-files/races', title: 'Races', group: 'Scripting and content', subgroup: 'Data files' },

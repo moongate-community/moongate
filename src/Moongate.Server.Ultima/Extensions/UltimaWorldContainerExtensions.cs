@@ -8,9 +8,11 @@ using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Books;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services.Diagnostics;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Books;
 
 namespace Moongate.Server.Ultima.Extensions;
 
@@ -31,6 +33,9 @@ public static class UltimaWorldContainerExtensions
         container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
         container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
+        container.Register<IBookTemplateService, BookTemplateService>(Reuse.Singleton);
+        container.Register<BookContextFactory>(Reuse.Singleton);
+        container.Register<IBookDocumentService, BookDocumentService>(Reuse.Singleton);
         container.Register<IDecorationsLoader, DecorationsLoader>(Reuse.Singleton);
         container.Register<IDoorGeneratorService, DoorGeneratorService>(Reuse.Singleton);
         container.Register<IDecorationService, DecorationService>(Reuse.Singleton);

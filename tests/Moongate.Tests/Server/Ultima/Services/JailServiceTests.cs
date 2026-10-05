@@ -15,6 +15,7 @@ using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Books;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Speech;
@@ -54,7 +55,7 @@ public sealed class JailServiceTests : IAsyncLifetime
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
             new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) },
-            new ItemTemplate { Id = JailService.NoteTemplate, ItemId = new Serial(0x14ED), Name = "a release note" }
+            new ItemTemplate { Id = JailService.NoteTemplate, ItemId = new Serial(0x14ED), Name = "a release note", Stackable = false, ScriptId = "jail_note" }
         )
     );
 
@@ -215,7 +216,7 @@ public sealed class JailServiceTests : IAsyncLifetime
         var note = Assert.Single(_items.GetContents(backpack.Id), item => item.TemplateId == JailService.NoteTemplate);
         Assert.Equal(
             "Aria served 3 days in cell 2, from 2026-10-04 to 2026-10-07, and paid a fine of 0 gold. Jailed by Giachi. Reason: Stole a horse",
-            note.Props![JailService.NoteTextProp]
+            note.Props!["book.content"]
         );
     }
 
@@ -495,9 +496,37 @@ public sealed class JailServiceTests : IAsyncLifetime
         var note = Assert.Single(_items.GetContents(backpack.Id), item => item.TemplateId == JailService.NoteTemplate);
         Assert.Equal(
             "Aria served 3 days in cell 2, from 2026-10-04 to 2026-10-07, and paid a fine of 500 gold. Jailed by Giachi.",
-            note.Props![JailService.NoteTextProp]
+            note.Props!["book.content"]
         );
         Assert.Equal((2, 3, 500), (Convert.ToInt32(note.Props["jail.cell"]), Convert.ToInt32(note.Props["jail.days"]), Convert.ToInt32(note.Props["jail.fine"])));
+    }
+
+    [Fact]
+    public void Check_APlayerRenamedAfterSentence_UsesRecordedNameOnDocument()
+    {
+        var backpack = Backpack(_aria);
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+        _jail.Jail(_aria, 2, 3, _staff);
+        _aria.Name = "Renamed";
+        _clock.Advance(TimeSpan.FromDays(3));
+        _jail.Check();
+        var note = Assert.Single(_items.GetContents(backpack.Id), item => item.TemplateId == JailService.NoteTemplate);
+        Assert.StartsWith("Aria served", note.GetProp<string>("book.content"));
+        Assert.Equal("jail_release_note", note.GetProp<string>("book.template"));
+    }
+
+    [Fact]
+    public void Check_WhenNoNoteCanBeMade_ReleasesAndChargesOnlyOnce()
+    {
+        var gold = Gold(Backpack(_aria), 2000);
+        _jail.Jail(_aria, 2, 3, _staff);
+        _clock.Advance(TimeSpan.FromDays(3));
+        _jail.Check();
+        _jail.Check();
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal(1500, gold.Amount);
+        Assert.DoesNotContain(_items.GetOwnedBy(_aria.Id), item => item.TemplateId == JailService.NoteTemplate);
+        Assert.Single(_log.Events, entry => entry.Level == Serilog.Events.LogEventLevel.Warning && entry.RenderMessage().Contains("without its release note"));
     }
 
     [Fact]
@@ -1308,6 +1337,7 @@ public sealed class JailServiceTests : IAsyncLifetime
             handling,
             _view,
             _clock,
+            await TestBookDocuments.CreateAsync(_fixture, _items, handling, _templates, new StubGameLoop()),
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
         await jail.StartAsync();

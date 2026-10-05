@@ -11,6 +11,7 @@ using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Books;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Types.Jail;
 using Moongate.Ultima.Types;
@@ -59,6 +60,7 @@ public sealed class JailService : IJailService
     private readonly ItemsConfig _itemsConfig;
     private readonly IItemService _items;
     private readonly IItemHandlingService _handling;
+    private readonly IBookDocumentService _books;
     private readonly IWorldViewService _view;
     private readonly TimeProvider _time;
     private readonly ILocalizationService? _localization;
@@ -100,6 +102,7 @@ public sealed class JailService : IJailService
         IItemHandlingService handling,
         IWorldViewService view,
         TimeProvider time,
+        IBookDocumentService books,
         ILocalizationService? localization = null,
         ILogger? logger = null
     )
@@ -118,6 +121,7 @@ public sealed class JailService : IJailService
         _itemsConfig = itemsConfig;
         _items = items;
         _handling = handling;
+        _books = books;
         _view = view;
         _time = time;
         _localization = localization;
@@ -631,7 +635,21 @@ public sealed class JailService : IJailService
     // An NPC without a backpack gets no note.
     private void GiveNote(JailSentenceEntity sentence, MobileEntity prisoner, int fine)
     {
-        if (_handling.Give(prisoner, NoteTemplate) is not { } note)
+        var reasonLine = string.IsNullOrEmpty(sentence.Reason)
+            ? ""
+            : " " + _localization.Text(NoteReasonMessage, "Reason: {0}", sentence.Reason);
+        var values = new Dictionary<string, object?>
+        {
+            ["days"] = sentence.Days,
+            ["cell"] = sentence.Cell,
+            ["jailed_at"] = Date(sentence.JailedAt),
+            ["released_at"] = Date(sentence.ReleaseAt),
+            ["fine"] = fine,
+            ["jailed_by"] = sentence.JailedBy,
+            ["reason_line"] = reasonLine
+        };
+
+        if (_books.Give(prisoner, NoteTemplate, values, sentence.Name) is not { } note)
         {
             // A player always has a backpack: the template is missing or the reserved serials ran out.
             if (sentence.IsPlayer)
@@ -642,25 +660,6 @@ public sealed class JailService : IJailService
             return;
         }
 
-        var text = _localization.Text(
-            NoteMessage,
-            "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}.",
-            sentence.Name,
-            sentence.Days,
-            sentence.Cell,
-            Date(sentence.JailedAt),
-            Date(sentence.ReleaseAt),
-            fine,
-            sentence.JailedBy
-        );
-
-        // A row saved before the reason existed has none.
-        if (!string.IsNullOrEmpty(sentence.Reason))
-        {
-            text += " " + _localization.Text(NoteReasonMessage, "Reason: {0}", sentence.Reason);
-        }
-
-        note.SetProp(NoteTextProp, text);
         note.SetProp("jail.cell", sentence.Cell);
         note.SetProp("jail.days", sentence.Days);
         note.SetProp("jail.fine", fine);

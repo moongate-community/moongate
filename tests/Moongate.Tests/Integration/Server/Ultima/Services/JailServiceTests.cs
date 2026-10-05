@@ -76,7 +76,8 @@ public sealed class JailServiceTests
             items,
             null!,
             new RecordingWorldViewService(),
-            new SettableClock()
+            new SettableClock(),
+            null!
         );
     }
 }

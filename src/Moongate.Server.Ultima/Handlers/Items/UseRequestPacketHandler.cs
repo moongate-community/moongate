@@ -172,7 +172,10 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
             return true;
         }
 
-        if (_items.GetOwner(item) != character.Id && !_items.CanReach(character, item))
+        if (_items.GetOwner(item) != character.Id &&
+            (_items.GetGroundRoot(item) is not { } root ||
+             !_items.IsLyingOnGround(root) ||
+             !_items.CanReach(character, root)))
         {
             _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, TooFarCliloc, "", ""));
 
