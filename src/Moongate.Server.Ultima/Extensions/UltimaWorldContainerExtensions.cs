@@ -65,6 +65,9 @@ public static class UltimaWorldContainerExtensions
         // After the script engine (70), as the mobile scripts.
         container.AddMoongateService<IItemScriptService, ItemScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.AddMoongateService<IGumpScriptService, GumpScriptService>(LuaScriptEngineService.StartupPriority + 5);
+        container.AddMoongateService<ISkillScriptService, SkillScriptService>(LuaScriptEngineService.StartupPriority + 5);
+        container.Register<ISkillService, SkillService>(Reuse.Singleton);
+        container.Register<ISkillUseService, SkillUseService>(Reuse.Singleton);
         container.AddMetricProvider<NpcTickMetricsProvider>();
         container.Register<ISectorService, SectorService>(Reuse.Singleton);
         container.Register<IMobileService, MobileService>(Reuse.Singleton);

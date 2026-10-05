@@ -147,6 +147,23 @@ it opened: the other emulators take it as it comes. `scripts/common/dye.lua` hol
 scripts share (`dye.reach`, `dye.worn`, `dye.tell`). The special tubs (leather, furniture, black,
 metallic) and the hair dyes are not there yet.
 
+## hiding.lua
+
+`scripts/skills/hiding.lua` is the [skill script](../skills.md) of Hiding, as ModernUO's without
+what needs a fight or a house. A player that uses the skill is tried at it with
+`skill.check(user, "hiding", 0, 100)`: the chance is its points in a hundred, and the try may raise
+the skill.
+
+- Passed: the player is hidden (`mobile.set_hidden`), out of war mode, and reads "You have hidden
+  yourself well." (cliloc 501240).
+- Failed: the player is shown, also when it was hidden, and reads "You can't seem to hide here."
+  (501241).
+
+Either way it waits 10 seconds before another skill. Its first step shows it again, with "You have
+been revealed!" (500814): the server does that for every hidden player of a regular account, since
+there is no Stealth yet; a turn on the spot does not. The staff hides to watch and stays hidden.
+Speaking, being hit and the sight of who stands near do not show it yet.
+
 ## Regeneration props
 
 Hit points, mana and stamina come back by themselves (see
