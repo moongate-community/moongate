@@ -31,6 +31,7 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
   them up; items left on the ground decay.
 - Open the paperdoll, dress and undress (two-handed weapons included).
 - Read tooltips and names of what is in view.
+- Read personalized scrolls from [text templates](data-files/books.md): their text stays fixed when traded.
 - Open doors, and locked doors when carrying their key; light and douse lights.
 - See day and night pass, dark dungeons, and the weather, the season and the music of each region
   (rain, snow, storms).
@@ -121,14 +122,14 @@ See all of them in [Commands](commands.md).
 - Sandboxed Lua 5.2 with an instruction budget, `wait`, timers, events, hot reload and editor
   definitions. See [Writing Lua scripts](scripting.md).
 - Modules: `engine`, `log`, `timer`, `events`, and in the Ultima plugin `dice`, `localization`,
-  `npc`, `item`, `world`, `mobile`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations` and `jail`.
+  `npc`, `item`, `world`, `mobile`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations`, `jail` and `book`.
   Every function they give scripts is listed in the [Lua API reference](https://moongate.sh/lua/),
   generated from the server's code.
 - Gumps: XML layouts checked by `gump.xsd`, a Lua script per gump for the answers, slots and whole
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
-  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `jail_note.lua`, `gumps/go.lua`, `gumps/jail_sentence.lua`, `wander.lua`, `monster.lua`, `guard.lua`,
+  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `jail_note.lua`, `readable_scroll.lua`, `gumps/go.lua`, `gumps/jail_sentence.lua`, `wander.lua`, `monster.lua`, `guard.lua`,
   `banker.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
   and `gumps/tutorial_list.lua`.
 - Not yet: timers on mobiles, combat and skill events.
@@ -140,6 +141,8 @@ See all of them in [Commands](commands.md).
 - Templates in `templates/`: items, loot, mobiles, NPC lists, spawn regions and decoration, with
   `base_id` inheritance, and the XML gumps of `templates/gumps`. See
   [Loading TOML templates](templates.md) and [Gumps](gumps.md).
+- Plain document sources in `templates/books`, with named variables resolved and saved on individual
+  scrolls at creation. Native book pages/editing come next; see [Readable text templates](data-files/books.md).
 - Client files read from `ultima.ultima_path`: tile data, maps (MUL or UOP) and multis.
 - Messages in 8 languages, ported from UOX3; a language can be split into several toml
   files. See [Localization](localization.md).

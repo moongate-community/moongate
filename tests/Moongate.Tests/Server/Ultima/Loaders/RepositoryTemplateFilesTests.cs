@@ -19,6 +19,19 @@ namespace Moongate.Tests.Server.Ultima.Loaders;
 public sealed class RepositoryTemplateFilesTests
 {
     [Fact]
+    public async Task ShippedBookTemplates_LoadAgainstRealReadableItems()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
+        var books = (await new BooksLoader(Directories(), new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
+        Assert.Equal(["jail_release_note", "welcome_letter"], books.Select(book => book.Id).Order(StringComparer.Ordinal));
+        var welcome = Assert.Single(books, book => book.Id == "welcome_letter");
+        Assert.Equal(["contact_name"], welcome.Variables);
+        Assert.Equal("readable_scroll", welcome.ItemTemplate);
+        Assert.Equal(false, items.Single(item => item.Id == "readable_scroll").Stackable);
+        Assert.Equal(0x14EDu, items.Single(item => item.Id == "readable_scroll").ItemId.Value);
+        Assert.Equal(7, books.Single(book => book.Id == "jail_release_note").Translations.Count);
+    }
+    [Fact]
     public async Task ShippedMotd_Loads()
     {
         var registry = new MotdVariableRegistry();

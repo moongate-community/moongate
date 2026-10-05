@@ -39,7 +39,7 @@ it.
 | <span id="starting-cities"></span><span id="validation-at-startup-1"></span>[`starting_cities.toml`](data-files/starting-cities.md) | `StartingCityContent` | maps | Yes, in the character list |
 | <span id="moongates"></span>[`moongates.toml`](data-files/moongates.md) | `MoongateFacet` | maps | Yes, by `.decorate` and the moongate script |
 | <span id="locations"></span>[`locations.toml`](data-files/locations.md) | `NamedLocation` | optional | Yes, by `.go` and its gump |
-| <span id="jail"></span>[`jail.toml`](data-files/jail.md) | `JailFile` | optional; read last | Yes, by `.jail` and its gump |
+| <span id="jail"></span>[`jail.toml`](data-files/jail.md) | `JailFile` | optional; before book templates | Yes, by `.jail` and its gump |
 | <span id="skills"></span><span id="validation-at-startup-2"></span>[`skills.toml`](data-files/skills.md) | `SkillContent` | starting cities | No |
 | <span id="professions"></span><span id="validation-at-startup-3"></span>[`professions.toml`](data-files/professions.md) | `ProfessionContent` | skills (every starting skill must exist) | Yes, character creation |
 | <span id="races"></span><span id="validation-at-startup-4"></span>[`races.toml`](data-files/races.md) | `RaceContent` | professions | Yes, character creation and mobile appearance |
@@ -53,6 +53,7 @@ it.
 | <span id="starting-items"></span><span id="validation-at-startup-7"></span>[`starting_items.toml`](data-files/starting-items.md) | `StartingItemSet` | names (after the item templates of `templates/items/`, which every item must name) | Yes, through `IStartingItemsService` |
 | [`motd.toml`](motd.md) | `MotdLine` | after mobile templates and plugin variable registration | Yes, on every character entry; optional file |
 | [`titles.toml`](data-files/titles.md) | `FameKarmaTitle` | after MOTD | Shown in the paperdoll title |
+| [`templates/books/<name>.toml`](data-files/books.md) | `BookTemplate` | after item templates | Personalized scrolls; saved text is read through a gump |
 
 "No" means the file is loaded and validated, but no game system reads it yet. A
 mistake in such a file still stops the server.

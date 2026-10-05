@@ -163,7 +163,10 @@ Jailed by Giachi. Reason: Stole a horse
 The reason is there when one was given (message 30149).
 
 The fine on the note is the gold really taken. The text is written in the server's language
-(message 30143 of [`messages`](data-files/messages.md)), with the dates in UTC. The note also
+from [`templates/books/jail_release_note.toml`](data-files/books.md), with the dates in UTC.
+Its recipient name is the name recorded with the sentence, even after a rename. The rendered
+`book.title`, `book.author` and `book.content` stay fixed when traded or read. Old `jail.text`
+notes remain readable. The note also
 keeps the props `jail.cell`, `jail.days` and `jail.fine` for scripts; its script is
 [`jail_note.lua`](scripting/shipped-scripts.md#jail_notelua).
 
