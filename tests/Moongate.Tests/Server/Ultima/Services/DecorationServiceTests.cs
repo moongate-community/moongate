@@ -37,6 +37,7 @@ public sealed class DecorationServiceTests
             new StubDataLoaderService().With(
                 new ItemTemplate { Id = "decoration", ItemId = new Serial(0x0A28), Movable = false, Decays = false },
                 new ItemTemplate { Id = "decoration_clock", ItemId = new Serial(0x104B), Movable = false, Decays = false, ScriptId = "clock" },
+                new ItemTemplate { Id = "bulletin_board", ItemId = new Serial(0x1E5E), Movable = false, Decays = false, ScriptId = "bulletin_board" },
                 new ItemTemplate { Id = "decoration_fillable", ItemId = new Serial(0x0E3C), Movable = false, Decays = false, ScriptId = "fillable" },
                 new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door" },
                 new ItemTemplate
@@ -152,6 +153,37 @@ public sealed class DecorationServiceTests
 
         var clock = Assert.Single(_items.Items);
         Assert.Equal(("decoration_clock", 0x104B), (clock.TemplateId, clock.ItemId));
+    }
+
+    [Theory, InlineData(0x1E5E), InlineData(0x1E5F)]
+    public async Task DecorateAsync_ABulletinBoard_UsesTheBoardTemplate_WithTheGraphicOfTheEntry(int graphic)
+    {
+        await Service(File("trammel", Block("BulletinBoard", graphic))).DecorateAsync(_progress);
+
+        var board = Assert.Single(_items.Items);
+        Assert.Equal(("bulletin_board", graphic), (board.TemplateId, board.ItemId));
+    }
+
+    // Bounties do not exist yet: its board stays a thing to look at.
+    [Fact]
+    public async Task DecorateAsync_ABountyBoard_StaysPlain()
+    {
+        await Service(File("trammel", Block("BountyBoard", 0x1E5E))).DecorateAsync(_progress);
+
+        Assert.Equal("decoration", Assert.Single(_items.Items).TemplateId);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ABulletinBoardPlacedAsPlainDecoration_BecomesABoard_AndCountsAsThere()
+    {
+        var board = new ItemEntity { Id = new Serial(0x40000511), TemplateId = "decoration", ItemId = 0x1E5E, Amount = 1 };
+        _items.Add([board]);
+        _items.PlaceOnGround(board, MapType.Trammel, new Point3D(1500, 1600, 10));
+
+        var result = await Service(File("trammel", Block("BulletinBoard", 0x1E5E))).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(0, 1, 0, 1), result);
+        Assert.Equal("bulletin_board", board.TemplateId);
     }
 
     // The parts a tinker makes a clock from tell no time.

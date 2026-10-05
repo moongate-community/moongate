@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 76 done, 🟡 44 partly done, ❌ 148 not built yet.
+**268 systems:** ✅ 77 done, 🟡 44 partly done, ❌ 147 not built yet.
 
-**Coverage: 28%** of the systems done, **37%** counting a partly done system as half.
+**Coverage: 29%** of the systems done, **37%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -252,7 +252,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Party | ❌ | |
 | Guilds | ❌ | |
 | Chat window | ❌ | |
-| Bulletin boards | ❌ | |
+| Bulletin boards | ✅ | Every board has its own messages, in threads with replies; the poster or a game master removes; threads expire some days after their last reply and a full board lets its oldest thread go, both from settings; see [Bulletin boards](bulletin-boards.md) |
 | Duels, arenas and tournaments | ❌ | |
 | Character profile | ❌ | |
 | Tips window | ❌ | |

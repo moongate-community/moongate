@@ -116,6 +116,12 @@ initial_fill = true                   # The first spawn of each region after the
 fine_gold = 500                       # Gold coins taken from a prisoner when its jail sentence ends; 0 takes nothing.
 max_days = 30                         # The longest sentence the jail gump accepts, in real days.
 
+[ultima.bulletin_boards]
+expire_days = 7                       # A thread of a bulletin board goes this many days after its last reply; 0 keeps it.
+max_messages = 50                     # The messages a board holds; its oldest thread goes when it is full.
+thread_seconds = 120                  # The wait between two new threads of one character on a board.
+reply_seconds = 30                    # The wait between two posts of one character on a board.
+
 [persistence]
 auto_sync_schema = false
 auto_apply_migrations = false         # true: a start adds the bundled core SQL and applies what is pending.
@@ -238,6 +244,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.crime.guards_enabled`, `guard_template`, `guard_seconds` | Default `true`, `guard` and 40 (from 1 to 86400). A player that says "guards" in a guarded region, by the keyword of its client in any language or by the plain word, calls the guards: for every criminal within 14 tiles that stands in a guarded region itself, the staff left out, an NPC of `guard_template` appears on it with the teleport effect and sound and says its line (message 30138); a criminal gets one guard at a time. The guard leaves the same way after `guard_seconds`. There is no combat yet, so the guard does nothing more. ModernUO is stricter about who can be called on: there, only who did its crime in that town in the last 15 seconds, and a murderer; here, anyone who is a criminal. A called guard bears the prop `guard.summoned`: one a stopped server left in the world is removed at the next start. Off, nobody comes. |
 | `ultima.spawns.initial_fill` | Default `true`. The first spawn of each spawn region after the start fills it to its `max` at once, so an empty world is full in about 10 minutes; `false` keeps UOX3's way, where the first spawn also brings only `call` NPCs. Used in game and standalone modes. See [NPC spawns](spawns.md#how-spawning-works). |
 | `ultima.jail.fine_gold`, `ultima.jail.max_days` | Defaults 500 (from 0 to 1,000,000,000) and 30 (from 1 to 3650). The gold taken from a prisoner when its sentence ends, from its backpack and then its bank box, and the longest sentence [`.jail`](commands/jail.md) accepts, in real days; see [Jail](jail.md). |
+| `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Defaults 7 (from 0 to 3650; 0 keeps threads forever), 50 (from 1 to 200), 120 and 30 (from 0 to 86400). How long a thread of a [bulletin board](bulletin-boards.md) lasts after its last reply, how many messages a board holds, and how long a character waits between two new threads and between two posts on one board. |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
 `[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the

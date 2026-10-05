@@ -55,7 +55,7 @@ its own: it comes with the priority that gives it its rule.
 | Ankhs that resurrect (44 placed) | Death (2.3) | 4 |
 | Wands in the treasure chests | Spells (4.3) | 7 |
 | Forges and anvils that craft | Crafting (5.2) | 8 |
-| Chess and checker boards, bulletin and bounty boards (98 placed) | Chat and boards (6.3) | 9 |
+| Chess and checker boards and bounty boards (the [bulletin boards](bulletin-boards.md) work) | Chat and boards (6.3) | 9 |
 | The 621 addons of the shops and inns (anvils, ovens, beds, looms), skipped by `.decorate` | Addons (7.4) | 10 |
 | The 87 spawners of quest characters, skipped by `.decorate` | Quests ([Later](#later)) | After 10 |
 
@@ -145,7 +145,7 @@ Vendors need only phase 1, so they can be built in parallel with phases 2 and 3.
 | --- | --- | --- | --- |
 | 6.1 | ❌ | **Party** | Needs nothing else; a small shard lives on group play |
 | 6.2 | ❌ | **Guilds**, with war and alliance colours | Needs notoriety (3.4) |
-| 6.3 | ❌ | **Chat, bulletin boards, books, profile** | Independent, small |
+| 6.3 | 🟡 | **Chat, bulletin boards, books, profile** | Independent, small. [Bulletin boards](bulletin-boards.md) are done |
 
 ## Phase 7: houses and boats
 

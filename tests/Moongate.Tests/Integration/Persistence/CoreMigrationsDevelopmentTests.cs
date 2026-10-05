@@ -28,7 +28,8 @@ public sealed class CoreMigrationsDevelopmentTests
             typeof(MobileEntity),
             typeof(ItemEntity),
             typeof(WorldStateEntity),
-            typeof(JailSentenceEntity)
+            typeof(JailSentenceEntity),
+            typeof(BulletinMessageEntity)
         );
     }
 
@@ -43,7 +44,8 @@ public sealed class CoreMigrationsDevelopmentTests
             typeof(MobileEntity),
             typeof(ItemEntity),
             typeof(WorldStateEntity),
-            typeof(JailSentenceEntity)
+            typeof(JailSentenceEntity),
+            typeof(BulletinMessageEntity)
         );
     }
 

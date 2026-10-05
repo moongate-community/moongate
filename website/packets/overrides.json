@@ -4387,5 +4387,217 @@
     ],
     "notes": "What a corpse is drawn wearing. The items come first, in a container content (0x3C) of the corpse.",
     "handler": "WorldViewService: sent after the corpse of a human, elf or gargoyle body, with what who died wore that is still inside, its hair and its beard."
+  },
+  "0x71/0x00:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Bulletin boards",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "byte",
+        "size": "1",
+        "description": "Value 0x00: display the board."
+      },
+      {
+        "offset": "4",
+        "name": "Board",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the bulletin board item."
+      },
+      {
+        "offset": "8",
+        "name": "Name",
+        "type": "utf8",
+        "size": "30",
+        "description": "Name of the board: at most 29 bytes of UTF-8 text, zero filled."
+      }
+    ],
+    "notes": "Opens a bulletin board on the client. Always 38 bytes. The messages follow as the content of a container (0x3C): each message is an item 0x0EB0 inside the board, and the client asks for each summary with sub-command 0x04.",
+    "handler": "BulletinBoardService.Open: sent when a player double clicks a bulletin board (bulletin_board.lua, board.open)."
+  },
+  "0x71/0x01:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Bulletin boards",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "byte",
+        "size": "1",
+        "description": "Value 0x01: message summary."
+      },
+      {
+        "offset": "4",
+        "name": "Board",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the bulletin board item."
+      },
+      {
+        "offset": "8",
+        "name": "Message",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the message."
+      },
+      {
+        "offset": "12",
+        "name": "Thread",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the first message of the thread this one replies to; 0 for a first message."
+      },
+      {
+        "offset": "16",
+        "name": "Poster, subject, date",
+        "type": "loop",
+        "size": "variable",
+        "description": "Three strings, each a length byte, UTF-8 text and one zero; the length counts the zero. The date is the day only, in English: Oct 05, 2026."
+      }
+    ],
+    "notes": "The line of a message in the list of a board: who posted it, what about and when.",
+    "handler": "BulletinBoardRequestPacketHandler: the answer to a client's sub-command 0x04."
+  },
+  "0x71/0x02:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Bulletin boards",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "byte",
+        "size": "1",
+        "description": "Value 0x02: message."
+      },
+      {
+        "offset": "4",
+        "name": "Board",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the bulletin board item."
+      },
+      {
+        "offset": "8",
+        "name": "Message",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the message."
+      },
+      {
+        "offset": "12",
+        "name": "Poster, subject, date, look, lines",
+        "type": "loop",
+        "size": "variable",
+        "description": "Poster, subject and date as in the summary; then the poster's body (ushort), hue (ushort), a count byte and that many pieces worn (item id ushort, hue ushort); then a count byte and that many lines, each a length byte, UTF-8 text and two zeros, the length counting both."
+      }
+    ],
+    "notes": "A message in full, with its poster as it looked when it posted. The two zeros after a line work around an old client bug that loses the last letter.",
+    "handler": "BulletinBoardRequestPacketHandler: the answer to a client's sub-command 0x03."
+  },
+  "0x71:incoming": {
+    "category": "Items",
+    "tags": [
+      "Bulletin boards",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "byte",
+        "size": "1",
+        "description": "0x03 asks for the text of a message, 0x04 for its summary, 0x05 posts, 0x06 removes."
+      },
+      {
+        "offset": "4",
+        "name": "Board",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the bulletin board item."
+      },
+      {
+        "offset": "8",
+        "name": "Message",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the message asked for or removed; on a post, the message it replies to, 0 for a new thread."
+      },
+      {
+        "offset": "12",
+        "name": "Subject and lines",
+        "type": "loop",
+        "size": "variable",
+        "description": "On a post only: the subject as a length byte and that many bytes of UTF-8 text, a count byte, then each line the same way. The text of each ends at its first zero."
+      }
+    ],
+    "notes": "What a client asks of a bulletin board. A request is answered only when the item is a board, the character stands within two tiles of it on its map, and the message is one of that board; game masters and above are answered from anywhere. A post whose lengths run past the packet is refused.",
+    "handler": "BulletinBoardRequestPacketHandler: answers with sub-command 0x01 or 0x02, posts (the new message enters the poster's list with 0x25) or removes (0x1D for each message gone)."
   }
 }
