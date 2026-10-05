@@ -13,6 +13,7 @@ using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
@@ -36,6 +37,7 @@ public sealed class WorldViewServiceTests
     private readonly MobileService _mobiles;
     private readonly ItemService _items;
     private readonly CapturingLogSink _log = new();
+    private readonly SettableClock _clock = new();
     private readonly WorldViewService _view;
 
     public WorldViewServiceTests()
@@ -51,7 +53,8 @@ public sealed class WorldViewServiceTests
             _sender.Ignore<PropertyListInfoPacket>(),
             TestTooltips.Create(_items, _mobiles),
             _world,
-            new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(_log).CreateLogger()
+            new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(_log).CreateLogger(),
+            time: _clock
         );
     }
 
@@ -577,6 +580,25 @@ public sealed class WorldViewServiceTests
 
         Assert.Equal([shirt.Id], _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => item.Serial));
         Assert.Equal([shirt.Id], _sender.Sent.OfType<ContainerContentPacket>().Single().Items.Select(entry => entry.Serial));
+    }
+
+    [Fact]
+    public void AHumanCorpse_IsShownBare_UntilTheTimeItsDressIsHeldFor()
+    {
+        var corpse = HumanCorpse();
+        var shirt = Inside(corpse, 0x40000061, 0x1517);
+        corpse.SetProp("corpse.worn", $"{shirt.Id.Value}:{(int)LayerType.Shirt}");
+        corpse.SetProp("corpse.dress_at", _clock.Now.ToUnixTimeMilliseconds() + 2000);
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.IsType<WorldItemSaPacket>(Assert.Single(_sender.Sent));
+        ClearSent();
+
+        _clock.Advance(TimeSpan.FromSeconds(2));
+        _view.ItemAppeared(corpse);
+
+        Assert.Single(_sender.Sent.OfType<CorpseEquipmentPacket>());
     }
 
     [Fact]

@@ -53,6 +53,9 @@ The corpse of a human, elf or gargoyle body is drawn with what the NPC wore, its
 as ModernUO does: right after the corpse the client is sent the worn items that are still inside
 (`0x3C`) and their layers (`0x89`). Take an item out of the corpse and it is no longer drawn on it,
 for who sees the corpse from then on. Hair and beard are no items: they cannot be taken. The corpse
+is dressed 2 seconds after the death, once the body has fallen: the client plays the fall on the
+mobile with what it wears and takes off it whatever a corpse is drawn wearing, so a corpse dressed
+at once makes the NPC fall naked. Until then the corpse keeps the time in its prop `corpse.dress_at`. The corpse
 of any other body is drawn as the client draws that body dead.
 
 When the `corpse` template is missing, the NPC dies all the same and leaves nothing; the log says so.

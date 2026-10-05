@@ -23,6 +23,12 @@ public sealed class DeathService : IDeathService
     public const int RemainsMessage = 30151;
 
     private const string DeathFunction = "on_death";
+    private const string DressTimer = "corpse-dress";
+
+    /// <summary>
+    ///     How long a body takes to fall, as the client plays it: a corpse is drawn dressed only after it.
+    /// </summary>
+    public static readonly TimeSpan FallTime = TimeSpan.FromSeconds(2);
 
     private const int FirstMaleDeathSound = 0x15A;
     private const int FirstFemaleDeathSound = 0x150;
@@ -42,6 +48,8 @@ public sealed class DeathService : IDeathService
     private readonly IItemTemplateService _itemTemplates;
     private readonly IGameLoopService _loop;
     private readonly Lazy<IScriptEngine> _engine;
+    private readonly ITimerService _timers;
+    private readonly TimeProvider _time;
     private readonly IContainerLayoutService? _layouts;
     private readonly ILocalizationService? _localization;
     private readonly ILogger _logger;
@@ -61,6 +69,8 @@ public sealed class DeathService : IDeathService
         IItemTemplateService itemTemplates,
         IGameLoopService loop,
         Lazy<IScriptEngine> engine,
+        ITimerService timers,
+        TimeProvider time,
         IContainerLayoutService? layouts = null,
         ILocalizationService? localization = null,
         ILogger? logger = null
@@ -77,6 +87,8 @@ public sealed class DeathService : IDeathService
         _itemTemplates = itemTemplates;
         _loop = loop;
         _engine = engine;
+        _timers = timers;
+        _time = time;
         _layouts = layouts;
         _localization = localization;
         _logger = logger ?? Log.ForContext<DeathService>();
@@ -93,6 +105,7 @@ public sealed class DeathService : IDeathService
 
         if (corpse is not null)
         {
+            HoldDress(corpse);
             _view.ItemAppeared(corpse);
         }
 
@@ -133,6 +146,35 @@ public sealed class DeathService : IDeathService
         );
 
         return true;
+    }
+
+    // The corpse of a human body is shown bare while who died falls, and dressed once the fall is over: the client
+    // takes what a corpse is drawn wearing off the mobile, which would die naked.
+    private void HoldDress(ItemEntity corpse)
+    {
+        if (!corpse.TryGetProp<int>(CorpseProps.Body, out var body) ||
+            !CorpseProps.IsHumanBody(body) ||
+            corpse.Props is not { } props ||
+            !(props.ContainsKey(CorpseProps.Worn) || props.ContainsKey(CorpseProps.Hair) || props.ContainsKey(CorpseProps.Beard)))
+        {
+            return;
+        }
+
+        corpse.SetProp(CorpseProps.DressAt, (_time.GetUtcNow() + FallTime).ToUnixTimeMilliseconds());
+        _timers.RegisterTimer(
+            DressTimer,
+            FallTime,
+            () =>
+            {
+                corpse.RemoveProp(CorpseProps.DressAt);
+
+                // Still there: it may have been removed meanwhile.
+                if (_items.TryGet(corpse.Id, out var live) && ReferenceEquals(live, corpse))
+                {
+                    _view.ItemAppeared(corpse);
+                }
+            }
+        );
     }
 
     // While the NPC is still there to be read. A script that fails does not keep the NPC alive.
