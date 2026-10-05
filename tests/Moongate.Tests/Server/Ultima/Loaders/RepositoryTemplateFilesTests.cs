@@ -49,7 +49,7 @@ public sealed class RepositoryTemplateFilesTests
     {
         var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
         var books = (await new BooksLoader(Directories(), new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
-        Assert.Equal(64, books.Count);
+        Assert.Equal(65, books.Count);
         Assert.Equal(["jail_release_note", "welcome_letter"], books.Where(book => book.Id is "jail_release_note" or "welcome_letter")
             .Select(book => book.Id).Order(StringComparer.Ordinal));
         var welcome = Assert.Single(books, book => book.Id == "welcome_letter");

@@ -68,7 +68,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         directoriesConfig.CreateDirectoryIfNotExists("scripts/gumps/");
     }
 
-    private static void RegisterTomlConverters()
+    internal static void RegisterTomlConverters()
     {
         TomlUtils.AddTomlConverter(new SerialTomlConverter());
         TomlUtils.AddTomlConverter(new Point2DTomlConverter());
