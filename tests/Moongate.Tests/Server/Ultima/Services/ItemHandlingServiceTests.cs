@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Containers;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Speech;
@@ -83,6 +84,27 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
 
         Assert.Null(_handling.Give(bare, "gold", 30));
         Assert.Single(_serials.Serials);
+    }
+
+    // A backpack whose template has a limit of items, reached: a script's gift does not go past it.
+    [Fact]
+    public void Give_IntoABackpackWithNoRoom_IsNull_AndUsesNoSerial()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+        var handling = new ItemHandlingService(
+            _items,
+            _fixture.Sessions,
+            _fixture.Sender,
+            _view,
+            TestTooltips.Create(_items, _fixture.Mobiles),
+            new FakeItemFactoryService(_templates, _tiles),
+            _serials,
+            capacity: new StubContainerCapacityService { HasRoomResult = false }
+        );
+
+        Assert.Null(handling.Give(_owner, "gold", 30));
+        Assert.Single(_serials.Serials);
+        Assert.Single(_items.GetContents(_backpack.Id));
     }
 
     [Fact]
