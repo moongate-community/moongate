@@ -217,7 +217,7 @@ locks and traps the container: those are not there yet. The town tables use
 Its `rows` function fills the slot: first a button that gives the cursor with `target.pick` and opens
 the gump again on the character picked, then the cells of `jail.cells()`, ten per page. With a
 character picked, a free cell has a button that reads the days typed in the gump and calls
-`jail.send(target, cell, days, who)`; days that are empty, not a number, a fraction or beyond
+`jail.send(target, cell, days, who, reason)`, the reason being what is typed in the second field; days that are empty, not a number, a fraction or beyond
 `jail.max_days()` jail nobody, and the gump opens again with the reason. A cell that holds someone
 shows its name, the time left as `2d 4h`, `5h 10m` or `12m`, and a button that calls
 `jail.release`. Every cell has a button that takes the game master into it with

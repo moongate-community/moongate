@@ -290,6 +290,33 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void TheReasonTyped_GoesWithTheSentence_AndAnEmptyOneIsNone()
+    {
+        Open(Staff);
+        Answer(0, Jail(3), "5", "Stole a horse");
+        Open(Staff);
+        Answer(1, Jail(4), "5");
+
+        Assert.Equal(["Stole a horse", null], _jail.Reasons);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void TheReasonTyped_IsKeptWhenTheGumpOpensAgain()
+    {
+        Open(Staff);
+
+        // Days that jail nobody: the gump comes back with what was typed.
+        Answer(0, Jail(1), "abc", "Stole a horse");
+        Assert.Contains("Stole a horse", _gumps.Opened[1].Gump.Layout.Build().Strings);
+
+        // And after a visit to a cell.
+        Answer(1, Go(2), "5", "Insulted the king");
+        Assert.Contains("Insulted the king", _gumps.Opened[2].Gump.Layout.Build().Strings);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
     public void WithoutATarget_TheCellsAreListed_ButNobodyCanBeJailed()
     {
         _jail.SentenceList.Add(Sentence(Player, "Gino", cell: 2, secondsLeft: 3600));
@@ -459,13 +486,13 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         return _gumps.Opened[^1].Gump.Layout.Build();
     }
 
-    private void Answer(int gump, int button, string days)
+    private void Answer(int gump, int button, string days, string reason = "")
     {
         // As the loop does: what the script posts runs after the script, not inside it.
         _loop.DeferTryPost = true;
         _gumps.Opened[gump].Gump.OnResponse(
             _session,
-            new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = days } }
+            new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = days, [2] = reason } }
         );
         _loop.RunDeferred();
         _loop.DeferTryPost = false;

@@ -172,3 +172,5 @@
 30145 = "La cárcel no está configurada: falta data/jail.toml."
 30146 = "Eso no es un personaje."
 30147 = "Falta el gump de la cárcel: templates/gumps/jail_sentence.xml."
+30148 = "Has sido encarcelado durante {0} días: {1}"
+30149 = "Motivo: {0}"

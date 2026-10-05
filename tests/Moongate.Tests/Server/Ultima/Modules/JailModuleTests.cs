@@ -105,6 +105,27 @@ public sealed class JailModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Send_PassesTheReason_AndWithoutOneThereIsNone()
+    {
+        Run("jail.send(2, 1, 3, 3, 'Stole a horse') jail.send(2, 1, 3, 3)");
+
+        Assert.Equal(["Stole a horse", null], _jail.Reasons);
+    }
+
+    [Fact]
+    public void Sentence_AndAnOccupiedCell_GiveTheReason()
+    {
+        var sentence = Sentence(2, cell: 2, secondsLeft: 3600);
+        sentence.Reason = "Stole a horse";
+        _jail.SentenceList.Add(sentence);
+
+        var result = Run("return jail.sentence(2).reason, jail.cells()[2].reason, jail.cells()[1].reason");
+
+        Assert.Equal(("Stole a horse", "Stole a horse"), (result[0].Read<string>(), result[1].Read<string>()));
+        Assert.Equal(LuaValue.Nil, result[2]);
+    }
+
+    [Fact]
     public void Send_GivesTheAnswerOfTheJail()
     {
         _jail.Result = JailResultType.CellOccupied;

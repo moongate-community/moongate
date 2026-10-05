@@ -126,6 +126,63 @@ public sealed class JailServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Jail_WithAReason_KeepsIt_AndTellsThePlayerWhy()
+    {
+        _jail.Jail(_aria, 1, 3, _staff, "  Stole a horse  ");
+
+        Assert.Equal("Stole a horse", Assert.Single(_jail.Sentences).Reason);
+        Assert.Equal((_aria, "You have been jailed for 3 days: Stole a horse"), Assert.Single(_speech.Told));
+        Assert.Equal(["Aria (0x00000002) is jailed in cell 1 for 3 days by Giachi: Stole a horse"], Logged());
+    }
+
+    [Theory,
+     // Line breaks and tabs become spaces: the reason is one line, on the note and in the log.
+     InlineData("Stole\na\thorse", "Stole a horse"),
+     InlineData("   ", ""),
+     InlineData(null, "")]
+    public void Jail_CleansTheReason(string? typed, string kept)
+    {
+        _jail.Jail(_aria, 1, 3, _staff, typed);
+
+        Assert.Equal(kept, Assert.Single(_jail.Sentences).Reason);
+    }
+
+    [Fact]
+    public void Jail_CutsAReasonThatIsTooLong()
+    {
+        _jail.Jail(_aria, 1, 3, _staff, new string('x', 500));
+
+        Assert.Equal(JailService.MaxReasonLength, Assert.Single(_jail.Sentences).Reason.Length);
+    }
+
+    [Fact]
+    public void Jail_AgainInAnotherCell_TakesTheNewReason_EvenNone()
+    {
+        _jail.Jail(_aria, 2, 3, _staff, "Stole a horse");
+
+        _jail.Jail(_aria, 1, 5, _staff);
+
+        Assert.Equal("", Assert.Single(_jail.Sentences).Reason);
+    }
+
+    [Fact]
+    public void Check_WritesTheReasonOnTheNote()
+    {
+        var backpack = Backpack(_aria);
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+        _jail.Jail(_aria, 2, 3, _staff, "Stole a horse");
+        _clock.Advance(TimeSpan.FromDays(3));
+
+        _jail.Check();
+
+        var note = Assert.Single(_items.GetContents(backpack.Id), item => item.TemplateId == JailService.NoteTemplate);
+        Assert.Equal(
+            "Aria served 3 days in cell 2, from 2026-10-04 to 2026-10-07, and paid a fine of 0 gold. Jailed by Giachi. Reason: Stole a horse",
+            note.Props![JailService.NoteTextProp]
+        );
+    }
+
+    [Fact]
     public void Jail_AnOccupiedCell_IsRefused()
     {
         _jail.Jail(_aria, 1, 3, _staff);

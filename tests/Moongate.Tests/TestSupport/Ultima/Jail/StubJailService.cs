@@ -47,9 +47,15 @@ public sealed class StubJailService : IJailService
         return SentenceList.FirstOrDefault(sentence => sentence.Cell == cell && !sentence.IsOver(Now));
     }
 
-    public JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by)
+    /// <summary>
+    ///     The reason given with each jailing, in order; null for none.
+    /// </summary>
+    public List<string?> Reasons { get; } = [];
+
+    public JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by, string? reason = null)
     {
         Jailed.Add((prisoner, cell, days, by));
+        Reasons.Add(reason);
 
         return Result;
     }

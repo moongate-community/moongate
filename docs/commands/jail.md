@@ -17,7 +17,8 @@ In game only. It takes no argument.
 The gump of the jail opens at once, with the cells and who is inside. From there:
 
 - `Target` gives you a cursor: pick a player or an NPC and the gump opens again on it. Then type
-  the days and press the button of a free cell, and the character is there.
+  the days and, if you want, the reason, and press the button of a free cell: the character is
+  there.
 - `Release`, on a cell that holds someone, ends its sentence with no fine.
 - `Go`, on any cell, takes you into it on the map of the jail. Use it to visit a prisoner:
   [`.go cell 1`](go.md) leads to the place of that name on your own map, which is an empty room

@@ -3,8 +3,8 @@
   Moongate - templates/gumps/jail_sentence.xml
 
   What it is for:
-    The gump of the jail, opened by .jail: the days of the sentence are typed
-    here, and the rest comes from jail_sentence.rows in
+    The gump of the jail, opened by .jail: the days of the sentence and its
+    reason are typed here, and the rest comes from jail_sentence.rows in
     scripts/gumps/jail_sentence.lua: the target button and who is picked, then
     the cells of data/jail.toml with who is inside, paged. The button of a free
     cell sends the character picked there; every cell has a button that takes
@@ -14,6 +14,7 @@
     target  the serial of the character to jail; none until one is picked
     name    its name
     days    the days shown in the field, as text
+    reason  the reason shown in its field; empty until one is typed
 -->
 <gump id="jail_sentence" x="80" y="60"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
@@ -22,5 +23,8 @@
   <text x="20" y="44">Days:</text>
   <image_tiled x="70" y="42" width="60" height="24" gump="2624" />
   <text_entry x="75" y="44" width="50" height="20" hue="1152" entry="1" max_length="4" bind="days">${days}</text_entry>
+  <text x="150" y="44">Reason:</text>
+  <image_tiled x="205" y="42" width="240" height="24" gump="2624" />
+  <text_entry x="210" y="44" width="230" height="20" hue="1152" entry="2" max_length="60" bind="reason">${reason}</text_entry>
   <slot name="rows" x="20" y="75" />
 </gump>
