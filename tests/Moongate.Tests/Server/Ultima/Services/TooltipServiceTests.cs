@@ -122,6 +122,38 @@ public sealed class TooltipServiceTests
         Assert.Equal((1016093, ""), (lines[0].Cliloc, lines[0].Arguments));
     }
 
+    // A bank check reads what it is worth, as ModernUO's: "value: 5,000".
+    [Fact]
+    public void Build_AnItemWithAWorth_SaysItsValue_WithItsThousands()
+    {
+        var check = Item("unknown", 0x14F0);
+        check.SetProp("label_number", 1041361L);
+        check.SetProp("bank.worth", 1_250_000L);
+
+        var lines = _tooltips.Build(check).Entries;
+
+        Assert.Equal(1041361, lines[0].Cliloc);
+        Assert.Contains((1060738, "1,250,000"), lines.Select(line => (line.Cliloc, line.Arguments)));
+    }
+
+    [Fact]
+    public void Build_TwoChecksOfDifferentWorth_DoNotShareATooltip()
+    {
+        var first = Item("unknown", 0x14F0);
+        first.SetProp("bank.worth", 5000L);
+        var second = Item("unknown", 0x14F0);
+        second.SetProp("bank.worth", 6000L);
+
+        Assert.Contains(_tooltips.Build(first).Entries, line => line.Arguments == "5,000");
+        Assert.Contains(_tooltips.Build(second).Entries, line => line.Arguments == "6,000");
+    }
+
+    [Fact]
+    public void Build_AnItemWithoutAWorth_HasNoValueLine()
+    {
+        Assert.DoesNotContain(_tooltips.Build(Item("unknown", 0x0BD8)).Entries, line => line.Cliloc == 1060738);
+    }
+
     [Fact]
     public void Build_AnItemsOwnName_WinsOverItsLabelNumber()
     {
