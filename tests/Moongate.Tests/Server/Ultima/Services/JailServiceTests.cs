@@ -156,6 +156,40 @@ public sealed class JailServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Jail_CutsALongReason_WithoutSplittingACharacterInTwo()
+    {
+        // The hundredth place falls in the middle of a character of two code units.
+        _jail.Jail(_aria, 1, 3, _staff, new string('x', 99) + "\U0001F600" + "tail");
+
+        var reason = Assert.Single(_jail.Sentences).Reason;
+        Assert.Equal(new string('x', 99), reason);
+    }
+
+    [Fact]
+    public void Jail_TakesTheAngleBracketsOutOfAReason_SoTheNoteShowsNoMarkup()
+    {
+        _jail.Jail(_aria, 1, 3, _staff, "Stole <basefont color=red>a horse</basefont>");
+
+        Assert.Equal("Stole basefont color=red a horse /basefont", Assert.Single(_jail.Sentences).Reason);
+    }
+
+    [Fact]
+    public async Task Start_ASentenceSavedBeforeTheReasonExisted_HasAnEmptyOne()
+    {
+        _data.Upserted.Add(
+            new()
+            {
+                Id = new Serial(77), Name = "Old", Cell = 1, Days = 3, JailedBy = "Giachi", Reason = null!,
+                ReleaseAt = _clock.Now.ToUnixTimeMilliseconds() + Day
+            }
+        );
+
+        var jail = await CreateAsync(_file);
+
+        Assert.Equal("", Assert.Single(jail.Sentences).Reason);
+    }
+
+    [Fact]
     public void Jail_AgainInAnotherCell_TakesTheNewReason_EvenNone()
     {
         _jail.Jail(_aria, 2, 3, _staff, "Stole a horse");

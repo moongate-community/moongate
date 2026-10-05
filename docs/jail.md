@@ -27,13 +27,17 @@ Jail                              Release  Go
 
 1. Press `Target` and pick the character with the cursor: a player or an NPC. The gump opens
    again with its name. Until then the cells are only listed: no cell has a button to jail.
-2. Type the days of the sentence and, if you want, its reason: up to 60 characters.
+2. Type the days of the sentence and, if you want, its reason: up to 60 characters in the gump.
+   Picking a character already in jail fills the field with its reason, so moving it to another
+   cell keeps it.
 3. Press the button of a free cell.
 
 The character stands in that cell at once and is told `You have been jailed for 3 days: Stole a
 horse`, or `You have been jailed for 3 days.` with no reason; you are told `Lord Pippo is in cell 3
-for 3 days.` The reason is kept with the sentence as one line, written in the
-[console](#in-the-console-and-the-log) and on the [release note](#the-release-note).
+for 3 days.` The reason is kept with the sentence as one line of plain text, written in the
+[console](#in-the-console-and-the-log) and on the [release note](#the-release-note): line breaks
+become spaces, `<` and `>` are taken out, and what goes beyond 100 characters is cut. The gump
+field takes 60; the 100 are the limit for a script that calls `jail.send`.
 
 - A cell holds one prisoner. A cell that holds someone shows its name and the time left, and has
   no button to jail.

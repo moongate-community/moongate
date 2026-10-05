@@ -317,6 +317,26 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void ATargetAlreadyInJail_ComesWithItsReason_SoMovingItKeepsIt()
+    {
+        var sentence = Sentence(Player, "Gino", cell: 2, secondsLeft: 3600);
+        sentence.Reason = "Stole a horse";
+        _jail.SentenceList.Add(sentence);
+        _targets.Result = TargetResult.ForObject(new Serial((uint)Player));
+        Open(Staff, false);
+
+        Answer(0, TargetButton, "1");
+
+        // The field shows why it is in jail.
+        Assert.Contains("Stole a horse", _gumps.Opened[1].Gump.Layout.Build().Strings);
+
+        // A reason typed before the pick wins over the one of the sentence.
+        Answer(0, TargetButton, "1", "Insulted the king");
+        Assert.Contains("Insulted the king", _gumps.Opened[2].Gump.Layout.Build().Strings);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
     public void WithoutATarget_TheCellsAreListed_ButNobodyCanBeJailed()
     {
         _jail.SentenceList.Add(Sentence(Player, "Gino", cell: 2, secondsLeft: 3600));

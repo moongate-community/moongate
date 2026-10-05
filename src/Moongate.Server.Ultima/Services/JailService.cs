@@ -32,13 +32,13 @@ public sealed class JailService : IJailService
     public const int ReleasedMessage = 30141;
     public const int PardonedMessage = 30142;
     public const int JailedForMessage = 30148;
+    public const int NoteMessage = 30143;
     public const int NoteReasonMessage = 30149;
 
     /// <summary>
     ///     The longest reason kept with a sentence; what is typed beyond it is cut.
     /// </summary>
     public const int MaxReasonLength = 100;
-    public const int NoteMessage = 30143;
 
     private const long MillisecondsADay = 86_400_000;
 
@@ -120,6 +120,8 @@ public sealed class JailService : IJailService
 
         foreach (var sentence in await _table.GetAllAsync())
         {
+            // A row saved before the reason existed has none.
+            sentence.Reason ??= "";
             _sentences[sentence.Id] = sentence;
         }
 
@@ -442,7 +444,8 @@ public sealed class JailService : IJailService
         note.SetProp("jail.fine", fine);
     }
 
-    // One line, no longer than the limit: what is typed goes on a note, into a message and into the log.
+    // One line of plain text, no longer than the limit: what is typed goes on a note, which reads markup, into a
+    // message and into the log.
     private static string Clean(string? reason)
     {
         if (string.IsNullOrWhiteSpace(reason))
@@ -450,10 +453,19 @@ public sealed class JailService : IJailService
             return "";
         }
 
-        var line = string.Join(' ', reason.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+        var plain = reason.Replace('<', ' ').Replace('>', ' ');
+        var line = string.Join(' ', plain.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
         line = new(line.Where(letter => !char.IsControl(letter)).ToArray());
 
-        return line.Length > MaxReasonLength ? line[..MaxReasonLength].TrimEnd() : line;
+        if (line.Length <= MaxReasonLength)
+        {
+            return line;
+        }
+
+        // A character of two code units is not cut in half.
+        var length = char.IsHighSurrogate(line[MaxReasonLength - 1]) ? MaxReasonLength - 1 : MaxReasonLength;
+
+        return line[..length].TrimEnd();
     }
 
     private static string Date(long milliseconds)

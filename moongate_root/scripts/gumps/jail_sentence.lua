@@ -100,7 +100,18 @@ local function pick(who, response, args)
         local name = picked.kind == "object" and mobile.name(picked.serial) or nil
 
         if name then
-            open(who, { target = picked.serial, name = name }, response)
+            local text = response.text or {}
+            local reason = text[2] or ""
+
+            -- Someone already in jail comes with its reason, so that moving it to another cell keeps it; a reason
+            -- typed before the pick wins.
+            if reason == "" then
+                local sentence = jail.sentence(picked.serial)
+
+                reason = sentence and sentence.reason or ""
+            end
+
+            open(who, { target = picked.serial, name = name, days = text[1], reason = reason })
             return
         end
 
