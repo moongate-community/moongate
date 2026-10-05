@@ -2,6 +2,7 @@ using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.Bank;
 
 namespace Moongate.Server.Ultima.Modules;
 
@@ -37,6 +38,51 @@ public sealed class BankModule
     public bool IsOpen(long player)
     {
         return TryGetPlayer(player, out var mobile) && _bank.IsOpen(mobile);
+    }
+
+    /// <summary>
+    ///     Gets the gold in the bank of <paramref name="player" />; <c>bank.balance(speaker)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The gold in the player's bank: the coins anywhere inside its bank box, bags included; 0 for a player who never opened its bank; nil for an NPC or a player not in the world. The box need not be open.")]
+    public int? Balance(long player)
+    {
+        return TryGetPlayer(player, out var mobile) ? _bank.Balance(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Moves coins from the bank of <paramref name="player" /> to its backpack;
+    ///     <c>bank.withdraw(speaker, 500) == BankResultType.Ok</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Moves amount coins from the player's bank to its backpack, onto a gold pile already there when it fits, and gives a BankResultType: Ok, BadAmount (not a whole number above 0), TooMuch (more than ultima.bank.max_withdraw), NoBank (the player never opened its bank: bank.open makes it), NotEnoughGold, BackpackFull (no backpack, no room or too heavy), Busy (try again in a moment) or NoPlayer (an NPC or a player not in the world). All or nothing: a refusal moves no coin. The box need not be open, and the function does not check where the player stands or who it is: a banker script checks the distance and mobile.criminal first.")]
+    public BankResultType Withdraw(long player, double amount)
+    {
+        if (!TryGetPlayer(player, out var mobile))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        return IsWhole(amount) ? _bank.Withdraw(mobile, (int)amount) : BankResultType.BadAmount;
+    }
+
+    /// <summary>
+    ///     Moves coins from the backpack of <paramref name="player" /> to its bank;
+    ///     <c>bank.deposit(speaker, 500) == BankResultType.Ok</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Moves amount coins from the player's backpack and its bags to its bank box, topping up the gold piles of the box and then making piles of 60000, and gives a BankResultType: Ok, BadAmount (not a whole number above 0), NoBank (the player never opened its bank: bank.open makes it), NotEnoughGold, BankFull (the box holds ultima.bank.max_items), Busy (try again in a moment) or NoPlayer (an NPC or a player not in the world). All or nothing: a refusal moves no coin. The box need not be open.")]
+    public BankResultType Deposit(long player, double amount)
+    {
+        if (!TryGetPlayer(player, out var mobile))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        return IsWhole(amount) ? _bank.Deposit(mobile, (int)amount) : BankResultType.BadAmount;
+    }
+
+    // Lua numbers: an amount with a fraction, or beyond an int, is none.
+    private static bool IsWhole(double value)
+    {
+        return value is >= int.MinValue and <= int.MaxValue && Math.Floor(value) == value;
     }
 
     private bool TryGetPlayer(long serial, out MobileEntity mobile)
