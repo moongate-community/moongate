@@ -28,7 +28,7 @@ internal sealed class BookAttachmentTestFixture : IAsyncDisposable
         books.Data.With(books.Data.GetEntities<ItemTemplate>().Where(template => template.Id != "gold").Append(new ItemTemplate { Id = "gold", ItemId = new(0xEED), Stackable = true, Weight = 1m }).ToArray());
         Service = new(books.Items, books.World.Mobiles, books.World.Sessions, books.ItemTemplates, tiles,
             books.Handling, new WeightService(books.Items, books.ItemTemplates, tiles), books.Serials,
-            books.World.Network.Loop, Reservations, Barrier, store ?? Store);
+            books.World.Network.Loop, Reservations, Barrier, new ContainerCapacityService(books.Items, books.ItemTemplates, new()), store ?? Store);
     }
     public static async Task<BookAttachmentTestFixture> CreateAsync(Moongate.Server.Ultima.Interfaces.Internal.Books.IBookAttachmentStore? store = null, BookTestFixture? books = null)
     {

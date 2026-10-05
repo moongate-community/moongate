@@ -8,6 +8,31 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.Server.Ultima.Services.Books;
 public sealed class BookAttachmentServiceTests
 {
+    [Theory]
+    [InlineData(3, BookAttachmentClaimResultType.NoCapacity)]
+    [InlineData(4, BookAttachmentClaimResultType.Claimed)]
+    public async Task Claim_ConfiguredItemLimitCountsNestedContents(int maximum, BookAttachmentClaimResultType expected)
+    {
+        await using var f = await BookAttachmentTestFixture.CreateAsync();
+        await f.Books.OnLoopAsync(() =>
+        {
+            Assert.True(f.Books.ItemTemplates.TryGet("backpack", out var template));
+            template.MaxItems = maximum;
+            var bag = new ItemEntity { Id = new(0x40005000), TemplateId = "backpack", ItemId = 0xE75 };
+            bag.PutInContainer(f.Books.Backpack.Id, new(10, 10));
+            var nested = new ItemEntity { Id = new(0x40005001), TemplateId = "gold", ItemId = 0xEED, Amount = 1 };
+            nested.PutInContainer(bag.Id, new(10, 10));
+            f.Books.Items.Add([bag, nested]);
+        });
+        Assert.Equal(expected, await await f.BeginAsync());
+        if (expected == BookAttachmentClaimResultType.NoCapacity)
+        {
+            Assert.Null(f.Store.Claim);
+            Assert.Equal(2, f.Books.Serials.Serials.Count);
+            await f.Books.OnLoopAsync(() => Assert.Equal(4, f.Books.Items.Items.Count));
+        }
+    }
+
     [Fact]
     public async Task Claim_UnsafeOwnerApplicationPoisonsBarrierWhenLoopStops()
     {

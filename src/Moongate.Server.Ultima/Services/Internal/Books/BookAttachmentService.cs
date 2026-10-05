@@ -36,6 +36,7 @@ internal sealed class BookAttachmentService : IBookAttachmentService
     private readonly ITileDataService _tiles;
     private readonly IItemHandlingService _handling;
     private readonly IWeightService _weights;
+    private readonly IContainerCapacityService _capacity;
     private readonly IItemSerialPool _serials;
     private readonly IGameLoopService _loop;
     private readonly IInventoryReservationService _reservations;
@@ -50,7 +51,7 @@ internal sealed class BookAttachmentService : IBookAttachmentService
     public BookAttachmentService(IItemService items, IMobileService mobiles, ISessionService sessions,
         IItemTemplateService templates, ITileDataService tiles, IItemHandlingService handling,
         IWeightService weights, IItemSerialPool serials, IGameLoopService loop,
-        IInventoryReservationService reservations, IPersistenceOperationBarrier barrier, IBookAttachmentStore store,
+        IInventoryReservationService reservations, IPersistenceOperationBarrier barrier, IContainerCapacityService capacity, IBookAttachmentStore store,
         IContainerLayoutService? layouts = null)
     {
         _items = items;
@@ -60,6 +61,7 @@ internal sealed class BookAttachmentService : IBookAttachmentService
         _tiles = tiles;
         _handling = handling;
         _weights = weights;
+        _capacity = capacity;
         _serials = serials;
         _loop = loop;
         _reservations = reservations;
@@ -177,12 +179,8 @@ internal sealed class BookAttachmentService : IBookAttachmentService
             var contents = _items.GetContents(backpack.Id).ToList();
             var occupied = contents.Where(item => item.GridIndex is >= 0 and < ContainerSlotUtils.SlotCount)
                                    .Select(item => item.GridIndex!.Value).ToHashSet();
-            var maximum = ContainerSlotUtils.SlotCount;
-            if (_templates.TryGet(backpack.TemplateId, out var template) && template.MaxItems is > 0)
-            {
-                maximum = Math.Min(maximum, template.MaxItems.Value);
-            }
-            if (contents.Count + rewards.Count > maximum || ContainerSlotUtils.SlotCount - occupied.Count < rewards.Count ||
+            if (contents.Count + rewards.Count > ContainerSlotUtils.SlotCount ||
+                ContainerSlotUtils.SlotCount - occupied.Count < rewards.Count || !_capacity.HasRoomFor(backpack, rewards.Count) ||
                 !_weights.Holds(backpack, rewards))
             {
                 result = BookAttachmentClaimResultType.NoCapacity;

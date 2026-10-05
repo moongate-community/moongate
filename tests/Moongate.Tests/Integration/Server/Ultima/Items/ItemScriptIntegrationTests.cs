@@ -1,3 +1,9 @@
+using Moongate.Server.Ultima.Interfaces.Items;
+using Moongate.Server.Ultima.Services.Items;
+using Moongate.Server.Ultima.Handlers.Items;
+using Moongate.Server.Ultima.Services.Titles;
+using Moongate.Server.Ultima.Data.Config;
+using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Lua;
 using DryIoc;
 using Moongate.Core.Geometry;
@@ -122,6 +128,39 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
                     return Task.CompletedTask;
                 }
             );
+    }
+
+    [Theory]
+    [InlineData(0x1F9D)]
+    [InlineData(0x09EE)]
+    public async Task UsePacket_ReservedInventoryDoesNotDrinkOrGrantThirst(int graphic)
+    {
+        var reservations = new InventoryReservationService(_loop);
+        var inventory = new InventoryMutationGuard(new Lazy<IItemService>(() => _items), reservations);
+        _container.RegisterInstance<IInventoryMutationGuard>(inventory);
+        var scripts = await StartItemScriptAsync("drink", "potion");
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var player));
+        player.Body = 400;
+        player.Thirst = 2;
+        _potions.ItemId = graphic;
+        _potions.Amount = 1;
+        _potions.SetProp("drink.uses", graphic == 0x1F9D ? 5L : 1L);
+        var data = new StubDataLoaderService();
+        var handler = new UseRequestPacketHandler(_items, _fixture.Mobiles, data, new WorldConfig(),
+            new FakeTileDataService(), new ContainerLayoutService(data), _fixture.Sender,
+            TestTooltips.Create(_items, _fixture.Mobiles), new FameKarmaTitleService(data), scripts, inventory: inventory);
+        Assert.True(_fixture.Sessions.TryGetByCharacterId(player.Id, out var session));
+        reservations.TryReserve(player.Id, Task.CompletedTask);
+        handler.Handle(session, new UseRequestPacket { Target = _potions.Id });
+        Assert.Equal(2, player.Thirst);
+        Assert.Equal(graphic, _potions.ItemId);
+        Assert.Equal(graphic == 0x1F9D ? 5L : 1L, _potions.GetProp<long>("drink.uses"));
+        Assert.Empty(_speech.Sounds);
+        Assert.Empty(_speech.Told);
+        reservations.Release(player.Id);
+        handler.Handle(session, new UseRequestPacket { Target = _potions.Id });
+        Assert.Equal(5, player.Thirst);
+        Assert.Empty(_errors);
     }
 
     [Fact]
