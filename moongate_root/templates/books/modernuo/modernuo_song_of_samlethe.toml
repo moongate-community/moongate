@@ -54,11 +54,11 @@ content = """
 První medvěd
 plaval za dne,
 a v noci se
-ke spánku měl.
+spánku oddal.
 Zůstával ve
 své jeskyni
 a pod hvězdami
-jíst vždy chtěl.
+jídal.
 
 
 Druhý medvěd
@@ -76,7 +76,7 @@ a dnes podlahu
 zdobí.
 Jeho kobercová tvář
 je otlačena
-kroky i těmi
+kroky a
 
 dveřmi.
 
@@ -87,16 +87,16 @@ a teď tančí
 jako hlupák
 pro bludičky a
 
-věci bez podob.
+neviděné věci.
 
 Tak netanči a
 nespi také,
 ať nesvede tě klam!
 Vždyť medvědi šest stop
 v zemi leží,
-až skončí den
+na konci
 
-Samlethe sám."""
+dne Samlethe."""
 
 [translations.fre]
 title = "Une chanson de Samlethe"

@@ -143,9 +143,9 @@ item_template = "readable_scroll"
 [translations.cze]
 title = "Základy zbraní a výzbroje"
 content = """
-Toto jsou základní vlastnosti, které je třeba zvážit při posuzování zbraně a kterých si mají být vědomi všichni válečníci, již se považují za něco víc než pouhé námezdné bojovníky,
+Toto jsou základní vlastnosti, které je třeba zvážit při posuzování zbraně a které by všichni válečníci, již se považují za něco víc než pouhé námezdné bojovníky, měli
 
-než vezmou zbraň do ruky.
+znát.
 První a nejzjevnější je míra zranění, jež může zbraň způsobit nechráněnému tělu. Ač právě tato vlastnost nejprve upoutá
 
 pozornost nováčka, pokládat ji za jedinou hodnotu zbraně je smrtelnou chybou. Třebaže jako prostředek k působení zranění může být vskutku ničivá,
