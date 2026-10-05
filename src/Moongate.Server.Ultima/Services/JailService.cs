@@ -171,10 +171,13 @@ public sealed class JailService : IJailService
             return [];
         }
 
+        // The database lowers the name: this ToLower becomes its lower(), where a culture means nothing.
+#pragma warning disable CA1311
         var characters = await _characters.QueryAsync(
             mobile => mobile.AccountId != null && mobile.DeletionRequestedAt == null && mobile.Name.ToLower() == wanted,
             cancellationToken
         );
+#pragma warning restore CA1311
         var found = new List<JailCandidate>();
 
         foreach (var character in characters.OrderBy(character => character.Id.Value))
@@ -225,6 +228,13 @@ public sealed class JailService : IJailService
         if (GetOccupant(cell) is { } occupant && occupant.Id != prisoner.Id)
         {
             return JailResultType.CellOccupied;
+        }
+
+        // A player whose login is still being sent: a teleport now would reach its client before it knows where it
+        // stands. Its sentence waits, and the next check takes it once it has entered.
+        if (!prisoner.IsNpc && !_view.HasEntered(prisoner.Id))
+        {
+            return Wait(prisoner.Id, prisoner.Name, cell, days, by, reason);
         }
 
         // Where it stands now, read before the teleport moves it.
@@ -308,6 +318,12 @@ public sealed class JailService : IJailService
             return JailResultType.CellOccupied;
         }
 
+        return Wait(prisoner, found.Name, cell, days, by, reason);
+    }
+
+    // The sentence is kept with its cell and nobody is moved: the check starts it when its player has entered the world.
+    private JailResultType Wait(Serial prisoner, string name, int cell, int days, MobileEntity by, string? reason)
+    {
         if (!_sentences.TryGetValue(prisoner, out var sentence))
         {
             // No place to go back to yet: it is taken where the player logs in.
@@ -316,7 +332,7 @@ public sealed class JailService : IJailService
             _ended.TryRemove(prisoner, out _);
         }
 
-        sentence.Name = found.Name;
+        sentence.Name = name;
         sentence.IsPlayer = true;
         sentence.Cell = cell;
         sentence.Days = days;

@@ -900,6 +900,54 @@ public sealed class JailServiceTests : IAsyncLifetime
         Assert.False(Assert.Single(_jail.Sentences).Pending);
     }
 
+    // The gump jails whoever is in the world through Jail: the same wait, whichever way the sentence comes.
+    [Fact]
+    public void Jail_APlayerWhoseLoginIsNotOverYet_KeepsTheSentenceWaiting_AndTheCheckTakesItOnceItEntered()
+    {
+        _view.NotEntered.Add(_aria.Id);
+
+        Assert.Equal(JailResultType.Pending, _jail.Jail(_aria, 2, 3, _staff, "Stole a horse"));
+
+        Assert.Empty(_teleports.Teleports);
+        Assert.Empty(_speech.Told);
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal((true, "Aria", true, 2, 3, "Stole a horse"), (sentence.Pending, sentence.Name, sentence.IsPlayer, sentence.Cell, sentence.Days, sentence.Reason));
+
+        _view.NotEntered.Clear();
+        _jail.Check();
+
+        Assert.Equal((_aria, MapType.Felucca, Cell2), Assert.Single(_teleports.Teleports));
+        Assert.Equal((MapType.Trammel, 1600, 1600, 5), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+    }
+
+    [Fact]
+    public void Jail_AnNpc_IsNeverMadeToWait()
+    {
+        _view.NotEntered.Add(_orc.Id);
+
+        Assert.Equal(JailResultType.Ok, _jail.Jail(_orc, 1, 1, _staff));
+    }
+
+    // Its login is being sent: a teleport now would reach its client before it knows where it stands.
+    [Fact]
+    public async Task JailOffline_APlayerWhoseLoginIsNotOverYet_IsNotMovedYet_AndTheCheckTakesItOnceItEntered()
+    {
+        var aria = await OfflineAsync(_aria);
+        await LoginAsync(_aria, MapType.Trammel, new Point3D(1600, 1600, 5));
+        _view.NotEntered.Add(aria);
+
+        Assert.Equal(JailResultType.Pending, _jail.JailOffline(aria, 2, 3, _staff));
+
+        Assert.Empty(_teleports.Teleports);
+        Assert.True(Assert.Single(_jail.Sentences).Pending);
+
+        _view.NotEntered.Clear();
+        _jail.Check();
+
+        Assert.Equal((_aria, MapType.Felucca, Cell2), Assert.Single(_teleports.Teleports));
+        Assert.False(Assert.Single(_jail.Sentences).Pending);
+    }
+
     [Fact]
     public async Task JailOffline_ARunningSentenceOfAnOfflinePlayer_WaitsAgain_AndKeepsItsReturnPlace()
     {

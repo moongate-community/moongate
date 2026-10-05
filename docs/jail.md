@@ -96,6 +96,9 @@ A player who was jailed while online and then logged out can be moved the same w
 <name>`, then a free cell. Its sentence waits again and starts over at its next login, and it
 still goes back where it was first arrested.
 
+A player caught in the few seconds of its login is treated as one who is offline: the sentence
+waits, and the next check takes it to the cell.
+
 NPCs are not found by name: jail them with `Target`.
 
 ## Visit the cells
@@ -247,7 +250,6 @@ script [`jail_sentence.lua`](scripting/shipped-scripts.md#jail_sentencelua) does
 ## What it does not do yet
 
 - Forbid anything in jail: there are no spells, skills or recall to forbid.
-- Jail a player who is offline.
 - Keep a record of past sentences: the reason lives with the sentence and on its note.
 - Jail a whole account: a sentence is of one character.
 
