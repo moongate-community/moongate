@@ -10,7 +10,8 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     The skill check and the gain of ModernUO and ServUO, with the rule of the classic game that a failure teaches
-///     too, less than a success. The value of a skill is its base: stats add nothing to it yet.
+///     too, less than a success; and the stats a successful check can raise, as ModernUO's classic rule. The value of a
+///     skill is its base: stats add nothing to it yet.
 /// </summary>
 public sealed class SkillService : ISkillService
 {
@@ -27,16 +28,30 @@ public sealed class SkillService : ISkillService
     private const double FailureWeight = 0.2;
     private const double LeastGainChance = 0.01;
 
+    // A stat gain of 33.3 in skills.toml is a sure thing at each try.
+    private const double StatGainScale = 33.3;
+
+    // The least a stat can be lowered to, so one that is locked down never reaches nothing.
+    private const int LeastStat = 10;
+
     private readonly IMobileStateService _state;
     private readonly SkillsConfig _config;
     private readonly Random _random;
+    private readonly TimeProvider _time;
     private readonly Lazy<Dictionary<SkillType, SkillContent>> _skills;
 
-    public SkillService(IMobileStateService state, IDataLoaderService data, SkillsConfig config, Random? random = null)
+    public SkillService(
+        IMobileStateService state,
+        IDataLoaderService data,
+        SkillsConfig config,
+        Random? random = null,
+        TimeProvider? time = null
+    )
     {
         _state = state;
         _config = config;
         _random = random ?? Random.Shared;
+        _time = time ?? TimeProvider.System;
         _skills = new(() => data.GetEntities<SkillContent>().ToDictionary(skill => skill.Id));
     }
 
@@ -64,9 +79,18 @@ public sealed class SkillService : ISkillService
         var chance = (value - min) / (max - min);
         var success = chance >= _random.NextDouble();
 
-        if (_config.GainEnabled && !mobile.IsNpc && Learns(mobile, known, chance, success))
+        if (_config.GainEnabled && !mobile.IsNpc)
         {
-            Gain(mobile, known);
+            if (Learns(mobile, known, chance, success))
+            {
+                Gain(mobile, known);
+            }
+
+            // As ModernUO: whether or not the skill itself rose, a success can raise a stat.
+            if (success && _skills.Value.TryGetValue(skill, out var content))
+            {
+                GainStats(mobile, content);
+            }
         }
 
         return success;
@@ -122,5 +146,100 @@ public sealed class SkillService : ISkillService
         {
             _state.SetSkill(mobile, known.Skill, Math.Min(known.Base + amount, known.Cap));
         }
+    }
+
+    private void GainStats(MobileEntity mobile, SkillContent content)
+    {
+        TryGainStat(mobile, StatType.Str, content.StrGain);
+        TryGainStat(mobile, StatType.Dex, content.DexGain);
+        TryGainStat(mobile, StatType.Int, content.IntGain);
+    }
+
+    // A stat the skill favours, that is up, may rise, by the chance the skill gives it and once in a while.
+    private void TryGainStat(MobileEntity mobile, StatType stat, double gain)
+    {
+        if (gain <= 0 || LockOf(mobile, stat) != StatLockType.Up || gain / StatGainScale <= _random.NextDouble())
+        {
+            return;
+        }
+
+        var now = _time.GetUtcNow();
+
+        if (mobile.StatTriedAt.TryGetValue(stat, out var last) && last.AddMinutes(_config.StatGainMinutes) > now)
+        {
+            return;
+        }
+
+        // The wait starts here, even when nothing rises.
+        mobile.StatTriedAt[stat] = now;
+        var atrophy = StatTotal(mobile) / (double)_config.StatCap >= _random.NextDouble();
+        RaiseStat(mobile, stat, atrophy);
+    }
+
+    // Raises the stat by one, as ModernUO's IncreaseStat: when the character is full, or by chance the nearer it is,
+    // another stat that is locked down gives a point first.
+    private void RaiseStat(MobileEntity mobile, StatType stat, bool atrophy)
+    {
+        var values = new[] { mobile.Strength, mobile.Dexterity, mobile.Intelligence };
+        var before = values.ToArray();
+        var others = Enum.GetValues<StatType>().Where(other => other != stat).ToArray();
+
+        if (atrophy || values.Sum() >= _config.StatCap)
+        {
+            var (first, second) = (others[0], others[1]);
+
+            if (CanLower(mobile, first, values) && (values[(int)first] < values[(int)second] || !CanLower(mobile, second, values)))
+            {
+                values[(int)first]--;
+            }
+            else if (CanLower(mobile, second, values))
+            {
+                values[(int)second]--;
+            }
+        }
+
+        if (values.Sum() < _config.StatCap && LockOf(mobile, stat) == StatLockType.Up && values[(int)stat] < _config.StatMax)
+        {
+            values[(int)stat]++;
+        }
+
+        if (values.SequenceEqual(before))
+        {
+            return;
+        }
+
+        // The maximum of each bar follows its stat, as at creation.
+        _state.SetStats(
+            mobile,
+            new MobileStatsChange
+            {
+                Strength = values[0],
+                Dexterity = values[1],
+                Intelligence = values[2],
+                HitsMax = mobile.HitsMax + values[0] - before[0],
+                StaminaMax = mobile.StaminaMax + values[1] - before[1],
+                ManaMax = mobile.ManaMax + values[2] - before[2]
+            }
+        );
+    }
+
+    private static bool CanLower(MobileEntity mobile, StatType stat, int[] values)
+    {
+        return LockOf(mobile, stat) == StatLockType.Down && values[(int)stat] > LeastStat;
+    }
+
+    private static StatLockType LockOf(MobileEntity mobile, StatType stat)
+    {
+        return stat switch
+        {
+            StatType.Str => mobile.StrLock,
+            StatType.Dex => mobile.DexLock,
+            _            => mobile.IntLock
+        };
+    }
+
+    private static int StatTotal(MobileEntity mobile)
+    {
+        return mobile.Strength + mobile.Dexterity + mobile.Intelligence;
     }
 }
