@@ -288,7 +288,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Hot reload | 🟡 | Lua scripts; not the data or templates |
 | GM help queue (pages) | ❌ | |
 | Help menu and stuck menu | ❌ | |
-| Jails | ✅ | A gump lists the cells and who is in them; sentences in real days, a gold fine and a release note at the end, a chest of bread and water in every cell; see [Jail](jail.md) |
+| Jails | ✅ | A gump lists the cells and who is in them; sentences in real days, a gold fine and a release note at the end, a chest of bread and water in every cell; a player who is offline is jailed by name and serves from its next login; see [Jail](jail.md) |
 | Who list | ❌ | |
 | Staff tools: property gump, add menu, area commands | 🟡 | The gump of the named places, `.go`, with ModernUO's 558 places; no property gump, add menu or area commands |
 | Named locations and travel menu for staff | ✅ | `.go <place>` and the go gump, with ModernUO's 558 places from `data/locations.toml` |
