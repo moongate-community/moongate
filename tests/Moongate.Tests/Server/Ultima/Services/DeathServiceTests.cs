@@ -7,7 +7,6 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Scripting;
-using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
@@ -144,6 +143,51 @@ public sealed class DeathServiceTests : IAsyncLifetime
         );
         Assert.Equal((null, null), (_sword.MobileId, _sword.Layer));
         Assert.Equal(20, _gold.Amount);
+    }
+
+    [Fact]
+    public void Kill_KeepsOnTheCorpseWhatTheNpcWoreAndOnWhichLayer_NotWhatLayInItsBackpack()
+    {
+        var shirt = Worn(_orc, "sword", 0x1517, LayerType.Shirt);
+
+        _death.Kill(_orc);
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.Equal(
+            new[] { $"{_sword.Id.Value}:{(int)LayerType.OneHanded}", $"{shirt.Id.Value}:{(int)LayerType.Shirt}" }.Order(),
+            corpse.GetProp<string>("corpse.worn").Split(',').Order()
+        );
+    }
+
+    [Fact]
+    public void Kill_KeepsOnTheCorpseTheHairAndTheBeardOfWhoDied()
+    {
+        _orc.HairStyle = 0x203B;
+        _orc.HairHue = new Hue(0x0455);
+        _orc.BeardStyle = 0x203E;
+        _orc.BeardHue = new Hue(0x0456);
+
+        _death.Kill(_orc);
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.Equal(
+            (0x203B, 0x0455, 0x203E, 0x0456),
+            (corpse.GetProp<int>("corpse.hair"), corpse.GetProp<int>("corpse.hair_hue"), corpse.GetProp<int>("corpse.beard"), corpse.GetProp<int>("corpse.beard_hue"))
+        );
+    }
+
+    [Fact]
+    public void Kill_ABaldNakedNpc_KeepsNoneOfThatOnTheCorpse()
+    {
+        _items.Remove([_sword.Id]);
+
+        _death.Kill(_orc);
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.All(
+            new[] { "corpse.worn", "corpse.hair", "corpse.hair_hue", "corpse.beard", "corpse.beard_hue" },
+            key => Assert.False(corpse.Props!.ContainsKey(key))
+        );
     }
 
     [Fact]

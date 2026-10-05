@@ -227,10 +227,14 @@ public sealed class TooltipService : ITooltipService
                     InView(viewer, wearer.Map, wearer.Location));
         }
 
-        return item.Map is { } map &&
-               item.GroundLocation is { } spot &&
-               _items.IsLyingOnGround(item) &&
+        // On the ground, or inside what lies there at any depth, such as a treasure chest or a corpse: read from
+        // where the container is, by who may see both.
+        return _items.GetGroundRoot(item) is { } root &&
+               root.Map is { } map &&
+               root.GroundLocation is { } spot &&
+               _items.IsLyingOnGround(root) &&
                InView(viewer, map, spot) &&
+               account >= VisibilityOf(root) &&
                account >= VisibilityOf(item);
     }
 

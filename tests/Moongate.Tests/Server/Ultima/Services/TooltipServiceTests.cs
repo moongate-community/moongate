@@ -353,6 +353,39 @@ public sealed class TooltipServiceTests
     }
 
     [Fact]
+    public void TryBuildFor_AnItemInsideAContainerOnTheGround_AtAnyDepth_IsBuiltWhenTheContainerIsInView()
+    {
+        // As what lies in a treasure chest, or in the corpse of an NPC.
+        var chest = Placed(0x40000010, item => { });
+        _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(1005, 1000, 0));
+        var bag = Placed(0x40000011, item => item.PutInContainer(chest.Id, new Point2D(10, 10)));
+        var coin = Placed(0x40000012, item => item.PutInContainer(bag.Id, new Point2D(10, 10)));
+
+        Assert.True(_tooltips.TryBuildFor(Aria, bag.Id, out _));
+        Assert.True(_tooltips.TryBuildFor(Aria, coin.Id, out _));
+
+        _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(1100, 1000, 0));
+
+        Assert.False(_tooltips.TryBuildFor(Aria, coin.Id, out _));
+    }
+
+    [Fact]
+    public void TryBuildFor_WhatLiesInAContainerHiddenFromThePlayer_OrIsHiddenItself_IsRefused()
+    {
+        var chest = new ItemEntity { Id = new(0x40000010), TemplateId = "teleporter", ItemId = 0x1BC3, Amount = 1 };
+        _items.Add([chest]);
+        _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(1005, 1000, 0));
+        var coin = Placed(0x40000012, item => item.PutInContainer(chest.Id, new Point2D(10, 10)));
+
+        Assert.False(_tooltips.TryBuildFor(Aria, coin.Id, out _));
+        Assert.True(_tooltips.TryBuildFor(Aria, coin.Id, out _, AccountType.GameMaster));
+
+        coin.Visibility = AccountType.Administrator;
+
+        Assert.False(_tooltips.TryBuildFor(Aria, coin.Id, out _, AccountType.GameMaster));
+    }
+
+    [Fact]
     public void TryBuildFor_AGroundItem_IsBuiltOnlyInViewRange()
     {
         var near = Placed(0x40000004, item => { });

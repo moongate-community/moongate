@@ -43,6 +43,11 @@ public sealed class LoopCheckingMobileService : IMobileService
         return _inner.BeardSerial(mobile);
     }
 
+    public void ForgetHair(Serial owner)
+    {
+        _inner.ForgetHair(owner);
+    }
+
     public void EnterWorld(MobileEntity mobile)
     {
         EnteredOnLoop.Add(_gameLoop.IsOnLoopThread);

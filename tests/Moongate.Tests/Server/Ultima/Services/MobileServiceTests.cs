@@ -33,6 +33,20 @@ public sealed class MobileServiceTests
     }
 
     [Fact]
+    public void ForgetHair_GivesTheSerialsBack_SoTheOwnerTakesNewOnesIfAskedAgain()
+    {
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
+        var owner = new Serial(0x40000900);
+        var hair = mobiles.HairSerial(owner);
+        var beard = mobiles.BeardSerial(owner);
+
+        mobiles.ForgetHair(owner);
+
+        Assert.NotEqual(hair, mobiles.HairSerial(owner));
+        Assert.NotEqual(beard, mobiles.BeardSerial(owner));
+    }
+
+    [Fact]
     public void HairSerials_OfDifferentMobiles_Differ()
     {
         var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());

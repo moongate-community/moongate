@@ -55,7 +55,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
 | Hiding and stealth | ❌ | A script can hide a mobile with `mobile.set_hidden`; no skill |
-| Death, corpses, ghosts and resurrection | 🟡 | An NPC dies by `.kill` or `mobile.kill`: corpse with what it carried, death animation and sound, decay after 7 minutes. No player death, ghosts or resurrection; nothing fights yet |
+| Death, corpses, ghosts and resurrection | 🟡 | An NPC dies by `.kill` or `mobile.kill`: corpse with what it carried, drawn dressed for a human body, death animation and sound, decay after 7 minutes. No player death, ghosts or resurrection; nothing fights yet |
 | Young player protection | ❌ | |
 | Murder reports and bounty boards | ❌ | |
 | Virtues | ❌ | |

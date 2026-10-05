@@ -102,8 +102,15 @@ public sealed class MobileService : IMobileService
         }
 
         _deleted[serial] = 0;
+        ForgetHair(serial);
 
         return true;
+    }
+
+    public void ForgetHair(Serial owner)
+    {
+        _hair.TryRemove(owner, out _);
+        _beard.TryRemove(owner, out _);
     }
 
     public IReadOnlyCollection<Serial> Capture()

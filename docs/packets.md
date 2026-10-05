@@ -70,6 +70,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x2E` | `WornItemPacket` | Outgoing | Fixed 15 | — |
 | `0x6E` | `MobileAnimationPacket` | Outgoing | Fixed 14 | — |
 | `0xAF` | `DeathAnimationPacket` | Outgoing | Fixed 13 | — |
+| `0x89` | `CorpseEquipmentPacket` | Outgoing | Variable | — |
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x95` | `HuePickerPacket` | Outgoing | Fixed 9 | — |
@@ -285,7 +286,9 @@ corpse, four zero bytes, as ModernUO) and, when the NPC is removed, `0x1D`. The 
 death animation of the body by itself; the server names none. A corpse is the graphic `0x2006` and
 tells the client its body in the place of the amount and the way it lies in the light byte, as
 ServUO does: the item itself keeps amount 1, and both come from its props `corpse.body` and
-`corpse.direction`.
+`corpse.direction`. After the corpse of a human, elf or gargoyle body come `0x3C`, with the worn
+items still inside it plus its hair and beard under virtual serials, and `0x89`, which names the
+layer of each as the layer plus one and ends with a zero byte: the client draws the corpse dressed.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.

@@ -43,6 +43,17 @@ in the place of the amount, as the client expects of the corpse graphic.
 | `corpse.direction` | The way it faced, a direction number |
 | `corpse.template` | The mobile template of who died, when it had one |
 | `corpse.killer` | The serial of who killed it, when someone did |
+| `corpse.worn` | What who died wore that went into the corpse, as `serial:layer` pairs split by commas |
+| `corpse.hair`, `corpse.hair_hue` | The hair graphic of who died and its hue, when it had hair |
+| `corpse.beard`, `corpse.beard_hue` | The same for its beard |
+
+## The dressed corpse
+
+The corpse of a human, elf or gargoyle body is drawn with what the NPC wore, its hair and its beard,
+as ModernUO does: right after the corpse the client is sent the worn items that are still inside
+(`0x3C`) and their layers (`0x89`). Take an item out of the corpse and it is no longer drawn on it,
+for who sees the corpse from then on. Hair and beard are no items: they cannot be taken. The corpse
+of any other body is drawn as the client draws that body dead.
 
 When the `corpse` template is missing, the NPC dies all the same and leaves nothing; the log says so.
 
@@ -91,7 +102,5 @@ end
 ## What is not there yet
 
 - The death of players: ghost, resurrection, healers and ankhs.
-- The dressed corpse of human bodies (packet `0x89`): today a human corpse is drawn naked, and its
-  clothes are inside.
 - Carving, fame and karma, looting as a crime, loot shared among those who fought.
 - Summoned creatures that leave no corpse, and bones.

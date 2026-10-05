@@ -35,4 +35,33 @@ public static class CorpseProps
     ///     The serial of who killed it, when someone did.
     /// </summary>
     public const string Killer = "corpse.killer";
+
+    /// <summary>
+    ///     What who died wore that went into the corpse, as "serial:layer" pairs split by commas, the layer a LayerType
+    ///     number: a human body is drawn wearing those still inside.
+    /// </summary>
+    public const string Worn = "corpse.worn";
+
+    /// <summary>
+    ///     The hair graphic of who died, and its hue; missing for none.
+    /// </summary>
+    public const string Hair = "corpse.hair";
+
+    public const string HairHue = "corpse.hair_hue";
+
+    /// <summary>
+    ///     The beard graphic of who died, and its hue; missing for none.
+    /// </summary>
+    public const string Beard = "corpse.beard";
+
+    public const string BeardHue = "corpse.beard_hue";
+
+    /// <summary>
+    ///     Gets whether the body is a human, elf or gargoyle one, male or female: the bodies whose corpse the client
+    ///     draws dressed, and that die with a voice of their own.
+    /// </summary>
+    public static bool IsHumanBody(int body)
+    {
+        return body is 0x190 or 0x191 or 0x25D or 0x25E or 0x29A or 0x29B;
+    }
 }
