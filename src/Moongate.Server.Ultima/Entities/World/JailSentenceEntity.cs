@@ -87,11 +87,18 @@ public class JailSentenceEntity : IMoongateEntity
     public bool Pardoned { get; set; }
 
     /// <summary>
-    ///     Gets whether the sentence has ended at <paramref name="now" />, in Unix milliseconds.
+    ///     Whether the sentence waits for its prisoner, a player who was offline, to log in: its days start then.
+    /// </summary>
+    [Column(IsNullable = false, DbType = "boolean NOT NULL DEFAULT false")]
+    public bool Pending { get; set; }
+
+    /// <summary>
+    ///     Gets whether the sentence has ended at <paramref name="now" />, in Unix milliseconds. One that waits for
+    ///     its prisoner has not started, and never has.
     /// </summary>
     public bool IsOver(long now)
     {
-        return now >= ReleaseAt;
+        return !Pending && now >= ReleaseAt;
     }
 
     /// <summary>

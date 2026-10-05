@@ -11,6 +11,19 @@ public sealed class JailSentenceEntityTests
         Assert.Equal(over, new JailSentenceEntity { ReleaseAt = 1000 }.IsOver(now));
     }
 
+    [Theory, InlineData(0), InlineData(1000), InlineData(long.MaxValue)]
+    public void IsOver_ASentenceThatWaits_IsNeverOver(long now)
+    {
+        // Its days have not started: there is no end to reach.
+        Assert.False(new JailSentenceEntity { Pending = true, ReleaseAt = 0 }.IsOver(now));
+    }
+
+    [Fact]
+    public void Snapshot_KeepsPending()
+    {
+        Assert.True(new JailSentenceEntity { Pending = true }.Snapshot().Pending);
+    }
+
     [Fact]
     public void Snapshot_IsADetachedCopy()
     {
