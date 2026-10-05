@@ -1,6 +1,7 @@
 using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
@@ -23,7 +24,8 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 ///     Drops the item the player holds (0x08) into a container their character carries, onto a carried stack of the
 ///     same kind (they merge), into the container of a carried item it was dropped on, into a container lying on the
 ///     ground within reach or one inside it (onto a pile of the same kind there, they merge), on the ground within 2
-///     tiles, or onto a ground stack of the same kind within reach; anything else bounces the item back to where it was. The hand
+///     tiles, or onto a ground stack of the same kind within reach; dropped on an NPC within 2 tiles, the NPC's script is
+///     asked to take it (<c>on_drag_drop</c>); anything else bounces the item back to where it was. The hand
 ///     is always freed: 0x25 shows the item where it really is, and a ground item is shown to everyone in range.
 /// </summary>
 /// <remarks>
@@ -35,6 +37,16 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     public const string DropFunction = "on_drop";
     public const string CanDropFunction = "can_drop";
     public const string CanInsertFunction = "can_insert";
+
+    /// <summary>
+    ///     The function of an NPC's script that is asked to take an item a player drops on the NPC.
+    /// </summary>
+    public const string DragDropFunction = "on_drag_drop";
+
+    /// <summary>
+    ///     How many tiles away a player gives an item to an NPC, as it drops one on the ground.
+    /// </summary>
+    public const int GiveRange = 2;
 
     /// <summary>
     ///     The client's "That container cannot hold more weight."
@@ -62,6 +74,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private readonly IContainerCapacityService? _capacity;
 
     private readonly IInventoryMutationGuard? _inventory;
+    private readonly INpcScriptService? _npcScripts;
 
     public DropRequestPacketHandler(
         IItemService items,
@@ -77,9 +90,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         ISpeechService? speech = null,
         IFatigueService? fatigue = null,
         IContainerCapacityService? capacity = null,
-        IInventoryMutationGuard? inventory = null
+        IInventoryMutationGuard? inventory = null,
+        INpcScriptService? npcScripts = null
     )
     {
+        _npcScripts = npcScripts;
         _inventory = inventory;
         _capacity = capacity;
         _weight = weight;
@@ -135,6 +150,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
             LoadChanged(session, false);
 
+            return;
+        }
+
+        if (TakenByNpc(session, item, packet.Destination))
+        {
             return;
         }
 
@@ -237,6 +257,52 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
         HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
         LoadChanged(session, false);
+    }
+
+    // Dropped on an NPC within reach: its script is asked to take the item, and only an answer of true takes it. The
+    // item is on no cursor while the script runs, so the script may move or delete it; what it did is then shown to the
+    // giver. Any other answer leaves the drop to the other rules, which bounce it.
+    private bool TakenByNpc(GameSession session, ItemEntity item, Serial destination)
+    {
+        if (_npcScripts is null ||
+            !destination.IsMobile ||
+            destination == session.CharacterId ||
+            !_mobiles.TryGet(destination, out var npc) ||
+            !npc.IsNpc ||
+            !_mobiles.TryGet(session.CharacterId, out var giver) ||
+            giver.Map != npc.Map ||
+            !giver.Location.InRange(npc.Location, GiveRange))
+        {
+            return false;
+        }
+
+        var wearer = item.MobileId is { } wearerId && _mobiles.TryGet(wearerId, out var worn) ? worn : null;
+        var answer = _npcScripts.Run(npc, DragDropFunction, (long)giver.Id.Value, (long)item.Id.Value);
+
+        if (answer is not { Kind: ScriptResultKind.Completed, Values: [true, ..] })
+        {
+            return false;
+        }
+
+        if (item.MobileId is null)
+        {
+            TakenOff(wearer, item);
+        }
+
+        // Gone, or with someone else: the giver's client forgets it. Else it is shown where the script left it.
+        if (!_items.TryGet(item.Id, out _) ||
+            (item.ContainerId is not null && _items.GetOwner(item) != session.CharacterId))
+        {
+            _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
+        }
+        else
+        {
+            HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+        }
+
+        LoadChanged(session, false);
+
+        return true;
     }
 
     // As ModernUO: a container takes its limit of stones from a player, anything from the staff.

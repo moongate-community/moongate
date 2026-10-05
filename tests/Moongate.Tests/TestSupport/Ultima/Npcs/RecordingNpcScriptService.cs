@@ -16,6 +16,16 @@ public sealed class RecordingNpcScriptService : INpcScriptService
     /// </summary>
     public Exception? Throws { get; set; }
 
+    /// <summary>
+    ///     What every run answers.
+    /// </summary>
+    public ScriptResult Result { get; set; } = ScriptResult.Completed([]);
+
+    /// <summary>
+    ///     What a script does while it runs, given the function's name: called before the answer is given.
+    /// </summary>
+    public Action<string>? OnRun { get; set; }
+
     public ScriptResult Run(MobileEntity npc, string function, params object?[] args)
     {
         Record("Run", npc, function, args);
@@ -25,7 +35,9 @@ public sealed class RecordingNpcScriptService : INpcScriptService
             throw Throws;
         }
 
-        return ScriptResult.Completed([]);
+        OnRun?.Invoke(function);
+
+        return Result;
     }
 
     public void Queue(MobileEntity npc, string function, params object?[] args)
