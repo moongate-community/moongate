@@ -298,6 +298,28 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void AContainerThatChangesPlace_AsksTheSaveToWriteItsContentsAgain_UntilTheyAreCommitted()
+    {
+        var items = Service();
+        var chest = Item(0x40000010);
+        chest.PlaceOnGround(MapType.Trammel, new Point3D(1500, 1628, 10));
+        items.Add([chest]);
+        Assert.Empty(items.CaptureRewrites());
+
+        // The bag holds the coin; the dagger holds nothing.
+        items.MoveToContainer(_bag, chest.Id, new Point2D(10, 10));
+        items.MoveToContainer(_dagger, chest.Id, new Point2D(20, 20));
+
+        Assert.Equal([_coin.Id], items.CaptureRewrites());
+
+        items.RewritesCommitted([_coin.Id]);
+        Assert.Empty(items.CaptureRewrites());
+
+        items.PlaceOnGround(_bag, MapType.Trammel, new Point3D(1501, 1628, 10));
+        Assert.Equal([_coin.Id], items.CaptureRewrites());
+    }
+
+    [Fact]
     public void MoveToContainer_PutsTheLiveItemInTheContainerAtThePosition()
     {
         var items = Service();

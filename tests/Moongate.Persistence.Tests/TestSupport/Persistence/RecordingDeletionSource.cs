@@ -21,4 +21,21 @@ public sealed class RecordingDeletionSource : IPersistenceDeletionSource
     {
         Committed.Add(serials);
     }
+
+    /// <summary>
+    ///     The serials the save is asked to write whatever their fingerprint.
+    /// </summary>
+    public List<Serial> Rewrites { get; } = [];
+
+    public List<IReadOnlyCollection<Serial>> RewritesReported { get; } = [];
+
+    public IReadOnlyCollection<Serial> CaptureRewrites()
+    {
+        return Rewrites.ToArray();
+    }
+
+    public void RewritesCommitted(IReadOnlyCollection<Serial> serials)
+    {
+        RewritesReported.Add(serials);
+    }
 }

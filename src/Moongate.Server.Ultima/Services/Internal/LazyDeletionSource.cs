@@ -25,4 +25,14 @@ public sealed class LazyDeletionSource : IPersistenceDeletionSource
     {
         _source.Value.Committed(serials);
     }
+
+    public IReadOnlyCollection<Serial> CaptureRewrites()
+    {
+        return _source.Value.CaptureRewrites();
+    }
+
+    public void RewritesCommitted(IReadOnlyCollection<Serial> serials)
+    {
+        _source.Value.RewritesCommitted(serials);
+    }
 }

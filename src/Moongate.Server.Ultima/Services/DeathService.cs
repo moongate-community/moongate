@@ -1,9 +1,12 @@
 using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
+using Moongate.Scripting.Interfaces;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Death;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -18,6 +21,8 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class DeathService : IDeathService
 {
     public const int RemainsMessage = 30151;
+
+    private const string DeathFunction = "on_death";
 
     private const int FirstMaleDeathSound = 0x15A;
     private const int FirstFemaleDeathSound = 0x150;
@@ -38,9 +43,14 @@ public sealed class DeathService : IDeathService
     private readonly INpcScriptService _scripts;
     private readonly IMobileTemplateService _mobileTemplates;
     private readonly IItemTemplateService _itemTemplates;
+    private readonly IGameLoopService _loop;
+    private readonly Lazy<IScriptEngine> _engine;
     private readonly IContainerLayoutService? _layouts;
     private readonly ILocalizationService? _localization;
     private readonly ILogger _logger;
+
+    // Who is between its death and its removal: it does not die twice.
+    private readonly HashSet<Serial> _dying = [];
 
     public DeathService(
         IMobileService mobiles,
@@ -52,6 +62,8 @@ public sealed class DeathService : IDeathService
         INpcScriptService scripts,
         IMobileTemplateService mobileTemplates,
         IItemTemplateService itemTemplates,
+        IGameLoopService loop,
+        Lazy<IScriptEngine> engine,
         IContainerLayoutService? layouts = null,
         ILocalizationService? localization = null,
         ILogger? logger = null
@@ -66,6 +78,8 @@ public sealed class DeathService : IDeathService
         _scripts = scripts;
         _mobileTemplates = mobileTemplates;
         _itemTemplates = itemTemplates;
+        _loop = loop;
+        _engine = engine;
         _layouts = layouts;
         _localization = localization;
         _logger = logger ?? Log.ForContext<DeathService>();
@@ -73,7 +87,7 @@ public sealed class DeathService : IDeathService
 
     public bool Kill(MobileEntity mobile, MobileEntity? killer = null)
     {
-        if (!mobile.IsNpc || !_mobiles.IsInWorld(mobile.Id))
+        if (!mobile.IsNpc || !_mobiles.IsInWorld(mobile.Id) || !_dying.Add(mobile.Id))
         {
             return false;
         }
@@ -92,9 +106,26 @@ public sealed class DeathService : IDeathService
             _speech.PlaySound(mobile, sound);
         }
 
-        // While the NPC is still there to be read.
-        _scripts.Run(mobile, "on_death", (long?)corpse?.Id.Value, (long?)killer?.Id.Value);
-        _npcs.Remove(mobile.Id);
+        var corpseSerial = (long?)corpse?.Id.Value;
+        var killerSerial = (long?)killer?.Id.Value;
+
+        // A kill asked by a script, such as mobile.kill in an on_think: the engine runs no script inside another, so
+        // on_death and the removal wait for the next turn of the game loop, in this order.
+        if (_engine.Value.IsRunningScript)
+        {
+            _scripts.Queue(mobile, DeathFunction, corpseSerial, killerSerial);
+
+            if (!_loop.TryPost(new LoopActionWorkItem(() => Remove(mobile))))
+            {
+                Remove(mobile);
+            }
+        }
+        else
+        {
+            RunScript(mobile, corpseSerial, killerSerial);
+            Remove(mobile);
+        }
+
         _logger.Information(
             "{Name:l} ({Serial:l}) died at {Location:l} of {Map}, killed by {Killer:l}",
             mobile.Name,
@@ -105,6 +136,25 @@ public sealed class DeathService : IDeathService
         );
 
         return true;
+    }
+
+    // While the NPC is still there to be read. A script that fails does not keep the NPC alive.
+    private void RunScript(MobileEntity mobile, long? corpse, long? killer)
+    {
+        try
+        {
+            _scripts.Run(mobile, DeathFunction, corpse, killer);
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(exception, "{Function:l} of {Name:l} ({Serial:l}) failed", DeathFunction, mobile.Name, mobile.Id);
+        }
+    }
+
+    private void Remove(MobileEntity mobile)
+    {
+        _npcs.Remove(mobile.Id);
+        _dying.Remove(mobile.Id);
     }
 
     // Null when the corpse template is missing or no serial is left: the NPC dies all the same, with what it carried.
@@ -173,17 +223,14 @@ public sealed class DeathService : IDeathService
 
     private bool Drops(ItemEntity item)
     {
-        if (item.Movable == false)
-        {
-            return false;
-        }
-
         if (!_itemTemplates.TryGet(item.TemplateId, out var template))
         {
-            return true;
+            return item.Movable != false;
         }
 
-        return template.Movable != false && template.LootType is not (LootType.Newbied or LootType.Blessed);
+        // The item's own flag wins over its template's.
+        return (item.Movable ?? template.Movable) != false &&
+               template.LootType is not (LootType.Newbied or LootType.Blessed);
     }
 
     // The sound of its template, as UOX3's creature sounds; a human, elf or gargoyle body without one has the four

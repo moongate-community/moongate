@@ -1,10 +1,12 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Scripting.Interfaces;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -33,6 +35,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly RecordingNpcScriptService _scripts = new();
     private readonly StubItemSerialPool _serials = new();
     private readonly CapturingLogSink _log = new();
+    private readonly FakeScriptEngine _engine = new();
+    private readonly StubGameLoop _loop = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                  .Item(0x0EED, TileFlagType.Generic, 0)
                                                  .Item(0x0E75, TileFlagType.Container, 0)
@@ -100,6 +104,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
             _scripts,
             _mobileTemplates,
             _itemTemplates,
+            _loop,
+            new Lazy<IScriptEngine>(() => _engine),
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -248,6 +254,64 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.Equal([_orc.Id], _npcs.Removals);
         // What it carried stays on it and goes with it.
         Assert.Equal(_backpack.Id, _gold.ContainerId);
+    }
+
+    [Fact]
+    public void Kill_FromInsideARunningScript_LeavesTheScriptAndTheRemovalToTheNextTurnOfTheLoop()
+    {
+        // The engine refuses a script started inside another: on_death cannot run nested in the one that kills.
+        _engine.IsRunningScript = true;
+        _loop.DeferTryPost = true;
+
+        Assert.True(_death.Kill(_orc, _aria));
+
+        // The death is seen at once.
+        Assert.Equal([$"Appeared {CorpseSerial}", $"MobileDied 900 {CorpseSerial}"], _view.Calls);
+        Assert.Equal([$"Queue 900 on_death {CorpseSerial} 2"], _scripts.Calls);
+        Assert.Empty(_npcs.Removals);
+
+        _loop.RunDeferred();
+
+        Assert.Equal([_orc.Id], _npcs.Removals);
+    }
+
+    [Fact]
+    public void Kill_AnNpcThatIsAlreadyDying_IsRefused_AndMakesNoSecondCorpse()
+    {
+        _engine.IsRunningScript = true;
+        _loop.DeferTryPost = true;
+        _serials.Serials.Enqueue(new Serial(CorpseSerial + 1));
+        _death.Kill(_orc);
+
+        Assert.False(_death.Kill(_orc));
+
+        Assert.False(_items.TryGet(new Serial(CorpseSerial + 1), out _));
+        Assert.Single(_view.Calls, call => call.StartsWith("MobileDied", StringComparison.Ordinal));
+
+        // Once it is gone it may be told to die again, as a serial used anew.
+        _loop.RunDeferred();
+        Assert.True(_death.Kill(_orc));
+    }
+
+    [Fact]
+    public void Kill_WhoseScriptFails_RemovesTheNpcAllTheSame()
+    {
+        _scripts.Throws = new InvalidOperationException("boom");
+
+        Assert.True(_death.Kill(_orc));
+
+        Assert.Equal([_orc.Id], _npcs.Removals);
+    }
+
+    [Fact]
+    public void Kill_AnItemWhoseOwnFlagSaysItMoves_DropsIt_WhateverItsTemplate()
+    {
+        var statue = Carried(_backpack, "statue", 0x1224, 1);
+        statue.Movable = true;
+
+        _death.Kill(_orc);
+
+        Assert.Equal(new Serial(CorpseSerial), statue.ContainerId);
     }
 
     [Fact]

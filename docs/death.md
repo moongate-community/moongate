@@ -46,6 +46,10 @@ in the place of the amount, as the client expects of the corpse graphic.
 
 When the `corpse` template is missing, the NPC dies all the same and leaves nothing; the log says so.
 
+A bag that lay in the backpack goes into the corpse with what it holds. The world save writes those
+contents again even though they did not change: the database deletes them with the backpack of the
+dead NPC, which they were under.
+
 ## The death sound
 
 The sound is `death` of the NPC template's [`[mobile.sounds]`](templates.md). A human, elf or
@@ -59,10 +63,20 @@ gargoyle body without one dies with one of the four voices of its gender (`0x15A
 mobile.kill(orc, user)
 ```
 
-`mobile.kill` is false for a player and for a mobile that is not in the world.
+`mobile.kill` is false for a player, for a mobile that is not in the world and for an NPC that is
+already dying.
 
 The script of the NPC may define `on_death`, which runs after the corpse exists and before the NPC
-is removed, so the NPC can still be read:
+is removed, so the NPC can still be read. Killed by `.kill`, it runs at once. Killed by a script
+(`mobile.kill` inside an `on_think`, an `on_use`, a gump): the corpse, the death and the sound come
+at once, and `on_death` and the removal on the next turn of the game loop, because a script cannot
+run inside another. Until then the NPC is still in the world, without its things.
+
+- `on_death` must not `wait()`: the NPC is removed all the same, and what comes after the wait finds
+  it gone.
+- An `on_death` that fails is written in the log and the NPC is removed all the same.
+- What the NPC wore runs its own `on_unequip` after the NPC is gone: an item script must stand a
+  wearer that is no longer there.
 
 ```lua
 function orc.on_death(serial, corpse, killer)
