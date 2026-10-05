@@ -186,3 +186,7 @@
 30155 = "You must wait {0} seconds before posting again."
 30156 = "That message is not yours."
 30157 = "The board is busy: post again in a moment."
+
+# Moongate: texts of the animate command (30158-30159).
+30158 = "Makes the character or NPC you target play an action of its body: animate <action>."
+30159 = "{0} plays action {1}."

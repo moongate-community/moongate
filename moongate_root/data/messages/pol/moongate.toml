@@ -186,3 +186,7 @@
 30155 = "Musisz poczekać {0} sekund, zanim napiszesz ponownie."
 30156 = "Ta wiadomość nie jest twoja."
 30157 = "Tablica jest zajęta: napisz ponownie za chwilę."
+
+# Moongate: texts of the animate command (30158-30159).
+30158 = "Każe wskazanej postaci lub NPC wykonać akcję jej ciała: animate <akcja>."
+30159 = "{0} wykonuje akcję {1}."

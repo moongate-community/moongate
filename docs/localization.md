@@ -64,7 +64,7 @@ chosen language stays in English, so a partial translation still works. The log
 reports how many messages fell back:
 
 ```text
-Found 5619 messages in ita, 3 of them in English
+Found 5621 messages in ita, 3 of them in English
 ```
 
 ### Validation at startup

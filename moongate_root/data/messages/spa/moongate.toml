@@ -186,3 +186,7 @@
 30155 = "Debes esperar {0} segundos antes de volver a publicar."
 30156 = "Ese mensaje no es tuyo."
 30157 = "El tablón está ocupado: publica de nuevo en un momento."
+
+# Moongate: texts of the animate command (30158-30159).
+30158 = "Hace que el personaje o PNJ que selecciones ejecute una acción de su cuerpo: animate <acción>."
+30159 = "{0} ejecuta la acción {1}."

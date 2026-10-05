@@ -186,3 +186,7 @@
 30155 = "Před dalším příspěvkem musíš počkat {0} sekund."
 30156 = "Ta zpráva není tvoje."
 30157 = "Nástěnka je zaneprázdněná: zkus to za chvíli znovu."
+
+# Moongate: texts of the animate command (30158-30159).
+30158 = "Přiměje vybranou postavu nebo NPC provést akci jejího těla: animate <akce>."
+30159 = "{0} provádí akci {1}."

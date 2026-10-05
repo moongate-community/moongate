@@ -66,6 +66,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.RemoveDescription
         );
+        container.RegisterCommand<AnimateCommand>(
+            "animate",
+            "Makes the character or NPC you target play an action of its body: animate <action>.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.AnimateDescription
+        );
         container.RegisterCommand<KillCommand>(
             "kill",
             "Kills the NPC you target: it dies where it stands and leaves its corpse.",

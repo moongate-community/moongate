@@ -138,4 +138,6 @@ public static class CommandMessages
     public const int KillDescription = 30152;
     public const int Killed = 30153;
     public const int PlayersCannotDie = 30154;
+    public const int AnimateDescription = 30158;
+    public const int Animated = 30159;
 }
