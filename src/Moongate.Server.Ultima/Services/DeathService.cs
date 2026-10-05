@@ -23,12 +23,22 @@ public sealed class DeathService : IDeathService
     public const int RemainsMessage = 30151;
 
     private const string DeathFunction = "on_death";
-    private const string DressTimer = "corpse-dress";
+    private const string FallTimer = "npc-fall";
 
     /// <summary>
-    ///     How long a body takes to fall, as the client plays it: a corpse is drawn dressed only after it.
+    ///     The action a human body falls dead with, forward: the one the client draws its corpse lying in.
     /// </summary>
-    public static readonly TimeSpan FallTime = TimeSpan.FromSeconds(2);
+    public const int HumanFallAction = 21;
+
+    /// <summary>
+    ///     The frames of the fall asked of the client.
+    /// </summary>
+    public const int HumanFallFrames = 10;
+
+    /// <summary>
+    ///     How long the fall of a human body lasts on the client: its corpse takes its place when it is over.
+    /// </summary>
+    public static readonly TimeSpan FallTime = TimeSpan.FromMilliseconds(1500);
 
     private const int FirstMaleDeathSound = 0x15A;
     private const int FirstFemaleDeathSound = 0x150;
@@ -49,7 +59,6 @@ public sealed class DeathService : IDeathService
     private readonly IGameLoopService _loop;
     private readonly Lazy<IScriptEngine> _engine;
     private readonly ITimerService _timers;
-    private readonly TimeProvider _time;
     private readonly IContainerLayoutService? _layouts;
     private readonly ILocalizationService? _localization;
     private readonly ILogger _logger;
@@ -70,7 +79,6 @@ public sealed class DeathService : IDeathService
         IGameLoopService loop,
         Lazy<IScriptEngine> engine,
         ITimerService timers,
-        TimeProvider time,
         IContainerLayoutService? layouts = null,
         ILocalizationService? localization = null,
         ILogger? logger = null
@@ -88,7 +96,6 @@ public sealed class DeathService : IDeathService
         _loop = loop;
         _engine = engine;
         _timers = timers;
-        _time = time;
         _layouts = layouts;
         _localization = localization;
         _logger = logger ?? Log.ForContext<DeathService>();
@@ -101,21 +108,76 @@ public sealed class DeathService : IDeathService
             return false;
         }
 
-        var corpse = MakeCorpse(mobile, killer);
-
-        if (corpse is not null)
-        {
-            HoldDress(corpse);
-            _view.ItemAppeared(corpse);
-        }
-
-        _view.MobileDied(mobile, corpse?.Id ?? default);
+        _logger.Information(
+            "{Name:l} ({Serial:l}) died at {Location:l} of {Map}, killed by {Killer:l}",
+            mobile.Name,
+            mobile.Id,
+            mobile.Location,
+            mobile.Map,
+            killer?.Name ?? "nobody"
+        );
 
         if (DeathSound(mobile) is { } sound)
         {
             _speech.PlaySound(mobile, sound);
         }
 
+        if (CorpseProps.IsHumanBody(mobile.Body))
+        {
+            Fall(mobile, killer);
+
+            return true;
+        }
+
+        var corpse = MakeCorpse(mobile, killer);
+
+        if (corpse is not null)
+        {
+            _view.ItemAppeared(corpse);
+        }
+
+        _view.MobileDied(mobile, corpse?.Id ?? default);
+        Finish(mobile, corpse, killer);
+
+        return true;
+    }
+
+    // A human, elf or gargoyle body plays its fall itself and leaves its corpse when the fall is over. The death packet
+    // (0xAF) is not used for it: ClassicUO takes the clothes off a mobile that dies by it, since 2019, so it falls
+    // naked, while an action it is told to play is drawn dressed. UOX3 plays the same action for an NPC a guard kills.
+    private void Fall(MobileEntity mobile, MobileEntity? killer)
+    {
+        // It neither walks nor is pushed while it falls.
+        mobile.Frozen = true;
+        _view.MobileAnimated(mobile, HumanFallAction, HumanFallFrames, 1);
+        _timers.RegisterTimer(
+            FallTimer,
+            FallTime,
+            () =>
+            {
+                // Removed while it fell, such as by the remove command: nothing is left to do.
+                if (!_mobiles.TryGet(mobile.Id, out var live) || !ReferenceEquals(live, mobile))
+                {
+                    _dying.Remove(mobile.Id);
+
+                    return;
+                }
+
+                var corpse = MakeCorpse(mobile, killer);
+
+                if (corpse is not null)
+                {
+                    _view.ItemAppeared(corpse);
+                }
+
+                Finish(mobile, corpse, killer);
+            }
+        );
+    }
+
+    // The script is told and the NPC leaves the world.
+    private void Finish(MobileEntity mobile, ItemEntity? corpse, MobileEntity? killer)
+    {
         var corpseSerial = (long?)corpse?.Id.Value;
         var killerSerial = (long?)killer?.Id.Value;
 
@@ -135,46 +197,6 @@ public sealed class DeathService : IDeathService
             RunScript(mobile, corpseSerial, killerSerial);
             Remove(mobile);
         }
-
-        _logger.Information(
-            "{Name:l} ({Serial:l}) died at {Location:l} of {Map}, killed by {Killer:l}",
-            mobile.Name,
-            mobile.Id,
-            mobile.Location,
-            mobile.Map,
-            killer?.Name ?? "nobody"
-        );
-
-        return true;
-    }
-
-    // The corpse of a human body is shown bare while who died falls, and dressed once the fall is over: the client
-    // takes what a corpse is drawn wearing off the mobile, which would die naked.
-    private void HoldDress(ItemEntity corpse)
-    {
-        if (!corpse.TryGetProp<int>(CorpseProps.Body, out var body) ||
-            !CorpseProps.IsHumanBody(body) ||
-            corpse.Props is not { } props ||
-            !(props.ContainsKey(CorpseProps.Worn) || props.ContainsKey(CorpseProps.Hair) || props.ContainsKey(CorpseProps.Beard)))
-        {
-            return;
-        }
-
-        corpse.SetProp(CorpseProps.DressAt, (_time.GetUtcNow() + FallTime).ToUnixTimeMilliseconds());
-        _timers.RegisterTimer(
-            DressTimer,
-            FallTime,
-            () =>
-            {
-                corpse.RemoveProp(CorpseProps.DressAt);
-
-                // Still there: it may have been removed meanwhile.
-                if (_items.TryGet(corpse.Id, out var live) && ReferenceEquals(live, corpse))
-                {
-                    _view.ItemAppeared(corpse);
-                }
-            }
-        );
     }
 
     // While the NPC is still there to be read. A script that fails does not keep the NPC alive.

@@ -7,7 +7,6 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Scripting;
-using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
@@ -38,7 +37,6 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly FakeScriptEngine _engine = new();
     private readonly StubGameLoop _loop = new();
     private readonly RecordingTimerService _timers = new();
-    private readonly SettableClock _clock = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                  .Item(0x0EED, TileFlagType.Generic, 0)
                                                  .Item(0x0E75, TileFlagType.Container, 0)
@@ -109,7 +107,6 @@ public sealed class DeathServiceTests : IAsyncLifetime
             _loop,
             new Lazy<IScriptEngine>(() => _engine),
             _timers,
-            _clock,
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -165,49 +162,70 @@ public sealed class DeathServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Kill_AHumanBody_HoldsTheDressOfItsCorpseUntilTheFallIsOver_ThenShowsItAgain()
+    public void Kill_AHumanBody_PlaysItsFallAndItsSound_AndLeavesItsCorpseOnlyWhenTheFallIsOver()
     {
-        // The client takes what a corpse wears off the mobile: told at once, it would fall naked.
+        // ClassicUO undresses a mobile that dies by the death packet: a human body is told to play the fall instead.
         _orc.Body = 0x0190;
 
-        _death.Kill(_orc);
+        Assert.True(_death.Kill(_orc, _aria));
 
-        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
-        Assert.Equal(
-            (_clock.Now + DeathService.FallTime).ToUnixTimeMilliseconds(),
-            corpse.GetProp<long>("corpse.dress_at")
-        );
+        Assert.Equal([$"Animated 900 {DeathService.HumanFallAction} {DeathService.HumanFallFrames} 1"], _view.Calls);
+        Assert.Single(_speech.Sounds);
+        Assert.True(_orc.Frozen);
+        Assert.False(_items.TryGet(new Serial(CorpseSerial), out _));
+        Assert.Equal(_orc.Id, _sword.MobileId);
+        Assert.Empty(_npcs.Removals);
+        Assert.Empty(_scripts.Calls);
         var timer = Assert.Single(_timers.Timers);
         Assert.Equal((DeathService.FallTime, false), (timer.Interval, timer.Repeat));
         _view.Calls.Clear();
 
         _timers.Fire(timer.Id);
 
-        Assert.False(corpse.Props!.ContainsKey("corpse.dress_at"));
+        // The corpse, with what it wore, then the script and the removal: no death packet.
         Assert.Equal([$"Appeared {CorpseSerial}"], _view.Calls);
+        Assert.Equal(new Serial(CorpseSerial), _sword.ContainerId);
+        Assert.Equal([$"Run 900 on_death {CorpseSerial} 2"], _scripts.Calls);
+        Assert.Equal([_orc.Id], _npcs.Removals);
     }
 
     [Fact]
-    public void Kill_AHumanBody_WhoseCorpseIsGoneBeforeTheFallIsOver_ShowsNothingAgain()
+    public void Kill_AHumanBodyThatIsFalling_IsRefused_UntilItIsGone()
     {
         _orc.Body = 0x0190;
         _death.Kill(_orc);
-        _items.Remove([new Serial(CorpseSerial)]);
+
+        Assert.False(_death.Kill(_orc));
+
+        Assert.Single(_timers.Timers);
+        Assert.Single(_view.Calls);
+    }
+
+    [Fact]
+    public async Task Kill_AHumanBodyRemovedWhileItFalls_LeavesNoCorpse_AndMayDieAgainUnderThatSerial()
+    {
+        _orc.Body = 0x0190;
+        _death.Kill(_orc);
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.Delete(_orc.Id));
         _view.Calls.Clear();
 
         _timers.Fire(Assert.Single(_timers.Timers).Id);
 
         Assert.Empty(_view.Calls);
+        Assert.Empty(_scripts.Calls);
+        Assert.False(_items.TryGet(new Serial(CorpseSerial), out _));
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(_orc));
+        Assert.True(_death.Kill(_orc));
     }
 
     [Fact]
-    public void Kill_AMonster_OrAHumanBodyWithNothingToWear_HoldsNothing()
+    public void Kill_AMonster_DiesAtOnceByTheDeathPacket_WithNoTimer()
     {
         _death.Kill(_orc);
 
-        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
-        Assert.False(corpse.Props!.ContainsKey("corpse.dress_at"));
         Assert.Empty(_timers.Timers);
+        Assert.Contains($"MobileDied 900 {CorpseSerial}", _view.Calls);
+        Assert.False(_orc.Frozen);
     }
 
     [Fact]

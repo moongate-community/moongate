@@ -288,7 +288,10 @@ tells the client its body in the place of the amount and the way it lies in the 
 ServUO does: the item itself keeps amount 1, and both come from its props `corpse.body` and
 `corpse.direction`. After the corpse of a human, elf or gargoyle body come `0x3C`, with the worn
 items still inside it plus its hair and beard under virtual serials, and `0x89`, which names the
-layer of each as the layer plus one and ends with a zero byte: the client draws the corpse dressed.
+layer of each as the layer plus one and ends with a zero byte: the client draws the corpse dressed. Such a
+body gets no `0xAF`: it is told to play its fall (`0x6E`, action 21) and its corpse comes 1.5 seconds
+later, because ClassicUO deletes the worn items of a mobile that dies by `0xAF` and shows it falling
+naked.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.
