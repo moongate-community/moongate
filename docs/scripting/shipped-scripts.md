@@ -40,7 +40,7 @@ guard is in one of two states:
 | State | What it does | It ends when |
 | --- | --- | --- |
 | post | Strolls around its post, the area of its spawn region, about a step every four seconds, with `npc.wander`, which also walks it back from outside | It sees a criminal: to arrest |
-| arrest | Goes into war mode; when it is not beside the criminal it appears on it, with a puff of smoke where it stood and where it comes and the teleport sound; says "Thou wilt regret thine actions, swine!" (message 30138). Then it stays on the criminal, facing it, and runs after it with `npc.walk_to` when it moves. Beside a criminal NPC it strikes (an attack animation) and a second later the NPC is dead: `mobile.kill`, with the guard as its killer, so it [dies as any other](../death.md) and leaves its corpse | The NPC is killed; or the criminal is pardoned or its time is over, hides, leaves the guarded region, goes farther than 24 tiles from the guard or from its post, or cannot be reached for 10 seconds: back to its post, in peace |
+| arrest | Goes into war mode; when it is not beside the criminal it appears on a free tile a step from it (`world.spot_beside`; on it when none is free), with a puff of smoke where it stood and where it comes and the teleport sound; says "Thou wilt regret thine actions, swine!" (message 30138). Then it stays on the criminal, facing it, and runs after it with `npc.walk_to` when it moves. Beside a criminal NPC it strikes (an attack animation) and a second later the NPC is dead: `mobile.kill`, with the guard as its killer, so it [dies as any other](../death.md) and leaves its corpse | The NPC is killed; or the criminal is pardoned or its time is over, hides, leaves the guarded region, goes farther than 24 tiles from the guard or from its post, or cannot be reached for 10 seconds: back to its post, in peace |
 
 It looks for a criminal every second: the nearest player or NPC of `npc.nearby` within 12 tiles whose
 `mobile.criminal` is true, that stands in a guarded region (`world.is_guarded`) no farther than 24
@@ -51,7 +51,7 @@ hidden player, a game master or an administrator. An NPC it has just killed is s
 falls: the guard does not turn on it again. A teleport that is refused leaves the guard where it is, to
 run to the criminal.
 
-A guard that was called bears the prop `guard.summoned`: it came onto its criminal and said its line
+A guard that was called bears the prop `guard.summoned`: it came beside its criminal and said its line
 already, so it stays on it in silence and does not stroll, and once that criminal is let go it arrests
 no other and waits to be sent away. What a guard is doing is kept in memory by its serial, not saved.
 The numbers (12, 24, the 10 seconds) are constants at the top of the file.

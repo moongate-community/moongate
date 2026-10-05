@@ -178,9 +178,12 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors.Select(error => error.ToString()));
         Assert.Equal(["war 256 True"], _state.Flags);
-        Assert.Equal((_guard, MapType.Trammel, new Point3D(1605, 1600, 0)), Assert.Single(_teleports.Teleports));
+        // Beside the criminal, a step away, not on it.
+        var teleport = Assert.Single(_teleports.Teleports);
+        Assert.Equal((_guard, MapType.Trammel), (teleport.Mobile, teleport.Map));
+        Assert.Equal(1, Math.Max(Math.Abs(teleport.Location.X - 1605), Math.Abs(teleport.Location.Y - 1600)));
         // A puff where it stood and one where it comes.
-        Assert.Equal([new Point3D(1600, 1600, 0), new Point3D(1605, 1600, 0)], _effects.At.Select(effect => effect.Location));
+        Assert.Equal([new Point3D(1600, 1600, 0), teleport.Location], _effects.At.Select(effect => effect.Location));
         Assert.All(_effects.At, effect => Assert.Equal((int)EffectGraphicType.Smoke, effect.Options.Graphic));
         Assert.Contains((_guard, TeleportSound), _speech.Sounds);
         Assert.Equal((_guard, "Ti pentirai delle tue azioni, canaglia!"), Assert.Single(_speech.Said));

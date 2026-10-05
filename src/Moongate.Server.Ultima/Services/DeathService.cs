@@ -63,6 +63,7 @@ public sealed class DeathService : IDeathService
     private readonly Lazy<IScriptEngine> _engine;
     private readonly ITimerService _timers;
     private readonly IContainerLayoutService? _layouts;
+    private readonly ICrimeService? _crimes;
     private readonly ILocalizationService? _localization;
     private readonly ILogger _logger;
 
@@ -86,6 +87,7 @@ public sealed class DeathService : IDeathService
         Lazy<IScriptEngine> engine,
         ITimerService timers,
         IContainerLayoutService? layouts = null,
+        ICrimeService? crimes = null,
         ILocalizationService? localization = null,
         ILogger? logger = null
     )
@@ -103,6 +105,7 @@ public sealed class DeathService : IDeathService
         _engine = engine;
         _timers = timers;
         _layouts = layouts;
+        _crimes = crimes;
         _localization = localization;
         _logger = logger ?? Log.ForContext<DeathService>();
     }
@@ -112,6 +115,12 @@ public sealed class DeathService : IDeathService
         if (!mobile.IsNpc || !_mobiles.IsInWorld(mobile.Id) || !_dying.Add(mobile.Id))
         {
             return false;
+        }
+
+        // The dead are wanted no more: a body that still falls is not a criminal for the next guard.
+        if (mobile.Criminal)
+        {
+            _crimes?.Pardon(mobile);
         }
 
         _logger.Information(

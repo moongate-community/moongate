@@ -14,7 +14,7 @@
 --             second it looks for a criminal: a player or an NPC whose name is grey, within
 --             12 tiles and in sight, standing in a guarded region no farther than
 --             24 tiles from the post.
---     arrest  it saw one: it goes into war mode, appears on it with the teleport
+--     arrest  it saw one: it goes into war mode, appears beside it with the teleport
 --             effect and sound when it is not beside it, and says its line. Then
 --             it stays on it, running after it when it moves. Beside an NPC it
 --             strikes, and a second later the NPC is dead (mobile.kill, with
@@ -150,13 +150,16 @@ local function start_arrest(serial, mind, here, criminal)
 
     local there = mobile.location(criminal)
 
-    -- Not beside it: the guard is gone from where it stood and stands on the criminal, as ModernUO's. A teleport
-    -- that is refused leaves it where it is, to run there.
-    if (npc.distance_to(serial, there.x, there.y) > 1 or math.abs(there.z - here.z) > STOREY)
-        and mobile.teleport(serial, there.x, there.y, there.z) then
-        puff(here)
-        puff(there)
-        npc.play_sound(serial, TELEPORT_SOUND)
+    -- Not beside it: the guard is gone from where it stood and stands beside the criminal, on a free tile a step
+    -- from it, or on it when there is none. A teleport that is refused leaves it where it is, to run there.
+    if npc.distance_to(serial, there.x, there.y) > 1 or math.abs(there.z - here.z) > STOREY then
+        local spot = world.spot_beside(there.map, there.x, there.y, there.z) or there
+
+        if mobile.teleport(serial, spot.x, spot.y, spot.z) then
+            puff(here)
+            puff({ map = there.map, x = spot.x, y = spot.y, z = spot.z })
+            npc.play_sound(serial, TELEPORT_SOUND)
+        end
     end
 
     -- A guard that was called said it when it came.

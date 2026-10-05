@@ -216,6 +216,21 @@ public sealed class WorldModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SpotBeside_IsATileAStepAway_ThatCanBeSteppedOn_OrNil()
+    {
+        var result = Run("local spot = world.spot_beside('Trammel', 1600, 1600, 0) return spot.map, spot.x, spot.y, spot.z");
+
+        Assert.Equal((int)MapType.Trammel, result[0].Read<int>());
+        Assert.Equal(1, Math.Max(Math.Abs(result[1].Read<int>() - 1600), Math.Abs(result[2].Read<int>() - 1600)));
+        Assert.Equal(0, result[3].Read<int>());
+
+        _movement.Allow = false;
+
+        Assert.Equal(LuaValue.Nil, Run("return world.spot_beside('Trammel', 1600, 1600, 0)")[0]);
+        Assert.Equal(LuaValue.Nil, Run("return world.spot_beside('Trammel', -5, 1600, 0)")[0]);
+    }
+
+    [Fact]
     public void WeatherAndSeason_ReadTheSky()
     {
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
