@@ -57,9 +57,8 @@ appear in the default console output. Use templates rather than concatenating
 changing values into messages.
 
 The `npc`, `item`, `mobile`, `effect`, `world`, `target`, `prompt`, `bank` and `gump` modules serve the [mobile](scripting/mobile-scripts.md) and
-[item scripts](scripting/item-scripts.md). A script reads and writes a mobile's numbers and skills; nothing
-uses them yet, so a skill a script sets gains nothing by itself (see the
-[Roadmap](roadmap.md#phase-0-what-lua-needs-before-any-gameplay)). To expose application
+[item scripts](scripting/item-scripts.md). A script reads and writes a mobile's numbers and skills, and
+tries a mobile at a skill with `skill.check`, which may raise it (see [Skills](skills.md)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 Some modules have a page that says more:

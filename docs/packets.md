@@ -76,7 +76,8 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x95` | `HuePickerPacket` | Outgoing | Fixed 9 | — |
 | `0x95` | `HuePickerResponsePacket` | Incoming | Fixed 9 | `HuePickerResponsePacketHandler`: gives the hue picked to the player's open picker |
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0x12`, `0xB8`, `0xE1`, `0xF0` | `TextCommandPacket`, `ProfileRequestPacket`, `ClientTypePacket`, `ProtocolExtensionPacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x12` | `TextCommandPacket` | Incoming | Variable | `TextCommandPacketHandler`: kind `0x24` [uses the skill](skills.md) whose number starts the text; the other kinds are ignored for now (Debug log) |
+| `0xB8`, `0xE1`, `0xF0` | `ProfileRequestPacket`, `ClientTypePacket`, `ProtocolExtensionPacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip; the others are ignored for now |
 | `0xD6` | `QueryPropertiesPacket` | Incoming | Variable, at most 500 serials | `QueryPropertiesPacketHandler`: one `0xD6` per object the character sees |
 | `0xD6` | `PropertyListPacket` | Outgoing | Variable | — |

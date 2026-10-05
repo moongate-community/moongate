@@ -15,8 +15,10 @@ using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.Support.Timing;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
@@ -28,6 +30,8 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
     private readonly StubBankService _bank = new();
     private readonly RecordingMoveOverService _moveOver = new();
     private readonly RecordingFatigueService _fatigue = new();
+    private readonly RecordingMobileStateService _state = new();
+    private readonly RecordingSpeechService _speech = new();
     private readonly StubMovementService _movement = new() { LandingZ = 10 };
     private readonly StubPacketSendService _sender = new();
     private readonly RecordingWorldViewService _view = new();
@@ -363,6 +367,57 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(new Point3D(1496, 1628, 10), _aria.Location);
     }
 
+    [Fact]
+    public async Task Handle_AStepOfAHiddenPlayer_ShowsIt_AndSaysSo()
+    {
+        await EnterAsync();
+        _aria.Hidden = true;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.False(_aria.Hidden);
+        Assert.Equal([(_aria, MoveRequestPacketHandler.RevealedCliloc, "")], _speech.ToldClilocs);
+    }
+
+    [Fact]
+    public async Task Handle_ATurnOrARefusedStepOfAHiddenPlayer_KeepsItHidden()
+    {
+        await EnterAsync();
+        _aria.Hidden = true;
+
+        await StepAsync(DirectionType.South, 0);
+        _aria.Frozen = true;
+        await StepAsync(DirectionType.South, 1);
+
+        Assert.True(_aria.Hidden);
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
+    [Fact]
+    public async Task Handle_AStepOfAPlayerInSight_SaysNothing()
+    {
+        await EnterAsync();
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
+    [Theory]
+    [InlineData(AccountType.GameMaster)]
+    [InlineData(AccountType.Administrator)]
+    public async Task Handle_AStepOfHiddenStaff_KeepsItHidden(AccountType account)
+    {
+        await EnterAsync();
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, account));
+        _aria.Hidden = true;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.True(_aria.Hidden);
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
     private async Task EnterAsync()
     {
         _fixture = await SessionFixture.CreateAsync();
@@ -373,7 +428,7 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
 
     private Task StepAsync(DirectionType direction, byte sequence, bool running = false)
     {
-        var handler = new MoveRequestPacketHandler(_mobiles, _view, _sender, _time, _bank, _moveOver, _fatigue);
+        var handler = new MoveRequestPacketHandler(_mobiles, _view, _sender, _time, _bank, _moveOver, _fatigue, _state, _speech);
         var packet = new MoveRequestPacket { Direction = direction, Running = running, Sequence = sequence, FastWalkKey = 0 };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));

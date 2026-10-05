@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 78 done, 🟡 44 partly done, ❌ 146 not built yet.
+**268 systems:** ✅ 78 done, 🟡 47 partly done, ❌ 143 not built yet.
 
 **Coverage: 29%** of the systems done, **37%** counting a partly done system as half.
 
@@ -46,7 +46,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | --- | --- | --- |
 | Creation: races, professions, starting items, starting cities | ✅ | [Personalized starting letters](data-files/starting-items.md#personalized-starting-letters) saved in the same creation transaction |
 | Stats | 🟡 | Rolled, stored and set by scripts; no gain, caps or locks |
-| Skills | 🟡 | Stored, shown in the skill window and set by scripts; no use, gain or locks |
+| Skills | 🟡 | Stored, shown in the skill window and set by scripts; [used, checked and gained](skills.md). The client cannot change the locks yet |
 | Hit points, mana and stamina regeneration | ✅ | A point at a time, ModernUO's classic rates; mana by intelligence and Meditation; rates per mobile from scripts |
 | Titles | 🟡 | Fame and karma titles in the paperdoll; no skill titles |
 | Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); nothing gains or loses them yet |
@@ -54,7 +54,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Crimes, criminal timer and murder counts | 🟡 | The criminal flag with its timer, saved with the mobile, set by scripts and by the staff; no act makes a criminal yet, no murder counts |
 | Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
-| Hiding and stealth | ❌ | A script can hide a mobile with `mobile.set_hidden`; no skill |
+| Hiding and stealth | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) hides a player until its first step; no Stealth, and speaking or being hit does not show it yet |
 | Death, corpses, ghosts and resurrection | 🟡 | An NPC dies by `.kill` or `mobile.kill`: corpse with what it carried, drawn dressed for a human body, death animation and sound, decay after 7 minutes. No player death, ghosts or resurrection; nothing fights yet |
 | Young player protection | ❌ | |
 | Murder reports and bounty boards | ❌ | |
@@ -109,7 +109,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| Using a skill and gaining it | ❌ | |
+| Using a skill and gaining it | 🟡 | A [skill](skills.md) is used from the skill window (`scripts/skills/<skill>.lua`), checked by `skill.check` and gained with ModernUO's formula; only Hiding is shipped, and stats do not rise with skills yet |
 | Gathering: mining, lumberjacking, fishing | ❌ | |
 | Crafting engine: menus, recipes, resources, quality | ❌ | |
 | The crafts: blacksmithing, tailoring, carpentry, tinkering, alchemy, cooking, inscription, fletching, cartography | ❌ | |
@@ -125,7 +125,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Carving corpses | ❌ | |
 | Resource regions (ore, wood, fish per area, regrowing) | ❌ | |
 | Resource processing: smelting, looms, spinning wheels, hides | ❌ | |
-| Skill classes and caps (skill total, stat total) | ❌ | |
+| Skill classes and caps (skill total, stat total) | 🟡 | The skill total stops at `ultima.skills.total_cap` (700.0) and lowers the skills locked down; no stat total, no classes |
 | Training objects: dummies, pickpocket dips, archery buttes | ❌ | |
 
 ## NPCs
@@ -311,7 +311,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Script events | 🟡 | NPC, item and character events, `player_say` and `player_region_changed`; no combat or skill events |
 | Events that can refuse the default action | 🟡 | Items: `on_use`, `can_pick_up`, `can_drop`, `can_equip`, `can_insert`; none yet for skills and combat |
 | Region enter and leave events | 🟡 | `player_region_changed` for players; not for NPCs |
-| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`, `prompt`; a mobile's stats and skills are read and written |
+| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`, `prompt`, `skill`; a mobile's stats and skills are read and written |
 | World queries from scripts (objects near, in sight, by serial) | ✅ | `world.mobiles_in_range`, `world.items_in_range`, `world.players`, `world.line_of_sight`, `world.standing_z`, `world.region`, `world.is_occupied`, `world.carries` |
 | Creating and moving items from scripts | ✅ | Create on the ground or in a backpack, loot into a container, move, equip, find by template, consume, delete |
 | Messages, target cursor and prompts from scripts | ✅ | `npc.say`, `mobile.message`, `item.message`, `item.message_cliloc`, `target.pick`, `prompt.ask`, gumps |

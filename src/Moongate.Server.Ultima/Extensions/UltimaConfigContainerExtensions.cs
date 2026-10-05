@@ -30,6 +30,7 @@ public static class UltimaConfigContainerExtensions
         container.RegisterInstance(ultima.Npcs);
         container.RegisterInstance(ultima.Regeneration);
         container.RegisterInstance(ultima.Crime);
+        container.RegisterInstance(ultima.Skills);
         container.RegisterInstance(ultima.Spawns);
         container.RegisterInstance(ultima.Jail);
         container.RegisterInstance(ultima.BulletinBoards);
