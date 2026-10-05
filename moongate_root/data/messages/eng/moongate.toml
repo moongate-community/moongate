@@ -181,3 +181,8 @@
 30152 = "Kills the NPC you target: it dies where it stands and leaves its corpse."
 30153 = "{0} is dead."
 30154 = "Players cannot die yet."
+
+# Moongate: texts of the bulletin boards (30155-30157, to who posts or removes).
+30155 = "You must wait {0} seconds before posting again."
+30156 = "That message is not yours."
+30157 = "The board is busy: post again in a moment."

@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.BulletinBoards;
+using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
@@ -505,6 +506,6 @@ public sealed class BulletinBoardServiceTests
             }
         }
 
-        return new BulletinBoardService(_table, _items, _templates, serials, _timers, _config, _clock);
+        return new BulletinBoardService(_table, _items, _templates, serials, _timers, _config, _clock, new StubPacketSendService());
     }
 }

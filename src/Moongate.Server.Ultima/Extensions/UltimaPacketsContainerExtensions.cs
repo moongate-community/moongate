@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Ultima.Handlers.BulletinBoards;
 using Moongate.Server.Ultima.Handlers.Characters;
 using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Handlers.Gumps;
@@ -71,6 +72,7 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterIncomingPacket<UpdateRangePacket>();
         container.RegisterPacketHandler<UpdateRangePacket, UpdateRangePacketHandler>();
         container.RegisterIncomingPacket<BulletinBoardRequestPacket>();
+        container.RegisterPacketHandler<BulletinBoardRequestPacket, BulletinBoardRequestPacketHandler>();
         container.RegisterIncomingPacket<ExtendedCommandPacket>();
         container.RegisterPacketHandler<ExtendedCommandPacket, ExtendedCommandPacketHandler>();
         container.RegisterIncomingPacket<QueryPropertiesPacket>();

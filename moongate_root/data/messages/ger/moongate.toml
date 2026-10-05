@@ -181,3 +181,8 @@
 30152 = "Tötet den anvisierten NPC: Er stirbt an Ort und Stelle und hinterlässt seine Leiche."
 30153 = "{0} ist tot."
 30154 = "Spieler können noch nicht sterben."
+
+# Moongate: texts of the bulletin boards (30155-30157, to who posts or removes).
+30155 = "Du musst {0} Sekunden warten, bevor du wieder schreiben kannst."
+30156 = "Diese Nachricht gehört nicht dir."
+30157 = "Das Brett ist beschäftigt: Schreibe in einem Moment noch einmal."

@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
+using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.BulletinBoards;
@@ -25,6 +26,12 @@ public interface IBulletinBoardService : IMoongateStartupService, IPersistenceDe
     ///     Gets whether the item is a bulletin board: its template has the script of one.
     /// </summary>
     bool IsBoard(ItemEntity item);
+
+    /// <summary>
+    ///     Opens the board on the client of the session: its expired threads go first, then the client gets the
+    ///     board (0x71) and its messages as the content of a container (0x3C). False when they could not be sent.
+    /// </summary>
+    bool Open(ItemEntity board, GameSession session);
 
     /// <summary>
     ///     Gets the messages of the board: the threads from the oldest, each followed by its replies in the order

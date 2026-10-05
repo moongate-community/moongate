@@ -1,12 +1,16 @@
 using System.Collections.Concurrent;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
+using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.BulletinBoards;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Packets.BulletinBoards;
+using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.BulletinBoards;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -31,6 +35,15 @@ public sealed class BulletinBoardService : IBulletinBoardService
     /// </summary>
     public const int MessageItemId = 0x0EB0;
 
+    /// <summary>
+    ///     What a board without a name of its own is called on the client.
+    /// </summary>
+    public const string DefaultName = "bulletin board";
+
+    public const int WaitMessage = 30155;
+    public const int NotYoursMessage = 30156;
+    public const int BusyMessage = 30157;
+
     public const int MaxSubject = 60;
     public const int MaxLine = 80;
     public const int MaxLines = 32;
@@ -47,6 +60,7 @@ public sealed class BulletinBoardService : IBulletinBoardService
     private readonly ITimerService _timers;
     private readonly BulletinBoardsConfig _config;
     private readonly TimeProvider _time;
+    private readonly IPacketSendService _sender;
 
     private readonly Dictionary<Serial, BulletinMessageEntity> _messages = new();
 
@@ -65,6 +79,7 @@ public sealed class BulletinBoardService : IBulletinBoardService
         ITimerService timers,
         BulletinBoardsConfig config,
         TimeProvider time,
+        IPacketSendService sender,
         ILogger? logger = null
     )
     {
@@ -76,6 +91,7 @@ public sealed class BulletinBoardService : IBulletinBoardService
         _timers = timers;
         _config = config;
         _time = time;
+        _sender = sender;
     }
 
     public async Task StartAsync()
@@ -109,6 +125,28 @@ public sealed class BulletinBoardService : IBulletinBoardService
     public bool IsBoard(ItemEntity item)
     {
         return _templates.TryGet(item.TemplateId, out var template) && template.ScriptId == ScriptId;
+    }
+
+    public bool Open(ItemEntity board, GameSession session)
+    {
+        Expire(board.Id);
+
+        var name = string.IsNullOrWhiteSpace(board.Name) ? DefaultName : board.Name;
+
+        // The board first, then its messages as the items of a container: the client asks for each summary itself.
+        return _sender.TrySend(session.SessionId, new BulletinBoardDisplayPacket(board.Id, name)) &&
+               _sender.TrySend(
+                   session.SessionId,
+                   new ContainerContentPacket(GetMessages(board.Id).Select(AsItem), session.UsesContainerGrid())
+               );
+    }
+
+    /// <summary>
+    ///     Gets the message as the item the client lists it as: a note inside its board.
+    /// </summary>
+    public static ItemEntity AsItem(BulletinMessageEntity message)
+    {
+        return new() { Id = message.Id, ItemId = MessageItemId, Amount = 1, ContainerId = message.BoardId, GridX = 0, GridY = 0 };
     }
 
     public IReadOnlyList<BulletinMessageEntity> GetMessages(Serial board)

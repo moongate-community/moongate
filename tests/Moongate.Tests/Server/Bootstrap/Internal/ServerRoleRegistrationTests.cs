@@ -27,6 +27,7 @@ using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Motd;
+using Moongate.Server.Ultima.Handlers.BulletinBoards;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.Gumps;
@@ -202,6 +203,7 @@ public sealed class ServerRoleRegistrationTests
         Assert.NotNull(container.Resolve<JailModule>());
         Assert.NotNull(container.Resolve<JailCommand>());
         Assert.NotNull(container.Resolve<IBulletinBoardService>());
+        Assert.NotNull(container.Resolve<BulletinBoardRequestPacketHandler>());
         // The death takes the NPC scripts, whose engine takes the mobile module, which takes the death.
         Assert.NotNull(container.Resolve<IDeathService>());
         Assert.NotNull(container.Resolve<MobileModule>());
