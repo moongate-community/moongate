@@ -33,16 +33,19 @@ local function open(player, tool)
     gump.open(player, "gmtools", { tool = tool })
 end
 
--- The kinds of weather, in the order of the buttons.
-local kinds = {
-    { kind = WeatherKindType.None, name = "none" },
-    { kind = WeatherKindType.Rain, name = "rain" },
-    { kind = WeatherKindType.Snow, name = "snow" },
-    { kind = WeatherKindType.Storm, name = "storm" },
-}
+-- The kinds of weather, in the order of the buttons. Read when the gump opens, not when the script loads: the
+-- enum is only there once the weather module is.
+local function kinds()
+    return {
+        { kind = WeatherKindType.None, name = "none" },
+        { kind = WeatherKindType.Rain, name = "rain" },
+        { kind = WeatherKindType.Snow, name = "snow" },
+        { kind = WeatherKindType.Storm, name = "storm" },
+    }
+end
 
 local function kind_name(kind)
-    for _, entry in ipairs(kinds) do
+    for _, entry in ipairs(kinds()) do
         if entry.kind == kind then
             return entry.name
         end
@@ -64,7 +67,7 @@ local function weather_panel(g, player)
         text = "Now: " .. kind_name(sky.kind) .. ", density " .. sky.density .. ", temperature " .. sky.temperature }
     g:label_cropped{ x = 0, y = 54, width = panel_width, height = text_height, text = "Force it until the next game hour:" }
 
-    for index, entry in ipairs(kinds) do
+    for index, entry in ipairs(kinds()) do
         local y = 80 + (index - 1) * row_height
 
         g:button{ x = 0, y = y, up = 4023, down = 4025, on_click = function(who)

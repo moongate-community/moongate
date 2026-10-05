@@ -51,6 +51,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`animate`](commands/animate.md) | `animate <action>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`where`](commands/where.md) | `where`, then target anything | No | Yes | GameMaster | Game |
 | [`go`](commands/go.md) | `go [<x>,<y>,<z> [map] \| <place>]` | No | Yes | GameMaster | Game |
+| [`gmtools`](commands/gmtools.md) | `gmtools` | No | Yes | GameMaster | Game |
 | [`moongate`](commands/moongate.md) | `moongate <x>,<y>,<z> [map]` | No | Yes | GameMaster | Game |
 | [`jail`](commands/jail.md) | `jail [name]` | No | Yes | GameMaster | Game |
 | [`fame`](commands/fame.md) | `fame <0..32000>`, then target a mobile | No | Yes | GameMaster | Game |
@@ -69,7 +70,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 ### By who uses them
 
 - **Everyone:** `help`, `echo`, `time`.
-- **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `resurrect`, `animate`, `where`, `go`, `moongate`, `fame`, `karma`, `globallight`,
+- **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `moongate`, `fame`, `karma`, `globallight`,
   `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `create_check`, `add_gold`.
 - **Administrators:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, plus everything a

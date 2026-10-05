@@ -231,7 +231,9 @@ var choice = await templates.AskAsync(session, "decorate_confirm", new Dictionar
 ```
 
 `.decorate` asks this way with `templates/gumps/decorate_confirm.xml`; the other shipped gump is
-`templates/gumps/go.xml`, the travel menu of [`.go`](commands/go.md).
+`templates/gumps/go.xml`, the travel menu of [`.go`](commands/go.md), `templates/gumps/jail_sentence.xml`,
+the gump of [`.jail`](commands/jail.md), and `templates/gumps/gmtools.xml`, the tools of
+[`.gmtools`](commands/gmtools.md): a gump with two slots, a sidebar and a panel.
 
 The answer also carries `answer.Open`, the gump an `open` button names (null for any other
 button), and `answer.Bound`, the values of the controls with `bind` by name. `AskAsync` follows

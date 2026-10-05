@@ -221,3 +221,7 @@
 30178 = "{1} sztuk złota jest w plecaku postaci {0}."
 30179 = "{0} nie ma plecaka albo jest on pełny."
 30180 = "Wkłada stos złota (od 1 do 60000) do plecaka wskazanej postaci lub NPC."
+
+# Moongate: texts of the gmtools command (30181-30182).
+30181 = "Otwiera gump narzędzi game mastera: pasek boczny z narzędziami i ich poleceniami, na razie pogoda."
+30182 = "Brakuje gumpa gmtools: templates/gumps/gmtools.xml."

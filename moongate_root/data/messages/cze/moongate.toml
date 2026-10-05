@@ -221,3 +221,7 @@
 30178 = "{1} zlatých je v batohu postavy {0}."
 30179 = "{0} nemá batoh, nebo je plný."
 30180 = "Vloží hromádku zlata (1 až 60000) do batohu postavy nebo NPC, které označíš."
+
+# Moongate: texts of the gmtools command (30181-30182).
+30181 = "Otevře gump nástrojů game mastera: boční panel s nástroji a jejich příkazy, zatím počasí."
+30182 = "Chybí gump gmtools: templates/gumps/gmtools.xml."

@@ -221,3 +221,7 @@
 30178 = "{1} pièces d'or sont dans le sac à dos de {0}."
 30179 = "{0} n'a pas de sac à dos, ou il est plein."
 30180 = "Met une pile d'or (de 1 à 60000) dans le sac à dos du personnage ou du PNJ que vous ciblez."
+
+# Moongate: texts of the gmtools command (30181-30182).
+30181 = "Ouvre le gump des outils du game master : une barre latérale d'outils et leurs commandes, la météo d'abord."
+30182 = "Le gump gmtools est introuvable : templates/gumps/gmtools.xml."

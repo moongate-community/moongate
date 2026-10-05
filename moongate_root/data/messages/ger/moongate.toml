@@ -221,3 +221,7 @@
 30178 = "{1} Gold ist im Rucksack von {0}."
 30179 = "{0} hat keinen Rucksack, oder er ist voll."
 30180 = "Legt einen Stapel Gold (1 bis 60000) in den Rucksack der Figur oder des NPCs, den du auswählst."
+
+# Moongate: texts of the gmtools command (30181-30182).
+30181 = "Öffnet das Gump der Game-Master-Werkzeuge: eine Seitenleiste mit Werkzeugen und ihren Befehlen, zuerst das Wetter."
+30182 = "Das gmtools-Gump fehlt: templates/gumps/gmtools.xml."

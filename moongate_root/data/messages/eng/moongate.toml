@@ -221,3 +221,7 @@
 30178 = "{1} gold is in the backpack of {0}."
 30179 = "{0} has no backpack, or it is full."
 30180 = "Puts a pile of gold (1 to 60000) in the backpack of the character or NPC you target."
+
+# Moongate: texts of the gmtools command (30181-30182).
+30181 = "Opens the gump of the game master's tools: a sidebar of tools and their commands, the weather first."
+30182 = "The gmtools gump is missing: templates/gumps/gmtools.xml."
