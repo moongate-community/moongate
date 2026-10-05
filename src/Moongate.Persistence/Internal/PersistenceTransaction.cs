@@ -200,6 +200,26 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
         }
     }
 
+    /// <summary>
+    ///     Makes the constraints that can wait be checked when the transaction commits, not at every statement: the
+    ///     rows of a world save come in batches, and a row may be written before the one it points to, as an item
+    ///     before the newer container it lies in.
+    /// </summary>
+    public Task<int> DeferConstraintsAsync(CancellationToken cancellationToken)
+    {
+        return RunAsync(
+            async (_, transaction, token) =>
+            {
+                await using var command = transaction.Connection!.CreateCommand();
+                command.Transaction = transaction;
+                command.CommandText = "SET CONSTRAINTS ALL DEFERRED";
+
+                return await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+            },
+            cancellationToken
+        );
+    }
+
     public Task<int> UpsertSnapshotsAsync<T>(T[] snapshots, CancellationToken cancellationToken)
         where T : class, IMoongateEntity
     {

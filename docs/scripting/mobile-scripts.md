@@ -54,6 +54,7 @@ end
 
 function wander.on_speech(serial, speaker, text)
     if text:lower():find("hello", 1, true) then
+        npc.look_at(serial, speaker)
         wait(1)
         npc.say(serial, "Well met, traveller.")
     end
@@ -83,6 +84,8 @@ key with the script name, as `vega.lua` counts the hellos it hears:
 ```lua
 function vega.on_speech(serial, speaker, text)
     if text:lower():find("hello", 1, true) then
+        npc.look_at(serial, speaker)
+
         local times = (npc.get_prop(serial, "vega.greeted") or 0) + 1
         npc.set_prop(serial, "vega.greeted", times)
         npc.say(serial, "Meow! That's " .. times .. " hellos.")

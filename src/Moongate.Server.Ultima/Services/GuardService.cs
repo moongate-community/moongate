@@ -47,6 +47,7 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
     private readonly CrimeConfig _config;
     private readonly TimeProvider _time;
     private readonly ILocalizationService? _localization;
+    private readonly IMovementService? _movement;
 
     // The criminals a guard was sent for, and the guards in the world with when they leave. Game loop only.
     private readonly HashSet<Serial> _wanted = [];
@@ -72,9 +73,11 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
         IGameLoopService loop,
         CrimeConfig config,
         TimeProvider time,
-        ILocalizationService? localization = null
+        ILocalizationService? localization = null,
+        IMovementService? movement = null
     )
     {
+        _movement = movement;
         _timers = timers;
         _npcs = npcs;
         _mobiles = mobiles;
@@ -130,7 +133,11 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
             {
                 // What the spawn needs is read here, on the loop; the spawn itself waits for the loop, so it cannot
                 // start on it.
-                var (map, location) = (mobile.Map, mobile.Location);
+                // The guard comes beside the criminal, not onto it; onto it when no tile around is free.
+                var map = mobile.Map;
+                var location = _movement is null
+                                   ? mobile.Location
+                                   : SpotBeside.Find(_movement, _sectors, map, mobile.Location) ?? mobile.Location;
                 Start(() => SummonAsync(mobile.Id, map, location));
                 sent++;
             }

@@ -12,6 +12,7 @@ using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Speech;
+using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -29,6 +30,7 @@ public sealed class GuardServiceTests : IAsyncLifetime
     };
     private readonly CrimeConfig _config = new();
     private readonly SettableClock _clock = new();
+    private readonly StubMovementService _movement = new();
 
     private BroadcastFixture _fixture = null!;
     private GameSession _thiefSession = null!;
@@ -66,7 +68,8 @@ public sealed class GuardServiceTests : IAsyncLifetime
             _effects,
             _fixture.Network.Loop,
             _config,
-            _clock
+            _clock,
+            movement: _movement
         );
         // As the real service: a spawn or a removal started on the loop thread throws.
         _npcs.OnLoopThread = () => _fixture.Network.Loop.IsOnLoopThread;
@@ -88,15 +91,59 @@ public sealed class GuardServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task TheGuardsKeyword_InAGuardedRegion_BringsAGuardOntoTheCriminal_WithItsEffectSoundAndLine()
+    public async Task AGuard_ComesOntoTheCriminal_WhenNoTileAroundItCanBeSteppedOn()
+    {
+        // Walled in on every side.
+        _movement.Allow = false;
+
+        await HeardAsync("qualcosa", GuardsKeyword);
+
+        Assert.Equal(new Point3D(60, 50, 0), Assert.Single(_npcs.Spawns).Location);
+    }
+
+    [Fact]
+    public async Task AGuard_ComesOntoTheOnlyTileAroundTheCriminalThatNobodyStandsOn()
+    {
+        // Someone on seven of the eight tiles around the thief: the one to the north-west is left.
+        var serial = 0x300u;
+
+        await _fixture.Network.ExecuteOnLoopAsync(
+            () =>
+            {
+                for (var x = 59; x <= 61; x++)
+                {
+                    for (var y = 49; y <= 51; y++)
+                    {
+                        if ((x, y) is not ((60, 50) or (59, 49)))
+                        {
+                            _fixture.Mobiles.EnterWorld(
+                                new MobileEntity { Id = new Serial(serial++), Name = "a bystander", Map = MapType.Trammel, Location = new Point3D(x, y, 0) }
+                            );
+                        }
+                    }
+                }
+            }
+        );
+
+        await HeardAsync("qualcosa", GuardsKeyword);
+
+        Assert.Equal(new Point3D(59, 49, 0), Assert.Single(_npcs.Spawns).Location);
+    }
+
+    [Fact]
+    public async Task TheGuardsKeyword_InAGuardedRegion_BringsAGuardBesideTheCriminal_WithItsEffectSoundAndLine()
     {
         await HeardAsync("qualcosa", GuardsKeyword);
 
-        Assert.Equal(("guard", MapType.Trammel, new Point3D(60, 50, 0)), Assert.Single(_npcs.Spawns));
+        // Beside the criminal, a step away, not on it.
+        var spawn = Assert.Single(_npcs.Spawns);
+        Assert.Equal(("guard", MapType.Trammel), (spawn.TemplateId, spawn.Map));
+        Assert.Equal(1, Math.Max(Math.Abs(spawn.Location.X - 60), Math.Abs(spawn.Location.Y - 50)));
         Assert.True(_npcs.Spawned.GetProp("guard.summoned", false));
+        // The effect and the sound are where the guard comes.
         var effect = Assert.Single(_effects.At);
-        Assert.Equal((MapType.Trammel, new Point3D(60, 50, 0), GuardService.TeleportEffect), (effect.Map, effect.Location, effect.Options.Graphic));
-        Assert.Equal((MapType.Trammel, new Point3D(60, 50, 0), GuardService.TeleportSound), Assert.Single(_speech.PlacedSounds));
+        Assert.Equal((MapType.Trammel, spawn.Location, GuardService.TeleportEffect), (effect.Map, effect.Location, effect.Options.Graphic));
+        Assert.Equal((MapType.Trammel, spawn.Location, GuardService.TeleportSound), Assert.Single(_speech.PlacedSounds));
         Assert.Equal((_npcs.Spawned, "Thou wilt regret thine actions, swine!"), Assert.Single(_speech.Said));
     }
 

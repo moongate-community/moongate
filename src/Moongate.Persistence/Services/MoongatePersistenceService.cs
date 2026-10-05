@@ -291,6 +291,8 @@ public sealed class MoongatePersistenceService : IPersistenceDataExporter, IAsyn
                                         _schema.GetDatabase(group.Key),
                                         async transaction =>
                                         {
+                                            await transaction.DeferConstraintsAsync(token).ConfigureAwait(false);
+
                                             foreach (var write in writes)
                                             {
                                                 await write(transaction, token).ConfigureAwait(false);

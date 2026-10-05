@@ -321,6 +321,21 @@ public sealed class NpcModule
     }
 
     /// <summary>
+    ///     Turns the NPC towards a player or another NPC without stepping, as towards who speaks to it;
+    ///     <c>npc.look_at(serial, speaker)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Turns the NPC towards another mobile, player or NPC, without stepping, as npc.face does towards a place: towards who speaks to it. False for an unknown or frozen NPC, a mobile not in the world or on another map, or one on its own cell.")]
+    public bool LookAt(long serial, long other)
+    {
+        return TryGetNpc(serial, out var npc) &&
+               other is > 0 and <= uint.MaxValue &&
+               _mobiles.TryGet(new Serial((uint)other), out var mobile) &&
+               _mobiles.IsInWorld(mobile.Id) &&
+               mobile.Map == npc.Map &&
+               Face(serial, mobile.Location.X, mobile.Location.Y);
+    }
+
+    /// <summary>
     ///     Gets how many tiles lie between the NPC and a place, as the view range counts them;
     ///     <c>npc.distance_to(serial, there.x, there.y) <= 2</c>.
     /// </summary>
