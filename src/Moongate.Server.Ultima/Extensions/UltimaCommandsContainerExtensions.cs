@@ -213,6 +213,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.GoDescription
         );
+        container.RegisterCommand<GmToolsCommand>(
+            "gmtools",
+            "Opens the gump of the game master's tools: a sidebar of tools and their commands, the weather first.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.GmToolsDescription
+        );
         container.RegisterCommand<JailCommand>(
             "jail",
             "Opens the gump of the jail: it lists the cells, takes you into one, and jails or releases a character; jail <name> opens it on the player of that name, online or not.",

@@ -6,6 +6,22 @@ Whether the mobile carries the key of a door:
 world.carries(user, "key.value", 1234)
 ```
 
+## weather_profile
+
+The name of the weather profile where the player stands:
+
+```lua
+local profile = world.weather_profile(user)
+```
+
+## set_weather
+
+Forces a kind of weather on that profile until the next game hour, as `.weather` does:
+
+```lua
+world.set_weather(user, WeatherKindType.Storm)
+```
+
 ## moon
 
 ```lua

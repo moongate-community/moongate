@@ -158,4 +158,6 @@ public static class CommandMessages
     public const int BookCreated = 30182;
     public const int BookNotCreated = 30183;
     public const int BookDescription = 30184;
+    public const int GmToolsDescription = 30185;
+    public const int GmToolsGumpMissing = 30186;
 }

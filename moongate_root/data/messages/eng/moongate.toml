@@ -227,3 +227,7 @@
 30182 = "Document {0} is in your backpack."
 30183 = "Document {0} could not be created. Check its values and backpack availability."
 30184 = "Gives a document from templates/books to your backpack: book <template> [name=value ...]."
+
+# Moongate: texts of the gmtools command (30185-30186).
+30185 = "Opens the gump of the game master's tools: a sidebar of tools and their commands, the weather first."
+30186 = "The gmtools gump is missing: templates/gumps/gmtools.xml."

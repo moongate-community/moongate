@@ -280,6 +280,22 @@ locks and traps the container: those are not there yet. The town tables use
 `templates/loots/randomshields.toml` (one plain shield, ModernUO's `Loot.ShieldTypes`) and the two goods of
 `templates/items/town_goods.toml` (mallet and chisel, arrow shafts) that the converted item files lack.
 
+## gmtools.lua
+
+`scripts/gumps/gmtools.lua` is the script of the gump of the game master's tools
+(`templates/gumps/gmtools.xml`), which [`.gmtools`](../commands/gmtools.md) opens. The gump has two
+slots, filled by two functions: `tools` draws the sidebar, a button for each entry of the table
+`tools` in the script, and `panel` draws the panel of the selected one (`args.tool`, the first when
+none or an unknown one is given). A click on the sidebar opens the gump again on that tool.
+
+The only tool so far is the weather. Its panel reads `world.weather_profile` and `world.weather` and
+has a button for each kind, `none`, `rain`, `snow` and `storm`, that calls `world.set_weather` on the
+player, tells it `The weather of temperate is now storm until the next hour.` and opens the gump again.
+Staff only: the slots are empty for anyone else, and every button checks `world.is_staff` again.
+
+To add a tool, write a panel function with the signature `function(g, player)` and add
+`{ id = "...", title = "...", panel = ... }` to `tools`.
+
 ## jail_sentence.lua
 
 `scripts/gumps/jail_sentence.lua` is the script of the gump of the [jail](../jail.md)

@@ -64,7 +64,7 @@ chosen language stays in English, so a partial translation still works. The log
 reports how many messages fell back:
 
 ```text
-Found 5630 messages in ita, 3 of them in English
+Found 5648 messages in ita, 3 of them in English
 ```
 
 ### Validation at startup
@@ -215,6 +215,7 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30150 | No character is named {0}. | What `jail <name>` answers when no player has the name |
 | 30160 to 30163 | Shows the version the server runs…, Moongate {0} "{1}" ({2}), built {3}., Shows how long the server has been running…, Up for {0}, since {1}. | The `version` and `uptime` commands |
 | 30181 to 30184 | No document {0} in templates/books., Document {0} is in your backpack., ... | The [`book` command](commands/book.md) replies and help description |
+| 30185, 30186 | Opens the gump of the game master's tools…, The gmtools gump is missing: templates/gumps/gmtools.xml. | The `gmtools` command |
 
 The header of the command texts in `eng/moongate.toml` lists the ids of both sets.
 

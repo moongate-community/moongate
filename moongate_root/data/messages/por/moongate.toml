@@ -227,3 +227,7 @@
 30182 = "O documento {0} está na tua mochila."
 30183 = "Não foi possível criar o documento {0}. Verifica os valores e a disponibilidade da mochila."
 30184 = "Põe um documento de templates/books na tua mochila: book <template> [name=value ...]."
+
+# Moongate: texts of the gmtools command (30185-30186).
+30185 = "Abre o gump das ferramentas do game master: uma barra lateral de ferramentas e os seus comandos, primeiro o clima."
+30186 = "Falta o gump gmtools: templates/gumps/gmtools.xml."

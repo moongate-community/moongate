@@ -248,6 +248,64 @@ public sealed class WorldModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void WeatherProfile_IsTheNameOfTheProfileThePlayerStandsIn()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        var result = Run("return world.weather_profile(2), world.weather_profile(256), world.weather_profile(0), world.weather_profile(-1)");
+
+        Assert.Equal("temperate", result[0].Read<string>());
+        Assert.Equal([LuaValue.Nil, LuaValue.Nil, LuaValue.Nil], result[1..]);
+    }
+
+    [Fact]
+    public void WeatherProfile_OfAnNpc_IsNil()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var orc));
+        orc.AccountId = null;
+
+        Assert.Equal(LuaValue.Nil, Run("return world.weather_profile(2)")[0]);
+    }
+
+    [Theory]
+    [InlineData("WeatherKindType.None", WeatherKindType.None)]
+    [InlineData("WeatherKindType.Rain", WeatherKindType.Rain)]
+    [InlineData("WeatherKindType.Snow", WeatherKindType.Snow)]
+    [InlineData("WeatherKindType.Storm", WeatherKindType.Storm)]
+    public void SetWeather_ForcesTheKindOnTheProfileOfThePlayer(string kind, WeatherKindType expected)
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        Assert.True(Run($"return world.set_weather(2, {kind})")[0].Read<bool>());
+
+        Assert.Equal([("temperate", expected)], _weather.Forced);
+    }
+
+    [Theory]
+    [InlineData("world.set_weather(256, WeatherKindType.Rain)")]
+    [InlineData("world.set_weather(0, WeatherKindType.Rain)")]
+    [InlineData("world.set_weather(2, WeatherKindType.Rain)")]
+    public void SetWeather_ANpcOrAnUnknownPlayer_ForcesNothing(string call)
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var npc));
+        npc.AccountId = null;
+
+        Assert.False(Run($"return {call}")[0].Read<bool>());
+
+        Assert.Empty(_weather.Forced);
+    }
+
+    [Fact]
+    public void SetWeather_AKindThatDoesNotExist_IsAScriptError_AndForcesNothing()
+    {
+        Assert.Throws<LuaRuntimeException>(() => Run("return world.set_weather(2, 7)"));
+
+        Assert.Empty(_weather.Forced);
+    }
+
+    [Fact]
     public void Broadcast_SendsTheTextToEveryone_CutTo128Characters()
     {
         var result = Run("return world.broadcast(string.rep('a', 200)), world.broadcast('  ')");

@@ -227,3 +227,7 @@
 30182 = "Dokument {0} je ve tvém batohu."
 30183 = "Dokument {0} nelze vytvořit. Zkontroluj jeho hodnoty a dostupnost batohu."
 30184 = "Vloží dokument z templates/books do tvého batohu: book <template> [name=value ...]."
+
+# Moongate: texts of the gmtools command (30185-30186).
+30185 = "Otevře gump nástrojů game mastera: boční panel s nástroji a jejich příkazy, zatím počasí."
+30186 = "Chybí gump gmtools: templates/gumps/gmtools.xml."
