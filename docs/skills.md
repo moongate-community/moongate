@@ -102,7 +102,7 @@ favours each stat; a stat whose number is 0 is never tried by that skill.
 1. For each stat the skill favours and whose lock is up, a roll with the chance `gain / 33.3` (a
    gain of 0.8 is 2.4%).
 2. A stat that passes is tried once in `stat_gain_minutes` (10): the wait starts when it is tried,
-   even if nothing rises. It is not saved: after a restart a stat can be tried at once.
+   even if nothing rises. It is kept in memory, not saved: after a restart a stat can be tried at once.
 3. The more the three stats add up to near `stat_cap` (225), the more often the player *gives way*:
    one point is taken from a stat locked down (above 10 points), the lower of the two when both
    can. Once the total is at the cap it always gives way.
@@ -112,8 +112,8 @@ The maximum of its bar moves with it: strength the hit points, dexterity the sta
 intelligence the mana, and the player sees the whole status again. NPCs never gain stats.
 
 Strength, dexterity and intelligence have a lock each, as the skills do, saved with the character:
-the arrows beside them in the status window (`0xBF` subcommand `0x1A` from the client, and `0x19` at
-login to the client).
+the arrows beside them in the status window (`0xBF` subcommand `0x1A` from the client, and `0x19` to
+the client at login and each time a lock changes).
 
 | Lock | The stat |
 | --- | --- |
@@ -121,8 +121,9 @@ login to the client).
 | Down | Does not rise; gives a point away when another rises and the total is at the cap. |
 | Locked | Does not rise and is never lowered. |
 
-Existing characters are all up after the upgrade; the migration `0024_mobile_stat_locks.sql` adds
-the three columns.
+The wait of a stat is kept by character in memory, so logging out and in does not skip it; a restart
+does. Existing characters are all up after the upgrade; the migration `0024_mobile_stat_locks.sql`
+adds the three columns.
 
 ## See also
 

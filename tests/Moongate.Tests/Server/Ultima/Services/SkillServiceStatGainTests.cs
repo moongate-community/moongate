@@ -151,6 +151,82 @@ public sealed class SkillServiceStatGainTests
     }
 
     [Fact]
+    public void TheWaitOutlivesALogout_TheCharacterIsRebuiltFromTheDatabaseWithTheSameSerial()
+    {
+        _random.Doubles(Success, NoSkillGain, StatPasses, NoAtrophy);
+        Check();
+        Assert.Single(_state.Stats);
+
+        // Out and in again a minute later: a new entity of the same character.
+        _clock.Advance(TimeSpan.FromMinutes(1));
+        var again = new MobileEntity
+        {
+            Id = _aria.Id, Name = "Aria", AccountId = _aria.AccountId, Strength = 51, Dexterity = 50, Intelligence = 50,
+            HitsMax = 51, StaminaMax = 50, ManaMax = 50
+        };
+        again.Skills.Add(new MobileSkill { Skill = SkillType.Anatomy, Base = 500 });
+        _random.Doubles(Success, NoSkillGain, StatPasses, StatFails, StatFails);
+
+        _skills.Check(again, SkillType.Anatomy, 0, 100);
+
+        Assert.Single(_state.Stats);
+    }
+
+    [Fact]
+    public void WhenTheStateServiceRefusesTheChange_NothingIsRaised_AndTheWaitStays()
+    {
+        _state.Result = false;
+        _random.Doubles(Success, NoSkillGain, StatPasses, NoAtrophy);
+
+        Check();
+
+        // Refused, so unchanged: the stub records the ask and does not write.
+        Assert.Equal(50, _aria.Strength);
+    }
+
+    [Theory]
+    [InlineData(StatType.Dex, 60, 40, 40 - 1)]
+    [InlineData(StatType.Dex, 40, 60, 40 - 1)]
+    [InlineData(StatType.Int, 60, 40, 40 - 1)]
+    [InlineData(StatType.Int, 40, 60, 40 - 1)]
+    public void WhicheverStatRises_TheLowerOfTheOtherTwoGivesWay(StatType rises, int firstOther, int secondOther, int lowered)
+    {
+        // The two others, in the order strength, dexterity, intelligence; both locked down, the total at the cap.
+        var others = Enum.GetValues<StatType>().Where(stat => stat != rises).ToArray();
+        _aria.Strength = _aria.Dexterity = _aria.Intelligence = 50;
+        Set(others[0], firstOther);
+        Set(others[1], secondOther);
+        _aria.StrLock = rises == StatType.Str ? StatLockType.Up : StatLockType.Down;
+        _aria.DexLock = rises == StatType.Dex ? StatLockType.Up : StatLockType.Down;
+        _aria.IntLock = rises == StatType.Int ? StatLockType.Up : StatLockType.Down;
+        _config.StatCap = _aria.Strength + _aria.Dexterity + _aria.Intelligence;
+        // Only the stat that is up is rolled for: the others are locked down.
+        _random.Doubles(Success, NoSkillGain, StatPasses);
+
+        Check();
+
+        var change = Assert.Single(_state.Stats).Change;
+        var values = new[] { change.Strength!.Value, change.Dexterity!.Value, change.Intelligence!.Value };
+        Assert.Equal(51, values[(int)rises]);
+        Assert.Equal(lowered, values.Where((_, index) => index != (int)rises).Min());
+        Assert.Equal(_config.StatCap, values.Sum());
+    }
+
+    [Fact]
+    public void ADownStat_KeepsGivingWayWhenTheTotalIsOverALoweredCap()
+    {
+        _aria.DexLock = StatLockType.Down;
+        _config.StatCap = 100;
+        _random.Doubles(Success, NoSkillGain, StatPasses);
+
+        Check();
+
+        // Over the cap nothing rises, but the stat locked down still gives its point.
+        var change = Assert.Single(_state.Stats).Change;
+        Assert.Equal((50, 49, 50), (change.Strength, change.Dexterity, change.Intelligence));
+    }
+
+    [Fact]
     public void TheWaitStartsWhenTheStatIsTried_EvenWhenNothingRises()
     {
         // At the cap with nothing to give way: strength is tried and cannot rise.
@@ -321,6 +397,25 @@ public sealed class SkillServiceStatGainTests
         Check();
 
         Assert.Equal([51, 52], _state.Stats.Select(stat => stat.Change.Strength));
+    }
+
+    private void Set(StatType stat, int value)
+    {
+        switch (stat)
+        {
+            case StatType.Str:
+                _aria.Strength = value;
+
+                break;
+            case StatType.Dex:
+                _aria.Dexterity = value;
+
+                break;
+            default:
+                _aria.Intelligence = value;
+
+                break;
+        }
     }
 
     private bool Check()

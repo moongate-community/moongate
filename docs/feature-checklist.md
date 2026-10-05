@@ -9,7 +9,7 @@ built.
 
 **268 systems:** ✅ 79 done, 🟡 46 partly done, ❌ 143 not built yet.
 
-**Coverage: 29%** of the systems done, **37%** counting a partly done system as half.
+**Coverage: 29%** of the systems done, **38%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -46,7 +46,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | --- | --- | --- |
 | Creation: races, professions, starting items, starting cities | ✅ | [Personalized starting letters](data-files/starting-items.md#personalized-starting-letters) saved in the same creation transaction |
 | Stats | ✅ | Rolled, stored and set by scripts; a successful skill raises them as ModernUO's classic rule, to 100 each and 225 in all, with the locks of the status window |
-| Skills | 🟡 | Stored, shown in the skill window and set by scripts; [used, checked and gained](skills.md), with the locks of the skill window (up, down, locked). Stat locks are not built |
+| Skills | 🟡 | Stored, shown in the skill window and set by scripts; [used, checked and gained](skills.md), with the locks of the skill window (up, down, locked). The stat locks of the status window work too |
 | Hit points, mana and stamina regeneration | ✅ | A point at a time, ModernUO's classic rates; mana by intelligence and Meditation; rates per mobile from scripts |
 | Titles | 🟡 | Fame and karma titles in the paperdoll; no skill titles |
 | Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); nothing gains or loses them yet |

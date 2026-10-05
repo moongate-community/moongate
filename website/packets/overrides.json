@@ -4791,7 +4791,7 @@
         "description": "Two bits each, strength << 4, dexterity << 2, intelligence: 0 up, 1 down, 2 locked"
       }
     ],
-    "notes": "The arrows beside strength, dexterity and intelligence in the status window. Sent once, after the status, when a player enters the world; a change the player makes is not sent back.",
-    "handler": "CharacterEnterWorldService: sends the stat locks of the character during world entry."
+    "notes": "The arrows beside strength, dexterity and intelligence in the status window. Sent after the status when a player enters the world, and again with the three locks when one changes, as ModernUO.",
+    "handler": "CharacterEnterWorldService: sends the stat locks of the character during world entry. MobileStateService.SetStatLock: sends them again to the player when one changes."
   }
 }

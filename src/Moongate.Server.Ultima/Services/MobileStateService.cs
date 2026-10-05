@@ -186,6 +186,8 @@ public sealed class MobileStateService : IMobileStateService
             return false;
         }
 
+        var before = (mobile.StrLock, mobile.DexLock, mobile.IntLock);
+
         switch (stat)
         {
             case StatType.Str:
@@ -200,6 +202,14 @@ public sealed class MobileStateService : IMobileStateService
                 mobile.IntLock = statLock;
 
                 break;
+        }
+
+        // As ModernUO: the three locks, to its own player, when one changed.
+        if (before != (mobile.StrLock, mobile.DexLock, mobile.IntLock) &&
+            _mobiles.IsInWorld(mobile.Id) &&
+            _sessions.TryGetByCharacterId(mobile.Id, out var own))
+        {
+            _sender.TrySend(own.SessionId, new StatLockInfoPacket(mobile.Id, mobile.StrLock, mobile.DexLock, mobile.IntLock));
         }
 
         return true;

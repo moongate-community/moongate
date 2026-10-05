@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mobiles;
@@ -5,6 +6,7 @@ using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Ultima.Types;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
 
@@ -34,10 +36,15 @@ public sealed class SkillService : ISkillService
     // The least a stat can be lowered to, so one that is locked down never reaches nothing.
     private const int LeastStat = 10;
 
+    private readonly ILogger _logger = Log.ForContext<SkillService>();
     private readonly IMobileStateService _state;
     private readonly SkillsConfig _config;
     private readonly Random _random;
     private readonly TimeProvider _time;
+
+    // When each stat of each character was last tried. By character, not on the mobile: a login builds the mobile
+    // again from the database. Only the game loop reads it.
+    private readonly Dictionary<(Serial Character, StatType Stat), DateTimeOffset> _statTriedAt = [];
     private readonly Lazy<Dictionary<SkillType, SkillContent>> _skills;
 
     public SkillService(
@@ -165,13 +172,13 @@ public sealed class SkillService : ISkillService
 
         var now = _time.GetUtcNow();
 
-        if (mobile.StatTriedAt.TryGetValue(stat, out var last) && last.AddMinutes(_config.StatGainMinutes) > now)
+        if (_statTriedAt.TryGetValue((mobile.Id, stat), out var last) && last.AddMinutes(_config.StatGainMinutes) > now)
         {
             return;
         }
 
         // The wait starts here, even when nothing rises.
-        mobile.StatTriedAt[stat] = now;
+        _statTriedAt[(mobile.Id, stat)] = now;
         var atrophy = StatTotal(mobile) / (double)_config.StatCap >= _random.NextDouble();
         RaiseStat(mobile, stat, atrophy);
     }
@@ -209,7 +216,7 @@ public sealed class SkillService : ISkillService
         }
 
         // The maximum of each bar follows its stat, as at creation.
-        _state.SetStats(
+        if (!_state.SetStats(
             mobile,
             new MobileStatsChange
             {
@@ -220,7 +227,11 @@ public sealed class SkillService : ISkillService
                 StaminaMax = mobile.StaminaMax + values[1] - before[1],
                 ManaMax = mobile.ManaMax + values[2] - before[2]
             }
-        );
+        ))
+        {
+            // Refused, as when a number would pass what the status can show: nothing changed.
+            _logger.Warning("The stat of {Mobile} could not be changed: {Stat} stays at {Value}", mobile, stat, before[(int)stat]);
+        }
     }
 
     private static bool CanLower(MobileEntity mobile, StatType stat, int[] values)

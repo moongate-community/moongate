@@ -268,7 +268,7 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     [InlineData(StatType.Str, StatLockType.Down)]
     [InlineData(StatType.Dex, StatLockType.Locked)]
     [InlineData(StatType.Int, StatLockType.Down)]
-    public void SetStatLock_KeepsTheLockOfThatStatOnly_AndSendsNothing(StatType stat, StatLockType statLock)
+    public void SetStatLock_KeepsTheLockOfThatStatOnly_AndShowsTheThreeToItsPlayer(StatType stat, StatLockType statLock)
     {
         Assert.True(_service.SetStatLock(_aria, stat, statLock));
 
@@ -277,7 +277,17 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
              stat == StatType.Int ? statLock : StatLockType.Up),
             (_aria.StrLock, _aria.DexLock, _aria.IntLock)
         );
-        // The client already shows the lock it asked for.
+        // As ModernUO: the three locks, to its own player only.
+        var packet = Assert.IsType<StatLockInfoPacket>(Assert.Single(_fixture.Sender.Sent));
+        Assert.Equal((_aria.StrLock, _aria.DexLock, _aria.IntLock), (packet.Strength, packet.Dexterity, packet.Intelligence));
+        Assert.Equal([Aria], _fixture.Sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void SetStatLock_ToTheLockItHas_SendsNothing()
+    {
+        Assert.True(_service.SetStatLock(_aria, StatType.Str, StatLockType.Up));
+
         Assert.Empty(_fixture.Sender.Sent);
     }
 
@@ -288,6 +298,7 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.False(_service.SetStatLock(_aria, StatType.Str, (StatLockType)3));
 
         Assert.Equal((StatLockType.Up, StatLockType.Up, StatLockType.Up), (_aria.StrLock, _aria.DexLock, _aria.IntLock));
+        Assert.Empty(_fixture.Sender.Sent);
     }
 
     [Fact]

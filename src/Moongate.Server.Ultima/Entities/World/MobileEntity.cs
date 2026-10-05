@@ -221,12 +221,6 @@ public class MobileEntity : IMoongateEntity
     public StatLockType IntLock { get; set; } = StatLockType.Up;
 
     /// <summary>
-    ///     When each stat was last tried for a rise. It is not a column: the wait does not outlive a restart.
-    /// </summary>
-    [Column(IsIgnore = true)]
-    public Dictionary<StatType, DateTimeOffset> StatTriedAt { get; } = [];
-
-    /// <summary>
     ///     How quenched the mobile is, from 0 (parched) to 20: it drops with time for a player and rises by drinking.
     /// </summary>
     public int Thirst { get; set; } = 20;

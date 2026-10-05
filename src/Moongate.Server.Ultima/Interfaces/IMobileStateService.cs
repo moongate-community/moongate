@@ -66,7 +66,7 @@ public interface IMobileStateService
 
     /// <summary>
     ///     Sets which way a stat may move: up to rise by use, down to be lowered for another stat, or locked, as the
-    ///     player chooses in the status window. Nothing is sent: the client already shows the lock it asked for.
+    ///     player chooses in the status window. When one changed, its own player is sent the three locks, as ModernUO does.
     /// </summary>
     /// <returns>
     ///     False, with nothing changed, for a stat or a lock that does not exist.

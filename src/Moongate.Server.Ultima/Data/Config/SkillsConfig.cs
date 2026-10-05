@@ -1,3 +1,5 @@
+using Moongate.Server.Ultima.Interfaces;
+
 namespace Moongate.Server.Ultima.Data.Config;
 
 /// <summary>
@@ -6,7 +8,7 @@ namespace Moongate.Server.Ultima.Data.Config;
 public sealed class SkillsConfig
 {
     private const int MaximumTotalCap = 100_000;
-    private const int MaximumStat = 100_000;
+    private const int MaximumStat = IMobileStateService.MaxValue;
     private const double MaximumGainMinutes = 1440;
 
     /// <summary>
@@ -56,9 +58,9 @@ public sealed class SkillsConfig
             throw new InvalidOperationException($"ultima.skills.stat_max must be from 1 to {MaximumStat}, found {StatMax}.");
         }
 
-        if (StatCap is < 30 or > MaximumStat)
+        if (StatCap is < 30 or > MaximumTotalCap)
         {
-            throw new InvalidOperationException($"ultima.skills.stat_cap must be from 30 to {MaximumStat}, found {StatCap}.");
+            throw new InvalidOperationException($"ultima.skills.stat_cap must be from 30 to {MaximumTotalCap}, found {StatCap}.");
         }
 
         if (StatGainMinutes is < 0 or > MaximumGainMinutes || double.IsNaN(StatGainMinutes))

@@ -16,7 +16,7 @@ public sealed class SkillsConfigTests
     [Theory]
     [InlineData(0, 100, 225, 10.0)]
     [InlineData(700, 0, 225, 10.0)]
-    [InlineData(700, 100001, 225, 10.0)]
+    [InlineData(700, 65536, 225, 10.0)]
     [InlineData(700, 100, 29, 10.0)]
     [InlineData(700, 100, 100001, 10.0)]
     [InlineData(700, 100, 225, -1.0)]
