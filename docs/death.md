@@ -6,13 +6,18 @@ the world. Nothing fights yet, so an NPC dies when a game master kills it with
 
 ## What happens
 
-1. The corpse is made where the NPC stood and takes its things.
-2. The players around see the corpse, then the NPC dying (packet `0xAF`: the client plays the death
+1. The players around hear its death sound.
+2. The corpse is made where the NPC stood and takes its things.
+3. The players around see the corpse, then the NPC dying (packet `0xAF`: the client plays the death
    of that body on its own).
-3. They hear its death sound.
 4. The NPC's script runs `on_death`.
 5. The NPC leaves the world. One that came from a spawn region frees its place, and the region
    brings another at its next time.
+
+A human, elf or gargoyle body dies in two moments, 1.5 seconds apart: first it plays its fall
+(action 21, as [`animate 21`](commands/animate.md) shows it) and cannot move; when the fall is over
+come its corpse, `on_death` and its removal, with no `0xAF`. See [The dressed
+corpse](#the-dressed-corpse) for why. An NPC removed while it falls leaves no corpse.
 
 The console and the log say it: `an orc (0x00000384) died at (1700, 1700, 5) of Felucca, killed by
 Giachi`.
@@ -53,9 +58,6 @@ The corpse of a human, elf or gargoyle body is drawn with what the NPC wore, its
 as ModernUO does: right after the corpse the client is sent the worn items that are still inside
 (`0x3C`) and their layers (`0x89`). Take an item out of the corpse and it is no longer drawn on it,
 for who sees the corpse from then on. Hair and beard are no items: they cannot be taken. The corpse
-is dressed 2 seconds after the death, once the body has fallen: the client plays the fall on the
-mobile with what it wears and takes off it whatever a corpse is drawn wearing, so a corpse dressed
-at once makes the NPC fall naked. Until then the corpse keeps the time in its prop `corpse.dress_at`. The corpse
 of any other body is drawn as the client draws that body dead.
 
 When the `corpse` template is missing, the NPC dies all the same and leaves nothing; the log says so.
@@ -63,6 +65,13 @@ When the `corpse` template is missing, the NPC dies all the same and leaves noth
 A bag that lay in the backpack goes into the corpse with what it holds. The world save writes those
 contents again even though they did not change: the database deletes them with the backpack of the
 dead NPC, which they were under.
+
+The fall is played by the server, not by the death packet. ClassicUO, since 2019, takes the clothes
+off a mobile that dies by `0xAF`: it gives the dying mobile a serial of its own, counts its worn
+items as lying on the ground far away and deletes them at once, so the body falls naked whatever a
+server sends; the other emulators all show it so. An action the mobile is told to play is drawn
+dressed, so a human body is told to fall, and its corpse, dressed, takes its place when the fall is
+over. UOX3 plays the same action for an NPC killed by a guard.
 
 ## The death sound
 
