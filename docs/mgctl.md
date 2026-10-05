@@ -66,7 +66,9 @@ that names no command, such as `mgctl migrate` alone, exits with code 2.
 On Windows, use `mgctl.exe init C:\MoongateData` from the extracted distribution.
 Keep `mgctl` and `mgserver` from the same release together.
 When preparing a root, `mgctl` shows the same Moongate banner, version and codename
-as the server, followed by `Root setup`. Help and version output omit the banner.
+as the server, followed by `Root setup`. Help and version output omit the banner, and so does
+`mgctl init <root> --no-header`: `scripts/run_server.sh` uses it, since the server it starts
+right after shows the banner itself.
 
 ## Generate an administration certificate
 

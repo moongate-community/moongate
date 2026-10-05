@@ -157,6 +157,19 @@ public sealed class CtlCommandTests
     }
 
     [Fact]
+    public async Task Run_InitWithNoHeader_PreparesTheRoot_WithoutTheBanner()
+    {
+        // For a script that starts the server right after: the server shows the banner itself.
+        using var directory = new TemporaryDirectory();
+        var result = await CtlProcess.RunAsync("init", directory.Path, "--no-header");
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.DoesNotContain("Codename:", result.Output);
+        Assert.Contains("Root setup", result.Output);
+        Assert.True(File.Exists(Path.Combine(directory.Path, "config/moongate.toml")));
+    }
+
+    [Fact]
     public async Task Run_GenerateCertificate_PreparesRootWithSpacesAndEnablesApi()
     {
         using var directory = new TemporaryDirectory();

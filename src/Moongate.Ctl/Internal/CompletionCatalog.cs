@@ -26,7 +26,8 @@ internal static class CompletionCatalog
             "Prepare a server root",
             [
                 new("--generate-admin-certificate", "Create a TLS certificate and enable the administration API", CompletionValueType.None),
-                new("--admin-certificate-hosts", "Additional DNS names or IP addresses, comma separated", CompletionValueType.Text)
+                new("--admin-certificate-hosts", "Additional DNS names or IP addresses, comma separated", CompletionValueType.Text),
+                new("--no-header", "Leave out the banner", CompletionValueType.None)
             ],
             new("root-directory", "Root directory to initialize", CompletionValueType.Directory)
         ),
