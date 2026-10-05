@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
@@ -36,6 +37,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly CapturingLogSink _log = new();
     private readonly FakeScriptEngine _engine = new();
     private readonly StubGameLoop _loop = new();
+    private readonly RecordingTimerService _timers = new();
+    private readonly SettableClock _clock = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                  .Item(0x0EED, TileFlagType.Generic, 0)
                                                  .Item(0x0E75, TileFlagType.Container, 0)
@@ -105,6 +108,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
             _itemTemplates,
             _loop,
             new Lazy<IScriptEngine>(() => _engine),
+            _timers,
+            _clock,
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -157,6 +162,52 @@ public sealed class DeathServiceTests : IAsyncLifetime
             new[] { $"{_sword.Id.Value}:{(int)LayerType.OneHanded}", $"{shirt.Id.Value}:{(int)LayerType.Shirt}" }.Order(),
             corpse.GetProp<string>("corpse.worn").Split(',').Order()
         );
+    }
+
+    [Fact]
+    public void Kill_AHumanBody_HoldsTheDressOfItsCorpseUntilTheFallIsOver_ThenShowsItAgain()
+    {
+        // The client takes what a corpse wears off the mobile: told at once, it would fall naked.
+        _orc.Body = 0x0190;
+
+        _death.Kill(_orc);
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.Equal(
+            (_clock.Now + DeathService.FallTime).ToUnixTimeMilliseconds(),
+            corpse.GetProp<long>("corpse.dress_at")
+        );
+        var timer = Assert.Single(_timers.Timers);
+        Assert.Equal((DeathService.FallTime, false), (timer.Interval, timer.Repeat));
+        _view.Calls.Clear();
+
+        _timers.Fire(timer.Id);
+
+        Assert.False(corpse.Props!.ContainsKey("corpse.dress_at"));
+        Assert.Equal([$"Appeared {CorpseSerial}"], _view.Calls);
+    }
+
+    [Fact]
+    public void Kill_AHumanBody_WhoseCorpseIsGoneBeforeTheFallIsOver_ShowsNothingAgain()
+    {
+        _orc.Body = 0x0190;
+        _death.Kill(_orc);
+        _items.Remove([new Serial(CorpseSerial)]);
+        _view.Calls.Clear();
+
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public void Kill_AMonster_OrAHumanBodyWithNothingToWear_HoldsNothing()
+    {
+        _death.Kill(_orc);
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.False(corpse.Props!.ContainsKey("corpse.dress_at"));
+        Assert.Empty(_timers.Timers);
     }
 
     [Fact]

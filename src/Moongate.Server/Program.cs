@@ -28,6 +28,11 @@ using Moongate.Server.Types.Persistence;
 using Moongate.Server.Ultima;
 using Serilog;
 
+// After Ctrl+C or SIGTERM the framework ends the process when the command has not returned in this time, 5 seconds
+// by default. The final world save must fit in it: the first save of a process writes every entity, which takes
+// 8 to 15 seconds for the shipped world, and a save cut half way commits nothing.
+ConsoleApp.Timeout = TimeSpan.FromMinutes(2);
+
 await ConsoleApp.RunAsync(
     args,
     async (
