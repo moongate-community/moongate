@@ -4,20 +4,28 @@
 -- What it is for:
 --   The script of the gump of the jail (templates/gumps/jail_sentence.xml),
 --   opened by .jail: it fills the "rows" slot. First the target: a button that
---   gives the cursor to pick the character to jail, and its name. Then the
---   cells of data/jail.toml, ten per page. A free cell has a button that sends
---   the character picked there for the days typed in the gump, with the
---   reason typed beside them; with nobody picked it has none. A cell that holds someone shows who, how long is left
---   and a button that releases it with no fine. Every cell has a button that
---   takes the game master into it, on the map of the jail. A character already
---   in jail has a line of its own at the top, with its release; one whose days
---   are over while it is offline is said to be free at its next login. Staff
---   only: anyone else sees an empty gump.
+--   gives the cursor to pick the character to jail, and its name, with
+--   "(offline)" for a player that .jail <name> found and is not in the world.
+--   When .jail <name> found several players of that name, they are listed
+--   below, each with its account, whether it is online and a button that makes
+--   it the target; the cells come once one is picked. Then the cells of
+--   data/jail.toml, ten per page. A free cell has a button that sends the
+--   character picked there for the days typed in the gump, with the reason
+--   typed beside them; with nobody picked it has none. A player who is offline
+--   is not moved: the cell is kept for it and its days start at its next
+--   login. A cell that holds someone shows who, how long is left, or that it
+--   waits for its login, and a button that releases it with no fine. Every
+--   cell has a button that takes the game master into it, on the map of the
+--   jail. A character already in jail has a line of its own at the top, with
+--   its release; one whose days are over while it is offline is said to be
+--   free at its next login. Staff only: anyone else sees an empty gump.
 --
 -- Functions:
 --   rows(g, player, args)  fills the slot; args.target is the serial of the
 --                          character to jail and args.name its name, both
---                          absent until one is picked; args.days and
+--                          absent until one is picked; args.candidates the
+--                          players of one name to pick from, each
+--                          { serial, name, account }; args.days and
 --                          args.reason what the two fields show
 -- ==============================================================================
 
@@ -36,6 +44,9 @@ local go_x = 395
 
 local free_hue = 68
 local taken_hue = 38
+
+-- The players of one name listed to pick from: more do not fit the frame.
+local max_candidates = 10
 
 -- "2d 4h", "5h 10m" or "12m": the two largest units, never less than a minute.
 local function left(seconds)
@@ -61,6 +72,8 @@ local function open(player, args, response)
     gump.open(player, "jail_sentence", {
         target = args.target,
         name = args.name,
+        -- Several players of one name: listed until one of them is the target.
+        candidates = not args.target and args.candidates or nil,
         days = text[1] or args.days or "1",
         reason = text[2] or args.reason or ""
     })
@@ -174,6 +187,13 @@ local function send(who, response, args, cell)
         return
     end
 
+    -- A player who is offline: the cell is kept for it.
+    if result == JailResultType.Pending then
+        mobile.message(who, args.name .. " will be in cell " .. cell .. " for " .. math.floor(days)
+            .. " days from its next login.")
+        return
+    end
+
     mobile.message(who, refusal(result))
     open(who, args, response)
 end
@@ -195,9 +215,47 @@ function jail_sentence.rows(g, player, args)
     g:button{ x = 0, y = 0, up = 4005, down = 4007, on_click = function(who, response)
         pick(who, response, args)
     end }
+    local candidates = not args.target and args.candidates or nil
+    local headline = "Target: nobody. Press the button to pick one."
+
+    if args.target then
+        -- A player .jail <name> found who is not in the world has no name there.
+        headline = "Target: " .. args.name .. (mobile.name(args.target) and "" or " (offline)")
+    elseif candidates then
+        headline = "Target: nobody. Pick one of these, or press the button."
+    end
+
     g:label_cropped{ x = 35, y = 0, width = row_width + number_width + 100, height = text_height,
-        hue = args.target and free_hue or taken_hue,
-        text = args.target and "Target: " .. args.name or "Target: nobody. Press the button to pick one." }
+        hue = args.target and free_hue or taken_hue, text = headline }
+
+    -- Several players of the name: who is who, and the cells once one is picked.
+    if candidates then
+        for index = 1, math.min(#candidates, max_candidates) do
+            local candidate = candidates[index]
+            local y = index * row_height
+
+            g:button{ x = 0, y = y, up = 4005, down = 4007, on_click = function(who, response)
+                if not world.is_staff(who) then
+                    return
+                end
+
+                local text = response.text or {}
+
+                open(who, { target = candidate.serial, name = candidate.name, days = text[1], reason = text[2] })
+            end }
+            g:label_cropped{ x = 35, y = y, width = row_width + number_width + 100, height = text_height,
+                text = candidate.name .. " - account " .. candidate.account .. " - "
+                    .. (mobile.name(candidate.serial) and "online" or "offline") }
+        end
+
+        if #candidates > max_candidates then
+            g:label_cropped{ x = 35, y = (max_candidates + 1) * row_height, width = row_width + number_width,
+                height = text_height, hue = taken_hue,
+                text = "and " .. (#candidates - max_candidates) .. " more of that name" }
+        end
+
+        return
+    end
 
     local top = row_height
     local sentence = args.target and jail.sentence(args.target)
@@ -208,7 +266,9 @@ function jail_sentence.rows(g, player, args)
             release(who, args, args.target, args.name)
         end }
         g:label_cropped{ x = 35, y = top, width = row_width + number_width, height = text_height, hue = taken_hue,
-            text = sentence.seconds_left > 0
+            -- Given while it was offline: its days start when it is back.
+            text = sentence.pending and "Waits for login: cell " .. sentence.cell .. ", " .. sentence.days .. " days"
+                or sentence.seconds_left > 0
                 and "In cell " .. sentence.cell .. ", " .. left(sentence.seconds_left) .. " left"
                 -- Its days are over and it is not in the world: the jail releases it when it is back.
                 or "Sentence over: free at its next login" }
@@ -230,7 +290,8 @@ function jail_sentence.rows(g, player, args)
 
         if cell.prisoner and cell.prisoner ~= args.target then
             g:label_cropped{ x = 100, y = y, width = row_width, height = text_height, hue = taken_hue,
-                text = cell.name .. " - " .. left(cell.seconds_left) .. " left" }
+                text = cell.pending and cell.name .. " - waits for login"
+                    or cell.name .. " - " .. left(cell.seconds_left) .. " left" }
             g:button{ x = release_x, y = y, up = 4017, down = 4019, on_click = function(who)
                 release(who, args, cell.prisoner, cell.name)
             end }
@@ -243,7 +304,7 @@ function jail_sentence.rows(g, player, args)
             end
 
             g:label_cropped{ x = 100, y = y, width = row_width, height = text_height, hue = free_hue,
-                text = cell.prisoner and "here now" or "free" }
+                text = cell.prisoner and (cell.pending and "kept for it" or "here now") or "free" }
         end
 
         g:button{ x = go_x, y = y, up = 4005, down = 4007, on_click = function(who, response)

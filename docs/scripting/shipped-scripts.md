@@ -247,7 +247,8 @@ locks and traps the container: those are not there yet. The town tables use
 ## jail_sentence.lua
 
 `scripts/gumps/jail_sentence.lua` is the script of the gump of the [jail](../jail.md)
-(`templates/gumps/jail_sentence.xml`), which [`.jail`](../commands/jail.md) opens with no target.
+(`templates/gumps/jail_sentence.xml`), which [`.jail`](../commands/jail.md) opens with no target,
+and `.jail <name>` on the player of that name.
 Its `rows` function fills the slot: first a button that gives the cursor with `target.pick` and opens
 the gump again on the character picked, then the cells of `jail.cells()`, ten per page. With a
 character picked, a free cell has a button that reads the days typed in the gump and calls
@@ -257,6 +258,12 @@ shows its name, the time left as `2d 4h`, `5h 10m` or `12m`, and a button that c
 `jail.release`. Every cell has a button that takes the game master into it with
 `mobile.teleport(who, cell.x, cell.y, cell.z, cell.map)`, on the map of the jail. A target that is
 already in jail has its release on a line of its own at the top.
+A target that is not in the world, a player `.jail <name>` found, is shown as `(offline)`:
+`mobile.name` is nil for it. `jail.send` then answers `JailResultType.Pending` and the game master
+is told the cell is kept until the login; such a cell reads `waits for login`, from the `pending`
+of `jail.cells()`. When the gump is opened with `candidates`, several players of one name, the
+function lists them, ten at most, with their account and whether they are online, each with a
+button that opens the gump on it, and leaves the cells out until one is picked.
 Every button checks `world.is_staff` again: the rank may have gone while the gump was open.
 
 ## jail_note.lua

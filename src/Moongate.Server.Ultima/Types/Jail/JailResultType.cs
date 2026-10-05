@@ -27,5 +27,8 @@ public enum JailResultType
     Refused = 6,
 
     /// <summary>The map of the jail is not loaded, or the cell is outside it.</summary>
-    MapNotLoaded = 7
+    MapNotLoaded = 7,
+
+    /// <summary>The player is offline: the sentence waits for its login.</summary>
+    Pending = 8
 }

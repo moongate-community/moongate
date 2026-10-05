@@ -51,6 +51,9 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
     private const long Player = 8;
     private const long Target = 9;
 
+    // A player found by .jail <name> who is not in the world.
+    private const long Offline = 200;
+
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
     private readonly StubGameLoop _loop = new();
@@ -247,6 +250,149 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         Answer(0, 2, "1");
 
         Assert.Equal([new Serial((uint)Target)], _jail.Pardoned);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void AnOfflineTarget_IsSaidOffline()
+    {
+        var built = OpenWith(Staff, OfflineTarget());
+
+        Assert.Contains("Target: Pippo (offline)", built.Strings);
+        // It can be jailed: a jail button and a go for each cell.
+        Assert.Equal(25, built.Buttons.Count);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void SeveralOfTheName_AreListed_WithTheirAccount_AndWhetherTheyAreOnline()
+    {
+        var built = OpenWith(Staff, Homonyms((Player, "mario"), (Offline, "luigi")));
+
+        Assert.Contains("Target: nobody. Pick one of these, or press the button.", built.Strings);
+        Assert.Contains("Pippo - account mario - online", built.Strings);
+        Assert.Contains("Pippo - account luigi - offline", built.Strings);
+        // The target button and one for each of the two. The cells come once one is picked: the list has their place.
+        Assert.Equal(3, built.Buttons.Count);
+        Assert.DoesNotContain("Cell 1", built.Strings);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void PickingOneOfTheList_MakesItTheTarget_AndTheListIsGone()
+    {
+        OpenWith(Staff, Homonyms((Player, "mario"), (Offline, "luigi")));
+
+        // After the target button come the characters of the list, in its order.
+        Answer(0, 3, "7", "Stole a horse");
+
+        var again = _gumps.Opened[1].Gump.Layout.Build();
+        Assert.Contains("Target: Pippo (offline)", again.Strings);
+        // What was typed is kept.
+        Assert.Contains("7", again.Strings);
+        Assert.Contains("Stole a horse", again.Strings);
+        Assert.DoesNotContain(again.Strings, text => text.Contains("account"));
+        Assert.Equal(25, again.Buttons.Count);
+
+        _jail.OfflineResult = JailResultType.Pending;
+        Answer(1, Jail(4), "7", "Stole a horse");
+
+        Assert.Equal((new Serial((uint)Offline), 4, 7), (_jail.JailedOffline[0].Prisoner, _jail.JailedOffline[0].Cell, _jail.JailedOffline[0].Days));
+        Assert.Empty(_errors);
+    }
+
+    // The cursor instead of the list, then put away: the list is still there to pick from.
+    [Fact]
+    public void TheList_ComesBackWhenTheTargetCursorIsPutAway()
+    {
+        _targets.Result = TargetResult.Canceled(TargetCancelType.Canceled);
+        OpenWith(Staff, Homonyms((Player, "mario"), (Offline, "luigi")));
+
+        Answer(0, TargetButton, "1");
+
+        var again = _gumps.Opened[1].Gump.Layout.Build();
+        Assert.Contains("Pippo - account luigi - offline", again.Strings);
+        Assert.Equal(3, again.Buttons.Count);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void MoreThanTenOfTheName_SaysHowManyMore()
+    {
+        var many = Enumerable.Range(0, 12).Select(index => (Offline + index, "account" + index)).ToArray();
+
+        var built = OpenWith(Staff, Homonyms(many));
+
+        Assert.Contains("Pippo - account account9 - offline", built.Strings);
+        Assert.DoesNotContain("Pippo - account account10 - offline", built.Strings);
+        Assert.Contains("and 2 more of that name", built.Strings);
+        Assert.Equal(1 + 10, built.Buttons.Count);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void AFreeCell_ForAnOfflineTarget_KeepsTheSentenceWaiting_AndTellsTheGameMaster()
+    {
+        _jail.OfflineResult = JailResultType.Pending;
+        OpenWith(Staff, OfflineTarget());
+
+        Answer(0, Jail(3), "3", "Stole a horse");
+
+        var sent = Assert.Single(_jail.JailedOffline);
+        Assert.Equal((new Serial((uint)Offline), 3, 3, new Serial((uint)Staff)), (sent.Prisoner, sent.Cell, sent.Days, sent.By.Id));
+        Assert.Equal(["Stole a horse"], _jail.Reasons);
+        Assert.Equal("Pippo will be in cell 3 for 3 days from its next login.", Assert.Single(_speech.Told).Text);
+        // Done: the gump does not come back.
+        Assert.Single(_gumps.Opened);
+        Assert.Empty(_errors);
+    }
+
+    // It was deleted, or the jail was restarted since .jail <name> found it.
+    [Fact]
+    public void AFreeCell_ForAnOfflineTargetTheJailNoLongerKnows_SaysSo_AndOpensTheGumpAgain()
+    {
+        OpenWith(Staff, OfflineTarget());
+
+        Answer(0, Jail(3), "3");
+
+        Assert.Equal("That character is no longer here.", Assert.Single(_speech.Told).Text);
+        Assert.Equal(2, _gumps.Opened.Count);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void ACellKeptForASentenceThatWaits_SaysSo_AndCanBeReleased()
+    {
+        _jail.SentenceList.Add(Waiting(Player, "Gino", cell: 2));
+
+        var built = Open(Staff);
+
+        Assert.Contains("Gino - waits for login", built.Strings);
+        Assert.DoesNotContain(built.Strings, text => text.StartsWith("Gino") && text.Contains("left"));
+
+        Answer(0, Jail(2), "1");
+
+        Assert.Equal([new Serial((uint)Player)], _jail.Pardoned);
+        Assert.Equal("Gino is released.", Assert.Single(_speech.Told).Text);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void ATargetWhoseSentenceWaits_SeesItAtTheTop_AndCanBeReleased()
+    {
+        _jail.SentenceList.Add(Waiting(Offline, "Pippo", cell: 2));
+
+        var built = OpenWith(Staff, OfflineTarget());
+
+        Assert.Contains("Waits for login: cell 2, 3 days", built.Strings);
+        // Nobody is in its cell yet.
+        Assert.Contains("kept for it", built.Strings);
+        Assert.DoesNotContain("here now", built.Strings);
+
+        // After the target button comes the release of the target; the cells follow.
+        Answer(0, 2, "1");
+
+        Assert.Equal([new Serial((uint)Offline)], _jail.Pardoned);
         Assert.Empty(_errors);
     }
 
@@ -487,6 +633,50 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
     private static int Go(int cell)
     {
         return 2 * cell + 1;
+    }
+
+    private JailSentenceEntity Waiting(long prisoner, string name, int cell)
+    {
+        return new() { Id = new Serial((uint)prisoner), Name = name, Cell = cell, Days = 3, JailedBy = "Giachi", Pending = true };
+    }
+
+    // What .jail Pippo opens the gump with when it finds one player, who is offline.
+    private static LuaTable OfflineTarget()
+    {
+        var args = new LuaTable();
+        args["target"] = Offline;
+        args["name"] = "Pippo";
+        args["days"] = "1";
+
+        return args;
+    }
+
+    // What .jail Pippo opens the gump with when several players have the name.
+    private static LuaTable Homonyms(params (long Serial, string Account)[] characters)
+    {
+        var candidates = new LuaTable();
+
+        for (var index = 0; index < characters.Length; index++)
+        {
+            var entry = new LuaTable();
+            entry["serial"] = characters[index].Serial;
+            entry["name"] = "Pippo";
+            entry["account"] = characters[index].Account;
+            candidates[index + 1] = entry;
+        }
+
+        var args = new LuaTable();
+        args["candidates"] = candidates;
+        args["days"] = "1";
+
+        return args;
+    }
+
+    private GumpBuildResult OpenWith(long player, LuaTable args)
+    {
+        Assert.True(_module.Open(player, "jail_sentence", args));
+
+        return _gumps.Opened[^1].Gump.Layout.Build();
     }
 
     private GumpBuildResult Open(long player, bool withTarget = true)

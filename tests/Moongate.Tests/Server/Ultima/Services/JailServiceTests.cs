@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Jail;
@@ -36,6 +37,8 @@ public sealed class JailServiceTests : IAsyncLifetime
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingDataAccess<JailSentenceEntity> _data = new();
+    private readonly RecordingDataAccess<MobileEntity> _characters = new();
+    private readonly RecordingDataAccess<AccountEntity> _accounts = new();
     private readonly JailConfig _config = new();
     private readonly SettableClock _clock = new() { Now = new DateTimeOffset(2026, 10, 4, 12, 0, 0, TimeSpan.Zero) };
     private readonly ItemsConfig _itemsConfig = new() { GoldTemplate = "gold", BackpackTemplate = "backpack" };
@@ -730,6 +733,470 @@ public sealed class JailServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Find_GivesThePlayersOfThatName_WithTheirAccountAndRank()
+    {
+        Character(200, "Pippo", "mario", AccountType.Regular);
+        Character(201, "Gino", "luigi", AccountType.Regular);
+
+        var found = Assert.Single(await _jail.FindAsync("Pippo"));
+
+        Assert.Equal(
+            (new Serial(200), "Pippo", "mario", AccountType.Regular),
+            (found.Id, found.Name, found.Account, found.AccountType)
+        );
+    }
+
+    [Fact]
+    public async Task Find_IgnoresCaseAndTheSpacesAround()
+    {
+        Character(200, "Pippo", "mario", AccountType.Regular);
+
+        Assert.Equal(new Serial(200), Assert.Single(await _jail.FindAsync("  pIPPO ")).Id);
+    }
+
+    [Fact]
+    public async Task Find_LeavesOutNpcsAndCharactersPendingDeletion()
+    {
+        _characters.Upserted.Add(new MobileEntity { Id = new Serial(300), Name = "Pippo" });
+        Character(200, "Pippo", "mario", AccountType.Regular).DeletionRequestedAt = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        Assert.Empty(await _jail.FindAsync("Pippo"));
+    }
+
+    [Fact]
+    public async Task Find_SeveralOfTheSameName_GivesThemAllInSerialOrder()
+    {
+        Character(210, "Pippo", "luigi", AccountType.GameMaster);
+        Character(200, "Pippo", "mario", AccountType.Regular);
+
+        var found = await _jail.FindAsync("pippo");
+
+        Assert.Equal(
+            [(new Serial(200), "mario", AccountType.Regular), (new Serial(210), "luigi", AccountType.GameMaster)],
+            found.Select(candidate => (candidate.Id, candidate.Account, candidate.AccountType))
+        );
+    }
+
+    [Theory, InlineData(""), InlineData("   ")]
+    public async Task Find_AnEmptyName_FindsNobody(string name)
+    {
+        Character(200, "", "mario", AccountType.Regular);
+
+        Assert.Empty(await _jail.FindAsync(name));
+    }
+
+    [Fact]
+    public async Task JailOffline_AFoundPlayer_KeepsASentenceThatWaits_AndMovesNobody()
+    {
+        var aria = await OfflineAsync(_aria);
+
+        Assert.Equal(JailResultType.Pending, _jail.JailOffline(aria, 2, 3, _staff, " Stole a horse "));
+
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal(
+            (aria, "Aria", true, 2, 3, "Giachi", "Stole a horse", true, false),
+            (sentence.Id, sentence.Name, sentence.IsPlayer, sentence.Cell, sentence.Days, sentence.JailedBy, sentence.Reason, sentence.Pending, sentence.Pardoned)
+        );
+        // Its days have not started.
+        Assert.Equal((0L, 0L), (sentence.JailedAt, sentence.ReleaseAt));
+        Assert.Empty(_teleports.Teleports);
+        Assert.Empty(_speech.Told);
+    }
+
+    [Fact]
+    public async Task JailOffline_ReservesTheCell()
+    {
+        var aria = await OfflineAsync(_aria);
+
+        _jail.JailOffline(aria, 2, 3, _staff);
+
+        Assert.Equal(aria, _jail.GetOccupant(2)?.Id);
+        Assert.Equal(JailResultType.CellOccupied, _jail.Jail(_bruno, 2, 1, _staff));
+
+        // However long it waits.
+        _clock.Advance(TimeSpan.FromDays(400));
+        Assert.Equal(aria, _jail.GetOccupant(2)?.Id);
+    }
+
+    [Fact]
+    public async Task JailOffline_ASerialTheJailDidNotFind_IsRefused()
+    {
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.LeaveWorld(_aria.Id));
+
+        Assert.Equal(JailResultType.NotInWorld, _jail.JailOffline(_aria.Id, 2, 3, _staff));
+        Assert.Empty(_jail.Sentences);
+    }
+
+    [Theory, InlineData(AccountType.GameMaster), InlineData(AccountType.Administrator)]
+    public async Task JailOffline_AnAccountOfTheSameRankOrAbove_IsRefused(AccountType rank)
+    {
+        var aria = await OfflineAsync(_aria, rank);
+
+        Assert.Equal(JailResultType.Refused, _jail.JailOffline(aria, 2, 3, _staff));
+        Assert.Empty(_jail.Sentences);
+    }
+
+    [Theory, InlineData(0), InlineData(-1), InlineData(31)]
+    public async Task JailOffline_DaysOutOfRange_AreRefused(int days)
+    {
+        var aria = await OfflineAsync(_aria);
+
+        Assert.Equal(JailResultType.BadDays, _jail.JailOffline(aria, 2, days, _staff));
+        Assert.Empty(_jail.Sentences);
+    }
+
+    [Fact]
+    public async Task JailOffline_AnUnknownCell_IsRefused()
+    {
+        var aria = await OfflineAsync(_aria);
+
+        Assert.Equal(JailResultType.NoSuchCell, _jail.JailOffline(aria, 9, 3, _staff));
+    }
+
+    [Fact]
+    public async Task JailOffline_WithoutTheFile_IsDisabled()
+    {
+        var jail = await CreateAsync(null);
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.LeaveWorld(_aria.Id));
+        Character(_aria.Id.Value, "Aria", "mario", AccountType.Regular);
+        await jail.FindAsync("Aria");
+
+        Assert.Equal(JailResultType.Disabled, jail.JailOffline(_aria.Id, 1, 3, _staff));
+    }
+
+    [Fact]
+    public async Task JailOffline_AnOccupiedCell_IsRefused()
+    {
+        var aria = await OfflineAsync(_aria);
+        _jail.Jail(_bruno, 2, 1, _staff);
+
+        Assert.Equal(JailResultType.CellOccupied, _jail.JailOffline(aria, 2, 3, _staff));
+        Assert.Single(_jail.Sentences);
+    }
+
+    [Fact]
+    public async Task JailOffline_AgainInAnotherCell_MovesTheReservation()
+    {
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 1, 3, _staff, "Stole a horse");
+
+        Assert.Equal(JailResultType.Pending, _jail.JailOffline(aria, 2, 5, _staff));
+
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal((2, 5, "", true), (sentence.Cell, sentence.Days, sentence.Reason, sentence.Pending));
+        Assert.Null(_jail.GetOccupant(1));
+    }
+
+    // Found offline by .jail, back in the world before the game master picked the cell.
+    [Fact]
+    public async Task JailOffline_APlayerWhoLoggedInMeanwhile_IsJailedAtOnce()
+    {
+        var aria = await OfflineAsync(_aria);
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(_aria));
+
+        Assert.Equal(JailResultType.Ok, _jail.JailOffline(aria, 2, 3, _staff));
+
+        Assert.Equal((_aria, MapType.Felucca, Cell2), Assert.Single(_teleports.Teleports));
+        Assert.False(Assert.Single(_jail.Sentences).Pending);
+    }
+
+    // The gump jails whoever is in the world through Jail: the same wait, whichever way the sentence comes.
+    [Fact]
+    public void Jail_APlayerWhoseLoginIsNotOverYet_KeepsTheSentenceWaiting_AndTheCheckTakesItOnceItEntered()
+    {
+        _view.NotEntered.Add(_aria.Id);
+
+        Assert.Equal(JailResultType.Pending, _jail.Jail(_aria, 2, 3, _staff, "Stole a horse"));
+
+        Assert.Empty(_teleports.Teleports);
+        Assert.Empty(_speech.Told);
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal((true, "Aria", true, 2, 3, "Stole a horse"), (sentence.Pending, sentence.Name, sentence.IsPlayer, sentence.Cell, sentence.Days, sentence.Reason));
+
+        _view.NotEntered.Clear();
+        _jail.Check();
+
+        Assert.Equal((_aria, MapType.Felucca, Cell2), Assert.Single(_teleports.Teleports));
+        Assert.Equal((MapType.Trammel, 1600, 1600, 5), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+    }
+
+    [Fact]
+    public void Jail_AnNpc_IsNeverMadeToWait()
+    {
+        _view.NotEntered.Add(_orc.Id);
+
+        Assert.Equal(JailResultType.Ok, _jail.Jail(_orc, 1, 1, _staff));
+    }
+
+    // Its login is being sent: a teleport now would reach its client before it knows where it stands.
+    [Fact]
+    public async Task JailOffline_APlayerWhoseLoginIsNotOverYet_IsNotMovedYet_AndTheCheckTakesItOnceItEntered()
+    {
+        var aria = await OfflineAsync(_aria);
+        await LoginAsync(_aria, MapType.Trammel, new Point3D(1600, 1600, 5));
+        _view.NotEntered.Add(aria);
+
+        Assert.Equal(JailResultType.Pending, _jail.JailOffline(aria, 2, 3, _staff));
+
+        Assert.Empty(_teleports.Teleports);
+        Assert.True(Assert.Single(_jail.Sentences).Pending);
+
+        _view.NotEntered.Clear();
+        _jail.Check();
+
+        Assert.Equal((_aria, MapType.Felucca, Cell2), Assert.Single(_teleports.Teleports));
+        Assert.False(Assert.Single(_jail.Sentences).Pending);
+    }
+
+    [Fact]
+    public async Task JailOffline_ARunningSentenceOfAnOfflinePlayer_WaitsAgain_AndKeepsItsReturnPlace()
+    {
+        _jail.Jail(_aria, 1, 3, _staff);
+        var aria = await OfflineAsync(_aria);
+
+        Assert.Equal(JailResultType.Pending, _jail.JailOffline(aria, 2, 5, _staff));
+
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal((2, 5, true), (sentence.Cell, sentence.Days, sentence.Pending));
+        Assert.Equal((MapType.Trammel, 1600, 1600, 5), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+        Assert.Null(_jail.GetOccupant(1));
+    }
+
+    [Fact]
+    public async Task TheConsole_IsToldWhoWillBeJailedAtItsLogin()
+    {
+        var aria = await OfflineAsync(_aria);
+        Logged();
+
+        _jail.JailOffline(aria, 2, 3, _staff, "Stole a horse");
+        _jail.JailOffline(aria, 1, 1, _staff);
+
+        Assert.Equal(
+            [
+                "Aria (0x00000002) will be jailed in cell 2 for 3 days at its next login, by Giachi: Stole a horse",
+                "Aria (0x00000002) will be jailed in cell 1 for 1 days at its next login, by Giachi"
+            ],
+            Logged()
+        );
+    }
+
+    [Fact]
+    public async Task Check_AWaitingSentence_WhileItsPrisonerIsOffline_DoesNothing()
+    {
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 2, 3, _staff);
+        _clock.Advance(TimeSpan.FromDays(10));
+
+        _jail.Check();
+
+        Assert.True(Assert.Single(_jail.Sentences).Pending);
+        Assert.Empty(_teleports.Teleports);
+        Assert.Empty(_jail.Capture());
+    }
+
+    [Fact]
+    public async Task Check_AWaitingSentence_AtTheLogin_TakesThePrisonerToItsCell_AndItsDaysStartThen()
+    {
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 2, 3, _staff, "Stole a horse");
+        _clock.Advance(TimeSpan.FromDays(5));
+        await LoginAsync(_aria, MapType.Felucca, new Point3D(2000, 2100, 7));
+        Logged();
+
+        _jail.Check();
+
+        Assert.Equal((_aria, MapType.Felucca, Cell2), Assert.Single(_teleports.Teleports));
+        var sentence = Assert.Single(_jail.Sentences);
+        var now = _clock.Now.ToUnixTimeMilliseconds();
+        Assert.Equal((false, now, now + 3 * Day), (sentence.Pending, sentence.JailedAt, sentence.ReleaseAt));
+        // It goes back where it logged in.
+        Assert.Equal((MapType.Felucca, 2000, 2100, 7), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+        Assert.Equal((_aria, "You have been jailed for 3 days: Stole a horse"), Assert.Single(_speech.Told));
+        Assert.Equal(["Aria (0x00000002) is jailed in cell 2 for 3 days by Giachi: Stole a horse"], Logged());
+
+        // Once: the next check finds a sentence that runs.
+        _jail.Check();
+        Assert.Single(_teleports.Teleports);
+        Assert.Single(_speech.Told);
+    }
+
+    [Fact]
+    public async Task Check_AWaitingSentence_WhoseLoginIsNotOverYet_WaitsForTheNextCheck()
+    {
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 2, 3, _staff);
+        await LoginAsync(_aria, MapType.Trammel, new Point3D(1600, 1600, 5));
+        _view.NotEntered.Add(aria);
+
+        _jail.Check();
+
+        Assert.True(Assert.Single(_jail.Sentences).Pending);
+        Assert.Empty(_teleports.Teleports);
+
+        _view.NotEntered.Clear();
+        _jail.Check();
+
+        Assert.False(Assert.Single(_jail.Sentences).Pending);
+        Assert.Single(_teleports.Teleports);
+    }
+
+    [Fact]
+    public async Task Check_AWaitingSentence_WhenTheJailMapIsNotLoaded_KeepsWaiting()
+    {
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 2, 3, _staff);
+        await LoginAsync(_aria, MapType.Trammel, new Point3D(1600, 1600, 5));
+        _teleports.Result = false;
+
+        _jail.Check();
+
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal((true, 0L, 0L), (sentence.Pending, sentence.JailedAt, sentence.ReleaseAt));
+        Assert.Empty(_speech.Told);
+
+        // The map is back: the same sentence starts.
+        _teleports.Result = true;
+        _jail.Check();
+
+        Assert.False(sentence.Pending);
+    }
+
+    [Fact]
+    public async Task Check_AWaitingSentence_WhoseCellIsGoneFromTheFile_KeepsWaiting_AndMovesNobody()
+    {
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 2, 3, _staff);
+        await LoginAsync(_aria, MapType.Trammel, new Point3D(1600, 1600, 5));
+        _file.Cell.RemoveAll(cell => cell.Number == 2);
+
+        _jail.Check();
+
+        Assert.True(Assert.Single(_jail.Sentences).Pending);
+        Assert.Empty(_teleports.Teleports);
+    }
+
+    [Fact]
+    public async Task Check_ASentenceStartedAtTheLogin_EndsAfterItsDays_WithTheFineAndTheNote()
+    {
+        var gold = Gold(Backpack(_aria), 800);
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 2, 3, _staff);
+        await LoginAsync(_aria, MapType.Trammel, new Point3D(1600, 1600, 5));
+        _jail.Check();
+
+        _clock.Advance(TimeSpan.FromDays(3) - TimeSpan.FromSeconds(1));
+        _jail.Check();
+        Assert.Single(_jail.Sentences);
+
+        _clock.Advance(TimeSpan.FromSeconds(1));
+        _jail.Check();
+
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal((_aria, MapType.Trammel, new Point3D(1600, 1600, 5)), _teleports.Teleports[^1]);
+        Assert.Equal(300, gold.Amount);
+        Assert.Single(_items.GetOwnedBy(_aria.Id), item => item.TemplateId == JailService.NoteTemplate);
+    }
+
+    // Back in the world with a sentence that waits, and jailed by hand before the check got to it.
+    [Fact]
+    public async Task Jail_APlayerWhoseSentenceWaits_StartsItNow_AndKeepsWhereItWas()
+    {
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 2, 3, _staff);
+        await LoginAsync(_aria, MapType.Felucca, new Point3D(2000, 2100, 7));
+
+        Assert.Equal(JailResultType.Ok, _jail.Jail(_aria, 1, 4, _staff));
+
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal((false, 1, 4), (sentence.Pending, sentence.Cell, sentence.Days));
+        Assert.Equal((MapType.Felucca, 2000, 2100, 7), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+
+        // The check has nothing left to start.
+        _jail.Check();
+        Assert.Single(_teleports.Teleports);
+    }
+
+    [Fact]
+    public async Task Start_ASentenceThatWaits_StillWaitsAfterARestart_AndKeepsItsCell()
+    {
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.LeaveWorld(_bruno.Id));
+        _data.Upserted.Add(
+            new JailSentenceEntity { Id = _bruno.Id, Name = "Bruno", IsPlayer = true, Cell = 1, Days = 2, Pending = true }
+        );
+        var jail = await CreateAsync(_file);
+
+        jail.Check();
+
+        Assert.True(Assert.Single(jail.Sentences).Pending);
+        Assert.Equal("Bruno", jail.GetOccupant(1)?.Name);
+        Assert.Equal(JailResultType.CellOccupied, jail.Jail(_aria, 1, 1, _staff));
+        Assert.Empty(jail.Capture());
+    }
+
+    [Fact]
+    public async Task Pardon_ASentenceThatNeverBegan_DropsIt_WithNoTeleportNoFineAndNoNote()
+    {
+        var gold = Gold(Backpack(_aria), 800);
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 2, 3, _staff);
+        Logged();
+
+        Assert.True(_jail.Pardon(aria));
+
+        Assert.Empty(_jail.Sentences);
+        Assert.Null(_jail.GetOccupant(2));
+        Assert.Equal([aria], _jail.Capture());
+        Assert.Equal(["The sentence of Aria (0x00000002) for cell 2 is dropped before it began"], Logged());
+
+        // Back in the world, it is nobody's prisoner.
+        await LoginAsync(_aria, MapType.Trammel, new Point3D(1600, 1600, 5));
+        _jail.Check();
+
+        Assert.Empty(_teleports.Teleports);
+        Assert.Empty(_speech.Told);
+        Assert.Equal(800, gold.Amount);
+    }
+
+    // Jailed while online, logged out in its cell, then given another cell while offline and released before it came
+    // back: it stands in the first cell and must leave it.
+    [Fact]
+    public async Task Pardon_ARunningSentenceMadeToWait_ReleasesThePrisonerAtItsLogin()
+    {
+        _jail.Jail(_aria, 1, 3, _staff);
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 2, 5, _staff);
+
+        Assert.True(_jail.Pardon(aria));
+
+        Assert.Null(_jail.GetOccupant(2));
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(_aria));
+        _jail.Check();
+
+        Assert.Empty(_jail.Sentences);
+        Assert.Equal((_aria, MapType.Trammel, new Point3D(1600, 1600, 5)), _teleports.Teleports[^1]);
+        Assert.Equal("You have been released from jail.", _speech.Told[^1].Text);
+    }
+
+    [Fact]
+    public async Task Check_ARunningSentenceMadeToWait_AtTheLogin_KeepsTheFirstReturnPlace()
+    {
+        _jail.Jail(_aria, 1, 3, _staff);
+        var aria = await OfflineAsync(_aria);
+        _jail.JailOffline(aria, 2, 5, _staff);
+        _clock.Advance(TimeSpan.FromDays(1));
+        // Where it logged out: its first cell.
+        await LoginAsync(_aria, MapType.Felucca, Cell1);
+
+        _jail.Check();
+
+        var sentence = Assert.Single(_jail.Sentences);
+        Assert.Equal((_aria, MapType.Felucca, Cell2), _teleports.Teleports[^1]);
+        Assert.Equal((MapType.Trammel, 1600, 1600, 5), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+        Assert.Equal(_clock.Now.ToUnixTimeMilliseconds() + 5 * Day, sentence.ReleaseAt);
+    }
+
+    [Fact]
     public void Pardon_SomeoneNotJailed_IsFalse()
     {
         Assert.False(_jail.Pardon(_aria.Id));
@@ -767,6 +1234,35 @@ public sealed class JailServiceTests : IAsyncLifetime
         return gold;
     }
 
+    // A player character of the world database, with its account: it is not in the world.
+    private MobileEntity Character(uint id, string name, string account, AccountType rank)
+    {
+        var owner = new Serial(5000 + id);
+        var character = new MobileEntity { Id = new Serial(id), Name = name, AccountId = owner, Map = MapType.Trammel };
+        _characters.Upserted.Add(character);
+        _accounts.Upserted.Add(new AccountEntity { Id = owner, Username = account, AccountType = rank });
+
+        return character;
+    }
+
+    // The player logs out and the jail finds it by its name, as .jail <name> does.
+    private async Task<Serial> OfflineAsync(MobileEntity player, AccountType rank = AccountType.Regular)
+    {
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.LeaveWorld(player.Id));
+        Character(player.Id.Value, player.Name, "mario", rank);
+        Assert.Single(await _jail.FindAsync(player.Name));
+
+        return player.Id;
+    }
+
+    // The player comes back into the world at that place.
+    private async Task LoginAsync(MobileEntity player, MapType map, Point3D location)
+    {
+        player.Map = map;
+        player.Location = location;
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(player));
+    }
+
     private async Task<MobileEntity> AddPlayerAsync(long id, string name, AccountType rank)
     {
         var session = await _fixture.AddAsync(id);
@@ -799,6 +1295,8 @@ public sealed class JailServiceTests : IAsyncLifetime
         var jail = new JailService(
             loader,
             _data,
+            _characters,
+            _accounts,
             _fixture.Mobiles,
             _fixture.Sessions,
             _teleports,

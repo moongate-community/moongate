@@ -11,10 +11,11 @@
     the game master into it. A right click closes the gump.
 
   Arguments:
-    target  the serial of the character to jail; none until one is picked
-    name    its name
-    days    the days shown in the field, as text
-    reason  the reason shown in its field; empty until one is typed
+    target      the serial of the character to jail; none until one is picked
+    name        its name
+    candidates  the players of one name that jail <name> found, to pick from
+    days        the days shown in the field, as text
+    reason      the reason shown in its field; empty until one is typed
 -->
 <gump id="jail_sentence" x="80" y="60"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">

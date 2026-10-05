@@ -55,7 +55,8 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
   `.season`, `.music`.
 - Try any gump on themselves: `.gump`.
 - Send a player or an NPC to a jail cell for some days, or release it, from a gump that lists the
-  cells: [`.jail`](commands/jail.md). The sentence ends by itself, with a fine and a release note;
+  cells: [`.jail`](commands/jail.md). The sentence ends by itself, with a fine and a release note.
+  `.jail <name>` jails a player who is offline: the cell is kept and the days start at its login;
   see [Jail](jail.md).
 - Set fame and karma, inspect what a target cursor picks: `.fame`, `.karma`, `.where`.
 - Restore a character waiting to be deleted: `.character`.

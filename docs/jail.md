@@ -51,6 +51,56 @@ field takes 60; the 100 are the limit for a script that calls `jail.send`.
   had. A cursor that another one replaces, such as that of a second `.jail`, opens nothing.
 - A right click closes the gump.
 
+## Jail a player who is offline
+
+`.jail Pippo` looks for the player of that name and opens the gump on it, whether it is in the
+world or not. The name is typed whole, in any case.
+
+```text
+[>] Target: Pippo (offline)
+Jail                              Release  Go
+[>] Cell 1   free                          [>]
+    Cell 2   Gino - waits for login  [x]   [>]
+```
+
+Type the days and the reason and press the button of a free cell, as for anyone else. A player
+who is online stands in the cell at once. One who is offline is not moved, and you are told
+`Pippo will be in cell 3 for 3 days from its next login.`:
+
+- The cell is kept for it: it shows `Pippo - waits for login` and nobody else can be sent there.
+- Within ten seconds of its next login the player is taken to the cell and told its sentence.
+  **Its days start then**, not on the day you gave the sentence: three days are three days in the
+  cell.
+- When the days are over it goes back where it logged in, with the fine and the note of any
+  other prisoner.
+- `Release` on a sentence that waits drops it: nobody was moved, so there is no fine and no note.
+- A sentence that waits never expires. If the player does not come back, the cell is free again
+  only with `Release`.
+- Pressing another free cell for a player whose sentence waits moves the cell kept for it.
+- The rank counts offline too: you cannot jail a character whose account has your rank or a
+  higher one.
+
+When several players have the name, the gump lists them instead of the cells:
+
+```text
+[>] Target: nobody. Pick one of these, or press the button.
+[>] Pippo - account mario - online
+[>] Pippo - account luigi - offline
+```
+
+Press the button of the one you mean: the gump opens on it, with the cells. Ten are listed at
+most; with more than ten players of one name the gump says how many it left out, and those can
+only be picked with `Target` while they are online.
+
+A player who was jailed while online and then logged out can be moved the same way: `.jail
+<name>`, then a free cell. Its sentence waits again and starts over at its next login, and it
+still goes back where it was first arrested.
+
+A player caught in the few seconds of its login is treated as one who is offline: the sentence
+waits, and the next check takes it to the cell.
+
+NPCs are not found by name: jail them with `Target`.
+
 ## Visit the cells
 
 `Go`, on every cell of the gump, takes you into it, on the map of the jail, and leaves the gump
@@ -69,6 +119,8 @@ The server looks every ten seconds for the sentences that are over.
 - A prisoner in the world is released at once.
 - A player who is offline is released within ten seconds of its next login. Its cell is free
   from the moment the sentence is over.
+- A sentence given to a player who was offline has not started: it
+  [waits for its login](#jail-a-player-who-is-offline) and is never over before.
 - The sentence of an NPC that was removed meanwhile is dropped.
 - A prisoner who holds an item on its cursor waits in its cell until it drops it: gold on the
   cursor cannot be taken, and lifting it is no way around the fine.
@@ -138,13 +190,20 @@ The server says who goes in and who comes out, at the information level:
 
 ```text
 Lord Pippo (0x00000A12) is jailed in cell 3 for 3 days by Giachi: Stole a horse
+Aria (0x00000A40) will be jailed in cell 4 for 2 days at its next login, by Giachi: Insulted the staff
+The sentence of Aria (0x00000A40) for cell 4 is dropped before it began
 Lord Pippo (0x00000A12) is released from cell 3 after 3 days, with a fine of 500 gold
 Gino (0x00000B07) is released early from cell 2
 The sentence of an orc (0x0000E258) in cell 1 is dropped: it is no longer in the world
 ```
 
 A character moved to another cell is said to be jailed again, in the new cell. The fine is the
-gold really taken. The last line is an NPC that was removed while it served.
+gold really taken. The last line is an NPC that was removed while it served. The second line is
+a sentence given to a player who was offline; when it logs in the server writes the usual `is
+jailed in cell` line, and the third line is that sentence released before the player came back.
+A sentence that waits for a cell that is gone from `jail.toml`, or whose map is not loaded, writes
+a warning at every check after the login, `waits for cell 4, which cannot be reached`, and keeps
+waiting.
 
 ## Settings
 
@@ -179,7 +238,11 @@ for _, cell in ipairs(jail.cells()) do
 end
 ```
 
-`jail.release(serial)` ends a sentence early and `jail.sentence(serial)` reads one. The module
+`jail.release(serial)` ends a sentence early and `jail.sentence(serial)` reads one. A sentence
+that waits for its player to log in has `pending` set, in `jail.sentence` and in the cell kept for
+it, and `seconds_left` is then its whole length. `jail.send` answers `JailResultType.Pending` for a
+player who is offline, and only for one that `.jail <name>` found: a script cannot jail any serial
+that is not in the world. The module
 does not check who calls it: a script for the staff checks `world.is_staff` first, as the gump
 script [`jail_sentence.lua`](scripting/shipped-scripts.md#jail_sentencelua) does. The gump is
 [`templates/gumps/jail_sentence.xml`](gumps.md); both are yours to change.
@@ -187,7 +250,6 @@ script [`jail_sentence.lua`](scripting/shipped-scripts.md#jail_sentencelua) does
 ## What it does not do yet
 
 - Forbid anything in jail: there are no spells, skills or recall to forbid.
-- Jail a player who is offline.
 - Keep a record of past sentences: the reason lives with the sentence and on its note.
 - Jail a whole account: a sentence is of one character.
 

@@ -8,6 +8,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Jail;
+using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -47,6 +48,8 @@ public sealed class JailService : IJailService
     private readonly ILogger _logger;
     private readonly IDataLoaderService _data;
     private readonly IDataAccess<JailSentenceEntity> _table;
+    private readonly IDataAccess<MobileEntity> _characters;
+    private readonly IDataAccess<AccountEntity> _accounts;
     private readonly IMobileService _mobiles;
     private readonly ISessionService _sessions;
     private readonly ITeleportService _teleports;
@@ -65,6 +68,9 @@ public sealed class JailService : IJailService
     // The sentences that ended since the last world save, which deletes their rows.
     private readonly ConcurrentDictionary<Serial, byte> _ended = new();
 
+    // Who FindAsync gave: the only serials that can be jailed while they are not in the world.
+    private readonly ConcurrentDictionary<Serial, JailCandidate> _found = new();
+
     private JailFile? _file;
     private string? _timerId;
 
@@ -81,6 +87,8 @@ public sealed class JailService : IJailService
     public JailService(
         IDataLoaderService data,
         IDataAccess<JailSentenceEntity> table,
+        IDataAccess<MobileEntity> characters,
+        IDataAccess<AccountEntity> accounts,
         IMobileService mobiles,
         ISessionService sessions,
         ITeleportService teleports,
@@ -99,6 +107,8 @@ public sealed class JailService : IJailService
         _logger = logger ?? Log.ForContext<JailService>();
         _data = data;
         _table = table;
+        _characters = characters;
+        _accounts = accounts;
         _mobiles = mobiles;
         _sessions = sessions;
         _teleports = teleports;
@@ -152,6 +162,42 @@ public sealed class JailService : IJailService
         return _sentences.Values.FirstOrDefault(sentence => sentence.Cell == cell && !sentence.IsOver(now));
     }
 
+    public async Task<IReadOnlyList<JailCandidate>> FindAsync(string name, CancellationToken cancellationToken = default)
+    {
+        var wanted = name.Trim().ToLowerInvariant();
+
+        if (wanted.Length == 0)
+        {
+            return [];
+        }
+
+        // The database lowers the name: this ToLower becomes its lower(), where a culture means nothing.
+#pragma warning disable CA1311
+        var characters = await _characters.QueryAsync(
+            mobile => mobile.AccountId != null && mobile.DeletionRequestedAt == null && mobile.Name.ToLower() == wanted,
+            cancellationToken
+        );
+#pragma warning restore CA1311
+        var found = new List<JailCandidate>();
+
+        foreach (var character in characters.OrderBy(character => character.Id.Value))
+        {
+            if (await _accounts.GetByIdAsync(character.AccountId!.Value, cancellationToken) is not { } account)
+            {
+                continue;
+            }
+
+            var candidate = new JailCandidate
+            {
+                Id = character.Id, Name = character.Name, Account = account.Username, AccountType = account.AccountType
+            };
+            _found[candidate.Id] = candidate;
+            found.Add(candidate);
+        }
+
+        return found;
+    }
+
     public JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by, string? reason = null)
     {
         if (_file is not { } file)
@@ -184,6 +230,13 @@ public sealed class JailService : IJailService
             return JailResultType.CellOccupied;
         }
 
+        // A player whose login is still being sent: a teleport now would reach its client before it knows where it
+        // stands. Its sentence waits, and the next check takes it once it has entered.
+        if (!prisoner.IsNpc && !_view.HasEntered(prisoner.Id))
+        {
+            return Wait(prisoner.Id, prisoner.Name, cell, days, by, reason);
+        }
+
         // Where it stands now, read before the teleport moves it.
         var (map, location) = (prisoner.Map, prisoner.Location);
 
@@ -203,7 +256,13 @@ public sealed class JailService : IJailService
             _sentences[prisoner.Id] = sentence;
             _ended.TryRemove(prisoner.Id, out _);
         }
+        else if (sentence.JailedAt == 0)
+        {
+            // One that waited for this login and never began: it has no place to go back to yet.
+            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ) = (map, location.X, location.Y, location.Z);
+        }
 
+        sentence.Pending = false;
         sentence.Name = prisoner.Name;
         sentence.IsPlayer = !prisoner.IsNpc;
         sentence.Cell = cell;
@@ -214,11 +273,79 @@ public sealed class JailService : IJailService
         sentence.Reason = Clean(reason);
         sentence.Pardoned = false;
 
+        Announce(sentence, prisoner);
+
+        return JailResultType.Ok;
+    }
+
+    public JailResultType JailOffline(Serial prisoner, int cell, int days, MobileEntity by, string? reason = null)
+    {
+        // It logged in after it was found.
+        if (_mobiles.TryGet(prisoner, out var online))
+        {
+            return Jail(online, cell, days, by, reason);
+        }
+
+        if (_file is not { } file)
+        {
+            return JailResultType.Disabled;
+        }
+
+        if (days < 1 || days > _config.MaxDays)
+        {
+            return JailResultType.BadDays;
+        }
+
+        if (file.Cell.All(candidate => candidate.Number != cell))
+        {
+            return JailResultType.NoSuchCell;
+        }
+
+        // Only who the search by name gave: a script cannot jail any serial it likes.
+        if (!_found.TryGetValue(prisoner, out var found))
+        {
+            return JailResultType.NotInWorld;
+        }
+
+        if (prisoner == by.Id ||
+            (_sessions.TryGetByCharacterId(by.Id, out var mine) && found.AccountType >= mine.AccountType))
+        {
+            return JailResultType.Refused;
+        }
+
+        if (GetOccupant(cell) is { } occupant && occupant.Id != prisoner)
+        {
+            return JailResultType.CellOccupied;
+        }
+
+        return Wait(prisoner, found.Name, cell, days, by, reason);
+    }
+
+    // The sentence is kept with its cell and nobody is moved: the check starts it when its player has entered the world.
+    private JailResultType Wait(Serial prisoner, string name, int cell, int days, MobileEntity by, string? reason)
+    {
+        if (!_sentences.TryGetValue(prisoner, out var sentence))
+        {
+            // No place to go back to yet: it is taken where the player logs in.
+            sentence = new JailSentenceEntity { Id = prisoner };
+            _sentences[prisoner] = sentence;
+            _ended.TryRemove(prisoner, out _);
+        }
+
+        sentence.Name = name;
+        sentence.IsPlayer = true;
+        sentence.Cell = cell;
+        sentence.Days = days;
+        sentence.JailedBy = by.Name;
+        sentence.Reason = Clean(reason);
+        sentence.Pardoned = false;
+        sentence.Pending = true;
+        sentence.ReleaseAt = 0;
+
         if (sentence.Reason.Length == 0)
         {
-            _speech.Tell(prisoner, _localization.Text(JailedMessage, "You have been jailed for {0} days.", days));
             _logger.Information(
-                "{Name:l} ({Serial:l}) is jailed in cell {Cell} for {Days} days by {By:l}",
+                "{Name:l} ({Serial:l}) will be jailed in cell {Cell} for {Days} days at its next login, by {By:l}",
                 sentence.Name,
                 sentence.Id,
                 cell,
@@ -228,12 +355,8 @@ public sealed class JailService : IJailService
         }
         else
         {
-            _speech.Tell(
-                prisoner,
-                _localization.Text(JailedForMessage, "You have been jailed for {0} days: {1}", days, sentence.Reason)
-            );
             _logger.Information(
-                "{Name:l} ({Serial:l}) is jailed in cell {Cell} for {Days} days by {By:l}: {Reason:l}",
+                "{Name:l} ({Serial:l}) will be jailed in cell {Cell} for {Days} days at its next login, by {By:l}: {Reason:l}",
                 sentence.Name,
                 sentence.Id,
                 cell,
@@ -243,7 +366,7 @@ public sealed class JailService : IJailService
             );
         }
 
-        return JailResultType.Ok;
+        return JailResultType.Pending;
     }
 
     public IReadOnlyCollection<Serial> Capture()
@@ -266,6 +389,22 @@ public sealed class JailService : IJailService
             return false;
         }
 
+        if (sentence.Pending && sentence.JailedAt == 0)
+        {
+            // Nobody was moved and nothing was taken: there is nothing to give back.
+            End(sentence);
+            _logger.Information(
+                "The sentence of {Name:l} ({Serial:l}) for cell {Cell} is dropped before it began",
+                sentence.Name,
+                sentence.Id,
+                sentence.Cell
+            );
+
+            return true;
+        }
+
+        // One that had run and was made to wait: its prisoner still stands in a cell, and leaves it as any other.
+        sentence.Pending = false;
         sentence.Pardoned = true;
         sentence.ReleaseAt = Now();
         Check();
@@ -276,6 +415,18 @@ public sealed class JailService : IJailService
     // A timer callback that throws closes the timer wheel: one bad prisoner must not stop the server.
     public void Check()
     {
+        foreach (var sentence in _sentences.Values.Where(sentence => sentence.Pending).ToArray())
+        {
+            try
+            {
+                Begin(sentence);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "The jailing of {Prisoner} at its login failed", sentence.Id);
+            }
+        }
+
         var now = Now();
 
         foreach (var sentence in _sentences.Values.Where(sentence => sentence.IsOver(now)).ToArray())
@@ -318,6 +469,77 @@ public sealed class JailService : IJailService
                 _logger.Error(exception, "The release of {Prisoner} from jail failed", sentence.Id);
             }
         }
+    }
+
+    // The prisoner is told its days, and the console who went where.
+    private void Announce(JailSentenceEntity sentence, MobileEntity prisoner)
+    {
+        if (sentence.Reason.Length == 0)
+        {
+            _speech.Tell(prisoner, _localization.Text(JailedMessage, "You have been jailed for {0} days.", sentence.Days));
+            _logger.Information(
+                "{Name:l} ({Serial:l}) is jailed in cell {Cell} for {Days} days by {By:l}",
+                sentence.Name,
+                sentence.Id,
+                sentence.Cell,
+                sentence.Days,
+                sentence.JailedBy
+            );
+        }
+        else
+        {
+            _speech.Tell(
+                prisoner,
+                _localization.Text(JailedForMessage, "You have been jailed for {0} days: {1}", sentence.Days, sentence.Reason)
+            );
+            _logger.Information(
+                "{Name:l} ({Serial:l}) is jailed in cell {Cell} for {Days} days by {By:l}: {Reason:l}",
+                sentence.Name,
+                sentence.Id,
+                sentence.Cell,
+                sentence.Days,
+                sentence.JailedBy,
+                sentence.Reason
+            );
+        }
+    }
+
+    // A sentence given while its prisoner was offline starts when it is back and its login is over.
+    private void Begin(JailSentenceEntity sentence)
+    {
+        if (!_mobiles.TryGet(sentence.Id, out var prisoner) || !_view.HasEntered(prisoner.Id))
+        {
+            return;
+        }
+
+        // Where it stands now, read before the teleport moves it.
+        var (map, location) = (prisoner.Map, prisoner.Location);
+
+        if (_file is not { } file ||
+            file.Cell.FirstOrDefault(candidate => candidate.Number == sentence.Cell) is not { } cell ||
+            !_teleports.Teleport(prisoner, file.Map, cell.Location))
+        {
+            _logger.Warning(
+                "{Name:l} ({Serial:l}) waits for cell {Cell}, which cannot be reached",
+                sentence.Name,
+                sentence.Id,
+                sentence.Cell
+            );
+
+            return;
+        }
+
+        // A sentence that had run before keeps the place of its first arrest.
+        if (sentence.JailedAt == 0)
+        {
+            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ) = (map, location.X, location.Y, location.Z);
+        }
+
+        var now = Now();
+        sentence.Pending = false;
+        sentence.JailedAt = now;
+        sentence.ReleaseAt = now + sentence.Days * MillisecondsADay;
+        Announce(sentence, prisoner);
     }
 
     private bool OwesAFine(JailSentenceEntity sentence)

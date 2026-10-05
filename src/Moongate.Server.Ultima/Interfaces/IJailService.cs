@@ -53,11 +53,28 @@ public interface IJailService : IMoongateStartupService, IPersistenceDeletionSou
     JailSentenceEntity? GetOccupant(int cell);
 
     /// <summary>
+    ///     Finds the player characters of that name, without case, in the world or not, and remembers them: they
+    ///     are the ones that can be jailed while offline. Characters pending deletion are left out. Any thread.
+    /// </summary>
+    Task<IReadOnlyList<JailCandidate>> FindAsync(string name, CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     Sends the mobile to the cell for that many days and keeps where it was. A mobile already in jail moves to
     ///     the cell with a sentence that starts now, and keeps the place it was first arrested on. The reason, when
     ///     there is one, is kept with the sentence as one line, told to the prisoner and written on its release note.
+    ///     A player whose login is not over yet is not moved: its sentence waits, the result is
+    ///     <see cref="JailResultType.Pending" />, and <see cref="Check" /> takes it to the cell once it has entered.
     /// </summary>
     JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by, string? reason = null);
+
+    /// <summary>
+    ///     Gives a sentence to a player who is not in the world, one <see cref="FindAsync" /> gave: it waits with its
+    ///     cell taken, nobody is moved, and <see cref="Check" /> starts it when the player is back, so its days count
+    ///     from the login. The result is then <see cref="JailResultType.Pending" />. A player who is in the world is
+    ///     jailed at once, as by <see cref="Jail" />. A sentence the player already has waits again with the new cell
+    ///     and days, and keeps the place it was first arrested on.
+    /// </summary>
+    JailResultType JailOffline(Serial prisoner, int cell, int days, MobileEntity by, string? reason = null);
 
     /// <summary>
     ///     Ends the sentence now with no fine and no note: a prisoner in the world goes back at once, a player who is

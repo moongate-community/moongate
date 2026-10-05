@@ -60,6 +60,38 @@ public sealed class StubJailService : IJailService
         return Result;
     }
 
+    /// <summary>
+    ///     Who a search by name gives, whatever the name.
+    /// </summary>
+    public List<JailCandidate> Found { get; } = [];
+
+    /// <summary>
+    ///     The names searched, in order.
+    /// </summary>
+    public List<string> Searched { get; } = [];
+
+    public Task<IReadOnlyList<JailCandidate>> FindAsync(string name, CancellationToken cancellationToken = default)
+    {
+        Searched.Add(name);
+
+        return Task.FromResult<IReadOnlyList<JailCandidate>>(Found.ToList());
+    }
+
+    /// <summary>
+    ///     What jailing someone who is not in the world gives: as the jail answers for a serial it did not find.
+    /// </summary>
+    public JailResultType OfflineResult { get; set; } = JailResultType.NotInWorld;
+
+    public List<(Serial Prisoner, int Cell, int Days, MobileEntity By)> JailedOffline { get; } = [];
+
+    public JailResultType JailOffline(Serial prisoner, int cell, int days, MobileEntity by, string? reason = null)
+    {
+        JailedOffline.Add((prisoner, cell, days, by));
+        Reasons.Add(reason);
+
+        return OfflineResult;
+    }
+
     public bool Pardon(Serial prisoner)
     {
         Pardoned.Add(prisoner);
