@@ -2,7 +2,7 @@ title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Seventeen - Day
 Eighteen :
-
+ 
 I cannot go on much
 longer.  I know now
 t'was no work of the
@@ -36,7 +36,7 @@ item_id = 0x0FF1
 title = "Deník: Objevení hrobky"
 content = """Den sedmnáctý až
 osmnáctý:
-
+ 
 Už nemohu dlouho
 pokračovat. Nyní vím, že
 nás tu neuvěznila práce
@@ -62,7 +62,7 @@ v tomto oceánu krve."""
 title = "Journal : découverte du tombeau"
 content = """Du dix-septième au
 dix-huitième jour :
-
+ 
 Je ne puis continuer
 beaucoup plus longtemps.
 Je sais maintenant que
@@ -95,7 +95,7 @@ dans cet océan de sang."""
 title = "Tagebuch: Entdeckung des Grabes"
 content = """Siebzehnter bis
 achtzehnter Tag:
-
+ 
 Ich kann nicht mehr
 lange weitermachen. Ich
 weiß nun, dass es kein
@@ -128,7 +128,7 @@ Blut."""
 title = "Diario: scoperta della Tomba"
 content = """Giorno Diciassette -
 Giorno Diciotto :
-
+ 
 Non posso andare avanti
 ancora a lungo. Ora so
 che non è stata opera
@@ -158,7 +158,7 @@ sangue."""
 title = "Dziennik: odkrycie Grobowca"
 content = """Dzień siedemnasty —
 dzień osiemnasty:
-
+ 
 Nie wytrzymam już długo.
 Teraz wiem, że to nie
 ruch ziemi uwięził nas
@@ -186,7 +186,7 @@ w tym oceanie krwi."""
 title = "Diário: descoberta da tumba"
 content = """Décimo sétimo dia -
 Décimo oitavo dia:
-
+ 
 Não posso continuar por
 muito mais tempo. Agora
 sei que não foi uma obra
@@ -216,7 +216,7 @@ neste oceano de sangue."""
 title = "Diario: descubrimiento de la tumba"
 content = """Día diecisiete - Día
 dieciocho:
-
+ 
 No puedo seguir mucho
 más tiempo. Ahora sé que
 no fue obra de la tierra

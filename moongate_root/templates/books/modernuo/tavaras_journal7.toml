@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Seven:
-
+ 
 T'was written that,
 upon his death, Khal
 Ankur's followers,
@@ -58,7 +58,7 @@ item_id = 0x0FF1
 [translations.cze]
 title = "Deník: Objevení hrobky"
 content = """Den sedmý:
-
+ 
 Bylo psáno, že po smrti
 Khal Ankur se jeho
 stoupenci, známí jako
@@ -105,7 +105,7 @@ samotná moje otázka."""
 [translations.fre]
 title = "Journal : découverte du tombeau"
 content = """Septième jour :
-
+ 
 Il était écrit qu’à sa
 mort, les fidèles de Khal
 Ankur, ceux que l’on
@@ -162,7 +162,7 @@ question."""
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
 content = """Siebter Tag:
-
+ 
 Es stand geschrieben,
 dass nach Khal Ankurs Tod
 seine Anhänger, die als
@@ -218,7 +218,7 @@ fühlte."""
 [translations.ita]
 title = "Diario: scoperta della Tomba"
 content = """Giorno Sette:
-
+ 
 È scritto che, alla morte
 di Khal Ankur, i suoi
 seguaci, quelli noti come
@@ -269,7 +269,7 @@ solo per averlo chiesto."""
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
 content = """Dzień siódmy:
-
+ 
 Napisano, że po śmierci
 Khal Ankur jego wyznawcy,
 zwani Strażnikami Siódmej
@@ -314,7 +314,7 @@ od samego pytania."""
 [translations.por]
 title = "Diário: descoberta da tumba"
 content = """Sétimo dia:
-
+ 
 Estava escrito que, após
 sua morte, os seguidores
 de Khal Ankur, conhecidos
@@ -366,7 +366,7 @@ por ter perguntado."""
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
 content = """Día siete:
-
+ 
 Se escribió que, a su
 muerte, los seguidores de
 Khal Ankur, conocidos

@@ -49,9 +49,10 @@ path and rerun.
 A class becomes a stable `<snake_case_class>.toml` filename. For example,
 `GrammarOfOrcish` becomes `grammar_of_orcish`. Titles are preserved and are never
 used for deduplication: the Grimmoch, Lysander and Tavara installments remain distinct.
-Empty lines, leading spaces, empty pages, spelling and annotations stay as written.
-Lines are joined with a newline and pages with two newlines. This provides readable plain
-text; it does not retain a separate native pagination model.
+Leading spaces, empty pages, spelling and annotations stay as written. Lines are joined with
+a newline and pages with two newlines, so an empty line of the text is a page break; an empty
+line inside a ModernUO page is written as a line of one space, and the book keeps the pages of
+its source. The shipped translations have the same pages as the English text.
 
 The UTF-8 TOML body is multiline when that representation preserves the text exactly;
 leading newlines and CR/CRLF sequences use escaped basic strings when needed. Invalid

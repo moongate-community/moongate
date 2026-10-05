@@ -1,7 +1,7 @@
 title = "Drakov's Journal"
 author = "Drakov"
 content = """My Master
-
+ 
 This journal was
 found on one of
 our controllers.  It
@@ -78,7 +78,7 @@ item_id = 0x0FF2
 [translations.cze]
 title = "Deník Drakov"
 content = """Můj Mistře
-
+ 
 Tento deník byl
 nalezen u jednoho z
 našich ovladačů. Zdá
@@ -150,7 +150,7 @@ nebezpečí."""
 [translations.fre]
 title = "Le journal de Drakov"
 content = """Mon Maître
-
+ 
 Ce journal a été
 trouvé sur l’un de
 nos contrôleurs. Il
@@ -232,7 +232,7 @@ un si grand péril."""
 [translations.ger]
 title = "Drakovs Tagebuch"
 content = """Mein Meister
-
+ 
 Dieses Tagebuch wurde
 bei einem unserer
 Lenker gefunden.
@@ -316,7 +316,7 @@ solch großer Gefahr."""
 [translations.ita]
 title = "Il diario di Drakov"
 content = """Mio Padrone
-
+ 
 Questo diario è stato
 trovato su uno dei
 nostri controllori.
@@ -394,7 +394,7 @@ grave pericolo."""
 [translations.pol]
 title = "Dziennik Drakov"
 content = """Mój Mistrzu
-
+ 
 Ten dziennik
 znaleziono przy
 jednym z naszych
@@ -469,7 +469,7 @@ niebezpieczeństwie."""
 [translations.por]
 title = "Diário de Drakov"
 content = """Meu Mestre
-
+ 
 Este diário foi
 encontrado com um de
 nossos controladores.
@@ -546,7 +546,7 @@ perigo tão terrível."""
 [translations.spa]
 title = "El diario de Drakov"
 content = """Mi Maestro
-
+ 
 Se encontró este
 diario en poder de
 uno de nuestros

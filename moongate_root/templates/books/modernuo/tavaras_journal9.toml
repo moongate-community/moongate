@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Nine - Day Ten:
-
+ 
 The excavation of the
 next set of tunnels
 has ceased, as three
@@ -54,7 +54,7 @@ item_id = 0x0FF1
 [translations.cze]
 title = "Deník: Objevení hrobky"
 content = """Den devátý až desátý:
-
+ 
 Odkrývání další
 soustavy tunelů se
 zastavilo, protože v
@@ -100,7 +100,7 @@ Bergen."""
 title = "Journal : découverte du tombeau"
 content = """Du neuvième au dixième
 jour :
-
+ 
 Le déblaiement de la
 série de tunnels
 suivante a cessé, car
@@ -156,7 +156,7 @@ dit Bergen."""
 title = "Tagebuch: Entdeckung des Grabes"
 content = """Neunter bis zehnter
 Tag:
-
+ 
 Das Freilegen der
 nächsten Tunnel ist
 zum Stillstand
@@ -214,7 +214,7 @@ sagte."""
 title = "Diario: scoperta della Tomba"
 content = """Giorno Nove - Giorno
 Dieci:
-
+ 
 Lo scavo della
 successiva serie di
 cunicoli si è fermato,
@@ -270,7 +270,7 @@ ha detto Bergen."""
 title = "Dziennik: odkrycie Grobowca"
 content = """Dzień dziewiąty —
 dzień dziesiąty:
-
+ 
 Odsłanianie kolejnych
 tuneli ustało, gdyż
 nocą zaginęło trzech
@@ -315,7 +315,7 @@ jak powiedział Bergen."""
 [translations.por]
 title = "Diário: descoberta da tumba"
 content = """Nono dia - Décimo dia:
-
+ 
 A escavação do próximo
 conjunto de túneis
 parou, pois três dos
@@ -369,7 +369,7 @@ como disse Bergen."""
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
 content = """Día nueve - Día diez:
-
+ 
 La excavación del
 siguiente conjunto de
 túneles se ha

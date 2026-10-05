@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day One:
-
+ 
 The workers continue
 tirelessly in their
 efforts to unload our
@@ -53,7 +53,7 @@ item_id = 0x0FF1
 [translations.cze]
 title = "Deník: Objevení hrobky"
 content = """Den první:
-
+ 
 Dělníci neúnavně
 pokračují ve vykládání
 zásob, i když světlo
@@ -94,7 +94,7 @@ deset let svého života."""
 [translations.fre]
 title = "Journal : découverte du tombeau"
 content = """Premier jour :
-
+ 
 Les ouvriers
 poursuivent sans
 relâche leurs efforts
@@ -147,7 +147,7 @@ ma vie."""
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
 content = """Erster Tag:
-
+ 
 Die Arbeiter setzen
 unermüdlich ihre
 Bemühungen fort, unsere
@@ -202,7 +202,7 @@ habe."""
 [translations.ita]
 title = "Diario: scoperta della Tomba"
 content = """Giorno Uno:
-
+ 
 Gli operai continuano
 instancabilmente a
 scaricare le nostre
@@ -252,7 +252,7 @@ mia vita."""
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
 content = """Dzień pierwszy:
-
+ 
 Robotnicy niestrudzenie
 wyładowują nasze
 zapasy, nawet gdy
@@ -297,7 +297,7 @@ ostatnich dziesięć lat
 [translations.por]
 title = "Diário: descoberta da tumba"
 content = """Primeiro dia:
-
+ 
 Os trabalhadores
 continuam incansáveis
 em seus esforços para
@@ -347,7 +347,7 @@ minha vida."""
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
 content = """Día uno:
-
+ 
 Los trabajadores siguen
 descargando nuestros
 suministros sin

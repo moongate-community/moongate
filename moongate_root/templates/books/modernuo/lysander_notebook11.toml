@@ -2,7 +2,7 @@ title = "Lysander's Notebook"
 author = "L. Gathenwale"
 content = """Day Eleven - Day
 Thirteen:
-
+ 
 I come for Thee, my
 Master.  I come!  The
 way is clear, I have
@@ -53,7 +53,7 @@ item_id = 0x0FF1
 title = "Lysanderův zápisník"
 content = """Den jedenáctý až
 třináctý:
-
+ 
 Přicházím pro Tebe, můj
 Mistře. Přicházím! Cesta
 je volná, nalezl jsem
@@ -98,7 +98,7 @@ Khaldun!"""
 title = "Le carnet de Lysander"
 content = """Du onzième au treizième
 jour :
-
+ 
 Je viens à Toi, mon
 Maître. Je viens ! La
 voie est libre, j’ai
@@ -146,7 +146,7 @@ Khaldun enfin !"""
 title = "Lysanders Notizbuch"
 content = """Elfter bis dreizehnter
 Tag:
-
+ 
 Ich komme zu Dir, mein
 Meister. Ich komme! Der
 Weg ist frei, ich habe
@@ -197,7 +197,7 @@ Khaldun!"""
 title = "Il taccuino di Lysander"
 content = """Giorno Undici - Giorno
 Tredici:
-
+ 
 Vengo a Te, mio Padrone.
 Vengo! La via è sgombra,
 ho trovato il Tuo
@@ -242,7 +242,7 @@ Khaldun finalmente!"""
 title = "Notatnik Lysander"
 content = """Dzień jedenasty — dzień
 trzynasty:
-
+ 
 Przybywam do Ciebie, mój
 Mistrzu. Przybywam! Droga
 jest wolna, odnalazłem
@@ -289,7 +289,7 @@ Khaldun!"""
 title = "Caderno de Lysander"
 content = """Décimo primeiro dia -
 Décimo terceiro dia:
-
+ 
 Venho buscar Você, meu
 Mestre. Eu venho! O
 caminho está livre,
@@ -335,7 +335,7 @@ Khaldun enfim!"""
 [translations.spa]
 title = "Cuaderno de Lysander"
 content = """Día once - Día trece:
-
+ 
 Vengo por Ti, mi Maestro.
 ¡Vengo! El camino está
 despejado; he encontrado

@@ -34,7 +34,7 @@ collection!
 
 Caring for our
 Underwater Allies:
-
+ 
   Fish need clean
 water and food to
 survive.
@@ -64,7 +64,7 @@ healthy, and add more
 on a regular basis
 to keep your aquarium
 a pretty, sparkely blue.
-
+ 
   Well, I hope you
 get as much enjoyment,
 
@@ -72,7 +72,7 @@ collecting a beautiful
 array of our fine, finned,
 friends from the sea,
 as I do!
-
+ 
 Happy Fishing!"""
 item_template = "readable_book"
 item_id = 0x0FF2
@@ -108,7 +108,7 @@ přírůstek do své sbírky!
 
 Péče o naše podvodní
 spojence:
-
+ 
 Ryby potřebují k přežití
 čistou vodu a potravu.
 Naše akvárium je vybaveno
@@ -136,7 +136,7 @@ pravidelně doplňovat
 další, aby vaše akvárium
 zůstalo pěkně třpytivě
 modré.
-
+ 
 Nuže, doufám, že vám
 přinese stejně radosti
 
@@ -144,7 +144,7 @@ shromažďování krásné
 sbírky našich skvělých
 přátel s ploutvemi z moře
 jako mně!
-
+ 
 Šťastný rybolov!"""
 [translations.fre]
 title = "Votre nouvel aquarium"
@@ -183,7 +183,7 @@ collection !
 
 Prendre soin de nos alliés
 sous-marins :
-
+ 
 Les poissons ont besoin
 d’eau propre et de
 nourriture pour survivre.
@@ -216,7 +216,7 @@ vigoureuse, et à en
 ajouter régulièrement pour
 que votre aquarium garde
 un beau bleu étincelant.
-
+ 
 Eh bien, j’espère que vous
 prendrez autant de plaisir
 que moi
@@ -225,7 +225,7 @@ que moi
 collection de nos
 charmants amis des mers à
 nageoires !
-
+ 
 Bonne pêche !"""
 [translations.ger]
 title = "Euer neues Aquarium"
@@ -262,7 +262,7 @@ Eure Sammlung!
 
 Fürsorge für unsere
 Unterwasserverbündeten:
-
+ 
 Fische brauchen sauberes
 Wasser und Nahrung, um zu
 überleben.
@@ -297,7 +297,7 @@ füllt regelmäßig nach,
 damit Euer Aquarium ein
 hübsches, funkelndes Blau
 behält.
-
+ 
 Nun, ich hoffe, Ihr habt
 ebenso viel Freude daran,
 
@@ -305,7 +305,7 @@ eine schöne Auswahl
 unserer feinen Freunde mit
 Flossen aus dem Meer zu
 sammeln, wie ich!
-
+ 
 Fröhliches Fischen!"""
 [translations.ita]
 title = "Il vostro nuovo acquario"
@@ -343,7 +343,7 @@ collezione!
 
 Prendersi cura dei nostri
 Alleati Sottomarini:
-
+ 
 I pesci hanno bisogno di
 acqua pulita e cibo per
 sopravvivere.
@@ -376,7 +376,7 @@ regolarmente, per
 conservare al vostro
 acquario un bel blu
 scintillante.
-
+ 
 Be', spero che vi
 divertiate quanto me
 
@@ -384,7 +384,7 @@ a raccogliere una bella
 varietà dei nostri
 graziosi amici pinnuti del
 mare!
-
+ 
 Buona Pesca!"""
 [translations.pol]
 title = "Twoje nowe akwarium"
@@ -418,7 +418,7 @@ kolekcji!
 Opieka nad naszymi
 podwodnymi
 sprzymierzeńcami:
-
+ 
 Ryby potrzebują do życia
 czystej wody i pożywienia.
 Nasze akwarium wyposażone
@@ -445,7 +445,7 @@ wodę mocną i zdrową i
 regularnie jej dolewać,
 aby akwarium miało piękny,
 lśniący błękit.
-
+ 
 Mam nadzieję, że zbieranie
 pięknej kolekcji naszych
 wspaniałych, płetwiastych
@@ -453,7 +453,7 @@ przyjaciół z morza da ci
 tyle samo radości,
 
 ile mnie!
-
+ 
 Udanych połowów!"""
 [translations.por]
 title = "Seu novo aquário"
@@ -488,7 +488,7 @@ de sua coleção!
 
 Cuidando de nossos
 aliados subaquáticos:
-
+ 
 Os peixes precisam de água
 limpa e comida para
 sobreviver.
@@ -520,7 +520,7 @@ e de adicionar mais
 regularmente, para que seu
 aquário continue com um
 lindo azul cintilante.
-
+ 
 Bem, espero que você se
 divirta tanto
 
@@ -528,7 +528,7 @@ quanto eu ao colecionar
 uma bela variedade de
 nossos bons amigos com
 barbatanas vindos do mar!
-
+ 
 Boa pescaria!"""
 [translations.spa]
 title = "Tu nuevo acuario"
@@ -564,7 +564,7 @@ colección!
 
 Cuidar de nuestros aliados
 submarinos:
-
+ 
 Los peces necesitan agua
 limpia y comida para
 sobrevivir. Nuestro
@@ -594,7 +594,7 @@ estado, y añadir más
 regularmente para que tu
 acuario conserve un
 hermoso azul brillante.
-
+ 
 Bueno, ¡espero que
 disfrutes tanto como yo
 
@@ -602,5 +602,5 @@ reuniendo una hermosa
 variedad de nuestros
 queridos amigos marinos
 con aletas!
-
+ 
 ¡Buena pesca!"""

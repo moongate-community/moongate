@@ -1,7 +1,7 @@
 title = "Lysander's Notebook"
 author = "L. Gathenwale"
 content = """Day Eight - Day Ten :
-
+ 
 Have you taken them,
 Master?  They could
 not have found a way
@@ -55,7 +55,7 @@ item_id = 0x0FF1
 [translations.cze]
 title = "Lysanderův zápisník"
 content = """Den osmý až desátý:
-
+ 
 Vzal sis je, Mistře?
 Nemohli najít cestu za
 kameny, které blokují
@@ -100,7 +100,7 @@ pokryt jejich krví."""
 title = "Le carnet de Lysander"
 content = """Du huitième au dixième
 jour :
-
+ 
 Les as-Tu pris, Maître
 ? Ils n’ont pas pu
 trouver un chemin
@@ -154,7 +154,7 @@ leur sang."""
 [translations.ger]
 title = "Lysanders Notizbuch"
 content = """Achter bis zehnter Tag:
-
+ 
 Hast du sie genommen,
 Meister? Sie können
 keinen Weg an den
@@ -210,7 +210,7 @@ Blut."""
 title = "Il taccuino di Lysander"
 content = """Giorno Otto - Giorno
 Dieci :
-
+ 
 Li hai presi Tu,
 Padrone? Non possono
 aver trovato una via
@@ -261,7 +261,7 @@ del loro sangue."""
 title = "Notatnik Lysander"
 content = """Dzień ósmy — dzień
 dziesiąty:
-
+ 
 Czy ich zabrałeś,
 Mistrzu? Nie mogli
 znaleźć drogi za
@@ -309,7 +309,7 @@ pokryty ich krwią."""
 title = "Caderno de Lysander"
 content = """Oitavo dia - Décimo
 dia:
-
+ 
 Você os levou, Mestre?
 Eles não poderiam ter
 encontrado um caminho
@@ -359,7 +359,7 @@ sangue."""
 [translations.spa]
 title = "Cuaderno de Lysander"
 content = """Día ocho - Día diez:
-
+ 
 ¿Te los has llevado,
 Maestro? ¡No podrían
 haber encontrado un

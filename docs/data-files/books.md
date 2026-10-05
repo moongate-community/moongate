@@ -61,7 +61,9 @@ The item decides how a document opens:
 
 A book is read only. Its pages come from the saved text when it is opened:
 
-- An empty line of the text is a page break.
+- An empty line of the text is a page break. For a blank line inside a page write a line of one
+  space.
+- Line ends at the end of the text add no line and no page.
 - A page holds 8 lines. A longer one, as a translated page often is, goes on in the page after it:
   nothing is cut.
 - A line of more than 78 characters is cut at a space.
@@ -81,6 +83,18 @@ content = """..."""
 
 A book cannot carry [attachments](#letter-attachments): it has no button to claim them with, so
 such a source is refused at startup. Use a scroll for a letter with a gift.
+
+A root made before books existed keeps its own files, which `mgctl init` does not overwrite, and
+its imported texts stay parchments until you do both of these:
+
+1. Add the `readable_book` item to your `templates/items/books.toml`, as the shipped file has it:
+   `id = "readable_book"`, `item_id = 0x0FF1`, `name = "a book"`, `script_id = "readable_book"`,
+   `stackable = false`, `weight = 1`. `mgctl init` adds `scripts/items/readable_book.lua` by itself.
+2. Replace the files of `templates/books/modernuo` with the shipped ones, or run
+   [`mgctl convert modernuo-books`](../book-content-import.md) on them.
+
+Do the first before the second: a catalog that names `readable_book` without the item stops the
+startup. Scrolls already handed out stay scrolls; new copies are books.
 
 ## Delivery at character creation
 

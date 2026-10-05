@@ -2,7 +2,7 @@ title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Eleven - Day
 Thirteen:
-
+ 
 Two more workers
 have gone missing.
 Even more disturbing
@@ -75,7 +75,7 @@ item_id = 0x0FF1
 title = "Deník: Objevení hrobky"
 content = """Den jedenáctý až
 třináctý:
-
+ 
 Zmizeli další dva
 dělníci. Ještě
 znepokojivější je
@@ -137,7 +137,7 @@ kletba na nás všechny."""
 title = "Journal : découverte du tombeau"
 content = """Du onzième au
 treizième jour :
-
+ 
 Deux autres ouvriers
 ont disparu. Plus
 troublant encore,
@@ -214,7 +214,7 @@ nous tous."""
 title = "Tagebuch: Entdeckung des Grabes"
 content = """Elfter bis dreizehnter
 Tag:
-
+ 
 Zwei weitere Arbeiter
 sind verschwunden.
 Noch beunruhigender
@@ -298,7 +298,7 @@ unheimlicher Fluch
 title = "Diario: scoperta della Tomba"
 content = """Giorno Undici - Giorno
 Tredici:
-
+ 
 Altri due operai sono
 scomparsi. Ancor più
 inquietante è il fatto
@@ -373,7 +373,7 @@ tutti noi."""
 title = "Dziennik: odkrycie Grobowca"
 content = """Dzień jedenasty —
 dzień trzynasty:
-
+ 
 Zaginęło jeszcze dwóch
 robotników. Bardziej
 niepokojące jest to,
@@ -440,7 +440,7 @@ wszystkich."""
 title = "Diário: descoberta da tumba"
 content = """Décimo primeiro dia -
 Décimo terceiro dia:
-
+ 
 Mais dois
 trabalhadores
 desapareceram. Ainda
@@ -514,7 +514,7 @@ todos nós."""
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
 content = """Día once - Día trece:
-
+ 
 Han desaparecido otros
 dos trabajadores. Más
 inquietante aún es que

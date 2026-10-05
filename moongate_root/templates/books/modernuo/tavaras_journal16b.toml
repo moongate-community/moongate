@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Sixteen, Later :
-
+ 
 We ran. What could
 we do?  We ran back
 towards the entrance,
@@ -68,7 +68,7 @@ item_id = 0x0FF1
 [translations.cze]
 title = "Deník: Objevení hrobky"
 content = """Den šestnáctý, později:
-
+ 
 Utíkali jsme. Co jsme
 mohli dělat? Utíkali
 jsme zpět ke vchodu a
@@ -132,7 +132,7 @@ neuspěchaném tempu
 title = "Journal : découverte du tombeau"
 content = """Seizième jour, plus
 tard :
-
+ 
 Nous avons couru. Que
 pouvions-nous faire ?
 Nous avons couru vers
@@ -202,7 +202,7 @@ traînant les pieds."""
 title = "Tagebuch: Entdeckung des Grabes"
 content = """Sechzehnter Tag,
 später:
-
+ 
 Wir rannten. Was
 konnten wir tun? Wir
 rannten zum Eingang
@@ -273,7 +273,7 @@ der schlurfenden Toten."""
 title = "Diario: scoperta della Tomba"
 content = """Giorno Sedici, Più
 Tardi :
-
+ 
 Siamo fuggiti. Cosa
 potevamo fare? Siamo
 corsi verso l'ingresso,
@@ -344,7 +344,7 @@ strascicanti."""
 title = "Dziennik: odkrycie Grobowca"
 content = """Dzień szesnasty,
 później:
-
+ 
 Uciekliśmy. Cóż
 mogliśmy zrobić?
 Uciekliśmy ku wejściu,
@@ -410,7 +410,7 @@ zmarłych."""
 title = "Diário: descoberta da tumba"
 content = """Décimo sexto dia, mais
 tarde:
-
+ 
 Corremos. O que
 podíamos fazer?
 Corremos de volta para
@@ -481,7 +481,7 @@ mortos que se arrastam."""
 title = "Diario: descubrimiento de la tumba"
 content = """Día dieciséis, más
 tarde:
-
+ 
 Corrimos. ¿Qué podíamos
 hacer? Corrimos de
 vuelta a la entrada,

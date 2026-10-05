@@ -55,7 +55,7 @@ internal static class ModernUoBookConverter
             output.WriteLine($"{books.Count} books, {books.Values.Sum(book => book.PageCount)} pages converted to {destination}");
             return 0;
         }
-        catch (Exception exception) when (exception is InvalidDataException or IOException or UnauthorizedAccessException or DecoderFallbackException)
+        catch (Exception exception) when (exception is InvalidDataException or IOException or UnauthorizedAccessException or DecoderFallbackException or TomlException)
         {
             error.WriteLine($"Book conversion failed: {exception.Message}");
             return 2;
@@ -79,17 +79,12 @@ internal static class ModernUoBookConverter
         text = HexGraphic(TomlUtils.Serialize(document));
         if (MatchesSource(text, document)) return text;
 
-        // Basic strings retain leading newlines and CR/CRLF sequences that multiline TOML normalizes.
-        var fields = new Dictionary<string, object>
+        // Escaped strings retain leading newlines and CR/CRLF sequences that multiline TOML normalizes.
+        text = HexGraphic(TomlUtils.Serialize(new ConvertedPlainBookSource
         {
-            ["title"] = document.Title,
-            ["author"] = document.Author,
-            ["content"] = document.Content,
-            ["item_template"] = document.ItemTemplate
-        };
-        if (document.ItemId is { } graphic) fields.Add("item_id", graphic);
-        if (document.Translations is not null) fields.Add("translations", document.Translations);
-        text = HexGraphic(TomlUtils.Serialize(fields));
+            Title = document.Title, Author = document.Author, Content = document.Content, ItemTemplate = document.ItemTemplate,
+            ItemId = document.ItemId, Translations = document.Translations
+        }));
         if (!MatchesSource(text, document))
             throw new InvalidDataException($"{id}: serialized TOML does not preserve the source text.");
         return text;
@@ -98,7 +93,9 @@ internal static class ModernUoBookConverter
     // A graphic reads as the other graphics of the templates do: item_id = 0x0FF1.
     private static string HexGraphic(string text)
     {
-        return Regex.Replace(text, @"^item_id = (\d+)\r?$", match => $"item_id = 0x{int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture):X4}",
+        // Only the field written right after item_template: a line of a body that reads the same is text.
+        return Regex.Replace(text, @"(?<=^item_template = ""[^""\r\n]*""\r?\n)item_id = (\d+)(?=\r?$)",
+            match => $"item_id = 0x{int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture):X4}",
             RegexOptions.Multiline, TimeSpan.FromSeconds(1));
     }
 

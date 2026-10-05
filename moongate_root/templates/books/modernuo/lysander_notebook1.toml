@@ -1,7 +1,7 @@
 title = "Lysander's Notebook"
 author = "L. Gathenwale"
 content = """Day One :
-
+ 
 At last, it stands
 before me.  The doors
 of Thy Sanctum will
@@ -25,7 +25,7 @@ item_id = 0x0FF1
 [translations.cze]
 title = "Lysanderův zápisník"
 content = """Den první:
-
+ 
 Konečně stojí přede
 mnou. Dveře Tvé
 svatyně se mi nyní
@@ -45,7 +45,7 @@ tisíc
 [translations.fre]
 title = "Le carnet de Lysander"
 content = """Premier jour :
-
+ 
 Enfin, il se dresse
 devant moi. Les portes
 de Ton Sanctuaire vont
@@ -67,7 +67,7 @@ fortunes dans la nuit."""
 [translations.ger]
 title = "Lysanders Notizbuch"
 content = """Erster Tag:
-
+ 
 Endlich steht es vor
 mir. Die Türen Deines
 Heiligtums werden sich
@@ -89,7 +89,7 @@ Nacht."""
 [translations.ita]
 title = "Il taccuino di Lysander"
 content = """Giorno Uno :
-
+ 
 Finalmente si erge
 davanti a me. Le porte
 del Tuo Santuario si
@@ -110,7 +110,7 @@ fortune nella notte."""
 [translations.pol]
 title = "Notatnik Lysander"
 content = """Dzień pierwszy:
-
+ 
 Nareszcie stoi przede
 mną. Drzwi Twego
 Sanktuarium otworzą
@@ -130,7 +130,7 @@ pomyślności w nocy."""
 [translations.por]
 title = "Caderno de Lysander"
 content = """Primeiro dia:
-
+ 
 Enfim, ergue-se diante
 de mim. As portas de
 Seu Santuário se
@@ -152,7 +152,7 @@ fortunas na noite."""
 [translations.spa]
 title = "Cuaderno de Lysander"
 content = """Día uno:
-
+ 
 Al fin se alza ante
 mí. Las puertas de Tu
 Santuario se abrirán

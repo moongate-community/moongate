@@ -54,6 +54,27 @@ public sealed class BookPaginationTests
         Assert.Equal([["one", "two"], ["three"]], pages);
     }
 
+    // A body written in a TOML file ends with a line end: it is no line and no page of the book.
+    [Theory]
+    [InlineData("one\ntwo\n")]
+    [InlineData("one\ntwo\n\n")]
+    [InlineData("one\ntwo\r\n\r\n\r\n")]
+    public void LineEndsAtTheEnd_AddNothing(string content)
+    {
+        Assert.True(BookPagination.TryPaginate(content, out var pages));
+
+        Assert.Equal([["one", "two"]], pages);
+    }
+
+    // A line of one space is a blank line of the page, not a page break.
+    [Fact]
+    public void ALineOfOneSpace_IsABlankLineOfThePage()
+    {
+        Assert.True(BookPagination.TryPaginate("one\n \ntwo", out var pages));
+
+        Assert.Equal([["one", " ", "two"]], pages);
+    }
+
     [Fact]
     public void TheIndentOfALine_IsKept()
     {

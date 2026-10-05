@@ -31,7 +31,8 @@ public static class BookPagination
         ArgumentNullException.ThrowIfNull(content);
 
         var result = new List<IReadOnlyList<string>>();
-        var text = content.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
+        // A body written in a file ends with a line end: it is no line and no page of the book.
+        var text = content.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n').TrimEnd('\n');
 
         foreach (var source in text.Split(PageBreak))
         {

@@ -1,7 +1,7 @@
 title = "Lysander's Notebook"
 author = "L. Gathenwale"
 content = """Day Two:
-
+ 
 The woman, Tavara
 Sewel, is unbearable.
 Her entire demeanor
@@ -55,7 +55,7 @@ item_id = 0x0FF1
 [translations.cze]
 title = "Lysanderův zápisník"
 content = """Den druhý:
-
+ 
 Ta žena, Tavara Sewel,
 je nesnesitelná. Celé
 její chování se mi
@@ -104,7 +104,7 @@ naučil."""
 [translations.fre]
 title = "Le carnet de Lysander"
 content = """Deuxième jour :
-
+ 
 Cette femme, Tavara
 Sewel, est
 insupportable. Toute
@@ -160,7 +160,7 @@ Toi, Maître, oui."""
 [translations.ger]
 title = "Lysanders Notizbuch"
 content = """Zweiter Tag:
-
+ 
 Das Weib Tavara Sewel
 ist unerträglich. Ihr
 ganzes Gebaren widert
@@ -217,7 +217,7 @@ habe ich."""
 [translations.ita]
 title = "Il taccuino di Lysander"
 content = """Giorno Due:
-
+ 
 La donna, Tavara Sewel,
 è insopportabile. Tutto
 il suo contegno mi
@@ -273,7 +273,7 @@ imparato."""
 [translations.pol]
 title = "Notatnik Lysander"
 content = """Dzień drugi:
-
+ 
 Ta kobieta, Tavara
 Sewel, jest nieznośna.
 Cała jej postawa budzi
@@ -324,7 +324,7 @@ Mistrzu, naprawdę."""
 [translations.por]
 title = "Caderno de Lysander"
 content = """Segundo dia:
-
+ 
 A mulher, Tavara Sewel,
 é insuportável. Toda a
 sua postura me enoja.
@@ -377,7 +377,7 @@ Você, Mestre, aprendi."""
 [translations.spa]
 title = "Cuaderno de Lysander"
 content = """Día dos:
-
+ 
 Esa mujer, Tavara
 Sewel, es insoportable.
 Toda su conducta me

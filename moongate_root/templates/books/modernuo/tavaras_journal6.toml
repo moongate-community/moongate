@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Six:
-
+ 
 Late last night our
 camp was set upon by
 a pack of wild beasts
@@ -68,7 +68,7 @@ item_id = 0x0FF1
 [translations.cze]
 title = "Deník: Objevení hrobky"
 content = """Den šestý:
-
+ 
 Pozdě včera večer náš
 tábor napadla smečka
 divokých bestií –
@@ -129,7 +129,7 @@ smrti."""
 [translations.fre]
 title = "Journal : découverte du tombeau"
 content = """Sixième jour :
-
+ 
 Tard la nuit dernière,
 notre camp a été
 assailli par une meute
@@ -200,7 +200,7 @@ certaine."""
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
 content = """Sechster Tag:
-
+ 
 Spät gestern Nacht
 wurde unser Lager von
 einem Rudel wilder
@@ -274,7 +274,7 @@ sicheren Todes."""
 [translations.ita]
 title = "Diario: scoperta della Tomba"
 content = """Giorno Sei:
-
+ 
 Ieri a tarda notte il
 nostro accampamento è
 stato assalito da un
@@ -344,7 +344,7 @@ davanti a morte certa."""
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
 content = """Dzień szósty:
-
+ 
 Późno wczoraj w nocy
 obóz napadła wataha
 dzikich bestii —
@@ -407,7 +407,7 @@ nawet wobec pewnej
 [translations.por]
 title = "Diário: descoberta da tumba"
 content = """Sexto dia:
-
+ 
 Tarde da noite passada,
 nosso acampamento foi
 atacado por uma matilha
@@ -471,7 +471,7 @@ morte certa."""
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
 content = """Día seis:
-
+ 
 Anoche, tarde, una
 manada de bestias
 salvajes atacó nuestro

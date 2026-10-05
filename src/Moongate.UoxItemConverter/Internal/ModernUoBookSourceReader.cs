@@ -14,6 +14,8 @@ namespace Moongate.UoxItemConverter.Internal;
 /// </summary>
 internal static class ModernUoBookSourceReader
 {
+    private const string BlankLine = " ";
+
     public static IReadOnlyList<ImportedBook> Read(string source, string path)
     {
         var tree = CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Preview), path);
@@ -42,8 +44,11 @@ internal static class ModernUoBookSourceReader
                     if (arguments.Count < 3) throw new InvalidDataException("BookContent needs a title, author and pages.");
                     var title = Literal(arguments[0].Expression);
                     var author = Literal(arguments[1].Expression);
+                    // An empty line of the text is a page break, so an empty line inside a page is written as a
+                    // space: the page stays one page, as in the source.
                     var pages = arguments.Skip(2).Select(argument => string.Join('\n',
-                        Arguments(argument.Expression, "BookPageInfo").Select(line => Literal(line.Expression)))).ToArray();
+                        Arguments(argument.Expression, "BookPageInfo").Select(line => Literal(line.Expression))
+                            .Select(line => line.Length == 0 ? BlankLine : line))).ToArray();
                     var content = string.Join("\n\n", pages);
                     var utf8 = new UTF8Encoding(false, true);
                     utf8.GetByteCount(title);

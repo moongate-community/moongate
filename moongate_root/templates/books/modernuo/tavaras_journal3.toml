@@ -1,7 +1,7 @@
 title = "Journal: Discovery of the Tomb"
 author = "Tavara Sewel"
 content = """Day Three - Day Five:
-
+ 
 I do not understand
 this place... not as I
 once thought I did.
@@ -57,7 +57,7 @@ item_id = 0x0FF1
 [translations.cze]
 title = "Deník: Objevení hrobky"
 content = """Den třetí až pátý:
-
+ 
 Nerozumím tomuto
 místu... ne tak, jak
 jsem si kdysi myslela.
@@ -105,7 +105,7 @@ síní."""
 title = "Journal : découverte du tombeau"
 content = """Du troisième au
 cinquième jour :
-
+ 
 Je ne comprends pas cet
 endroit... pas comme je
 croyais jadis le
@@ -164,7 +164,7 @@ intérieurs."""
 title = "Tagebuch: Entdeckung des Grabes"
 content = """Dritter bis fünfter
 Tag:
-
+ 
 Ich verstehe diesen Ort
 nicht ... nicht so, wie
 ich einst dachte. Etwas
@@ -219,7 +219,7 @@ weiter freilegt."""
 title = "Diario: scoperta della Tomba"
 content = """Giorno Tre - Giorno
 Cinque:
-
+ 
 Non capisco questo
 luogo... non come un
 tempo pensavo di
@@ -275,7 +275,7 @@ interne."""
 title = "Dziennik: odkrycie Grobowca"
 content = """Dzień trzeci — dzień
 piąty:
-
+ 
 Nie rozumiem tego
 miejsca... nie tak, jak
 niegdyś sądziłam. Coś
@@ -325,7 +325,7 @@ sale."""
 title = "Diário: descoberta da tumba"
 content = """Terceiro dia - Quinto
 dia:
-
+ 
 Não entendo este
 lugar... não como antes
 pensava entender. Algo
@@ -377,7 +377,7 @@ internos."""
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
 content = """Día tres - Día cinco:
-
+ 
 No comprendo este
 lugar... no como creía
 comprenderlo. Algo

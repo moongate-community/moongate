@@ -4,6 +4,7 @@ using Moongate.Server.Ultima.Services.Text;
 using Moongate.Server.Ultima.Types.Text;
 using Moongate.UoxItemConverter.Internal;
 using Moongate.UoxItemConverter.Tests.TestSupport;
+using Moongate.Server.Ultima.Services.Books;
 
 namespace Moongate.UoxItemConverter.Tests.Integration;
 
@@ -35,7 +36,11 @@ public sealed class ModernUoBookConverterTests : IDisposable
         var first = Read("journal1");
         Assert.Equal("Journal", first.Title);
         Assert.Equal("Writer", first.Author);
-        Assert.Equal(" first\n\nlast\n\n\n\nend", first.Content);
+        // An empty line of a page is written as a space: an empty line of the text is a page break, and the page
+        // must stay one page. A page with no line at all is an empty page.
+        Assert.Equal(" first\n \nlast\n\n\n\nend", first.Content);
+        Assert.True(BookPagination.TryPaginate(first.Content, out var pages));
+        Assert.Equal([3, 0, 1], pages.Select(page => page.Count));
         Assert.Equal("another part", Read("journal2").Content);
         Assert.Equal("readable_book", first.ItemTemplate);
         Assert.Null(first.ItemId);
@@ -85,6 +90,41 @@ public sealed class ModernUoBookConverterTests : IDisposable
         // Written as the graphics are read everywhere else: in hexadecimal.
         Assert.Contains("item_id = 0x0FF2", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "stated_cover.toml")));
         Assert.DoesNotContain("item_id", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "unknown_cover.toml")));
+    }
+
+    // A body that only an escaped string keeps exactly, with a translation to keep: both are written.
+    [Fact]
+    public void Run_ABodyThatOpensWithALineEnd_AndAKeptTranslation_WritesBoth()
+    {
+        _directories.WriteSource("Known.cs", Book("Known", "\nfirst"));
+        Assert.True(Run() == 0, _error.ToString());
+        var path = Path.Combine(_directories.DestinationDirectory, "known.toml");
+        File.AppendAllText(path, "\n[translations.ita]\ntitle = \"Titolo\"\ncontent = \"\\n\\nCorpo\"\n");
+
+        Assert.True(Run() == 0, _error.ToString());
+
+        Assert.Equal("\nfirst", Read("known").Content);
+        Assert.Equal(("Titolo", "\n\nCorpo"), (Read("known").Translations["ita"].Title, Read("known").Translations["ita"].Content));
+    }
+
+    // A line of a body that reads like the graphic field is text, and stays as written.
+    [Fact]
+    public void Run_ABodyLineThatLooksLikeTheGraphic_IsLeftAlone()
+    {
+        _directories.WriteSource("Covers.cs", """
+            public class Tricky : BaseBook
+            {
+                public static readonly BookContent Content = new("T", "A", new BookPageInfo("item_id = 5", "end"));
+                public Tricky() : base(0xFF2, false) { }
+            }
+            """);
+
+        Assert.True(Run() == 0, _error.ToString());
+
+        var text = File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "tricky.toml"));
+        Assert.Equal("item_id = 5\nend", Read("tricky").Content);
+        Assert.Contains("content = \"\"\"item_id = 5\n", text);
+        Assert.Contains("item_id = 0x0FF2", text);
     }
 
     [Fact]

@@ -108,13 +108,18 @@ public sealed class RepositoryTemplateFilesTests
         data.With(books);
         var service = new BookTemplateService(data);
         Assert.Equal("readable_book", Assert.Single(items, item => item.Id == "readable_book").ScriptId);
+        // ModernUO's own count of pages.
+        Assert.Equal(738, books.Sum(book => book.Content.Split("\n\n").Length));
 
         foreach (var book in books)
         {
             Assert.Equal("readable_book", book.ItemTemplate);
             Assert.Contains(book.ItemId, new int?[] { 0x0FEF, 0x0FF0, 0x0FF1, 0x0FF2 });
             Assert.True(service.TryRender(book.Id, new TextTemplateContext(), language, null, out var rendered), book.Id);
-            Assert.True(BookPagination.TryPaginate(rendered!.Content, out var pages), book.Id);
+            // The pages of ModernUO, in every language: a blank line inside a page is a line of one space, so only
+            // a page break is an empty line.
+            Assert.Equal(book.Content.Split("\n\n").Length, rendered!.Content.Split("\n\n").Length);
+            Assert.True(BookPagination.TryPaginate(rendered.Content, out var pages), book.Id);
             Assert.All(pages, page => Assert.InRange(page.Count, 0, BookPagination.LinesPerPage));
             Assert.Equal(rendered.Content.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries), pages.SelectMany(page => page).SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)));
             Assert.Equal(pages.Count, new BookPagesPacket(new(0x40000001), pages).PageCount);
