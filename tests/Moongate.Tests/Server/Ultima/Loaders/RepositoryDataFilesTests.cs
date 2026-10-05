@@ -104,7 +104,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5635, messages.Count);
+        Assert.Equal(5636, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
@@ -180,7 +180,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5635, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5636, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     [Theory,

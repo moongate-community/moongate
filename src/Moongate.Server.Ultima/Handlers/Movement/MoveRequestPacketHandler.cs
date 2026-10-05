@@ -31,6 +31,11 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private const long CreditMs = 200;
     private const byte LastSequence = 255;
 
+    /// <summary>
+    ///     "You have been revealed!"
+    /// </summary>
+    public const int RevealedCliloc = 500814;
+
     private readonly ILogger _logger = Log.ForContext<MoveRequestPacketHandler>();
     private readonly IMobileService _mobiles;
     private readonly IWorldViewService _view;
@@ -39,6 +44,8 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private readonly IBankService? _bank;
     private readonly IMoveOverService? _moveOver;
     private readonly IFatigueService? _fatigue;
+    private readonly IMobileStateService? _state;
+    private readonly ISpeechService? _speech;
 
     public MoveRequestPacketHandler(
         IMobileService mobiles,
@@ -47,9 +54,13 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         TimeProvider time,
         IBankService? bank = null,
         IMoveOverService? moveOver = null,
-        IFatigueService? fatigue = null
+        IFatigueService? fatigue = null,
+        IMobileStateService? state = null,
+        ISpeechService? speech = null
     )
     {
+        _state = state;
+        _speech = speech;
         _fatigue = fatigue;
         _bank = bank;
         _moveOver = moveOver;
@@ -117,6 +128,14 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         _fatigue?.Stepped(session, mobile, packet.Running);
         // As ModernUO, a step closes the bank box.
         _bank?.Close(mobile);
+
+        // And it shows who hid: there is no Stealth yet. The staff hides to watch, and stays hidden.
+        if (mobile.Hidden && session.AccountType < AccountType.GameMaster && _state is not null)
+        {
+            _state.SetHidden(mobile, false);
+            _speech?.TellCliloc(mobile, RevealedCliloc);
+        }
+
         Accept(session, state, mobile, packet.Sequence);
         _view.Moved(mobile, oldLocation, packet.Running);
         // Last: a teleporter on the new cell moves the character again and restarts its sequence.

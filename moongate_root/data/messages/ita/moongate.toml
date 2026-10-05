@@ -203,10 +203,13 @@
 30166 = "Quello non è un cadavere."
 30167 = "Quel cadavere non può essere resuscitato."
 
-# Moongate: letter attachments (30168-30173).
-30168 = "Ritira allegati"
-30169 = "Gli allegati sono nel tuo zaino."
-30170 = "Il tuo zaino non ha spazio per tutti gli allegati."
-30171 = "Questi allegati non possono essere ritirati."
-30172 = "Il tuo zaino è occupato. Riprova tra poco."
-30173 = "Non è stato possibile consegnare gli allegati. Riprova tra poco."
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "Non puoi usare le abilità in prigione."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Ritira allegati"
+30170 = "Gli allegati sono nel tuo zaino."
+30171 = "Il tuo zaino non ha spazio per tutti gli allegati."
+30172 = "Questi allegati non possono essere ritirati."
+30173 = "Il tuo zaino è occupato. Riprova tra poco."
+30174 = "Non è stato possibile consegnare gli allegati. Riprova tra poco."

@@ -203,10 +203,13 @@
 30166 = "Ce n'est pas un cadavre."
 30167 = "Ce cadavre ne peut pas être ressuscité."
 
-# Moongate: letter attachments (30168-30173).
-30168 = "Récupérer les pièces jointes"
-30169 = "Les pièces jointes sont dans votre sac."
-30170 = "Votre sac ne peut pas contenir toutes les pièces jointes."
-30171 = "Ces pièces jointes ne peuvent pas être récupérées."
-30172 = "Votre sac est occupé. Réessayez bientôt."
-30173 = "Les pièces jointes ne peuvent pas être livrées. Réessayez bientôt."
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "Vous ne pouvez pas utiliser de compétences en prison."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Récupérer les pièces jointes"
+30170 = "Les pièces jointes sont dans votre sac."
+30171 = "Votre sac ne peut pas contenir toutes les pièces jointes."
+30172 = "Ces pièces jointes ne peuvent pas être récupérées."
+30173 = "Votre sac est occupé. Réessayez bientôt."
+30174 = "Les pièces jointes ne peuvent pas être livrées. Réessayez bientôt."

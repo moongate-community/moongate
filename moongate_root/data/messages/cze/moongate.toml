@@ -203,10 +203,13 @@
 30166 = "To není mrtvola."
 30167 = "Tuto mrtvolu nelze vzkřísit."
 
-# Moongate: letter attachments (30168-30173).
-30168 = "Vyzvednout přílohy"
-30169 = "Přílohy jsou ve tvém batohu."
-30170 = "V batohu není místo na všechny přílohy."
-30171 = "Tyto přílohy nelze vyzvednout."
-30172 = "Tvůj batoh je zaneprázdněný. Zkus to za chvíli."
-30173 = "Přílohy se nepodařilo doručit. Zkus to za chvíli."
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "Ve vězení nemůžeš používat dovednosti."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Vyzvednout přílohy"
+30170 = "Přílohy jsou ve tvém batohu."
+30171 = "V batohu není místo na všechny přílohy."
+30172 = "Tyto přílohy nelze vyzvednout."
+30173 = "Tvůj batoh je zaneprázdněný. Zkus to za chvíli."
+30174 = "Přílohy se nepodařilo doručit. Zkus to za chvíli."

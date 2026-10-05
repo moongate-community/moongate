@@ -22,12 +22,12 @@ namespace Moongate.Server.Ultima.Services.Internal.Books;
 
 internal sealed class BookAttachmentService : IBookAttachmentService
 {
-    public const int ClaimLabelMessage = 30168;
-    public const int SuccessMessage = 30169;
-    public const int CapacityMessage = 30170;
-    public const int UnavailableMessage = 30171;
-    public const int BusyMessage = 30172;
-    public const int FailureMessage = 30173;
+    public const int ClaimLabelMessage = 30169;
+    public const int SuccessMessage = 30170;
+    public const int CapacityMessage = 30171;
+    public const int UnavailableMessage = 30172;
+    public const int BusyMessage = 30173;
+    public const int FailureMessage = 30174;
     private static readonly ILogger Logger = Log.ForContext<BookAttachmentService>();
     private readonly IItemService _items;
     private readonly IMobileService _mobiles;

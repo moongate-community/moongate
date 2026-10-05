@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Services.Books;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Services.Internal.Books;
 using Moongate.Server.Ultima.Services.Motd;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Ultima.Types;
@@ -32,12 +33,12 @@ public sealed class RepositoryTemplateFilesTests
     {
         var path = Path.Combine(FindRepositoryRoot(), "moongate_root", "data", "messages", language, "moongate.toml");
         var source = await TomlUtils.DeserializeFromFileAsync<Moongate.Server.Ultima.Data.Messages.MessageContentFile>(path);
-        foreach (var id in Enumerable.Range(30168, 6))
+        foreach (var id in Enumerable.Range(BookAttachmentService.ClaimLabelMessage, 6))
         {
             Assert.True(source!.Messages.TryGetValue(id.ToString(), out var text));
             Assert.False(string.IsNullOrWhiteSpace(text));
         }
-        if (language == "ita") Assert.Equal("Ritira allegati", source!.Messages["30168"]);
+        if (language == "ita") Assert.Equal("Ritira allegati", source!.Messages[BookAttachmentService.ClaimLabelMessage.ToString()]);
         Assert.NotEmpty((await new MessagesLoader(Directories(), new LocalizationConfig { Language = language }).LoadDataAsync()).Entities);
     }
 

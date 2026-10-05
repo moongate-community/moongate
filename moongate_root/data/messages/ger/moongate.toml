@@ -203,10 +203,13 @@
 30166 = "Das ist keine Leiche."
 30167 = "Diese Leiche kann nicht erweckt werden."
 
-# Moongate: letter attachments (30168-30173).
-30168 = "Anhänge abholen"
-30169 = "Die Anhänge sind in deinem Rucksack."
-30170 = "Dein Rucksack hat keinen Platz für alle Anhänge."
-30171 = "Diese Anhänge können nicht abgeholt werden."
-30172 = "Dein Rucksack ist beschäftigt. Versuche es gleich erneut."
-30173 = "Die Anhänge konnten nicht geliefert werden. Versuche es gleich erneut."
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "Im Gefängnis kannst du keine Fertigkeiten benutzen."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Anhänge abholen"
+30170 = "Die Anhänge sind in deinem Rucksack."
+30171 = "Dein Rucksack hat keinen Platz für alle Anhänge."
+30172 = "Diese Anhänge können nicht abgeholt werden."
+30173 = "Dein Rucksack ist beschäftigt. Versuche es gleich erneut."
+30174 = "Die Anhänge konnten nicht geliefert werden. Versuche es gleich erneut."

@@ -92,7 +92,7 @@ public sealed class BookTestFixture : IAsyncDisposable
         var factory = new FakeItemFactoryService(ItemTemplates, tiles);
         Books = new(new BookTemplateService(Data), Contexts, Items, World.Mobiles, Handling, ItemTemplates, World.Sessions,
             Bank, gumps ?? Gumps, World.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory,
-            claims, TestLocalization.With((30168, "Ritira allegati")), Speech);
+            claims, TestLocalization.With((30169, "Ritira allegati")), Speech);
     }
 
     public static async Task<BookTestFixture> CreateAsync(bool realGumps = false)

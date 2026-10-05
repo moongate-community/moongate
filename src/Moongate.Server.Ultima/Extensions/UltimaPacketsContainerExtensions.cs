@@ -11,6 +11,7 @@ using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Handlers.Movement;
 using Moongate.Server.Ultima.Handlers.Prompts;
+using Moongate.Server.Ultima.Handlers.Skills;
 using Moongate.Server.Ultima.Handlers.Targeting;
 using Moongate.Server.Ultima.Handlers.Tooltips;
 using Moongate.Server.Ultima.Packets.BulletinBoards;
@@ -78,7 +79,8 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterIncomingPacket<QueryPropertiesPacket>();
         container.RegisterPacketHandler<QueryPropertiesPacket, QueryPropertiesPacketHandler>();
         RegisterIgnoredPacket<AttackRequestPacket>(container);
-        RegisterIgnoredPacket<TextCommandPacket>(container);
+        container.RegisterIncomingPacket<TextCommandPacket>();
+        container.RegisterPacketHandler<TextCommandPacket, TextCommandPacketHandler>();
         RegisterIgnoredPacket<ProfileRequestPacket>(container);
         RegisterIgnoredPacket<ProtocolExtensionPacket>(container);
         RegisterIgnoredPacket<ResynchronizeRequestPacket>(container);

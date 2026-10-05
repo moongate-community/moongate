@@ -203,10 +203,13 @@
 30166 = "That is not a corpse."
 30167 = "That corpse cannot be raised."
 
-# Moongate: letter attachments (30168-30173).
-30168 = "Claim attachments"
-30169 = "The attachments are in your backpack."
-30170 = "Your backpack has no room for all the attachments."
-30171 = "These attachments cannot be claimed."
-30172 = "Your backpack is busy. Try again shortly."
-30173 = "The attachments could not be delivered. Try again shortly."
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "You may not use skills in jail."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Claim attachments"
+30170 = "The attachments are in your backpack."
+30171 = "Your backpack has no room for all the attachments."
+30172 = "These attachments cannot be claimed."
+30173 = "Your backpack is busy. Try again shortly."
+30174 = "The attachments could not be delivered. Try again shortly."
