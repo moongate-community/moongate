@@ -18,6 +18,8 @@ public sealed class RecordingSpeechService : ISpeechService
 
     public List<(MobileEntity Player, string Text)> Told { get; } = [];
 
+    public List<(MobileEntity Speaker, int Cliloc, string Arguments)> SaidClilocs { get; } = [];
+
     public int Say(MobileEntity speaker, string text)
     {
         Said.Add((speaker, text));
@@ -57,6 +59,13 @@ public sealed class RecordingSpeechService : ISpeechService
         ToldClilocHues.Add(hue);
 
         return true;
+    }
+
+    public int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "")
+    {
+        SaidClilocs.Add((speaker, cliloc, arguments));
+
+        return 1;
     }
 
     public bool Tell(MobileEntity player, string text, int? hue = null)

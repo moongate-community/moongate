@@ -1,4 +1,5 @@
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Tests.TestSupport.Ultima.Containers;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.Weight;
 using Moongate.Tests.TestSupport.Ultima.Bank;
@@ -10,6 +11,7 @@ using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Handlers.Items;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
@@ -58,6 +60,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly StubBankService _bank = new();
     private readonly RecordingItemScriptService _scripts = new();
     private readonly StubWeightService _weight = new();
+    private readonly StubContainerCapacityService _capacity = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingFatigueService _fatigue = new();
 
@@ -299,6 +302,54 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
         Assert.Equal((30, 70), (_coins.Amount, _pile.Amount));
         Assert.Equal(DropRequestPacketHandler.TooHeavyMessage, Assert.Single(_speech.ToldClilocs).Cliloc);
+    }
+
+    [Theory, InlineData("backpack"), InlineData("bag")]
+    public async Task Handle_IntoAContainerThatHoldsNoMoreItems_BouncesBack_AndThePlayerIsToldWhy(string where)
+    {
+        _capacity.HasRoomResult = false;
+        await HoldingAsync(_coins);
+
+        await DropTo(where);
+
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+        Assert.Equal(IContainerCapacityService.FullMessage, Assert.Single(_speech.ToldClilocs).Cliloc);
+    }
+
+    // Joining a pile adds no item to the container.
+    [Fact]
+    public async Task Handle_OntoAPileInAFullContainer_StillMerges()
+    {
+        _capacity.HasRoomResult = false;
+        await HoldingAsync(_coins);
+
+        await DropTo("pile");
+
+        Assert.Equal(100, _pile.Amount);
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
+    [Fact]
+    public async Task Handle_TheStaff_PutsIntoAContainerHoweverFullItIs()
+    {
+        _capacity.HasRoomResult = false;
+        await HoldingAsync(_coins);
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        await DropAsync(_coins.Id, 80, 70, _bag.Id);
+
+        Assert.Equal(_bag.Id, _coins.ContainerId);
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
+    [Fact]
+    public async Task Handle_IntoAContainer_AsksItsRoomForThatItem()
+    {
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 80, 70, _bag.Id);
+
+        Assert.Contains((_bag, _coins), _capacity.Asked);
     }
 
     [Fact]
@@ -970,7 +1021,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
                 }
             )
         );
-        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _weight, _speech, _fatigue);
+        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _weight, _speech, _fatigue, _capacity);
         var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, GridIndex = gridIndex, Destination = destination };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));

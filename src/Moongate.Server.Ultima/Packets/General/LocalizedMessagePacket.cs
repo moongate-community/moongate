@@ -70,6 +70,15 @@ public sealed class LocalizedMessagePacket : BasePacket<LocalizedMessagePacket>,
         return new(NoSerial, NoGraphic, cliloc, SystemName, arguments, RegularType) { Hue = hue ?? LabelHue };
     }
 
+    /// <summary>
+    ///     Gets a cliloc said by a mobile, overhead and in the journal under its name, as ModernUO's localized Say:
+    ///     each client shows it in its own language.
+    /// </summary>
+    public static LocalizedMessagePacket Spoken(Serial speaker, int body, int cliloc, string name, string arguments = "")
+    {
+        return new(speaker, body, cliloc, name, arguments, RegularType);
+    }
+
     public void Write(ref PacketWriter writer)
     {
         writer.EnsureCapacity(Length);

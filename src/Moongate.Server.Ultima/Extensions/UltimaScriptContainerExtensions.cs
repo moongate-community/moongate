@@ -3,6 +3,7 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Types.Effects;
+using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Server.Ultima.Types.Jail;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Speech;
@@ -49,6 +50,7 @@ public static class UltimaScriptContainerExtensions
         container.RegisterScriptEnum<SpeechKeywordType>();
         container.RegisterScriptEnum<DirectionType>();
         container.RegisterScriptEnum<JailResultType>();
+        container.RegisterScriptEnum<BankResultType>();
         container.RegisterScriptEnum<SkillType>();
         container.RegisterScriptEnum<SeasonType>();
         container.RegisterScriptEnum<WeatherKindType>();

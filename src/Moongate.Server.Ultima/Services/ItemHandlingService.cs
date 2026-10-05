@@ -28,6 +28,7 @@ public sealed class ItemHandlingService : IItemHandlingService
     private readonly IItemSerialPool? _serials;
     private readonly IContainerLayoutService? _layouts;
     private readonly IInventoryMutationGuard? _inventory;
+    private readonly IContainerCapacityService? _capacity;
 
     public ItemHandlingService(
         IItemService items,
@@ -38,10 +39,12 @@ public sealed class ItemHandlingService : IItemHandlingService
         IItemFactoryService? factory = null,
         IItemSerialPool? serials = null,
         IContainerLayoutService? layouts = null,
+        IContainerCapacityService? capacity = null,
         IInventoryMutationGuard? inventory = null
     )
     {
         _inventory = inventory;
+        _capacity = capacity;
         _items = items;
         _sessions = sessions;
         _sender = sender;
@@ -84,6 +87,7 @@ public sealed class ItemHandlingService : IItemHandlingService
     public ItemEntity? Give(MobileEntity owner, string template, int? amount = null)
     {
         if (_inventory?.AllowsOwner(owner.Id) == false || _items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
+            _capacity?.HasRoomFor(backpack, 1) == false ||
             Make(template, amount) is not { } item)
         {
             return null;

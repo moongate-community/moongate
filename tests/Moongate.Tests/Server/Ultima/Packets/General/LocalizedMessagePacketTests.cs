@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Serialization;
 using Moongate.Server.Ultima.Packets.General;
 
@@ -34,5 +35,18 @@ public sealed class LocalizedMessagePacketTests
         var bytes = PacketCodec.Encode(LocalizedMessagePacket.System(500112, "", 0x3F));
 
         Assert.Equal(Convert.FromHexString("003F"), bytes[10..12]);
+    }
+
+    [Fact]
+    public void Spoken_WritesARegularMessageOfTheSpeaker_WithItsBodyAndName()
+    {
+        var bytes = PacketCodec.Encode(LocalizedMessagePacket.Spoken(new Serial(0x100), 0x0190, 1042759, "Bank Teller", "1,200"));
+
+        // serial, body, type 0 (regular), hue 0x3B2, font 3, cliloc 1042759
+        Assert.Equal(Convert.FromHexString("C1" + "003C" + "00000100" + "0190" + "00" + "03B2" + "0003" + "000FE947"), bytes[..18]);
+        Assert.Equal("Bank Teller"u8.ToArray(), bytes[18..29]);
+        // The arguments in little-endian UTF-16, then their end.
+        Assert.Equal(System.Text.Encoding.Unicode.GetBytes("1,200"), bytes[48..58]);
+        Assert.Equal([0, 0], bytes[58..60]);
     }
 }
