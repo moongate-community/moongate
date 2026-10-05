@@ -544,6 +544,42 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void ABaldBeardlessCorpse_TakesNoVirtualSerial_AndACorpseThatIsGoneGivesItsOwnBack()
+    {
+        var bald = HumanCorpse();
+        var shirt = Inside(bald, 0x40000061, 0x1517);
+        bald.SetProp("corpse.worn", $"{shirt.Id.Value}:{(int)LayerType.Shirt}");
+        var before = _mobiles.HairSerial(new Serial(0x00000F01));
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        // The next serial handed out is the one right after: the corpse took none.
+        Assert.Equal(before.Value + 1, _mobiles.HairSerial(new Serial(0x00000F02)).Value);
+
+        bald.SetProp("corpse.hair", 0x203B);
+        _view.ItemAppeared(bald);
+        var taken = _mobiles.HairSerial(bald.Id);
+        _view.ItemDisappeared(bald);
+
+        Assert.NotEqual(taken, _mobiles.HairSerial(bald.Id));
+    }
+
+    [Fact]
+    public void AHumanCorpse_IsNotDrawnWearingAnItemHiddenFromTheViewer()
+    {
+        var corpse = HumanCorpse();
+        var shirt = Inside(corpse, 0x40000061, 0x1517);
+        var cloak = Inside(corpse, 0x40000062, 0x1515);
+        cloak.Visibility = AccountType.GameMaster;
+        corpse.SetProp("corpse.worn", $"{shirt.Id.Value}:{(int)LayerType.Shirt},{cloak.Id.Value}:{(int)LayerType.Cloak}");
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal([shirt.Id], _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => item.Serial));
+        Assert.Equal([shirt.Id], _sender.Sent.OfType<ContainerContentPacket>().Single().Items.Select(entry => entry.Serial));
+    }
+
+    [Fact]
     public void AHumanCorpse_IsNotDrawnWearingWhatWasTakenOutOfIt()
     {
         var corpse = HumanCorpse();
@@ -580,8 +616,8 @@ public sealed class WorldViewServiceTests
         var corpse = HumanCorpse();
         var shirt = Inside(corpse, 0x40000061, 0x1517);
         var cloak = Inside(corpse, 0x40000062, 0x1515);
-        // Rubbish, a layer that does not exist, a second item on a taken layer, a serial that is not inside.
-        corpse.SetProp("corpse.worn", $"x:y,{cloak.Id.Value}:200,{shirt.Id.Value}:5,{cloak.Id.Value}:5,999:6,");
+        // Rubbish, a layer that does not exist, no layer, a second item on a taken layer, a serial that is not inside.
+        corpse.SetProp("corpse.worn", $"x:y,{cloak.Id.Value}:200,{cloak.Id.Value}:0,{shirt.Id.Value}:5,{cloak.Id.Value}:5,999:6,");
 
         Enter(2, 1496, 1628, AriaSession);
 

@@ -365,6 +365,12 @@ public sealed class WorldViewService : IWorldViewService
             return;
         }
 
+        // A corpse that is gone gives back the serials of its hair; shown again, it takes new ones.
+        if (item.ItemId == CorpseProps.Graphic)
+        {
+            _mobiles.ForgetHair(item.Id);
+        }
+
         var remove = new RemoveEntityPacket(item.Id);
 
         foreach (var other in _sectors.GetMobilesInRange(map, spot, ViewRange))
@@ -580,8 +586,20 @@ public sealed class WorldViewService : IWorldViewService
             }
         }
 
-        AddHair(corpse, CorpseProps.Hair, CorpseProps.HairHue, LayerType.Hair, _mobiles.HairSerial(corpse.Id), entries, worn);
-        AddHair(corpse, CorpseProps.Beard, CorpseProps.BeardHue, LayerType.FacialHair, _mobiles.BeardSerial(corpse.Id), entries, worn);
+        // A virtual serial is taken only by a corpse that has the hair to show; ItemDisappeared gives it back.
+        if (HairOf(corpse, CorpseProps.Hair, CorpseProps.HairHue) is { } hair)
+        {
+            var serial = _mobiles.HairSerial(corpse.Id);
+            entries.Add(new(serial, hair.Graphic, 1, 0, 0, 0, corpse.Id, hair.Hue));
+            worn.Add(new(LayerType.Hair, serial));
+        }
+
+        if (HairOf(corpse, CorpseProps.Beard, CorpseProps.BeardHue) is { } beard)
+        {
+            var serial = _mobiles.BeardSerial(corpse.Id);
+            entries.Add(new(serial, beard.Graphic, 1, 0, 0, 0, corpse.Id, beard.Hue));
+            worn.Add(new(LayerType.FacialHair, serial));
+        }
 
         if (worn.Count == 0)
         {
@@ -593,23 +611,11 @@ public sealed class WorldViewService : IWorldViewService
         _sender.TrySend(viewer.SessionId, new CorpseEquipmentPacket(corpse.Id, worn));
     }
 
-    private static void AddHair(
-        ItemEntity corpse,
-        string graphicProp,
-        string hueProp,
-        LayerType layer,
-        Serial serial,
-        List<ContainerItemEntry> entries,
-        List<CorpseWornItem> worn
-    )
+    private static (int Graphic, Hue Hue)? HairOf(ItemEntity corpse, string graphicProp, string hueProp)
     {
-        if (WholeProp(corpse, graphicProp) is not { } graphic || graphic == 0)
-        {
-            return;
-        }
-
-        entries.Add(new(serial, graphic, 1, 0, 0, 0, corpse.Id, new Hue((ushort)(WholeProp(corpse, hueProp) ?? 0))));
-        worn.Add(new(layer, serial));
+        return WholeProp(corpse, graphicProp) is { } graphic and > 0
+                   ? (graphic, new Hue((ushort)(WholeProp(corpse, hueProp) ?? 0)))
+                   : null;
     }
 
     // The "serial:layer" pairs of the corpse's worn prop; what a script spoiled is left out.
@@ -627,6 +633,8 @@ public sealed class WorldViewService : IWorldViewService
             if (parts.Length == 2 &&
                 uint.TryParse(parts[0], NumberStyles.None, CultureInfo.InvariantCulture, out var serial) &&
                 byte.TryParse(parts[1], NumberStyles.None, CultureInfo.InvariantCulture, out var layer) &&
+                // A layer something can be worn on: none is not one.
+                layer != (byte)LayerType.None &&
                 Enum.IsDefined((LayerType)layer))
             {
                 yield return (new Serial(serial), (LayerType)layer);
