@@ -79,167 +79,521 @@ item_template = "readable_scroll"
 [translations.cze]
 title = "Rozmlouvání s bludičkami"
 content = """
-Tento svazek je podporován dary od Lord Blackthorn, jenž vždy podporuje porozumění ostatním rozumným rasám země Britannia.
+Tento svazek je
+podporován dary od Lord
+Blackthorn, jenž vždy
+podporuje porozumění
+ostatním rozumným rasám
+země Britannia.
 
 -
-Bludičky jsou nejinteligentnější z nelidských ras obývajících zemi Britannia. Velcí mudrci tvrdí, že jednoho dne s nimi budeme
+Bludičky jsou
+nejinteligentnější z
+nelidských ras
+obývajících zemi
+Britannia. Velcí mudrci
+tvrdí, že jednoho dne s
+nimi budeme
 
-moci otevřeně rozmlouvat ve své rodné řeči – vskutku musíme doufat, že se bludičky naučí našemu jazyku, protože lidé nedokážou
+moci otevřeně rozmlouvat
+ve své rodné řeči –
+vskutku musíme doufat,
+že se bludičky naučí
+našemu jazyku, protože
+lidé nedokážou
 
-jazyk bludiček vyslovovat!
-Zdá se, že jazyk bludiček obsahuje jen jednu samohlásku, písmeno Y. Avšak písmena W, C, M a L jsou podle všeho
+jazyk bludiček
+vyslovovat!
+Zdá se, že jazyk
+bludiček obsahuje jen
+jednu samohlásku,
+písmeno Y. Avšak písmena
+W, C, M a L jsou podle
+všeho
 
-gramaticky považována za samohlásky a navíc po každém písmenu následuje to, co lidskému uchu zní jako hlasivkový ráz. Je možné, že i hlasivkový ráz je
+gramaticky považována za
+samohlásky a navíc po
+každém písmenu následuje
+to, co lidskému uchu zní
+jako hlasivkový ráz. Je
+možné, že i hlasivkový
+ráz je
 
 považován za samohlásku.
-Bludičky užívají to, co nám připadá jako změny výšky tónu a důrazu, podobné zvoláním a
+Bludičky užívají to, co
+nám připadá jako změny
+výšky tónu a důrazu,
+podobné zvoláním a
 
 otázkám.
-Průměrné slovo v jazyce bludiček zřejmě sestává ze tří fonémů a tří hlasivkových rázů, případně také ze změny tónu. Často zní jako
+Průměrné slovo v jazyce
+bludiček zřejmě sestává
+ze tří fonémů a tří
+hlasivkových rázů,
+případně také ze změny
+tónu. Často zní jako
 
-hořící nebo praskající oheň. Někteří se domnívali, že to, co rozebíráme, vlastně není nic víc než samotný vzduch praskající poblíž záře bludičky, a vůbec ne
+hořící nebo praskající
+oheň. Někteří se
+domnívali, že to, co
+rozebíráme, vlastně není
+nic víc než samotný
+vzduch praskající poblíž
+záře bludičky, a vůbec
+ne
 
-jazyk, ale to je ovšem nepravděpodobné."""
+jazyk, ale to je ovšem
+nepravděpodobné."""
 
 [translations.fre]
 title = "Parler aux feux follets"
 content = """
-Ce volume a été financé par les dons de Lord Blackthorn, qui a toujours soutenu la compréhension des autres races douées de raison de Britannia.
+Ce volume a été financé
+par les dons de Lord
+Blackthorn, qui a
+toujours soutenu la
+compréhension des autres
+races douées de raison
+de Britannia.
 
 -
-Les feux follets sont la plus intelligente des races non humaines habitant Britannia. Les grands sages affirment qu’un jour nous pourrons
+Les feux follets sont la
+plus intelligente des
+races non humaines
+habitant Britannia. Les
+grands sages affirment
+qu’un jour nous pourrons
 
-converser ouvertement avec eux dans notre langue natale ; en effet, nous devons espérer que les feux follets apprennent notre langue, car il n’est pas possible aux humains de
+converser ouvertement
+avec eux dans notre
+langue natale ; en
+effet, nous devons
+espérer que les feux
+follets apprennent notre
+langue, car il n’est pas
+possible aux humains de
 
-prononcer leur langage ! La langue des feux follets semble ne contenir qu’une seule voyelle, la lettre Y. Cependant, les lettres W, C, M et L semblent être traitées
+prononcer leur langage !
+La langue des feux
+follets semble ne
+contenir qu’une seule
+voyelle, la lettre Y.
+Cependant, les lettres
+W, C, M et L semblent
+être traitées
 
-grammaticalement comme des voyelles ; en outre, chaque lettre est suivie de ce qui ressemble à l’oreille humaine à un coup de glotte. Il est possible que le coup de glotte soit
+grammaticalement comme
+des voyelles ; en outre,
+chaque lettre est suivie
+de ce qui ressemble à
+l’oreille humaine à un
+coup de glotte. Il est
+possible que le coup de
+glotte soit
 
-lui aussi considéré comme une voyelle. Les feux follets utilisent ce qui nous paraît être des variations de hauteur et d’accentuation semblables à des exclamations et des
+lui aussi considéré
+comme une voyelle. Les
+feux follets utilisent
+ce qui nous paraît être
+des variations de
+hauteur et
+d’accentuation
+semblables à des
+exclamations et des
 
-questions. Le mot moyen dans la langue des feux follets semble se composer de trois phonèmes et de trois coups de glotte, avec éventuellement une variation de hauteur. Cela ressemble souvent à un
+questions. Le mot moyen
+dans la langue des feux
+follets semble se
+composer de trois
+phonèmes et de trois
+coups de glotte, avec
+éventuellement une
+variation de hauteur.
+Cela ressemble souvent à
+un
 
-feu qui brûle ou crépite. Certains ont supposé que ce que nous analysons n’est en fait rien de plus que l’air même qui crépite près de la lueur du feu follet, et non une
+feu qui brûle ou
+crépite. Certains ont
+supposé que ce que nous
+analysons n’est en fait
+rien de plus que l’air
+même qui crépite près de
+la lueur du feu follet,
+et non une
 
-langue, mais cela est bien sûr peu probable."""
+langue, mais cela est
+bien sûr peu probable."""
 
 [translations.ger]
 title = "Mit Irrlichtern sprechen"
 content = """
-Dieser Band wurde durch Spenden von Lord Blackthorn gefördert, der stets das Verständnis der anderen vernunftbegabten Völker Britannias unterstützt.
+Dieser Band wurde durch
+Spenden von Lord
+Blackthorn gefördert,
+der stets das
+Verständnis der anderen
+vernunftbegabten Völker
+Britannias unterstützt.
 
 -
-Irrlichter sind die intelligentesten der nichtmenschlichen Völker, die Britannia bewohnen. Die großen Weisen behaupten, eines Tages werden wir
+Irrlichter sind die
+intelligentesten der
+nichtmenschlichen
+Völker, die Britannia
+bewohnen. Die großen
+Weisen behaupten, eines
+Tages werden wir
 
-uns offen in unserer eigenen Sprache mit ihnen unterhalten können – tatsächlich müssen wir hoffen, dass Irrlichter unsere Sprache lernen, denn Menschen können
+uns offen in unserer
+eigenen Sprache mit
+ihnen unterhalten können
+– tatsächlich müssen wir
+hoffen, dass Irrlichter
+unsere Sprache lernen,
+denn Menschen können
 
-die Irrlichtsprache nicht aussprechen!
-Die Sprache der Irrlichter scheint nur einen Vokal zu enthalten, den Buchstaben Y. Doch die Buchstaben W, C, M und L scheinen
+die Irrlichtsprache
+nicht aussprechen!
+Die Sprache der
+Irrlichter scheint nur
+einen Vokal zu
+enthalten, den
+Buchstaben Y. Doch die
+Buchstaben W, C, M und L
+scheinen
 
-grammatisch als Vokale behandelt zu werden, und außerdem folgt jedem Buchstaben etwas, das für das menschliche Ohr wie ein Glottisschlag klingt. Möglicherweise wird auch der Glottisschlag
+grammatisch als Vokale
+behandelt zu werden, und
+außerdem folgt jedem
+Buchstaben etwas, das
+für das menschliche Ohr
+wie ein Glottisschlag
+klingt. Möglicherweise
+wird auch der
+Glottisschlag
 
 als Vokal betrachtet.
-Irrlichter verwenden tatsächlich etwas, das für uns wie Wechsel in Tonhöhe und Betonung klingt, ähnlich Ausrufen und
+Irrlichter verwenden
+tatsächlich etwas, das
+für uns wie Wechsel in
+Tonhöhe und Betonung
+klingt, ähnlich Ausrufen
+und
 
 Fragen.
-Das durchschnittliche Wort der Irrlichtsprache scheint aus drei Phonemen und drei Glottisschlägen zu bestehen, möglicherweise zuzüglich eines Tonhöhenwechsels. Es klingt oft wie ein
+Das durchschnittliche
+Wort der Irrlichtsprache
+scheint aus drei
+Phonemen und drei
+Glottisschlägen zu
+bestehen, möglicherweise
+zuzüglich eines
+Tonhöhenwechsels. Es
+klingt oft wie ein
 
-brennendes oder knisterndes Feuer. Manche haben vermutet, dass das, was wir untersuchen, tatsächlich nichts weiter als das Knistern der Luft nahe dem Leuchten des Irrlichts ist und keine
+brennendes oder
+knisterndes Feuer.
+Manche haben vermutet,
+dass das, was wir
+untersuchen, tatsächlich
+nichts weiter als das
+Knistern der Luft nahe
+dem Leuchten des
+Irrlichts ist und keine
 
-Sprache, doch das ist natürlich unwahrscheinlich."""
+Sprache, doch das ist
+natürlich
+unwahrscheinlich."""
 
 [translations.ita]
 title = "Parlare ai fuochi fatui"
 content = """
-Questo volume è stato patrocinato dalle donazioni di Lord Blackthorn, da sempre sostenitore della comprensione delle altre razze senzienti di Britannia.
+Questo volume è stato
+patrocinato dalle
+donazioni di Lord
+Blackthorn, da sempre
+sostenitore della
+comprensione delle altre
+razze senzienti di
+Britannia.
 
 -
-I fuochi fatui sono i più intelligenti fra le razze non umane che abitano Britannia. I grandi saggi affermano che un giorno saremo
+I fuochi fatui sono i
+più intelligenti fra le
+razze non umane che
+abitano Britannia. I
+grandi saggi affermano
+che un giorno saremo
 
-in grado di conversare liberamente con loro nella nostra lingua: dobbiamo anzi sperare che i fuochi fatui imparino la nostra lingua, poiché per gli umani è impossibile
+in grado di conversare
+liberamente con loro
+nella nostra lingua:
+dobbiamo anzi sperare
+che i fuochi fatui
+imparino la nostra
+lingua, poiché per gli
+umani è impossibile
 
 pronunciare la loro!
-La lingua dei fuochi fatui sembra contenere una sola vocale, la lettera Y. Tuttavia le lettere W, C, M e L sembrano essere trattate
+La lingua dei fuochi
+fatui sembra contenere
+una sola vocale, la
+lettera Y. Tuttavia le
+lettere W, C, M e L
+sembrano essere trattate
 
-grammaticalmente come vocali, e inoltre ogni lettera è seguita da quello che all'orecchio umano suona come un'occlusione glottidale. È possibile che l'occlusione glottidale venga
+grammaticalmente come
+vocali, e inoltre ogni
+lettera è seguita da
+quello che all'orecchio
+umano suona come
+un'occlusione
+glottidale. È possibile
+che l'occlusione
+glottidale venga
 
-considerata anch'essa una vocale.
-I fuochi fatui fanno uso di quelli che ci suonano come cambiamenti di tono e d'enfasi simili a esclamazioni e
+considerata anch'essa
+una vocale.
+I fuochi fatui fanno uso
+di quelli che ci suonano
+come cambiamenti di tono
+e d'enfasi simili a
+esclamazioni e
 
 domande.
-La parola media nella lingua dei fuochi fatui sembra consistere di tre fonemi e tre occlusioni glottidali, più un possibile cambiamento di tono. Spesso suona come un
+La parola media nella
+lingua dei fuochi fatui
+sembra consistere di tre
+fonemi e tre occlusioni
+glottidali, più un
+possibile cambiamento di
+tono. Spesso suona come
+un
 
-fuoco che brucia o crepita. Alcuni hanno ipotizzato che ciò che analizziamo non sia in realtà altro che l'aria stessa che crepita vicino al bagliore del fuoco fatuo, e non
+fuoco che brucia o
+crepita. Alcuni hanno
+ipotizzato che ciò che
+analizziamo non sia in
+realtà altro che l'aria
+stessa che crepita
+vicino al bagliore del
+fuoco fatuo, e non
 
-una lingua, ma ciò è naturalmente improbabile."""
+una lingua, ma ciò è
+naturalmente
+improbabile."""
 
 [translations.pol]
 title = "Rozmowy z błędnymi ognikami"
 content = """
-Ten tom powstał dzięki datkom Lord Blackthorn, który zawsze wspiera zrozumienie innych rozumnych ras Britannia.
+Ten tom powstał dzięki
+datkom Lord Blackthorn,
+który zawsze wspiera
+zrozumienie innych
+rozumnych ras Britannia.
 
 -
-Błędne ogniki są najinteligentniejszą z nieludzkich ras zamieszkujących Britannia. Wielcy mędrcy twierdzą, że pewnego dnia będziemy
+Błędne ogniki są
+najinteligentniejszą z
+nieludzkich ras
+zamieszkujących
+Britannia. Wielcy mędrcy
+twierdzą, że pewnego
+dnia będziemy
 
-mogli otwarcie rozmawiać z nimi w naszym rodzimym języku — istotnie, musimy mieć nadzieję, że ogniki nauczą się naszego języka, gdyż ludzie nie potrafią
+mogli otwarcie rozmawiać
+z nimi w naszym rodzimym
+języku — istotnie,
+musimy mieć nadzieję, że
+ogniki nauczą się
+naszego języka, gdyż
+ludzie nie potrafią
 
 wymawiać ich mowy!
-Język ogników zdaje się zawierać tylko jedną samogłoskę, literę Y. Jednak litery W, C, M i L zdają się być traktowane
+Język ogników zdaje się
+zawierać tylko jedną
+samogłoskę, literę Y.
+Jednak litery W, C, M i
+L zdają się być
+traktowane
 
-gramatycznie jako samogłoski, a ponadto po każdej literze następuje coś, co ludzkie ucho słyszy jako zwarcie krtaniowe. Możliwe, że zwarcie krtaniowe
+gramatycznie jako
+samogłoski, a ponadto po
+każdej literze następuje
+coś, co ludzkie ucho
+słyszy jako zwarcie
+krtaniowe. Możliwe, że
+zwarcie krtaniowe
 
-również uznają za samogłoskę.
-Ogniki używają czegoś, co brzmi dla nas jak zmiany wysokości i nacisku podobne do wykrzyknień oraz
+również uznają za
+samogłoskę.
+Ogniki używają czegoś,
+co brzmi dla nas jak
+zmiany wysokości i
+nacisku podobne do
+wykrzyknień oraz
 
 pytań.
-Przeciętne słowo ich języka zdaje się składać z trzech fonemów i trzech zwarć krtaniowych, a być może również zmiany tonu. Często brzmi niczym
+Przeciętne słowo ich
+języka zdaje się składać
+z trzech fonemów i
+trzech zwarć
+krtaniowych, a być może
+również zmiany tonu.
+Często brzmi niczym
 
-płonący lub trzaskający ogień. Niektórzy przypuszczają, że to, co analizujemy, nie jest w istocie niczym więcej niż trzaskiem samego powietrza przy blasku ognika, a nie
+płonący lub trzaskający
+ogień. Niektórzy
+przypuszczają, że to, co
+analizujemy, nie jest w
+istocie niczym więcej
+niż trzaskiem samego
+powietrza przy blasku
+ognika, a nie
 
-językiem, lecz jest to oczywiście mało prawdopodobne."""
+językiem, lecz jest to
+oczywiście mało
+prawdopodobne."""
 
 [translations.por]
 title = "Conversando com wisps"
 content = """
-Este volume foi patrocinado por doações de Lord Blackthorn, sempre um defensor da compreensão das outras raças sencientes de Britannia.
+Este volume foi
+patrocinado por doações
+de Lord Blackthorn,
+sempre um defensor da
+compreensão das outras
+raças sencientes de
+Britannia.
 
 -
-Os wisps são a mais inteligente das raças não humanas que habitam Britannia. Os grandes sábios afirmam que um dia seremos
+Os wisps são a mais
+inteligente das raças
+não humanas que habitam
+Britannia. Os grandes
+sábios afirmam que um
+dia seremos
 
-capazes de conversar com eles abertamente em nossa língua nativa; de fato, precisamos esperar que os wisps aprendam nossa língua, pois não é possível aos humanos
+capazes de conversar com
+eles abertamente em
+nossa língua nativa; de
+fato, precisamos esperar
+que os wisps aprendam
+nossa língua, pois não é
+possível aos humanos
 
-pronunciar a língua dos wisps!
-A língua dos wisps parece conter apenas uma vogal, a letra Y. Porém, as letras W, C, M e L parecem ser tratadas
+pronunciar a língua dos
+wisps!
+A língua dos wisps
+parece conter apenas uma
+vogal, a letra Y. Porém,
+as letras W, C, M e L
+parecem ser tratadas
 
-gramaticalmente como vogais e, além disso, cada letra é seguida pelo que soa ao ouvido humano como uma oclusão glotal. É possível que a oclusão glotal também seja
+gramaticalmente como
+vogais e, além disso,
+cada letra é seguida
+pelo que soa ao ouvido
+humano como uma oclusão
+glotal. É possível que a
+oclusão glotal também
+seja
 
 considerada uma vogal.
-Os wisps usam sons que nos parecem mudanças de altura e de ênfase semelhantes a exclamações e
+Os wisps usam sons que
+nos parecem mudanças de
+altura e de ênfase
+semelhantes a
+exclamações e
 
 perguntas.
-A palavra média na língua dos wisps parece consistir em três fonemas e três oclusões glotais, mais uma possível mudança de altura. Frequentemente soa como um
+A palavra média na
+língua dos wisps parece
+consistir em três
+fonemas e três oclusões
+glotais, mais uma
+possível mudança de
+altura. Frequentemente
+soa como um
 
-fogo ardendo ou crepitando. Alguns especularam que o que estamos analisando é, na verdade, nada mais do que o próprio ar crepitando perto do brilho do wisp, e não
+fogo ardendo ou
+crepitando. Alguns
+especularam que o que
+estamos analisando é, na
+verdade, nada mais do
+que o próprio ar
+crepitando perto do
+brilho do wisp, e não
 
-uma língua, mas isso, naturalmente, é improvável."""
+uma língua, mas isso,
+naturalmente, é
+improvável."""
 
 [translations.spa]
 title = "Hablar con los wisps"
 content = """
-Este volumen se financió con donaciones de Lord Blackthorn, siempre partidario de comprender a las demás razas inteligentes de Britannia.
+Este volumen se financió
+con donaciones de Lord
+Blackthorn, siempre
+partidario de comprender
+a las demás razas
+inteligentes de
+Britannia.
 
-- Los wisps son la más inteligente de las razas no humanas que habitan Britannia. Los grandes sabios afirman que algún día podremos
+- Los wisps son la más
+inteligente de las razas
+no humanas que habitan
+Britannia. Los grandes
+sabios afirman que algún
+día podremos
 
-conversar abiertamente con ellos en nuestra lengua nativa; en efecto, debemos esperar que los wisps aprendan nuestro idioma, pues los humanos no podemos
+conversar abiertamente
+con ellos en nuestra
+lengua nativa; en
+efecto, debemos esperar
+que los wisps aprendan
+nuestro idioma, pues los
+humanos no podemos
 
-pronunciar su lengua. El idioma de los wisps parece contener una sola vocal, la letra Y. Sin embargo, las letras W, C, M y L parecen tratarse
+pronunciar su lengua. El
+idioma de los wisps
+parece contener una sola
+vocal, la letra Y. Sin
+embargo, las letras W,
+C, M y L parecen
+tratarse
 
-gramaticalmente como vocales, y además cada letra va seguida de lo que al oído humano le suena como una oclusión glotal. Es posible que la oclusión glotal
+gramaticalmente como
+vocales, y además cada
+letra va seguida de lo
+que al oído humano le
+suena como una oclusión
+glotal. Es posible que
+la oclusión glotal
 
-también se considere una vocal. Los wisps emplean lo que nos parecen cambios de tono y énfasis semejantes a exclamaciones y
+también se considere una
+vocal. Los wisps emplean
+lo que nos parecen
+cambios de tono y
+énfasis semejantes a
+exclamaciones y
 
-preguntas. La palabra media en su idioma parece consistir en tres fonemas y tres oclusiones glotales, más un posible cambio de tono. A menudo suena como un
+preguntas. La palabra
+media en su idioma
+parece consistir en tres
+fonemas y tres
+oclusiones glotales, más
+un posible cambio de
+tono. A menudo suena
+como un
 
-fuego que arde o crepita. Algunos han especulado que lo que analizamos no es más que el aire mismo crepitando cerca del resplandor del wisp, y no un
+fuego que arde o
+crepita. Algunos han
+especulado que lo que
+analizamos no es más que
+el aire mismo crepitando
+cerca del resplandor del
+wisp, y no un
 
-idioma, pero eso, desde luego, es poco probable."""
+idioma, pero eso, desde
+luego, es poco probable."""

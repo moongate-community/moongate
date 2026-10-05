@@ -79,178 +79,559 @@ title = "Deník Drakov"
 content = """
 Můj Mistře
 
-Tento deník byl nalezen u jednoho z našich ovladačů. Zdá se, že ve vás ztratil víru. Vězte, že se mu
+Tento deník byl
+nalezen u jednoho z
+našich ovladačů. Zdá
+se, že ve vás ztratil
+víru. Vězte, že se mu
 
-dostalo náležitého zacházení a už nikdy nebude mluvit špatně o vás ani o naší věci.
+dostalo náležitého
+zacházení a už nikdy
+nebude mluvit špatně
+o vás ani o naší
+věci.
           –Galzon
 
-Dokončili jsme stavbu zařízení potřebných k výrobě mechanických dozorců a přisluhovačů podle Mistrova přání. Chrliči byli
+Dokončili jsme stavbu
+zařízení potřebných k
+výrobě mechanických
+dozorců a
+přisluhovačů podle
+Mistrova přání.
+Chrliči byli
 
-velmi užiteční a jejich znalosti postupů výroby těchto tvorů nám dobře poslouží.
+velmi užiteční a
+jejich znalosti
+postupů výroby těchto
+tvorů nám dobře
+poslouží.
         -----
-Nejsem z těch, kdo
+    Nejsem z těch,
+kdo
 
-kritizují Mistra, ale myslím, že se mohl zmýlit, když se rozhodl zničit bezkřídlé. Naše síly již oslabují neustálé útoky
+kritizují Mistra, ale
+myslím, že se mohl
+zmýlit, když se
+rozhodl zničit
+bezkřídlé. Naše síly
+již oslabují neustálé
+útoky
 
-lidí. Jejich síla a bezvýhradná poslušnost by z nich učinily velmi užitečné pomocníky v boji proti lidem. Mistr však považoval
+lidí. Jejich síla a
+bezvýhradná
+poslušnost by z nich
+učinily velmi
+užitečné pomocníky v
+boji proti lidem.
+Mistr však považoval
 
-jejich přítomnost za obtíž a za rozptýlení pro okřídlené. Vůbec nebylo těžké odstranit je z tohoto světa. Nyní se však obávám, že bez dalších
+jejich přítomnost za
+obtíž a za rozptýlení
+pro okřídlené. Vůbec
+nebylo těžké
+odstranit je z tohoto
+světa. Nyní se však
+obávám, že bez
+dalších
 
-spojenců, dobrovolných či nedobrovolných, máme jen malou šanci vyhnat odporné lidi z našich zemí. Snad kdyby Mistr projevil trochu
+spojenců,
+dobrovolných či
+nedobrovolných, máme
+jen malou šanci
+vyhnat odporné lidi z
+našich zemí. Snad
+kdyby Mistr projevil
+trochu
 
-milosrdenství a předvídavosti, nebyli bychom v tak vážném nebezpečí."""
+milosrdenství a
+předvídavosti, nebyli
+bychom v tak vážném
+nebezpečí."""
 
 [translations.fre]
 title = "Le journal de Drakov"
 content = """
 Mon Maître
 
-Ce journal a été trouvé sur l’un de nos contrôleurs. Il semble qu’il ait perdu foi en vous. Sachez que l’on s’est
+Ce journal a été
+trouvé sur l’un de
+nos contrôleurs. Il
+semble qu’il ait
+perdu foi en vous.
+Sachez que l’on s’est
 
-occupé de lui et que jamais plus il ne médira de vous ou de notre cause.
+occupé de lui et que
+jamais plus il ne
+médira de vous ou de
+notre cause.
           — Galzon
 
-Nous avons achevé la construction des dispositifs nécessaires pour fabriquer les surveillants et les serviteurs mécaniques, conformément à la demande du Maître. Les gargouilles ont été
+Nous avons achevé la
+construction des
+dispositifs
+nécessaires pour
+fabriquer les
+surveillants et les
+serviteurs
+mécaniques,
+conformément à la
+demande du Maître.
+Les gargouilles ont
+été
 
-fort utiles, et leur connaissance des techniques de construction de ces créatures nous servira bien.
+fort utiles, et leur
+connaissance des
+techniques de
+construction de ces
+créatures nous
+servira bien.
         -----
-Je ne suis pas homme à
+    Je ne suis pas
+homme à
 
-critiquer le Maître, mais je crois qu’il a pu se tromper en décidant de détruire les êtres sans ailes. Déjà, nos forces sont affaiblies par les attaques incessantes
+critiquer le Maître,
+mais je crois qu’il a
+pu se tromper en
+décidant de détruire
+les êtres sans ailes.
+Déjà, nos forces sont
+affaiblies par les
+attaques incessantes
 
-des humains. Leur force et leur obéissance sans réserve les auraient rendus fort utiles dans la lutte contre les humains. Mais le Maître estimait
+des humains. Leur
+force et leur
+obéissance sans
+réserve les auraient
+rendus fort utiles
+dans la lutte contre
+les humains. Mais le
+Maître estimait
 
-que leur présence était une gêne et une distraction pour les êtres ailés. Il ne fut nullement difficile de les faire disparaître de ce monde. Mais à présent je crains que, sans davantage
+que leur présence
+était une gêne et une
+distraction pour les
+êtres ailés. Il ne
+fut nullement
+difficile de les
+faire disparaître de
+ce monde. Mais à
+présent je crains
+que, sans davantage
 
-d’alliés, consentants ou non, nous n’ayons guère de chances de chasser ces ignobles humains de nos terres. Peut-être, si le Maître avait montré un peu
+d’alliés, consentants
+ou non, nous n’ayons
+guère de chances de
+chasser ces ignobles
+humains de nos
+terres. Peut-être, si
+le Maître avait
+montré un peu
 
-de clémence et de prévoyance, ne serions-nous pas dans un si grand péril."""
+de clémence et de
+prévoyance, ne
+serions-nous pas dans
+un si grand péril."""
 
 [translations.ger]
 title = "Drakovs Tagebuch"
 content = """
 Mein Meister
 
-Dieses Tagebuch wurde bei einem unserer Lenker gefunden. Offenbar hat er den Glauben an Euch verloren. Wisset, dass mit ihm
+Dieses Tagebuch wurde
+bei einem unserer
+Lenker gefunden.
+Offenbar hat er den
+Glauben an Euch
+verloren. Wisset,
+dass mit ihm
 
-verfahren wurde und er nie wieder schlecht über Euch oder unsere Sache sprechen wird.
--Galzon
+verfahren wurde und
+er nie wieder
+schlecht über Euch
+oder unsere Sache
+sprechen wird.
+    -Galzon
 
-Wir haben den Bau der Vorrichtungen vollendet, die auf Wunsch des Meisters zur Herstellung der Uhrwerkaufseher und -diener gebraucht werden. Die Gargoyles sind
+Wir haben den Bau der
+Vorrichtungen
+vollendet, die auf
+Wunsch des Meisters
+zur Herstellung der
+Uhrwerkaufseher und
+-diener gebraucht
+werden. Die Gargoyles
+sind
 
-äußerst nützlich gewesen, und ihr Wissen um die Bauverfahren für diese Geschöpfe wird uns gute Dienste leisten.
------
-Ich bin keiner, der
+äußerst nützlich
+gewesen, und ihr
+Wissen um die
+Bauverfahren für
+diese Geschöpfe wird
+uns gute Dienste
+leisten.
+    -----
+    Ich bin keiner,
+der
 
-den Meister kritisiert, doch ich glaube, er könnte mit seiner Entscheidung, die Flügellosen zu vernichten, geirrt haben. Schon jetzt werden unsere Kräfte durch die ständigen Angriffe
+den Meister
+kritisiert, doch ich
+glaube, er könnte mit
+seiner Entscheidung,
+die Flügellosen zu
+vernichten, geirrt
+haben. Schon jetzt
+werden unsere Kräfte
+durch die ständigen
+Angriffe
 
-der Menschen geschwächt. Ihre Stärke und ihr fragloser Gehorsam hätten sie im Kampf gegen die Menschen sehr nützlich gemacht. Doch der Meister empfand
+der Menschen
+geschwächt. Ihre
+Stärke und ihr
+fragloser Gehorsam
+hätten sie im Kampf
+gegen die Menschen
+sehr nützlich
+gemacht. Doch der
+Meister empfand
 
-ihre Anwesenheit als lästig und als Ablenkung für die Geflügelten. Es war gar nicht schwer, sie aus dieser Welt zu entfernen. Doch nun fürchte ich, ohne weitere
+ihre Anwesenheit als
+lästig und als
+Ablenkung für die
+Geflügelten. Es war
+gar nicht schwer, sie
+aus dieser Welt zu
+entfernen. Doch nun
+fürchte ich, ohne
+weitere
 
-Verbündete, willige oder nicht, haben wir kaum Aussicht, die abscheulichen Menschen aus unseren Landen zu vertreiben. Vielleicht wären wir, hätte der Meister ein wenig
+Verbündete, willige
+oder nicht, haben wir
+kaum Aussicht, die
+abscheulichen
+Menschen aus unseren
+Landen zu vertreiben.
+Vielleicht wären wir,
+hätte der Meister ein
+wenig
 
-Gnade und Voraussicht gezeigt, nicht in solch großer Gefahr."""
+Gnade und Voraussicht
+gezeigt, nicht in
+solch großer Gefahr."""
 
 [translations.ita]
 title = "Il diario di Drakov"
 content = """
 Mio Padrone
 
-Questo diario è stato trovato su uno dei nostri controllori. Sembra che abbia perso fiducia in voi. Sappiate che è stato
+Questo diario è stato
+trovato su uno dei
+nostri controllori.
+Sembra che abbia
+perso fiducia in voi.
+Sappiate che è stato
 
-sistemato e che non parlerà mai più male di voi o della nostra causa.
+sistemato e che non
+parlerà mai più male
+di voi o della nostra
+causa.
           -Galzon
 
-Abbiamo completato la costruzione dei congegni necessari a fabbricare i sorveglianti e i servitori a orologeria, come richiesto dal Padrone. I gargoyle sono stati
+Abbiamo completato la
+costruzione dei
+congegni necessari a
+fabbricare i
+sorveglianti e i
+servitori a
+orologeria, come
+richiesto dal
+Padrone. I gargoyle
+sono stati
 
-molto utili e la loro conoscenza delle tecniche di costruzione di queste creature ci sarà di grande aiuto.
+molto utili e la loro
+conoscenza delle
+tecniche di
+costruzione di queste
+creature ci sarà di
+grande aiuto.
         -----
-Non sono uno che
+    Non sono uno che
 
-critica il Padrone, ma credo che possa aver sbagliato nel decidere di distruggere quelli senza ali. Le nostre forze sono già indebolite dai continui attacchi
+critica il Padrone,
+ma credo che possa
+aver sbagliato nel
+decidere di
+distruggere quelli
+senza ali. Le nostre
+forze sono già
+indebolite dai
+continui attacchi
 
-degli umani La loro forza e la loro obbedienza incondizionata li avrebbero resi molto utili nella lotta contro gli umani. Ma il Padrone riteneva
+degli umani La loro
+forza e la loro
+obbedienza
+incondizionata li
+avrebbero resi molto
+utili nella lotta
+contro gli umani. Ma
+il Padrone riteneva
 
-la loro presenza un fastidio e una distrazione per quelli alati. Non è stato affatto difficile eliminarli da questo mondo. Ma ora temo che senza altri
+la loro presenza un
+fastidio e una
+distrazione per
+quelli alati. Non è
+stato affatto
+difficile eliminarli
+da questo mondo. Ma
+ora temo che senza
+altri
 
-alleati, volenti o nolenti, abbiamo poche possibilità di sconfiggere gli immondi umani nelle nostre terre. Forse se il Padrone avesse mostrato un po' di
+alleati, volenti o
+nolenti, abbiamo
+poche possibilità di
+sconfiggere gli
+immondi umani nelle
+nostre terre. Forse
+se il Padrone avesse
+mostrato un po' di
 
-pietà e lungimiranza non saremmo in così grave pericolo."""
+pietà e lungimiranza
+non saremmo in così
+grave pericolo."""
 
 [translations.pol]
 title = "Dziennik Drakov"
 content = """
 Mój Mistrzu
 
-Ten dziennik znaleziono przy jednym z naszych kontrolerów. Zdaje się, że stracił wiarę w ciebie. Wiedz, że został
+Ten dziennik
+znaleziono przy
+jednym z naszych
+kontrolerów. Zdaje
+się, że stracił wiarę
+w ciebie. Wiedz, że
+został
 
-ukarany i nigdy więcej nie powie nic złego o tobie ani o naszej sprawie.
-— Galzon
+ukarany i nigdy
+więcej nie powie nic
+złego o tobie ani o
+naszej sprawie.
+    — Galzon
 
-Ukończyliśmy budowę urządzeń potrzebnych do tworzenia mechanicznych nadzorców i sług, zgodnie z życzeniem Mistrza. Gargulce okazały się
+Ukończyliśmy budowę
+urządzeń potrzebnych
+do tworzenia
+mechanicznych
+nadzorców i sług,
+zgodnie z życzeniem
+Mistrza. Gargulce
+okazały się
 
-bardzo użyteczne, a ich znajomość technik budowy tych stworzeń dobrze nam posłuży.
------ Nie zwykłem
+bardzo użyteczne, a
+ich znajomość technik
+budowy tych stworzeń
+dobrze nam posłuży.
+    ----- Nie zwykłem
 
-krytykować Mistrza, lecz sądzę, że mógł się pomylić, decydując o zniszczeniu bezskrzydłych. Już teraz nasze siły słabną pod ciągłymi atakami
+krytykować Mistrza,
+lecz sądzę, że mógł
+się pomylić,
+decydując o
+zniszczeniu
+bezskrzydłych. Już
+teraz nasze siły
+słabną pod ciągłymi
+atakami
 
-ludzi. Ich siła i bezwarunkowe posłuszeństwo uczyniłyby ich bardzo użytecznymi w walce z ludźmi. Lecz Mistrz uważał
+ludzi. Ich siła i
+bezwarunkowe
+posłuszeństwo
+uczyniłyby ich bardzo
+użytecznymi w walce z
+ludźmi. Lecz Mistrz
+uważał
 
-ich obecność za irytującą i rozpraszającą skrzydlatych. Usunięcie ich z tego świata nie sprawiło najmniejszych trudności. Lecz teraz obawiam się, że bez większej liczby
+ich obecność za
+irytującą i
+rozpraszającą
+skrzydlatych.
+Usunięcie ich z tego
+świata nie sprawiło
+najmniejszych
+trudności. Lecz teraz
+obawiam się, że bez
+większej liczby
 
-sprzymierzeńców, chętnych czy nie, mamy małe szanse na wyparcie plugawych ludzi z naszych ziem. Gdyby może Mistrz wykazał odrobinę
+sprzymierzeńców,
+chętnych czy nie,
+mamy małe szanse na
+wyparcie plugawych
+ludzi z naszych ziem.
+Gdyby może Mistrz
+wykazał odrobinę
 
-miłosierdzia i przezorności, nie bylibyśmy w tak strasznym niebezpieczeństwie."""
+miłosierdzia i
+przezorności, nie
+bylibyśmy w tak
+strasznym
+niebezpieczeństwie."""
 
 [translations.por]
 title = "Diário de Drakov"
 content = """
 Meu Mestre
 
-Este diário foi encontrado com um de nossos controladores. Parece que ele perdeu a fé em você. Saiba que já
+Este diário foi
+encontrado com um de
+nossos controladores.
+Parece que ele perdeu
+a fé em você. Saiba
+que já
 
-cuidamos dele e que nunca mais falará mal de você ou de nossa causa.
+cuidamos dele e que
+nunca mais falará mal
+de você ou de nossa
+causa.
           -Galzon
 
-Concluímos a construção dos dispositivos necessários para fabricar os supervisores e lacaios mecânicos, conforme o pedido do Mestre. As gárgulas têm sido
+Concluímos a
+construção dos
+dispositivos
+necessários para
+fabricar os
+supervisores e
+lacaios mecânicos,
+conforme o pedido do
+Mestre. As gárgulas
+têm sido
 
-muito úteis, e seu conhecimento das técnicas de construção dessas criaturas nos servirá bem.
+muito úteis, e seu
+conhecimento das
+técnicas de
+construção dessas
+criaturas nos servirá
+bem.
         -----
-Não sou de
+    Não sou de
 
-criticar o Mestre, mas acredito que ele possa ter errado ao decidir destruir os sem asas. Nossas forças já estão enfraquecidas pelos constantes ataques dos
+criticar o Mestre,
+mas acredito que ele
+possa ter errado ao
+decidir destruir os
+sem asas. Nossas
+forças já estão
+enfraquecidas pelos
+constantes ataques
+dos
 
-humanos. Sua força e obediência inquestionável os teriam tornado muito úteis na luta contra os humanos. Mas o Mestre considerou
+humanos. Sua força e
+obediência
+inquestionável os
+teriam tornado muito
+úteis na luta contra
+os humanos. Mas o
+Mestre considerou
 
-sua presença um incômodo e uma distração para os alados. Não foi nada difícil removê-los deste mundo. Mas agora temo que, sem mais
+sua presença um
+incômodo e uma
+distração para os
+alados. Não foi nada
+difícil removê-los
+deste mundo. Mas
+agora temo que, sem
+mais
 
-aliados, dispostos ou não, tenhamos pouca chance de expulsar os humanos repugnantes de nossas terras. Talvez, se o Mestre tivesse demonstrado um pouco de
+aliados, dispostos ou
+não, tenhamos pouca
+chance de expulsar os
+humanos repugnantes
+de nossas terras.
+Talvez, se o Mestre
+tivesse demonstrado
+um pouco de
 
-misericórdia e previdência, não estivéssemos em perigo tão terrível."""
+misericórdia e
+previdência, não
+estivéssemos em
+perigo tão terrível."""
 
 [translations.spa]
 title = "El diario de Drakov"
 content = """
 Mi Maestro
 
-Se encontró este diario en poder de uno de nuestros controladores. Parece que ha perdido la fe en vos. Sabed que se han tomado medidas
+Se encontró este
+diario en poder de
+uno de nuestros
+controladores. Parece
+que ha perdido la fe
+en vos. Sabed que se
+han tomado medidas
 
-contra él y que nunca volverá a hablar mal de vos ni de nuestra causa.
+contra él y que nunca
+volverá a hablar mal
+de vos ni de nuestra
+causa.
           —Galzon
 
-Hemos terminado la construcción de los dispositivos necesarios para fabricar los supervisores y servidores de relojería, tal como lo pidió el Maestro. Los gargoyles han sido
+Hemos terminado la
+construcción de los
+dispositivos
+necesarios para
+fabricar los
+supervisores y
+servidores de
+relojería, tal como
+lo pidió el Maestro.
+Los gargoyles han
+sido
 
-de gran utilidad, y su conocimiento de las técnicas para construir estas criaturas nos servirá bien.
+de gran utilidad, y
+su conocimiento de
+las técnicas para
+construir estas
+criaturas nos servirá
+bien.
         -----
-No soy quien para
+    No soy quien para
 
-criticar al Maestro, pero creo que quizá se haya equivocado al decidir destruir a los que no tienen alas. Nuestras fuerzas ya se ven debilitadas por los ataques constantes de
+criticar al Maestro,
+pero creo que quizá
+se haya equivocado al
+decidir destruir a
+los que no tienen
+alas. Nuestras
+fuerzas ya se ven
+debilitadas por los
+ataques constantes de
 
-los humanos. Su fuerza y su obediencia sin reservas los habrían hecho muy útiles en la lucha contra los humanos. Pero el Maestro consideró
+los humanos. Su
+fuerza y su
+obediencia sin
+reservas los habrían
+hecho muy útiles en
+la lucha contra los
+humanos. Pero el
+Maestro consideró
 
-que su presencia era una molestia y una distracción para los alados. No fue nada difícil eliminarlos de este mundo. Pero ahora temo que, sin más
+que su presencia era
+una molestia y una
+distracción para los
+alados. No fue nada
+difícil eliminarlos
+de este mundo. Pero
+ahora temo que, sin
+más
 
-aliados, voluntarios o no, tendremos pocas posibilidades de expulsar de nuestras tierras a los viles humanos. Quizá, si el Maestro hubiera mostrado un poco de
+aliados, voluntarios
+o no, tendremos pocas
+posibilidades de
+expulsar de nuestras
+tierras a los viles
+humanos. Quizá, si el
+Maestro hubiera
+mostrado un poco de
 
-misericordia y previsión, no nos hallaríamos en un peligro tan terrible."""
+misericordia y
+previsión, no nos
+hallaríamos en un
+peligro tan terrible."""

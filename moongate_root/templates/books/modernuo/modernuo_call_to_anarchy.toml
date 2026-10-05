@@ -134,255 +134,899 @@ item_template = "readable_scroll"
 [translations.cze]
 title = "Rozvážná výzva k anarchii"
 content = """
-Kéž nikdo nikdy netvrdí, že mám svár se svým lenním pánem Lord British, neboť jsme vskutku nejlepšími přáteli, kteří za zimních nocí přátelsky hrají šachy
+Kéž nikdo nikdy netvrdí,
+že mám svár se svým
+lenním pánem Lord
+British, neboť jsme
+vskutku nejlepšími
+přáteli, kteří za
+zimních nocí přátelsky
+hrají šachy
 
-a dlouze až do časných hodin rozprávějí o věcech ovlivňujících říši Britannia.
-Opravdové přátelství však nebrání opravdovému filozofickému
+a dlouze až do časných
+hodin rozprávějí o
+věcech ovlivňujících
+říši Britannia.
+Opravdové přátelství
+však nebrání opravdovému
+filozofickému
 
-nesouhlasu. Ačkoli se souhlasem hledím na náklonnost svého pána k jeho pečlivě vytvořené filozofii Osmi ctností, v níž je mezi lidem podporováno mravné
+nesouhlasu. Ačkoli se
+souhlasem hledím na
+náklonnost svého pána k
+jeho pečlivě vytvořené
+filozofii Osmi ctností,
+v níž je mezi lidem
+podporováno mravné
 
-chování, s menším souhlasem hledím na vydávání veřejných prostředků na stavbu „svatyní“ zasvěcených těmto
+chování, s menším
+souhlasem hledím na
+vydávání veřejných
+prostředků na stavbu
+„svatyní“ zasvěcených
+těmto
 
 ideálům.
-Nejde však o peníze, nýbrž o navýsost rozumový spor o náležitou cestu lidstva z etického hlediska. Nemá snad
+Nejde však o peníze,
+nýbrž o navýsost
+rozumový spor o
+náležitou cestu lidstva
+z etického hlediska.
+Nemá snad
 
-svoboda rozhodování být v každém takovém mravním rozhodnutí považována za nejvyšší hodnotu? Ačkoli nikdo neopomene odsoudit vraha, jemnější otázka vyvstává,
+svoboda rozhodování být
+v každém takovém mravním
+rozhodnutí považována za
+nejvyšší hodnotu? Ačkoli
+nikdo neopomene odsoudit
+vraha, jemnější otázka
+vyvstává,
 
-když se ptáme, zda by jeho chování bylo etické, kdyby k němu byl donucen.
-Říkám tobě, čtenáři, zcela přímo, že žádný etický systém nade mnou nebude mít moc,
+když se ptáme, zda by
+jeho chování bylo
+etické, kdyby k němu byl
+donucen.
+Říkám tobě, čtenáři,
+zcela přímo, že žádný
+etický systém nade mnou
+nebude mít moc,
 
-pokud mne nepřesvědčí, neboť právě svobodně učiněná volba je mi znamením platnosti tohoto systému.
-Nakolik je systém „Ctností“, jejž můj
+pokud mne nepřesvědčí,
+neboť právě svobodně
+učiněná volba je mi
+znamením platnosti
+tohoto systému.
+Nakolik je systém
+„Ctností“, jejž můj
 
-lenní pán zastává, skutečně souborem obecně uznávaných ctností, schvaluji jej. Kde však usiluje o ovládání lidu a omezení jeho rozmanitosti i
+lenní pán zastává,
+skutečně souborem obecně
+uznávaných ctností,
+schvaluji jej. Kde však
+usiluje o ovládání lidu
+a omezení jeho
+rozmanitosti i
 
-rozsahu chování, přu se s ním. A proto vydávám tuto rozvážnou výzvu k anarchii a pokorně prosím Lord British, aby mi odpustil mou troufalost:
+rozsahu chování, přu se
+s ním. A proto vydávám
+tuto rozvážnou výzvu k
+anarchii a pokorně
+prosím Lord British, aby
+mi odpustil mou
+troufalost:
 
-Oslavuj své odlišnosti. Jednej podle vlastního úsudku. Ptej se, z jakého zdroje může vzejít zákon, pravidlo, soudce či ctnost. Bylo by
+Oslavuj své odlišnosti.
+Jednej podle vlastního
+úsudku. Ptej se, z
+jakého zdroje může
+vzejít zákon, pravidlo,
+soudce či ctnost. Bylo
+by
 
-možné (ačkoli to vážně nenavrhuji), že démon zasadil semeno těchto „Ctností“ do mysli mého pána Lord British; bylo by možné, že
+možné (ačkoli to vážně
+nenavrhuji), že démon
+zasadil semeno těchto
+„Ctností“ do mysli mého
+pána Lord British; bylo
+by možné, že
 
-svatyně jsou pouhým plánem na zničení světa. Nemůžeš to vědět, pokud se nebudeš ptát a pochybovat a nakonec se nebudeš spoléhat na SEBE SAMA a
+svatyně jsou pouhým
+plánem na zničení světa.
+Nemůžeš to vědět, pokud
+se nebudeš ptát a
+pochybovat a nakonec se
+nebudeš spoléhat na SEBE
+SAMA a
 
 svůj úsudek.
-Nabízím tato slova jako pouhé filozofické úvahy těm, kdo hledají osvícení, neboť právě tato otázka zaměstnává mou
+Nabízím tato slova jako
+pouhé filozofické úvahy
+těm, kdo hledají
+osvícení, neboť právě
+tato otázka zaměstnává
+mou
 
-pozornost i pozornost Lord British již nějakou dobu."""
+pozornost i pozornost
+Lord British již nějakou
+dobu."""
 
 [translations.fre]
 title = "Un appel politique à l’anarchie"
 content = """
-Que l’on ne dise jamais que j’ai quelque querelle avec mon suzerain Lord British, car nous sommes les meilleurs amis du monde, partageant d’amicales parties d’échecs lors d’une
+Que l’on ne dise jamais
+que j’ai quelque
+querelle avec mon
+suzerain Lord British,
+car nous sommes les
+meilleurs amis du monde,
+partageant d’amicales
+parties d’échecs lors
+d’une
 
-nuit d’hiver et discutant longuement, jusqu’aux premières heures du jour, des questions touchant le royaume de Britannia. Pourtant, la véritable amitié n’empêche point un véritable désaccord
+nuit d’hiver et
+discutant longuement,
+jusqu’aux premières
+heures du jour, des
+questions touchant le
+royaume de Britannia.
+Pourtant, la véritable
+amitié n’empêche point
+un véritable désaccord
 
-philosophique. Si je considère avec approbation l’affection de mon seigneur pour sa philosophie soigneusement élaborée des Huit Vertus, qui encourage une conduite morale
+philosophique. Si je
+considère avec
+approbation l’affection
+de mon seigneur pour sa
+philosophie
+soigneusement élaborée
+des Huit Vertus, qui
+encourage une conduite
+morale
 
-parmi la population, j’approuve moins la dépense des fonds publics pour construire des « sanctuaires » consacrés à ces
+parmi la population,
+j’approuve moins la
+dépense des fonds
+publics pour construire
+des « sanctuaires »
+consacrés à ces
 
-idéaux. Cependant, il ne s’agit point d’une question de fonds, mais d’un désaccord fort intellectuel sur la juste conduite de l’humanité au sens éthique. Assurément,
+idéaux. Cependant, il ne
+s’agit point d’une
+question de fonds, mais
+d’un désaccord fort
+intellectuel sur la
+juste conduite de
+l’humanité au sens
+éthique. Assurément,
 
-la liberté de décision doit être tenue pour primordiale dans toute décision morale de cette sorte ? Si nul ne manque de condamner le meurtrier, une question plus subtile se pose lorsque
+la liberté de décision
+doit être tenue pour
+primordiale dans toute
+décision morale de cette
+sorte ? Si nul ne manque
+de condamner le
+meurtrier, une question
+plus subtile se pose
+lorsque
 
-nous demandons si sa conduite serait éthique s’il y était contraint. Je vous le dis tout net, lecteur : aucun système éthique n’aura d’autorité sur
+nous demandons si sa
+conduite serait éthique
+s’il y était contraint.
+Je vous le dis tout net,
+lecteur : aucun système
+éthique n’aura
+d’autorité sur
 
-moi à moins de me convaincre, car ce choix librement consenti est pour moi le signe de la validité du système. Dans la mesure où le système des « Vertus » que mon
+moi à moins de me
+convaincre, car ce choix
+librement consenti est
+pour moi le signe de la
+validité du système.
+Dans la mesure où le
+système des « Vertus »
+que mon
 
-suzerain prône est véritablement une compilation de vertus communément approuvées, je l’approuve. Là où il cherche à gouverner la population et à restreindre sa diversité et son
+suzerain prône est
+véritablement une
+compilation de vertus
+communément approuvées,
+je l’approuve. Là où il
+cherche à gouverner la
+population et à
+restreindre sa diversité
+et son
 
-éventail de comportements, je le conteste. Ainsi lancé-je cet appel politique à l’anarchie, tout en priant humblement Lord British de pardonner mon impertinence :
+éventail de
+comportements, je le
+conteste. Ainsi lancé-je
+cet appel politique à
+l’anarchie, tout en
+priant humblement Lord
+British de pardonner mon
+impertinence :
 
-Célébrez vos différences. Agissez selon vos propres lumières. Interrogez-vous sur la source d’où peuvent naître une loi, une règle, un juge et une vertu. Il serait
+Célébrez vos
+différences. Agissez
+selon vos propres
+lumières.
+Interrogez-vous sur la
+source d’où peuvent
+naître une loi, une
+règle, un juge et une
+vertu. Il serait
 
-possible (bien que je ne l’avance pas sérieusement) qu’un démon ait planté la graine de ces « Vertus » dans l’esprit de mon Lord British ; il serait possible que les
+possible (bien que je ne
+l’avance pas
+sérieusement) qu’un
+démon ait planté la
+graine de ces « Vertus »
+dans l’esprit de mon
+Lord British ; il serait
+possible que les
 
-sanctuaires ne fussent qu’un dessein visant à détruire ce monde. Vous ne pouvez savoir sans questionner, sans douter et, enfin, sans vous fier à VOUS-MÊME et
+sanctuaires ne fussent
+qu’un dessein visant à
+détruire ce monde. Vous
+ne pouvez savoir sans
+questionner, sans douter
+et, enfin, sans vous
+fier à VOUS-MÊME et
 
-à votre jugement. Je propose ces mots comme de simples réflexions philosophiques à ceux qui cherchent la lumière, car voilà la question qui occupe mon
+à votre jugement. Je
+propose ces mots comme
+de simples réflexions
+philosophiques à ceux
+qui cherchent la
+lumière, car voilà la
+question qui occupe mon
 
-intérêt et celui de Lord British depuis quelque temps déjà."""
+intérêt et celui de Lord
+British depuis quelque
+temps déjà."""
 
 [translations.ger]
 title = "Ein besonnener Aufruf zur Anarchie"
 content = """
-Man sage niemals, ich hätte irgendeinen Streit mit meinem Lehnsherrn Lord British, denn wir sind wahrlich die besten Freunde, spielen an
+Man sage niemals, ich
+hätte irgendeinen Streit
+mit meinem Lehnsherrn
+Lord British, denn wir
+sind wahrlich die besten
+Freunde, spielen an
 
-Winterabenden freundschaftlich Schach und sprechen bis in die frühen Morgenstunden ausführlich über die Fragen, die das Reich Britannia betreffen.
-Doch wahre Freundschaft verhindert auch wahre philosophische
+Winterabenden
+freundschaftlich Schach
+und sprechen bis in die
+frühen Morgenstunden
+ausführlich über die
+Fragen, die das Reich
+Britannia betreffen.
+Doch wahre Freundschaft
+verhindert auch wahre
+philosophische
 
-Meinungsverschiedenheiten nicht. Zwar sehe ich mit Wohlwollen die Zuneigung meines Herrn zu seiner sorgfältig ausgearbeiteten Lehre der Acht Tugenden, die das moralische
+Meinungsverschiedenheiten
+nicht. Zwar sehe ich mit
+Wohlwollen die Zuneigung
+meines Herrn zu seiner
+sorgfältig
+ausgearbeiteten Lehre
+der Acht Tugenden, die
+das moralische
 
-Verhalten des Volkes fördert, doch mit weniger Wohlwollen sehe ich die Ausgabe öffentlicher Mittel für den Bau von „Schreinen“ zu Ehren besagter
+Verhalten des Volkes
+fördert, doch mit
+weniger Wohlwollen sehe
+ich die Ausgabe
+öffentlicher Mittel für
+den Bau von „Schreinen“
+zu Ehren besagter
 
 Ideale.
-Die Frage ist jedoch keine der Mittel, sondern eine höchst geistige Meinungsverschiedenheit über den rechten Weg der Menschheit in ethischer Hinsicht. Sicherlich
+Die Frage ist jedoch
+keine der Mittel,
+sondern eine höchst
+geistige
+Meinungsverschiedenheit
+über den rechten Weg der
+Menschheit in ethischer
+Hinsicht. Sicherlich
 
-muss die Entscheidungsfreiheit bei einer solchen moralischen Entscheidung als das Wichtigste gelten? Zwar versäumt niemand, den Mörder zu verurteilen, doch eine feinere Frage ergibt sich,
+muss die
+Entscheidungsfreiheit
+bei einer solchen
+moralischen Entscheidung
+als das Wichtigste
+gelten? Zwar versäumt
+niemand, den Mörder zu
+verurteilen, doch eine
+feinere Frage ergibt
+sich,
 
-wenn wir fragen, ob sein Verhalten ethisch wäre, würde er dazu gezwungen.
-Ich sage Euch, dem Leser, ganz unverblümt, dass kein ethisches System Macht über
+wenn wir fragen, ob sein
+Verhalten ethisch wäre,
+würde er dazu gezwungen.
+Ich sage Euch, dem
+Leser, ganz unverblümt,
+dass kein ethisches
+System Macht über
 
-mich haben soll, wenn es mich nicht überzeugt, denn diese frei getroffene Entscheidung ist mir das Zeichen, dass das System Gültigkeit besitzt.
-Soweit das System der „Tugenden“, das mein
+mich haben soll, wenn es
+mich nicht überzeugt,
+denn diese frei
+getroffene Entscheidung
+ist mir das Zeichen,
+dass das System
+Gültigkeit besitzt.
+Soweit das System der
+„Tugenden“, das mein
 
-Lehnsherr vertritt, tatsächlich eine Sammlung allgemein gebilligter Tugenden ist, billige ich es. Wo es das Volk zu beherrschen und seine Vielfalt sowie sein
+Lehnsherr vertritt,
+tatsächlich eine
+Sammlung allgemein
+gebilligter Tugenden
+ist, billige ich es. Wo
+es das Volk zu
+beherrschen und seine
+Vielfalt sowie sein
 
-Spektrum an Verhaltensweisen zu beschränken sucht, widerspreche ich ihm. Und so erlasse ich diesen besonnenen Aufruf zur Anarchie, während ich Lord British demütig um Verzeihung für meine Unverschämtheit bitte:
+Spektrum an
+Verhaltensweisen zu
+beschränken sucht,
+widerspreche ich ihm.
+Und so erlasse ich
+diesen besonnenen Aufruf
+zur Anarchie, während
+ich Lord British demütig
+um Verzeihung für meine
+Unverschämtheit bitte:
 
-Feiert Eure Unterschiede. Handelt nach Eurer eigenen Einsicht. Fragt, aus welcher Quelle ein Gesetz, eine Regel, ein Richter und eine Tugend entstehen mögen. Es wäre
+Feiert Eure
+Unterschiede. Handelt
+nach Eurer eigenen
+Einsicht. Fragt, aus
+welcher Quelle ein
+Gesetz, eine Regel, ein
+Richter und eine Tugend
+entstehen mögen. Es wäre
 
-möglich (obwohl ich dies nicht ernsthaft behaupte), dass ein Dämon den Samen dieser „Tugenden“ in den Geist meines Lord British gepflanzt hätte; es wäre möglich, dass die
+möglich (obwohl ich dies
+nicht ernsthaft
+behaupte), dass ein
+Dämon den Samen dieser
+„Tugenden“ in den Geist
+meines Lord British
+gepflanzt hätte; es wäre
+möglich, dass die
 
-Schreine nur ein Plan zur Zerstörung dieser Welt wären. Ihr könnt es nicht wissen, wenn Ihr nicht fragt und zweifelt und zuletzt auf EUCH SELBST und
+Schreine nur ein Plan
+zur Zerstörung dieser
+Welt wären. Ihr könnt es
+nicht wissen, wenn Ihr
+nicht fragt und zweifelt
+und zuletzt auf EUCH
+SELBST und
 
 Euer Urteil vertraut.
-Ich biete diese Worte als bloße philosophische Betrachtungen für jene an, die Erleuchtung suchen, denn dies ist die Frage, die mein
+Ich biete diese Worte
+als bloße philosophische
+Betrachtungen für jene
+an, die Erleuchtung
+suchen, denn dies ist
+die Frage, die mein
 
-Interesse und das von Lord British nun schon seit einiger Zeit beschäftigt."""
+Interesse und das von
+Lord British nun schon
+seit einiger Zeit
+beschäftigt."""
 
 [translations.ita]
 title = "Un prudente appello all’anarchia"
 content = """
-Non si dica mai che io abbia alcuna disputa col mio sovrano Lord British, poiché siamo davvero ottimi amici, condividiamo amichevoli partite a scacchi in una
+Non si dica mai che io
+abbia alcuna disputa col
+mio sovrano Lord
+British, poiché siamo
+davvero ottimi amici,
+condividiamo amichevoli
+partite a scacchi in una
 
-notte d'inverno e parliamo a lungo, fino alle ore piccole, delle questioni che riguardano il regno di Britannia.
-Eppure la vera amicizia non impedisce un autentico disaccordo
+notte d'inverno e
+parliamo a lungo, fino
+alle ore piccole, delle
+questioni che riguardano
+il regno di Britannia.
+Eppure la vera amicizia
+non impedisce un
+autentico disaccordo
 
-filosofico. Sebbene io approvi l'affetto del mio signore per la sua filosofia delle Otto Virtù, elaborata con cura, nella quale il comportamento morale
+filosofico. Sebbene io
+approvi l'affetto del
+mio signore per la sua
+filosofia delle Otto
+Virtù, elaborata con
+cura, nella quale il
+comportamento morale
 
-viene incoraggiato fra il popolo, approvo meno la spesa di fondi pubblici per la costruzione di «santuari» dedicati a detti
+viene incoraggiato fra
+il popolo, approvo meno
+la spesa di fondi
+pubblici per la
+costruzione di
+«santuari» dedicati a
+detti
 
 ideali.
-La questione, tuttavia, non riguarda i fondi, ma un disaccordo squisitamente intellettuale sulla retta via dell'umanità in senso etico. Certamente
+La questione, tuttavia,
+non riguarda i fondi, ma
+un disaccordo
+squisitamente
+intellettuale sulla
+retta via dell'umanità
+in senso etico.
+Certamente
 
-la libertà di scelta deve essere considerata suprema in ogni simile decisione morale? Benché nessuno manchi di censurare l'assassino, nasce una domanda più sottile quando
+la libertà di scelta
+deve essere considerata
+suprema in ogni simile
+decisione morale? Benché
+nessuno manchi di
+censurare l'assassino,
+nasce una domanda più
+sottile quando
 
-ci chiediamo se il suo comportamento sarebbe etico qualora vi fosse costretto.
-Dico a te, lettore, con assoluta franchezza, che nessun sistema etico avrà potere su
+ci chiediamo se il suo
+comportamento sarebbe
+etico qualora vi fosse
+costretto.
+Dico a te, lettore, con
+assoluta franchezza, che
+nessun sistema etico
+avrà potere su
 
-di me se non mi convince, poiché quella scelta compiuta liberamente è per me il segno che il sistema ha validità.
-In quanto il sistema di «Virtù» che il mio
+di me se non mi
+convince, poiché quella
+scelta compiuta
+liberamente è per me il
+segno che il sistema ha
+validità.
+In quanto il sistema di
+«Virtù» che il mio
 
-sovrano sostiene è davvero una raccolta di virtù comunemente approvate, io lo approvo. Là dove cerca di controllare il popolo e limitarne la diversità e la
+sovrano sostiene è
+davvero una raccolta di
+virtù comunemente
+approvate, io lo
+approvo. Là dove cerca
+di controllare il popolo
+e limitarne la diversità
+e la
 
-varietà dei comportamenti, io mi oppongo. E così lancio questo prudente appello all'anarchia, implorando umilmente il perdono di Lord British per la mia impertinenza:
+varietà dei
+comportamenti, io mi
+oppongo. E così lancio
+questo prudente appello
+all'anarchia, implorando
+umilmente il perdono di
+Lord British per la mia
+impertinenza:
 
-Celebrate le vostre differenze. Agite secondo i vostri lumi. Domandatevi da quale fonte possano nascere una legge, una regola, un giudice e una virtù. Sarebbe
+Celebrate le vostre
+differenze. Agite
+secondo i vostri lumi.
+Domandatevi da quale
+fonte possano nascere
+una legge, una regola,
+un giudice e una virtù.
+Sarebbe
 
-possibile (benché non lo suggerisca seriamente) che un demone abbia piantato il seme di queste «Virtù» nella mente del mio Lord British; sarebbe possibile che i
+possibile (benché non lo
+suggerisca seriamente)
+che un demone abbia
+piantato il seme di
+queste «Virtù» nella
+mente del mio Lord
+British; sarebbe
+possibile che i
 
-Santuari fossero soltanto un piano per distruggere questo mondo. Non potete sapere se non interrogate, dubitate e, infine, se non fate affidamento su VOI STESSI e sul
+Santuari fossero
+soltanto un piano per
+distruggere questo
+mondo. Non potete sapere
+se non interrogate,
+dubitate e, infine, se
+non fate affidamento su
+VOI STESSI e sul
 
 vostro giudizio.
-Offro queste parole come semplici riflessioni filosofiche a coloro che cercano l'illuminazione, poiché è la questione che ha occupato il mio
+Offro queste parole come
+semplici riflessioni
+filosofiche a coloro che
+cercano l'illuminazione,
+poiché è la questione
+che ha occupato il mio
 
-interesse e quello di Lord British ormai da qualche tempo."""
+interesse e quello di
+Lord British ormai da
+qualche tempo."""
 
 [translations.pol]
 title = "Rozważne wezwanie do anarchii"
 content = """
-Niech nigdy nie padnie twierdzenie, jakobym żywił jakąś urazę do mego seniora Lord British, albowiem jesteśmy najlepszymi przyjaciółmi, rozgrywającymi serdeczne partie szachów w
+Niech nigdy nie padnie
+twierdzenie, jakobym
+żywił jakąś urazę do
+mego seniora Lord
+British, albowiem
+jesteśmy najlepszymi
+przyjaciółmi,
+rozgrywającymi serdeczne
+partie szachów w
 
-zimowe wieczory i rozprawiającymi długo, do późnych godzin, o sprawach dotyczących królestwa Britannia.
-Jednak prawdziwa przyjaźń nie wyklucza prawdziwej filozoficznej
+zimowe wieczory i
+rozprawiającymi długo,
+do późnych godzin, o
+sprawach dotyczących
+królestwa Britannia.
+Jednak prawdziwa
+przyjaźń nie wyklucza
+prawdziwej filozoficznej
 
-różnicy zdań. Choć z aprobatą spoglądam na przywiązanie mego pana do starannie opracowanej filozofii Ośmiu Cnót, w której moralne
+różnicy zdań. Choć z
+aprobatą spoglądam na
+przywiązanie mego pana
+do starannie opracowanej
+filozofii Ośmiu Cnót, w
+której moralne
 
-postępowanie jest zalecane ludowi, z mniejszą aprobatą patrzę na wydawanie publicznych środków na budowę „kaplic” poświęconych tym
+postępowanie jest
+zalecane ludowi, z
+mniejszą aprobatą patrzę
+na wydawanie publicznych
+środków na budowę
+„kaplic” poświęconych
+tym
 
 ideałom.
-Nie chodzi jednak o fundusze, lecz o spór wielce intelektualny dotyczący właściwej drogi ludzkości w sensie etycznym. Czyż
+Nie chodzi jednak o
+fundusze, lecz o spór
+wielce intelektualny
+dotyczący właściwej
+drogi ludzkości w sensie
+etycznym. Czyż
 
-wolność wyboru nie powinna być uznana za najważniejszą w każdej takiej decyzji moralnej? Choć nikt nie omieszka potępić mordercy, subtelniejsze pytanie pojawia się, gdy
+wolność wyboru nie
+powinna być uznana za
+najważniejszą w każdej
+takiej decyzji moralnej?
+Choć nikt nie omieszka
+potępić mordercy,
+subtelniejsze pytanie
+pojawia się, gdy
 
-pytamy, czy jego postępowanie byłoby etyczne, gdyby został do niego zmuszony.
-Powiadam tobie, czytelniku, całkiem stanowczo, że żaden system etyczny nie będzie miał nade mną władzy,
+pytamy, czy jego
+postępowanie byłoby
+etyczne, gdyby został do
+niego zmuszony.
+Powiadam tobie,
+czytelniku, całkiem
+stanowczo, że żaden
+system etyczny nie
+będzie miał nade mną
+władzy,
 
-jeśli mnie nie przekona, bo właśnie swobodnie dokonany wybór jest dla mnie znakiem, że system jest prawomocny.
-O ile system „Cnót” wyznawany przez mego
+jeśli mnie nie przekona,
+bo właśnie swobodnie
+dokonany wybór jest dla
+mnie znakiem, że system
+jest prawomocny.
+O ile system „Cnót”
+wyznawany przez mego
 
-seniora jest istotnie zbiorem powszechnie uznawanych cnót, o tyle go popieram. Gdy pragnie kontrolować lud i ograniczać jego różnorodność oraz
+seniora jest istotnie
+zbiorem powszechnie
+uznawanych cnót, o tyle
+go popieram. Gdy pragnie
+kontrolować lud i
+ograniczać jego
+różnorodność oraz
 
-zakres zachowań, sprzeciwiam się mu. Dlatego kieruję to rozważne wezwanie do anarchii, pokornie błagając Lord British o wybaczenie mej zuchwałości:
+zakres zachowań,
+sprzeciwiam się mu.
+Dlatego kieruję to
+rozważne wezwanie do
+anarchii, pokornie
+błagając Lord British o
+wybaczenie mej
+zuchwałości:
 
-Świętujcie swe różnice. Postępujcie według własnego rozeznania. Pytajcie, skąd pochodzą prawo, reguła, sędzia i cnota. Byłoby
+Świętujcie swe różnice.
+Postępujcie według
+własnego rozeznania.
+Pytajcie, skąd pochodzą
+prawo, reguła, sędzia i
+cnota. Byłoby
 
-możliwe (choć nie sugeruję tego poważnie), że demon zasiał ziarno tych „Cnót” w umyśle mego Lord British; byłoby możliwe, że
+możliwe (choć nie
+sugeruję tego poważnie),
+że demon zasiał ziarno
+tych „Cnót” w umyśle
+mego Lord British;
+byłoby możliwe, że
 
-Kaplice były tylko planem zniszczenia tego świata. Nie dowiesz się, póki nie zaczniesz pytać i wątpić, a w końcu, póki nie zdasz się na SIEBIE i
+Kaplice były tylko
+planem zniszczenia tego
+świata. Nie dowiesz się,
+póki nie zaczniesz pytać
+i wątpić, a w końcu,
+póki nie zdasz się na
+SIEBIE i
 
 swój osąd.
-Ofiaruję te słowa jedynie jako filozoficzne rozważania dla poszukujących oświecenia, gdyż to właśnie zagadnienie od pewnego czasu zajmuje moje
+Ofiaruję te słowa
+jedynie jako
+filozoficzne rozważania
+dla poszukujących
+oświecenia, gdyż to
+właśnie zagadnienie od
+pewnego czasu zajmuje
+moje
 
-zainteresowanie oraz zainteresowanie Lord British."""
+zainteresowanie oraz
+zainteresowanie Lord
+British."""
 
 [translations.por]
 title = "Um chamado ponderado à anarquia"
 content = """
-Que jamais se diga que tenho qualquer desavença com meu soberano Lord British, pois, de fato, somos os melhores amigos, compartilhando amistosas partidas de xadrez numa
+Que jamais se diga que
+tenho qualquer desavença
+com meu soberano Lord
+British, pois, de fato,
+somos os melhores
+amigos, compartilhando
+amistosas partidas de
+xadrez numa
 
-noite de inverno e conversando longamente até a madrugada sobre as questões que afetam o reino de Britannia.
-Ainda assim, a verdadeira amizade tampouco impede uma verdadeira discordância
+noite de inverno e
+conversando longamente
+até a madrugada sobre as
+questões que afetam o
+reino de Britannia.
+Ainda assim, a
+verdadeira amizade
+tampouco impede uma
+verdadeira discordância
 
-filosófica. Embora eu veja com aprovação o apreço de meu senhor por sua filosofia cuidadosamente elaborada das Oito Virtudes, pela qual se incentiva o comportamento moral
+filosófica. Embora eu
+veja com aprovação o
+apreço de meu senhor por
+sua filosofia
+cuidadosamente elaborada
+das Oito Virtudes, pela
+qual se incentiva o
+comportamento moral
 
-entre a população, vejo com menos aprovação o gasto de recursos públicos na construção de \"santuários\" para esses
+entre a população, vejo
+com menos aprovação o
+gasto de recursos
+públicos na construção
+de \"santuários\" para
+esses
 
 ideais.
-A questão, porém, não é de recursos, mas uma discordância profundamente intelectual sobre o caminho adequado da humanidade no sentido ético. Certamente
+A questão, porém, não é
+de recursos, mas uma
+discordância
+profundamente
+intelectual sobre o
+caminho adequado da
+humanidade no sentido
+ético. Certamente
 
-a liberdade de decisão deve ser considerada primordial em qualquer decisão moral assim? Embora todos condenem o assassino, surge uma questão mais sutil quando
+a liberdade de decisão
+deve ser considerada
+primordial em qualquer
+decisão moral assim?
+Embora todos condenem o
+assassino, surge uma
+questão mais sutil
+quando
 
-perguntamos se seu comportamento seria ético caso ele fosse forçado a agir assim.
-Digo a você, leitor, com toda a clareza, que nenhum sistema ético exercerá domínio sobre
+perguntamos se seu
+comportamento seria
+ético caso ele fosse
+forçado a agir assim.
+Digo a você, leitor, com
+toda a clareza, que
+nenhum sistema ético
+exercerá domínio sobre
 
-mim a menos que me convença, pois essa escolha feita livremente é, para mim, o sinal de que o sistema tem validade.
-Na medida em que o sistema de \"Virtudes\" que meu
+mim a menos que me
+convença, pois essa
+escolha feita livremente
+é, para mim, o sinal de
+que o sistema tem
+validade.
+Na medida em que o
+sistema de \"Virtudes\"
+que meu
 
-soberano defende é de fato uma compilação de virtudes comumente aprovadas, eu o aprovo. Na medida em que busca controlar a população e restringir sua diversidade e sua
+soberano defende é de
+fato uma compilação de
+virtudes comumente
+aprovadas, eu o aprovo.
+Na medida em que busca
+controlar a população e
+restringir sua
+diversidade e sua
 
-variedade de comportamentos, eu o contesto. E assim faço este chamado ponderado à anarquia, enquanto humildemente peço perdão a Lord British por minha impertinência:
+variedade de
+comportamentos, eu o
+contesto. E assim faço
+este chamado ponderado à
+anarquia, enquanto
+humildemente peço perdão
+a Lord British por minha
+impertinência:
 
-Celebre suas diferenças. Tome suas decisões de acordo com suas próprias convicções. Questione de que fonte podem surgir uma lei, uma regra, um juiz e uma virtude. Seria
+Celebre suas diferenças.
+Tome suas decisões de
+acordo com suas próprias
+convicções. Questione de
+que fonte podem surgir
+uma lei, uma regra, um
+juiz e uma virtude.
+Seria
 
-possível (embora eu não o sugira seriamente) que um demônio tivesse plantado a semente dessas \"Virtudes\" na mente de meu Lord British; seria possível que os
+possível (embora eu não
+o sugira seriamente) que
+um demônio tivesse
+plantado a semente
+dessas \"Virtudes\" na
+mente de meu Lord
+British; seria possível
+que os
 
-Santuários fossem apenas um plano para destruir este mundo. Você não pode saber a menos que questione, duvide e, por fim, confie em SI MESMO e
+Santuários fossem apenas
+um plano para destruir
+este mundo. Você não
+pode saber a menos que
+questione, duvide e, por
+fim, confie em SI MESMO
+e
 
 em seu julgamento.
-Ofereço estas palavras como meras reflexões filosóficas àqueles que buscam a iluminação, pois essa é a questão que ocupa meu
+Ofereço estas palavras
+como meras reflexões
+filosóficas àqueles que
+buscam a iluminação,
+pois essa é a questão
+que ocupa meu
 
-interesse e o de Lord British há algum tempo."""
+interesse e o de Lord
+British há algum tempo."""
 
 [translations.spa]
 title = "Un llamamiento prudente a la anarquía"
 content = """
-  Que nunca se diga que tengo querella alguna con mi señor Lord British, pues somos, en verdad, los mejores amigos: compartimos amenas partidas de ajedrez en las
+  Que nunca se diga que
+tengo querella alguna
+con mi señor Lord
+British, pues somos, en
+verdad, los mejores
+amigos: compartimos
+amenas partidas de
+ajedrez en las
 
-noches de invierno y conversamos largamente, hasta altas horas, sobre los asuntos que afectan al reino de Britannia. Pero la verdadera amistad tampoco impide un sincero desacuerdo
+noches de invierno y
+conversamos largamente,
+hasta altas horas, sobre
+los asuntos que afectan
+al reino de Britannia.
+Pero la verdadera
+amistad tampoco impide
+un sincero desacuerdo
 
-filosófico. Aunque apruebo el afecto que mi señor profesa a su cuidadosamente elaborada filosofía de las Ocho Virtudes, que fomenta una conducta moral
+filosófico. Aunque
+apruebo el afecto que mi
+señor profesa a su
+cuidadosamente elaborada
+filosofía de las Ocho
+Virtudes, que fomenta
+una conducta moral
 
-entre el pueblo, apruebo menos el gasto de fondos públicos en la construcción de «santuarios» dedicados a dichos
+entre el pueblo, apruebo
+menos el gasto de fondos
+públicos en la
+construcción de
+«santuarios» dedicados a
+dichos
 
-ideales. La cuestión, sin embargo, no es de dinero, sino un desacuerdo sumamente intelectual sobre el camino correcto de la humanidad en un sentido ético. ¿Acaso
+ideales. La cuestión,
+sin embargo, no es de
+dinero, sino un
+desacuerdo sumamente
+intelectual sobre el
+camino correcto de la
+humanidad en un sentido
+ético. ¿Acaso
 
-la libertad de elegir no debe considerarse primordial en toda decisión moral de esta índole? Aunque nadie deje de censurar al asesino, surge una pregunta más sutil cuando
+la libertad de elegir no
+debe considerarse
+primordial en toda
+decisión moral de esta
+índole? Aunque nadie
+deje de censurar al
+asesino, surge una
+pregunta más sutil
+cuando
 
-nos preguntamos si su conducta sería ética si lo hubieran obligado a ella. Te digo a ti, lector, sin rodeos, que ningún sistema ético tendrá autoridad sobre
+nos preguntamos si su
+conducta sería ética si
+lo hubieran obligado a
+ella. Te digo a ti,
+lector, sin rodeos, que
+ningún sistema ético
+tendrá autoridad sobre
 
-mí si no me convence, pues esa elección libremente tomada es, para mí, la señal de que el sistema tiene validez. En tanto que el sistema de «Virtudes» que mi
+mí si no me convence,
+pues esa elección
+libremente tomada es,
+para mí, la señal de que
+el sistema tiene
+validez. En tanto que el
+sistema de «Virtudes»
+que mi
 
-señor defiende es, en efecto, una recopilación de virtudes comúnmente aprobadas, lo apruebo. Cuando busca controlar al pueblo y restringir su diversidad y su
+señor defiende es, en
+efecto, una recopilación
+de virtudes comúnmente
+aprobadas, lo apruebo.
+Cuando busca controlar
+al pueblo y restringir
+su diversidad y su
 
-abanico de conductas, discrepo de él. Por eso lanzo este prudente llamamiento a la anarquía, mientras ruego humildemente a Lord British que perdone mi impertinencia:
+abanico de conductas,
+discrepo de él. Por eso
+lanzo este prudente
+llamamiento a la
+anarquía, mientras ruego
+humildemente a Lord
+British que perdone mi
+impertinencia:
 
-  Celebra tus diferencias. Actúa según tu propio criterio. Pregúntate de qué fuente pueden surgir una ley, una norma, un juez y una virtud. Sería
+  Celebra tus
+diferencias. Actúa según
+tu propio criterio.
+Pregúntate de qué fuente
+pueden surgir una ley,
+una norma, un juez y una
+virtud. Sería
 
-posible —aunque no lo propongo en serio— que un demonio hubiera sembrado estas «Virtudes» en la mente de mi Lord British; sería posible que los
+posible —aunque no lo
+propongo en serio— que
+un demonio hubiera
+sembrado estas
+«Virtudes» en la mente
+de mi Lord British;
+sería posible que los
 
-Santuarios no fueran más que un plan para destruir este mundo. No podrás saberlo si no preguntas, dudas y, al final, confías en TI MISMO y en
+Santuarios no fueran más
+que un plan para
+destruir este mundo. No
+podrás saberlo si no
+preguntas, dudas y, al
+final, confías en TI
+MISMO y en
 
-tu juicio. Ofrezco estas palabras como meras reflexiones filosóficas para quienes buscan la iluminación, pues esta cuestión ha ocupado mi
+tu juicio. Ofrezco estas
+palabras como meras
+reflexiones filosóficas
+para quienes buscan la
+iluminación, pues esta
+cuestión ha ocupado mi
 
-interés y el de Lord British desde hace algún tiempo."""
+interés y el de Lord
+British desde hace algún
+tiempo."""
