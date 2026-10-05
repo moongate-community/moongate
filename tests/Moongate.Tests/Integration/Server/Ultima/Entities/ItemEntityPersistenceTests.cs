@@ -471,6 +471,68 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task WorldSave_WritesAnItemBeforeTheNewerContainerItLiesIn_WhenTheyFallInDifferentBatches()
+    {
+        // A save that writes everything goes in batches of 256 rows, in no order a container can count on: the corpse
+        // of an NPC is made after what it takes in, so what lies in it may be written first.
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var corpse = new ItemEntity { Id = new Serial(0x40002000), TemplateId = "corpse", ItemId = 0x2006 };
+        corpse.PlaceOnGround(MapType.Trammel, new Point3D(100, 100, 0));
+        var sword = new ItemEntity { Id = new Serial(0x40000002), TemplateId = "sword", ItemId = 0x0F5E };
+        sword.PutInContainer(corpse.Id, new Point2D(30, 30));
+        var filler = Enumerable.Range(0, 600)
+                               .Select(
+                                   index =>
+                                   {
+                                       var item = new ItemEntity { Id = new Serial(0x40000100 + (uint)index), TemplateId = "rock", ItemId = 0x1363 };
+                                       item.PlaceOnGround(MapType.Trammel, new Point3D(1 + index % 100, 1 + index / 100, 0));
+
+                                       return item;
+                                   }
+                               )
+                               .ToList();
+        // The sword in the first batch, the corpse in the last.
+        ItemEntity[] ordered = [sword, .. filler, corpse];
+        host.Container.AddPersistenceWorld<ItemEntity>(() => ordered, item => item.Snapshot());
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+
+        await host.Owner.SaveAllAsync();
+
+        Assert.Equal(corpse.Id, (await data.GetByIdAsync(sword.Id))!.ContainerId);
+        Assert.NotNull(await data.GetByIdAsync(corpse.Id));
+    }
+
+    [Fact]
+    public async Task WorldSave_AnItemWhoseContainerIsNowhere_StillFailsTheSave_AndWritesNothing()
+    {
+        // The check waits for the end of the save, it does not go away.
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var rock = new ItemEntity { Id = new Serial(0x40000100), TemplateId = "rock", ItemId = 0x1363 };
+        rock.PlaceOnGround(MapType.Trammel, new Point3D(1, 1, 0));
+        var orphan = new ItemEntity { Id = new Serial(0x40000101), TemplateId = "sword", ItemId = 0x0F5E };
+        orphan.PutInContainer(new Serial(0x40FFFFFF), new Point2D(30, 30));
+        ItemEntity[] items = [rock, orphan];
+        host.Container.AddPersistenceWorld<ItemEntity>(() => items, item => item.Snapshot());
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+
+        await Assert.ThrowsAnyAsync<Exception>(() => host.Owner.SaveAllAsync());
+
+        Assert.Empty(await data.GetAllAsync());
+    }
+
+    [Fact]
+    public async Task AnItemInAContainerThatDoesNotExist_IsRejectedAtOnce_OutsideAWorldSave()
+    {
+        var orphan = Item(0x40000301, item => item.PutInContainer(new Serial(0x40FFFFFF), new Point2D(1, 1)));
+
+        await AssertRejectedAsync(orphan);
+    }
+
+    [Fact]
     public async Task WorldSave_DeletesTheItemsAbsorbedIntoOtherStacks()
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);
