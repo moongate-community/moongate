@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
@@ -60,6 +61,8 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private readonly IFatigueService? _fatigue;
     private readonly IContainerCapacityService? _capacity;
 
+    private readonly IInventoryMutationGuard? _inventory;
+
     public DropRequestPacketHandler(
         IItemService items,
         IMobileService mobiles,
@@ -73,9 +76,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         IWeightService? weight = null,
         ISpeechService? speech = null,
         IFatigueService? fatigue = null,
-        IContainerCapacityService? capacity = null
+        IContainerCapacityService? capacity = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _capacity = capacity;
         _weight = weight;
         _speech = speech;
@@ -93,6 +98,14 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
     public void Handle(GameSession session, DropRequestPacket packet)
     {
+        if (_inventory is not null && (!_inventory.AllowsOwner(session.CharacterId) ||
+            (_items.TryGet(packet.Item, out var guarded) && !_inventory.Allows(guarded)) ||
+            (session.Get(ItemSessionKeys.Held) is { } hand && _items.TryGet(hand.Item, out var heldItem) && !_inventory.Allows(heldItem)) ||
+            (_items.TryGet(packet.Destination, out var destination) && !_inventory.Allows(destination))))
+        {
+            return;
+        }
+
         var held = session.Get(ItemSessionKeys.Held);
         session.Set(ItemSessionKeys.Held, null);
 

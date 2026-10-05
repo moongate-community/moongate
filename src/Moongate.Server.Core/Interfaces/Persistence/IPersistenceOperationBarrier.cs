@@ -9,7 +9,7 @@ public interface IPersistenceOperationBarrier
     ///     Runs an operation through its awaited post-commit owner application before admitting another operation or save.
     /// </summary>
     /// <remarks>
-    ///     Acquire this barrier before calling persistence. Do not call it from the owner loop or reenter it.
+    ///     Admit before calling persistence and run callbacks off the owner loop. Never await it on the owner loop or reenter it.
     ///     Any admitted callback failure or cancellation faults future operations and world captures until the host restarts;
     ///     the barrier cannot know whether the database committed or the owner state was applied. Callbacks must await all work.
     /// </remarks>

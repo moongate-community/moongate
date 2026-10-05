@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using System.Collections.Concurrent;
 using System.Globalization;
 using Moongate.Core.Geometry;
@@ -86,6 +87,8 @@ public sealed class JailService : IJailService
 
     public int MaxDays => _config.MaxDays;
 
+    private readonly IInventoryMutationGuard? _inventory;
+
     public JailService(
         IDataLoaderService data,
         IDataAccess<JailSentenceEntity> table,
@@ -104,9 +107,11 @@ public sealed class JailService : IJailService
         TimeProvider time,
         IBookDocumentService books,
         ILocalizationService? localization = null,
-        ILogger? logger = null
+        ILogger? logger = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _logger = logger ?? Log.ForContext<JailService>();
         _data = data;
         _table = table;
@@ -204,6 +209,10 @@ public sealed class JailService : IJailService
 
     public JailResultType Jail(MobileEntity prisoner, int cell, int days, MobileEntity by, string? reason = null)
     {
+        if (_inventory?.AllowsOwner(prisoner.Id) == false)
+        {
+            return JailResultType.Refused;
+        }
         if (_file is not { } file)
         {
             return JailResultType.Disabled;
@@ -423,7 +432,7 @@ public sealed class JailService : IJailService
         {
             try
             {
-                Begin(sentence);
+                if (_inventory?.AllowsOwner(sentence.Id) != false) Begin(sentence);
             }
             catch (Exception exception)
             {
@@ -437,6 +446,7 @@ public sealed class JailService : IJailService
         {
             try
             {
+                if (_inventory?.AllowsOwner(sentence.Id) == false) continue;
                 if (_mobiles.TryGet(sentence.Id, out var prisoner))
                 {
                     // A player whose login is still being sent: a teleport now would reach its client before it

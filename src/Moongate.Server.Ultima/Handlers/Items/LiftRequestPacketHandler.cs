@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
@@ -43,6 +44,8 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
     private readonly ISessionService? _sessions;
     private readonly IFatigueService? _fatigue;
 
+    private readonly IInventoryMutationGuard? _inventory;
+
     public LiftRequestPacketHandler(
         IItemService items,
         IMobileService mobiles,
@@ -55,9 +58,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         IBankService? bank = null,
         IItemTemplateService? templates = null,
         ISessionService? sessions = null,
-        IFatigueService? fatigue = null
+        IFatigueService? fatigue = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _fatigue = fatigue;
         _sessions = sessions;
         _templates = templates;
@@ -74,6 +79,13 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
 
     public void Handle(GameSession session, LiftRequestPacket packet)
     {
+        if (_inventory is not null && (!_inventory.AllowsOwner(session.CharacterId) ||
+            (_items.TryGet(packet.Item, out var guarded) && !_inventory.Allows(guarded)) ||
+            (session.Get(ItemSessionKeys.Held) is { } hand && _items.TryGet(hand.Item, out var heldItem) && !_inventory.Allows(heldItem))))
+        {
+            return;
+        }
+
         _items.TryGet(packet.Item, out var item);
 
         if (session.Get(ItemSessionKeys.Held) is not null)

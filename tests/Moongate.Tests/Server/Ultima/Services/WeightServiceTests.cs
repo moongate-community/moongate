@@ -75,6 +75,14 @@ public sealed class WeightServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Holds_BatchCountsAllNewItemsTogether()
+    {
+        Moongate.Server.Ultima.Interfaces.IWeightService weights = _weight;
+        Assert.True(weights.Holds(_bag, Pile(0x40000080, 5)));
+        Assert.False(weights.Holds(_bag, new[] { Pile(0x40000080, 5), Pile(0x40000081, 5) }));
+    }
+
+    [Fact]
     public void Of_APileIsItsUnitTimesItsAmountRoundedUp_AndAContainerAddsWhatIsInside()
     {
         // 70 coins of 0.02: 1.4, two stones, as the tooltip says. The bag weighs 2 by tiledata.

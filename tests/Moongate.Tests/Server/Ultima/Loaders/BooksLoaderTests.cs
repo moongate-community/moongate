@@ -111,4 +111,23 @@ public sealed class BooksLoaderTests
         return new(new DirectoriesConfig(root.Path, ["templates"]),
             new StubDataLoaderService().With(new ItemTemplate { Id = "readable_scroll", Stackable = stackable, ScriptId = script }));
     }
+
+    [Theory]
+    [InlineData("amount = 0")]
+    [InlineData("amount = 65536")]
+    [InlineData("amount = \"1d2-1\"")]
+    [InlineData("amount = 33")]
+    [InlineData("hue = \"broken\"")]
+    [InlineData("item_template = \"missing\"")]
+    public async Task LoadDataAsync_InvalidAttachment_RefusesSourceWithPath(string field)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/gift.toml", Valid + "\n[[attachments]]\n" +
+            (field.StartsWith("item_template", StringComparison.Ordinal) ? field : "item_template = \"bread\"\n" + field));
+        var loader = new BooksLoader(new DirectoriesConfig(root.Path, ["templates"]), new StubDataLoaderService().With(
+            new ItemTemplate { Id = "readable_scroll", Stackable = false, ScriptId = "readable_scroll" },
+            new ItemTemplate { Id = "bread", Stackable = false }));
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => loader.LoadDataAsync());
+        Assert.Contains("gift.toml", error.Message);
+    }
 }

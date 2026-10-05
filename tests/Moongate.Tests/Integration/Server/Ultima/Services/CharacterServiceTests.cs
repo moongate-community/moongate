@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Services.Internal.Books;
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -552,7 +553,29 @@ public sealed class CharacterServiceTests : IAsyncLifetime
         Assert.Equal(["Aria", "Bran"], characters.Select(character => character.Name));
     }
 
-    private CharacterService CreateService(int maxPerAccount = 7, string startingItem = "bottle", string? book = null, string values = "{ contact_name = \"Vega $server_name\" }", string language = "eng", bool oversizedTitle = false)
+    [Fact]
+    public async Task CreateAsync_AttachedStartingLetter_SavesFrozenPayloadWithoutRewardRows()
+    {
+        var service = CreateService(book: "welcome_letter", attachments: true);
+        Assert.True((await service.CreateAsync(Account, Request())).IsCreated);
+        var stored = await _items.GetAllAsync();
+        var letter = Assert.Single(stored, item => item.TemplateId == "readable_scroll");
+        Assert.True(BookAttachmentCodec.TryDecode(letter.GetProp<string>(BookAttachmentCodec.PropKey), out var batch));
+        Assert.Equal(100, Assert.Single(batch!.Items).Amount);
+        Assert.Equal(1000, Assert.Single(stored, item => item.TemplateId == "gold").Amount);
+    }
+
+    [Fact]
+    public async Task CreateAsync_LateAttachmentPreparationFailure_RollsBackCharacterAndAllItems()
+    {
+        var service = CreateService(book: "welcome_letter", attachments: true, failAttachments: true);
+        await Assert.ThrowsAsync<InvalidDataException>(() => service.CreateAsync(Account, Request()));
+        Assert.Empty(await _mobiles.GetAllAsync());
+        Assert.Empty(await _items.GetAllAsync());
+        Assert.Empty(_created);
+    }
+
+    private CharacterService CreateService(int maxPerAccount = 7, string startingItem = "bottle", string? book = null, string values = "{ contact_name = \"Vega $server_name\" }", string language = "eng", bool oversizedTitle = false, bool attachments = false, bool failAttachments = false)
     {
         var loaders = new StubDataLoaderService()
                       .With(
@@ -609,6 +632,14 @@ public sealed class CharacterServiceTests : IAsyncLifetime
         source.Variables = ["contact_name"];
         source.Translations["ita"] = new BookTranslation { Title = "Benvenuto $player_name", Content = "Ciao $player_name, incontra $contact_name." };
         if (oversizedTitle) source.Title = new string('x', 127) + "$player_name";
+        if (attachments)
+        {
+            source.Attachments.Add(new() { ItemTemplate = "gold", Amount = DiceSpec.Parse("100"), Hue = HueSpec.FromValue(42) });
+        }
+        if (failAttachments)
+        {
+            loaders.GetEntities<StartingItemSet>().Single().Items.Last().Amount = DiceSpec.Parse("2");
+        }
         var tiles = new FakeTileDataService()
                     .Item(0x0E75, TileFlagType.Container, 0, layer: (byte)LayerType.Backpack)
                     .Item(0x0EED, TileFlagType.Generic, 0)
@@ -616,16 +647,18 @@ public sealed class CharacterServiceTests : IAsyncLifetime
                     .Item(0x1517, TileFlagType.Wearable, 0, layer: (byte)LayerType.Shirt)
                     .Item(0x14ED, TileFlagType.None, 1);
         var templates = new ItemTemplateService(loaders);
+        var factory = new ItemFactoryService(templates, tiles, _host.Owner);
+        var preparation = new CountingBookAttachmentPreparationService(new BookAttachmentPreparationService(factory, templates, tiles)) { FailOnCall = failAttachments ? 2 : null };
         var startingItems = new StartingItemsService(
             loaders,
-            new ItemFactoryService(templates, tiles, _host.Owner),
+            factory,
             templates,
             new ContainerLayoutService(loaders),
             tiles,
             _host.Owner,
             new StartingItemsConfig(),
             new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" },
-            new BookTemplateService(loaders), TestBookContexts.Create(), new LocalizationConfig { Language = language }
+            new BookTemplateService(loaders), TestBookContexts.Create(), new LocalizationConfig { Language = language }, preparation
         );
 
         return new CharacterService(

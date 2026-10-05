@@ -37,4 +37,7 @@ public interface IWeightService
     ///     a container inside it keeps its own. A container the item is already in is not asked.
     /// </summary>
     bool Holds(ItemEntity container, ItemEntity item);
+
+    /// <summary>Checks the cumulative weight of a new detached batch against every ancestor.</summary>
+    bool Holds(ItemEntity container, IReadOnlyList<ItemEntity> additions);
 }

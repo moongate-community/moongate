@@ -205,3 +205,11 @@
 
 # Moongate: what a prisoner reads when it uses a skill (30168).
 30168 = "Vous ne pouvez pas utiliser de compétences en prison."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Récupérer les pièces jointes"
+30170 = "Les pièces jointes sont dans votre sac."
+30171 = "Votre sac ne peut pas contenir toutes les pièces jointes."
+30172 = "Ces pièces jointes ne peuvent pas être récupérées."
+30173 = "Votre sac est occupé. Réessayez bientôt."
+30174 = "Les pièces jointes ne peuvent pas être livrées. Réessayez bientôt."

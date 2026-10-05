@@ -5,6 +5,8 @@ using Moongate.Server.Ultima.Data.Books;
 using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services.Internal.Books;
 using Moongate.Server.Ultima.Services.Books;
 using Moongate.Server.Ultima.Services.Text;
 using Moongate.Server.Ultima.Types.Text;
@@ -19,12 +21,14 @@ public sealed class BooksLoader : IDataLoader<BookTemplate>
 {
     private readonly DirectoriesConfig _directories;
     private readonly IDataLoaderService _data;
+    private readonly ITileDataService? _tiles;
     private readonly ILogger _logger = Log.ForContext<BooksLoader>();
 
-    public BooksLoader(DirectoriesConfig directories, IDataLoaderService data)
+    public BooksLoader(DirectoriesConfig directories, IDataLoaderService data, ITileDataService? tiles = null)
     {
         _directories = directories;
         _data = data;
+        _tiles = tiles;
     }
 
     public Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -67,6 +71,7 @@ public sealed class BooksLoader : IDataLoader<BookTemplate>
             }
 
             Validate(book, items);
+            BookAttachmentValidation.Validate(book, items, _tiles);
         }
 
         _logger.Information("Loaded {Count} document templates", books.Count);

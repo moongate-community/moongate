@@ -12,6 +12,14 @@ namespace Moongate.Persistence.Interfaces;
 public interface IPersistenceTransaction
 {
     /// <summary>
+    ///     Inserts a nonzero explicit identity; a duplicate fails and poisons the transaction instead of updating a row.
+    /// </summary>
+    /// <remarks>
+    ///     Requires the entity's registered database target and an active callback. Does not allocate an identity.
+    /// </remarks>
+    Task InsertAsync<T>(T entity, CancellationToken cancellationToken = default) where T : class, IMoongateEntity;
+
+    /// <summary>
     ///     Reads an entity and holds a PostgreSQL row lock until this transaction finishes.
     /// </summary>
     /// <remarks>

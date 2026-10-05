@@ -29,6 +29,11 @@ public sealed class StubWeightService : IWeightService
         return MaximumStones;
     }
 
+    public bool Holds(ItemEntity container, IReadOnlyList<ItemEntity> additions)
+    {
+        return HoldsResult;
+    }
+
     public bool Holds(ItemEntity container, ItemEntity item)
     {
         return HoldsResult;

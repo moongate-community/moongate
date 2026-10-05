@@ -1,3 +1,8 @@
+using Moongate.Server.Ultima.Interfaces.Books;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Tests.TestSupport.Localization;
+using Moongate.Server.Ultima.Services.Items;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Tests.TestSupport.Ultima.Weight;
 using System.Net;
 using Moongate.Core.Geometry;
@@ -34,12 +39,15 @@ public sealed class BookTestFixture : IAsyncDisposable
     public StubItemSerialPool Serials { get; } = new();
     public RecordingGumpService Gumps { get; } = new();
     public IScriptEngine Engine { get; set; } = new FakeScriptEngine();
+    public InventoryReservationService Reservations { get; }
+    public InventoryMutationGuard Inventory { get; }
     public ItemService Items { get; }
     public ItemTemplateService ItemTemplates { get; }
     public ItemHandlingService Handling { get; }
     public BookContextFactory Contexts { get; }
     public BankService Bank { get; }
-    public BookDocumentService Books { get; }
+    public BookDocumentService Books { get; private set; }
+    public RecordingSpeechService Speech { get; } = new();
     public MobileEntity Player { get; }
     public MobileEntity Other { get; }
     public GameSession Session { get; }
@@ -58,35 +66,36 @@ public sealed class BookTestFixture : IAsyncDisposable
         Session = session;
         Data.With(Source).With(
             new ItemTemplate { Id = "backpack", ItemId = new(0x0E75) },
-            new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll" },
+            new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll", Weight = 1m },
             new ItemTemplate { Id = "jail_release_note", ItemId = new(0x14F0), Stackable = false, ScriptId = "jail_note" },
+            new ItemTemplate { Id = BankService.CheckTemplate, ItemId = new(0x14F0), Stackable = false },
+            new ItemTemplate { Id = "gold", ItemId = new(0xEED), Stackable = true, Weight = 0.02m },
             new ItemTemplate { Id = "unrelated", ItemId = new(0x14ED), Stackable = false });
-        Items = TestItems.Create(world.Sectors, loop: world.Network.Loop);
+        Reservations = new(world.Network.Loop);
+        Inventory = new(new Lazy<IItemService>(() => Items!), Reservations);
+        Items = TestItems.Create(world.Sectors, loop: world.Network.Loop, inventory: Inventory);
         ItemTemplates = new(Data);
+        Data.With(new Moongate.Server.Ultima.Data.Containers.ContainerContent
+            { Name = "backpack", Gump = 0x3C, Items = [0xE75], Default = true });
         var tiles = new FakeTileDataService().Item(0x0E75, TileFlagType.Container, 0).Item(0x14ED, TileFlagType.None, 1).Item(0x14F0, TileFlagType.None, 1);
         var factory = new FakeItemFactoryService(ItemTemplates, tiles);
         var tooltips = TestTooltips.Create(Items, world.Mobiles);
-        Handling = new(Items, world.Sessions, world.Sender, new RecordingWorldViewService(), tooltips, factory, Serials);
-        // The books only ask the bank whether an item is reachable: its gold is not used here.
-        Bank = new(
-            Items,
-            factory,
-            world.Sessions,
-            world.Mobiles,
-            world.Sender,
-            tooltips,
-            null!,
-            world.Network.Loop,
-            Handling,
-            new ContainerCapacityService(Items, ItemTemplates, new BankConfig()),
-            new StubWeightService(),
-            new ItemsConfig(),
-            new BankConfig()
-        );
+        Handling = new(Items, world.Sessions, world.Sender, new RecordingWorldViewService(), tooltips, factory, Serials, inventory: Inventory);
+        Bank = new(Items, factory, world.Sessions, world.Mobiles, world.Sender, tooltips, new ContainerLayoutService(Data), world.Network.Loop,
+            Handling, new ContainerCapacityService(Items, ItemTemplates, new BankConfig()), new StubWeightService(), new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" }, new BankConfig(), inventory: Inventory, reservations: Reservations);
         var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
         Contexts = new(world.Sessions, new AdminServerInfoProvider(ServerMode.Game, realm), realm, new MotdServerIdentity("Moongate"), world.Network.Loop);
         Books = new(new BookTemplateService(Data), Contexts, Items, world.Mobiles, Handling, ItemTemplates, world.Sessions,
-            Bank, realGumps ? new GumpService(world.Sender) : Gumps, world.Network.Loop, new(() => Engine), new());
+            Bank, realGumps ? new GumpService(world.Sender) : Gumps, world.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory);
+    }
+
+    public void RebuildDocuments(IBookAttachmentService claims, IGumpService? gumps = null)
+    {
+        var tiles = new FakeTileDataService();
+        var factory = new FakeItemFactoryService(ItemTemplates, tiles);
+        Books = new(new BookTemplateService(Data), Contexts, Items, World.Mobiles, Handling, ItemTemplates, World.Sessions,
+            Bank, gumps ?? Gumps, World.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory,
+            claims, TestLocalization.With((30169, "Ritira allegati")), Speech);
     }
 
     public static async Task<BookTestFixture> CreateAsync(bool realGumps = false)

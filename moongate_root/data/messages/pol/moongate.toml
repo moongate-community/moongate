@@ -205,3 +205,11 @@
 
 # Moongate: what a prisoner reads when it uses a skill (30168).
 30168 = "W więzieniu nie możesz używać umiejętności."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Odbierz załączniki"
+30170 = "Załączniki są w twoim plecaku."
+30171 = "Twój plecak nie pomieści wszystkich załączników."
+30172 = "Tych załączników nie można odebrać."
+30173 = "Twój plecak jest zajęty. Spróbuj ponownie za chwilę."
+30174 = "Nie udało się dostarczyć załączników. Spróbuj ponownie za chwilę."

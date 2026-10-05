@@ -38,6 +38,7 @@ public class StartingItemsService : IStartingItemsService
     private readonly IBookTemplateService _books;
     private readonly BookContextFactory _contexts;
     private readonly LocalizationConfig _localization;
+    private readonly IBookAttachmentPreparationService? _attachments;
 
     public StartingItemsService(
         IDataLoaderService dataLoaderService,
@@ -50,9 +51,11 @@ public class StartingItemsService : IStartingItemsService
         ItemsConfig items,
         IBookTemplateService books,
         BookContextFactory contexts,
-        LocalizationConfig localization
+        LocalizationConfig localization,
+        IBookAttachmentPreparationService? attachments = null
     )
     {
+        _attachments = attachments;
         _dataLoaderService = dataLoaderService;
         _factory = factory;
         _templates = templates;
@@ -193,6 +196,15 @@ public class StartingItemsService : IStartingItemsService
             var item = _factory.Create(templateId, stacks ? amount : 1, entry.Hue?.Resolve());
             if (rendered is not null)
             {
+                if (!_books.TryGet(rendered.TemplateId, out var source) || (source.Attachments.Count > 0 && _attachments is null))
+                {
+                    throw new InvalidDataException($"Cannot prepare attachments for starting document '{rendered.TemplateId}'.");
+                }
+                var payload = _attachments?.Prepare(source);
+                if (payload is not null)
+                {
+                    item.SetProp(BookAttachmentCodec.PropKey, payload);
+                }
                 BookDocumentText.Apply(item, rendered);
             }
             ApplyLootType(item, template, entry.Newbie);

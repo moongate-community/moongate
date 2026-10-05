@@ -92,6 +92,33 @@ public sealed class WeightService : IWeightService
         return true;
     }
 
+    public bool Holds(ItemEntity container, IReadOnlyList<ItemEntity> additions)
+    {
+        var added = additions.Sum(item => (long)Of(item));
+        var visited = new HashSet<Serial>();
+        for (var current = container; current is not null; current = Parent(current))
+        {
+            if (!visited.Add(current.Id))
+            {
+                return false;
+            }
+            if (current.Layer == LayerType.Bank)
+            {
+                return true;
+            }
+            var maximum = MaximumOf(current);
+            if (maximum > 0 && (long)Of(current) - PileWeight(current) + added > maximum)
+            {
+                return false;
+            }
+            if (current.ContainerId is { } parent && !_items.TryGet(parent, out _))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // The containers the item is in, at any depth.
     private HashSet<Serial> Around(ItemEntity item)
     {

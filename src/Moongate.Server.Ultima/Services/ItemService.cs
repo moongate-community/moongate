@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
+using Moongate.Server.Ultima.Interfaces.Items;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -55,6 +56,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
     private readonly IItemScriptService? _scripts;
     private readonly IItemDecayQueue? _decay;
     private readonly IItemTimerQueue? _timers;
+    private readonly IInventoryMutationGuard? _inventory;
 
     public IReadOnlyCollection<ItemEntity> Items => _items.Values.ToArray();
 
@@ -66,9 +68,11 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         IGameLoopService loop,
         IItemScriptService? scripts = null,
         IItemDecayQueue? decay = null,
-        IItemTimerQueue? timers = null
+        IItemTimerQueue? timers = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _timers = timers;
         _sectors = sectors;
         _movement = movement;
@@ -99,7 +103,27 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void Add(IEnumerable<ItemEntity> items)
     {
-        foreach (var item in items)
+        var batch = items.ToList();
+        if (_inventory is not null)
+        {
+            var incoming = batch.ToDictionary(item => item.Id);
+            foreach (var item in batch)
+            {
+                var seen = new HashSet<Serial>();
+                var root = item;
+                while (root.ContainerId is { } parent && incoming.TryGetValue(parent, out var next))
+                {
+                    if (!seen.Add(root.Id))
+                    {
+                        throw new InvalidOperationException("Cannot add cyclic inventory.");
+                    }
+                    root = next;
+                }
+                EnsureAllowed(root);
+                if (_items.TryGetValue(item.Id, out var previous)) EnsureAllowed(previous);
+            }
+        }
+        foreach (var item in batch)
         {
             if (_items.TryGetValue(item.Id, out var previous))
             {
@@ -152,7 +176,12 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void Remove(IEnumerable<Serial> serials)
     {
-        foreach (var serial in serials)
+        var batch = serials.ToList();
+        foreach (var serial in batch)
+        {
+            if (_items.TryGetValue(serial, out var item)) EnsureAllowed(item);
+        }
+        foreach (var serial in batch)
         {
             if (_items.TryRemove(serial, out var item))
             {
@@ -245,6 +274,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void MoveToContainer(ItemEntity item, Serial container, Point2D position, int gridIndex = 0)
     {
+        EnsureAllowed(item, container);
         var wearer = item.MobileId;
         _sectors.RemoveItem(item);
         Unindex(item);
@@ -260,6 +290,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void PlaceOnGround(ItemEntity item, MapType map, Point3D location)
     {
+        EnsureAllowed(item);
         var wearer = item.MobileId;
         _sectors.RemoveItem(item);
         Unindex(item);
@@ -272,6 +303,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void Equip(ItemEntity item, Serial mobile, LayerType layer)
     {
+        EnsureAllowed(item, mobile);
         var wearer = item.MobileId;
         _sectors.RemoveItem(item);
         Unindex(item);
@@ -295,7 +327,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public bool TryDropOnGround(MobileEntity mobile, ItemEntity item, int x, int y)
     {
-        if (!IsNear(mobile.Location, x, y) ||
+        if (_inventory?.Allows(item) == false || !IsNear(mobile.Location, x, y) ||
             !_movement.TryGetDropZ(mobile.Map, x, y, mobile.Location.Z + DropCeiling, out var z))
         {
             return false;
@@ -320,6 +352,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void Release(ItemEntity item, Serial owner)
     {
+        EnsureAllowed(item);
         _released[item.Id] = owner;
     }
 
@@ -340,18 +373,21 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void Hide(ItemEntity item)
     {
+        EnsureAllowed(item);
         _sectors.RemoveItem(item);
         _decay?.Stop(item);
     }
 
     public void Show(ItemEntity item)
     {
+        EnsureAllowed(item);
         _sectors.AddItem(item);
         _decay?.Restart(item);
     }
 
     public ItemEntity Split(ItemEntity item, int amount, Serial serial)
     {
+        EnsureAllowed(item);
         var rest = item.Snapshot();
         rest.Id = serial;
 
@@ -440,6 +476,14 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         }
     }
 
+    private void EnsureAllowed(ItemEntity item, Serial? destination = null)
+    {
+        if (_inventory?.Allows(item, destination) == false)
+        {
+            throw new InvalidOperationException("Inventory is reserved for attachment settlement.");
+        }
+    }
+
     // Everything inside the item, at any depth.
     private void RewriteContents(ItemEntity item)
     {
@@ -476,6 +520,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     private void AbsorbFor(ItemEntity item, Serial? owner)
     {
+        EnsureAllowed(item);
         // A ground item a player released still has that player's row: the player's save must delete it, or the next
         // login would load it back into the backpack.
         if (_released.TryRemove(item.Id, out var releasedBy))

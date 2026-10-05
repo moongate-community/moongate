@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using System.Collections.Frozen;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
@@ -46,6 +47,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     private readonly IFameKarmaTitleService _titles;
     private readonly IItemScriptService? _scripts;
     private readonly IBankService? _bank;
+    private readonly IInventoryMutationGuard? _inventory;
 
     public UseRequestPacketHandler(
         IItemService items,
@@ -58,9 +60,11 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         ITooltipService tooltips,
         IFameKarmaTitleService titles,
         IItemScriptService? scripts = null,
-        IBankService? bank = null
+        IBankService? bank = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _bank = bank;
         _tooltips = tooltips;
         _titles = titles;
@@ -168,6 +172,11 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     private bool RunOnUse(GameSession session, ItemEntity item)
     {
         if (!_mobiles.TryGet(session.CharacterId, out var character))
+        {
+            return true;
+        }
+
+        if (_inventory?.AllowsOwner(character.Id) == false || _inventory?.Allows(item) == false)
         {
             return true;
         }

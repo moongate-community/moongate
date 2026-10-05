@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
+using Moongate.Server.Ultima.Interfaces.Items;
 
 namespace Moongate.Server.Ultima.Services;
 
@@ -26,6 +27,7 @@ public sealed class ItemHandlingService : IItemHandlingService
     private readonly IItemFactoryService? _factory;
     private readonly IItemSerialPool? _serials;
     private readonly IContainerLayoutService? _layouts;
+    private readonly IInventoryMutationGuard? _inventory;
     private readonly IContainerCapacityService? _capacity;
 
     public ItemHandlingService(
@@ -37,9 +39,11 @@ public sealed class ItemHandlingService : IItemHandlingService
         IItemFactoryService? factory = null,
         IItemSerialPool? serials = null,
         IContainerLayoutService? layouts = null,
-        IContainerCapacityService? capacity = null
+        IContainerCapacityService? capacity = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _capacity = capacity;
         _items = items;
         _sessions = sessions;
@@ -82,8 +86,7 @@ public sealed class ItemHandlingService : IItemHandlingService
 
     public ItemEntity? Give(MobileEntity owner, string template, int? amount = null)
     {
-        // The room is asked before the item is made: a gift that does not fit uses no serial.
-        if (_items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
+        if (_inventory?.AllowsOwner(owner.Id) == false || _items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
             _capacity?.HasRoomFor(backpack, 1) == false ||
             Make(template, amount) is not { } item)
         {
@@ -100,7 +103,7 @@ public sealed class ItemHandlingService : IItemHandlingService
 
     public bool Consume(ItemEntity item, int amount = 1)
     {
-        if (amount < 1 || item.MobileId is not null || IsHeld(item) || item.Amount < amount)
+        if (_inventory?.Allows(item) == false || amount < 1 || item.MobileId is not null || IsHeld(item) || item.Amount < amount)
         {
             return false;
         }
@@ -118,7 +121,7 @@ public sealed class ItemHandlingService : IItemHandlingService
 
     public bool Delete(ItemEntity item)
     {
-        if (item.MobileId is not null || IsHeld(item) || _items.GetContents(item.Id).Count > 0)
+        if (_inventory?.Allows(item) == false || item.MobileId is not null || IsHeld(item) || _items.GetContents(item.Id).Count > 0)
         {
             return false;
         }

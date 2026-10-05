@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Services.Internal.Books;
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -29,6 +30,8 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
     private HostPersistenceFixture _host = null!;
     private IDataAccess<ItemEntity> _items = null!;
     private MobileEntity _mobile = null!;
+    private BookTemplate _source = null!;
+    private CountingBookAttachmentPreparationService _preparation = null!;
 
     public async Task InitializeAsync()
     {
@@ -189,6 +192,44 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
         Assert.Equal("Meet 42", letters[1].GetProp<string>("book.content"));
     }
 
+    [Fact]
+    public async Task StartingItems_AttachmentPayloadSavedInCharacterTransaction()
+    {
+        var service = CreateService(Set(common: true, entries: [new StartingItemEntry
+        {
+            Items = ["readable_scroll"], Amount = DiceSpec.Parse("2"), BookTemplate = "welcome_letter",
+            BookValues = new() { ["contact_name"] = "Vega" }
+        }]));
+        _source.Attachments.Add(new() { ItemTemplate = "gold", Amount = DiceSpec.Parse("100"), Hue = HueSpec.FromValue(42) });
+        var given = await service.GiveAsync(Request(new()));
+        var stored = await _items.QueryAsync(item => item.ContainerId == given[0].Id);
+        Assert.Equal(2, _preparation.Calls);
+        Assert.Equal(2, stored.Count);
+        Assert.All(stored, letter =>
+        {
+            Assert.True(BookAttachmentCodec.TryDecode(letter.GetProp<string>(BookAttachmentCodec.PropKey), out var batch));
+            Assert.Equal((100, (ushort)42), (Assert.Single(batch!.Items).Amount, batch.Items[0].Hue));
+        });
+        given[1].SetProp(BookAttachmentCodec.PropKey, "changed");
+        Assert.NotEqual("changed", given[2].GetProp<string>(BookAttachmentCodec.PropKey));
+        Assert.DoesNotContain(await _items.GetAllAsync(), item => item.TemplateId == "gold");
+    }
+
+    [Fact]
+    public async Task GiveAsync_LateAttachmentPreparationFailure_RollsBackEarlierItemsAndLetters()
+    {
+        var service = CreateService(Set(common: true, entries: [Entry("bottle"), new StartingItemEntry
+        {
+            Items = ["readable_scroll"], Amount = DiceSpec.Parse("2"), BookTemplate = "welcome_letter",
+            BookValues = new() { ["contact_name"] = "Vega" }
+        }]));
+        _source.Attachments.Add(new() { ItemTemplate = "gold", Amount = DiceSpec.Parse("100") });
+        _preparation.FailOnCall = 2;
+        await Assert.ThrowsAsync<InvalidDataException>(() => service.GiveAsync(Request(new())));
+        Assert.Equal(2, _preparation.Calls);
+        Assert.Empty(await _items.GetAllAsync());
+    }
+
     private StartingItemsService CreateService(params StartingItemSet[] sets)
     {
         return CreateService(new StartingItemsConfig(), new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" }, sets);
@@ -211,7 +252,8 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
                       )
                       .With(new ContainerContent { Name = "default", Bounds = new(new Point2D(44, 65), new Point2D(186, 159)), Default = true })
                       .With<StartingItemSet>(sets);
-        loaders.With(new BookTemplate { Id = "welcome_letter", Title = "Welcome $player_name", Content = "Meet $contact_name", Variables = ["contact_name"] });
+        _source = new BookTemplate { Id = "welcome_letter", Title = "Welcome $player_name", Content = "Meet $contact_name", Variables = ["contact_name"] };
+        loaders.With(_source);
         var tiles = new FakeTileDataService()
                     .Item(0x0E75, TileFlagType.Container, 0, layer: (byte)LayerType.Backpack)
                     .Item(0x0EED, TileFlagType.Generic, 0)
@@ -224,16 +266,18 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
                     .Item(0x0EFA, TileFlagType.None, 0).Item(0x14ED, TileFlagType.None, 1);
         var templates = new ItemTemplateService(loaders);
 
+        var factory = new ItemFactoryService(templates, tiles, _host.Owner);
+        _preparation = new(new BookAttachmentPreparationService(factory, templates, tiles));
         return new StartingItemsService(
             loaders,
-            new ItemFactoryService(templates, tiles, _host.Owner),
+            factory,
             templates,
             new ContainerLayoutService(loaders),
             tiles,
             _host.Owner,
             config,
             items,
-            new BookTemplateService(loaders), TestBookContexts.Create(), new LocalizationConfig()
+            new BookTemplateService(loaders), TestBookContexts.Create(), new LocalizationConfig(), _preparation
         );
     }
 

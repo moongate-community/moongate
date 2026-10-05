@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using System.Diagnostics.CodeAnalysis;
 using Lua;
 using Moongate.Core.Geometry;
@@ -55,6 +56,8 @@ public sealed class ItemModule
     private readonly IEquipmentService? _equipment;
     private readonly IItemTimerService? _timers;
 
+    private readonly IInventoryMutationGuard? _inventory;
+
     public ItemModule(
         IItemService items,
         ISessionService sessions,
@@ -71,9 +74,11 @@ public sealed class ItemModule
         IItemTemplateService? templates = null,
         ILootService? loot = null,
         IEquipmentService? equipment = null,
-        IItemTimerService? timers = null
+        IItemTimerService? timers = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _timers = timers;
         _equipment = equipment;
         _loot = loot;
@@ -124,6 +129,10 @@ public sealed class ItemModule
             return 0;
         }
 
+        if (_inventory?.Allows(target) == false)
+        {
+            return 0;
+        }
         var contents = _items.GetContents(target.Id).ToList();
         var added = 0;
 
@@ -313,6 +322,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Keeps a string, a number or a bool on the item across restarts, saved by the world save or its owner's save; nil removes it. False for a table, a function, a blank key or a timer.<name> key, which the item's timers use.")]
     public bool SetProp(long serial, string key, object? value = null)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
         // The timer props are the item's timers: only item.start_timer and item.stop_timer write them.
         if (string.IsNullOrWhiteSpace(key) ||
             key.StartsWith(ItemTimerQueue.PropPrefix, StringComparison.Ordinal) ||
@@ -345,6 +358,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Sets the item's own name (cut to 128 characters), nil gives it back its template's, shown to the players who see it; false for a worn or held item.")]
     public bool SetName(long serial, string? name = null)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
         if (!TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
         {
             return false;
@@ -372,6 +389,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Changes the item's hue (0 to 65535), shown to the players who see it; false for a worn or held item.")]
     public bool SetHue(long serial, int hue)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
         if (hue is < 0 or > ushort.MaxValue || !TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
         {
             return false;
@@ -390,6 +411,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Sets the stack's amount (1 to 60000), shown to the players who see it; false for a worn or held item, an amount out of range, or an amount above 1 on an item that does not stack, as its template or its graphic says.")]
     public bool SetAmount(long serial, int amount)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
         if (amount is < 1 or > MaximumAmount ||
             !TryGetItem(serial, out var item) ||
             item.MobileId is not null ||
@@ -448,6 +473,10 @@ public sealed class ItemModule
             return false;
         }
 
+        if (_inventory?.Allows(item, target.Id) == false)
+        {
+            return false;
+        }
         // Not into itself, nor into anything it holds.
         for (ItemEntity? holder = target; holder is not null; holder = ContainerOf(holder))
         {
@@ -497,6 +526,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Puts the item on the mobile, on its template's layer, seen by everyone around; its script runs on_equip, its can_equip is not asked. False for a worn or held item, a stack, an item without a layer or one the mobile cannot wear, a taken layer, a mobile not in the world, or an item another mobile carries.")]
     public bool Equip(long serial, long mobile)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded, new Serial((uint)mobile)) == false)
+        {
+            return false;
+        }
         if (_equipment is null ||
             !TryGetItem(serial, out var item) ||
             item.MobileId is not null ||
@@ -573,6 +606,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Starts, or starts again from now, a timer of the item that runs on_timer(serial, name) of its script after that many seconds, also after a restart; one whose script has no on_timer, or fails, is dropped with a warning in the log. False for an unknown item, a blank name or one over 32 characters, or seconds not above 0 or over a year.")]
     public bool StartTimer(long serial, string name, double seconds)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
         return _timers is not null &&
                TryGetItem(serial, out var item) &&
                double.IsFinite(seconds) &&
@@ -586,6 +623,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Stops a timer of the item; false for an unknown item or when it has no timer of that name.")]
     public bool StopTimer(long serial, string name)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
         return _timers is not null && TryGetItem(serial, out var item) && _timers.Stop(item, name);
     }
 
@@ -614,6 +655,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Changes the item's graphic (0 to 65535), as a door opening, shown to the players around a ground item or the owner of a carried one; an item inside a container on the ground changes without being shown again. False for an unknown, worn or held item or a graphic out of range.")]
     public bool SetItemId(long serial, int graphic)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
         if (graphic is < 0 or > ushort.MaxValue || !TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
         {
             return false;
@@ -632,6 +677,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Sets the item's light shape by LightType name, such as circle150, circle300 or west_big, nil clears it; the players who see the item are shown it again, and the client draws the light only for a lit graphic. False for an unknown shape or a worn or held item.")]
     public bool SetLight(long serial, string? type = null)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
         if (!TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
         {
             return false;
@@ -703,6 +752,10 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Moves a ground item to x, y, z on its map: the players around the old spot lose it, those around the new one see it, and a decaying item's decay starts again; false for an item not on the ground, a spot outside the map or a z outside -128 to 127.")]
     public bool MoveTo(long serial, int x, int y, int z)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
         // Outside the map's grid the item would be taken off its sector and never put back: seen by nobody.
         if (z is < sbyte.MinValue or > sbyte.MaxValue ||
             !TryGetItem(serial, out var item) ||

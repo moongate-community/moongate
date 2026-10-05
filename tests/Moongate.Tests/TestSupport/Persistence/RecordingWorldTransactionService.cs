@@ -57,6 +57,11 @@ public sealed class RecordingWorldTransactionService : IWorldTransactionService
             _owner = owner;
         }
 
+        public Task InsertAsync<T>(T entity, CancellationToken cancellationToken = default) where T : class, IMoongateEntity
+        {
+            return GetDataAccess<T>().UpsertAsync(entity, cancellationToken);
+        }
+
         public Task<T?> GetByIdForUpdateAsync<T>(Serial id, CancellationToken cancellationToken = default)
             where T : class, IMoongateEntity
         {

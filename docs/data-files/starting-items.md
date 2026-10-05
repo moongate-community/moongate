@@ -116,6 +116,13 @@ renaming its recipient or editing the source cannot change its saved text.
 `amount` creates separate, nonstacking copies; normal hue, newbie and backpack
 placement rules still apply.
 
+A source's [attachments](books.md#letter-attachments) are frozen separately for
+every physical starting letter and saved before its first item write. Rewards
+remain inside the saved entitlement until the bearer claims them, so they add no
+starting weight. Any late attachment-preparation failure rolls back the character
+and all earlier starting items. The shipped welcome source contains no rewards;
+add them to your own source to opt in.
+
 All item ids in the entry must explicitly resolve to `stackable = false` and
 use `script_id = "readable_scroll"` or `"jail_note"`. Text entries must have
 `equip = false`. If rendering fails during character creation, the character,

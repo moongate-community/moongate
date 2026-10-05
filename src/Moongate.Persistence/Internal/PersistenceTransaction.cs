@@ -36,6 +36,26 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
         _cancellationToken = cancellationToken;
     }
 
+    public Task InsertAsync<T>(T entity, CancellationToken cancellationToken = default) where T : class, IMoongateEntity
+    {
+        return RunAsync(
+            async (orm, transaction, token) =>
+            {
+                ArgumentNullException.ThrowIfNull(entity);
+                if (!entity.Id.IsValid)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(entity), "Insert requires a nonzero explicit identity.");
+                }
+                if (_owner.GetTarget(typeof(T)) != Target)
+                {
+                    throw new InvalidOperationException("Transactions cannot cross database targets.");
+                }
+                return await orm.Insert(entity).WithTransaction(transaction).ExecuteAffrowsAsync(token).ConfigureAwait(false);
+            },
+            cancellationToken
+        );
+    }
+
     public Task<T?> GetByIdForUpdateAsync<T>(Serial id, CancellationToken cancellationToken = default)
         where T : class, IMoongateEntity
     {

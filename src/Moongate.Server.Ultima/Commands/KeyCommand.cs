@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Commands;
@@ -35,6 +36,8 @@ public sealed class KeyCommand : ICommandExecutor
     private readonly ITooltipService _tooltips;
     private readonly IGameLoopService _loop;
     private readonly ILocalizationService? _localization;
+    private readonly IInventoryMutationGuard? _inventory;
+    private readonly IInventoryReservationService? _reservations;
 
     public KeyCommand(
         ITargetService targets,
@@ -44,9 +47,13 @@ public sealed class KeyCommand : ICommandExecutor
         IPacketSendService sender,
         ITooltipService tooltips,
         IGameLoopService loop,
-        ILocalizationService? localization = null
+        ILocalizationService? localization = null,
+        IInventoryMutationGuard? inventory = null,
+        IInventoryReservationService? reservations = null
     )
     {
+        _inventory = inventory;
+        _reservations = reservations;
         _targets = targets;
         _items = items;
         _templates = templates;
@@ -77,9 +84,15 @@ public sealed class KeyCommand : ICommandExecutor
 
         long? value = null;
         Serial? backpack = null;
+        var busy = false;
         await OnLoopAsync(
             () =>
             {
+                if (_inventory?.AllowsOwner(session.CharacterId) == false)
+                {
+                    busy = true;
+                    return;
+                }
                 if (DoorKeys.TryGetDoor(_items, _templates, target.Serial, out var door))
                 {
                     value = DoorKeys.EnsureKeyValue(door, DoorKeys.LinkedDoor(_items, _templates, door));
@@ -89,6 +102,11 @@ public sealed class KeyCommand : ICommandExecutor
             context.CancellationToken
         );
 
+        if (busy)
+        {
+            context.PrintError(_localization.Text(Moongate.Server.Ultima.Services.Internal.Books.BookAttachmentService.BusyMessage, "Your backpack is busy. Try again shortly."));
+            return;
+        }
         if (value is not { } keyValue)
         {
             context.Print(_localization.Text(CommandMessages.NotADoor, "That is not a door."));
@@ -108,18 +126,30 @@ public sealed class KeyCommand : ICommandExecutor
         key.SetProp(DoorKeys.KeyValueProp, keyValue);
         key.PutInContainer(container, InBackpack);
         await _factory.SaveAsync(key, context.CancellationToken);
-        await OnLoopAsync(
-            () =>
+        var applied = false;
+        var delivered = false;
+        while (!applied)
+        {
+            Task? settlement = null;
+            await OnLoopAsync(() =>
             {
-                // On the loop, where the backpack's contents are known: the key takes a free grid slot.
+                if (_inventory?.AllowsOwner(session.CharacterId) == false)
+                {
+                    settlement = _reservations!.WaitAsync(session.CharacterId);
+                    return;
+                }
+                applied = true;
+                if (!_items.TryGet(container, out _)) return;
                 key.GridIndex = ContainerSlotUtils.FirstFree(_items.GetContents(container));
                 _items.Add([key]);
+                delivered = true;
                 _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(key, session.UsesContainerGrid()));
                 _sender.TrySend(session.SessionId, _tooltips.Info(key));
-            },
-            CancellationToken.None
-        );
+            }, CancellationToken.None);
+            if (settlement is not null) await settlement;
+        }
 
+        if (!delivered) return;
         context.Print(_localization.Text(CommandMessages.KeyCreated, "A key for the door is in your backpack."));
     }
 
