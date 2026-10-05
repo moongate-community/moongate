@@ -41,15 +41,19 @@ Within 12 tiles of a banker, with the box open or not:
 | *balance* | tells the gold in your bank | `Thy current bank balance is 1,234 gold.` |
 | *withdraw 500* | moves 500 coins from the bank to your backpack | `Thou hast withdrawn gold from thy account.` |
 | *deposit 500* | moves 500 coins from your backpack to the bank | `500 gold was deposited in your account.` |
+| *check 5000* | writes a [bank check](#bank-checks) for 5000 coins of the bank | `Into your bank box I have placed a check in the amount of: 5,000` |
 
-- *balance* and *withdraw* are speech keywords of the client, like *bank*: they work in the
-  language of the client. *deposit* is an English word only, because the client has no keyword
+- *balance*, *withdraw* and *check* are speech keywords of the client, like *bank*: they work in
+  the language of the client. *deposit* is an English word only, because the client has no keyword
   for it.
 - The amount is the first number of the sentence: `withdraw 500`, `I wish to withdraw 500 gold`
   and `500 withdraw` are the same. A sentence with no number, or with 0, moves nothing and gets
   no answer. Separators are not read: `5,000` is 5.
-- The balance counts the coins anywhere in the bank box, bags included.
-- A withdrawal is at most [`max_withdraw`](#settings) coins. They join a gold pile of your backpack
+- The balance counts the coins and the worth of the checks anywhere in the bank box, bags
+  included.
+- A withdrawal is at most [`max_withdraw`](#settings) coins. When the coins of the bank are not
+  enough the checks give the rest: a check that is used up is gone, the last one keeps what is
+  left of it. They join a gold pile of your backpack
   when it has the room, a pile holding 60000 at most, and make a new pile otherwise.
 - A deposit takes coins from the backpack and its bags; in the bank they top up the piles of the
   box, then make piles of 60000.
@@ -69,8 +73,32 @@ Within 12 tiles of a banker, with the box open or not:
 | `Your backpack can't hold anything else.` | The backpack is already at its weight, or has no room for a new pile. |
 | `Your bank box is full.` | The deposit needs a new pile and the box holds its [limit of items](#how-much-it-holds). |
 
+| `We cannot create checks for such a paltry amount of gold!` | A check below [`min_check`](#settings). |
+| `Our policies prevent us from creating checks worth that much!` | A check above [`max_check`](#settings). |
+| `There's not enough room in your bankbox for the check!` | The box is full and the coins that pay the check use up no pile. |
+
 A player who says *deposit* before ever opening its bank gets the box made and shown instead, and
-asks again. Bank checks and deposits by handing the gold to the banker are not built yet.
+asks again. Deposits by handing the gold to the banker are not built yet.
+
+## Bank checks
+
+A check is gold on paper: one item that weighs a stone, whatever it is worth. Say *check 5000*
+to a banker and it takes 5000 coins of your bank and puts a check in your bank box.
+
+- A check is worth from [`min_check`](#settings) to [`max_check`](#settings) coins, 5000 to
+  1,000,000 unless the shard says otherwise.
+- It is paid with the coins of the bank: another check does not pay a check.
+- Its tooltip reads `value: 5,000`. It is blessed, and it does not stack.
+- **To cash it, double click it inside your open bank box**, in the box or in a bag of it: it
+  becomes coins of the box, topping up the gold piles there and then making piles of 60000, and
+  you read `5,000 gold was deposited in your account.`
+- A box with room for part of the gold takes what fits and the check keeps the rest; with room for
+  nothing you read `Your bank box is full.`
+- Anywhere else a double click says `That must be in your bank box to use it.`
+
+A check is the item template `bank_check` of `templates/items/bank.toml`, with its worth in the
+prop `bank.worth`; its script is `scripts/items/bank_check.lua`. The name it shows is the
+client's own, `A bank check`.
 
 ## How much it holds
 
@@ -98,8 +126,7 @@ max_check = 1000000    # The largest.
 ```
 
 `max_items` goes from 0 to 10000, `max_withdraw` from 1 to 60000 (one pile), `min_check` from 1 to
-`max_check`, `max_check` up to 2,000,000,000. The two check settings are read once bank checks
-exist.
+`max_check`, `max_check` up to 2,000,000,000.
 
 ## The banker script
 
@@ -140,11 +167,15 @@ so without it every banker of a bank would face the same way for ever.
 | `bank.balance(player)` | The gold in the bank; 0 for a player who never opened it. |
 | `bank.withdraw(player, amount)` | Coins to the backpack; a `BankResultType`. |
 | `bank.deposit(player, amount)` | Coins from the backpack; a `BankResultType`. |
+| `bank.check(player, amount)` | Writes a check paid with the coins of the bank; a `BankResultType`. |
+| `bank.cash(player, check)` | Turns a check inside the bank box into coins; a `BankResultType`. |
+| `bank.worth(item)` | What a check is worth; nil for anything else. |
 | `bank.attend(player)` | True for the first banker that asks in the same moment. |
-| `npc.say_cliloc(npc, cliloc [, args])` | The NPC says a text of the client, each player in its language. |
+| `npc.say_cliloc(npc, cliloc [, args [, affix]])` | The NPC says a text of the client, each player in its language; `affix` is written after it. |
 
 `BankResultType` is `Ok`, `NotEnoughGold`, `TooMuch`, `BackpackFull`, `BankFull`, `BadAmount`,
-`NoPlayer`, `NoBank` (the player never opened its bank) or `Busy` (try again in a moment). The
+`NoPlayer`, `NoBank` (the player never opened its bank), `Busy` (try again in a moment),
+`CheckTooSmall`, `CheckTooBig` or `NotInBank` (not a check, or not inside the player's bank box). The
 module does not check where the player stands nor who it is: the script does. See the
 [`bank` module](https://moongate.sh/lua/bank/).
 
