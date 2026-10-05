@@ -80,6 +80,11 @@ ModernUO; unrelated files remain untouched. Existing translations are retained v
 when upstream English changes, so review their meaning after importing a different
 upstream revision. No network translation service runs during import.
 
+The shipped translations are laid out as the English source: the same pages, lines wrapped to
+the width of the book's longest English line, and the four-space indent where the English page
+opens a paragraph. A translated page may run to more lines than its source, since the text is
+longer.
+
 The ordinary `mgctl init` workflow copies missing shipped files into existing roots and
 preserves files already present. Newly added sources load at the next normal startup.
 For an existing root whose catalog predates these translations, copy the desired

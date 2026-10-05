@@ -52,6 +52,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.AddDescription
         );
+        container.RegisterCommand<BookCommand>(
+            "book",
+            "Gives a document from templates/books to your backpack: book <template> [name=value ...].",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.BookDescription
+        );
         container.RegisterCommand<SetCommand>(
             "set",
             "Sets the hits, mana, stamina, hunger or thirst of the mobile you target, or makes it a criminal: set <hits|mana|stamina|hunger|thirst|criminal> <value>.",

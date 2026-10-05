@@ -136,7 +136,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5644, messages.Count);
+        Assert.Equal(5648, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
@@ -212,7 +212,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5644, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5648, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     [Theory,
@@ -264,7 +264,7 @@ public sealed class RepositoryDataFilesTests
         var messages = (Tomlyn.Model.TomlTable)own["messages"];
 
         // Every language carries its own text, not the English fallback.
-        Assert.All(Enumerable.Range(30008, 47), id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}"));
+        Assert.All(Enumerable.Range(30008, 47).Concat(Enumerable.Range(30181, 4)), id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}"));
     }
 
     [Theory,

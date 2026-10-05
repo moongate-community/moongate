@@ -154,6 +154,10 @@ public static class CommandMessages
     public const int GoldAdded = 30178;
     public const int GoldNotAdded = 30179;
     public const int AddGoldDescription = 30180;
+    public const int UnknownBookTemplate = 30181;
+    public const int BookCreated = 30182;
+    public const int BookNotCreated = 30183;
+    public const int BookDescription = 30184;
     public const int GmToolsDescription = 30185;
     public const int GmToolsGumpMissing = 30186;
 }

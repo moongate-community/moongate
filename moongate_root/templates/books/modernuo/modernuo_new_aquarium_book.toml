@@ -79,155 +79,386 @@ item_template = "readable_scroll"
 [translations.cze]
 title = "Vaše nové akvárium"
 content = """
-Vítejte v nádherném světě vlastníků akvárií. S trochou času a dovednosti se vaše akvárium může stát uměleckým dílem!
+Vítejte v nádherném světě
+vlastníků akvárií. S
+trochou času a dovednosti
+se vaše akvárium může stát
+uměleckým dílem!
 
 Chytání ryb:
-U místního rybáře si musíte opatřit rybářskou síť a několik nádob na ryby.
-Chcete-li síť použít, vyberte ji ze svého
+U místního rybáře si
+musíte opatřit rybářskou
+síť a několik nádob na
+ryby.
+Chcete-li síť použít,
+vyberte ji ze svého
 
-batohu a hoďte do mělké vody. Pak čekáme.
-Ryby budou tak rády, že mohou být ve vašem akváriu, že po chycení skočí rovnou do vaší nádoby na ryby!
+batohu a hoďte do mělké
+vody. Pak čekáme.
+Ryby budou tak rády, že
+mohou být ve vašem
+akváriu, že po chycení
+skočí rovnou do vaší
+nádoby na ryby!
 
-Jen je odneste domů a přelijte do akvária a CINK! Máte šťastný nový přírůstek do své sbírky!
+Jen je odneste domů a
+přelijte do akvária a
+CINK! Máte šťastný nový
+přírůstek do své sbírky!
 
-Péče o naše podvodní spojence:
+Péče o naše podvodní
+spojence:
 
-Ryby potřebují k přežití čistou vodu a potravu.
-Naše akvárium je vybaveno pomůckou ke sledování
+Ryby potřebují k přežití
+čistou vodu a potravu.
+Naše akvárium je vybaveno
+pomůckou ke sledování
 
 stavu. To musí být magie!
-Stačí se podívat na přední stranu akvária (najeďte na ni myší). Vidíte toho užitečného a přátelského průvodce? Říká, kolik potravy a vody je potřeba k udržení
+Stačí se podívat na přední
+stranu akvária (najeďte na
+ni myší). Vidíte toho
+užitečného a přátelského
+průvodce? Říká, kolik
+potravy a vody je potřeba
+k udržení
 
-a zlepšení kvality vaší nádrže.
-Nechcete své ryby často překrmovat. Ve skutečnosti je chcete krmit jen obden. Nezapomínejte však udržovat
+a zlepšení kvality vaší
+nádrže.
+Nechcete své ryby často
+překrmovat. Ve skutečnosti
+je chcete krmit jen obden.
+Nezapomínejte však
+udržovat
 
-vodu silnou a zdravou a pravidelně doplňovat další, aby vaše akvárium zůstalo pěkně třpytivě modré.
+vodu silnou a zdravou a
+pravidelně doplňovat
+další, aby vaše akvárium
+zůstalo pěkně třpytivě
+modré.
 
-Nuže, doufám, že vám přinese stejně radosti
+Nuže, doufám, že vám
+přinese stejně radosti
 
-shromažďování krásné sbírky našich skvělých přátel s ploutvemi z moře jako mně!
+shromažďování krásné
+sbírky našich skvělých
+přátel s ploutvemi z moře
+jako mně!
 
 Šťastný rybolov!"""
 
 [translations.fre]
 title = "Votre nouvel aquarium"
 content = """
-Bienvenue dans le merveilleux monde des propriétaires d’aquariums. Avec un peu de temps et de savoir-faire, votre aquarium peut devenir une œuvre d’art !
+Bienvenue dans le
+merveilleux monde des
+propriétaires d’aquariums.
+Avec un peu de temps et de
+savoir-faire, votre
+aquarium peut devenir une
+œuvre d’art !
 
 Attraper des poissons :
-Vous devrez vous procurer un filet de pêche et plusieurs bocaux à poissons auprès de votre pêcheur local. Pour utiliser le filet, sélectionnez-le dans votre
+Vous devrez vous procurer
+un filet de pêche et
+plusieurs bocaux à
+poissons auprès de votre
+pêcheur local. Pour
+utiliser le filet,
+sélectionnez-le dans votre
 
-sac à dos et lancez-le dans l’eau peu profonde. Puis on attend. Les poissons seront si heureux d’habiter votre aquarium qu’une fois attrapés, ils sauteront tout droit dans votre bocal !
+sac à dos et lancez-le
+dans l’eau peu profonde.
+Puis on attend. Les
+poissons seront si heureux
+d’habiter votre aquarium
+qu’une fois attrapés, ils
+sauteront tout droit dans
+votre bocal !
 
-Il suffit de les ramener chez vous et de les verser dans votre aquarium, et BING ! Voilà un joyeux nouveau membre de votre collection !
+Il suffit de les ramener
+chez vous et de les verser
+dans votre aquarium, et
+BING ! Voilà un joyeux
+nouveau membre de votre
+collection !
 
-Prendre soin de nos alliés sous-marins :
+Prendre soin de nos alliés
+sous-marins :
 
-Les poissons ont besoin d’eau propre et de nourriture pour survivre. Notre aquarium est fourni avec un outil de surveillance de son
+Les poissons ont besoin
+d’eau propre et de
+nourriture pour survivre.
+Notre aquarium est fourni
+avec un outil de
+surveillance de son
 
-état. Ce doit être de la magie ! Regardez simplement l’avant de votre aquarium (survolez-le avec la souris). Voyez-vous ce guide aimable et serviable ? Il indique la quantité de nourriture et d’eau nécessaire pour entretenir
+état. Ce doit être de la
+magie ! Regardez
+simplement l’avant de
+votre aquarium
+(survolez-le avec la
+souris). Voyez-vous ce
+guide aimable et serviable
+? Il indique la quantité
+de nourriture et d’eau
+nécessaire pour entretenir
 
-et améliorer la qualité de votre bac. Vous ne devez pas donner trop souvent un excès de nourriture à vos poissons. En fait, vous ne devez les nourrir qu’un jour sur deux. Mais pensez à conserver
+et améliorer la qualité de
+votre bac. Vous ne devez
+pas donner trop souvent un
+excès de nourriture à vos
+poissons. En fait, vous ne
+devez les nourrir qu’un
+jour sur deux. Mais pensez
+à conserver
 
-une eau saine et vigoureuse, et à en ajouter régulièrement pour que votre aquarium garde un beau bleu étincelant.
+une eau saine et
+vigoureuse, et à en
+ajouter régulièrement pour
+que votre aquarium garde
+un beau bleu étincelant.
 
-Eh bien, j’espère que vous prendrez autant de plaisir que moi
+Eh bien, j’espère que vous
+prendrez autant de plaisir
+que moi
 
-à rassembler une belle collection de nos charmants amis des mers à nageoires !
+à rassembler une belle
+collection de nos
+charmants amis des mers à
+nageoires !
 
 Bonne pêche !"""
 
 [translations.ger]
 title = "Euer neues Aquarium"
 content = """
-Willkommen in der wunderbaren Welt der Aquarienbesitzer. Mit ein wenig Zeit und Geschick kann Euer Aquarium zu einem Kunstwerk werden!
+Willkommen in der
+wunderbaren Welt der
+Aquarienbesitzer. Mit ein
+wenig Zeit und Geschick
+kann Euer Aquarium zu
+einem Kunstwerk werden!
 
 Fische fangen:
-Ihr müsst bei Eurem örtlichen Fischer ein Fischernetz und mehrere Fischgläser erwerben.
-Um das Netz zu benutzen, wählt es aus Eurem
+Ihr müsst bei Eurem
+örtlichen Fischer ein
+Fischernetz und mehrere
+Fischgläser erwerben.
+Um das Netz zu benutzen,
+wählt es aus Eurem
 
-Rucksack aus und werft es in flaches Wasser. Dann warten wir.
-Die Fische werden so glücklich sein, in Eurem Aquarium zu leben, dass sie beim Fang gleich in Euer Fischglas springen!
+Rucksack aus und werft es
+in flaches Wasser. Dann
+warten wir.
+Die Fische werden so
+glücklich sein, in Eurem
+Aquarium zu leben, dass
+sie beim Fang gleich in
+Euer Fischglas springen!
 
-Bringt sie einfach nach Hause und schüttet sie in Euer Aquarium, und BING! Schon habt Ihr einen glücklichen Neuzugang für Eure Sammlung!
+Bringt sie einfach nach
+Hause und schüttet sie in
+Euer Aquarium, und BING!
+Schon habt Ihr einen
+glücklichen Neuzugang für
+Eure Sammlung!
 
-Fürsorge für unsere Unterwasserverbündeten:
+Fürsorge für unsere
+Unterwasserverbündeten:
 
-Fische brauchen sauberes Wasser und Nahrung, um zu überleben.
-Unser Aquarium wird mit einer Hilfe zur Zustandsüberwachung
+Fische brauchen sauberes
+Wasser und Nahrung, um zu
+überleben.
+Unser Aquarium wird mit
+einer Hilfe zur
+Zustandsüberwachung
 
-geliefert. Muss Magie sein!
-Schaut einfach auf die Vorderseite Eures Aquariums (mit der Maus darüberfahren). Seht Ihr den hilfreichen und freundlichen Ratgeber? Er zeigt an, wie viel Futter und Wasser nötig sind, um
+geliefert. Muss Magie
+sein!
+Schaut einfach auf die
+Vorderseite Eures
+Aquariums (mit der Maus
+darüberfahren). Seht Ihr
+den hilfreichen und
+freundlichen Ratgeber? Er
+zeigt an, wie viel Futter
+und Wasser nötig sind, um
 
-die Qualität Eures Beckens zu erhalten und zu verbessern.
-Ihr solltet Eure Fische nicht allzu oft überfüttern. Tatsächlich solltet Ihr sie nur jeden zweiten Tag füttern. Denkt aber daran,
+die Qualität Eures Beckens
+zu erhalten und zu
+verbessern.
+Ihr solltet Eure Fische
+nicht allzu oft
+überfüttern. Tatsächlich
+solltet Ihr sie nur jeden
+zweiten Tag füttern. Denkt
+aber daran,
 
-das Wasser kräftig und gesund zu halten, und füllt regelmäßig nach, damit Euer Aquarium ein hübsches, funkelndes Blau behält.
+das Wasser kräftig und
+gesund zu halten, und
+füllt regelmäßig nach,
+damit Euer Aquarium ein
+hübsches, funkelndes Blau
+behält.
 
-Nun, ich hoffe, Ihr habt ebenso viel Freude daran,
+Nun, ich hoffe, Ihr habt
+ebenso viel Freude daran,
 
-eine schöne Auswahl unserer feinen Freunde mit Flossen aus dem Meer zu sammeln, wie ich!
+eine schöne Auswahl
+unserer feinen Freunde mit
+Flossen aus dem Meer zu
+sammeln, wie ich!
 
 Fröhliches Fischen!"""
 
 [translations.ita]
 title = "Il vostro nuovo acquario"
 content = """
-Benvenuti nel meraviglioso mondo di chi possiede un acquario. Con un po' di tempo e abilità il vostro acquario può diventare un'opera d'arte!
+Benvenuti nel meraviglioso
+mondo di chi possiede un
+acquario. Con un po' di
+tempo e abilità il vostro
+acquario può diventare
+un'opera d'arte!
 
 Catturare i pesci:
-Dovrete procurarvi una rete da pesca e diverse bocce per pesci dal vostro pescatore locale.
-Per usare la rete, selezionatela dal vostro
+Dovrete procurarvi una
+rete da pesca e diverse
+bocce per pesci dal vostro
+pescatore locale.
+Per usare la rete,
+selezionatela dal vostro
 
-zaino e lanciatela nell'acqua bassa. Poi aspettiamo.
-I pesci saranno così felici di stare nel vostro acquario che, una volta catturati, salteranno dritti nella vostra boccia!
+zaino e lanciatela
+nell'acqua bassa. Poi
+aspettiamo.
+I pesci saranno così
+felici di stare nel vostro
+acquario che, una volta
+catturati, salteranno
+dritti nella vostra
+boccia!
 
-Portateli semplicemente a casa e versateli nell'acquario, e BING! Avete una felice nuova aggiunta alla vostra collezione!
+Portateli semplicemente a
+casa e versateli
+nell'acquario, e BING!
+Avete una felice nuova
+aggiunta alla vostra
+collezione!
 
-Prendersi cura dei nostri Alleati Sottomarini:
+Prendersi cura dei nostri
+Alleati Sottomarini:
 
-I pesci hanno bisogno di acqua pulita e cibo per sopravvivere.
-Il nostro acquario è dotato di un ausilio per controllarne
+I pesci hanno bisogno di
+acqua pulita e cibo per
+sopravvivere.
+Il nostro acquario è
+dotato di un ausilio per
+controllarne
 
-lo stato. Dev'essere Magia!
-Guardate semplicemente la parte anteriore del vostro acquario (passateci sopra il mouse). Vedete la guida utile e amichevole? Dice quanto cibo e quanta acqua servono per mantenere
+lo stato. Dev'essere
+Magia!
+Guardate semplicemente la
+parte anteriore del vostro
+acquario (passateci sopra
+il mouse). Vedete la guida
+utile e amichevole? Dice
+quanto cibo e quanta acqua
+servono per mantenere
 
-e migliorare la qualità della vostra vasca.
-Non vorrete nutrire troppo i pesci molto spesso. In effetti, dovrete dar loro da mangiare solo a giorni alterni. Ma ricordate di mantenere
+e migliorare la qualità
+della vostra vasca.
+Non vorrete nutrire troppo
+i pesci molto spesso. In
+effetti, dovrete dar loro
+da mangiare solo a giorni
+alterni. Ma ricordate di
+mantenere
 
-l'acqua vigorosa e sana e di aggiungerne regolarmente, per conservare al vostro acquario un bel blu scintillante.
+l'acqua vigorosa e sana e
+di aggiungerne
+regolarmente, per
+conservare al vostro
+acquario un bel blu
+scintillante.
 
-Be', spero che vi divertiate quanto me
+Be', spero che vi
+divertiate quanto me
 
-a raccogliere una bella varietà dei nostri graziosi amici pinnuti del mare!
+a raccogliere una bella
+varietà dei nostri
+graziosi amici pinnuti del
+mare!
 
 Buona Pesca!"""
 
 [translations.pol]
 title = "Twoje nowe akwarium"
 content = """
-Witaj we wspaniałym świecie posiadaczy akwariów. Przy odrobinie czasu i wprawy twoje akwarium może stać się dziełem sztuki!
+Witaj we wspaniałym
+świecie posiadaczy
+akwariów. Przy odrobinie
+czasu i wprawy twoje
+akwarium może stać się
+dziełem sztuki!
 
-Łowienie ryb: musisz nabyć sieć rybacką i kilka szklanych kul dla ryb u miejscowego rybaka. Aby użyć sieci, wybierz ją ze swego
+Łowienie ryb: musisz nabyć
+sieć rybacką i kilka
+szklanych kul dla ryb u
+miejscowego rybaka. Aby
+użyć sieci, wybierz ją ze
+swego
 
-plecaka i zarzuć na płytką wodę. Potem czekamy. Ryby tak ucieszą się na pobyt w twoim akwarium, że po złowieniu same wskoczą do szklanej kuli!
+plecaka i zarzuć na płytką
+wodę. Potem czekamy. Ryby
+tak ucieszą się na pobyt w
+twoim akwarium, że po
+złowieniu same wskoczą do
+szklanej kuli!
 
-Po prostu zabierz je do domu i wlej do akwarium, i BĘC! Masz nowego szczęśliwego członka kolekcji!
+Po prostu zabierz je do
+domu i wlej do akwarium, i
+BĘC! Masz nowego
+szczęśliwego członka
+kolekcji!
 
-Opieka nad naszymi podwodnymi sprzymierzeńcami:
+Opieka nad naszymi
+podwodnymi
+sprzymierzeńcami:
 
-Ryby potrzebują do życia czystej wody i pożywienia.
-Nasze akwarium wyposażone jest w pomoc do monitorowania
+Ryby potrzebują do życia
+czystej wody i pożywienia.
+Nasze akwarium wyposażone
+jest w pomoc do
+monitorowania
 
 stanu. To musi być magia!
-Po prostu spójrz na przód akwarium (najedź myszą). Widzisz pomocny i przyjazny przewodnik? Mówi, ile jedzenia i wody potrzeba do utrzymania
+Po prostu spójrz na przód
+akwarium (najedź myszą).
+Widzisz pomocny i
+przyjazny przewodnik?
+Mówi, ile jedzenia i wody
+potrzeba do utrzymania
 
-oraz poprawy jakości zbiornika.
-Nie chcesz zbyt często przekarmiać ryb. Właściwie należy karmić je jedynie co drugi dzień. Pamiętaj jednak, by utrzymywać
+oraz poprawy jakości
+zbiornika.
+Nie chcesz zbyt często
+przekarmiać ryb. Właściwie
+należy karmić je jedynie
+co drugi dzień. Pamiętaj
+jednak, by utrzymywać
 
-wodę mocną i zdrową i regularnie jej dolewać, aby akwarium miało piękny, lśniący błękit.
+wodę mocną i zdrową i
+regularnie jej dolewać,
+aby akwarium miało piękny,
+lśniący błękit.
 
-Mam nadzieję, że zbieranie pięknej kolekcji naszych wspaniałych, płetwiastych przyjaciół z morza da ci tyle samo radości,
+Mam nadzieję, że zbieranie
+pięknej kolekcji naszych
+wspaniałych, płetwiastych
+przyjaciół z morza da ci
+tyle samo radości,
 
 ile mnie!
 
@@ -236,60 +467,152 @@ Udanych połowów!"""
 [translations.por]
 title = "Seu novo aquário"
 content = """
-Boas-vindas ao maravilhoso mundo de ter um aquário. Com um pouco de tempo e habilidade, seu aquário pode se tornar uma obra de arte!
+Boas-vindas ao maravilhoso
+mundo de ter um aquário.
+Com um pouco de tempo e
+habilidade, seu aquário
+pode se tornar uma obra de
+arte!
 
 Pegando peixes:
-Você precisará adquirir uma rede de pesca e vários aquários pequenos de seu pescador local.
-Para usar a rede, selecione-a em sua
+Você precisará adquirir
+uma rede de pesca e vários
+aquários pequenos de seu
+pescador local.
+Para usar a rede,
+selecione-a em sua
 
-mochila e lance-a em águas rasas. Depois esperamos.
-Os peixes ficarão tão felizes de estar em seu aquário que pularão direto para seu aquário pequeno quando forem apanhados!
+mochila e lance-a em águas
+rasas. Depois esperamos.
+Os peixes ficarão tão
+felizes de estar em seu
+aquário que pularão direto
+para seu aquário pequeno
+quando forem apanhados!
 
-Basta levá-los para casa e despejá-los em seu aquário, e PLIM! Você tem um novo e feliz integrante de sua coleção!
+Basta levá-los para casa e
+despejá-los em seu
+aquário, e PLIM! Você tem
+um novo e feliz integrante
+de sua coleção!
 
 Cuidando de nossos
 aliados subaquáticos:
 
-Os peixes precisam de água limpa e comida para sobreviver.
-Nosso aquário vem com um recurso de monitoramento de estado.
+Os peixes precisam de água
+limpa e comida para
+sobreviver.
+Nosso aquário vem com um
+recurso de monitoramento
+de estado.
 
 Deve ser magia!
-Basta olhar a parte da frente de seu aquário (passe o mouse sobre ela). Vê o guia útil e simpático? Ele informa quanta comida e água são necessárias para manter
+Basta olhar a parte da
+frente de seu aquário
+(passe o mouse sobre ela).
+Vê o guia útil e
+simpático? Ele informa
+quanta comida e água são
+necessárias para manter
 
-e melhorar a qualidade de seu aquário.
-Você não deve alimentar demais seus peixes com muita frequência. Na verdade, só deve alimentá-los em dias alternados. Mas lembre-se de manter
+e melhorar a qualidade de
+seu aquário.
+Você não deve alimentar
+demais seus peixes com
+muita frequência. Na
+verdade, só deve
+alimentá-los em dias
+alternados. Mas lembre-se
+de manter
 
-a água vigorosa e saudável e de adicionar mais regularmente, para que seu aquário continue com um lindo azul cintilante.
+a água vigorosa e saudável
+e de adicionar mais
+regularmente, para que seu
+aquário continue com um
+lindo azul cintilante.
 
-Bem, espero que você se divirta tanto
+Bem, espero que você se
+divirta tanto
 
-quanto eu ao colecionar uma bela variedade de nossos bons amigos com barbatanas vindos do mar!
+quanto eu ao colecionar
+uma bela variedade de
+nossos bons amigos com
+barbatanas vindos do mar!
 
 Boa pescaria!"""
 
 [translations.spa]
 title = "Tu nuevo acuario"
 content = """
-Bienvenido al maravilloso mundo de los acuarios. ¡Con un poco de tiempo y habilidad, tu acuario puede convertirse en una obra de arte!
+Bienvenido al maravilloso
+mundo de los acuarios.
+¡Con un poco de tiempo y
+habilidad, tu acuario
+puede convertirse en una
+obra de arte!
 
-Capturar peces: tendrás que conseguir una red de pesca y varias peceras de tu pescador local. Para usar la red, selecciónala en tu
+Capturar peces: tendrás
+que conseguir una red de
+pesca y varias peceras de
+tu pescador local. Para
+usar la red, selecciónala
+en tu
 
-mochila y lánzala a aguas poco profundas. Después esperamos. ¡Los peces estarán tan felices de vivir en tu acuario que saltarán directamente a tu pecera cuando los captures!
+mochila y lánzala a aguas
+poco profundas. Después
+esperamos. ¡Los peces
+estarán tan felices de
+vivir en tu acuario que
+saltarán directamente a tu
+pecera cuando los
+captures!
 
-Solo tienes que llevarlos a casa y verterlos en tu acuario, ¡y BING! ¡Tienes una feliz nueva incorporación a tu colección!
+Solo tienes que llevarlos
+a casa y verterlos en tu
+acuario, ¡y BING! ¡Tienes
+una feliz nueva
+incorporación a tu
+colección!
 
-Cuidar de nuestros aliados submarinos:
+Cuidar de nuestros aliados
+submarinos:
 
-Los peces necesitan agua limpia y comida para sobrevivir. Nuestro acuario incluye una ayuda para controlar su
+Los peces necesitan agua
+limpia y comida para
+sobrevivir. Nuestro
+acuario incluye una ayuda
+para controlar su
 
-estado. ¡Debe de ser magia! Mira la parte frontal de tu acuario, pasando el ratón por encima. ¿Ves esa guía amable y útil? Indica cuánta comida y agua hacen falta para mantener
+estado. ¡Debe de ser
+magia! Mira la parte
+frontal de tu acuario,
+pasando el ratón por
+encima. ¿Ves esa guía
+amable y útil? Indica
+cuánta comida y agua hacen
+falta para mantener
 
-y mejorar la calidad de tu tanque. No conviene alimentar demasiado a tus peces con mucha frecuencia. De hecho, solo debes alimentarlos cada dos días. Pero recuerda mantener
+y mejorar la calidad de tu
+tanque. No conviene
+alimentar demasiado a tus
+peces con mucha
+frecuencia. De hecho, solo
+debes alimentarlos cada
+dos días. Pero recuerda
+mantener
 
-el agua sana y en buen estado, y añadir más regularmente para que tu acuario conserve un hermoso azul brillante.
+el agua sana y en buen
+estado, y añadir más
+regularmente para que tu
+acuario conserve un
+hermoso azul brillante.
 
-Bueno, ¡espero que disfrutes tanto como yo
+Bueno, ¡espero que
+disfrutes tanto como yo
 
-reuniendo una hermosa variedad de nuestros queridos amigos marinos con aletas!
+reuniendo una hermosa
+variedad de nuestros
+queridos amigos marinos
+con aletas!
 
 ¡Buena pesca!"""

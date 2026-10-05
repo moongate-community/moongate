@@ -222,6 +222,12 @@
 30179 = "{0} hat keinen Rucksack, oder er ist voll."
 30180 = "Legt einen Stapel Gold (1 bis 60000) in den Rucksack der Figur oder des NPCs, den du auswählst."
 
+# Moongate: book command (30181-30184).
+30181 = "Kein Dokument {0} in templates/books."
+30182 = "Dokument {0} ist in deinem Rucksack."
+30183 = "Dokument {0} konnte nicht erstellt werden. Prüfe seine Werte und ob dein Rucksack verfügbar ist."
+30184 = "Legt ein Dokument aus templates/books in deinen Rucksack: book <template> [name=value ...]."
+
 # Moongate: texts of the gmtools command (30185-30186).
 30185 = "Öffnet das Gump der Game-Master-Werkzeuge: eine Seitenleiste mit Werkzeugen und ihren Befehlen, zuerst das Wetter."
 30186 = "Das gmtools-Gump fehlt: templates/gumps/gmtools.xml."

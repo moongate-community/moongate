@@ -34,90 +34,222 @@ item_template = "readable_scroll"
 [translations.cze]
 title = "Deník: Objevení hrobky"
 content = """
-Den sedmnáctý až osmnáctý:
+Den sedmnáctý až
+osmnáctý:
 
-Už nemohu dlouho pokračovat. Nyní vím, že nás tu neuvěznila práce země – cítím v tom Jeho
+Už nemohu dlouho
+pokračovat. Nyní vím, že
+nás tu neuvěznila práce
+země – cítím v tom Jeho
 
-sílu. Byla to Jeho vůle, Jeho moc, která nás tu uzavřela v této noční můře. Barikáda nebude stačit. Je jich tolik. Přicházejí jako vlny oceánu
+sílu. Byla to Jeho vůle,
+Jeho moc, která nás tu
+uzavřela v této noční
+můře. Barikáda nebude
+stačit. Je jich tolik.
+Přicházejí jako vlny
+oceánu
 
-– neustále, bez konce. Za každých pět, které srazíme, jich proti nám povstane dalších deset. A jako písek musíme být strženi, obroušeni
+– neustále, bez konce.
+Za každých pět, které
+srazíme, jich proti nám
+povstane dalších deset.
+A jako písek musíme být
+strženi, obroušeni
 
 v tomto oceánu krve."""
 
 [translations.fre]
 title = "Journal : découverte du tombeau"
 content = """
-Du dix-septième au dix-huitième jour :
+Du dix-septième au
+dix-huitième jour :
 
-Je ne puis continuer beaucoup plus longtemps. Je sais maintenant que ce n’est pas l’œuvre de la terre qui nous a piégés ici : je peux y sentir Sa
+Je ne puis continuer
+beaucoup plus longtemps.
+Je sais maintenant que
+ce n’est pas l’œuvre de
+la terre qui nous a
+piégés ici : je peux y
+sentir Sa
 
-force. C’est Sa volonté, Son pouvoir, qui nous ont enfermés ici dans ce cauchemar. La barricade ne suffira pas. Ils sont si nombreux. Ils arrivent comme les vagues de l’océan,
+force. C’est Sa volonté,
+Son pouvoir, qui nous
+ont enfermés ici dans ce
+cauchemar. La barricade
+ne suffira pas. Ils sont
+si nombreux. Ils
+arrivent comme les
+vagues de l’océan,
 
-incessantes, interminables. Pour cinq que nous abattons, dix autres se lèvent contre nous. Et comme les sables, nous ne pouvons que nous laisser emporter, nous laisser user
+incessantes,
+interminables. Pour cinq
+que nous abattons, dix
+autres se lèvent contre
+nous. Et comme les
+sables, nous ne pouvons
+que nous laisser
+emporter, nous laisser
+user
 
 dans cet océan de sang."""
 
 [translations.ger]
 title = "Tagebuch: Entdeckung des Grabes"
 content = """
-Siebzehnter bis achtzehnter Tag:
+Siebzehnter bis
+achtzehnter Tag:
 
-Ich kann nicht mehr lange weitermachen. Ich weiß nun, dass es kein Werk der Erde war, das uns hier gefangen hat – ich kann Seine
+Ich kann nicht mehr
+lange weitermachen. Ich
+weiß nun, dass es kein
+Werk der Erde war, das
+uns hier gefangen hat –
+ich kann Seine
 
-Kraft darin fühlen. Es war Sein Wille, Seine Macht, die uns hier in diesem Albtraum eingeschlossen hat. Die Barrikade wird nicht genügen. So viele von ihnen. Sie kommen wie die Wellen des Ozeans
+Kraft darin fühlen. Es
+war Sein Wille, Seine
+Macht, die uns hier in
+diesem Albtraum
+eingeschlossen hat. Die
+Barrikade wird nicht
+genügen. So viele von
+ihnen. Sie kommen wie
+die Wellen des Ozeans
 
-– unaufhörlich, endlos. Für je fünf, die wir niederschlagen, erheben sich zehn weitere gegen uns. Und wie der Sand müssen wir unweigerlich niedergerissen werden, aufgezehrt
+– unaufhörlich, endlos.
+Für je fünf, die wir
+niederschlagen, erheben
+sich zehn weitere gegen
+uns. Und wie der Sand
+müssen wir unweigerlich
+niedergerissen werden,
+aufgezehrt
 
-in diesem Ozean aus Blut."""
+in diesem Ozean aus
+Blut."""
 
 [translations.ita]
 title = "Diario: scoperta della Tomba"
 content = """
-Giorno Diciassette - Giorno Diciotto :
+Giorno Diciassette -
+Giorno Diciotto :
 
-Non posso andare avanti ancora a lungo. Ora so che non è stata opera della terra a intrappolarci qui: sento la Sua
+Non posso andare avanti
+ancora a lungo. Ora so
+che non è stata opera
+della terra a
+intrappolarci qui: sento
+la Sua
 
-forza in questo. È stata la Sua volontà, il Suo potere a sigillarci qui dentro questo incubo. La barricata non basterà. Sono tanti. Vengono come le onde dell'oceano,
+forza in questo. È stata
+la Sua volontà, il Suo
+potere a sigillarci qui
+dentro questo incubo. La
+barricata non basterà.
+Sono tanti. Vengono come
+le onde dell'oceano,
 
-incessanti, senza fine. Per ogni cinque che abbattiamo, altri dieci sorgono contro di noi. E come la sabbia non possiamo che essere abbattuti, consumati
+incessanti, senza fine.
+Per ogni cinque che
+abbattiamo, altri dieci
+sorgono contro di noi. E
+come la sabbia non
+possiamo che essere
+abbattuti, consumati
 
-in questo oceano di sangue."""
+in questo oceano di
+sangue."""
 
 [translations.pol]
 title = "Dziennik: odkrycie Grobowca"
 content = """
-Dzień siedemnasty — dzień osiemnasty:
+Dzień siedemnasty —
+dzień osiemnasty:
 
-Nie wytrzymam już długo. Teraz wiem, że to nie ruch ziemi uwięził nas tutaj — czuję w tym Jego
+Nie wytrzymam już długo.
+Teraz wiem, że to nie
+ruch ziemi uwięził nas
+tutaj — czuję w tym Jego
 
-moc. To Jego wola, Jego potęga zamknęła nas w tym koszmarze. Barykada nie wystarczy. Tak wielu. Nadchodzą niczym fale oceanu
+moc. To Jego wola, Jego
+potęga zamknęła nas w
+tym koszmarze. Barykada
+nie wystarczy. Tak
+wielu. Nadchodzą niczym
+fale oceanu
 
-— bez ustanku, bez końca. Na każdych pięciu, których powalimy, kolejnych dziesięciu powstaje przeciw nam. A my, jak piasek, nie możemy uniknąć starcia, zniszczenia
+— bez ustanku, bez
+końca. Na każdych
+pięciu, których
+powalimy, kolejnych
+dziesięciu powstaje
+przeciw nam. A my, jak
+piasek, nie możemy
+uniknąć starcia,
+zniszczenia
 
 w tym oceanie krwi."""
 
 [translations.por]
 title = "Diário: descoberta da tumba"
 content = """
-Décimo sétimo dia - Décimo oitavo dia:
+Décimo sétimo dia -
+Décimo oitavo dia:
 
-Não posso continuar por muito mais tempo. Agora sei que não foi uma obra da terra que nos prendeu aqui: posso sentir a força Dele
+Não posso continuar por
+muito mais tempo. Agora
+sei que não foi uma obra
+da terra que nos prendeu
+aqui: posso sentir a
+força Dele
 
-nisso. Foi a vontade Dele, Seu poder, que nos selou aqui neste pesadelo. A barricada não bastará. São tantos. Vêm como as ondas do oceano,
+nisso. Foi a vontade
+Dele, Seu poder, que nos
+selou aqui neste
+pesadelo. A barricada
+não bastará. São tantos.
+Vêm como as ondas do
+oceano,
 
-incessantes, intermináveis. Para cada cinco que derrubamos, outros dez se levantam contra nós. E, como as areias, não podemos evitar sermos derrubados, consumidos
+incessantes,
+intermináveis. Para cada
+cinco que derrubamos,
+outros dez se levantam
+contra nós. E, como as
+areias, não podemos
+evitar sermos
+derrubados, consumidos
 
 neste oceano de sangue."""
 
 [translations.spa]
 title = "Diario: descubrimiento de la tumba"
 content = """
-Día diecisiete - Día dieciocho:
+Día diecisiete - Día
+dieciocho:
 
-No puedo seguir mucho más tiempo. Ahora sé que no fue obra de la tierra lo que nos atrapó aquí: puedo sentir Su
+No puedo seguir mucho
+más tiempo. Ahora sé que
+no fue obra de la tierra
+lo que nos atrapó aquí:
+puedo sentir Su
 
-fuerza en ello. Fue Su voluntad, Su poder, lo que nos encerró en esta pesadilla. La barricada no bastará. Son tantos. Llegan como las olas del océano:
+fuerza en ello. Fue Su
+voluntad, Su poder, lo
+que nos encerró en esta
+pesadilla. La barricada
+no bastará. Son tantos.
+Llegan como las olas del
+océano:
 
-sin cesar, sin fin. Por cada cinco que abatimos, otros diez se alzan contra nosotros. Y, como las arenas, no podemos evitar ser derribados, consumidos
+sin cesar, sin fin. Por
+cada cinco que abatimos,
+otros diez se alzan
+contra nosotros. Y, como
+las arenas, no podemos
+evitar ser derribados,
+consumidos
 
-en este océano de sangre."""
+en este océano de
+sangre."""
