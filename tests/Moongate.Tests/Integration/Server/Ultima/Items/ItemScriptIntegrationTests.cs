@@ -31,6 +31,7 @@ using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
+using Moongate.Tests.TestSupport.Ultima.BulletinBoards;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -56,6 +57,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly RecordingEffectService _effects = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly StubClockService _clock = new();
+    private readonly StubBulletinBoardService _boards = new();
     private readonly ItemService _items;
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
     private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3 };
@@ -110,6 +112,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterScriptEnum<EffectGraphicType>();
         _container.RegisterInstance(TestLocalization.With((398, "C'è una serratura."), (405, "Using your key, you open the door.")));
         _container.AddScriptModule<LocalizationModule>();
+        _container.RegisterInstance<IBulletinBoardService>(_boards);
+        _container.AddScriptModule<BoardModule>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
                 {
@@ -979,6 +983,22 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         var labels = _fixture.Sender.Sent.OfType<LocalizedMessagePacket>().ToList();
         Assert.Equal([(part, ""), (1042958, exact)], labels.Select(label => (label.Cliloc, label.Arguments)));
         Assert.All(labels, label => Assert.Equal(clock.Id, label.Serial));
+    }
+
+    [Fact]
+    public async Task TheShippedBulletinBoardScript_OpensTheBoardOnWhoDoubleClicksIt()
+    {
+        var scripts = await StartItemScriptAsync("bulletin_board", "bulletin_board");
+        var board = new ItemEntity { Id = new Serial(0x40000090), TemplateId = "bulletin_board", ItemId = 0x1E5E, Amount = 1 };
+        board.PlaceOnGround(MapType.Trammel, new Point3D(1496, 1628, 10));
+        _items.Add([board]);
+
+        var result = scripts.Run(board, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        // Handled: nothing else follows the double click.
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        Assert.Equal(board, Assert.Single(_boards.Opened).Board);
     }
 
     private async Task<ItemScriptService> StartLightScriptAsync()
