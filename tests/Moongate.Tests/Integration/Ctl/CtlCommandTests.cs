@@ -150,10 +150,14 @@ public sealed class CtlCommandTests
 
         Assert.Equal(0, result.ExitCode);
         Assert.StartsWith(".       .     _.--.", result.Output);
-        Assert.Matches("Version: [0-9]+\\.[0-9]+\\.[0-9]+ Codename: \"[^\"]+\"", result.Output);
+        Assert.Matches("Version: [0-9]+\\.[0-9]+\\.[0-9]+ \\((Debug|Release)\\) Codename: \"[^\"]+\"", result.Output);
+        // When the binaries were built, to the minute.
+        Assert.Matches("Built: [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2} UTC", result.Output);
         Assert.Contains("Root setup", result.Output);
         Assert.DoesNotContain("{Version}", result.Output);
         Assert.DoesNotContain("{Codename}", result.Output);
+        Assert.DoesNotContain("{Configuration}", result.Output);
+        Assert.DoesNotContain("{BuildTime}", result.Output);
     }
 
     [Fact]

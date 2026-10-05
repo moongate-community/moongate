@@ -35,6 +35,10 @@ public sealed class AdminServerInfoProvider : IAdminServerInfoProvider
             _instanceId,
             _realmId,
             DateTime.UtcNow - _startedAt
-        );
+        )
+        {
+            Configuration = VersionUtils.GetBuildConfiguration(typeof(AdminServerInfoProvider).Assembly),
+            BuiltAt = VersionUtils.GetBuildTime(typeof(AdminServerInfoProvider).Assembly)
+        };
     }
 }

@@ -21,6 +21,8 @@ export const contentEntries = [
   { source: 'docs/commands.md', slug: 'server/commands', title: 'Overview', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/help.md', slug: 'server/commands/help', title: 'help', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/echo.md', slug: 'server/commands/echo', title: 'echo', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/version.md', slug: 'server/commands/version', title: 'version', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/uptime.md', slug: 'server/commands/uptime', title: 'uptime', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/console.md', slug: 'server/commands/console', title: 'console', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/script.md', slug: 'server/commands/script', title: 'script', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/account.md', slug: 'server/commands/account', title: 'account', group: 'Run a shard', subgroup: 'Commands' },

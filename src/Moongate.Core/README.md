@@ -102,6 +102,12 @@ returns an empty string when absent. The server embeds its `Codename` MSBuild
 property into this metadata through its project configuration; merely declaring
 an arbitrary MSBuild property in another project does not embed it automatically.
 
+`VersionUtils.GetBuildTime` and `GetBuildConfiguration` read the `AssemblyMetadata` entries
+`BuildTime` (ISO 8601, UTC) and `BuildConfiguration` (`Debug` or `Release`) an application writes
+at build time; they give `null` and an empty string when the assembly has none.
+`VersionUtils.FormatHeader` fills `{Version}`, `{Codename}`, `{Configuration}` and `{BuildTime}` in
+a banner text, writing `unknown` for what the assembly does not carry.
+
 `NetworkUtils.GetLocalIpAddresses()` enumerates local unicast addresses without
 filtering loopback, inactive interfaces, duplicates or address family. Apply the
 filters appropriate to your application, as above. These are local interface
