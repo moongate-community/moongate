@@ -95,7 +95,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
 
         Assert.Contains(_view.Calls, call => call.StartsWith($"ContainedAppeared {ruby.Id.Value} in {chest.Id.Value}", StringComparison.Ordinal));
         Assert.True(_items.TryGet(ruby.Id, out _));
-        Assert.Empty(_world.Items.Upserted.Where(item => item.Id == ruby.Id));
+        Assert.DoesNotContain(_world.Items.Upserted, item => item.Id == ruby.Id);
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
 
         Assert.Contains($"Appeared {gold.Id.Value}", _view.Calls);
         Assert.True(_items.TryGet(gold.Id, out _));
-        Assert.Empty(_world.Items.Upserted.Where(item => item.Id == gold.Id));
+        Assert.DoesNotContain(_world.Items.Upserted, item => item.Id == gold.Id);
     }
 
     [Fact]

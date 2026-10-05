@@ -234,7 +234,7 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
         // The heading of the frame is the one text left as it is.
         Assert.Single(System.Text.RegularExpressions.Regex.Matches(built.Layout, @"\{ text "));
         // The path, Back, Towns and Arena.
-        Assert.Equal(4, System.Text.RegularExpressions.Regex.Matches(built.Layout, @"\{ croppedtext ").Count);
+        Assert.Equal(4, System.Text.RegularExpressions.Regex.Count(built.Layout, @"\{ croppedtext "));
     }
 
     [Fact]

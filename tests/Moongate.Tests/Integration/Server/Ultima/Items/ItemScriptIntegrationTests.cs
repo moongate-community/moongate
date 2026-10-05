@@ -40,7 +40,6 @@ using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
-using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Items;
 

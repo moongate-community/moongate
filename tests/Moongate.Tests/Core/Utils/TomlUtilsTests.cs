@@ -257,7 +257,7 @@ public sealed class TomlUtilsTests
     }
 
     [Fact]
-    public void RemoveTomlConverter_WhileOthersRead_NeverHidesAnotherConverter()
+    public async Task RemoveTomlConverter_WhileOthersRead_NeverHidesAnotherConverter()
     {
         TomlUtils.AddTomlConverter(new RegistryTomlConverter<StableRegistryMarker>());
         var missing = 0;
@@ -281,8 +281,8 @@ public sealed class TomlUtilsTests
             TomlUtils.RemoveTomlConverter<RecordingTomlConverter>();
         }
 
-        stop.Cancel();
-        reader.Wait();
+        await stop.CancelAsync();
+        await reader;
 
         Assert.Equal(0, missing);
     }
