@@ -1,0 +1,12 @@
+# What it is for:
+#   Readable documents whose text is saved on their individual item.
+# Fields:
+#   script_id delegates double click to book.open; stackable must be false.
+
+[[item]]
+id = "readable_scroll"
+item_id = 0x14ED
+name = "a scroll"
+script_id = "readable_scroll"
+stackable = false
+weight = 1

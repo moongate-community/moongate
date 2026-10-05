@@ -1,0 +1,28 @@
+# What it is for:
+#   A personal welcome letter: book.give(player, "welcome_letter", { contact_name = "Vega" }).
+# Fields:
+#   title, author and content are plain text resolved once at creation.
+#   variables lists additional values that the creating script must supply.
+
+title = "Welcome $player_name"
+author = "Lord British"
+content = """
+Dear $player_name,
+
+Welcome to $server_name.
+Bring this letter to $contact_name.
+
+May your journey be a long one.
+"""
+variables = ["contact_name"]
+
+[translations.ita]
+title = "Benvenuto $player_name"
+content = """
+Caro $player_name,
+
+Benvenuto a $server_name.
+Porta questa lettera a $contact_name.
+
+Che il tuo viaggio sia lungo e felice.
+"""
