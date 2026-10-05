@@ -50,10 +50,14 @@ end
 
 function banker.on_speech(serial, speaker, text, keywords)
     if has_keyword(keywords, SpeechKeywordType.Bank) or text:lower():find("bank", 1, true) then
+        npc.look_at(serial, speaker)
         bank.open(speaker)
     end
 end
 ```
+
+The banker turns to who asks (`npc.look_at`): an NPC is born facing south, and a banker never walks,
+so without it every banker of a bank would face the same way for ever.
 
 `on_speech` gets the speech keywords the client found as a fourth argument, an array of numbers;
 `SpeechKeywordType` names the bank's (`Withdraw`, `Balance`, `Bank`, `Check`). Any mobile script

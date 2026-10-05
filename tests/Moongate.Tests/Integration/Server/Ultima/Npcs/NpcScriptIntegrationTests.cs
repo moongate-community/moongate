@@ -312,6 +312,48 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.Equal([_aria, _aria], _bank.Opened);
     }
 
+    [Fact]
+    public async Task TheShippedBankerScript_TurnsToWhoAsksForTheBank_NotToWhoSaysAnythingElse()
+    {
+        // Every NPC is born facing south: one that never walks would stay so.
+        _scripts.Write("mobiles/banker.lua", File.ReadAllText(ShippedScript("mobiles/banker.lua")));
+        var templates = new MobileTemplateService(
+            new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = "banker" })
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        await scripts.StartAsync();
+        var hearing = new NpcHearingService(scripts, _sectors);
+
+        hearing.Heard(_aria, "nice weather");
+        Assert.Equal(DirectionType.North, _cat.Direction);
+
+        hearing.Heard(_aria, "bank");
+
+        Assert.Empty(_errors);
+        // Aria stands to the east.
+        Assert.Equal(DirectionType.East, _cat.Direction);
+    }
+
+    [Theory, InlineData("wander"), InlineData("vega")]
+    public async Task TheShippedScriptsThatAnswerAGreeting_TurnToWhoGreets(string script)
+    {
+        _scripts.Write($"mobiles/{script}.lua", File.ReadAllText(ShippedScript($"mobiles/{script}.lua")));
+        var templates = new MobileTemplateService(
+            new StubDataLoaderService().With(new MobileTemplate { Id = "cat", ScriptId = script })
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        await scripts.StartAsync();
+
+        new NpcHearingService(scripts, _sectors).Heard(_aria, "Hello!");
+
+        Assert.Empty(_errors);
+        Assert.Equal(DirectionType.East, _cat.Direction);
+    }
+
     public void Dispose()
     {
         foreach (var engine in _engines)

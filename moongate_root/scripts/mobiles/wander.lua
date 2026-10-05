@@ -40,6 +40,7 @@ end
 -- Called when a player says something within 15 cells. It may call wait().
 function wander.on_speech(serial, speaker, text)
     if text:lower():find("hello", 1, true) then
+        npc.look_at(serial, speaker)
         wait(1)
         npc.say(serial, "Well met, traveller.")
     end

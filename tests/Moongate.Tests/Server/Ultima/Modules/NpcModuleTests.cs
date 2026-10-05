@@ -534,6 +534,15 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void LookAt_TurnsTheNpcTowardsTheMobile_AndRefusesWhatItCannotLookAt()
+    {
+        // Aria (2) stands east of the NPC (256); 999 is nobody, 256 is itself.
+        var result = Run("return npc.look_at(256, 2), npc.look_at(256, 999), npc.look_at(256, 256), npc.look_at(2, 256), npc.look_at(256, -1)");
+
+        Assert.Equal([true, false, false, false, false], result.Select(value => value.Read<bool>()));
+    }
+
+    [Fact]
     public void Face_AFrozenNpc_DoesNotTurn()
     {
         _orc.Frozen = true;
