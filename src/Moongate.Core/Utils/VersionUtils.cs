@@ -86,6 +86,21 @@ public static class VersionUtils
     }
 
     /// <summary>
+    ///     Formats a build configuration for display: the configuration itself, or <c>unknown</c> when the assembly
+    ///     did not carry one.
+    /// </summary>
+    /// <param name="configuration">
+    ///     The configuration as <see cref="GetBuildConfiguration" /> gives it.
+    /// </param>
+    /// <returns>
+    ///     <c>Debug</c>, <c>Release</c> or <c>unknown</c>.
+    /// </returns>
+    public static string FormatBuildConfiguration(string? configuration)
+    {
+        return string.IsNullOrEmpty(configuration) ? Unknown : configuration;
+    }
+
+    /// <summary>
     ///     Fills the placeholders of a startup header with the metadata of the specified assembly:
     ///     <c>{Version}</c>, <c>{Codename}</c>, <c>{Configuration}</c> and <c>{BuildTime}</c>.
     /// </summary>
@@ -102,11 +117,9 @@ public static class VersionUtils
     {
         ArgumentNullException.ThrowIfNull(template);
 
-        var configuration = GetBuildConfiguration(assembly);
-
         return template.Replace("{Version}", GetVersion(assembly), StringComparison.Ordinal)
                        .Replace("{Codename}", GetCodename(assembly), StringComparison.Ordinal)
-                       .Replace("{Configuration}", configuration.Length == 0 ? Unknown : configuration, StringComparison.Ordinal)
+                       .Replace("{Configuration}", FormatBuildConfiguration(GetBuildConfiguration(assembly)), StringComparison.Ordinal)
                        .Replace("{BuildTime}", FormatBuildTime(GetBuildTime(assembly)), StringComparison.Ordinal);
     }
 

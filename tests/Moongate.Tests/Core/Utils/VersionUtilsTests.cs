@@ -142,6 +142,37 @@ public sealed class VersionUtilsTests
         Assert.Contains(VersionUtils.GetBuildConfiguration(assembly), new[] { "Debug", "Release" });
     }
 
+    [Theory, InlineData("Release", "Release"), InlineData("Debug", "Debug"), InlineData("", "unknown")]
+    public void FormatBuildConfiguration_IsTheConfiguration_OrUnknown(string configuration, string shown)
+    {
+        Assert.Equal(shown, VersionUtils.FormatBuildConfiguration(configuration));
+    }
+
+    // The two lines under the banner sit in its middle, as the banner is drawn.
+    [Fact]
+    public void TheHeaderOfTheServer_HasItsVersionAndBuildLinesInTheMiddleOfTheBanner()
+    {
+        var server = typeof(Moongate.Server.Commands.EchoCommand).Assembly;
+        var template = ResourceUtils.GetEmbeddedResourceString(server, "Assets/header.txt");
+        var assembly = DynamicAssemblyFactory.Create(
+            new(1, 0, 0, 0),
+            "0.14.0",
+            "Lilly",
+            new Dictionary<string, string> { ["BuildTime"] = "2026-10-05T14:32:07Z", ["BuildConfiguration"] = "Release" }
+        );
+
+        var lines = VersionUtils.FormatHeader(template, assembly).Split('\n').Select(line => line.TrimEnd('\r')).ToArray();
+        var width = lines.Max(line => line.Length);
+
+        foreach (var line in lines.Where(line => line.Contains("Version:") || line.Contains("Built:")))
+        {
+            var left = line.Length - line.TrimStart().Length;
+            var right = width - line.Length;
+
+            Assert.InRange(left - right, -2, 2);
+        }
+    }
+
     private static System.Reflection.Assembly Built(string? time, string configuration)
     {
         var metadata = new Dictionary<string, string> { ["BuildConfiguration"] = configuration };

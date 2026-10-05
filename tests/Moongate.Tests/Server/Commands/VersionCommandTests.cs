@@ -49,10 +49,7 @@ public sealed class VersionCommandTests
 
     private static AdminServerInfo Info(string configuration, DateTimeOffset? builtAt)
     {
-        return new("0.14.0", "Lilly", ServerMode.Standalone, "test", null, TimeSpan.FromMinutes(5))
-        {
-            Configuration = configuration, BuiltAt = builtAt
-        };
+        return new("0.14.0", "Lilly", ServerMode.Standalone, "test", null, TimeSpan.FromMinutes(5), configuration, builtAt);
     }
 
     private static async Task<CommandContext> RunAsync(AdminServerInfo info, params string[] arguments)

@@ -17,12 +17,12 @@ public sealed class AdminServerInfo
     /// <summary>
     ///     Gets the configuration the server was built in, Debug or Release; empty when its build did not say.
     /// </summary>
-    public string Configuration { get; init; } = "";
+    public string Configuration { get; }
 
     /// <summary>
     ///     Gets when the server was built, in UTC; null when its build did not say.
     /// </summary>
-    public DateTimeOffset? BuiltAt { get; init; }
+    public DateTimeOffset? BuiltAt { get; }
 
     public AdminServerInfo(
         string version,
@@ -30,7 +30,9 @@ public sealed class AdminServerInfo
         ServerMode mode,
         string instanceId,
         string? realmId,
-        TimeSpan uptime
+        TimeSpan uptime,
+        string configuration = "",
+        DateTimeOffset? builtAt = null
     )
     {
         Version = version;
@@ -39,5 +41,7 @@ public sealed class AdminServerInfo
         InstanceId = instanceId;
         RealmId = realmId;
         Uptime = uptime;
+        Configuration = configuration;
+        BuiltAt = builtAt;
     }
 }

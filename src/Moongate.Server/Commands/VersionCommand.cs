@@ -14,8 +14,6 @@ namespace Moongate.Server.Commands;
 /// </summary>
 public sealed class VersionCommand : ICommandExecutor
 {
-    private const string Unknown = "unknown";
-
     private readonly IAdminServerInfoProvider _info;
     private readonly ILocalizationService? _localization;
 
@@ -41,7 +39,7 @@ public sealed class VersionCommand : ICommandExecutor
                 "Moongate {0} \"{1}\" ({2}), built {3}.",
                 info.Version,
                 info.Codename,
-                info.Configuration.Length == 0 ? Unknown : info.Configuration,
+                VersionUtils.FormatBuildConfiguration(info.Configuration),
                 VersionUtils.FormatBuildTime(info.BuiltAt)
             )
         );
