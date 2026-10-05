@@ -1,9 +1,12 @@
 # ==============================================================================
-# Moongate - templates/decorations/britannia/magincia.toml
+# Moongate - templates/decorations/_old_magincia/magincia.toml
 #
 # What it is for:
-#   World decoration placed on Trammel and Felucca: doors, signs, lights, furniture and
-#   the other items the client's map files do not hold. Each block is one kind
+#   World decoration of Trammel and Felucca for the Magincia of old clients, before
+#   the city was destroyed: lights, furniture and the other items the client's map
+#   files do not hold. Not loaded: the map of a current client holds New Magincia,
+#   without those buildings, and this furniture would stand in the open. For an old
+#   client, move the file to britannia/. Each block is one kind
 #   of item placed at every location it lists.
 #
 # Fields:

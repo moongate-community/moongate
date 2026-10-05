@@ -458,9 +458,11 @@ ModernUO's `signs.cfg` (`signs.toml`, written by
 teleporters of its `teleporters.json` (`teleporters.toml`, written by
 [`mgctl convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
-`tokuno/`, `termur/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
-`_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename it without the `_`
-to place its decoration. Files starting with `_` inside a loaded folder (the dungeons, such as
+`tokuno/`, `termur/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/`,
+`_old_magincia/` and `_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename
+it without the `_` to place its decoration. `_old_magincia/` is the furniture of Magincia as it
+was before its destruction: the map of a current client holds New Magincia, rebuilt without those
+buildings, so the set stays out; with an old client, move its file to `britannia/`. Files starting with `_` inside a loaded folder (the dungeons, such as
 `britannia/_covetous.toml`) are loaded.
 
 ```toml
