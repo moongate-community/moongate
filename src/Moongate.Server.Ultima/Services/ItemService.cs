@@ -35,6 +35,10 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     private readonly ConcurrentDictionary<Serial, ItemEntity> _items = new();
     private readonly ConcurrentDictionary<Serial, Serial?> _tombstones = new();
+
+    // What lies inside a container that changed place: unchanged itself, but the database deletes it with the row the
+    // container was under when that row goes in the same save (a dead NPC's backpack), so the save writes it again.
+    private readonly ConcurrentDictionary<Serial, byte> _rewrites = new();
     private readonly ConcurrentDictionary<Serial, Serial> _released = new();
     private readonly ConcurrentDictionary<Serial, ConcurrentDictionary<Serial, ItemEntity>> _worn = new();
 
@@ -250,6 +254,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         item.PutInContainer(container, position, ContainerSlotUtils.FirstFree(others, gridIndex));
         Index(item);
         _decay?.Stop(item);
+        RewriteContents(item);
         WearerChanged(item, wearer);
     }
 
@@ -261,6 +266,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         item.PlaceOnGround(map, location);
         _sectors.AddItem(item);
         _decay?.Restart(item);
+        RewriteContents(item);
         WearerChanged(item, wearer);
     }
 
@@ -272,6 +278,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         item.Equip(mobile, layer);
         Index(item);
         _decay?.Stop(item);
+        RewriteContents(item);
         WearerChanged(item, wearer);
     }
 
@@ -417,6 +424,31 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         foreach (var serial in serials)
         {
             _tombstones.TryRemove(serial, out _);
+        }
+    }
+
+    public IReadOnlyCollection<Serial> CaptureRewrites()
+    {
+        return _rewrites.Keys.ToArray();
+    }
+
+    public void RewritesCommitted(IReadOnlyCollection<Serial> serials)
+    {
+        foreach (var serial in serials)
+        {
+            _rewrites.TryRemove(serial, out _);
+        }
+    }
+
+    // Everything inside the item, at any depth.
+    private void RewriteContents(ItemEntity item)
+    {
+        var inside = new List<ItemEntity>(GetContents(item.Id));
+
+        for (var index = 0; index < inside.Count; index++)
+        {
+            _rewrites[inside[index].Id] = 0;
+            inside.AddRange(GetContents(inside[index].Id));
         }
     }
 

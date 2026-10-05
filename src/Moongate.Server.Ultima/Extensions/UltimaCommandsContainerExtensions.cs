@@ -66,6 +66,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.RemoveDescription
         );
+        container.RegisterCommand<KillCommand>(
+            "kill",
+            "Kills the NPC you target: it dies where it stands and leaves its corpse.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.KillDescription
+        );
         container.RegisterCommand<FameCommand>(
             "fame",
             "Sets the fame (0 to 32000) of the character or NPC you target.",

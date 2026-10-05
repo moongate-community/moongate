@@ -122,22 +122,23 @@ public sealed class NpcService : INpcService
     public async Task<bool> RemoveAsync(Serial serial, CancellationToken cancellationToken = default)
     {
         var removed = false;
-        await OnLoopAsync(
-            () =>
-            {
-                if (!_mobiles.TryGet(serial, out var npc) || !npc.IsNpc)
-                {
-                    return;
-                }
+        await OnLoopAsync(() => removed = Remove(serial), cancellationToken);
 
-                // Still in the grid: the players around it can be told.
-                _view.Left(npc);
-                _items.Remove(_items.GetOwnedBy(npc.Id).Select(item => item.Id));
-                removed = _mobiles.Delete(npc.Id);
-                _paths?.Forget(npc.Id);
-            },
-            cancellationToken
-        );
+        return removed;
+    }
+
+    public bool Remove(Serial serial)
+    {
+        if (!_mobiles.TryGet(serial, out var npc) || !npc.IsNpc)
+        {
+            return false;
+        }
+
+        // Still in the grid: the players around it can be told.
+        _view.Left(npc);
+        _items.Remove(_items.GetOwnedBy(npc.Id).Select(item => item.Id));
+        var removed = _mobiles.Delete(npc.Id);
+        _paths?.Forget(npc.Id);
 
         return removed;
     }

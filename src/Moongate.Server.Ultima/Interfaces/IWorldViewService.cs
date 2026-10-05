@@ -69,6 +69,13 @@ public interface IWorldViewService
     void MobileFlagsChanged(MobileEntity mobile);
 
     /// <summary>
+    ///     The mobile died: the players who see it are sent the death (0xAF), which their client plays on the body and
+    ///     ties to <paramref name="corpse" />; a zero serial when it leaves none. Called before the mobile leaves the
+    ///     world.
+    /// </summary>
+    void MobileDied(MobileEntity mobile, Serial corpse);
+
+    /// <summary>
     ///     Call it after <see cref="MobileEntity.Hidden" /> changed: a hidden mobile leaves the screens of the players
     ///     in range (0x1D) and one revealed is shown to them again (0x78); the staff, who sees it either way, and the
     ///     mobile's own player get its new flags (0x77).

@@ -20,6 +20,7 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
     private readonly Func<T, T> _snapshot;
     private readonly IPersistenceDeletionSource? _deletions;
     private IReadOnlyCollection<Serial> _captured = [];
+    private IReadOnlyCollection<Serial> _capturedRewrites = [];
 
     // The fingerprints of the last committed save, and those of the save in progress, adopted on its commit: a failed
     // save leaves the old ones, so its entities are written again.
@@ -76,6 +77,8 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
         entityCount = values.Count;
         var deletions = (_deletions?.Capture() ?? []).Where(id => !ids.Contains(id)).ToArray();
         _captured = deletions;
+        var rewrites = (_deletions?.CaptureRewrites() ?? []).ToHashSet();
+        _capturedRewrites = rewrites;
         _pending = null;
         Written = 0;
         // The first save and every FullWriteEvery-th one after it write everything.
@@ -94,7 +97,10 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
                 var fingerprint = SnapshotFingerprint.Of(value);
                 pending[value.Id] = fingerprint;
 
-                if (full || !saved.TryGetValue(value.Id, out var previous) || previous != fingerprint)
+                if (full ||
+                    rewrites.Contains(value.Id) ||
+                    !saved.TryGetValue(value.Id, out var previous) ||
+                    previous != fingerprint)
                 {
                     changed.Add(value);
                 }
@@ -132,6 +138,14 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
         if (_deletions is not null && captured.Count > 0)
         {
             _deletions.Committed(captured);
+        }
+
+        var rewrites = _capturedRewrites;
+        _capturedRewrites = [];
+
+        if (_deletions is not null && rewrites.Count > 0)
+        {
+            _deletions.RewritesCommitted(rewrites);
         }
     }
 }

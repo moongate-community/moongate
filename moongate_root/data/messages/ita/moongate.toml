@@ -175,3 +175,9 @@
 30148 = "Sei stato imprigionato per {0} giorni: {1}"
 30149 = "Motivo: {0}"
 30150 = "Nessun personaggio si chiama {0}."
+
+# Moongate: texts of death (30151 the name of a corpse, 30152-30154 of the kill command).
+30151 = "i resti di {0}"
+30152 = "Uccide l'NPC che scegli: muore dove si trova e lascia il suo cadavere."
+30153 = "{0} è morto."
+30154 = "I giocatori non possono ancora morire."

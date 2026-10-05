@@ -32,4 +32,10 @@ public interface INpcService : IMoongateStartupService
     ///     game loop.
     /// </summary>
     Task<bool> RemoveAsync(Serial serial, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     As <see cref="RemoveAsync" />, at once, for the code that already runs on the game loop, such as a death.
+    ///     Call it on the game loop.
+    /// </summary>
+    bool Remove(Serial serial);
 }

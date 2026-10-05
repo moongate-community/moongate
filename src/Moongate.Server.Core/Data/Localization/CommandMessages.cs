@@ -135,4 +135,7 @@ public static class CommandMessages
     public const int NotACharacter = 30146;
     public const int JailGumpMissing = 30147;
     public const int JailNobodyNamed = 30150;
+    public const int KillDescription = 30152;
+    public const int Killed = 30153;
+    public const int PlayersCannotDie = 30154;
 }

@@ -4309,5 +4309,44 @@
     ],
     "notes": "The hue the player picked in the hue picker. Nothing is sent when the picker is closed.",
     "handler": "HuePickerResponsePacketHandler: gives the hue to the player's open picker; ignored when the id is not the one of the open picker."
+  },
+  "0xAF:outgoing": {
+    "category": "Mobiles",
+    "tags": [
+      "Mobiles",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of who died"
+      },
+      {
+        "offset": "5",
+        "name": "Corpse",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of its corpse, 0 when it leaves none"
+      },
+      {
+        "offset": "9",
+        "name": "Unused",
+        "type": "uint",
+        "size": "4",
+        "description": "Zero."
+      }
+    ],
+    "notes": "Makes the client play the death of the mobile and tie it to its corpse; the client picks the animation of the body.",
+    "handler": "DeathService: sent to the players who see an NPC die, after its corpse and before its removal."
   }
 }

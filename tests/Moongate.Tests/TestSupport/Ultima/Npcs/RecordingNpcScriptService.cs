@@ -11,9 +11,19 @@ public sealed class RecordingNpcScriptService : INpcScriptService
 {
     public List<string> Calls { get; } = [];
 
+    /// <summary>
+    ///     What every run throws after it is recorded; null for none.
+    /// </summary>
+    public Exception? Throws { get; set; }
+
     public ScriptResult Run(MobileEntity npc, string function, params object?[] args)
     {
         Record("Run", npc, function, args);
+
+        if (Throws is not null)
+        {
+            throw Throws;
+        }
 
         return ScriptResult.Completed([]);
     }

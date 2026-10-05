@@ -78,6 +78,15 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedItemTemplates_HaveTheCorpse_ThatCannotBePickedUpAndDecays()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        var corpse = templates["corpse"];
+        Assert.Equal((0x2006u, (bool?)false, (bool?)true, (int?)7), (corpse.ItemId.Value, corpse.Movable, corpse.Decays, corpse.DecayMinutes));
+    }
+
+    [Fact]
     public async Task ShippedItemTemplates_HaveTheDyesTheDyeTubAndDyeableClothing()
     {
         var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);

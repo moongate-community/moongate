@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 76 done, 🟡 43 partly done, ❌ 149 not built yet.
+**268 systems:** ✅ 76 done, 🟡 44 partly done, ❌ 148 not built yet.
 
-**Coverage: 28%** of the systems done, **36%** counting a partly done system as half.
+**Coverage: 28%** of the systems done, **37%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -55,7 +55,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
 | Hiding and stealth | ❌ | A script can hide a mobile with `mobile.set_hidden`; no skill |
-| Death, corpses, ghosts and resurrection | ❌ | |
+| Death, corpses, ghosts and resurrection | 🟡 | An NPC dies by `.kill` or `mobile.kill`: corpse with what it carried, death animation and sound, decay after 7 minutes. No player death, ghosts or resurrection; nothing fights yet |
 | Young player protection | ❌ | |
 | Murder reports and bounty boards | ❌ | |
 | Virtues | ❌ | |

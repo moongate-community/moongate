@@ -6,6 +6,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Death;
 using Moongate.Server.Ultima.Data.Internal.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
@@ -275,6 +276,20 @@ public sealed class WorldViewService : IWorldViewService
         }
     }
 
+    public void MobileDied(MobileEntity mobile, Serial corpse)
+    {
+        var death = new DeathAnimationPacket(mobile.Id, corpse);
+
+        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            // Not its own player: the client of who dies is told another way.
+            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
+            {
+                _sender.TrySend(viewer.SessionId, death);
+            }
+        }
+    }
+
     public void MobileFlagsChanged(MobileEntity mobile)
     {
         var moving = Moving(mobile, false);
@@ -439,15 +454,42 @@ public sealed class WorldViewService : IWorldViewService
         {
             var highSeas = version is null || version.CompareTo(HighSeas) >= 0;
 
-            return new WorldItemSaPacket(item.Id, graphic, item.Amount, spot, item.Hue, highSeas, LightOf(item));
+            return new WorldItemSaPacket(item.Id, graphic, AmountOf(item), spot, item.Hue, highSeas, LightOf(item));
         }
 
-        return new WorldItemPacket(item.Id, graphic, item.Amount, spot, item.Hue, LightOf(item));
+        return new WorldItemPacket(item.Id, graphic, AmountOf(item), spot, item.Hue, LightOf(item));
     }
 
-    // The item's light shape, kept in its "light" prop by name, such as circle150; none for anything else.
+    // A corpse tells the client its body in the place of the amount.
+    private static int AmountOf(ItemEntity item)
+    {
+        return item.ItemId == CorpseProps.Graphic && WholeProp(item, CorpseProps.Body) is { } body ? body : item.Amount;
+    }
+
+    // A prop that holds a whole number from 0 to 65535, however it was written; null for anything else, as a script
+    // may have put there.
+    private static int? WholeProp(ItemEntity item, string key)
+    {
+        var number = item.Props?.GetValueOrDefault(key) switch
+        {
+            int value    => value,
+            long value   => value,
+            double value => value,
+            _            => double.NaN
+        };
+
+        return number is >= 0 and <= ushort.MaxValue && Math.Floor(number) == number ? (int)number : null;
+    }
+
+    // The item's light shape, kept in its "light" prop by name, such as circle150; none for anything else. A corpse
+    // tells the client the way it lies in the same byte, as ServUO does.
     private static int LightOf(ItemEntity item)
     {
+        if (item.ItemId == CorpseProps.Graphic && WholeProp(item, CorpseProps.Direction) is { } direction)
+        {
+            return direction & 0xFF;
+        }
+
         return item.Props?.GetValueOrDefault("light") is string name && EnumNameUtils.TryParse<LightType>(name, out var light)
             ? (int)light
             : 0;
