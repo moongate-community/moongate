@@ -252,7 +252,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Party | ❌ | |
 | Guilds | ❌ | |
 | Chat window | ❌ | |
-| Bulletin boards | ✅ | Every board has its own messages, in threads with replies; the poster or a game master removes; threads expire some days after their last reply and a full board lets its oldest thread go, both from settings; see [Bulletin boards](bulletin-boards.md) |
+| Bulletin boards | ✅ | Every board has its own messages, in threads with replies; the poster or a game master removes; threads expire some days after their last reply and a full board lets its oldest thread go, both from settings; scripts post, list and remove with the `board` module; see [Bulletin boards](bulletin-boards.md) |
 | Duels, arenas and tournaments | ❌ | |
 | Character profile | ❌ | |
 | Tips window | ❌ | |
