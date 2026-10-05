@@ -133,7 +133,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | NPC templates, names, equipment and loot | ✅ | Dressed and with their loot at spawn |
-| Scripted behaviour | ✅ | Lua mobile scripts: `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range` |
+| Scripted behaviour | ✅ | Lua mobile scripts: `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, `on_death`, `on_drag_drop` |
 | Sleeping away from players | ✅ | NPCs think only near a player |
 | Wandering | 🟡 | `wander.lua` keeps spawned NPCs in their home area |
 | Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*, *balance*, *withdraw* and *check*, and the word *deposit*, which has no keyword; no vendor keywords yet |

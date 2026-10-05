@@ -5,6 +5,7 @@ using Moongate.Tests.TestSupport.Ultima.Weight;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Scripting.Data.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Data.Containers;
@@ -21,6 +22,7 @@ using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Npcs;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
@@ -63,6 +65,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly StubContainerCapacityService _capacity = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingFatigueService _fatigue = new();
+    private readonly RecordingNpcScriptService _npcScripts = new();
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -925,6 +928,159 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
     }
 
+    // The NPC's script says it took the item, and it deleted it: the client drops it from the cursor.
+    [Fact]
+    public async Task Handle_OnAnNpcWhoseScriptTakesTheItem_AsksOnDragDrop_AndTheItemLeavesTheCursor()
+    {
+        var banker = Npc(1498);
+        _npcScripts.Result = ScriptResult.Completed([true]);
+        _npcScripts.OnRun = _ =>
+        {
+            // Not on the cursor any more while the script is asked: it may delete or move the item.
+            Assert.Null(_session.Get(ItemSessionKeys.Held));
+            _items.Remove([_coins.Id]);
+        };
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, banker.Id);
+
+        Assert.Equal([$"Run {banker.Id.Value} on_drag_drop 2 {_coins.Id.Value}"], _npcScripts.Calls);
+        Assert.Equal(_coins.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(_sender.Sent)).Serial);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        // What the giver carries changed.
+        Assert.Single(_fatigue.Loads);
+        Assert.Empty(_scripts.Queued);
+    }
+
+    // The script moved it somewhere the giver carries: the giver sees it there.
+    [Fact]
+    public async Task Handle_OnAnNpcWhoseScriptMovesTheItemToTheGiver_ShowsItWhereItIsNow()
+    {
+        var banker = Npc(1498);
+        _npcScripts.Result = ScriptResult.Completed([true]);
+        _npcScripts.OnRun = _ => _items.MoveToContainer(_coins, _bag.Id, new Point2D(60, 70), 0);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, banker.Id);
+
+        AssertAt(_coins, _bag.Id, new Point2D(60, 70));
+    }
+
+    // The script moved it to someone else: the giver's client forgets it.
+    [Fact]
+    public async Task Handle_OnAnNpcWhoseScriptMovesTheItemToSomeoneElse_RemovesItForTheGiver()
+    {
+        var banker = Npc(1498);
+        _npcScripts.Result = ScriptResult.Completed([true]);
+        _npcScripts.OnRun = _ => _items.MoveToContainer(_coins, _otherBackpack.Id, new Point2D(60, 70), 0);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, banker.Id);
+
+        Assert.Equal(_coins.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(_sender.Sent)).Serial);
+        Assert.Equal(_otherBackpack.Id, _coins.ContainerId);
+    }
+
+    // Only true takes the item: nothing, false, any other value or a script that waits bounce it.
+    [Theory]
+    [InlineData("nothing")]
+    [InlineData("false")]
+    [InlineData("number")]
+    [InlineData("waits")]
+    [InlineData("missing")]
+    public async Task Handle_OnAnNpcWhoseScriptDoesNotTakeTheItem_BouncesBack(string answer)
+    {
+        var banker = Npc(1498);
+        _npcScripts.Result = answer switch
+        {
+            "nothing" => ScriptResult.Completed([]),
+            "false"   => ScriptResult.Completed([false]),
+            "number"  => ScriptResult.Completed([1L]),
+            "waits"   => ScriptResult.Suspended,
+            _         => ScriptResult.Missing
+        };
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, banker.Id);
+
+        Assert.Single(_npcScripts.Calls);
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+    }
+
+    [Fact]
+    public async Task Handle_OnAnNpcTwoTilesAway_IsAsked_ThreeTilesAway_IsNot()
+    {
+        var near = Npc(1498);
+        var far = Npc(1499, 0x101);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, far.Id);
+
+        Assert.Empty(_npcScripts.Calls);
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(ItemSessionKeys.Held, new(_coins.Id)));
+        await DropAsync(_coins.Id, 0, 0, near.Id);
+
+        Assert.Single(_npcScripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_OnAnNpcOfAnotherMap_IsNotAsked()
+    {
+        var banker = Npc(1497, map: MapType.Felucca);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, banker.Id);
+
+        Assert.Empty(_npcScripts.Calls);
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+    }
+
+    // A player is not an NPC, and nobody gives an item to itself.
+    [Theory]
+    [InlineData(0x00000002u)]
+    [InlineData(0x00000003u)]
+    public async Task Handle_OnAPlayer_AsksNoScript(uint player)
+    {
+        _mobiles.EnterWorld(
+            new() { Id = Bran, Name = "Bran", AccountId = new Serial(1003), Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) }
+        );
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, new Serial(player));
+
+        Assert.Empty(_npcScripts.Calls);
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+    }
+
+    [Fact]
+    public async Task Handle_OnAnNpc_WhenTheItemsScriptRefusesTheDrop_TheNpcIsNotAsked()
+    {
+        var banker = Npc(1498);
+        _scripts.Scripted.Add("item");
+        _scripts.Refused.Add("can_drop");
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, banker.Id);
+
+        Assert.Empty(_npcScripts.Calls);
+    }
+
+    // Taken off the paperdoll and given away: those around see it is worn no more.
+    [Fact]
+    public async Task Handle_AWornItemAnNpcTakes_IsTakenOffForThoseAround()
+    {
+        var banker = Npc(1498);
+        _npcScripts.Result = ScriptResult.Completed([true]);
+        _npcScripts.OnRun = _ => _items.MoveToContainer(_shirt, _otherBackpack.Id, new Point2D(60, 70), 0);
+        await HoldingAsync(_shirt);
+
+        await DropAsync(_shirt.Id, 0, 0, banker.Id);
+
+        Assert.Contains($"Unworn {Aria.Value} {_shirt.Id.Value}", _view.Calls);
+    }
+
     [Fact]
     public async Task Handle_NothingHeld_SendsNothing()
     {
@@ -956,6 +1112,15 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         await DropAsync(_coins.Id, 1496, 1628, Ground);
 
         Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    // An NPC on Aria's row at the given x; Aria stands at 1496.
+    private MobileEntity Npc(int x, uint serial = 0x100, MapType map = MapType.Trammel)
+    {
+        var npc = new MobileEntity { Id = new(serial), Name = "a banker", TemplateId = "banker", Map = map, Location = new Point3D(x, 1628, 0) };
+        _mobiles.EnterWorld(npc);
+
+        return npc;
     }
 
     // A bag on the ground of Aria's row at the given x, with a ruby inside.
@@ -1021,7 +1186,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
                 }
             )
         );
-        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _weight, _speech, _fatigue, _capacity);
+        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _weight, _speech, _fatigue, _capacity, npcScripts: _npcScripts);
         var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, GridIndex = gridIndex, Destination = destination };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));
