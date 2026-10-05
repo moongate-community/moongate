@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Entities.World;
@@ -28,6 +29,7 @@ public sealed class ItemTimerService : IItemTimerService, IMoongateStartupServic
     private readonly IItemService _items;
     private readonly IItemScriptService _scripts;
     private readonly TimeProvider _time;
+    private readonly IInventoryMutationGuard? _inventory;
 
     private string? _timerId;
 
@@ -36,9 +38,11 @@ public sealed class ItemTimerService : IItemTimerService, IMoongateStartupServic
         IItemTimerQueue queue,
         IItemService items,
         IItemScriptService scripts,
-        TimeProvider time
+        TimeProvider time,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _timers = timers;
         _queue = queue;
         _items = items;
@@ -66,7 +70,7 @@ public sealed class ItemTimerService : IItemTimerService, IMoongateStartupServic
 
     public bool Start(ItemEntity item, string name, TimeSpan delay)
     {
-        if (string.IsNullOrWhiteSpace(name) || name.Length > MaximumNameLength || delay <= TimeSpan.Zero || delay > MaximumDelay)
+        if (_inventory?.Allows(item) == false || string.IsNullOrWhiteSpace(name) || name.Length > MaximumNameLength || delay <= TimeSpan.Zero || delay > MaximumDelay)
         {
             return false;
         }
@@ -80,7 +84,7 @@ public sealed class ItemTimerService : IItemTimerService, IMoongateStartupServic
 
     public bool Stop(ItemEntity item, string name)
     {
-        return !string.IsNullOrWhiteSpace(name) && item.RemoveProp(ItemTimerQueue.PropPrefix + name);
+        return _inventory?.Allows(item) != false && !string.IsNullOrWhiteSpace(name) && item.RemoveProp(ItemTimerQueue.PropPrefix + name);
     }
 
     public TimeSpan? Remaining(ItemEntity item, string name)
@@ -110,6 +114,12 @@ public sealed class ItemTimerService : IItemTimerService, IMoongateStartupServic
                     item.Props?.GetValueOrDefault(key) is not long dueAt ||
                     dueAt != entry.DueAt)
                 {
+                    continue;
+                }
+
+                if (_inventory?.Allows(item) == false)
+                {
+                    _queue.Schedule(entry.Item, entry.Name, entry.DueAt);
                     continue;
                 }
 

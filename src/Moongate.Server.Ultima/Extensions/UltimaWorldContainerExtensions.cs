@@ -125,6 +125,7 @@ public static class UltimaWorldContainerExtensions
         container.AddLiveWorldState();
         container.AddLiveJailSentences();
         container.AddLiveBulletinMessages();
+        container.AddBookAttachments();
 
         container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
         // After the loaders: the maps come from data/maps.toml.

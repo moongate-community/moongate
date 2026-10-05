@@ -31,6 +31,28 @@ public sealed class ItemTimerServiceTests
     }
 
     [Fact]
+    public async Task Check_ReservedInventoryKeepsDueTimerWithoutRunningScript()
+    {
+        var reservations = new Moongate.Server.Ultima.Services.Items.InventoryReservationService(new StubGameLoop());
+        var guard = new Moongate.Server.Ultima.Services.Items.InventoryMutationGuard(new Lazy<Moongate.Server.Ultima.Interfaces.IItemService>(() => _items), reservations);
+        var service = new ItemTimerService(_wheel, _queue, _items, _scripts, _clock, guard);
+        _items.Equip(_door, new(2), LayerType.Backpack);
+        await service.StartAsync();
+        service.Start(_door, "close", TimeSpan.FromSeconds(1));
+        reservations.TryReserve(new(2), Task.CompletedTask);
+        _clock.Advance(TimeSpan.FromSeconds(2));
+        Check();
+        Assert.True(_door.TryGetProp<long>("timer.close", out _));
+        Assert.Empty(_scripts.Calls);
+        Assert.False(service.Start(_door, "new", TimeSpan.FromSeconds(1)));
+        Assert.False(service.Stop(_door, "close"));
+        reservations.Release(new(2));
+        Check();
+        Assert.Single(_scripts.Calls);
+        Assert.False(_door.TryGetProp<long>("timer.close", out _));
+    }
+
+    [Fact]
     public async Task StartAsync_RegistersOneRepeatingCheckEverySecond_AndStopAsyncRemovesIt()
     {
         await _timers.StartAsync();

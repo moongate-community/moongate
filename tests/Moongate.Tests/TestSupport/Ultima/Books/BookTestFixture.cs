@@ -1,3 +1,5 @@
+using Moongate.Server.Ultima.Services.Items;
+using Moongate.Server.Ultima.Interfaces;
 using System.Net;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -33,6 +35,8 @@ public sealed class BookTestFixture : IAsyncDisposable
     public StubItemSerialPool Serials { get; } = new();
     public RecordingGumpService Gumps { get; } = new();
     public IScriptEngine Engine { get; set; } = new FakeScriptEngine();
+    public InventoryReservationService Reservations { get; }
+    public InventoryMutationGuard Inventory { get; }
     public ItemService Items { get; }
     public ItemTemplateService ItemTemplates { get; }
     public ItemHandlingService Handling { get; }
@@ -60,13 +64,15 @@ public sealed class BookTestFixture : IAsyncDisposable
             new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll" },
             new ItemTemplate { Id = "jail_release_note", ItemId = new(0x14F0), Stackable = false, ScriptId = "jail_note" },
             new ItemTemplate { Id = "unrelated", ItemId = new(0x14ED), Stackable = false });
-        Items = TestItems.Create(world.Sectors, loop: world.Network.Loop);
+        Reservations = new(world.Network.Loop);
+        Inventory = new(new Lazy<IItemService>(() => Items!), Reservations);
+        Items = TestItems.Create(world.Sectors, loop: world.Network.Loop, inventory: Inventory);
         ItemTemplates = new(Data);
         var tiles = new FakeTileDataService().Item(0x0E75, TileFlagType.Container, 0).Item(0x14ED, TileFlagType.None, 1).Item(0x14F0, TileFlagType.None, 1);
         var factory = new FakeItemFactoryService(ItemTemplates, tiles);
         var tooltips = TestTooltips.Create(Items, world.Mobiles);
-        Handling = new(Items, world.Sessions, world.Sender, new RecordingWorldViewService(), tooltips, factory, Serials);
-        Bank = new(Items, factory, world.Sessions, world.Mobiles, world.Sender, tooltips, null!, world.Network.Loop);
+        Handling = new(Items, world.Sessions, world.Sender, new RecordingWorldViewService(), tooltips, factory, Serials, inventory: Inventory);
+        Bank = new(Items, factory, world.Sessions, world.Mobiles, world.Sender, tooltips, null!, world.Network.Loop, inventory: Inventory, reservations: Reservations);
         var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
         Contexts = new(world.Sessions, new AdminServerInfoProvider(ServerMode.Game, realm), realm, new MotdServerIdentity("Moongate"), world.Network.Loop);
         Books = new(new BookTemplateService(Data), Contexts, Items, world.Mobiles, Handling, ItemTemplates, world.Sessions,

@@ -14,6 +14,7 @@ namespace Moongate.Tests.TestSupport.Ultima.Books;
 internal sealed class BookAttachmentStoreFixture : IAsyncDisposable
 {
     public HostPersistenceFixture Host { get; }
+    public int Captures { get; private set; }
     public BookAttachmentStore Store { get; }
     public IDataAccess<ItemEntity> Items { get; }
     public IDataAccess<BookAttachmentClaimEntity> Receipts { get; }
@@ -26,16 +27,31 @@ internal sealed class BookAttachmentStoreFixture : IAsyncDisposable
         Store = new(new WorldTransactionService(host.Owner), Receipts);
     }
 
-    public static async Task<BookAttachmentStoreFixture> CreateAsync()
+    public static async Task<BookAttachmentStoreFixture> CreateAsync(BookTestFixture? world = null)
     {
         var host = await HostPersistenceFixture.CreateAsync(false);
         try
         {
-            host.Container.AddPersistenceWorld<MobileEntity>().AddPersistenceWorld<ItemEntity>()
-                .AddPersistenceWorld<BookAttachmentClaimEntity>();
+            BookAttachmentStoreFixture? fixture = null;
+            if (world is null)
+            {
+                host.Container.AddPersistenceWorld<MobileEntity>().AddPersistenceWorld<ItemEntity>();
+            }
+            else
+            {
+                host.Container.AddPersistenceWorld<MobileEntity>(() => [world.Player], mobile => mobile.Snapshot());
+                host.Container.AddPersistenceWorld<ItemEntity>(() =>
+                {
+                    Assert.True(world.World.Network.Loop.IsOnLoopThread);
+                    fixture!.Captures++;
+                    return world.Items.Items;
+                }, item => item.Snapshot());
+            }
+            host.Container.AddPersistenceWorld<BookAttachmentClaimEntity>();
             await CoreMigrationFiles.ApplyAsync(host.Database, "world");
             await host.Owner.InitializeAsync();
-            return new(host);
+            fixture = new(host);
+            return fixture;
         }
         catch
         {

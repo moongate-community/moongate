@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
@@ -32,6 +33,8 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
     private readonly ITooltipService _tooltips;
     private readonly IItemScriptService? _scripts;
 
+    private readonly IInventoryMutationGuard? _inventory;
+
     public EquipRequestPacketHandler(
         IItemService items,
         IMobileService mobiles,
@@ -39,9 +42,11 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
         IWorldViewService view,
         IPacketSendService sender,
         ITooltipService tooltips,
-        IItemScriptService? scripts = null
+        IItemScriptService? scripts = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _scripts = scripts;
         _tooltips = tooltips;
         _items = items;
@@ -53,6 +58,13 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
 
     public void Handle(GameSession session, EquipRequestPacket packet)
     {
+        if (_inventory is not null && (!_inventory.AllowsOwner(session.CharacterId) ||
+            (_items.TryGet(packet.Item, out var guarded) && !_inventory.Allows(guarded)) ||
+            (session.Get(ItemSessionKeys.Held) is { } hand && _items.TryGet(hand.Item, out var heldItem) && !_inventory.Allows(heldItem)) || !_inventory.AllowsOwner(packet.Mobile)))
+        {
+            return;
+        }
+
         var held = session.Get(ItemSessionKeys.Held);
         session.Set(ItemSessionKeys.Held, null);
 

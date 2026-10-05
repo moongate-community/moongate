@@ -43,6 +43,58 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task Claim_LogoutWaitsBeforeTakingSnapshot()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        var (pack, coin, _) = CarriedItems();
+        var reservations = new Moongate.Server.Ultima.Services.Items.InventoryReservationService(fixture.Loop);
+        var settlement = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _events.RegisterMoongateEventBus();
+        var service = new CharacterLeaveWorldService(_mobiles, _items, _view, _world,
+            _events.Resolve<IMoongateEventBus>(), reservations, fixture.Loop);
+        await fixture.ExecuteOnLoopAsync(() =>
+        {
+            Assert.True(reservations.TryReserve(_aria.Id, settlement.Task));
+            service.OnSessionClosed(session);
+        });
+        Assert.True(_mobiles.IsInWorld(_aria.Id));
+        var loginWait = service.WaitForAccountAsync(_aria.AccountId!.Value);
+        Assert.False(loginWait.IsCompleted);
+        Assert.Empty(_world.Items.Upserted);
+        await fixture.ExecuteOnLoopAsync(() => { coin.Amount = 77; reservations.Release(_aria.Id); });
+        settlement.SetResult();
+        await loginWait.WaitAsync(Timeout);
+        Assert.False(_mobiles.IsInWorld(_aria.Id));
+        Assert.Equal(77, Assert.Single(_world.Items.Upserted, item => item.Id == coin.Id).Amount);
+    }
+
+    [Fact]
+    public async Task Claim_UnsafeLogoutCannotSnapshotOrAllowReplacementLogin()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        CarriedItems();
+        var reservations = new Moongate.Server.Ultima.Services.Items.InventoryReservationService(fixture.Loop);
+        var settlement = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _events.RegisterMoongateEventBus();
+        var service = new CharacterLeaveWorldService(_mobiles, _items, _view, _world,
+            _events.Resolve<IMoongateEventBus>(), reservations, fixture.Loop);
+        await fixture.ExecuteOnLoopAsync(() =>
+        {
+            reservations.TryReserve(_aria.Id, settlement.Task);
+            service.OnSessionClosed(session);
+        });
+        var wait = service.WaitForAccountAsync(_aria.AccountId!.Value);
+        settlement.SetException(new IOException("Uncertain claim."));
+        await Assert.ThrowsAsync<IOException>(() => wait);
+        await Assert.ThrowsAsync<IOException>(() => service.StopAsync());
+        await Assert.ThrowsAsync<IOException>(() => service.WaitForAccountAsync(_aria.AccountId!.Value));
+        Assert.True(_mobiles.IsInWorld(_aria.Id));
+        Assert.Empty(_world.Items.Upserted);
+    }
+
+    [Fact]
     public async Task OnSessionClosed_SavesTheCharacterRemovesItAndPublishesTheEvent()
     {
         await using var fixture = await SessionFixture.CreateAsync();

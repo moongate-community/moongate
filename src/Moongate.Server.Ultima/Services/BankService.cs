@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using System.Collections.Concurrent;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Localization;
@@ -41,6 +42,8 @@ public sealed class BankService : IBankService
     private readonly IGameLoopService _loop;
     private readonly ILocalizationService? _localization;
     private readonly TimeProvider _time;
+    private readonly IInventoryMutationGuard? _inventory;
+    private readonly IInventoryReservationService? _reservations;
 
     public BankService(
         IItemService items,
@@ -52,9 +55,13 @@ public sealed class BankService : IBankService
         IContainerLayoutService layouts,
         IGameLoopService loop,
         ILocalizationService? localization = null,
-        TimeProvider? time = null
+        TimeProvider? time = null,
+        IInventoryMutationGuard? inventory = null,
+        IInventoryReservationService? reservations = null
     )
     {
+        _inventory = inventory;
+        _reservations = reservations;
         _time = time ?? TimeProvider.System;
         _items = items;
         _factory = factory;
@@ -69,7 +76,7 @@ public sealed class BankService : IBankService
 
     public bool Open(MobileEntity player)
     {
-        if (!_sessions.TryGetByCharacterId(player.Id, out var session))
+        if (_inventory?.AllowsOwner(player.Id) == false || !_sessions.TryGetByCharacterId(player.Id, out var session))
         {
             return false;
         }
@@ -136,26 +143,36 @@ public sealed class BankService : IBankService
             box.Equip(player.Id, LayerType.Bank);
             await _factory.SaveAsync(box);
 
-            var posted = _loop.TryPost(
-                new LoopActionWorkItem(
-                    () =>
-                    {
-                        _making.TryRemove(player.Id, out _);
-
-                        if (_mobiles.TryGet(player.Id, out var live) &&
-                            ReferenceEquals(live, player) &&
-                            _sessions.TryGetByCharacterId(player.Id, out var session))
-                        {
-                            _items.Add([box]);
-                            Show(player, session, box);
-                        }
-                    }
-                )
-            );
-
-            if (!posted)
+            var applied = false;
+            while (!applied)
             {
-                _making.TryRemove(player.Id, out _);
+                Task? settlement = null;
+                var work = new LoopActionWorkItem(() =>
+                {
+                    if (_inventory?.AllowsOwner(player.Id) == false)
+                    {
+                        settlement = _reservations!.WaitAsync(player.Id);
+                        return;
+                    }
+                    applied = true;
+                    _making.TryRemove(player.Id, out _);
+                    if (_mobiles.TryGet(player.Id, out var live) && ReferenceEquals(live, player) &&
+                        _sessions.TryGetByCharacterId(player.Id, out var session))
+                    {
+                        _items.Add([box]);
+                        Show(player, session, box);
+                    }
+                });
+                if (_loop.IsOnLoopThread)
+                {
+                    if (!_loop.TryPost(work)) throw new InvalidOperationException("The loop refused bank application.");
+                }
+                else
+                {
+                    await _loop.PostAsync(work);
+                }
+                await work.Completion;
+                if (settlement is not null) await settlement;
             }
         }
         catch (Exception exception)
