@@ -59,6 +59,19 @@ public interface IBulletinBoardService : IMoongateStartupService, IPersistenceDe
     );
 
     /// <summary>
+    ///     Posts on the board for a script, in the name given: no character is the poster, so nobody waits and only
+    ///     the staff removes it. The name, the subject and the lines are cleaned and cut as a player's, and the board
+    ///     keeps to its size. <see cref="BulletinPostResultType.Empty" /> without a name, a subject or a line of text.
+    /// </summary>
+    BulletinPostResult PostAs(
+        ItemEntity board,
+        string name,
+        string subject,
+        IReadOnlyList<string> lines,
+        Serial replyTo = default
+    );
+
+    /// <summary>
     ///     Gets whether <paramref name="by" /> may remove the message: its poster, or a game master and above.
     /// </summary>
     bool CanRemove(BulletinMessageEntity message, MobileEntity by, AccountType rank);

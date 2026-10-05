@@ -60,6 +60,38 @@ public sealed class StubBulletinBoardService : IBulletinBoardService
         return new() { Type = BulletinPostResultType.Empty };
     }
 
+    /// <summary>
+    ///     What a script's post answers; the message it gives is added to <see cref="MessageList" />.
+    /// </summary>
+    public BulletinPostResultType PostAsResult { get; set; } = BulletinPostResultType.Ok;
+
+    public List<(ItemEntity Board, string Name, string Subject, IReadOnlyList<string> Lines, Serial ReplyTo)> PostedAs { get; } = [];
+
+    public BulletinPostResult PostAs(
+        ItemEntity board,
+        string name,
+        string subject,
+        IReadOnlyList<string> lines,
+        Serial replyTo = default
+    )
+    {
+        PostedAs.Add((board, name, subject, lines.ToArray(), replyTo));
+
+        if (PostAsResult != BulletinPostResultType.Ok)
+        {
+            return new() { Type = PostAsResult };
+        }
+
+        var message = new BulletinMessageEntity
+        {
+            Id = new Serial(0x40005000 + (uint)MessageList.Count), BoardId = board.Id, ThreadId = replyTo, PosterName = name,
+            Subject = subject, Body = string.Join('\n', lines)
+        };
+        MessageList.Add(message);
+
+        return new() { Type = BulletinPostResultType.Ok, Message = message };
+    }
+
     public bool CanRemove(BulletinMessageEntity message, MobileEntity by, AccountType rank)
     {
         return true;
