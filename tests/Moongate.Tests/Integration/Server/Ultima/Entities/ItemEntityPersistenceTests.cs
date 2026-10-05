@@ -378,6 +378,99 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task WorldSave_AfterAnNpcDied_KeepsItsCorpseWithWhatItCarried_AndDeletesTheNpcWithItsBackpack()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var items = TestItems.Create();
+        var live = new MobileService(new StubMovementService(), TestSectors.Create());
+        host.Container.RegisterInstance<IMobileService>(live);
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var orc = new MobileEntity { Id = new Serial(0x0000E259), Name = "an orc", Map = MapType.Trammel };
+        live.EnterWorld(orc);
+        var backpack = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75 };
+        backpack.Equip(orc.Id, LayerType.Backpack);
+        var sword = new ItemEntity { Id = new Serial(0x40000002), TemplateId = "sword", ItemId = 0x0F5E };
+        sword.Equip(orc.Id, LayerType.OneHanded);
+        var gold = new ItemEntity { Id = new Serial(0x40000003), TemplateId = "gold", ItemId = 0x0EED, Amount = 20 };
+        gold.PutInContainer(backpack.Id, new Point2D(44, 65));
+        var bag = new ItemEntity { Id = new Serial(0x40000004), TemplateId = "bag", ItemId = 0x0E76 };
+        bag.PutInContainer(backpack.Id, new Point2D(60, 65));
+        var gem = new ItemEntity { Id = new Serial(0x40000005), TemplateId = "gem", ItemId = 0x0F13 };
+        gem.PutInContainer(bag.Id, new Point2D(20, 20));
+        items.Add([backpack, sword, gold, bag, gem]);
+        await host.Owner.SaveAllAsync();
+
+        // The death, as DeathService and NpcService do it. The corpse has a serial above everything it takes in.
+        var corpse = new ItemEntity { Id = new Serial(0x40000900), TemplateId = "corpse", ItemId = 0x2006 };
+        corpse.PlaceOnGround(MapType.Trammel, new Point3D(100, 100, 0));
+        items.Add([corpse]);
+
+        foreach (var item in new[] { gold, bag, sword })
+        {
+            items.MoveToContainer(item, corpse.Id, new Point2D(30, 30));
+        }
+
+        items.Remove(items.GetOwnedBy(orc.Id).Select(item => item.Id));
+        live.Delete(orc.Id);
+        await host.Owner.SaveAllAsync();
+
+        Assert.Null(await mobiles.GetByIdAsync(orc.Id));
+        Assert.Null(await data.GetByIdAsync(backpack.Id));
+        Assert.NotNull(await data.GetByIdAsync(corpse.Id));
+        Assert.All(
+            new[] { gold, bag, sword },
+            item => Assert.Equal(corpse.Id, data.GetByIdAsync(item.Id).GetAwaiter().GetResult()!.ContainerId)
+        );
+        // Unchanged itself, but the database deleted it with the backpack its bag was under.
+        Assert.Equal(bag.Id, (await data.GetByIdAsync(gem.Id))!.ContainerId);
+    }
+
+    [Fact]
+    public async Task WorldSave_TheFirstOne_WritesAContainerBeforeWhatLiesInIt_WhateverTheirSerials()
+    {
+        // The first save writes every item, in batches: an item must not be written before a container made after it,
+        // as the corpse of an NPC that takes in what the NPC carried.
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var items = TestItems.Create();
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var filler = Enumerable.Range(0, 3000)
+                               .Select(
+                                   index =>
+                                   {
+                                       var item = new ItemEntity { Id = new Serial(0x40000100 + (uint)index), TemplateId = "rock", ItemId = 0x1363 };
+                                       item.PlaceOnGround(MapType.Trammel, new Point3D(1 + index % 100, 1 + index / 100, 0));
+
+                                       return item;
+                                   }
+                               )
+                               .ToList();
+        var corpse = new ItemEntity { Id = new Serial(0x40002000), TemplateId = "corpse", ItemId = 0x2006 };
+        corpse.PlaceOnGround(MapType.Trammel, new Point3D(100, 100, 0));
+        var sword = new ItemEntity { Id = new Serial(0x40000002), TemplateId = "sword", ItemId = 0x0F5E };
+        sword.PutInContainer(corpse.Id, new Point2D(30, 30));
+        var bag = new ItemEntity { Id = new Serial(0x40000003), TemplateId = "bag", ItemId = 0x0E76 };
+        bag.PutInContainer(corpse.Id, new Point2D(40, 30));
+        var gem = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "gem", ItemId = 0x0F13 };
+        gem.PutInContainer(bag.Id, new Point2D(20, 20));
+        items.Add([gem, sword, bag, .. filler, corpse]);
+
+        await host.Owner.SaveAllAsync();
+
+        Assert.Equal(corpse.Id, (await data.GetByIdAsync(sword.Id))!.ContainerId);
+        Assert.Equal(bag.Id, (await data.GetByIdAsync(gem.Id))!.ContainerId);
+    }
+
+    [Fact]
     public async Task WorldSave_DeletesTheItemsAbsorbedIntoOtherStacks()
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);

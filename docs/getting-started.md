@@ -186,7 +186,10 @@ another root, so unset it or pass the same path.
 6. **Stop it.** Press Ctrl+C and let shutdown finish. After a successful startup the
    host runs a final world save before closing PostgreSQL persistence. A failed
    startup or a faulted game loop cannot promise that save. Do not terminate the
-   process while it is waiting for one.
+   process while it is waiting for one. The first save after a start writes the
+   whole world and takes some seconds (8 to 15 for the shipped one); the server
+   waits up to 2 minutes for it after Ctrl+C or SIGTERM. A save cut half way
+   commits nothing: what happened since the last completed save is lost.
 
 To run another standalone instance, give it its own root, distinct login and
 game listener ports, a distinct `realm_directory.realm_id` and `server_index`,
