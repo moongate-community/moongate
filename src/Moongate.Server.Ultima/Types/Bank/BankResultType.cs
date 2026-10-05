@@ -39,5 +39,10 @@ public enum BankResultType
     CheckTooBig = 10,
 
     /// <summary>Not a bank check, or one that is not inside the player's bank box.</summary>
-    NotInBank = 11
+    NotInBank = 11,
+
+    /// <summary>
+    ///     The item is neither gold nor a bank check, or is not the player's to deposit.
+    /// </summary>
+    NotMoney = 12
 }

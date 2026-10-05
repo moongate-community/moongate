@@ -941,7 +941,154 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.Equal(BankResultType.NotInBank, _bank.Cash(_aria, check, out _));
     }
 
-    // A prop anybody could set on anything: only a check is a check.
+    // Handed to the banker: the pile tops up the gold of the box and what is left is a pile of its own.
+    [Fact]
+    public async Task DepositItem_AGoldPile_GoesIntoTheBox_ToppingUpThePilesThere()
+    {
+        var box = await BoxAsync();
+        var there = Gold(box, 59_900);
+        var given = Gold(Backpack(), 300);
+
+        Assert.Equal(BankResultType.Ok, _bank.DepositItem(_aria, given));
+
+        Assert.False(_items.TryGet(given.Id, out _));
+        Assert.Equal(60_000, there.Amount);
+        Assert.Equal([200, 60_000], _items.GetContents(box.Id).Select(item => item.Amount).Order());
+        Assert.Equal(60_200, _bank.Balance(_aria));
+        // Gold weighs: the player's load changed.
+        Assert.Single(_fatigue.Loads);
+    }
+
+    [Fact]
+    public async Task DepositItem_AGoldPileThatOnlyTopsUp_NeedsNoPlaceInAFullBox()
+    {
+        _config.MaxItems = 1;
+        var box = await BoxAsync();
+        var there = Gold(box, 100);
+        var given = Gold(Backpack(), 300);
+
+        Assert.Equal(BankResultType.Ok, _bank.DepositItem(_aria, given));
+
+        Assert.Equal(400, there.Amount);
+        Assert.Single(_items.GetContents(box.Id));
+    }
+
+    [Fact]
+    public async Task DepositItem_AGoldPileIntoAFullBox_IsRefused_AndThePileIsWhole()
+    {
+        _config.MaxItems = 1;
+        var box = await BoxAsync();
+        In(box, "sword");
+        var backpack = Backpack();
+        var given = Gold(backpack, 300);
+
+        Assert.Equal(BankResultType.BankFull, _bank.DepositItem(_aria, given));
+
+        Assert.Equal((backpack.Id, 300), (given.ContainerId!.Value, given.Amount));
+        Assert.Equal(0, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task DepositItem_ACheck_GoesIntoTheBox_WorthTheSame()
+    {
+        var box = await BoxAsync();
+        var given = Check(Backpack(), 7000);
+
+        Assert.Equal(BankResultType.Ok, _bank.DepositItem(_aria, given));
+
+        Assert.False(_items.TryGet(given.Id, out _));
+        Assert.Equal(7000, _bank.WorthOf(Assert.Single(_items.GetContents(box.Id))));
+        Assert.Equal(7000, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task DepositItem_ACheckIntoAFullBox_IsRefused_AndTheCheckIsWhole()
+    {
+        _config.MaxItems = 1;
+        var box = await BoxAsync();
+        In(box, "sword");
+        var given = Check(Backpack(), 7000);
+
+        Assert.Equal(BankResultType.BankFull, _bank.DepositItem(_aria, given));
+
+        Assert.True(_items.TryGet(given.Id, out _));
+        Assert.Equal(7000, _bank.WorthOf(given));
+    }
+
+    // Gold lifted from the ground and handed over: nobody carried it.
+    [Fact]
+    public async Task DepositItem_AGoldPileOnTheGround_GoesIntoTheBox()
+    {
+        await BoxAsync();
+        var given = new ItemEntity { Id = new Serial(_nextItem++), TemplateId = "gold", ItemId = 0x0EED, Amount = 500 };
+        given.PlaceOnGround(MapType.Trammel, new Point3D(1601, 1600, 0));
+        _items.Add([given]);
+
+        Assert.Equal(BankResultType.Ok, _bank.DepositItem(_aria, given));
+
+        Assert.False(_items.TryGet(given.Id, out _));
+        Assert.Equal(500, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public async Task DepositItem_WhatIsAlreadyInTheBox_StaysAsItIs()
+    {
+        var box = await BoxAsync();
+        var given = Gold(box, 300);
+
+        Assert.Equal(BankResultType.Ok, _bank.DepositItem(_aria, given));
+
+        Assert.Equal(300, Assert.Single(_items.GetContents(box.Id)).Amount);
+    }
+
+    [Fact]
+    public async Task DepositItem_WhatIsNeitherGoldNorACheck_IsNotMoney()
+    {
+        await BoxAsync();
+        var backpack = Backpack();
+        var sword = In(backpack, "sword");
+        var paper = In(backpack, BankService.CheckTemplate);
+
+        Assert.Equal(BankResultType.NotMoney, _bank.DepositItem(_aria, sword));
+        Assert.Equal(BankResultType.NotMoney, _bank.DepositItem(_aria, paper));
+        Assert.True(_items.TryGet(sword.Id, out _));
+    }
+
+    // Gold another mobile carries is not this player's to deposit, nor is gold on a cursor.
+    [Fact]
+    public async Task DepositItem_GoldOfSomeoneElse_OrOnACursor_IsNotMoney()
+    {
+        await BoxAsync();
+        var theirs = new ItemEntity { Id = new Serial(_nextItem++), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        theirs.Equip(new Serial(3), LayerType.Backpack);
+        _items.Add([theirs]);
+        var stolen = Gold(theirs, 300);
+        var held = Gold(Backpack(), 300);
+        await OnLoopAsync(
+            () =>
+            {
+                _session.Set(ItemSessionKeys.Held, new HeldItem(held.Id));
+
+                return true;
+            }
+        );
+
+        Assert.Equal(BankResultType.NotMoney, _bank.DepositItem(_aria, stolen));
+        Assert.Equal(BankResultType.NotMoney, _bank.DepositItem(_aria, held));
+        Assert.Equal(0, _bank.Balance(_aria));
+    }
+
+    [Fact]
+    public void DepositItem_WithNoBankBoxYet_IsNoBank_AndAnNpcIsNoPlayer()
+    {
+        var given = Gold(Backpack(), 300);
+        var orc = new MobileEntity { Id = new Serial(0x200), Name = "an orc" };
+
+        Assert.Equal(BankResultType.NoBank, _bank.DepositItem(_aria, given));
+        Assert.Equal(BankResultType.NoPlayer, _bank.DepositItem(orc, given));
+        Assert.Equal(300, given.Amount);
+    }
+
     [Fact]
     public async Task Cash_WhatIsNotACheck_EvenWithAWorth_IsRefused()
     {

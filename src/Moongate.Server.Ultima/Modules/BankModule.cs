@@ -123,6 +123,26 @@ public sealed class BankModule
     }
 
     /// <summary>
+    ///     Puts a gold pile or a bank check into the bank of <paramref name="player" />;
+    ///     <c>bank.deposit_item(giver, item) == BankResultType.Ok</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Puts a gold pile or a bank check into the player's bank box, as a banker does with what is dropped on it (on_drag_drop): the gold tops up the piles of the box and what is left is a pile of its own, a check goes in worth the same. Gives a BankResultType: Ok (the item handed over is gone: return true from on_drag_drop), NotMoney (not gold nor a bank check, not there, worn, on a cursor or carried by someone else), NoBank (the player never opened its bank: bank.open makes it), BankFull (the box holds ultima.bank.max_items), Busy (try again in a moment) or NoPlayer. All or nothing. bank.balance before and after tells how much went in. The box need not be open.")]
+    public BankResultType DepositItem(long player, long item)
+    {
+        if (!TryGetPlayer(player, out var mobile))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        if (_items is null || item is <= 0 or > uint.MaxValue || !_items.TryGet(new Serial((uint)item), out var found))
+        {
+            return BankResultType.NotMoney;
+        }
+
+        return _bank.DepositItem(mobile, found);
+    }
+
+    /// <summary>
     ///     Writes a bank check paid with the coins of the bank of <paramref name="player" />;
     ///     <c>bank.check(speaker, 5000) == BankResultType.Ok</c>.
     /// </summary>

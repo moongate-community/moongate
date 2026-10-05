@@ -77,7 +77,26 @@ Within 12 tiles of a banker, with the box open or not:
 | `There's not enough room in your bankbox for the check!` | The box is full and the coins that pay the check use up no pile. |
 
 A player who says *deposit* before ever opening its bank gets the box made and shown instead, and
-asks again. Deposits by handing the gold to the banker are not built yet.
+asks again.
+
+## Gold handed to the banker
+
+Drop a pile of gold or a bank check on a banker, from 2 tiles or closer, and it goes into your
+bank: the banker says `1,250 gold was deposited in your account.`, with the worth of a check.
+
+- Gold tops up the gold piles of the box, and what is left is a pile of its own; a check goes in
+  as it is. All or nothing: a refusal gives the item back to where you lifted it from.
+- The box need not be open.
+- This is the script's `on_drag_drop` ([mobile scripts](scripting/mobile-scripts.md)), over
+  `bank.deposit_item`.
+
+| The banker says | Why |
+| --- | --- |
+| `I will not do business with a criminal!` | A criminal handed it. |
+| `Your bank box is full.` | The gold or the check needs a place and the box holds its [limit of items](#how-much-it-holds). |
+| `I am not interested in this.` | It is neither gold nor a bank check. |
+
+A player who never opened its bank gets the box made and shown, and hands the gold again.
 
 ## Bank checks
 

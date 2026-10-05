@@ -69,6 +69,13 @@ public interface IBankService : ISessionClosedListener
     BankResultType Cash(MobileEntity player, ItemEntity check, out int deposited);
 
     /// <summary>
+    ///     Puts a gold pile or a bank check into the bank box of <paramref name="player" />, as when it is handed to a
+    ///     banker: the gold tops up the piles of the box and what is left is a pile of its own; a check goes in worth
+    ///     the same. All or nothing. The item is the player's, or nobody's (on the ground), and on no cursor.
+    /// </summary>
+    BankResultType DepositItem(MobileEntity player, ItemEntity item);
+
+    /// <summary>
     ///     Gets what a bank check is worth; null for an item that is not one.
     /// </summary>
     long? WorthOf(ItemEntity item);

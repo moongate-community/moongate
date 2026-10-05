@@ -347,6 +347,94 @@ public sealed class BankService : IBankService
         return BankResultType.Ok;
     }
 
+    public BankResultType DepositItem(MobileEntity player, ItemEntity item)
+    {
+        if (_inventory?.AllowsOwner(player.Id) == false)
+        {
+            return BankResultType.Busy;
+        }
+
+        if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        var isGold = item.TemplateId == _itemsConfig.GoldTemplate;
+        var worth = isGold ? item.Amount : WorthOf(item);
+
+        // Gold or a check, the player's own or nobody's, and on no cursor.
+        if (worth is not > 0 ||
+            item.MobileId is not null ||
+            _handling.IsHeld(item) ||
+            (_items.GetOwner(item) is { } owner && owner != player.Id))
+        {
+            return BankResultType.NotMoney;
+        }
+
+        if (BoxOf(player.Id) is not { } box)
+        {
+            return BankResultType.NoBank;
+        }
+
+        if (IsInside(item, box))
+        {
+            return BankResultType.Ok;
+        }
+
+        // Gold tops up the piles of the box first, and what is left is a pile of its own; a check is always one item.
+        var there = isGold ? TopPilesOf(box) : [];
+        var toTopUp = isGold ? (int)Math.Min(item.Amount, there.Sum(pile => (long)(PileMaximum - pile.Amount))) : 0;
+        var left = isGold ? item.Amount - toTopUp : 0;
+        var needsAPlace = !isGold || left > 0;
+
+        if (needsAPlace && !_capacity.HasRoomFor(box, 1))
+        {
+            return BankResultType.BankFull;
+        }
+
+        // What arrives in the box is made anew and what was handed over is taken: the paths of a deposit by speech.
+        ItemEntity? made = null;
+
+        if (needsAPlace && (made = isGold ? _handling.Make(_itemsConfig.GoldTemplate, left) : _handling.Make(CheckTemplate)) is null)
+        {
+            return BankResultType.Busy;
+        }
+
+        if (!(isGold ? _handling.Consume(item, item.Amount) : _handling.Delete(item)))
+        {
+            return BankResultType.Busy;
+        }
+
+        // Nothing can refuse from here on.
+        foreach (var pile in there)
+        {
+            if (toTopUp == 0)
+            {
+                break;
+            }
+
+            var added = Math.Min(toTopUp, PileMaximum - pile.Amount);
+            pile.Amount += added;
+            toTopUp -= added;
+            _handling.Refresh(pile);
+        }
+
+        if (made is not null)
+        {
+            if (!isGold)
+            {
+                made.SetProp(ItemPropKeys.BankWorth, worth.Value);
+                made.SetProp(ItemPropKeys.LabelNumber, (long)CheckLabel);
+            }
+
+            Put(made, box);
+        }
+
+        LoadChanged(player);
+
+        return BankResultType.Ok;
+    }
+
     public long? WorthOf(ItemEntity item)
     {
         return CheckWorth(item);

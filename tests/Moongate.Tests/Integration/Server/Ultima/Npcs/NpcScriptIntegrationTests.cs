@@ -20,6 +20,7 @@ using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Bank;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
@@ -39,6 +40,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly StubBankService _bank = new();
+    private readonly ItemService _items = TestItems.Create();
     private readonly SettableClock _clock = new();
     private readonly List<ScriptErrorEvent> _errors = [];
     private readonly List<LuaScriptEngineService> _engines = [];
@@ -79,6 +81,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         _container.AddScriptModule<NpcModule>();
         _container.AddScriptModule<DiceModule>();
         _container.RegisterInstance<IBankService>(_bank);
+        _container.RegisterInstance<IItemService>(_items);
         _container.AddScriptModule<BankModule>();
         _container.RegisterInstance<TimeProvider>(_clock);
         _container.RegisterInstance<ITeleportService>(new RecordingTeleportService());
@@ -600,7 +603,79 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.Equal((_cat, 500389, ""), Assert.Single(_speech.SaidClilocs));
     }
 
+    // Gold or a check dropped on the banker goes into the bank, and the banker says how much.
+    [Fact]
+    public async Task TheBanker_DepositsWhatIsDroppedOnIt_AndTakesIt()
+    {
+        var scripts = await StartBankerScriptsAsync();
+        var gold = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "gold", ItemId = 0x0EED, Amount = 1250 };
+        _items.Add([gold]);
+        _bank.ItemDeposits = 1250;
+
+        var result = scripts.Run(_cat, "on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.Equal([true], result.Values);
+        Assert.Equal((_aria, gold), Assert.Single(_bank.DepositedItems));
+        Assert.Equal((_cat, 1042763, "1,250"), Assert.Single(_speech.SaidClilocs));
+    }
+
+    [Theory,
+     InlineData(BankResultType.BankFull, 500390),
+     InlineData(BankResultType.NotMoney, 501550)]
+    public async Task TheBanker_GivesBackWhatItDoesNotDeposit_WithTheWordsOfTheClient(BankResultType refusal, int cliloc)
+    {
+        var scripts = await StartBankerScriptsAsync();
+        var item = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "sword", ItemId = 0x0F5E, Amount = 1 };
+        _items.Add([item]);
+        _bank.Result = refusal;
+
+        var result = scripts.Run(_cat, "on_drag_drop", (long)_aria.Id.Value, (long)item.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.Equal([false], result.Values);
+        Assert.Equal((_cat, cliloc, ""), Assert.Single(_speech.SaidClilocs));
+    }
+
+    [Fact]
+    public async Task TheBanker_TakesNothingFromACriminal()
+    {
+        var scripts = await StartBankerScriptsAsync();
+        var gold = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "gold", ItemId = 0x0EED, Amount = 1250 };
+        _items.Add([gold]);
+        _aria.Criminal = true;
+
+        var result = scripts.Run(_cat, "on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.Equal([false], result.Values);
+        Assert.Empty(_bank.DepositedItems);
+        Assert.Equal((_cat, 500389, ""), Assert.Single(_speech.SaidClilocs));
+    }
+
+    // No bank box yet: it is made and shown, and the player hands the gold again.
+    [Fact]
+    public async Task TheBanker_OpensTheBankOfWhoNeverHadOne_AndGivesTheItemBack()
+    {
+        var scripts = await StartBankerScriptsAsync();
+        var gold = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "gold", ItemId = 0x0EED, Amount = 1250 };
+        _items.Add([gold]);
+        _bank.Result = BankResultType.NoBank;
+
+        var result = scripts.Run(_cat, "on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.Equal([false], result.Values);
+        Assert.Equal([_aria], _bank.Opened);
+        Assert.Empty(_speech.SaidClilocs);
+    }
+
     private async Task<NpcHearingService> StartBankerAsync()
+    {
+        return new NpcHearingService(await StartBankerScriptsAsync(), _sectors);
+    }
+
+    private async Task<NpcScriptService> StartBankerScriptsAsync()
     {
         _scripts.Write("mobiles/banker.lua", File.ReadAllText(ShippedScript("mobiles/banker.lua")));
         _scripts.Write("common/numbers.lua", File.ReadAllText(ShippedScript("common/numbers.lua")));
@@ -613,7 +688,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
         await scripts.StartAsync();
 
-        return new NpcHearingService(scripts, _sectors);
+        return scripts;
     }
 
     public void Dispose()

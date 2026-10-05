@@ -128,6 +128,27 @@ public sealed class StubBankService : IBankService
         return Result ?? BankResultType.Ok;
     }
 
+    public List<(MobileEntity Player, ItemEntity Item)> DepositedItems { get; } = [];
+
+    /// <summary>
+    ///     What an item handed to the bank adds to the player's gold when it is not refused.
+    /// </summary>
+    public int ItemDeposits { get; set; }
+
+    public BankResultType DepositItem(MobileEntity player, ItemEntity item)
+    {
+        DepositedItems.Add((player, item));
+
+        if (Result is { } result)
+        {
+            return result;
+        }
+
+        Gold[player.Id] = Gold.GetValueOrDefault(player.Id) + ItemDeposits;
+
+        return BankResultType.Ok;
+    }
+
     public long? WorthOf(ItemEntity item)
     {
         return Worths.TryGetValue(item.Id, out var worth) ? worth : null;
