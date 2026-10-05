@@ -5,6 +5,7 @@ using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Books;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Services.Motd;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -136,7 +137,9 @@ public sealed class RepositoryTemplateFilesTests
     {
         var directories = Directories();
         var templates = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var loader = new StartingItemsLoader(directories, new StubDataLoaderService().With(templates));
+        var data = new StubDataLoaderService().With(templates);
+        data.With((await new BooksLoader(directories, data).LoadDataAsync()).Entities.ToArray());
+        var loader = new StartingItemsLoader(directories, data, new BookTemplateService(data), new LocalizationConfig());
         await loader.InitializeAsync();
 
         var sets = (await loader.LoadDataAsync()).Entities;
@@ -152,6 +155,10 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Single(common.Items, entry => entry.Items.SequenceEqual(["0x1f9e_pitcher_of_water"]));
         Assert.Equal("food", templates.Single(template => template.Id == "0x103b_bread_loaf").ScriptId);
         Assert.Equal("drink", templates.Single(template => template.Id == "0x1f9e_pitcher_of_water").ScriptId);
+        var letter = Assert.Single(common.Items, entry => entry.BookTemplate == "welcome_letter");
+        Assert.Equal(["readable_scroll"], letter.Items);
+        Assert.Equal("Vega", letter.BookValues["contact_name"]);
+        Assert.False(letter.Equip);
         Assert.False(gold.Equip);
         Assert.Contains(templates, t => t.Id == new ItemsConfig().BackpackTemplate);
         Assert.Contains(templates, t => t.Id == new ItemsConfig().GoldTemplate);

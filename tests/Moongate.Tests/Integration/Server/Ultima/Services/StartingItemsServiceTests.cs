@@ -9,9 +9,12 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Books;
+using Moongate.Tests.TestSupport.Ultima.Books;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -167,6 +170,25 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
         await Assert.ThrowsAsync<InvalidDataException>(service.StartAsync);
     }
 
+    [Fact]
+    public async Task GiveAsync_MultipleLetters_SaveIndependentSnapshotsInTheBackpack()
+    {
+        var service = CreateService(Set(common: true, entries: [new StartingItemEntry
+        {
+            Items = ["readable_scroll"], Amount = DiceSpec.Parse("2"), BookTemplate = "welcome_letter",
+            BookValues = new() { ["contact_name"] = 42 }
+        }]));
+        var given = await service.GiveAsync(Request(new()));
+        var backpack = given[0];
+        var letters = await _items.QueryAsync(item => item.ContainerId == backpack.Id);
+        Assert.Equal(2, letters.Count);
+        Assert.Equal(2, letters.Select(item => item.Id).Distinct().Count());
+        Assert.All(letters, item => Assert.Equal("Meet 42", item.GetProp<string>("book.content")));
+        Assert.All(letters, item => Assert.Equal("Welcome Aria", item.Name));
+        letters[0].SetProp("book.content", "Edited");
+        Assert.Equal("Meet 42", letters[1].GetProp<string>("book.content"));
+    }
+
     private StartingItemsService CreateService(params StartingItemSet[] sets)
     {
         return CreateService(new StartingItemsConfig(), new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" }, sets);
@@ -184,10 +206,12 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
                           Template("fancy_shirt", 0x1EFD),
                           Template("pants", 0x152E, 0x100),
                           Template("elven_boots", 0x2FC4),
-                          Template("spellbook", 0x0EFA)
+                          Template("spellbook", 0x0EFA),
+                          new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll" }
                       )
                       .With(new ContainerContent { Name = "default", Bounds = new(new Point2D(44, 65), new Point2D(186, 159)), Default = true })
                       .With<StartingItemSet>(sets);
+        loaders.With(new BookTemplate { Id = "welcome_letter", Title = "Welcome $player_name", Content = "Meet $contact_name", Variables = ["contact_name"] });
         var tiles = new FakeTileDataService()
                     .Item(0x0E75, TileFlagType.Container, 0, layer: (byte)LayerType.Backpack)
                     .Item(0x0EED, TileFlagType.Generic, 0)
@@ -197,7 +221,7 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
                     .Item(0x1EFD, TileFlagType.Wearable, 0, layer: (byte)LayerType.Shirt)
                     .Item(0x152E, TileFlagType.Wearable, 0, layer: (byte)LayerType.Pants)
                     .Item(0x2FC4, TileFlagType.Wearable, 0, layer: (byte)LayerType.Shoes)
-                    .Item(0x0EFA, TileFlagType.None, 0);
+                    .Item(0x0EFA, TileFlagType.None, 0).Item(0x14ED, TileFlagType.None, 1);
         var templates = new ItemTemplateService(loaders);
 
         return new StartingItemsService(
@@ -208,13 +232,14 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
             tiles,
             _host.Owner,
             config,
-            items
+            items,
+            new BookTemplateService(loaders), TestBookContexts.Create(), new LocalizationConfig()
         );
     }
 
     private StartingItemsRequest Request(Dictionary<SkillType, int> skills, ushort shirtHue = 0, ushort pantsHue = 0)
     {
-        return new(_mobile.Id, RaceType.Human, GenderType.Male, skills, new Hue(shirtHue), new Hue(pantsHue));
+        return new(_mobile.Id, RaceType.Human, GenderType.Male, skills, new Hue(shirtHue), new Hue(pantsHue)) { PlayerName = _mobile.Name };
     }
 
     private static ItemTemplate Template(string id, int itemId, int hue = 0)
