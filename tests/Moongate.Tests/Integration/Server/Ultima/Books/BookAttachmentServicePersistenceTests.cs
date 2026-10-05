@@ -10,6 +10,64 @@ namespace Moongate.Tests.Integration.Server.Ultima.Books;
 [Collection(PostgresTestCollection.Name)]
 public sealed class BookAttachmentServicePersistenceTests
 {
+    [Fact]
+    public async Task Claim_MovedLetterSurvivesAncestorDeletionWithoutLosingReceipt()
+    {
+        await using var books = await BookTestFixture.CreateAsync();
+        await using var db = await BookAttachmentStoreFixture.CreateAsync(books);
+        await using var f = await BookAttachmentTestFixture.CreateAsync(db.Store, books);
+        await db.Host.Container.Resolve<IDataAccess<MobileEntity>>().UpsertAsync(books.Player.Snapshot());
+        Assert.Equal(BookAttachmentClaimResultType.Claimed, await await f.BeginAsync());
+        var receipt = Assert.Single(await db.Receipts.GetAllAsync());
+        var chest = new ItemEntity { Id = new(0x40006000), TemplateId = "backpack", ItemId = 0xE75 };
+        var saves = new WorldSaveService(db.Host.Owner, books.World.Network.Loop, new RecordingTimerService(),
+            new() { Enabled = false }, TimeProvider.System, f.Barrier);
+        await saves.StartAsync();
+        saves.Activate();
+        try
+        {
+            await books.OnLoopAsync(() =>
+            {
+                books.Items.Add([chest]);
+                books.Items.PlaceOnGround(chest, books.Player.Map, books.Player.Location);
+                books.Items.MoveToContainer(f.Letter, chest.Id, new(10, 10), 0);
+            });
+            await saves.SaveAsync();
+            await books.OnLoopAsync(() =>
+            {
+                books.Items.MoveToContainer(f.Letter, books.Backpack.Id, new(10, 10), 0);
+                Assert.True(books.Handling.Delete(chest));
+            });
+            await saves.SaveAsync();
+            Assert.Null(await db.Items.GetByIdAsync(chest.Id));
+            Assert.Equal(books.Backpack.Id, (await db.Items.GetByIdAsync(f.Letter.Id))!.ContainerId);
+            var preserved = Assert.Single(await db.Receipts.GetAllAsync());
+            Assert.Equal((receipt.Id, receipt.ClaimantId, receipt.ClaimedAt),
+                (preserved.Id, preserved.ClaimantId, preserved.ClaimedAt));
+            var tiles = new Moongate.Tests.TestSupport.Ultima.Tiles.FakeTileDataService();
+            var restarted = new Moongate.Server.Ultima.Services.Internal.Books.BookAttachmentService(
+                books.Items, books.World.Mobiles, books.World.Sessions, books.ItemTemplates, tiles,
+                books.Handling, new Moongate.Server.Ultima.Services.WeightService(books.Items, books.ItemTemplates, tiles),
+                books.Serials, books.World.Network.Loop, books.Reservations, f.Barrier,
+                new Moongate.Server.Ultima.Services.ContainerCapacityService(books.Items, books.ItemTemplates, new()), db.Store);
+            await restarted.StartAsync();
+            await books.OnLoopAsync(() => Assert.False(restarted.CanClaim(f.Letter, books.Session)));
+            Task<BookAttachmentClaimResultType> retry = null!;
+            await books.OnLoopAsync(() => retry = restarted.ClaimAsync(f.Letter.Id, books.Session));
+            Assert.Equal(BookAttachmentClaimResultType.Unavailable, await retry);
+            Assert.Single(await db.Items.GetAllAsync(), item => item.TemplateId == "gold");
+            await books.OnLoopAsync(() => Assert.True(books.Handling.Delete(f.Letter)));
+            await saves.SaveAsync();
+            Assert.Null(await db.Items.GetByIdAsync(f.Letter.Id));
+            Assert.Empty(await db.Receipts.GetAllAsync());
+            await restarted.StopAsync();
+        }
+        finally
+        {
+            await saves.StopAsync();
+        }
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

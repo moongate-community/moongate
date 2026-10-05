@@ -44,8 +44,8 @@ internal sealed class BookAttachmentStoreFixture : IAsyncDisposable
                 {
                     Assert.True(world.World.Network.Loop.IsOnLoopThread);
                     fixture!.Captures++;
-                    return world.Items.Items;
-                }, item => item.Snapshot());
+                    return world.Items.Items.OrderBy(item => item.MobileId is not null);
+                }, item => item.Snapshot(), world.Items);
             }
             host.Container.AddPersistenceWorld<BookAttachmentClaimEntity>();
             await CoreMigrationFiles.ApplyAsync(host.Database, "world");

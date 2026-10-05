@@ -1,12 +1,70 @@
 using Moongate.Server.Ultima.Types.Books;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Books;
+using Npgsql;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Books;
 
 [Collection(PostgresTestCollection.Name)]
 public sealed class BookAttachmentStoreTests
 {
+    [Fact]
+    public async Task Receipt_ReferencesMissingLetter_IsRefused()
+    {
+        await using var fixture = await BookAttachmentStoreFixture.CreateAsync();
+        var exception = await Assert.ThrowsAsync<PostgresException>(() => fixture.Host.Database.ExecuteAsync(
+            "INSERT INTO world.book_attachment_claims(letter_id, claimant_id, claimed_at) VALUES (1073741900, 100, 1000)"));
+        Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, exception.SqlState);
+        Assert.Empty(await fixture.Receipts.GetAllAsync());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Receipt_ConcurrentInsertionAndLetterDeletion_LeaveNoOrphan(bool insertFirst)
+    {
+        await using var fixture = await BookAttachmentStoreFixture.CreateAsync();
+        var claim = fixture.Claim();
+        await fixture.Store.CommitAsync(claim);
+        await fixture.Receipts.DeleteAsync(claim.Letter.Id);
+        await using var inserter = new NpgsqlConnection(fixture.Host.Database.ConnectionString);
+        await inserter.OpenAsync();
+        await using var insertion = await inserter.BeginTransactionAsync();
+        await using var deleter = new NpgsqlConnection(fixture.Host.Database.ConnectionString);
+        await deleter.OpenAsync();
+        await using var deletion = await deleter.BeginTransactionAsync();
+        await using var insert = new NpgsqlCommand(
+            "INSERT INTO world.book_attachment_claims(letter_id, claimant_id, claimed_at) VALUES (@letter, 100, 1000)",
+            inserter, insertion) { CommandTimeout = 10 };
+        insert.Parameters.AddWithValue("letter", (long)claim.Letter.Id.Value);
+        await using var delete = new NpgsqlCommand("DELETE FROM world.items WHERE id = @letter", deleter, deletion)
+            { CommandTimeout = 10 };
+        delete.Parameters.AddWithValue("letter", (long)claim.Letter.Id.Value);
+        if (insertFirst)
+        {
+            await insert.ExecuteNonQueryAsync();
+            var pendingDelete = delete.ExecuteNonQueryAsync();
+            await WaitForDatabaseLockAsync(fixture.Host.Database, deleter.ProcessID);
+            Assert.False(pendingDelete.IsCompleted);
+            await insertion.CommitAsync();
+            await pendingDelete;
+            await deletion.CommitAsync();
+        }
+        else
+        {
+            await delete.ExecuteNonQueryAsync();
+            var pendingInsert = insert.ExecuteNonQueryAsync();
+            await WaitForDatabaseLockAsync(fixture.Host.Database, inserter.ProcessID);
+            Assert.False(pendingInsert.IsCompleted);
+            await deletion.CommitAsync();
+            var exception = await Assert.ThrowsAsync<PostgresException>(() => pendingInsert);
+            Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, exception.SqlState);
+            await insertion.RollbackAsync();
+        }
+        Assert.Null(await fixture.Items.GetByIdAsync(claim.Letter.Id));
+        Assert.Empty(await fixture.Receipts.GetAllAsync());
+    }
+
     [Fact]
     public async Task Commit_UnsavedLetterAndParents_PersistsOneBatchAndReceipt()
     {
@@ -75,5 +133,15 @@ public sealed class BookAttachmentStoreTests
         Assert.Equal(BookAttachmentCommitState.Uncertain, await fixture.Store.ReconcileAsync(claim));
         await fixture.Items.DeleteAsync(reward.Id);
         Assert.Equal(BookAttachmentCommitState.Uncertain, await fixture.Store.ReconcileAsync(claim));
+    }
+
+    private static async Task WaitForDatabaseLockAsync(PostgreSqlTestDatabase database, int processId)
+    {
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        while (await database.ScalarAsync<long>(
+            $"SELECT COUNT(*) FROM pg_stat_activity WHERE pid = {processId} AND wait_event_type = 'Lock'") == 0)
+        {
+            await Task.Delay(10, deadline.Token);
+        }
     }
 }

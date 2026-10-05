@@ -43,6 +43,56 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task Claim_DeferredLogoutPropagatesLoopFaultInsteadOfHanging()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        CarriedItems();
+        var reservations = new Moongate.Server.Ultima.Services.Items.InventoryReservationService(fixture.Loop);
+        var settlement = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _events.RegisterMoongateEventBus();
+        var service = new CharacterLeaveWorldService(_mobiles, _items, _view, _world,
+            _events.Resolve<IMoongateEventBus>(), reservations, fixture.Loop);
+        await fixture.ExecuteOnLoopAsync(() =>
+        {
+            Assert.True(reservations.TryReserve(_aria.Id, settlement.Task));
+            service.OnSessionClosed(session);
+        });
+        var loginWait = service.WaitForAccountAsync(_aria.AccountId!.Value);
+        using var release = new ManualResetEventSlim();
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        await fixture.Loop.PostAsync(new Moongate.Tests.Support.GameLoop.ActionGameLoopWorkItem(() =>
+        {
+            reservations.Release(_aria.Id);
+            entered.SetResult();
+            release.Wait();
+            throw new ApplicationException("Owner loop lost before deferred logout.");
+        }));
+        try
+        {
+            await entered.Task.WaitAsync(Timeout);
+            settlement.SetResult();
+            using var deadline = new CancellationTokenSource(Timeout);
+            while (fixture.Loop.GetMetricsSnapshot().QueueDepth == 0)
+            {
+                await Task.Delay(10, deadline.Token);
+            }
+            release.Set();
+            await Assert.ThrowsAsync<ApplicationException>(() => fixture.Loop.Completion);
+            await Assert.ThrowsAsync<ApplicationException>(() => loginWait.WaitAsync(Timeout));
+            await Assert.ThrowsAsync<ApplicationException>(() => service.StopAsync().WaitAsync(Timeout));
+            await Assert.ThrowsAsync<ApplicationException>(() => service.WaitForAccountAsync(_aria.AccountId.Value));
+            Assert.True(_mobiles.IsInWorld(_aria.Id));
+            Assert.Empty(_world.Items.Upserted);
+            Assert.Empty(_world.Mobiles.Upserted);
+        }
+        finally
+        {
+            release.Set();
+        }
+    }
+
+    [Fact]
     public async Task Claim_LogoutWaitsBeforeTakingSnapshot()
     {
         await using var fixture = await SessionFixture.CreateAsync();

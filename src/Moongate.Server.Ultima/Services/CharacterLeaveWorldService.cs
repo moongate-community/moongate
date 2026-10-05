@@ -68,7 +68,21 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
                         save = CaptureLeave(session);
                     }
                 });
-                await _loop!.PostAsync(work);
+                try
+                {
+                    await _loop!.PostAsync(work);
+                }
+                catch (InvalidOperationException) when (_loop!.Completion.IsCompleted)
+                {
+                    await _loop.Completion;
+                    throw;
+                }
+                await Task.WhenAny(work.Completion, _loop!.Completion);
+                if (!work.Completion.IsCompleted)
+                {
+                    await _loop.Completion;
+                    throw new InvalidOperationException("The game loop stopped before deferred logout capture.");
+                }
                 await work.Completion;
                 await save;
             }), character.AccountId);

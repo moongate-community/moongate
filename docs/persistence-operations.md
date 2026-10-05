@@ -218,7 +218,10 @@ Letter rewards are frozen in the item's `book.attachments` string prop. The
 `world.book_attachment_claims` table holds an insert-only receipt keyed by letter
 serial; it has no live world-save source. The receipt and newly materialized
 reward rows commit with the saved letter and required containment parents in one
-world transaction. Deleting the letter cascades its receipt.
+world transaction. Receipt insertion locks and checks its referenced letter.
+Deletion cleanup runs at transaction completion: destroying the letter removes
+its receipt, while a save that temporarily deletes and restores a moved letter
+preserves it. Receipts never become live world-save snapshots.
 
 Claims share the persistence-operation barrier with world saves. They briefly
 reserve the claimant's inventory, run database work off the game loop and apply
