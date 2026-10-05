@@ -1,3 +1,5 @@
+using Moongate.Server.Ultima.Services.Books;
+using Moongate.Server.Ultima.Packets.Books;
 using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
@@ -32,6 +34,109 @@ public sealed class BookDocumentServiceTests
 
             Assert.Equal(("readable_book", 0x0FF2), (tome.TemplateId, tome.ItemId));
             Assert.Equal(0x0FF1, plain.ItemId);
+        });
+    }
+
+    // A book item opens the client's book: its cover, then every page; no parchment.
+    [Fact]
+    public async Task Open_ABook_SendsItsHeaderAndItsPages_AndOpensNoGump()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        f.Data.With(new BookTemplate { Id = "tome", Title = "Tome", Author = "Yorick", Content = "one\ntwo\n\nthree", ItemTemplate = "readable_book" });
+
+        await f.OnLoopAsync(() =>
+        {
+            var tome = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "tome"));
+            f.World.Sender.Sent.Clear();
+
+            Assert.True(f.Books.Open(tome, f.Player));
+
+            Assert.Empty(f.Gumps.Opened);
+            var header = Assert.IsType<BookHeaderPacket>(f.World.Sender.Sent[0]);
+            var pages = Assert.IsType<BookPagesPacket>(f.World.Sender.Sent[1]);
+            Assert.Equal(2, f.World.Sender.Sent.Count);
+            Assert.Equal((tome.Id, 2), (header.Book, header.PageCount));
+            Assert.Equal((tome.Id, 2), (pages.Book, pages.PageCount));
+        });
+    }
+
+    [Fact]
+    public async Task Open_AScroll_StillOpensTheParchment_AndSendsNoBook()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+
+        await f.OnLoopAsync(() =>
+        {
+            var letter = f.Give();
+            f.World.Sender.Sent.Clear();
+
+            Assert.True(f.Books.Open(letter, f.Player));
+
+            Assert.Single(f.Gumps.Opened);
+            Assert.DoesNotContain(f.World.Sender.Sent, packet => packet is BookHeaderPacket or BookPagesPacket);
+        });
+    }
+
+    // Written on a scroll from a source that has a cover: the scroll takes the graphic and stays a parchment.
+    [Fact]
+    public async Task Open_AScrollWrittenFromABookSource_IsStillAParchment()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        f.Data.With(f.Source, new BookTemplate { Id = "tome", Title = "Tome", Content = "Text", ItemTemplate = "readable_book", ItemId = 0x0FF2 });
+
+        await f.OnLoopAsync(() =>
+        {
+            var letter = f.Give();
+            Assert.True(f.Books.Write(letter, f.Player, "tome"));
+            f.World.Sender.Sent.Clear();
+
+            Assert.True(f.Books.Open(letter, f.Player));
+
+            Assert.Single(f.Gumps.Opened);
+            Assert.DoesNotContain(f.World.Sender.Sent, packet => packet is BookHeaderPacket);
+        });
+    }
+
+    [Theory]
+    [InlineData("other")]
+    [InlineData("far")]
+    public async Task Open_ABookOutOfReach_SendsNothing(string where)
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        f.Data.With(new BookTemplate { Id = "tome", Title = "Tome", Content = "Text", ItemTemplate = "readable_book" });
+
+        await f.OnLoopAsync(() =>
+        {
+            var tome = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "tome"));
+
+            if (where == "far")
+            {
+                f.Items.PlaceOnGround(tome, MapType.Trammel, new(1700, 1700, 0));
+            }
+
+            f.World.Sender.Sent.Clear();
+
+            Assert.False(f.Books.Open(tome, where == "other" ? f.Other : f.Player));
+
+            Assert.DoesNotContain(f.World.Sender.Sent, packet => packet is BookHeaderPacket or BookPagesPacket);
+        });
+    }
+
+    [Fact]
+    public async Task Open_ABookOfMorePagesThanTheClientTakes_IsRefused()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var content = string.Join("\n\n", Enumerable.Range(1, BookPagination.MaxPages + 1).Select(page => $"p{page}"));
+        f.Data.With(new BookTemplate { Id = "tome", Title = "Tome", Content = content, ItemTemplate = "readable_book" });
+
+        await f.OnLoopAsync(() =>
+        {
+            var tome = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "tome"));
+            f.World.Sender.Sent.Clear();
+
+            Assert.False(f.Books.Open(tome, f.Player));
+
+            Assert.DoesNotContain(f.World.Sender.Sent, packet => packet is BookHeaderPacket or BookPagesPacket);
         });
     }
 

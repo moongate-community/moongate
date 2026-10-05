@@ -88,7 +88,7 @@ public sealed class BookTestFixture : IAsyncDisposable
         var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
         Contexts = new(world.Sessions, new AdminServerInfoProvider(ServerMode.Game, realm), realm, new MotdServerIdentity("Moongate"), world.Network.Loop);
         Books = new(new BookTemplateService(Data), Contexts, Items, world.Mobiles, Handling, ItemTemplates, world.Sessions,
-            Bank, realGumps ? new GumpService(world.Sender) : Gumps, world.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory);
+            Bank, realGumps ? new GumpService(world.Sender) : Gumps, world.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory, sender: world.Sender);
     }
 
     public void RebuildDocuments(IBookAttachmentService claims, IGumpService? gumps = null)
@@ -97,7 +97,7 @@ public sealed class BookTestFixture : IAsyncDisposable
         var factory = new FakeItemFactoryService(ItemTemplates, tiles);
         Books = new(new BookTemplateService(Data), Contexts, Items, World.Mobiles, Handling, ItemTemplates, World.Sessions,
             Bank, gumps ?? Gumps, World.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory,
-            claims, TestLocalization.With((30169, "Ritira allegati")), Speech);
+            claims, TestLocalization.With((30169, "Ritira allegati")), Speech, World.Sender);
     }
 
     public static async Task<BookTestFixture> CreateAsync(bool realGumps = false)
