@@ -21,7 +21,8 @@ gmtools = {}
 
 local row_height = 26
 
--- The frame is 560 wide: the sidebar is 140 wide from x = 20, the panel 340 from x = 190.
+-- The frame is 560 wide: the sidebar starts at x = 20 and the panel at x = 190. The widths are those of their texts,
+-- cut here instead of running over the divider or the edge.
 local sidebar_width = 100
 local panel_width = 330
 local text_height = 20

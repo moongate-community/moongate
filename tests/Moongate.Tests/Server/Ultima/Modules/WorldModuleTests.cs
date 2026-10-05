@@ -286,6 +286,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
     [Theory]
     [InlineData("world.set_weather(256, WeatherKindType.Rain)")]
     [InlineData("world.set_weather(0, WeatherKindType.Rain)")]
+    [InlineData("world.set_weather(2, WeatherKindType.Rain)")]
     public void SetWeather_ANpcOrAnUnknownPlayer_ForcesNothing(string call)
     {
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var npc));

@@ -309,7 +309,7 @@ public sealed class WorldModule
     ///     Forces a kind of weather on the profile a player stands in until the next game hour, as the weather command
     ///     does; <c>world.set_weather(who, WeatherKindType.Rain)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Forces a WeatherKindType (None, Rain, Snow or Storm) on the profile where the player stands, which every region using that profile gets, until the next game hour. False for an NPC or a player not in the world; a kind that does not exist is a script error.")]
+    [ScriptFunction(helpText: "Forces a WeatherKindType (None, Rain, Snow or Storm) on the profile where the player stands, which every region using that profile gets, until the next game hour. False for an NPC or a player not in the world; a kind that does not exist is a script error. It does not check who calls it: a script for the staff checks world.is_staff first.")]
     public bool SetWeather(long player, WeatherKindType kind)
     {
         if (!TryGetWeatherPlayer(player, out var mobile))

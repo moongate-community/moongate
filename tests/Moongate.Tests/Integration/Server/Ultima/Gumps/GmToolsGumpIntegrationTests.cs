@@ -130,6 +130,16 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void TheSelectedTool_IsInTheTitleHue_AndTheCaptionsOfTheOthersAreNot()
+    {
+        var built = Open(Staff, "weather");
+
+        // The label of the sidebar, at x 20 + 35, is written with the hue of the titles (68).
+        Assert.Matches(@"\{ croppedtext 55 \d+ \d+ \d+ 68 \d+ \}", built.Layout);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
     public void TheWeatherPanel_ShowsTheProfileAndTheWeatherWhereTheGameMasterStands()
     {
         var built = Open(Staff, "weather");
