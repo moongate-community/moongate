@@ -18,15 +18,17 @@ public sealed class BankModule
     private readonly IBankService _bank;
     private readonly IMobileService _mobiles;
     private readonly TimeProvider _time;
+    private readonly IItemService? _items;
 
     // When each player was last attended to: several bankers hear the same words, one serves.
     private readonly Dictionary<Serial, DateTimeOffset> _attended = new();
 
-    public BankModule(IBankService bank, IMobileService mobiles, TimeProvider? time = null)
+    public BankModule(IBankService bank, IMobileService mobiles, TimeProvider? time = null, IItemService? items = null)
     {
         _bank = bank;
         _mobiles = mobiles;
         _time = time ?? TimeProvider.System;
+        _items = items;
     }
 
     /// <summary>
@@ -118,6 +120,52 @@ public sealed class BankModule
         }
 
         return IsWhole(amount) ? _bank.Deposit(mobile, (int)amount) : BankResultType.BadAmount;
+    }
+
+    /// <summary>
+    ///     Writes a bank check paid with the coins of the bank of <paramref name="player" />;
+    ///     <c>bank.check(speaker, 5000) == BankResultType.Ok</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Writes a bank check worth amount, paid with the coins of the player's bank and put in its bank box, and gives a BankResultType: Ok, BadAmount (not a whole number above 0), CheckTooSmall (below ultima.bank.min_check), CheckTooBig (above ultima.bank.max_check), NoBank (the player never opened its bank), NotEnoughGold (coins only: another check does not pay a check), BankFull (the box holds ultima.bank.max_items and no gold pile is used up to leave its place), Busy (try again in a moment) or NoPlayer. All or nothing. The check is an item of the template bank_check; bank.worth reads what it is worth.")]
+    public BankResultType Check(long player, double amount)
+    {
+        if (!TryGetPlayer(player, out var mobile))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        return IsWhole(amount) ? _bank.WriteCheck(mobile, (int)amount) : BankResultType.BadAmount;
+    }
+
+    /// <summary>
+    ///     Turns a bank check inside the bank box of <paramref name="player" /> into coins;
+    ///     <c>bank.cash(user, check) == BankResultType.Ok</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Turns a bank check lying inside the player's bank box, in the box or in a bag of it, into coins of the box: the gold piles there are topped up and piles of 60000 are made. Gives a BankResultType: Ok when gold went in, all of it and the check is gone, or what the box had room for and the check keeps the rest (bank.worth before and after tells how much went in); BankFull when nothing fits; NotInBank for an item that is not a check or is not inside that player's bank box; NoBank, Busy or NoPlayer. It does not ask whether the box is open: an item script's on_use is not called for an item of a closed bank.")]
+    public BankResultType Cash(long player, long check)
+    {
+        if (!TryGetPlayer(player, out var mobile))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        if (_items is null || check is <= 0 or > uint.MaxValue || !_items.TryGet(new Serial((uint)check), out var item))
+        {
+            return BankResultType.NotInBank;
+        }
+
+        return _bank.Cash(mobile, item, out _);
+    }
+
+    /// <summary>
+    ///     Gets what a bank check is worth; <c>bank.worth(check)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "What a bank check is worth in gold; nil for an item that is not a bank check, or is not there.")]
+    public long? Worth(long item)
+    {
+        return _items is not null && item is > 0 and <= uint.MaxValue && _items.TryGet(new Serial((uint)item), out var found)
+            ? _bank.WorthOf(found)
+            : null;
     }
 
     // Lua numbers: an amount with a fraction, or beyond an int, is none.

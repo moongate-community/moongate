@@ -4,7 +4,11 @@
 # What it is for:
 #   The bank box every player gets the first time a banker opens it: a
 #   container worn on the bank layer that the client never draws, opened only
-#   by its owner standing where it was opened.
+#   by its owner standing where it was opened. And the bank check a banker
+#   writes for gold of the bank: its worth is the prop bank.worth, shown on
+#   its tooltip, and a double click inside the open bank box turns it back
+#   into coins (scripts/items/bank_check.lua). It has no name of its own: the
+#   bank gives it the client's "A bank check".
 #
 # Fields:
 #   base_id     inherits base_item
@@ -22,3 +26,14 @@ rarity = "common"
 movable = false
 decays = false
 weight = 0.0
+
+[[item]]
+id = "bank_check"
+base_id = "base_item"
+item_id = 0x14F0
+hue = 0x34
+rarity = "common"
+weight = 1.0
+stackable = false
+loot_type = "blessed"
+script_id = "bank_check"

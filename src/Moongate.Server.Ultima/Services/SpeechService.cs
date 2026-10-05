@@ -48,15 +48,14 @@ public sealed class SpeechService : ISpeechService
         return SendAround(speaker.Map, speaker.Location, message, speaker);
     }
 
-    public int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "")
+    public int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "", string affix = "")
     {
-        var message = LocalizedMessagePacket.Spoken(
-            speaker.Id,
-            Math.Clamp(speaker.Body, 0, ushort.MaxValue),
-            cliloc,
-            speaker.Name,
-            arguments
-        );
+        var body = Math.Clamp(speaker.Body, 0, ushort.MaxValue);
+
+        // A text with something of the server after it travels in a packet of its own.
+        IOutgoingPacket message = affix.Length == 0
+            ? LocalizedMessagePacket.Spoken(speaker.Id, body, cliloc, speaker.Name, arguments)
+            : LocalizedMessageAffixPacket.Spoken(speaker.Id, body, cliloc, speaker.Name, affix, arguments);
 
         return SendAround(speaker.Map, speaker.Location, message, speaker);
     }
