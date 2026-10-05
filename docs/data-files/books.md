@@ -68,6 +68,7 @@ one transaction. Existing roots must add the entry to their preserved
 | `content` | Required, nonblank multiline source body; supports variables |
 | `variables` | Optional array of required custom value names |
 | `item_template` | Existing item template; default `readable_scroll` |
+| `attachments` | Optional reward entries; see [Letter attachments](#letter-attachments) |
 | `translations.<language>` | Optional `title`, `author` and `content` overrides; each missing field falls back to the top-level value |
 
 Ids and variable names use lowercase letters, digits and underscores, beginning
@@ -78,6 +79,61 @@ selected item template must explicitly set `stackable = false` and use
 The creation language is `[localization].language`. Supported overrides are
 `eng`, `ita`, `fre`, `ger`, `spa`, `por`, `pol` and `cze`. An absent language
 uses the top-level fields.
+
+## Letter attachments
+
+Add attachments to a document source, outside any translation table:
+
+```toml
+[[attachments]]
+item_template = "0x0eed_gold_coin"
+amount = 100
+
+[[attachments]]
+item_template = "0x103b_bread_loaf"
+amount = 3
+newbie = false
+```
+
+Each entry requires an existing `item_template`. `amount` defaults to 1 and uses
+the shared integer/dice syntax; its entire range must stay within 1..65535.
+`hue` is optional and uses the shared fixed/range/list syntax; leaving it unset
+keeps the item factory's hue. `newbie` defaults to false (ordinary loot); true
+marks the delivered item as kept on death. The batch may contain at most 32
+physical items, counting every possible nonstackable copy at the maximum roll.
+Translations change only text and cannot add or replace attachments.
+
+`book.give` and starting items freeze an independent batch for each physical
+letter at creation, including rolled quantities, hue and factory properties.
+The letter keeps that batch through source edits, trades and restarts. Reward
+items enter the world and contribute weight only when claimed; until then only
+the letter weighs. They are delivered as distinct stacks/items without merging
+existing stacks.
+
+A reader sees **Claim attachments** (**Ritira allegati** in Italian) only while
+an unclaimed letter is in their own backpack, including nested bags. Trading
+that letter transfers its unclaimed rewards. Ground letters, bank letters,
+letters held on the cursor and letters in another player's inventory have no
+claim action. Reading remains available under the normal access rules.
+
+Claiming delivers the whole batch once, or nothing if the backpack lacks weight
+capacity, item capacity or free grid slots. Make room and reopen the letter to
+retry. On success the button disappears and the same letter remains readable.
+Invalid saved rewards or an unavailable/incompatible item template refuse the
+claim; editing the TOML does not recreate the issued batch.
+
+`book.write` preserves an existing valid attachment payload, including after
+claiming. It cannot add rewards to a plain letter or repair malformed rewards.
+A refused rewrite leaves the text unchanged. A preparation failure makes live
+`book.give` return nil before allocating the letter, and rolls back character
+creation when the letter is a starting item.
+
+The shipped welcome letter has no rewards. To opt in, add the entries above to
+your own `templates/books/welcome_letter.toml` and restart. If your root already
+has an edited starting-items file, bind that source using the
+[personalized starting-letter entry](starting-items.md#personalized-starting-letters).
+Only newly issued letters receive the configured batch. Mailboxes and native
+book covers/pages/editing remain separate features.
 
 ## Variables
 

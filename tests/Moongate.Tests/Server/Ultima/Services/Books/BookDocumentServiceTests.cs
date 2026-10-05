@@ -14,6 +14,64 @@ namespace Moongate.Tests.Server.Ultima.Services.Books;
 
 public sealed class BookDocumentServiceTests
 {
+    [Theory]
+    [InlineData("own", true)]
+    [InlineData("nested", true)]
+    [InlineData("plain", false)]
+    [InlineData("malformed", false)]
+    [InlineData("ground", false)]
+    [InlineData("claimed", false)]
+    public async Task Open_ClaimActionOnlyForEligibleBackpackLetter(string state, bool expected)
+    {
+        await using var f = await BookAttachmentTestFixture.CreateAsync();
+        if (state == "claimed") await await f.BeginAsync();
+        await f.Books.OnLoopAsync(() =>
+        {
+            if (state == "plain") f.Letter.RemoveProp(BookAttachmentCodec.PropKey);
+            if (state == "malformed") f.Letter.SetProp(BookAttachmentCodec.PropKey, "{}");
+            if (state == "ground") f.Books.Items.PlaceOnGround(f.Letter, MapType.Trammel, f.Books.Player.Location);
+            if (state == "nested")
+            {
+                var bag = new ItemEntity { Id = new(0x40002000), TemplateId = "backpack", ItemId = 0xE75 };
+                bag.PutInContainer(f.Books.Backpack.Id, new(10, 10));
+                f.Books.Items.Add([bag]);
+                f.Books.Items.MoveToContainer(f.Letter, bag.Id, new(10, 10));
+            }
+            Assert.True(f.Books.Books.Open(f.Letter, f.Books.Player));
+            var built = Assert.Single(f.Books.Gumps.Opened).Gump.Layout.Build();
+            Assert.Equal(expected, built.Buttons.Contains(1));
+            if (expected) Assert.Contains("Ritira allegati", built.Strings);
+        });
+    }
+
+    [Fact]
+    public async Task Claim_ReservedInventoryRefusesBankTransfersBeforeAnySideEffect()
+    {
+        await using var f = await BookAttachmentTestFixture.CreateAsync();
+        f.Store.Block = true;
+        var bankGold = new ItemEntity { Id = new(0x40003001), TemplateId = "gold", ItemId = 0xEED, Amount = 200 };
+        var carriedGold = new ItemEntity { Id = new(0x40003002), TemplateId = "gold", ItemId = 0xEED, Amount = 10 };
+        await f.Books.OnLoopAsync(() =>
+        {
+            f.Books.Player.AccountId = new(1);
+            var bank = new ItemEntity { Id = new(0x40003000), TemplateId = "backpack", ItemId = 0xE75 };
+            bank.Equip(f.Books.Player.Id, LayerType.Bank);
+            bankGold.PutInContainer(bank.Id, new(10, 10));
+            carriedGold.PutInContainer(f.Books.Backpack.Id, new(10, 10));
+            f.Books.Items.Add([bank, bankGold, carriedGold]);
+        });
+        var pending = await f.BeginAsync();
+        await f.Store.Entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        await f.Books.OnLoopAsync(() =>
+        {
+            Assert.Equal(Moongate.Server.Ultima.Types.Bank.BankResultType.Busy, f.Books.Bank.Withdraw(f.Books.Player, 1));
+            Assert.Equal(Moongate.Server.Ultima.Types.Bank.BankResultType.Busy, f.Books.Bank.Deposit(f.Books.Player, 1));
+            Assert.Equal((200, 10), (bankGold.Amount, carriedGold.Amount));
+        });
+        f.Store.Continue.TrySetResult();
+        await pending;
+    }
+
     [Fact]
     public async Task Give_AttachmentsFreezeWithoutCreatingRewardItemsOrChangingLetterWeight()
     {

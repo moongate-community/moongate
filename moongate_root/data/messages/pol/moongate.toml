@@ -202,3 +202,11 @@
 30165 = "{0} wraca."
 30166 = "To nie są zwłoki."
 30167 = "Tych zwłok nie można wskrzesić."
+
+# Moongate: letter attachments (30168-30173).
+30168 = "Odbierz załączniki"
+30169 = "Załączniki są w twoim plecaku."
+30170 = "Twój plecak nie pomieści wszystkich załączników."
+30171 = "Tych załączników nie można odebrać."
+30172 = "Twój plecak jest zajęty. Spróbuj ponownie za chwilę."
+30173 = "Nie udało się dostarczyć załączników. Spróbuj ponownie za chwilę."

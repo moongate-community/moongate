@@ -202,3 +202,11 @@
 30165 = "{0} ist zurück."
 30166 = "Das ist keine Leiche."
 30167 = "Diese Leiche kann nicht erweckt werden."
+
+# Moongate: letter attachments (30168-30173).
+30168 = "Anhänge abholen"
+30169 = "Die Anhänge sind in deinem Rucksack."
+30170 = "Dein Rucksack hat keinen Platz für alle Anhänge."
+30171 = "Diese Anhänge können nicht abgeholt werden."
+30172 = "Dein Rucksack ist beschäftigt. Versuche es gleich erneut."
+30173 = "Die Anhänge konnten nicht geliefert werden. Versuche es gleich erneut."

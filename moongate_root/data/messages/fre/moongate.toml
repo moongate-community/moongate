@@ -202,3 +202,11 @@
 30165 = "{0} est de retour."
 30166 = "Ce n'est pas un cadavre."
 30167 = "Ce cadavre ne peut pas être ressuscité."
+
+# Moongate: letter attachments (30168-30173).
+30168 = "Récupérer les pièces jointes"
+30169 = "Les pièces jointes sont dans votre sac."
+30170 = "Votre sac ne peut pas contenir toutes les pièces jointes."
+30171 = "Ces pièces jointes ne peuvent pas être récupérées."
+30172 = "Votre sac est occupé. Réessayez bientôt."
+30173 = "Les pièces jointes ne peuvent pas être livrées. Réessayez bientôt."

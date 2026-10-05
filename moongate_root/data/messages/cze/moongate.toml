@@ -202,3 +202,11 @@
 30165 = "{0} je zpět."
 30166 = "To není mrtvola."
 30167 = "Tuto mrtvolu nelze vzkřísit."
+
+# Moongate: letter attachments (30168-30173).
+30168 = "Vyzvednout přílohy"
+30169 = "Přílohy jsou ve tvém batohu."
+30170 = "V batohu není místo na všechny přílohy."
+30171 = "Tyto přílohy nelze vyzvednout."
+30172 = "Tvůj batoh je zaneprázdněný. Zkus to za chvíli."
+30173 = "Přílohy se nepodařilo doručit. Zkus to za chvíli."

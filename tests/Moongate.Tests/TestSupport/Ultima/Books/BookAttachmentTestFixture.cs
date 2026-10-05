@@ -33,6 +33,7 @@ internal sealed class BookAttachmentTestFixture : IAsyncDisposable
     public static async Task<BookAttachmentTestFixture> CreateAsync(Moongate.Server.Ultima.Interfaces.Internal.Books.IBookAttachmentStore? store = null, BookTestFixture? books = null)
     {
         var fixture = new BookAttachmentTestFixture(books ?? await BookTestFixture.CreateAsync(), store, books is null);
+        fixture.Books.RebuildDocuments(fixture.Service);
         await fixture.Service.StartAsync();
         await fixture.Books.OnLoopAsync(() =>
         {

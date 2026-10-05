@@ -104,7 +104,7 @@ public sealed class KeyCommand : ICommandExecutor
 
         if (busy)
         {
-            context.PrintError(_localization.Text(30168, "Your backpack is busy. Try again shortly."));
+            context.PrintError(_localization.Text(Moongate.Server.Ultima.Services.Internal.Books.BookAttachmentService.BusyMessage, "Your backpack is busy. Try again shortly."));
             return;
         }
         if (value is not { } keyValue)

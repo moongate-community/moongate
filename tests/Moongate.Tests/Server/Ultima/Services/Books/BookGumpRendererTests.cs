@@ -6,6 +6,19 @@ namespace Moongate.Tests.Server.Ultima.Services.Books;
 public sealed class BookGumpRendererTests
 {
     [Fact]
+    public void TryBuild_ClaimFooterEscapesTextAndFitsBothPackets()
+    {
+        Assert.True(BookGumpRenderer.TryBuild("Title", "Author", "Body", "Claim <&>\"\nNow", (_, _) => { }, out var gump));
+        var built = gump!.Layout.Build();
+        Assert.Contains(1, built.Buttons);
+        Assert.Contains("Claim &lt;&amp;&gt;&quot;<br>Now", built.Strings);
+        Assert.Equal(285, Assert.Single(gump.Layout.Entries.OfType<GumpHtml>(), html => html.Scrollbar).Height);
+        _ = new Moongate.Server.Ultima.Packets.Gumps.GumpPacket(1, 1, 0, 0, built);
+        _ = new Moongate.Server.Ultima.Packets.Gumps.CompressedGumpPacket(1, 1, 0, 0, built);
+        Assert.False(BookGumpRenderer.TryBuild("Title", "", new string('&', 16384), "Claim", (_, _) => { }, out _));
+    }
+
+    [Fact]
     public void TryBuild_PlainText_EscapesOnlyAtPresentationAndPreservesParagraphs()
     {
         Assert.True(BookGumpRenderer.TryBuild("Title &<>\"", "By &<>\"", "First &<>\"\r\n\r\nLast", out var gump));

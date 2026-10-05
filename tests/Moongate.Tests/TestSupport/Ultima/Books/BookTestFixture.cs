@@ -1,3 +1,6 @@
+using Moongate.Server.Ultima.Interfaces.Books;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Server.Ultima.Services.Items;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Tests.TestSupport.Ultima.Weight;
@@ -43,7 +46,8 @@ public sealed class BookTestFixture : IAsyncDisposable
     public ItemHandlingService Handling { get; }
     public BookContextFactory Contexts { get; }
     public BankService Bank { get; }
-    public BookDocumentService Books { get; }
+    public BookDocumentService Books { get; private set; }
+    public RecordingSpeechService Speech { get; } = new();
     public MobileEntity Player { get; }
     public MobileEntity Other { get; }
     public GameSession Session { get; }
@@ -75,11 +79,20 @@ public sealed class BookTestFixture : IAsyncDisposable
         var tooltips = TestTooltips.Create(Items, world.Mobiles);
         Handling = new(Items, world.Sessions, world.Sender, new RecordingWorldViewService(), tooltips, factory, Serials, inventory: Inventory);
         Bank = new(Items, factory, world.Sessions, world.Mobiles, world.Sender, tooltips, null!, world.Network.Loop,
-            Handling, new ContainerCapacityService(Items, ItemTemplates, new BankConfig()), new StubWeightService(), new ItemsConfig(), new BankConfig(), inventory: Inventory, reservations: Reservations);
+            Handling, new ContainerCapacityService(Items, ItemTemplates, new BankConfig()), new StubWeightService(), new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" }, new BankConfig(), inventory: Inventory, reservations: Reservations);
         var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
         Contexts = new(world.Sessions, new AdminServerInfoProvider(ServerMode.Game, realm), realm, new MotdServerIdentity("Moongate"), world.Network.Loop);
         Books = new(new BookTemplateService(Data), Contexts, Items, world.Mobiles, Handling, ItemTemplates, world.Sessions,
             Bank, realGumps ? new GumpService(world.Sender) : Gumps, world.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory);
+    }
+
+    public void RebuildDocuments(IBookAttachmentService claims, IGumpService? gumps = null)
+    {
+        var tiles = new FakeTileDataService();
+        var factory = new FakeItemFactoryService(ItemTemplates, tiles);
+        Books = new(new BookTemplateService(Data), Contexts, Items, World.Mobiles, Handling, ItemTemplates, World.Sessions,
+            Bank, gumps ?? Gumps, World.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory,
+            claims, TestLocalization.With((30168, "Ritira allegati")), Speech);
     }
 
     public static async Task<BookTestFixture> CreateAsync(bool realGumps = false)
