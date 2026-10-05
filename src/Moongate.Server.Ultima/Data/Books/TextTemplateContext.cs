@@ -9,4 +9,3 @@ public sealed record TextTemplateContext
     public string PlayerName { get; init; } = "";
     public int UsersOnline { get; init; }
 }
-

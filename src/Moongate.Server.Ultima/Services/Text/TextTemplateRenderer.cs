@@ -47,4 +47,3 @@ public static class TextTemplateRenderer
         return output.ToString();
     }
 }
-

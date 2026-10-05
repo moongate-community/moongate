@@ -18,4 +18,3 @@ public static class MotdTemplateTokens
         return TextTemplateTokens.IsValidName(name);
     }
 }
-

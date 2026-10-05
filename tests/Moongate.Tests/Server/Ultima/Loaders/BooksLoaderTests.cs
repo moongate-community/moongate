@@ -1,0 +1,114 @@
+using DryIoc;
+using Moongate.Core.Directories;
+using Moongate.Server.Ultima.Data.Templates.Books;
+using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Directories;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
+
+namespace Moongate.Tests.Server.Ultima.Loaders;
+
+public sealed class BooksLoaderTests
+{
+    private const string Valid = "title = \"Welcome $player_name\"\nauthor = \"British\"\ncontent = \"\"\"\nCaro ${player_name}, è un piacere!\n\nHello\n\"\"\"\n";
+
+    [Fact]
+    public async Task RegisteredLoader_UsesAlreadyLoadedItems()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/welcome_letter.toml", Valid);
+        using var container = new Container();
+        container.RegisterInstance(new DirectoriesConfig(root.Path, ["templates"]));
+        container.RegisterInstance<IDataLoaderService>(new StubDataLoaderService().With(
+            new ItemTemplate { Id = "readable_scroll", Stackable = false, ScriptId = "readable_scroll" }));
+        container.AddUltimaDataLoaders();
+        var book = Assert.Single((await container.Resolve<IDataLoader<BookTemplate>>().LoadDataAsync()).Entities);
+        Assert.Equal("welcome_letter", book.Id);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_UnicodeParagraphsAndFilename_ArePreserved()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/welcome_letter.toml", Valid.Replace("\n", "\r\n"));
+        var book = Assert.Single((await Loader(root).LoadDataAsync()).Entities);
+        Assert.Equal("welcome_letter", book.Id);
+        Assert.Equal("Caro ${player_name}, è un piacere!\n\nHello\n", book.Content.Replace("\r\n", "\n"));
+        Assert.Equal("readable_scroll", book.ItemTemplate);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_MissingDirectory_IsEmpty()
+    {
+        using var root = new TemporaryDirectory();
+        Assert.Empty((await Loader(root).LoadDataAsync()).Entities);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_DuplicateStems_IdentifiesBothFiles()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/a/welcome_letter.toml", Valid);
+        root.CreateFile("templates/books/b/welcome_letter.toml", Valid);
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Loader(root).LoadDataAsync());
+        Assert.Contains("a/welcome_letter.toml", error.Message);
+        Assert.Contains("b/welcome_letter.toml", error.Message);
+    }
+
+    [Theory]
+    [InlineData("title = \"\"", "content = \"Hello\"")]
+    [InlineData("title = \"Title\"", "content = \" \"")]
+    [InlineData("title = \"Title\"", "content = \"$dayz\"")]
+    [InlineData("title = \"Title\"", "content = \"${Player}\"")]
+    [InlineData("title = \"Title\"", "content = \"Hello\"\nvariables = [\"player_name\"]")]
+    [InlineData("title = \"Title\"", "content = \"Hello\"\nvariables = [\"x\", \"x\"]")]
+    [InlineData("title = \"Title\"", "content = \"Hello\"\nvariables = [\"X\"]")]
+    [InlineData("title = \"Title\"", "content = \"Hello\"\nitem_template = \"missing\"")]
+    [InlineData("title = \"Title\"", "content = \"Hello\"\n[translations.zzz]\ncontent = \"Hello\"")]
+    [InlineData("title = \"Title\"", "content = \"Hello\"\n[translations.ita]\ncontent = \"$dayz\"")]
+    [InlineData("title =", "content = \"Hello\"")]
+    [InlineData("title = \"Title\"", "content = \"Hello\\u0000\"")]
+    public async Task LoadDataAsync_InvalidSource_FailsWithPath(string title, string body)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/bad.toml", title + "\n" + body);
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Loader(root).LoadDataAsync());
+        Assert.Contains("books/bad.toml", error.Message);
+    }
+
+    [Theory]
+    [InlineData(true, "readable_scroll")]
+    [InlineData(false, "unrelated")]
+    public async Task LoadDataAsync_UnsupportedItem_FailsWithPath(bool stackable, string script)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/note.toml", Valid);
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Loader(root, stackable, script).LoadDataAsync());
+        Assert.Contains("note.toml", error.Message);
+    }
+
+    [Theory]
+    [InlineData(16384, true)]
+    [InlineData(16385, false)]
+    public async Task LoadDataAsync_SourceContentLength_EnforcesLimit(int length, bool valid)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/note.toml", "title = \"Note\"\ncontent = \"" + new string('a', length) + "\"");
+        if (valid)
+        {
+            Assert.Single((await Loader(root).LoadDataAsync()).Entities);
+        }
+        else
+        {
+            await Assert.ThrowsAsync<InvalidDataException>(() => Loader(root).LoadDataAsync());
+        }
+    }
+
+    private static BooksLoader Loader(TemporaryDirectory root, bool stackable = false, string script = "readable_scroll")
+    {
+        return new(new DirectoriesConfig(root.Path, ["templates"]),
+            new StubDataLoaderService().With(new ItemTemplate { Id = "readable_scroll", Stackable = stackable, ScriptId = script }));
+    }
+}

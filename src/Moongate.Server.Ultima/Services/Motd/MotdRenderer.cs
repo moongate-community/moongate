@@ -40,4 +40,3 @@ public sealed class MotdRenderer
             (name, token) => _variables.ResolveAsync(name, context, token), TextTemplateSyntaxType.Motd, cancellationToken);
     }
 }
-

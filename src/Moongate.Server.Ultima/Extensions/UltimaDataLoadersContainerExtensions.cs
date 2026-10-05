@@ -14,6 +14,7 @@ using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Data.Templates.Gumps;
+using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
@@ -59,6 +60,7 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<MoongatesLoader, MoongateFacet>(21);
         container.AddUltimaDataLoader<LocationsLoader, NamedLocation>(22);
         container.AddUltimaDataLoader<JailLoader, JailFile>(23);
+        container.AddUltimaDataLoader<BooksLoader, BookTemplate>(24);
 
         return container;
     }

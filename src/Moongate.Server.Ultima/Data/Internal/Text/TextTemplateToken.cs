@@ -6,4 +6,3 @@ public sealed record TextTemplateToken
     public int Length { get; init; }
     public string? Name { get; init; }
 }
-

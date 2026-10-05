@@ -34,4 +34,3 @@ public static partial class TextTemplateTokens
     [GeneratedRegex(@"\$\$|\$\{([^}]*)\}|\$([a-z][a-z0-9_]*)", RegexOptions.CultureInvariant)]
     private static partial Regex DocumentRegex();
 }
-
