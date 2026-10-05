@@ -347,21 +347,32 @@ public sealed class BankService : IBankService
         return BankResultType.Ok;
     }
 
-    // Gold weighs: the player's status shows its new load, and it is warned when it is now overloaded.
-    private void LoadChanged(MobileEntity player)
-    {
-        if (_fatigue is not null && _sessions.TryGetByCharacterId(player.Id, out var session))
-        {
-            _fatigue.LoadChanged(session, player, true);
-        }
-    }
-
     public long? WorthOf(ItemEntity item)
     {
-        // Only a check is a check: the prop on anything else is worth nothing.
-        return item.TemplateId == CheckTemplate && item.TryGetProp<long>(ItemPropKeys.BankWorth, out var worth) && worth > 0
-            ? worth
-            : null;
+        return CheckWorth(item);
+    }
+
+    /// <summary>
+    ///     Gets what a bank check is worth; null for an item that is not one. Only a check is a check: the prop on
+    ///     anything else is worth nothing, and so is a worth that is not a number above 0.
+    /// </summary>
+    public static long? CheckWorth(ItemEntity item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (item.TemplateId != CheckTemplate)
+        {
+            return null;
+        }
+
+        try
+        {
+            return item.TryGetProp<long>(ItemPropKeys.BankWorth, out var worth) && worth > 0 ? worth : null;
+        }
+        catch (Exception exception) when (exception is InvalidCastException or FormatException or OverflowException)
+        {
+            return null;
+        }
     }
 
     public BankResultType WriteCheck(MobileEntity player, int amount)
@@ -504,7 +515,7 @@ public sealed class BankService : IBankService
         // Nothing can refuse from here on. The check goes first: its place is the one a pile takes.
         if (whole)
         {
-            _handling.Delete(check);
+            Remove(check);
         }
         else
         {
@@ -537,6 +548,15 @@ public sealed class BankService : IBankService
         deposited = (int)Math.Min(going, int.MaxValue);
 
         return BankResultType.Ok;
+    }
+
+    // Gold weighs: the player's status shows its new load, and it is warned when it is now overloaded.
+    private void LoadChanged(MobileEntity player)
+    {
+        if (_fatigue is not null && _sessions.TryGetByCharacterId(player.Id, out var session))
+        {
+            _fatigue.LoadChanged(session, player, true);
+        }
     }
 
     // The gold piles inside a container, at any depth, the smallest first: taking from them empties the small ones.
@@ -599,9 +619,23 @@ public sealed class BankService : IBankService
             {
                 amount -= taken;
             }
+            else
+            {
+                // Its callers counted these coins as theirs to take: gold may have been made out of nothing.
+                _logger.Error("Bank: {Amount} coins could not be taken from the gold pile {Item}", taken, pile.Id);
+            }
         }
 
         return amount;
+    }
+
+    // A check that gave all its gold. Nothing refuses it today; if something ever does, the gold was paid twice.
+    private void Remove(ItemEntity check)
+    {
+        if (!_handling.Delete(check))
+        {
+            _logger.Error("Bank: the used up check {Item} could not be removed", check.Id);
+        }
     }
 
     // Takes the rest from the checks, the smallest first: one used up is gone, the last one keeps what is left.
@@ -620,7 +654,7 @@ public sealed class BankService : IBankService
 
             if (taken == worth)
             {
-                _handling.Delete(check);
+                Remove(check);
             }
             else
             {

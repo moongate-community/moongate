@@ -16,38 +16,38 @@ using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
-using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
-using Moongate.Server.Ultima.Data.Bodies;
-using Moongate.Server.Ultima.Interfaces.Loaders;
-using Moongate.Ultima.Types;
 using Moongate.Server.Ultima.Types.Effects;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Speech;
-using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.BulletinBoards;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
-using Moongate.Server.Ultima.Types.Mobiles;
-using Moongate.Tests.TestSupport.Ultima.Mobiles;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Items;
 
@@ -1182,8 +1182,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private async Task<ItemScriptService> StartItemScriptAsync(string script, string template)
     {
         _scripts.Write($"items/{script}.lua", File.ReadAllText(ShippedScript($"items/{script}.lua")));
-        // What the teleporter scripts take with require.
+        // What the teleporter scripts and the bank check take with require.
         _scripts.Write("common/teleport.lua", File.ReadAllText(ShippedScript("common/teleport.lua")));
+        _scripts.Write("common/numbers.lua", File.ReadAllText(ShippedScript("common/numbers.lua")));
         var engine = NewEngine();
         _engines.Add(engine);
         await engine.StartAsync();

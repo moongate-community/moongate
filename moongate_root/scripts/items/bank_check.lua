@@ -13,6 +13,8 @@
 --   on_use(serial, user)   a player double clicks the check; returns true
 -- ==============================================================================
 
+local numbers = require("common.numbers")
+
 bank_check = {}
 
 -- The client's texts the player reads.
@@ -20,27 +22,13 @@ local must_be_in_bank = 1047026  -- That must be in your bank box to use it.
 local deposited = 1042763        -- ~1_AMOUNT~ gold was deposited in your account.
 local bank_full = 500390         -- Your bank box is full.
 
--- "1234567" as "1,234,567".
-local function with_thousands(amount)
-    local digits = tostring(math.floor(amount))
-
-    while true do
-        local grouped, found = digits:gsub("^(%d+)(%d%d%d)", "%1,%2")
-        digits = grouped
-
-        if found == 0 then
-            return digits
-        end
-    end
-end
-
 function bank_check.on_use(serial, user)
     local before = bank.worth(serial) or 0
     local result = bank.cash(user, serial)
 
     if result == BankResultType.Ok then
         -- Cashed whole the check is gone; a box with room for part of it leaves the rest on the check.
-        mobile.message_cliloc(user, deposited, with_thousands(before - (bank.worth(serial) or 0)))
+        mobile.message_cliloc(user, deposited, numbers.with_thousands(before - (bank.worth(serial) or 0)))
     elseif result == BankResultType.BankFull then
         mobile.message_cliloc(user, bank_full)
     elseif result == BankResultType.NotInBank or result == BankResultType.NoBank then

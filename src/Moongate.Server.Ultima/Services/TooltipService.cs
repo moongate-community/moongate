@@ -1,6 +1,6 @@
-using System.Globalization;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Extensions;
@@ -130,7 +130,7 @@ public sealed class TooltipService : ITooltipService
 
         var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own) ? own : (LootType?)null;
         var labelNumber = item.TryGetProp<int>(ItemPropKeys.LabelNumber, out var label) ? label : (int?)null;
-        var worth = item.TryGetProp<long>(ItemPropKeys.BankWorth, out var value) ? value : (long?)null;
+        var worth = BankService.CheckWorth(item);
         var key = new ItemTooltipKey(
             item.TemplateId,
             item.ItemId,

@@ -1,27 +1,27 @@
-using Moongate.Server.Ultima.Data.Internal.Items;
-using Moongate.Server.Ultima.Data.Items;
-using Moongate.Server.Ultima.Interfaces;
-using Moongate.Tests.TestSupport.Ultima.Movement;
-using Moongate.Tests.TestSupport.Ultima.World;
-using Moongate.Tests.TestSupport.Ultima.Weight;
-using Moongate.Server.Ultima.Types.Bank;
-using Moongate.Server.Ultima.Data.Config;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Internal.Items;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
+using Moongate.Tests.TestSupport.Ultima.Weight;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -925,6 +925,20 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.Equal(BankService.CashPilesMaximum * BankService.PileMaximum, deposited);
         Assert.True(check.TryGetProp<long>(ItemPropKeys.BankWorth, out var left));
         Assert.Equal(long.MaxValue - deposited, left);
+    }
+
+    // A worth that is not a number, set by a script: the paper is worth nothing, and nothing breaks.
+    [Fact]
+    public async Task ACheckWhoseWorthIsNotANumber_IsWorthNothing()
+    {
+        var box = await BoxAsync();
+        Gold(box, 100);
+        var check = In(box, BankService.CheckTemplate);
+        check.SetProp(ItemPropKeys.BankWorth, "a lot");
+
+        Assert.Null(_bank.WorthOf(check));
+        Assert.Equal(100, _bank.Balance(_aria));
+        Assert.Equal(BankResultType.NotInBank, _bank.Cash(_aria, check, out _));
     }
 
     // A prop anybody could set on anything: only a check is a check.
