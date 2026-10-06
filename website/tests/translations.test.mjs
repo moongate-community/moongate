@@ -44,3 +44,11 @@ test('translation validation catches a missing prose paragraph', () => {
   const hash = createHash('sha256').update(expanded).digest('hex');
   assert.throws(() => parseTranslation(wrap(translated, hash), expanded), /blocks/);
 });
+
+test('absolute links to authored pages on the documentation domain stay in Italian', () => {
+  const entries = [{ slug: 'server/persistence' }];
+  assert.equal(localizedPath('https://moongate.sh/server/persistence/#save', 'it', entries), '/it/server/persistence/#save');
+  assert.equal(localizedPath('https://moongate.sh/', 'it', entries), '/it/');
+  assert.equal(localizedPath('https://moongate.sh/lua/', 'it', entries), 'https://moongate.sh/lua/');
+  assert.equal(localizedPath('https://example.com/server/persistence/', 'it', entries), 'https://example.com/server/persistence/');
+});

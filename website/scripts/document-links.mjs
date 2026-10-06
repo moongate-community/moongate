@@ -28,7 +28,7 @@ export function resolveDocumentUrl(url, { source, repositoryRoot, sourceRef, ent
       'https://raw.githubusercontent.com/moongate-community/moongate/',
     ];
     const prefix = prefixes.find(value => url.startsWith(value));
-    if (!prefix) return url;
+    if (!prefix) return localizedPath(url, locale, entries);
     const suffix = url.slice(prefix.length);
     const refs = [...new Set(['develop', 'main', sourceRef])];
     const ref = refs.find(value => suffix.startsWith(`${encodeURIComponent(value)}/`));

@@ -1,3 +1,4 @@
+import { docsSite } from '../site-config.mjs';
 import { parseFragment } from 'parse5';
 import { createHash } from 'node:crypto';
 import { remark } from 'remark';
@@ -60,8 +61,14 @@ export function headingAliases(source, translated) {
 }
 
 export function localizedPath(url, locale, entries) {
-  if (!url || locale !== 'it' || !url.startsWith('/') || url.startsWith('//')) return url;
-  const [, pathname, suffix] = url.match(/^([^?#]*)(.*)$/);
+  if (!url || locale !== 'it') return url;
+  let local = url;
+  if (url === docsSite || url.startsWith(`${docsSite}/`)) {
+    const parsed = new URL(url);
+    local = `${parsed.pathname}${parsed.search}${parsed.hash}`;
+  }
+  if (!local.startsWith('/') || local.startsWith('//')) return url;
+  const [, pathname, suffix] = local.match(/^([^?#]*)(.*)$/);
   const slug = pathname.replace(/^\/|\/$/g, '');
   if (!slug || entries.some(entry => entry.slug === slug && !entry.englishOnly)) return `/it${pathname}${suffix}`;
   return url;
