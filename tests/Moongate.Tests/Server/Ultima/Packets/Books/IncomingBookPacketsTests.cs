@@ -20,8 +20,9 @@ public sealed class IncomingBookPacketsTests
 
         Assert.Equal(0x40000010u, packet.Book.Value);
         Assert.Equal(2, packet.Pages.Count);
-        Assert.Equal((3, new[] { "ab", "è" }), (packet.Pages[0].Number, packet.Pages[0].Lines!.ToArray()));
-        Assert.Equal((4, Array.Empty<string>()), (packet.Pages[1].Number, packet.Pages[1].Lines!.ToArray()));
+        Assert.Equal([3, 4], packet.Pages.Select(page => page.Number));
+        Assert.Equal(["ab", "è"], packet.Pages[0].Lines);
+        Assert.Empty(packet.Pages[1].Lines!);
     }
 
     // The client asking for page 1: a line count of 0xFFFF and no lines.
