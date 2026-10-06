@@ -47,6 +47,7 @@ public static class UltimaScriptContainerExtensions
         container.AddScriptModule<LocationsModule>();
         container.AddScriptModule<JailModule>();
         container.AddScriptModule<BookModule>();
+        container.AddScriptModule<CommandsModule>();
         container.AddScriptModule<BoardModule>();
         // No module function takes it: registered so on_speech can compare its keywords with names.
         container.RegisterScriptEnum<SpeechKeywordType>();

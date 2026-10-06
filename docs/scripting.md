@@ -51,7 +51,7 @@ The [Lua API reference](https://moongate.sh/lua/) has a page for each module, wi
 function's signature, parameters and return type; it is generated from the server's code.
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations`, `jail` and `board` in game and standalone modes.
+The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations`, `jail`, `board` and `commands` in game and standalone modes.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -77,6 +77,7 @@ Some modules have a page that says more:
 | `moongates` | [Moongates](data-files/moongates.md) |
 | `jail` | [Jail](jail.md) and the [`jail` command](commands/jail.md) |
 | `board` | [Bulletin boards](bulletin-boards.md) |
+| `commands` | [Commands](commands.md): `commands.execute` runs one as the console, `commands.execute_as` as a player |
 
 ## Where to read next
 

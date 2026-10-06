@@ -69,6 +69,30 @@ public sealed class ServerRoleRegistrationTests
         Assert.Equal("Città di Luna", container.Resolve<MotdServerIdentity>().ServerName);
     }
 
+    // The commands module of Lua is built by the script engine from the container: what it asks for must be there.
+    [Theory, InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
+    public void Register_TheCommandsModuleOfLua_CanBeBuilt(ServerMode mode)
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = mode };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: mode));
+
+        // The command system is the host's own, registered by Program beside the roles.
+        container.Register<ICommandSystemService, Moongate.Server.Services.Commands.CommandSystemService>(Reuse.Singleton);
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        Assert.Contains(typeof(Moongate.Server.Ultima.Modules.CommandsModule), container.Resolve<Moongate.Scripting.Interfaces.IScriptModuleRegistry>().ModuleTypes);
+        Assert.NotNull(container.Resolve<Moongate.Server.Ultima.Modules.CommandsModule>(IfUnresolved.Throw));
+    }
+
     [Fact]
     public void Register_EveryCommand_HasATranslatedDescription()
     {

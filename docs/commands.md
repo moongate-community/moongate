@@ -68,6 +68,28 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`create_check`](commands/create_check.md) | `create_check <1..2000000000>` | No | Yes | GameMaster | Game |
 | [`add_gold`](commands/add_gold.md) | `add_gold <1..60000>`, then target a mobile | No | Yes | GameMaster | Game |
 
+### From a script
+
+A script runs any of these commands with the `commands` module of Lua:
+
+```lua
+commands.execute("season", "winter")          -- as the console: every power, no player
+commands.execute_as(player, "go", "britain")  -- as that player wrote it in game
+```
+
+- `commands.execute(name, ...)` runs the command as the server console does. A command that needs a
+  player, such as one that opens a target cursor, answers that it works in game only. What the
+  command answers is written in the server log.
+- `commands.execute_as(player, name, ...)` runs it as that player: with the level of its account,
+  so a command above it is refused, and with its session, so a cursor opens for it. The player
+  reads what the command answers.
+- The arguments follow the name, one each: strings, numbers and booleans. They are joined by
+  spaces into one line, so an argument with a space in it is read as two.
+- Both answer `true` when the command was started and `false` when there is nothing to run: an
+  empty name, a line end in the name or in an argument, a player that is not in the world. The
+  command runs on its own, as one typed in game does: the script does not wait for it and does
+  not get what it answered.
+
 ### By who uses them
 
 - **Everyone:** `help`, `echo`, `time`.
