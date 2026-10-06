@@ -54,6 +54,17 @@ public static class CorpseProps
     public const string Killer = "corpse.killer";
 
     /// <summary>
+    ///     The serial of the player the corpse is of; an NPC's corpse has none.
+    /// </summary>
+    public const string Owner = "corpse.owner";
+
+    /// <summary>
+    ///     Whether the player was an innocent when it died, that is no criminal and no murderer: taking from its corpse
+    ///     is a crime.
+    /// </summary>
+    public const string Innocent = "corpse.innocent";
+
+    /// <summary>
     ///     What who died wore that went into the corpse, as "serial:layer" pairs split by commas, the layer a LayerType
     ///     number: a human body is drawn wearing those still inside.
     /// </summary>

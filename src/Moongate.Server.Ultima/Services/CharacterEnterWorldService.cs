@@ -42,6 +42,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
     private readonly IWeightService? _weight;
     private readonly ICrimeService? _crimes;
     private readonly ICombatGearService? _gear;
+    private readonly IMurderService? _murders;
 
     public CharacterEnterWorldService(
         IMobileService mobiles,
@@ -55,9 +56,11 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         ISeasonService? seasons = null,
         IWeightService? weight = null,
         ICrimeService? crimes = null,
-        ICombatGearService? gear = null
+        ICombatGearService? gear = null,
+        IMurderService? murders = null
     )
     {
+        _murders = murders;
         _gear = gear;
         _crimes = crimes;
         _weight = weight;
@@ -106,6 +109,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
                     _mobiles.EnterWorld(character);
                     // Before the packets that show it: a criminal that comes back is grey from the first one.
                     _crimes?.Restore(character);
+                    _murders?.Restore(character);
 
                     // Its rows are as its last save left them: what another player took or merged since stays out, and
                     // is not shown on the character either.

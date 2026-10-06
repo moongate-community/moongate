@@ -41,6 +41,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly RecordingCrimeService _crimes = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly RecordingNpcSenseService _senses = new();
+    private readonly RecordingMurderService _murders = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                  .Item(0x0EED, TileFlagType.Generic, 0)
                                                  .Item(0x0E75, TileFlagType.Container, 0)
@@ -116,6 +117,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
             crimes: _crimes,
             state: _state,
             senses: _senses,
+            murders: _murders,
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -726,6 +728,43 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.Contains($"OwnItemRemoved {_aria.Id.Value} {robe.Id.Value}", _view.Calls);
         Assert.Contains(_items.GetWorn(_aria.Id), item => item.TemplateId == "death_shroud");
         Assert.DoesNotContain(_items.GetWorn(_aria.Id), item => item.TemplateId == "death_robe");
+    }
+
+    [Fact]
+    public void Kill_APlayer_TellsTheMurderService_AndMarksItsCorpseWithTheOwnerAndWhetherItWasInnocent()
+    {
+        _aria.Body = 0x0190;
+
+        _death.Kill(_aria, _orc);
+
+        Assert.Equal([$"Died {_aria.Id.Value}"], _murders.Calls);
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.Equal(((long)_aria.Id.Value, true), (corpse.GetProp<long>("corpse.owner"), corpse.GetProp<bool>("corpse.innocent")));
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public void Kill_ACriminalOrAMurderer_LeavesACorpseThatIsNoInnocents(bool criminal, bool murderer)
+    {
+        _aria.Body = 0x0190;
+        _aria.Criminal = criminal;
+        _aria.Kills = murderer ? 5 : 0;
+
+        _death.Kill(_aria);
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.False(corpse.GetProp<bool>("corpse.innocent", true));
+    }
+
+    [Fact]
+    public void Kill_AnNpc_LeavesNoOwnerOnItsCorpse()
+    {
+        _death.Kill(_orc);
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.False(corpse.TryGetProp<long>("corpse.owner", out _));
+        Assert.Empty(_murders.Calls);
     }
 
     [Fact]
