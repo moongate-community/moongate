@@ -1,7 +1,9 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Death;
 using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
@@ -46,6 +48,7 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
     private readonly IWorldViewService _view;
     private readonly ISpeechService _speech;
     private readonly IGumpTemplateService _gumps;
+    private readonly ICrimeService _crimes;
     private readonly MurderConfig _config;
     private readonly TimeProvider _time;
 
@@ -65,6 +68,7 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
         IWorldViewService view,
         ISpeechService speech,
         IGumpTemplateService gumps,
+        ICrimeService crimes,
         MurderConfig config,
         TimeProvider time
     )
@@ -76,6 +80,7 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
         _view = view;
         _speech = speech;
         _gumps = gumps;
+        _crimes = crimes;
         _config = config;
         _time = time;
     }
@@ -162,6 +167,21 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
         _logger.Information("{Killer:l} ({Serial:l}) was reported for murder by {Victim:l}: {Kills} kills", killer.Name, killer.Id, victim.Name, killer.Kills);
 
         return true;
+    }
+
+    public void Looted(MobileEntity looter, ItemEntity corpse)
+    {
+        if (looter.IsNpc ||
+            corpse.ItemId != CorpseProps.Graphic ||
+            !corpse.TryGetProp<long>(CorpseProps.Owner, out var owner) ||
+            owner == looter.Id.Value ||
+            !corpse.GetProp(CorpseProps.Innocent, false) ||
+            (_sessions.TryGetByCharacterId(looter.Id, out var session) && session.AccountType >= AccountType.GameMaster))
+        {
+            return;
+        }
+
+        _crimes.MakeCriminal(looter);
     }
 
     public void Restore(MobileEntity mobile)

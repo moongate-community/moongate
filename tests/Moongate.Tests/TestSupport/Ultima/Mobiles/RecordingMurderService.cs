@@ -4,7 +4,7 @@ using Moongate.Server.Ultima.Interfaces;
 namespace Moongate.Tests.TestSupport.Ultima.Mobiles;
 
 /// <summary>
-///     Records what it is told, as "Aggressed 3 2", "Died 2", "Report 2 3" and "Restore 2" (serials).
+///     Records what it is told, as "Aggressed 3 2", "Died 2", "Report 2 3", "Looted 3 4294967296" and "Restore 2" (serials).
 /// </summary>
 public sealed class RecordingMurderService : IMurderService
 {
@@ -25,6 +25,11 @@ public sealed class RecordingMurderService : IMurderService
         Calls.Add($"Report {victim.Id.Value} {killer.Id.Value}");
 
         return true;
+    }
+
+    public void Looted(MobileEntity looter, ItemEntity corpse)
+    {
+        Calls.Add($"Looted {looter.Id.Value} {corpse.Id.Value}");
     }
 
     public void Restore(MobileEntity mobile)

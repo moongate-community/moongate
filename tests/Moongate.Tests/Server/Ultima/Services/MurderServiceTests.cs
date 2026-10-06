@@ -1,6 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Entities.World;
@@ -23,6 +24,7 @@ public sealed class MurderServiceTests : IAsyncLifetime
     private readonly RecordingWorldViewService _view = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly StubGumpTemplateService _gumps = new();
+    private readonly RecordingCrimeService _crimes = new();
     private readonly MurderConfig _config = new();
     private readonly SettableClock _clock = new();
 
@@ -50,7 +52,7 @@ public sealed class MurderServiceTests : IAsyncLifetime
         }
 
         _gumps.Ids.Add(MurderService.ReportGump);
-        _murders = new(_timers, _fixture.Sessions, _fixture.Mobiles, _state, _view, _speech, _gumps, _config, _clock);
+        _murders = new(_timers, _fixture.Sessions, _fixture.Mobiles, _state, _view, _speech, _gumps, _crimes, _config, _clock);
     }
 
     public async Task DisposeAsync()
@@ -225,6 +227,46 @@ public sealed class MurderServiceTests : IAsyncLifetime
         _murders.Restore(_boris);
 
         Assert.Equal((4, 0, (DateTime?)null), (_boris.Kills, _boris.ShortTermMurders, _boris.ShortTermDecayAt));
+    }
+
+    [Fact]
+    public void Looted_TheCorpseOfAnInnocent_MakesTheLooterACriminal()
+    {
+        _murders.Looted(_boris, Corpse(_aria, true));
+
+        Assert.Equal(["criminal 3"], _crimes.Calls);
+    }
+
+    [Fact]
+    public async Task Looted_TheCorpseOfAnInnocent_IsFreeToItsOwner_AndToTheStaff_AndForAnNpcLooter()
+    {
+        var corpse = Corpse(_aria, true);
+        _murders.Looted(_aria, corpse);
+        Assert.True(_fixture.Sessions.TryGetByCharacterId(_boris.Id, out var session));
+        await _fixture.Network.ExecuteOnLoopAsync(() => session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+        _murders.Looted(_boris, corpse);
+        _murders.Looted(new MobileEntity { Id = new Serial(900), TemplateId = "orc" }, corpse);
+
+        Assert.Empty(_crimes.Calls);
+    }
+
+    [Fact]
+    public void Looted_TheCorpseOfACriminalOrAMurdererOrAnNpc_IsNoCrime()
+    {
+        _murders.Looted(_boris, Corpse(_aria, false));
+        _murders.Looted(_boris, new ItemEntity { Id = new Serial(0x40000901), ItemId = 0x2006, Amount = 1 });
+        _murders.Looted(_boris, new ItemEntity { Id = new Serial(0x40000902), ItemId = 0x0E75, Amount = 1 });
+
+        Assert.Empty(_crimes.Calls);
+    }
+
+    private static ItemEntity Corpse(MobileEntity owner, bool innocent)
+    {
+        var corpse = new ItemEntity { Id = new Serial(0x40000900), ItemId = 0x2006, Amount = 1 };
+        corpse.SetProp("corpse.owner", (long)owner.Id.Value);
+        corpse.SetProp("corpse.innocent", innocent);
+
+        return corpse;
     }
 
     private static GumpTemplateAnswer Answer(string click)

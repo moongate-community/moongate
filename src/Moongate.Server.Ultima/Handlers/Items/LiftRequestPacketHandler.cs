@@ -40,6 +40,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
     private readonly ITooltipService _tooltips;
     private readonly IItemScriptService? _scripts;
     private readonly IBankService? _bank;
+    private readonly IMurderService? _murders;
     private readonly IItemTemplateService? _templates;
     private readonly ISessionService? _sessions;
     private readonly IFatigueService? _fatigue;
@@ -59,9 +60,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         IItemTemplateService? templates = null,
         ISessionService? sessions = null,
         IFatigueService? fatigue = null,
-        IInventoryMutationGuard? inventory = null
+        IInventoryMutationGuard? inventory = null,
+        IMurderService? murders = null
     )
     {
+        _murders = murders;
         _inventory = inventory;
         _fatigue = fatigue;
         _sessions = sessions;
@@ -167,6 +170,12 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             Refuse(session, LiftRejectReasonType.Inspecific, item);
 
             return;
+        }
+
+        // Taking from the corpse of an innocent is a crime.
+        if (chest is not null && _mobiles.TryGet(session.CharacterId, out var looter))
+        {
+            _murders?.Looted(looter, chest);
         }
 
         if (packet.Amount < item.Amount)

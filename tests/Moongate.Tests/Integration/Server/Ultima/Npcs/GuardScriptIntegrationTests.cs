@@ -167,6 +167,18 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AMurdererInSight_GetsTheGuardOnIt_ThoughItsNameIsRedAndNotGrey()
+    {
+        _aria.Kills = 5;
+
+        Think(2);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(["war 256 True"], _state.Flags);
+        Assert.Single(_teleports.Teleports);
+    }
+
+    [Fact]
     public void ACriminalInSight_GetsTheGuardOnIt_WithItsEffectSoundAndLine()
     {
         _aria.Criminal = true;

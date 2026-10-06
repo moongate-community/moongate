@@ -32,6 +32,13 @@ public interface IMurderService
     bool Report(MobileEntity victim, MobileEntity killer);
 
     /// <summary>
+    ///     Makes <paramref name="looter" /> a criminal when it takes something from the corpse of an innocent player,
+    ///     as ModernUO's corpse does outside Trammel: the corpse of a criminal or a murderer, its owner's own, a staff
+    ///     looter, and any other thing are free.
+    /// </summary>
+    void Looted(MobileEntity looter, ItemEntity corpse);
+
+    /// <summary>
     ///     Forgets the counts of a player whose time is over, as when it comes back into the world.
     /// </summary>
     void Restore(MobileEntity mobile);
