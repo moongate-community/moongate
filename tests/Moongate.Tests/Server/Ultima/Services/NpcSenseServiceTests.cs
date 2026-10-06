@@ -127,6 +127,18 @@ public sealed class NpcSenseServiceTests
     }
 
     [Fact]
+    public void Moved_AGhostInWarModeComingWithinRange_IsNotSensed()
+    {
+        Add(Npc(0x100, 1600, 1600));
+        var aria = Add(Player(2, 1609, 1600));
+        aria.Body = 0x0192;
+
+        Step(aria, 1608, 1600);
+
+        Assert.Empty(_scripts.Calls);
+    }
+
+    [Fact]
     public void Appeared_AnNpcNearAHiddenPlayer_DoesNotSenseIt()
     {
         var aria = Add(Player(2, 1601, 1600));
