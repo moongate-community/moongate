@@ -32,3 +32,4 @@ game minutes, Trammel's every 30, and both move with the longitude like the time
 
 - [All commands](../commands.md)
 - [`globallight`](globallight.md)
+- [`gmtools`](gmtools.md): the time, the moons and the light in a gump

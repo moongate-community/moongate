@@ -288,13 +288,16 @@ slots, filled by two functions: `tools` draws the sidebar, a button for each ent
 `tools` in the script, and `panel` draws the panel of the selected one (`args.tool`, the first when
 none or an unknown one is given). A click on the sidebar opens the gump again on that tool.
 
-There are two tools, the weather and the season. The weather panel reads `world.weather_profile` and `world.weather` and
+There are three tools, the weather, the season and the time. The weather panel reads `world.weather_profile` and `world.weather` and
 has a button for each kind, `none`, `rain`, `snow` and `storm`, that calls `world.set_weather` on the
 player, tells it `The weather of temperate is now storm until the next hour.` and opens the gump again.
 The season panel reads `world.season_here` and the season of the map the player stands on
 (`world.season` of `mobile.location(player).map`) and has a button for each season and one for
 `auto`, that call `world.set_season` or `world.clear_season`, tell the player `The season of your map
-is now winter.` and open the gump again. Staff only: the slots are empty for anyone else, and every
+is now winter.` and open the gump again. The time panel reads `world.time`, `world.moon`,
+`world.light_here` and `world.global_light` and has a button for each of four light levels and one for
+`auto`, that call `world.set_global_light` or `world.clear_global_light` and tell the player `The
+global light is now 26.`. Staff only: the slots are empty for anyone else, and every
 button checks `world.is_staff` again.
 
 To add a tool, write a panel function with the signature `function(g, player)` and add

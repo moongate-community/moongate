@@ -17,7 +17,9 @@ using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Loaders;
+using Moongate.Server.Ultima.Data.World;
 using Moongate.Server.Ultima.Types.Weather;
+using Moongate.Server.Ultima.Types.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Scripting;
@@ -49,6 +51,8 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
     private readonly RecordingSpeechService _speech = new();
     private readonly StubWeatherService _weather = new();
     private readonly StubSeasonService _seasons = new();
+    private readonly RecordingLightService _light = new();
+    private readonly StubClockService _clock = new();
     private readonly List<ScriptErrorEvent> _errors = [];
 
     private BroadcastFixture _fixture = null!;
@@ -89,7 +93,8 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IMobileService>(_fixture.Mobiles);
         _container.RegisterInstance<ISpeechService>(_speech);
         _container.RegisterInstance<ISectorService>(_fixture.Sectors);
-        _container.RegisterInstance<IClockService>(new StubClockService());
+        _container.RegisterInstance<IClockService>(_clock);
+        _container.RegisterInstance<ILightService>(_light);
         _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
         _container.RegisterInstance<IWeatherService>(_weather);
         _container.RegisterInstance<ISeasonService>(_seasons);
@@ -126,8 +131,8 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
 
         Assert.Contains("GM tools", built.Strings);
         Assert.Contains("Weather", built.Strings);
-        // The two sidebar buttons, then None, Rain, Snow and Storm.
-        Assert.Equal([1, 2, 3, 4, 5, 6], built.Buttons.Order());
+        // The three sidebar buttons, then None, Rain, Snow and Storm.
+        Assert.Equal([1, 2, 3, 4, 5, 6, 7], built.Buttons.Order());
         Assert.Empty(_errors);
     }
 
@@ -174,10 +179,10 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData(3, WeatherKindType.None, "none")]
-    [InlineData(4, WeatherKindType.Rain, "rain")]
-    [InlineData(5, WeatherKindType.Snow, "snow")]
-    [InlineData(6, WeatherKindType.Storm, "storm")]
+    [InlineData(4, WeatherKindType.None, "none")]
+    [InlineData(5, WeatherKindType.Rain, "rain")]
+    [InlineData(6, WeatherKindType.Snow, "snow")]
+    [InlineData(7, WeatherKindType.Storm, "storm")]
     public void AKindButton_ForcesItOnTheProfile_TellsTheGameMaster_AndShowsTheWeatherAgain(int button, WeatherKindType kind, string name)
     {
         Open(Staff, "weather");
@@ -206,8 +211,8 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
 
         Assert.Contains("Season here: winter", built.Strings);
         Assert.Contains("Season of your map: summer", built.Strings);
-        // The two sidebar buttons, then spring, summer, fall, winter, desolation and auto.
-        Assert.Equal([1, 2, 3, 4, 5, 6, 7, 8], built.Buttons.Order());
+        // The three sidebar buttons, then spring, summer, fall, winter, desolation and auto.
+        Assert.Equal([1, 2, 3, 4, 5, 6, 7, 8, 9], built.Buttons.Order());
         Assert.DoesNotContain("Weather here: temperate", built.Strings);
         Assert.Empty(_errors);
     }
@@ -225,11 +230,11 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData(3, SeasonType.Spring, "spring")]
-    [InlineData(4, SeasonType.Summer, "summer")]
-    [InlineData(5, SeasonType.Fall, "fall")]
-    [InlineData(6, SeasonType.Winter, "winter")]
-    [InlineData(7, SeasonType.Desolation, "desolation")]
+    [InlineData(4, SeasonType.Spring, "spring")]
+    [InlineData(5, SeasonType.Summer, "summer")]
+    [InlineData(6, SeasonType.Fall, "fall")]
+    [InlineData(7, SeasonType.Winter, "winter")]
+    [InlineData(8, SeasonType.Desolation, "desolation")]
     public void ASeasonButton_SetsItOnTheMapOfTheGameMaster_TellsIt_AndShowsTheSeasonAgain(int button, SeasonType season, string name)
     {
         Open(Staff, "season");
@@ -253,7 +258,7 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         Open(Staff, "season");
         _seasons.MapSeason = SeasonType.Summer;
 
-        Answer(0, 8);
+        Answer(0, 9);
 
         Assert.Equal([(MapType.Trammel, (SeasonType?)null)], _seasons.Overrides);
         Assert.Equal(
@@ -269,9 +274,80 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         Open(Staff, "season");
         await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.Regular));
 
-        Answer(0, 6);
+        Answer(0, 7);
 
         Assert.Empty(_seasons.Overrides);
+        Assert.Empty(_speech.Told);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void TheTimeTool_ShowsTheTimeTheMoonsAndTheLightWhereTheGameMasterStands()
+    {
+        _clock.Time = new GameTime(7, 5);
+        _clock.Moon = MoonPhaseType.FullMoon;
+
+        var built = Open(Staff, "time");
+
+        Assert.Contains("Game time here: 07:05", built.Strings);
+        Assert.Contains("Moons: Trammel full moon, Felucca full moon", built.Strings);
+        Assert.Contains("Light here: 0, following the time of day", built.Strings);
+        // The three sidebar buttons, then the four levels and auto.
+        Assert.Equal([1, 2, 3, 4, 5, 6, 7, 8], built.Buttons.Order());
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void WithAGlobalLight_TheTimeToolSaysSo()
+    {
+        _light.SetOverride(26);
+
+        var built = Open(Staff, "time");
+
+        Assert.Contains("Light here: 26, the same for every player", built.Strings);
+        Assert.Empty(_errors);
+    }
+
+    [Theory]
+    [InlineData(4, 0)]
+    [InlineData(5, 12)]
+    [InlineData(6, 26)]
+    [InlineData(7, 31)]
+    public void ALightButton_GivesEveryPlayerThatLevel_TellsTheGameMaster_AndShowsTheLightAgain(int button, int level)
+    {
+        Open(Staff, "time");
+
+        Answer(0, button);
+
+        Assert.Equal(level, _light.Override);
+        Assert.Equal($"The global light is now {level}.", Assert.Single(_speech.Told).Text);
+        Assert.Equal(2, _gumps.Opened.Count);
+        Assert.Contains($"Light here: {level}, the same for every player", _gumps.Opened[1].Gump.Layout.Build().Strings);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void TheAutoLightButton_GoesBackToTheTimeOfDay()
+    {
+        _light.SetOverride(26);
+        Open(Staff, "time");
+
+        Answer(0, 8);
+
+        Assert.Null(_light.Override);
+        Assert.Equal("The global light follows the time of day again.", Assert.Single(_speech.Told).Text);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public async Task ALightClickedByOneWhoIsNoLongerStaff_ChangesNothing()
+    {
+        Open(Staff, "time");
+        await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.Regular));
+
+        Answer(0, 7);
+
+        Assert.Null(_light.Override);
         Assert.Empty(_speech.Told);
         Assert.Empty(_errors);
     }
@@ -293,7 +369,7 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         Open(Staff, "weather");
         await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.Regular));
 
-        Answer(0, 6);
+        Answer(0, 7);
 
         Assert.Empty(_weather.Forced);
         Assert.Empty(_speech.Told);

@@ -34,6 +34,12 @@ public sealed class RecordingLightService : ILightService
         return LevelFor(character);
     }
 
+    public void SetOverride(int? level)
+    {
+        Calls++;
+        Override = level;
+    }
+
     public Task SetOverrideAsync(int? level, CancellationToken cancellationToken = default)
     {
         Calls++;

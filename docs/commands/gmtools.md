@@ -1,6 +1,6 @@
 # gmtools
 
-Opens the gump of the game master's tools: a sidebar of tools on the left (weather and season) and the
+Opens the gump of the game master's tools: a sidebar of tools on the left (weather, season and time) and the
 commands of the selected tool on the right.
 
 | Syntax | Console | In game | Minimum level | Role |
@@ -51,6 +51,24 @@ itself, with a sound on the change: leafless trees and snow in winter, autumn co
 The season is the look of the ground; the snow that falls is the weather, which the first tool sets.
 For a snowy world, set both.
 
+## Time
+
+The time tool shows what [`.time`](time.md) prints, the game time and the phases of the two moons at
+your position, and the light level where you stand:
+
+```text
+Game time here: 07:05
+Moons: Trammel last quarter, Felucca first quarter
+Light here: 0, following the time of day
+```
+
+Under it are five buttons, the levels `0 (brightest)`, `12`, `26` and `31 (darkest)`, and `auto (the
+time of day)`. A level gives every player in the world that light at once, as
+[`.globallight`](globallight.md) does, and the line says `Light here: 26, the same for every player`;
+`auto` goes back to the light of the time of day. You read `The global light is now 26.` or `The
+global light follows the time of day again.` The override is not saved: a restart goes back to the
+time of day. For a level between the buttons, use `.globallight <0-31>`.
+
 ## Add a tool
 
 The gump is [`templates/gumps/gmtools.xml`](../gumps.md) and its script
@@ -64,4 +82,5 @@ lost the rank since it was opened.
 - [All commands](../commands.md)
 - [`weather`](weather.md)
 - [`season`](season.md)
+- [`time`](time.md) and [`globallight`](globallight.md)
 - [`go`](go.md)

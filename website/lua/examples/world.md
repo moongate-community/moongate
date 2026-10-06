@@ -48,6 +48,41 @@ Gives that map back the season of `maps.toml`:
 world.clear_season(user)
 ```
 
+## light_here
+
+The light level where a player stands, from 0 (brightest) to 31 (darkest):
+
+```lua
+local level = world.light_here(user)
+```
+
+## global_light
+
+The level every player was given with `.globallight` or `world.set_global_light`, nil when the light
+follows the time of day:
+
+```lua
+if world.global_light() == nil then
+    mobile.message(user, "The light follows the clock.")
+end
+```
+
+## set_global_light
+
+Gives every player the same light, as `.globallight` does:
+
+```lua
+world.set_global_light(26)
+```
+
+## clear_global_light
+
+Makes the light follow the time of day again:
+
+```lua
+world.clear_global_light()
+```
+
 ## moon
 
 ```lua

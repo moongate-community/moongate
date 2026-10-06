@@ -175,16 +175,16 @@ public sealed class LightService : ILightService
         return level;
     }
 
+    public void SetOverride(int? level)
+    {
+        _override = level ?? NoOverride;
+        Send();
+        CheckLampPosts();
+    }
+
     public async Task SetOverrideAsync(int? level, CancellationToken cancellationToken = default)
     {
-        var work = new LoopActionWorkItem(
-            () =>
-            {
-                _override = level ?? NoOverride;
-                Send();
-                CheckLampPosts();
-            }
-        );
+        var work = new LoopActionWorkItem(() => SetOverride(level));
         await _loop.PostAsync(work, cancellationToken);
         await work.Completion;
     }

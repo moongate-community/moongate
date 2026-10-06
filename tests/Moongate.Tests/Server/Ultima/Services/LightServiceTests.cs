@@ -131,6 +131,21 @@ public sealed class LightServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task SetOverride_OnTheLoop_SendsTheLevelAtOnce_WithoutWaiting()
+    {
+        await LoginAsync(1);
+        _clock.Time = new GameTime(1, 0);
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        _light.SetOverride(25);
+        Assert.Equal((25, 25), (_light.Override, _light.LevelFor(Mobile())));
+        _light.SetOverride(null);
+
+        Assert.Null(_light.Override);
+        Assert.Equal([(1L, 12), (1L, 25), (1L, 12)], Sent());
+    }
+
+    [Fact]
     public void LevelFor_ADungeonIsDark_AndAJailDim_WhateverTheTime()
     {
         var mobile = Mobile();
