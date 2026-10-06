@@ -11,7 +11,8 @@
 --
 --   The guard is in one of two states:
 --     post    it strolls around its post, the area of its spawn region. Every
---             second it looks for a criminal: a player or an NPC whose name is grey, or a player whose name is red, within
+--             second it looks for a criminal: a player or an NPC whose name is grey, a player whose name is red or a
+--             monster (an NPC with the script monster), within
 --             12 tiles and in sight, standing in a guarded region no farther than
 --             24 tiles from the post.
 --     arrest  it saw one: it goes into war mode, appears beside it with the teleport
@@ -97,8 +98,9 @@ end
 -- Whether the guard reaches the mobile: a criminal, or a murderer with its red name, that stands in a guarded region, not
 -- too far from its post. So a criminal cannot lead it away step by step.
 local function is_wanted(serial, who)
-    -- A ghost is no one the guards want: its crimes died with it.
-    if mobile.is_dead(who) or not (mobile.criminal(who) or mobile.is_murderer(who)) then
+    -- A ghost is no one the guards want: its crimes died with it. A monster is, as in ModernUO: the creatures that go for
+    -- everyone are known by their script.
+    if mobile.is_dead(who) or not (mobile.criminal(who) or mobile.is_murderer(who) or npc.script_id(who) == "monster") then
         return false
     end
 

@@ -56,6 +56,7 @@ gender = "female"
 
 [[mobile]]
 id = "brigand"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Brigand"
@@ -210,6 +211,7 @@ gender = "female"
 
 [[mobile]]
 id = "chaosdragoon"
+script_id = "monster"
 base_id = "basehuman"
 name = "a chaos dragoon"
 gender = "random"
@@ -263,6 +265,7 @@ items = ["swampdragon"]
 
 [[mobile]]
 id = "chaosdragoonelite"
+script_id = "monster"
 base_id = "basehuman"
 name = "a chaos dragoon elite"
 gender = "random"
@@ -318,6 +321,7 @@ items = ["armorswampdragon"]
 
 [[mobile]]
 id = "executioner"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Executioner"
@@ -367,6 +371,7 @@ gender = "female"
 
 [[mobile]]
 id = "fighter"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Fighter"
@@ -453,6 +458,7 @@ gender = "female"
 
 [[mobile]]
 id = "golemcontroller"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "golem_controller"
 title = "the controller"
@@ -738,6 +744,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "murderer_archmage"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Archmage"
@@ -844,6 +851,7 @@ gender = "female"
 
 [[mobile]]
 id = "paladin"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Paladin"
@@ -895,6 +903,7 @@ gender = "female"
 
 [[mobile]]
 id = "pirate"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Pirate"
@@ -967,6 +976,7 @@ gender = "female"
 
 [[mobile]]
 id = "ranger"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Ranger"
@@ -1159,6 +1169,7 @@ gender = "female"
 
 [[mobile]]
 id = "warrior"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Warrior"
@@ -1200,6 +1211,7 @@ items = ["0x170b_boots"]
 
 [[mobile]]
 id = "thief"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Thief"

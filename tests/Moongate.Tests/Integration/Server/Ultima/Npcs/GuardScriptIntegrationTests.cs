@@ -57,7 +57,11 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
     private readonly List<ScriptErrorEvent> _errors = [];
     private readonly StubDeathService _death = new();
     private readonly MobileTemplateService _templates = new(
-        new StubDataLoaderService().With(new MobileTemplate { Id = "guard", ScriptId = "guard" })
+        new StubDataLoaderService().With(
+            new MobileTemplate { Id = "guard", ScriptId = "guard" },
+            new MobileTemplate { Id = "zombie", ScriptId = "monster" },
+            new MobileTemplate { Id = "rabbit", ScriptId = "scared_animal" }
+        )
     );
     private readonly MobileEntity _guard = new()
     {
@@ -232,6 +236,32 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors.Select(error => error.ToString()));
         Assert.Equal((thief, (MobileEntity?)_guard), Assert.Single(_death.Killed));
         Assert.Equal(["war 256 True", "war 256 False"], _state.Flags);
+    }
+
+    [Fact]
+    public void AMonsterInTheTown_IsGoneForToo_AndKilledByTheGuard_ThoughItIsNoCriminal()
+    {
+        var zombie = Npc(0x200, 1601, 1600);
+        zombie.TemplateId = "zombie";
+
+        Think(5);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal((zombie, (MobileEntity?)_guard), Assert.Single(_death.Killed));
+    }
+
+    [Fact]
+    public void AnAnimalOrAnNpcOfNoScript_IsLeftAloneByTheGuard()
+    {
+        var rabbit = Npc(0x200, 1601, 1600);
+        rabbit.TemplateId = "rabbit";
+        Npc(0x201, 1602, 1600);
+
+        Think(8);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Empty(_death.Killed);
+        Assert.Empty(_state.Flags);
     }
 
     [Fact]

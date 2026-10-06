@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3d41ee94b4dba544c76f0d87e58830094b915ee1a8f524ab44ec80aa27f9acd4","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"7d383c25edc7916947d217efdac8db515752c7af0d4d15c9feca50291b9d538e","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -11,10 +11,10 @@ dove sono elencati `wander.lua` e `potion.lua`.
 
 Il file `scripts/mobiles/monster.lua` della distribuzione è lo script dei mostri che attaccano i giocatori,
 seguendo l'IA corpo a corpo di ModernUO: insegue un giocatore e lo combatte standogli accanto. Un template lo adotta con
-`script_id = "monster"`; lo fanno i non morti dei cimiteri (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`,
-`spectre`, `lich`), e quindi i template basati su di essi. Wraith, spectre e lich sono incantatori in
-ModernUO: si avvicinano e combattono come gli altri finché non esisterà la magia. Un
-mostro si trova in uno di tre stati:
+`script_id = "monster"`; lo fanno le creature il cui `NPCAI` di UOX3 è malvagio, incantatore malvagio o caotico (gli orchi, gli orchi giganti, i lucertoloni, i draghi, i non morti e gli altri 200 circa template
+e quelli basati su di essi; [migrazione da UOX3](../uox3-migration.md)); i buoni combattenti e incantatori, che combattono solo i criminali, no. Gli incantatori, tra cui wraith, spectre e lich,
+sono incantatori in ModernUO: si avvicinano e combattono come gli altri finché non esisterà la magia. Il comportamento è il modulo
+condiviso [`common/creature.lua`](#commoncreaturelua), `creature.new({ hunts = true })`. Un mostro si trova in uno di tre stati:
 
 | Stato | Cosa fa | Termina quando |
 | --- | --- | --- |
@@ -26,13 +26,21 @@ Un mostro colpito, o mancato, risponde all'attacco (se ne occupa il [servizio di
 qualunque cosa stesse facendo, passeggiando o facendo la guardia, anche se non lo aveva visto: passa in modalità guerra e lo insegue, senza
 minacciarlo di nuovo.
 
-Cerca un giocatore ogni due secondi mentre passeggia e ogni secondo quando fa la guardia, e sceglie il
-più vicino da `npc.players_in_sight`: entro 16 caselle e in linea di vista, da occhio a occhio. Non
-vede mai un giocatore nascosto, un game master o un amministratore, e ignora gli NPC. Una volta che insegue un giocatore
-lo segue senza vederlo (`npc.can_see` con `in_sight` false), fino al limite di inseguimento. Un giocatore che non è riuscito a
-raggiungere viene lasciato in pace finché non si muove. Ciò che un mostro sta facendo è mantenuto in memoria per seriale, non
-salvato: dopo un riavvio, o quando nessun giocatore è abbastanza vicino da farlo pensare, riparte dal
-movimento casuale. I numeri (16, 32, i tempi) sono costanti all'inizio del file.
+Cerca una preda ogni due secondi mentre passeggia e ogni secondo quando fa la guardia, tra le prime sei di
+`npc.mobiles_in_sight`: entro 16 caselle e in linea di vista, da occhio a occhio, la più vicina per prima. La sua preda è qualsiasi giocatore
+e, tra gli NPC, quelli con il nome blu, i cittadini, `mobile.notoriety` innocente: un mostro in una città attacca
+la gente per strada oltre ai giocatori. Lascia in pace quelli gialli, venditori, banchieri e
+guardie, che non si possono ferire, e le altre creature, animali o mostri. Non vede mai un giocatore nascosto, un fantasma, un
+game master o un amministratore. Una volta che insegue la preda la segue senza vederla (`npc.can_see` con
+`in_sight` false), fino al limite di inseguimento. Una preda che non riesce a raggiungere viene lasciata in pace finché non si muove. La sua minaccia e il suo gesto
+sono le azioni di un corpo da mostro; una creatura con corpo umano o animale, come un brigante, non ne esegue,
+perché quei corpi numerano le azioni in modo diverso. Ciò che un mostro sta facendo è mantenuto in memoria per seriale, non
+salvato, e dimenticato quando muore: dopo un riavvio, o quando nessun giocatore è abbastanza vicino da farlo pensare, riparte
+dal movimento casuale. I numeri (16, 32, i tempi) sono costanti all'inizio del file.
+
+**Le guardie cittadine attaccano i mostri**, come in ModernUO: `guard.lua` considera ricercato qualsiasi NPC il cui
+`npc.script_id` è `monster` e che si trova in una regione sorvegliata, come un criminale. La guardia appare accanto a lui, lo colpisce
+e lo uccide con un colpo.
 
 ## guard.lua
 
@@ -61,6 +69,24 @@ Una guardia chiamata porta la prop `guard.summoned`: è già arrivata accanto al
 quindi resta su di lui in silenzio senza passeggiare, e quando quel criminale viene lasciato andare non arresta
 nessun altro e attende di essere mandata via. Ciò che una guardia sta facendo viene mantenuto in memoria per seriale, non salvato.
 I numeri (12, 24, i 10 secondi) sono costanti all'inizio del file.
+
+## animal.lua e scared_animal.lua
+
+Gli animali, secondo l'IA animale di ModernUO, usano lo stesso modulo con `hunts = false`: passeggiano nella propria casa, ogni tanto si riposano
+con il suono di inattività e un'animazione, e non attaccano mai un giocatore. `scripts/mobiles/animal.lua` (`script_id = "animal"`, le
+creature il cui `NPCAI` di UOX3 è 6: orsi, lupi e simili) reagisce quando viene colpito, come un mostro.
+`scripts/mobiles/scared_animal.lua` (`script_id = "scared_animal"`, `NPCAI` 12) no: un animale pauroso colpito
+smette di combattere e fugge, fino a dodici celle e al massimo dieci secondi, lontano da chi l'ha colpito, poi riprende a passeggiare. Il
+servizio di combattimento fa rispondere al colpo ogni NPC colpito tranne uno il cui template ha questo script, che si limita a fuggire.
+
+## common/creature.lua
+
+`scripts/common/creature.lua` è ciò che i tre script sopra condividono, preso con
+`local creature = require("common.creature")`. `creature.new(options)` restituisce la tabella che uno script mobile definisce, con il suo
+`on_think`; le opzioni sono `hunts` (attacca i giocatori che vede) e `flees` (fugge da un colpo invece di
+rispondere). Una tua creatura lo prende allo stesso modo: `mycreature = creature.new({ hunts = true })` in
+`scripts/mobiles/mycreature.lua`. Una root i cui script sono sostituiti manualmente ha bisogno anche di `scripts/common/`, altrimenti le creature
+smettono di pensare.
 
 ## orione.lua e vega.lua
 

@@ -150,7 +150,8 @@ public sealed class UoxMobileConverterTests : IDisposable
             "npc/undead.dfn",
             "[skeleton]\n{\nID=0x0032\n}\n[zombie]\n{\nID=0x0003\n}\n[wraith]\n{\nID=0x001a\n}\n[ghoul]\n{\nGET=wraith\n}\n" +
             "[spectre]\n{\nID=0x001a\n}\n[lich]\n{\nID=0x0018\n}\n[headless]\n{\nID=0x001f\n}\n[boneknight]\n{\nGET=skeleton\n}\n[m_banker]\n{\nID=0x0190\nNPCAI=8\n}\n" +
-            "[orc]\n{\nID=0x0011\nNPCAI=2\n}\n[m_guard]\n{\nID=0x0190\nNPCAI=4\n}\n"
+            "[orc]\n{\nID=0x0011\nNPCAI=2\n}\n[m_guard]\n{\nID=0x0190\nNPCAI=4\n}\n" +
+            "[fighter]\n{\nID=0x0190\nNPCAI=5\n}\n[bunny]\n{\nID=0x00cd\nNPCAI=6\n}\n[mage]\n{\nID=0x0190\nNPCAI=10\n}\n[evilmage]\n{\nID=0x0190\nNPCAI=11\n}\n[rabbit]\n{\nID=0x00cd\nNPCAI=12\n}\n[chaos]\n{\nID=0x0190\nNPCAI=88\n}\n[merchant]\n{\nID=0x0190\nNPCAI=7\n}\n[orcking]\n{\nGET=orc\n}\n"
         );
 
         Assert.True(Run() == 0, CombinedOutput);
@@ -168,7 +169,14 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Equal("guard", mobiles["m_guard"].ScriptId);
         // A template based on one of them takes the script through its base; the others have none yet.
         Assert.True(string.IsNullOrEmpty(mobiles["boneknight"].ScriptId));
-        Assert.True(string.IsNullOrEmpty(mobiles["orc"].ScriptId));
+        // The creatures that go for the players, the animals that keep to themselves and those that run.
+        Assert.All(new[] { "orc", "evilmage", "chaos" }, id => Assert.Equal("monster", mobiles[id].ScriptId));
+        // The good fighters and casters fight criminals only: no script yet.
+        Assert.All(new[] { "fighter", "mage" }, id => Assert.True(string.IsNullOrEmpty(mobiles[id].ScriptId)));
+        Assert.Equal(("animal", "scared_animal"), (mobiles["bunny"].ScriptId, mobiles["rabbit"].ScriptId));
+        // A dummy, 7, has none yet; one based on a monster takes its script through its base.
+        Assert.True(string.IsNullOrEmpty(mobiles["merchant"].ScriptId));
+        Assert.True(string.IsNullOrEmpty(mobiles["orcking"].ScriptId));
     }
 
     [Fact]

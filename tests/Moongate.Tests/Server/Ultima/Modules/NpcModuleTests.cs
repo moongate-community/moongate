@@ -58,6 +58,7 @@ public sealed class NpcModuleTests
                 Id = "orc", Sounds = new MobileSounds { StartAttack = 0x69, Idle = 0x2A3, Attack = 0x6B, Hurt = 0x6C, Death = 0x6D }
             },
             new MobileTemplate { Id = "quiet" },
+            new MobileTemplate { Id = "zombie", ScriptId = "monster" },
             new MobileTemplate { Id = "dolphin", Movement = MobileMovementType.Water },
             new MobileTemplate { Id = "walrus", Movement = MobileMovementType.Both }
         )
@@ -751,6 +752,58 @@ public sealed class NpcModuleTests
 
         _sight.Allow = false;
         Assert.Equal(0, Run("return #npc.players_in_sight(256, 16)")[0].Read<int>());
+    }
+
+    [Fact]
+    public void ScriptId_IsTheOneOfTheTemplate_NilWithoutOne()
+    {
+        _orc.TemplateId = "zombie";
+
+        var result = Run("return npc.script_id(256), npc.script_id(257), npc.script_id(2), npc.script_id(999)");
+
+        Assert.Equal(["monster", null, null, null], result.Select(value => value.Type == LuaValueType.Nil ? null : value.Read<string>()));
+    }
+
+    [Fact]
+    public void MobilesInSight_ArePlayersAndNpcsItSees_NearestFirst_NotItself_NotTheHiddenNorTheDead()
+    {
+        var far = new MobileEntity
+        {
+            Id = new Serial(3), Name = "Boris", AccountId = new Serial(0x43), Map = MapType.Trammel,
+            Location = new Point3D(1610, 1600, 0)
+        };
+        var hidden = new MobileEntity
+        {
+            Id = new Serial(4), Name = "Carla", AccountId = new Serial(0x44), Map = MapType.Trammel,
+            Location = new Point3D(1600, 1601, 0), Hidden = true
+        };
+        var ghost = new MobileEntity
+        {
+            Id = new Serial(5), Name = "Dora", AccountId = new Serial(0x45), Map = MapType.Trammel,
+            Location = new Point3D(1601, 1601, 0), Body = 0x0192
+        };
+        var townsman = new MobileEntity
+        {
+            Id = new Serial(900), Name = "a townsman", TemplateId = "townsman", Map = MapType.Trammel,
+            Location = new Point3D(1603, 1600, 0)
+        };
+
+        foreach (var other in new[] { far, hidden, ghost, townsman })
+        {
+            _mobiles.EnterWorld(other);
+        }
+
+        var result = Run(
+            "local seen, near = npc.mobiles_in_sight(256, 16), npc.mobiles_in_sight(256, 4) " +
+            "return #seen, seen[1], seen[2], seen[3], seen[4], #near, #npc.mobiles_in_sight(256, 16, 1), #npc.mobiles_in_sight(2, 16), #npc.mobiles_in_sight(256, 99)"
+        );
+
+        // Nearest first: the player at 1 cell, the quiet orc at 2, the townsman at 3, Boris at 10. Itself, the hidden
+        // Carla and the ghost Dora are not there; a player asked, or a range out of bounds, gives nothing.
+        Assert.Equal([4, 2, 0x101, 900, 3, 3, 1, 0, 0], result.Select(value => value.Read<int>()));
+
+        _sight.Allow = false;
+        Assert.Equal(0, Run("return #npc.mobiles_in_sight(256, 16)")[0].Read<int>());
     }
 
     [Fact]

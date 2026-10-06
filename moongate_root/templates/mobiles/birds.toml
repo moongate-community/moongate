@@ -1,5 +1,6 @@
 [[mobile]]
 id = "bird"
+script_id = "scared_animal"
 name = "a bird"
 name_list = "bird"
 body = 6
@@ -48,6 +49,7 @@ name = "a crow"
 
 [[mobile]]
 id = "chicken"
+script_id = "scared_animal"
 name = "a chicken"
 body = 208
 strength = 5
@@ -136,6 +138,7 @@ wrestling = "1d11+19"
 
 [[mobile]]
 id = "raven"
+script_id = "scared_animal"
 base_id = "bird"
 name = "a raven"
 skin_hue = 1

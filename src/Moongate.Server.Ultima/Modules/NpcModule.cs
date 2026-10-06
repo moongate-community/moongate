@@ -495,33 +495,17 @@ public sealed class NpcModule
     [ScriptFunction(helpText: "The serials of the players the NPC sees within range tiles (default 16, 0 to 32), as npc.can_see says, nearest first; with limit, that many at most, so a script that wants the nearest does not pay for a crowd. A line of sight is not checked beyond ultima.line_of_sight.max_distance (25). Empty for an unknown NPC, a range out of bounds or a limit below 1.")]
     public LuaTable PlayersInSight(long serial, int range = DefaultSight, int limit = int.MaxValue)
     {
-        var table = new LuaTable();
+        return InSight(serial, range, limit, other => !other.IsNpc);
+    }
 
-        if (_sectors is null || limit < 1 || range is < 0 or > WorldModule.MaximumRange || !TryGetNpc(serial, out var npc))
-        {
-            return table;
-        }
-
-        var index = 1;
-
-        // Nearest first, so the line of sight of a far player is not checked before that of a near one.
-        foreach (var player in _sectors.GetMobilesInRange(npc.Map, npc.Location, range)
-                                       .Where(other => !other.IsNpc)
-                                       .OrderBy(other => Distance(npc.Location, other.Location))
-                                       .ThenBy(other => other.Id.Value))
-        {
-            if (Sees(npc, player, range, true))
-            {
-                table[index++] = (long)player.Id.Value;
-
-                if (index > limit)
-                {
-                    break;
-                }
-            }
-        }
-
-        return table;
+    /// <summary>
+    ///     Gets the mobiles, players and NPCs, the NPC sees, nearest first, as a list of serials; <c>for _, who in
+    ///     ipairs(npc.mobiles_in_sight(serial, 16)) do ... end</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The serials of the mobiles, players and other NPCs, the NPC sees within range cells, in the line of sight, at most limit of them, nearest first: what a creature that goes for everyone looks at. The NPC itself, the hidden, the dead and the staff are left out. Empty for an unknown NPC or a range out of bounds. npc.players_in_sight is the same for the players only.")]
+    public LuaTable MobilesInSight(long serial, int range = DefaultSight, int limit = int.MaxValue)
+    {
+        return InSight(serial, range, limit, _ => true);
     }
 
     /// <summary>
@@ -585,6 +569,20 @@ public sealed class NpcModule
     public string? Name(long serial)
     {
         return TryGetNpc(serial, out var npc) ? npc.Name : null;
+    }
+
+    /// <summary>
+    ///     Gets the id of the mobile script of the NPC's template; <c>npc.script_id(serial)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The script_id of the NPC's mobile template, such as monster, guard or healer: what kind of creature it is to the scripts that look at others. nil for an unknown NPC or a template without a script.")]
+    public string? ScriptId(long serial)
+    {
+        return TryGetNpc(serial, out var npc) &&
+               npc.TemplateId is { } id &&
+               _templates.TryGet(id, out var template) &&
+               !string.IsNullOrEmpty(template.ScriptId)
+            ? template.ScriptId
+            : null;
     }
 
     // A whole number in the sound range, or a kind the template sets, as UOX3's creature sounds.
@@ -703,6 +701,38 @@ public sealed class NpcModule
     private static int Distance(Point3D from, Point3D to)
     {
         return Math.Max(Math.Abs(from.X - to.X), Math.Abs(from.Y - to.Y));
+    }
+
+    // The serials of those that pass the filter and that the NPC sees, nearest first. The nearest are looked at first, so
+    // the line of sight of a far one is not checked before that of a near one.
+    private LuaTable InSight(long serial, int range, int limit, Func<MobileEntity, bool> filter)
+    {
+        var table = new LuaTable();
+
+        if (_sectors is null || limit < 1 || range is < 0 or > WorldModule.MaximumRange || !TryGetNpc(serial, out var npc))
+        {
+            return table;
+        }
+
+        var index = 1;
+
+        foreach (var other in _sectors.GetMobilesInRange(npc.Map, npc.Location, range)
+                                      .Where(filter)
+                                      .OrderBy(other => Distance(npc.Location, other.Location))
+                                      .ThenBy(other => other.Id.Value))
+        {
+            if (Sees(npc, other, range, true))
+            {
+                table[index++] = (long)other.Id.Value;
+
+                if (index > limit)
+                {
+                    break;
+                }
+            }
+        }
+
+        return table;
     }
 
     // A ghost is what only a healer looks for: it is hidden from the living, and the others do not see it at all.

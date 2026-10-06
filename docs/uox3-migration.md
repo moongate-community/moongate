@@ -211,11 +211,15 @@ leather tunic as their parents; they get the leather sleeves (`0x13cd`) and legg
 (`0x13cb`).
 
 A mobile Moongate has a script for gets its `script_id`: a banker (`NPCAI=8`) takes `banker`
-(`scripts/mobiles/banker.lua`), a town guard (`NPCAI=4`) takes `guard` (`scripts/mobiles/guard.lua`), and the undead of the graveyards (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`, `spectre`, `lich`) take
-`monster` (`scripts/mobiles/monster.lua`);
-the templates based on them take it through `base_id`.
+(`scripts/mobiles/banker.lua`), a town guard (`NPCAI=4`) takes `guard` (`scripts/mobiles/guard.lua`), the creatures
+that go for everyone (`NPCAI=2` evil, `11` evil caster and `88` chaotic, and the undead of the graveyards by name:
+`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`, `spectre`, `lich`) take `monster`
+(`scripts/mobiles/monster.lua`; the casters fight in melee until there is magic; the good fighters and casters, `5`
+and `10`, fight criminals only and have no script yet), an animal (`NPCAI=6`) takes `animal`
+(`scripts/mobiles/animal.lua`) and a scared animal (`NPCAI=12`) takes `scared_animal`
+(`scripts/mobiles/scared_animal.lua`); the templates based on them take the script through `base_id`.
 
-Dropped, no home yet: the rest of AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
+Dropped, no home yet: the rest of AI and wandering (the other `NPCAI` values, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
 taming and bard skills (`TOTAME`, `CONTROLSLOTS`, `TOPROV`, `TOPEACE`), shops
 (`SHOPKEEPER`, `SHOPLIST`), `PACKITEM`, `CARVE`, `FOOD`, `PRIV`, `SCRIPT` and the other
 tags without a field. The run prints how often each kind of value was dropped.

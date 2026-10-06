@@ -20,6 +20,7 @@ using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Modules;
@@ -351,6 +352,22 @@ public sealed class MobileModuleTests
         {
             Assert.Equal([corpse.Id], _death.Raised);
         }
+    }
+
+    [Fact]
+    public void Notoriety_IsTheOneOthersSee_ARedMurdererAndAGreyCriminalIncluded()
+    {
+        _orc.Notoriety = NotorietyType.Invulnerable;
+        _aria.AccountId = new Serial(0x42);
+
+        var result = Run("return mobile.notoriety(256), mobile.notoriety(2), mobile.notoriety(999)");
+        _aria.Criminal = true;
+        var criminal = Run("return mobile.notoriety(2)")[0].Read<string>();
+        _aria.Kills = 5;
+        var murderer = Run("return mobile.notoriety(2)")[0].Read<string>();
+
+        Assert.Equal(("invulnerable", "innocent", true), (result[0].Read<string>(), result[1].Read<string>(), result[2].Type == LuaValueType.Nil));
+        Assert.Equal(("criminal", "murderer"), (criminal, murderer));
     }
 
     [Fact]

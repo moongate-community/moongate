@@ -97,6 +97,15 @@ public sealed class MobileModule
     }
 
     /// <summary>
+    ///     Gets the notoriety the mobile is shown with; <c>mobile.notoriety(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The notoriety others see the mobile with, as a name: innocent (blue), ally, attackable, criminal (grey), enemy, murderer (red) or invulnerable (yellow). A criminal reads criminal and a murderer murderer, whatever its template says. nil for a mobile not in the world.")]
+    public string? Notoriety(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? EnumNameUtils.Format(mobile.ShownNotoriety) : null;
+    }
+
+    /// <summary>
     ///     Gets the mobile's name; <c>mobile.name(who)</c>.
     /// </summary>
     [ScriptFunction(helpText: "The mobile's name; nil for a mobile not in the world.")]

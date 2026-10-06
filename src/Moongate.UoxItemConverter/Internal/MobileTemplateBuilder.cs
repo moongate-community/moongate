@@ -27,17 +27,25 @@ internal static class MobileTemplateBuilder
     // Hair and beard item lists: the race gives hair and beard instead.
     private static readonly HashSet<int> HairItemLists = [13, 14, 15];
 
-    // UOX3's NPCAI values Moongate has a mobile script for: the town guards (4, scripts/mobiles/guard.lua) and the
-    // bankers (8, scripts/mobiles/banker.lua).
+    // UOX3's NPCAI values Moongate has a mobile script for: the town guards (4, scripts/mobiles/guard.lua), the
+    // bankers (8, scripts/mobiles/banker.lua), the creatures that go for everyone (2 evil, 11 evil caster and 88
+    // chaotic: scripts/mobiles/monster.lua, the casters fight in melee until there is magic; the fighter, 5, and the
+    // caster, 10, are the good ones, who fight criminals only, and have none yet), the animals that keep to themselves (6, scripts/mobiles/animal.lua) and those that run (12 scared animal,
+    // scripts/mobiles/scared_animal.lua).
     private static readonly Dictionary<string, string> AiScripts = new(StringComparer.Ordinal)
     {
+        ["2"] = "monster",
         ["4"] = "guard",
-        ["8"] = "banker"
+        ["6"] = "animal",
+        ["8"] = "banker",
+        ["11"] = "monster",
+        ["12"] = "scared_animal",
+        ["88"] = "monster"
     };
 
     // The mobiles a Moongate mobile script is written for, by their UOX3 name; those based on them take it through
-    // base_id. scripts/mobiles/monster.lua is the melee AI without the fight: the undead of the graveyards take it,
-    // the casters among them (wraith, spectre, lich) too until magic exists.
+    // base_id. scripts/mobiles/monster.lua is the melee AI: the undead of the graveyards take it, the casters among
+    // them (wraith, spectre, lich) too until magic exists. The ones UOX3 gives an NPCAI take the script of its value.
     private static readonly Dictionary<string, string> ScriptIds = new(StringComparer.OrdinalIgnoreCase)
     {
         ["skeleton"] = "monster",

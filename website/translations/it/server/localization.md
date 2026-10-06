@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"9aeab581ebf0f6390c55dd150826a8899273961a3c93ce6f17a9aa5b38ad1abd","title":"Localizzazione"} -->
+<!-- translation: {"sourceHash":"d342d916e0f214cc6573ef96f533e73f03c29c14159baceee665631fab9ec8dc","title":"Localizzazione"} -->
 
 # Localizzazione
 
@@ -196,7 +196,7 @@ Risiedono in `data/messages/<language>/moongate.toml`, separati dai testi standa
 
 | ID | Testo | Usato da |
 | --- | --- | --- |
-| 30000–30004 | Comune, Non comune, Raro, Epico, Leggendario | Rarità nei tooltip |
+| 30000–30004 | Comune, Non comune, Raro, Epico, Leggendario | Rarità nei tooltip; un oggetto la mostra solo sopra Comune (30000 resta per script e strumenti) |
 | 30005 | [Maledetto] | Tipo di bottino nei tooltip |
 | 30006, 30007 | Peso: 1 stone, Peso: {0} stone | Peso nei tooltip |
 | 30008–30038, 30050–30052, gran parte di 30055–30112, 30115–30120, 30122 e 30126 | Bersaglio annullato., Comando sconosciuto: {0}, Uso: {0}, Il mondo è stato salvato in {0} secondi., {0} ora ha {1} fama., ... | Risposte dei comandi e messaggi globali (`CommandMessages`) |

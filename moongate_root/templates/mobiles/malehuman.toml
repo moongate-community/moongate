@@ -122,6 +122,7 @@ items = ["0x1410"]
 
 [[mobile]]
 id = "m_murderer_archmage"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "male"
 title = "the Archmage"
@@ -216,6 +217,7 @@ items = ["0x1fa1_tunic", "0x1f03_robe"]
 
 [[mobile]]
 id = "m_pirate"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "male"
 title = "the Pirate"
@@ -434,6 +436,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "m_brigand"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "male"
 title = "the Brigand"
@@ -616,6 +619,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "m_thief"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "male"
 title = "the Thief"
@@ -1194,6 +1198,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "m_golemcontroller"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "golem_controller"
 title = "the controller"
@@ -1236,6 +1241,7 @@ hue = 2117
 
 [[mobile]]
 id = "m_executioner"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "male"
 title = "the Executioner"
@@ -1281,6 +1287,7 @@ items = ["0x0f46"]
 
 [[mobile]]
 id = "m_chaosdragoon"
+script_id = "monster"
 base_id = "basehuman"
 name = "a chaos dragoon"
 gender = "male"
@@ -1336,6 +1343,7 @@ items = ["swampdragon"]
 
 [[mobile]]
 id = "m_chaosdragoonelite"
+script_id = "monster"
 base_id = "basehuman"
 name = "a chaos dragoon elite"
 gender = "male"

@@ -1,5 +1,6 @@
 [[mobile]]
 id = "base_undead"
+script_id = "monster"
 notoriety = "attackable"
 
 [[mobile]]
@@ -32,6 +33,7 @@ death = 475
 
 [[mobile]]
 id = "ancientlich"
+script_id = "monster"
 name_list = "ancient_lich"
 body = 79
 skin_hue = 0
@@ -63,6 +65,7 @@ death = 416
 
 [[mobile]]
 id = "lichlord"
+script_id = "monster"
 name = "a lich lord"
 body = 79
 skin_hue = 0
@@ -234,6 +237,7 @@ death = 455
 
 [[mobile]]
 id = "boneknight"
+script_id = "monster"
 name = "a bone knight"
 body = 147
 skin_hue = 0
@@ -278,6 +282,7 @@ wrestling = "1d11+84"
 
 [[mobile]]
 id = "bonemage"
+script_id = "monster"
 name = "a bone magi"
 body = 148
 skin_hue = 2014
@@ -320,6 +325,7 @@ wrestling = "1d11+44"
 
 [[mobile]]
 id = "mummy"
+script_id = "monster"
 name = "a mummy"
 body = 154
 skin_hue = 1102
@@ -347,6 +353,7 @@ death = 475
 
 [[mobile]]
 id = "rottingcorpse"
+script_id = "monster"
 name = "a rotting corpse"
 body = 155
 strength = "1d50+300"

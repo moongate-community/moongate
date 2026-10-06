@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0729db8a0fb99ff4f0dcadc23a2fe93b15c0a73264d374a13cb978e277c7c4cc","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"0e056b2f1d35ae2c0c6540b5b3dc06de28a17bc2cb3c5884ac336b2e15769c9b","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -82,7 +82,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Armi e armature: danno, armatura, durabilità, resistenze | 🟡 | L'arma impugnata e l'armatura indossata da un giocatore determinano [tempi dei colpi, probabilità di colpire, danno e riduzione del danno subito](combat.md#weapons-and-armor); nessuna durabilità, parata, scudo o resistenza |
 | Parata | ❌ | |
 | Mosse speciali delle armi | ❌ | |
-| IA di combattimento degli NPC | 🟡 | `monster.lua`: i non morti dei cimiteri notano un giocatore, gli si avvicinano, lo combattono e fanno la guardia quando lo perdono; un NPC colpito risponde all'attacco |
+| IA di combattimento degli NPC | 🟡 | `monster.lua` su ogni creatura malvagia o caotica in UOX3 (circa 200 template): notano un giocatore o un cittadino, gli si avvicinano, lo combattono e fanno la guardia quando lo perdono, anche gli incantatori in corpo a corpo, e le guardie cittadine li attaccano. Gli animali passeggiano e rispondono se colpiti, quelli paurosi fuggono. Niente arcieri, incantesimi o fuga con pochi punti vita |
 | Guardie nelle regioni sorvegliate | 🟡 | Un giocatore che dice "guards" fa arrivare una guardia accanto a ciascun criminale nelle vicinanze: appare, pronuncia la sua battuta e se ne va. Le guardie presenti nelle città notano autonomamente un criminale e lo raggiungono (`guard.lua`). Un NPC criminale viene ucciso con un colpo e lascia il cadavere; un giocatore criminale viene solo raggiunto, perché i giocatori non muoiono ancora |
 | Abilità speciali dei mostri | ❌ | |
 | Danno elementale e resistenze | ❌ | |
@@ -141,7 +141,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Parole chiave del parlato e risposte | 🟡 | Le parole chiave del client raggiungono `on_speech` in qualsiasi lingua; i banchieri rispondono a *bank*, *balance*, *withdraw* e *check*, e alla parola *deposit*, che non ha una parola chiave; nessuna parola chiave dei venditori ancora |
 | Creature acquatiche e anfibie | ✅ | Compaiono sull'acqua e nuotano |
 | Tipi di IA (venditore, guardia, guaritore, animale, mostro, incantatore) | ❌ | |
-| Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, aggirando porte chiuse e mobili. Nessuna fuga, gli NPC non aprono le porte e i mobile non bloccano il percorso |
+| Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, aggirando porte chiuse e mobili. Fuggono solo gli animali paurosi, da un colpo; gli NPC non aprono le porte e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
 | Animali e seguaci: comandi, lealtà, legame | ❌ | |
 | Cavalcature | ❌ | |
 | Eventi di script per gli NPC (parlato, portata, danno) | 🟡 | Parlato e portata; nessun evento di combattimento |
