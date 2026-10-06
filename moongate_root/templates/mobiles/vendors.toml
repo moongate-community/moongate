@@ -1865,3 +1865,17 @@ gender = "female"
 items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
 hue = "0x0835-0x0852"
 gender = "female"
+
+# The healers of the evil, as ModernUO's EvilHealer and EvilWanderingHealer: a healer that turns nobody away, the red
+# players included (scripts/mobiles/healer.lua knows them by the id starting with "evil").
+[[mobile]]
+id = "evilhealer"
+base_id = "healer"
+title = "the Evil Healer"
+karma = -10000
+
+[[mobile]]
+id = "evilwhealer"
+base_id = "whealer"
+title = "the Evil Wandering Healer"
+karma = -10000

@@ -354,6 +354,20 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Murders_AreTheCountsOfTheMobile_AndIsMurdererIsRedFromFiveKills()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Kills = 4;
+        _aria.ShortTermMurders = 2;
+
+        var before = Run("return mobile.murders(2).kills, mobile.murders(2).short_term, mobile.is_murderer(2), mobile.murders(999), mobile.is_murderer(999)");
+        _aria.Kills = 5;
+
+        Assert.Equal((4, 2, false, true, false), (before[0].Read<int>(), before[1].Read<int>(), before[2].Read<bool>(), before[3].Type == LuaValueType.Nil, before[4].Read<bool>()));
+        Assert.True(Run("return mobile.is_murderer(2)")[0].Read<bool>());
+    }
+
+    [Fact]
     public void Resurrect_ADeadPlayer_RaisesItAtOnce_AndIsDeadSaysWhoIs()
     {
         _aria.AccountId = new Serial(0x42);

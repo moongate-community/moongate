@@ -309,7 +309,7 @@ public sealed class RepositoryTemplateFilesTests
 
         var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
-        Assert.Equal(674, mobiles.Count);
+        Assert.Equal(676, mobiles.Count);
         Assert.Equal("{gender}", mobiles["guard"].NameList);
         // Moongate's own cats inherit the UOX3 cat and add their name and script.
         Assert.Equal((201, "Orione", "orione"), (mobiles["orione"].Body, mobiles["orione"].Name, mobiles["orione"].ScriptId));
@@ -336,6 +336,9 @@ public sealed class RepositoryTemplateFilesTests
             new[] { "healer", "m_healer", "f_healer", "whealer", "m_whealer", "f_whealer" },
             id => Assert.Equal("healer", mobiles[id].ScriptId)
         );
+        // The evil ones inherit the script and the shop, and are known by their id.
+        Assert.All(new[] { "evilhealer", "evilwhealer" }, id => Assert.Equal("healer", mobiles[id].ScriptId));
+        Assert.Equal("the Evil Healer", mobiles["evilhealer"].Title);
     }
 
     [Fact]
