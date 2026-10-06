@@ -36,6 +36,16 @@ public sealed class RecordingCombatService : ICombatService
         Stopped.Add(mobile);
     }
 
+    /// <summary>
+    ///     What <see cref="RangeOf" /> answers: the melee range, 1, unless a test sets it.
+    /// </summary>
+    public int Range { get; set; } = 1;
+
+    public int RangeOf(MobileEntity mobile)
+    {
+        return Range;
+    }
+
     public MobileEntity? TargetOf(MobileEntity mobile)
     {
         return Attacks.LastOrDefault(attack => attack.Attacker == mobile).Target;

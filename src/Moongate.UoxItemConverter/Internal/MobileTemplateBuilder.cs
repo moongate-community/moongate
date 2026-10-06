@@ -336,6 +336,11 @@ internal static class MobileTemplateBuilder
                     template.Gold = Dice(value, context);
 
                     break;
+                case "FLEEAT":
+                    // From 0 to 100, or -1 for never; a value out of it is left out.
+                    template.FleeAt = UoxNumber.TryParse(value, out var fleeAt) && fleeAt is >= -1 and <= 100 ? (int)fleeAt : template.FleeAt;
+
+                    break;
                 case "FLAG":
                     template.Notoriety = value.ToUpperInvariant() switch
                     {

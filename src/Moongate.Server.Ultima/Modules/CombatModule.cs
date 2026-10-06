@@ -55,6 +55,15 @@ public sealed class CombatModule
         return TryGet(mobile, out var who) && _combat.TargetOf(who) is { } target ? target.Id.Value : null;
     }
 
+    /// <summary>
+    ///     Gets how far a mobile's blows reach; <c>combat.range(archer)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "How far, in cells, the mobile's blows reach: the range of the bow (10) or crossbow (8) an NPC holds, else 1, the melee range of ultima.combat.max_range. nil for a mobile not in the world.")]
+    public int? Range(long mobile)
+    {
+        return TryGet(mobile, out var who) ? _combat.RangeOf(who) : null;
+    }
+
     private bool TryGet(long serial, out MobileEntity mobile)
     {
         mobile = null!;

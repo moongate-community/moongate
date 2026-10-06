@@ -66,6 +66,15 @@ public sealed class CombatModuleTests
     }
 
     [Fact]
+    public void Range_IsHowFarTheBlowsOfTheMobileReach_OrNil()
+    {
+        _combat.Range = 10;
+
+        Assert.Equal(10, Run("return combat.range(256)")[0].Read<int>());
+        Assert.Equal(LuaValue.Nil, Run("return combat.range(999)")[0]);
+    }
+
+    [Fact]
     public void Target_IsTheSerialOfWhomItFights_OrNil()
     {
         _combat.Attack(_orc, _aria);

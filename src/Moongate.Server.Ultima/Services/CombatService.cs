@@ -189,6 +189,11 @@ public sealed class CombatService : ICombatService
         }
     }
 
+    public int RangeOf(MobileEntity mobile)
+    {
+        return RangedOf(mobile)?.Range ?? _config.MaxRange;
+    }
+
     public MobileEntity? TargetOf(MobileEntity mobile)
     {
         return _fighters.TryGetValue(mobile.Id, out var fighter) ? fighter.Target : null;

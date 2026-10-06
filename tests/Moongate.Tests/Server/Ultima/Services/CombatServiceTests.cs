@@ -515,6 +515,16 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void RangeOf_IsTheRangeOfTheBowAnNpcHolds_ElseTheMeleeRange_APlayersBowCountsForNothing()
+    {
+        Assert.Equal((1, 1), (_combat.RangeOf(_orc), _combat.RangeOf(_aria)));
+
+        _gear.Ranged = Bow;
+
+        Assert.Equal((10, 1), (_combat.RangeOf(_orc), _combat.RangeOf(_aria)));
+    }
+
+    [Fact]
     public void AnNpcWithABow_DoesNotShootBeyondItsRange()
     {
         _gear.Ranged = Bow;
