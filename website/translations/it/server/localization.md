@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"8ab47a2308c14c992549e6af01bdd2c4b8ee40b5606bb12ea5e591ef0fd9cf01","title":"Localizzazione"} -->
+<!-- translation: {"sourceHash":"9aeab581ebf0f6390c55dd150826a8899273961a3c93ce6f17a9aa5b38ad1abd","title":"Localizzazione"} -->
 
 # Localizzazione
 
@@ -210,7 +210,7 @@ Risiedono in `data/messages/<language>/moongate.toml`, separati dai testi standa
 | 30138 | Rimpiangerai le tue azioni, porco! | Ciò che una guardia dice quando arriva per un criminale |
 | 30148, 30149 | Sei stato incarcerato per {0} giorni: {1}, Motivo: {0} | Ciò che un prigioniero legge quando è stato fornito un motivo, e il motivo sulla nota di rilascio |
 | 30151 | i resti di {0} | Il nome del cadavere lasciato da un NPC |
-| 30152 a 30154 | Uccide l'NPC che selezioni…, {0} è morto., I giocatori non possono ancora morire. | Il comando `kill` |
+| 30152 a 30154 | Uccide l'NPC che selezioni…, {0} è morto., {0} non può morire. | Il comando `kill` |
 | 30164 a 30167 | Resuscita l'NPC di cui selezioni il cadavere…, {0} è tornato., Quello non è un cadavere., Quel cadavere non può essere resuscitato. | Il comando `resurrect` |
 | 30155 a 30157 | Devi attendere {0} secondi prima di pubblicare di nuovo., Quel messaggio non è tuo., La bacheca è occupata: pubblica di nuovo tra un momento. | Ciò che un giocatore legge su una [bacheca](bulletin-boards.md) |
 | 30168 | Non puoi usare abilità in prigione. | Ciò che un prigioniero legge quando usa un'[abilità](skills.md) |

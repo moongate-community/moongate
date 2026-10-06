@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a9435379ffcfd93b2b7342eec977679ef873980a398f7c4de7b68d3a7bb3a7e1","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"68d43b9db4fc75cc6b59f23d5687cb2d4777d8f188e05ebb7ed23f6494dc26ff","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -235,6 +235,17 @@ pagina della mappa del giocatore, e riproduce il suono `0x20E`. Un pulsante tele
 con `mobile.teleport`, anche su un'altra mappa, e vi riproduce `0x1FE`. Un giocatore che si è allontanato più
 di una casella mentre il gump era aperto viene avvisato e resta; scegliere la città del portale
 stesso non fa nulla.
+
+## ankh.lua e resurrect.lua
+
+`scripts/items/ankh.lua` è lo script del template `decoration_ankh`, i due pezzi di ogni
+`AnkhWest` e `AnkhNorth` che `.decorate` posiziona. Non ha `on_use`: i vivi non hanno nulla da fare
+con un ankh. La sua `on_ghost_use` viene eseguita quando un giocatore morto lo usa con un doppio clic ([Morte e
+resurrezione](../death.md#death-of-a-player)): da più di 2 celle dice "È troppo lontano."
+(testo del client 500446), altrimenti apre il gump `resurrect` (`templates/gumps/resurrect.xml`). Il suo
+pulsante Continue chiama `resurrect.accept` in `scripts/gumps/resurrect.lua`, che, se il giocatore è
+ancora morto ed entro 2 celle dall'ankh, chiama `mobile.resurrect`, riproduce il suono `0x214` e
+l'effetto `SparkleHeal` sul giocatore. Cancel non fa nulla.
 
 ## moongate.lua
 

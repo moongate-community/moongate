@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ac21e8f8ff6f5eb5ceae3181c684822375b869d09c7e2fa461f6b505f5420424","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"e82d4ae4dc5392199458f70f2e7fcc6c4eddc0527ac027cdc816aab8fa878256","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -54,7 +54,6 @@ separatamente: arrivano con la priorità che dà loro la regola.
 | Manichini da allenamento, bersagli di tiro con l'arco e bersagli per freccette (107 posizionati) | Incremento delle abilità (1.2) | 2 |
 | Serrature e scassinamento dei forzieri del tesoro e dei contenitori cittadini | Verifica delle abilità (1.2) | 2 |
 | Trappole dei forzieri e le 490 trappole posizionate nei dungeon | Danno (2.1) | 4 |
-| Ankh che resuscitano (44 posizionati) | Morte (2.3) | 4 |
 | Bacchette nei forzieri del tesoro | Incantesimi (4.3) | 7 |
 | Forge e incudini per la creazione | Creazione (5.2) | 8 |
 | Scacchiere, tavoli da dama e bacheche delle taglie (le [bacheche](bulletin-boards.md) funzionano) | Chat e bacheche (6.3) | 9 |
@@ -105,7 +104,7 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | --- | --- | --- | --- |
 | 2.1 | 🟡 | **Modalità guerra, timer dei colpi, corpo a corpo e tiro con l'arco**: probabilità di colpire, danno, armatura, parata, durabilità. Completato: un [combattimento](combat.md) a pugni o con un'arma, timer dei colpi, colpo tramite abilità, danno e armatura di un NPC o di ciò che un giocatore indossa. Restano: parata, tiro con l'arco, durabilità | Il ciclo fondamentale del gioco |
 | 2.2 | ❌ | **Elenchi degli aggressori** | Notorietà, guardie e diritti sul bottino si basano su di essi |
-| 2.3 | 🟡 | **Morte, cadavere, fantasma, resurrezione**; NPC guaritori e santuari. Completato: un NPC muore tramite `.kill` o `mobile.kill` e lascia il proprio [cadavere](death.md) con ciò che trasportava. Restano: morte del giocatore, fantasmi, resurrezione | Dà un risultato al combattimento |
+| 2.3 | 🟡 | **Morte, cadavere, fantasma, resurrezione**; NPC guaritori e santuari. Completato: un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill` e lascia il proprio [cadavere](death.md) con ciò che trasportava; un giocatore resta come [fantasma](death.md#death-of-a-player) e torna in vita a un ankh, con `.resurrect` o `mobile.resurrect`. Restano: guaritori, conteggi degli omicidi e perdita di abilità, regole per saccheggiare, ossa | Dà un risultato al combattimento |
 | 2.4 | ❌ | **Bende e guarigione** | Necessarie appena esiste il danno |
 | 2.5 | ❌ | **Eventi di combattimento per Lua**: attacco, colpo riuscito, colpo mancato, danno, morte, resurrezione | Permette ai contenuti di modificare le regole |
 | 2.6 | ❌ | **Impostazioni del combattimento**: velocità dei colpi, regole del danno, decadimento dei cadaveri | Un proprietario di shard si aspetta di regolarle |
