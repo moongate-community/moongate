@@ -108,6 +108,13 @@ public interface IMobileStateService
     void SetWarMode(MobileEntity mobile, bool warMode);
 
     /// <summary>
+    ///     Makes the player a ghost or brings it back to its living body. A ghost wears the ghost body of its race and
+    ///     gender and is hidden from the living players unless it is in war mode; its own client is told it died. The
+    ///     living body is the one of the ghost body. Nothing happens for an NPC, or for a body that has no ghost.
+    /// </summary>
+    void SetDead(MobileEntity mobile, bool dead);
+
+    /// <summary>
     ///     Sends the status of <paramref name="target" /> to the session: all of it for the session's own character,
     ///     else the name and the health bar only. Nothing is sent of a hidden mobile to a player who does not see it.
     /// </summary>

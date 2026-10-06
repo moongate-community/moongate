@@ -39,6 +39,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly StubGameLoop _loop = new();
     private readonly RecordingTimerService _timers = new();
     private readonly RecordingCrimeService _crimes = new();
+    private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                  .Item(0x0EED, TileFlagType.Generic, 0)
                                                  .Item(0x0E75, TileFlagType.Container, 0)
@@ -52,7 +53,9 @@ public sealed class DeathServiceTests : IAsyncLifetime
             new ItemTemplate { Id = "hair", ItemId = new Serial(0x203B) },
             new ItemTemplate { Id = "newbie_dagger", ItemId = new Serial(0x0F52), LootType = LootType.Newbied },
             new ItemTemplate { Id = "blessed_ring", ItemId = new Serial(0x108A), LootType = LootType.Blessed },
-            new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false }
+            new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false },
+            new ItemTemplate { Id = "death_shroud", ItemId = new Serial(0x204E), Movable = false },
+            new ItemTemplate { Id = "death_robe", ItemId = new Serial(0x2684), LootType = LootType.Newbied }
         )
     );
     private readonly MobileTemplateService _mobileTemplates = new(
@@ -110,6 +113,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
             new Lazy<IScriptEngine>(() => _engine),
             _timers,
             crimes: _crimes,
+            state: _state,
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -641,13 +645,82 @@ public sealed class DeathServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Kill_APlayer_IsRefused_AndNothingHappens()
+    public void Kill_APlayer_LeavesACorpseWithItsGearAndItsPack_AndKeepsItsBackpack()
     {
+        _aria.Body = 0x0190;
+        _aria.Location = Spot;
+        var pack = Worn(_aria, "backpack", 0x0E75, LayerType.Backpack);
+        var coins = Carried(pack, "gold", 0x0EED, 15);
+        var blade = Worn(_aria, "sword", 0x0F5E, LayerType.OneHanded);
+        var dagger = Carried(pack, "newbie_dagger", 0x0F52, 1);
+
+        Assert.True(_death.Kill(_aria, _orc));
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.Equal("the remains of Aria", corpse.Name);
+        Assert.Equal(
+            [coins.Id, blade.Id],
+            _items.GetContents(corpse.Id).Select(item => item.Id).Order()
+        );
+        Assert.Equal((_aria.Id, LayerType.Backpack), (pack.MobileId, pack.Layer));
+        Assert.Equal(dagger.Id, _items.GetContents(pack.Id).Single().Id);
+    }
+
+    [Fact]
+    public void Kill_APlayer_BecomesAGhostWithNothingLeft_AndTheViewIsTold()
+    {
+        _aria.Body = 0x0190;
+        _aria.Hits = 40;
+        _aria.Stamina = 30;
+        _aria.Mana = 20;
+        _aria.WarMode = true;
+        _serials.Serials.Enqueue(new Serial(CorpseSerial + 1));
+
+        Assert.True(_death.Kill(_aria, _orc));
+
+        Assert.True(_aria.IsDead);
+        Assert.Equal(0x0192, _aria.Body);
+        Assert.Equal((0, 0, 0), (_aria.Hits, _aria.Stamina, _aria.Mana));
+        Assert.False(_aria.WarMode);
+        Assert.Contains($"MobileDied {_aria.Id.Value} {CorpseSerial}", _view.Calls);
+        Assert.Contains(_items.GetWorn(_aria.Id), item => item.Layer == LayerType.OuterTorso && item.TemplateId == "death_shroud");
+        Assert.Empty(_scripts.Calls);
+        Assert.Empty(_npcs.Removals);
+    }
+
+    [Fact]
+    public void Kill_APlayerThatIsDeadAlready_IsRefused()
+    {
+        _aria.Body = 0x0192;
+
         Assert.False(_death.Kill(_aria));
 
         Assert.Empty(_view.Calls);
-        Assert.Empty(_npcs.Removals);
-        Assert.Empty(_scripts.Calls);
+    }
+
+    [Fact]
+    public void Resurrect_APlayer_GetsItsBodyBackWithTenHits_FullStamina_NoMana_AndADeathRobe()
+    {
+        _aria.Body = 0x0190;
+        _aria.HitsMax = 80;
+        _aria.StaminaMax = 70;
+        _aria.ManaMax = 60;
+        _death.Kill(_aria);
+        _serials.Serials.Enqueue(new Serial(CorpseSerial + 1));
+
+        Assert.True(_death.Resurrect(_aria));
+
+        Assert.False(_aria.IsDead);
+        Assert.Equal(0x0190, _aria.Body);
+        Assert.Equal((10, 70, 0), (_aria.Hits, _aria.Stamina, _aria.Mana));
+        var worn = _items.GetWorn(_aria.Id).Where(item => item.Layer == LayerType.OuterTorso).ToList();
+        Assert.Equal(["death_robe"], worn.Select(item => item.TemplateId));
+    }
+
+    [Fact]
+    public void Resurrect_APlayerThatIsAlive_IsRefused()
+    {
+        Assert.False(_death.Resurrect(_aria));
     }
 
     [Fact]

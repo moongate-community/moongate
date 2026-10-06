@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Data.Movement;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Ultima.Primitives;
 using Moongate.Ultima.Types;
 
@@ -286,6 +287,30 @@ public sealed class MobileStateService : IMobileStateService
         _view.MobileAppeared(mobile);
 
         return true;
+    }
+
+    public void SetDead(MobileEntity mobile, bool dead)
+    {
+        if (mobile.IsNpc || mobile.IsDead == dead)
+        {
+            return;
+        }
+
+        var body = dead ? GhostBodies.GhostOf(mobile.Body) : GhostBodies.LivingOf(mobile.Body);
+
+        if (body == mobile.Body)
+        {
+            return;
+        }
+
+        // Hidden first: the players around lose the figure that dies, and the ghost they may see is shown after.
+        SetHidden(mobile, dead && !mobile.WarMode);
+        SetLooks(mobile, body, null);
+
+        if (dead && _sessions.TryGetByCharacterId(mobile.Id, out var own))
+        {
+            _sender.TrySend(own.SessionId, new DeathStatusPacket());
+        }
     }
 
     public void SetHidden(MobileEntity mobile, bool hidden)

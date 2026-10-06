@@ -6,6 +6,7 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.Internal;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 
@@ -46,6 +47,14 @@ public class MobileEntity : IMoongateEntity
     /// </summary>
     [Column(IsIgnore = true)]
     public bool IsNpc => AccountId is null;
+
+    /// <summary>
+    ///     Gets whether the mobile is a dead player: a ghost wears the ghost body of its race and gender, and a player is
+    ///     alive again when its living body is back. It is not a column: the body is what is saved. An NPC is never
+    ///     dead, it leaves the world.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public bool IsDead => !IsNpc && GhostBodies.IsGhost(Body);
 
     public string Name { get; set; }
 

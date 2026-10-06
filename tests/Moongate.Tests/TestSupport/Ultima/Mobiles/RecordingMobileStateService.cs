@@ -2,6 +2,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.TestSupport.Ultima.Mobiles;
@@ -100,6 +101,12 @@ public sealed class RecordingMobileStateService : IMobileStateService
     }
 
     public List<string> Flags { get; } = [];
+
+    public void SetDead(MobileEntity mobile, bool dead)
+    {
+        Flags.Add($"dead {mobile.Id.Value} {dead}");
+        mobile.Body = dead ? GhostBodies.GhostOf(mobile.Body) : GhostBodies.LivingOf(mobile.Body);
+    }
 
     public void SetHidden(MobileEntity mobile, bool hidden)
     {

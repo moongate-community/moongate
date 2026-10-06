@@ -1,0 +1,34 @@
+# ==============================================================================
+# Moongate - templates/items/death.toml
+#
+# What it is for:
+#   The two garments of death. A player that dies wears the shroud on its outer
+#   torso layer until it is raised; a player that is raised wears the robe.
+#
+# Fields:
+#   base_id     inherits base_item
+#   item_id     0x204E the shroud, 0x2684 the robe
+#   layer       outer_torso, where both are worn
+#   movable     false for the shroud: nobody takes it off a ghost
+#   loot_type   newbied for the robe: it never goes into a corpse
+#   hue         2301 for the robe, the grey of the death robe
+# ==============================================================================
+
+[[item]]
+id = "death_shroud"
+base_id = "base_item"
+item_id = 0x204E
+name = "a death shroud"
+rarity = "common"
+layer = "outer_torso"
+movable = false
+
+[[item]]
+id = "death_robe"
+base_id = "base_item"
+item_id = 0x2684
+name = "a death robe"
+rarity = "common"
+layer = "outer_torso"
+hue = 2301
+loot_type = "newbied"

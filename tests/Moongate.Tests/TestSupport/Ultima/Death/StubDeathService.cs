@@ -32,6 +32,15 @@ public sealed class StubDeathService : IDeathService
         return Kills;
     }
 
+    public List<MobileEntity> PlayersRaised { get; } = [];
+
+    public bool Resurrect(MobileEntity player)
+    {
+        PlayersRaised.Add(player);
+
+        return Kills;
+    }
+
     /// <summary>
     ///     What every raising answers.
     /// </summary>
