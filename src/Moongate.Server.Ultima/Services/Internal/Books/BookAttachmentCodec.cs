@@ -93,6 +93,7 @@ internal static class BookAttachmentCodec
         {
             object scalar = value.ValueKind switch
             {
+                // Safe: the value kind is String, so GetString is not null.
                 JsonValueKind.String => value.GetString()!,
                 JsonValueKind.True => true,
                 JsonValueKind.False => false,

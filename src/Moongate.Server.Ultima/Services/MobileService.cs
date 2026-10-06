@@ -267,9 +267,9 @@ public sealed class MobileService : IMobileService
         // The bank box is worn but never drawn: ModernUO leaves it out too.
         var entries = worn
             .Where(item => item.Layer is not null and not LayerType.Bank)
-            .GroupBy(item => item.Layer!.Value)
+            .GroupBy(item => item.Layer.Value)
             .Select(group => group.First())
-            .Select(item => new MobileEquipmentEntry(item.Id, item.ItemId, item.Layer!.Value, item.Hue))
+            .Select(item => new MobileEquipmentEntry(item.Id, item.ItemId, item.Layer.Value, item.Hue))
             .ToList();
         var layers = entries.Select(entry => entry.Layer).ToHashSet();
 

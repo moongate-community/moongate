@@ -231,7 +231,7 @@ public sealed class CharacterService : ICharacterService
 
         var used = (await GetCharactersAsync(character.AccountId.Value, cancellationToken))
             .Where(other => other.DeletionRequestedAt is null && other.Slot is not null)
-            .Select(other => other.Slot!.Value)
+            .Select(other => other.Slot.Value)
             .ToHashSet();
         var free = Enumerable.Range(0, _config.MaxPerAccount).Where(slot => !used.Contains(slot)).ToList();
 
@@ -255,7 +255,7 @@ public sealed class CharacterService : ICharacterService
     /// </summary>
     private int FreeSlot(int requested, IReadOnlyList<MobileEntity> existing)
     {
-        var used = existing.Where(c => c.Slot is not null).Select(c => c.Slot!.Value).ToHashSet();
+        var used = existing.Where(c => c.Slot is not null).Select(c => c.Slot.Value).ToHashSet();
 
         if (requested >= 0 && requested < _config.MaxPerAccount && !used.Contains(requested))
         {

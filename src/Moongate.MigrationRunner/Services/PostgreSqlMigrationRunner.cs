@@ -11,6 +11,8 @@ namespace Moongate.MigrationRunner.Services;
 /// </summary>
 public static class PostgreSqlMigrationRunner
 {
+    private const int ExecutionTimeoutSeconds = 60;
+
     /// <summary>
     ///     Applies all pending files atomically and returns their count. No database is created.
     /// </summary>
@@ -33,7 +35,7 @@ public static class PostgreSqlMigrationRunner
             .JournalTo((manager, _) => new MigrationJournal(manager, catalog))
             .WithTransaction()
             .WithVariablesDisabled()
-            .WithExecutionTimeout(TimeSpan.FromSeconds(60))
+            .WithExecutionTimeout(TimeSpan.FromSeconds(ExecutionTimeoutSeconds))
             .LogToNowhere()
             .Build();
         var result = engine.PerformUpgrade();

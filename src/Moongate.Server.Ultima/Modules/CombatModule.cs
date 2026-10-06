@@ -72,8 +72,10 @@ public sealed class CombatModule
 
     private bool TryGet(long serial, out MobileEntity mobile)
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         mobile = null!;
 
+        // Safe: the out value is only used when the lookup succeeds.
         return serial is > 0 and <= uint.MaxValue &&
                _mobiles.TryGet(new Serial((uint)serial), out mobile!) &&
                _mobiles.IsInWorld(mobile.Id);

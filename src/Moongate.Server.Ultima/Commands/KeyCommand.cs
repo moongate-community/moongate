@@ -150,6 +150,8 @@ public sealed class KeyCommand : ICommandExecutor
                 {
                     if (_inventory?.AllowsOwner(session.CharacterId) == false)
                     {
+                        // Safe: AddBookAttachments registers the guard and the reservations together,
+                        // so a guard that refuses comes with a reservation service.
                         settlement = _reservations!.WaitAsync(session.CharacterId);
                         return;
                     }

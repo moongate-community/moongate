@@ -30,6 +30,7 @@ public static class LuaFunctionDescriber
         foreach (var parameter in function.Method.GetParameters())
         {
             var isParams = parameter.GetCustomAttribute<ParamArrayAttribute>() is not null;
+            // Safe: isParams guarantees an array type, which has an element type.
             var type = isParams ? parameter.ParameterType.GetElementType()! : parameter.ParameterType;
             var underlying = Nullable.GetUnderlyingType(type) ?? type;
             var optional = !isParams && (parameter.HasDefaultValue || IsNullableValueType(parameter.ParameterType));
@@ -39,6 +40,7 @@ public static class LuaFunctionDescriber
             // A declared Lua type (such as the EventName alias) wins over the one derived from the CLR type.
             var typeName = parameter.GetCustomAttribute<ScriptParameterTypeAttribute>()?.LuaType ??
                            (underlying.IsEnum ? LuaTypeName(type) + "|string" : LuaTypeName(type));
+            // Safe: parameters of a described method always carry a name.
             parameters.Add(
                 new(
                     isParams ? "..." : LuaModuleBinder.ToSnakeCase(parameter.Name!),

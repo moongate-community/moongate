@@ -29,6 +29,7 @@ internal static class GenderPairMerger
         out MobileTemplate merged
     )
     {
+        // Safe: merged is only read when the method returns true.
         merged = null!;
         var (firstRace, firstGender) = resolve(first);
         var (secondRace, secondGender) = resolve(second);
@@ -69,6 +70,7 @@ internal static class GenderPairMerger
 
         // A male sound on a female mobile is wrong, not just imprecise (humans die with gendered screams): when the
         // two differ, neither is kept.
+        // Safe: Sounds is a known public property of MobileTemplate.
         var soundsProperty = typeof(MobileTemplate).GetProperty(nameof(MobileTemplate.Sounds))!;
 
         if (Describe(soundsProperty, male) != Describe(soundsProperty, female))
@@ -131,6 +133,7 @@ internal static class GenderPairMerger
 
     private static MobileTemplate Copy(MobileTemplate template)
     {
+        // Safe: deserializing a document we just serialized never yields null.
         return TomlUtils.Deserialize<MobileTemplate>(TomlUtils.Serialize(template))!;
     }
 }

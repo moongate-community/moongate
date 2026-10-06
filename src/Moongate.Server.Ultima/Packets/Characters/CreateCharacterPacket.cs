@@ -136,6 +136,7 @@ public sealed class CreateCharacterPacket : BaseFixedPacket<CreateCharacterPacke
             return false;
         }
 
+        // Safe: the Try read above succeeded, so the string is set.
         packet = new()
         {
             Name = name!,

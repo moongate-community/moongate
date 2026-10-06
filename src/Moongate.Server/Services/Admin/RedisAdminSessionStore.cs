@@ -15,6 +15,8 @@ namespace Moongate.Server.Services.Admin;
 /// </summary>
 public sealed class RedisAdminSessionStore : IAdminSessionStore
 {
+    private const int MaxUsernameLength = 255;
+
     private readonly RedisConnectionService _redis;
     private readonly string _prefix;
 
@@ -68,7 +70,7 @@ public sealed class RedisAdminSessionStore : IAdminSessionStore
 
         if (!Enum.IsDefined(identity.AccountType) ||
             string.IsNullOrWhiteSpace(identity.Username) ||
-            identity.Username.Length > 255 ||
+            identity.Username.Length > MaxUsernameLength ||
             generation == Guid.Empty ||
             lifetime <= TimeSpan.Zero ||
             lifetime > TimeSpan.FromDays(1))
@@ -115,7 +117,7 @@ public sealed class RedisAdminSessionStore : IAdminSessionStore
             !uint.TryParse((string?)values[0], out var id) ||
             id == 0 ||
             string.IsNullOrWhiteSpace((string?)values[1]) ||
-            ((string?)values[1])!.Length > 255 ||
+            ((string?)values[1])?.Length > MaxUsernameLength ||
             !int.TryParse((string?)values[2], out var role) ||
             !Enum.IsDefined((AccountType)role) ||
             !Guid.TryParseExact((string?)values[3], "N", out var generation) ||
@@ -127,6 +129,7 @@ public sealed class RedisAdminSessionStore : IAdminSessionStore
             return null;
         }
 
+        // Safe: the shape was validated above, so element 1 is a non-empty string.
         return new(
             new(new(id), (string)values[1]!, (AccountType)role),
             generation,

@@ -70,20 +70,23 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
                                 }
                             }
                         );
+                        // Safe: reservations exist only in the game role, and every game role registers
+                        // the game loop (ServerRoleRegistration.RegisterGame).
+                        var loop = _loop!;
                         try
                         {
-                            await _loop!.PostAsync(work);
+                            await loop.PostAsync(work);
                         }
-                        catch (InvalidOperationException) when (_loop!.Completion.IsCompleted)
+                        catch (InvalidOperationException) when (loop.Completion.IsCompleted)
                         {
-                            await _loop.Completion;
+                            await loop.Completion;
                             throw;
                         }
 
-                        await Task.WhenAny(work.Completion, _loop!.Completion);
+                        await Task.WhenAny(work.Completion, loop.Completion);
                         if (!work.Completion.IsCompleted)
                         {
-                            await _loop.Completion;
+                            await loop.Completion;
                             throw new InvalidOperationException("The game loop stopped before deferred logout capture.");
                         }
 

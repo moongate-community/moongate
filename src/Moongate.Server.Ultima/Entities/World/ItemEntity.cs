@@ -122,10 +122,10 @@ public class ItemEntity : IMoongateEntity
             ItemLocationType.None;
 
     [Column(IsIgnore = true)]
-    public Point3D? GroundLocation => Map is null ? null : new Point3D(X!.Value, Y!.Value, Z!.Value);
+    public Point3D? GroundLocation => Map is null ? null : new Point3D(X.Value, Y.Value, Z.Value);
 
     [Column(IsIgnore = true)]
-    public Point2D? GridLocation => ContainerId is null ? null : new Point2D(GridX!.Value, GridY!.Value);
+    public Point2D? GridLocation => ContainerId is null ? null : new Point2D(GridX.Value, GridY.Value);
 
     /// <summary>
     ///     Puts the item on the ground of <paramref name="map" /> at <paramref name="location" />.
@@ -217,6 +217,7 @@ public class ItemEntity : IMoongateEntity
     /// <exception cref="InvalidCastException">
     ///     The prop holds a value that does not convert to <typeparamref name="T" />.
     /// </exception>
+    // Safe: default of a generic value, only returned when no value is stored.
     public T GetProp<T>(string key, T defaultValue = default!)
     {
         return TryGetProp<T>(key, out var value) ? value : defaultValue;

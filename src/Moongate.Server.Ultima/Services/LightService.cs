@@ -73,6 +73,7 @@ public sealed class LightService : ILightService
     {
         _items = items;
         _itemScripts = itemScripts;
+        // Safe: the Where keeps only regions with a name.
         _regionsByName = new(() => data.GetEntities<RegionContent>()
             .Where(region => region.Name is not null)
             .GroupBy(region => (region.Map, region.Name!))

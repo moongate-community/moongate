@@ -5,6 +5,19 @@ namespace Moongate.Server.Ultima.Data.Config;
 /// </summary>
 public sealed class WorldConfig
 {
+    private const int MinViewRange = 5;
+    private const int MaxViewRange = 24;
+    private const int MinSecondsPerUoMinute = 1;
+    private const int MaxSecondsPerUoMinute = 3600;
+    private const int MinLight = 0;
+    private const int MaxLight = 31; // The client's darkest light level.
+    private const int MinDaysPerSeason = 1;
+    private const int MaxDaysPerSeason = 365;
+    private const int MinPathfindingRange = 8;
+    private const int MaxPathfindingRange = 64;
+    private const int MinPathfindingMaxNodes = 50;
+    private const int MaxPathfindingMaxNodes = 20000;
+
     /// <summary>
     ///     Gets or sets how far players see mobiles and items, in cells along X or Y; the client is told with 0xC8.
     /// </summary>
@@ -70,60 +83,60 @@ public sealed class WorldConfig
     /// </summary>
     public void Validate()
     {
-        if (ViewRange is < 5 or > 24)
+        if (ViewRange is < MinViewRange or > MaxViewRange)
         {
             throw new InvalidOperationException($"ultima.world.view_range must be from 5 to 24, found {ViewRange}.");
         }
 
-        if (SecondsPerUoMinute is < 1 or > 3600)
+        if (SecondsPerUoMinute is < MinSecondsPerUoMinute or > MaxSecondsPerUoMinute)
         {
             throw new InvalidOperationException(
                 $"ultima.world.seconds_per_uo_minute must be from 1 to 3600, found {SecondsPerUoMinute}."
             );
         }
 
-        if (DayLight is < 0 or > 31)
+        if (DayLight is < MinLight or > MaxLight)
         {
             throw new InvalidOperationException($"ultima.world.day_light must be from 0 to 31, found {DayLight}.");
         }
 
-        if (NightLight is < 0 or > 31)
+        if (NightLight is < MinLight or > MaxLight)
         {
             throw new InvalidOperationException($"ultima.world.night_light must be from 0 to 31, found {NightLight}.");
         }
 
-        if (DungeonLight is < 0 or > 31)
+        if (DungeonLight is < MinLight or > MaxLight)
         {
             throw new InvalidOperationException($"ultima.world.dungeon_light must be from 0 to 31, found {DungeonLight}.");
         }
 
-        if (JailLight is < 0 or > 31)
+        if (JailLight is < MinLight or > MaxLight)
         {
             throw new InvalidOperationException($"ultima.world.jail_light must be from 0 to 31, found {JailLight}.");
         }
 
-        if (LampPostLight is < 0 or > 31)
+        if (LampPostLight is < MinLight or > MaxLight)
         {
             throw new InvalidOperationException(
                 $"ultima.world.lamp_post_light must be from 0 to 31, found {LampPostLight}."
             );
         }
 
-        if (DaysPerSeason is < 1 or > 365)
+        if (DaysPerSeason is < MinDaysPerSeason or > MaxDaysPerSeason)
         {
             throw new InvalidOperationException(
                 $"ultima.world.days_per_season must be from 1 to 365, found {DaysPerSeason}."
             );
         }
 
-        if (PathfindingRange is < 8 or > 64)
+        if (PathfindingRange is < MinPathfindingRange or > MaxPathfindingRange)
         {
             throw new InvalidOperationException(
                 $"ultima.world.pathfinding_range must be from 8 to 64, found {PathfindingRange}."
             );
         }
 
-        if (PathfindingMaxNodes is < 50 or > 20000)
+        if (PathfindingMaxNodes is < MinPathfindingMaxNodes or > MaxPathfindingMaxNodes)
         {
             throw new InvalidOperationException(
                 $"ultima.world.pathfinding_max_nodes must be from 50 to 20000, found {PathfindingMaxNodes}."

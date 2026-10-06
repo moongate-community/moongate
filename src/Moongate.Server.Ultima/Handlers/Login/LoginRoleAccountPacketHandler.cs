@@ -52,7 +52,7 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
         {
             _logger.Information("Login failed for account {Account}: {Reason}", packet.Account, result.DenialReason);
 
-            if (!_sender.TrySend(session.SessionId, connection, new LoginDeniedPacket(result.DenialReason!.Value)))
+            if (!_sender.TrySend(session.SessionId, connection, new LoginDeniedPacket(result.DenialReason.Value)))
             {
                 await connection.CloseAsync(CancellationToken.None);
             }

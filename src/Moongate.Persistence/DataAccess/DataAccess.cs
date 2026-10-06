@@ -202,11 +202,14 @@ public sealed class DataAccess<T> : IDataAccess<T> where T : class, IMoongateEnt
                     throw new ArgumentOutOfRangeException(nameof(take));
                 }
 
+                // Safe: the visitor returns an expression of the same shape for a non-null predicate.
                 var normalized = (Expression<Func<T, bool>>)new SerialConstantExpressionVisitor().Visit(predicate)!;
                 var query = orm.Select<T>().WithTransaction(transaction).Where(normalized);
 
                 if (skip.HasValue)
                 {
+                    // Safe: both QueryAsync overloads pass skip and take together (both set or both null),
+                    // so take is set here; a non-null take was checked as positive above.
                     query = query.OrderBy(entity => entity.Id).Skip(skip.Value).Limit(take!.Value);
                 }
 

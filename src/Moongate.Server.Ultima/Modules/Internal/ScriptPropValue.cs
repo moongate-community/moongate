@@ -22,6 +22,7 @@ internal static class ScriptPropValue
 
                 return true;
             default:
+                // Safe: out parameter; callers read it only when the method returns true.
                 prop = null!;
 
                 return false;

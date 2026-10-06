@@ -146,6 +146,7 @@ internal sealed partial class GumpXmlRenderContext
 
                 break;
             case "item_property":
+                // Safe: the XSD requires the serial attribute.
                 _layout.Add(
                     new GumpItemProperty
                     {

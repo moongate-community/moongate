@@ -11,6 +11,9 @@ namespace Moongate.Network.Packets.Encryption;
 /// </summary>
 public sealed class UoGameCipher
 {
+    private const int ReceiveTableLength = 256;
+    private const int SendKeyPositionMask = 15;
+
     private readonly TwofishEngine? _twofish;
     private readonly BlowfishCipher? _blowfish;
     private readonly byte[]? _receiveTable;
@@ -28,7 +31,7 @@ public sealed class UoGameCipher
         if (type is UoEncryptionType.BlowfishTwofish or UoEncryptionType.Twofish)
         {
             _twofish = new(seed);
-            _receiveTable = new byte[256];
+            _receiveTable = new byte[ReceiveTableLength];
             for (var i = 0; i < _receiveTable.Length; i++)
             {
                 _receiveTable[i] = (byte)i;
@@ -56,17 +59,17 @@ public sealed class UoGameCipher
     /// </summary>
     public void Decrypt(Span<byte> data)
     {
-        if (_twofish is not null)
+        if (_twofish is not null && _receiveTable is { } receiveTable)
         {
             for (var i = 0; i < data.Length; i++)
             {
-                if (_receivePosition == 256)
+                if (_receivePosition == ReceiveTableLength)
                 {
-                    _twofish.EncryptBlocks(_receiveTable!);
+                    _twofish.EncryptBlocks(receiveTable);
                     _receivePosition = 0;
                 }
 
-                data[i] ^= _receiveTable![_receivePosition++];
+                data[i] ^= receiveTable[_receivePosition++];
             }
         }
 
@@ -86,7 +89,7 @@ public sealed class UoGameCipher
         for (var i = 0; i < data.Length; i++)
         {
             data[i] ^= _sendKey[_sendPosition];
-            _sendPosition = (_sendPosition + 1) & 15;
+            _sendPosition = (_sendPosition + 1) & SendKeyPositionMask;
         }
     }
 }

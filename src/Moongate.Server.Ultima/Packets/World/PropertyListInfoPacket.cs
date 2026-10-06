@@ -14,6 +14,8 @@ namespace Moongate.Server.Ultima.Packets.World;
 [PacketHandler(0xDC, PacketSizing.Fixed, Length = 9)]
 public sealed class PropertyListInfoPacket : BaseFixedPacket<PropertyListInfoPacket>, IOutgoingPacket
 {
+    private const int RevisionFlag = 0x40000000; // Bit 30, which the client masks off.
+
     public Serial Serial { get; }
 
     public int Hash { get; }
@@ -29,6 +31,6 @@ public sealed class PropertyListInfoPacket : BaseFixedPacket<PropertyListInfoPac
         writer.EnsureCapacity(Length);
         writer.WriteByte(OpCode);
         writer.WriteSerial(Serial);
-        writer.WriteUInt32BigEndian((uint)(Hash | 0x40000000));
+        writer.WriteUInt32BigEndian((uint)(Hash | RevisionFlag));
     }
 }

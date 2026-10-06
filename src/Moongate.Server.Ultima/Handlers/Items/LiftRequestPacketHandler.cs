@@ -259,7 +259,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             return true;
         }
 
-        var spot = item.GroundLocation!.Value;
+        var spot = item.GroundLocation.Value;
         var near = item.Map == mobile.Map &&
                    Math.Abs(spot.X - mobile.Location.X) <= ItemService.GroundReach &&
                    Math.Abs(spot.Y - mobile.Location.Y) <= ItemService.GroundReach;

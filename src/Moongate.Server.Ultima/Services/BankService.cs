@@ -50,6 +50,7 @@ public sealed class BankService : IBankService
     /// </summary>
     public const int CashPilesMaximum = 125;
 
+    private const int GoldItemId = 0x0EED;
     private static readonly Hue MessageHue = new(0x03B2);
     private static readonly TimeSpan ShowAgainAfter = TimeSpan.FromSeconds(1);
 
@@ -257,6 +258,7 @@ public sealed class BankService : IBankService
         }
         else
         {
+            // Safe: made is created whenever no existing stack was topped up.
             Put(made!, backpack);
         }
 
@@ -801,6 +803,7 @@ public sealed class BankService : IBankService
                 return true;
             }
 
+            // Safe: the out value is only used when the lookup succeeds.
             if (!_items.TryGet(parent, out current!))
             {
                 return false;
@@ -824,7 +827,7 @@ public sealed class BankService : IBankService
     // That many coins as an item nobody holds yet, to ask a container whether it still holds anything.
     private ItemEntity Coins(int amount)
     {
-        return new() { TemplateId = _itemsConfig.GoldTemplate, ItemId = 0x0EED, Amount = amount };
+        return new() { TemplateId = _itemsConfig.GoldTemplate, ItemId = GoldItemId, Amount = amount };
     }
 
     private ItemEntity? BackpackOf(Serial player)
@@ -855,6 +858,8 @@ public sealed class BankService : IBankService
                     {
                         if (_inventory?.AllowsOwner(player.Id) == false)
                         {
+                            // Safe: AddBookAttachments registers the guard and the reservations together,
+                            // so a guard that refuses comes with a reservation service.
                             settlement = _reservations!.WaitAsync(player.Id);
                             return;
                         }

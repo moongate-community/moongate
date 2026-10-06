@@ -55,7 +55,9 @@ public sealed class DecorationsLoader : IDecorationsLoader
                     continue;
                 }
 
-                var document = TomlSerializer.Deserialize<TomlTable>(await File.ReadAllTextAsync(path, cancellationToken))!;
+                var text = await File.ReadAllTextAsync(path, cancellationToken);
+                var document = TomlSerializer.Deserialize<TomlTable>(text) ??
+                               throw new InvalidDataException($"{path}: the file could not be read.");
                 var blocks = document.TryGetValue("decoration", out var array) && array is TomlTableArray tables
                     ? tables.Select(table => ReadBlock(path, table)).ToList()
                     : [];
@@ -113,6 +115,7 @@ public sealed class DecorationsLoader : IDecorationsLoader
                 else if (value is TomlArray { Count: 3 } xyz && xyz.All(part => part is long))
                 {
                     // A point, such as a teleporter's point_dest.
+                    // Safe: the array holds three longs, checked above.
                     props[key] = new Point3D((int)(long)xyz[0]!, (int)(long)xyz[1]!, (int)(long)xyz[2]!);
                 }
             }
@@ -129,6 +132,7 @@ public sealed class DecorationsLoader : IDecorationsLoader
                     throw new InvalidDataException($"{path}: a location of '{typeName}' is not [x, y, z].");
                 }
 
+                // Safe: the array holds three longs, checked above.
                 locations.Add(new((int)(long)xyz[0]!, (int)(long)xyz[1]!, (int)(long)xyz[2]!));
             }
         }

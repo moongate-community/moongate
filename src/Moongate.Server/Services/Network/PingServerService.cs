@@ -30,6 +30,7 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
 
     private bool _stopped;
 
+    // Safe: sockets are bound before they are listed.
     internal IReadOnlyList<IPEndPoint> LocalEndpoints =>
         _sockets.Select(socket => (IPEndPoint)socket.LocalEndPoint!).ToArray();
 
@@ -62,6 +63,7 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
             }
 
             // Read here and not in the loop: a stop right after the start disposes the socket before the loop runs.
+            // Safe: sockets are bound before they are listed.
             var local = (IPEndPoint)socket.LocalEndPoint!;
             _sockets.Add(socket);
             _loops.Add(Task.Run(() => EchoAsync(socket, local, _stopping.Token)));

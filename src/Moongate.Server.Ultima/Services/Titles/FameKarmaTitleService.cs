@@ -56,6 +56,7 @@ public sealed class FameKarmaTitleService : IFameKarmaTitleService
             selected = row;
         }
 
+        // Safe: selected is set whenever a title matched above.
         return gender == GenderType.Female && selected!.FemaleTitle is not null
             ? selected.FemaleTitle
             : selected.Title;

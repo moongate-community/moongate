@@ -413,6 +413,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         out ItemEntity stack
     )
     {
+        // Safe: the out value is only used when the lookup succeeds.
         if (!_items.TryGet(destination, out stack!) ||
             stack.Id == item.Id ||
             stack.ContainerId is null ||
@@ -435,6 +436,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     // Onto a ground stack of the same kind within reach: the stack grows and the held item is absorbed.
     private bool TryMergeOnGround(MobileEntity mobile, ItemEntity item, Serial destination, out ItemEntity stack)
     {
+        // Safe: the out value is only used when the lookup succeeds.
         if (!_items.TryGet(destination, out stack!) ||
             stack.Id == item.Id ||
             stack.GroundLocation is null ||
@@ -463,8 +465,10 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         out ItemEntity chest
     )
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         chest = null!;
 
+        // Safe: the out value is only used when the lookup succeeds.
         if (!_items.TryGet(destination, out stack!) ||
             stack.Id == item.Id ||
             stack.ContainerId is null ||
@@ -519,7 +523,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return false;
         }
 
-        return TryPut(item, container, target.GridLocation!.Value, packet.GridIndex, allowsInto);
+        return TryPut(item, container, target.GridLocation.Value, packet.GridIndex, allowsInto);
     }
 
     // Into a container lying on the ground within reach, such as a treasure chest, or into one inside it; dropped on an
@@ -532,6 +536,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         out ItemEntity chest
     )
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         chest = null!;
 
         if (!packet.Destination.IsItem ||
@@ -557,7 +562,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         {
             // Dropped on an item inside: beside it.
             container = holder;
-            position = target.GridLocation!.Value;
+            position = target.GridLocation.Value;
         }
         else
         {

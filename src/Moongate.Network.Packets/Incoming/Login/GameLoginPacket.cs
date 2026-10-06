@@ -38,12 +38,14 @@ public sealed class GameLoginPacket : BaseFixedPacket<GameLoginPacket>, IIncomin
 
         if (!reader.TryReadUInt32BigEndian(out var authKey) ||
             !reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var account) ||
-            !reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var password))
+            account is null ||
+            !reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var password) ||
+            password is null)
         {
             return false;
         }
 
-        packet = new(authKey, account!, password!);
+        packet = new(authKey, account, password);
 
         return true;
     }

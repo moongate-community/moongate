@@ -175,6 +175,7 @@ internal static class PersistenceSerialSequence
             connection
         );
 
+        // Safe: the sequence query always returns a bigint scalar.
         return (long)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
     }
 

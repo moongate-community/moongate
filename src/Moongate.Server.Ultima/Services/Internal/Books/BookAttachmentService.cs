@@ -193,11 +193,13 @@ internal sealed class BookAttachmentService : IBookAttachmentService
                         return;
                     }
 
+                    // Safe: Eligible returned true, so it set parents.
                     var backpack = parents![0];
+                    // Safe: Eligible returned true, so it set batch.
                     var rewards = batch!.Items.Select(BookAttachmentCodec.Materialize).ToList();
                     var contents = _items.GetContents(backpack.Id).ToList();
                     var occupied = contents.Where(item => item.GridIndex is >= 0 and < ContainerSlotUtils.SlotCount)
-                        .Select(item => item.GridIndex!.Value)
+                        .Select(item => item.GridIndex.Value)
                         .ToHashSet();
                     if (contents.Count + rewards.Count > ContainerSlotUtils.SlotCount ||
                         ContainerSlotUtils.SlotCount - occupied.Count < rewards.Count ||
@@ -320,6 +322,7 @@ internal sealed class BookAttachmentService : IBookAttachmentService
     {
         parents = null;
         batch = null;
+        // Safe: batch is read only after TryDecode in the chain has just succeeded and set it.
         if (!CurrentSession(session) || !_mobiles.TryGet(session.CharacterId, out _) || _claimed.Contains(letter.Id) ||
             !_items.TryGet(letter.Id, out var live) || !ReferenceEquals(live, letter) || letter.Amount != 1 ||
             !_templates.TryGet(letter.TemplateId, out var template) || template.Stackable != false ||
@@ -355,6 +358,7 @@ internal sealed class BookAttachmentService : IBookAttachmentService
                 return true;
             }
 
+            // Safe: the out value is only used when the lookup succeeds.
             if (currentItem.ContainerId is not { } parent || !_items.TryGet(parent, out currentItem!))
             {
                 return false;

@@ -183,6 +183,7 @@ public sealed class LuaModuleBinder
                     {
                         if (!parameter.HasDefaultValue)
                         {
+                            // Safe: parameters of a bound method always carry a name.
                             throw new LuaRuntimeException(
                                 context.State,
                                 new LuaValue(
@@ -211,6 +212,7 @@ public sealed class LuaModuleBinder
 
                 if (hasParams)
                 {
+                    // Safe: the last parameter is a params array, so it has an element type.
                     var elementType = parameters[^1].ParameterType.GetElementType()!;
                     var extra = Math.Max(0, context.ArgumentCount - fixedCount);
                     var rest = Array.CreateInstance(elementType, extra);

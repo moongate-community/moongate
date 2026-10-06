@@ -16,6 +16,7 @@ public sealed class DoorGeneratorService : IDoorGeneratorService
 {
     private const int ChunkSize = 128;
     private const int DoorHeight = 16;
+    private const int LandIdMask = 0x3FFF;
 
     private static readonly Rectangle2D[] BritanniaRegions =
     [
@@ -214,7 +215,7 @@ public sealed class DoorGeneratorService : IDoorGeneratorService
         var hasSurface = false;
         var land = _maps.GetLand(map, x, y);
         LandHeights.Get(_maps, map, x, y, out var lowest, out var average, out _);
-        var landImpassable = (_tiles.GetLand(land.Id & 0x3FFF).Flags & TileFlagType.Impassable) != 0;
+        var landImpassable = (_tiles.GetLand(land.Id & LandIdMask).Flags & TileFlagType.Impassable) != 0;
 
         if (landImpassable && average > z && z + DoorHeight > lowest)
         {

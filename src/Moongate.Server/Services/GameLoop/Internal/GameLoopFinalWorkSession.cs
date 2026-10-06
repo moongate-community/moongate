@@ -127,6 +127,7 @@ internal sealed class GameLoopFinalWorkSession
         try
         {
             item.Execute();
+            // Safe: completion is read together with item, which is not null here.
             completion!.TrySetResult();
         }
         catch (Exception exception)
@@ -136,6 +137,7 @@ internal sealed class GameLoopFinalWorkSession
                 _failures.Add(exception);
             }
 
+            // Safe: completion is read together with item, which is not null here.
             completion!.TrySetException(exception);
         }
 

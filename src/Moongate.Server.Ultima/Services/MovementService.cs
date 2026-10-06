@@ -21,6 +21,7 @@ public class MovementService : IMovementService
 {
     private const int PersonHeight = 16;
     private const int StepHeight = 2;
+    private const int LandIdMask = 0x3FFF;
     private const int CannotLiftWeight = 255;
 
     private readonly IMapService _mapService;
@@ -65,7 +66,7 @@ public class MovementService : IMovementService
         var land = _mapService.GetLand(map, x, y);
 
         if (!LandHeights.IsIgnored(land.Id) &&
-            (_tileDataService.GetLand(land.Id & 0x3FFF).Flags & TileFlagType.Impassable) == 0)
+            (_tileDataService.GetLand(land.Id & LandIdMask).Flags & TileFlagType.Impassable) == 0)
         {
             var average = GetAverageZ(map, x, y);
 
@@ -113,7 +114,7 @@ public class MovementService : IMovementService
         var statics = _mapService.GetStatics(map, x, y);
 
         if (!LandHeights.IsIgnored(land.Id) &&
-            (_tileDataService.GetLand(land.Id & 0x3FFF).Flags & (TileFlagType.Impassable | TileFlagType.Wet)) == 0)
+            (_tileDataService.GetLand(land.Id & LandIdMask).Flags & (TileFlagType.Impassable | TileFlagType.Wet)) == 0)
         {
             var average = GetAverageZ(map, x, y);
 
@@ -163,7 +164,7 @@ public class MovementService : IMovementService
         var considerLand = !LandHeights.IsIgnored(land.Id);
         var average = considerLand ? GetAverageZ(map, x, y) : int.MinValue;
 
-        if (considerLand && IsWater(_tileDataService.GetLand(land.Id & 0x3FFF).Flags))
+        if (considerLand && IsWater(_tileDataService.GetLand(land.Id & LandIdMask).Flags))
         {
             if (IsOk(statics, average, average + PersonHeight))
             {
@@ -544,7 +545,7 @@ public class MovementService : IMovementService
     // Impassable land blocks, except water for a swimmer; a mover that cannot walk is blocked by any other land.
     private bool LandBlocks(MapLandTile land, bool canSwim, bool cantWalk)
     {
-        var flags = _tileDataService.GetLand(land.Id & 0x3FFF).Flags;
+        var flags = _tileDataService.GetLand(land.Id & LandIdMask).Flags;
         var impassable = (flags & TileFlagType.Impassable) != 0;
 
         return (cantWalk || impassable) && !(impassable && canSwim && (flags & TileFlagType.Wet) != 0);

@@ -146,6 +146,7 @@ public sealed class BulletinBoardRequestPacketHandler : IPacketHandler<BulletinB
                     _sender.TrySend(session.SessionId, new RemoveEntityPacket(dropped));
                 }
 
+                // Safe: a successful result always carries the message.
                 _sender.TrySend(
                     session.SessionId,
                     new ContainerItemUpdatePacket(BulletinBoardService.AsItem(result.Message!), session.UsesContainerGrid())

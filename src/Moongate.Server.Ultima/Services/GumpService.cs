@@ -23,6 +23,7 @@ public sealed class GumpService : IGumpService
 
     // The paperdoll's virtue gump answers with this type id unasked.
     private const uint VirtueGumpTypeId = 0x1CD;
+    private const uint ScriptGumpTypeBit = 0x80000000u;
 
     // 5.0.0a, the first client that reads 0xDD; a client that has not told its version yet is taken as a modern one.
     private static readonly ClientVersion Compressed = new(5, 0, 0, 1);
@@ -49,7 +50,7 @@ public sealed class GumpService : IGumpService
             hash = (hash ^ value) * 16777619u;
         }
 
-        return hash is 0 or VirtueGumpTypeId ? hash ^ 0x80000000u : hash;
+        return hash is 0 or VirtueGumpTypeId ? hash ^ ScriptGumpTypeBit : hash;
     }
 
     public void Open(GameSession session, GumpInstance gump)
@@ -101,12 +102,12 @@ public sealed class GumpService : IGumpService
         var typeId = TypeIdOf(id);
         var index = state?.Open.FindIndex(open => open.TypeId == typeId) ?? -1;
 
-        if (index < 0)
+        if (state is null || index < 0)
         {
             return false;
         }
 
-        Closed(session, Take(session, state!, index), GumpCloseReasonType.Server);
+        Closed(session, Take(session, state, index), GumpCloseReasonType.Server);
 
         return true;
     }
@@ -116,7 +117,7 @@ public sealed class GumpService : IGumpService
         var state = session.Get(GumpSessionKeys.State);
         var index = state?.Open.FindIndex(open => open.Serial == packet.Serial && open.TypeId == packet.TypeId) ?? -1;
 
-        if (index < 0)
+        if (state is null || index < 0)
         {
             _logger.Debug(
                 "Session {SessionId} answered gump {Serial}/{TypeId}, which is not open",
@@ -128,7 +129,7 @@ public sealed class GumpService : IGumpService
             return;
         }
 
-        var open = state!.Open[index];
+        var open = state.Open[index];
         state.Open.RemoveAt(index);
 
         if (Invalid(open.Built, packet) is { } reason)

@@ -14,6 +14,10 @@ namespace Moongate.Server.Ultima.Data.Templates.Mobiles;
 /// </summary>
 public class MobileTemplate
 {
+    private const int MaximumSkillValue = 120; // A skill goes up to 120 with bonuses.
+    private const int MaximumResistance = 100;
+    private const int MaximumPercent = 100;
+
     /// <summary>
     ///     The stable id a spawn, a loot table or the <c>addnpc</c> command names this template by.
     /// </summary>
@@ -232,7 +236,7 @@ public class MobileTemplate
                     throw Invalid("skills", $"has '{name}', which is not a skill");
                 }
 
-                if (dice.Min < 0 || dice.Max > 120)
+                if (dice.Min < 0 || dice.Max > MaximumSkillValue)
                 {
                     throw Invalid("skills", $"'{name}' must roll between 0 and 120");
                 }
@@ -241,7 +245,7 @@ public class MobileTemplate
 
         if (Resistances is not null &&
             new[] { Resistances.Physical, Resistances.Fire, Resistances.Cold, Resistances.Poison, Resistances.Energy }
-                .Any(dice => dice is { } value && (value.Min < 0 || value.Max > 100)))
+                .Any(dice => dice is { } value && (value.Min < 0 || value.Max > MaximumResistance)))
         {
             throw Invalid("resistances", "must roll between 0 and 100");
         }
@@ -263,7 +267,7 @@ public class MobileTemplate
             throw Invalid("tags", "must not have an empty key");
         }
 
-        if (FleeAt is < -1 or > 100)
+        if (FleeAt is < -1 or > MaximumPercent)
         {
             throw Invalid("flee_at", "must be from -1 to 100");
         }

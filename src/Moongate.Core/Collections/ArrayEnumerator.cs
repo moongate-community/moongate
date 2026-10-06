@@ -25,6 +25,7 @@ public struct ArrayEnumerator<T> : IEnumerator<T>
                 throw new InvalidOperationException(nameof(_index));
             }
 
+            // Safe: the index check above guarantees Current points at an element.
             return Current!;
         }
     }

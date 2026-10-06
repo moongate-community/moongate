@@ -302,6 +302,7 @@ public class MobileFactoryService : IMobileFactoryService
             cancellationToken
         );
 
+        // Safe: the backpack is created inside the transaction above.
         return backpack!;
     }
 

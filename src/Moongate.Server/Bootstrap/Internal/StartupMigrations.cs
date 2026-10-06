@@ -33,6 +33,7 @@ internal static class StartupMigrations
         }
 
         // The directory the persistence options read, and the plugins whose SQL the runner applies with the core's.
+        // Safe: a default is passed, so the resolved directory is never null.
         var migrationsDirectory = persistence.ResolveMigrationsDirectory(Path.Combine(directories.Root, "migrations"))!;
 
         foreach (var created in BundledMigrations.CopyMissing(bundledDirectory, migrationsDirectory))

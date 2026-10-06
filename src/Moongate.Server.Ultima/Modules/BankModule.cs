@@ -227,8 +227,10 @@ public sealed class BankModule
 
     private bool TryGetPlayer(long serial, out MobileEntity mobile)
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         mobile = null!;
 
+        // Safe: the out value is only used when the lookup succeeds.
         return serial is > 0 and <= uint.MaxValue &&
                _mobiles.TryGet(new Serial((uint)serial), out mobile!) &&
                !mobile.IsNpc;

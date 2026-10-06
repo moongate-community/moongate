@@ -357,6 +357,7 @@ public class MobileEntity : IMoongateEntity
     /// <exception cref="InvalidCastException">
     ///     The prop holds a value that does not convert to <typeparamref name="T" />.
     /// </exception>
+    // Safe: default of a generic value, only returned when no value is stored.
     public T GetProp<T>(string key, T defaultValue = default!)
     {
         return TryGetProp<T>(key, out var value) ? value : defaultValue;

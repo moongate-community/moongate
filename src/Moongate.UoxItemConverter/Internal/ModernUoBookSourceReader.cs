@@ -105,6 +105,7 @@ internal static class ModernUoBookSourceReader
 
         foreach (var constructor in constructors)
         {
+            // Safe: a constructor declaration with a base/this call has an initializer.
             if (constructor.Initializer!.ArgumentList.Arguments.FirstOrDefault()?.Expression is not { } first)
             {
                 continue;

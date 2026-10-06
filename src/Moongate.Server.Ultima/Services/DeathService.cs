@@ -28,6 +28,8 @@ public sealed class DeathService : IDeathService
 
     private const string DeathFunction = "on_death";
     private const string FallTimer = "npc-fall";
+    private const int ByteMask = 0xFF;
+    private const int DirectionMask = 0x07;
 
     /// <summary>
     ///     The item template of the shroud a ghost wears, on its outer torso layer.
@@ -378,7 +380,7 @@ public sealed class DeathService : IDeathService
             props.GetValueOrDefault(CorpseProps.Direction) switch
             {
                 int value  => value,
-                long value => (int)(value & 0xFF),
+                long value => (int)(value & ByteMask),
                 _          => null
             },
             props.Where(prop => prop.Key.StartsWith(CorpseProps.Kept + CorpseProps.SpawnProps, StringComparison.Ordinal))
@@ -405,9 +407,9 @@ public sealed class DeathService : IDeathService
             npc.Name = raising.Name;
         }
 
-        if (raising.Direction is { } direction && Enum.IsDefined((DirectionType)(direction & 0x07)))
+        if (raising.Direction is { } direction && Enum.IsDefined((DirectionType)(direction & DirectionMask)))
         {
-            npc.Direction = (DirectionType)(direction & 0x07);
+            npc.Direction = (DirectionType)(direction & DirectionMask);
         }
 
         // Shown again as who it was: it was born with a name and a facing of its template.

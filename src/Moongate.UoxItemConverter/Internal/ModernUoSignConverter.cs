@@ -89,6 +89,7 @@ internal static class ModernUoSignConverter
                 continue;
             }
 
+            // Safe: GetDirectoryName is null only for a root or empty path, not a file combined under a folder.
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, Write(facet, blocks[facet]));
             output.WriteLine(

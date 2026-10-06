@@ -39,6 +39,7 @@ public sealed class LocationService : ILocationService
     {
         Build();
 
+        // Safe: Build() above fills _nodes, _places and _categories (it returns early only once they are set).
         return _nodes!.TryGetValue(Key(path ?? ""), out var entry) ? entry.Node : null;
     }
 
@@ -54,9 +55,11 @@ public sealed class LocationService : ILocationService
         }
 
         // What is named exactly so comes first: a place, else a category, whose first place stands for it.
+        // Safe: Build() above fills _nodes, _places and _categories (it returns early only once they are set).
         var named = _places!.Where(entry => EndsWithParts(entry.Parts, wanted)).Select(entry => entry.Place).ToList();
         var filed = new List<NamedLocation>();
 
+        // Safe: Build() above fills _nodes, _places and _categories (it returns early only once they are set).
         foreach (var (node, parts) in _categories!)
         {
             if (EndsWithParts(parts, wanted) && FirstPlace(node) is { } place)
@@ -186,6 +189,7 @@ public sealed class LocationService : ILocationService
 
         foreach (var category in node.Categories)
         {
+            // Safe: the only caller, Find, runs Build() first, which fills _nodes.
             if (FirstPlace(_nodes![Key(node.Path + Separator + category)].Node) is { } place)
             {
                 return place;

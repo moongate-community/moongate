@@ -417,8 +417,10 @@ public sealed class WorldViewService : IWorldViewService
             }
 
             // The mover's client drops what it walks away from by itself, as in ModernUO; it only needs the newcomers.
+            // Safe: hasSession is true here, so own is set.
             if (!sawIt && hasSession && CanSee(own!, other))
             {
+                // Safe: hasSession is true here, so own is set.
                 SendMobile(own!.SessionId, other, Incoming(other));
                 sent.Add(other);
             }
@@ -431,6 +433,7 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
         {
+            // Safe: hasSession is true here, so own is set.
             if (item.GroundLocation is { } spot && !InRange(spot, oldLocation) && SendItem(own!, item))
             {
                 sent.Items++;
@@ -462,7 +465,7 @@ public sealed class WorldViewService : IWorldViewService
 
     private static IOutgoingPacket WorldItem(ItemEntity item, ClientVersion? version, AccountType account)
     {
-        var spot = item.GroundLocation!.Value;
+        var spot = item.GroundLocation.Value;
         // As ModernUO's Blocker: the graphic that draws nothing blocks the way unseen; the staff sees a gravestone.
         var graphic = item.ItemId == NoDrawGraphic && account >= AccountType.GameMaster ? StaffBlockerGraphic : item.ItemId;
 

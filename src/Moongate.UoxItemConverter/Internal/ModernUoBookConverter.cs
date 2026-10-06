@@ -13,6 +13,8 @@ namespace Moongate.UoxItemConverter.Internal;
 /// </summary>
 internal static class ModernUoBookConverter
 {
+    private const int RegexTimeoutSeconds = 1;
+
     public static int Run(string source, string destination, TextWriter output, TextWriter error)
     {
         if (!Directory.Exists(source))
@@ -121,7 +123,7 @@ internal static class ModernUoBookConverter
             @"(?<=^item_template = ""[^""\r\n]*""\r?\n)item_id = (\d+)(?=\r?$)",
             match => $"item_id = 0x{int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture):X4}",
             RegexOptions.Multiline,
-            TimeSpan.FromSeconds(1)
+            TimeSpan.FromSeconds(RegexTimeoutSeconds)
         );
     }
 

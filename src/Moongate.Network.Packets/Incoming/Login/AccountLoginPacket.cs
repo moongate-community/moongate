@@ -37,13 +37,15 @@ public sealed class AccountLoginPacket : BaseFixedPacket<AccountLoginPacket>, II
         var reader = new PacketReader(data[1..]);
 
         if (!reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var account) ||
+            account is null ||
             !reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var password) ||
+            password is null ||
             !reader.TryReadByte(out var nextLoginKey))
         {
             return false;
         }
 
-        packet = new(account!, password!, nextLoginKey);
+        packet = new(account, password, nextLoginKey);
 
         return true;
     }

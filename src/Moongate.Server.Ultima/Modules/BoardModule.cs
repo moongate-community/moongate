@@ -65,6 +65,7 @@ public sealed class BoardModule
 
         var result = _boards.PostAs(item, name, subject, Lines(lines), new Serial((uint)thread));
 
+        // Safe: a successful result always carries the message.
         return result.Type == BulletinPostResultType.Ok ? result.Message!.Id.Value : null;
     }
 
@@ -163,8 +164,10 @@ public sealed class BoardModule
 
     private bool TryGetBoard(long board, out ItemEntity item)
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         item = null!;
 
+        // Safe: the out value is only used when the lookup succeeds.
         return IsSerial(board) && _items.TryGet(new Serial((uint)board), out item!) && _boards.IsBoard(item);
     }
 

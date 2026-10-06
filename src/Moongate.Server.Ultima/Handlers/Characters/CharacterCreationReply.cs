@@ -83,6 +83,7 @@ internal static class CharacterCreationReply
             return;
         }
 
+        // Safe: a successful result always carries the character.
         var character = result.Character!;
         logger.Information(
             "Session {SessionId}: account {AccountId} created character {Serial} {Name} ({Race} {Gender}) in slot {Slot} at {Map} {Location}",

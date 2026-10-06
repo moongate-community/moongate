@@ -31,6 +31,7 @@ public sealed class WeatherService : IWeatherService
     public const string CheckTimerName = "weather_check";
     private const string NoWeather = "none";
     private const int RoofHeight = 10;
+    private const int MinutesPerUoHour = 60;
     private const int ThunderOneIn = 4;
     private const int FirstThunder = 0x28;
 
@@ -88,7 +89,7 @@ public sealed class WeatherService : IWeatherService
     {
         RollDay();
         RollHour();
-        var hour = TimeSpan.FromSeconds(60 * _world.SecondsPerUoMinute);
+        var hour = TimeSpan.FromSeconds(MinutesPerUoHour * _world.SecondsPerUoMinute);
         _hourTimer = _timers.RegisterTimer(HourTimerName, hour, OnHour, hour, true);
         _checkTimer = _timers.RegisterTimer(CheckTimerName, CheckInterval, Check, CheckInterval, true);
         // The event comes from the login handler's thread; the viewers change on the game loop only.

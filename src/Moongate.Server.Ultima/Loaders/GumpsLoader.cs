@@ -130,7 +130,7 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
             throw new InvalidDataException($"{path}: line {exception.LineNumber}: {exception.Message}", exception);
         }
 
-        var root = document.Root!;
+        var root = document.Root ?? throw new InvalidDataException($"{path}: the gump has no root element.");
         CheckRules(path, root);
 
         foreach (var button in root.Descendants("button"))
@@ -143,7 +143,9 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
             }
         }
 
-        return new() { Id = (string)root.Attribute("id")!, File = path, Root = root };
+        var id = (string?)root.Attribute("id") ?? throw new InvalidDataException($"{path}: the gump has no id.");
+
+        return new() { Id = id, File = path, Root = root };
     }
 
     private static void CheckRules(string path, XElement root)
@@ -227,7 +229,8 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
 
     private static XmlSchemaSet LoadSchema()
     {
-        using var stream = typeof(GumpsLoader).Assembly.GetManifestResourceStream(SchemaResource)!;
+        using var stream = typeof(GumpsLoader).Assembly.GetManifestResourceStream(SchemaResource) ??
+                           throw new InvalidOperationException($"Missing embedded resource {SchemaResource}.");
         var schemas = new XmlSchemaSet();
         schemas.Add(null, XmlReader.Create(stream));
         schemas.Compile();

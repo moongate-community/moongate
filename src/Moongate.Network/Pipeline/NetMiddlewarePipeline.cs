@@ -105,7 +105,7 @@ public sealed class NetMiddlewarePipeline
         for (var i = 0; i < middlewares.Length; i++)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            current = await middlewares[i].ProcessAsync(client, current, cancellationToken);
+            current = await middlewares[i].ProcessAsync(client, current, cancellationToken).ConfigureAwait(false);
 
             if (current.IsEmpty)
             {
@@ -149,7 +149,7 @@ public sealed class NetMiddlewarePipeline
         for (var i = 0; i < middlewares.Length; i++)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            current = await middlewares[i].ProcessSendAsync(client, current, cancellationToken);
+            current = await middlewares[i].ProcessSendAsync(client, current, cancellationToken).ConfigureAwait(false);
 
             if (current.IsEmpty)
             {

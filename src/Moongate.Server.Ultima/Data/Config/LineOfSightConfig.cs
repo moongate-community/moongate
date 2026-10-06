@@ -5,6 +5,9 @@ namespace Moongate.Server.Ultima.Data.Config;
 /// </summary>
 public sealed class LineOfSightConfig
 {
+    private const int MinimumDistance = 1;
+    private const int MaximumDistance = 255; // A distance still fits in a byte.
+
     /// <summary>
     ///     Gets or sets the farthest a point can see, in cells along X or Y; farther points are never in sight.
     /// </summary>
@@ -15,7 +18,7 @@ public sealed class LineOfSightConfig
     /// </summary>
     public void Validate()
     {
-        if (MaxDistance is < 1 or > 255)
+        if (MaxDistance is < MinimumDistance or > MaximumDistance)
         {
             throw new InvalidOperationException(
                 $"ultima.line_of_sight.max_distance must be from 1 to 255, found {MaxDistance}."

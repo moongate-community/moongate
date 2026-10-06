@@ -768,6 +768,7 @@ public sealed class NpcModule
     {
         try
         {
+            // Safe: the only caller, Spawn, returns before calling this when _npcs is null.
             var npc = await _npcs!.SpawnAsync(template, map, location);
 
             if (callback is not null && _engine is not null && _loop is not null)

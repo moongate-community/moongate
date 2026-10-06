@@ -105,6 +105,7 @@ internal static class ModernUoTeleporterConverter
             var blocks = teleporters[map]
                 .GroupBy(teleporter => (teleporter.Map, teleporter.DestX, teleporter.DestY, teleporter.DestZ))
                 .ToList();
+            // Safe: GetDirectoryName is null only for a root or empty path, not a file combined under a folder.
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, Write(map, blocks));
             output.WriteLine(
