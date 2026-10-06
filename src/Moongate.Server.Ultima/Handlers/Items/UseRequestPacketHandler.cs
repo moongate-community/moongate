@@ -236,7 +236,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
 
         if (!_bodies.Value.TryGetValue(mobile.Body, out var type) || type != BodyType.Human)
         {
-            _logger.Debug("Session {SessionId} asked for the paperdoll of {Mobile}, which has no human body", session.SessionId, mobile.Id);
+            _logger.Information("Session {SessionId} asked for the paperdoll of {Mobile}, which has no human body", session.SessionId, mobile.Id);
 
             return;
         }

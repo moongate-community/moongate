@@ -5,6 +5,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.Combat;
 using Moongate.Server.Ultima.Packets.General;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Handlers.Combat;
 
@@ -15,6 +16,7 @@ namespace Moongate.Server.Ultima.Handlers.Combat;
 /// </summary>
 public sealed class AttackRequestPacketHandler : IPacketHandler<AttackRequestPacket>
 {
+    private readonly ILogger _logger = Log.ForContext<AttackRequestPacketHandler>();
     private readonly IMobileService _mobiles;
     private readonly ICombatService _combat;
     private readonly IPacketSendService _sender;
@@ -35,8 +37,14 @@ public sealed class AttackRequestPacketHandler : IPacketHandler<AttackRequestPac
             return;
         }
 
-        if (_mobiles.TryGet(packet.Target, out var target) && _combat.Attack(character, target))
+        if (!_mobiles.TryGet(packet.Target, out var target))
         {
+            _logger.Information("{Character} asked to attack {Target}, which is not in the world", character, packet.Target);
+        }
+        else if (_combat.Attack(character, target))
+        {
+            _logger.Debug("{Character} attacks {Target}", character, target);
+
             return;
         }
 

@@ -137,8 +137,10 @@ public sealed class CombatService : ICombatService
 
     public bool Attack(MobileEntity attacker, MobileEntity target)
     {
-        if (!CanAttack(attacker, target))
+        if (Refusal(attacker, target) is { } reason)
         {
+            _logger.Information("{Attacker} cannot attack {Target}: {Reason}", attacker, target, reason);
+
             return false;
         }
 
@@ -204,36 +206,52 @@ public sealed class CombatService : ICombatService
         }
     }
 
-    private bool CanAttack(MobileEntity attacker, MobileEntity target)
+    // Why the attacker cannot attack the target, or null when it can.
+    private string? Refusal(MobileEntity attacker, MobileEntity target)
     {
-        if (attacker.Id == target.Id ||
-            target.Notoriety == NotorietyType.Invulnerable ||
-            target.Hits <= 0 ||
-            !_mobiles.IsInWorld(attacker.Id) ||
-            !_mobiles.IsInWorld(target.Id) ||
-            attacker.Map != target.Map)
+        if (attacker.Id == target.Id)
         {
-            return false;
+            return "it is itself";
+        }
+
+        if (target.Notoriety == NotorietyType.Invulnerable)
+        {
+            return "the target is invulnerable";
+        }
+
+        if (target.Hits <= 0)
+        {
+            return "the target has no hit points";
+        }
+
+        if (!_mobiles.IsInWorld(attacker.Id) || !_mobiles.IsInWorld(target.Id))
+        {
+            return "one of them is not in the world";
+        }
+
+        if (attacker.Map != target.Map)
+        {
+            return "they are on different maps";
         }
 
         if (target.IsHiddenFrom(attacker.Id, AccountOf(attacker)))
         {
-            return false;
+            return "the target is hidden";
         }
 
         if (!attacker.Location.InRange(target.Location, _world.ViewRange))
         {
-            return false;
+            return "the target is out of view";
         }
 
         try
         {
-            return _sight.HasLineOfSight(attacker.Map, attacker.Location, target.Location);
+            return _sight.HasLineOfSight(attacker.Map, attacker.Location, target.Location) ? null : "the target is out of sight";
         }
         catch (KeyNotFoundException)
         {
             // A map that is not loaded cannot be fought on.
-            return false;
+            return "the map is not loaded";
         }
     }
 
