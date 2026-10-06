@@ -664,7 +664,7 @@ public sealed class MobileModule
     /// <summary>
     ///     Kills an NPC, which dies where it stands and leaves its corpse; <c>mobile.kill(orc, user)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Kills an NPC: it leaves its corpse with what it carried and wore, the players around see and hear it die, its script runs on_death(npc, corpse, killer) and it leaves the world; killer is the serial of who did it, kept on the corpse, or nil. False for a player, which does not die yet, or a mobile not in the world.")]
+    [ScriptFunction(helpText: "Kills a mobile: it leaves its corpse with what it carried and wore and the players around see and hear it die. An NPC runs its on_death(npc, corpse, killer) and leaves the world; a player stays as a ghost. killer is the serial of who did it, kept on the corpse, or nil. False for a mobile not in the world, a player that is dead already, or a body without a ghost.")]
     public bool Kill(long serial, long? killer = null)
     {
         if (_death is null || !TryGetMobile(serial, out var mobile))

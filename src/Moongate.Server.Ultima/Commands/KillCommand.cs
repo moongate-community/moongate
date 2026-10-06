@@ -11,7 +11,7 @@ namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
 ///     Kills the NPC the game master targets: it dies where it stands and leaves its corpse, as when something kills
-///     it. Players are refused: they do not die yet.
+///     it. A player dies too and stays as a ghost.
 /// </summary>
 public sealed class KillCommand : ICommandExecutor
 {

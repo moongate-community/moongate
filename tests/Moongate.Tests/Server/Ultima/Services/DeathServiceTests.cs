@@ -713,6 +713,22 @@ public sealed class DeathServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Kill_APlayer_TellsItsOwnClientWhatWentIntoTheCorpse_AndTakesTheOldRobeOff()
+    {
+        _aria.Body = 0x0190;
+        var blade = Worn(_aria, "sword", 0x0F5E, LayerType.OneHanded);
+        var robe = Worn(_aria, "death_robe", 0x2684, LayerType.OuterTorso);
+        _serials.Serials.Enqueue(new Serial(CorpseSerial + 1));
+
+        _death.Kill(_aria);
+
+        Assert.Contains($"OwnItemRemoved {_aria.Id.Value} {blade.Id.Value}", _view.Calls);
+        Assert.Contains($"OwnItemRemoved {_aria.Id.Value} {robe.Id.Value}", _view.Calls);
+        Assert.Contains(_items.GetWorn(_aria.Id), item => item.TemplateId == "death_shroud");
+        Assert.DoesNotContain(_items.GetWorn(_aria.Id), item => item.TemplateId == "death_robe");
+    }
+
+    [Fact]
     public void Kill_APlayerThatIsDeadAlready_IsRefused()
     {
         _aria.Body = 0x0192;

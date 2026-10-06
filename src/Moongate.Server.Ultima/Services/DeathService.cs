@@ -139,7 +139,7 @@ public sealed class DeathService : IDeathService
             return KillPlayer(mobile, killer);
         }
 
-        if ( !_mobiles.IsInWorld(mobile.Id) || !_dying.Add(mobile.Id))
+        if (!_mobiles.IsInWorld(mobile.Id) || !_dying.Add(mobile.Id))
         {
             return false;
         }
@@ -201,6 +201,7 @@ public sealed class DeathService : IDeathService
         foreach (var shroud in _items.GetWorn(player.Id).Where(item => item.TemplateId == ShroudTemplate).ToArray())
         {
             _view.WornItemRemoved(player, shroud);
+            _view.OwnItemRemoved(player, shroud);
             _items.Absorb(shroud);
         }
 
@@ -300,10 +301,18 @@ public sealed class DeathService : IDeathService
             _view.ItemAppeared(corpse);
         }
 
-        _view.MobileDied(player, corpse?.Id ?? default);
         _state.SetWarMode(player, false);
+        _view.MobileDied(player, corpse?.Id ?? default);
         _state.SetStats(player, new MobileStatsChange { Hits = 0, Stamina = 0, Mana = 0 });
         _state.SetDead(player, true);
+
+        // The robe of the last time would keep the shroud off: it is gone, as ModernUO deletes it.
+        foreach (var robe in _items.GetWorn(player.Id).Where(item => item.TemplateId == RobeTemplate).ToArray())
+        {
+            _view.OwnItemRemoved(player, robe);
+            _items.Absorb(robe);
+        }
+
         Wear(player, ShroudTemplate, LayerType.OuterTorso);
 
         return true;
@@ -565,6 +574,12 @@ public sealed class DeathService : IDeathService
             }
 
             _items.MoveToContainer(item, corpse.Id, _layouts?.RandomGridPosition(CorpseProps.Graphic) ?? DefaultSpot);
+
+            // A player stays in the world: its own client must lose what it lost.
+            if (!mobile.IsNpc)
+            {
+                _view.OwnItemRemoved(mobile, item);
+            }
         }
 
         if (worn.Count > 0)

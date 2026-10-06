@@ -22,6 +22,7 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class MobileStateService : IMobileStateService
 {
     private const int DefaultSkillCap = 1000;
+    private const string HiddenBeforeDeathProp = "death.hidden";
 
     private readonly IMobileService _mobiles;
     private readonly ISessionService _sessions;
@@ -303,8 +304,21 @@ public sealed class MobileStateService : IMobileStateService
             return;
         }
 
-        // Hidden first: the players around lose the figure that dies, and the ghost they may see is shown after.
-        SetHidden(mobile, dead && !mobile.WarMode);
+        // Hidden first: the players around lose the figure that dies, and the ghost they may see is shown after. What
+        // it was before dying, such as a game master that hid, comes back with it.
+        if (dead)
+        {
+            mobile.SetProp(HiddenBeforeDeathProp, mobile.Hidden);
+        }
+
+        var wasHidden = !dead && mobile.GetProp(HiddenBeforeDeathProp, false);
+
+        if (!dead)
+        {
+            mobile.RemoveProp(HiddenBeforeDeathProp);
+        }
+
+        SetHidden(mobile, dead ? !mobile.WarMode : wasHidden);
         SetLooks(mobile, body, null);
 
         if (dead && _sessions.TryGetByCharacterId(mobile.Id, out var own))

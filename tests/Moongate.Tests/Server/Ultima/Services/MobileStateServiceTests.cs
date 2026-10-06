@@ -443,6 +443,27 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SetDead_AMobileThatWasHidden_IsHiddenAgainWhenRaised_AndOneThatWasNotIsNot()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 400;
+        _aria.Hidden = true;
+
+        _service.SetDead(_aria, true);
+        _service.SetWarMode(_aria, true);
+        _service.SetDead(_aria, false);
+
+        Assert.True(_aria.Hidden);
+        Assert.False(_aria.TryGetProp<bool>("death.hidden", out _));
+
+        _aria.Hidden = false;
+        _service.SetDead(_aria, true);
+        _service.SetDead(_aria, false);
+
+        Assert.False(_aria.Hidden);
+    }
+
+    [Fact]
     public void SetDead_ForAnNpc_DoesNothing()
     {
         _aria.Body = 400;

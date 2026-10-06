@@ -155,7 +155,7 @@ public sealed class SpeechRequestPacketHandler :
                         _mobiles.TryGet(recipient.CharacterId, out var mobile) &&
                         mobile.Map == speaker.Map &&
                         mobile.Location.InRange(speaker.Location, SayRange) &&
-                        !speaker.IsHiddenFrom(recipient.CharacterId, recipient.AccountType))
+                        (speaker.IsDead || !speaker.IsHiddenFrom(recipient.CharacterId, recipient.AccountType)))
                     {
                         var heardAsIs = !speaker.IsDead || mobile.IsDead || recipient.AccountType >= AccountType.GameMaster;
                         SpeechMessageHelper.TrySend(_sender, recipient, heardAsIs ? message : whispered);

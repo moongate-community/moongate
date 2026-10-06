@@ -126,7 +126,7 @@ public sealed class FatigueService : IFatigueService
 
     private bool Applies(GameSession session, MobileEntity mobile)
     {
-        return _config.FatigueEnabled && !mobile.IsNpc && session.AccountType < AccountType.GameMaster;
+        return _config.FatigueEnabled && !mobile.IsNpc && !mobile.IsDead && session.AccountType < AccountType.GameMaster;
     }
 
     // What a step costs a mobile that carries more than it may; nothing at the maximum or below.

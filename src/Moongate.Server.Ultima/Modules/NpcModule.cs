@@ -675,6 +675,7 @@ public sealed class NpcModule
     {
         if (other.Id == npc.Id ||
             other.Hidden ||
+            other.IsDead ||
             other.Map != npc.Map ||
             !_mobiles.IsInWorld(other.Id) ||
             Distance(npc.Location, other.Location) > range ||

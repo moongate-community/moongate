@@ -67,6 +67,8 @@ public sealed class SpeechRequestPacketHandlerTests
         Assert.True(fixture.Mobiles.TryGet(dead.CharacterId, out var ghost));
         speaker.AccountId = new Serial(0x42);
         speaker.Body = 0x0192;
+        // As a ghost in peace mode: hidden from the living, yet heard.
+        speaker.Hidden = true;
         ghost.AccountId = new Serial(0x43);
         ghost.Body = 0x0193;
 
