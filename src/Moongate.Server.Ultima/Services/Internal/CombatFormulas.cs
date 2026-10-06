@@ -1,3 +1,5 @@
+using Moongate.Server.Ultima.Types.Combat;
+
 namespace Moongate.Server.Ultima.Services.Internal;
 
 /// <summary>
@@ -81,15 +83,47 @@ internal static class CombatFormulas
     /// </summary>
     public static double ArmorShare(double roll)
     {
-        foreach (var (limit, share) in Zones)
+        return ShareOf(ZoneOf(roll));
+    }
+
+    /// <summary>
+    ///     Gets the part of the body a roll from 0 to 1 hits: neck 7%, hands 7%, arms 14%, head 15%, legs 22%, chest 35%.
+    /// </summary>
+    public static ArmorZoneType ZoneOf(double roll)
+    {
+        for (var index = 0; index < Zones.Length; index++)
         {
-            if (roll < limit)
+            if (roll < Zones[index].Limit)
             {
-                return share;
+                return (ArmorZoneType)index;
             }
         }
 
-        return Zones[^1].Share;
+        return ArmorZoneType.Chest;
+    }
+
+    /// <summary>
+    ///     Gets how often a blow lands on the zone, as a share of 1.
+    /// </summary>
+    public static double ShareOf(ArmorZoneType zone)
+    {
+        return Zones[(int)zone].Share;
+    }
+
+    /// <summary>
+    ///     Gets what a worn piece of armor takes off a blow, from half of its armor rating to all of it, as ModernUO's
+    ///     <c>BaseArmor.OnHit</c>.
+    /// </summary>
+    public static int AbsorbedByPiece(int pieceRating, Random random)
+    {
+        if (pieceRating <= 0)
+        {
+            return 0;
+        }
+
+        var half = pieceRating / 2;
+
+        return half + (int)((pieceRating - half + 1) * random.NextDouble());
     }
 
     /// <summary>
