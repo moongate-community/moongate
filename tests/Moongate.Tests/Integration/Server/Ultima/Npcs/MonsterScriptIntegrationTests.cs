@@ -319,6 +319,42 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AMonsterThatIsFought_WhileItWanders_TurnsOnWhoFightsIt_AndWalksToIt()
+    {
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+        // The combat service made the skeleton fight the player that hit it: no scan of its own has seen it yet.
+        _combat.Attack(_skeleton, _aria);
+
+        Think(1);
+
+        Assert.Equal(["war 256 True"], _state.Flags);
+        Assert.Equal(new Point3D(1601, 1600, 0), _skeleton.Location);
+        Think(3);
+        Assert.Equal(new Point3D(1604, 1600, 0), _skeleton.Location);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void AMonsterThatIsFought_WhileItStandsGuard_ChasesAgain_WithoutThreatening()
+    {
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+        Think(20);
+        _aria.Hidden = true;
+        Think(1);
+        Assert.Contains(_skeleton, _combat.Stopped);
+        _speech.Sounds.Clear();
+        _state.Flags.Clear();
+
+        // The player strikes from hiding: the monster fights back, and does not threaten twice.
+        _combat.Attack(_skeleton, _aria);
+        Think(1);
+
+        Assert.Equal(["war 256 True"], _state.Flags);
+        Assert.DoesNotContain((_skeleton, StartAttackSound), _speech.Sounds);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
     public void APlayerItLosesOrGivesUp_EndsItsFight()
     {
         _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);

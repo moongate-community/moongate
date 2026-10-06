@@ -7,7 +7,8 @@
 --   swings, hits and kills by its combat rules). A mobile template uses it with
 --   script_id = "monster" (the skeleton and the zombie do).
 --
---   The monster is in one of three states:
+--   The monster is in one of three states (and turns on whoever hits it, as ModernUO's
+--   creatures do: the one it fights is the one it chases, whatever it was doing):
 --     wander  it strolls around its home, the area of its spawn region, mostly
 --             straight ahead, and now and then rests for 15 to 25 seconds with
 --             its idle sound and a fidget.
@@ -107,6 +108,17 @@ local function start_chase(serial, mind, player)
     mobile.set_war_mode(serial, true)
     npc.play_sound(serial, "start_attack")
     mobile.animate(serial, THREATEN)
+end
+
+-- Someone hit it, or missed it, and the combat service made it fight back: it turns on that one, whatever it was doing,
+-- and without threatening it, since the fight has begun.
+local function retaliate(serial, mind, attacker)
+    mind.state = "chase"
+    mind.target = attacker
+    mind.stalled = 0
+    mind.rest = 0
+    mind.given_up = nil
+    mobile.set_war_mode(serial, true)
 end
 
 local function start_guard(serial, mind)
@@ -234,6 +246,13 @@ function monster.on_think(serial)
 
     local mind = mind_of(serial)
     mind.thinks = mind.thinks + 1
+
+    -- Whoever it fights is the one it chases, even if it has not seen it: a monster that is hit does not go on strolling.
+    local fought = combat.target(serial)
+
+    if fought ~= nil and (mind.state ~= "chase" or mind.target ~= fought) then
+        retaliate(serial, mind, fought)
+    end
 
     if mind.state == "chase" then
         chase(serial, mind, here)

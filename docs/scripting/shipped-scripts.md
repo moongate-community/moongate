@@ -20,6 +20,10 @@ monster is in one of three states:
 | chase | Threatens the player with its `start_attack` sound and an animation, goes into war mode and walks to it with `npc.walk_to`, a step every think, never running. Beside it, it faces it and fights it with `combat.attack`, once: the swings, the hits and the [death](../combat.md) are the combat service's | The player hides, leaves, is farther than 32 tiles, or cannot be reached for 20 seconds |
 | guard | Stops fighting, stands in war mode for 10 seconds, looking around | It sees a player, or the time is over: back to wander, in peace |
 
+A monster that is hit, or missed, fights back (the [combat service](../combat.md) sees to it) and turns on the one who fights it
+whatever it was doing, wandering or on guard, even if it had not seen it: it goes to war mode and chases it, without
+threatening it again.
+
 It looks for a player every two seconds while it wanders and every second on guard, and takes the
 nearest one of `npc.players_in_sight`: within 16 tiles and in line of sight, from eye to eye. It never
 sees a hidden player, a game master or an administrator, and it ignores NPCs. Once it chases a player
