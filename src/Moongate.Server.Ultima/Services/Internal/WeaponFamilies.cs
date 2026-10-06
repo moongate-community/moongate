@@ -12,6 +12,10 @@ internal static class WeaponFamilies
     public const int FistsHitSound = 0x135;
     public const int FistsMissSound = 0x239;
 
+    // The sounds of an arrow or a bolt that hits and that misses, as ModernUO's ranged weapons.
+    public const int ShotHitSound = 0x234;
+    public const int ShotMissSound = 0x238;
+
     /// <summary>
     ///     Gets the sound of a blow that hits.
     /// </summary>
@@ -23,6 +27,7 @@ internal static class WeaponFamilies
             WeaponType.Axe                          => 0x232,
             WeaponType.PoleArm                      => 0x237,
             WeaponType.Mace                         => 0x233,
+            WeaponType.Bow or WeaponType.Crossbow   => ShotHitSound,
             _                                       => FistsHitSound
         };
     }
@@ -37,6 +42,7 @@ internal static class WeaponFamilies
             WeaponType.Sword or WeaponType.Axe => 0x23A,
             WeaponType.PoleArm or WeaponType.Fencing => 0x238,
             WeaponType.Mace                    => 0x239,
+            WeaponType.Bow or WeaponType.Crossbow => ShotMissSound,
             _                                  => FistsMissSound
         };
     }
@@ -52,6 +58,8 @@ internal static class WeaponFamilies
             WeaponType.PoleArm                 => HumanAnimationType.AttackSlash2H,
             WeaponType.Mace                    => twoHanded ? HumanAnimationType.AttackBash2H : HumanAnimationType.AttackBash1H,
             WeaponType.Fencing                 => twoHanded ? HumanAnimationType.AttackPierce2H : HumanAnimationType.AttackPierce1H,
+            WeaponType.Bow                     => HumanAnimationType.AttackBow,
+            WeaponType.Crossbow                => HumanAnimationType.AttackCrossbow,
             _                                  => HumanAnimationType.Punch
         };
     }

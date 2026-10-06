@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"7d383c25edc7916947d217efdac8db515752c7af0d4d15c9feca50291b9d538e","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"0085667e8edf7ca682a730e5da8a4371ade69a4f456d1aedc32aab7bce6840b7","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -83,8 +83,21 @@ servizio di combattimento fa rispondere al colpo ogni NPC colpito tranne uno il 
 
 `scripts/common/creature.lua` è ciò che i tre script sopra condividono, preso con
 `local creature = require("common.creature")`. `creature.new(options)` restituisce la tabella che uno script mobile definisce, con il suo
-`on_think`; le opzioni sono `hunts` (attacca i giocatori che vede) e `flees` (fugge da un colpo invece di
-rispondere). Una tua creatura lo prende allo stesso modo: `mycreature = creature.new({ hunts = true })` in
+`on_think`; le opzioni sono `hunts` (attacca i giocatori che vede), `flees` (fugge da un colpo invece di
+rispondere) e `flee_at` (vedi sotto).
+
+**Arcieri.** Una creatura che impugna un arco o una balestra ha `combat.range` di 10 o 8 ([Combattimento](../combat.md#archers)):
+il suo inseguimento si ferma dove la preda è entro quella portata e nella sua linea di vista, `npc.can_see`, la guarda e avvia
+lo scontro, e il servizio di combattimento spara. Troppo lontana, cammina finché la preda è un passo dentro la portata; entro la portata ma
+senza linea di vista, si avvicina. Non arretra davanti a una preda che si avvicina: neppure gli arcieri di ModernUO,
+a meno che il costruttore lo chieda.
+
+**Fuga da feriti**, come le creature di ModernUO: una che combatte (non un animale pauroso, che scappa da un colpo) e ha
+meno di `flee_at` percento dei punti vita scappa con una probabilità su dieci a ogni think, per 10-30 secondi,
+dritta lontano dalla preda, correndo. La percentuale è il `flee_at` del template, altrimenti l'opzione dello script: 20 per un
+mostro, 10 per un animale; un template con `flee_at = -1`, come il `FLEEAT=-1` di UOX3 dà ai non morti, agli elementali e ai
+demoni, non scappa mai. Mentre scappa non risponde a un colpo: imposta la prop dell'NPC `combat.passive`, che il servizio di
+combattimento legge, e quando finisce torna a passeggiare, e quindi a cacciare di nuovo. Una tua creatura lo prende allo stesso modo: `mycreature = creature.new({ hunts = true })` in
 `scripts/mobiles/mycreature.lua`. Una root i cui script sono sostituiti manualmente ha bisogno anche di `scripts/common/`, altrimenti le creature
 smettono di pensare.
 

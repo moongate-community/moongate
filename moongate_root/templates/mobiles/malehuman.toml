@@ -1,5 +1,6 @@
 [[mobile]]
 id = "basehuman"
+flee_at = 20
 race = "human"
 damage = "1d8+2"
 armor = 10
@@ -1433,6 +1434,7 @@ items = ["0x1515_cloak"]
 
 [[mobile]]
 id = "lordbritish"
+flee_at = -1
 name = "Lord British"
 body = 990
 damage = "1d101+99"
@@ -1450,6 +1452,7 @@ hue = 902
 
 [[mobile]]
 id = "lordblackthorn"
+flee_at = -1
 name = "Lord Blackthorn"
 body = 991
 damage = "1d101+99"
@@ -1463,6 +1466,7 @@ items = ["0x2043_lord_blackthorne"]
 
 [[mobile]]
 id = "dupre"
+flee_at = -1
 name = "Dupre"
 title = "the Fighter"
 gender = "male"
@@ -1477,6 +1481,7 @@ items = ["0x2050_dupre_the_fighter"]
 
 [[mobile]]
 id = "garriot"
+flee_at = -1
 name = "Garriot"
 gender = "male"
 race = "human"

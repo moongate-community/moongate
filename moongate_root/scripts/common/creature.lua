@@ -11,8 +11,13 @@
 -- Options:
 --   hunts   true: it goes for the players it sees and for the townsfolk, the NPCs with a
 --           blue name (ModernUO's melee AI); false: it never starts a fight, it only
---           answers one
+--           answers one. One that holds a bow or a crossbow is an archer: it stops where
+--           the bow reaches and sees its prey, and shoots
 --   flees   true: it does not fight back, it runs from who hit it
+--   flee_at the percent of its hit points under which a creature that fights runs,
+--           when its template sets none (flee_at): 20 for a monster, 10 for an animal.
+--           At each think it then runs with a chance of one in ten, for 10 to 30
+--           seconds, as ModernUO's; a template with flee_at -1 never does
 --
 -- Functions:
 --   creature.new(options)  gives a table with on_think(serial), the function a
@@ -28,6 +33,10 @@ local creature = {}
 -- How far a creature runs from who hit it, in cells, and for how many thinks (ten seconds).
 local FLEE_DISTANCE = 12
 local FLEE_THINKS = 20
+
+-- A creature too hurt to fight (ModernUO's): at each think it may run with this chance, for ten to thirty seconds.
+local HURT_FLEE_CHANCE = 0.1
+local HURT_FLEE_MIN, HURT_FLEE_MAX = 20, 60
 
 -- How many mobiles it looks at in a scan, nearest first: those that are no prey are passed over.
 local SEEN = 6
@@ -65,6 +74,11 @@ local function mind_of(serial)
     if mind == nil then
         mind = { state = "wander", thinks = 0, rest = 0, until_think = 0, stalled = 0 }
         minds[serial] = mind
+
+        -- A creature the script lost track of, as after a restart in the middle of a run, is not told to run still.
+        if npc.get_prop(serial, "combat.passive") ~= nil then
+            npc.set_prop(serial, "combat.passive", nil)
+        end
 
         -- A creature the script lost track of, as after a script reload, may still be in war mode.
         local flags = mobile.flags(serial)
@@ -145,6 +159,7 @@ local function start_guard(serial, mind)
 end
 
 local function start_wander(serial, mind)
+    npc.set_prop(serial, "combat.passive", nil)
     combat.stop(serial)
     mind.state = "wander"
     mind.target = nil
@@ -153,12 +168,30 @@ end
 
 -- Someone hit it and it runs: it stops fighting and walks away from the one who did, running, until it is far enough or
 -- ten seconds have passed.
-local function start_flee(serial, mind, attacker)
+local function start_flee(serial, mind, attacker, thinks)
     combat.stop(serial)
     mind.state = "flee"
     mind.target = attacker
-    mind.until_think = mind.thinks + FLEE_THINKS
+    mind.until_think = mind.thinks + (thinks or FLEE_THINKS)
+    -- One that runs from a blow is far enough at some cells; one too hurt to fight runs for its whole time.
+    mind.hurt = thinks ~= nil
     mobile.set_war_mode(serial, false)
+    -- Told to the combat service, which makes every hit NPC answer the blow: this one only runs.
+    npc.set_prop(serial, "combat.passive", true)
+end
+
+-- Whether the creature has lost enough of its hit points to run: under flee_at percent, the one of its template, else
+-- the default of its script; never for flee_at -1.
+local function too_hurt(serial, default)
+    local at = npc.flee_at(serial) or default
+
+    if at < 0 then
+        return false
+    end
+
+    local stats = mobile.stats(serial)
+
+    return stats ~= nil and stats.hits_max > 0 and stats.hits * 100 < stats.hits_max * at
 end
 
 local function flee(serial, mind, here)
@@ -167,7 +200,9 @@ local function flee(serial, mind, here)
 
     local from = mobile.location(mind.target)
 
-    if from == nil or mind.thinks >= mind.until_think or npc.distance_to(serial, from.x, from.y) >= FLEE_DISTANCE then
+    if from == nil
+        or mind.thinks >= mind.until_think
+        or (not mind.hurt and npc.distance_to(serial, from.x, from.y) >= FLEE_DISTANCE) then
         start_wander(serial, mind)
 
         return
@@ -229,13 +264,25 @@ local function chase(serial, mind, here)
     end
 
     local there = mobile.location(target)
+    local distance = npc.distance_to(serial, there.x, there.y)
+    local level = math.abs(there.z - here.z) <= STOREY
 
-    -- Beside it, and on its storey: one tile away on the floor above is not reached.
-    if npc.distance_to(serial, there.x, there.y) <= 1 and math.abs(there.z - here.z) <= STOREY then
+    -- How far its blows reach: beside the prey for most, the range of its bow for an archer, which shoots what it sees.
+    local range = combat.range(serial) or 1
+    local reaches
+
+    if range > 1 then
+        reaches = distance <= range and level and npc.can_see(serial, target, range)
+    else
+        -- Beside it, and on its storey: one tile away on the floor above is not reached.
+        reaches = distance <= 1 and level
+    end
+
+    if reaches then
         mind.stalled = 0
         npc.face(serial, there.x, there.y)
 
-        -- Beside its prey it fights it, once: the swings are the combat service's.
+        -- In reach of its prey it fights it, once: the swings are the combat service's.
         if combat.target(serial) ~= target then
             combat.attack(serial, target)
         end
@@ -243,7 +290,10 @@ local function chase(serial, mind, here)
         return
     end
 
-    if npc.walk_to(serial, there.x, there.y, there.z, 1) == "moving" then
+    -- An archer too far walks until the prey is a step inside its range; one in range that cannot see it comes closer.
+    local stop = (range > 1 and distance > range) and (range - 1) or 1
+
+    if npc.walk_to(serial, there.x, there.y, there.z, stop) == "moving" then
         mind.stalled = 0
 
         return
@@ -289,6 +339,7 @@ end
 function creature.new(options)
     local hunts = options.hunts == true
     local flees = options.flees == true
+    local flee_at = options.flee_at or 20
     local script = {}
 
     -- Called on every think of an NPC near a player. It must not call wait().
@@ -316,6 +367,12 @@ function creature.new(options)
             end
         end
 
+        -- Fighting, and hurt: now and then it runs, instead of fighting to its death.
+        if not flees and mind.state == "chase" and combat.target(serial) ~= nil and too_hurt(serial, flee_at)
+            and math.random() < HURT_FLEE_CHANCE then
+            start_flee(serial, mind, mind.target, math.random(HURT_FLEE_MIN, HURT_FLEE_MAX))
+        end
+
         if mind.state == "flee" then
             flee(serial, mind, here)
         elseif mind.state == "chase" then
@@ -329,6 +386,7 @@ function creature.new(options)
 
     -- It dies, or is raised again: what it was doing is forgotten with it.
     function script.on_death(serial)
+        npc.set_prop(serial, "combat.passive", nil)
         minds[serial] = nil
     end
 

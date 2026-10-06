@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e4218da779e13445de1bd645187b7e0ef18d55274f6d0e3d4f9e829915263b9b","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"1e36a3802019162d95e8a6a461c460b92ab9c5168cdba92e258eb46ed3830dab","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -95,7 +95,7 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | 1.2 | ✅ | **Uso, verifica e incremento delle abilità**; incremento delle statistiche; limiti e blocchi. Un'[abilità](skills.md) viene usata dal client, verificata da `skill.check`, incrementata entro il limite dell'abilità e quello totale e impostata in aumento, diminuzione o bloccata dalla finestra delle abilità; una verifica riuscita aumenta forza, destrezza e intelligenza secondo la regola classica di ModernUO, fino a 100 ciascuna e 225 complessivi, con i loro blocchi. Hiding è il primo script di abilità; gli altri arrivano con i rispettivi sistemi | La progressione del gioco; ogni sistema successivo chiama la verifica delle abilità | UOX3 `skills.dfn` (61 abilità: pesi delle statistiche, curve di incremento), ModernUO `skills.json` |
 | 1.3 | ❌ | **Effetti temporanei**: un meccanismo per veleno, maledizioni, benedizioni, polymorph, nascondersi; la barra dei buff li mostra | Magia, pozioni e combattimento ne hanno bisogno | |
 | 1.4 | ✅ | **Contenitori a terra**, con limiti di oggetti e peso; peso e sovraccarico: un contenitore a terra si apre, gli oggetti entrano ed escono, fino a 125 e al suo limite di stone; un giocatore trasporta 40 stone e 3.5 per punto di forza, e muoversi sovraccarichi o correre costa stamina | Cadaveri, venditori, forzieri e case ne hanno bisogno | |
-| 1.5 | 🟡 | **Menu contestuali e menu classici**. Completato: richiesta di testo (`prompt.ask`) | Venditori, animali, creazione e gilde si aprono tramite essi | |
+| 1.5 | 🟡 | **Menu contestuali e menu classici**. Completato: richiesta di testo (`prompt.ask`) e [menu contestuali](context-menus.md) con le voci del server e quelle che aggiunge uno script Lua | Venditori, animali, creazione e gilde si aprono tramite essi | |
 | 1.6 | ✅ | **Campi di combattimento degli oggetti** nei template e nel convertitore: danno, velocità, armatura, punti vita, requisito di forza | Il combattimento li legge; ora il convertitore li legge da UOX3 | UOX3 `items/gear/` |
 
 ## Fase 2: combattimento
@@ -114,7 +114,7 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | Passaggio | Stato | Cosa | Perché viene qui | Dati pronti da importare |
 | --- | --- | --- | --- | --- |
 | 3.1 | 🟡 | **Ricerca del percorso** e movimento che controlla oggetti e mobile. Completato: ricerca A*, `npc.walk_to` e oggetti che bloccano; i mobile non bloccano ancora | L'IA non può inseguire senza questo | |
-| 3.2 | 🟡 | **IA degli NPC**: corpo a corpo, arciere, mago, animale, fuga; memoria degli NPC di chi ha attaccato. Oggi uno script Lua a ogni tick, movimento casuale, `monster.lua`, l'IA corpo a corpo, sui 200 circa template malvagi e caotici, che attaccano giocatori e cittadini e che le guardie uccidono, e gli animali (`animal.lua`, `scared_animal.lua`) sul modulo condiviso `common/creature.lua` | I 29.000 NPC generati diventano contenuti | Tag NPC UOX3 oggi scartati (`NPCAI`, `FLEEAT`, `SPATTACK`), ModernUO `npc-speeds.json` |
+| 3.2 | 🟡 | **IA degli NPC**: corpo a corpo, arciere, mago, animale, fuga; memoria degli NPC di chi ha attaccato. Fatto: gli arcieri (un NPC con un arco spara), le creature che scappano quando sono ferite. Restano: i maghi. Oggi uno script Lua a ogni tick, movimento casuale, `monster.lua`, l'IA corpo a corpo, sui 200 circa template malvagi e caotici, che attaccano giocatori e cittadini e che le guardie uccidono, e gli animali (`animal.lua`, `scared_animal.lua`) sul modulo condiviso `common/creature.lua` | I 29.000 NPC generati diventano contenuti | Tag NPC UOX3 oggi scartati (valori di `NPCAI`, `SPATTACK`), ModernUO `npc-speeds.json` |
 | 3.3 | 🟡 | **Bottino sui cadaveri**, smembramento, incremento di fama e karma. Il bottino viene generato nello zaino allo spawn e si trova nel cadavere di un NPC morto; nessuno smembramento, fama o karma | Ricompensa del combattimento | UOX3 `carve.dfn` (102 tabelle) |
 | 3.4 | 🟡 | **Notorietà**: flag criminale e assassino, colori dei nomi, conteggi degli omicidi. Oggi il colore del nome dal template mobile, assegnato a ogni NPC alla creazione | Dà regole al PvP | |
 | 3.5 | ❌ | **Regole delle regioni e guardie**: città sorvegliate, no recall, no gate, no case | Rende sicure le città | ModernUO `regions.json` (regioni tipizzate), UOX3 `regions.dfn` (179 insiemi di regole) |

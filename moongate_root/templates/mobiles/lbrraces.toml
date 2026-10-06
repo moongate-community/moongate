@@ -95,6 +95,7 @@ death = 652
 
 [[mobile]]
 id = "meereternal"
+flee_at = -1
 name = "a meer eternal"
 body = 772
 strength = "1d90+415"
@@ -167,6 +168,7 @@ death = 788
 
 [[mobile]]
 id = "meermage"
+flee_at = -1
 name = "a meer mage"
 body = 770
 strength = "1d31+169"

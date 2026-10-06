@@ -181,6 +181,12 @@ public class MobileTemplate
     public string? ScriptId { get; set; }
 
     /// <summary>
+    ///     The percent of its hit points under which the creature runs from a fight, from 0 to 100; -1 for one that never
+    ///     does, as UOX3's <c>FLEEAT</c>. Unset: the script's own, 20 for a monster and 10 for an animal.
+    /// </summary>
+    public int? FleeAt { get; set; }
+
+    /// <summary>
     ///     The lowest account type that sees the mobile. Unset: everyone.
     /// </summary>
     public AccountType? Visibility { get; set; }
@@ -251,6 +257,11 @@ public class MobileTemplate
         if (Tags is not null && Tags.Keys.Any(string.IsNullOrWhiteSpace))
         {
             throw Invalid("tags", "must not have an empty key");
+        }
+
+        if (FleeAt is < -1 or > 100)
+        {
+            throw Invalid("flee_at", "must be from -1 to 100");
         }
 
         if (ScriptId is not null && !ScriptIdUtils.IsValid(ScriptId))

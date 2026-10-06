@@ -58,7 +58,7 @@ public sealed class NpcModuleTests
                 Id = "orc", Sounds = new MobileSounds { StartAttack = 0x69, Idle = 0x2A3, Attack = 0x6B, Hurt = 0x6C, Death = 0x6D }
             },
             new MobileTemplate { Id = "quiet" },
-            new MobileTemplate { Id = "zombie", ScriptId = "monster" },
+            new MobileTemplate { Id = "zombie", ScriptId = "monster", FleeAt = -1 },
             new MobileTemplate { Id = "dolphin", Movement = MobileMovementType.Water },
             new MobileTemplate { Id = "walrus", Movement = MobileMovementType.Both }
         )
@@ -752,6 +752,16 @@ public sealed class NpcModuleTests
 
         _sight.Allow = false;
         Assert.Equal(0, Run("return #npc.players_in_sight(256, 16)")[0].Read<int>());
+    }
+
+    [Fact]
+    public void FleeAt_IsTheOneOfTheTemplate_NilWithoutOne()
+    {
+        _orc.TemplateId = "zombie";
+
+        var result = Run("return npc.flee_at(256), npc.flee_at(257), npc.flee_at(2), npc.flee_at(999)");
+
+        Assert.Equal([-1, null, null, null], result.Select(value => value.Type == LuaValueType.Nil ? (int?)null : value.Read<int>()));
     }
 
     [Fact]

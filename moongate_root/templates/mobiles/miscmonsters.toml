@@ -203,6 +203,7 @@ death = 109
 [[mobile]]
 id = "hellhound"
 script_id = "monster"
+flee_at = -1
 name = "a hell hound"
 body = 98
 skin_hue = 1153
@@ -365,6 +366,7 @@ death = 917
 
 [[mobile]]
 id = "headless"
+flee_at = -1
 name = "a headless one"
 body = 31
 strength = "1d25+25"

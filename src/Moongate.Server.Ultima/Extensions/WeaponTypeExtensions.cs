@@ -23,6 +23,27 @@ public static class WeaponTypeExtensions
         };
 
         /// <summary>
+        ///     Gets how far the weapon reaches, in cells: 10 for a bow, 8 for a crossbow, as ModernUO; 1 for every other.
+        /// </summary>
+        public int Range => type switch
+        {
+            WeaponType.Bow      => 10,
+            WeaponType.Crossbow => 8,
+            _                   => 1
+        };
+
+        /// <summary>
+        ///     Gets the graphic of the projectile that flies from the shooter to its target: the arrow 0x0F42 of a bow,
+        ///     the bolt 0x1BFE of a crossbow; 0 for any other weapon.
+        /// </summary>
+        public int Projectile => type switch
+        {
+            WeaponType.Bow      => 0x0F42,
+            WeaponType.Crossbow => 0x1BFE,
+            _                   => 0
+        };
+
+        /// <summary>
         ///     Gets whether the weapon shoots or throws: it is not fought in melee, which is all there is yet.
         /// </summary>
         public bool IsRanged => type is WeaponType.Bow or WeaponType.Crossbow or WeaponType.Thrown;

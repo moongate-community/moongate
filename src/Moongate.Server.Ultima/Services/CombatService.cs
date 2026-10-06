@@ -3,6 +3,8 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Effects;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Data.Internal.Combat;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
@@ -44,8 +46,15 @@ public sealed class CombatService : ICombatService
     /// </summary>
     public const string ScaredAnimalScript = "scared_animal";
 
+    /// <summary>
+    ///     The prop a script sets to true on an NPC that must not answer a blow, as one that flees.
+    /// </summary>
+    public const string PassiveProp = "combat.passive";
+
     private const int ReachInHeight = 15;
     private const int SwingFrames = 7;
+    private const byte ProjectileSpeed = 18;
+    private const int EyeHeight = 14;
     private const int OtherSwingFrames = 5;
     private const int HurtFrames = 5;
     private const int MonsterHurtFrames = 4;
@@ -74,6 +83,7 @@ public sealed class CombatService : ICombatService
     private readonly TimeProvider _time;
     private readonly Random _random;
     private readonly IMurderService? _murders;
+    private readonly IEffectService? _effects;
     private string? _timerId;
 
     public CombatService(
@@ -95,9 +105,11 @@ public sealed class CombatService : ICombatService
         WorldConfig world,
         TimeProvider time,
         Random? random = null,
-        IMurderService? murders = null
+        IMurderService? murders = null,
+        IEffectService? effects = null
     )
     {
+        _effects = effects;
         _murders = murders;
         _mobiles = mobiles;
         _state = state;
@@ -183,6 +195,11 @@ public sealed class CombatService : ICombatService
         }
     }
 
+    public int RangeOf(MobileEntity mobile)
+    {
+        return RangedOf(mobile)?.Range ?? _config.MaxRange;
+    }
+
     public MobileEntity? TargetOf(MobileEntity mobile)
     {
         return _fighters.TryGetValue(mobile.Id, out var fighter) ? fighter.Target : null;
@@ -262,7 +279,7 @@ public sealed class CombatService : ICombatService
 
         try
         {
-            return _sight.HasLineOfSight(attacker.Map, attacker.Location, target.Location) ? null : "the target is out of sight";
+            return _sight.HasLineOfSight(attacker.Map, EyeOf(attacker), EyeOf(target)) ? null : "the target is out of sight";
         }
         catch (KeyNotFoundException)
         {
@@ -330,12 +347,21 @@ public sealed class CombatService : ICombatService
             return;
         }
 
+        // An archer shoots only what it sees: it keeps the fight, and its script walks it to a place where it does.
+        if (RangedOf(attacker) is not null && !CanSee(attacker, target))
+        {
+            return;
+        }
+
         Swing(fighter, now);
     }
 
     private bool InReach(MobileEntity attacker, MobileEntity target)
     {
-        return attacker.Location.InRange(target.Location, _config.MaxRange) &&
+        // A square range, as the scripts and the line of sight measure: a diagonal neighbour is one cell away, not 1.4.
+        var range = RangedOf(attacker)?.Range ?? _config.MaxRange;
+
+        return Math.Max(Math.Abs(attacker.Location.X - target.Location.X), Math.Abs(attacker.Location.Y - target.Location.Y)) <= range &&
                Math.Abs(attacker.Location.Z - target.Location.Z) <= ReachInHeight;
     }
 
@@ -349,8 +375,9 @@ public sealed class CombatService : ICombatService
             _state.SetHidden(attacker, false);
         }
 
-        // A player fights with what it holds; an NPC with its template, whatever it is dressed in.
-        var weapon = WeaponOf(attacker);
+        // A player fights with what it holds; an NPC with its template, whatever it is dressed in, except that a bow or a
+        // crossbow it holds shoots.
+        var weapon = RangedOf(attacker) ?? WeaponOf(attacker);
         fighter.NextSwingAt = now.AddSeconds(
             CombatFormulas.SwingDelaySeconds(attacker.Stamina, weapon?.Speed ?? FistsSpeed, _config.GlobalAttackSpeed)
         );
@@ -364,6 +391,19 @@ public sealed class CombatService : ICombatService
 
         var (action, frames) = SwingAnimation(attacker, weapon);
         _view.MobileAnimated(attacker, action, frames, 1);
+
+        // The arrow or the bolt flies to its target, hit or missed.
+        if (weapon is { Type: { } kind } && kind.Projectile != 0)
+        {
+            _effects?.PlayMoving(
+                attacker.Map,
+                attacker.Id,
+                attacker.Location,
+                target.Id,
+                target.Location,
+                new EffectOptions { Graphic = kind.Projectile, Speed = ProjectileSpeed }
+            );
+        }
 
         var attackSkill = weapon?.Skill ?? SkillType.Wrestling;
         var defenseSkill = WeaponOf(target)?.Skill ?? SkillType.Wrestling;
@@ -430,8 +470,8 @@ public sealed class CombatService : ICombatService
     // The NPC that is hit, or missed, fights the one who swings, if it fights no one; whoever hit it keeps it at it.
     private void FightBack(MobileEntity victim, MobileEntity attacker, DateTimeOffset now)
     {
-        // A scared animal runs from the blow: its script, not the fight, answers it.
-        if (!victim.IsNpc || !_mobiles.IsInWorld(victim.Id) || RunsFromBlows(victim))
+        // One that runs, a scared animal or a creature too hurt to fight, does not answer the blow: its script runs.
+        if (!victim.IsNpc || !_mobiles.IsInWorld(victim.Id) || RunsFromBlows(victim) || IsPassive(victim))
         {
             return;
         }
@@ -440,6 +480,38 @@ public sealed class CombatService : ICombatService
         {
             Fight(victim, attacker, now, false);
         }
+    }
+
+    // The bow or the crossbow an NPC holds: the shots are the NPCs' for now, a player's are fists.
+    private WeaponInfo? RangedOf(MobileEntity mobile)
+    {
+        return mobile.IsNpc ? _gear.RangedWeaponOf(mobile) : null;
+    }
+
+    private bool CanSee(MobileEntity attacker, MobileEntity target)
+    {
+        try
+        {
+            return _sight.HasLineOfSight(attacker.Map, EyeOf(attacker), EyeOf(target));
+        }
+        catch (KeyNotFoundException)
+        {
+            return false;
+        }
+    }
+
+    // Where a mobile sees from, as the scripts' sight: the eyes, not the feet, so a fence a mobile sees over does not stop it.
+    private static Point3D EyeOf(MobileEntity mobile)
+    {
+        var spot = mobile.Location;
+
+        return new(spot.X, spot.Y, Math.Min(spot.Z + EyeHeight, sbyte.MaxValue));
+    }
+
+    // Whether a script told the NPC not to fight back for now, as a creature that flees.
+    private static bool IsPassive(MobileEntity mobile)
+    {
+        return mobile.TryGetProp<bool>(PassiveProp, out var passive) && passive;
     }
 
     // Whether the NPC's template names the script of the animals that run instead of fighting back.
@@ -491,17 +563,18 @@ public sealed class CombatService : ICombatService
     // The weapon of a player, between its least and its most; the dice of the template of an NPC; else the fists of ModernUO.
     private int BaseDamage(MobileEntity attacker, WeaponInfo? weapon)
     {
-        if (weapon is not null)
-        {
-            return weapon.DamageMin + _random.Next(Math.Max(weapon.DamageMax - weapon.DamageMin, 0) + 1);
-        }
-
+        // An NPC hits with the dice of its template, a bow in its hands or not, as ModernUO's creatures do.
         if (attacker.IsNpc &&
             attacker.TemplateId is { } id &&
             _templates.TryGet(id, out var template) &&
             template.Damage is { } dice)
         {
             return dice.Roll();
+        }
+
+        if (weapon is not null)
+        {
+            return weapon.DamageMin + _random.Next(Math.Max(weapon.DamageMax - weapon.DamageMin, 0) + 1);
         }
 
         return _random.Next(CombatFormulas.FistsMaximumDamage) + CombatFormulas.FistsMinimumDamage;

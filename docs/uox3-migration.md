@@ -210,6 +210,9 @@ Two known mistakes in UOX3's item data are corrected as the blocks are read
 leather tunic as their parents; they get the leather sleeves (`0x13cd`) and leggings
 (`0x13cb`).
 
+`FLEEAT` becomes the `flee_at` of the template (from 0 to 100, or `-1` for a creature that never runs; the undead, the
+elementals and the daemons have `-1`); a value outside is left out.
+
 A mobile Moongate has a script for gets its `script_id`: a banker (`NPCAI=8`) takes `banker`
 (`scripts/mobiles/banker.lua`), a town guard (`NPCAI=4`) takes `guard` (`scripts/mobiles/guard.lua`), the creatures
 that go for everyone (`NPCAI=2` evil, `11` evil caster and `88` chaotic, and the undead of the graveyards by name:
@@ -219,7 +222,7 @@ and `10`, fight criminals only and have no script yet), an animal (`NPCAI=6`) ta
 (`scripts/mobiles/animal.lua`) and a scared animal (`NPCAI=12`) takes `scared_animal`
 (`scripts/mobiles/scared_animal.lua`); the templates based on them take the script through `base_id`.
 
-Dropped, no home yet: the rest of AI and wandering (the other `NPCAI` values, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
+Dropped, no home yet: the rest of AI and wandering (the other `NPCAI` values, `NPCWANDER`, `FX*`, speeds),
 taming and bard skills (`TOTAME`, `CONTROLSLOTS`, `TOPROV`, `TOPEACE`), shops
 (`SHOPKEEPER`, `SHOPLIST`), `PACKITEM`, `CARVE`, `FOOD`, `PRIV`, `SCRIPT` and the other
 tags without a field. The run prints how often each kind of value was dropped.

@@ -1,7 +1,7 @@
 # Combat
 
 A player fights an NPC with its fists, as ModernUO's classic (pre-AOS) combat does; the NPC fights back and
-dies when its hit points are gone. This is the first slice: weapons and armor of items, parry, archery,
+dies when its hit points are gone. This is the first slice: weapons and armor of items, parry, archery for players,
 the combat events of Lua come later.
 
 ## Starting a fight
@@ -109,9 +109,21 @@ of the blows it takes (rounded), and the damage shown there is the weapon's, wit
 eras, converted by `mgctl convert uox` (see [Migrate from UOX3](uox3-migration.md)); a plain graphic inherits the LBR
 numbers, ModernUO's classic ones.
 
+## Archers
+
+An NPC that holds a **bow** or a **crossbow** shoots instead of fighting from beside its target, as ModernUO's and
+UOX3's archers do. The range is the weapon's: 10 cells for a bow, 8 for a crossbow. It must see its target: with no
+line of sight it keeps the fight but does not shoot, and its [creature script](scripting/shipped-scripts.md#commoncreaturelua)
+walks it to where it does. Ranges are counted in squares, the larger of the two differences along X and Y, as the scripts and the line of sight count them: a diagonal neighbour is one cell away. The line of sight is from eye to eye. A shot is a swing like any other: the weapon's speed and the NPC's stamina give the delay,
+the hit is rolled with the Archery skill against what the target defends with, the damage is the template's dice
+(not the bow's), and the arrow `0x0F42`, or the bolt `0x1BFE`, flies from the shooter to the target, hit or missed.
+A human body plays the shooting action of its weapon; a monster body plays its attack. The sound is the creature's own
+attack, else the bow's, `0x234` on a hit and `0x238` on a miss. An NPC's ammo is never counted. A **player** holding a
+bow still fights with its fists: player archery, with arrows to carry and spend, is not built yet.
+
 ## Not yet
 
-Parry (a shield counts for nothing yet), archery, special moves, durability (`max_hits` is kept, not used), the
+Parry (a shield counts for nothing yet), archery for players, special moves, durability (`max_hits` is kept, not used), the
 strength a weapon or armor asks for (`strength_required` is kept, not used), the lumberjacking bonus of axes, aggressor
 lists beyond the target, bandages and the combat events of Lua (`attack`, `hit`, `miss`,
 `get_hit`).

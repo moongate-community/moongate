@@ -236,6 +236,7 @@ death = 366
 [[mobile]]
 id = "skeletaldragon"
 script_id = "monster"
+flee_at = -1
 name = "a skeletal dragon"
 body = 104
 strength = "1d101+899"

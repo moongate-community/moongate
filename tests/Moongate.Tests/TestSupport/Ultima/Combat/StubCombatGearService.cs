@@ -15,9 +15,19 @@ public sealed class StubCombatGearService : ICombatGearService
 
     public Dictionary<ArmorZoneType, int> Armor { get; } = [];
 
+    /// <summary>
+    ///     The bow or crossbow every mobile holds, when set.
+    /// </summary>
+    public WeaponInfo? Ranged { get; set; }
+
     public WeaponInfo? WeaponOf(MobileEntity mobile)
     {
         return Weapon;
+    }
+
+    public WeaponInfo? RangedWeaponOf(MobileEntity mobile)
+    {
+        return Ranged;
     }
 
     public int ArmorAt(MobileEntity mobile, ArmorZoneType zone)

@@ -106,7 +106,7 @@ public sealed class MobileTemplateTests
     {
         var toml = TomlUtils.Serialize(new MobileTemplate { Id = "orc", Equipment = [new() { Items = ["club"] }] });
 
-        foreach (var key in new[] { "base_id", "name", "body", "gender", "race", "strength", "hits", "skills", "resistances", "sounds", "notoriety", "karma", "loot", "gold", "visibility", "tags", "hue", "script_id" })
+        foreach (var key in new[] { "base_id", "name", "body", "gender", "race", "strength", "hits", "skills", "resistances", "sounds", "notoriety", "karma", "loot", "gold", "visibility", "tags", "hue", "script_id", "flee_at" })
         {
             Assert.DoesNotContain($"{key} =", toml);
             Assert.DoesNotContain($"[{key}]", toml);
@@ -116,6 +116,8 @@ public sealed class MobileTemplateTests
     [Theory,
      InlineData("strength = \"1d6-10\"\n", "strength"),
      InlineData("hits = -1\n", "hits"),
+     InlineData("flee_at = -2\n", "flee_at"),
+     InlineData("flee_at = 101\n", "flee_at"),
      InlineData("gold = -5\n", "gold"),
      InlineData("[skills]\nnot_a_skill = 50\n", "skills"),
      InlineData("[skills]\ntactics = \"1d30+100\"\n", "skills"),

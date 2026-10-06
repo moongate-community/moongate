@@ -6,6 +6,7 @@ using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Combat;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Services;
@@ -29,13 +30,24 @@ public sealed class CombatGearService : ICombatGearService
 
     public WeaponInfo? WeaponOf(MobileEntity mobile)
     {
+        return HeldWeapon(mobile, shoots: false);
+    }
+
+    public WeaponInfo? RangedWeaponOf(MobileEntity mobile)
+    {
+        return HeldWeapon(mobile, shoots: true);
+    }
+
+    // What the mobile holds in its hands that is fought in melee, or that shoots: a bow or a crossbow.
+    private WeaponInfo? HeldWeapon(MobileEntity mobile, bool shoots)
+    {
         foreach (var item in _items.GetWorn(mobile.Id))
         {
             if (item.Layer is not { } layer ||
                 Array.IndexOf(HandLayers, layer) < 0 ||
                 !_templates.TryGet(item.TemplateId, out var template) ||
                 template is not { DamageMax: > 0 } ||
-                template.WeaponType is { IsRanged: true })
+                (shoots ? template.WeaponType is not (WeaponType.Bow or WeaponType.Crossbow) : template.WeaponType is { IsRanged: true }))
             {
                 continue;
             }

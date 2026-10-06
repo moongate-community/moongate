@@ -183,6 +183,7 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
         child.Fame ??= parent.Fame;
         child.Gold ??= parent.Gold;
         child.ScriptId ??= parent.ScriptId;
+        child.FleeAt ??= parent.FleeAt;
         child.Visibility ??= parent.Visibility;
         child.Movement ??= parent.Movement;
         child.Loot ??= parent.Loot is null ? null : [..parent.Loot];

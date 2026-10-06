@@ -30,4 +30,10 @@ public interface ICombatService : IMoongateStartupService
     ///     Gets whom <paramref name="mobile" /> fights; null when it fights no one.
     /// </summary>
     MobileEntity? TargetOf(MobileEntity mobile);
+
+    /// <summary>
+    ///     Gets how far the mobile's blows reach, in cells: the range of the bow or crossbow an NPC holds, else the
+    ///     melee range of the configuration.
+    /// </summary>
+    int RangeOf(MobileEntity mobile);
 }

@@ -32,6 +32,7 @@ public sealed class MobileTemplatesLoaderTests
             name_list = "orc"
             body = 17
             script_id = "wander"
+            flee_at = -1
             strength = "1d25+95"
             skills = { tactics = "60", wrestling = "50" }
             resistances = { fire = "20", cold = "10" }
@@ -61,6 +62,7 @@ public sealed class MobileTemplatesLoaderTests
         Assert.Equal(["a", "b"], captain.Tags!.Keys.Order());
         Assert.Equal(["axe"], Assert.Single(captain.Equipment!).Items);
         Assert.Equal("wander", captain.ScriptId);
+        Assert.Equal(-1, captain.FleeAt);
 
         captain.Skills["wrestling"] = DiceSpec.FromValue(1);
         Assert.Equal("50", templates["base_orc"].Skills!["wrestling"].ToString());

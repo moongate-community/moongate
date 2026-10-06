@@ -180,6 +180,25 @@ public sealed class UoxMobileConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_FleeAt_IsTheHitPercentUnderWhichTheCreatureRuns_MinusOneForNever()
+    {
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource(
+            "npc/undead.dfn",
+            "[zombie]\n{\nID=0x0003\nFLEEAT=-1\n}\n[man]\n{\nID=0x0190\nFLEEAT=20\n}\n[calm]\n{\nID=0x0190\n}\n[bad]\n{\nID=0x0190\nFLEEAT=500\n}\n[zero]\n{\nID=0x0190\nFLEEAT=0\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var mobiles = ReadMobiles("undead.toml");
+        Assert.Equal(((int?)-1, (int?)20, (int?)null), (mobiles["zombie"].FleeAt, mobiles["man"].FleeAt, mobiles["calm"].FleeAt));
+        // A value out of 0 to 100 is left out rather than written as a template that cannot load.
+        Assert.Null(mobiles["bad"].FleeAt);
+        // 0 is UOX3's "the default of the server": nothing is written.
+        Assert.Null(mobiles["zero"].FleeAt);
+    }
+
+    [Fact]
     public void Run_ARandomPickOfTwoCreatures_BecomesTheFirst()
     {
         // UOX3's [dragon] GET=graydragon reddragon: a template has one base, so the first is kept and counted.

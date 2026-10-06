@@ -82,8 +82,21 @@ combat service makes every hit NPC answer the blow except one whose template has
 
 `scripts/common/creature.lua` is what the three scripts above share, taken with
 `local creature = require("common.creature")`. `creature.new(options)` gives the table a mobile script defines, with its
-`on_think`; the options are `hunts` (it goes for the players it sees) and `flees` (it runs from a blow instead of
-fighting back). A creature of your own takes it the same way: `mycreature = creature.new({ hunts = true })` in
+`on_think`; the options are `hunts` (it goes for the players it sees), `flees` (it runs from a blow instead of
+fighting back) and `flee_at` (see below).
+
+**Archers.** A creature that holds a bow or a crossbow has `combat.range` of 10 or 8 ([Combat](../combat.md#archers)):
+its chase stops where the prey is within that range and in its line of sight, `npc.can_see`, faces it and starts the
+fight, and the combat service shoots. Too far, it walks until the prey is a step inside its range; within range but
+with no line of sight, it comes closer. It does not step back from a prey that comes close: ModernUO's archers do not
+either, unless their constructor asks.
+
+**Running when hurt**, as ModernUO's creatures: one that fights (not a scared animal, which runs from a blow) and has
+under `flee_at` percent of its hit points runs with a chance of one in ten at each think, for 10 to 30 seconds,
+straight away from its prey, running. The percent is the template's `flee_at`, else the option of the script: 20 for a
+monster, 10 for an animal; a template with `flee_at = -1`, as UOX3's `FLEEAT=-1` gives the undead, the elementals and the
+daemons, never runs. While it runs it does not answer a blow: it sets the NPC prop `combat.passive`, which the combat
+service reads, and it goes back to strolling, and so to hunting again, when it is over. A creature of your own takes it the same way: `mycreature = creature.new({ hunts = true })` in
 `scripts/mobiles/mycreature.lua`. A root whose scripts are replaced by hand needs `scripts/common/` too, or the creatures
 stop thinking.
 
