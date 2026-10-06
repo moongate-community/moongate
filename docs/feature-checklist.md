@@ -55,7 +55,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
 | Hiding and stealth | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) hides a player until its first step; no Stealth, and speaking or being hit does not show it yet |
-| Death, corpses, ghosts and resurrection | 🟡 | An NPC or a player dies by a fight, `.kill` or `mobile.kill`: corpse with what it carried, death animation and sound, decay after 7 minutes. A player stays as a ghost (hidden from the living unless in war mode, heard as oOo, no fight, skill or lifting) and is raised at an ankh, by `.resurrect` or `mobile.resurrect`. No healers, murder counts, stat loss or bones |
+| Death, corpses, ghosts and resurrection | 🟡 | An NPC or a player dies by a fight, `.kill` or `mobile.kill`: corpse with what it carried, death animation and sound, decay after 7 minutes. A player stays as a ghost (hidden from the living unless in war mode, heard as oOo, no fight, skill or lifting) and is raised at an ankh or by a healer (for a tenth of its fame), by `.resurrect` or `mobile.resurrect`. No evil healers, murder counts, stat loss or bones |
 | Young player protection | ❌ | |
 | Murder reports and bounty boards | ❌ | |
 | Virtues | ❌ | |

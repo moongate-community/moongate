@@ -885,6 +885,7 @@ gender = "female"
 
 [[mobile]]
 id = "healer"
+script_id = "healer"
 base_id = "basevendor"
 name_list = "{gender}"
 title = "the Healer"
@@ -1711,6 +1712,7 @@ gender = "female"
 
 [[mobile]]
 id = "whealer"
+script_id = "healer"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Wandering Healer"

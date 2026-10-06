@@ -3,12 +3,14 @@
   Moongate - templates/gumps/resurrect.xml
 
   What it is for:
-    The question an ankh asks a ghost that double clicks it: to come back to
-    life or not. Continue calls resurrect.accept in scripts/gumps/resurrect.lua,
-    Cancel calls resurrect.cancel, which leaves the ghost as it is.
+    The question an ankh asks a ghost that double clicks it, and a healer a ghost
+    that comes near: to come back to life or not. Continue calls resurrect.accept
+    in scripts/gumps/resurrect.lua, Cancel calls resurrect.cancel, which leaves
+    the ghost as it is.
 
   Arguments:
-    ankh   the serial of the ankh that was used
+    ankh     the serial of the ankh that was used; none when a healer asked
+    healer   the serial of the healer that offered; none when an ankh asked
 -->
 <gump id="resurrect" x="120" y="120"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">

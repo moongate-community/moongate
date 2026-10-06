@@ -525,6 +525,40 @@ public sealed class NpcModule
     }
 
     /// <summary>
+    ///     Gets the serials of the dead players an NPC sees, nearest first; <c>npc.ghosts_in_sight(healer, 4)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The serials of the dead players, ghosts, within range cells that the NPC sees, in the line of sight and whatever their hidden flag says, staff ghosts too; at most limit of them. Nearest first. Empty for an unknown NPC or a range out of bounds. What a healer looks for: npc.players_in_sight never lists a ghost.")]
+    public LuaTable GhostsInSight(long serial, int range = DefaultSight, int limit = int.MaxValue)
+    {
+        var table = new LuaTable();
+
+        if (_sectors is null || limit < 1 || range is < 0 or > WorldModule.MaximumRange || !TryGetNpc(serial, out var npc))
+        {
+            return table;
+        }
+
+        var index = 1;
+
+        foreach (var ghost in _sectors.GetMobilesInRange(npc.Map, npc.Location, range)
+                                      .Where(other => other.IsDead)
+                                      .OrderBy(other => Distance(npc.Location, other.Location))
+                                      .ThenBy(other => other.Id.Value))
+        {
+            if (Sees(npc, ghost, range, true, true))
+            {
+                table[index++] = (long)ghost.Id.Value;
+
+                if (index > limit)
+                {
+                    break;
+                }
+            }
+        }
+
+        return table;
+    }
+
+    /// <summary>
     ///     Gets where the NPC is as <c>{ x, y, z, map }</c>; <c>npc.location(serial)</c>.
     /// </summary>
     [ScriptFunction(helpText: "Where the NPC is, as a table { x, y, z, map }; nil for an unknown NPC.")]
@@ -671,15 +705,16 @@ public sealed class NpcModule
         return Math.Max(Math.Abs(from.X - to.X), Math.Abs(from.Y - to.Y));
     }
 
-    private bool Sees(MobileEntity npc, MobileEntity other, int range, bool inSight)
+    // A ghost is what only a healer looks for: it is hidden from the living, and the others do not see it at all.
+    private bool Sees(MobileEntity npc, MobileEntity other, int range, bool inSight, bool ghost = false)
     {
         if (other.Id == npc.Id ||
-            other.Hidden ||
-            other.IsDead ||
+            (ghost ? !other.IsDead : other.Hidden || other.IsDead) ||
             other.Map != npc.Map ||
             !_mobiles.IsInWorld(other.Id) ||
             Distance(npc.Location, other.Location) > range ||
-            IsStaff(other))
+            // A healer raises the ghost of a game master too: only the monsters leave the staff alone.
+            (!ghost && IsStaff(other)))
         {
             return false;
         }

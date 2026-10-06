@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"68d43b9db4fc75cc6b59f23d5687cb2d4777d8f188e05ebb7ed23f6494dc26ff","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"ef1cc8b94be861aadcd275ebb1f19edb67c9697a4d781bb9a1ee38612adf2fa5","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -236,6 +236,16 @@ con `mobile.teleport`, anche su un'altra mappa, e vi riproduce `0x1FE`. Un gioca
 di una casella mentre il gump era aperto viene avvisato e resta; scegliere la città del portale
 stesso non fa nulla.
 
+## healer.lua
+
+`scripts/mobiles/healer.lua` è lo script dei guaritori (`script_id = "healer"`): a ogni think chiede a
+`npc.ghosts_in_sight(serial, 4)` i fantasmi entro 4 celle nella sua linea di vista. Un fantasma che non c'era
+al think precedente viene guardato (`npc.look_at`), riceve il suono `0x1F2` e le scintille `SparkleHeal`, e
+il gump `resurrect` con l'argomento `healer`, come il `BaseHealer` di ModernUO. Un guaritore aspetta 2 secondi (4 think)
+tra due offerte, e un fantasma incontrato durante l'attesa riceve l'offerta quando finisce. Un criminale viene rifiutato con il
+testo del client 501222, e un giocatore con karma negativo si sente dire 501224 e riceve comunque l'offerta. Un guaritore di un
+template che finisce con `whealer`, uno errante, fa un passo con `npc.wander` a ogni quarto think.
+
 ## ankh.lua e resurrect.lua
 
 `scripts/items/ankh.lua` è lo script del template `decoration_ankh`, i due pezzi di ogni
@@ -244,8 +254,9 @@ con un ankh. La sua `on_ghost_use` viene eseguita quando un giocatore morto lo u
 resurrezione](../death.md#death-of-a-player)): da più di 2 celle dice "È troppo lontano."
 (testo del client 500446), altrimenti apre il gump `resurrect` (`templates/gumps/resurrect.xml`). Il suo
 pulsante Continue chiama `resurrect.accept` in `scripts/gumps/resurrect.lua`, che, se il giocatore è
-ancora morto ed entro 2 celle dall'ankh, chiama `mobile.resurrect`, riproduce il suono `0x214` e
-l'effetto `SparkleHeal` sul giocatore. Cancel non fa nulla.
+ancora morto ed entro 2 celle dall'ankh (8 dal guaritore, se ha offerto un [guaritore](#healerlua)),
+chiama `mobile.resurrect`, riproduce il suono `0x214` e l'effetto `SparkleHeal` sul giocatore e gli toglie un
+decimo della fama. Cancel non fa nulla.
 
 ## moongate.lua
 

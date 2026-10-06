@@ -323,6 +323,22 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedHealers_UseTheHealerScript()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots)).LoadDataAsync())
+                      .Entities.ToDictionary(t => t.Id);
+
+        Assert.All(
+            new[] { "healer", "m_healer", "f_healer", "whealer", "m_whealer", "f_whealer" },
+            id => Assert.Equal("healer", mobiles[id].ScriptId)
+        );
+    }
+
+    [Fact]
     public async Task ShippedVendorsBankersAndGuards_AreInvulnerable_AsInModernUO()
     {
         var directories = Directories();

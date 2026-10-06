@@ -171,6 +171,7 @@ hue = "0x0641-0x0676"
 
 [[mobile]]
 id = "m_whealer"
+script_id = "healer"
 base_id = "basehuman"
 name_list = "male"
 title = "the Wandering Healer"

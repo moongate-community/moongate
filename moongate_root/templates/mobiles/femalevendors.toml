@@ -910,6 +910,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "f_healer"
+script_id = "healer"
 base_id = "basevendor"
 name_list = "female"
 title = "the Healer"

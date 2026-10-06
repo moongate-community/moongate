@@ -167,7 +167,16 @@ A ghost:
   `decoration_ankh`, script `ankh.lua`): a ghost that double clicks it from 2 cells or closer is asked in a gump
   whether it wants to live; Continue raises it with the sound `0x214` and the sparkles `0x376A`, and it must still
   be there, dead and within 2 cells when it answers.
+- A **healer** (templates `healer`, `m_healer`, `f_healer`, and the wandering `whealer`, `m_whealer`,
+  `f_whealer`, script `healer.lua`): a ghost that comes within 4 cells of one, with the healer in sight, is
+  offered the same gump, with the healer's sound `0x1F2` and the sparkles. A healer offers every 2 seconds at most
+  and only to a ghost that comes near: it must leave and come back to be offered again. A ghost met while the healer waits for its turn is offered when the wait is over, which ModernUO does not do. The ghost of a game master is offered too. A criminal is
+  refused ("Thou art a criminal. I shall not resurrect thee."), and one of negative karma is told it has strayed
+  and offered all the same. It costs nothing, and the ghost may answer from up to 8 cells away.
 - A game master with [`.resurrect`](commands/resurrect.md), a script with `mobile.resurrect(serial)`.
+
+A resurrection by ankh or healer costs a tenth of the player's **fame**, as ModernUO; `.resurrect` and
+`mobile.resurrect` do not.
 
 The player comes back in its living body with **10 hit points**, full stamina and no mana, the shroud is gone and a
 **death robe** (`death_robe`, hue 2301, newbied so it never goes into a corpse) is worn in its place. Its corpse is
@@ -180,8 +189,11 @@ mobile.resurrect(serial) -- the serial of a ghost raises it at once
 
 ## What is not there yet
 
-- Healers, spells that raise, the murder counts and their report, the loss of skills and stats, and looting a
-  player's corpse by the rules of crimes. A ghost is not seen by other ghosts. Bones: a corpse just decays.
-- Whether the spot is free for a body (ModernUO's `Map.CanFit`) is not checked when an ankh raises a ghost.
+- Spells that raise, the evil healers (the ones that raise the red players), the murder counts and their
+  report, the refusal of a murderer by a healer, the loss of skills and stats that a resurrection costs from five
+  murders (ModernUO's `TryGiveStatLoss`), and looting a player's corpse by the rules of crimes. A ghost is not seen
+  by other ghosts. Bones: a corpse just decays.
+- Whether the spot is free for a body (ModernUO's `Map.CanFit`) is not checked when an ankh or a healer raises a
+  ghost.
 - Carving, fame and karma, looting as a crime, loot shared among those who fought.
 - Summoned creatures that leave no corpse, and bones.

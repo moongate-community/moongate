@@ -234,6 +234,16 @@ with `mobile.teleport`, to another map too, and plays `0x1FE` there. A player wh
 than a cell away while the gump was open is told so and stays; choosing the city of the gate
 itself does nothing.
 
+## healer.lua
+
+`scripts/mobiles/healer.lua` is the script of the healers (`script_id = "healer"`): on every think it asks
+`npc.ghosts_in_sight(serial, 4)` for the ghosts within 4 cells in its line of sight. A ghost that was not
+there at the last think is turned to (`npc.look_at`), gets the sound `0x1F2` and the sparkles `SparkleHeal`, and
+the gump `resurrect` with the argument `healer`, as ModernUO's `BaseHealer`. A healer waits 2 seconds (4 thinks)
+between two offers, and a ghost met during the wait is offered when it is over. A criminal is refused with the
+client text 501222, and a player of negative karma is told 501224 and offered all the same. A healer of a
+template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think.
+
 ## ankh.lua and resurrect.lua
 
 `scripts/items/ankh.lua` is the script of the `decoration_ankh` template, the two pieces of each
@@ -242,8 +252,9 @@ with an ankh. Its `on_ghost_use` runs when a dead player double clicks it ([Deat
 resurrection](../death.md#death-of-a-player)): from more than 2 cells it says "That is too far away."
 (client text 500446), else it opens the gump `resurrect` (`templates/gumps/resurrect.xml`). Its
 Continue button calls `resurrect.accept` in `scripts/gumps/resurrect.lua`, which, if the player is
-still dead and within 2 cells of the ankh, calls `mobile.resurrect`, plays the sound `0x214` and the
-effect `SparkleHeal` on the player. Cancel does nothing.
+still dead and within 2 cells of the ankh (8 of the healer, when it was a [healer](#healerlua) that
+asked), calls `mobile.resurrect`, plays the sound `0x214` and the effect `SparkleHeal` on the player and
+takes a tenth of its fame. Cancel does nothing.
 
 ## moongate.lua
 
