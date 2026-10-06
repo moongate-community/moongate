@@ -264,6 +264,28 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.Empty(_aria.Skills);
     }
 
+    [Fact]
+    public void SendStatus_OfTheOwnCharacter_HasTheDamageAndTheArmorOfItsGear_ThatOfAnotherDoesNot()
+    {
+        var gear = new Moongate.Tests.TestSupport.Ultima.Combat.StubCombatGearService { StatusDamage = (9, 59) };
+        gear.Armor[Moongate.Server.Ultima.Types.Combat.ArmorZoneType.Chest] = 12;
+        var service = new MobileStateService(
+            _fixture.Mobiles, _fixture.Sessions, _fixture.Sectors, _fixture.Sender, _view, new WorldConfig(),
+            new Lazy<IWeightService>(() => _weight), new Lazy<ICombatGearService>(() => gear)
+        );
+        Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Boris), out var boris));
+        // The gear is a player's: a mobile with an account.
+        _aria.AccountId = new Serial(0x42);
+
+        service.SendStatus(_ariaSession, _aria);
+        service.SendStatus(_ariaSession, boris);
+
+        var own = Assert.IsType<MobileStatusPacket>(_fixture.Sender.Sent[0]).Status;
+        var other = Assert.IsType<MobileStatusPacket>(_fixture.Sender.Sent[1]).Status;
+        Assert.Equal((9, 59, 12), (own.DamageMin, own.DamageMax, own.PhysicalResistance));
+        Assert.Equal((0, 0), (other.DamageMin, other.DamageMax));
+    }
+
     [Theory]
     [InlineData(StatType.Str, StatLockType.Down)]
     [InlineData(StatType.Dex, StatLockType.Locked)]

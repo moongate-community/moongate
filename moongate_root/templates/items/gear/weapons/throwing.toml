@@ -7,6 +7,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "thrown"
 decays = true
 
 [[item]]
@@ -20,6 +21,7 @@ id = "0x406b"
 base_id = "0x090a_lbr"
 item_id = 16491
 rarity = "common"
+weapon_type = "thrown"
 
 [[item]]
 id = "base_boomerang"
@@ -30,6 +32,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "thrown"
 decays = true
 
 [[item]]
@@ -43,6 +46,7 @@ id = "0x4067"
 base_id = "0x08ff_lbr"
 item_id = 16487
 rarity = "common"
+weapon_type = "thrown"
 
 [[item]]
 id = "base_cyclone"
@@ -53,6 +57,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "thrown"
 decays = true
 
 [[item]]
@@ -66,3 +71,4 @@ id = "0x406c"
 base_id = "0x0901_lbr"
 item_id = 16492
 rarity = "common"
+weapon_type = "thrown"

@@ -4,6 +4,9 @@ base_id = "base_ring_gloves"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 40
+armor_rating = 3
+max_hits = 50
 buy_price = 93
 sell_price = 26
 
@@ -13,6 +16,9 @@ base_id = "base_ring_tunic"
 item_id = 0
 rarity = "common"
 weight = 15.0
+strength_required = 40
+armor_rating = 3
+max_hits = 50
 buy_price = 121
 sell_price = 60
 
@@ -22,6 +28,9 @@ base_id = "base_ring_sleeves"
 item_id = 0
 rarity = "common"
 weight = 15.0
+strength_required = 40
+armor_rating = 3
+max_hits = 50
 buy_price = 85
 sell_price = 42
 
@@ -31,6 +40,9 @@ base_id = "base_ring_leggings"
 item_id = 0
 rarity = "common"
 weight = 15.0
+strength_required = 40
+armor_rating = 3
+max_hits = 50
 buy_price = 90
 sell_price = 45
 
@@ -40,6 +52,9 @@ base_id = "base_chain_coif"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 60
+armor_rating = 4
+max_hits = 60
 buy_price = 17
 sell_price = 8
 
@@ -49,6 +64,9 @@ base_id = "base_chain_leggings"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 60
+armor_rating = 4
+max_hits = 60
 buy_price = 149
 sell_price = 74
 
@@ -58,6 +76,9 @@ base_id = "base_chain_tunic"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 60
+armor_rating = 4
+max_hits = 60
 buy_price = 143
 sell_price = 71
 
@@ -67,6 +88,9 @@ base_id = "base_fem_plate"
 item_id = 0
 rarity = "common"
 weight = 4.0
+strength_required = 95
+armor_rating = 5
+max_hits = 65
 buy_price = 226
 sell_price = 113
 
@@ -76,6 +100,9 @@ base_id = "base_plate_arms"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 80
+armor_rating = 5
+max_hits = 65
 buy_price = 188
 sell_price = 94
 
@@ -85,6 +112,9 @@ base_id = "base_plate_leggings"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 90
+armor_rating = 5
+max_hits = 65
 buy_price = 211
 sell_price = 105
 
@@ -94,6 +124,9 @@ base_id = "base_plate_gorget"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 45
+armor_rating = 5
+max_hits = 65
 buy_price = 104
 sell_price = 52
 
@@ -103,6 +136,9 @@ base_id = "base_plate_gloves"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 70
+armor_rating = 5
+max_hits = 65
 buy_price = 155
 sell_price = 72
 
@@ -112,6 +148,9 @@ base_id = "base_plate_chest"
 item_id = 0
 rarity = "common"
 weight = 10.0
+strength_required = 95
+armor_rating = 5
+max_hits = 65
 buy_price = 243
 sell_price = 121
 
@@ -121,6 +160,9 @@ base_id = "base_leather_sleeves"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 80
 sell_price = 40
 
@@ -130,6 +172,9 @@ base_id = "base_leather_gloves"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 60
 sell_price = 30
 
@@ -139,6 +184,9 @@ base_id = "base_leather_gorget"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 74
 sell_price = 37
 
@@ -148,6 +196,9 @@ base_id = "base_leather_cap"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 10
 sell_price = 5
 
@@ -158,6 +209,9 @@ item_id = 0
 rarity = "common"
 weight = 4.0
 layer = "pants"
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 80
 sell_price = 40
 
@@ -167,6 +221,9 @@ base_id = "base_leather_tunic"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 25
+armor_rating = 2
+max_hits = 40
 buy_price = 101
 sell_price = 52
 
@@ -176,6 +233,9 @@ base_id = "base_leather_shorts"
 item_id = 0
 rarity = "common"
 weight = 3.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 86
 sell_price = 11
 
@@ -185,6 +245,9 @@ base_id = "base_leather_armor"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 25
+armor_rating = 2
+max_hits = 40
 buy_price = 36
 sell_price = 18
 
@@ -194,6 +257,9 @@ base_id = "base_leather_skirt"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 87
 sell_price = 11
 
@@ -203,6 +269,9 @@ base_id = "base_leather_bustier"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 97
 sell_price = 11
 
@@ -212,6 +281,9 @@ base_id = "base_studded_sleeves"
 item_id = 0
 rarity = "common"
 weight = 4.0
+strength_required = 25
+armor_rating = 2
+max_hits = 45
 buy_price = 87
 sell_price = 43
 
@@ -221,6 +293,9 @@ base_id = "base_studded_gloves"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 25
+armor_rating = 2
+max_hits = 45
 buy_price = 79
 sell_price = 39
 
@@ -230,6 +305,9 @@ base_id = "base_studded_gorget"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 25
+armor_rating = 2
+max_hits = 45
 buy_price = 73
 sell_price = 36
 
@@ -239,6 +317,9 @@ base_id = "base_studded_leggings"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 30
+armor_rating = 2
+max_hits = 45
 buy_price = 103
 sell_price = 71
 
@@ -248,6 +329,9 @@ base_id = "base_studded_tunic"
 item_id = 0
 rarity = "common"
 weight = 8.0
+strength_required = 35
+armor_rating = 2
+max_hits = 45
 buy_price = 128
 sell_price = 64
 
@@ -257,6 +341,9 @@ base_id = "base_studded_armor"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 35
+armor_rating = 2
+max_hits = 45
 buy_price = 50
 sell_price = 25
 
@@ -266,6 +353,9 @@ base_id = "base_studded_bustier"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 35
+armor_rating = 2
+max_hits = 45
 buy_price = 54
 sell_price = 27
 
@@ -275,6 +365,9 @@ base_id = "base_bone_arms"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 55
+armor_rating = 3
+max_hits = 30
 buy_price = 145
 sell_price = 72
 
@@ -284,6 +377,9 @@ base_id = "base_bone_armor"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 60
+armor_rating = 3
+max_hits = 30
 buy_price = 171
 sell_price = 80
 
@@ -294,6 +390,9 @@ item_id = 0
 name = "bone gloves"
 rarity = "common"
 weight = 2.0
+strength_required = 55
+armor_rating = 3
+max_hits = 30
 buy_price = 127
 sell_price = 55
 
@@ -304,6 +403,9 @@ item_id = 0
 name = "bone helmet"
 rarity = "common"
 weight = 3.0
+strength_required = 20
+armor_rating = 3
+max_hits = 30
 buy_price = 21
 sell_price = 10
 
@@ -313,6 +415,9 @@ base_id = "base_bone_legs"
 item_id = 0
 rarity = "common"
 weight = 3.0
+strength_required = 55
+armor_rating = 3
+max_hits = 30
 buy_price = 163
 sell_price = 72
 
@@ -322,6 +427,9 @@ base_id = "base_orc_helm"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 30
+armor_rating = 3
+max_hits = 50
 buy_price = 14
 sell_price = 6
 
@@ -332,6 +440,9 @@ item_id = 0
 name = "close helmet"
 rarity = "common"
 weight = 5.0
+strength_required = 55
+armor_rating = 3
+max_hits = 60
 buy_price = 18
 sell_price = 9
 
@@ -341,6 +452,9 @@ base_id = "base_helmet"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 45
+armor_rating = 2
+max_hits = 60
 buy_price = 31
 sell_price = 9
 
@@ -350,6 +464,9 @@ base_id = "base_bascinet"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 40
+armor_rating = 7
+max_hits = 50
 buy_price = 18
 sell_price = 9
 
@@ -359,6 +476,9 @@ base_id = "base_norse_helm"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 55
+armor_rating = 4
+max_hits = 60
 buy_price = 18
 sell_price = 9
 
@@ -368,6 +488,9 @@ base_id = "base_plate_helm"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 80
+armor_rating = 5
+max_hits = 65
 buy_price = 21
 sell_price = 10
 
@@ -377,6 +500,9 @@ base_id = "base_heavy_platemail_jingasa"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 55
+armor_rating = 7
+max_hits = 70
 buy_price = 76
 sell_price = 38
 
@@ -386,6 +512,9 @@ base_id = "base_decorative_platemail_kabuto"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 70
+armor_rating = 6
+max_hits = 75
 buy_price = 95
 sell_price = 47
 
@@ -395,6 +524,9 @@ base_id = "base_platemail_do"
 item_id = 0
 rarity = "common"
 weight = 10.0
+strength_required = 85
+armor_rating = 5
+max_hits = 70
 buy_price = 310
 sell_price = 155
 
@@ -404,6 +536,9 @@ base_id = "base_platemail_hiro_sode"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 75
+armor_rating = 5
+max_hits = 75
 buy_price = 222
 sell_price = 111
 
@@ -413,6 +548,9 @@ base_id = "base_light_platemail_jingasa"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 55
+armor_rating = 7
+max_hits = 60
 buy_price = 36
 sell_price = 16
 
@@ -422,6 +560,9 @@ base_id = "base_small_platemail_jingasa"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 55
+armor_rating = 7
+max_hits = 60
 buy_price = 36
 sell_price = 16
 
@@ -431,6 +572,9 @@ base_id = "base_platemail_battle_kabuto"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 70
+armor_rating = 6
+max_hits = 65
 buy_price = 31
 sell_price = 14
 
@@ -440,6 +584,9 @@ base_id = "base_platemail_suneate"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 80
+armor_rating = 5
+max_hits = 65
 buy_price = 224
 sell_price = 112
 
@@ -449,6 +596,9 @@ base_id = "base_platemail_kabuto"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 70
+armor_rating = 6
+max_hits = 65
 buy_price = 31
 sell_price = 14
 
@@ -458,6 +608,9 @@ base_id = "base_kabuto"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 80
+armor_rating = 5
+max_hits = 48
 buy_price = 26
 sell_price = 11
 
@@ -467,6 +620,9 @@ base_id = "base_platemail_haidate"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 80
+armor_rating = 5
+max_hits = 65
 buy_price = 235
 sell_price = 117
 
@@ -476,6 +632,9 @@ base_id = "base_chainmail_hatsuburi"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 50
+armor_rating = 5
+max_hits = 75
 buy_price = 76
 sell_price = 38
 
@@ -485,6 +644,9 @@ base_id = "base_platemail_hatsuburi"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 65
+armor_rating = 5
+max_hits = 75
 buy_price = 76
 sell_price = 38
 
@@ -494,6 +656,9 @@ base_id = "base_platemail_mempo"
 item_id = 0
 rarity = "common"
 weight = 3.0
+strength_required = 50
+armor_rating = 5
+max_hits = 70
 buy_price = 154
 sell_price = 76
 
@@ -503,6 +668,9 @@ base_id = "base_leather_ninja_hood"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 10
+armor_rating = 2
+max_hits = 45
 buy_price = 10
 sell_price = 4
 
@@ -512,6 +680,7 @@ base_id = "base_leather_ninja_belt"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 10
 buy_price = 5
 sell_price = 2
 
@@ -521,6 +690,9 @@ base_id = "base_leather_ninja_pants"
 item_id = 0
 rarity = "common"
 weight = 3.0
+strength_required = 10
+armor_rating = 2
+max_hits = 50
 buy_price = 49
 sell_price = 25
 
@@ -530,6 +702,9 @@ base_id = "base_leather_ninja_mitts"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 10
+armor_rating = 2
+max_hits = 25
 buy_price = 68
 sell_price = 29
 
@@ -539,6 +714,9 @@ base_id = "base_leather_ninja_jacket"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 10
+armor_rating = 2
+max_hits = 40
 buy_price = 51
 sell_price = 26
 
@@ -548,6 +726,9 @@ base_id = "base_leather_jingasa"
 item_id = 0
 rarity = "common"
 weight = 3.0
+strength_required = 25
+armor_rating = 3
+max_hits = 30
 buy_price = 11
 sell_price = 5
 
@@ -557,6 +738,9 @@ base_id = "base_leather_mempo"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 30
+armor_rating = 2
+max_hits = 40
 buy_price = 59
 sell_price = 29
 
@@ -566,6 +750,9 @@ base_id = "base_leather_do"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 40
+armor_rating = 2
+max_hits = 45
 buy_price = 87
 sell_price = 42
 
@@ -575,6 +762,9 @@ base_id = "base_leather_hiro_sode"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 25
+armor_rating = 2
+max_hits = 50
 buy_price = 49
 sell_price = 23
 
@@ -584,6 +774,9 @@ base_id = "base_leather_suneate"
 item_id = 0
 rarity = "common"
 weight = 4.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 55
 sell_price = 26
 
@@ -593,6 +786,9 @@ base_id = "base_leather_haidate"
 item_id = 0
 rarity = "common"
 weight = 4.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 54
 sell_price = 28
 
@@ -602,6 +798,9 @@ base_id = "base_studded_do"
 item_id = 0
 rarity = "common"
 weight = 8.0
+strength_required = 55
+armor_rating = 2
+max_hits = 50
 buy_price = 130
 sell_price = 68
 
@@ -611,6 +810,9 @@ base_id = "base_studded_hiro_sode"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 30
+armor_rating = 2
+max_hits = 55
 buy_price = 73
 sell_price = 32
 
@@ -620,6 +822,9 @@ base_id = "base_studded_suneate"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 30
+armor_rating = 2
+max_hits = 50
 buy_price = 78
 sell_price = 40
 
@@ -629,6 +834,9 @@ base_id = "base_studded_haidate"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 30
+armor_rating = 2
+max_hits = 45
 buy_price = 76
 sell_price = 37
 
@@ -638,6 +846,9 @@ base_id = "base_studded_mempo"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 30
+armor_rating = 2
+max_hits = 40
 buy_price = 61
 sell_price = 28
 
@@ -647,6 +858,9 @@ base_id = "base_leaf_arms"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 15
+armor_rating = 2
+max_hits = 40
 buy_price = 77
 sell_price = 38
 
@@ -656,6 +870,9 @@ base_id = "base_leaf_tunic"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 65
 sell_price = 40
 
@@ -665,6 +882,9 @@ base_id = "base_leaf_armor"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 65
 sell_price = 40
 
@@ -674,6 +894,9 @@ base_id = "base_leaf_gloves"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 10
+armor_rating = 2
+max_hits = 40
 buy_price = 68
 sell_price = 29
 
@@ -683,6 +906,9 @@ base_id = "base_leaf_gorget"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 10
+armor_rating = 2
+max_hits = 40
 buy_price = 59
 sell_price = 29
 
@@ -692,6 +918,9 @@ base_id = "base_leaf_leggings"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 20
+armor_rating = 2
+max_hits = 40
 buy_price = 81
 sell_price = 36
 
@@ -701,6 +930,9 @@ base_id = "base_leaf_tonlet"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 10
+armor_rating = 2
+max_hits = 48
 buy_price = 81
 sell_price = 36
 
@@ -710,6 +942,9 @@ base_id = "base_hide_pauldrons"
 item_id = 0
 rarity = "common"
 weight = 4.0
+strength_required = 20
+armor_rating = 3
+max_hits = 45
 buy_price = 116
 sell_price = 58
 
@@ -719,6 +954,9 @@ base_id = "base_hide_tunic"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 25
+armor_rating = 3
+max_hits = 45
 buy_price = 125
 sell_price = 59
 
@@ -728,6 +966,9 @@ base_id = "base_hide_armor"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 25
+armor_rating = 3
+max_hits = 45
 buy_price = 125
 sell_price = 59
 
@@ -737,6 +978,9 @@ base_id = "base_hide_gloves"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 15
+armor_rating = 3
+max_hits = 45
 buy_price = 102
 sell_price = 44
 
@@ -746,6 +990,9 @@ base_id = "base_hide_pants"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 25
+armor_rating = 3
+max_hits = 45
 buy_price = 119
 sell_price = 53
 
@@ -755,6 +1002,9 @@ base_id = "base_hide_gorget"
 item_id = 0
 rarity = "common"
 weight = 3.0
+strength_required = 15
+armor_rating = 3
+max_hits = 45
 buy_price = 91
 sell_price = 45
 
@@ -764,6 +1014,9 @@ base_id = "base_dragon_sleeves"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 75
+armor_rating = 3
+max_hits = 75
 buy_price = 106
 sell_price = 53
 
@@ -773,6 +1026,9 @@ base_id = "base_dragon_breastplate"
 item_id = 0
 rarity = "common"
 weight = 10.0
+strength_required = 75
+armor_rating = 3
+max_hits = 75
 buy_price = 125
 sell_price = 59
 
@@ -782,6 +1038,9 @@ base_id = "base_dragon_gloves"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 75
+armor_rating = 3
+max_hits = 75
 buy_price = 93
 sell_price = 40
 
@@ -791,6 +1050,9 @@ base_id = "base_dragon_helm"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 75
+armor_rating = 3
+max_hits = 75
 buy_price = 16
 sell_price = 7
 
@@ -800,6 +1062,9 @@ base_id = "base_dragon_leggings"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 75
+armor_rating = 3
+max_hits = 75
 buy_price = 119
 sell_price = 53
 
@@ -809,6 +1074,9 @@ base_id = "base_woodland_arms"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 80
+armor_rating = 5
+max_hits = 65
 buy_price = 193
 sell_price = 96
 
@@ -818,6 +1086,9 @@ base_id = "base_woodland_chest"
 item_id = 0
 rarity = "common"
 weight = 8.0
+strength_required = 95
+armor_rating = 5
+max_hits = 65
 buy_price = 228
 sell_price = 107
 
@@ -827,6 +1098,9 @@ base_id = "base_woodland_armor"
 item_id = 0
 rarity = "common"
 weight = 8.0
+strength_required = 95
+armor_rating = 5
+max_hits = 65
 buy_price = 228
 sell_price = 107
 
@@ -836,6 +1110,9 @@ base_id = "base_woodland_gauntlets"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 70
+armor_rating = 5
+max_hits = 65
 buy_price = 170
 sell_price = 73
 
@@ -845,6 +1122,9 @@ base_id = "base_woodland_leggings"
 item_id = 0
 rarity = "common"
 weight = 8.0
+strength_required = 90
+armor_rating = 5
+max_hits = 65
 buy_price = 217
 sell_price = 96
 
@@ -854,6 +1134,9 @@ base_id = "base_woodland_gorget"
 item_id = 0
 rarity = "common"
 weight = 3.0
+strength_required = 45
+armor_rating = 5
+max_hits = 65
 buy_price = 157
 sell_price = 78
 
@@ -863,6 +1146,9 @@ base_id = "base_circlet"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 10
+armor_rating = 1
+max_hits = 65
 buy_price = 5
 sell_price = 2
 
@@ -872,6 +1158,9 @@ base_id = "base_royal_circlet"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 10
+armor_rating = 1
+max_hits = 35
 buy_price = 5
 sell_price = 2
 
@@ -881,6 +1170,9 @@ base_id = "base_gemmed_circlet"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 10
+armor_rating = 1
+max_hits = 35
 buy_price = 5
 sell_price = 2
 
@@ -890,6 +1182,9 @@ base_id = "base_raven_helm"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 25
+armor_rating = 5
+max_hits = 65
 buy_price = 26
 sell_price = 11
 
@@ -899,6 +1194,9 @@ base_id = "base_vulture_helm"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 25
+armor_rating = 5
+max_hits = 65
 buy_price = 26
 sell_price = 11
 
@@ -908,6 +1206,9 @@ base_id = "base_winged_helm"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 25
+armor_rating = 5
+max_hits = 55
 buy_price = 26
 sell_price = 11
 
@@ -917,6 +1218,9 @@ base_id = "base_elven_glasses"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 45
+armor_rating = 2
+max_hits = 48
 buy_price = 10
 sell_price = 4
 
@@ -926,6 +1230,9 @@ base_id = "base_gargish_cloth_arms"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 20
+armor_rating = 5
+max_hits = 50
 buy_price = 61
 sell_price = 30
 
@@ -935,6 +1242,9 @@ base_id = "base_female_gargish_cloth_arms"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 20
+armor_rating = 5
+max_hits = 50
 buy_price = 62
 sell_price = 30
 
@@ -944,6 +1254,9 @@ base_id = "base_gargish_cloth_chest"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 25
+armor_rating = 5
+max_hits = 50
 buy_price = 78
 sell_price = 42
 
@@ -953,6 +1266,9 @@ base_id = "base_female_gargish_cloth_chest"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 25
+armor_rating = 5
+max_hits = 50
 buy_price = 83
 sell_price = 40
 
@@ -962,6 +1278,9 @@ base_id = "base_gargish_cloth_leggings"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 20
+armor_rating = 5
+max_hits = 50
 buy_price = 66
 sell_price = 32
 
@@ -971,6 +1290,9 @@ base_id = "base_female_gargish_cloth_leggings"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 20
+armor_rating = 5
+max_hits = 50
 buy_price = 71
 sell_price = 30
 
@@ -980,6 +1302,9 @@ base_id = "base_gargish_cloth_kilt"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 20
+armor_rating = 5
+max_hits = 50
 buy_price = 56
 sell_price = 32
 
@@ -989,6 +1314,9 @@ base_id = "base_female_gargish_cloth_kilt"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 20
+armor_rating = 5
+max_hits = 50
 buy_price = 57
 sell_price = 30
 
@@ -998,6 +1326,7 @@ base_id = "base_gargish_cloth_wing_armor"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 10
 
 [[item]]
 id = "0x0302_tol"
@@ -1005,6 +1334,9 @@ base_id = "base_gargish_leather_arms"
 item_id = 0
 rarity = "common"
 weight = 4.0
+strength_required = 25
+armor_rating = 5
+max_hits = 50
 buy_price = 80
 sell_price = 41
 
@@ -1014,6 +1346,9 @@ base_id = "base_gargish_leather_arms"
 item_id = 0
 rarity = "common"
 weight = 4.0
+strength_required = 25
+armor_rating = 5
+max_hits = 50
 buy_price = 73
 sell_price = 42
 
@@ -1023,6 +1358,9 @@ base_id = "base_gargish_leather_chest"
 item_id = 0
 rarity = "common"
 weight = 8.0
+strength_required = 25
+armor_rating = 5
+max_hits = 50
 buy_price = 77
 sell_price = 44
 
@@ -1032,6 +1370,9 @@ base_id = "base_female_gargish_leather_chest"
 item_id = 0
 rarity = "common"
 weight = 8.0
+strength_required = 25
+armor_rating = 5
+max_hits = 50
 buy_price = 77
 sell_price = 44
 
@@ -1041,6 +1382,9 @@ base_id = "base_gargish_leather_leggings"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 20
+armor_rating = 5
+max_hits = 50
 buy_price = 67
 sell_price = 34
 
@@ -1050,6 +1394,9 @@ base_id = "base_female_gargish_leather_leggings"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 20
+armor_rating = 5
+max_hits = 50
 buy_price = 67
 sell_price = 34
 
@@ -1059,6 +1406,9 @@ base_id = "base_gargish_leather_kilt"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 25
+armor_rating = 5
+max_hits = 50
 buy_price = 85
 sell_price = 48
 
@@ -1068,6 +1418,9 @@ base_id = "base_female_gargish_leather_kilt"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 25
+armor_rating = 5
+max_hits = 50
 buy_price = 92
 sell_price = 46
 
@@ -1077,6 +1430,7 @@ base_id = "base_gargish_leather_wing_armor"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 10
 
 [[item]]
 id = "0x0308_tol"
@@ -1084,6 +1438,9 @@ base_id = "base_gargish_plate_arms"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 80
+armor_rating = 8
+max_hits = 65
 buy_price = 328
 sell_price = 164
 
@@ -1093,6 +1450,9 @@ base_id = "base_female_gargish_plate_arms"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 80
+armor_rating = 8
+max_hits = 65
 buy_price = 363
 sell_price = 181
 
@@ -1102,6 +1462,9 @@ base_id = "base_gargish_plate_chest"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 95
+armor_rating = 8
+max_hits = 65
 buy_price = 462
 sell_price = 231
 
@@ -1111,6 +1474,9 @@ base_id = "base_female_gargish_plate_chest"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 95
+armor_rating = 8
+max_hits = 65
 buy_price = 481
 sell_price = 67
 
@@ -1120,6 +1486,9 @@ base_id = "base_gargish_plate_leggings"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 90
+armor_rating = 8
+max_hits = 65
 buy_price = 355
 sell_price = 177
 
@@ -1129,6 +1498,9 @@ base_id = "base_female_gargish_plate_leggings"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 90
+armor_rating = 8
+max_hits = 65
 buy_price = 372
 sell_price = 186
 
@@ -1138,6 +1510,9 @@ base_id = "base_gargish_plate_kilt"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 80
+armor_rating = 8
+max_hits = 65
 buy_price = 370
 sell_price = 185
 
@@ -1147,6 +1522,9 @@ base_id = "base_female_gargish_plate_kilt"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 80
+armor_rating = 8
+max_hits = 65
 buy_price = 338
 sell_price = 169
 
@@ -1156,6 +1534,9 @@ base_id = "base_gargish_stone_arms"
 item_id = 0
 rarity = "common"
 weight = 10.0
+strength_required = 40
+armor_rating = 6
+max_hits = 50
 buy_price = 116
 sell_price = 58
 
@@ -1165,6 +1546,9 @@ base_id = "base_female_gargish_stone_arms"
 item_id = 0
 rarity = "common"
 weight = 10.0
+strength_required = 40
+armor_rating = 6
+max_hits = 50
 buy_price = 116
 sell_price = 58
 
@@ -1174,6 +1558,9 @@ base_id = "base_gargish_stone_chest"
 item_id = 0
 rarity = "common"
 weight = 15.0
+strength_required = 40
+armor_rating = 6
+max_hits = 50
 buy_price = 142
 sell_price = 71
 
@@ -1183,6 +1570,9 @@ base_id = "base_female_gargish_stone_chest"
 item_id = 0
 rarity = "common"
 weight = 15.0
+strength_required = 40
+armor_rating = 6
+max_hits = 50
 buy_price = 135
 sell_price = 67
 
@@ -1192,6 +1582,9 @@ base_id = "base_gargish_stone_leggings"
 item_id = 0
 rarity = "common"
 weight = 15.0
+strength_required = 40
+armor_rating = 6
+max_hits = 50
 buy_price = 113
 sell_price = 56
 
@@ -1201,6 +1594,9 @@ base_id = "base_female_gargish_stone_leggings"
 item_id = 0
 rarity = "common"
 weight = 15.0
+strength_required = 40
+armor_rating = 6
+max_hits = 50
 buy_price = 116
 sell_price = 58
 
@@ -1210,6 +1606,9 @@ base_id = "base_gargish_stone_kilt"
 item_id = 0
 rarity = "common"
 weight = 10.0
+strength_required = 40
+armor_rating = 6
+max_hits = 50
 buy_price = 132
 sell_price = 66
 
@@ -1219,6 +1618,9 @@ base_id = "base_female_gargish_stone_kilt"
 item_id = 0
 rarity = "common"
 weight = 10.0
+strength_required = 40
+armor_rating = 6
+max_hits = 50
 buy_price = 135
 sell_price = 67
 
@@ -1228,6 +1630,9 @@ base_id = "base_dragon_turtle_hide_arms"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 30
+armor_rating = 4
+max_hits = 45
 buy_price = 145
 sell_price = 72
 
@@ -1237,6 +1642,9 @@ base_id = "base_dragon_turtle_hide_chest"
 item_id = 0
 rarity = "common"
 weight = 8.0
+strength_required = 30
+armor_rating = 4
+max_hits = 45
 buy_price = 171
 sell_price = 80
 
@@ -1246,6 +1654,9 @@ base_id = "base_dragon_turtle_hide_bustier"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 30
+armor_rating = 4
+max_hits = 45
 buy_price = 171
 sell_price = 80
 
@@ -1255,6 +1666,9 @@ base_id = "base_dragon_turtle_hide_helm"
 item_id = 0
 rarity = "common"
 weight = 4.0
+strength_required = 30
+armor_rating = 4
+max_hits = 35
 buy_price = 21
 sell_price = 10
 
@@ -1264,6 +1678,9 @@ base_id = "base_dragon_turtle_hide_leggings"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 30
+armor_rating = 4
+max_hits = 45
 buy_price = 163
 sell_price = 72
 
@@ -1273,6 +1690,9 @@ base_id = "base_tiger_pelt_chest"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 30
+armor_rating = 3
+max_hits = 40
 buy_price = 125
 sell_price = 59
 
@@ -1282,6 +1702,9 @@ base_id = "base_tiger_pelt_bustier"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 25
+armor_rating = 3
+max_hits = 40
 buy_price = 125
 sell_price = 59
 
@@ -1291,6 +1714,9 @@ base_id = "base_tiger_pelt_helm"
 item_id = 0
 rarity = "common"
 weight = 4.0
+strength_required = 30
+armor_rating = 4
+max_hits = 40
 buy_price = 16
 sell_price = 7
 
@@ -1300,6 +1726,9 @@ base_id = "base_tiger_pelt_leggings"
 item_id = 0
 rarity = "common"
 weight = 4.0
+strength_required = 30
+armor_rating = 3
+max_hits = 40
 buy_price = 119
 sell_price = 53
 
@@ -1309,6 +1738,9 @@ base_id = "base_tiger_pelt_shorts"
 item_id = 0
 rarity = "common"
 weight = 3.0
+strength_required = 25
+armor_rating = 3
+max_hits = 40
 buy_price = 119
 sell_price = 53
 
@@ -1318,6 +1750,9 @@ base_id = "base_tiger_pelt_long_skirt"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 25
+armor_rating = 3
+max_hits = 40
 buy_price = 119
 sell_price = 53
 
@@ -1327,6 +1762,9 @@ base_id = "base_tiger_pelt_skirt"
 item_id = 0
 rarity = "common"
 weight = 1.0
+strength_required = 25
+armor_rating = 3
+max_hits = 40
 buy_price = 119
 sell_price = 53
 
@@ -1336,6 +1774,9 @@ base_id = "base_tiger_pelt_collar"
 item_id = 0
 rarity = "common"
 weight = 2.0
+strength_required = 30
+armor_rating = 3
+max_hits = 40
 buy_price = 87
 sell_price = 43
 
@@ -1345,6 +1786,8 @@ base_id = "base_bronze_shield"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 35
+max_hits = 30
 buy_price = 66
 sell_price = 33
 
@@ -1354,6 +1797,8 @@ base_id = "base_buckler"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 20
+max_hits = 50
 buy_price = 50
 sell_price = 24
 
@@ -1363,6 +1808,8 @@ base_id = "base_metal_kite_shield"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 45
+max_hits = 60
 buy_price = 123
 sell_price = 62
 
@@ -1372,6 +1819,8 @@ base_id = "base_heater_shield"
 item_id = 0
 rarity = "common"
 weight = 8.0
+strength_required = 90
+max_hits = 65
 buy_price = 231
 sell_price = 115
 
@@ -1381,6 +1830,8 @@ base_id = "base_metal_shield"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 45
+max_hits = 65
 buy_price = 121
 sell_price = 60
 
@@ -1390,6 +1841,8 @@ base_id = "base_wooden_kite_shield"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 20
+max_hits = 65
 buy_price = 70
 sell_price = 35
 
@@ -1399,6 +1852,8 @@ base_id = "base_wooden_shield"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 20
+max_hits = 25
 buy_price = 30
 sell_price = 15
 
@@ -1408,6 +1863,9 @@ base_id = "base_order_shield"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 95
+armor_rating = 1
+max_hits = 125
 buy_price = 181
 sell_price = 90
 
@@ -1417,6 +1875,9 @@ base_id = "base_chaos_shield"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 95
+armor_rating = 1
+max_hits = 125
 buy_price = 193
 sell_price = 96
 
@@ -1426,6 +1887,9 @@ base_id = "base_gargish_chaos_shield"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 95
+armor_rating = 1
+max_hits = 125
 buy_price = 193
 sell_price = 96
 
@@ -1435,6 +1899,8 @@ base_id = "base_gargish_kite_shield"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 45
+max_hits = 60
 buy_price = 109
 sell_price = 54
 
@@ -1444,6 +1910,9 @@ base_id = "base_gargish_order_shield"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 95
+armor_rating = 1
+max_hits = 125
 buy_price = 181
 sell_price = 90
 
@@ -1453,6 +1922,8 @@ base_id = "base_large_plate_shield"
 item_id = 0
 rarity = "common"
 weight = 8.0
+strength_required = 90
+max_hits = 65
 buy_price = 193
 sell_price = 96
 
@@ -1462,6 +1933,8 @@ base_id = "base_large_stone_shield"
 item_id = 0
 rarity = "common"
 weight = 7.0
+strength_required = 20
+max_hits = 65
 buy_price = 54
 sell_price = 27
 
@@ -1471,6 +1944,8 @@ base_id = "base_medium_plate_shield"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 45
+max_hits = 65
 buy_price = 109
 sell_price = 54
 
@@ -1480,6 +1955,8 @@ base_id = "base_small_plate_shield"
 item_id = 0
 rarity = "common"
 weight = 6.0
+strength_required = 20
+max_hits = 30
 buy_price = 54
 sell_price = 27
 
@@ -1489,5 +1966,7 @@ base_id = "base_gargish_wooden_shield"
 item_id = 0
 rarity = "common"
 weight = 5.0
+strength_required = 20
+max_hits = 25
 buy_price = 30
 sell_price = 15

@@ -25,6 +25,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "bow"
 decays = true
 
 [[item]]
@@ -38,3 +39,4 @@ id = "0x27f5"
 base_id = "0x27aa_lbr"
 item_id = 10229
 rarity = "common"
+weapon_type = "bow"

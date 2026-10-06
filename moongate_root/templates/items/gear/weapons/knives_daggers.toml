@@ -6,6 +6,7 @@ name = "cleaver"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -19,6 +20,7 @@ id = "0x0ec3"
 base_id = "0x0ec2_lbr"
 item_id = 3779
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "base_skinning_knife"
@@ -28,6 +30,7 @@ name = "skinning knife"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "sword"
 decays = true
 
 [[item]]
@@ -41,6 +44,7 @@ id = "0x0ec5"
 base_id = "0x0ec4_lbr"
 item_id = 3781
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "base_dagger"
@@ -50,6 +54,7 @@ name = "dagger"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -63,6 +68,7 @@ id = "0x0f52"
 base_id = "0x0f51_lbr"
 item_id = 3922
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_butcher_knife"
@@ -72,6 +78,7 @@ name = "butcher knife"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "sword"
 decays = true
 
 [[item]]
@@ -85,6 +92,7 @@ id = "0x13f7"
 base_id = "0x13f6_lbr"
 item_id = 5111
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "base_leafblade"
@@ -94,6 +102,7 @@ name = "leafblade"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -107,6 +116,7 @@ id = "0x2d2e"
 base_id = "0x2d22_lbr"
 item_id = 11566
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_assassin_spike"
@@ -116,6 +126,7 @@ name = "assassin spike"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -129,6 +140,7 @@ id = "0x2d2d"
 base_id = "0x2d21_lbr"
 item_id = 11565
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_gargish_dagger"
@@ -138,6 +150,7 @@ name = "gargish dagger"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -151,3 +164,4 @@ id = "0x406a"
 base_id = "0x0902_lbr"
 item_id = 16490
 rarity = "common"
+weapon_type = "fencing"

@@ -5,6 +5,7 @@ item_id = 3570
 name = "wand"
 rarity = "common"
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -18,15 +19,18 @@ id = "0x0df3"
 base_id = "0x0df2_lbr"
 item_id = 3571
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "0x0df4"
 base_id = "0x0df2_lbr"
 item_id = 3572
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "0x0df5"
 base_id = "0x0df2_lbr"
 item_id = 3573
 rarity = "common"
+weapon_type = "mace"

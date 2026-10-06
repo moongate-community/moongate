@@ -95,13 +95,13 @@ written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has to
 | 1.3 | ❌ | **Timed effects**: one mechanism for poison, curses, blessings, polymorph, hiding; the buff bar shows them | Magic, potions and combat all need it | |
 | 1.4 | ✅ | **Containers on the ground**, with item and weight limits; weight and overloading: a container on the ground opens, items go in and out of it, 125 at most and up to its limit of stones; a player carries 40 stones and 3.5 a point of strength, and moving overloaded or running costs stamina | Corpses, vendors, chests and houses need them | |
 | 1.5 | 🟡 | **Context menus and old-style menus**. Done: the text prompt (`prompt.ask`) | Vendors, pets, crafting and guilds open through them | |
-| 1.6 | ❌ | **Item combat fields** in the templates and the converter: damage, speed, armour, hit points, strength requirement | Combat reads them; the converter drops them today | UOX3 `items/gear/` |
+| 1.6 | ✅ | **Item combat fields** in the templates and the converter: damage, speed, armour, hit points, strength requirement | Combat reads them; the converter reads them from UOX3 now | UOX3 `items/gear/` |
 
 ## Phase 2: combat
 
 | Step | State | What | Why it comes here |
 | --- | --- | --- | --- |
-| 2.1 | 🟡 | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability. Done: a [fight](combat.md) with fists, the swing timer, the hit by Wrestling, the damage and the armor of an NPC. Left: weapons and armor of items, parry, archery, durability | The core loop of the game |
+| 2.1 | 🟡 | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability. Done: a [fight](combat.md) with fists or a weapon, the swing timer, the hit by skill, the damage and the armor of an NPC or of what a player wears. Left: parry, archery, durability | The core loop of the game |
 | 2.2 | ❌ | **Aggressor lists** | Notoriety, guards and loot rights rest on them |
 | 2.3 | 🟡 | **Death, corpse, ghost, resurrection**; healer NPCs and shrines. Done: an NPC dies by `.kill` or `mobile.kill` and leaves its [corpse](death.md) with what it carried. Left: player death, ghosts, resurrection | Gives combat a result |
 | 2.4 | ❌ | **Bandages and healing** | Needed as soon as damage exists |

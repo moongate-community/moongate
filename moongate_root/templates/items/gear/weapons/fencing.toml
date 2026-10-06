@@ -7,6 +7,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -20,6 +21,7 @@ id = "0x0f63"
 base_id = "0x0f62_lbr"
 item_id = 3939
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "tribalspear"
@@ -27,6 +29,8 @@ base_id = "tribalspear_lbr"
 item_id = 0
 name = "tribal spear"
 rarity = "common"
+damage_min = 4
+damage_max = 40
 hue = 837
 
 [[item]]
@@ -37,6 +41,7 @@ name = "kryss"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -50,6 +55,7 @@ id = "0x1401"
 base_id = "0x1400_lbr"
 item_id = 5121
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_short_spear"
@@ -60,6 +66,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -73,6 +80,7 @@ id = "0x1403"
 base_id = "0x1402_lbr"
 item_id = 5123
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_war_fork"
@@ -82,6 +90,7 @@ name = "war fork"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -95,6 +104,7 @@ id = "0x1405"
 base_id = "0x1404_lbr"
 item_id = 5125
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_pitchfork"
@@ -105,6 +115,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -118,6 +129,7 @@ id = "0x0e88"
 base_id = "0x0e87_lbr"
 item_id = 3720
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_pike"
@@ -128,6 +140,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -141,6 +154,7 @@ id = "0x26c8"
 base_id = "0x26be_lbr"
 item_id = 9928
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_lance"
@@ -150,6 +164,7 @@ name = "lance"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -163,6 +178,7 @@ id = "0x26ca"
 base_id = "0x26c0_lbr"
 item_id = 9930
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_lajatang"
@@ -173,6 +189,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -186,6 +203,7 @@ id = "0x27f2"
 base_id = "0x27a7_lbr"
 item_id = 10226
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_tekagi"
@@ -196,6 +214,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -209,6 +228,7 @@ id = "0x27f6"
 base_id = "0x27ab_lbr"
 item_id = 10230
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_kama"
@@ -219,6 +239,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -232,6 +253,7 @@ id = "0x27f8"
 base_id = "0x27ad_lbr"
 item_id = 10232
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_sai"
@@ -242,6 +264,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -255,6 +278,7 @@ id = "0x27fa"
 base_id = "0x27af_lbr"
 item_id = 10234
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_war_cleaver"
@@ -265,6 +289,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -278,6 +303,7 @@ id = "0x2d2f"
 base_id = "0x2d23_lbr"
 item_id = 11567
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_elven_spellblade"
@@ -288,6 +314,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -301,6 +328,7 @@ id = "0x2d2c"
 base_id = "0x2d20_lbr"
 item_id = 11564
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_gargish_war_fork"
@@ -332,6 +360,7 @@ name = "shortblade"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "sword"
 decays = true
 
 [[item]]
@@ -345,6 +374,7 @@ id = "0x4076"
 base_id = "0x0907_lbr"
 item_id = 16502
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "base_bloodblade"
@@ -354,6 +384,7 @@ name = "bloodblade"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -367,6 +398,7 @@ id = "0x4072"
 base_id = "0x08fe_lbr"
 item_id = 16498
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_gargish_kryss"
@@ -376,6 +408,7 @@ name = "gargish kryss"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -389,6 +422,7 @@ id = "0x48bd"
 base_id = "0x48bc_lbr"
 item_id = 18621
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_spiked_whip"
@@ -398,6 +432,7 @@ name = "spiked whip"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -411,6 +446,7 @@ id = "0xa292"
 base_id = "0xa28a_lbr"
 item_id = 41618
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_gargish_lance"
@@ -420,6 +456,7 @@ name = "gargish lance"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -433,6 +470,7 @@ id = "0x48cb"
 base_id = "0x48ca_lbr"
 item_id = 18635
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_gargish_pike"
@@ -443,6 +481,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -456,6 +495,7 @@ id = "0x48c9"
 base_id = "0x48c8_lbr"
 item_id = 18633
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_dual_pointed_spear"
@@ -466,6 +506,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -479,6 +520,7 @@ id = "0x406d"
 base_id = "0x0904_lbr"
 item_id = 16493
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_gargish_tekagi"
@@ -489,6 +531,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -502,3 +545,4 @@ id = "0x48cf"
 base_id = "0x48ce_lbr"
 item_id = 18639
 rarity = "common"
+weapon_type = "fencing"
