@@ -13,8 +13,8 @@ namespace Moongate.Server.Ultima.Handlers.General;
 
 /// <summary>
 ///     Dispatches the extended commands (0xBF) by subcommand: 0x10 asks for one object's tooltip, answered with 0xD6
-///     when the character can see it; 0x1A sets the lock of one stat of the character. The others are recognised and
-///     ignored for now.
+///     when the character can see it; 0x1A sets the lock of one stat of the character; 0x13 asks for the context menu
+///     of a mobile or an item and 0x15 chooses an entry of it. The others are recognised and ignored for now.
 /// </summary>
 public sealed class ExtendedCommandPacketHandler : IPacketHandler<ExtendedCommandPacket>
 {
@@ -33,7 +33,6 @@ public sealed class ExtendedCommandPacketHandler : IPacketHandler<ExtendedComman
     private readonly IPacketSendService _sender;
     private readonly IMobileService? _mobiles;
     private readonly IMobileStateService? _state;
-
     private readonly IContextMenuService? _contextMenus;
 
     public ExtendedCommandPacketHandler(

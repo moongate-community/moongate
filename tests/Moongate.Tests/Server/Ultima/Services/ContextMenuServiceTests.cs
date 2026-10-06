@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.ContextMenus;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.ContextMenus;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -30,6 +31,7 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
     private readonly RecordingUseService _use = new();
     private readonly RecordingNpcScriptService _npcScripts = new();
     private readonly RecordingItemScriptService _itemScripts = new();
+    private readonly StubBankService _bank = new();
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
 
     private BroadcastFixture _fixture = null!;
@@ -58,7 +60,7 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
                 new ItemTemplate { Id = "staff_marker", ItemId = new Serial(0x1BC3), Visibility = AccountType.GameMaster }
             )
         );
-        _menus = new(_items, _fixture.Mobiles, templates, _fixture.Sender, _use, new WorldConfig(), _npcScripts, _itemScripts);
+        _menus = new(_items, _fixture.Mobiles, templates, _fixture.Sender, _use, new WorldConfig(), _npcScripts, _itemScripts, _bank);
     }
 
     public async Task DisposeAsync()
@@ -233,6 +235,81 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
         Assert.False(Request(_session, target));
 
         Assert.Empty(_fixture.Sender.Sent.OfType<DisplayContextMenuPacket>());
+    }
+
+    // The dead are answered by nobody: a ghost keeps the paperdolls, and no script offers it anything.
+    [Fact]
+    public void Request_ByAGhost_GetsNoEntryOfAScript()
+    {
+        _npcScripts.Result = ScriptResult.Completed([Entries(Entry("bank", Bank, range: 12))]);
+        _aria.Body = 402;
+
+        Assert.True(Request(_session, Banker));
+
+        Assert.Empty(_npcScripts.Calls);
+        Assert.Equal([(Paperdoll, false)], Assert.Single(_fixture.Sender.Sent.OfType<DisplayContextMenuPacket>()).Entries);
+    }
+
+    // Dead between the menu and the choice: the entry of a script is not run.
+    [Fact]
+    public void Select_AScriptEntry_ByWhoDiedMeanwhile_RunsNothing()
+    {
+        _npcScripts.Result = ScriptResult.Completed([Entries(Entry("bank", Bank, range: 12))]);
+        Assert.True(Request(_session, Banker));
+        _npcScripts.Calls.Clear();
+        _aria.Body = 402;
+
+        Assert.False(Select(_session, Banker, 1));
+
+        Assert.Empty(_npcScripts.Calls);
+    }
+
+    // What lies in a bank that is not open is out of reach, for a menu as for a double click.
+    [Fact]
+    public void Request_OnAnItemInTheClosedBank_SendsNothing_AndInTheOpenOneItDoes()
+    {
+        var box = new ItemEntity { Id = new Serial(0x40000060), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        box.Equip(_aria.Id, LayerType.Bank);
+        var stone = new ItemEntity { Id = new Serial(0x40000061), TemplateId = "stone", ItemId = 0x0ED4, Amount = 1 };
+        stone.PutInContainer(box.Id, new Point2D(10, 10));
+        _items.Add([box, stone]);
+        _itemScripts.Scripted.Add("stone");
+        _itemScripts.Result = ScriptResult.Completed([Entries(Entry("touch", 3006150))]);
+        _bank.Locked.Add(stone.Id);
+
+        Assert.False(Request(_session, stone.Id));
+        Assert.Empty(_itemScripts.Calls);
+
+        _bank.Locked.Clear();
+
+        Assert.True(Request(_session, stone.Id));
+    }
+
+    // Lifted onto a cursor, an item of the ground is not there to click.
+    [Fact]
+    public void Request_OnAnItemLiftedFromTheGround_SendsNothing_AndAChoiceOfItRunsNothing()
+    {
+        var stone = Stone(1601);
+        _itemScripts.Scripted.Add("stone");
+        _itemScripts.Result = ScriptResult.Completed([Entries(Entry("touch", 3006150))]);
+        Assert.True(Request(_session, stone.Id));
+        _items.Hide(stone);
+
+        Assert.False(Select(_session, stone.Id, 0));
+        Assert.False(Request(_session, stone.Id));
+
+        Assert.Empty(_itemScripts.Queued);
+    }
+
+    // A request that offers nothing still takes the place of the menu before it.
+    [Fact]
+    public void Request_ThatOffersNothing_ForgetsTheMenuKept()
+    {
+        Assert.True(Request(_session, Banker));
+        Assert.False(Request(_session, new Serial(0x999)));
+
+        Assert.False(Select(_session, Banker, 0));
+        Assert.Empty(_use.Used);
     }
 
     [Fact]

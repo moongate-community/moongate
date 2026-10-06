@@ -12,8 +12,9 @@ namespace Moongate.Server.Ultima.Packets.ContextMenus;
 ///     and the client answers with the index of the one chosen.
 /// </summary>
 /// <remarks>
-///     ModernUO's <c>SendDisplayContextMenu</c> in the format every client from 6.0.0.0 takes: format 2, the target,
-///     the count, then for each entry its cliloc in four bytes, its index and its flags.
+///     ServUO's <c>DisplayContextMenu</c>, and the second of the two formats of ModernUO's
+///     <c>SendDisplayContextMenu</c>, which every client from 6.0.0.0 takes: format 2, the target, the count, then
+///     for each entry its cliloc in four bytes, its index and its flags.
 /// </remarks>
 [PacketHandler(0xBF, PacketSizing.Variable, MinimumLength = HeaderLength, Description = "Display context menu")]
 public sealed class DisplayContextMenuPacket : BasePacket<DisplayContextMenuPacket>, IOutgoingPacket

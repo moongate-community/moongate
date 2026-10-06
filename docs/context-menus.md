@@ -5,8 +5,8 @@ it. Each entry is a text of the client, so every player reads it in its own lang
 the menu with a few entries of its own and with the ones the [Lua script](scripting.md) of that NPC or
 item adds.
 
-How the menu opens is the client's own: a single click in the Classic Client (with `Shift` when its
-option asks for it), a right click in the Enhanced Client.
+How the menu opens is the client's own choice, a click or a click with a key held, as its options
+say: the server only answers when the client asks.
 
 ## The server's entries
 
@@ -16,6 +16,9 @@ option asks for it), a right click in the Enhanced Client.
 | Yourself, alive, with a backpack | `Open Backpack` | 18 tiles | What a double click on your backpack does |
 
 They come first in the menu, and a script cannot take them out.
+
+A ghost gets these and nothing else: the dead are offered no entry of a script, as nobody answers
+their words.
 
 ## Entries of a script
 
@@ -60,7 +63,7 @@ client cannot choose what it was not offered.
 
 | When | Checked |
 | --- | --- |
-| The client asks | The target exists, on the player's map, within the view range (18 tiles), and the player may see it: no menu for a hidden mobile or a staff-only item, nor for an item another mobile carries. A target with no entry gets no menu |
+| The client asks | The target exists, on the player's map, within the view range (18 tiles), and the player may see and reach it: no menu for a hidden mobile or a staff-only item, for an item another mobile carries, for one in the player's bank while the bank is closed, nor for one lifted onto a cursor. A target with no entry gets no menu |
 | An entry is out of its range, or not enabled | It is shown greyed out |
 | The player chooses | The menu is the last one sent and for that same target; the index is one of its entries; the entry is not greyed out; the player is in its range now; the target is still there to see. The menu is good for one choice |
 

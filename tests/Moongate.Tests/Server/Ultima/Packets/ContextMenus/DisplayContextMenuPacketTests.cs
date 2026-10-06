@@ -6,7 +6,7 @@ namespace Moongate.Tests.Server.Ultima.Packets.ContextMenus;
 
 public sealed class DisplayContextMenuPacketTests
 {
-    // ModernUO's SendDisplayContextMenu in the format of clients 6.0.0.0 and later: sub-command 0x14, format 2, the
+    // ServUO's DisplayContextMenu, the format of clients 6.0.0.0 and later: sub-command 0x14, format 2, the
     // target, the count, then for each entry its cliloc whole, its index and its flags.
     [Fact]
     public void Encode_IsTheMenuOfTheTarget_AnEntryOutOfReachGreyedOut()

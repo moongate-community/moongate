@@ -63,6 +63,7 @@ public sealed class ContextMenuService : IContextMenuService
     private readonly WorldConfig _world;
     private readonly INpcScriptService? _npcScripts;
     private readonly IItemScriptService? _itemScripts;
+    private readonly IBankService? _bank;
 
     public ContextMenuService(
         IItemService items,
@@ -72,9 +73,11 @@ public sealed class ContextMenuService : IContextMenuService
         IUseService use,
         WorldConfig world,
         INpcScriptService? npcScripts = null,
-        IItemScriptService? itemScripts = null
+        IItemScriptService? itemScripts = null,
+        IBankService? bank = null
     )
     {
+        _bank = bank;
         _items = items;
         _mobiles = mobiles;
         _templates = templates;
@@ -101,12 +104,13 @@ public sealed class ContextMenuService : IContextMenuService
         {
             AddServerEntries(player, mobile, entries);
 
-            if (mobile.IsNpc && _npcScripts is not null)
+            // The dead are answered by nobody: a ghost gets the server's entries and none of a script.
+            if (mobile.IsNpc && !player.IsDead && _npcScripts is not null)
             {
                 AddScriptEntries(_npcScripts.Run(mobile, EntriesFunction, (long)player.Id.Value), target, entries);
             }
         }
-        else if (_items.TryGet(target, out var item) && _itemScripts is not null && _itemScripts.HasScript(item))
+        else if (!player.IsDead && _items.TryGet(target, out var item) && _itemScripts is not null && _itemScripts.HasScript(item))
         {
             AddScriptEntries(_itemScripts.Run(item, EntriesFunction, (long)player.Id.Value), target, entries);
         }
@@ -159,6 +163,12 @@ public sealed class ContextMenuService : IContextMenuService
 
         if (entry.ScriptId is { } id)
         {
+            // Dead since the menu was shown.
+            if (player.IsDead)
+            {
+                return false;
+            }
+
             if (_mobiles.TryGet(target, out var npc))
             {
                 _npcScripts?.Queue(npc, SelectFunction, (long)player.Id.Value, id);
@@ -277,8 +287,9 @@ public sealed class ContextMenuService : IContextMenuService
 
             if (_items.GetOwner(item) is { } owner)
             {
-                // What another mobile carries is not this player's to ask about.
-                if (owner != player.Id)
+                // What another mobile carries is not this player's to ask about, nor is what lies in its own bank
+                // while the bank is closed: the reach of a double click.
+                if (owner != player.Id || _bank?.CanAccess(session, player, item) == false)
                 {
                     return false;
                 }
@@ -286,7 +297,7 @@ public sealed class ContextMenuService : IContextMenuService
                 map = player.Map;
                 place = player.Location;
             }
-            else if (_items.GetGroundRoot(item) is { Map: { } itemMap, GroundLocation: { } ground })
+            else if (_items.GetGroundRoot(item) is { Map: { } itemMap, GroundLocation: { } ground } root && _items.IsLyingOnGround(root))
             {
                 map = itemMap;
                 place = ground;
