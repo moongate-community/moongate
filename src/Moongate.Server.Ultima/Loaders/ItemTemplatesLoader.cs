@@ -133,6 +133,13 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         child.Layer ??= parent.Layer;
         child.TwoHandedWeapon ??= parent.TwoHandedWeapon;
         child.Dyeable ??= parent.Dyeable;
+        child.WeaponSkill ??= parent.WeaponSkill;
+        child.DamageMin ??= parent.DamageMin;
+        child.DamageMax ??= parent.DamageMax;
+        child.Speed ??= parent.Speed;
+        child.StrengthRequired ??= parent.StrengthRequired;
+        child.ArmorRating ??= parent.ArmorRating;
+        child.MaxHits ??= parent.MaxHits;
         child.BuyPrice ??= parent.BuyPrice;
         child.SellPrice ??= parent.SellPrice;
         child.Decays ??= parent.Decays;

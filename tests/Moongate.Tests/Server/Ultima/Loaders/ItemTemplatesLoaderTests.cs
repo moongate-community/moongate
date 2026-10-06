@@ -76,6 +76,54 @@ public sealed class ItemTemplatesLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_TheCombatFields_AreReadAndInherited_AndATemplateKeepsItsOwn()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/items/swords.toml",
+            "[[item]]\nid = \"base_longsword\"\nitem_id = 0x0F60\nlayer = \"one_handed\"\nweapon_skill = \"swordsmanship\"\n\n" +
+            "[[item]]\nid = \"longsword\"\nbase_id = \"base_longsword\"\nitem_id = 0x0F60\ndamage_min = 5\ndamage_max = 33\n" +
+            "speed = 35\nstrength_required = 25\nmax_hits = 90\n\n" +
+            "[[item]]\nid = \"fast_longsword\"\nbase_id = \"longsword\"\nitem_id = 0x0F60\nspeed = 50\n\n" +
+            "[[item]]\nid = \"ringmail_tunic\"\nitem_id = 0x13EC\nlayer = \"inner_torso\"\narmor_rating = 22\nstrength_required = 20\nmax_hits = 51\n"
+        );
+
+        var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        var longsword = templates["longsword"];
+        Assert.Equal(
+            (SkillType.Swordsmanship, 5, 33, 35, 25, 90),
+            (longsword.WeaponSkill!.Value, longsword.DamageMin!.Value, longsword.DamageMax!.Value, longsword.Speed!.Value,
+                longsword.StrengthRequired!.Value, longsword.MaxHits!.Value)
+        );
+        var fast = templates["fast_longsword"];
+        Assert.Equal((SkillType.Swordsmanship, 5, 33, 50), (fast.WeaponSkill!.Value, fast.DamageMin!.Value, fast.DamageMax!.Value, fast.Speed!.Value));
+        var tunic = templates["ringmail_tunic"];
+        Assert.Equal((22, 20, 51, (SkillType?)null, (int?)null), (tunic.ArmorRating!.Value, tunic.StrengthRequired!.Value, tunic.MaxHits!.Value, tunic.WeaponSkill, tunic.DamageMax));
+        Assert.Null(templates["base_longsword"].DamageMax);
+    }
+
+    [Theory]
+    [InlineData("damage_min = -1")]
+    [InlineData("damage_min = 10\ndamage_max = 5")]
+    [InlineData("damage_max = 70000")]
+    [InlineData("speed = 0")]
+    [InlineData("speed = 1000")]
+    [InlineData("armor_rating = -1")]
+    [InlineData("armor_rating = 1000")]
+    [InlineData("strength_required = -1")]
+    [InlineData("max_hits = -1")]
+    public async Task LoadDataAsync_ACombatFieldOutOfRange_IsRefused(string field)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/items/bad.toml", $"[[item]]\nid = \"bad\"\nitem_id = 0x0F60\n{field}\n");
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+
+        Assert.Contains("bad", error.Message);
+    }
+
+    [Fact]
     public async Task LoadDataAsync_ResolvesBaseIdThroughThreeLevels_AndReadsSubfolders()
     {
         using var root = new TemporaryDirectory();
