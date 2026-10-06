@@ -62,6 +62,66 @@ public sealed class BookTestFixture : IAsyncDisposable
         Variables = ["contact_name"]
     };
 
+    public void RebuildDocuments(IBookAttachmentService claims, IGumpService? gumps = null)
+    {
+        var tiles = new FakeTileDataService();
+        var factory = new FakeItemFactoryService(ItemTemplates, tiles);
+        Books = new(
+            new BookTemplateService(Data),
+            Contexts,
+            Items,
+            World.Mobiles,
+            Handling,
+            ItemTemplates,
+            World.Sessions,
+            Bank,
+            gumps ?? Gumps,
+            World.Network.Loop,
+            new(() => Engine),
+            new(),
+            new BookAttachmentPreparationService(factory, ItemTemplates, tiles),
+            Inventory,
+            claims,
+            TestLocalization.With((30169, "Ritira allegati")),
+            Speech,
+            World.Sender
+        );
+    }
+
+    public static async Task<BookTestFixture> CreateAsync(bool realGumps = false)
+    {
+        var world = await BroadcastFixture.CreateAsync();
+        var session = await world.AddAsync(2);
+        await world.AddAsync(3);
+        Assert.True(world.Mobiles.TryGet(new(2), out var player));
+        Assert.True(world.Mobiles.TryGet(new(3), out var other));
+        var fixture = new BookTestFixture(world, player, other, session, realGumps);
+        await fixture.OnLoopAsync(() =>
+            {
+                player.Name = "Pippo";
+                other.Name = "Bruno";
+                fixture.Backpack.Equip(player.Id, LayerType.Backpack);
+                fixture.Items.Add([fixture.Backpack]);
+                world.Mobiles.MoveTo(player, MapType.Trammel, new Point3D(1600, 1600, 0));
+                world.Mobiles.MoveTo(other, MapType.Trammel, new Point3D(1600, 1600, 0));
+                fixture.Serials.Serials.Enqueue(new(0x40000F00));
+            }
+        );
+        return fixture;
+    }
+
+    public Task OnLoopAsync(Action action)
+    {
+        return World.Network.ExecuteOnLoopAsync(action);
+    }
+
+    public ItemEntity Give()
+    {
+        return Assert.IsType<ItemEntity>(
+            Books.Give(Player, "welcome_letter", new Dictionary<string, object?> { ["contact_name"] = "Vega" })
+        );
+    }
+
     private BookTestFixture(
         BroadcastFixture world, MobileEntity player, MobileEntity other, GameSession session, bool realGumps
     )
@@ -157,66 +217,6 @@ public sealed class BookTestFixture : IAsyncDisposable
             new BookAttachmentPreparationService(factory, ItemTemplates, tiles),
             Inventory,
             sender: world.Sender
-        );
-    }
-
-    public void RebuildDocuments(IBookAttachmentService claims, IGumpService? gumps = null)
-    {
-        var tiles = new FakeTileDataService();
-        var factory = new FakeItemFactoryService(ItemTemplates, tiles);
-        Books = new(
-            new BookTemplateService(Data),
-            Contexts,
-            Items,
-            World.Mobiles,
-            Handling,
-            ItemTemplates,
-            World.Sessions,
-            Bank,
-            gumps ?? Gumps,
-            World.Network.Loop,
-            new(() => Engine),
-            new(),
-            new BookAttachmentPreparationService(factory, ItemTemplates, tiles),
-            Inventory,
-            claims,
-            TestLocalization.With((30169, "Ritira allegati")),
-            Speech,
-            World.Sender
-        );
-    }
-
-    public static async Task<BookTestFixture> CreateAsync(bool realGumps = false)
-    {
-        var world = await BroadcastFixture.CreateAsync();
-        var session = await world.AddAsync(2);
-        await world.AddAsync(3);
-        Assert.True(world.Mobiles.TryGet(new(2), out var player));
-        Assert.True(world.Mobiles.TryGet(new(3), out var other));
-        var fixture = new BookTestFixture(world, player, other, session, realGumps);
-        await fixture.OnLoopAsync(() =>
-            {
-                player.Name = "Pippo";
-                other.Name = "Bruno";
-                fixture.Backpack.Equip(player.Id, LayerType.Backpack);
-                fixture.Items.Add([fixture.Backpack]);
-                world.Mobiles.MoveTo(player, MapType.Trammel, new Point3D(1600, 1600, 0));
-                world.Mobiles.MoveTo(other, MapType.Trammel, new Point3D(1600, 1600, 0));
-                fixture.Serials.Serials.Enqueue(new(0x40000F00));
-            }
-        );
-        return fixture;
-    }
-
-    public Task OnLoopAsync(Action action)
-    {
-        return World.Network.ExecuteOnLoopAsync(action);
-    }
-
-    public ItemEntity Give()
-    {
-        return Assert.IsType<ItemEntity>(
-            Books.Give(Player, "welcome_letter", new Dictionary<string, object?> { ["contact_name"] = "Vega" })
         );
     }
 

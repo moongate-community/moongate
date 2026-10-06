@@ -25,6 +25,7 @@ namespace Moongate.Tests.Server.Ultima.Loaders;
 /// </summary>
 public sealed class RepositoryTemplateFilesTests
 {
+
     [Theory]
     [InlineData("eng")]
     [InlineData("ita")]
@@ -502,21 +503,6 @@ public sealed class RepositoryTemplateFilesTests
         Assert.NotEqual(NotorietyType.Invulnerable, mobiles["skeleton"].Notoriety);
     }
 
-    private static bool IsVendor(MobileTemplate template, Dictionary<string, MobileTemplate> mobiles)
-    {
-        for (var parent = template.BaseId;
-             parent is not null && mobiles.TryGetValue(parent, out var next);
-             parent = next.BaseId)
-        {
-            if (parent == "basevendor")
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     [Fact]
     public async Task ShippedBankers_AllHaveTheBankerScript()
     {
@@ -708,6 +694,21 @@ public sealed class RepositoryTemplateFilesTests
             }
         );
         Assert.Equal(regions.Count, regions.Select(region => (region.Areas[0].X1, region.Areas[0].Y1)).Distinct().Count());
+    }
+
+    private static bool IsVendor(MobileTemplate template, Dictionary<string, MobileTemplate> mobiles)
+    {
+        for (var parent = template.BaseId;
+             parent is not null && mobiles.TryGetValue(parent, out var next);
+             parent = next.BaseId)
+        {
+            if (parent == "basevendor")
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // The imported ModernUO catalog is the folder templates/books/modernuo: a book's id is its file name.

@@ -13,18 +13,6 @@ public sealed class FakeMapService : IMapService
     private readonly int _height;
     private readonly ushort[,] _landIds;
     private readonly sbyte[,] _landZ;
-    private readonly Dictionary<(int X, int Y), MapStaticTile[]> _statics = new();
-
-    public IReadOnlyList<MapType> Maps { get; } = [MapType.Felucca];
-
-    public FakeMapService(int width, int height)
-    {
-        _width = width;
-        _height = height;
-        _landIds = new ushort[width, height];
-        _landZ = new sbyte[width, height];
-        SetLandId(0, 0, width - 1, height - 1, 3);
-    }
 
     public FakeMapService SetLand(int x, int y, ushort id, sbyte z)
     {
@@ -96,6 +84,19 @@ public sealed class FakeMapService : IMapService
     public Task StopAsync()
     {
         return Task.CompletedTask;
+    }
+
+    private readonly Dictionary<(int X, int Y), MapStaticTile[]> _statics = new();
+
+    public IReadOnlyList<MapType> Maps { get; } = [MapType.Felucca];
+
+    public FakeMapService(int width, int height)
+    {
+        _width = width;
+        _height = height;
+        _landIds = new ushort[width, height];
+        _landZ = new sbyte[width, height];
+        SetLandId(0, 0, width - 1, height - 1, 3);
     }
 
     private void Check(MapType map, int x, int y)

@@ -134,17 +134,17 @@ public sealed class SpawnCommandTests : IAsyncDisposable
         Assert.Equal(0, _targets.Requests);
     }
 
-    private Task<CommandContext> RunAsync(params string[] arguments)
-    {
-        return RunAsync(null, arguments);
-    }
-
     [Fact]
     public async Task ExecuteAsync_Texts_AreInTheServerLanguage()
     {
         var context = await RunAsync(TestLocalization.With((30022, "Modello di creatura sconosciuto: {0}")), "nothing");
 
         Assert.Equal("Modello di creatura sconosciuto: nothing", Assert.Single(context.Output).Text);
+    }
+
+    private Task<CommandContext> RunAsync(params string[] arguments)
+    {
+        return RunAsync(null, arguments);
     }
 
     private async Task<CommandContext> RunAsync(ILocalizationService? localization, params string[] arguments)

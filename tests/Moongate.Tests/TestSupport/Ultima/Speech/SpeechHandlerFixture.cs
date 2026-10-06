@@ -56,42 +56,6 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
     /// </summary>
     public List<PlayerSaidEvent> Said { get; } = [];
 
-    private SpeechHandlerFixture(SessionFixture network, ILogger? commandLogger, ILocalizationService? localization)
-    {
-        _network = network;
-        Sessions = new(network.Loop);
-        Speaker = Sessions.GetOrCreate(network.Client);
-        Mobiles = new(new StubMovementService(), TestSectors.Create());
-        _container.RegisterCommand<HelpCommand>(
-            "help",
-            source: CommandSourceType.Console | CommandSourceType.InGame,
-            minimumAccountType: AccountType.Regular
-        );
-        _container.RegisterCommand<RecordingCommandExecutor>(
-            "account",
-            source: CommandSourceType.Console | CommandSourceType.InGame,
-            minimumAccountType: AccountType.Administrator
-        );
-        _container.RegisterCommand<DelayedCommandExecutor>(
-            "wait",
-            source: CommandSourceType.InGame,
-            minimumAccountType: AccountType.Regular
-        );
-        Commands = commandLogger is null
-            ? new(_container.Resolve<CommandRegistry>(), _container)
-            : new(_container.Resolve<CommandRegistry>(), _container, commandLogger);
-        _container.RegisterMoongateEventBus();
-        var events = _container.Resolve<IMoongateEventBus>();
-        events.Subscribe<PlayerSaidEvent>((said, _) =>
-            {
-                Said.Add(said);
-
-                return Task.CompletedTask;
-            }
-        );
-        Handler = new(Commands, Sessions, Mobiles, Sender, localization, Listener, events, ItemListener, Guards);
-    }
-
     public static async Task<SpeechHandlerFixture> CreateAsync(
         ILogger? commandLogger = null, ILocalizationService? localization = null
     )
@@ -152,6 +116,42 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
         var replacement = new ControlledNetworkConnection(Speaker.SessionId);
         _connections.Add(replacement);
         Sessions.GetOrCreate(replacement);
+    }
+
+    private SpeechHandlerFixture(SessionFixture network, ILogger? commandLogger, ILocalizationService? localization)
+    {
+        _network = network;
+        Sessions = new(network.Loop);
+        Speaker = Sessions.GetOrCreate(network.Client);
+        Mobiles = new(new StubMovementService(), TestSectors.Create());
+        _container.RegisterCommand<HelpCommand>(
+            "help",
+            source: CommandSourceType.Console | CommandSourceType.InGame,
+            minimumAccountType: AccountType.Regular
+        );
+        _container.RegisterCommand<RecordingCommandExecutor>(
+            "account",
+            source: CommandSourceType.Console | CommandSourceType.InGame,
+            minimumAccountType: AccountType.Administrator
+        );
+        _container.RegisterCommand<DelayedCommandExecutor>(
+            "wait",
+            source: CommandSourceType.InGame,
+            minimumAccountType: AccountType.Regular
+        );
+        Commands = commandLogger is null
+            ? new(_container.Resolve<CommandRegistry>(), _container)
+            : new(_container.Resolve<CommandRegistry>(), _container, commandLogger);
+        _container.RegisterMoongateEventBus();
+        var events = _container.Resolve<IMoongateEventBus>();
+        events.Subscribe<PlayerSaidEvent>((said, _) =>
+            {
+                Said.Add(said);
+
+                return Task.CompletedTask;
+            }
+        );
+        Handler = new(Commands, Sessions, Mobiles, Sender, localization, Listener, events, ItemListener, Guards);
     }
 
     private async Task EnterAsync(

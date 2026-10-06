@@ -10,19 +10,6 @@ namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class GumpServiceTests : IAsyncLifetime
 {
-    private readonly List<(GameSession Session, GumpResponse Response)> _responses = [];
-    private readonly List<(string Gump, GumpCloseReasonType Reason)> _closes = [];
-
-    private BroadcastFixture _fixture = null!;
-    private GameSession _session = null!;
-    private GumpService _gumps = null!;
-
-    public async Task InitializeAsync()
-    {
-        _fixture = await BroadcastFixture.CreateAsync();
-        _session = await _fixture.AddAsync(1);
-        _gumps = new(_fixture.Sender);
-    }
 
     [Fact]
     public async Task Open_WithNoClientVersionYet_SendsTheCompressedGump()
@@ -281,6 +268,20 @@ public sealed class GumpServiceTests : IAsyncLifetime
 
         await OnLoopAsync(() => _gumps.Respond(_session, Reply(2)));
         Assert.Empty(_responses);
+    }
+
+    private readonly List<(GameSession Session, GumpResponse Response)> _responses = [];
+    private readonly List<(string Gump, GumpCloseReasonType Reason)> _closes = [];
+
+    private BroadcastFixture _fixture = null!;
+    private GameSession _session = null!;
+    private GumpService _gumps = null!;
+
+    public async Task InitializeAsync()
+    {
+        _fixture = await BroadcastFixture.CreateAsync();
+        _session = await _fixture.AddAsync(1);
+        _gumps = new(_fixture.Sender);
     }
 
     private Task OnLoopAsync(Action action)

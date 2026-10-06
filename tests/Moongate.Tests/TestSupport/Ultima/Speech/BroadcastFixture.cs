@@ -22,13 +22,6 @@ public sealed class BroadcastFixture : IAsyncDisposable
     public MobileService Mobiles { get; }
     public StubPacketSendService Sender { get; } = new();
 
-    private BroadcastFixture(SessionFixture network)
-    {
-        Network = network;
-        Sessions = new(network.Loop);
-        Mobiles = new(new StubMovementService(), Sectors);
-    }
-
     public static async Task<BroadcastFixture> CreateAsync()
     {
         return new(await SessionFixture.CreateAsync());
@@ -58,6 +51,13 @@ public sealed class BroadcastFixture : IAsyncDisposable
         }
 
         return session;
+    }
+
+    private BroadcastFixture(SessionFixture network)
+    {
+        Network = network;
+        Sessions = new(network.Loop);
+        Mobiles = new(new StubMovementService(), Sectors);
     }
 
     public async ValueTask DisposeAsync()

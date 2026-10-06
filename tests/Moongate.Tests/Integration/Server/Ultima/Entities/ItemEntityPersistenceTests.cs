@@ -297,33 +297,6 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         Assert.IsType<PostgresException>(exception);
     }
 
-    private async Task<MobileEntity> NewMobileAsync()
-    {
-        var mobile = new MobileEntity { Id = new(0x00000100 + (uint)Random.Shared.Next(1, 100000)), Name = "Aria" };
-        await _mobiles.UpsertAsync(mobile);
-
-        return mobile;
-    }
-
-    private static ItemEntity Item(uint id, Action<ItemEntity> place)
-    {
-        var item = new ItemEntity { Id = new(id), TemplateId = "test", ItemId = 0x0E75 };
-        place(item);
-
-        return item;
-    }
-
-    private async Task AssertRejectedAsync(ItemEntity item)
-    {
-        var exception = await Record.ExceptionAsync(() => _items.UpsertAsync(item));
-
-        Assert.NotNull(exception);
-        Assert.True(
-            exception is PostgresException || exception.InnerException is PostgresException,
-            exception.ToString()
-        );
-    }
-
     [Fact]
     public async Task WorldSave_WritesTheLiveItemsAsTheyAreNow()
     {
@@ -601,6 +574,33 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
 
         Assert.Null(await data.GetByIdAsync(gold.Id));
         Assert.Empty(((IPersistenceDeletionSource)items).Capture());
+    }
+
+    private async Task<MobileEntity> NewMobileAsync()
+    {
+        var mobile = new MobileEntity { Id = new(0x00000100 + (uint)Random.Shared.Next(1, 100000)), Name = "Aria" };
+        await _mobiles.UpsertAsync(mobile);
+
+        return mobile;
+    }
+
+    private static ItemEntity Item(uint id, Action<ItemEntity> place)
+    {
+        var item = new ItemEntity { Id = new(id), TemplateId = "test", ItemId = 0x0E75 };
+        place(item);
+
+        return item;
+    }
+
+    private async Task AssertRejectedAsync(ItemEntity item)
+    {
+        var exception = await Record.ExceptionAsync(() => _items.UpsertAsync(item));
+
+        Assert.NotNull(exception);
+        Assert.True(
+            exception is PostgresException || exception.InnerException is PostgresException,
+            exception.ToString()
+        );
     }
 
     public async Task DisposeAsync()

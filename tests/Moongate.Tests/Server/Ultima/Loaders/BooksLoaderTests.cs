@@ -212,16 +212,6 @@ public sealed class BooksLoaderTests
         Assert.Single((await Loader(root, script: "readable_book").LoadDataAsync()).Entities);
     }
 
-    private static BooksLoader Loader(TemporaryDirectory root, bool stackable = false, string script = "readable_scroll")
-    {
-        return new(
-            new DirectoriesConfig(root.Path, ["templates"]),
-            new StubDataLoaderService().With(
-                new ItemTemplate { Id = "readable_scroll", Stackable = stackable, ScriptId = script }
-            )
-        );
-    }
-
     [Theory]
     [InlineData("amount = 0")]
     [InlineData("amount = 65536")]
@@ -246,5 +236,15 @@ public sealed class BooksLoaderTests
         );
         var error = await Assert.ThrowsAsync<InvalidDataException>(() => loader.LoadDataAsync());
         Assert.Contains("gift.toml", error.Message);
+    }
+
+    private static BooksLoader Loader(TemporaryDirectory root, bool stackable = false, string script = "readable_scroll")
+    {
+        return new(
+            new DirectoriesConfig(root.Path, ["templates"]),
+            new StubDataLoaderService().With(
+                new ItemTemplate { Id = "readable_scroll", Stackable = stackable, ScriptId = script }
+            )
+        );
     }
 }

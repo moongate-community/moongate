@@ -58,17 +58,6 @@ public sealed class DoorGeneratorServiceTests
         Assert.Single(Scan());
     }
 
-    private void Place(int graphic, int x, int y, int z)
-    {
-        var item = new ItemEntity
-        {
-            Id = new((uint)(0x40000000 + _sectors.GetItemsInRange(MapType.Felucca, new(x, y, z), 64).Count + 1)),
-            TemplateId = "decoration", ItemId = graphic, Amount = 1
-        };
-        item.PlaceOnGround(MapType.Felucca, new(x, y, z));
-        _sectors.AddItem(item);
-    }
-
     [Fact]
     public void Scan_AWestAndAnEastFrameTwoCellsApart_GiveOneDoorBetweenThem()
     {
@@ -213,6 +202,17 @@ public sealed class DoorGeneratorServiceTests
 
         Assert.Empty(generator.ChunksOf(MapType.Trammel));
         Assert.Empty(generator.ChunksOf(MapType.Tokuno));
+    }
+
+    private void Place(int graphic, int x, int y, int z)
+    {
+        var item = new ItemEntity
+        {
+            Id = new((uint)(0x40000000 + _sectors.GetItemsInRange(MapType.Felucca, new(x, y, z), 64).Count + 1)),
+            TemplateId = "decoration", ItemId = graphic, Amount = 1
+        };
+        item.PlaceOnGround(MapType.Felucca, new(x, y, z));
+        _sectors.AddItem(item);
     }
 
     private IReadOnlyList<GeneratedDoor> Scan(Rectangle2D? chunk = null)

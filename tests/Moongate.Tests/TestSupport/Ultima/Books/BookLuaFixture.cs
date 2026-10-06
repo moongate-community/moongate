@@ -24,11 +24,6 @@ public sealed class BookLuaFixture : IAsyncDisposable
     public ItemScriptService ItemScripts { get; private set; } = null!;
     public List<ScriptErrorEvent> Errors { get; } = [];
 
-    private BookLuaFixture(BookTestFixture documents)
-    {
-        Documents = documents;
-    }
-
     public static async Task<BookLuaFixture> CreateAsync(bool realGumps = false, string? jailScript = null)
     {
         var fixture = new BookLuaFixture(await BookTestFixture.CreateAsync(realGumps));
@@ -102,6 +97,11 @@ public sealed class BookLuaFixture : IAsyncDisposable
         }
 
         return directory?.FullName ?? throw new InvalidOperationException("Repository root not found.");
+    }
+
+    private BookLuaFixture(BookTestFixture documents)
+    {
+        Documents = documents;
     }
 
     public async ValueTask DisposeAsync()

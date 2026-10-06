@@ -12,12 +12,6 @@ public sealed class LoopbackPair : IAsyncDisposable
     public MoongateTcpClient Sender { get; }
     public MoongateTcpClient Receiver { get; }
 
-    private LoopbackPair(MoongateTcpClient sender, MoongateTcpClient receiver)
-    {
-        Sender = sender;
-        Receiver = receiver;
-    }
-
     public static async Task<LoopbackPair> CreateAsync(
         Stream? senderStream = null,
         ITransportCodec? codec = null,
@@ -87,6 +81,12 @@ public sealed class LoopbackPair : IAsyncDisposable
             senderSocket?.Dispose();
             receiverSocket?.Dispose();
         }
+    }
+
+    private LoopbackPair(MoongateTcpClient sender, MoongateTcpClient receiver)
+    {
+        Sender = sender;
+        Receiver = receiver;
     }
 
     public async ValueTask DisposeAsync()

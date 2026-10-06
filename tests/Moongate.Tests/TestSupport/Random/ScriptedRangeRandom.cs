@@ -4,12 +4,12 @@ namespace Moongate.Tests.TestSupport.Random;
 ///     Returns the given values from <see cref="Next(int, int)" /> in order, each clamped into the asked range; the last
 ///     one repeats once they run out.
 /// </summary>
-public sealed class ScriptedRandom : System.Random
+public sealed class ScriptedRangeRandom : System.Random
 {
     private readonly Queue<int> _values;
     private int _last;
 
-    public ScriptedRandom(params int[] values)
+    public ScriptedRangeRandom(params int[] values)
     {
         _values = new(values);
     }

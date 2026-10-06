@@ -19,6 +19,7 @@ namespace Moongate.Tests.Integration.Server.Ultima.Books;
 
 public sealed class ReadableScrollIntegrationTests
 {
+
     [Fact]
     public async Task RealClaimResponse_DuplicateReplyDeliversOnceAndReopensReadableLetter()
     {
@@ -127,20 +128,6 @@ public sealed class ReadableScrollIntegrationTests
                 Assert.Contains(1, Assert.Single(f.Books.Session.Get(GumpSessionKeys.State)!.Open).Built.Buttons);
             }
         );
-    }
-
-    private static async Task WaitForFeedback(BookAttachmentTestFixture f)
-    {
-        var timeout = DateTime.UtcNow.AddSeconds(5);
-        while (DateTime.UtcNow < timeout)
-        {
-            var settled = false;
-            await f.Books.OnLoopAsync(() => settled = f.Books.Speech.Told.Count > 0);
-            if (settled) return;
-            await Task.Delay(10);
-        }
-
-        Assert.Fail("Claim response did not settle on the original session.");
     }
 
     [Theory]
@@ -276,5 +263,19 @@ public sealed class ReadableScrollIntegrationTests
         );
         await documents.OnLoopAsync(() => Assert.Empty(documents.Gumps.Opened));
         Assert.Empty(fixture.Errors);
+    }
+
+    private static async Task WaitForFeedback(BookAttachmentTestFixture f)
+    {
+        var timeout = DateTime.UtcNow.AddSeconds(5);
+        while (DateTime.UtcNow < timeout)
+        {
+            var settled = false;
+            await f.Books.OnLoopAsync(() => settled = f.Books.Speech.Told.Count > 0);
+            if (settled) return;
+            await Task.Delay(10);
+        }
+
+        Assert.Fail("Claim response did not settle on the original session.");
     }
 }

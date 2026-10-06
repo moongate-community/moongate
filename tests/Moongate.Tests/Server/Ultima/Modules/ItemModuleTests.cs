@@ -619,15 +619,6 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Single(_serials.Serials);
     }
 
-    private ItemEntity GroundChest()
-    {
-        var chest = new ItemEntity { Id = new Serial(0x40000060), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
-        chest.PlaceOnGround(MapType.Trammel, new Point3D(1601, 1600, 0));
-        _items.Add([chest]);
-
-        return chest;
-    }
-
     [Fact]
     public void Contents_ListsWhatLiesDirectlyInTheContainer()
     {
@@ -871,6 +862,15 @@ public sealed class ItemModuleTests : IAsyncLifetime
 
         Assert.True(_fixture.Mobiles.MoveTo(_owner, MapType.Felucca, new Point3D(1600, 1600, 0)));
         Assert.False(Run("return item.in_range(0x40000003, 2, 5)")[0].Read<bool>());
+    }
+
+    private ItemEntity GroundChest()
+    {
+        var chest = new ItemEntity { Id = new Serial(0x40000060), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
+        chest.PlaceOnGround(MapType.Trammel, new Point3D(1601, 1600, 0));
+        _items.Add([chest]);
+
+        return chest;
     }
 
     private static ItemEntity Shirt(uint serial)

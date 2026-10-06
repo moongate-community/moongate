@@ -1045,22 +1045,6 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_speech.PlacedSounds);
     }
 
-    private ItemEntity PlaceLight(int graphic, bool? isProtected)
-    {
-        var light = new ItemEntity
-            { Id = new Serial(0x40000020), TemplateId = "decoration_light", ItemId = graphic, Amount = 1 };
-
-        if (isProtected is { } value)
-        {
-            light.Props = new() { ["protected"] = value };
-        }
-
-        light.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
-        _items.Add([light]);
-
-        return light;
-    }
-
     // As ModernUO's Clock: the part of the day, then the time to the minute, as texts of the client over the clock.
     [Theory]
     [InlineData(0, 30, 1042950, "12:30")]
@@ -1158,6 +1142,22 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal(true, result.Values[0]);
         Assert.Equal(cliloc, Assert.Single(_speech.ToldClilocs).Cliloc);
+    }
+
+    private ItemEntity PlaceLight(int graphic, bool? isProtected)
+    {
+        var light = new ItemEntity
+            { Id = new Serial(0x40000020), TemplateId = "decoration_light", ItemId = graphic, Amount = 1 };
+
+        if (isProtected is { } value)
+        {
+            light.Props = new() { ["protected"] = value };
+        }
+
+        light.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+        _items.Add([light]);
+
+        return light;
     }
 
     // A check held by a player: the bank is a stub here, which says where it lies.

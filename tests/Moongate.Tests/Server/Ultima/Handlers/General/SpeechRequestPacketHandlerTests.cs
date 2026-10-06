@@ -14,6 +14,7 @@ namespace Moongate.Tests.Server.Ultima.Handlers.General;
 
 public sealed class SpeechRequestPacketHandlerTests
 {
+
     [Fact]
     public async Task Handle_Say_ReachesSenderAndSameMapPlayersWithin15Tiles()
     {
@@ -351,16 +352,6 @@ public sealed class SpeechRequestPacketHandlerTests
         Assert.DoesNotContain(sink.Events, entry => entry.RenderMessage().Contains("secret", StringComparison.Ordinal));
     }
 
-    private sealed class CapturingSink : ILogEventSink
-    {
-        public List<LogEvent> Events { get; } = [];
-
-        public void Emit(LogEvent logEvent)
-        {
-            Events.Add(logEvent);
-        }
-    }
-
     [Fact]
     public async Task Handle_CommandReplyAfterSessionReplacement_IsDiscarded()
     {
@@ -434,5 +425,15 @@ public sealed class SpeechRequestPacketHandlerTests
         await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
 
         Assert.Equal("done", Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent)).Text);
+    }
+
+    private sealed class CapturingSink : ILogEventSink
+    {
+        public List<LogEvent> Events { get; } = [];
+
+        public void Emit(LogEvent logEvent)
+        {
+            Events.Add(logEvent);
+        }
     }
 }

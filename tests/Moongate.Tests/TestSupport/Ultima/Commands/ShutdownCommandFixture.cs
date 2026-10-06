@@ -17,17 +17,6 @@ public sealed class ShutdownCommandFixture : IAsyncDisposable
     public ServerShutdownService Shutdown { get; } = new();
     public ShutdownCommand Command { get; }
 
-    private ShutdownCommandFixture(BroadcastFixture world)
-    {
-        World = world;
-        Timers = new(new() { TickDuration = TimeSpan.FromMilliseconds(1), MaxPendingTimers = 1 }, Clock);
-        Command = new(
-            Shutdown,
-            Timers,
-            new BroadcastService(world.Network.Loop, world.Sessions, world.Mobiles, world.Sender)
-        );
-    }
-
     public static async Task<ShutdownCommandFixture> CreateAsync()
     {
         var fixture = new ShutdownCommandFixture(await BroadcastFixture.CreateAsync());
@@ -56,6 +45,17 @@ public sealed class ShutdownCommandFixture : IAsyncDisposable
             CommandSourceType.Console,
             null,
             cancellationToken
+        );
+    }
+
+    private ShutdownCommandFixture(BroadcastFixture world)
+    {
+        World = world;
+        Timers = new(new() { TickDuration = TimeSpan.FromMilliseconds(1), MaxPendingTimers = 1 }, Clock);
+        Command = new(
+            Shutdown,
+            Timers,
+            new BroadcastService(world.Network.Loop, world.Sessions, world.Mobiles, world.Sender)
         );
     }
 

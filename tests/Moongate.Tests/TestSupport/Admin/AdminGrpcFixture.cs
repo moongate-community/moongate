@@ -17,14 +17,6 @@ internal sealed class AdminGrpcFixture : IAsyncDisposable
     public GrpcChannel Channel { get; }
     public AdminRequestGate Gate { get; }
 
-    private AdminGrpcFixture(WebApplication app, AccountAdminFixture backend, AdminRequestGate gate)
-    {
-        _app = app;
-        Backend = backend;
-        Gate = gate;
-        Channel = GrpcChannel.ForAddress(app.Urls.Single());
-    }
-
     public static async Task<AdminGrpcFixture> CreateAsync(
         ServerMode mode = ServerMode.Login,
         int concurrency = 64,
@@ -56,6 +48,14 @@ internal sealed class AdminGrpcFixture : IAsyncDisposable
         gate.Activate();
 
         return new(app, backend, gate);
+    }
+
+    private AdminGrpcFixture(WebApplication app, AccountAdminFixture backend, AdminRequestGate gate)
+    {
+        _app = app;
+        Backend = backend;
+        Gate = gate;
+        Channel = GrpcChannel.ForAddress(app.Urls.Single());
     }
 
     public async ValueTask DisposeAsync()

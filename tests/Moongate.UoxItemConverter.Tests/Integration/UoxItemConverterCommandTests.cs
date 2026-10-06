@@ -1303,12 +1303,6 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         Assert.Contains("No .dfn files", _error.ToString());
     }
 
-    private Dictionary<string, ItemTemplate> ReadItems(string file = "items.toml")
-    {
-        return TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, file))!
-            .Item.ToDictionary(item => item.Id);
-    }
-
     [Fact]
     public void Run_WithTheScriptsSource_GivesTheItemsOfAScriptWithALuaEquivalentItsScriptId()
     {
@@ -1386,6 +1380,12 @@ public sealed class UoxItemConverterCommandTests : IDisposable
 
         Assert.Equal(2, exitCode);
         Assert.Contains("jse_fileassociations.scp", _error.ToString());
+    }
+
+    private Dictionary<string, ItemTemplate> ReadItems(string file = "items.toml")
+    {
+        return TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, file))!
+            .Item.ToDictionary(item => item.Id);
     }
 
     private int Run(bool includeLootDestination = true, string? scriptsSource = null)

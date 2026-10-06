@@ -455,14 +455,6 @@ public sealed class ItemServiceTests
         Assert.Empty(((IPersistenceDeletionSource)items).Capture());
     }
 
-    private ItemService Service()
-    {
-        var items = TestItems.Create();
-        items.Add([_backpack, _bag, _coin, _dagger, _shirt, _ground]);
-
-        return items;
-    }
-
     [Fact]
     public void PlaceOnGround_PutsTheItemInTheGrid()
     {
@@ -868,6 +860,14 @@ public sealed class ItemServiceTests
         items.Absorb(_ground);
 
         Assert.Null(_ground.DecayAt);
+    }
+
+    private ItemService Service()
+    {
+        var items = TestItems.Create();
+        items.Add([_backpack, _bag, _coin, _dagger, _shirt, _ground]);
+
+        return items;
     }
 
     private (ItemService Items, SettableClock Clock) Decaying()

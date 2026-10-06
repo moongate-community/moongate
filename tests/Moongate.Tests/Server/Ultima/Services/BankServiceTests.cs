@@ -254,26 +254,6 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.False(_bank.CanAccess(bob, bobby, coin));
     }
 
-    private (ItemEntity Box, ItemEntity Coin) AddBank()
-    {
-        var box = new ItemEntity
-            { Id = new Serial(0x40000010), TemplateId = BankService.BankTemplate, ItemId = 0x0E7C, Amount = 1 };
-        box.Equip(_aria.Id, LayerType.Bank);
-        var coin = new ItemEntity { Id = new Serial(0x40000011), TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
-        coin.PutInContainer(box.Id, new Point2D(44, 65));
-        _items.Add([box, coin]);
-
-        return (box, coin);
-    }
-
-    private async Task<bool> OnLoopAsync(Func<bool> action)
-    {
-        var result = false;
-        await _fixture.Network.ExecuteOnLoopAsync(() => result = action());
-
-        return result;
-    }
-
     [Fact]
     public async Task Balance_IsTheGoldInTheBox_BagsIncluded_AndNothingElse()
     {
@@ -605,46 +585,6 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.Null(_bank.Balance(orc));
         Assert.Equal(BankResultType.NoPlayer, _bank.Withdraw(orc, 10));
         Assert.Equal(BankResultType.NoPlayer, _bank.Deposit(orc, 10));
-    }
-
-    // The bank with the weights a test wants: the stub says yes to everything, the real one weighs the gold.
-    private BankService BankWith(IWeightService weight)
-    {
-        var tooltips = TestTooltips.Create(_items, _fixture.Mobiles);
-        var handling = new ItemHandlingService(
-            _items,
-            _fixture.Sessions,
-            _fixture.Sender,
-            new RecordingWorldViewService(),
-            tooltips,
-            _factory,
-            _serials,
-            _layouts,
-            _capacity
-        );
-
-        return new(
-            _items,
-            _factory,
-            _fixture.Sessions,
-            _fixture.Mobiles,
-            _fixture.Sender,
-            tooltips,
-            _layouts,
-            _fixture.Network.Loop,
-            handling,
-            _capacity,
-            weight,
-            new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" },
-            _config,
-            fatigue: _fatigue,
-            time: _time
-        );
-    }
-
-    private WeightService RealWeights()
-    {
-        return new(_items, _templates, new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0));
     }
 
     [Fact]
@@ -1161,6 +1101,66 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.False(_items.TryGet(small.Id, out _));
         Assert.True(large.TryGetProp<long>(ItemPropKeys.BankWorth, out var left));
         Assert.Equal(8000, left);
+    }
+
+    private (ItemEntity Box, ItemEntity Coin) AddBank()
+    {
+        var box = new ItemEntity
+            { Id = new Serial(0x40000010), TemplateId = BankService.BankTemplate, ItemId = 0x0E7C, Amount = 1 };
+        box.Equip(_aria.Id, LayerType.Bank);
+        var coin = new ItemEntity { Id = new Serial(0x40000011), TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        coin.PutInContainer(box.Id, new Point2D(44, 65));
+        _items.Add([box, coin]);
+
+        return (box, coin);
+    }
+
+    private async Task<bool> OnLoopAsync(Func<bool> action)
+    {
+        var result = false;
+        await _fixture.Network.ExecuteOnLoopAsync(() => result = action());
+
+        return result;
+    }
+
+    // The bank with the weights a test wants: the stub says yes to everything, the real one weighs the gold.
+    private BankService BankWith(IWeightService weight)
+    {
+        var tooltips = TestTooltips.Create(_items, _fixture.Mobiles);
+        var handling = new ItemHandlingService(
+            _items,
+            _fixture.Sessions,
+            _fixture.Sender,
+            new RecordingWorldViewService(),
+            tooltips,
+            _factory,
+            _serials,
+            _layouts,
+            _capacity
+        );
+
+        return new(
+            _items,
+            _factory,
+            _fixture.Sessions,
+            _fixture.Mobiles,
+            _fixture.Sender,
+            tooltips,
+            _layouts,
+            _fixture.Network.Loop,
+            handling,
+            _capacity,
+            weight,
+            new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" },
+            _config,
+            fatigue: _fatigue,
+            time: _time
+        );
+    }
+
+    private WeightService RealWeights()
+    {
+        return new(_items, _templates, new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0));
     }
 
     private ItemEntity Check(ItemEntity container, long worth)

@@ -44,30 +44,6 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     private readonly RecordingWorldViewService _view = new();
     private StubCharacterLeaveWorldService _leaves = new();
     private SessionService _sessions = null!;
-    private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
-    private readonly RecordingMotdService _motd = new();
-
-    [Fact]
-    public async Task HandleAsync_SendsTheLightOfTheCharactersTimeOfDay()
-    {
-        await using var fixture = await SessionFixture.CreateAsync();
-        var (context, _, sender) = await Context(fixture, new Serial(42));
-        var characters = new RecordingCharacterService { ForPlay = Aria() };
-        var light = new LightService(
-            new StubClockService { Time = new GameTime(1, 0) },
-            _sessions,
-            _mobiles,
-            sender,
-            new RecordingTimerService(),
-            fixture.Loop,
-            new WorldConfig(),
-            new StubDataLoaderService()
-        );
-
-        await Handler(characters, sender, light: light).HandleAsync(context, Packet(2), CancellationToken.None);
-
-        Assert.Equal(12, Assert.Single(sender.Sent.OfType<GlobalLightLevelPacket>()).Level);
-    }
 
     [Fact]
     public async Task HandleAsync_SendsTheEnterWorldSequenceInOrder_ThenPublishesTheEvent()
@@ -384,6 +360,31 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
 
         Assert.Null(characters.PlayIndex);
         Assert.False(fixture.Client.IsConnected);
+    }
+
+    private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
+    private readonly RecordingMotdService _motd = new();
+
+    [Fact]
+    public async Task HandleAsync_SendsTheLightOfTheCharactersTimeOfDay()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var characters = new RecordingCharacterService { ForPlay = Aria() };
+        var light = new LightService(
+            new StubClockService { Time = new GameTime(1, 0) },
+            _sessions,
+            _mobiles,
+            sender,
+            new RecordingTimerService(),
+            fixture.Loop,
+            new WorldConfig(),
+            new StubDataLoaderService()
+        );
+
+        await Handler(characters, sender, light: light).HandleAsync(context, Packet(2), CancellationToken.None);
+
+        Assert.Equal(12, Assert.Single(sender.Sent.OfType<GlobalLightLevelPacket>()).Level);
     }
 
     private PlayCharacterPacketHandler Handler(

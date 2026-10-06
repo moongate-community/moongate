@@ -190,15 +190,6 @@ public sealed class BankModuleTests
         Assert.Equal([LuaValue.Nil, LuaValue.Nil, LuaValue.Nil], result[1..]);
     }
 
-    private ItemEntity Check(uint serial, long worth)
-    {
-        var check = new ItemEntity { Id = new Serial(serial), TemplateId = "bank_check", ItemId = 0x14F0, Amount = 1 };
-        _items.Add([check]);
-        _bank.Worths[check.Id] = worth;
-
-        return check;
-    }
-
     // Several bankers hear the same words in the same moment: the first one that asks serves the player.
     [Fact]
     public void Attend_IsTrueForTheFirstWhoAsksForAPlayer_AndAgainAMomentLater()
@@ -210,6 +201,15 @@ public sealed class BankModuleTests
         _clock.Advance(TimeSpan.FromMilliseconds(600));
 
         Assert.True(Run("return bank.attend(2)")[0].Read<bool>());
+    }
+
+    private ItemEntity Check(uint serial, long worth)
+    {
+        var check = new ItemEntity { Id = new Serial(serial), TemplateId = "bank_check", ItemId = 0x14F0, Amount = 1 };
+        _items.Add([check]);
+        _bank.Worths[check.Id] = worth;
+
+        return check;
     }
 
     private LuaValue[] Run(string chunk)

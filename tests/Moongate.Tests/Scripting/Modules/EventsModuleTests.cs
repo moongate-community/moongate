@@ -44,23 +44,6 @@ public sealed class EventsModuleTests : IDisposable
             );
     }
 
-    private IMoongateEventBus Bus => _container.Resolve<IMoongateEventBus>();
-
-    [Fact]
-    public async Task On_ReturnsAHandle_AndOffRemovesItOnce()
-    {
-        _scripts.Write(
-            "init.lua",
-            "function sub() h = events.on('probe_fired', function(e) end) return type(h) end " +
-            "function unsub() return events.off(h), events.off(h) end"
-        );
-        using var engine = NewEngine();
-        await engine.StartAsync();
-
-        Assert.Equal(["string"], engine.Call("sub").Values);
-        Assert.Equal([true, false], engine.Call("unsub").Values);
-    }
-
     [Fact]
     public async Task On_UnknownEventName_FailsWithAScriptError()
     {
@@ -290,6 +273,23 @@ public sealed class EventsModuleTests : IDisposable
 
         Assert.Null(thrown);
         Assert.Equal(2, _errors.Count(e => e.Error.Message.Contains("probe_fired", StringComparison.Ordinal)));
+    }
+
+    private IMoongateEventBus Bus => _container.Resolve<IMoongateEventBus>();
+
+    [Fact]
+    public async Task On_ReturnsAHandle_AndOffRemovesItOnce()
+    {
+        _scripts.Write(
+            "init.lua",
+            "function sub() h = events.on('probe_fired', function(e) end) return type(h) end " +
+            "function unsub() return events.off(h), events.off(h) end"
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+
+        Assert.Equal(["string"], engine.Call("sub").Values);
+        Assert.Equal([true, false], engine.Call("unsub").Values);
     }
 
     private LuaScriptEngineService NewEngine()

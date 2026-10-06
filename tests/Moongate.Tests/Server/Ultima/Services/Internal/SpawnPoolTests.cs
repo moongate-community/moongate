@@ -26,7 +26,7 @@ public sealed class SpawnPoolTests
     {
         var pool = new SpawnPool(new() { MobileIds = ["rabbit", "deer"] }, Lists);
 
-        Assert.Equal(expected, pool.Pick(new ScriptedRandom(roll)));
+        Assert.Equal(expected, pool.Pick(new ScriptedRangeRandom(roll)));
     }
 
     [Theory, InlineData(0, "orc"), InlineData(2, "orc"), InlineData(3, "troll")]
@@ -34,7 +34,7 @@ public sealed class SpawnPoolTests
     {
         var pool = new SpawnPool(new() { NpcListIds = ["orcs"] }, Lists);
 
-        Assert.Equal(expected, pool.Pick(new ScriptedRandom(roll, 0)));
+        Assert.Equal(expected, pool.Pick(new ScriptedRangeRandom(roll, 0)));
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public sealed class SpawnPoolTests
     {
         var pool = new SpawnPool(new() { NpcListIds = ["orcs"] }, Lists);
 
-        Assert.Equal("frost_troll", pool.Pick(new ScriptedRandom(3, 1)));
+        Assert.Equal("frost_troll", pool.Pick(new ScriptedRangeRandom(3, 1)));
     }
 
     [Fact]
@@ -51,8 +51,8 @@ public sealed class SpawnPoolTests
         // rabbit weighs 1, then the entries of orcs: orc 3, trolls 1.
         var pool = new SpawnPool(new() { MobileIds = ["rabbit"], NpcListIds = ["orcs"] }, Lists);
 
-        Assert.Equal("rabbit", pool.Pick(new ScriptedRandom(0)));
-        Assert.Equal("orc", pool.Pick(new ScriptedRandom(1)));
-        Assert.Equal("troll", pool.Pick(new ScriptedRandom(4, 0)));
+        Assert.Equal("rabbit", pool.Pick(new ScriptedRangeRandom(0)));
+        Assert.Equal("orc", pool.Pick(new ScriptedRangeRandom(1)));
+        Assert.Equal("troll", pool.Pick(new ScriptedRangeRandom(4, 0)));
     }
 }

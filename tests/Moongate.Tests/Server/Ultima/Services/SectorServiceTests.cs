@@ -12,6 +12,7 @@ namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class SectorServiceTests
 {
+
     [Fact]
     public void GetMobilesInRange_FindsAnAddedMobile()
     {
@@ -230,14 +231,6 @@ public sealed class SectorServiceTests
 
         Assert.Empty(sectors.Query(MapType.Trammel, new Point3D(1496, 1628, 0)).Npcs);
         Assert.Equal([orc], sectors.Query(MapType.Trammel, new Point3D(1496, 1628, 0), 6).Npcs);
-    }
-
-    private static ItemEntity GroundItem(uint serial, int x, int y)
-    {
-        var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
-        item.PlaceOnGround(MapType.Trammel, new Point3D(x, y, 0));
-
-        return item;
     }
 
     [Theory]
@@ -528,6 +521,14 @@ public sealed class SectorServiceTests
         Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600 + 3 * 16, 1600, 0)));
         Assert.True(sectors.IsActive(MapType.Trammel, new Point3D(1600 + 4 * 16, 1600, 0)));
         Assert.Equal([aria], sectors.GetMobilesInRange(MapType.Trammel, new Point3D(1600 + 6 * 16, 1600, 0), 18));
+    }
+
+    private static ItemEntity GroundItem(uint serial, int x, int y)
+    {
+        var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        item.PlaceOnGround(MapType.Trammel, new Point3D(x, y, 0));
+
+        return item;
     }
 
     private static MobileEntity Player(uint serial, int x, int y)

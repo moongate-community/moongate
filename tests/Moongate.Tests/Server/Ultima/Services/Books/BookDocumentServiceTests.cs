@@ -18,6 +18,7 @@ namespace Moongate.Tests.Server.Ultima.Services.Books;
 
 public sealed class BookDocumentServiceTests
 {
+
     // The cover of a book is told by its source: the item it is written on takes that graphic.
     [Fact]
     public async Task Give_ASourceWithAnItemId_GivesAnItemOfThatGraphic()
@@ -543,23 +544,6 @@ public sealed class BookDocumentServiceTests
         );
     }
 
-    private static async Task<ItemEntity> BlankBookAsync(BookTestFixture f)
-    {
-        f.Data.With(
-            f.Source,
-            new BookTemplate
-            {
-                Id = "blank", Title = "a book", Author = "$player_name", Content = "", ItemTemplate = "readable_book",
-                Writable = true, Pages = 30
-            },
-            new BookTemplate { Id = "tome", Title = "Tome", Content = "Text", ItemTemplate = "readable_book" }
-        );
-        ItemEntity? blank = null;
-        await f.OnLoopAsync(() => blank = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "blank")));
-
-        return blank!;
-    }
-
     [Fact]
     public async Task Write_ASourceWithAnItemId_SetsTheGraphicOfTheItemWrittenOn()
     {
@@ -1013,5 +997,22 @@ public sealed class BookDocumentServiceTests
                 Assert.False(fixture.Books.Open(note, fixture.Player));
             }
         );
+    }
+
+    private static async Task<ItemEntity> BlankBookAsync(BookTestFixture f)
+    {
+        f.Data.With(
+            f.Source,
+            new BookTemplate
+            {
+                Id = "blank", Title = "a book", Author = "$player_name", Content = "", ItemTemplate = "readable_book",
+                Writable = true, Pages = 30
+            },
+            new BookTemplate { Id = "tome", Title = "Tome", Content = "Text", ItemTemplate = "readable_book" }
+        );
+        ItemEntity? blank = null;
+        await f.OnLoopAsync(() => blank = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "blank")));
+
+        return blank!;
     }
 }

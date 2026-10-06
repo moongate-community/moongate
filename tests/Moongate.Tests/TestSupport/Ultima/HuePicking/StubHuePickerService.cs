@@ -8,33 +8,6 @@ namespace Moongate.Tests.TestSupport.Ultima.HuePicking;
 /// </summary>
 public sealed class StubHuePickerService : IHuePickerService
 {
-    private readonly List<(GameSession Session, Action<GameSession, int?> Callback)> _open = [];
-
-    /// <summary>
-    ///     The hue every picker is answered with; null for a picker that was replaced or whose player left.
-    /// </summary>
-    public int? Result { get; set; }
-
-    public List<int> Graphics { get; } = [];
-
-    /// <summary>
-    ///     True keeps every picker open until <see cref="Answer" />, as a player that takes its time.
-    /// </summary>
-    public bool Defer { get; set; }
-
-    public void Begin(GameSession session, int graphic, Action<GameSession, int?> callback)
-    {
-        Graphics.Add(graphic);
-
-        if (Defer)
-        {
-            _open.Add((session, callback));
-
-            return;
-        }
-
-        callback(session, Result);
-    }
 
     /// <summary>
     ///     Answers the pickers kept open with <paramref name="hue" />.
@@ -63,5 +36,33 @@ public sealed class StubHuePickerService : IHuePickerService
 
     public void OnSessionClosed(GameSession session)
     {
+    }
+
+    private readonly List<(GameSession Session, Action<GameSession, int?> Callback)> _open = [];
+
+    /// <summary>
+    ///     The hue every picker is answered with; null for a picker that was replaced or whose player left.
+    /// </summary>
+    public int? Result { get; set; }
+
+    public List<int> Graphics { get; } = [];
+
+    /// <summary>
+    ///     True keeps every picker open until <see cref="Answer" />, as a player that takes its time.
+    /// </summary>
+    public bool Defer { get; set; }
+
+    public void Begin(GameSession session, int graphic, Action<GameSession, int?> callback)
+    {
+        Graphics.Add(graphic);
+
+        if (Defer)
+        {
+            _open.Add((session, callback));
+
+            return;
+        }
+
+        callback(session, Result);
     }
 }

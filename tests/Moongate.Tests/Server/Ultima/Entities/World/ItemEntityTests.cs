@@ -172,14 +172,6 @@ public sealed class ItemEntityTests
         Assert.Throws<ArgumentException>(() => new ItemEntity().Equip(Mobile, LayerType.None));
     }
 
-    private static ItemEntity InContainer()
-    {
-        var item = new ItemEntity { Id = new(0x40000005) };
-        item.PutInContainer(Backpack, new Point2D(10, 20));
-
-        return item;
-    }
-
     [Fact]
     public void Props_SetGetAndRemove()
     {
@@ -270,5 +262,13 @@ public sealed class ItemEntityTests
             (snapshot.Id, snapshot.Amount, snapshot.ContainerId!.Value, snapshot.GridLocation!.Value,
                 snapshot.GetProp<int>("minted"))
         );
+    }
+
+    private static ItemEntity InContainer()
+    {
+        var item = new ItemEntity { Id = new(0x40000005) };
+        item.PutInContainer(Backpack, new Point2D(10, 20));
+
+        return item;
     }
 }

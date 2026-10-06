@@ -292,11 +292,6 @@ public sealed class GuardServiceTests : IAsyncLifetime
         Assert.Single(_speech.Said);
     }
 
-    private void Move(MobileEntity mobile, int x, int y)
-    {
-        Assert.True(_fixture.Mobiles.MoveTo(mobile, MapType.Trammel, new Point3D(x, y, 0)));
-    }
-
     [Theory]
     [InlineData(MapType.Ilshenar, "archerguard")]
     [InlineData(MapType.Malas, "archerguard")]
@@ -352,6 +347,11 @@ public sealed class GuardServiceTests : IAsyncLifetime
         await FireAsync();
 
         Assert.Equal([_npcs.Spawned.Id], _npcs.Removals);
+    }
+
+    private void Move(MobileEntity mobile, int x, int y)
+    {
+        Assert.True(_fixture.Mobiles.MoveTo(mobile, MapType.Trammel, new Point3D(x, y, 0)));
     }
 
     // On the game loop, as the speech handler and the timer wheel call the service; then what it started elsewhere

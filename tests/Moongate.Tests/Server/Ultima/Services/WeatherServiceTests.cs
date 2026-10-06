@@ -44,7 +44,7 @@ public sealed class WeatherServiceTests : IAsyncLifetime
         _fixture = await BroadcastFixture.CreateAsync();
         await _fixture.AddAsync(1, map: MapType.Felucca);
         _container.RegisterMoongateEventBus();
-        await StartAsync(new ScriptedRandom(1));
+        await StartAsync(new ScriptedRangeRandom(1));
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public sealed class WeatherServiceTests : IAsyncLifetime
     public async Task AStorm_ThundersSometimesForThePlayerOutside()
     {
         await _weather.StopAsync();
-        await StartAsync(new ScriptedRandom(0), storms: true);
+        await StartAsync(new ScriptedRangeRandom(0), storms: true);
         _weather.RegionChanged(_aria, null, null);
         await LoginAsync();
 

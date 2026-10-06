@@ -19,14 +19,6 @@ internal sealed class BookAttachmentStoreFixture : IAsyncDisposable
     public IDataAccess<ItemEntity> Items { get; }
     public IDataAccess<BookAttachmentClaimEntity> Receipts { get; }
 
-    private BookAttachmentStoreFixture(HostPersistenceFixture host)
-    {
-        Host = host;
-        Items = host.Container.Resolve<IDataAccess<ItemEntity>>();
-        Receipts = host.Container.Resolve<IDataAccess<BookAttachmentClaimEntity>>();
-        Store = new(new WorldTransactionService(host.Owner), Receipts);
-    }
-
     public static async Task<BookAttachmentStoreFixture> CreateAsync(BookTestFixture? world = null)
     {
         var host = await HostPersistenceFixture.CreateAsync(false);
@@ -79,6 +71,14 @@ internal sealed class BookAttachmentStoreFixture : IAsyncDisposable
             Letter = letter, Parents = [pack], Items = [reward],
             Receipt = new() { Id = letter.Id, ClaimantId = new(100), ClaimedAt = 1000 }
         };
+    }
+
+    private BookAttachmentStoreFixture(HostPersistenceFixture host)
+    {
+        Host = host;
+        Items = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        Receipts = host.Container.Resolve<IDataAccess<BookAttachmentClaimEntity>>();
+        Store = new(new WorldTransactionService(host.Owner), Receipts);
     }
 
     public async ValueTask DisposeAsync()

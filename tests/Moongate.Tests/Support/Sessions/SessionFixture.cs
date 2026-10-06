@@ -16,13 +16,6 @@ public sealed class SessionFixture : IAsyncDisposable
 
     public GameLoopService Loop { get; }
 
-    private SessionFixture(MoongateTcpClient client, Socket peer, GameLoopService loop)
-    {
-        Client = client;
-        _peer = peer;
-        Loop = loop;
-    }
-
     public static async Task<SessionFixture> CreateAsync()
     {
         var listener = new TcpListener(IPAddress.Loopback, 0);
@@ -71,6 +64,13 @@ public sealed class SessionFixture : IAsyncDisposable
         var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         await Loop.PostAsync(new SessionGameLoopWorkItem(action, completion));
         await completion.Task.WaitAsync(Timeout);
+    }
+
+    private SessionFixture(MoongateTcpClient client, Socket peer, GameLoopService loop)
+    {
+        Client = client;
+        _peer = peer;
+        Loop = loop;
     }
 
     private static void Attempt(Action action, List<Exception> failures)

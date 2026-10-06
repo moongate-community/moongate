@@ -116,20 +116,6 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Equal((race, gender, body, nameList), (x.Race, x.Gender, x.Body, x.NameList));
     }
 
-    private int Run()
-    {
-        return UoxItemConverterCommand.Run(
-            _dirs.SourceDirectory,
-            _dirs.DestinationDirectory,
-            _dirs.LootDestinationDirectory,
-            _output,
-            _error,
-            _dirs.MobileSourceDirectory,
-            _dirs.MobileDestinationDirectory,
-            _dirs.NamesDestinationPath
-        );
-    }
-
     [Fact]
     public void Run_ADoubledHexPrefix_IsReadAsOne()
     {
@@ -573,6 +559,20 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Equal(["0x170b", "0x170c"], equipment[0].Items);
         // [0x13bb] getlbr=0x13bb_lbr has one parent, so it is a template of its own inheriting that graphic.
         Assert.Equal(["0x13bb"], equipment[1].Items);
+    }
+
+    private int Run()
+    {
+        return UoxItemConverterCommand.Run(
+            _dirs.SourceDirectory,
+            _dirs.DestinationDirectory,
+            _dirs.LootDestinationDirectory,
+            _output,
+            _error,
+            _dirs.MobileSourceDirectory,
+            _dirs.MobileDestinationDirectory,
+            _dirs.NamesDestinationPath
+        );
     }
 
     private void WriteItemsAndNames()

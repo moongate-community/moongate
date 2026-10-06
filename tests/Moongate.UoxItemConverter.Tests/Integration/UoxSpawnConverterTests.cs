@@ -283,11 +283,6 @@ public sealed class UoxSpawnConverterTests : IDisposable
         );
     }
 
-    private static string Region(int number, int world)
-    {
-        return $"[REGIONSPAWN {number}]\n{{\nNPC=orc\nMAXNPCS=1\nX1=1\nY1=1\nX2=5\nY2=5\nWORLD={world}\n}}\n";
-    }
-
     [Fact]
     public void Run_ASpawnOfAnUnknownMobile_IsDropped()
     {
@@ -330,6 +325,11 @@ public sealed class UoxSpawnConverterTests : IDisposable
 
         Assert.Equal(2, exitCode);
         Assert.Contains("--npc-lists-destination and --spawns-destination need --mobile-source", _error.ToString());
+    }
+
+    private static string Region(int number, int world)
+    {
+        return $"[REGIONSPAWN {number}]\n{{\nNPC=orc\nMAXNPCS=1\nX1=1\nY1=1\nX2=5\nY2=5\nWORLD={world}\n}}\n";
     }
 
     private void WriteSources(string? npcLists = null, string? spawns = null)
