@@ -9,6 +9,7 @@ public sealed class CombatConfig
     private const int MaximumStamina = 100;
     private const int MaximumRange = 24;
     private const int MaximumSeconds = 3600;
+    private const double MaximumStandStill = 60;
 
     /// <summary>
     ///     Gets or sets the factor that divides the delay between two swings: 2 makes every fighter swing twice as
@@ -42,6 +43,12 @@ public sealed class CombatConfig
     public bool DisplayDamageNumbers { get; set; } = true;
 
     /// <summary>
+    ///     Gets or sets the seconds a player must have stood still before it can shoot, as ModernUO and UOX3 ask of an archer;
+    ///     0 for none.
+    /// </summary>
+    public double ArcheryStandStillSeconds { get; set; } = 1.0;
+
+    /// <summary>
     ///     Validates the section before server services begin startup.
     /// </summary>
     public void Validate()
@@ -70,6 +77,13 @@ public sealed class CombatConfig
         if (MaxRange is < 1 or > MaximumRange)
         {
             throw new InvalidOperationException($"ultima.combat.max_range must be from 1 to {MaximumRange}, found {MaxRange}.");
+        }
+
+        if (double.IsNaN(ArcheryStandStillSeconds) || ArcheryStandStillSeconds is < 0 or > MaximumStandStill)
+        {
+            throw new InvalidOperationException(
+                $"ultima.combat.archery_stand_still_seconds must be from 0 to {MaximumStandStill}, found {ArcheryStandStillSeconds}."
+            );
         }
 
         if (CombatantSeconds is < 1 or > MaximumSeconds)

@@ -9,8 +9,27 @@ public sealed class CombatConfigTests
     {
         var config = new CombatConfig();
 
-        Assert.Equal((1.0, 0, 1.0, 1, 60, true), (config.GlobalAttackSpeed, config.AttackStamina, config.NpcDamageRate, config.MaxRange, config.CombatantSeconds, config.DisplayDamageNumbers));
+        Assert.Equal((1.0, 0, 1.0, 1, 60, true, 1.0), (config.GlobalAttackSpeed, config.AttackStamina, config.NpcDamageRate, config.MaxRange, config.CombatantSeconds, config.DisplayDamageNumbers, config.ArcheryStandStillSeconds));
         config.Validate();
+    }
+
+    [Theory]
+    [InlineData(-0.5)]
+    [InlineData(61.0)]
+    [InlineData(double.NaN)]
+    public void Validate_ABadStandStillTime_Throws(double seconds)
+    {
+        var config = new CombatConfig { ArcheryStandStillSeconds = seconds };
+
+        var error = Assert.Throws<InvalidOperationException>(config.Validate);
+
+        Assert.Contains("ultima.combat.archery_stand_still_seconds", error.Message);
+    }
+
+    [Fact]
+    public void Validate_NoStandStillTimeAtAll_IsAccepted()
+    {
+        new CombatConfig { ArcheryStandStillSeconds = 0 }.Validate();
     }
 
     [Theory]
