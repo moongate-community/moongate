@@ -20,6 +20,7 @@ using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Combat;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -41,6 +42,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     private const int IdleSound = 452;
     private const int AttackSound = 453;
 
+    private readonly RecordingCombatService _combat = new();
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
     private readonly StubGameLoop _loop = new();
@@ -107,6 +109,8 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<MobileModule>();
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<DiceModule>();
+        _container.AddScriptModule<CombatModule>();
+        _container.RegisterInstance<ICombatService>(_combat);
         _container.RegisterScriptEnum<MonsterAnimationType>();
         _container.Resolve<IMoongateEventBus>()
                   .Subscribe<ScriptErrorEvent>(
@@ -140,7 +144,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void APlayerInSight_IsThreatened_WalkedTo_AndSnarledAtFromBesideIt()
+    public void APlayerInSight_IsThreatened_WalkedTo_AndFoughtFromBesideIt()
     {
         _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
 
@@ -160,12 +164,11 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(new Point3D(1604, 1600, 0), _skeleton.Location);
         Assert.DoesNotContain(_view.Calls, call => call.Contains("running", StringComparison.OrdinalIgnoreCase));
 
-        // Beside it, it stays, faces the player and snarls: no combat yet.
+        // Beside it, it stays, faces the player and fights it: told once, whatever the thinks after.
         Think(12);
         Assert.Equal(new Point3D(1604, 1600, 0), _skeleton.Location);
         Assert.Equal(DirectionType.East, _skeleton.Direction);
-        Assert.Contains((_skeleton, AttackSound), _speech.Sounds);
-        Assert.Contains(_view.Calls, call => call is "Animated 256 4 5 1" or "Animated 256 5 5 1" or "Animated 256 6 5 1");
+        Assert.Equal([(_skeleton, _aria)], _combat.Attacks);
         Assert.Empty(_errors);
     }
 
@@ -311,7 +314,22 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
 
         Think(40);
 
-        Assert.DoesNotContain((_skeleton, AttackSound), _speech.Sounds);
+        Assert.Empty(_combat.Attacks);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void APlayerItLosesOrGivesUp_EndsItsFight()
+    {
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+        Think(20);
+        Assert.Single(_combat.Attacks);
+
+        // The player hides: the monster loses it and stands guard, no longer fighting it.
+        _aria.Hidden = true;
+        Think(1);
+
+        Assert.Contains(_skeleton, _combat.Stopped);
         Assert.Empty(_errors);
     }
 

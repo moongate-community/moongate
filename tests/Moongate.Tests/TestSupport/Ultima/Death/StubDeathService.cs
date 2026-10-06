@@ -13,10 +13,20 @@ public sealed class StubDeathService : IDeathService
 {
     public bool Kills { get; set; } = true;
 
+    /// <summary>
+    ///     What <see cref="Kill" /> throws, when set.
+    /// </summary>
+    public Exception? KillFailure { get; set; }
+
     public List<(MobileEntity Mobile, MobileEntity? Killer)> Killed { get; } = [];
 
     public bool Kill(MobileEntity mobile, MobileEntity? killer = null)
     {
+        if (KillFailure is not null)
+        {
+            throw KillFailure;
+        }
+
         Killed.Add((mobile, killer));
 
         return Kills;

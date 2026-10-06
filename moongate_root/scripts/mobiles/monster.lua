@@ -3,8 +3,9 @@
 --
 -- What it is for:
 --   A mobile script for the monsters that go for the players, as ModernUO's melee
---   AI without the fight: the server has no combat yet. A mobile template uses it
---   with script_id = "monster" (the skeleton and the zombie do).
+--   AI: it chases a player and, beside it, fights it (combat.attack: the server
+--   swings, hits and kills by its combat rules). A mobile template uses it with
+--   script_id = "monster" (the skeleton and the zombie do).
 --
 --   The monster is in one of three states:
 --     wander  it strolls around its home, the area of its spawn region, mostly
@@ -13,10 +14,10 @@
 --     chase   it saw a player within 16 tiles, in line of sight: it threatens it
 --             with its attack sound, goes into war mode and walks to it, around
 --             what stands in the way, never running. Beside the player it faces
---             it and snarls every few seconds. It does no harm.
+--             it and fights it until the player dies, goes or hides.
 --     guard   it lost the player: hidden, gone, farther than 32 tiles or out of
---             reach for 20 seconds. It stands in war mode for 10 seconds, looking
---             around, then goes back to wandering, and so to its home. A
+--             reach for 20 seconds. It stops fighting, stands in war mode for 10
+--             seconds, looking around, then goes back to wandering, and so to its home. A
 --             player it could not reach is left alone until it moves.
 --   It never sees a hidden player, a game master or an administrator, and it
 --   ignores the other monsters.
@@ -38,19 +39,17 @@ local PERCEPTION = 16
 local LEASH = 32
 
 -- In thinks, two a second: how often it looks for a player, how long it stands guard, how long it tries a player it
--- cannot reach, how often it snarls beside one, and how long a rest lasts.
+-- cannot reach, and how long a rest lasts.
 local SCAN_EVERY = 4
 local GUARD_THINKS = 20
 local GIVE_UP_THINKS = 40
-local SNARL_EVERY = 6
 local REST_MIN, REST_MAX = 30, 50
 
 -- How far apart two heights of one storey are.
 local STOREY = 16
 
--- A monster body's actions: it threatens, attacks and fidgets (ModernUO's choices).
+-- A monster body's actions: it threatens and fidgets (ModernUO's choices); its attacks are the combat service's.
 local THREATEN = MonsterAnimationType.Pillage
-local ATTACKS = { MonsterAnimationType.Attack1, MonsterAnimationType.Attack2, MonsterAnimationType.Attack3 }
 local FIDGETS = { MonsterAnimationType.Fidget1, MonsterAnimationType.Fidget2 }
 
 -- What each monster is doing, by serial.
@@ -111,12 +110,14 @@ local function start_chase(serial, mind, player)
 end
 
 local function start_guard(serial, mind)
+    combat.stop(serial)
     mind.state = "guard"
     mind.target = nil
     mind.until_think = mind.thinks + GUARD_THINKS
 end
 
 local function start_wander(serial, mind)
+    combat.stop(serial)
     mind.state = "wander"
     mind.target = nil
     mobile.set_war_mode(serial, false)
@@ -171,10 +172,9 @@ local function chase(serial, mind, here)
         mind.stalled = 0
         npc.face(serial, there.x, there.y)
 
-        -- Beside its prey it can only snarl: the fight comes with the combat.
-        if mind.thinks % SNARL_EVERY == 0 then
-            npc.play_sound(serial, "attack")
-            mobile.animate(serial, ATTACKS[math.random(#ATTACKS)])
+        -- Beside its prey it fights it, once: the swings are the combat service's.
+        if combat.target(serial) ~= target then
+            combat.attack(serial, target)
         end
 
         return

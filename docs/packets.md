@@ -75,7 +75,11 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x95` | `HuePickerPacket` | Outgoing | Fixed 9 | — |
 | `0x95` | `HuePickerResponsePacket` | Incoming | Fixed 9 | `HuePickerResponsePacketHandler`: gives the hue picked to the player's open picker |
-| `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x05` | `AttackRequestPacket` | Incoming | Fixed 5 | `AttackRequestPacketHandler`: the character [fights](combat.md) the mobile; a refused request is answered with `0xAA` and zero |
+| `0x22`, `0xB5`, `0xFB` | `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0xAA` | `CombatantPacket` | Outgoing | Fixed 5 | — |
+| `0x2F` | `SwingPacket` | Outgoing | Fixed 10 | — |
+| `0x0B` | `DamagePacket` | Outgoing | Fixed 7 | — |
 | `0x12` | `TextCommandPacket` | Incoming | Variable | `TextCommandPacketHandler`: kind `0x24` [uses the skill](skills.md) whose number starts the text; the other kinds are ignored for now (Debug log) |
 | `0xB8`, `0xE1`, `0xF0` | `ProfileRequestPacket`, `ClientTypePacket`, `ProtocolExtensionPacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip, `0x1A` sets the lock of a stat; the others are ignored for now |
