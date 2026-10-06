@@ -1,5 +1,5 @@
 # ==============================================================================
-# Moongate - templates/decorations/ilshenar/_serpentine.toml
+# Moongate - templates/decorations/ilshenar/regvolom.toml
 #
 # What it is for:
 #   World decoration placed on Ilshenar: doors, signs, lights, furniture and
@@ -18,48 +18,38 @@
 # ==============================================================================
 
 [[decoration]]
-comment = "lute"
-type = "Static"
-item_id = 0x0EB3
-locations = [[426, 1557, -23]]
+comment = "metal box"
+type = "MetalBox"
+item_id = 0x09A8
+props = { hue = 0x096E }
+locations = [[1349, 1030, -5]]
 
 [[decoration]]
-comment = "lap harp"
+comment = "marble floor"
 type = "Static"
-item_id = 0x0EB2
-locations = [[426, 1558, -23]]
-
-[[decoration]]
-comment = "tambourine"
-type = "Static"
-item_id = 0x0E9E
-locations = [[427, 1560, -23]]
-
-[[decoration]]
-comment = "standing harp"
-type = "Static"
-item_id = 0x0EB1
+item_id = 0x0511
+props = { hue = 0x0001 }
 locations = [
-    [434, 1557, -22],
-    [436, 1557, -22],
+    [1362, 1031, -13],
+    [1363, 1031, -13],
+    [1364, 1031, -13],
 ]
 
 [[decoration]]
-comment = "metal door"
-type = "MetalDoor"
-item_id = 0x0675
-props = { hue = 0x08AB, facing = "west_cw" }
-locations = [[478, 1527, -27]]
-
-[[decoration]]
-comment = "metal door"
-type = "MetalDoor"
-item_id = 0x0677
-props = { hue = 0x08AB, facing = "east_ccw" }
-locations = [[479, 1527, -27]]
-
-[[decoration]]
-comment = "drum"
+comment = "bottle"
 type = "Static"
-item_id = 0x0E9C
-locations = [[427, 1557, -23]]
+item_id = 0x0F00
+locations = [[1378, 1049, -12]]
+
+[[decoration]]
+comment = "sandstone stairs"
+type = "Static"
+item_id = 0x076F
+props = { hue = 0x0961 }
+locations = [
+    [1980, 1107, -18],
+    [1981, 1107, -18],
+    [1982, 1107, -18],
+    [1983, 1107, -18],
+    [1984, 1107, -18],
+]

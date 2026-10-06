@@ -1,5 +1,5 @@
 # ==============================================================================
-# Moongate - templates/decorations/ilshenar/_regvolom.toml
+# Moongate - templates/decorations/ilshenar/sheepfarm.toml
 #
 # What it is for:
 #   World decoration placed on Ilshenar: doors, signs, lights, furniture and
@@ -18,38 +18,52 @@
 # ==============================================================================
 
 [[decoration]]
-comment = "metal box"
-type = "MetalBox"
-item_id = 0x09A8
-props = { hue = 0x096E }
-locations = [[1349, 1030, -5]]
+comment = "wooden gate"
+type = "DarkWoodGate"
+item_id = 0x086E
+props = { facing = "south_cw" }
+locations = [[1311, 1325, -14]]
 
 [[decoration]]
-comment = "marble floor"
-type = "Static"
-item_id = 0x0511
-props = { hue = 0x0001 }
-locations = [
-    [1362, 1031, -13],
-    [1363, 1031, -13],
-    [1364, 1031, -13],
-]
+comment = "wooden gate"
+type = "DarkWoodGate"
+item_id = 0x086C
+props = { facing = "east_cw" }
+locations = [[1328, 1321, -14]]
 
 [[decoration]]
-comment = "bottle"
-type = "Static"
-item_id = 0x0F00
-locations = [[1378, 1049, -12]]
+comment = "upright loom"
+type = "LoomEastAddon"
+item_id = 0x1060
+locations = [[1305, 1319, -14]]
 
 [[decoration]]
-comment = "sandstone stairs"
+comment = "spinning wheel"
+type = "SpinningWheelSouthAddon"
+item_id = 0x1015
+locations = [[1306, 1316, -14]]
+
+[[decoration]]
+comment = "chest of drawers"
+type = "Drawer"
+item_id = 0x0A2C
+locations = [[1308, 1314, 6]]
+
+[[decoration]]
+comment = "scissors"
+type = "Scissors"
+item_id = 0x0F9E
+locations = [[1309, 1319, -10]]
+
+[[decoration]]
+comment = "dyeing tub"
+type = "DyeTub"
+item_id = 0x0FAB
+props = { hue = 0x015C }
+locations = [[1311, 1319, -14]]
+
+[[decoration]]
+comment = "upright loom"
 type = "Static"
-item_id = 0x076F
-props = { hue = 0x0961 }
-locations = [
-    [1980, 1107, -18],
-    [1981, 1107, -18],
-    [1982, 1107, -18],
-    [1983, 1107, -18],
-    [1984, 1107, -18],
-]
+item_id = 0x105F
+locations = [[1305, 1320, -14]]

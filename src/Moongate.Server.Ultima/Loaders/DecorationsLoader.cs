@@ -10,7 +10,7 @@ namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
 ///     Reads <c>templates/decorations/&lt;folder&gt;/*.toml</c> on demand, so an edited file is placed by the next
-///     <c>.decorate</c> without a restart. A folder starting with <c>_</c> is skipped; <c>britannia</c> decorates Trammel
+///     <c>.decorate</c> without a restart. A folder or a file starting with <c>_</c> is skipped; <c>britannia</c> decorates Trammel
 ///     and Felucca, and any other folder must be named after a map.
 /// </summary>
 public sealed class DecorationsLoader : IDecorationsLoader
@@ -48,6 +48,12 @@ public sealed class DecorationsLoader : IDecorationsLoader
 
             foreach (var path in Directory.GetFiles(folderPath, "*.toml").Order(StringComparer.Ordinal))
             {
+                // Set aside as a folder is: kept in the root, and not placed.
+                if (Path.GetFileName(path).StartsWith('_'))
+                {
+                    continue;
+                }
+
                 var document = TomlSerializer.Deserialize<TomlTable>(await File.ReadAllTextAsync(path, cancellationToken))!;
                 var blocks = document.TryGetValue("decoration", out var array) && array is TomlTableArray tables
                     ? tables.Select(table => ReadBlock(path, table)).ToList()

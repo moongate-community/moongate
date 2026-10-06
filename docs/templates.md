@@ -451,7 +451,7 @@ regions spawn at runtime, water mobiles included, is in [NPC spawns](spawns.md).
 ## Decorations
 
 `templates/decorations/` holds the world decoration the client's map files do not: doors, signs,
-lights, furniture, teleporters and the like, about 35,500 placements in the loaded folders (115 files in all). It was
+lights, furniture, teleporters and the like, about 32,800 placements in the 108 loaded files (115 files in all). It was
 converted once from ModernUO's `Data/Decoration`, plus ServUO's New Haven (`trammel/newhaven.toml`,
 `havenisland.toml`, `havenmine.toml`, which ModernUO lacks) and the shop and world signs of
 ModernUO's `signs.cfg` (`signs.toml`, written by
@@ -460,11 +460,21 @@ teleporters of its `teleporters.json` (`teleporters.toml`, written by
 [`mgctl convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
 `tokuno/`, `termur/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/`,
-`_old_magincia/` and `_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename
+`_old_magincia/` and `_bounty_boards/`. A folder or a file whose name starts with `_` is not loaded: rename
 it without the `_` to place its decoration. `_old_magincia/` is the furniture of Magincia as it
 was before its destruction: the map of a current client holds New Magincia, rebuilt without those
-buildings, so the set stays out; with an old client, move its file to `britannia/`. Files starting with `_` inside a loaded folder (the dungeons, such as
-`britannia/_covetous.toml`) are loaded.
+buildings, so the set stays out; with an old client, move its file to `britannia/`.
+
+The old Haven of Trammel is set aside the same way: `trammel/_haven.toml`,
+`trammel/_haven_additions.toml` and `trammel/_signs.toml`, 631 placements. On the map of a current
+client that town is a ruin, with a third of its buildings gone or broken, so its doors, chests and
+bookcases would stand with no walls around them; Felucca keeps the town at the same place. With an
+old client, rename the three files without the `_`. ModernUO names some of its files with a leading
+underscore (`_covetous.cfg`): here they are `covetous.toml`, or `despise_additions.toml` where a
+plain `despise.toml` exists too, so that the underscore only ever means "not loaded". A world decorated
+before keeps the items it already has: `.decorate` tells what is placed by where it stands, not by
+the file, so the renamed files place nothing twice, and the old Haven's items stay until they are
+removed or the world is decorated anew.
 
 ```toml
 [[decoration]]

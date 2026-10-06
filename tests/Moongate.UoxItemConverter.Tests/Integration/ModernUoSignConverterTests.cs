@@ -44,6 +44,8 @@ public sealed class ModernUoSignConverterTests : IDisposable
         Assert.Equal(1016093L, ((TomlTable)britannia["props"])["label_number"]);
         Assert.Equal([373L, 904L, -1L], ((TomlArray)((TomlArray)britannia["locations"])[0]!).Cast<long>());
 
+        // The signs of Trammel alone are those of the old Haven, a ruin on the client's map: written set aside.
+        Assert.False(File.Exists(Path.Combine(Destination, "trammel", "signs.toml")));
         var trammel = Assert.Single(Read("trammel"));
         Assert.Equal("Sign", trammel["type"]);
         Assert.Equal("The Shakin' Bakery", ((TomlTable)trammel["props"])["name"]);
@@ -114,7 +116,7 @@ public sealed class ModernUoSignConverterTests : IDisposable
 
     private List<TomlTable> Read(string folder)
     {
-        var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(Path.Combine(Destination, folder, "signs.toml")))!;
+        var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(Path.Combine(Destination, folder, folder == "trammel" ? "_signs.toml" : "signs.toml")))!;
 
         return ((TomlTableArray)document["decoration"]).ToList();
     }

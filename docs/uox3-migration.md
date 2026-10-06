@@ -251,7 +251,9 @@ dotnet run --project src/Moongate.Ctl -- convert modernuo-signs \
 ```
 
 It writes one `signs.toml` per [decoration folder](templates.md#decorations) (`britannia` for the
-signs of both Trammel and Felucca), replacing that of a previous run: a text of the client becomes
+signs of both Trammel and Felucca), replacing that of a previous run. The signs of Trammel alone
+are those of the old Haven, a ruin on the map of a current client: they are written to
+`trammel/_signs.toml`, which is [not loaded](templates.md#decorations). In each file a text of the client becomes
 a `LocalizedSign` with `label_number`, a written one a `Sign` with `name`, and the signs of Luna and
 Umbra keep the hue of their town. A line that is not a sign stops the run and names itself.
 [`.decorate`](commands/decorate.md) places them.

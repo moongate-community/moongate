@@ -1,5 +1,5 @@
 # ==============================================================================
-# Moongate - templates/decorations/ilshenar/_sheepfarm.toml
+# Moongate - templates/decorations/ilshenar/serpentine.toml
 #
 # What it is for:
 #   World decoration placed on Ilshenar: doors, signs, lights, furniture and
@@ -18,52 +18,48 @@
 # ==============================================================================
 
 [[decoration]]
-comment = "wooden gate"
-type = "DarkWoodGate"
-item_id = 0x086E
-props = { facing = "south_cw" }
-locations = [[1311, 1325, -14]]
-
-[[decoration]]
-comment = "wooden gate"
-type = "DarkWoodGate"
-item_id = 0x086C
-props = { facing = "east_cw" }
-locations = [[1328, 1321, -14]]
-
-[[decoration]]
-comment = "upright loom"
-type = "LoomEastAddon"
-item_id = 0x1060
-locations = [[1305, 1319, -14]]
-
-[[decoration]]
-comment = "spinning wheel"
-type = "SpinningWheelSouthAddon"
-item_id = 0x1015
-locations = [[1306, 1316, -14]]
-
-[[decoration]]
-comment = "chest of drawers"
-type = "Drawer"
-item_id = 0x0A2C
-locations = [[1308, 1314, 6]]
-
-[[decoration]]
-comment = "scissors"
-type = "Scissors"
-item_id = 0x0F9E
-locations = [[1309, 1319, -10]]
-
-[[decoration]]
-comment = "dyeing tub"
-type = "DyeTub"
-item_id = 0x0FAB
-props = { hue = 0x015C }
-locations = [[1311, 1319, -14]]
-
-[[decoration]]
-comment = "upright loom"
+comment = "lute"
 type = "Static"
-item_id = 0x105F
-locations = [[1305, 1320, -14]]
+item_id = 0x0EB3
+locations = [[426, 1557, -23]]
+
+[[decoration]]
+comment = "lap harp"
+type = "Static"
+item_id = 0x0EB2
+locations = [[426, 1558, -23]]
+
+[[decoration]]
+comment = "tambourine"
+type = "Static"
+item_id = 0x0E9E
+locations = [[427, 1560, -23]]
+
+[[decoration]]
+comment = "standing harp"
+type = "Static"
+item_id = 0x0EB1
+locations = [
+    [434, 1557, -22],
+    [436, 1557, -22],
+]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0675
+props = { hue = 0x08AB, facing = "west_cw" }
+locations = [[478, 1527, -27]]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0677
+props = { hue = 0x08AB, facing = "east_ccw" }
+locations = [[479, 1527, -27]]
+
+[[decoration]]
+comment = "drum"
+type = "Static"
+item_id = 0x0E9C
+locations = [[427, 1557, -23]]

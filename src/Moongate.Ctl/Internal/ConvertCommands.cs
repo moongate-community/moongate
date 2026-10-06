@@ -128,7 +128,8 @@ internal static class ConvertCommands
     ///     ModernUO's Distribution/Data/signs.cfg file.
     /// </param>
     /// <param name="destination">
-    ///     The decorations folder (templates/decorations); each folder gets a signs.toml, replacing that of a previous run.
+    ///     The decorations folder (templates/decorations); each folder gets a signs.toml, replacing that of a previous run
+    ///     (Trammel's, the signs of the old Haven, is written set aside as _signs.toml).
     /// </param>
     public static int ModernUoSigns(string source, string destination)
     {

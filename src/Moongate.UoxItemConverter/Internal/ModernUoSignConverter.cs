@@ -76,7 +76,7 @@ internal static class ModernUoSignConverter
 
         for (var facet = 0; facet < Folders.Length; facet++)
         {
-            var path = Path.Combine(destination, Folders[facet], FileName);
+            var path = Path.Combine(destination, Folders[facet], FileNameOf(facet));
 
             if (blocks[facet].Count == 0)
             {
@@ -91,11 +91,18 @@ internal static class ModernUoSignConverter
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, Write(facet, blocks[facet]));
             output.WriteLine(
-                $"{Folders[facet]}/{FileName}: {blocks[facet].Sum(block => block.Locations.Count)} signs in {blocks[facet].Count} blocks"
+                $"{Folders[facet]}/{FileNameOf(facet)}: {blocks[facet].Sum(block => block.Locations.Count)} signs in {blocks[facet].Count} blocks"
             );
         }
 
         return 0;
+    }
+
+    // The signs of Trammel alone are those of the old Haven, which is a ruin on the map of a modern client: their
+    // file is set aside with an underscore, as the other decoration of that town, and the loader skips it.
+    private static string FileNameOf(int facet)
+    {
+        return Folders[facet] == "trammel" ? "_" + FileName : FileName;
     }
 
     // ModernUO's SignParser: the signs of Luna and Umbra take the hue of their town.
@@ -124,7 +131,7 @@ internal static class ModernUoSignConverter
             CultureInfo.InvariantCulture,
             $"""
              # ==============================================================================
-             # Moongate - templates/decorations/{Folders[facet]}/{FileName}
+             # Moongate - templates/decorations/{Folders[facet]}/{FileNameOf(facet)}
              #
              # What it is for:
              #   The shop and world signs placed on {MapNames[facet]}. Each block is one sign

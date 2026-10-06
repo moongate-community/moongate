@@ -90,7 +90,7 @@ public sealed class CtlCommandTests
         var result = await CtlProcess.RunAsync("convert", "modernuo-signs", "--source", source, "--destination", destination);
 
         Assert.True(result.ExitCode == 0, result.Output);
-        Assert.Contains("The Shakin' Bakery", File.ReadAllText(Path.Combine(destination, "trammel", "signs.toml")));
+        Assert.Contains("The Shakin' Bakery", File.ReadAllText(Path.Combine(destination, "trammel", "_signs.toml")));
     }
 
     [Fact]
