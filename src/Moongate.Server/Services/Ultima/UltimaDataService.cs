@@ -38,6 +38,11 @@ public class UltimaDataService : IUltimaDataService
         return Task.CompletedTask;
     }
 
+    public Task StopAsync()
+    {
+        return Task.CompletedTask;
+    }
+
     // Movement, line of sight and item properties all read the tile flags, so a client without them cannot run a shard.
     private void LoadTileData()
     {
@@ -56,10 +61,5 @@ public class UltimaDataService : IUltimaDataService
             TileData.LandTable.Length,
             TileData.ItemTable.Length
         );
-    }
-
-    public Task StopAsync()
-    {
-        return Task.CompletedTask;
     }
 }

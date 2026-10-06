@@ -265,55 +265,6 @@ public sealed class BulletinBoardService : IBulletinBoardService
         return Put(board.Id, ThreadOf(board.Id, replyTo), message, title, text, Now());
     }
 
-    // The subject and the lines as they are kept; false when there is no subject or no line of text.
-    private static bool TryClean(string subject, IReadOnlyList<string> lines, out string title, out List<string> text)
-    {
-        title = Clean(subject, MaxSubject);
-        text = lines.Take(MaxLines).Select(line => Clean(line, MaxLine)).ToList();
-
-        // The empty lines a client leaves under the text are not part of it.
-        while (text.Count > 0 && text[^1].Length == 0)
-        {
-            text.RemoveAt(text.Count - 1);
-        }
-
-        return title.Length > 0 && text.Count > 0;
-    }
-
-    // The message goes on the board with a serial of its own, under its thread, and the board is brought back to
-    // its size.
-    private BulletinPostResult Put(
-        Serial board,
-        BulletinMessageEntity? thread,
-        BulletinMessageEntity message,
-        string title,
-        List<string> text,
-        long now
-    )
-    {
-        if (!_serials.TryTake(out var serial))
-        {
-            return new() { Type = BulletinPostResultType.Busy };
-        }
-
-        message.Id = serial;
-        message.BoardId = board;
-        message.ThreadId = thread?.Id ?? Serial.Zero;
-        message.Subject = title;
-        message.Body = string.Join('\n', text);
-        message.PostedAt = now;
-        message.LastReplyAt = now;
-        _messages[serial] = message;
-        _removed.TryRemove(serial, out _);
-
-        if (thread is not null)
-        {
-            thread.LastReplyAt = now;
-        }
-
-        return new() { Type = BulletinPostResultType.Ok, Message = message, Dropped = MakeRoom(board, message) };
-    }
-
     public bool CanRemove(BulletinMessageEntity message, MobileEntity by, AccountType rank)
     {
         return rank >= AccountType.GameMaster || (message.PosterId.IsValid && message.PosterId == by.Id);
@@ -401,6 +352,55 @@ public sealed class BulletinBoardService : IBulletinBoardService
         {
             _removed.TryRemove(serial, out _);
         }
+    }
+
+    // The subject and the lines as they are kept; false when there is no subject or no line of text.
+    private static bool TryClean(string subject, IReadOnlyList<string> lines, out string title, out List<string> text)
+    {
+        title = Clean(subject, MaxSubject);
+        text = lines.Take(MaxLines).Select(line => Clean(line, MaxLine)).ToList();
+
+        // The empty lines a client leaves under the text are not part of it.
+        while (text.Count > 0 && text[^1].Length == 0)
+        {
+            text.RemoveAt(text.Count - 1);
+        }
+
+        return title.Length > 0 && text.Count > 0;
+    }
+
+    // The message goes on the board with a serial of its own, under its thread, and the board is brought back to
+    // its size.
+    private BulletinPostResult Put(
+        Serial board,
+        BulletinMessageEntity? thread,
+        BulletinMessageEntity message,
+        string title,
+        List<string> text,
+        long now
+    )
+    {
+        if (!_serials.TryTake(out var serial))
+        {
+            return new() { Type = BulletinPostResultType.Busy };
+        }
+
+        message.Id = serial;
+        message.BoardId = board;
+        message.ThreadId = thread?.Id ?? Serial.Zero;
+        message.Subject = title;
+        message.Body = string.Join('\n', text);
+        message.PostedAt = now;
+        message.LastReplyAt = now;
+        _messages[serial] = message;
+        _removed.TryRemove(serial, out _);
+
+        if (thread is not null)
+        {
+            thread.LastReplyAt = now;
+        }
+
+        return new() { Type = BulletinPostResultType.Ok, Message = message, Dropped = MakeRoom(board, message) };
     }
 
     private void Forget(BulletinMessageEntity message)

@@ -46,13 +46,6 @@ public sealed class ContainerContentPacket : BasePacket<ContainerContentPacket>,
         Length = HeaderLength + Items.Count * (gridBytes ? GridItemLength : ItemLength);
     }
 
-    private ContainerContentPacket(ContainerItemEntry[] entries, bool gridBytes)
-    {
-        Items = entries;
-        GridBytes = gridBytes;
-        Length = HeaderLength + entries.Length * (gridBytes ? GridItemLength : ItemLength);
-    }
-
     /// <summary>
     ///     Gets the packet of entries made by hand, such as the hair of a corpse, which is no item.
     /// </summary>
@@ -85,5 +78,12 @@ public sealed class ContainerContentPacket : BasePacket<ContainerContentPacket>,
             writer.WriteSerial(item.Container);
             writer.WriteUInt16BigEndian(item.Hue.Value);
         }
+    }
+
+    private ContainerContentPacket(ContainerItemEntry[] entries, bool gridBytes)
+    {
+        Items = entries;
+        GridBytes = gridBytes;
+        Length = HeaderLength + entries.Length * (gridBytes ? GridItemLength : ItemLength);
     }
 }

@@ -147,6 +147,13 @@ public sealed class TooltipService : ITooltipService
         return Cached(_itemTooltips, key, () => BuildItem(item, lootType, labelNumber, worth));
     }
 
+    public PropertyList Build(MobileEntity mobile)
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+
+        return Cached(_mobileTooltips, new MobileTooltipKey(mobile.Name, mobile.Title), () => BuildMobile(mobile));
+    }
+
     private PropertyList BuildItem(ItemEntity item, LootType? ownLootType, int? labelNumber, long? worth)
     {
         var list = new PropertyList();
@@ -198,13 +205,6 @@ public sealed class TooltipService : ITooltipService
         }
 
         return list;
-    }
-
-    public PropertyList Build(MobileEntity mobile)
-    {
-        ArgumentNullException.ThrowIfNull(mobile);
-
-        return Cached(_mobileTooltips, new MobileTooltipKey(mobile.Name, mobile.Title), () => BuildMobile(mobile));
     }
 
     private static PropertyList Cached<TKey>(

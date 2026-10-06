@@ -29,17 +29,6 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     {
     }
 
-    internal ConsoleInputService(
-        IConsolePromptService prompt,
-        ICommandSystemService commands,
-        IConsoleKeySource keys
-    )
-    {
-        _prompt = prompt;
-        _commands = commands;
-        _keys = keys;
-    }
-
     /// <inheritdoc />
     public Task StartAsync()
     {
@@ -76,6 +65,17 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         }
 
         _prompt.HidePrompt();
+    }
+
+    internal ConsoleInputService(
+        IConsolePromptService prompt,
+        ICommandSystemService commands,
+        IConsoleKeySource keys
+    )
+    {
+        _prompt = prompt;
+        _commands = commands;
+        _keys = keys;
     }
 
     private static bool IsNoKey(ConsoleKeyInfo key)

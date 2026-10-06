@@ -55,12 +55,6 @@ public sealed class LocalizedMessagePacket : BasePacket<LocalizedMessagePacket>,
         Length = HeaderLength + arguments.Length * 2 + 2;
     }
 
-    private LocalizedMessagePacket(Serial serial, int graphic, int cliloc, string name, string arguments, byte type)
-        : this(serial, graphic, cliloc, name, arguments)
-    {
-        _type = type;
-    }
-
     /// <summary>
     ///     Gets a cliloc shown as a system message, in the lower left of the screen, as ModernUO's
     ///     SendLocalizedMessage: no object, the name "System".
@@ -93,5 +87,11 @@ public sealed class LocalizedMessagePacket : BasePacket<LocalizedMessagePacket>,
         writer.WriteFixedAscii(new string(Name.Select(c => c is > '\0' and <= '\x7F' ? c : '?').ToArray()), NameLength);
         writer.WriteBytes(Encoding.Unicode.GetBytes(Arguments));
         writer.WriteUInt16BigEndian(0);
+    }
+
+    private LocalizedMessagePacket(Serial serial, int graphic, int cliloc, string name, string arguments, byte type)
+        : this(serial, graphic, cliloc, name, arguments)
+    {
+        _type = type;
     }
 }

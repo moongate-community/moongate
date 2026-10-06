@@ -146,19 +146,6 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         _noDelay = noDelay;
     }
 
-    private MoongateTcpServer(IPEndPoint endpoint, TcpServerOptions options)
-        : this(
-            endpoint,
-            options.Framer,
-            options.ReceiveBufferSize,
-            options.ConnectionPipelineFactory,
-            options.MaxFrameLength,
-            options.NoDelay
-        )
-    {
-        _configuredOptions = options;
-    }
-
     /// <summary>
     ///     Registers middleware in execution order.
     /// </summary>
@@ -259,6 +246,19 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         var cleanup = GetOrStartStopTask();
 
         return cancellationToken.CanBeCanceled ? cleanup.WaitAsync(cancellationToken) : cleanup;
+    }
+
+    private MoongateTcpServer(IPEndPoint endpoint, TcpServerOptions options)
+        : this(
+            endpoint,
+            options.Framer,
+            options.ReceiveBufferSize,
+            options.ConnectionPipelineFactory,
+            options.MaxFrameLength,
+            options.NoDelay
+        )
+    {
+        _configuredOptions = options;
     }
 
     private async Task AcceptLoopAsync(Socket socket, CancellationToken cancellationToken)

@@ -168,44 +168,6 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    ///     Creates a client wrapper for an accepted socket using the supplied transport stream.
-    /// </summary>
-    internal MoongateTcpClient(
-        Socket socket,
-        Stream stream,
-        IEnumerable<INetMiddleware>? middlewares = null,
-        INetFramer? framer = null,
-        ITransportCodec? codec = null,
-        int receiveBufferSize = DefaultReceiveBufferSize,
-        int maxFrameLength = DefaultMaxFrameLength,
-        bool noDelay = true
-    )
-    {
-        ArgumentNullException.ThrowIfNull(socket);
-        ArgumentNullException.ThrowIfNull(stream);
-
-        if (receiveBufferSize is < 1 or > 1024 * 1024)
-        {
-            throw new ArgumentOutOfRangeException(nameof(receiveBufferSize));
-        }
-
-        if (maxFrameLength is < 1 or > 16 * 1024 * 1024)
-        {
-            throw new ArgumentOutOfRangeException(nameof(maxFrameLength));
-        }
-
-        _socket = socket;
-        _stream = stream;
-        _middlewarePipeline = new(middlewares);
-        Framer = framer;
-        _pendingFrames = framer is null ? null : new(framer, receiveBufferSize, maxFrameLength);
-        _codec = codec;
-        socket.NoDelay = noDelay;
-        ReceiveBufferSize = receiveBufferSize;
-        SessionId = Interlocked.Increment(ref _sessionIdSequence);
-    }
-
-    /// <summary>
     ///     Adds a middleware component to this client pipeline.
     /// </summary>
     public MoongateTcpClient AddMiddleware(INetMiddleware middleware)
@@ -548,6 +510,44 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     public void SwapCodec(ITransportCodec? codec)
     {
         Volatile.Write(ref _codec, codec);
+    }
+
+    /// <summary>
+    ///     Creates a client wrapper for an accepted socket using the supplied transport stream.
+    /// </summary>
+    internal MoongateTcpClient(
+        Socket socket,
+        Stream stream,
+        IEnumerable<INetMiddleware>? middlewares = null,
+        INetFramer? framer = null,
+        ITransportCodec? codec = null,
+        int receiveBufferSize = DefaultReceiveBufferSize,
+        int maxFrameLength = DefaultMaxFrameLength,
+        bool noDelay = true
+    )
+    {
+        ArgumentNullException.ThrowIfNull(socket);
+        ArgumentNullException.ThrowIfNull(stream);
+
+        if (receiveBufferSize is < 1 or > 1024 * 1024)
+        {
+            throw new ArgumentOutOfRangeException(nameof(receiveBufferSize));
+        }
+
+        if (maxFrameLength is < 1 or > 16 * 1024 * 1024)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maxFrameLength));
+        }
+
+        _socket = socket;
+        _stream = stream;
+        _middlewarePipeline = new(middlewares);
+        Framer = framer;
+        _pendingFrames = framer is null ? null : new(framer, receiveBufferSize, maxFrameLength);
+        _codec = codec;
+        socket.NoDelay = noDelay;
+        ReceiveBufferSize = receiveBufferSize;
+        SessionId = Interlocked.Increment(ref _sessionIdSequence);
     }
 
     private static async Task AttemptAsync(Task task, List<Exception> failures)

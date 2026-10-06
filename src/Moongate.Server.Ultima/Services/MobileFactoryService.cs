@@ -86,62 +86,6 @@ public class MobileFactoryService : IMobileFactoryService
         return Create(_templates.Get(templateId));
     }
 
-    private MobileEntity Create(MobileTemplate template)
-    {
-        var gender = template.Gender switch
-        {
-            MobileGenderType.Female => GenderType.Female,
-            MobileGenderType.Random => BuiltInRng.Next(2) == 0 ? GenderType.Male : GenderType.Female,
-            _                       => GenderType.Male
-        };
-        var race = template.Race is { } templateRace
-            ? _dataLoaderService.GetEntities<RaceContent>().FirstOrDefault(content => content.Race == templateRace)
-            : null;
-        var looks = race?.For(gender);
-        var strength = template.Strength?.Roll() ?? DefaultStat;
-        var dexterity = template.Dexterity?.Roll() ?? DefaultStat;
-        var intelligence = template.Intelligence?.Roll() ?? DefaultStat;
-        var hits = template.Hits?.Roll() ?? strength;
-        var mana = template.Mana?.Roll() ?? intelligence;
-        var stamina = template.Stamina?.Roll() ?? dexterity;
-        var hairStyle = PickStyle(template.Hair ?? looks?.Hair);
-        var beardStyle = gender == GenderType.Female ? 0 : PickStyle(template.Beard ?? looks?.Beard);
-
-        return new MobileEntity
-        {
-            TemplateId = template.Id,
-            Gender = gender,
-            Race = template.Race ?? RaceType.Human,
-            Body = template.Body ?? looks?.Body ?? 0,
-            Name = template.Name ?? RandomName(template.NameList, gender),
-            SkinHue = template.SkinHue?.Resolve() ?? PickHue(race?.SkinHues),
-            HairStyle = hairStyle,
-            HairHue = hairStyle == 0 ? default : template.HairHue?.Resolve() ?? PickHue(race?.HairHues),
-            BeardStyle = beardStyle,
-            BeardHue = beardStyle == 0 ? default : template.BeardHue?.Resolve() ?? PickHue(race?.HairHues),
-            Strength = strength,
-            Dexterity = dexterity,
-            Intelligence = intelligence,
-            Hits = hits,
-            HitsMax = hits,
-            Mana = mana,
-            ManaMax = mana,
-            Stamina = stamina,
-            StaminaMax = stamina,
-            Notoriety = NpcNotoriety.Of(template, template.Body ?? looks?.Body ?? 0),
-            Armor = Roll(template.Armor),
-            ResistPhysical = Roll(template.Resistances?.Physical),
-            ResistFire = Roll(template.Resistances?.Fire),
-            ResistCold = Roll(template.Resistances?.Cold),
-            ResistPoison = Roll(template.Resistances?.Poison),
-            ResistEnergy = Roll(template.Resistances?.Energy),
-            Fame = Roll(template.Fame),
-            Karma = Roll(template.Karma),
-            Skills = (template.Skills ?? []).Select(pair => RollSkill(template.Id, pair.Key, pair.Value)).ToList(),
-            CreatedAt = DateTime.UtcNow
-        };
-    }
-
     public async Task<SpawnedMobile> SpawnAsync(
         string templateId,
         MapType map,
@@ -212,6 +156,78 @@ public class MobileFactoryService : IMobileFactoryService
         await _eventBus.PublishAsync(new MobileAfterSpawnEvent(spawned), CancellationToken.None);
 
         return spawned;
+    }
+
+    public Task SaveAsync(MobileEntity mobile, CancellationToken cancellationToken = default)
+    {
+        if (mobile.Id == Serial.Zero)
+        {
+            throw new InvalidOperationException(
+                $"Mobile '{mobile.TemplateId}' has no serial yet: spawn it with SpawnAsync before saving it."
+            );
+        }
+
+        return _persistence.ExecuteInTransactionAsync(
+            PersistenceDatabaseTarget.Realm,
+            transaction => transaction.GetDataAccess<MobileEntity>().UpsertAsync(mobile, cancellationToken),
+            cancellationToken
+        );
+    }
+
+    private MobileEntity Create(MobileTemplate template)
+    {
+        var gender = template.Gender switch
+        {
+            MobileGenderType.Female => GenderType.Female,
+            MobileGenderType.Random => BuiltInRng.Next(2) == 0 ? GenderType.Male : GenderType.Female,
+            _                       => GenderType.Male
+        };
+        var race = template.Race is { } templateRace
+            ? _dataLoaderService.GetEntities<RaceContent>().FirstOrDefault(content => content.Race == templateRace)
+            : null;
+        var looks = race?.For(gender);
+        var strength = template.Strength?.Roll() ?? DefaultStat;
+        var dexterity = template.Dexterity?.Roll() ?? DefaultStat;
+        var intelligence = template.Intelligence?.Roll() ?? DefaultStat;
+        var hits = template.Hits?.Roll() ?? strength;
+        var mana = template.Mana?.Roll() ?? intelligence;
+        var stamina = template.Stamina?.Roll() ?? dexterity;
+        var hairStyle = PickStyle(template.Hair ?? looks?.Hair);
+        var beardStyle = gender == GenderType.Female ? 0 : PickStyle(template.Beard ?? looks?.Beard);
+
+        return new MobileEntity
+        {
+            TemplateId = template.Id,
+            Gender = gender,
+            Race = template.Race ?? RaceType.Human,
+            Body = template.Body ?? looks?.Body ?? 0,
+            Name = template.Name ?? RandomName(template.NameList, gender),
+            SkinHue = template.SkinHue?.Resolve() ?? PickHue(race?.SkinHues),
+            HairStyle = hairStyle,
+            HairHue = hairStyle == 0 ? default : template.HairHue?.Resolve() ?? PickHue(race?.HairHues),
+            BeardStyle = beardStyle,
+            BeardHue = beardStyle == 0 ? default : template.BeardHue?.Resolve() ?? PickHue(race?.HairHues),
+            Strength = strength,
+            Dexterity = dexterity,
+            Intelligence = intelligence,
+            Hits = hits,
+            HitsMax = hits,
+            Mana = mana,
+            ManaMax = mana,
+            Stamina = stamina,
+            StaminaMax = stamina,
+            Notoriety = NpcNotoriety.Of(template, template.Body ?? looks?.Body ?? 0),
+            Armor = Roll(template.Armor),
+            ResistPhysical = Roll(template.Resistances?.Physical),
+            ResistFire = Roll(template.Resistances?.Fire),
+            ResistCold = Roll(template.Resistances?.Cold),
+            ResistPoison = Roll(template.Resistances?.Poison),
+            ResistEnergy = Roll(template.Resistances?.Energy),
+            Fame = Roll(template.Fame),
+            Karma = Roll(template.Karma),
+            Skills = (template.Skills ?? []).Select(pair => RollSkill(template.Id, pair.Key, pair.Value)).ToList(),
+            CreatedAt = DateTime.UtcNow
+        };
     }
 
     // Saves the mobile, its backpack, what it wears, and in the backpack what it cannot wear, its gold and its loot.
@@ -304,22 +320,6 @@ public class MobileFactoryService : IMobileFactoryService
         );
         await _itemFactory.SaveAsync(transaction, item, cancellationToken);
         backpackItems.Add(item);
-    }
-
-    public Task SaveAsync(MobileEntity mobile, CancellationToken cancellationToken = default)
-    {
-        if (mobile.Id == Serial.Zero)
-        {
-            throw new InvalidOperationException(
-                $"Mobile '{mobile.TemplateId}' has no serial yet: spawn it with SpawnAsync before saving it."
-            );
-        }
-
-        return _persistence.ExecuteInTransactionAsync(
-            PersistenceDatabaseTarget.Realm,
-            transaction => transaction.GetDataAccess<MobileEntity>().UpsertAsync(mobile, cancellationToken),
-            cancellationToken
-        );
     }
 
     // Template skills are whole points; the mobile stores tenths (1000 is 100.0).

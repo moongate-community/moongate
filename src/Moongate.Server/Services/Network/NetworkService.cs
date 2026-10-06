@@ -36,19 +36,6 @@ public sealed class NetworkService : INetworkService, ILoginNetworkService
     {
     }
 
-    internal NetworkService(IReadOnlyList<MoongateTcpServer> listeners, IConnectionService connections)
-    {
-        _connections = connections;
-        Listeners = listeners.ToArray();
-
-        foreach (var listener in Listeners)
-        {
-            listener.OnClientConnect += OnClientConnect;
-            listener.OnClientDisconnect += OnClientDisconnect;
-            listener.OnDataReceived += OnDataReceived;
-        }
-    }
-
     public Task StartAsync()
     {
         lock (_lifecycleGate)
@@ -78,6 +65,19 @@ public sealed class NetworkService : INetworkService, ILoginNetworkService
                     await StopListenersAsync().ConfigureAwait(false);
                 }
             );
+        }
+    }
+
+    internal NetworkService(IReadOnlyList<MoongateTcpServer> listeners, IConnectionService connections)
+    {
+        _connections = connections;
+        Listeners = listeners.ToArray();
+
+        foreach (var listener in Listeners)
+        {
+            listener.OnClientConnect += OnClientConnect;
+            listener.OnClientDisconnect += OnClientDisconnect;
+            listener.OnDataReceived += OnDataReceived;
         }
     }
 

@@ -704,11 +704,6 @@ public sealed class MultiComponentList
         ConvertList();
     }
 
-    private MultiComponentList()
-    {
-        Tiles = Array.Empty<MTile[][]>();
-    }
-
     public struct MultiTileEntry
     {
         public ushort ItemId;
@@ -933,6 +928,11 @@ public sealed class MultiComponentList
         }
 
         return canvas;
+    }
+
+    private MultiComponentList()
+    {
+        Tiles = Array.Empty<MTile[][]>();
     }
 
     private void ConvertList()

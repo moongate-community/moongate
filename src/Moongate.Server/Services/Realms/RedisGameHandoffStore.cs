@@ -30,17 +30,6 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
     {
     }
 
-    internal RedisGameHandoffStore(
-        RedisConnectionService redis,
-        IHandoffProofService proof,
-        Func<uint> generateAuthKey
-    )
-    {
-        _redis = redis;
-        _proof = proof;
-        _generateAuthKey = generateAuthKey;
-    }
-
     public async ValueTask<uint> IssueAsync(
         PendingHandoff handoff,
         ReadOnlyMemory<byte> credentialKey,
@@ -219,6 +208,17 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
         ArgumentException.ThrowIfNullOrEmpty(realmId);
         token.ThrowIfCancellationRequested();
         await _redis.Connection.GetDatabase().KeyDeleteAsync(Key(realmId, authKey)).ConfigureAwait(false);
+    }
+
+    internal RedisGameHandoffStore(
+        RedisConnectionService redis,
+        IHandoffProofService proof,
+        Func<uint> generateAuthKey
+    )
+    {
+        _redis = redis;
+        _proof = proof;
+        _generateAuthKey = generateAuthKey;
     }
 
     private static uint GenerateAuthKey()

@@ -151,6 +151,16 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         }
     }
 
+    public void Use(GameSession session, Serial target)
+    {
+        Handle(session, new UseRequestPacket { Target = target });
+    }
+
+    public bool HasPaperdoll(MobileEntity mobile)
+    {
+        return _bodies.Value.TryGetValue(mobile.Body, out var type) && type == BodyType.Human;
+    }
+
     // A container lying on the ground, or inside one, within reach of the character, such as a treasure chest; one too
     // far says so.
     private bool CanOpenOnTheGround(GameSession session, ItemEntity item)
@@ -223,16 +233,6 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         var name = string.IsNullOrEmpty(prefix) ? mobile.Name : $"{prefix} {mobile.Name}";
 
         return string.IsNullOrEmpty(mobile.Title) ? name : $"{name}, {mobile.Title}";
-    }
-
-    public void Use(GameSession session, Serial target)
-    {
-        Handle(session, new UseRequestPacket { Target = target });
-    }
-
-    public bool HasPaperdoll(MobileEntity mobile)
-    {
-        return _bodies.Value.TryGetValue(mobile.Body, out var type) && type == BodyType.Human;
     }
 
     private void OpenOwnPaperdoll(GameSession session)

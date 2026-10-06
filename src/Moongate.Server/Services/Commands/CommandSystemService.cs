@@ -33,13 +33,6 @@ public sealed class CommandSystemService : ICommandSystemService
     {
     }
 
-    internal CommandSystemService(CommandRegistry registry, IResolverContext resolver, ILogger logger)
-    {
-        _registry = registry;
-        _resolver = resolver;
-        _logger = logger;
-    }
-
     /// <inheritdoc />
     public async Task<IReadOnlyList<CommandOutputLine>> ExecuteAsync(
         string commandLine,
@@ -208,6 +201,13 @@ public sealed class CommandSystemService : ICommandSystemService
 
             return [];
         }
+    }
+
+    internal CommandSystemService(CommandRegistry registry, IResolverContext resolver, ILogger logger)
+    {
+        _registry = registry;
+        _resolver = resolver;
+        _logger = logger;
     }
 
     private FrozenDictionary<string, BoundCommand> BindCommands()

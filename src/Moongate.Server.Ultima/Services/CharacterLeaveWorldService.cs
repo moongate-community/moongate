@@ -102,6 +102,35 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         }
     }
 
+    public Task StartAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    public async Task StopAsync()
+    {
+        Task[] pending;
+
+        lock (_gate)
+        {
+            pending = _pending.Keys.ToArray();
+        }
+
+        await Task.WhenAll(pending);
+    }
+
+    public Task WaitForAccountAsync(Serial account)
+    {
+        Task[] pending;
+
+        lock (_gate)
+        {
+            pending = _pending.Where(pair => pair.Value == account).Select(pair => pair.Key).ToArray();
+        }
+
+        return Task.WhenAll(pending);
+    }
+
     private Task CaptureLeaveAsync(GameSession session)
     {
         if (!session.CharacterId.IsValid || !_mobiles.TryGet(session.CharacterId, out var character))
@@ -148,23 +177,6 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         return Task.Run(() => SaveAndPublishAsync(snapshot, items, merged));
     }
 
-    public Task StartAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    public async Task StopAsync()
-    {
-        Task[] pending;
-
-        lock (_gate)
-        {
-            pending = _pending.Keys.ToArray();
-        }
-
-        await Task.WhenAll(pending);
-    }
-
     private async Task SaveAndPublishAsync(
         MobileEntity character,
         IReadOnlyList<ItemEntity> items,
@@ -208,18 +220,6 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         {
             _logger.Error(exception, "Publishing that {Character} left the world failed", character);
         }
-    }
-
-    public Task WaitForAccountAsync(Serial account)
-    {
-        Task[] pending;
-
-        lock (_gate)
-        {
-            pending = _pending.Where(pair => pair.Value == account).Select(pair => pair.Key).ToArray();
-        }
-
-        return Task.WhenAll(pending);
     }
 
     private void Track(Task task, Serial? account)

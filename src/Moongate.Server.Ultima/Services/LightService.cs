@@ -124,22 +124,6 @@ public sealed class LightService : ILightService
         return ClockLevel(mobile.Map, mobile.Location.X);
     }
 
-    private int ClockLevel(MapType map, int x)
-    {
-        var time = _clock.GetTime(map, x);
-        var day = _world.DayLight;
-        var night = _world.NightLight;
-
-        // ModernUO's bands: two hours of fade on each side of the night.
-        return time.Hours switch
-        {
-            < 4  => night,
-            < 6  => night + ((time.Hours - 4) * 60 + time.Minutes) * (day - night) / 120,
-            < 22 => day,
-            _    => day + ((time.Hours - 22) * 60 + time.Minutes) * (night - day) / 120
-        };
-    }
-
     public void RegionChanged(MobileEntity player, RegionContent? previous, RegionContent? current)
     {
         _regions[player.Id] = current;
@@ -189,6 +173,22 @@ public sealed class LightService : ILightService
         var work = new LoopActionWorkItem(() => SetOverride(level));
         await _loop.PostAsync(work, cancellationToken);
         await work.Completion;
+    }
+
+    private int ClockLevel(MapType map, int x)
+    {
+        var time = _clock.GetTime(map, x);
+        var day = _world.DayLight;
+        var night = _world.NightLight;
+
+        // ModernUO's bands: two hours of fade on each side of the night.
+        return time.Hours switch
+        {
+            < 4  => night,
+            < 6  => night + ((time.Hours - 4) * 60 + time.Minutes) * (day - night) / 120,
+            < 22 => day,
+            _    => day + ((time.Hours - 22) * 60 + time.Minutes) * (night - day) / 120
+        };
     }
 
     // A plain region inside a dungeon or a jail, such as the lairs of the Abyss, is lit as its parent, as ModernUO's

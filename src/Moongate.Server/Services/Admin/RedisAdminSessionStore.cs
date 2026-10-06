@@ -22,12 +22,6 @@ public sealed class RedisAdminSessionStore : IAdminSessionStore
     {
     }
 
-    internal RedisAdminSessionStore(RedisConnectionService redis, string prefix)
-    {
-        _redis = redis;
-        _prefix = prefix;
-    }
-
     public async Task<AdminAccountGate?> ReadGateAsync(Serial accountId, CancellationToken token = default)
     {
         ValidateId(accountId);
@@ -143,6 +137,12 @@ public sealed class RedisAdminSessionStore : IAdminSessionStore
     public async Task RemoveAsync(string tokenHash, CancellationToken token = default)
     {
         await EvalAsync(AdminRedisScripts.Remove, [Session(tokenHash)], [_prefix], token);
+    }
+
+    internal RedisAdminSessionStore(RedisConnectionService redis, string prefix)
+    {
+        _redis = redis;
+        _prefix = prefix;
     }
 
     private Task<RedisResult> EvalAsync(string script, RedisKey[] keys, RedisValue[] values, CancellationToken token)

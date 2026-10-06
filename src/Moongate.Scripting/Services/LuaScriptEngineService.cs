@@ -380,6 +380,50 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         await RunOnLoopAsync(Dispose, "stop").ConfigureAwait(false);
     }
 
+    /// <summary>
+    ///     Starts every current Lua handler of <paramref name="eventName" /> as a coroutine owned by the file that
+    ///     subscribed it, each with its own table. Runs on the loop thread.
+    ///     A handler the scheduler refuses to start is reported as a script error and the rest still run.
+    /// </summary>
+    internal void Dispatch(string eventName, IReadOnlyList<KeyValuePair<string, LuaValue>> values)
+    {
+        var scheduler = _scheduler;
+        var subscriptions = _eventSubscriptions;
+
+        if (scheduler is null || subscriptions is null)
+        {
+            return;
+        }
+
+        foreach (var subscription in subscriptions.Snapshot(eventName))
+        {
+            var table = new LuaTable();
+
+            foreach (var (key, value) in values)
+            {
+                table[key] = value;
+            }
+
+            // Handler errors are already reported by the scheduler; this catches the scheduler refusing to start one
+            // at all. The work item runs on the loop, where an escaping exception would fault the whole loop.
+            try
+            {
+                scheduler.Start(subscription.Function, subscription.Owner, table);
+            }
+            catch (Exception exception)
+            {
+                ReportError(
+                    new(
+                        subscription.Owner,
+                        0,
+                        $"handler for event '{eventName}' could not start: {exception.Message}",
+                        null
+                    )
+                );
+            }
+        }
+    }
+
     // A module table is an empty read-only proxy whose __index is the real table: follow it once.
     private static bool TryGetMember(LuaTable table, string name, out LuaValue value)
     {
@@ -613,50 +657,6 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         {
             Interlocked.Increment(ref _eventsDropped);
             _logger.Warning("Script event {EventName} was dropped; the game loop is not accepting work", eventName);
-        }
-    }
-
-    /// <summary>
-    ///     Starts every current Lua handler of <paramref name="eventName" /> as a coroutine owned by the file that
-    ///     subscribed it, each with its own table. Runs on the loop thread.
-    ///     A handler the scheduler refuses to start is reported as a script error and the rest still run.
-    /// </summary>
-    internal void Dispatch(string eventName, IReadOnlyList<KeyValuePair<string, LuaValue>> values)
-    {
-        var scheduler = _scheduler;
-        var subscriptions = _eventSubscriptions;
-
-        if (scheduler is null || subscriptions is null)
-        {
-            return;
-        }
-
-        foreach (var subscription in subscriptions.Snapshot(eventName))
-        {
-            var table = new LuaTable();
-
-            foreach (var (key, value) in values)
-            {
-                table[key] = value;
-            }
-
-            // Handler errors are already reported by the scheduler; this catches the scheduler refusing to start one
-            // at all. The work item runs on the loop, where an escaping exception would fault the whole loop.
-            try
-            {
-                scheduler.Start(subscription.Function, subscription.Owner, table);
-            }
-            catch (Exception exception)
-            {
-                ReportError(
-                    new(
-                        subscription.Owner,
-                        0,
-                        $"handler for event '{eventName}' could not start: {exception.Message}",
-                        null
-                    )
-                );
-            }
         }
     }
 

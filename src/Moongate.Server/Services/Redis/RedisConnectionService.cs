@@ -61,6 +61,20 @@ public sealed class RedisConnectionService : IMoongateStartupService, IAsyncDisp
         }
     }
 
+    /// <inheritdoc />
+    public async Task StopAsync()
+    {
+        var connection = Interlocked.Exchange(ref _connection, null);
+
+        if (connection is null)
+        {
+            return;
+        }
+
+        await connection.CloseAsync().ConfigureAwait(false);
+        connection.Dispose();
+    }
+
     /// <summary>
     ///     The endpoints of a Redis connection string, for error messages: the password and every other setting are
     ///     left out.
@@ -77,20 +91,6 @@ public sealed class RedisConnectionService : IMoongateStartupService, IAsyncDisp
         {
             return "unparsable";
         }
-    }
-
-    /// <inheritdoc />
-    public async Task StopAsync()
-    {
-        var connection = Interlocked.Exchange(ref _connection, null);
-
-        if (connection is null)
-        {
-            return;
-        }
-
-        await connection.CloseAsync().ConfigureAwait(false);
-        connection.Dispose();
     }
 
     /// <inheritdoc />

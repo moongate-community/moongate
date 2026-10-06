@@ -98,6 +98,19 @@ public class MapService : IMapService
         return statics;
     }
 
+    public Task StopAsync()
+    {
+        foreach (var matrix in _matrices.Values)
+        {
+            matrix.Dispose();
+        }
+
+        _matrices = FrozenDictionary<MapType, TileMatrix>.Empty;
+        Maps = [];
+
+        return Task.CompletedTask;
+    }
+
     private TileMatrix GetMatrix(MapType map, int x, int y)
     {
         if (!_matrices.TryGetValue(map, out var matrix))
@@ -114,18 +127,5 @@ public class MapService : IMapService
         }
 
         return matrix;
-    }
-
-    public Task StopAsync()
-    {
-        foreach (var matrix in _matrices.Values)
-        {
-            matrix.Dispose();
-        }
-
-        _matrices = FrozenDictionary<MapType, TileMatrix>.Empty;
-        Maps = [];
-
-        return Task.CompletedTask;
     }
 }

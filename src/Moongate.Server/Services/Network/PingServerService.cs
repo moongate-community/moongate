@@ -107,6 +107,24 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
         _loops.Clear();
     }
 
+    /// <summary>
+    ///     Tells whether a datagram gets its echo: not when it is over the size limit, and not when it comes from the
+    ///     ping port itself, which is another ping server's echo and would bounce between the two forever.
+    /// </summary>
+    internal static bool IsAnswered(int size, int senderPort, int localPort, int maxDatagramSize)
+    {
+        return size <= maxDatagramSize && senderPort != localPort;
+    }
+
+    /// <summary>
+    ///     Tells whether the loop waits before the next receive: yes for an error that can come back at once and spin
+    ///     the loop, no for one that only means this ping is lost.
+    /// </summary>
+    internal static bool NeedsPause(SocketError error)
+    {
+        return error is not (SocketError.MessageSize or SocketError.ConnectionReset);
+    }
+
     private async Task EchoAsync(Socket socket, IPEndPoint local, CancellationToken cancellationToken)
     {
         // One byte more than the limit, so a datagram over it is seen as such instead of being cut to the limit.
@@ -151,24 +169,6 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
                 return;
             }
         }
-    }
-
-    /// <summary>
-    ///     Tells whether a datagram gets its echo: not when it is over the size limit, and not when it comes from the
-    ///     ping port itself, which is another ping server's echo and would bounce between the two forever.
-    /// </summary>
-    internal static bool IsAnswered(int size, int senderPort, int localPort, int maxDatagramSize)
-    {
-        return size <= maxDatagramSize && senderPort != localPort;
-    }
-
-    /// <summary>
-    ///     Tells whether the loop waits before the next receive: yes for an error that can come back at once and spin
-    ///     the loop, no for one that only means this ping is lost.
-    /// </summary>
-    internal static bool NeedsPause(SocketError error)
-    {
-        return error is not (SocketError.MessageSize or SocketError.ConnectionReset);
     }
 
     // The port sits in network byte order after the two bytes of the address family, for IPv4 and IPv6 alike.

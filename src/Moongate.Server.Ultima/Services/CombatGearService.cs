@@ -53,44 +53,6 @@ public sealed class CombatGearService : ICombatGearService
         return pack is null ? null : FindAmmo(pack.Id, graphic, accept ?? (_ => true));
     }
 
-    // The first stack of the graphic in the container, or in a container inside it.
-    private ItemEntity? FindAmmo(Serial container, int graphic, Func<ItemEntity, bool> accept)
-    {
-        var inside = _items.GetContents(container);
-
-        return inside.FirstOrDefault(item => item.ItemId == graphic && item.Amount > 0 && accept(item)) ??
-               inside.Select(item => FindAmmo(item.Id, graphic, accept)).FirstOrDefault(found => found is not null);
-    }
-
-    // What the mobile holds in its hands that is fought in melee, or that shoots: a bow or a crossbow.
-    private WeaponInfo? HeldWeapon(MobileEntity mobile, bool shoots)
-    {
-        foreach (var item in _items.GetWorn(mobile.Id))
-        {
-            if (item.Layer is not { } layer ||
-                Array.IndexOf(HandLayers, layer) < 0 ||
-                !_templates.TryGet(item.TemplateId, out var template) ||
-                template is not { DamageMax: > 0 } ||
-                (shoots
-                    ? template.WeaponType is not (WeaponType.Bow or WeaponType.Crossbow)
-                    : template.WeaponType is { IsRanged: true }))
-            {
-                continue;
-            }
-
-            return new(
-                template.WeaponType?.Skill ?? SkillType.Wrestling,
-                template.WeaponType,
-                template.TwoHandedWeapon == true,
-                template.DamageMin ?? 0,
-                template.DamageMax.Value,
-                template.Speed ?? CombatService.FistsSpeed
-            );
-        }
-
-        return null;
-    }
-
     public int ArmorAt(MobileEntity mobile, ArmorZoneType zone)
     {
         var best = 0;
@@ -143,6 +105,44 @@ public sealed class CombatGearService : ICombatGearService
             // Before AOS the client shows the armor rating where the physical resistance goes.
             PhysicalResistance = ArmorRatingOf(mobile)
         };
+    }
+
+    // The first stack of the graphic in the container, or in a container inside it.
+    private ItemEntity? FindAmmo(Serial container, int graphic, Func<ItemEntity, bool> accept)
+    {
+        var inside = _items.GetContents(container);
+
+        return inside.FirstOrDefault(item => item.ItemId == graphic && item.Amount > 0 && accept(item)) ??
+               inside.Select(item => FindAmmo(item.Id, graphic, accept)).FirstOrDefault(found => found is not null);
+    }
+
+    // What the mobile holds in its hands that is fought in melee, or that shoots: a bow or a crossbow.
+    private WeaponInfo? HeldWeapon(MobileEntity mobile, bool shoots)
+    {
+        foreach (var item in _items.GetWorn(mobile.Id))
+        {
+            if (item.Layer is not { } layer ||
+                Array.IndexOf(HandLayers, layer) < 0 ||
+                !_templates.TryGet(item.TemplateId, out var template) ||
+                template is not { DamageMax: > 0 } ||
+                (shoots
+                    ? template.WeaponType is not (WeaponType.Bow or WeaponType.Crossbow)
+                    : template.WeaponType is { IsRanged: true }))
+            {
+                continue;
+            }
+
+            return new(
+                template.WeaponType?.Skill ?? SkillType.Wrestling,
+                template.WeaponType,
+                template.TwoHandedWeapon == true,
+                template.DamageMin ?? 0,
+                template.DamageMax.Value,
+                template.Speed ?? CombatService.FistsSpeed
+            );
+        }
+
+        return null;
     }
 
     private static double Points(MobileEntity mobile, SkillType skill)

@@ -81,47 +81,6 @@ public sealed class WorldViewService : IWorldViewService
         return _sessions.ContainsKey(mobile);
     }
 
-    // Shows the mobile to the players in range and, when it is a player, everyone and every ground item in range to it.
-    private void ShowAround(MobileEntity mobile, Viewer? own)
-    {
-        MobileIncomingPacket? incoming = null;
-        var sent = new SentCounts();
-
-        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
-        {
-            if (other.Id == mobile.Id)
-            {
-                continue;
-            }
-
-            if (own is not null && CanSee(own, other))
-            {
-                SendMobile(own.SessionId, other, Incoming(other));
-                sent.Add(other);
-            }
-
-            if (_sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
-            {
-                SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
-            }
-        }
-
-        if (own is null)
-        {
-            return;
-        }
-
-        foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
-        {
-            if (SendItem(own, item))
-            {
-                sent.Items++;
-            }
-        }
-
-        LogSectorEntry(mobile, sent);
-    }
-
     public void Moved(MobileEntity mobile, Point3D oldLocation, bool running)
     {
         Relocated(mobile, oldLocation, running, false);
@@ -169,73 +128,6 @@ public sealed class WorldViewService : IWorldViewService
 
         // The mover is shown the new surroundings from nothing.
         ShowAround(mobile, own);
-    }
-
-    private void Relocated(MobileEntity mobile, Point3D oldLocation, bool running, bool teleported)
-    {
-        // Players that saw the old tile but not the new one lose the mover.
-        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, oldLocation, ViewRange))
-        {
-            if (other.Id != mobile.Id &&
-                !InRange(other.Location, mobile.Location) &&
-                _sessions.TryGetValue(other.Id, out var viewer) &&
-                CanSee(viewer, mobile))
-            {
-                _sender.TrySend(viewer.SessionId, new RemoveEntityPacket(mobile.Id));
-            }
-        }
-
-        var hasSession = _sessions.TryGetValue(mobile.Id, out var own);
-        var sent = new SentCounts();
-        MobileMovingPacket? moving = null;
-        MobileIncomingPacket? incoming = null;
-
-        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
-        {
-            if (other.Id == mobile.Id)
-            {
-                continue;
-            }
-
-            var sawIt = InRange(other.Location, oldLocation);
-
-            if (_sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
-            {
-                if (sawIt && !teleported)
-                {
-                    _sender.TrySend(viewer.SessionId, moving ??= Moving(mobile, running));
-                }
-                else
-                {
-                    SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
-                }
-            }
-
-            // The mover's client drops what it walks away from by itself, as in ModernUO; it only needs the newcomers.
-            if (!sawIt && hasSession && CanSee(own!, other))
-            {
-                SendMobile(own!.SessionId, other, Incoming(other));
-                sent.Add(other);
-            }
-        }
-
-        if (!hasSession)
-        {
-            return;
-        }
-
-        foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
-        {
-            if (item.GroundLocation is { } spot && !InRange(spot, oldLocation) && SendItem(own!, item))
-            {
-                sent.Items++;
-            }
-        }
-
-        if (SectorOf(mobile.Location) != SectorOf(oldLocation))
-        {
-            LogSectorEntry(mobile, sent);
-        }
     }
 
     public void Left(MobileEntity mobile)
@@ -407,23 +299,6 @@ public sealed class WorldViewService : IWorldViewService
         }
     }
 
-    // The players who may have the container on the ground open: those in range of it, less the one who acts.
-    private IEnumerable<Viewer> AroundTheContainer(ItemEntity root, Serial except)
-    {
-        if (root.Map is not { } map || root.GroundLocation is not { } spot)
-        {
-            yield break;
-        }
-
-        foreach (var other in _sectors.GetMobilesInRange(map, spot, ViewRange))
-        {
-            if (other.Id != except && _sessions.TryGetValue(other.Id, out var viewer))
-            {
-                yield return viewer;
-            }
-        }
-    }
-
     public void WornItemChanged(MobileEntity wearer, ItemEntity item)
     {
         var worn = new WornItemPacket(item);
@@ -457,6 +332,131 @@ public sealed class WorldViewService : IWorldViewService
         if (_sessions.TryGetValue(owner.Id, out var viewer))
         {
             _sender.TrySend(viewer.SessionId, new RemoveEntityPacket(item.Id));
+        }
+    }
+
+    // Shows the mobile to the players in range and, when it is a player, everyone and every ground item in range to it.
+    private void ShowAround(MobileEntity mobile, Viewer? own)
+    {
+        MobileIncomingPacket? incoming = null;
+        var sent = new SentCounts();
+
+        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            if (other.Id == mobile.Id)
+            {
+                continue;
+            }
+
+            if (own is not null && CanSee(own, other))
+            {
+                SendMobile(own.SessionId, other, Incoming(other));
+                sent.Add(other);
+            }
+
+            if (_sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
+            {
+                SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
+            }
+        }
+
+        if (own is null)
+        {
+            return;
+        }
+
+        foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            if (SendItem(own, item))
+            {
+                sent.Items++;
+            }
+        }
+
+        LogSectorEntry(mobile, sent);
+    }
+
+    private void Relocated(MobileEntity mobile, Point3D oldLocation, bool running, bool teleported)
+    {
+        // Players that saw the old tile but not the new one lose the mover.
+        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, oldLocation, ViewRange))
+        {
+            if (other.Id != mobile.Id &&
+                !InRange(other.Location, mobile.Location) &&
+                _sessions.TryGetValue(other.Id, out var viewer) &&
+                CanSee(viewer, mobile))
+            {
+                _sender.TrySend(viewer.SessionId, new RemoveEntityPacket(mobile.Id));
+            }
+        }
+
+        var hasSession = _sessions.TryGetValue(mobile.Id, out var own);
+        var sent = new SentCounts();
+        MobileMovingPacket? moving = null;
+        MobileIncomingPacket? incoming = null;
+
+        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            if (other.Id == mobile.Id)
+            {
+                continue;
+            }
+
+            var sawIt = InRange(other.Location, oldLocation);
+
+            if (_sessions.TryGetValue(other.Id, out var viewer) && CanSee(viewer, mobile))
+            {
+                if (sawIt && !teleported)
+                {
+                    _sender.TrySend(viewer.SessionId, moving ??= Moving(mobile, running));
+                }
+                else
+                {
+                    SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
+                }
+            }
+
+            // The mover's client drops what it walks away from by itself, as in ModernUO; it only needs the newcomers.
+            if (!sawIt && hasSession && CanSee(own!, other))
+            {
+                SendMobile(own!.SessionId, other, Incoming(other));
+                sent.Add(other);
+            }
+        }
+
+        if (!hasSession)
+        {
+            return;
+        }
+
+        foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            if (item.GroundLocation is { } spot && !InRange(spot, oldLocation) && SendItem(own!, item))
+            {
+                sent.Items++;
+            }
+        }
+
+        if (SectorOf(mobile.Location) != SectorOf(oldLocation))
+        {
+            LogSectorEntry(mobile, sent);
+        }
+    }
+
+    // The players who may have the container on the ground open: those in range of it, less the one who acts.
+    private IEnumerable<Viewer> AroundTheContainer(ItemEntity root, Serial except)
+    {
+        if (root.Map is not { } map || root.GroundLocation is not { } spot)
+        {
+            yield break;
+        }
+
+        foreach (var other in _sectors.GetMobilesInRange(map, spot, ViewRange))
+        {
+            if (other.Id != except && _sessions.TryGetValue(other.Id, out var viewer))
+            {
+                yield return viewer;
+            }
         }
     }
 

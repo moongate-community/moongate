@@ -23,12 +23,6 @@ public class TileDataService : ITileDataService
     {
     }
 
-    internal TileDataService(Func<LandData[]?> landTable, Func<ItemData[]?> itemTable)
-    {
-        _land = new(() => ToLandTiles(landTable() ?? throw NotLoaded()));
-        _items = new(() => ToItemTiles(itemTable() ?? throw NotLoaded()));
-    }
-
     public LandTile GetLand(int id)
     {
         return TryGetLand(id, out var tile)
@@ -57,6 +51,12 @@ public class TileDataService : ITileDataService
         tile = (uint)id < (uint)items.Length ? items[id] : null;
 
         return tile is not null;
+    }
+
+    internal TileDataService(Func<LandData[]?> landTable, Func<ItemData[]?> itemTable)
+    {
+        _land = new(() => ToLandTiles(landTable() ?? throw NotLoaded()));
+        _items = new(() => ToItemTiles(itemTable() ?? throw NotLoaded()));
     }
 
     private static InvalidOperationException NotLoaded()

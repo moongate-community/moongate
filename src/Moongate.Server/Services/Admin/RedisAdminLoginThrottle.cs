@@ -19,12 +19,6 @@ public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
     {
     }
 
-    internal RedisAdminLoginThrottle(RedisConnectionService redis, string prefix)
-    {
-        _redis = redis;
-        _prefix = prefix;
-    }
-
     public async Task<bool> TryAcquireAsync(string peerAddress, string username, CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username);
@@ -46,6 +40,12 @@ public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
         );
 
         return (long)result == 1;
+    }
+
+    internal RedisAdminLoginThrottle(RedisConnectionService redis, string prefix)
+    {
+        _redis = redis;
+        _prefix = prefix;
     }
 
     private static string Digest(string value)

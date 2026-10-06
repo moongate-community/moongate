@@ -336,54 +336,6 @@ public sealed class JailService : IJailService
         return Wait(prisoner, found.Name, cell, days, by, reason);
     }
 
-    // The sentence is kept with its cell and nobody is moved: the check starts it when its player has entered the world.
-    private JailResultType Wait(Serial prisoner, string name, int cell, int days, MobileEntity by, string? reason)
-    {
-        if (!_sentences.TryGetValue(prisoner, out var sentence))
-        {
-            // No place to go back to yet: it is taken where the player logs in.
-            sentence = new JailSentenceEntity { Id = prisoner };
-            _sentences[prisoner] = sentence;
-            _ended.TryRemove(prisoner, out _);
-        }
-
-        sentence.Name = name;
-        sentence.IsPlayer = true;
-        sentence.Cell = cell;
-        sentence.Days = days;
-        sentence.JailedBy = by.Name;
-        sentence.Reason = Clean(reason);
-        sentence.Pardoned = false;
-        sentence.Pending = true;
-        sentence.ReleaseAt = 0;
-
-        if (sentence.Reason.Length == 0)
-        {
-            _logger.Information(
-                "{Name:l} ({Serial:l}) will be jailed in cell {Cell} for {Days} days at its next login, by {By:l}",
-                sentence.Name,
-                sentence.Id,
-                cell,
-                days,
-                sentence.JailedBy
-            );
-        }
-        else
-        {
-            _logger.Information(
-                "{Name:l} ({Serial:l}) will be jailed in cell {Cell} for {Days} days at its next login, by {By:l}: {Reason:l}",
-                sentence.Name,
-                sentence.Id,
-                cell,
-                days,
-                sentence.JailedBy,
-                sentence.Reason
-            );
-        }
-
-        return JailResultType.Pending;
-    }
-
     public IReadOnlyCollection<Serial> Capture()
     {
         return _ended.Keys.ToArray();
@@ -485,6 +437,54 @@ public sealed class JailService : IJailService
                 _logger.Error(exception, "The release of {Prisoner} from jail failed", sentence.Id);
             }
         }
+    }
+
+    // The sentence is kept with its cell and nobody is moved: the check starts it when its player has entered the world.
+    private JailResultType Wait(Serial prisoner, string name, int cell, int days, MobileEntity by, string? reason)
+    {
+        if (!_sentences.TryGetValue(prisoner, out var sentence))
+        {
+            // No place to go back to yet: it is taken where the player logs in.
+            sentence = new JailSentenceEntity { Id = prisoner };
+            _sentences[prisoner] = sentence;
+            _ended.TryRemove(prisoner, out _);
+        }
+
+        sentence.Name = name;
+        sentence.IsPlayer = true;
+        sentence.Cell = cell;
+        sentence.Days = days;
+        sentence.JailedBy = by.Name;
+        sentence.Reason = Clean(reason);
+        sentence.Pardoned = false;
+        sentence.Pending = true;
+        sentence.ReleaseAt = 0;
+
+        if (sentence.Reason.Length == 0)
+        {
+            _logger.Information(
+                "{Name:l} ({Serial:l}) will be jailed in cell {Cell} for {Days} days at its next login, by {By:l}",
+                sentence.Name,
+                sentence.Id,
+                cell,
+                days,
+                sentence.JailedBy
+            );
+        }
+        else
+        {
+            _logger.Information(
+                "{Name:l} ({Serial:l}) will be jailed in cell {Cell} for {Days} days at its next login, by {By:l}: {Reason:l}",
+                sentence.Name,
+                sentence.Id,
+                cell,
+                days,
+                sentence.JailedBy,
+                sentence.Reason
+            );
+        }
+
+        return JailResultType.Pending;
     }
 
     // The prisoner is told its days, and the console who went where.

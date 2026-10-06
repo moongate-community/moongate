@@ -89,6 +89,14 @@ public sealed class SpeechRequestPacketHandler
         return HandleSpeechAsync(context, packet.Speech, cancellationToken);
     }
 
+    /// <summary>
+    ///     Waits for the in-game commands still running.
+    /// </summary>
+    internal Task WaitForCommandsAsync()
+    {
+        return Task.WhenAll(_running.Values);
+    }
+
     private async ValueTask HandleSpeechAsync(
         PacketContext context,
         SpeechRequestData speech,
@@ -205,14 +213,6 @@ public sealed class SpeechRequestPacketHandler
         }
 
         Track(invoker.SessionId, RunCommandAsync(context, text[1..], invoker));
-    }
-
-    /// <summary>
-    ///     Waits for the in-game commands still running.
-    /// </summary>
-    internal Task WaitForCommandsAsync()
-    {
-        return Task.WhenAll(_running.Values);
     }
 
     // Detached from the packet: a command waiting for the player, such as for a target, must not hold back the
