@@ -130,7 +130,8 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         _bank?.Close(mobile);
 
         // And it shows who hid: there is no Stealth yet. The staff hides to watch, and stays hidden.
-        if (mobile.Hidden && session.AccountType < AccountType.GameMaster && _state is not null)
+        // A ghost hides by being dead: war mode shows it, not a step.
+        if (mobile.Hidden && !mobile.IsDead && session.AccountType < AccountType.GameMaster && _state is not null)
         {
             _state.SetHidden(mobile, false);
             _speech?.TellCliloc(mobile, RevealedCliloc);

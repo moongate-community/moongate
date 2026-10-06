@@ -403,6 +403,20 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         Assert.Empty(_speech.ToldClilocs);
     }
 
+    [Fact]
+    public async Task Handle_AStepOfAGhost_KeepsItHidden()
+    {
+        await EnterAsync();
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 0x0192;
+        _aria.Hidden = true;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.True(_aria.Hidden);
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
     [Theory]
     [InlineData(AccountType.GameMaster)]
     [InlineData(AccountType.Administrator)]

@@ -33,7 +33,9 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     // The client sets this bit on the serial when the player asks for their own paperdoll.
     private const uint PaperdollRequestFlag = 0x80000000;
     private const int TooFarCliloc = 500446;
+    private const int DeadCliloc = 1019048;
     private const string UseFunction = "on_use";
+    private const string GhostUseFunction = "on_ghost_use";
 
     private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     private readonly IItemService _items;
@@ -187,6 +189,19 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
              !_items.CanReach(character, root)))
         {
             _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, TooFarCliloc, "", ""));
+
+            return true;
+        }
+
+        // A ghost uses only what its script says a ghost may, such as an ankh.
+        if (character.IsDead)
+        {
+            var ghost = _scripts!.Run(item, GhostUseFunction, (long)character.Id.Value);
+
+            if (ghost.Kind == ScriptResultKind.Missing)
+            {
+                _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, DeadCliloc, "", ""));
+            }
 
             return true;
         }

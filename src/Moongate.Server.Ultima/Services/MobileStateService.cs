@@ -348,6 +348,12 @@ public sealed class MobileStateService : IMobileStateService
         var changed = mobile.WarMode != warMode;
         mobile.WarMode = warMode;
 
+        // A ghost is seen by the living only while it is in war mode.
+        if (mobile.IsDead)
+        {
+            SetHidden(mobile, !warMode);
+        }
+
         if (!_mobiles.IsInWorld(mobile.Id))
         {
             return;
