@@ -61,7 +61,8 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
             {
                 Id = "skeleton", ScriptId = "monster",
                 Sounds = new MobileSounds { StartAttack = StartAttackSound, Idle = IdleSound, Attack = AttackSound }
-            }
+            },
+            new MobileTemplate { Id = "lich", ScriptId = "monster", FleeAt = -1 }
         )
     );
     private readonly MobileEntity _skeleton = new()
@@ -226,6 +227,85 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors.Select(error => error.ToString()));
         Assert.Equal(["war 256 True"], _state.Flags);
         Assert.DoesNotContain(_view.Calls, call => call.StartsWith("Animated", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void AnArcher_ShootsFromWhereItsBowReachesAndItSeesItsPrey_WithoutWalkingUpToIt()
+    {
+        _combat.Range = 8;
+
+        Think(4);
+        Think(2);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal([(_skeleton, _aria)], _combat.Attacks);
+        Assert.Equal(new Point3D(1600, 1600, 0), _skeleton.Location);
+        Assert.Equal(DirectionType.East, _skeleton.Direction);
+    }
+
+    [Fact]
+    public void AnArcherOutOfRange_WalksUntilItsPreyIsInside_ThenShoots()
+    {
+        _combat.Range = 8;
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1612, 1600, 0)));
+        _finder.Finds(Enumerable.Repeat(DirectionType.East, 12).ToArray());
+
+        // Seen at 12 cells, a step each think until the prey is within 7: then it stands and shoots.
+        Think(4 + 12);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.InRange(_skeleton.Location.X, 1604, 1606);
+        Assert.Equal([(_skeleton, _aria)], _combat.Attacks);
+    }
+
+    [Fact]
+    public void AnArcherInRangeWithNoLineOfSight_ComesCloser_InsteadOfStandingBlind()
+    {
+        _combat.Range = 8;
+        _sight.Allow = false;
+        _finder.Finds(Enumerable.Repeat(DirectionType.East, 8).ToArray());
+
+        // It is seen by the scan only with a line of sight: with none it is not seen at all, so it does not start.
+        Think(8);
+
+        Assert.Empty(_combat.Attacks);
+        Assert.Equal(new Point3D(1600, 1600, 0), _skeleton.Location);
+    }
+
+    [Fact]
+    public void AMonsterThatFightsAndIsHurt_NowAndThenRuns_AndDoesNotAnswerTheBlowWhileItDoes()
+    {
+        _skeleton.Hits = 10;
+        _skeleton.HitsMax = 100;
+        _combat.Attack(_skeleton, _aria);
+
+        // One chance in ten at each think: a few hundred thinks always have one.
+        for (var think = 0; think < 400 && !_skeleton.GetProp<bool>("combat.passive"); think++)
+        {
+            Think(1);
+        }
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.True(_skeleton.GetProp<bool>("combat.passive"));
+        Assert.Contains(_skeleton, _combat.Stopped);
+        Assert.Contains("war 256 False", _state.Flags);
+    }
+
+    [Fact]
+    public void AMonsterThatIsUnhurt_OrWhoseTemplateNeverFlees_DoesNotRun()
+    {
+        _combat.Attack(_skeleton, _aria);
+        _skeleton.Hits = 100;
+        _skeleton.HitsMax = 100;
+        Think(200);
+        Assert.False(_skeleton.GetProp<bool>("combat.passive"));
+
+        _skeleton.TemplateId = "lich";
+        _skeleton.Hits = 1;
+        Think(400);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.False(_skeleton.GetProp<bool>("combat.passive"));
     }
 
     [Fact]

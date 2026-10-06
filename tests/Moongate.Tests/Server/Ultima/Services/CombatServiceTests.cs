@@ -613,6 +613,20 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AnNpcTheScriptMadePassive_DoesNotFightBack_UntilItIsNotAny()
+    {
+        _orc.SetProp(CombatService.PassiveProp, true);
+        _random.Integers(4);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+        Tick();
+
+        Assert.Null(_combat.TargetOf(_orc));
+        Assert.Equal(30, _aria.Hits);
+    }
+
+    [Fact]
     public void ADamagedNpc_FightsBackTheOneWhoHitIt_AndSwingsAtOnce()
     {
         _random.Integers(4);

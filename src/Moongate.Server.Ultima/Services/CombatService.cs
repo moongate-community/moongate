@@ -46,6 +46,11 @@ public sealed class CombatService : ICombatService
     /// </summary>
     public const string ScaredAnimalScript = "scared_animal";
 
+    /// <summary>
+    ///     The prop a script sets to true on an NPC that must not answer a blow, as one that flees.
+    /// </summary>
+    public const string PassiveProp = "combat.passive";
+
     private const int ReachInHeight = 15;
     private const int SwingFrames = 7;
     private const byte ProjectileSpeed = 18;
@@ -461,8 +466,8 @@ public sealed class CombatService : ICombatService
     // The NPC that is hit, or missed, fights the one who swings, if it fights no one; whoever hit it keeps it at it.
     private void FightBack(MobileEntity victim, MobileEntity attacker, DateTimeOffset now)
     {
-        // A scared animal runs from the blow: its script, not the fight, answers it.
-        if (!victim.IsNpc || !_mobiles.IsInWorld(victim.Id) || RunsFromBlows(victim))
+        // One that runs, a scared animal or a creature too hurt to fight, does not answer the blow: its script runs.
+        if (!victim.IsNpc || !_mobiles.IsInWorld(victim.Id) || RunsFromBlows(victim) || IsPassive(victim))
         {
             return;
         }
@@ -489,6 +494,12 @@ public sealed class CombatService : ICombatService
         {
             return false;
         }
+    }
+
+    // Whether a script told the NPC not to fight back for now, as a creature that flees.
+    private static bool IsPassive(MobileEntity mobile)
+    {
+        return mobile.TryGetProp<bool>(PassiveProp, out var passive) && passive;
     }
 
     // Whether the NPC's template names the script of the animals that run instead of fighting back.

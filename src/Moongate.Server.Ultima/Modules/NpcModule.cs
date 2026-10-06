@@ -572,6 +572,17 @@ public sealed class NpcModule
     }
 
     /// <summary>
+    ///     Gets the hit percent under which the NPC's template makes it run; <c>npc.flee_at(serial)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The flee_at of the NPC's template: the percent of its hit points (0 to 100) under which it runs from a fight, or -1 for one that never does. nil for an unknown NPC or a template that sets none: the script's own value then.")]
+    public int? FleeAt(long serial)
+    {
+        return TryGetNpc(serial, out var npc) && npc.TemplateId is { } id && _templates.TryGet(id, out var template)
+            ? template.FleeAt
+            : null;
+    }
+
+    /// <summary>
     ///     Gets the id of the mobile script of the NPC's template; <c>npc.script_id(serial)</c>.
     /// </summary>
     [ScriptFunction(helpText: "The script_id of the NPC's mobile template, such as monster, guard or healer: what kind of creature it is to the scripts that look at others. nil for an unknown NPC or a template without a script.")]

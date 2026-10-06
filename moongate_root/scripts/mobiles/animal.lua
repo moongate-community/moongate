@@ -21,4 +21,4 @@
 
 local creature = require("common.creature")
 
-animal = creature.new({ hunts = false })
+animal = creature.new({ hunts = false, flee_at = 10 })
