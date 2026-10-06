@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"94463b80ac968db1d6af3cad9ccff04f27237f54e85816ade69b104a4ff6eca9","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"ac21e8f8ff6f5eb5ceae3181c684822375b869d09c7e2fa461f6b505f5420424","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -97,13 +97,13 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | 1.3 | ❌ | **Effetti temporanei**: un meccanismo per veleno, maledizioni, benedizioni, polymorph, nascondersi; la barra dei buff li mostra | Magia, pozioni e combattimento ne hanno bisogno | |
 | 1.4 | ✅ | **Contenitori a terra**, con limiti di oggetti e peso; peso e sovraccarico: un contenitore a terra si apre, gli oggetti entrano ed escono, fino a 125 e al suo limite di stone; un giocatore trasporta 40 stone e 3.5 per punto di forza, e muoversi sovraccarichi o correre costa stamina | Cadaveri, venditori, forzieri e case ne hanno bisogno | |
 | 1.5 | 🟡 | **Menu contestuali e menu classici**. Completato: richiesta di testo (`prompt.ask`) | Venditori, animali, creazione e gilde si aprono tramite essi | |
-| 1.6 | ❌ | **Campi di combattimento degli oggetti** nei template e nel convertitore: danno, velocità, armatura, punti vita, requisito di forza | Il combattimento li legge; oggi il convertitore li scarta | UOX3 `items/gear/` |
+| 1.6 | ✅ | **Campi di combattimento degli oggetti** nei template e nel convertitore: danno, velocità, armatura, punti vita, requisito di forza | Il combattimento li legge; ora il convertitore li legge da UOX3 | UOX3 `items/gear/` |
 
 ## Fase 2: combattimento
 
 | Passaggio | Stato | Cosa | Perché viene qui |
 | --- | --- | --- | --- |
-| 2.1 | 🟡 | **Modalità guerra, timer dei colpi, corpo a corpo e tiro con l'arco**: probabilità di colpire, danno, armatura, parata, durabilità. Completato: un [combattimento](combat.md) a pugni, timer dei colpi, colpo tramite Wrestling, danno e armatura di un NPC. Restano: armi e armature degli oggetti, parata, tiro con l'arco, durabilità | Il ciclo fondamentale del gioco |
+| 2.1 | 🟡 | **Modalità guerra, timer dei colpi, corpo a corpo e tiro con l'arco**: probabilità di colpire, danno, armatura, parata, durabilità. Completato: un [combattimento](combat.md) a pugni o con un'arma, timer dei colpi, colpo tramite abilità, danno e armatura di un NPC o di ciò che un giocatore indossa. Restano: parata, tiro con l'arco, durabilità | Il ciclo fondamentale del gioco |
 | 2.2 | ❌ | **Elenchi degli aggressori** | Notorietà, guardie e diritti sul bottino si basano su di essi |
 | 2.3 | 🟡 | **Morte, cadavere, fantasma, resurrezione**; NPC guaritori e santuari. Completato: un NPC muore tramite `.kill` o `mobile.kill` e lascia il proprio [cadavere](death.md) con ciò che trasportava. Restano: morte del giocatore, fantasmi, resurrezione | Dà un risultato al combattimento |
 | 2.4 | ❌ | **Bende e guarigione** | Necessarie appena esiste il danno |

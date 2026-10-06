@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"738db83d381601248006248aa72f7ab9d530d24c128ffd2ca0706654101a7699","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"5a54c7af3da4a5bacbe1dfc22fcb098cf9206bc4564e1316759ebdbfcc135a7c","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**268 sistemi:** ✅ 80 completati, 🟡 46 parzialmente completati, ❌ 142 non ancora realizzati.
+**268 sistemi:** ✅ 80 completati, 🟡 47 parzialmente completati, ❌ 141 non ancora realizzati.
 
-**Copertura: 30%** dei sistemi completati, **38%** contando un sistema parzialmente completato come metà.
+**Copertura: 30%** dei sistemi completati, **39%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -77,9 +77,9 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 
 | Sistema | Moongate | Note |
 | --- | --- | --- |
-| Modalità guerra, corpo a corpo e tempi dei colpi | 🟡 | Un giocatore [combatte](combat.md) a pugni: timer del colpo, probabilità di colpire tramite Wrestling, danno con tactics, forza, anatomy e armatura del bersaglio, suoni e animazioni; nessuna arma o armatura degli oggetti |
+| Modalità guerra, corpo a corpo e tempi dei colpi | 🟡 | Un giocatore [combatte](combat.md) a pugni o con l'arma che impugna: timer del colpo, probabilità di colpire tramite abilità, danno con tactics, forza, anatomy e armatura del bersaglio, suoni e animazioni |
 | Tiro con l'arco | ❌ | |
-| Armi e armature: danno, armatura, durabilità, resistenze | ❌ | I template NPC contengono danno e armatura; i template degli oggetti ancora no |
+| Armi e armature: danno, armatura, durabilità, resistenze | 🟡 | L'arma impugnata e l'armatura indossata da un giocatore determinano [tempi dei colpi, probabilità di colpire, danno e riduzione del danno subito](combat.md#weapons-and-armor); nessuna durabilità, parata, scudo o resistenza |
 | Parata | ❌ | |
 | Mosse speciali delle armi | ❌ | |
 | IA di combattimento degli NPC | 🟡 | `monster.lua`: i non morti dei cimiteri notano un giocatore, gli si avvicinano, lo combattono e fanno la guardia quando lo perdono; un NPC colpito risponde all'attacco |

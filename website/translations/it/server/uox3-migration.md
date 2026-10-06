@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b8a44eb0377984053b1bab50f12f35e05174f4dc0ea6f243bb7d3bc5aacbd37c","title":"Migrare da UOX3"} -->
+<!-- translation: {"sourceHash":"be57da8135f726136602b3ad2e0226cf37140d081894a077b4da9e71832832cf","title":"Migrare da UOX3"} -->
 
 # Migrare da UOX3
 
@@ -47,6 +47,15 @@ di farina (`0x0a1e_bowl_of_flour`) e il pesce magico (`base_magic_fish`). Ciò c
 UOX3 chiama bevanda (tipo oggetto 105) riceve allo stesso modo `script_id = "drink"`
 (`scripts/items/drink.lua`), al posto del suo `pitchers.js`, eccetto il barattolo
 di miele (`0x09ec_jar_of_honey`). Una cartella a cui manca uno dei due file esce con `2`.
+
+Viene convertito anche ciò che legge il combattimento: `damage=min max`, `spd`,
+`str`, `def` e `hp=min max` di un oggetto diventano `damage_min`, `damage_max`,
+`speed`, `strength_required`, `armor_rating` e `max_hits` (un valore non numerico,
+o pari a 0, viene omesso), e il tipo di arma (`weapon_type`) segue la grafica di
+un blocco con `id=`, secondo la tabella del `GetWeaponType` di UOX3 (una grafica
+non elencata da UOX3 combatte con i pugni). Le ere UOX3 (`t2a`, `lbr`, `aos`, `tol`)
+mantengono i propri valori, e il tipo va sull'oggetto che ha la grafica, da cui
+lo ereditano. Vedi [Combattimento](combat.md).
 
 Le tinture (tipo oggetto 208) ricevono `script_id = "dyes"` e la tinozza da tintura
 `script_id = "dye_tub"` (`scripts/items/dyes.lua`, `scripts/items/dye_tub.lua`). UOX3
