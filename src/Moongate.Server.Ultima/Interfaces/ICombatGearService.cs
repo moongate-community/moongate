@@ -22,6 +22,12 @@ public interface ICombatGearService
     WeaponInfo? WeaponOf(MobileEntity mobile);
 
     /// <summary>
+    ///     Gets the bow or crossbow the mobile holds, with its skill, damage, speed and range; null when it holds none.
+    ///     <see cref="WeaponOf" /> never gives one.
+    /// </summary>
+    WeaponInfo? RangedWeaponOf(MobileEntity mobile);
+
+    /// <summary>
     ///     Gets the armor rating of the piece the mobile wears on a part of its body, the best of the layers of that part;
     ///     0 for none.
     /// </summary>

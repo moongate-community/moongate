@@ -94,6 +94,20 @@ public sealed class CombatGearServiceTests
     }
 
     [Fact]
+    public void RangedWeaponOf_ABow_IsItsSkillItsDamageItsSpeedAndItsRange_AMeleeWeaponIsNone()
+    {
+        Assert.Null(_gear.RangedWeaponOf(_aria));
+
+        Wear("longsword");
+        Assert.Null(_gear.RangedWeaponOf(_aria));
+
+        Wear("bow");
+        var weapon = _gear.RangedWeaponOf(_aria)!;
+
+        Assert.Equal((SkillType.Archery, WeaponType.Bow, 9, 41, 25, 10), (weapon.Skill, weapon.Type, weapon.DamageMin, weapon.DamageMax, weapon.Speed, weapon.Range));
+    }
+
+    [Fact]
     public void WeaponOf_ABow_IsNotFoughtWithYet()
     {
         Wear("bow");

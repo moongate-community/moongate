@@ -21,6 +21,14 @@ public sealed class WeaponFamiliesTests
         Assert.Equal((hit, miss, action), (WeaponFamilies.HitSound(type), WeaponFamilies.MissSound(type), (int)WeaponFamilies.Action(type, twoHanded)));
     }
 
+    [Theory]
+    [InlineData(WeaponType.Bow, 0x234, 0x238, 18)]
+    [InlineData(WeaponType.Crossbow, 0x234, 0x238, 19)]
+    public void AShootingWeapon_HasItsSoundsAndItsShot(WeaponType type, int hit, int miss, int action)
+    {
+        Assert.Equal((hit, miss, action), (WeaponFamilies.HitSound(type), WeaponFamilies.MissSound(type), (int)WeaponFamilies.Action(type, false)));
+    }
+
     [Fact]
     public void AWeaponWithoutAKind_SoundsAndSwingsAsFists()
     {
@@ -28,10 +36,8 @@ public sealed class WeaponFamiliesTests
     }
 
     [Theory]
-    [InlineData(WeaponType.Bow)]
-    [InlineData(WeaponType.Crossbow)]
     [InlineData(WeaponType.Thrown)]
-    public void ARangedKind_IsNotFoughtWith_SoItSwingsAsFists(WeaponType type)
+    public void AThrownWeapon_IsNotFoughtWith_SoItSwingsAsFists(WeaponType type)
     {
         Assert.Equal(HumanAnimationType.Punch, WeaponFamilies.Action(type, true));
     }

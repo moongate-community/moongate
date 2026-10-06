@@ -19,4 +19,20 @@ public sealed class WeaponTypeExtensionsTests
     {
         Assert.Equal((skill, ranged), (type.Skill, type.IsRanged));
     }
+
+    [Theory]
+    [InlineData(WeaponType.Bow, 10, 0x0F42)]
+    [InlineData(WeaponType.Crossbow, 8, 0x1BFE)]
+    public void ABow_AndACrossbow_ShootFromTheirRange_WithTheirProjectile(WeaponType type, int range, int projectile)
+    {
+        Assert.Equal((range, projectile), (type.Range, type.Projectile));
+    }
+
+    [Theory]
+    [InlineData(WeaponType.Sword)]
+    [InlineData(WeaponType.Thrown)]
+    public void AnyOtherWeapon_ReachesOneCell_AndShootsNothing(WeaponType type)
+    {
+        Assert.Equal((1, 0), (type.Range, type.Projectile));
+    }
 }

@@ -2,12 +2,14 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.Combat;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Combat;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -17,6 +19,7 @@ using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Combat;
 using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Skills;
 using Moongate.Tests.TestSupport.Ultima.Speech;
@@ -39,6 +42,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
     private const int OrcAttack = 0x1B0;
 
     private readonly RecordingMurderService _murders = new();
+    private readonly RecordingEffectService _effects = new();
     private readonly StubCombatGearService _gear = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly StubSkillService _skills = new();
@@ -102,7 +106,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
             new WorldConfig(),
             _clock,
             _random,
-            _murders
+            _murders,
+            _effects
         );
     }
 
@@ -490,6 +495,97 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Assert.Contains((_aria, CombatService.MissSound), _speech.Sounds);
         Assert.Empty(_fixture.Sender.Sent.OfType<DamagePacket>());
         Assert.Equal(_aria, _combat.TargetOf(_orc));
+    }
+
+    private static readonly WeaponInfo Bow = new(SkillType.Archery, WeaponType.Bow, true, 9, 41, 25);
+
+    [Fact]
+    public void AnNpcWithABow_ShootsFromTheRangeOfItsBow_WithAnArrowFlyingToItsTarget()
+    {
+        _gear.Ranged = Bow;
+        _orc.Location = new Point3D(6, 0, 0);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        var shot = Assert.Single(_effects.Moving);
+        Assert.Equal((_orc.Id, _aria.Id, 0x0F42, (byte)18), (shot.Source, shot.Target, shot.Options.Graphic, shot.Options.Speed));
+        Assert.Equal(_orc.Location, shot.From);
+        Assert.Equal(_aria.Location, shot.To);
+    }
+
+    [Fact]
+    public void AnNpcWithABow_DoesNotShootBeyondItsRange()
+    {
+        _gear.Ranged = Bow;
+        _orc.Location = new Point3D(6, 0, 0);
+        _combat.Attack(_orc, _aria);
+        _orc.Location = new Point3D(11, 0, 0);
+
+        Tick();
+
+        Assert.Empty(_effects.Moving);
+        Assert.Equal(30, _aria.Hits);
+    }
+
+    [Fact]
+    public void AnNpcWithABow_DoesNotShootWithoutALineOfSight_ButKeepsTheFight()
+    {
+        _gear.Ranged = Bow;
+        _orc.Location = new Point3D(6, 0, 0);
+        _combat.Attack(_orc, _aria);
+        _sight.Allow = false;
+
+        Tick();
+
+        Assert.Empty(_effects.Moving);
+        Assert.Equal(_aria, _combat.TargetOf(_orc));
+    }
+
+    [Fact]
+    public void AnArcherOfAHumanBody_ShootsItsBow_AnOrcOfAMonsterBodyPlaysItsAttack()
+    {
+        _gear.Ranged = Bow;
+        _orc.Location = new Point3D(6, 0, 0);
+        _combat.Attack(_orc, _aria);
+        Tick();
+        var monster = _view.Calls.Single(call => call.StartsWith($"Animated {_orc.Id.Value} ", StringComparison.Ordinal));
+
+        _view.Calls.Clear();
+        _combat.Stop(_orc);
+        _orc.Body = HumanBody;
+        _clock.Advance(TimeSpan.FromSeconds(10));
+        _combat.Attack(_orc, _aria);
+        Tick();
+
+        Assert.Equal($"Animated {_orc.Id.Value} {(int)MonsterAnimationType.Attack1} 5 1", monster);
+        Assert.Contains($"Animated {_orc.Id.Value} {(int)HumanAnimationType.AttackBow} 7 1", _view.Calls);
+    }
+
+    [Fact]
+    public void AnArrowThatMisses_FliesAllTheSame_WithTheSoundOfTheMissedShot()
+    {
+        _gear.Ranged = Bow;
+        _orc.Location = new Point3D(6, 0, 0);
+        _skills.ChanceResult = false;
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        Assert.Single(_effects.Moving);
+        Assert.Contains((_orc, WeaponFamilies.ShotMissSound), _speech.Sounds);
+    }
+
+    [Fact]
+    public void APlayerWithABowInItsHands_StillFightsWithItsFists_TheShotsAreTheNpcsOnly()
+    {
+        _gear.Ranged = Bow;
+        _aria.Location = new Point3D(5, 0, 0);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Empty(_effects.Moving);
     }
 
     [Fact]

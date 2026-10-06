@@ -3,6 +3,8 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Effects;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Data.Internal.Combat;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
@@ -46,6 +48,7 @@ public sealed class CombatService : ICombatService
 
     private const int ReachInHeight = 15;
     private const int SwingFrames = 7;
+    private const byte ProjectileSpeed = 18;
     private const int OtherSwingFrames = 5;
     private const int HurtFrames = 5;
     private const int MonsterHurtFrames = 4;
@@ -74,6 +77,7 @@ public sealed class CombatService : ICombatService
     private readonly TimeProvider _time;
     private readonly Random _random;
     private readonly IMurderService? _murders;
+    private readonly IEffectService? _effects;
     private string? _timerId;
 
     public CombatService(
@@ -95,9 +99,11 @@ public sealed class CombatService : ICombatService
         WorldConfig world,
         TimeProvider time,
         Random? random = null,
-        IMurderService? murders = null
+        IMurderService? murders = null,
+        IEffectService? effects = null
     )
     {
+        _effects = effects;
         _murders = murders;
         _mobiles = mobiles;
         _state = state;
@@ -330,12 +336,18 @@ public sealed class CombatService : ICombatService
             return;
         }
 
+        // An archer shoots only what it sees: it keeps the fight, and its script walks it to a place where it does.
+        if (RangedOf(attacker) is not null && !CanSee(attacker, target))
+        {
+            return;
+        }
+
         Swing(fighter, now);
     }
 
     private bool InReach(MobileEntity attacker, MobileEntity target)
     {
-        return attacker.Location.InRange(target.Location, _config.MaxRange) &&
+        return attacker.Location.InRange(target.Location, RangedOf(attacker)?.Range ?? _config.MaxRange) &&
                Math.Abs(attacker.Location.Z - target.Location.Z) <= ReachInHeight;
     }
 
@@ -349,8 +361,9 @@ public sealed class CombatService : ICombatService
             _state.SetHidden(attacker, false);
         }
 
-        // A player fights with what it holds; an NPC with its template, whatever it is dressed in.
-        var weapon = WeaponOf(attacker);
+        // A player fights with what it holds; an NPC with its template, whatever it is dressed in, except that a bow or a
+        // crossbow it holds shoots.
+        var weapon = RangedOf(attacker) ?? WeaponOf(attacker);
         fighter.NextSwingAt = now.AddSeconds(
             CombatFormulas.SwingDelaySeconds(attacker.Stamina, weapon?.Speed ?? FistsSpeed, _config.GlobalAttackSpeed)
         );
@@ -364,6 +377,19 @@ public sealed class CombatService : ICombatService
 
         var (action, frames) = SwingAnimation(attacker, weapon);
         _view.MobileAnimated(attacker, action, frames, 1);
+
+        // The arrow or the bolt flies to its target, hit or missed.
+        if (weapon is { Type: { } kind } && kind.Projectile != 0)
+        {
+            _effects?.PlayMoving(
+                attacker.Map,
+                attacker.Id,
+                attacker.Location,
+                target.Id,
+                target.Location,
+                new EffectOptions { Graphic = kind.Projectile, Speed = ProjectileSpeed }
+            );
+        }
 
         var attackSkill = weapon?.Skill ?? SkillType.Wrestling;
         var defenseSkill = WeaponOf(target)?.Skill ?? SkillType.Wrestling;
@@ -439,6 +465,24 @@ public sealed class CombatService : ICombatService
         if (!_fighters.ContainsKey(victim.Id))
         {
             Fight(victim, attacker, now, false);
+        }
+    }
+
+    // The bow or the crossbow an NPC holds: the shots are the NPCs' for now, a player's are fists.
+    private WeaponInfo? RangedOf(MobileEntity mobile)
+    {
+        return mobile.IsNpc ? _gear.RangedWeaponOf(mobile) : null;
+    }
+
+    private bool CanSee(MobileEntity attacker, MobileEntity target)
+    {
+        try
+        {
+            return _sight.HasLineOfSight(attacker.Map, attacker.Location, target.Location);
+        }
+        catch (KeyNotFoundException)
+        {
+            return false;
         }
     }
 
