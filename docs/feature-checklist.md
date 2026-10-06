@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 79 done, 🟡 46 partly done, ❌ 143 not built yet.
+**268 systems:** ✅ 80 done, 🟡 46 partly done, ❌ 142 not built yet.
 
-**Coverage: 29%** of the systems done, **38%** counting a partly done system as half.
+**Coverage: 30%** of the systems done, **38%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -75,17 +75,17 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| War mode, melee and swing timing | 🟡 | War mode is switched and shown; nothing is fought yet |
+| War mode, melee and swing timing | 🟡 | A player [fights](combat.md) with its fists: the swing timer, the hit by Wrestling, the damage with tactics, strength, anatomy and the armor of the target, the sounds and animations; no weapons or armor of items |
 | Archery | ❌ | |
 | Weapons and armour: damage, armour, durability, resistances | ❌ | NPC templates carry damage and armour; item templates do not yet |
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
-| NPC combat AI | 🟡 | `monster.lua`: the undead of the graveyards notice a player, walk to it and stand guard when they lose it; no fight yet |
+| NPC combat AI | 🟡 | `monster.lua`: the undead of the graveyards notice a player, walk to it, fight it and stand guard when they lose it; an NPC that is hit fights back |
 | Guards in guarded regions | 🟡 | A player that says "guards" brings a guard beside each criminal near it: it appears, says its line and leaves. The guards standing in the towns notice a criminal by themselves and go to it (`guard.lua`). A criminal NPC is killed with one blow and leaves its corpse; a criminal player is only stood on, since players do not die yet |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
 | Aggressor lists and attack timeouts | ❌ | |
-| Damage numbers over heads | ❌ | |
+| Damage numbers over heads | ✅ | The damage of a hit shows over the one hit (`ultima.combat.display_damage_numbers`) |
 
 ## Magic
 
