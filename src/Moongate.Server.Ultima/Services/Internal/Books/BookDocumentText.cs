@@ -8,6 +8,16 @@ namespace Moongate.Server.Ultima.Services.Internal.Books;
 /// </summary>
 internal static class BookDocumentText
 {
+    /// <summary>
+    ///     The prop of a book the character that carries it writes in.
+    /// </summary>
+    public const string WritableProp = "book.writable";
+
+    /// <summary>
+    ///     The prop with the page count of a writable book.
+    /// </summary>
+    public const string PagesProp = "book.pages";
+
     public static void Apply(ItemEntity item, RenderedBook rendered)
     {
         item.SetProp("book.template", rendered.TemplateId);
@@ -15,6 +25,17 @@ internal static class BookDocumentText
         item.SetProp("book.author", rendered.Author);
         item.SetProp("book.content", rendered.Content);
         item.Name = rendered.Title;
+
+        if (rendered.Writable)
+        {
+            item.SetProp(WritableProp, true);
+            item.SetProp(PagesProp, (long)rendered.Pages);
+        }
+        else
+        {
+            item.RemoveProp(WritableProp);
+            item.RemoveProp(PagesProp);
+        }
 
         if (rendered.ItemId is { } graphic)
         {

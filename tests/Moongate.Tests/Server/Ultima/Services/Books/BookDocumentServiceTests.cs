@@ -140,6 +140,28 @@ public sealed class BookDocumentServiceTests
         });
     }
 
+    // What makes a book one a player writes in is on the item, and goes when a read-only text is written on it.
+    [Fact]
+    public async Task Give_AWritableSource_MarksTheItem_AndAReadOnlyTextWrittenOnItUnmarksIt()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        f.Data.With(
+            new BookTemplate { Id = "blank", Title = "a book", Author = "$player_name", Content = "", ItemTemplate = "readable_book", Writable = true, Pages = 30 },
+            new BookTemplate { Id = "tome", Title = "Tome", Content = "Text", ItemTemplate = "readable_book" });
+
+        await f.OnLoopAsync(() =>
+        {
+            var blank = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "blank"));
+
+            Assert.Equal((true, 30L, "Pippo", ""), (blank.GetProp("book.writable", false), blank.GetProp("book.pages", 0L), blank.GetProp("book.author", ""), blank.GetProp("book.content", "x")));
+
+            Assert.True(f.Books.Write(blank, f.Player, "tome"));
+
+            Assert.False(blank.TryGetProp<bool>("book.writable", out _));
+            Assert.False(blank.TryGetProp<long>("book.pages", out _));
+        });
+    }
+
     [Fact]
     public async Task Write_ASourceWithAnItemId_SetsTheGraphicOfTheItemWrittenOn()
     {
