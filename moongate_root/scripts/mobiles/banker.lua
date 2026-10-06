@@ -24,6 +24,10 @@
 --                                               banker: gold and bank checks
 --                                               go into its bank, anything
 --                                               else is given back
+--   on_context_menu(serial, player)             the entry the banker adds to
+--                                               its context menu: Open Bank Box
+--   on_context_menu_select(serial, player, id)  the player chose it: the box
+--                                               opens, but not for a criminal
 -- ==============================================================================
 
 local numbers = require("common.numbers")
@@ -224,4 +228,29 @@ function banker.on_drag_drop(serial, giver, given)
     end
 
     return false
+end
+
+-- The banker's entry of its context menu: the client's own "Open Bank Box", from as far as it hears.
+local open_bank_box = 3006105
+
+function banker.on_context_menu(serial, player)
+    return {
+        { id = "bank", cliloc = open_bank_box, range = range },
+    }
+end
+
+-- Called when the player chose an entry of the menu above.
+function banker.on_context_menu_select(serial, player, id)
+    if id ~= "bank" then
+        return
+    end
+
+    npc.look_at(serial, player)
+
+    if mobile.criminal(player) then
+        npc.say_cliloc(serial, criminal_bank)
+        return
+    end
+
+    bank.open(player)
 end

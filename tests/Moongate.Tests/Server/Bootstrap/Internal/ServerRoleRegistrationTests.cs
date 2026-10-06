@@ -93,6 +93,36 @@ public sealed class ServerRoleRegistrationTests
         Assert.NotNull(container.Resolve<Moongate.Server.Ultima.Modules.CommandsModule>(IfUnresolved.Throw));
     }
 
+    // The handler takes the context menus as an optional service: were they not there to build, every menu a
+    // client asks for would be dropped in silence.
+    [Theory, InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
+    public void Register_TheExtendedCommandHandler_IsGivenTheContextMenus(ServerMode mode)
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = mode };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: mode));
+        // The host's own, registered by Program beside the roles.
+        container.RegisterMoongateEventBus();
+        container.Register<IEventBusService, Moongate.Server.Services.Events.EventBusService>(Reuse.Singleton);
+        container.Register<ICommandSystemService, Moongate.Server.Services.Commands.CommandSystemService>(Reuse.Singleton);
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        var handler = container.Resolve<Moongate.Server.Ultima.Handlers.General.ExtendedCommandPacketHandler>();
+        var field = handler.GetType().GetField("_contextMenus", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+        Assert.IsType<Moongate.Server.Ultima.Services.ContextMenuService>(field!.GetValue(handler));
+        Assert.Same(container.Resolve<Moongate.Server.Ultima.Handlers.Items.UseRequestPacketHandler>(), container.Resolve<Moongate.Server.Ultima.Interfaces.IUseService>());
+    }
+
     [Fact]
     public void Register_EveryCommand_HasATranslatedDescription()
     {
