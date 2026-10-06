@@ -40,6 +40,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly RecordingTimerService _timers = new();
     private readonly RecordingCrimeService _crimes = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
+    private readonly RecordingNpcSenseService _senses = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                  .Item(0x0EED, TileFlagType.Generic, 0)
                                                  .Item(0x0E75, TileFlagType.Container, 0)
@@ -114,6 +115,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
             _timers,
             crimes: _crimes,
             state: _state,
+            senses: _senses,
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -686,6 +688,28 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.Contains(_items.GetWorn(_aria.Id), item => item.Layer == LayerType.OuterTorso && item.TemplateId == "death_shroud");
         Assert.Empty(_scripts.Calls);
         Assert.Empty(_npcs.Removals);
+    }
+
+    [Fact]
+    public void Kill_TellsTheNpcsAroundWhoWasKilled_PlayerOrNpc()
+    {
+        _serials.Serials.Enqueue(new Serial(CorpseSerial + 1));
+        _aria.Body = 0x0190;
+
+        _death.Kill(_orc, _aria);
+        _death.Kill(_aria, _orc);
+
+        Assert.Equal([$"Killed {_orc.Id.Value} {_aria.Id.Value}", $"Killed {_aria.Id.Value} {_orc.Id.Value}"], _senses.Calls);
+    }
+
+    [Fact]
+    public void Kill_WhatTheDeathRefuses_TellsNobody()
+    {
+        _aria.Body = 0x0192;
+
+        _death.Kill(_aria);
+
+        Assert.Empty(_senses.Calls);
     }
 
     [Fact]

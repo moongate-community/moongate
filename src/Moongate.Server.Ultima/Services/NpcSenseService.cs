@@ -6,13 +6,15 @@ using Moongate.Server.Ultima.Interfaces;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Queues <c>on_mobile_in_range(serial, other)</c> both ways: an NPC senses a mobile, player or NPC, that comes within
+///     Queues <c>on_mobile_killed(serial, killed, killer)</c> on the NPCs near a death, and
+///     <c>on_mobile_in_range(serial, other)</c> both ways: an NPC senses a mobile, player or NPC, that comes within
 ///     the sense range, and a moving NPC senses the mobiles it comes near. Queued, not run: a step may come from inside a
 ///     running script.
 /// </summary>
 public sealed class NpcSenseService : INpcSenseService
 {
     public const string Function = "on_mobile_in_range";
+    public const string KilledFunction = "on_mobile_killed";
 
     private readonly INpcScriptService _scripts;
     private readonly ISectorService _sectors;
@@ -28,6 +30,20 @@ public sealed class NpcSenseService : INpcSenseService
     public void Appeared(MobileEntity mobile)
     {
         Sense(mobile, null);
+    }
+
+    public void Killed(MobileEntity killed, MobileEntity? killer)
+    {
+        long? killerSerial = killer is null ? null : killer.Id.Value;
+
+        foreach (var other in _sectors.GetMobilesInRange(killed.Map, killed.Location, _config.SenseRange))
+        {
+            // A dying NPC, with no hit points, is told nothing: it is going.
+            if (other.IsNpc && other.Id != killed.Id && other.Hits > 0)
+            {
+                _scripts.Queue(other, KilledFunction, (long)killed.Id.Value, killerSerial);
+            }
+        }
     }
 
     public void Moved(MobileEntity mobile, Point3D oldLocation)

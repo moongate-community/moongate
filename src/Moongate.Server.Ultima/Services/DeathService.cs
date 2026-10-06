@@ -82,6 +82,7 @@ public sealed class DeathService : IDeathService
     private readonly ICrimeService? _crimes;
     private readonly ILocalizationService? _localization;
     private readonly IMobileStateService? _state;
+    private readonly INpcSenseService? _senses;
     private readonly ILogger _logger;
 
     // Who is between its death and its removal: it does not die twice.
@@ -107,10 +108,12 @@ public sealed class DeathService : IDeathService
         ICrimeService? crimes = null,
         ILocalizationService? localization = null,
         IMobileStateService? state = null,
+        INpcSenseService? senses = null,
         ILogger? logger = null
     )
     {
         _state = state;
+        _senses = senses;
         _mobiles = mobiles;
         _items = items;
         _handling = handling;
@@ -155,6 +158,7 @@ public sealed class DeathService : IDeathService
             mobile.Map,
             killer?.Name ?? "nobody"
         );
+        _senses?.Killed(mobile, killer);
 
         if (DeathSound(mobile) is { } sound)
         {
@@ -282,6 +286,7 @@ public sealed class DeathService : IDeathService
             player.Map,
             killer?.Name ?? "nobody"
         );
+        _senses?.Killed(player, killer);
 
         if (DeathSound(player) is { } sound)
         {
