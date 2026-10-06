@@ -64,6 +64,61 @@ public sealed class SkillServiceTests
         Assert.Equal(expected, _skills.Check(_aria, SkillType.Hiding, 40, 100));
     }
 
+    [Theory]
+    [InlineData(0.6, 0.6, true)]
+    [InlineData(0.6, 0.5999, false)]
+    [InlineData(0.999, 1.5, true)]
+    [InlineData(0.0, 0.0, true)]
+    [InlineData(0.0, -1.0, false)]
+    public void CheckChance_SucceedsWhenTheChanceReachesTheRoll_WhateverThePointsOfTheSkill(double roll, double chance, bool expected)
+    {
+        Has(_aria, SkillType.Hiding, 500);
+        // The roll of the check, then the roll of whether it learns (it does not).
+        _random.Doubles(roll, 0.999);
+
+        Assert.Equal(expected, _skills.CheckChance(_aria, SkillType.Hiding, chance));
+    }
+
+    [Fact]
+    public void CheckChance_MayTeachTheSkill_ByTheSameRuleAsCheck()
+    {
+        Has(_aria, SkillType.Hiding, 500);
+        // A success at a chance of one half; then a roll that learns, the skill being at 50 of 100 and the task easy.
+        _random.Doubles(0.3, 0.0);
+
+        Assert.True(_skills.CheckChance(_aria, SkillType.Hiding, 0.5));
+
+        Assert.Equal((_aria, SkillType.Hiding, 501, (int?)null), Assert.Single(_state.SkillsSet));
+    }
+
+    [Fact]
+    public void CheckChance_ASkillBelowTenPoints_AlwaysLearns()
+    {
+        Has(_aria, SkillType.Hiding, 50);
+        _random.Doubles(0.999).Integers(2);
+
+        Assert.False(_skills.CheckChance(_aria, SkillType.Hiding, 0.5));
+
+        Assert.Equal((_aria, SkillType.Hiding, 53, (int?)null), Assert.Single(_state.SkillsSet));
+    }
+
+    [Fact]
+    public void CheckChance_AnNpc_NeverLearns()
+    {
+        Has(_orc, SkillType.Hiding, 50);
+        _random.Doubles(0.1).Integers(2);
+
+        Assert.True(_skills.CheckChance(_orc, SkillType.Hiding, 0.5));
+
+        Assert.Empty(_state.SkillsSet);
+    }
+
+    [Fact]
+    public void CheckChance_AnUnknownSkill_Fails()
+    {
+        Assert.False(_skills.CheckChance(_aria, (SkillType)200, 1.0));
+    }
+
     [Fact]
     public void Check_ASkillBelowTenPoints_AlwaysLearns_ByOneToFourTenths()
     {

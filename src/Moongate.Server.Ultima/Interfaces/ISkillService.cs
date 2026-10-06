@@ -23,6 +23,13 @@ public interface ISkillService
     bool Check(MobileEntity mobile, SkillType skill, double min, double max);
 
     /// <summary>
+    ///     Tries the mobile at <paramref name="skill" /> with a chance the caller worked out, from 0 up: it succeeds when
+    ///     the chance reaches a roll, whatever the points of the skill, as ModernUO's <c>CheckSkill(skill, chance)</c> that
+    ///     a weapon swing makes. The try, passed or failed, may raise the skill of a player as <see cref="Check" /> does.
+    /// </summary>
+    bool CheckChance(MobileEntity mobile, SkillType skill, double chance);
+
+    /// <summary>
     ///     Gets the points the mobile has in all its skills together, in tenths.
     /// </summary>
     int Total(MobileEntity mobile);

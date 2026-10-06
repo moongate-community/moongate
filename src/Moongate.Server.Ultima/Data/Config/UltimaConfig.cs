@@ -29,6 +29,8 @@ public class UltimaConfig : IConfigSection
 
     public SkillsConfig Skills { get; set; } = new();
 
+    public CombatConfig Combat { get; set; } = new();
+
     public SpawnsConfig Spawns { get; set; } = new();
 
     public JailConfig Jail { get; set; } = new();
@@ -116,6 +118,13 @@ public class UltimaConfig : IConfigSection
         }
 
         Skills.Validate();
+
+        if (Combat is null)
+        {
+            throw new InvalidOperationException("The ultima.combat configuration section cannot be null.");
+        }
+
+        Combat.Validate();
 
         if (Jail is null)
         {

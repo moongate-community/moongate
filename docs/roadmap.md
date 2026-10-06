@@ -101,7 +101,7 @@ written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has to
 
 | Step | State | What | Why it comes here |
 | --- | --- | --- | --- |
-| 2.1 | ❌ | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability | The core loop of the game |
+| 2.1 | 🟡 | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability. Done: a [fight](combat.md) with fists, the swing timer, the hit by Wrestling, the damage and the armor of an NPC. Left: weapons and armor of items, parry, archery, durability | The core loop of the game |
 | 2.2 | ❌ | **Aggressor lists** | Notoriety, guards and loot rights rest on them |
 | 2.3 | 🟡 | **Death, corpse, ghost, resurrection**; healer NPCs and shrines. Done: an NPC dies by `.kill` or `mobile.kill` and leaves its [corpse](death.md) with what it carried. Left: player death, ghosts, resurrection | Gives combat a result |
 | 2.4 | ❌ | **Bandages and healing** | Needed as soon as damage exists |

@@ -60,8 +60,8 @@
         "description": "Requested attack target."
       }
     ],
-    "notes": "Recognized and ignored until combat handling is available.",
-    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+    "notes": "The player clicks a mobile to attack it. The server makes the character fight it; a refused request is answered with 0xAA and a zero serial.",
+    "handler": "AttackRequestPacketHandler: ICombatService.Attack on the mobile; a refusal clears the client's target."
   },
   "0x06:incoming": {
     "category": "Items",
@@ -5037,5 +5037,101 @@
     ],
     "notes": "The title and author a player wrote, as the older clients send them. Saved as those of 0xD4.",
     "handler": "BookEditPacketHandler: BookDocumentService.SetHeader."
+  },
+  "0xAA:outgoing": {
+    "category": "Combat",
+    "tags": [
+      "Combat",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Target",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the mobile the character fights; zero when it fights no one"
+      }
+    ],
+    "notes": "Highlights the target of the fight in the client. Sent when a player starts or changes a fight and when it ends or is refused.",
+    "handler": "CombatService: sent to the player who fights. AttackRequestPacketHandler: a clear target for a refused request."
+  },
+  "0x2F:outgoing": {
+    "category": "Combat",
+    "tags": [
+      "Combat",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Flag",
+        "type": "byte",
+        "size": "1",
+        "description": "Zero."
+      },
+      {
+        "offset": "2",
+        "name": "Attacker",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the one who swings"
+      },
+      {
+        "offset": "6",
+        "name": "Defender",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the target"
+      }
+    ],
+    "notes": "A swing, told to the player who swings.",
+    "handler": "CombatService: sent to the attacker's player for each swing."
+  },
+  "0x0B:outgoing": {
+    "category": "Combat",
+    "tags": [
+      "Combat",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Target",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the mobile hit"
+      },
+      {
+        "offset": "5",
+        "name": "Damage",
+        "type": "ushort",
+        "size": "2",
+        "description": "The damage, kept from 0 to 65535"
+      }
+    ],
+    "notes": "The damage of a hit, which the client shows over the head of the one hit.",
+    "handler": "CombatService: sent to the players in the fight when display_damage_numbers is on."
   }
 }

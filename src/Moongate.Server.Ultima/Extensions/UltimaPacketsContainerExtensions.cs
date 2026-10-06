@@ -5,6 +5,7 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Ultima.Handlers.Books;
 using Moongate.Server.Ultima.Handlers.BulletinBoards;
 using Moongate.Server.Ultima.Handlers.Characters;
+using Moongate.Server.Ultima.Handlers.Combat;
 using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Handlers.Gumps;
 using Moongate.Server.Ultima.Handlers.HuePicking;
@@ -80,7 +81,8 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterPacketHandler<ExtendedCommandPacket, ExtendedCommandPacketHandler>();
         container.RegisterIncomingPacket<QueryPropertiesPacket>();
         container.RegisterPacketHandler<QueryPropertiesPacket, QueryPropertiesPacketHandler>();
-        RegisterIgnoredPacket<AttackRequestPacket>(container);
+        container.RegisterIncomingPacket<AttackRequestPacket>();
+        container.RegisterPacketHandler<AttackRequestPacket, AttackRequestPacketHandler>();
         container.RegisterIncomingPacket<SkillLockPacket>();
         container.RegisterPacketHandler<SkillLockPacket, SkillLockPacketHandler>();
         container.RegisterIncomingPacket<TextCommandPacket>();

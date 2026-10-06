@@ -8,17 +8,17 @@ where `wander.lua` and `potion.lua` are listed.
 ## monster.lua
 
 The distribution's `scripts/mobiles/monster.lua` is the script of the monsters that go for the players,
-after ModernUO's melee AI without the fight: the server has no combat yet. A template takes it with
+after ModernUO's melee AI: it chases a player and fights it from beside it. A template takes it with
 `script_id = "monster"`; the undead of the graveyards do (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`,
 `spectre`, `lich`), and so the templates based on them. The wraith, the spectre and the lich are casters in
-ModernUO: they walk up and snarl like the others until magic exists. A
+ModernUO: they walk up and fight like the others until magic exists. A
 monster is in one of three states:
 
 | State | What it does | It ends when |
 | --- | --- | --- |
 | wander | Strolls in its home, the area of its spawn region: about a step every two seconds, mostly straight ahead. It strolls with `npc.wander`, which walks it back from outside, as after a chase. One think in twenty it rests 15 to 25 seconds, with its `idle` sound and a fidget | It sees a player |
-| chase | Threatens the player with its `start_attack` sound and an animation, goes into war mode and walks to it with `npc.walk_to`, a step every think, never running. Beside it, it faces it and snarls every three seconds (`attack` sound and an attack animation): it does no harm | The player hides, leaves, is farther than 32 tiles, or cannot be reached for 20 seconds |
-| guard | Stands in war mode for 10 seconds, looking around | It sees a player, or the time is over: back to wander, in peace |
+| chase | Threatens the player with its `start_attack` sound and an animation, goes into war mode and walks to it with `npc.walk_to`, a step every think, never running. Beside it, it faces it and fights it with `combat.attack`, once: the swings, the hits and the [death](../combat.md) are the combat service's | The player hides, leaves, is farther than 32 tiles, or cannot be reached for 20 seconds |
+| guard | Stops fighting, stands in war mode for 10 seconds, looking around | It sees a player, or the time is over: back to wander, in peace |
 
 It looks for a player every two seconds while it wanders and every second on guard, and takes the
 nearest one of `npc.players_in_sight`: within 16 tiles and in line of sight, from eye to eye. It never

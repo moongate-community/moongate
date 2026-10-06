@@ -38,6 +38,7 @@ public static class UltimaScriptContainerExtensions
         container.AddScriptModule<TargetModule>();
         container.AddScriptModule<HuePickerModule>();
         container.AddScriptModule<SkillModule>();
+        container.AddScriptModule<CombatModule>();
         container.AddScriptModule<PromptModule>();
         container.AddScriptModule<GumpModule>();
         container.AddScriptModule<BankModule>();
