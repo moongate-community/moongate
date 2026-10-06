@@ -39,6 +39,9 @@ public sealed class DiceSpecTomlConverterTests
     public void Serialize_AConstantAsAnIntegerAndAnExpressionAsText()
     {
         Assert.Contains("value = 7", TomlUtils.Serialize(new DiceSpecHolder { Value = DiceSpec.FromValue(7) }, Options));
-        Assert.Contains("value = \"2d6+3\"", TomlUtils.Serialize(new DiceSpecHolder { Value = DiceSpec.Parse("2d6+3") }, Options));
+        Assert.Contains(
+            "value = \"2d6+3\"",
+            TomlUtils.Serialize(new DiceSpecHolder { Value = DiceSpec.Parse("2d6+3") }, Options)
+        );
     }
 }

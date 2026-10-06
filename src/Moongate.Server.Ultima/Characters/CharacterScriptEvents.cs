@@ -8,7 +8,8 @@ namespace Moongate.Server.Ultima.Characters;
 public static class CharacterScriptEvents
 {
     /// <summary>
-    ///     The fields of <c>character_created</c>: the character's serial and account, name, race and gender (as numbers),
+    ///     The fields of <c>character_created</c>: the character's serial and account, name, race and gender (as
+    ///     numbers),
     ///     and where it starts.
     /// </summary>
     public static IReadOnlyDictionary<string, object?> CharacterCreated(CharacterCreatedEvent evt)

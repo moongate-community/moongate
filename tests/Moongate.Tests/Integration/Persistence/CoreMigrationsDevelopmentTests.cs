@@ -15,7 +15,12 @@ public sealed class CoreMigrationsDevelopmentTests
     [Fact]
     public async Task TheShippedAuthSql_LeavesNothingToGenerate()
     {
-        await AssertNothingGeneratedAsync("auth", "AccountMigrations", PersistenceDatabaseTarget.Accounts, typeof(AccountEntity));
+        await AssertNothingGeneratedAsync(
+            "auth",
+            "AccountMigrations",
+            PersistenceDatabaseTarget.Accounts,
+            typeof(AccountEntity)
+        );
     }
 
     [Fact]
@@ -49,7 +54,9 @@ public sealed class CoreMigrationsDevelopmentTests
         );
     }
 
-    private static Task AssertNothingGeneratedAsync(string target, string shipped, PersistenceDatabaseTarget database, params Type[] entities)
+    private static Task AssertNothingGeneratedAsync(
+        string target, string shipped, PersistenceDatabaseTarget database, params Type[] entities
+    )
     {
         return AssertNothingGeneratedAsync(target, shipped, database, null, entities);
     }

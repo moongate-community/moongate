@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Converts the named places of ModernUO's <c>[Go</c> gump (<c>Distribution/Data/Locations/&lt;map&gt;.json</c>,
+///     Converts the named places of ModernUO's <c>[Go</c> gump ( <c>Distribution/Data/Locations/&lt;map&gt;.json</c>,
 ///     nested categories of places) into one data file, <c>locations.toml</c>: a <c>[[location]]</c> per place with its
 ///     map, its categories joined by <c>/</c>, its name and its spot.
 /// </summary>

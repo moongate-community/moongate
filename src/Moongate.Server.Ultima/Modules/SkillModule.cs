@@ -26,7 +26,10 @@ public sealed class SkillModule
     ///     Tries the mobile at a skill, between the points at which the task can just be begun and those at which it
     ///     never fails; <c>skill.check(user, "lockpicking", 30, 80)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Tries the mobile at a skill, named as in data/skills.toml (hiding, animal_lore): min is the points (50.5) at which the task can just be begun, max those at which it never fails. Below min it fails, at max or above it succeeds, and neither teaches; in between the chance grows in a line, and the try, passed or failed, may raise the skill of a player by a tenth of a point, more often with room under the caps and for a hard task. False also for an unknown skill or a mobile not in the world.")]
+    [ScriptFunction(
+        helpText:
+        "Tries the mobile at a skill, named as in data/skills.toml (hiding, animal_lore): min is the points (50.5) at which the task can just be begun, max those at which it never fails. Below min it fails, at max or above it succeeds, and neither teaches; in between the chance grows in a line, and the try, passed or failed, may raise the skill of a player by a tenth of a point, more often with room under the caps and for a hard task. False also for an unknown skill or a mobile not in the world."
+    )]
     public bool Check(long mobile, string skill, double min, double max)
     {
         return mobile is > 0 and <= uint.MaxValue &&

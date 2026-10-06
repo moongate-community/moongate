@@ -63,8 +63,8 @@ public sealed class TargetResponsePacketHandler : IPacketHandler<TargetResponseP
         if (packet.Serial.Value != 0)
         {
             return _items.TryGet(packet.Serial, out _) || _mobiles.IsInWorld(packet.Serial)
-                       ? TargetResult.ForObject(packet.Serial)
-                       : TargetResult.Canceled(TargetCancelType.Canceled);
+                ? TargetResult.ForObject(packet.Serial)
+                : TargetResult.Canceled(TargetCancelType.Canceled);
         }
 
         var map = mobile.Map;

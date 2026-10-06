@@ -20,8 +20,11 @@ public sealed class MotdContainerExtensionsTests
         Assert.Same(registry, container.Resolve<IMotdVariableRegistry>());
         Assert.Equal(
             "Summer",
-            await registry.ResolveAsync("season_name", new("Moongate", "Felucca", "1", "Dawn", "Aria", 1),
-                CancellationToken.None)
+            await registry.ResolveAsync(
+                "season_name",
+                new("Moongate", "Felucca", "1", "Dawn", "Aria", 1),
+                CancellationToken.None
+            )
         );
     }
 }

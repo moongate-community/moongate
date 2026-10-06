@@ -162,12 +162,16 @@ public sealed class JailModuleTests : IAsyncLifetime
         var result = Run("return jail.send(200, 1, 3, 3, 'Stole a horse') == JailResultType.Pending");
 
         Assert.True(result[0].Read<bool>());
-        Assert.Equal((new Serial(200), 1, 3, new Serial(3)), Assert.Single(_jail.JailedOffline) switch { var sent => (sent.Prisoner, sent.Cell, sent.Days, sent.By.Id) });
+        Assert.Equal(
+            (new Serial(200), 1, 3, new Serial(3)),
+            Assert.Single(_jail.JailedOffline) switch { var sent => (sent.Prisoner, sent.Cell, sent.Days, sent.By.Id) }
+        );
         Assert.Equal(["Stole a horse"], _jail.Reasons);
         Assert.Empty(_jail.Jailed);
     }
 
-    [Theory, InlineData("200, 1, 3, 99"), InlineData("-1, 1, 3, 3"), InlineData("0, 1, 3, 3"), InlineData("99999999999, 1, 3, 3")]
+    [Theory, InlineData("200, 1, 3, 99"), InlineData("-1, 1, 3, 3"), InlineData("0, 1, 3, 3"),
+     InlineData("99999999999, 1, 3, 3")]
     public void Send_ByNotInTheWorld_OrASerialThatIsNone_NeverReachesTheOfflineJail(string arguments)
     {
         _jail.OfflineResult = JailResultType.Pending;
@@ -188,9 +192,13 @@ public sealed class JailModuleTests : IAsyncLifetime
     [Fact]
     public void Sentence_OfOneThatWaits_SaysPending_AndItsWholeLength()
     {
-        _jail.SentenceList.Add(new() { Id = new Serial(2), Name = "Gino", Cell = 2, Days = 3, JailedBy = "Giachi", Pending = true });
+        _jail.SentenceList.Add(
+            new() { Id = new Serial(2), Name = "Gino", Cell = 2, Days = 3, JailedBy = "Giachi", Pending = true }
+        );
 
-        var result = Run("local s = jail.sentence(2) return s.pending, s.seconds_left, jail.cells()[2].pending, jail.cells()[2].seconds_left");
+        var result = Run(
+            "local s = jail.sentence(2) return s.pending, s.seconds_left, jail.cells()[2].pending, jail.cells()[2].seconds_left"
+        );
 
         Assert.True(result[0].Read<bool>());
         Assert.Equal(3 * 86_400, result[1].Read<int>());

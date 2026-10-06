@@ -21,7 +21,9 @@ public sealed class StubDoorGeneratorService : IDoorGeneratorService
 
     public IReadOnlyList<Rectangle2D> ChunksOf(MapType map)
     {
-        return _doors.TryGetValue(map, out var doors) ? doors.Select((_, index) => new Rectangle2D(index, 0, 1, 1)).ToList() : [];
+        return _doors.TryGetValue(map, out var doors)
+            ? doors.Select((_, index) => new Rectangle2D(index, 0, 1, 1)).ToList()
+            : [];
     }
 
     public IReadOnlyList<GeneratedDoor> Scan(MapType map, Rectangle2D chunk)

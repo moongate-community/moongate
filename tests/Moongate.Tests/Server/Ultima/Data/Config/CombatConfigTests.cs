@@ -9,7 +9,11 @@ public sealed class CombatConfigTests
     {
         var config = new CombatConfig();
 
-        Assert.Equal((1.0, 0, 1.0, 1, 60, true, 1.0), (config.GlobalAttackSpeed, config.AttackStamina, config.NpcDamageRate, config.MaxRange, config.CombatantSeconds, config.DisplayDamageNumbers, config.ArcheryStandStillSeconds));
+        Assert.Equal(
+            (1.0, 0, 1.0, 1, 60, true, 1.0),
+            (config.GlobalAttackSpeed, config.AttackStamina, config.NpcDamageRate, config.MaxRange, config.CombatantSeconds,
+                config.DisplayDamageNumbers, config.ArcheryStandStillSeconds)
+        );
         config.Validate();
     }
 
@@ -48,7 +52,8 @@ public sealed class CombatConfigTests
     {
         var config = new CombatConfig
         {
-            GlobalAttackSpeed = speed, AttackStamina = stamina, NpcDamageRate = rate, MaxRange = range, CombatantSeconds = seconds
+            GlobalAttackSpeed = speed, AttackStamina = stamina, NpcDamageRate = rate, MaxRange = range,
+            CombatantSeconds = seconds
         };
 
         var error = Assert.Throws<InvalidOperationException>(config.Validate);

@@ -19,15 +19,20 @@ public sealed class MoongateUltimaPluginTitlesTests
     public async Task Register_GameModeExposesLoaderAndTitleService()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("data/titles.toml", """
+        root.CreateFile(
+            "data/titles.toml",
+            """
             [[titles]]
             fame = 0
             karma = 0
             title = "The Honored"
-            """);
+            """
+        );
         using var container = new Container();
         var configPath = root.CreateFile("moongate.toml", "[network]\n");
-        container.RegisterInstance(new ServerConfigDocument(configPath, TomlSerializer.Deserialize<TomlTable>("[network]\n")!, ["network"]));
+        container.RegisterInstance(
+            new ServerConfigDocument(configPath, TomlSerializer.Deserialize<TomlTable>("[network]\n")!, ["network"])
+        );
         container.RegisterInstance(new DirectoriesConfig(root.Path, ["data"]));
         container.RegisterInstance(ServerMode.Game);
         container.RegisterMoongatePersistence(new());

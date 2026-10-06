@@ -294,8 +294,8 @@ public sealed class CombatService : ICombatService
     private AccountType AccountOf(MobileEntity mobile)
     {
         return !mobile.IsNpc && _sessions.TryGetByCharacterId(mobile.Id, out var session)
-                   ? session.AccountType
-                   : AccountType.Regular;
+            ? session.AccountType
+            : AccountType.Regular;
     }
 
     // A timer callback that throws closes the timer wheel.
@@ -314,7 +314,12 @@ public sealed class CombatService : ICombatService
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error(exception, "The fight of {Attacker} against {Target} failed", fighter.Attacker, fighter.Target);
+                    _logger.Error(
+                        exception,
+                        "The fight of {Attacker} against {Target} failed",
+                        fighter.Attacker,
+                        fighter.Target
+                    );
                     Stop(fighter.Attacker);
                 }
             }
@@ -370,7 +375,10 @@ public sealed class CombatService : ICombatService
         // A square range, as the scripts and the line of sight measure: a diagonal neighbour is one cell away, not 1.4.
         var range = RangedOf(attacker)?.Range ?? _config.MaxRange;
 
-        return Math.Max(Math.Abs(attacker.Location.X - target.Location.X), Math.Abs(attacker.Location.Y - target.Location.Y)) <= range &&
+        return Math.Max(
+                   Math.Abs(attacker.Location.X - target.Location.X),
+                   Math.Abs(attacker.Location.Y - target.Location.Y)
+               ) <= range &&
                Math.Abs(attacker.Location.Z - target.Location.Z) <= ReachInHeight;
     }
 
@@ -443,7 +451,10 @@ public sealed class CombatService : ICombatService
             return;
         }
 
-        _speech.PlaySound(attacker, SoundsOf(attacker)?.Attack is { } sound and > 0 ? sound : WeaponFamilies.HitSound(weapon?.Type));
+        _speech.PlaySound(
+            attacker,
+            SoundsOf(attacker)?.Attack is { } sound and > 0 ? sound : WeaponFamilies.HitSound(weapon?.Type)
+        );
         Hit(attacker, target, now, weapon);
     }
 
@@ -649,7 +660,9 @@ public sealed class CombatService : ICombatService
     // The sounds of the template of an NPC; a player has its own, which the client plays.
     private MobileSounds? SoundsOf(MobileEntity mobile)
     {
-        return mobile.IsNpc && mobile.TemplateId is { } id && _templates.TryGet(id, out var template) ? template.Sounds : null;
+        return mobile.IsNpc && mobile.TemplateId is { } id && _templates.TryGet(id, out var template)
+            ? template.Sounds
+            : null;
     }
 
     private BodyType BodyOf(MobileEntity mobile)

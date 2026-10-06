@@ -8,11 +8,7 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Data.Templates.Items;
 
 /// <summary>
-///     An authored item definition, one TOML entry under
-///     <c>
-///         templates/items/
-///     </c>
-///     .
+///     An authored item definition, one TOML entry under <c>templates/items/</c>.
 /// </summary>
 public class ItemTemplate
 {
@@ -22,32 +18,20 @@ public class ItemTemplate
     private const int MaximumArmorRating = 500;
 
     /// <summary>
-    ///     The stable id a loot table, a spawn or the
-    ///     <c>
-    ///         additem
-    ///     </c>
-    ///     command names this template by.
+    ///     The stable id a loot table, a spawn or the <c>additem</c> command names this template by.
     /// </summary>
     public string Id { get; set; }
 
     /// <summary>
     ///     The <see cref="Id" /> of another <see cref="ItemTemplate" /> this one inherits unset fields
-    ///     from, the way UOX3's
-    ///     <c>
-    ///         get=
-    ///     </c>
-    ///     chains one door variant off another. Resolved by the loader
+    ///     from, the way UOX3's <c>get=</c> chains one door variant off another. Resolved by the loader
     ///     across every loaded file, not by this type itself.
     /// </summary>
     public string? BaseId { get; set; }
 
     /// <summary>
     ///     The base client graphic. Physical properties tiledata already carries, weight, layer,
-    ///     stackability, are read from it through
-    ///     <c>
-    ///         ITileDataService
-    ///     </c>
-    ///     at the point of use, not restated here.
+    ///     stackability, are read from it through <c>ITileDataService</c> at the point of use, not restated here.
     /// </summary>
     public Serial ItemId { get; set; }
 
@@ -68,7 +52,8 @@ public class ItemTemplate
         EnumValueSpec<ItemRarityType>.FromValue(ItemRarityType.Common);
 
     /// <summary>
-    ///     The global Lua table, defined by <c>scripts/items/&lt;script_id&gt;.lua</c>, whose functions handle the item's
+    ///     The global Lua table, defined by <c>scripts/items/&lt;script_id&gt;.lua</c>, whose functions handle the
+    ///     item's
     ///     events, such as <c>on_use</c>. A lower-case Lua identifier; empty: no script.
     /// </summary>
     public string ScriptId { get; set; }
@@ -175,7 +160,8 @@ public class ItemTemplate
     public LootType? LootType { get; set; }
 
     /// <summary>
-    ///     Free values for scripts, such as a quest step. A child template's tags, when set, replace its base's; they are not merged.
+    ///     Free values for scripts, such as a quest step. A child template's tags, when set, replace its base's; they are not
+    ///     merged.
     /// </summary>
     public Dictionary<string, string>? Tags { get; set; }
 

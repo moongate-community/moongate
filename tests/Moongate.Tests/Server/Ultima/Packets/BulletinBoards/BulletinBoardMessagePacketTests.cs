@@ -73,7 +73,9 @@ public sealed class BulletinBoardMessagePacketTests
         var lines = Enumerable.Range(0, 300).Select(_ => "x").ToArray();
         var worn = Enumerable.Range(0, 300).Select(index => new BulletinEquipment(index, 0)).ToArray();
 
-        var bytes = PacketCodec.Encode(new BulletinBoardMessagePacket(Board, Message, "A", "S", "D", 0x0190, 0, worn, lines));
+        var bytes = PacketCodec.Encode(
+            new BulletinBoardMessagePacket(Board, Message, "A", "S", "D", 0x0190, 0, worn, lines)
+        );
 
         Assert.Equal(255, bytes[25]);
         Assert.Equal(255, bytes[26 + 255 * 4]);

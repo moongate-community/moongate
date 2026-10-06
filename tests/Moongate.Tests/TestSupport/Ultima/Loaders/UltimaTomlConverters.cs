@@ -12,7 +12,11 @@ namespace Moongate.Tests.TestSupport.Ultima.Loaders;
 internal static class UltimaTomlConverters
 {
     [ModuleInitializer]
-    [SuppressMessage("Usage", "CA2255:The 'ModuleInitializer' attribute should not be used in libraries", Justification = "A test assembly.")]
+    [SuppressMessage(
+        "Usage",
+        "CA2255:The 'ModuleInitializer' attribute should not be used in libraries",
+        Justification = "A test assembly."
+    )]
     internal static void Register()
     {
         MoongateUltimaPlugin.RegisterTomlConverters();

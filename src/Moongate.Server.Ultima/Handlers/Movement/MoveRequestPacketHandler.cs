@@ -17,7 +17,8 @@ namespace Moongate.Server.Ultima.Handlers.Movement;
 /// <summary>
 ///     Moves the session's character one step (0x02): checks the sequence and the speed, then turns or steps it through
 ///     <see cref="IMobileService" /> and answers 0x22, or 0x21 with the real position; the players in range see the step or
-///     the turn through <see cref="IWorldViewService" />; a game master or an administrator walks through doors; the scripted items of the new cell are told of the step through
+///     the turn through <see cref="IWorldViewService" />; a game master or an administrator walks through doors; the scripted
+///     items of the new cell are told of the step through
 ///     <see cref="IMoveOverService" />.
 /// </summary>
 /// <remarks>

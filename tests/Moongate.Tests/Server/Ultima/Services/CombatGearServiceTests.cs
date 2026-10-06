@@ -31,7 +31,8 @@ public sealed class CombatGearServiceTests
                 new StubDataLoaderService().With(
                     new ItemTemplate
                     {
-                        Id = "longsword", ItemId = new Serial(0x0F60), Layer = LayerType.OneHanded, WeaponType = WeaponType.Sword,
+                        Id = "longsword", ItemId = new Serial(0x0F60), Layer = LayerType.OneHanded,
+                        WeaponType = WeaponType.Sword,
                         DamageMin = 5, DamageMax = 33, Speed = 35
                     },
                     new ItemTemplate
@@ -44,18 +45,31 @@ public sealed class CombatGearServiceTests
                         Id = "bow", ItemId = new Serial(0x13B2), Layer = LayerType.TwoHanded, TwoHandedWeapon = true,
                         WeaponType = WeaponType.Bow, DamageMin = 9, DamageMax = 41, Speed = 25
                     },
-                    new ItemTemplate { Id = "club", ItemId = new Serial(0x13B4), Layer = LayerType.OneHanded, DamageMin = 3, DamageMax = 9, Speed = 40 },
-                    new ItemTemplate { Id = "heater", ItemId = new Serial(0x1B76), Layer = LayerType.TwoHanded, ArmorRating = 8 },
-                    new ItemTemplate { Id = "plate_tunic", ItemId = new Serial(0x1415), Layer = LayerType.InnerTorso, ArmorRating = 30 },
-                    new ItemTemplate { Id = "chain_tunic", ItemId = new Serial(0x13BF), Layer = LayerType.MiddleTorso, ArmorRating = 28 },
-                    new ItemTemplate { Id = "plate_helm", ItemId = new Serial(0x1412), Layer = LayerType.Helm, ArmorRating = 40 },
-                    new ItemTemplate { Id = "gorget", ItemId = new Serial(0x1413), Layer = LayerType.Neck, ArmorRating = 30 },
-                    new ItemTemplate { Id = "gloves", ItemId = new Serial(0x1414), Layer = LayerType.Gloves, ArmorRating = 30 },
+                    new ItemTemplate
+                    {
+                        Id = "club", ItemId = new Serial(0x13B4), Layer = LayerType.OneHanded, DamageMin = 3, DamageMax = 9,
+                        Speed = 40
+                    },
+                    new ItemTemplate
+                        { Id = "heater", ItemId = new Serial(0x1B76), Layer = LayerType.TwoHanded, ArmorRating = 8 },
+                    new ItemTemplate
+                        { Id = "plate_tunic", ItemId = new Serial(0x1415), Layer = LayerType.InnerTorso, ArmorRating = 30 },
+                    new ItemTemplate
+                        { Id = "chain_tunic", ItemId = new Serial(0x13BF), Layer = LayerType.MiddleTorso, ArmorRating = 28 },
+                    new ItemTemplate
+                        { Id = "plate_helm", ItemId = new Serial(0x1412), Layer = LayerType.Helm, ArmorRating = 40 },
+                    new ItemTemplate
+                        { Id = "gorget", ItemId = new Serial(0x1413), Layer = LayerType.Neck, ArmorRating = 30 },
+                    new ItemTemplate
+                        { Id = "gloves", ItemId = new Serial(0x1414), Layer = LayerType.Gloves, ArmorRating = 30 },
                     new ItemTemplate { Id = "arms", ItemId = new Serial(0x1410), Layer = LayerType.Arms, ArmorRating = 30 },
-                    new ItemTemplate { Id = "leggings", ItemId = new Serial(0x1411), Layer = LayerType.Pants, ArmorRating = 30 },
+                    new ItemTemplate
+                        { Id = "leggings", ItemId = new Serial(0x1411), Layer = LayerType.Pants, ArmorRating = 30 },
                     new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Layer = LayerType.OuterTorso },
-                    new ItemTemplate { Id = "studded_tunic", ItemId = new Serial(0x1C02), Layer = LayerType.Shirt, ArmorRating = 16 },
-                    new ItemTemplate { Id = "plate_skirt", ItemId = new Serial(0x1416), Layer = LayerType.OuterLegs, ArmorRating = 30 }
+                    new ItemTemplate
+                        { Id = "studded_tunic", ItemId = new Serial(0x1C02), Layer = LayerType.Shirt, ArmorRating = 16 },
+                    new ItemTemplate
+                        { Id = "plate_skirt", ItemId = new Serial(0x1416), Layer = LayerType.OuterLegs, ArmorRating = 30 }
                 )
             )
         );
@@ -74,7 +88,10 @@ public sealed class CombatGearServiceTests
 
         var weapon = _gear.WeaponOf(_aria)!;
 
-        Assert.Equal((SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35), (weapon.Skill, weapon.Type, weapon.TwoHanded, weapon.DamageMin, weapon.DamageMax, weapon.Speed));
+        Assert.Equal(
+            (SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35),
+            (weapon.Skill, weapon.Type, weapon.TwoHanded, weapon.DamageMin, weapon.DamageMax, weapon.Speed)
+        );
     }
 
     [Fact]
@@ -92,7 +109,10 @@ public sealed class CombatGearServiceTests
 
         var weapon = _gear.WeaponOf(_aria)!;
 
-        Assert.Equal((SkillType.Wrestling, (WeaponType?)null, 3, 9, 40), (weapon.Skill, weapon.Type, weapon.DamageMin, weapon.DamageMax, weapon.Speed));
+        Assert.Equal(
+            (SkillType.Wrestling, (WeaponType?)null, 3, 9, 40),
+            (weapon.Skill, weapon.Type, weapon.DamageMin, weapon.DamageMax, weapon.Speed)
+        );
     }
 
     [Fact]
@@ -106,7 +126,10 @@ public sealed class CombatGearServiceTests
         Wear("bow");
         var weapon = _gear.RangedWeaponOf(_aria)!;
 
-        Assert.Equal((SkillType.Archery, WeaponType.Bow, 9, 41, 25, 10), (weapon.Skill, weapon.Type, weapon.DamageMin, weapon.DamageMax, weapon.Speed, weapon.Range));
+        Assert.Equal(
+            (SkillType.Archery, WeaponType.Bow, 9, 41, 25, 10),
+            (weapon.Skill, weapon.Type, weapon.DamageMin, weapon.DamageMax, weapon.Speed, weapon.Range)
+        );
     }
 
     [Fact]
@@ -168,9 +191,14 @@ public sealed class CombatGearServiceTests
         Wear("plate_helm");
         Wear("leggings");
 
-        Assert.Equal((30, 40, 30, 0, 0, 0), (
-            _gear.ArmorAt(_aria, ArmorZoneType.Chest), _gear.ArmorAt(_aria, ArmorZoneType.Head), _gear.ArmorAt(_aria, ArmorZoneType.Legs),
-            _gear.ArmorAt(_aria, ArmorZoneType.Neck), _gear.ArmorAt(_aria, ArmorZoneType.Hands), _gear.ArmorAt(_aria, ArmorZoneType.Arms)));
+        Assert.Equal(
+            (30, 40, 30, 0, 0, 0),
+            (
+                _gear.ArmorAt(_aria, ArmorZoneType.Chest), _gear.ArmorAt(_aria, ArmorZoneType.Head),
+                _gear.ArmorAt(_aria, ArmorZoneType.Legs),
+                _gear.ArmorAt(_aria, ArmorZoneType.Neck), _gear.ArmorAt(_aria, ArmorZoneType.Hands),
+                _gear.ArmorAt(_aria, ArmorZoneType.Arms))
+        );
     }
 
     [Fact]
@@ -265,18 +293,18 @@ public sealed class CombatGearServiceTests
     {
         return template switch
         {
-            "longsword" or "club" => LayerType.OneHanded,
+            "longsword" or "club"          => LayerType.OneHanded,
             "halberd" or "bow" or "heater" => LayerType.TwoHanded,
-            "plate_tunic" => LayerType.InnerTorso,
-            "studded_tunic" => LayerType.Shirt,
-            "plate_skirt" => LayerType.OuterLegs,
-            "chain_tunic" => LayerType.MiddleTorso,
-            "plate_helm" => LayerType.Helm,
-            "gorget" => LayerType.Neck,
-            "gloves" => LayerType.Gloves,
-            "arms" => LayerType.Arms,
-            "leggings" => LayerType.Pants,
-            _ => LayerType.OuterTorso
+            "plate_tunic"                  => LayerType.InnerTorso,
+            "studded_tunic"                => LayerType.Shirt,
+            "plate_skirt"                  => LayerType.OuterLegs,
+            "chain_tunic"                  => LayerType.MiddleTorso,
+            "plate_helm"                   => LayerType.Helm,
+            "gorget"                       => LayerType.Neck,
+            "gloves"                       => LayerType.Gloves,
+            "arms"                         => LayerType.Arms,
+            "leggings"                     => LayerType.Pants,
+            _                              => LayerType.OuterTorso
         };
     }
 }

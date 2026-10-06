@@ -5,7 +5,8 @@ namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
 ///     Calls the functions of an item's script, the global table its template names with <c>script_id</c>, defined by
-///     <c>scripts/items/&lt;script_id&gt;.lua</c>, with the item's serial first. Called on the game loop; <see cref="Run" />
+///     <c>scripts/items/&lt;script_id&gt;.lua</c>, with the item's serial first. Called on the game loop; <see
+///     cref="Run" />
 ///     never from inside a running script; nothing runs before the scripts are loaded or once they stop.
 /// </summary>
 public interface IItemScriptService

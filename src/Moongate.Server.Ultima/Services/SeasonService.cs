@@ -26,7 +26,9 @@ public sealed class SeasonService : ISeasonService
     public const string CheckTimerName = "season_check";
 
     private static readonly TimeSpan CheckInterval = TimeSpan.FromMinutes(1);
-    private static readonly SeasonType[] Rotation = [SeasonType.Spring, SeasonType.Summer, SeasonType.Fall, SeasonType.Winter];
+
+    private static readonly SeasonType[] Rotation =
+        [SeasonType.Spring, SeasonType.Summer, SeasonType.Fall, SeasonType.Winter];
 
     private readonly ILogger _logger = Log.ForContext<SeasonService>();
     private readonly ConcurrentDictionary<Serial, SeasonListener> _listeners = new();
@@ -73,8 +75,7 @@ public sealed class SeasonService : ISeasonService
     public Task StartAsync()
     {
         // The event comes from the login handler's thread; the listeners change on the game loop only.
-        _logins = _events.Subscribe<CharacterEnteredWorldEvent>(
-            async (evt, cancellationToken) =>
+        _logins = _events.Subscribe<CharacterEnteredWorldEvent>(async (evt, cancellationToken) =>
             {
                 var work = new LoopActionWorkItem(() => LoggedIn(evt.Character));
                 await _loop.PostAsync(work, cancellationToken);
@@ -133,7 +134,8 @@ public sealed class SeasonService : ISeasonService
             return season;
         }
 
-        var configured = _data.GetEntities<MapContent>().FirstOrDefault(content => content.Map == map)?.Season ?? SeasonType.Summer;
+        var configured = _data.GetEntities<MapContent>().FirstOrDefault(content => content.Map == map)?.Season ??
+                         SeasonType.Summer;
 
         var start = Array.IndexOf(Rotation, configured);
 

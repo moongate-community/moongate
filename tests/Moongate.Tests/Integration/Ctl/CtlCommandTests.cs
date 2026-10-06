@@ -20,7 +20,8 @@ public sealed class CtlCommandTests
         foreach (var command in new[]
                  {
                      "init", "migrate status", "migrate apply", "convert uox", "convert modernuo-spawns",
-                     "convert modernuo-signs", "convert modernuo-teleporters", "convert modernuo-locations", "convert modernuo-chests",
+                     "convert modernuo-signs", "convert modernuo-teleporters", "convert modernuo-locations",
+                     "convert modernuo-chests",
                      "convert modernuo-books"
                  })
         {
@@ -58,7 +59,9 @@ public sealed class CtlCommandTests
     [InlineData("needs a root directory", "init")]
     [InlineData("unknown command 'help'", "help")]
     [InlineData("unknown command 'status'", "status")]
-    public async Task Run_ALineThatNamesNoCommand_FailsWithAUsageError_AndPreparesNothing(string expected, params string[] arguments)
+    public async Task Run_ALineThatNamesNoCommand_FailsWithAUsageError_AndPreparesNothing(
+        string expected, params string[] arguments
+    )
     {
         using var directory = new TemporaryDirectory();
 
@@ -87,7 +90,14 @@ public sealed class CtlCommandTests
         File.WriteAllText(source, "2 2979 3632 2537 0 The Shakin' Bakery\n");
         var destination = Path.Combine(directory.Path, "decorations");
 
-        var result = await CtlProcess.RunAsync("convert", "modernuo-signs", "--source", source, "--destination", destination);
+        var result = await CtlProcess.RunAsync(
+            "convert",
+            "modernuo-signs",
+            "--source",
+            source,
+            "--destination",
+            destination
+        );
 
         Assert.True(result.ExitCode == 0, result.Output);
         Assert.Contains("The Shakin' Bakery", File.ReadAllText(Path.Combine(destination, "trammel", "_signs.toml")));
@@ -186,7 +196,10 @@ public sealed class CtlCommandTests
             "login.example.test,192.0.2.10"
         );
         Assert.True(result.ExitCode == 0, result.Output);
-        var config = TomlSections.Read<AdminApiConfig>(File.ReadAllText(Path.Combine(root, "config/moongate.toml")), "admin_api");
+        var config = TomlSections.Read<AdminApiConfig>(
+            File.ReadAllText(Path.Combine(root, "config/moongate.toml")),
+            "admin_api"
+        );
         Assert.True(config.Enabled);
         Assert.True(File.Exists(Path.Combine(root, config.CertificatePath)));
         Assert.True(File.Exists(Path.Combine(root, "certificates/admin.crt")));

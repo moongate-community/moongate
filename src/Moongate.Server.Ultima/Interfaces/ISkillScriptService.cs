@@ -6,7 +6,8 @@ namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
 ///     Calls the script of a skill a player uses, the global table named after the skill, defined by
-///     <c>scripts/skills/&lt;skill&gt;.lua</c>: <c>hiding</c>, <c>animal_lore</c>. Called on the game loop; nothing runs
+///     <c>scripts/skills/&lt;skill&gt;.lua</c>: <c>hiding</c>, <c>animal_lore</c>. Called on the game loop; nothing
+///     runs
 ///     before the scripts are loaded or once they stop.
 /// </summary>
 public interface ISkillScriptService

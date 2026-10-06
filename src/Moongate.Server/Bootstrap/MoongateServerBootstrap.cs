@@ -29,7 +29,10 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         _container = container;
         _cancellationToken = cancellationToken;
         _container.RegisterMoongateEventBus();
-        _container.Register<IServerShutdownService, ServerShutdownService>(Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Keep);
+        _container.Register<IServerShutdownService, ServerShutdownService>(
+            Reuse.Singleton,
+            ifAlreadyRegistered: IfAlreadyRegistered.Keep
+        );
         // Resolved now: RunAsync may run after a stop has already disposed the container.
         _shutdown = _container.Resolve<IServerShutdownService>();
         _eventBus = new(() => _container.Resolve<IMoongateEventBus>());
@@ -135,9 +138,9 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         _services.StopAcceptingAdministration();
 
         await CaptureFailureAsync(
-                () => _eventBus.Value.PublishAsync(new MoongateStoppingEvent(), CancellationToken.None),
-                failures
-            );
+            () => _eventBus.Value.PublishAsync(new MoongateStoppingEvent(), CancellationToken.None),
+            failures
+        );
 
         failures.AddRange(await _services.StopAsync(_startupSucceeded));
 
@@ -158,17 +161,17 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         }
 
         await CaptureFailureAsync(
-                () => _eventBus.Value.PublishAsync(new MoongateStoppedEvent(), CancellationToken.None),
-                failures
-            );
+            () => _eventBus.Value.PublishAsync(new MoongateStoppedEvent(), CancellationToken.None),
+            failures
+        );
 
         await CaptureFailureAsync(StopPersistenceAsync, failures);
         CaptureFailure(_container.Dispose, failures);
         _logger.Information("Moongate Server stopped.");
         await CaptureFailureAsync(
-                async () => await Log.CloseAndFlushAsync(),
-                failures
-            );
+            async () => await Log.CloseAndFlushAsync(),
+            failures
+        );
 
         return failures;
     }
@@ -185,14 +188,14 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             }
 
             await _services.StartAsync(service =>
+                {
+                    if (service is IGameLoopService gameLoop)
                     {
-                        if (service is IGameLoopService gameLoop)
-                        {
-                            // Capture after priority-ordered resolution, even if a later startup step fails.
-                            _gameLoopCompletion = gameLoop.Completion;
-                        }
+                        // Capture after priority-ordered resolution, even if a later startup step fails.
+                        _gameLoopCompletion = gameLoop.Completion;
                     }
-                );
+                }
+            );
 
             if (_gameLoopCompletion is { IsCompleted: true })
             {

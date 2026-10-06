@@ -213,6 +213,7 @@ public sealed class JailService : IJailService
         {
             return JailResultType.Refused;
         }
+
         if (_file is not { } file)
         {
             return JailResultType.Disabled;
@@ -272,7 +273,8 @@ public sealed class JailService : IJailService
         else if (sentence.JailedAt == 0)
         {
             // One that waited for this login and never began: it has no place to go back to yet.
-            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ) = (map, location.X, location.Y, location.Z);
+            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ) =
+                (map, location.X, location.Y, location.Z);
         }
 
         sentence.Pending = false;
@@ -504,7 +506,12 @@ public sealed class JailService : IJailService
         {
             _speech.Tell(
                 prisoner,
-                _localization.Text(JailedForMessage, "You have been jailed for {0} days: {1}", sentence.Days, sentence.Reason)
+                _localization.Text(
+                    JailedForMessage,
+                    "You have been jailed for {0} days: {1}",
+                    sentence.Days,
+                    sentence.Reason
+                )
             );
             _logger.Information(
                 "{Name:l} ({Serial:l}) is jailed in cell {Cell} for {Days} days by {By:l}: {Reason:l}",
@@ -546,7 +553,8 @@ public sealed class JailService : IJailService
         // A sentence that had run before keeps the place of its first arrest.
         if (sentence.JailedAt == 0)
         {
-            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ) = (map, location.X, location.Y, location.Z);
+            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ) =
+                (map, location.X, location.Y, location.Z);
         }
 
         var now = Now();
@@ -610,7 +618,11 @@ public sealed class JailService : IJailService
         _speech.Tell(
             prisoner,
             fine > 0
-                ? _localization.Text(ReleasedFinedMessage, "You have served your sentence. A fine of {0} gold was taken.", fine)
+                ? _localization.Text(
+                    ReleasedFinedMessage,
+                    "You have served your sentence. A fine of {0} gold was taken.",
+                    fine
+                )
                 : _localization.Text(ReleasedMessage, "You have served your sentence.")
         );
     }
@@ -620,9 +632,9 @@ public sealed class JailService : IJailService
     {
         var left = amount;
         var piles = _items.GetOwnedBy(prisoner.Id)
-                          .Where(item => item.TemplateId == _itemsConfig.GoldTemplate)
-                          .OrderBy(pile => _items.GetWornRoot(pile)?.Layer == LayerType.Bank)
-                          .ToArray();
+            .Where(item => item.TemplateId == _itemsConfig.GoldTemplate)
+            .OrderBy(pile => _items.GetWornRoot(pile)?.Layer == LayerType.Bank)
+            .ToArray();
 
         foreach (var pile in piles)
         {
@@ -664,7 +676,11 @@ public sealed class JailService : IJailService
             // A player always has a backpack: the template is missing or the reserved serials ran out.
             if (sentence.IsPlayer)
             {
-                _logger.Warning("{Prisoner} left the jail without its release note: {Template} could not be made", sentence.Id, NoteTemplate);
+                _logger.Warning(
+                    "{Prisoner} left the jail without its release note: {Template} could not be made",
+                    sentence.Id,
+                    NoteTemplate
+                );
             }
 
             return;

@@ -23,7 +23,9 @@ public sealed class RecordingCharacterEnterWorldService : ICharacterEnterWorldSe
         return Allowed;
     }
 
-    public Task EnterAsync(PacketContext context, Serial accountId, CharacterForPlay play, CancellationToken cancellationToken)
+    public Task EnterAsync(
+        PacketContext context, Serial accountId, CharacterForPlay play, CancellationToken cancellationToken
+    )
     {
         Entered.Add((accountId, play));
 

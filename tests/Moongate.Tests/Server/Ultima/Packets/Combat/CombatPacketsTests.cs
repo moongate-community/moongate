@@ -10,7 +10,10 @@ public sealed class CombatPacketsTests
     [Fact]
     public void Combatant_WritesTheSerialOfTheTarget_OrZeroForNone()
     {
-        Assert.Equal(new byte[] { 0xAA, 0x00, 0x00, 0x01, 0x02 }, PacketCodec.Encode(new CombatantPacket(new Serial(0x102))));
+        Assert.Equal(
+            new byte[] { 0xAA, 0x00, 0x00, 0x01, 0x02 },
+            PacketCodec.Encode(new CombatantPacket(new Serial(0x102)))
+        );
         Assert.Equal(new byte[] { 0xAA, 0x00, 0x00, 0x00, 0x00 }, PacketCodec.Encode(new CombatantPacket(Serial.Zero)));
     }
 

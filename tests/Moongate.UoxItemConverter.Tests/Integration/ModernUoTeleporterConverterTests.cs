@@ -6,7 +6,11 @@ namespace Moongate.UoxItemConverter.Tests.Integration;
 
 public sealed class ModernUoTeleporterConverterTests : IDisposable
 {
-    private readonly string _root = Path.Combine(Path.GetTempPath(), "moongate-modernuo-teleporters-" + Guid.NewGuid().ToString("N"));
+    private readonly string _root = Path.Combine(
+        Path.GetTempPath(),
+        "moongate-modernuo-teleporters-" + Guid.NewGuid().ToString("N")
+    );
+
     private readonly StringWriter _output = new();
     private readonly StringWriter _error = new();
 
@@ -133,11 +137,23 @@ public sealed class ModernUoTeleporterConverterTests : IDisposable
     }
 
     [Theory]
-    [InlineData("""[{ "src": { "map": "Atlantis", "loc": [1, 2, 3] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""", "entry 1")]
-    [InlineData("""[{ "src": { "map": "Trammel", "loc": [1, 2] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""", "entry 1")]
+    [InlineData(
+        """[{ "src": { "map": "Atlantis", "loc": [1, 2, 3] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""",
+        "entry 1"
+    )]
+    [InlineData(
+        """[{ "src": { "map": "Trammel", "loc": [1, 2] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""",
+        "entry 1"
+    )]
     [InlineData("""[{ "src": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""", "entry 1")]
-    [InlineData("""[{ "src": { "map": "Trammel", "loc": [1, 2, 3] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": "true" }]""", "entry 1")]
-    [InlineData("""[{ "src": { "map": "Trammel", "loc": [1, "2", 3] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""", "entry 1")]
+    [InlineData(
+        """[{ "src": { "map": "Trammel", "loc": [1, 2, 3] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": "true" }]""",
+        "entry 1"
+    )]
+    [InlineData(
+        """[{ "src": { "map": "Trammel", "loc": [1, "2", 3] }, "dst": { "map": "Trammel", "loc": [1, 2, 3] }, "back": false }]""",
+        "entry 1"
+    )]
     [InlineData("[]", "no teleporters")]
     [InlineData("this is not json", "not valid JSON")]
     public void Run_ABadFile_FailsNamingTheProblem_AndWritesNothing(string json, string expected)
@@ -199,7 +215,8 @@ public sealed class ModernUoTeleporterConverterTests : IDisposable
 
     private static string Entry(string map, int x, int y, int z, string destMap, int dx, int dy, int dz, bool back = false)
     {
-        return $$"""{ "src": { "map": "{{map}}", "loc": [{{x}}, {{y}}, {{z}}] }, "dst": { "map": "{{destMap}}", "loc": [{{dx}}, {{dy}}, {{dz}}] }, "back": {{(back ? "true" : "false")}} }""";
+        return
+            $$"""{ "src": { "map": "{{map}}", "loc": [{{x}}, {{y}}, {{z}}] }, "dst": { "map": "{{destMap}}", "loc": [{{dx}}, {{dy}}, {{dz}}] }, "back": {{(back ? "true" : "false")}} }""";
     }
 
     private static List<List<long>> Locations(TomlTable block)
@@ -219,7 +236,8 @@ public sealed class ModernUoTeleporterConverterTests : IDisposable
 
     private List<TomlTable> Read(string folder)
     {
-        var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(Path.Combine(Destination, folder, "teleporters.toml")))!;
+        var document =
+            TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(Path.Combine(Destination, folder, "teleporters.toml")))!;
 
         return ((TomlTableArray)document["decoration"]).ToList();
     }

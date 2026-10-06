@@ -19,7 +19,10 @@ public sealed class MobileEntityTests
             Gender = GenderType.Female, Body = 0x025E, Map = MapType.Trammel, Location = where
         };
 
-        Assert.Equal($"0x00000002 \"Aria\" player of 0x0000002A (Elf Female, body 0x025E) at Trammel {where}", aria.ToString());
+        Assert.Equal(
+            $"0x00000002 \"Aria\" player of 0x0000002A (Elf Female, body 0x025E) at Trammel {where}",
+            aria.ToString()
+        );
     }
 
     [Fact]

@@ -19,18 +19,11 @@ public interface IScriptEngine
     ///     Arguments converted with the same rules as module functions.
     /// </param>
     /// <returns>
-    ///     Completed with the returned values, Suspended if the function called
-    ///     <c>
-    ///         wait
-    ///     </c>
-    ///     , or Failed with the error.
+    ///     Completed with the returned values, Suspended if the function called <c>wait</c>, or Failed with the error.
     /// </returns>
     /// <remarks>
-    ///     A function whose return value the caller needs must not call
-    ///     <c>
-    ///         wait
-    ///     </c>
-    ///     : a suspended call returns no values.
+    ///     A function whose return value the caller needs must not call <c>wait</c>: a suspended call returns no
+    ///     values.
     ///     A call from the host outside any file load is owned by the bootstrap file, so invalidating it cancels such coroutines.
     /// </remarks>
     [SuppressMessage(
@@ -95,11 +88,7 @@ public interface IScriptEngine
     ///     Executes a file under the scripts directory, reading it from disk if it was never loaded or was invalidated.
     /// </summary>
     /// <param name="relativePath">
-    ///     Path relative to the scripts directory, with forward slashes, such as
-    ///     <c>
-    ///         ai/guard.lua
-    ///     </c>
-    ///     .
+    ///     Path relative to the scripts directory, with forward slashes, such as <c>ai/guard.lua</c>.
     /// </param>
     /// <exception cref="InvalidOperationException">
     ///     Called off the loop thread, or the path leaves the scripts directory.

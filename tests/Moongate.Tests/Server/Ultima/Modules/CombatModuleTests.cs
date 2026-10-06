@@ -19,8 +19,15 @@ public sealed class CombatModuleTests
 {
     private readonly RecordingCombatService _combat = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
-    private readonly MobileEntity _aria = new() { Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
-    private readonly MobileEntity _orc = new() { Id = new Serial(0x100), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
+
+    private readonly MobileEntity _aria = new()
+    {
+        Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
+        Location = new Point3D(1600, 1600, 0)
+    };
+
+    private readonly MobileEntity _orc = new()
+        { Id = new Serial(0x100), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
 
     public CombatModuleTests()
     {

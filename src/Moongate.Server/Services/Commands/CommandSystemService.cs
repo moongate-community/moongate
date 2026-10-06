@@ -67,7 +67,10 @@ public sealed class CommandSystemService : ICommandSystemService
             return [];
         }
 
-        var tokens = commandLine.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var tokens = commandLine.Split(
+            (char[]?)null,
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+        );
         var name = tokens[0].ToLowerInvariant();
         var context = new CommandContext(commandLine, name, tokens[1..], source, session, cancellationToken);
         // Absent on the login role: the texts are then the English ones.
@@ -83,14 +86,18 @@ public sealed class CommandSystemService : ICommandSystemService
 
         if (source == CommandSourceType.None || !command.Definition.Source.HasFlag(source))
         {
-            context.PrintError(localization.Text(CommandMessages.NotAvailableHere, "The command '{0}' is not available here.", name));
+            context.PrintError(
+                localization.Text(CommandMessages.NotAvailableHere, "The command '{0}' is not available here.", name)
+            );
 
             return context.Output;
         }
 
         if (ResolveInvokerAccountType(source, session) < command.Definition.MinimumAccountType)
         {
-            context.PrintError(localization.Text(CommandMessages.NotAllowed, "You are not allowed to use the command '{0}'.", name));
+            context.PrintError(
+                localization.Text(CommandMessages.NotAllowed, "You are not allowed to use the command '{0}'.", name)
+            );
 
             return context.Output;
         }
@@ -191,8 +198,8 @@ public sealed class CommandSystemService : ICommandSystemService
         {
             // A value the parser would split, or none at all, cannot be typed: a careless plugin must not reach the console.
             return command.Completer.GetArgumentCompletions(previousArguments)
-                          ?.Where(value => !string.IsNullOrEmpty(value) && !value.Any(char.IsWhiteSpace))
-                          .ToArray() ??
+                       ?.Where(value => !string.IsNullOrEmpty(value) && !value.Any(char.IsWhiteSpace))
+                       .ToArray() ??
                    [];
         }
         catch (Exception exception)

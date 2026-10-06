@@ -33,7 +33,13 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig()).HandleAsync(
+        await new GameLoginPacketHandler(
+            Realm(),
+            store,
+            new StubDataLoaderService(),
+            new RecordingCharacterService(),
+            new CharactersConfig()
+        ).HandleAsync(
             context,
             new(AuthKey, "user", "password"),
             CancellationToken.None
@@ -112,7 +118,13 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig()).HandleAsync(
+        await new GameLoginPacketHandler(
+            Realm(),
+            store,
+            new StubDataLoaderService(),
+            new RecordingCharacterService(),
+            new CharactersConfig()
+        ).HandleAsync(
             context,
             new(packetKey, "user", "password"),
             CancellationToken.None
@@ -135,7 +147,13 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig()).HandleAsync(
+        await new GameLoginPacketHandler(
+            Realm(),
+            store,
+            new StubDataLoaderService(),
+            new RecordingCharacterService(),
+            new CharactersConfig()
+        ).HandleAsync(
             context,
             new(AuthKey, "user", "wrong-password"),
             CancellationToken.None
@@ -158,7 +176,13 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig()).HandleAsync(
+        await new GameLoginPacketHandler(
+            Realm(),
+            store,
+            new StubDataLoaderService(),
+            new RecordingCharacterService(),
+            new CharactersConfig()
+        ).HandleAsync(
             context,
             new(AuthKey, "user", "password"),
             CancellationToken.None

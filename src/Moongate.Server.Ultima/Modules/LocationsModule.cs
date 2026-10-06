@@ -7,11 +7,14 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Modules;
 
 /// <summary>
-///     The <c>locations</c> Lua module: the named places of the maps the server loads, from
-///     <c>data/locations.toml</c>, as the go gump lists them; <c>locations.node("felucca/dungeons")</c>,
+///     The <c>locations</c> Lua module: the named places of the maps the server loads, from <c>data/locations.toml</c>,
+///     as the go gump lists them; <c>locations.node("felucca/dungeons")</c>,
 ///     <c>locations.find("covetous entrance", MapType.Felucca)</c>.
 /// </summary>
-[ScriptModule("locations", "The named places of the loaded maps, from data/locations.toml: the tree of maps and categories the go gump lists, and the places a name finds.")]
+[ScriptModule(
+    "locations",
+    "The named places of the loaded maps, from data/locations.toml: the tree of maps and categories the go gump lists, and the places a name finds."
+)]
 public sealed class LocationsModule
 {
     private readonly ILocationService _locations;
@@ -27,7 +30,10 @@ public sealed class LocationsModule
     ///     <c>{ path, name, categories, locations }</c>: each category <c>{ name, path }</c>, each location
     ///     <c>{ name, category, map, x, y, z }</c>.
     /// </summary>
-    [ScriptFunction(helpText: "One level of the named places as { path, name, categories, locations }: \"\" for the maps, then map/category/..., in any case; each category is { name, path }, each location { name, category, map, x, y, z }. nil for an unknown path.")]
+    [ScriptFunction(
+        helpText:
+        "One level of the named places as { path, name, categories, locations }: \"\" for the maps, then map/category/..., in any case; each category is { name, path }, each location { name, category, map, x, y, z }. nil for an unknown path."
+    )]
     public LuaValue Node(string path = "")
     {
         if (_locations.GetNode(path) is not { } node)
@@ -58,7 +64,10 @@ public sealed class LocationsModule
     ///     Finds the places a text names, those of <paramref name="map" /> first;
     ///     <c>locations.find("covetous entrance", MapType.Felucca)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The places the text names, as an array of { name, category, map, x, y, z }: a name, or the last words of the categories and the name, such as \"covetous entrance\"; a category alone gives its first place. Those of the given map when any fits, else those of the other maps.")]
+    [ScriptFunction(
+        helpText:
+        "The places the text names, as an array of { name, category, map, x, y, z }: a name, or the last words of the categories and the name, such as \"covetous entrance\"; a category alone gives its first place. Those of the given map when any fits, else those of the other maps."
+    )]
     public LuaTable Find(string text, MapType map)
     {
         return Places(_locations.Find(text, map));

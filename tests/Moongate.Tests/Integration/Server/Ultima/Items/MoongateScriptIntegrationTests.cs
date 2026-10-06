@@ -60,6 +60,7 @@ public sealed class MoongateScriptIntegrationTests : IAsyncLifetime
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+
     private readonly ItemEntity _gate = new()
     {
         Id = new Serial(0x40000040), TemplateId = "moongate", ItemId = 0x0F6C, Amount = 1,
@@ -105,7 +106,14 @@ public sealed class MoongateScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IClockService>(new StubClockService());
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.RegisterInstance<ITeleportService>(
-            new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService())
+            new TeleportService(
+                _fixture.Mobiles,
+                _view,
+                _fixture.Sessions,
+                _fixture.Sender,
+                _fixture.Sectors,
+                new StubBankService()
+            )
         );
         _container.RegisterInstance<IRegionService>(
             new RegionService(
@@ -136,21 +144,30 @@ public sealed class MoongateScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<GumpModule>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>((evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
 
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         gumpScripts = new GumpScriptService(_engine, _loop, options);
         await gumpScripts.StartAsync();
         _itemScripts = new ItemScriptService(
             _engine,
-            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "moongate", ScriptId = "moongate" })),
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "moongate", ScriptId = "moongate" })
+            ),
             _loop,
             options
         );
@@ -424,7 +441,11 @@ public sealed class MoongateScriptIntegrationTests : IAsyncLifetime
 
     private void Answer(int button)
     {
-        _gumps.Opened[0].Gump.OnResponse(_session, new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() });
+        _gumps.Opened[0]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
+            );
     }
 
     private static string RepositoryRoot()

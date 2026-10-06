@@ -10,6 +10,7 @@ namespace Moongate.Server.Ultima.Services.Motd;
 public sealed class MotdVariableRegistry : IMotdVariableRegistry
 {
     private readonly Lock _gate = new();
+
     private readonly Dictionary<string, Func<MotdContext, CancellationToken, ValueTask<string>>> _resolvers =
         new(StringComparer.Ordinal);
 
@@ -84,7 +85,9 @@ public sealed class MotdVariableRegistry : IMotdVariableRegistry
             return false;
         }
 
-        return name[1..].All(character =>
-            character is >= 'a' and <= 'z' or >= '0' and <= '9' or '_');
+        return name[1..]
+            .All(character =>
+                character is >= 'a' and <= 'z' or >= '0' and <= '9' or '_'
+            );
     }
 }

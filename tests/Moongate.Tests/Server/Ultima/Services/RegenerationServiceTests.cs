@@ -10,9 +10,9 @@ using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Ultima.Types;
-
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Speech;
+
 namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class RegenerationServiceTests
@@ -21,6 +21,7 @@ public sealed class RegenerationServiceTests
     private readonly RecordingMobileStateService _state = new();
     private readonly RegenerationConfig _config = new();
     private readonly RegenerationService _regeneration;
+
     private readonly MobileEntity _aria = new()
     {
         Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,

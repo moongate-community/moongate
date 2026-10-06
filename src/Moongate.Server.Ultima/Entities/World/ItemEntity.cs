@@ -214,7 +214,9 @@ public class ItemEntity : IMoongateEntity
     ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />, or <paramref name="defaultValue" /> when
     ///     the item does not have it.
     /// </summary>
-    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    /// <exception cref="InvalidCastException">
+    ///     The prop holds a value that does not convert to <typeparamref name="T" />.
+    /// </exception>
     public T GetProp<T>(string key, T defaultValue = default!)
     {
         return TryGetProp<T>(key, out var value) ? value : defaultValue;
@@ -223,7 +225,9 @@ public class ItemEntity : IMoongateEntity
     /// <summary>
     ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />; false when the item does not have it.
     /// </summary>
-    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    /// <exception cref="InvalidCastException">
+    ///     The prop holds a value that does not convert to <typeparamref name="T" />.
+    /// </exception>
     public bool TryGetProp<T>(string key, out T value)
     {
         return PropsDictionary.TryGet(Props, key, out value);
@@ -260,9 +264,9 @@ public class ItemEntity : IMoongateEntity
         var where = Location switch
         {
             ItemLocationType.Container => $"in {ContainerId}",
-            ItemLocationType.Equipped => $"on {MobileId} layer {Layer}",
-            ItemLocationType.Ground => $"at {Map} {GroundLocation}",
-            _ => "nowhere"
+            ItemLocationType.Equipped  => $"on {MobileId} layer {Layer}",
+            ItemLocationType.Ground    => $"at {Map} {GroundLocation}",
+            _                          => "nowhere"
         };
 
         return $"{Id} \"{Name ?? TemplateId}\" (0x{ItemId:X4}){amount} {where}";

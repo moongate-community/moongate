@@ -106,7 +106,10 @@ public sealed class RootDirectoryInitializerTests
         var source = CreateMigrations(directory);
         var root = Path.Combine(directory.Path, "root");
         RootDirectoryInitializer.Initialize(root, source, CreateData(directory), TextWriter.Null, ["login.example.test"]);
-        var config = TomlSections.Read<AdminApiConfig>(File.ReadAllText(Path.Combine(root, "config/moongate.toml")), "admin_api");
+        var config = TomlSections.Read<AdminApiConfig>(
+            File.ReadAllText(Path.Combine(root, "config/moongate.toml")),
+            "admin_api"
+        );
         Assert.True(config.Enabled);
         Assert.False(config.AllowInsecureLoopback);
         Assert.True(File.Exists(Path.Combine(root, config.CertificatePath)));

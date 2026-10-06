@@ -73,7 +73,10 @@ public sealed class RemoveCommand : ICommandExecutor
             else
             {
                 context.Print(
-                    _localization.Text(CommandMessages.RemoveOnlyGroundItems, "Only an item lying on the ground can be removed.")
+                    _localization.Text(
+                        CommandMessages.RemoveOnlyGroundItems,
+                        "Only an item lying on the ground can be removed."
+                    )
                 );
             }
 
@@ -95,8 +98,7 @@ public sealed class RemoveCommand : ICommandExecutor
     private async Task<bool> RemoveGroundItemAsync(Serial serial, CancellationToken cancellationToken)
     {
         var removed = false;
-        var work = new LoopActionWorkItem(
-            () =>
+        var work = new LoopActionWorkItem(() =>
             {
                 if (!_items.TryGet(serial, out var item) || !_items.IsLyingOnGround(item))
                 {

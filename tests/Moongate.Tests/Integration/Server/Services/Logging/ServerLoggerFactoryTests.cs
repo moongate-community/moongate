@@ -25,7 +25,11 @@ public sealed class ServerLoggerFactoryTests : IDisposable
         var logger = ServerLoggerFactory.Create(prompt, _logs, true, "0.11.0", "Lilly", _console);
         using var container = new Container();
         container.RegisterCommand<ThrowingCommandExecutor>("boom", minimumAccountType: AccountType.Regular);
-        var commands = new CommandSystemService(container.Resolve<CommandRegistry>(), container, logger.ForContext<CommandSystemService>());
+        var commands = new CommandSystemService(
+            container.Resolve<CommandRegistry>(),
+            container,
+            logger.ForContext<CommandSystemService>()
+        );
         await commands.StartAsync();
         var keys = new ScriptedConsoleKeySource();
         keys.Enqueue('*');
@@ -58,7 +62,11 @@ public sealed class ServerLoggerFactoryTests : IDisposable
         // The report: the whole exception, down to the command that threw.
         var text = await File.ReadAllTextAsync(report);
         Assert.Contains($"System.InvalidOperationException: command executor failure", text, StringComparison.Ordinal);
-        Assert.Contains($"{nameof(ThrowingCommandExecutor)}.{nameof(ThrowingCommandExecutor.ExecuteAsync)}", text, StringComparison.Ordinal);
+        Assert.Contains(
+            $"{nameof(ThrowingCommandExecutor)}.{nameof(ThrowingCommandExecutor.ExecuteAsync)}",
+            text,
+            StringComparison.Ordinal
+        );
         Assert.Contains("0.11.0 \"Lilly\"", text, StringComparison.Ordinal);
 
         // The .clef log keeps the full exception and points at the report.

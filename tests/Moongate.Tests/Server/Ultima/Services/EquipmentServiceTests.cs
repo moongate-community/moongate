@@ -31,8 +31,8 @@ public sealed class EquipmentServiceTests
             )
         );
         var tiles = new FakeTileDataService()
-                    .Item(0x09D0, TileFlagType.None, 0)
-                    .Item(0x1715, TileFlagType.Wearable, 0, layer: (byte)LayerType.Helm);
+            .Item(0x09D0, TileFlagType.None, 0)
+            .Item(0x1715, TileFlagType.Wearable, 0, layer: (byte)LayerType.Helm);
         _equipment = new(templates, tiles, _items);
     }
 
@@ -70,7 +70,8 @@ public sealed class EquipmentServiceTests
         Assert.False(_equipment.CanWear(Aria, Item("shirt"), LayerType.Shirt));
     }
 
-    [Theory, InlineData(LayerType.Backpack), InlineData(LayerType.Hair), InlineData(LayerType.FacialHair), InlineData(LayerType.Mount), InlineData(LayerType.Bank)]
+    [Theory, InlineData(LayerType.Backpack), InlineData(LayerType.Hair), InlineData(LayerType.FacialHair),
+     InlineData(LayerType.Mount), InlineData(LayerType.Bank)]
     public void CanWear_ALayerNotWornFromThePaperdoll_IsRefused(LayerType layer)
     {
         Assert.False(_equipment.CanWear(Aria, Item("backpack"), layer));

@@ -9,17 +9,19 @@ public sealed class BookContextFactoryTests
     {
         await using var fixture = await BookTestFixture.CreateAsync();
         await fixture.OnLoopAsync(() =>
-        {
-            var context = fixture.Contexts.Capture(fixture.Player);
-            Assert.Equal("Pippo", context.PlayerName);
-            Assert.Equal("Moongate", context.ServerName);
-            Assert.Equal("Felucca", context.RealmName);
-            Assert.Equal(2, context.UsersOnline);
-            Assert.NotEmpty(context.Version);
-            Assert.NotEmpty(context.Codename);
-            Assert.Equal("Recorded", fixture.Contexts.Capture(fixture.Player, "Recorded").PlayerName);
-        });
+            {
+                var context = fixture.Contexts.Capture(fixture.Player);
+                Assert.Equal("Pippo", context.PlayerName);
+                Assert.Equal("Moongate", context.ServerName);
+                Assert.Equal("Felucca", context.RealmName);
+                Assert.Equal(2, context.UsersOnline);
+                Assert.NotEmpty(context.Version);
+                Assert.NotEmpty(context.Codename);
+                Assert.Equal("Recorded", fixture.Contexts.Capture(fixture.Player, "Recorded").PlayerName);
+            }
+        );
     }
+
     [Fact]
     public async Task CaptureForCreation_UsesAnUnloadedCharacterNameOffTheGameLoop()
     {
@@ -32,5 +34,4 @@ public sealed class BookContextFactoryTests
         Assert.NotEmpty(context.Version);
         Assert.NotEmpty(context.Codename);
     }
-
 }

@@ -13,8 +13,7 @@ namespace Moongate.Server.Ultima.Services;
 /// <summary>
 ///     The stamina a step costs, with ModernUO's numbers: overloaded, 5 and one more every 25 stones over the maximum,
 ///     twice running; running, a point every 16 steps and one a step below a tenth of the stamina. A step that would
-///     take the last of the stamina is refused.
-///     <c>ultima.regeneration.fatigue_enabled</c> turns it off.
+///     take the last of the stamina is refused. <c>ultima.regeneration.fatigue_enabled</c> turns it off.
 /// </summary>
 public sealed class FatigueService : IFatigueService
 {

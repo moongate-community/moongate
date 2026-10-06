@@ -46,20 +46,27 @@ public sealed class JailServiceTests : IAsyncLifetime
     private readonly ItemService _items = TestItems.Create();
     private readonly RecordingWorldViewService _view = new();
     private readonly StubItemSerialPool _serials = new();
+
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
-                                                 .Item(0x0EED, TileFlagType.Generic, 0)
-                                                 .Item(0x0E75, TileFlagType.Container, 0)
-                                                 .Item(0x0E7C, TileFlagType.Container, 0)
-                                                 .Item(0x14ED, TileFlagType.Generic, 0);
+        .Item(0x0EED, TileFlagType.Generic, 0)
+        .Item(0x0E75, TileFlagType.Container, 0)
+        .Item(0x0E7C, TileFlagType.Container, 0)
+        .Item(0x14ED, TileFlagType.Generic, 0);
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
             new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) },
-            new ItemTemplate { Id = JailService.NoteTemplate, ItemId = new Serial(0x14ED), Name = "a release note", Stackable = false, ScriptId = "jail_note" }
+            new ItemTemplate
+            {
+                Id = JailService.NoteTemplate, ItemId = new Serial(0x14ED), Name = "a release note", Stackable = false,
+                ScriptId = "jail_note"
+            }
         )
     );
 
     private uint _nextItem = 0x40000001;
+
     private readonly JailFile _file = new()
     {
         Map = MapType.Felucca,
@@ -84,7 +91,8 @@ public sealed class JailServiceTests : IAsyncLifetime
         _bruno = await AddPlayerAsync(3, "Bruno", AccountType.Regular);
         _staff = await AddPlayerAsync(4, "Giachi", AccountType.GameMaster);
         _aria.Location = new Point3D(1600, 1600, 5);
-        _orc = new MobileEntity { Id = new Serial(900), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(1700, 1700, 0) };
+        _orc = new MobileEntity
+            { Id = new Serial(900), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(1700, 1700, 0) };
         await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(_orc));
         _jail = await CreateAsync(_file);
     }
@@ -101,7 +109,11 @@ public sealed class JailServiceTests : IAsyncLifetime
 
         Assert.Equal((_aria, MapType.Felucca, Cell2), Assert.Single(_teleports.Teleports));
         var sentence = Assert.Single(_jail.Sentences);
-        Assert.Equal((_aria.Id, "Aria", true, 2, 3, "Giachi", false), (sentence.Id, sentence.Name, sentence.IsPlayer, sentence.Cell, sentence.Days, sentence.JailedBy, sentence.Pardoned));
+        Assert.Equal(
+            (_aria.Id, "Aria", true, 2, 3, "Giachi", false),
+            (sentence.Id, sentence.Name, sentence.IsPlayer, sentence.Cell, sentence.Days, sentence.JailedBy,
+                sentence.Pardoned)
+        );
         Assert.Equal(
             (MapType.Trammel, 1600, 1600, 5),
             (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ)
@@ -319,7 +331,10 @@ public sealed class JailServiceTests : IAsyncLifetime
 
         var sentence = Assert.Single(_jail.Sentences);
         Assert.Equal((2, 5), (sentence.Cell, sentence.Days));
-        Assert.Equal((MapType.Trammel, 1600, 1600, 5), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+        Assert.Equal(
+            (MapType.Trammel, 1600, 1600, 5),
+            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ)
+        );
         Assert.Equal(_clock.Now.ToUnixTimeMilliseconds() + 5 * Day, sentence.ReleaseAt);
         Assert.Null(_jail.GetOccupant(1));
     }
@@ -498,7 +513,11 @@ public sealed class JailServiceTests : IAsyncLifetime
             "Aria served 3 days in cell 2, from 2026-10-04 to 2026-10-07, and paid a fine of 500 gold. Jailed by Giachi.",
             note.Props!["book.content"]
         );
-        Assert.Equal((2, 3, 500), (Convert.ToInt32(note.Props["jail.cell"]), Convert.ToInt32(note.Props["jail.days"]), Convert.ToInt32(note.Props["jail.fine"])));
+        Assert.Equal(
+            (2, 3, 500),
+            (Convert.ToInt32(note.Props["jail.cell"]), Convert.ToInt32(note.Props["jail.days"]),
+                Convert.ToInt32(note.Props["jail.fine"]))
+        );
     }
 
     [Fact]
@@ -526,7 +545,11 @@ public sealed class JailServiceTests : IAsyncLifetime
         Assert.Empty(_jail.Sentences);
         Assert.Equal(1500, gold.Amount);
         Assert.DoesNotContain(_items.GetOwnedBy(_aria.Id), item => item.TemplateId == JailService.NoteTemplate);
-        Assert.Single(_log.Events, entry => entry.Level == Serilog.Events.LogEventLevel.Warning && entry.RenderMessage().Contains("without its release note"));
+        Assert.Single(
+            _log.Events,
+            entry => entry.Level == Serilog.Events.LogEventLevel.Warning &&
+                     entry.RenderMessage().Contains("without its release note")
+        );
     }
 
     [Fact]
@@ -699,7 +722,10 @@ public sealed class JailServiceTests : IAsyncLifetime
         _jail.Jail(_aria, 2, 3, _staff);
         _jail.Jail(_orc, 1, 1, _staff);
         Assert.Equal(
-            ["Aria (0x00000002) is jailed in cell 2 for 3 days by Giachi", $"an orc ({_orc.Id}) is jailed in cell 1 for 1 days by Giachi"],
+            [
+                "Aria (0x00000002) is jailed in cell 2 for 3 days by Giachi",
+                $"an orc ({_orc.Id}) is jailed in cell 1 for 1 days by Giachi"
+            ],
             Logged()
         );
 
@@ -787,7 +813,8 @@ public sealed class JailServiceTests : IAsyncLifetime
     public async Task Find_LeavesOutNpcsAndCharactersPendingDeletion()
     {
         _characters.Upserted.Add(new MobileEntity { Id = new Serial(300), Name = "Pippo" });
-        Character(200, "Pippo", "mario", AccountType.Regular).DeletionRequestedAt = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
+        Character(200, "Pippo", "mario", AccountType.Regular).DeletionRequestedAt =
+            new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
 
         Assert.Empty(await _jail.FindAsync("Pippo"));
     }
@@ -824,7 +851,8 @@ public sealed class JailServiceTests : IAsyncLifetime
         var sentence = Assert.Single(_jail.Sentences);
         Assert.Equal(
             (aria, "Aria", true, 2, 3, "Giachi", "Stole a horse", true, false),
-            (sentence.Id, sentence.Name, sentence.IsPlayer, sentence.Cell, sentence.Days, sentence.JailedBy, sentence.Reason, sentence.Pending, sentence.Pardoned)
+            (sentence.Id, sentence.Name, sentence.IsPlayer, sentence.Cell, sentence.Days, sentence.JailedBy, sentence.Reason,
+                sentence.Pending, sentence.Pardoned)
         );
         // Its days have not started.
         Assert.Equal((0L, 0L), (sentence.JailedAt, sentence.ReleaseAt));
@@ -940,13 +968,19 @@ public sealed class JailServiceTests : IAsyncLifetime
         Assert.Empty(_teleports.Teleports);
         Assert.Empty(_speech.Told);
         var sentence = Assert.Single(_jail.Sentences);
-        Assert.Equal((true, "Aria", true, 2, 3, "Stole a horse"), (sentence.Pending, sentence.Name, sentence.IsPlayer, sentence.Cell, sentence.Days, sentence.Reason));
+        Assert.Equal(
+            (true, "Aria", true, 2, 3, "Stole a horse"),
+            (sentence.Pending, sentence.Name, sentence.IsPlayer, sentence.Cell, sentence.Days, sentence.Reason)
+        );
 
         _view.NotEntered.Clear();
         _jail.Check();
 
         Assert.Equal((_aria, MapType.Felucca, Cell2), Assert.Single(_teleports.Teleports));
-        Assert.Equal((MapType.Trammel, 1600, 1600, 5), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+        Assert.Equal(
+            (MapType.Trammel, 1600, 1600, 5),
+            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ)
+        );
     }
 
     [Fact]
@@ -987,7 +1021,10 @@ public sealed class JailServiceTests : IAsyncLifetime
 
         var sentence = Assert.Single(_jail.Sentences);
         Assert.Equal((2, 5, true), (sentence.Cell, sentence.Days, sentence.Pending));
-        Assert.Equal((MapType.Trammel, 1600, 1600, 5), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+        Assert.Equal(
+            (MapType.Trammel, 1600, 1600, 5),
+            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ)
+        );
         Assert.Null(_jail.GetOccupant(1));
     }
 
@@ -1039,7 +1076,10 @@ public sealed class JailServiceTests : IAsyncLifetime
         var now = _clock.Now.ToUnixTimeMilliseconds();
         Assert.Equal((false, now, now + 3 * Day), (sentence.Pending, sentence.JailedAt, sentence.ReleaseAt));
         // It goes back where it logged in.
-        Assert.Equal((MapType.Felucca, 2000, 2100, 7), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+        Assert.Equal(
+            (MapType.Felucca, 2000, 2100, 7),
+            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ)
+        );
         Assert.Equal((_aria, "You have been jailed for 3 days: Stole a horse"), Assert.Single(_speech.Told));
         Assert.Equal(["Aria (0x00000002) is jailed in cell 2 for 3 days by Giachi: Stole a horse"], Logged());
 
@@ -1139,7 +1179,10 @@ public sealed class JailServiceTests : IAsyncLifetime
 
         var sentence = Assert.Single(_jail.Sentences);
         Assert.Equal((false, 1, 4), (sentence.Pending, sentence.Cell, sentence.Days));
-        Assert.Equal((MapType.Felucca, 2000, 2100, 7), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+        Assert.Equal(
+            (MapType.Felucca, 2000, 2100, 7),
+            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ)
+        );
 
         // The check has nothing left to start.
         _jail.Check();
@@ -1221,7 +1264,10 @@ public sealed class JailServiceTests : IAsyncLifetime
 
         var sentence = Assert.Single(_jail.Sentences);
         Assert.Equal((_aria, MapType.Felucca, Cell2), _teleports.Teleports[^1]);
-        Assert.Equal((MapType.Trammel, 1600, 1600, 5), (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ));
+        Assert.Equal(
+            (MapType.Trammel, 1600, 1600, 5),
+            (sentence.ReturnMap, sentence.ReturnX, sentence.ReturnY, sentence.ReturnZ)
+        );
         Assert.Equal(_clock.Now.ToUnixTimeMilliseconds() + 5 * Day, sentence.ReleaseAt);
     }
 

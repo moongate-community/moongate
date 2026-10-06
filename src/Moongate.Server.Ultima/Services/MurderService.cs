@@ -139,7 +139,11 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
 
         if (queue.Count > 0)
         {
-            _timers.RegisterTimer(AskTimerName, TimeSpan.FromSeconds(_config.ReportDelaySeconds), () => AskSafely(victim, queue));
+            _timers.RegisterTimer(
+                AskTimerName,
+                TimeSpan.FromSeconds(_config.ReportDelaySeconds),
+                () => AskSafely(victim, queue)
+            );
         }
     }
 
@@ -173,7 +177,13 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
             _view.MobileFlagsChanged(killer);
         }
 
-        _logger.Information("{Killer:l} ({Serial:l}) was reported for murder by {Victim:l}: {Kills} kills", killer.Name, killer.Id, victim.Name, killer.Kills);
+        _logger.Information(
+            "{Killer:l} ({Serial:l}) was reported for murder by {Victim:l}: {Kills} kills",
+            killer.Name,
+            killer.Id,
+            victim.Name,
+            killer.Kills
+        );
 
         return true;
     }

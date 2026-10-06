@@ -45,7 +45,10 @@ public sealed class TimeCommandTests : IAsyncDisposable
     {
         var context = await RunAsync(["now"]);
 
-        Assert.Equal((CommandOutputLevel.Error, "Usage: time"), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "Usage: time"),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
     }
 
     [Fact]
@@ -71,7 +74,10 @@ public sealed class TimeCommandTests : IAsyncDisposable
         _fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         await _fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, new Serial(2)));
-        _mobiles.EnterWorld(new MobileEntity { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _mobiles.EnterWorld(
+            new MobileEntity
+                { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         var context = new CommandContext(".time", "time", arguments ?? [], CommandSourceType.InGame, session);
 
         await new TimeCommand(new ClockService(_now, new WorldConfig()), _mobiles, localization).ExecuteAsync(context);

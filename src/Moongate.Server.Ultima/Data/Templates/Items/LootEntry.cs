@@ -5,10 +5,7 @@ namespace Moongate.Server.Ultima.Data.Templates.Items;
 /// <summary>
 ///     One weighted outcome inside a <see cref="LootTemplate" />. Exactly one of <see cref="ItemId" /> and
 ///     <see cref="LootTemplateId" /> is set for an entry that drops something; both left unset is UOX3's
-///     <c>
-///         blank
-///     </c>
-///     sentinel, a real, weighted chance of dropping nothing.
+///     <c>blank</c> sentinel, a real, weighted chance of dropping nothing.
 /// </summary>
 public class LootEntry
 {
@@ -25,11 +22,7 @@ public class LootEntry
 
     /// <summary>
     ///     The <see cref="LootTemplate.Id" /> to pick from instead, when this entry nests another table
-    ///     rather than naming an item directly, the way UOX3's
-    ///     <c>
-    ///         LOOTLIST=
-    ///     </c>
-    ///     entries do.
+    ///     rather than naming an item directly, the way UOX3's <c>LOOTLIST=</c> entries do.
     /// </summary>
     public string? LootTemplateId { get; set; }
 
@@ -41,7 +34,7 @@ public class LootEntry
 
     /// <summary>
     ///     How many of <see cref="ItemId" /> to create, or how many times to roll <see cref="LootTemplateId" />
-    ///     (<c>LOOTLIST=table,2</c> rolls it twice). From 1 to 65535.
+    ///     ( <c>LOOTLIST=table,2</c> rolls it twice). From 1 to 65535.
     /// </summary>
     public RangeValueSpec<int> Amount { get; set; } = RangeValueSpec<int>.FromValue(1);
 }

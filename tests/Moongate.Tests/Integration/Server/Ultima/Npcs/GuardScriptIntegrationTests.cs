@@ -58,6 +58,7 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
     private readonly List<ScriptErrorEvent> _errors = [];
     private readonly StubDeathService _death = new();
     private readonly RecordingCombatService _combat = new();
+
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate { Id = "guard", ScriptId = "guard" },
@@ -65,6 +66,7 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
             new MobileTemplate { Id = "rabbit", ScriptId = "scared_animal" }
         )
     );
+
     private readonly MobileEntity _guard = new()
     {
         Id = new Serial(0x100), Name = "a guard", TemplateId = "guard", Map = MapType.Trammel,
@@ -133,14 +135,13 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
         _container.RegisterScriptEnum<EffectGraphicType>();
         _container.RegisterScriptEnum<HumanAnimationType>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>(
-                      (evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
         _scripts.Write("mobiles/guard.lua", File.ReadAllText(ShippedScript("mobiles/guard.lua")));
         var options = new ScriptEngineOptions
         {
@@ -150,7 +151,14 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
             HookInterval = 100,
             WriteDefinitions = false
         };
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         _npcs = new(_engine, _templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
         await _npcs.StartAsync();

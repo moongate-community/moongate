@@ -15,9 +15,8 @@ public class NameService : INameService
 
     public NameService(IDataLoaderService dataLoaderService)
     {
-        _lists = new(
-            () => dataLoaderService.GetEntities<NameList>()
-                                   .ToFrozenDictionary(list => list.Id, list => list.Names, StringComparer.OrdinalIgnoreCase)
+        _lists = new(() => dataLoaderService.GetEntities<NameList>()
+            .ToFrozenDictionary(list => list.Id, list => list.Names, StringComparer.OrdinalIgnoreCase)
         );
     }
 

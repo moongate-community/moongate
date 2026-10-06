@@ -88,8 +88,8 @@ internal static class StartingItemsBuilder
     {
         var gold = OwnEntry(items, GoldHeader, StartingGold);
         var food = new[] { OwnEntry(items, BreadHeader, StartingBread), OwnEntry(items, WaterHeader, 1) }
-                   .OfType<StartingItemEntry>()
-                   .ToList();
+            .OfType<StartingItemEntry>()
+            .ToList();
 
         if (gold is null && food.Count == 0)
         {
@@ -179,7 +179,7 @@ internal static class StartingItemsBuilder
         {
             55 => SkillType.Imbuing,
             56 => SkillType.Mysticism,
-            _ => (SkillType)number
+            _  => (SkillType)number
         };
     }
 }

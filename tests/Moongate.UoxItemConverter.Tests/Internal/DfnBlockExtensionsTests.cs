@@ -20,6 +20,6 @@ public sealed class DfnBlockExtensionsTests
 
     private static DfnBlock Block(params string[] lines)
     {
-        return Assert.Single(DfnParser.Parse(["[x]", "{", ..lines, "}"]));
+        return Assert.Single(DfnParser.Parse(["[x]", "{", .. lines, "}"]));
     }
 }

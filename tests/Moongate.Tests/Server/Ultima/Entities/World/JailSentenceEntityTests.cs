@@ -33,7 +33,10 @@ public sealed class JailSentenceEntityTests
         copy.Cell = 9;
 
         Assert.NotSame(sentence, copy);
-        Assert.Equal((new Serial(7), "Gino", 2, 3, 1000L), (sentence.Id, sentence.Name, sentence.Cell, sentence.Days, sentence.ReleaseAt));
+        Assert.Equal(
+            (new Serial(7), "Gino", 2, 3, 1000L),
+            (sentence.Id, sentence.Name, sentence.Cell, sentence.Days, sentence.ReleaseAt)
+        );
         Assert.Equal(9, copy.Cell);
     }
 }

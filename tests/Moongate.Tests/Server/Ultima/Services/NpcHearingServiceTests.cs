@@ -17,6 +17,7 @@ public sealed class NpcHearingServiceTests
     private readonly FakeScriptEngine _engine = new();
     private readonly SectorService _sectors = TestSectors.Create();
     private NpcScriptService _scripts = null!;
+
     private readonly MobileEntity _aria = new()
     {
         Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
@@ -59,7 +60,8 @@ public sealed class NpcHearingServiceTests
         Add(0x101, "orc", 1616, 1600);
         Add(0x102, "orc", 1600, 1600, MapType.Felucca);
         Add(0x103, "rabbit", 1601, 1600);
-        _sectors.Add(new MobileEntity
+        _sectors.Add(
+            new MobileEntity
             {
                 Id = new Serial(3), Name = "Bob", AccountId = new Serial(0x43), TemplateId = "orc", Map = MapType.Trammel,
                 Location = new Point3D(1601, 1600, 0)
@@ -88,7 +90,8 @@ public sealed class NpcHearingServiceTests
 
     private void Add(uint serial, string template, int x, int y, MapType map = MapType.Trammel)
     {
-        _sectors.Add(new MobileEntity
+        _sectors.Add(
+            new MobileEntity
             {
                 Id = new Serial(serial), Name = "npc", TemplateId = template, Map = map, Location = new Point3D(x, y, 0)
             }
@@ -104,7 +107,12 @@ public sealed class NpcHearingServiceTests
             )
         );
 
-        _scripts = new NpcScriptService(_engine, templates, new StubGameLoop(), new ScriptEngineOptions { ScriptsDirectory = "unused" });
+        _scripts = new NpcScriptService(
+            _engine,
+            templates,
+            new StubGameLoop(),
+            new ScriptEngineOptions { ScriptsDirectory = "unused" }
+        );
 
         return new(_scripts, _sectors);
     }

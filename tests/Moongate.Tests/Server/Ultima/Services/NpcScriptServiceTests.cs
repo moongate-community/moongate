@@ -20,6 +20,7 @@ public sealed class NpcScriptServiceTests : IDisposable
     private readonly FakeScriptEngine _engine = new();
     private readonly CapturingLogSink _log = new();
     private readonly StubGameLoop _loop = new();
+
     private readonly MobileEntity _orc = new()
     {
         Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,

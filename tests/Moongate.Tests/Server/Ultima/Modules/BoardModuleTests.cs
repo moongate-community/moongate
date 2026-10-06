@@ -83,10 +83,15 @@ public sealed class BoardModuleTests : IAsyncLifetime
     [Fact]
     public void Post_PostsInTheNameGiven_AndGivesTheSerialOfTheMessage()
     {
-        var result = Run($"return board.post({Board}, 'The town crier', 'Hear ye', {{ 'The bank is closed.', '', 'Come back tomorrow.' }})");
+        var result = Run(
+            $"return board.post({Board}, 'The town crier', 'Hear ye', {{ 'The bank is closed.', '', 'Come back tomorrow.' }})"
+        );
 
         var posted = Assert.Single(_boards.PostedAs);
-        Assert.Equal((_board, "The town crier", "Hear ye", Serial.Zero), (posted.Board, posted.Name, posted.Subject, posted.ReplyTo));
+        Assert.Equal(
+            (_board, "The town crier", "Hear ye", Serial.Zero),
+            (posted.Board, posted.Name, posted.Subject, posted.ReplyTo)
+        );
         Assert.Equal(["The bank is closed.", "", "Come back tomorrow."], posted.Lines);
         Assert.Equal(_boards.MessageList[0].Id.Value, (uint)result[0].Read<long>());
     }
@@ -142,26 +147,30 @@ public sealed class BoardModuleTests : IAsyncLifetime
         _boards.MessageList.Add(
             new()
             {
-                Id = new Serial(0x40001000), BoardId = _board.Id, PosterId = new Serial(2), PosterName = "Aria", Subject = "Horse",
+                Id = new Serial(0x40001000), BoardId = _board.Id, PosterId = new Serial(2), PosterName = "Aria",
+                Subject = "Horse",
                 Body = "A fine mare.\n\nAsk Aria.", PostedAt = 1_791_201_600_000
             }
         );
         _boards.MessageList.Add(
             new()
             {
-                Id = new Serial(0x40001001), BoardId = _board.Id, ThreadId = new Serial(0x40001000), PosterName = "The stable master",
+                Id = new Serial(0x40001001), BoardId = _board.Id, ThreadId = new Serial(0x40001000),
+                PosterName = "The stable master",
                 Subject = "Re: Horse", Body = "Sold.", PostedAt = 1_791_201_660_000
             }
         );
-        _boards.MessageList.Add(new() { Id = new Serial(0x40001002), BoardId = new Serial(0x40000002), Subject = "Elsewhere", Body = "x" });
+        _boards.MessageList.Add(
+            new() { Id = new Serial(0x40001002), BoardId = new Serial(0x40000002), Subject = "Elsewhere", Body = "x" }
+        );
 
         var result = Run(
             $"""
-            local list = board.messages({Board})
-            local first, reply = list[1], list[2]
-            return #list, first.serial, first.thread, first.poster, first.name, first.subject, #first.lines, first.lines[3], first.posted_at,
-                reply.serial, reply.thread, reply.poster, reply.name
-            """
+             local list = board.messages({Board})
+             local first, reply = list[1], list[2]
+             return #list, first.serial, first.thread, first.poster, first.name, first.subject, #first.lines, first.lines[3], first.posted_at,
+                 reply.serial, reply.thread, reply.poster, reply.name
+             """
         );
 
         Assert.Equal(2, result[0].Read<int>());
@@ -169,7 +178,10 @@ public sealed class BoardModuleTests : IAsyncLifetime
         // A first message has no thread; a message a script posted has no poster.
         Assert.Equal(LuaValue.Nil, result[2]);
         Assert.Equal(2, result[3].Read<long>());
-        Assert.Equal(("Aria", "Horse", 3, "Ask Aria."), (result[4].Read<string>(), result[5].Read<string>(), result[6].Read<int>(), result[7].Read<string>()));
+        Assert.Equal(
+            ("Aria", "Horse", 3, "Ask Aria."),
+            (result[4].Read<string>(), result[5].Read<string>(), result[6].Read<int>(), result[7].Read<string>())
+        );
         // In seconds, as os.time gives them.
         Assert.Equal(1_791_201_600, result[8].Read<long>());
         Assert.Equal((0x40001001, 0x40001000), (result[9].Read<long>(), result[10].Read<long>()));
@@ -188,7 +200,9 @@ public sealed class BoardModuleTests : IAsyncLifetime
     {
         _boards.MessageList.Add(new() { Id = new Serial(0x40001000), BoardId = _board.Id, Subject = "Horse", Body = "x" });
 
-        var result = Run("return board.remove(0x40001000), board.remove(0x40001000), board.remove(-1), board.remove(99999999999)");
+        var result = Run(
+            "return board.remove(0x40001000), board.remove(0x40001000), board.remove(-1), board.remove(99999999999)"
+        );
 
         Assert.Equal([true, false, false, false], result.Select(value => value.Read<bool>()));
         Assert.Empty(_boards.MessageList);

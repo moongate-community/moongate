@@ -395,7 +395,8 @@ public sealed class BankService : IBankService
         // What arrives in the box is made anew and what was handed over is taken: the paths of a deposit by speech.
         ItemEntity? made = null;
 
-        if (needsAPlace && (made = isGold ? _handling.Make(_itemsConfig.GoldTemplate, left) : _handling.Make(CheckTemplate)) is null)
+        if (needsAPlace &&
+            (made = isGold ? _handling.Make(_itemsConfig.GoldTemplate, left) : _handling.Make(CheckTemplate)) is null)
         {
             return BankResultType.Busy;
         }
@@ -469,6 +470,7 @@ public sealed class BankService : IBankService
         {
             return BankResultType.Busy;
         }
+
         if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
         {
             return BankResultType.NoPlayer;
@@ -685,10 +687,12 @@ public sealed class BankService : IBankService
     private List<ItemEntity> TopPilesOf(ItemEntity container)
     {
         return _items.GetContents(container.Id)
-                     .Where(item => item.TemplateId == _itemsConfig.GoldTemplate && item.Amount < PileMaximum && !_handling.IsHeld(item))
-                     .OrderByDescending(item => item.Amount)
-                     .ThenBy(item => item.Id.Value)
-                     .ToList();
+            .Where(item => item.TemplateId == _itemsConfig.GoldTemplate && item.Amount < PileMaximum &&
+                           !_handling.IsHeld(item)
+            )
+            .OrderByDescending(item => item.Amount)
+            .ThenBy(item => item.Id.Value)
+            .ToList();
     }
 
     // Takes the coins pile by pile; what the piles could not give.
@@ -848,21 +852,23 @@ public sealed class BankService : IBankService
             {
                 Task? settlement = null;
                 var work = new LoopActionWorkItem(() =>
-                {
-                    if (_inventory?.AllowsOwner(player.Id) == false)
                     {
-                        settlement = _reservations!.WaitAsync(player.Id);
-                        return;
+                        if (_inventory?.AllowsOwner(player.Id) == false)
+                        {
+                            settlement = _reservations!.WaitAsync(player.Id);
+                            return;
+                        }
+
+                        applied = true;
+                        _making.TryRemove(player.Id, out _);
+                        if (_mobiles.TryGet(player.Id, out var live) && ReferenceEquals(live, player) &&
+                            _sessions.TryGetByCharacterId(player.Id, out var session))
+                        {
+                            _items.Add([box]);
+                            Show(player, session, box);
+                        }
                     }
-                    applied = true;
-                    _making.TryRemove(player.Id, out _);
-                    if (_mobiles.TryGet(player.Id, out var live) && ReferenceEquals(live, player) &&
-                        _sessions.TryGetByCharacterId(player.Id, out var session))
-                    {
-                        _items.Add([box]);
-                        Show(player, session, box);
-                    }
-                });
+                );
                 if (_loop.IsOnLoopThread)
                 {
                     if (!_loop.TryPost(work)) throw new InvalidOperationException("The loop refused bank application.");
@@ -871,6 +877,7 @@ public sealed class BankService : IBankService
                 {
                     await _loop.PostAsync(work);
                 }
+
                 await work.Completion;
                 if (settlement is not null) await settlement;
             }
@@ -888,7 +895,10 @@ public sealed class BankService : IBankService
         var contents = _items.GetContents(box.Id);
 
         _sender.TrySend(session.SessionId, new WornItemPacket(box));
-        _sender.TrySend(session.SessionId, new DisplayContainerPacket(box.Id, _layouts.GetLayout(box.ItemId).Gump, session.UsesHighSeasContainers()));
+        _sender.TrySend(
+            session.SessionId,
+            new DisplayContainerPacket(box.Id, _layouts.GetLayout(box.ItemId).Gump, session.UsesHighSeasContainers())
+        );
         _sender.TrySend(session.SessionId, new ContainerContentPacket(contents, session.UsesContainerGrid()));
 
         foreach (var content in contents)

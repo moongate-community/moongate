@@ -57,13 +57,20 @@ public sealed class BankerDragDropIntegrationTests : IAsyncLifetime
     private readonly RecordingWorldViewService _view = new();
     private readonly StubItemSerialPool _serials = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
-                                                  .Item(GoldGraphic, TileFlagType.Generic, 0)
-                                                  .Item(0x0E75, TileFlagType.Container, 0)
-                                                  .Item(0x0E7C, TileFlagType.Container, 0);
-    private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
-    private readonly ItemEntity _box = new() { Id = new Serial(0x40000002), TemplateId = BankService.BankTemplate, ItemId = 0x0E7C, Amount = 1 };
-    private readonly ItemEntity _gold = new() { Id = new Serial(0x40000003), TemplateId = "gold", ItemId = GoldGraphic, Amount = 1250 };
+        .Item(GoldGraphic, TileFlagType.Generic, 0)
+        .Item(0x0E75, TileFlagType.Container, 0)
+        .Item(0x0E7C, TileFlagType.Container, 0);
+
+    private readonly ItemEntity _backpack = new()
+        { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    private readonly ItemEntity _box = new()
+        { Id = new Serial(0x40000002), TemplateId = BankService.BankTemplate, ItemId = 0x0E7C, Amount = 1 };
+
+    private readonly ItemEntity _gold = new()
+        { Id = new Serial(0x40000003), TemplateId = "gold", ItemId = GoldGraphic, Amount = 1250 };
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
@@ -81,7 +88,11 @@ public sealed class BankerDragDropIntegrationTests : IAsyncLifetime
         _aria.AccountId = new Serial(1002);
         _aria.Location = new Point3D(1600, 1600, 0);
         _fixture.Mobiles.EnterWorld(
-            new() { Id = Banker, Name = "a banker", TemplateId = "banker", Map = MapType.Trammel, Location = new Point3D(1602, 1600, 0) }
+            new()
+            {
+                Id = Banker, Name = "a banker", TemplateId = "banker", Map = MapType.Trammel,
+                Location = new Point3D(1602, 1600, 0)
+            }
         );
 
         _backpack.Equip(_aria.Id, LayerType.Backpack);
@@ -103,14 +114,26 @@ public sealed class BankerDragDropIntegrationTests : IAsyncLifetime
             )
         );
         var layouts = new ContainerLayoutService(
-            new StubDataLoaderService().With(new ContainerContent { Name = "backpack", Gump = 0x003C, Items = [0x0E75, 0x0E7C], Default = true })
+            new StubDataLoaderService().With(
+                new ContainerContent { Name = "backpack", Gump = 0x003C, Items = [0x0E75, 0x0E7C], Default = true }
+            )
         );
         var bankConfig = new BankConfig();
         var itemsConfig = new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" };
         var capacity = new ContainerCapacityService(_items, itemTemplates, bankConfig);
         var tooltips = TestTooltips.Create(_items, _fixture.Mobiles);
         var factory = new FakeItemFactoryService(itemTemplates, _tiles);
-        var handling = new ItemHandlingService(_items, _fixture.Sessions, _fixture.Sender, _view, tooltips, factory, _serials, layouts, capacity);
+        var handling = new ItemHandlingService(
+            _items,
+            _fixture.Sessions,
+            _fixture.Sender,
+            _view,
+            tooltips,
+            factory,
+            _serials,
+            layouts,
+            capacity
+        );
         _bank = new(
             _items,
             factory,
@@ -147,14 +170,13 @@ public sealed class BankerDragDropIntegrationTests : IAsyncLifetime
         _container.RegisterScriptEnum<BankResultType>();
         _container.RegisterScriptEnum<SpeechKeywordType>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>(
-                      (evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
 
         _scripts.Write("mobiles/banker.lua", File.ReadAllText(ShippedScript("mobiles/banker.lua")));
         _scripts.Write("common/numbers.lua", File.ReadAllText(ShippedScript("common/numbers.lua")));
@@ -237,8 +259,7 @@ public sealed class BankerDragDropIntegrationTests : IAsyncLifetime
     {
         var packet = new DropRequestPacket { Item = item.Id, X = -1, Y = -1, Z = 0, GridIndex = 0, Destination = Banker };
 
-        return _fixture.Network.ExecuteOnLoopAsync(
-            () =>
+        return _fixture.Network.ExecuteOnLoopAsync(() =>
             {
                 _session.Set(ItemSessionKeys.Held, new HeldItem(item.Id));
                 _handler.Handle(_session, packet);

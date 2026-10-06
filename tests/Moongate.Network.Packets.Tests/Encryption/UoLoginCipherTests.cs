@@ -25,6 +25,7 @@ public sealed class UoLoginCipherTests
                     {
                         cipher.Transform(data.AsSpan(i, Math.Min(chunk, data.Length - i)));
                     }
+
                     Assert.Equal(hash.Value.GetString(), Convert.ToHexString(SHA256.HashData(data)));
                 }
             }

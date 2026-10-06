@@ -38,7 +38,10 @@ public sealed class DecorationsLoaderTests
     public async Task LoadAsync_ReadsTheBlocks_KeepingTheScalarPropsAndThePoints()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("templates/decorations/trammel/doors.toml", Door + "\n[[decoration]]\ntype = \"AnvilEastAddon\"\nlocations = [[1, 2, 3]]\n");
+        root.CreateFile(
+            "templates/decorations/trammel/doors.toml",
+            Door + "\n[[decoration]]\ntype = \"AnvilEastAddon\"\nlocations = [[1, 2, 3]]\n"
+        );
 
         var blocks = (await CreateLoader(root).LoadAsync()).Single().Blocks;
 
@@ -84,7 +87,10 @@ public sealed class DecorationsLoaderTests
 
         Assert.DoesNotContain(files, file => file.Folder.StartsWith('_') || file.Name.StartsWith('_'));
         // The old Haven of Trammel is set aside: on the client's map that town is a ruin.
-        Assert.DoesNotContain(files, file => file.Folder == "trammel" && file.Name is "haven" or "haven_additions" or "signs");
+        Assert.DoesNotContain(
+            files,
+            file => file.Folder == "trammel" && file.Name is "haven" or "haven_additions" or "signs"
+        );
         // The dungeons and the other sets ModernUO names with an underscore are loaded under a plain name.
         Assert.Contains(files, file => file is { Folder: "britannia", Name: "covetous" });
         Assert.Equal(32832, files.Sum(file => file.Blocks.Sum(block => block.Locations.Count)));

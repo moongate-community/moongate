@@ -22,15 +22,23 @@ public sealed class BookAttachmentPreparationServiceTests
     public void Prepare_StackAndNonstackEntries_FreezesFourSerialFreeItems()
     {
         var tiles = new FakeTileDataService().Item(0xEED, TileFlagType.Generic, 0);
-        var gold = new ItemTemplate { Id = "gold", ItemId = new(0xEED), Hue = HueSpec.FromValue(42),
-            Rarity = EnumValueSpec<ItemRarityType>.FromValue(ItemRarityType.Legendary) };
+        var gold = new ItemTemplate
+        {
+            Id = "gold", ItemId = new(0xEED), Hue = HueSpec.FromValue(42),
+            Rarity = EnumValueSpec<ItemRarityType>.FromValue(ItemRarityType.Legendary)
+        };
         var bread = new ItemTemplate { Id = "bread", ItemId = new(0x103B), Stackable = false };
         var templates = new ItemTemplateService(new StubDataLoaderService().With(gold, bread));
         var factory = new FakeItemFactoryService(templates, tiles);
         var service = new BookAttachmentPreparationService(factory, templates, tiles);
-        var source = new BookTemplateSource { Attachments = [
-            new() { ItemTemplate = "gold", Amount = DiceSpec.FromValue(100), Newbie = true },
-            new() { ItemTemplate = "bread", Amount = DiceSpec.FromValue(3), Hue = HueSpec.FromValue(123) }] };
+        var source = new BookTemplateSource
+        {
+            Attachments =
+            [
+                new() { ItemTemplate = "gold", Amount = DiceSpec.FromValue(100), Newbie = true },
+                new() { ItemTemplate = "bread", Amount = DiceSpec.FromValue(3), Hue = HueSpec.FromValue(123) }
+            ]
+        };
         var encoded = service.Prepare(source);
         Assert.True(BookAttachmentCodec.TryDecode(encoded, out var batch));
         Assert.NotNull(batch);
@@ -56,8 +64,10 @@ public sealed class BookAttachmentPreparationServiceTests
     {
         var tiles = new FakeTileDataService();
         var templates = new ItemTemplateService(new StubDataLoaderService().With(Array.Empty<ItemTemplate>()));
-        Assert.Null(new BookAttachmentPreparationService(new FakeItemFactoryService(templates, tiles), templates, tiles)
-            .Prepare(new()));
+        Assert.Null(
+            new BookAttachmentPreparationService(new FakeItemFactoryService(templates, tiles), templates, tiles)
+                .Prepare(new())
+        );
     }
 
     [Theory]
@@ -67,11 +77,19 @@ public sealed class BookAttachmentPreparationServiceTests
     public void Prepare_InvalidBatch_RejectsBeforeReturningEntitlement(int count)
     {
         var tiles = new FakeTileDataService();
-        var templates = new ItemTemplateService(new StubDataLoaderService().With(
-            new ItemTemplate { Id = "bread", ItemId = new(0x103B), Stackable = false }));
+        var templates = new ItemTemplateService(
+            new StubDataLoaderService().With(
+                new ItemTemplate { Id = "bread", ItemId = new(0x103B), Stackable = false }
+            )
+        );
         var service = new BookAttachmentPreparationService(new FakeItemFactoryService(templates, tiles), templates, tiles);
-        Assert.Throws<InvalidDataException>(() => service.Prepare(new() {
-            Attachments = [new() { ItemTemplate = "bread", Amount = DiceSpec.FromValue(count) }] }));
+        Assert.Throws<InvalidDataException>(() => service.Prepare(
+                new()
+                {
+                    Attachments = [new() { ItemTemplate = "bread", Amount = DiceSpec.FromValue(count) }]
+                }
+            )
+        );
     }
 
     [Fact]
@@ -81,8 +99,16 @@ public sealed class BookAttachmentPreparationServiceTests
             .Add("text", JsonSerializer.SerializeToElement("hello"))
             .Add("flag", JsonSerializer.SerializeToElement(true))
             .Add("quality", JsonSerializer.SerializeToElement(1.25m));
-        var payload = new BookAttachmentPayload { Items = [new() {
-            TemplateId = "bread", ItemId = 0x103B, Amount = 1, Props = props }] };
+        var payload = new BookAttachmentPayload
+        {
+            Items =
+            [
+                new()
+                {
+                    TemplateId = "bread", ItemId = 0x103B, Amount = 1, Props = props
+                }
+            ]
+        };
         var text = BookAttachmentCodec.Encode(payload);
         Assert.True(BookAttachmentCodec.TryDecode(text, out var decoded));
         Assert.NotNull(decoded);
@@ -113,8 +139,13 @@ public sealed class BookAttachmentPreparationServiceTests
     public void Decode_TooManyItemsOrOversizedPayload_RefusesClaim()
     {
         var item = "{\"TemplateId\":\"x\",\"ItemId\":5,\"Amount\":1}";
-        Assert.False(BookAttachmentCodec.TryDecode("{\"Version\":1,\"Items\":[" +
-            string.Join(',', Enumerable.Repeat(item, 33)) + "]}", out _));
+        Assert.False(
+            BookAttachmentCodec.TryDecode(
+                "{\"Version\":1,\"Items\":[" +
+                string.Join(',', Enumerable.Repeat(item, 33)) + "]}",
+                out _
+            )
+        );
         Assert.False(BookAttachmentCodec.TryDecode(new string(' ', 65537), out _));
     }
 }

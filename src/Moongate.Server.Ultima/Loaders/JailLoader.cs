@@ -41,7 +41,8 @@ public class JailLoader : IDataLoader<JailFile>
             return new DataLoaderResult<JailFile> { Entities = [] };
         }
 
-        var jail = await TomlUtils.DeserializeFromFileAsync<JailFile>(jailFilePath, null, cancellationToken) ?? new JailFile();
+        var jail = await TomlUtils.DeserializeFromFileAsync<JailFile>(jailFilePath, null, cancellationToken) ??
+                   new JailFile();
 
         if (!Enum.IsDefined(jail.Map))
         {

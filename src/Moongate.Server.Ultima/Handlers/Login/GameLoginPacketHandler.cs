@@ -65,13 +65,13 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         try
         {
             handoff = await _handoffs.RedeemAsync(
-                    _realm.Descriptor.RealmId,
-                    _realm.InstanceId,
-                    packet.AuthKey,
-                    packet.Account,
-                    packet.Password,
-                    cancellationToken
-                );
+                _realm.Descriptor.RealmId,
+                _realm.InstanceId,
+                packet.AuthKey,
+                packet.Account,
+                packet.Password,
+                cancellationToken
+            );
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -97,23 +97,23 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         }
 
         await context.RunOnGameLoopAsync(
-                session =>
+            session =>
+            {
+                session.Set(SessionKeys.AccountId, handoff.AccountId);
+                session.Set(SessionKeys.AccountType, handoff.AccountType);
+                session.NetworkSession.SetState(NetworkSessionState.Authenticated);
+
+                // The client reported its version to the login server only; the handoff carries it over.
+                if (handoff.ClientVersion is { } clientVersion)
                 {
-                    session.Set(SessionKeys.AccountId, handoff.AccountId);
-                    session.Set(SessionKeys.AccountType, handoff.AccountType);
-                    session.NetworkSession.SetState(NetworkSessionState.Authenticated);
+                    session.NetworkSession.SetClientVersion(clientVersion);
+                }
 
-                    // The client reported its version to the login server only; the handoff carries it over.
-                    if (handoff.ClientVersion is { } clientVersion)
-                    {
-                        session.NetworkSession.SetClientVersion(clientVersion);
-                    }
-
-                    // From here on the client expects everything the game server sends to be Huffman-compressed.
-                    session.NetworkSession.EnableCompression();
-                },
-                cancellationToken
-            );
+                // From here on the client expects everything the game server sends to be Huffman-compressed.
+                session.NetworkSession.EnableCompression();
+            },
+            cancellationToken
+        );
 
         IReadOnlyList<MobileEntity> characters;
 
@@ -133,6 +133,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
 
             return;
         }
+
         var maxPerAccount = _charactersConfig.MaxPerAccount;
         var characterListPacket = new CharacterListPacket(
             CharacterListBuilder.Names(characters, maxPerAccount),
@@ -141,20 +142,20 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         );
 
         await context.RunOnGameLoopAsync(
-                _ =>
-                {
-                    context.TrySend(new SupportFeaturesPacket(CharacterListBuilder.Features(maxPerAccount)));
-                    context.TrySend(characterListPacket);
-                },
-                cancellationToken
-            );
+            _ =>
+            {
+                context.TrySend(new SupportFeaturesPacket(CharacterListBuilder.Features(maxPerAccount)));
+                context.TrySend(characterListPacket);
+            },
+            cancellationToken
+        );
     }
 
     private static async Task DenyAsync(PacketContext context, CancellationToken cancellationToken)
     {
         await context.SendAndDisconnectAsync(
-                new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem),
-                cancellationToken
-            );
+            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem),
+            cancellationToken
+        );
     }
 }

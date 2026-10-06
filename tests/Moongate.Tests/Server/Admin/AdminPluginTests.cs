@@ -19,7 +19,10 @@ public sealed class AdminPluginTests
         container.RegisterInstance(new DirectoriesConfig(directory.Path, []));
         container.RegisterInstance(ServerMode.Game);
         container.RegisterInstance(
-            TestConfigDocuments.FromToml(directory.Path, "[admin_api]\ncertificate_password = \"$ADMIN_UNDEFINED_TEST_ENV\"\n")
+            TestConfigDocuments.FromToml(
+                directory.Path,
+                "[admin_api]\ncertificate_password = \"$ADMIN_UNDEFINED_TEST_ENV\"\n"
+            )
         );
         var plugin = new MoongateAdminPlugin();
         Assert.Equal(

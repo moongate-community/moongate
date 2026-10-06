@@ -30,7 +30,8 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
 
     private bool _stopped;
 
-    internal IReadOnlyList<IPEndPoint> LocalEndpoints => _sockets.Select(socket => (IPEndPoint)socket.LocalEndPoint!).ToArray();
+    internal IReadOnlyList<IPEndPoint> LocalEndpoints =>
+        _sockets.Select(socket => (IPEndPoint)socket.LocalEndPoint!).ToArray();
 
     public PingServerService(PingServerOptions options)
     {
@@ -117,7 +118,7 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
             try
             {
                 var received = await socket.ReceiveFromAsync(buffer, SocketFlags.None, sender, cancellationToken)
-                                           .ConfigureAwait(false);
+                    .ConfigureAwait(false);
 
                 if (!IsAnswered(received, GetPort(sender), local.Port, _options.MaxDatagramSize))
                 {
@@ -125,7 +126,7 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
                 }
 
                 await socket.SendToAsync(buffer.AsMemory(0, received), SocketFlags.None, sender, cancellationToken)
-                            .ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {

@@ -14,6 +14,7 @@ internal static class BookAttachmentCodec
     public const int MaximumBytes = 65536;
     private const int MaximumDepth = 8;
     private const int MaximumProps = 64;
+
     private static readonly JsonSerializerOptions Options = new()
     {
         MaxDepth = MaximumDepth, UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow
@@ -22,10 +23,12 @@ internal static class BookAttachmentCodec
     public static bool TryDecode(string? payload, out BookAttachmentPayload? batch)
     {
         batch = null;
-        if (string.IsNullOrEmpty(payload) || payload.Length > MaximumBytes || Encoding.UTF8.GetByteCount(payload) > MaximumBytes)
+        if (string.IsNullOrEmpty(payload) || payload.Length > MaximumBytes ||
+            Encoding.UTF8.GetByteCount(payload) > MaximumBytes)
         {
             return false;
         }
+
         try
         {
             using var document = JsonDocument.Parse(payload, new() { MaxDepth = MaximumDepth });
@@ -35,16 +38,19 @@ internal static class BookAttachmentCodec
             {
                 return false;
             }
+
             var decoded = JsonSerializer.Deserialize<BookAttachmentPayload>(payload, Options);
             if (decoded is null || decoded.Version != 1 || decoded.Items.IsDefaultOrEmpty ||
                 decoded.Items.Length > BookAttachmentValidation.MaximumItems || decoded.Items.Any(item => !Valid(item)))
             {
                 return false;
             }
+
             batch = decoded;
             return true;
         }
-        catch (Exception exception) when (exception is JsonException or ArgumentException or InvalidOperationException or NotSupportedException)
+        catch (Exception exception) when (exception is JsonException or ArgumentException or InvalidOperationException
+                                              or NotSupportedException)
         {
             return false;
         }
@@ -57,6 +63,7 @@ internal static class BookAttachmentCodec
         {
             throw new InvalidDataException("Attachment snapshot is invalid or exceeds its bounded payload limits.");
         }
+
         return payload;
     }
 
@@ -65,8 +72,12 @@ internal static class BookAttachmentCodec
         return new()
         {
             TemplateId = item.TemplateId, ItemId = item.ItemId, Hue = item.Hue.Value, Amount = item.Amount,
-            Rarity = item.Rarity, Name = item.Name, Movable = item.Movable, Visibility = item.Visibility, DecayAt = item.DecayAt,
-            Props = (item.Props ?? []).ToImmutableDictionary(pair => pair.Key, pair => JsonSerializer.SerializeToElement(pair.Value))
+            Rarity = item.Rarity, Name = item.Name, Movable = item.Movable, Visibility = item.Visibility,
+            DecayAt = item.DecayAt,
+            Props = (item.Props ?? []).ToImmutableDictionary(
+                pair => pair.Key,
+                pair => JsonSerializer.SerializeToElement(pair.Value)
+            )
         };
     }
 
@@ -75,7 +86,8 @@ internal static class BookAttachmentCodec
         var result = new ItemEntity
         {
             TemplateId = item.TemplateId, ItemId = item.ItemId, Hue = new Hue(item.Hue), Amount = item.Amount,
-            Rarity = item.Rarity, Name = item.Name, Movable = item.Movable, Visibility = item.Visibility, DecayAt = item.DecayAt
+            Rarity = item.Rarity, Name = item.Name, Movable = item.Movable, Visibility = item.Visibility,
+            DecayAt = item.DecayAt
         };
         foreach (var (key, value) in item.Props)
         {
@@ -91,23 +103,25 @@ internal static class BookAttachmentCodec
             };
             result.SetProp(key, scalar);
         }
+
         return result;
     }
 
     private static bool Valid(FrozenBookAttachment? item)
     {
         return item is not null && !string.IsNullOrWhiteSpace(item.TemplateId) && item.TemplateId.Length <= 256 &&
-            !item.TemplateId.Any(char.IsControl) && item.ItemId is > 0 and <= ushort.MaxValue &&
-            item.Amount is >= 1 and <= BookAttachmentValidation.MaximumAmount && Enum.IsDefined(item.Rarity) &&
-            (item.Visibility is null || Enum.IsDefined(item.Visibility.Value)) && item.Props is not null &&
-            item.Props.Count <= MaximumProps && item.Props.All(pair => !string.IsNullOrWhiteSpace(pair.Key) &&
-                pair.Key.Length <= 128 && Scalar(pair.Value));
+               !item.TemplateId.Any(char.IsControl) && item.ItemId is > 0 and <= ushort.MaxValue &&
+               item.Amount is >= 1 and <= BookAttachmentValidation.MaximumAmount && Enum.IsDefined(item.Rarity) &&
+               (item.Visibility is null || Enum.IsDefined(item.Visibility.Value)) && item.Props is not null &&
+               item.Props.Count <= MaximumProps && item.Props.All(pair => !string.IsNullOrWhiteSpace(pair.Key) &&
+                                                                          pair.Key.Length <= 128 && Scalar(pair.Value)
+               );
     }
 
     private static bool Scalar(JsonElement value)
     {
         return value.ValueKind is JsonValueKind.String or JsonValueKind.True or JsonValueKind.False ||
-            (value.ValueKind == JsonValueKind.Number && value.TryGetDouble(out var number) && double.IsFinite(number));
+               (value.ValueKind == JsonValueKind.Number && value.TryGetDouble(out var number) && double.IsFinite(number));
     }
 
     private static bool UniqueKeys(JsonElement value)
@@ -133,6 +147,7 @@ internal static class BookAttachmentCodec
                 }
             }
         }
+
         return true;
     }
 }

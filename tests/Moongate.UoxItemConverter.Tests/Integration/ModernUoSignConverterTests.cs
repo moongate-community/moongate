@@ -6,7 +6,11 @@ namespace Moongate.UoxItemConverter.Tests.Integration;
 
 public sealed class ModernUoSignConverterTests : IDisposable
 {
-    private readonly string _root = Path.Combine(Path.GetTempPath(), "moongate-modernuo-signs-" + Guid.NewGuid().ToString("N"));
+    private readonly string _root = Path.Combine(
+        Path.GetTempPath(),
+        "moongate-modernuo-signs-" + Guid.NewGuid().ToString("N")
+    );
+
     private readonly StringWriter _output = new();
     private readonly StringWriter _error = new();
 
@@ -116,7 +120,9 @@ public sealed class ModernUoSignConverterTests : IDisposable
 
     private List<TomlTable> Read(string folder)
     {
-        var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(Path.Combine(Destination, folder, folder == "trammel" ? "_signs.toml" : "signs.toml")))!;
+        var document = TomlSerializer.Deserialize<TomlTable>(
+            File.ReadAllText(Path.Combine(Destination, folder, folder == "trammel" ? "_signs.toml" : "signs.toml"))
+        )!;
 
         return ((TomlTableArray)document["decoration"]).ToList();
     }

@@ -18,12 +18,14 @@ using Moongate.Server.Ultima.Services.Books;
 namespace Moongate.Server.Ultima.Extensions;
 
 /// <summary>
-///     Registers the services of the live world: templates, factories, mobiles, NPCs, items, the world view, characters, speech, light, weather, regions, decoration and the Lua modules, with their startup order.
+///     Registers the services of the live world: templates, factories, mobiles, NPCs, items, the world view, characters,
+///     speech, light, weather, regions, decoration and the Lua modules, with their startup order.
 /// </summary>
 public static class UltimaWorldContainerExtensions
 {
     /// <summary>
-    ///     Registers the services of the live world: templates, factories, mobiles, NPCs, items, the world view, characters, speech, light, weather, regions, decoration and the Lua modules, with their startup order.
+    ///     Registers the services of the live world: templates, factories, mobiles, NPCs, items, the world view, characters,
+    ///     speech, light, weather, regions, decoration and the Lua modules, with their startup order.
     /// </summary>
     public static Container AddUltimaWorldServices(this Container container)
     {
@@ -92,7 +94,10 @@ public static class UltimaWorldContainerExtensions
             "character_entered_world",
             CharacterScriptEvents.CharacterEnteredWorld
         );
-        container.AddScriptEvent<PlayerRegionChangedEvent>("player_region_changed", CharacterScriptEvents.PlayerRegionChanged);
+        container.AddScriptEvent<PlayerRegionChangedEvent>(
+            "player_region_changed",
+            CharacterScriptEvents.PlayerRegionChanged
+        );
         container.AddScriptEvent<PlayerSaidEvent>("player_say", CharacterScriptEvents.PlayerSay);
         container.AddScriptEvent<CharacterLeftWorldEvent>(
             "character_left_world",

@@ -28,5 +28,6 @@ public class BookTemplateSource
     ///     How many pages a writable book has; unset, <see cref="DefaultPages" />.
     /// </summary>
     public int? Pages { get; set; }
+
     public Dictionary<string, BookTranslation> Translations { get; set; } = new(StringComparer.Ordinal);
 }

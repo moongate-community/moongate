@@ -96,7 +96,13 @@ public sealed class RedisHandoffFlowTests
                 gameSessions,
                 new StubPacketSendService()
             );
-            await new GameLoginPacketHandler(realm, handoffs, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig()).HandleAsync(
+            await new GameLoginPacketHandler(
+                realm,
+                handoffs,
+                new StubDataLoaderService(),
+                new RecordingCharacterService(),
+                new CharactersConfig()
+            ).HandleAsync(
                 gameContext,
                 new(redirect.AuthKey, "Alice", "password"),
                 CancellationToken.None

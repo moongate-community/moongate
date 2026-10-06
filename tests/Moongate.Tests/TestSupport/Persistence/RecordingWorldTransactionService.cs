@@ -22,7 +22,9 @@ public sealed class RecordingWorldTransactionService : IWorldTransactionService
 
     public Task? Hold { get; set; }
 
-    public async Task ExecuteAsync(Func<IPersistenceTransaction, Task> operation, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(
+        Func<IPersistenceTransaction, Task> operation, CancellationToken cancellationToken = default
+    )
     {
         if (Hold is not null)
         {

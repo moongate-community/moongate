@@ -10,8 +10,8 @@ namespace Moongate.Server.Ultima.Services.Internal;
 
 /// <summary>
 ///     Turns a gump of <c>templates/gumps</c> into a layout for one opening: <c>${name}</c> filled from the arguments
-///     (empty when missing), texts from the element, a server message (<c>message</c>) or a client message
-///     (<c>cliloc</c>), and an id for every <c>on_click</c> button that the <c>id</c> buttons do not use. The file was
+///     (empty when missing), texts from the element, a server message ( <c>message</c>) or a client message
+///     ( <c>cliloc</c>), and an id for every <c>on_click</c> button that the <c>id</c> buttons do not use. The file was
 ///     checked against <c>gump.xsd</c>, so a number that is not one after filling is a placeholder gone wrong: it is 0.
 /// </summary>
 internal static class GumpXmlRenderer
@@ -28,10 +28,10 @@ internal static class GumpXmlRenderer
         var opens = new Dictionary<int, string>();
         var binds = new List<GumpBind>();
         var used = root.Descendants("button")
-                       .Select(button => button.Attribute("id")?.Value)
-                       .Select(id => int.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number) ? number : 0)
-                       .Where(id => id > 0)
-                       .ToHashSet();
+            .Select(button => button.Attribute("id")?.Value)
+            .Select(id => int.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number) ? number : 0)
+            .Where(id => id > 0)
+            .ToHashSet();
         var context = new GumpXmlRenderContext(layout, args, localization, clicks, opens, binds, used);
 
         foreach (var (attribute, flag) in new[]

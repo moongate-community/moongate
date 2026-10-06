@@ -10,8 +10,10 @@ namespace Moongate.Server.Ultima.Interfaces;
 ///     <see cref="IMovementService.CheckMovement" /> allows, so a path is made of steps the mover can really take.
 /// </summary>
 /// <remarks>
-///     Game loop only. The search looks at a square of <c>ultima.world.pathfinding_range</c> plus one tiles a side, placed
-///     so that start and goal lie in it, and at <c>ultima.world.pathfinding_max_nodes</c> places at most. A path sees what
+///     Game loop only. The search looks at a square of <c>ultima.world.pathfinding_range</c> plus one tiles a side,
+///     placed
+///     so that start and goal lie in it, and at <c>ultima.world.pathfinding_max_nodes</c> places at most. A path sees
+///     what
 ///     the movement sees: an impassable item on the ground, a closed door among them, blocks it. Other mobiles do not.
 ///     A tile on the way has one height in a search, so a path cannot pass both over and under the same tile; the goal's
 ///     own tile is only entered at the goal's height.

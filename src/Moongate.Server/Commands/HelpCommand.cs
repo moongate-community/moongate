@@ -60,7 +60,9 @@ public sealed class HelpCommand : ICommandExecutor, ICommandArgumentCompleter
 
         if (command is null)
         {
-            context.PrintError(_localization.Text(CommandMessages.UnknownOrUnavailableCommand, "Unknown or unavailable command: {0}", name));
+            context.PrintError(
+                _localization.Text(CommandMessages.UnknownOrUnavailableCommand, "Unknown or unavailable command: {0}", name)
+            );
 
             return Task.CompletedTask;
         }
@@ -70,23 +72,31 @@ public sealed class HelpCommand : ICommandExecutor, ICommandArgumentCompleter
         context.Print(_localization.Text(CommandMessages.HelpDescription, "Description: {0}", Description(command)));
         context.Print(_localization.Text(CommandMessages.HelpAliases, "Aliases: {0}", string.Join(", ", command.Aliases)));
         context.Print(_localization.Text(CommandMessages.HelpSources, "Sources: {0}", command.Source));
-        context.Print(_localization.Text(CommandMessages.HelpMinimumAccountLevel, "Minimum account level: {0}", command.MinimumAccountType));
+        context.Print(
+            _localization.Text(
+                CommandMessages.HelpMinimumAccountLevel,
+                "Minimum account level: {0}",
+                command.MinimumAccountType
+            )
+        );
 
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    /// <remarks>The commands of the console, the one place that completes.</remarks>
+    /// <remarks>
+    ///     The commands of the console, the one place that completes.
+    /// </remarks>
     public IReadOnlyList<string> GetArgumentCompletions(IReadOnlyList<string> previousArguments)
     {
         return previousArguments.Count == 0
             ? _registry.Registrations
-                       .Values
-                       .Select(registration => registration.Definition)
-                       .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
-                       .SelectMany(definition => definition.Aliases)
-                       .Distinct(StringComparer.OrdinalIgnoreCase)
-                       .ToArray()
+                .Values
+                .Select(registration => registration.Definition)
+                .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
+                .SelectMany(definition => definition.Aliases)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray()
             : [];
     }
 
@@ -96,8 +106,8 @@ public sealed class HelpCommand : ICommandExecutor, ICommandArgumentCompleter
         return definition.DescriptionMessage != 0 &&
                _localization is not null &&
                _localization.TryGetText(definition.DescriptionMessage, out var text)
-                   ? text
-                   : definition.Description;
+            ? text
+            : definition.Description;
     }
 
     private static bool IsAvailable(CommandDefinition definition, CommandContext context)

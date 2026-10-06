@@ -74,7 +74,9 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         _scripts = scripts;
         _items = items;
         _mobiles = mobiles;
-        _bodies = new(() => data.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type));
+        _bodies = new(() =>
+            data.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type)
+        );
         _world = world;
         _tiles = tiles;
         _layouts = layouts;
@@ -254,7 +256,11 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
                 Math.Abs(character.Location.X - mobile.Location.X) > _world.ViewRange ||
                 Math.Abs(character.Location.Y - mobile.Location.Y) > _world.ViewRange)
             {
-                _logger.Debug("Session {SessionId} asked for the paperdoll of {Mobile}, out of view", session.SessionId, mobile.Id);
+                _logger.Debug(
+                    "Session {SessionId} asked for the paperdoll of {Mobile}, out of view",
+                    session.SessionId,
+                    mobile.Id
+                );
 
                 return;
             }
@@ -262,11 +268,18 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
 
         if (!_bodies.Value.TryGetValue(mobile.Body, out var type) || type != BodyType.Human)
         {
-            _logger.Information("Session {SessionId} asked for the paperdoll of {Mobile}, which has no human body", session.SessionId, mobile.Id);
+            _logger.Information(
+                "Session {SessionId} asked for the paperdoll of {Mobile}, which has no human body",
+                session.SessionId,
+                mobile.Id
+            );
 
             return;
         }
 
-        _sender.TrySend(session.SessionId, new DisplayPaperdollPacket(mobile.Id, PaperdollTitle(mobile), mobile.WarMode, own));
+        _sender.TrySend(
+            session.SessionId,
+            new DisplayPaperdollPacket(mobile.Id, PaperdollTitle(mobile), mobile.WarMode, own)
+        );
     }
 }

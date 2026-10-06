@@ -80,11 +80,10 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         // A second character on the same session would replace the first and leave it in the world for ever.
         return !session.CharacterId.IsValid &&
                !_sessions.GetAll()
-                         .Any(
-                             other => other.SessionId != session.SessionId &&
-                                      other.AccountId == session.AccountId &&
-                                      other.CharacterId.IsValid
-                         );
+                   .Any(other => other.SessionId != session.SessionId &&
+                                 other.AccountId == session.AccountId &&
+                                 other.CharacterId.IsValid
+                   );
     }
 
     public async Task EnterAsync(
@@ -97,32 +96,32 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         var character = play.Character;
         var admitted = false;
         await context.RunOnGameLoopAsync(
-                session =>
+            session =>
+            {
+                if (!CanEnter(session))
                 {
-                    if (!CanEnter(session))
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    // Together on the loop: a session retirement then always finds the character live.
-                    session.Set(SessionKeys.CharacterId, character.Id);
-                    _mobiles.EnterWorld(character);
-                    // Before the packets that show it: a criminal that comes back is grey from the first one.
-                    _crimes?.Restore(character);
-                    _murders?.Restore(character);
+                // Together on the loop: a session retirement then always finds the character live.
+                session.Set(SessionKeys.CharacterId, character.Id);
+                _mobiles.EnterWorld(character);
+                // Before the packets that show it: a criminal that comes back is grey from the first one.
+                _crimes?.Restore(character);
+                _murders?.Restore(character);
 
-                    // Its rows are as its last save left them: what another player took or merged since stays out, and
-                    // is not shown on the character either.
-                    var added = _items.AddLoaded(play.Equipment.Concat(play.Contents)).ToHashSet();
-                    play = play with
-                    {
-                        Equipment = play.Equipment.Where(added.Contains).ToList(),
-                        Contents = play.Contents.Where(added.Contains).ToList()
-                    };
-                    admitted = true;
-                },
-                cancellationToken
-            );
+                // Its rows are as its last save left them: what another player took or merged since stays out, and
+                // is not shown on the character either.
+                var added = _items.AddLoaded(play.Equipment.Concat(play.Contents)).ToHashSet();
+                play = play with
+                {
+                    Equipment = play.Equipment.Where(added.Contains).ToList(),
+                    Contents = play.Contents.Where(added.Contains).ToList()
+                };
+                admitted = true;
+            },
+            cancellationToken
+        );
 
         if (!admitted)
         {
@@ -144,7 +143,11 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
             ))
         {
             // The session closed during the sequence: its leave already ran, so the login never completed.
-            _logger.Information("Session {SessionId} closed while {Character} entered the world", context.SessionId, character);
+            _logger.Information(
+                "Session {SessionId} closed while {Character} entered the world",
+                context.SessionId,
+                character
+            );
 
             return;
         }

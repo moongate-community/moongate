@@ -48,7 +48,11 @@ public sealed class MusicCommand : ICommandExecutor
         if (context.Arguments.Length == 0)
         {
             context.Print(
-                _localization.Text(CommandMessages.MusicHere, "Music here: {0}.", EnumNameUtils.Format(_music.MusicOf(character)))
+                _localization.Text(
+                    CommandMessages.MusicHere,
+                    "Music here: {0}.",
+                    EnumNameUtils.Format(_music.MusicOf(character))
+                )
             );
 
             return;
@@ -69,7 +73,9 @@ public sealed class MusicCommand : ICommandExecutor
 
         if (!played)
         {
-            context.PrintError(_localization.Text(CommandMessages.MusicNotPlayed, "{0} could not play.", EnumNameUtils.Format(music)));
+            context.PrintError(
+                _localization.Text(CommandMessages.MusicNotPlayed, "{0} could not play.", EnumNameUtils.Format(music))
+            );
 
             return;
         }

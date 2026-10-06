@@ -40,11 +40,12 @@ public sealed class WorldMigrationsTests
         await CoreMigrationFiles.ApplyAsync(host.Database, "world");
 
         var exception = await Record.ExceptionAsync(() => host.Database.ExecuteAsync(
-            "INSERT INTO world.mobiles (id, name, gender, race, body, skin_hue, strength, dexterity, intelligence, hair_style, " +
-            "hair_hue, beard_style, beard_hue, created_at, x, y, z, map, hits, hits_max, mana, mana_max, stamina, stamina_max, " +
-            "fame, karma, armor, resist_physical, resist_fire, resist_cold, resist_poison, resist_energy, direction, notoriety, hidden, frozen, hunger, thirst, str_lock, dex_lock, int_lock, kills, short_term_murders) " +
-            "VALUES (5, 'a', 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 9, false, false, 20, 20, 0, 0, 0, 0, 0)"
-        ));
+                "INSERT INTO world.mobiles (id, name, gender, race, body, skin_hue, strength, dexterity, intelligence, hair_style, " +
+                "hair_hue, beard_style, beard_hue, created_at, x, y, z, map, hits, hits_max, mana, mana_max, stamina, stamina_max, " +
+                "fame, karma, armor, resist_physical, resist_fire, resist_cold, resist_poison, resist_energy, direction, notoriety, hidden, frozen, hunger, thirst, str_lock, dex_lock, int_lock, kills, short_term_murders) " +
+                "VALUES (5, 'a', 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 9, false, false, 20, 20, 0, 0, 0, 0, 0)"
+            )
+        );
 
         Assert.IsType<PostgresException>(exception);
         Assert.Equal("ck_mobiles_notoriety", ((PostgresException)exception!).ConstraintName);
@@ -57,11 +58,12 @@ public sealed class WorldMigrationsTests
         await CoreMigrationFiles.ApplyAsync(host.Database, "world");
 
         var exception = await Record.ExceptionAsync(() => host.Database.ExecuteAsync(
-            "INSERT INTO world.mobiles (id, name, gender, race, body, skin_hue, strength, dexterity, intelligence, hair_style, " +
-            "hair_hue, beard_style, beard_hue, created_at, x, y, z, map, hits, hits_max, mana, mana_max, stamina, stamina_max, " +
-            "fame, karma, armor, resist_physical, resist_fire, resist_cold, resist_poison, resist_energy, direction, hidden, frozen, hunger, thirst, str_lock, dex_lock, int_lock, kills, short_term_murders) " +
-            "VALUES (5, 'a', 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 132, false, false, 20, 20, 0, 0, 0, 0, 0)"
-        ));
+                "INSERT INTO world.mobiles (id, name, gender, race, body, skin_hue, strength, dexterity, intelligence, hair_style, " +
+                "hair_hue, beard_style, beard_hue, created_at, x, y, z, map, hits, hits_max, mana, mana_max, stamina, stamina_max, " +
+                "fame, karma, armor, resist_physical, resist_fire, resist_cold, resist_poison, resist_energy, direction, hidden, frozen, hunger, thirst, str_lock, dex_lock, int_lock, kills, short_term_murders) " +
+                "VALUES (5, 'a', 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 132, false, false, 20, 20, 0, 0, 0, 0, 0)"
+            )
+        );
 
         Assert.IsType<PostgresException>(exception);
         Assert.Equal("ck_mobiles_direction", ((PostgresException)exception!).ConstraintName);
@@ -73,7 +75,8 @@ public sealed class WorldMigrationsTests
         await using var host = await HostPersistenceFixture.CreateAsync(false);
         await CoreMigrationFiles.ApplyAsync(host.Database, "world");
 
-        var exception = await Record.ExceptionAsync(() => host.Database.ExecuteAsync("INSERT INTO world.state (id) VALUES (2)"));
+        var exception =
+            await Record.ExceptionAsync(() => host.Database.ExecuteAsync("INSERT INTO world.state (id) VALUES (2)"));
 
         Assert.IsType<PostgresException>(exception);
         Assert.Equal("ck_state_one_row", ((PostgresException)exception!).ConstraintName);

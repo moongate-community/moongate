@@ -30,8 +30,8 @@ public sealed class ExtendedCommandPacket : BasePacket<ExtendedCommandPacket>, I
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out ExtendedCommandPacket? packet)
     {
         packet = HasValidHeader(data) && data.Length >= HeaderLength
-                     ? new ExtendedCommandPacket(data.Length, (ushort)(data[3] << 8 | data[4]), data[HeaderLength..].ToArray())
-                     : null;
+            ? new ExtendedCommandPacket(data.Length, (ushort)(data[3] << 8 | data[4]), data[HeaderLength..].ToArray())
+            : null;
 
         return packet is not null;
     }

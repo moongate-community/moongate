@@ -19,7 +19,8 @@ namespace Moongate.Server.Ultima.Services;
 /// <summary>
 ///     Places the decoration files as ModernUO's <c>[Decorate</c> does, file by file: the items are built and saved off
 ///     the game loop in one transaction per file, which gives them their serials, then enter the world on the loop. The
-///     doors of the towns, which ModernUO's <c>[DoorGen</c> reads from the map's door frames, follow the files as one more
+///     doors of the towns, which ModernUO's <c>[DoorGen</c> reads from the map's door frames, follow the files as one
+///     more
 ///     file per map.
 /// </summary>
 public sealed class DecorationService : IDecorationService, IDisposable
@@ -33,6 +34,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
     ///     The template of a bulletin board the files place: its script opens it, as <c>bulletin_board.lua</c>.
     /// </summary>
     public const string BulletinBoardTemplate = "bulletin_board";
+
     public const string AnkhTemplate = "decoration_ankh";
     public const string DoorTemplate = "decoration_door";
     public const string LightTemplate = "decoration_light";
@@ -74,6 +76,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
         [0x0004] = (0x0005, 1, 0),
         [0x1E5D] = (0x1E5C, 1, 0)
     };
+
     private const int GeneratedDoorGraphic = 0x06A5;
     private const int PublicMoongateGraphic = 0x0F6C;
 
@@ -89,7 +92,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
         ["Brazier"] = LightType.Circle225, ["BrazierTall"] = LightType.Circle300, ["Candelabra"] = LightType.Circle225,
         ["CandelabraStand"] = LightType.Circle225, ["Candle"] = LightType.Circle150, ["CandleLarge"] = LightType.Circle150,
         ["CandleLong"] = LightType.Circle150, ["CandleShort"] = LightType.Circle150, ["CandleSkull"] = LightType.Circle150,
-        ["HangingLantern"] = LightType.Circle300, ["HeatingStand"] = LightType.Circle150, ["LampPost1"] = LightType.Circle300,
+        ["HangingLantern"] = LightType.Circle300, ["HeatingStand"] = LightType.Circle150,
+        ["LampPost1"] = LightType.Circle300,
         ["LampPost2"] = LightType.Circle300, ["LampPost3"] = LightType.Circle300, ["Lantern"] = LightType.Circle300,
         ["PaperLantern"] = LightType.Circle150, ["RedHangingLantern"] = LightType.Circle300,
         ["RoundPaperLantern"] = LightType.Circle150, ["ShojiLantern"] = LightType.Circle150, ["Torch"] = LightType.Circle300,
@@ -232,18 +236,17 @@ public sealed class DecorationService : IDecorationService, IDisposable
             Name = MoongatesFile,
             Maps = [facet.Map],
             Blocks = facet.Destination
-                          .Select(
-                              destination => new DecorationBlock
-                              {
-                                  Type = PublicMoongateType,
-                                  ItemId = PublicMoongateGraphic,
-                                  Props = destination.Hue == 0
-                                      ? new Dictionary<string, object>(StringComparer.Ordinal)
-                                      : new Dictionary<string, object>(StringComparer.Ordinal) { ["hue"] = (long)destination.Hue },
-                                  Locations = [destination.Location]
-                              }
-                          )
-                          .ToList()
+                .Select(destination => new DecorationBlock
+                    {
+                        Type = PublicMoongateType,
+                        ItemId = PublicMoongateGraphic,
+                        Props = destination.Hue == 0
+                            ? new Dictionary<string, object>(StringComparer.Ordinal)
+                            : new Dictionary<string, object>(StringComparer.Ordinal) { ["hue"] = (long)destination.Hue },
+                        Locations = [destination.Location]
+                    }
+                )
+                .ToList()
         };
     }
 
@@ -269,21 +272,20 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
         // ModernUO's regions overlap: a frame in both is found twice.
         var blocks = doors.Distinct()
-                          .GroupBy(door => door.Facing)
-                          .OrderBy(group => group.Key)
-                          .Select(
-                              group => new DecorationBlock
-                              {
-                                  Type = GeneratedDoorType,
-                                  ItemId = GeneratedDoorGraphic + 2 * (int)group.Key,
-                                  Props = new Dictionary<string, object>(StringComparer.Ordinal)
-                                  {
-                                      [FacingProp] = EnumNameUtils.Format(group.Key)
-                                  },
-                                  Locations = group.Select(door => door.Location).ToList()
-                              }
-                          )
-                          .ToList();
+            .GroupBy(door => door.Facing)
+            .OrderBy(group => group.Key)
+            .Select(group => new DecorationBlock
+                {
+                    Type = GeneratedDoorType,
+                    ItemId = GeneratedDoorGraphic + 2 * (int)group.Key,
+                    Props = new Dictionary<string, object>(StringComparer.Ordinal)
+                    {
+                        [FacingProp] = EnumNameUtils.Format(group.Key)
+                    },
+                    Locations = group.Select(door => door.Location).ToList()
+                }
+            )
+            .ToList();
 
         return new()
         {
@@ -317,8 +319,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
         // What is on the ground is read on the loop; the new items are built and saved off it.
         var free = new List<(DecorationBlock Block, MapType Map, Point3D Location)>();
         var present = 0;
-        await OnLoopAsync(
-            () =>
+        await OnLoopAsync(() =>
             {
                 var seen = new HashSet<(MapType, Point3D, int)>();
                 // The teleporters this file already keeps: the ground does not show them yet.
@@ -339,8 +340,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     else if (!seen.Add((map, location, block.ItemId!.Value)) ||
                              IsThere(map, location, block) ||
                              IsTeleporter(block.Type) &&
-                             teleporters.Any(
-                                 other => other.Type == block.Type && other.Map == map && SharesSpot(other.Location, location)
+                             teleporters.Any(other =>
+                                 other.Type == block.Type && other.Map == map && SharesSpot(other.Location, location)
                              ))
                     {
                         present++;
@@ -358,7 +359,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
             }
         );
 
-        var items = free.SelectMany(candidate => BuildWithCompanion(candidate.Block, candidate.Map, candidate.Location)).ToList();
+        var items = free.SelectMany(candidate => BuildWithCompanion(candidate.Block, candidate.Map, candidate.Location))
+            .ToList();
 
         if (items.Count > 0)
         {
@@ -380,8 +382,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
                 }
             }
 
-            await OnLoopAsync(
-                () =>
+            await OnLoopAsync(() =>
                 {
                     _items.Add(items);
 
@@ -434,11 +435,9 @@ public sealed class DecorationService : IDecorationService, IDisposable
     // leaves it to the nearest vendor.
     private static string? ContentTypeOf(DecorationBlock block)
     {
-        return block.Props.GetValueOrDefault(ContentTypeProp) is string given && !string.IsNullOrWhiteSpace(given)
-            ? StringUtils.ToSnakeCase(given)
-            : block.Type == LibraryBookcaseType
-                ? LibraryContentType
-                : null;
+        return block.Props.GetValueOrDefault(ContentTypeProp) is string given && !string.IsNullOrWhiteSpace(given) ?
+            StringUtils.ToSnakeCase(given) :
+            block.Type == LibraryBookcaseType ? LibraryContentType : null;
     }
 
     // The template of a kind that was placed as plain decoration before its script was written: a container that
@@ -452,10 +451,10 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
         return type switch
         {
-            ClockType         => ClockTemplate,
-            BulletinBoardType => BulletinBoardTemplate,
+            ClockType                     => ClockTemplate,
+            BulletinBoardType             => BulletinBoardTemplate,
             AnkhWestType or AnkhNorthType => AnkhTemplate,
-            _                 => null
+            _                             => null
         };
     }
 
@@ -464,11 +463,10 @@ public sealed class DecorationService : IDecorationService, IDisposable
     private bool Upgrade(MapType map, Point3D location, DecorationBlock block, string template)
     {
         var plain = _sectors.GetItemsInRange(map, location, 0)
-                            .FirstOrDefault(
-                                item => item.TemplateId == DecorationTemplate &&
-                                        item.ItemId == block.ItemId!.Value &&
-                                        item.GroundLocation == location
-                            );
+            .FirstOrDefault(item => item.TemplateId == DecorationTemplate &&
+                                    item.ItemId == block.ItemId!.Value &&
+                                    item.GroundLocation == location
+            );
 
         if (plain is null)
         {
@@ -504,12 +502,13 @@ public sealed class DecorationService : IDecorationService, IDisposable
         var teleporterTemplate = TeleporterTemplateOf(block.Type);
 
         return _sectors.GetItemsInRange(map, location, 1)
-                       .Any(item => item.ItemId == graphic && item.GroundLocation == location ||
-                                    isDoor && item.TemplateId == DoorTemplate && StandsInDoorway(item, location) ||
-                                    isTeleporter && item.TemplateId == teleporterTemplate && SharesSpot(item, location) ||
-                                    item.ItemId == graphic + 1 && IsOpenFrom(item, location) ||
-                                    isLight && item.GroundLocation == location && item.TemplateId == LightTemplate &&
-                                    Equals(item.Props?.GetValueOrDefault(TypeProp), block.Type));
+            .Any(item => item.ItemId == graphic && item.GroundLocation == location ||
+                         isDoor && item.TemplateId == DoorTemplate && StandsInDoorway(item, location) ||
+                         isTeleporter && item.TemplateId == teleporterTemplate && SharesSpot(item, location) ||
+                         item.ItemId == graphic + 1 && IsOpenFrom(item, location) ||
+                         isLight && item.GroundLocation == location && item.TemplateId == LightTemplate &&
+                         Equals(item.Props?.GetValueOrDefault(TypeProp), block.Type)
+            );
     }
 
     private static bool SharesSpot(ItemEntity teleporter, Point3D location)
@@ -554,9 +553,14 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
         yield return item;
 
-        if (block.Type is AnkhWestType or AnkhNorthType && AnkhCompanions.TryGetValue(block.ItemId!.Value, out var companion))
+        if (block.Type is AnkhWestType or AnkhNorthType &&
+            AnkhCompanions.TryGetValue(block.ItemId!.Value, out var companion))
         {
-            var other = Build(block, map, new Point3D(location.X + companion.DeltaX, location.Y + companion.DeltaY, location.Z));
+            var other = Build(
+                block,
+                map,
+                new Point3D(location.X + companion.DeltaX, location.Y + companion.DeltaY, location.Z)
+            );
             other.ItemId = companion.Graphic;
 
             yield return other;
@@ -597,7 +601,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     props[TeleportZProp] = (long)destination.Z;
 
                     break;
-                case ("map_dest", string mapName) when teleporter && EnumNameUtils.TryParse<MapType>(mapName, out var mapDest):
+                case ("map_dest", string mapName)
+                    when teleporter && EnumNameUtils.TryParse<MapType>(mapName, out var mapDest):
                     props[TeleportMapProp] = (long)mapDest;
 
                     break;
@@ -645,7 +650,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
     // protected (only staff light or douse it) unless the data says unprotected.
     private static void AddLightProps(Dictionary<string, object?> props, LightType defaultLight)
     {
-        var light = props.GetValueOrDefault(LightProp) is string name && EnumNameUtils.TryParse<LightType>(name, out var parsed)
+        var light = props.GetValueOrDefault(LightProp) is string name &&
+                    EnumNameUtils.TryParse<LightType>(name, out var parsed)
             ? parsed
             : defaultLight;
         props[LightProp] = EnumNameUtils.Format(light);
@@ -663,8 +669,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
         foreach (var door in doors.Where(door => !door.Props!.ContainsKey(LinkProp)))
         {
-            var partner = doors.FirstOrDefault(
-                other => other != door && !other.Props!.ContainsKey(LinkProp) && Adjacent(door, other)
+            var partner = doors.FirstOrDefault(other =>
+                other != door && !other.Props!.ContainsKey(LinkProp) && Adjacent(door, other)
             );
 
             if (partner is null)

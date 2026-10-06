@@ -1,10 +1,13 @@
 // POL protocol port; see THIRD-PARTY-NOTICES.md for origin and license.
+
 using System.Buffers.Binary;
 using System.Numerics;
 
 namespace Moongate.Network.Packets.Encryption.Internal;
 
-/// <summary>The 128-bit Twofish block operation used by POL's game keystream.</summary>
+/// <summary>
+///     The 128-bit Twofish block operation used by POL's game keystream.
+/// </summary>
 internal sealed class TwofishEngine
 {
     // POL's Twofish q permutations.
@@ -92,6 +95,7 @@ internal sealed class TwofishEngine
                         (b, d) = (d, b);
                     }
                 }
+
                 BinaryPrimitives.WriteUInt32LittleEndian(block, a ^ _subkeys[4]);
                 BinaryPrimitives.WriteUInt32LittleEndian(block[4..], b ^ _subkeys[5]);
                 BinaryPrimitives.WriteUInt32LittleEndian(block[8..], c ^ _subkeys[6]);
@@ -109,11 +113,13 @@ internal sealed class TwofishEngine
             {
                 r ^= k0;
             }
+
             var b = r >> 24;
             var g2 = ((b << 1) ^ ((b & 0x80) != 0 ? 0x14Du : 0)) & 0xFF;
             var g3 = (b >> 1) ^ ((b & 1) != 0 ? 0xA6u : 0) ^ g2;
             r = (r << 8) ^ (g3 << 24) ^ (g2 << 16) ^ (g3 << 8) ^ b;
         }
+
         return r;
     }
 
@@ -135,17 +141,19 @@ internal sealed class TwofishEngine
     {
         return (x >> 1) ^ ((x & 1) != 0 ? 0xB4u : 0);
     }
+
     private static uint Lfsr2(uint x)
     {
         return (x >> 2) ^ ((x & 2) != 0 ? 0xB4u : 0) ^ ((x & 1) != 0 ? 0x5Au : 0);
     }
+
     private static uint Mx(uint x)
     {
         return x ^ Lfsr2(x);
     }
+
     private static uint My(uint x)
     {
         return x ^ Lfsr1(x) ^ Lfsr2(x);
     }
-
 }

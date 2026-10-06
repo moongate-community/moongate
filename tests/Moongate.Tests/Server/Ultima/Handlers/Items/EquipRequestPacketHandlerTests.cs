@@ -49,8 +49,12 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
         var sectors = TestSectors.Create();
         _items = TestItems.Create(sectors);
         _mobiles = new(new StubMovementService(), sectors);
-        _mobiles.EnterWorld(new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) });
-        _mobiles.EnterWorld(new() { Id = Bran, Name = "Bran", Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) });
+        _mobiles.EnterWorld(
+            new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) }
+        );
+        _mobiles.EnterWorld(
+            new() { Id = Bran, Name = "Bran", Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) }
+        );
         _backpack.Equip(Aria, LayerType.Backpack);
         _dagger.PutInContainer(_backpack.Id, new Point2D(60, 80));
         _apple.PutInContainer(_backpack.Id, new Point2D(70, 80));
@@ -334,10 +338,19 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
         );
     }
 
-    private Task EquipAsync(ItemEntity item, Serial mobile, LayerType layer = LayerType.OneHanded, IMobileStateService? state = null)
+    private Task EquipAsync(
+        ItemEntity item, Serial mobile, LayerType layer = LayerType.OneHanded, IMobileStateService? state = null
+    )
     {
         var handler = new EquipRequestPacketHandler(
-            _items, _mobiles, _equipment, _view, _sender, TestTooltips.Create(_items, _mobiles), _scripts, state: state
+            _items,
+            _mobiles,
+            _equipment,
+            _view,
+            _sender,
+            TestTooltips.Create(_items, _mobiles),
+            _scripts,
+            state: state
         );
 
         return _fixture.ExecuteOnLoopAsync(() =>

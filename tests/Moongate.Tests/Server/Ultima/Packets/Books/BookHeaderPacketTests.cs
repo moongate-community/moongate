@@ -14,7 +14,9 @@ public sealed class BookHeaderPacketTests
         var bytes = PacketCodec.Encode(new BookHeaderPacket(new Serial(0x40000010), 12, "Orcish", "Yorick"));
 
         Assert.Equal(
-            Convert.FromHexString("D4" + "001D" + "40000010" + "01" + "00" + "000C" + "0007" + "4F726369736800" + "0007" + "596F7269636B00"),
+            Convert.FromHexString(
+                "D4" + "001D" + "40000010" + "01" + "00" + "000C" + "0007" + "4F726369736800" + "0007" + "596F7269636B00"
+            ),
             bytes
         );
     }

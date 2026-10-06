@@ -70,7 +70,8 @@ public sealed class ItemTimerService : IItemTimerService, IMoongateStartupServic
 
     public bool Start(ItemEntity item, string name, TimeSpan delay)
     {
-        if (_inventory?.Allows(item) == false || string.IsNullOrWhiteSpace(name) || name.Length > MaximumNameLength || delay <= TimeSpan.Zero || delay > MaximumDelay)
+        if (_inventory?.Allows(item) == false || string.IsNullOrWhiteSpace(name) || name.Length > MaximumNameLength ||
+            delay <= TimeSpan.Zero || delay > MaximumDelay)
         {
             return false;
         }
@@ -84,7 +85,8 @@ public sealed class ItemTimerService : IItemTimerService, IMoongateStartupServic
 
     public bool Stop(ItemEntity item, string name)
     {
-        return _inventory?.Allows(item) != false && !string.IsNullOrWhiteSpace(name) && item.RemoveProp(ItemTimerQueue.PropPrefix + name);
+        return _inventory?.Allows(item) != false && !string.IsNullOrWhiteSpace(name) &&
+               item.RemoveProp(ItemTimerQueue.PropPrefix + name);
     }
 
     public TimeSpan? Remaining(ItemEntity item, string name)

@@ -20,7 +20,9 @@ public sealed class EquipmentService : IEquipmentService
 
     private readonly IInventoryMutationGuard? _inventory;
 
-    public EquipmentService(IItemTemplateService templates, ITileDataService tiles, IItemService items, IInventoryMutationGuard? inventory = null)
+    public EquipmentService(
+        IItemTemplateService templates, ITileDataService tiles, IItemService items, IInventoryMutationGuard? inventory = null
+    )
     {
         _inventory = inventory;
         _templates = templates;
@@ -57,6 +59,7 @@ public sealed class EquipmentService : IEquipmentService
         {
             return false;
         }
+
         if (!IsWornFromThePaperdoll(layer))
         {
             return false;

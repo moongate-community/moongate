@@ -26,12 +26,12 @@ public sealed class RegionEventPublisher : IRegionChangeListener
     {
         // Not awaited: the step that changed the region goes on; a listener that fails is logged.
         _ = _events.PublishAsync(new PlayerRegionChangedEvent(player, previous, current), CancellationToken.None)
-                   .ContinueWith(
-                       task => _logger.Warning(task.Exception, "Publishing the region change of {Player} failed", player.Name),
-                       CancellationToken.None,
-                       TaskContinuationOptions.OnlyOnFaulted,
-                       TaskScheduler.Default
-                   );
+            .ContinueWith(
+                task => _logger.Warning(task.Exception, "Publishing the region change of {Player} failed", player.Name),
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default
+            );
     }
 
     public void Left(Serial player)

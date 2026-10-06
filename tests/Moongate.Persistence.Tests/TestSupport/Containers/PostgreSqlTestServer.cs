@@ -4,8 +4,8 @@ using Testcontainers.PostgreSql;
 namespace Moongate.Persistence.Tests.TestSupport.Containers;
 
 /// <summary>
-///     The PostgreSQL server of the integration tests: the one named by
-///     <c>MOONGATE_TEST_POSTGRES_CONNECTION_STRING</c> when it is set, otherwise a <c>postgres:17-alpine</c> container
+///     The PostgreSQL server of the integration tests: the one named by <c>MOONGATE_TEST_POSTGRES_CONNECTION_STRING</c>
+///     when it is set, otherwise a <c>postgres:17-alpine</c> container
 ///     started on first use and shared by every test of the process. Testcontainers removes the container when the run
 ///     ends.
 /// </summary>

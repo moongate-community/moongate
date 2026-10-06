@@ -21,8 +21,8 @@ internal static class RootDirectoryGuard
     {
         var root = Normalize(rootDirectory);
         var comparison = OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()
-                             ? StringComparison.OrdinalIgnoreCase
-                             : StringComparison.Ordinal;
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
 
         if (!string.Equals(root, Normalize(binaryDirectory), comparison))
         {

@@ -31,7 +31,10 @@ public sealed class InitialSpawnCommandTests
 
         await new InitialSpawnCommand(_spawns).ExecuteAsync(context);
 
-        Assert.Equal((CommandOutputLevel.Error, "Usage: initial_spawn"), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "Usage: initial_spawn"),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
         Assert.Equal(0, _spawns.FillAllCalls);
     }
 
@@ -40,7 +43,9 @@ public sealed class InitialSpawnCommandTests
     {
         var context = new CommandContext("initial_spawn", "initial_spawn", [], CommandSourceType.Console, null);
 
-        await new InitialSpawnCommand(_spawns, TestLocalization.With((30092, "Riempio {0} regioni: {1} PNG."))).ExecuteAsync(context);
+        await new InitialSpawnCommand(_spawns, TestLocalization.With((30092, "Riempio {0} regioni: {1} PNG."))).ExecuteAsync(
+            context
+        );
 
         Assert.Equal("Riempio 2778 regioni: 21000 PNG.", Assert.Single(context.Output).Text);
     }

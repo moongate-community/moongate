@@ -34,20 +34,23 @@ public sealed class BroadcastFixture : IAsyncDisposable
         return new(await SessionFixture.CreateAsync());
     }
 
-    public async Task<GameSession> AddAsync(long id, bool entered = true, bool connected = true, MapType map = MapType.Trammel)
+    public async Task<GameSession> AddAsync(
+        long id, bool entered = true, bool connected = true, MapType map = MapType.Trammel
+    )
     {
         var connection = new ControlledNetworkConnection(id);
         _connections.Add(connection);
         var session = Sessions.GetOrCreate(connection);
         await Network.ExecuteOnLoopAsync(() =>
-        {
-            session.Set(SessionKeys.CharacterId, new Serial((uint)id));
-
-            if (entered)
             {
-                Mobiles.EnterWorld(new MobileEntity { Id = new Serial((uint)id), Name = "Player", Map = map });
+                session.Set(SessionKeys.CharacterId, new Serial((uint)id));
+
+                if (entered)
+                {
+                    Mobiles.EnterWorld(new MobileEntity { Id = new Serial((uint)id), Name = "Player", Map = map });
+                }
             }
-        });
+        );
 
         if (!connected)
         {

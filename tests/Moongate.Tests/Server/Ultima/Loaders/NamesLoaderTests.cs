@@ -18,7 +18,10 @@ public sealed class NamesLoaderTests
     public async Task LoadDataAsync_ValidFile_ReadsEveryListAndTrimsNames()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("data/names.toml", "[[names]]\nid = \"male\"\nnames = [\" Aaron \", \"Abbot\"]\n\n[[names]]\nid = \"orc\"\nnames = [\"Abghat\"]\n");
+        root.CreateFile(
+            "data/names.toml",
+            "[[names]]\nid = \"male\"\nnames = [\" Aaron \", \"Abbot\"]\n\n[[names]]\nid = \"orc\"\nnames = [\"Abghat\"]\n"
+        );
 
         var lists = (await CreateLoader(root).LoadDataAsync()).Entities;
 

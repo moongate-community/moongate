@@ -46,11 +46,16 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
                 {
                     throw new ArgumentOutOfRangeException(nameof(entity), "Insert requires a nonzero explicit identity.");
                 }
+
                 if (_owner.GetTarget(typeof(T)) != Target)
                 {
                     throw new InvalidOperationException("Transactions cannot cross database targets.");
                 }
-                return await orm.Insert(entity).WithTransaction(transaction).ExecuteAffrowsAsync(token).ConfigureAwait(false);
+
+                return await orm.Insert(entity)
+                    .WithTransaction(transaction)
+                    .ExecuteAffrowsAsync(token)
+                    .ConfigureAwait(false);
             },
             cancellationToken
         );

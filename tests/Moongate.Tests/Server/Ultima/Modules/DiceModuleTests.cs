@@ -12,7 +12,9 @@ public sealed class DiceModuleTests
     [Fact]
     public void Roll_StaysWithinTheExpressionBounds()
     {
-        var result = Run("local lo, hi = 99, 0 for i = 1, 500 do local v = dice.roll('2d6+3') lo = math.min(lo, v) hi = math.max(hi, v) end return lo, hi");
+        var result = Run(
+            "local lo, hi = 99, 0 for i = 1, 500 do local v = dice.roll('2d6+3') lo = math.min(lo, v) hi = math.max(hi, v) end return lo, hi"
+        );
 
         Assert.InRange(result[0].Read<int>(), 5, 15);
         Assert.InRange(result[1].Read<int>(), 5, 15);

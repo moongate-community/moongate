@@ -32,15 +32,15 @@ public class TileDataService : ITileDataService
     public LandTile GetLand(int id)
     {
         return TryGetLand(id, out var tile)
-                   ? tile
-                   : throw new ArgumentOutOfRangeException(nameof(id), id, $"Land ids go from 0 to {LandCount - 1}.");
+            ? tile
+            : throw new ArgumentOutOfRangeException(nameof(id), id, $"Land ids go from 0 to {LandCount - 1}.");
     }
 
     public ItemTile GetItem(int id)
     {
         return TryGetItem(id, out var tile)
-                   ? tile
-                   : throw new ArgumentOutOfRangeException(nameof(id), id, $"Item ids go from 0 to {ItemCount - 1}.");
+            ? tile
+            : throw new ArgumentOutOfRangeException(nameof(id), id, $"Item ids go from 0 to {ItemCount - 1}.");
     }
 
     public bool TryGetLand(int id, [NotNullWhen(true)] out LandTile? tile)

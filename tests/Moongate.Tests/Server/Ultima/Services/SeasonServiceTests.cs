@@ -21,7 +21,9 @@ namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class SeasonServiceTests : IAsyncLifetime
 {
-    private static readonly RegionContent IceCave = new() { Map = MapType.Trammel, Name = "Ice", Season = SeasonType.Winter };
+    private static readonly RegionContent IceCave = new()
+        { Map = MapType.Trammel, Name = "Ice", Season = SeasonType.Winter };
+
     private static readonly RegionContent Town = new() { Map = MapType.Trammel, Name = "Town" };
 
     private readonly Container _container = new();
@@ -30,9 +32,11 @@ public sealed class SeasonServiceTests : IAsyncLifetime
     private readonly WorldConfig _world = new();
     private readonly RecordingLightService _light = new();
     private readonly StubWeatherService _weather = new();
+
     private readonly MobileEntity _aria = new()
     {
-        Id = new Serial(1), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(50, 50, 0)
+        Id = new Serial(1), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
+        Location = new Point3D(50, 50, 0)
     };
 
     private BroadcastFixture _fixture = null!;
@@ -100,7 +104,10 @@ public sealed class SeasonServiceTests : IAsyncLifetime
         _seasons.RegionChanged(_aria, Town, IceCave);
 
         var packets = _fixture.Sender.Sent.Where(packet => packet is SeasonChangePacket or GlobalLightLevelPacket).ToList();
-        Assert.Equal((SeasonType.Winter, true), (((SeasonChangePacket)packets[0]).Season, ((SeasonChangePacket)packets[0]).PlaySound));
+        Assert.Equal(
+            (SeasonType.Winter, true),
+            (((SeasonChangePacket)packets[0]).Season, ((SeasonChangePacket)packets[0]).PlaySound)
+        );
         Assert.IsType<GlobalLightLevelPacket>(packets[1]);
         Assert.Equal(2, packets.Count);
         Assert.Equal([_aria], _weather.Resent);
@@ -139,7 +146,8 @@ public sealed class SeasonServiceTests : IAsyncLifetime
     {
         _world.SeasonRotation = true;
         await EnterAsync(null);
-        var bob = new MobileEntity { Id = new Serial(2), Name = "Bob", Map = MapType.Trammel, Location = new Point3D(60, 60, 0) };
+        var bob = new MobileEntity
+            { Id = new Serial(2), Name = "Bob", Map = MapType.Trammel, Location = new Point3D(60, 60, 0) };
         await _fixture.AddAsync(2);
         _seasons.RegionChanged(bob, null, IceCave);
         _seasons.SeasonOnLogin(bob);
@@ -237,9 +245,9 @@ public sealed class SeasonServiceTests : IAsyncLifetime
     private List<(SeasonType, long)> Sent()
     {
         return _fixture.Sender.Sent
-                       .Select((packet, index) => (packet, index))
-                       .Where(pair => pair.packet is SeasonChangePacket)
-                       .Select(pair => (((SeasonChangePacket)pair.packet).Season, _fixture.Sender.SentSessionIds[pair.index]))
-                       .ToList();
+            .Select((packet, index) => (packet, index))
+            .Where(pair => pair.packet is SeasonChangePacket)
+            .Select(pair => (((SeasonChangePacket)pair.packet).Season, _fixture.Sender.SentSessionIds[pair.index]))
+            .ToList();
     }
 }

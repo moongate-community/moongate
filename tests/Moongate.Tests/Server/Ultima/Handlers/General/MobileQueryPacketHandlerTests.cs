@@ -30,7 +30,14 @@ public sealed class MobileQueryPacketHandlerTests : IAsyncLifetime
         var world = new WorldConfig();
         _handler = new(
             _fixture.Mobiles,
-            new MobileStateService(_fixture.Mobiles, _fixture.Sessions, _fixture.Sectors, _fixture.Sender, new RecordingWorldViewService(), world),
+            new MobileStateService(
+                _fixture.Mobiles,
+                _fixture.Sessions,
+                _fixture.Sectors,
+                _fixture.Sender,
+                new RecordingWorldViewService(),
+                world
+            ),
             world
         );
     }

@@ -42,7 +42,10 @@ public sealed class JailServiceTests
         // An NPC of the name, and a player who asked to be deleted.
         await mobiles.UpsertAsync(new MobileEntity { Name = "Pippo" });
         await mobiles.UpsertAsync(
-            new MobileEntity { Name = "Pippo", AccountId = mario, DeletionRequestedAt = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc) }
+            new MobileEntity
+            {
+                Name = "Pippo", AccountId = mario, DeletionRequestedAt = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc)
+            }
         );
         var accounts = new RecordingDataAccess<AccountEntity>();
         accounts.Upserted.Add(new AccountEntity { Id = mario, Username = "mario", AccountType = AccountType.Regular });

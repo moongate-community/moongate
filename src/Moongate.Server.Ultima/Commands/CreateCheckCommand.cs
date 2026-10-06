@@ -60,8 +60,7 @@ public sealed class CreateCheckCommand : ICommandExecutor
 
         // Items are made and given on the loop; commands run off it.
         var made = false;
-        var work = new LoopActionWorkItem(
-            () =>
+        var work = new LoopActionWorkItem(() =>
             {
                 if (_mobiles.TryGet(session.CharacterId, out var character) &&
                     _handling.Give(character, BankService.CheckTemplate) is { } check)
@@ -79,7 +78,10 @@ public sealed class CreateCheckCommand : ICommandExecutor
         if (!made)
         {
             context.PrintError(
-                _localization.Text(CommandMessages.CheckNotCreated, "No check was made: you have no backpack, or it is full.")
+                _localization.Text(
+                    CommandMessages.CheckNotCreated,
+                    "No check was made: you have no backpack, or it is full."
+                )
             );
 
             return;

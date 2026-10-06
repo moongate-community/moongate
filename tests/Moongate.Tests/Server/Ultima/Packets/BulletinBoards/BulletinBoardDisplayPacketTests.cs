@@ -15,7 +15,10 @@ public sealed class BulletinBoardDisplayPacketTests
         var bytes = PacketCodec.Encode(new BulletinBoardDisplayPacket(Board, "bulletin board"));
 
         Assert.Equal(
-            Convert.FromHexString("710026" + "00" + "40000001" + Convert.ToHexString(Encoding.ASCII.GetBytes("bulletin board")) + new string('0', 32)),
+            Convert.FromHexString(
+                "710026" + "00" + "40000001" + Convert.ToHexString(Encoding.ASCII.GetBytes("bulletin board")) +
+                new string('0', 32)
+            ),
             bytes
         );
         Assert.Equal(38, bytes.Length);

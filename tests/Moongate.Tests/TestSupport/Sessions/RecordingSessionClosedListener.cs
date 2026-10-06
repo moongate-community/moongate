@@ -26,7 +26,9 @@ public sealed class RecordingSessionClosedListener : ISessionClosedListener
 
     public void OnSessionClosed(GameSession session)
     {
-        Closed.Add((session.SessionId, session.CharacterId, _sessions.TryGet(session.SessionId, out _), _gameLoop.IsOnLoopThread));
+        Closed.Add(
+            (session.SessionId, session.CharacterId, _sessions.TryGet(session.SessionId, out _), _gameLoop.IsOnLoopThread)
+        );
 
         if (Throw is not null)
         {

@@ -9,7 +9,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.TestSupport.Ultima.World;
 
 /// <summary>
-///     Records the calls it gets, in order, as "Entered 2 10", "Moved 2 1496,1628,10 run", "Teleported 2 Trammel 1496,1628,10", "Left 2",
+///     Records the calls it gets, in order, as "Entered 2 10", "Moved 2 1496,1628,10 run", "Teleported 2 Trammel 1496,1628,10",
+///     "Left 2",
 ///     "MobileAppeared 9", "Appeared 7", "ShownTo 2 7" and "Disappeared 7", running <see cref="OnCall" /> first so a
 ///     test can look at the state at that moment.
 /// </summary>
@@ -19,7 +20,9 @@ public sealed class RecordingWorldViewService : IWorldViewService
 
     public Action<string>? OnCall { get; set; }
 
-    public void Entered(MobileEntity mobile, long sessionId, ClientVersion? version, AccountType account = AccountType.Regular)
+    public void Entered(
+        MobileEntity mobile, long sessionId, ClientVersion? version, AccountType account = AccountType.Regular
+    )
     {
         Record($"Entered {mobile.Id.Value} {sessionId}");
     }

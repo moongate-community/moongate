@@ -22,7 +22,8 @@ namespace Moongate.Server.Ultima.Services;
 /// <inheritdoc />
 /// <remarks>
 ///     The texts are the server's, in the server language, through <see cref="ILocalizationService" /> as free text
-///     (as UOX3): blessed and cursed, the weight and, for an item above common, the rarity. Names stay the client's clilocs (its item names, the
+///     (as UOX3): blessed and cursed, the weight and, for an item above common, the rarity. Names stay the client's clilocs
+///     (its item names, the
 ///     amount and a mobile's name and title) until the server has translated names. A tooltip depends only on a few
 ///     fields of its item or mobile (<see cref="ItemTooltipKey" />, <see cref="MobileTooltipKey" />), so it is cached by
 ///     them: a change gives another key, and nothing is ever invalidated. The returned lists are shared and must not
@@ -40,14 +41,14 @@ public sealed class TooltipService : ITooltipService
     private const int HighItemNameCliloc = 1078872;
     private const int HighItemGraphic = 0x4000;
     private const int AmountAndNameCliloc = 1050039; // ~1_NUMBER~ ~2_ITEMNAME~
-    private const int ValueCliloc = 1060738; // value: ~1_val~
-    private const int MobileNameCliloc = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+    private const int ValueCliloc = 1060738;         // value: ~1_val~
+    private const int MobileNameCliloc = 1050045;    // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 
     private const byte CannotLiftWeight = 255;
 
     // messages/*.toml: the server's own tooltip texts, in the server language.
     private const int RarityMessageBase = 30000; // + rarity
-    private const int BlessedMessage = 9055; // [Blessed], as UOX3
+    private const int BlessedMessage = 9055;     // [Blessed], as UOX3
     private const int CursedMessage = 30005;
     private const int OneStoneMessage = 30006;
     private const int StonesMessage = 30007;
@@ -176,7 +177,11 @@ public sealed class TooltipService : ITooltipService
         if (item.Movable ?? template?.EffectiveMovable(_tiles) ?? TiledataWeight(item) < CannotLiftWeight)
         {
             var weight = (int)Math.Ceiling((template?.EffectiveWeight(_tiles) ?? TiledataWeight(item)) * item.Amount);
-            list.AddText(weight == 1 ? _localization.Text(OneStoneMessage, "Weight: 1 stone") : _localization.Text(StonesMessage, "Weight: {0} stones", weight));
+            list.AddText(
+                weight == 1
+                    ? _localization.Text(OneStoneMessage, "Weight: 1 stone")
+                    : _localization.Text(StonesMessage, "Weight: {0} stones", weight)
+            );
         }
 
         // A bank check: what it is worth, as ModernUO.
@@ -202,7 +207,9 @@ public sealed class TooltipService : ITooltipService
         return Cached(_mobileTooltips, new MobileTooltipKey(mobile.Name, mobile.Title), () => BuildMobile(mobile));
     }
 
-    private static PropertyList Cached<TKey>(ConcurrentDictionary<TKey, PropertyList> cache, TKey key, Func<PropertyList> build)
+    private static PropertyList Cached<TKey>(
+        ConcurrentDictionary<TKey, PropertyList> cache, TKey key, Func<PropertyList> build
+    )
         where TKey : notnull
     {
         if (cache.TryGetValue(key, out var cached))
@@ -223,7 +230,10 @@ public sealed class TooltipService : ITooltipService
         // The client needs a single space for an empty prefix or suffix.
         var list = new PropertyList();
         var title = Argument(mobile.Title);
-        list.Add(MobileNameCliloc, $" \t{Argument(mobile.Name) ?? " "}\t{(string.IsNullOrEmpty(title) ? " " : " " + title)}");
+        list.Add(
+            MobileNameCliloc,
+            $" \t{Argument(mobile.Name) ?? " "}\t{(string.IsNullOrEmpty(title) ? " " : " " + title)}"
+        );
 
         return list;
     }
@@ -304,9 +314,9 @@ public sealed class TooltipService : ITooltipService
         return rarity switch
         {
             ItemRarityType.Uncommon => "#1EFF00",
-            ItemRarityType.Rare => "#0070DD",
-            ItemRarityType.Epic => "#A335EE",
-            _ => "#FF8000"
+            ItemRarityType.Rare     => "#0070DD",
+            ItemRarityType.Epic     => "#A335EE",
+            _                       => "#FF8000"
         };
     }
 }

@@ -17,7 +17,8 @@ namespace Moongate.Server.Ultima.Packets.General;
 ///     refuses the packet, since a refused packet disconnects the client. Only a truncated keyword list is refused.
 /// </summary>
 [PacketHandler(0xAD, PacketSizing.Variable, MinimumLength = 14, Description = "Unicode speech request")]
-public sealed class UnicodeSpeechRequestPacket : BasePacket<UnicodeSpeechRequestPacket>, IIncomingPacket<UnicodeSpeechRequestPacket>
+public sealed class UnicodeSpeechRequestPacket
+    : BasePacket<UnicodeSpeechRequestPacket>, IIncomingPacket<UnicodeSpeechRequestPacket>
 {
     private const byte EncodedBit = 0xC0;
     private const int MaximumKeywords = 50;

@@ -48,7 +48,10 @@ public sealed class WeatherCommandTests : IAsyncDisposable
     {
         var context = await RunAsync(arguments.Split(' '));
 
-        Assert.Equal((CommandOutputLevel.Error, "Usage: weather [none|rain|snow|storm]"), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "Usage: weather [none|rain|snow|storm]"),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
         Assert.Empty(_weather.Forced);
     }
 
@@ -65,7 +68,10 @@ public sealed class WeatherCommandTests : IAsyncDisposable
     [Fact]
     public async Task Texts_AreInTheServerLanguage()
     {
-        var context = await RunAsync(["snow"], TestLocalization.With((30064, "Il meteo di {0} ora è {1} fino alla prossima ora.")));
+        var context = await RunAsync(
+            ["snow"],
+            TestLocalization.With((30064, "Il meteo di {0} ora è {1} fino alla prossima ora."))
+        );
 
         Assert.Equal("Il meteo di temperate ora è snow fino alla prossima ora.", Assert.Single(context.Output).Text);
     }
@@ -80,7 +86,10 @@ public sealed class WeatherCommandTests : IAsyncDisposable
         _fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         await _fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, new Serial(2)));
-        _mobiles.EnterWorld(new MobileEntity { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _mobiles.EnterWorld(
+            new MobileEntity
+                { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         var context = new CommandContext(".weather", "weather", arguments, CommandSourceType.InGame, session);
 
         await new WeatherCommand(_weather, _mobiles, localization).ExecuteAsync(context);

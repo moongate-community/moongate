@@ -66,7 +66,9 @@ public sealed class LogModule
     /// <summary>
     ///     Writes a Warning event; <paramref name="message" /> is a Serilog template filled by <paramref name="args" />.
     /// </summary>
-    [ScriptFunction(helpText: "Logs at WARNING: the message is a Serilog template whose properties the extra arguments fill.")]
+    [ScriptFunction(
+        helpText: "Logs at WARNING: the message is a Serilog template whose properties the extra arguments fill."
+    )]
     public void Warning(string message, params object?[] args)
     {
         Write(LogEventLevel.Warning, message, args);

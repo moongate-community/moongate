@@ -60,7 +60,9 @@ public sealed class SkillsConfig
 
         if (StatCap is < 30 or > MaximumTotalCap)
         {
-            throw new InvalidOperationException($"ultima.skills.stat_cap must be from 30 to {MaximumTotalCap}, found {StatCap}.");
+            throw new InvalidOperationException(
+                $"ultima.skills.stat_cap must be from 30 to {MaximumTotalCap}, found {StatCap}."
+            );
         }
 
         if (StatGainMinutes is < 0 or > MaximumGainMinutes || double.IsNaN(StatGainMinutes))

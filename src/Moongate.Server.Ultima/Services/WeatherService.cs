@@ -20,7 +20,8 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     UOX3's region weather: one state per profile, rolled on the <c>weather_hour</c> timer (a game hour, 60 game
-///     minutes) with a new temperature every 24 of them; the <c>weather_check</c> timer every 5 seconds sends each player
+///     minutes) with a new temperature every 24 of them; the <c>weather_check</c> timer every 5 seconds sends each
+///     player
 ///     what changed, such as walking into a building (a static more than 10 above its head is a roof), and thunders
 ///     during storms. A player is sent nothing before its login completes.
 /// </summary>
@@ -91,8 +92,7 @@ public sealed class WeatherService : IWeatherService
         _hourTimer = _timers.RegisterTimer(HourTimerName, hour, OnHour, hour, true);
         _checkTimer = _timers.RegisterTimer(CheckTimerName, CheckInterval, Check, CheckInterval, true);
         // The event comes from the login handler's thread; the viewers change on the game loop only.
-        _logins = _events.Subscribe<CharacterEnteredWorldEvent>(
-            async (evt, cancellationToken) =>
+        _logins = _events.Subscribe<CharacterEnteredWorldEvent>(async (evt, cancellationToken) =>
             {
                 var work = new LoopActionWorkItem(() => LoggedIn(evt.Character));
                 await _loop.PostAsync(work, cancellationToken);
@@ -239,7 +239,8 @@ public sealed class WeatherService : IWeatherService
         var packet = new WeatherPacket(state.Kind, state.Density, state.Temperature);
         var last = viewer.LastSent;
 
-        if (last is null || last.Kind != packet.Kind || last.Density != packet.Density || last.Temperature != packet.Temperature)
+        if (last is null || last.Kind != packet.Kind || last.Density != packet.Density ||
+            last.Temperature != packet.Temperature)
         {
             if (_sender.TrySend(sessionId, packet))
             {
@@ -299,7 +300,11 @@ public sealed class WeatherService : IWeatherService
         {
             foreach (var profile in _data.GetEntities<WeatherContent>())
             {
-                _states[profile.Name] = WeatherRolls.Hour(profile, _dayTemperatures.GetValueOrDefault(profile.Name), _random);
+                _states[profile.Name] = WeatherRolls.Hour(
+                    profile,
+                    _dayTemperatures.GetValueOrDefault(profile.Name),
+                    _random
+                );
             }
         }
     }

@@ -16,9 +16,10 @@ public sealed class FameKarmaTitleService : IFameKarmaTitleService
     public FameKarmaTitleService(IDataLoaderService dataLoaderService)
     {
         _rows = new(() => dataLoaderService.GetEntities<FameKarmaTitle>()
-                                         .OrderBy(row => row.Fame)
-                                         .ThenBy(row => row.Karma)
-                                         .ToArray());
+            .OrderBy(row => row.Fame)
+            .ThenBy(row => row.Karma)
+            .ToArray()
+        );
     }
 
     public string GetTitle(int fame, int karma, GenderType gender)

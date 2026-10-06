@@ -98,13 +98,22 @@ public sealed class CharacterCommand : ICommandExecutor, ICommandArgumentComplet
 
         if (restored is null)
         {
-            context.PrintError(_localization.Text(CommandMessages.NotPendingDeletion, "No character {0} is pending deletion.", characterId));
+            context.PrintError(
+                _localization.Text(CommandMessages.NotPendingDeletion, "No character {0} is pending deletion.", characterId)
+            );
 
             return;
         }
 
         _logger.Information("Character {Character} restored from pending deletion", restored);
-        context.Print(_localization.Text(CommandMessages.CharacterRestored, "Character {0} \"{1}\" restored.", restored.Id, restored.DisplayName()));
+        context.Print(
+            _localization.Text(
+                CommandMessages.CharacterRestored,
+                "Character {0} \"{1}\" restored.",
+                restored.Id,
+                restored.DisplayName()
+            )
+        );
     }
 
     private static string Format(DateTime utc)

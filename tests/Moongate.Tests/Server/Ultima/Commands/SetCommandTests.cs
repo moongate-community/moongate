@@ -26,6 +26,7 @@ public sealed class SetCommandTests : IAsyncDisposable
     private readonly RecordingCrimeService _crimes = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
+
     private readonly MobileEntity _orc = new()
     {
         Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
@@ -68,7 +69,8 @@ public sealed class SetCommandTests : IAsyncDisposable
         Assert.Equal(10, _orc.Hits);
     }
 
-    [Theory, InlineData(), InlineData("hits"), InlineData("luck", "5"), InlineData("hits", "ten"), InlineData("hits", "-1"), InlineData("hits", "1", "2")]
+    [Theory, InlineData(), InlineData("hits"), InlineData("luck", "5"), InlineData("hits", "ten"), InlineData("hits", "-1"),
+     InlineData("hits", "1", "2")]
     public async Task ExecuteAsync_WithoutAKnownNumberAndAValue_PrintsTheUsage(params string[] arguments)
     {
         var context = await RunAsync(arguments);

@@ -80,7 +80,8 @@ public sealed class PingServerServiceTests
             return;
         }
 
-        var service = new PingServerService(new PingServerOptions { Endpoints = [new IPEndPoint(IPAddress.IPv6Loopback, 0)] });
+        var service =
+            new PingServerService(new PingServerOptions { Endpoints = [new IPEndPoint(IPAddress.IPv6Loopback, 0)] });
         await service.StartAsync();
 
         try

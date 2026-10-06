@@ -20,8 +20,10 @@ using Moongate.Server.Ultima.Types.Movement;
 namespace Moongate.Server.Ultima.Modules;
 
 /// <summary>
-///     The <c>npc</c> Lua module: a mobile script acts on its NPC by serial, as <c>npc.say(serial, "Hail")</c>. A serial
-///     that is not an NPC in the world gives <c>false</c> or <c>nil</c>, never an error: a script that waited may outlive
+///     The <c>npc</c> Lua module: a mobile script acts on its NPC by serial, as <c>npc.say(serial, "Hail")</c>. A
+///     serial
+///     that is not an NPC in the world gives <c>false</c> or <c>nil</c>, never an error: a script that waited may
+///     outlive
 ///     its NPC, and a script must never move or voice a player.
 /// </summary>
 [ScriptModule("npc", "Acts as an NPC: speaks, plays sounds, walks and reads where it is.")]
@@ -97,9 +99,13 @@ public sealed class NpcModule
     }
 
     /// <summary>
-    ///     Makes the NPC say <paramref name="text" /> overhead to the players within 15 cells; <c>npc.say(serial, text)</c>.
+    ///     Makes the NPC say <paramref name="text" /> overhead to the players within 15 cells;
+    ///     <c>npc.say(serial, text)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The NPC says text overhead (cut to 128 characters) to the players within 15 cells; false for an unknown NPC or blank text.")]
+    [ScriptFunction(
+        helpText:
+        "The NPC says text overhead (cut to 128 characters) to the players within 15 cells; false for an unknown NPC or blank text."
+    )]
     public bool Say(long serial, string text)
     {
         if (!TryGetNpc(serial, out var npc) || string.IsNullOrWhiteSpace(text))
@@ -113,10 +119,13 @@ public sealed class NpcModule
     }
 
     /// <summary>
-    ///     Makes the NPC say a text of the client overhead, by its cliloc number; <c>npc.say_cliloc(serial, 1042759,
-    ///     "1,200")</c>.
+    ///     Makes the NPC say a text of the client overhead, by its cliloc number;
+    ///     <c>npc.say_cliloc(serial, 1042759, "1,200")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The NPC says a text of the client overhead, by its cliloc number, to the players within 15 cells: each player reads it in the language of its client, which npc.say cannot do. args fills the placeholders of the text (~1_AMOUNT~ and the like), several of them separated by a tab. affix is written after the text, for the texts that end with a colon and expect a value of the server, such as a banker's 1042673; it is ASCII, anything else shows as a question mark. False for an unknown NPC or a number that is no cliloc.")]
+    [ScriptFunction(
+        helpText:
+        "The NPC says a text of the client overhead, by its cliloc number, to the players within 15 cells: each player reads it in the language of its client, which npc.say cannot do. args fills the placeholders of the text (~1_AMOUNT~ and the like), several of them separated by a tab. affix is written after the text, for the texts that end with a colon and expect a value of the server, such as a banker's 1042673; it is ASCII, anything else shows as a question mark. False for an unknown NPC or a number that is no cliloc."
+    )]
     public bool SayCliloc(long serial, long cliloc, string args = "", string affix = "")
     {
         if (!TryGetNpc(serial, out var npc) || cliloc is < 1 or > int.MaxValue)
@@ -130,10 +139,14 @@ public sealed class NpcModule
     }
 
     /// <summary>
-    ///     Plays a sound where the NPC stands for the players within 15 cells: a sound id, <c>npc.play_sound(serial, 0x69)</c>,
+    ///     Plays a sound where the NPC stands for the players within 15 cells: a sound id,
+    ///     <c>npc.play_sound(serial, 0x69)</c>,
     ///     or a kind of the NPC template's <c>[mobile.sounds]</c>, <c>npc.play_sound(serial, "idle")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) or a kind of its template's [mobile.sounds] (start_attack, idle, attack, hurt, death) where the NPC stands, for the players within 15 cells (0x54); false for an unknown NPC, a sound out of range or a kind its template does not set.")]
+    [ScriptFunction(
+        helpText:
+        "Plays a sound id (0 to 65535) or a kind of its template's [mobile.sounds] (start_attack, idle, attack, hurt, death) where the NPC stands, for the players within 15 cells (0x54); false for an unknown NPC, a sound out of range or a kind its template does not set."
+    )]
     public bool PlaySound(long serial, object sound)
     {
         if (!TryGetNpc(serial, out var npc) || ResolveSound(npc, sound) is not { } id)
@@ -148,10 +161,15 @@ public sealed class NpcModule
 
     /// <summary>
     ///     Turns the NPC toward <paramref name="direction" /> when needed and takes one step, a run when
-    ///     <paramref name="running" />; <c>npc.step(serial, DirectionType.North, true)</c>. The players in range see the
-    ///     turn and the step. <c>DirectionType.Running</c> is not a direction: pass <paramref name="running" /> instead.
+    ///     <paramref name="running" />;
+    ///     <c>npc.step(serial, DirectionType.North, true)</c>. The players in range see the
+    ///     turn and the step. <c>DirectionType.Running</c> is not a direction: pass <paramref name="running" />
+    ///     instead.
     /// </summary>
-    [ScriptFunction(helpText: "One step in a direction (North to NorthWest), a run when running is true, turning first when needed, seen by the players in range; how often it is called sets the speed. False when blocked or for DirectionType.Running, which is not a direction.")]
+    [ScriptFunction(
+        helpText:
+        "One step in a direction (North to NorthWest), a run when running is true, turning first when needed, seen by the players in range; how often it is called sets the speed. False when blocked or for DirectionType.Running, which is not a direction."
+    )]
     public bool Step(long serial, DirectionType direction, bool running = false)
     {
         if ((direction & ~DirectionMask) != 0 || !TryGetNpc(serial, out var npc))
@@ -168,7 +186,10 @@ public sealed class NpcModule
     ///     path is searched the first time and kept: it is searched again only when the place changes or a step is
     ///     blocked, and two seconds after the last search at the soonest.
     /// </summary>
-    [ScriptFunction(helpText: "One step along a path to x, y (z defaults to the ground there), a run when running is true: 'arrived' within range tiles of it (default 0), 'moving' after a step, 'blocked' when the step was refused or it waits to look for another way, 'no_path' when the last search did not reach the place; nil for an unknown NPC, a negative range or a z outside -128 to 127.")]
+    [ScriptFunction(
+        helpText:
+        "One step along a path to x, y (z defaults to the ground there), a run when running is true: 'arrived' within range tiles of it (default 0), 'moving' after a step, 'blocked' when the step was refused or it waits to look for another way, 'no_path' when the last search did not reach the place; nil for an unknown NPC, a negative range or a z outside -128 to 127."
+    )]
     public string? WalkTo(long serial, int x, int y, int? z = null, int? range = null, bool running = false)
     {
         if (_paths is null || range is < 0 || !TryGetNpc(serial, out var npc) || GoalOf(npc, x, y, z) is not { } goal)
@@ -199,7 +220,10 @@ public sealed class NpcModule
     ///     <c>for _, direction in ipairs(npc.find_path(serial, 1434, 1699) or {}) do ... end</c>. Each call searches:
     ///     keep the list, do not ask on every tick.
     /// </summary>
-    [ScriptFunction(helpText: "The steps from the NPC to x, y (z defaults to the ground there) as a list of DirectionType, to walk with npc.step; with partial true, the steps to the closest place when it cannot be reached. Each call searches, so keep the list. Nil when there is no path, the place is too far or the NPC is unknown.")]
+    [ScriptFunction(
+        helpText:
+        "The steps from the NPC to x, y (z defaults to the ground there) as a list of DirectionType, to walk with npc.step; with partial true, the steps to the closest place when it cannot be reached. Each call searches, so keep the list. Nil when there is no path, the place is too far or the NPC is unknown."
+    )]
     public LuaTable? FindPath(long serial, int x, int y, int? z = null, bool partial = false)
     {
         if (_finder is null || !TryGetNpc(serial, out var npc) || GoalOf(npc, x, y, z) is not { } goal)
@@ -256,11 +280,15 @@ public sealed class NpcModule
     }
 
     /// <summary>
-    ///     Brings a new NPC of a template into the world; <c>npc.spawn("orc", MapType.Trammel, 1500, 1600, 10,
-    ///     function(serial) npc.say(serial, "Grr") end)</c>. The NPC is saved first, so it appears a moment later: its
+    ///     Brings a new NPC of a template into the world;
+    ///     <c>npc.spawn("orc", MapType.Trammel, 1500, 1600, 10, function(serial) npc.say(serial, "Grr") end)</c>. The
+    ///     NPC is saved first, so it appears a moment later: its
     ///     script's <c>on_spawn</c> runs then, and so does <paramref name="callback" />, with its serial.
     /// </summary>
-    [ScriptFunction(helpText: "Spawns an NPC of a mobile template at x, y, z of the map. It is saved first, so it appears a moment later: its on_spawn runs then, and so does the optional function with its serial. False for an unknown template, a spot outside the map or a z outside -128 to 127.")]
+    [ScriptFunction(
+        helpText:
+        "Spawns an NPC of a mobile template at x, y, z of the map. It is saved first, so it appears a moment later: its on_spawn runs then, and so does the optional function with its serial. False for an unknown template, a spot outside the map or a z outside -128 to 127."
+    )]
     public bool Spawn(
         string template,
         MapType map,
@@ -294,7 +322,10 @@ public sealed class NpcModule
     /// <summary>
     ///     Takes the NPC out of the world for good, with what it carries; <c>npc.delete(serial)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Deletes the NPC and what it carries, on the next turn of the game loop; false for a serial that is not an NPC in the world.")]
+    [ScriptFunction(
+        helpText:
+        "Deletes the NPC and what it carries, on the next turn of the game loop; false for a serial that is not an NPC in the world."
+    )]
     public bool Delete(long serial)
     {
         if (_npcs is null || !TryGetNpc(serial, out var npc))
@@ -305,12 +336,12 @@ public sealed class NpcModule
         // The removal posts to the game loop and waits: a script runs on that loop, so it is started off it.
         var id = npc.Id;
         _ = Task.Run(() => _npcs.RemoveAsync(id))
-                .ContinueWith(
-                    task => _logger.Warning(task.Exception, "npc.delete of {Serial} failed", serial),
-                    CancellationToken.None,
-                    TaskContinuationOptions.OnlyOnFaulted,
-                    TaskScheduler.Default
-                );
+            .ContinueWith(
+                task => _logger.Warning(task.Exception, "npc.delete of {Serial} failed", serial),
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default
+            );
 
         return true;
     }
@@ -318,7 +349,10 @@ public sealed class NpcModule
     /// <summary>
     ///     Turns the NPC towards a place without stepping; <c>npc.face(serial, there.x, there.y)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Turns the NPC towards x, y without stepping, seen by the players in range; false for an unknown or frozen NPC or its own cell.")]
+    [ScriptFunction(
+        helpText:
+        "Turns the NPC towards x, y without stepping, seen by the players in range; false for an unknown or frozen NPC or its own cell."
+    )]
     public bool Face(long serial, int x, int y)
     {
         if (!TryGetNpc(serial, out var npc) || npc.Frozen || npc.Location.X == x && npc.Location.Y == y)
@@ -341,7 +375,10 @@ public sealed class NpcModule
     ///     Turns the NPC towards a player or another NPC without stepping, as towards who speaks to it;
     ///     <c>npc.look_at(serial, speaker)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Turns the NPC towards another mobile, player or NPC, without stepping, as npc.face does towards a place: towards who speaks to it. False for an unknown or frozen NPC, a mobile not in the world or on another map, or one on its own cell.")]
+    [ScriptFunction(
+        helpText:
+        "Turns the NPC towards another mobile, player or NPC, without stepping, as npc.face does towards a place: towards who speaks to it. False for an unknown or frozen NPC, a mobile not in the world or on another map, or one on its own cell."
+    )]
     public bool LookAt(long serial, long other)
     {
         return TryGetNpc(serial, out var npc) &&
@@ -354,9 +391,12 @@ public sealed class NpcModule
 
     /// <summary>
     ///     Gets how many tiles lie between the NPC and a place, as the view range counts them;
-    ///     <c>npc.distance_to(serial, there.x, there.y) <= 2</c>.
+    ///     <c>npc.distance_to(serial, there.x, there.y) &lt;= 2</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The tiles between the NPC and x, y, the larger of the two differences, as the view range counts them; nil for an unknown NPC.")]
+    [ScriptFunction(
+        helpText:
+        "The tiles between the NPC and x, y, the larger of the two differences, as the view range counts them; nil for an unknown NPC."
+    )]
     public int? DistanceTo(long serial, int x, int y)
     {
         return TryGetNpc(serial, out var npc) ? Distance(npc.Location, new Point3D(x, y, 0)) : null;
@@ -364,10 +404,13 @@ public sealed class NpcModule
 
     /// <summary>
     ///     Gets the mobiles around the NPC, itself left out, nearest first, as a list of serials: the other NPCs, or
-    ///     with <paramref name="kind" /> the players or everyone; <c>for _, other in ipairs(npc.nearby(serial, 8)) do ...
-    ///     end</c>, <c>npc.nearby(serial, 8, "players")</c>.
+    ///     with <paramref name="kind" /> the players or everyone;
+    ///     <c>for _, other in ipairs(npc.nearby(serial, 8)) do ... end</c>, <c>npc.nearby(serial, 8, "players")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serials of the mobiles within range tiles (0 to 32) of the NPC, itself left out, nearest first: the other NPCs, or with kind 'players' the players, with 'all' everyone. Height and line of sight are not checked. Empty for an unknown NPC or a range out of bounds.")]
+    [ScriptFunction(
+        helpText:
+        "The serials of the mobiles within range tiles (0 to 32) of the NPC, itself left out, nearest first: the other NPCs, or with kind 'players' the players, with 'all' everyone. Height and line of sight are not checked. Empty for an unknown NPC or a range out of bounds."
+    )]
     public LuaTable Nearby(long serial, int range, string kind = "npcs")
     {
         if (kind is not ("npcs" or "players" or "all"))
@@ -385,9 +428,9 @@ public sealed class NpcModule
         var index = 1;
 
         foreach (var other in _sectors.GetMobilesInRange(npc.Map, npc.Location, range)
-                                      .Where(other => other.Id != npc.Id && (kind == "all" || other.IsNpc == (kind == "npcs")))
-                                      .OrderBy(other => Distance(npc.Location, other.Location))
-                                      .ThenBy(other => other.Id.Value))
+                     .Where(other => other.Id != npc.Id && (kind == "all" || other.IsNpc == (kind == "npcs")))
+                     .OrderBy(other => Distance(npc.Location, other.Location))
+                     .ThenBy(other => other.Id.Value))
         {
             table[index++] = (long)other.Id.Value;
         }
@@ -399,7 +442,10 @@ public sealed class NpcModule
     ///     Gets the home of an NPC of a spawn region, the area it was spawned in, as <c>{ x1, y1, x2, y2 }</c>;
     ///     <c>npc.home(serial)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The home of an NPC of a spawn region, the area it was spawned in, as a table { x1, y1, x2, y2 }; nil for an NPC without one or an unknown NPC.")]
+    [ScriptFunction(
+        helpText:
+        "The home of an NPC of a spawn region, the area it was spawned in, as a table { x1, y1, x2, y2 }; nil for an NPC without one or an unknown NPC."
+    )]
     public LuaTable? Home(long serial)
     {
         if (!TryGetNpc(serial, out var npc) || HomeOf(npc) is not { } home)
@@ -417,10 +463,14 @@ public sealed class NpcModule
     }
 
     /// <summary>
-    ///     One stroll step, as ModernUO's wander: mostly straight ahead, now and then another way; <c>npc.wander(serial)</c>
-    ///     on a think. An NPC with a home keeps to it, and from outside it walks back, around what stands in the way.
+    ///     One stroll step, as ModernUO's wander: mostly straight ahead, now and then another way;
+    ///     <c>npc.wander(serial)</c> on a think. An NPC with a home keeps to it, and from outside it walks back, around
+    ///     what stands in the way.
     /// </summary>
-    [ScriptFunction(helpText: "One stroll step, as ModernUO's wander: two times in three straight ahead, else another way. An NPC of a spawn region keeps to its home and from outside walks back along a path, with a random step when none is found. False when it did not move, as in a home of one cell, or for an unknown NPC.")]
+    [ScriptFunction(
+        helpText:
+        "One stroll step, as ModernUO's wander: two times in three straight ahead, else another way. An NPC of a spawn region keeps to its home and from outside walks back along a path, with a random step when none is found. False when it did not move, as in a home of one cell, or for an unknown NPC."
+    )]
     public bool Wander(long serial)
     {
         if (!TryGetNpc(serial, out var npc))
@@ -453,8 +503,8 @@ public sealed class NpcModule
             }
 
             var direction = state is null
-                                ? here.GetDirectionTo(new Point3D(x, y, here.Z)) & DirectionMask
-                                : (DirectionType)RandomUtils.Random(Directions);
+                ? here.GetDirectionTo(new Point3D(x, y, here.Z)) & DirectionMask
+                : (DirectionType)RandomUtils.Random(Directions);
 
             return Take(npc, direction, false);
         }
@@ -478,7 +528,10 @@ public sealed class NpcModule
     ///     hidden, not staff and in line of sight from eye to eye; <c>npc.can_see(serial, user)</c>. With
     ///     <paramref name="inSight" /> false the line of sight is not checked: what an NPC keeps following once it saw it.
     /// </summary>
-    [ScriptFunction(helpText: "Whether the NPC sees the mobile: on its map, within range tiles (default 16, 0 to 32), not hidden, not a game master or an administrator, and in line of sight from eye to eye (never beyond ultima.line_of_sight.max_distance, 25); with in_sight false the line of sight is not checked. False for itself or an unknown NPC or mobile.")]
+    [ScriptFunction(
+        helpText:
+        "Whether the NPC sees the mobile: on its map, within range tiles (default 16, 0 to 32), not hidden, not a game master or an administrator, and in line of sight from eye to eye (never beyond ultima.line_of_sight.max_distance, 25); with in_sight false the line of sight is not checked. False for itself or an unknown NPC or mobile."
+    )]
     public bool CanSee(long serial, long other, int range = DefaultSight, bool inSight = true)
     {
         return range is >= 0 and <= WorldModule.MaximumRange &&
@@ -489,20 +542,26 @@ public sealed class NpcModule
     }
 
     /// <summary>
-    ///     Gets the players the NPC sees, nearest first, as a list of serials; <c>for _, player in
-    ///     ipairs(npc.players_in_sight(serial, 16)) do ... end</c>.
+    ///     Gets the players the NPC sees, nearest first, as a list of serials;
+    ///     <c>for _, player in ipairs(npc.players_in_sight(serial, 16)) do ... end</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serials of the players the NPC sees within range tiles (default 16, 0 to 32), as npc.can_see says, nearest first; with limit, that many at most, so a script that wants the nearest does not pay for a crowd. A line of sight is not checked beyond ultima.line_of_sight.max_distance (25). Empty for an unknown NPC, a range out of bounds or a limit below 1.")]
+    [ScriptFunction(
+        helpText:
+        "The serials of the players the NPC sees within range tiles (default 16, 0 to 32), as npc.can_see says, nearest first; with limit, that many at most, so a script that wants the nearest does not pay for a crowd. A line of sight is not checked beyond ultima.line_of_sight.max_distance (25). Empty for an unknown NPC, a range out of bounds or a limit below 1."
+    )]
     public LuaTable PlayersInSight(long serial, int range = DefaultSight, int limit = int.MaxValue)
     {
         return InSight(serial, range, limit, other => !other.IsNpc);
     }
 
     /// <summary>
-    ///     Gets the mobiles, players and NPCs, the NPC sees, nearest first, as a list of serials; <c>for _, who in
-    ///     ipairs(npc.mobiles_in_sight(serial, 16)) do ... end</c>.
+    ///     Gets the mobiles, players and NPCs, the NPC sees, nearest first, as a list of serials;
+    ///     <c>for _, who in ipairs(npc.mobiles_in_sight(serial, 16)) do ... end</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serials of the mobiles, players and other NPCs, the NPC sees within range cells, in the line of sight, at most limit of them, nearest first: what a creature that goes for everyone looks at. The NPC itself, the hidden, the dead and the staff are left out. Empty for an unknown NPC or a range out of bounds. npc.players_in_sight is the same for the players only.")]
+    [ScriptFunction(
+        helpText:
+        "The serials of the mobiles, players and other NPCs, the NPC sees within range cells, in the line of sight, at most limit of them, nearest first: what a creature that goes for everyone looks at. The NPC itself, the hidden, the dead and the staff are left out. Empty for an unknown NPC or a range out of bounds. npc.players_in_sight is the same for the players only."
+    )]
     public LuaTable MobilesInSight(long serial, int range = DefaultSight, int limit = int.MaxValue)
     {
         return InSight(serial, range, limit, _ => true);
@@ -511,7 +570,10 @@ public sealed class NpcModule
     /// <summary>
     ///     Gets the serials of the dead players an NPC sees, nearest first; <c>npc.ghosts_in_sight(healer, 4)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serials of the dead players, ghosts, within range cells that the NPC sees, in the line of sight and whatever their hidden flag says, staff ghosts too; at most limit of them. Nearest first. Empty for an unknown NPC or a range out of bounds. What a healer looks for: npc.players_in_sight never lists a ghost.")]
+    [ScriptFunction(
+        helpText:
+        "The serials of the dead players, ghosts, within range cells that the NPC sees, in the line of sight and whatever their hidden flag says, staff ghosts too; at most limit of them. Nearest first. Empty for an unknown NPC or a range out of bounds. What a healer looks for: npc.players_in_sight never lists a ghost."
+    )]
     public LuaTable GhostsInSight(long serial, int range = DefaultSight, int limit = int.MaxValue)
     {
         var table = new LuaTable();
@@ -524,9 +586,9 @@ public sealed class NpcModule
         var index = 1;
 
         foreach (var ghost in _sectors.GetMobilesInRange(npc.Map, npc.Location, range)
-                                      .Where(other => other.IsDead)
-                                      .OrderBy(other => Distance(npc.Location, other.Location))
-                                      .ThenBy(other => other.Id.Value))
+                     .Where(other => other.IsDead)
+                     .OrderBy(other => Distance(npc.Location, other.Location))
+                     .ThenBy(other => other.Id.Value))
         {
             if (Sees(npc, ghost, range, true, true))
             {
@@ -574,7 +636,10 @@ public sealed class NpcModule
     /// <summary>
     ///     Gets the hit percent under which the NPC's template makes it run; <c>npc.flee_at(serial)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The flee_at of the NPC's template: the percent of its hit points (0 to 100) under which it runs from a fight, or -1 for one that never does. nil for an unknown NPC or a template that sets none: the script's own value then.")]
+    [ScriptFunction(
+        helpText:
+        "The flee_at of the NPC's template: the percent of its hit points (0 to 100) under which it runs from a fight, or -1 for one that never does. nil for an unknown NPC or a template that sets none: the script's own value then."
+    )]
     public int? FleeAt(long serial)
     {
         return TryGetNpc(serial, out var npc) && npc.TemplateId is { } id && _templates.TryGet(id, out var template)
@@ -585,7 +650,10 @@ public sealed class NpcModule
     /// <summary>
     ///     Gets the id of the mobile script of the NPC's template; <c>npc.script_id(serial)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The script_id of the NPC's mobile template, such as monster, guard or healer: what kind of creature it is to the scripts that look at others. nil for an unknown NPC or a template without a script.")]
+    [ScriptFunction(
+        helpText:
+        "The script_id of the NPC's mobile template, such as monster, guard or healer: what kind of creature it is to the scripts that look at others. nil for an unknown NPC or a template without a script."
+    )]
     public string? ScriptId(long serial)
     {
         return TryGetNpc(serial, out var npc) &&
@@ -615,11 +683,11 @@ public sealed class NpcModule
         return kind switch
         {
             "start_attack" => sounds.StartAttack,
-            "idle" => sounds.Idle,
-            "attack" => sounds.Attack,
-            "hurt" => sounds.Hurt,
-            "death" => sounds.Death,
-            _ => null
+            "idle"         => sounds.Idle,
+            "attack"       => sounds.Attack,
+            "hurt"         => sounds.Hurt,
+            "death"        => sounds.Death,
+            _              => null
         };
     }
 
@@ -630,14 +698,19 @@ public sealed class NpcModule
     [ScriptFunction(helpText: "A value the NPC keeps across restarts: a string, a number or a bool; nil when it has none.")]
     public object? GetProp(long serial, string key)
     {
-        return TryGetNpc(serial, out var npc) && npc.Props is { } props && props.TryGetValue(key, out var value) ? value : null;
+        return TryGetNpc(serial, out var npc) && npc.Props is { } props && props.TryGetValue(key, out var value)
+            ? value
+            : null;
     }
 
     /// <summary>
     ///     Keeps <paramref name="value" /> as the prop <paramref name="key" /> of the NPC, saved with it by the world save,
     ///     or removes it for <c>nil</c>; <c>npc.set_prop(serial, "vega.greeted", 3)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Keeps a string, a number or a bool on the NPC across restarts, saved with it by the world save; nil removes it. False for a table, a function or a blank key.")]
+    [ScriptFunction(
+        helpText:
+        "Keeps a string, a number or a bool on the NPC across restarts, saved with it by the world save; nil removes it. False for a table, a function or a blank key."
+    )]
     public bool SetProp(long serial, string key, object? value = null)
     {
         if (string.IsNullOrWhiteSpace(key) || !TryGetNpc(serial, out var npc))
@@ -728,9 +801,9 @@ public sealed class NpcModule
         var index = 1;
 
         foreach (var other in _sectors.GetMobilesInRange(npc.Map, npc.Location, range)
-                                      .Where(filter)
-                                      .OrderBy(other => Distance(npc.Location, other.Location))
-                                      .ThenBy(other => other.Id.Value))
+                     .Where(filter)
+                     .OrderBy(other => Distance(npc.Location, other.Location))
+                     .ThenBy(other => other.Id.Value))
         {
             if (Sees(npc, other, range, true))
             {
@@ -843,8 +916,8 @@ public sealed class NpcModule
         return movement switch
         {
             MobileMovementType.Water => MovementAbilityType.Swim,
-            MobileMovementType.Both => MovementAbilityType.Walk | MovementAbilityType.Swim,
-            _ => MovementAbilityType.Walk
+            MobileMovementType.Both  => MovementAbilityType.Walk | MovementAbilityType.Swim,
+            _                        => MovementAbilityType.Walk
         };
     }
 

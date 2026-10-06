@@ -54,7 +54,10 @@ public sealed class GoCommandTests : IAsyncDisposable
     {
         await RunAsync("1,1,1", map);
 
-        Assert.Equal((MapType.Felucca, new Point3D(1, 1, 1)), (_teleports.Teleports[0].Map, _teleports.Teleports[0].Location));
+        Assert.Equal(
+            (MapType.Felucca, new Point3D(1, 1, 1)),
+            (_teleports.Teleports[0].Map, _teleports.Teleports[0].Location)
+        );
     }
 
     [Fact]
@@ -116,7 +119,10 @@ public sealed class GoCommandTests : IAsyncDisposable
             TestLocalization.With((30109, "Non puoi andare lì: {0} non è caricata o il punto è fuori dalla mappa."))
         );
 
-        Assert.Equal("Non puoi andare lì: trammel non è caricata o il punto è fuori dalla mappa.", Assert.Single(context.Output).Text);
+        Assert.Equal(
+            "Non puoi andare lì: trammel non è caricata o il punto è fuori dalla mappa.",
+            Assert.Single(context.Output).Text
+        );
     }
 
     [Fact]
@@ -161,13 +167,18 @@ public sealed class GoCommandTests : IAsyncDisposable
 
         await RunAsync("cove");
 
-        Assert.Equal((MapType.Felucca, new Point3D(10, 100, 5)), (_teleports.Teleports[0].Map, _teleports.Teleports[0].Location));
+        Assert.Equal(
+            (MapType.Felucca, new Point3D(10, 100, 5)),
+            (_teleports.Teleports[0].Map, _teleports.Teleports[0].Location)
+        );
     }
 
     [Fact]
     public async Task ANameSeveralPlacesHave_ListsThem_AndTakesYouNowhere()
     {
-        _places.AddRange([Place(MapType.Trammel, "Dungeons/Covetous", "Entrance"), Place(MapType.Trammel, "Dungeons/Shame", "Entrance")]);
+        _places.AddRange(
+            [Place(MapType.Trammel, "Dungeons/Covetous", "Entrance"), Place(MapType.Trammel, "Dungeons/Shame", "Entrance")]
+        );
 
         var context = await RunAsync("entrance");
 
@@ -185,7 +196,9 @@ public sealed class GoCommandTests : IAsyncDisposable
     [Fact]
     public async Task ANameManyPlacesHave_ListsTheFirstTen()
     {
-        _places.AddRange(Enumerable.Range(1, 13).Select(index => Place(MapType.Trammel, $"Dungeons/Cave {index}", "Entrance")));
+        _places.AddRange(
+            Enumerable.Range(1, 13).Select(index => Place(MapType.Trammel, $"Dungeons/Cave {index}", "Entrance"))
+        );
 
         var context = await RunAsync("entrance");
 
@@ -227,7 +240,10 @@ public sealed class GoCommandTests : IAsyncDisposable
     {
         _places.Add(Place(MapType.Trammel, "Towns", "Cove"));
 
-        var context = await RunAsync(["atlantis"], TestLocalization.With((30115, "Nessun luogo si chiama {0}; go da solo li elenca.")));
+        var context = await RunAsync(
+            ["atlantis"],
+            TestLocalization.With((30115, "Nessun luogo si chiama {0}; go da solo li elenca."))
+        );
 
         Assert.Equal("Nessun luogo si chiama atlantis; go da solo li elenca.", Assert.Single(context.Output).Text);
     }
@@ -255,19 +271,32 @@ public sealed class GoCommandTests : IAsyncDisposable
         var sessions = new SessionService(_fixture.Loop);
         var session = sessions.GetOrCreate(_fixture.Client);
         await _fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, new Serial(2)));
-        _mobiles.EnterWorld(new MobileEntity { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _mobiles.EnterWorld(
+            new MobileEntity
+                { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         var context = new CommandContext(".go", "go", arguments, CommandSourceType.InGame, session);
 
         // The gump shows the path it was opened with.
         var templates = new GumpTemplateService(
             _gumps,
             new StubDataLoaderService().With(
-                new GumpTemplate { Id = "go", File = "go.xml", Root = XElement.Parse("""<gump id="go"><text x="1" y="1">go:${path}</text></gump>""") }
+                new GumpTemplate
+                {
+                    Id = "go", File = "go.xml",
+                    Root = XElement.Parse("""<gump id="go"><text x="1" y="1">go:${path}</text></gump>""")
+                }
             ),
             _fixture.Loop,
             sessions
         );
-        var gumps = new GumpModule(sessions, _gumps, templates, new Lazy<IGumpScriptService>(new RecordingGumpScriptService()), _fixture.Loop);
+        var gumps = new GumpModule(
+            sessions,
+            _gumps,
+            templates,
+            new Lazy<IGumpScriptService>(new RecordingGumpScriptService()),
+            _fixture.Loop
+        );
         var locations = new LocationService(new StubDataLoaderService().With(_places.ToArray()), TestSectors.Create());
 
         await new GoCommand(_teleports, _mobiles, _fixture.Loop, localization, locations, gumps).ExecuteAsync(context);

@@ -23,17 +23,23 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
     private readonly ItemService _items = TestItems.Create();
     private readonly StubItemSerialPool _serials = new();
     private readonly RecordingWorldViewService _view = new();
+
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
-                                                 .Item(0x0EED, TileFlagType.Generic, 0)
-                                                 .Item(0x0E75, TileFlagType.Container, 0);
+        .Item(0x0EED, TileFlagType.Generic, 0)
+        .Item(0x0E75, TileFlagType.Container, 0);
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
             new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) }
         )
     );
-    private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
-    private readonly ItemEntity _gold = new() { Id = new Serial(0x40000002), TemplateId = "gold", ItemId = 0x0EED, Amount = 100 };
+
+    private readonly ItemEntity _backpack = new()
+        { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    private readonly ItemEntity _gold = new()
+        { Id = new Serial(0x40000002), TemplateId = "gold", ItemId = 0x0EED, Amount = 100 };
 
     private BroadcastFixture _fixture = null!;
     private MobileEntity _owner = null!;

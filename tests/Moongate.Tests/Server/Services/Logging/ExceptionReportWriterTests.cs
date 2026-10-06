@@ -6,14 +6,20 @@ namespace Moongate.Tests.Server.Services.Logging;
 
 public sealed class ExceptionReportWriterTests : IDisposable
 {
-    private readonly string _directory = Path.Combine(Path.GetTempPath(), "moongate-reports-" + Guid.NewGuid().ToString("N"));
+    private readonly string _directory = Path.Combine(
+        Path.GetTempPath(),
+        "moongate-reports-" + Guid.NewGuid().ToString("N")
+    );
 
     [Fact]
     public void Write_AnEventWithAnException_WritesAMarkdownReportReadyForAnIssue()
     {
         var exception = Thrown(new InvalidOperationException("outer", Thrown(new ArgumentException("inner cause"))));
 
-        var path = Writer().Write(Event("Command {Name} failed", exception, ("Name", "spawn"), ("SourceContext", "Moongate.Server.Commands")));
+        var path = Writer()
+            .Write(
+                Event("Command {Name} failed", exception, ("Name", "spawn"), ("SourceContext", "Moongate.Server.Commands"))
+            );
 
         Assert.NotNull(path);
         Assert.Equal(_directory, Path.GetDirectoryName(path));

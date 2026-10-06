@@ -15,7 +15,7 @@ public static class LocalizationExtensions
     public static string Text(this ILocalizationService? localization, int id, string english, params object[] values)
     {
         return localization is not null && localization.TryGetText(id, out _)
-                   ? localization.Get(id, values)
-                   : string.Format(CultureInfo.InvariantCulture, english, values);
+            ? localization.Get(id, values)
+            : string.Format(CultureInfo.InvariantCulture, english, values);
     }
 }

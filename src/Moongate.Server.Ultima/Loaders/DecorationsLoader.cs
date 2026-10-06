@@ -10,7 +10,8 @@ namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
 ///     Reads <c>templates/decorations/&lt;folder&gt;/*.toml</c> on demand, so an edited file is placed by the next
-///     <c>.decorate</c> without a restart. A folder or a file starting with <c>_</c> is skipped; <c>britannia</c> decorates Trammel
+///     <c>.decorate</c> without a restart. A folder or a file starting with <c>_</c> is skipped; <c>britannia</c>
+///     decorates Trammel
 ///     and Felucca, and any other folder must be named after a map.
 /// </summary>
 public sealed class DecorationsLoader : IDecorationsLoader

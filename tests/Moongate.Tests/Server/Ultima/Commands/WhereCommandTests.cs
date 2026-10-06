@@ -51,7 +51,8 @@ public sealed class WhereCommandTests : IAsyncDisposable
             new StubDataLoaderService().With(
                 new RegionContent
                 {
-                    Map = MapType.Trammel, Name = "Britain", Areas = [new RegionAreaContent { X1 = 1400, Y1 = 1500, X2 = 1700, Y2 = 1800 }]
+                    Map = MapType.Trammel, Name = "Britain",
+                    Areas = [new RegionAreaContent { X1 = 1400, Y1 = 1500, X2 = 1700, Y2 = 1800 }]
                 }
             )
         );

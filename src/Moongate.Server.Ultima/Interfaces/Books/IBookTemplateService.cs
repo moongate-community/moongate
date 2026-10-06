@@ -16,6 +16,8 @@ public interface IBookTemplateService
     /// <summary>
     ///     Renders all fields atomically; invalid or missing supplied values return false.
     /// </summary>
-    bool TryRender(string id, TextTemplateContext context, string language,
-        IReadOnlyDictionary<string, object?>? values, out RenderedBook? rendered);
+    bool TryRender(
+        string id, TextTemplateContext context, string language,
+        IReadOnlyDictionary<string, object?>? values, out RenderedBook? rendered
+    );
 }

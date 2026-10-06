@@ -9,8 +9,10 @@ public sealed class ContainerLayoutServiceTests
 {
     private readonly ContainerLayoutService _service = new(
         new StubDataLoaderService().With(
-            new ContainerContent { Name = "default", Gump = 0x3C, Bounds = new(new Point2D(44, 65), new Point2D(186, 159)), Default = true },
-            new ContainerContent { Name = "bag", Gump = 0x3D, Bounds = new(new Point2D(29, 34), new Point2D(137, 128)), Items = [0x0E76] }
+            new ContainerContent
+                { Name = "default", Gump = 0x3C, Bounds = new(new Point2D(44, 65), new Point2D(186, 159)), Default = true },
+            new ContainerContent
+                { Name = "bag", Gump = 0x3D, Bounds = new(new Point2D(29, 34), new Point2D(137, 128)), Items = [0x0E76] }
         )
     );
 

@@ -59,7 +59,10 @@ public sealed class MessagesLoaderTests
         root.CreateFile("data/messages/eng.toml", English);
         root.CreateFile("data/messages/ita.toml", Italian);
 
-        var messages = (await CreateLoader(root, "ITA").LoadDataAsync()).Entities.ToDictionary(message => message.Id, message => message.Text);
+        var messages = (await CreateLoader(root, "ITA").LoadDataAsync()).Entities.ToDictionary(
+            message => message.Id,
+            message => message.Text
+        );
 
         Assert.Equal("Sali a bordo della barca.", messages[0]);
         Assert.Equal("{0} è stato ucciso da {1}!", messages[1]);
@@ -146,7 +149,10 @@ public sealed class MessagesLoaderTests
         root.CreateFile("data/messages/ita/boats.toml", "[messages]\n0 = \"Sali a bordo della barca.\"\n");
         root.CreateFile("data/messages/ita/combat.toml", "[messages]\n1 = \"{0} è stato ucciso da {1}!\"\n");
 
-        var messages = (await CreateLoader(root, "ita").LoadDataAsync()).Entities.ToDictionary(message => message.Id, message => message.Text);
+        var messages = (await CreateLoader(root, "ita").LoadDataAsync()).Entities.ToDictionary(
+            message => message.Id,
+            message => message.Text
+        );
 
         Assert.Equal("Sali a bordo della barca.", messages[0]);
         Assert.Equal("{0} è stato ucciso da {1}!", messages[1]);

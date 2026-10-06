@@ -9,7 +9,8 @@ namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
 ///     Loads every <c>*.toml</c> under <c>templates/loots/</c>, recursively; a table with no entries is kept, logged,
-///     and gives nothing. An empty or duplicate id, an entry with both an item and a nested table, an item that is not an item template, a nested table
+///     and gives nothing. An empty or duplicate id, an entry with both an item and a nested table, an item that is not an item
+///     template, a nested table
 ///     that does not exist, a weight below 1, an amount that can roll below 1 or nested tables that loop stop the
 ///     server at startup.
 /// </summary>
@@ -40,7 +41,7 @@ public class LootTemplatesLoader : IDataLoader<LootTemplate>
         if (Directory.Exists(lootsDirectoryPath))
         {
             foreach (var path in Directory.EnumerateFiles(lootsDirectoryPath, "*.toml", SearchOption.AllDirectories)
-                                          .Order(StringComparer.Ordinal))
+                         .Order(StringComparer.Ordinal))
             {
                 var file = await TomlUtils.DeserializeFromFileAsync<LootTemplateFile>(path, null, cancellationToken) ??
                            new LootTemplateFile();
@@ -63,8 +64,8 @@ public class LootTemplatesLoader : IDataLoader<LootTemplate>
         }
 
         var itemIds = _dataLoaderService.GetEntities<ItemTemplate>()
-                                        .Select(template => template.Id)
-                                        .ToHashSet(StringComparer.Ordinal);
+            .Select(template => template.Id)
+            .ToHashSet(StringComparer.Ordinal);
 
         foreach (var (table, file) in byId.Values)
         {
@@ -76,7 +77,9 @@ public class LootTemplatesLoader : IDataLoader<LootTemplate>
         {
             if (template.Loot?.FirstOrDefault(loot => !byId.ContainsKey(loot)) is { } missing)
             {
-                throw new InvalidDataException($"Item template '{template.Id}' has loot '{missing}', which is not a loot table.");
+                throw new InvalidDataException(
+                    $"Item template '{template.Id}' has loot '{missing}', which is not a loot table."
+                );
             }
         }
 

@@ -36,7 +36,9 @@ public sealed class SkillLockPacketHandlerTests : IAsyncLifetime
     [InlineData(21, 1, SkillLockType.Down)]
     [InlineData(0, 2, SkillLockType.Locked)]
     [InlineData(57, 1, SkillLockType.Down)]
-    public void Handle_GivesTheLockOfTheSkillToTheCharacter_WhichChecksThem(int skill, byte lockValue, SkillLockType expected)
+    public void Handle_GivesTheLockOfTheSkillToTheCharacter_WhichChecksThem(
+        int skill, byte lockValue, SkillLockType expected
+    )
     {
         Handle(skill, lockValue);
 

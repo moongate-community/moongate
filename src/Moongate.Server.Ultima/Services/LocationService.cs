@@ -21,6 +21,7 @@ public sealed class LocationService : ILocationService
 
     // By path in lower case; the lists are those the nodes show.
     private Dictionary<string, (LocationNode Node, List<string> Categories, List<NamedLocation> Locations)>? _nodes;
+
     // The words of each place, part by part: its categories, then its name.
     private List<(NamedLocation Place, string[] Parts)>? _places;
 
@@ -75,8 +76,8 @@ public sealed class LocationService : ILocationService
 
         // Nothing is named so: the last words of a name, such as "haven" for "Old Haven".
         var ending = _places.Where(entry => EndsWithWords(string.Join(' ', entry.Parts), wanted))
-                            .Select(entry => entry.Place)
-                            .ToList();
+            .Select(entry => entry.Place)
+            .ToList();
         var here = Here(ending, own);
 
         return here.Count > 0 ? here : ending;
@@ -130,7 +131,11 @@ public sealed class LocationService : ILocationService
 
                 if (!nodes.ContainsKey(Key(child)))
                 {
-                    Add(nodes, nodes[Key(parent)].Node.Path is { Length: > 0 } above ? above + Separator + name : name, name);
+                    Add(
+                        nodes,
+                        nodes[Key(parent)].Node.Path is { Length: > 0 } above ? above + Separator + name : name,
+                        name
+                    );
                     nodes[Key(parent)].Categories.Add(name);
 
                     if (parent.Length > 0)
@@ -159,7 +164,8 @@ public sealed class LocationService : ILocationService
     {
         var categories = new List<string>();
         var locations = new List<NamedLocation>();
-        nodes[Key(path)] = (new() { Path = path, Name = name, Categories = categories, Locations = locations }, categories, locations);
+        nodes[Key(path)] = (new() { Path = path, Name = name, Categories = categories, Locations = locations }, categories,
+            locations);
     }
 
     // The first place of a category: one of its own, else the first of the categories in it.
@@ -169,7 +175,12 @@ public sealed class LocationService : ILocationService
         {
             // ModernUO lists a town's places by name, so the first is whatever the alphabet puts there, such as
             // the upper floor of a castle: its "Center" is where someone going to the town means to stand.
-            return node.Locations.FirstOrDefault(place => string.Equals(place.Name, CenterName, StringComparison.OrdinalIgnoreCase)) ??
+            return node.Locations.FirstOrDefault(place => string.Equals(
+                           place.Name,
+                           CenterName,
+                           StringComparison.OrdinalIgnoreCase
+                       )
+                   ) ??
                    node.Locations[0];
         }
 
@@ -186,15 +197,18 @@ public sealed class LocationService : ILocationService
 
     private static string Key(string path)
     {
-        return string.Join(Separator, path.Split(Separator, StringSplitOptions.RemoveEmptyEntries).Select(part => part.Trim()))
-                     .ToLowerInvariant();
+        return string.Join(
+                Separator,
+                path.Split(Separator, StringSplitOptions.RemoveEmptyEntries).Select(part => part.Trim())
+            )
+            .ToLowerInvariant();
     }
 
     // Lower case, one space between words.
     private static string Words(string text)
     {
         return string.Join(' ', text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-                     .ToLowerInvariant();
+            .ToLowerInvariant();
     }
 
     private static string[] Parts(string category)

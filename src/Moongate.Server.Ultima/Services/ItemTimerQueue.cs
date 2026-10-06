@@ -61,7 +61,8 @@ public sealed class ItemTimerQueue : IItemTimerQueue
 
         foreach (var (key, value) in props)
         {
-            if (key.Length > PropPrefix.Length && key.StartsWith(PropPrefix, StringComparison.Ordinal) && value is long dueAt)
+            if (key.Length > PropPrefix.Length && key.StartsWith(PropPrefix, StringComparison.Ordinal) &&
+                value is long dueAt)
             {
                 Schedule(item.Id, key[PropPrefix.Length..], dueAt);
             }

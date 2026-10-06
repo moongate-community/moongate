@@ -13,7 +13,12 @@ namespace Moongate.Server.Ultima.Packets.BulletinBoards;
 ///     A message of a bulletin board in full (0x71, sub-command 0x02): who posted it, what about and when, how the
 ///     poster looked, and its lines. The answer to a client that asked for it with sub-command 0x03.
 /// </summary>
-[PacketHandler(0x71, PacketSizing.Variable, MinimumLength = HeaderLength + 3 * 2 + 6, Description = "Bulletin board: message")]
+[PacketHandler(
+    0x71,
+    PacketSizing.Variable,
+    MinimumLength = HeaderLength + 3 * 2 + 6,
+    Description = "Bulletin board: message"
+)]
 public sealed class BulletinBoardMessagePacket : BasePacket<BulletinBoardMessagePacket>, IOutgoingPacket
 {
     private const byte Subcommand = 0x02;

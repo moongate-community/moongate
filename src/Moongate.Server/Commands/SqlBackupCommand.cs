@@ -52,11 +52,11 @@ public sealed class SqlBackupCommand : ICommandExecutor
         {
             context.Print(
                 _localization.Text(
-                        CommandMessages.SqlBackupFileWritten,
-                        "{0} ({1})",
-                        Path.GetFileName(file.Path),
-                        FormatSize(file.Size)
-                    )
+                    CommandMessages.SqlBackupFileWritten,
+                    "{0} ({1})",
+                    Path.GetFileName(file.Path),
+                    FormatSize(file.Size)
+                )
             );
         }
 
@@ -64,11 +64,11 @@ public sealed class SqlBackupCommand : ICommandExecutor
         {
             context.PrintError(
                 _localization.Text(
-                        CommandMessages.SqlBackupFailed,
-                        "SQL backup of {0} failed: {1}.",
-                        failure.Database,
-                        failure.Reason
-                    )
+                    CommandMessages.SqlBackupFailed,
+                    "SQL backup of {0} failed: {1}.",
+                    failure.Database,
+                    failure.Reason
+                )
             );
         }
     }

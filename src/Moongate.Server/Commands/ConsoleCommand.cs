@@ -35,7 +35,11 @@ public sealed class ConsoleCommand : ICommandExecutor, ICommandArgumentCompleter
 
         _prompt.LockInput();
         context.Print(
-            _localization.Text(CommandMessages.ConsoleLocked, "Console locked. Press '{0}' to unlock.", _prompt.UnlockCharacter)
+            _localization.Text(
+                CommandMessages.ConsoleLocked,
+                "Console locked. Press '{0}' to unlock.",
+                _prompt.UnlockCharacter
+            )
         );
 
         return Task.CompletedTask;

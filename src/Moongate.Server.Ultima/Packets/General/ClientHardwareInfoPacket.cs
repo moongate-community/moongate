@@ -9,12 +9,14 @@ namespace Moongate.Server.Ultima.Packets.General;
 
 /// <summary>
 ///     Hardware and operating system information the client sends once connected to the game server ("Spy on
-///     Client 2"); the Enhanced Client also sends it to the login server, right after the account login. The server only needs it for diagnostics; the packet exists so the frame is consumed instead
+///     Client 2"); the Enhanced Client also sends it to the login server, right after the account login. The server only needs
+///     it for diagnostics; the packet exists so the frame is consumed instead
 ///     of being rejected as an unknown opcode. Numbers are big-endian and text is UTF-16BE.
 /// </summary>
 [PacketHandler(0xD9, PacketSizing.Fixed, Length = 268, Description = "Client hardware information")]
-public sealed class ClientHardwareInfoPacket : BaseFixedPacket<ClientHardwareInfoPacket>,
-    IIncomingPacket<ClientHardwareInfoPacket>
+public sealed class ClientHardwareInfoPacket
+    : BaseFixedPacket<ClientHardwareInfoPacket>,
+        IIncomingPacket<ClientHardwareInfoPacket>
 {
     private const int VideoDescriptionLength = 128;
     private const int LanguageCodeLength = 8;

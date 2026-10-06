@@ -30,7 +30,9 @@ public sealed class GlobalLightCommand : ICommandExecutor
         if (context.Arguments.Length == 0)
         {
             await _light.SetOverrideAsync(null, context.CancellationToken);
-            context.Print(_localization.Text(CommandMessages.GlobalLightCleared, "The global light follows the time of day again."));
+            context.Print(
+                _localization.Text(CommandMessages.GlobalLightCleared, "The global light follows the time of day again.")
+            );
 
             return;
         }

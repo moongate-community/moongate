@@ -6,20 +6,20 @@ using ShaiRandom.Generators;
 namespace Moongate.Core.DiceNotation;
 
 /// <summary>
-/// The default class for representing a parsed dice expression.
+///     The default class for representing a parsed dice expression.
 /// </summary>
 public class DiceExpression
 {
     /// <summary>
-    /// The root term in this expression tree.
+    ///     The root term in this expression tree.
     /// </summary>
     public readonly ITerm RootTerm;
 
     /// <summary>
-    /// Constructor. Takes the last term in the dice expression (the root of the expression tree).
+    ///     Constructor. Takes the last term in the dice expression (the root of the expression tree).
     /// </summary>
     /// <param name="rootTerm">
-    /// The root of the expression tree -- by evaluating this term, all others will be evaluated recursively.
+    ///     The root of the expression tree -- by evaluating this term, all others will be evaluated recursively.
     /// </param>
     public DiceExpression(ITerm rootTerm)
     {
@@ -27,28 +27,36 @@ public class DiceExpression
     }
 
     /// <summary>
-    /// Returns the maximum possible result of the dice expression.
+    ///     Returns the maximum possible result of the dice expression.
     /// </summary>
-    /// <returns>The maximum possible result of the dice expression.</returns>
+    /// <returns>
+    ///     The maximum possible result of the dice expression.
+    /// </returns>
     public int MaxRoll()
     {
         return RootTerm.GetBounds().Max;
     }
 
     /// <summary>
-    /// Returns the minimum possible result of the dice expression.
+    ///     Returns the minimum possible result of the dice expression.
     /// </summary>
-    /// <returns>The minimum possible result of the dice expression.</returns>
+    /// <returns>
+    ///     The minimum possible result of the dice expression.
+    /// </returns>
     public int MinRoll()
     {
         return RootTerm.GetBounds().Min;
     }
 
     /// <summary>
-    /// Rolls the expression using the RNG given, returning the result.
+    ///     Rolls the expression using the RNG given, returning the result.
     /// </summary>
-    /// <param name="rng">The RNG to use. If null is specified, the default RNG is used.</param>
-    /// <returns>The result obtained by rolling the dice expression.</returns>
+    /// <param name="rng">
+    ///     The RNG to use. If null is specified, the default RNG is used.
+    /// </param>
+    /// <returns>
+    ///     The result obtained by rolling the dice expression.
+    /// </returns>
     public int Roll(IEnhancedRandom? rng = null)
     {
         rng ??= BuiltInRng.Generator;
@@ -57,9 +65,11 @@ public class DiceExpression
     }
 
     /// <summary>
-    /// Returns a parenthesized string representing the dice expression in dice notation
+    ///     Returns a parenthesized string representing the dice expression in dice notation
     /// </summary>
-    /// <returns>A parenthesized string representing the expression.</returns>
+    /// <returns>
+    ///     A parenthesized string representing the expression.
+    /// </returns>
     public override string ToString()
     {
         return RootTerm.ToString() ?? "null";

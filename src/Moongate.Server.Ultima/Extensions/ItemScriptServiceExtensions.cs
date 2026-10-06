@@ -16,6 +16,7 @@ public static class ItemScriptServiceExtensions
     /// </summary>
     public static bool Allows(this IItemScriptService? scripts, ItemEntity item, string function, params object?[] args)
     {
-        return scripts is null || scripts.Run(item, function, args) is not { Kind: ScriptResultKind.Completed, Values: [false, ..] };
+        return scripts is null || scripts.Run(item, function, args) is not
+            { Kind: ScriptResultKind.Completed, Values: [false, ..] };
     }
 }

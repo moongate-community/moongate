@@ -31,7 +31,12 @@ public sealed class BookEditPacketHandlerTests
         await using var f = await BookTestFixture.CreateAsync();
         var (handler, book) = await StartAsync(f);
         var body = "01010014" + "0009" + Hex("My diary") + "00" + "0005" + Hex("Aria") + "00";
-        Assert.True(BookHeaderChangePacket.TryParse(Convert.FromHexString("D4" + (7 + body.Length / 2).ToString("X4") + $"{book.Id.Value:X8}" + body), out var header));
+        Assert.True(
+            BookHeaderChangePacket.TryParse(
+                Convert.FromHexString("D4" + (7 + body.Length / 2).ToString("X4") + $"{book.Id.Value:X8}" + body),
+                out var header
+            )
+        );
 
         await f.OnLoopAsync(() => handler.Handle(f.Session, header));
 
@@ -65,7 +70,10 @@ public sealed class BookEditPacketHandlerTests
 
         await f.OnLoopAsync(() => handler.Handle(f.Session, packet));
 
-        Assert.Equal((new string('é', 30), new string('ò', 15)), (book.GetProp("book.title", ""), book.GetProp("book.author", "")));
+        Assert.Equal(
+            (new string('é', 30), new string('ò', 15)),
+            (book.GetProp("book.title", ""), book.GetProp("book.author", ""))
+        );
     }
 
     // A request for a page, a packet that is not well formed, a book that is not there: nothing changes and
@@ -81,17 +89,24 @@ public sealed class BookEditPacketHandlerTests
         var missing = new ItemEntity { Id = new(0x4000FFFF), TemplateId = "readable_book" };
 
         await f.OnLoopAsync(() =>
-        {
-            handler.Handle(f.Session, Pages(book, body));
-            handler.Handle(f.Session, Pages(missing, "0001" + "0001" + "0001" + Hex("x") + "00"));
-        });
+            {
+                handler.Handle(f.Session, Pages(book, body));
+                handler.Handle(f.Session, Pages(missing, "0001" + "0001" + "0001" + Hex("x") + "00"));
+            }
+        );
 
         Assert.Equal("", book.GetProp("book.content", "x"));
     }
 
     private static async Task<(BookEditPacketHandler Handler, ItemEntity Book)> StartAsync(BookTestFixture f)
     {
-        f.Data.With(new BookTemplate { Id = "blank", Title = "a book", Author = "$player_name", Content = "", ItemTemplate = "readable_book", Writable = true });
+        f.Data.With(
+            new BookTemplate
+            {
+                Id = "blank", Title = "a book", Author = "$player_name", Content = "", ItemTemplate = "readable_book",
+                Writable = true
+            }
+        );
         ItemEntity? book = null;
         await f.OnLoopAsync(() => book = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "blank")));
 

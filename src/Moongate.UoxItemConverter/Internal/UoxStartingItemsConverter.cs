@@ -57,10 +57,10 @@ internal static class UoxStartingItemsConverter
         var itemIds = items.ItemIds;
         var written = TomlUtils.DeserializeFromFile<StartingItemsFile>(destination)?.Set ?? [];
         var errors = written.SelectMany(set => set.Items)
-                            .SelectMany(entry => entry.Items)
-                            .Where(item => !itemIds.Contains(item))
-                            .Select(item => $"starting item '{item}' does not exist")
-                            .ToList();
+            .SelectMany(entry => entry.Items)
+            .Where(item => !itemIds.Contains(item))
+            .Select(item => $"starting item '{item}' does not exist")
+            .ToList();
 
         if (ConverterOutput.ReportErrors(error, errors, "starting items") != 0)
         {

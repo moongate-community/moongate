@@ -5,9 +5,10 @@ using System.Text.Json;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Converts ModernUO's world and dungeon teleporters (<c>Distribution/Data/teleporters.json</c>, placed there by
+///     Converts ModernUO's world and dungeon teleporters ( <c>Distribution/Data/teleporters.json</c>, placed there by
 ///     <c>[TelGen</c>) into decoration files: <c>&lt;map&gt;/teleporters.toml</c> for each map with teleporters,
-///     replacing those of a previous run. An entry is a source, a destination and <c>back</c>, which adds the teleporter
+///     replacing those of a previous run. An entry is a source, a destination and <c>back</c>, which adds the
+///     teleporter
 ///     from the destination to the source.
 /// </summary>
 internal static class ModernUoTeleporterConverter
@@ -36,7 +37,7 @@ internal static class ModernUoTeleporterConverter
 
         // Per map, in the order the teleporters are made.
         var teleporters = Maps.Select(_ => new List<(int X, int Y, int Z, int Map, int DestX, int DestY, int DestZ)>())
-                              .ToArray();
+            .ToArray();
 
         try
         {
@@ -101,11 +102,14 @@ internal static class ModernUoTeleporterConverter
             }
 
             // One block per destination, in the order of its first teleporter.
-            var blocks = teleporters[map].GroupBy(teleporter => (teleporter.Map, teleporter.DestX, teleporter.DestY, teleporter.DestZ))
-                                         .ToList();
+            var blocks = teleporters[map]
+                .GroupBy(teleporter => (teleporter.Map, teleporter.DestX, teleporter.DestY, teleporter.DestZ))
+                .ToList();
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, Write(map, blocks));
-            output.WriteLine($"{Maps[map].Folder}/{FileName}: {teleporters[map].Count} teleporters in {blocks.Count} blocks");
+            output.WriteLine(
+                $"{Maps[map].Folder}/{FileName}: {teleporters[map].Count} teleporters in {blocks.Count} blocks"
+            );
         }
 
         return 0;
@@ -117,8 +121,7 @@ internal static class ModernUoTeleporterConverter
         (int Map, int X, int Y, int Z) to
     )
     {
-        teleporters.RemoveAll(
-            other => other.X == from.X && other.Y == from.Y && Math.Abs(other.Z - from.Z) <= SameSpotHeight
+        teleporters.RemoveAll(other => other.X == from.X && other.Y == from.Y && Math.Abs(other.Z - from.Z) <= SameSpotHeight
         );
         teleporters.Add((from.X, from.Y, from.Z, to.Map, to.X, to.Y, to.Z));
     }
@@ -161,7 +164,8 @@ internal static class ModernUoTeleporterConverter
 
     private static string Write(
         int map,
-        List<IGrouping<(int Map, int DestX, int DestY, int DestZ), (int X, int Y, int Z, int Map, int DestX, int DestY, int DestZ)>> blocks
+        List<IGrouping<(int Map, int DestX, int DestY, int DestZ), (int X, int Y, int Z, int Map, int DestX, int DestY, int
+            DestZ)>> blocks
     )
     {
         var text = new StringBuilder();
@@ -208,7 +212,10 @@ internal static class ModernUoTeleporterConverter
 
             if (locations.Count == 1)
             {
-                text.AppendLine(CultureInfo.InvariantCulture, $"locations = [[{locations[0].X}, {locations[0].Y}, {locations[0].Z}]]");
+                text.AppendLine(
+                    CultureInfo.InvariantCulture,
+                    $"locations = [[{locations[0].X}, {locations[0].Y}, {locations[0].Z}]]"
+                );
 
                 continue;
             }

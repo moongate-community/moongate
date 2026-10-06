@@ -22,9 +22,11 @@ public sealed class FameKarmaCommandTests : IAsyncDisposable
 {
     private readonly StubTargetService _targets = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
+
     private readonly MobileEntity _bran = new()
     {
-        Id = new Serial(3), Name = "Bran", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0)
+        Id = new Serial(3), Name = "Bran", AccountId = new Serial(0x42), Map = MapType.Trammel,
+        Location = new Point3D(1600, 1600, 0)
     };
 
     private SessionFixture? _fixture;

@@ -103,8 +103,7 @@ public sealed class ItemSpawnService : IItemSpawnService
         }
 
         // Saved already: from here the item is live whatever the caller does.
-        await OnLoopAsync(
-            () =>
+        await OnLoopAsync(() =>
             {
                 foreach (var created in contents.Prepend(item))
                 {
@@ -128,7 +127,11 @@ public sealed class ItemSpawnService : IItemSpawnService
 
     private void Pack(ItemEntity container, ItemEntity item, List<ItemEntity> contents)
     {
-        item.PutInContainer(container.Id, _layout.RandomGridPosition(container.ItemId), ContainerSlotUtils.FirstFree(contents));
+        item.PutInContainer(
+            container.Id,
+            _layout.RandomGridPosition(container.ItemId),
+            ContainerSlotUtils.FirstFree(contents)
+        );
         contents.Add(item);
     }
 }

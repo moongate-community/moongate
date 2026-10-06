@@ -67,8 +67,12 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly StubBulletinBoardService _boards = new();
     private readonly StubBankService _bankStub = new();
     private readonly ItemService _items;
-    private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
-    private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3 };
+
+    private readonly ItemEntity _backpack = new()
+        { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    private readonly ItemEntity _potions = new()
+        { Id = new Serial(0x40000002), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3 };
 
     private readonly SettableClock _time = new();
 
@@ -107,7 +111,16 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
-        _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService()));
+        _container.RegisterInstance<ITeleportService>(
+            new TeleportService(
+                _fixture.Mobiles,
+                _view,
+                _fixture.Sessions,
+                _fixture.Sender,
+                _fixture.Sectors,
+                new StubBankService()
+            )
+        );
         _container.RegisterInstance<IMobileStateService>(_mobileState);
         _container.RegisterInstance<IDataLoaderService>(
             new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human })
@@ -118,7 +131,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IEffectService>(_effects);
         _container.AddScriptModule<EffectModule>();
         _container.RegisterScriptEnum<EffectGraphicType>();
-        _container.RegisterInstance(TestLocalization.With((398, "C'è una serratura."), (405, "Using your key, you open the door.")));
+        _container.RegisterInstance(
+            TestLocalization.With((398, "C'è una serratura."), (405, "Using your key, you open the door."))
+        );
         _container.AddScriptModule<LocalizationModule>();
         _container.RegisterInstance<IBulletinBoardService>(_boards);
         _container.RegisterInstance<IBankService>(_bankStub);
@@ -151,9 +166,19 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _potions.Amount = 1;
         _potions.SetProp("drink.uses", graphic == 0x1F9D ? 5L : 1L);
         var data = new StubDataLoaderService();
-        var handler = new UseRequestPacketHandler(_items, _fixture.Mobiles, data, new WorldConfig(),
-            new FakeTileDataService(), new ContainerLayoutService(data), _fixture.Sender,
-            TestTooltips.Create(_items, _fixture.Mobiles), new FameKarmaTitleService(data), scripts, inventory: inventory);
+        var handler = new UseRequestPacketHandler(
+            _items,
+            _fixture.Mobiles,
+            data,
+            new WorldConfig(),
+            new FakeTileDataService(),
+            new ContainerLayoutService(data),
+            _fixture.Sender,
+            TestTooltips.Create(_items, _fixture.Mobiles),
+            new FameKarmaTitleService(data),
+            scripts,
+            inventory: inventory
+        );
         Assert.True(_fixture.Sessions.TryGetByCharacterId(player.Id, out var session));
         reservations.TryReserve(player.Id, Task.CompletedTask);
         handler.Handle(session, new UseRequestPacket { Target = _potions.Id });
@@ -222,7 +247,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
         // One sip of five: three points, the sound and the gesture of drinking; the pitcher is still a pitcher.
-        Assert.Equal((5, 0x1F9D, 4L), (aria.Thirst, _potions.ItemId, Convert.ToInt64(_potions.GetProp<object>("drink.uses"))));
+        Assert.Equal(
+            (5, 0x1F9D, 4L),
+            (aria.Thirst, _potions.ItemId, Convert.ToInt64(_potions.GetProp<object>("drink.uses")))
+        );
         Assert.Equal(0x30, Assert.Single(_speech.Sounds).Sound);
         Assert.Contains("Animated 2 34 5 1", _view.Calls);
         Assert.Equal("You drink, and feel less thirsty.", _speech.Told[^1].Text);
@@ -316,7 +344,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         await engine.StartAsync();
         var scripts = new ItemScriptService(
             engine,
-            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })),
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );
@@ -355,7 +385,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         await engine.StartAsync();
         var scripts = new ItemScriptService(
             engine,
-            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })),
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );
@@ -418,11 +450,16 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         scripts.Run(door, "on_use", 2L);
         Assert.Equal((0x0676, new Point3D(1601, 1599, 0)), (door.ItemId, door.GroundLocation!.Value));
 
-        _sectors.Add(new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _sectors.Add(
+            new MobileEntity
+                { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         scripts.Run(door, "on_use", 2L);
         Assert.Equal(0x0676, door.ItemId);
 
-        _sectors.Remove(new MobileEntity { Id = new Serial(0x100), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _sectors.Remove(
+            new MobileEntity { Id = new Serial(0x100), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         scripts.Run(door, "on_use", 2L);
 
         Assert.Empty(_errors);
@@ -500,7 +537,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal((0x0676, 0x0678, (object?)true), (left.ItemId, right.ItemId, left.Props["locked"]));
-        Assert.Equal("Using your key, you open the door.", Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>()).Text);
+        Assert.Equal(
+            "Using your key, you open the door.",
+            Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>()).Text
+        );
     }
 
     [Fact]
@@ -544,7 +584,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         var (left, right) = PlaceDoubleDoor();
         var scripts = await StartDoorScriptAsync();
         scripts.Run(left, "on_use", 2L);
-        var orc = new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
+        var orc = new MobileEntity
+            { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
 
         _sectors.Add(orc);
         scripts.Run(right, "on_use", 2L);
@@ -568,7 +609,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         scripts.Run(door, "on_use", 2L);
         // The timer is a prop of the door, so the world save keeps it and a restart does not lose it.
         Assert.Equal(TimeSpan.FromSeconds(20), _itemTimers.Remaining(door, "close"));
-        var orc = new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+        var orc = new MobileEntity
+            { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
         _sectors.Add(orc);
 
         // What the timer service does when the time has come.
@@ -624,7 +666,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     [InlineData(null, null, null)]
     // To a map that is not loaded.
     [InlineData(null, 5690L, 4L)]
-    public async Task TheShippedTeleporterScript_OffWithoutADestinationOrToAMapNotLoaded_DoesNothing(bool? active, long? x, long? map)
+    public async Task TheShippedTeleporterScript_OffWithoutADestinationOrToAMapNotLoaded_DoesNothing(
+        bool? active, long? x, long? map
+    )
     {
         var props = new Dictionary<string, object?> { ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["sound_id"] = 0x1FEL };
 
@@ -695,7 +739,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
         Assert.Equal(expected, _effects.At.Select(effect => effect.Location));
-        Assert.All(_effects.At, effect => Assert.Equal((aria.Map, (int)EffectGraphicType.Smoke), (effect.Map, effect.Options.Graphic)));
+        Assert.All(
+            _effects.At,
+            effect => Assert.Equal((aria.Map, (int)EffectGraphicType.Smoke), (effect.Map, effect.Options.Graphic))
+        );
     }
 
     [Fact]
@@ -709,7 +756,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
-        Assert.Equal([new Point3D(1600, 1600, 0), new Point3D(1595, 2489, 20)], _effects.At.Select(effect => effect.Location));
+        Assert.Equal(
+            [new Point3D(1600, 1600, 0), new Point3D(1595, 2489, 20)],
+            _effects.At.Select(effect => effect.Location)
+        );
         Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
         Assert.Empty(_timers.Timers);
     }
@@ -841,7 +891,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         var teleporter = PlaceTeleporter(
             new()
             {
-                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["teleport.map"] = (long)MapType.Felucca,
+                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L,
+                ["teleport.map"] = (long)MapType.Felucca,
                 ["sound_id"] = 0x1FEL
             }
         );
@@ -860,7 +911,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     [InlineData(null, false)]
     [InlineData(true, true)]
     [InlineData("true", true)]
-    public async Task TheShippedTeleporterScript_AnNpc_TravelsOnlyThroughATeleporterForCreatures(object? creatures, bool travels)
+    public async Task TheShippedTeleporterScript_AnNpc_TravelsOnlyThroughATeleporterForCreatures(
+        object? creatures, bool travels
+    )
     {
         var props = new Dictionary<string, object?> { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L };
 
@@ -871,7 +924,11 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
 
         var teleporter = PlaceTeleporter(props);
         var scripts = await StartTeleporterScriptAsync();
-        var orc = new MobileEntity { Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+        var orc = new MobileEntity
+        {
+            Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
+            Location = new Point3D(1600, 1600, 0)
+        };
         _fixture.Mobiles.EnterWorld(orc);
 
         scripts.Run(teleporter, "on_npc_move_over", 0x100L);
@@ -884,7 +941,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     public async Task TheShippedTeleporterScript_ToItsOwnMap_Teleports()
     {
         var teleporter = PlaceTeleporter(
-            new() { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["teleport.map"] = (long)MapType.Trammel }
+            new()
+            {
+                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["teleport.map"] = (long)MapType.Trammel
+            }
         );
         var scripts = await StartTeleporterScriptAsync();
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
@@ -987,7 +1047,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
 
     private ItemEntity PlaceLight(int graphic, bool? isProtected)
     {
-        var light = new ItemEntity { Id = new Serial(0x40000020), TemplateId = "decoration_light", ItemId = graphic, Amount = 1 };
+        var light = new ItemEntity
+            { Id = new Serial(0x40000020), TemplateId = "decoration_light", ItemId = graphic, Amount = 1 };
 
         if (isProtected is { } value)
         {
@@ -1012,7 +1073,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     [InlineData(16, 0, 1042956, "4:00")]
     [InlineData(20, 0, 1042957, "8:00")]
     [InlineData(23, 59, 1042957, "11:59")]
-    public async Task TheShippedClockScript_TellsThePartOfTheDayAndTheTimeToTheMinute(int hours, int minutes, int part, string exact)
+    public async Task TheShippedClockScript_TellsThePartOfTheDayAndTheTimeToTheMinute(
+        int hours, int minutes, int part, string exact
+    )
     {
         _clock.Time = new(hours, minutes);
         var scripts = await StartItemScriptAsync("clock", "clock");
@@ -1033,7 +1096,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     public async Task TheShippedBulletinBoardScript_OpensTheBoardOnWhoDoubleClicksIt()
     {
         var scripts = await StartItemScriptAsync("bulletin_board", "bulletin_board");
-        var board = new ItemEntity { Id = new Serial(0x40000090), TemplateId = "bulletin_board", ItemId = 0x1E5E, Amount = 1 };
+        var board = new ItemEntity
+            { Id = new Serial(0x40000090), TemplateId = "bulletin_board", ItemId = 0x1E5E, Amount = 1 };
         board.PlaceOnGround(MapType.Trammel, new Point3D(1496, 1628, 10));
         _items.Add([board]);
 
@@ -1117,7 +1181,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         await engine.StartAsync();
         var scripts = new ItemScriptService(
             engine,
-            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_light", ScriptId = "light" })),
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_light", ScriptId = "light" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );
@@ -1238,7 +1304,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         await engine.StartAsync();
         var scripts = new ItemScriptService(
             engine,
-            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_door", ScriptId = "door" })),
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_door", ScriptId = "door" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );

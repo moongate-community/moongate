@@ -38,8 +38,8 @@ public static class ItemEntityExtensions
     }
 
     /// <summary>
-    ///     Resolves the client's plural markers: <c>%s%</c> adds a plural ending (<c>gold coin%s%</c>), and
-    ///     <c>%plural/singular%</c> swaps one ending for the other (<c>loa%ves/f%</c>).
+    ///     Resolves the client's plural markers: <c>%s%</c> adds a plural ending ( <c>gold coin%s%</c>), and
+    ///     <c>%plural/singular%</c> swaps one ending for the other ( <c>loa%ves/f%</c>).
     /// </summary>
     private static string ResolvePlural(string name, bool plural)
     {
@@ -62,7 +62,10 @@ public static class ItemEntityExtensions
             }
 
             var forms = parts[i].Split('/', 2);
-            builder.Append(plural ? forms[0] : forms.Length > 1 ? forms[1] : "");
+            builder.Append(
+                plural ? forms[0] :
+                forms.Length > 1 ? forms[1] : ""
+            );
         }
 
         return builder.ToString().Trim();

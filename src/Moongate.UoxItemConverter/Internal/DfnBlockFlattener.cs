@@ -1,36 +1,10 @@
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Inlines a
-///     <c>
-///         get=
-///     </c>
-///     target that has no
-///     <c>
-///         id=
-///     </c>
-///     of its own, such as
-///     <c>
-///         [base_coin]
-///     </c>
-///     , into the block that names it. UOX3 applies such a target's lines in place, so its fields
-///     (a coin's
-///     <c>
-///         weight=2
-///     </c>
-///     ,
-///     <c>
-///         pileable=1
-///     </c>
-///     ) would otherwise never reach the templates made from its children. A target with an
-///     <c>
-///         id=
-///     </c>
-///     is converted on its own and stays a
-///     <c>
-///         BaseId
-///     </c>
-///     .
+///     Inlines a <c>get=</c> target that has no <c>id=</c> of its own, such as <c>[base_coin]</c>, into the block that
+///     names it. UOX3 applies such a target's lines in place, so its fields
+///     (a coin's <c>weight=2</c>, <c>pileable=1</c>) would otherwise never reach the templates made from its children.
+///     A target with an <c>id=</c> is converted on its own and stays a <c>BaseId</c>.
 /// </summary>
 internal static class DfnBlockFlattener
 {
@@ -77,9 +51,9 @@ internal static class DfnBlockFlattener
         }
 
         var entries = flatParent.Entries
-                                .Where(line => !IsGetLine(line))
-                                .Concat(block.Entries.Where(line => !IsGetLine(line)))
-                                .ToList();
+            .Where(line => !IsGetLine(line))
+            .Concat(block.Entries.Where(line => !IsGetLine(line)))
+            .ToList();
 
         return block with { Fields = fields, Entries = entries };
     }

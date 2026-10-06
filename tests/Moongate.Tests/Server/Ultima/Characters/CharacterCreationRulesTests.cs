@@ -40,7 +40,12 @@ public sealed class CharacterCreationRulesTests
     [Theory, InlineData(50, 50, 0, 0), InlineData(50, 50, 20, 0), InlineData(30, 30, 30, 30)]
     public void ValidateSkills_TotalOf100Or120_KeepsTheSkillsWithAValue(int a, int b, int c, int d)
     {
-        var skills = Skills((SkillType.Magery, a), (SkillType.Meditation, b), (SkillType.Wrestling, c), (SkillType.Tactics, d));
+        var skills = Skills(
+            (SkillType.Magery, a),
+            (SkillType.Meditation, b),
+            (SkillType.Wrestling, c),
+            (SkillType.Tactics, d)
+        );
 
         var accepted = CharacterCreationRules.ValidateSkills(skills, RaceType.Human);
 
@@ -50,7 +55,12 @@ public sealed class CharacterCreationRulesTests
     [Fact]
     public void ValidateSkills_ValueAbove50_IsNotValid()
     {
-        var skills = Skills((SkillType.Magery, 51), (SkillType.Meditation, 49), (SkillType.Wrestling, 0), (SkillType.Tactics, 0));
+        var skills = Skills(
+            (SkillType.Magery, 51),
+            (SkillType.Meditation, 49),
+            (SkillType.Wrestling, 0),
+            (SkillType.Tactics, 0)
+        );
 
         Assert.Empty(CharacterCreationRules.ValidateSkills(skills, RaceType.Human));
     }
@@ -58,7 +68,12 @@ public sealed class CharacterCreationRulesTests
     [Theory, InlineData(50, 40), InlineData(50, 60)]
     public void ValidateSkills_TotalNot100Or120_IsNotValid(int a, int b)
     {
-        var skills = Skills((SkillType.Magery, a), (SkillType.Meditation, 30), (SkillType.Wrestling, b - 30), (SkillType.Tactics, 0));
+        var skills = Skills(
+            (SkillType.Magery, a),
+            (SkillType.Meditation, 30),
+            (SkillType.Wrestling, b - 30),
+            (SkillType.Tactics, 0)
+        );
 
         Assert.Empty(CharacterCreationRules.ValidateSkills(skills, RaceType.Human));
     }
@@ -66,7 +81,12 @@ public sealed class CharacterCreationRulesTests
     [Fact]
     public void ValidateSkills_SameSkillTwice_IsNotValid()
     {
-        var skills = Skills((SkillType.Magery, 50), (SkillType.Magery, 50), (SkillType.Wrestling, 0), (SkillType.Tactics, 0));
+        var skills = Skills(
+            (SkillType.Magery, 50),
+            (SkillType.Magery, 50),
+            (SkillType.Wrestling, 0),
+            (SkillType.Tactics, 0)
+        );
 
         Assert.Empty(CharacterCreationRules.ValidateSkills(skills, RaceType.Human));
     }

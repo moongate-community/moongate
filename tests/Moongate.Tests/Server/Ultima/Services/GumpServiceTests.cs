@@ -296,10 +296,10 @@ public sealed class GumpServiceTests : IAsyncLifetime
     private GumpInstance Confirm(Action<GameSession, GumpResponse>? onResponse = null, string id = "confirm")
     {
         var layout = new GumpLayout()
-                     .Add(new GumpBackground { GumpId = 9200, Width = 300, Height = 200 })
-                     .Add(new GumpButton { Up = 4005, Down = 4007, ButtonId = 2 })
-                     .Add(new GumpCheckbox { Off = 210, On = 211, SwitchId = 10 })
-                     .Add(new GumpTextEntry { Width = 100, Height = 20, EntryId = 3 });
+            .Add(new GumpBackground { GumpId = 9200, Width = 300, Height = 200 })
+            .Add(new GumpButton { Up = 4005, Down = 4007, ButtonId = 2 })
+            .Add(new GumpCheckbox { Off = 210, On = 211, SwitchId = 10 })
+            .Add(new GumpTextEntry { Width = 100, Height = 20, EntryId = 3 });
 
         return new()
         {

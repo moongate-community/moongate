@@ -14,7 +14,10 @@ public sealed class MotdRendererTests
         var context = new MotdContext("Shard", "Felucca", "1.2.3", "Moonrise", "Aria", 42);
         var line = new MotdLine(1, "${version}|${codename}|${server_name}|${realm_name}|${player_name}|${users_online}");
 
-        Assert.Equal("1.2.3|Moonrise|Shard|Felucca|Aria|42", await renderer.RenderAsync(line, context, CancellationToken.None));
+        Assert.Equal(
+            "1.2.3|Moonrise|Shard|Felucca|Aria|42",
+            await renderer.RenderAsync(line, context, CancellationToken.None)
+        );
     }
 
     [Fact]
@@ -26,7 +29,11 @@ public sealed class MotdRendererTests
         var renderer = new MotdRenderer(registry);
         var context = new MotdContext("S", "R", "1", "C", "P", 1);
 
-        var result = await renderer.RenderAsync(new(1, "${custom} $ {x} ${version} ${version}"), context, CancellationToken.None);
+        var result = await renderer.RenderAsync(
+            new(1, "${custom} $ {x} ${version} ${version}"),
+            context,
+            CancellationToken.None
+        );
 
         Assert.Equal("${version} $ {x} 1 1", result);
     }

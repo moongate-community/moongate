@@ -76,7 +76,10 @@ public sealed class WorldViewServiceTests
         ClearSent();
 
         Enter(2, 1496, 1628, AriaSession);
-        Assert.DoesNotContain(_sender.Sent, packet => packet is MobileIncomingPacket incoming && incoming.Serial == boris.Id);
+        Assert.DoesNotContain(
+            _sender.Sent,
+            packet => packet is MobileIncomingPacket incoming && incoming.Serial == boris.Id
+        );
 
         ClearSent();
         var carla = Mobile(4, 1497, 1628);
@@ -132,7 +135,10 @@ public sealed class WorldViewServiceTests
         _mobiles.MoveTo(aria, aria.Map, new Point3D(1490, 1628, 0));
         _view.Moved(aria, new Point3D(1470, 1628, 0), false);
 
-        Assert.DoesNotContain(_sender.Sent, packet => packet is MobileIncomingPacket incoming && incoming.Serial == boris.Id);
+        Assert.DoesNotContain(
+            _sender.Sent,
+            packet => packet is MobileIncomingPacket incoming && incoming.Serial == boris.Id
+        );
     }
 
     [Fact]
@@ -150,8 +156,12 @@ public sealed class WorldViewServiceTests
 
         var bySession = _sender.Sent.Zip(_sender.SentSessionIds).ToLookup(pair => pair.Second, pair => pair.First);
         Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(bySession[BorisSession])).Serial);
-        Assert.True((Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[CarlaSession])).Flags & MobileFlagsType.Hidden) != 0);
-        Assert.True((Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[AriaSession])).Flags & MobileFlagsType.Hidden) != 0);
+        Assert.True(
+            (Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[CarlaSession])).Flags & MobileFlagsType.Hidden) != 0
+        );
+        Assert.True(
+            (Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[AriaSession])).Flags & MobileFlagsType.Hidden) != 0
+        );
     }
 
     [Fact]
@@ -169,7 +179,10 @@ public sealed class WorldViewServiceTests
         var bySession = _sender.Sent.Zip(_sender.SentSessionIds).ToLookup(pair => pair.Second, pair => pair.First);
         Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(bySession[BorisSession])).Serial);
         // The staff saw it all along: only its flags change.
-        Assert.Equal(MobileFlagsType.None, Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[CarlaSession])).Flags & MobileFlagsType.Hidden);
+        Assert.Equal(
+            MobileFlagsType.None,
+            Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[CarlaSession])).Flags & MobileFlagsType.Hidden
+        );
         Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[AriaSession]));
     }
 
@@ -184,7 +197,10 @@ public sealed class WorldViewServiceTests
 
         _view.MobileFlagsChanged(aria);
 
-        Assert.All(_sender.Sent, packet => Assert.True((Assert.IsType<MobileMovingPacket>(packet).Flags & MobileFlagsType.WarMode) != 0));
+        Assert.All(
+            _sender.Sent,
+            packet => Assert.True((Assert.IsType<MobileMovingPacket>(packet).Flags & MobileFlagsType.WarMode) != 0)
+        );
         Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
     }
 
@@ -199,7 +215,10 @@ public sealed class WorldViewServiceTests
         _view.MobileFlagsChanged(aria);
 
         Assert.Equal(2, _sender.Sent.Count);
-        Assert.All(_sender.Sent, packet => Assert.Equal(NotorietyType.Criminal, Assert.IsType<MobileMovingPacket>(packet).Notoriety));
+        Assert.All(
+            _sender.Sent,
+            packet => Assert.Equal(NotorietyType.Criminal, Assert.IsType<MobileMovingPacket>(packet).Notoriety)
+        );
     }
 
     [Fact]
@@ -217,7 +236,10 @@ public sealed class WorldViewServiceTests
             packet =>
             {
                 var animation = Assert.IsType<MobileAnimationPacket>(packet);
-                Assert.Equal((aria.Id, 32, 7, 2), (animation.Serial, animation.Action, animation.FrameCount, animation.RepeatCount));
+                Assert.Equal(
+                    (aria.Id, 32, 7, 2),
+                    (animation.Serial, animation.Action, animation.FrameCount, animation.RepeatCount)
+                );
             }
         );
         Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
@@ -487,7 +509,9 @@ public sealed class WorldViewServiceTests
         var shown = Assert.Single(_sender.Sent);
         Assert.Equal(
             (0x0011, 2),
-            shown is WorldItemSaPacket sa ? (sa.Amount, sa.Light) : (((WorldItemPacket)shown).Amount, ((WorldItemPacket)shown).Light)
+            shown is WorldItemSaPacket sa
+                ? (sa.Amount, sa.Light)
+                : (((WorldItemPacket)shown).Amount, ((WorldItemPacket)shown).Light)
         );
         // The item itself is one corpse, not seventeen.
         Assert.Equal(1, corpse.Amount);
@@ -601,7 +625,10 @@ public sealed class WorldViewServiceTests
 
         Enter(2, 1496, 1628, AriaSession);
 
-        Assert.Equal([(LayerType.Cloak, cloak.Id)], _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => (item.Layer, item.Serial)));
+        Assert.Equal(
+            [(LayerType.Cloak, cloak.Id)],
+            _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => (item.Layer, item.Serial))
+        );
     }
 
     [Fact]
@@ -628,11 +655,17 @@ public sealed class WorldViewServiceTests
         var shirt = Inside(corpse, 0x40000061, 0x1517);
         var cloak = Inside(corpse, 0x40000062, 0x1515);
         // Rubbish, a layer that does not exist, no layer, a second item on a taken layer, a serial that is not inside.
-        corpse.SetProp("corpse.worn", $"x:y,{cloak.Id.Value}:200,{cloak.Id.Value}:0,{shirt.Id.Value}:5,{cloak.Id.Value}:5,999:6,");
+        corpse.SetProp(
+            "corpse.worn",
+            $"x:y,{cloak.Id.Value}:200,{cloak.Id.Value}:0,{shirt.Id.Value}:5,{cloak.Id.Value}:5,999:6,"
+        );
 
         Enter(2, 1496, 1628, AriaSession);
 
-        Assert.Equal([(LayerType.Shirt, shirt.Id)], _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => (item.Layer, item.Serial)));
+        Assert.Equal(
+            [(LayerType.Shirt, shirt.Id)],
+            _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => (item.Layer, item.Serial))
+        );
     }
 
     [Fact]
@@ -758,7 +791,10 @@ public sealed class WorldViewServiceTests
         view.Entered(aria, AriaSession, null);
 
         Assert.Equal(
-            [typeof(MobileIncomingPacket), typeof(PropertyListInfoPacket), typeof(PropertyListInfoPacket), typeof(WorldItemSaPacket), typeof(PropertyListInfoPacket)],
+            [
+                typeof(MobileIncomingPacket), typeof(PropertyListInfoPacket), typeof(PropertyListInfoPacket),
+                typeof(WorldItemSaPacket), typeof(PropertyListInfoPacket)
+            ],
             sender.Sent.Select(packet => packet.GetType())
         );
         Assert.Equal(
@@ -783,7 +819,10 @@ public sealed class WorldViewServiceTests
 
         view.WornItemChanged(aria, shirt);
 
-        Assert.Equal([typeof(WornItemPacket), typeof(PropertyListInfoPacket)], sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal(
+            [typeof(WornItemPacket), typeof(PropertyListInfoPacket)],
+            sender.Sent.Select(packet => packet.GetType())
+        );
     }
 
     [Fact]
@@ -815,7 +854,10 @@ public sealed class WorldViewServiceTests
         _view.Teleported(aria, MapType.Trammel, old);
 
         var sent = _sender.Sent.Select((packet, index) => (_sender.SentSessionIds[index], packet)).ToList();
-        Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial);
+        Assert.Equal(
+            aria.Id,
+            Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial
+        );
         Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(sent, to => to.Item1 == 30).packet).Serial);
         var own = sent.Where(to => to.Item1 == AriaSession).Select(to => to.packet).ToList();
         Assert.Equal(cara.Id, Assert.IsType<MobileIncomingPacket>(own[0]).Serial);
@@ -844,7 +886,10 @@ public sealed class WorldViewServiceTests
         _view.Teleported(aria, MapType.Trammel, old);
 
         var sent = _sender.Sent.Select((packet, index) => (_sender.SentSessionIds[index], packet)).ToList();
-        Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial);
+        Assert.Equal(
+            aria.Id,
+            Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial
+        );
         Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(sent, to => to.Item1 == 30).packet).Serial);
         // As ModernUO's ClearScreen: the mover's client is told to drop what it saw on the old map.
         var own = sent.Where(to => to.Item1 == AriaSession).Select(to => to.packet).ToList();
@@ -870,7 +915,10 @@ public sealed class WorldViewServiceTests
 
         _view.Teleported(orc, MapType.Trammel, old);
 
-        Assert.Equal([typeof(RemoveEntityPacket), typeof(MobileIncomingPacket)], _sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal(
+            [typeof(RemoveEntityPacket), typeof(MobileIncomingPacket)],
+            _sender.Sent.Select(packet => packet.GetType())
+        );
         Assert.Equal([BorisSession, 30L], _sender.SentSessionIds);
     }
 
@@ -891,8 +939,8 @@ public sealed class WorldViewServiceTests
         view.ShowItemTo(boris, hidden);
 
         var shown = _sender.Sent.Select((packet, index) => (packet, _sender.SentSessionIds[index]))
-                           .Where(sent => sent.packet is WorldItemSaPacket)
-                           .Select(sent => sent.Item2);
+            .Where(sent => sent.packet is WorldItemSaPacket)
+            .Select(sent => sent.Item2);
         Assert.Equal([BorisSession, BorisSession, BorisSession], shown);
     }
 
@@ -946,7 +994,9 @@ public sealed class WorldViewServiceTests
 
         _view.ItemAppeared(blocker);
 
-        var sent = _sender.Sent.OfType<WorldItemSaPacket>().Zip(_sender.SentSessionIds).ToDictionary(pair => pair.Second, pair => pair.First.ItemId);
+        var sent = _sender.Sent.OfType<WorldItemSaPacket>()
+            .Zip(_sender.SentSessionIds)
+            .ToDictionary(pair => pair.Second, pair => pair.First.ItemId);
         Assert.Equal((0x21A4, 0x1183), (sent[AriaSession], sent[BorisSession]));
     }
 
@@ -1175,14 +1225,13 @@ public sealed class WorldViewServiceTests
     private List<long> SessionsToldOf(MobileEntity mobile)
     {
         return _sender.Sent
-                      .Zip(_sender.SentSessionIds)
-                      .Where(
-                          pair => pair.First is MobileIncomingPacket incoming && incoming.Serial == mobile.Id ||
-                                  pair.First is MobileMovingPacket moving && moving.Serial == mobile.Id
-                      )
-                      .Select(pair => pair.Second)
-                      .Distinct()
-                      .ToList();
+            .Zip(_sender.SentSessionIds)
+            .Where(pair => pair.First is MobileIncomingPacket incoming && incoming.Serial == mobile.Id ||
+                           pair.First is MobileMovingPacket moving && moving.Serial == mobile.Id
+            )
+            .Select(pair => pair.Second)
+            .Distinct()
+            .ToList();
     }
 
     private MobileEntity Enter(uint serial, int x, int y, long session)

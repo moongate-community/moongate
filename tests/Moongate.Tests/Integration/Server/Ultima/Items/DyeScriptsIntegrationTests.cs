@@ -60,6 +60,7 @@ public sealed class DyeScriptsIntegrationTests : IAsyncLifetime
     private readonly StubTargetService _targets = new();
     private readonly StubHuePickerService _pickers = new();
     private readonly ItemService _items;
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "dyes", ItemId = new Serial(0x0FA9), ScriptId = "dyes" },
@@ -68,12 +69,24 @@ public sealed class DyeScriptsIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) }
         )
     );
-    private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
-    private readonly ItemEntity _dyes = new() { Id = new Serial(0x40000002), TemplateId = "dyes", ItemId = 0x0FA9, Amount = 1 };
-    private readonly ItemEntity _tub = new() { Id = new Serial(0x40000003), TemplateId = "tub", ItemId = 0x0FAB, Amount = 1 };
-    private readonly ItemEntity _shirt = new() { Id = new Serial(0x40000004), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
-    private readonly ItemEntity _sword = new() { Id = new Serial(0x40000005), TemplateId = "sword", ItemId = 0x0F5E, Amount = 1 };
-    private readonly ItemEntity _otherBackpack = new() { Id = new Serial(0x40000006), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    private readonly ItemEntity _backpack = new()
+        { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    private readonly ItemEntity _dyes = new()
+        { Id = new Serial(0x40000002), TemplateId = "dyes", ItemId = 0x0FA9, Amount = 1 };
+
+    private readonly ItemEntity _tub = new()
+        { Id = new Serial(0x40000003), TemplateId = "tub", ItemId = 0x0FAB, Amount = 1 };
+
+    private readonly ItemEntity _shirt = new()
+        { Id = new Serial(0x40000004), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
+
+    private readonly ItemEntity _sword = new()
+        { Id = new Serial(0x40000005), TemplateId = "sword", ItemId = 0x0F5E, Amount = 1 };
+
+    private readonly ItemEntity _otherBackpack = new()
+        { Id = new Serial(0x40000006), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
 
     private BroadcastFixture _fixture = null!;
     private LuaScriptEngineService _engine = null!;
@@ -115,7 +128,14 @@ public sealed class DyeScriptsIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ITargetService>(_targets);
         _container.RegisterInstance<IHuePickerService>(_pickers);
         _container.RegisterInstance<ITeleportService>(
-            new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService())
+            new TeleportService(
+                _fixture.Mobiles,
+                _view,
+                _fixture.Sessions,
+                _fixture.Sender,
+                _fixture.Sectors,
+                new StubBankService()
+            )
         );
         _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         _container.AddScriptModule<ItemModule>();
@@ -124,14 +144,13 @@ public sealed class DyeScriptsIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<HuePickerModule>();
         _container.RegisterDelegate<IScriptEngine>(_ => _engine);
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>(
-                      (evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
 
         foreach (var script in new[] { "items/dyes.lua", "items/dye_tub.lua", "common/dye.lua" })
         {
@@ -284,7 +303,10 @@ public sealed class DyeScriptsIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal([SelectClothing], Told());
         Assert.Equal(0x0026, _shirt.Hue.Value);
-        Assert.Contains(DyeSound, _speech.Sounds.Select(sound => sound.Sound).Concat(_speech.PlacedSounds.Select(sound => sound.Sound)));
+        Assert.Contains(
+            DyeSound,
+            _speech.Sounds.Select(sound => sound.Sound).Concat(_speech.PlacedSounds.Select(sound => sound.Sound))
+        );
     }
 
     [Fact]

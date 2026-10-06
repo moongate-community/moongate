@@ -25,7 +25,8 @@ public sealed class MotdVariableRegistryTests
         registry.Register("player_name", (context, _) => ValueTask.FromResult(context.PlayerName));
 
         Assert.Throws<InvalidOperationException>(() =>
-            registry.Register("player_name", (_, _) => ValueTask.FromResult("replacement")));
+            registry.Register("player_name", (_, _) => ValueTask.FromResult("replacement"))
+        );
     }
 
     [Theory]
@@ -48,7 +49,8 @@ public sealed class MotdVariableRegistryTests
         registry.Freeze();
 
         Assert.Throws<InvalidOperationException>(() =>
-            registry.Register("late_name", (_, _) => ValueTask.FromResult("value")));
+            registry.Register("late_name", (_, _) => ValueTask.FromResult("value"))
+        );
     }
 
     [Fact]
@@ -58,6 +60,7 @@ public sealed class MotdVariableRegistryTests
         registry.Freeze();
 
         await Assert.ThrowsAsync<KeyNotFoundException>(async () =>
-            await registry.ResolveAsync("missing", Context, CancellationToken.None));
+            await registry.ResolveAsync("missing", Context, CancellationToken.None)
+        );
     }
 }

@@ -16,7 +16,9 @@ public sealed class ContainerContentPacketTests
         var packet = new ContainerContentPacket([Coins()], true);
 
         Assert.Equal(
-            Convert.FromHexString("3C" + "0019" + "0001" + "40000012" + "0EED" + "00" + "00FA" + "002C" + "0041" + "00" + "40000001" + "0481"),
+            Convert.FromHexString(
+                "3C" + "0019" + "0001" + "40000012" + "0EED" + "00" + "00FA" + "002C" + "0041" + "00" + "40000001" + "0481"
+            ),
             PacketCodec.Encode(packet)
         );
     }
@@ -40,7 +42,9 @@ public sealed class ContainerContentPacketTests
         var packet = new ContainerContentPacket([Coins()], false);
 
         Assert.Equal(
-            Convert.FromHexString("3C" + "0018" + "0001" + "40000012" + "0EED" + "00" + "00FA" + "002C" + "0041" + "40000001" + "0481"),
+            Convert.FromHexString(
+                "3C" + "0018" + "0001" + "40000012" + "0EED" + "00" + "00FA" + "002C" + "0041" + "40000001" + "0481"
+            ),
             PacketCodec.Encode(packet)
         );
     }
@@ -48,7 +52,10 @@ public sealed class ContainerContentPacketTests
     [Fact]
     public void Encode_AnEmptyContainer_SendsZeroItems()
     {
-        Assert.Equal(Convert.FromHexString("3C" + "0005" + "0000"), PacketCodec.Encode(new ContainerContentPacket([], true)));
+        Assert.Equal(
+            Convert.FromHexString("3C" + "0005" + "0000"),
+            PacketCodec.Encode(new ContainerContentPacket([], true))
+        );
     }
 
     [Fact]
@@ -57,7 +64,10 @@ public sealed class ContainerContentPacketTests
         var coins = Coins();
         coins.Amount = 100_000;
 
-        Assert.Equal("FFFF", Convert.ToHexString(PacketCodec.Encode(new ContainerContentPacket([coins], true)).AsSpan(12, 2)));
+        Assert.Equal(
+            "FFFF",
+            Convert.ToHexString(PacketCodec.Encode(new ContainerContentPacket([coins], true)).AsSpan(12, 2))
+        );
     }
 
     [Fact]
@@ -72,7 +82,8 @@ public sealed class ContainerContentPacketTests
 
     private static ItemEntity Coins()
     {
-        var coins = new ItemEntity { Id = new(0x40000012), TemplateId = "gold", ItemId = 0x0EED, Amount = 250, Hue = new(0x0481) };
+        var coins = new ItemEntity
+            { Id = new(0x40000012), TemplateId = "gold", ItemId = 0x0EED, Amount = 250, Hue = new(0x0481) };
         coins.PutInContainer(Backpack, new Point2D(44, 65));
 
         return coins;

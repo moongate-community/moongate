@@ -15,7 +15,9 @@ internal sealed class ExceptionReportEnricher : ILogEventEnricher
 
     private readonly ExceptionReportWriter? _writer;
 
-    /// <param name="writer">The report writer; null writes no report, and the console shows the message only.</param>
+    /// <param name="writer">
+    ///     The report writer; null writes no report, and the console shows the message only.
+    /// </param>
     public ExceptionReportEnricher(ExceptionReportWriter? writer)
     {
         _writer = writer;

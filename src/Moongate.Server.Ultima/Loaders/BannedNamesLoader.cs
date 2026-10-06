@@ -61,7 +61,9 @@ public class BannedNamesLoader : IDataLoader<BannedNamesContent>
 
         if (normalized.Any(word => word.Length == 0))
         {
-            throw new InvalidDataException($"{bannedNamesFilePath}: '{field}' has an empty word, which would ban every name.");
+            throw new InvalidDataException(
+                $"{bannedNamesFilePath}: '{field}' has an empty word, which would ban every name."
+            );
         }
 
         return normalized;

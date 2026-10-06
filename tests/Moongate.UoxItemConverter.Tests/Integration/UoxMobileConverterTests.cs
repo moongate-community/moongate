@@ -191,7 +191,10 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.True(Run() == 0, CombinedOutput);
 
         var mobiles = ReadMobiles("undead.toml");
-        Assert.Equal(((int?)-1, (int?)20, (int?)null), (mobiles["zombie"].FleeAt, mobiles["man"].FleeAt, mobiles["calm"].FleeAt));
+        Assert.Equal(
+            ((int?)-1, (int?)20, (int?)null),
+            (mobiles["zombie"].FleeAt, mobiles["man"].FleeAt, mobiles["calm"].FleeAt)
+        );
         // A value out of 0 to 100 is left out rather than written as a template that cannot load.
         Assert.Null(mobiles["bad"].FleeAt);
         // 0 is UOX3's "the default of the server": nothing is written.
@@ -298,7 +301,7 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Equal(
             (10, 11, 13, 12),
             (x.Resistances!.Fire!.Value.Roll(), x.Resistances.Cold!.Value.Roll(), x.Resistances.Poison!.Value.Roll(),
-             x.Resistances.Energy!.Value.Roll())
+                x.Resistances.Energy!.Value.Roll())
         );
         Assert.Equal("1d21+49", x.Skills!["magery"].ToString());
         Assert.Equal(65, x.Skills["resisting_spells"].Roll());
@@ -393,7 +396,10 @@ public sealed class UoxMobileConverterTests : IDisposable
             "[CREATURE 0x11]\n{ Orc\nSOUND_STARTATTACK=0x1b0\nSOUND_IDLE=0x1b1\nSOUND_ATTACK=0x1b2\nSOUND_DEFEND=0x1b3\nSOUND_DIE=0x1b4\n}\n" +
             "[CREATURE 0x190]\n{ Human Male\nSOUND_DIE=0x15c\n}\n"
         );
-        _dirs.WriteMobileSource("npc/a.dfn", "[base_orc]\n{\nID=0x0011\n}\n[orc]\n{\nGET=base_orc\n}\n[man]\n{\nID=0x0190\n}\n");
+        _dirs.WriteMobileSource(
+            "npc/a.dfn",
+            "[base_orc]\n{\nID=0x0011\n}\n[orc]\n{\nGET=base_orc\n}\n[man]\n{\nID=0x0190\n}\n"
+        );
 
         Assert.True(Run() == 0, CombinedOutput);
 
@@ -582,8 +588,10 @@ public sealed class UoxMobileConverterTests : IDisposable
 
     private Dictionary<string, MobileTemplate> ReadMobiles(string relativePath)
     {
-        return TomlUtils.DeserializeFromFile<MobileTemplateFile>(Path.Combine(_dirs.MobileDestinationDirectory, relativePath))!
-                        .Mobile.ToDictionary(mobile => mobile.Id);
+        return TomlUtils.DeserializeFromFile<MobileTemplateFile>(
+                Path.Combine(_dirs.MobileDestinationDirectory, relativePath)
+            )!
+            .Mobile.ToDictionary(mobile => mobile.Id);
     }
 
     public void Dispose()

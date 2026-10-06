@@ -21,6 +21,9 @@ public sealed class CorpseEquipmentPacketTests
     [Fact]
     public void Encode_ACorpseWearingNothing_IsTheHeaderAndTheEnd()
     {
-        Assert.Equal(Convert.FromHexString("89000840000900" + "00"), PacketCodec.Encode(new CorpseEquipmentPacket(new(0x40000900), [])));
+        Assert.Equal(
+            Convert.FromHexString("89000840000900" + "00"),
+            PacketCodec.Encode(new CorpseEquipmentPacket(new(0x40000900), []))
+        );
     }
 }

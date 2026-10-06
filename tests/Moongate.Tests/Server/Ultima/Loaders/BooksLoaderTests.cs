@@ -12,7 +12,8 @@ namespace Moongate.Tests.Server.Ultima.Loaders;
 
 public sealed class BooksLoaderTests
 {
-    private const string Valid = "title = \"Welcome $player_name\"\nauthor = \"British\"\ncontent = \"\"\"\nCaro ${player_name}, è un piacere!\n\nHello\n\"\"\"\n";
+    private const string Valid =
+        "title = \"Welcome $player_name\"\nauthor = \"British\"\ncontent = \"\"\"\nCaro ${player_name}, è un piacere!\n\nHello\n\"\"\"\n";
 
     [Fact]
     public async Task RegisteredLoader_UsesAlreadyLoadedItems()
@@ -21,8 +22,11 @@ public sealed class BooksLoaderTests
         root.CreateFile("templates/books/welcome_letter.toml", Valid);
         using var container = new Container();
         container.RegisterInstance(new DirectoriesConfig(root.Path, ["templates"]));
-        container.RegisterInstance<IDataLoaderService>(new StubDataLoaderService().With(
-            new ItemTemplate { Id = "readable_scroll", Stackable = false, ScriptId = "readable_scroll" }));
+        container.RegisterInstance<IDataLoaderService>(
+            new StubDataLoaderService().With(
+                new ItemTemplate { Id = "readable_scroll", Stackable = false, ScriptId = "readable_scroll" }
+            )
+        );
         container.AddUltimaDataLoaders();
         var book = Assert.Single((await container.Resolve<IDataLoader<BookTemplate>>().LoadDataAsync()).Entities);
         Assert.Equal("welcome_letter", book.Id);
@@ -145,13 +149,15 @@ public sealed class BooksLoaderTests
         var items = new StubDataLoaderService().With(
             new ItemTemplate { Id = "readable_scroll", Stackable = false, ScriptId = "readable_scroll" },
             new ItemTemplate { Id = "readable_book", Stackable = false, ScriptId = "readable_book" },
-            new ItemTemplate { Id = "bread", Stackable = false });
+            new ItemTemplate { Id = "bread", Stackable = false }
+        );
         var directories = new DirectoriesConfig(root.Path, ["templates"]);
 
         Assert.Single((await new BooksLoader(directories, items).LoadDataAsync()).Entities);
 
         root.CreateFile("templates/books/tome.toml", "item_template = \"readable_book\"\n" + Valid + gift);
-        var error = await Assert.ThrowsAsync<InvalidDataException>(() => new BooksLoader(directories, items).LoadDataAsync());
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => new BooksLoader(directories, items).LoadDataAsync()
+        );
 
         Assert.Contains("tome.toml", error.Message);
     }
@@ -161,14 +167,21 @@ public sealed class BooksLoaderTests
     public async Task LoadDataAsync_AWritableBook_MayBeBlank_AndSaysItsPages()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("templates/books/blank.toml", "title = \"a book\"\nauthor = \"$player_name\"\nwritable = true\npages = 30\n");
+        root.CreateFile(
+            "templates/books/blank.toml",
+            "title = \"a book\"\nauthor = \"$player_name\"\nwritable = true\npages = 30\n"
+        );
         root.CreateFile("templates/books/diary.toml", "title = \"Diary\"\nwritable = true\ncontent = \"Day one.\"\n");
 
         var books = (await Loader(root, script: "readable_book").LoadDataAsync()).Entities;
 
         var blank = books.Single(book => book.Id == "blank");
         Assert.Equal((true, 30, ""), (blank.Writable, blank.Pages, blank.Content));
-        Assert.Equal((true, (int?)null, "Day one."), (books.Single(book => book.Id == "diary").Writable, books.Single(book => book.Id == "diary").Pages, books.Single(book => book.Id == "diary").Content));
+        Assert.Equal(
+            (true, (int?)null, "Day one."),
+            (books.Single(book => book.Id == "diary").Writable, books.Single(book => book.Id == "diary").Pages,
+                books.Single(book => book.Id == "diary").Content)
+        );
     }
 
     [Theory]
@@ -201,8 +214,12 @@ public sealed class BooksLoaderTests
 
     private static BooksLoader Loader(TemporaryDirectory root, bool stackable = false, string script = "readable_scroll")
     {
-        return new(new DirectoriesConfig(root.Path, ["templates"]),
-            new StubDataLoaderService().With(new ItemTemplate { Id = "readable_scroll", Stackable = stackable, ScriptId = script }));
+        return new(
+            new DirectoriesConfig(root.Path, ["templates"]),
+            new StubDataLoaderService().With(
+                new ItemTemplate { Id = "readable_scroll", Stackable = stackable, ScriptId = script }
+            )
+        );
     }
 
     [Theory]
@@ -215,11 +232,18 @@ public sealed class BooksLoaderTests
     public async Task LoadDataAsync_InvalidAttachment_RefusesSourceWithPath(string field)
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("templates/books/gift.toml", Valid + "\n[[attachments]]\n" +
-            (field.StartsWith("item_template", StringComparison.Ordinal) ? field : "item_template = \"bread\"\n" + field));
-        var loader = new BooksLoader(new DirectoriesConfig(root.Path, ["templates"]), new StubDataLoaderService().With(
-            new ItemTemplate { Id = "readable_scroll", Stackable = false, ScriptId = "readable_scroll" },
-            new ItemTemplate { Id = "bread", Stackable = false }));
+        root.CreateFile(
+            "templates/books/gift.toml",
+            Valid + "\n[[attachments]]\n" +
+            (field.StartsWith("item_template", StringComparison.Ordinal) ? field : "item_template = \"bread\"\n" + field)
+        );
+        var loader = new BooksLoader(
+            new DirectoriesConfig(root.Path, ["templates"]),
+            new StubDataLoaderService().With(
+                new ItemTemplate { Id = "readable_scroll", Stackable = false, ScriptId = "readable_scroll" },
+                new ItemTemplate { Id = "bread", Stackable = false }
+            )
+        );
         var error = await Assert.ThrowsAsync<InvalidDataException>(() => loader.LoadDataAsync());
         Assert.Contains("gift.toml", error.Message);
     }

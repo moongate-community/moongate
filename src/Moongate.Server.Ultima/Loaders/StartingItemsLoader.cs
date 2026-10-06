@@ -27,7 +27,10 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
 
     private string startingItemsFilePath => Path.Join(_directoriesConfig["data"], "starting_items.toml");
 
-    public StartingItemsLoader(DirectoriesConfig directoriesConfig, IDataLoaderService dataLoaderService, IBookTemplateService books, LocalizationConfig localization)
+    public StartingItemsLoader(
+        DirectoriesConfig directoriesConfig, IDataLoaderService dataLoaderService, IBookTemplateService books,
+        LocalizationConfig localization
+    )
     {
         _directoriesConfig = directoriesConfig;
         _dataLoaderService = dataLoaderService;
@@ -47,9 +50,14 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
 
     public async Task<DataLoaderResult<StartingItemSet>> LoadDataAsync(CancellationToken cancellationToken = default)
     {
-        var file = await TomlUtils.DeserializeFromFileAsync<StartingItemsFile>(startingItemsFilePath, null, cancellationToken) ??
+        var file = await TomlUtils.DeserializeFromFileAsync<StartingItemsFile>(
+                       startingItemsFilePath,
+                       null,
+                       cancellationToken
+                   ) ??
                    new StartingItemsFile();
-        var templates = _dataLoaderService.GetEntities<ItemTemplate>().ToDictionary(template => template.Id, StringComparer.Ordinal);
+        var templates = _dataLoaderService.GetEntities<ItemTemplate>()
+            .ToDictionary(template => template.Id, StringComparer.Ordinal);
         var templateIds = templates.Keys.ToHashSet(StringComparer.Ordinal);
 
         for (var i = 0; i < file.Set.Count; i++)
@@ -64,7 +72,9 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
 
             if (!set.Common && set.Skill is null && set.Race is null && set.Gender is null)
             {
-                throw new InvalidDataException($"{where} is not common and has no skill, race or gender, so no one gets it.");
+                throw new InvalidDataException(
+                    $"{where} is not common and has no skill, race or gender, so no one gets it."
+                );
             }
 
             foreach (var entry in set.Items)
@@ -83,8 +93,17 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
                 {
                     if (entry.Equip || !_books.TryGet(book, out var source) || source is null ||
                         entry.Items.Any(id => !BookItemCompatibility.IsCompatible(source, templates[id])) ||
-                        !_books.TryRender(book, new TextTemplateContext { PlayerName = "Player", ServerName = "Server", RealmName = "Realm", Version = "Version", Codename = "Codename" },
-                            _localization.Language, entry.BookValues, out _))
+                        !_books.TryRender(
+                            book,
+                            new TextTemplateContext
+                            {
+                                PlayerName = "Player", ServerName = "Server", RealmName = "Realm", Version = "Version",
+                                Codename = "Codename"
+                            },
+                            _localization.Language,
+                            entry.BookValues,
+                            out _
+                        ))
                     {
                         throw new InvalidDataException($"{where} has an invalid book binding '{book}'.");
                     }

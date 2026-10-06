@@ -31,9 +31,11 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
     private readonly BulletinBoardsConfig _config = new();
     private readonly SettableClock _clock = new() { Now = new DateTimeOffset(2026, 10, 5, 12, 0, 0, TimeSpan.Zero) };
     private readonly RecordingSpeechService _speech = new();
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
-            new ItemTemplate { Id = "bulletin_board", ItemId = new Serial(0x1E5E), ScriptId = BulletinBoardService.ScriptId },
+            new ItemTemplate
+                { Id = "bulletin_board", ItemId = new Serial(0x1E5E), ScriptId = BulletinBoardService.ScriptId },
             new ItemTemplate { Id = "chair", ItemId = new Serial(0x0B2E) }
         )
     );
@@ -93,12 +95,18 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
         Assert.True(_service.Open(_board, _ariaSession));
 
         var sent = Sent();
-        Assert.Equal([typeof(BulletinBoardDisplayPacket), typeof(ContainerContentPacket)], sent.Select(packet => packet.GetType()));
+        Assert.Equal(
+            [typeof(BulletinBoardDisplayPacket), typeof(ContainerContentPacket)],
+            sent.Select(packet => packet.GetType())
+        );
         Assert.Equal(_board.Id, ((BulletinBoardDisplayPacket)sent[0]).Board);
         Assert.Contains("bulletin board", Encoding.ASCII.GetString(PacketCodec.Encode(sent[0])));
         var content = (ContainerContentPacket)sent[1];
         Assert.Equal(
-            [(thread.Id, BulletinBoardService.MessageItemId, 1, _board.Id), (reply.Id, BulletinBoardService.MessageItemId, 1, _board.Id)],
+            [
+                (thread.Id, BulletinBoardService.MessageItemId, 1, _board.Id),
+                (reply.Id, BulletinBoardService.MessageItemId, 1, _board.Id)
+            ],
             content.Items.Select(item => (item.Serial, item.ItemId, item.Amount, item.Container))
         );
     }
@@ -154,7 +162,8 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
     [Fact]
     public void ARequestForTheText_GetsTheLinesAndHowThePosterLooked()
     {
-        var hat = new ItemEntity { Id = new Serial(0x40000100), TemplateId = "chair", ItemId = 0x1713, Amount = 1, Hue = new Hue(0x0021) };
+        var hat = new ItemEntity
+            { Id = new Serial(0x40000100), TemplateId = "chair", ItemId = 0x1713, Amount = 1, Hue = new Hue(0x0021) };
         hat.Equip(_aria.Id, LayerType.Helm);
         _items.Add([hat]);
         var thread = Posted(_aria, "Horse");
@@ -178,7 +187,10 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
         var message = Assert.Single(_service.GetMessages(_board.Id));
         Assert.Equal(("Aria", "Horse"), (message.PosterName, message.Subject));
         var added = Assert.IsType<ContainerItemUpdatePacket>(Assert.Single(Sent()));
-        Assert.Equal((message.Id, BulletinBoardService.MessageItemId, _board.Id), (added.Item.Serial, added.Item.ItemId, added.Item.Container));
+        Assert.Equal(
+            (message.Id, BulletinBoardService.MessageItemId, _board.Id),
+            (added.Item.Serial, added.Item.ItemId, added.Item.Container)
+        );
         Assert.Empty(_speech.Told);
     }
 
@@ -206,7 +218,10 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
         Handle(_ariaSession, Post(_board, Serial.Zero, "New", "x"));
 
         var sent = Sent();
-        Assert.Equal([typeof(RemoveEntityPacket), typeof(ContainerItemUpdatePacket)], sent.Select(packet => packet.GetType()));
+        Assert.Equal(
+            [typeof(RemoveEntityPacket), typeof(ContainerItemUpdatePacket)],
+            sent.Select(packet => packet.GetType())
+        );
         Assert.Equal(old.Id, ((RemoveEntityPacket)sent[0]).Serial);
     }
 
@@ -230,7 +245,10 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
         Handle(_ariaSession, "06", _board, thread.Id);
 
         Assert.Empty(_service.Messages);
-        Assert.Equal(new[] { thread.Id, reply.Id }.Order(), Sent().Select(packet => Assert.IsType<RemoveEntityPacket>(packet).Serial).Order());
+        Assert.Equal(
+            new[] { thread.Id, reply.Id }.Order(),
+            Sent().Select(packet => Assert.IsType<RemoveEntityPacket>(packet).Serial).Order()
+        );
     }
 
     [Fact]
@@ -368,7 +386,9 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
         return sent;
     }
 
-    private BulletinMessageEntity Posted(MobileEntity poster, string subject, Serial replyTo = default, ItemEntity? board = null)
+    private BulletinMessageEntity Posted(
+        MobileEntity poster, string subject, Serial replyTo = default, ItemEntity? board = null
+    )
     {
         // The staff rank: these posts set the scene and do not wait.
         return _service.Post(board ?? _board, poster, AccountType.GameMaster, replyTo, subject, ["A fine mare."]).Message!;
@@ -381,7 +401,10 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
 
     private void Handle(GameSession session, string command, Serial board, Serial message)
     {
-        Handle(session, Convert.FromHexString("71000C" + command + board.Value.ToString("X8") + message.Value.ToString("X8")));
+        Handle(
+            session,
+            Convert.FromHexString("71000C" + command + board.Value.ToString("X8") + message.Value.ToString("X8"))
+        );
     }
 
     private void Handle(GameSession session, byte[] data)

@@ -19,7 +19,9 @@ public sealed class BookAttachmentPreparationService : IBookAttachmentPreparatio
     private readonly IItemTemplateService _templates;
     private readonly ITileDataService _tiles;
 
-    public BookAttachmentPreparationService(IItemFactoryService factory, IItemTemplateService templates, ITileDataService tiles)
+    public BookAttachmentPreparationService(
+        IItemFactoryService factory, IItemTemplateService templates, ITileDataService tiles
+    )
     {
         _factory = factory;
         _templates = templates;
@@ -32,6 +34,7 @@ public sealed class BookAttachmentPreparationService : IBookAttachmentPreparatio
         {
             return null;
         }
+
         var snapshots = ImmutableArray.CreateBuilder<FrozenBookAttachment>();
         foreach (var entry in source.Attachments)
         {
@@ -39,6 +42,7 @@ public sealed class BookAttachmentPreparationService : IBookAttachmentPreparatio
             {
                 throw new InvalidDataException($"Unknown attachment item template '{entry.ItemTemplate}'.");
             }
+
             var min = entry.Amount?.Min ?? 1;
             var max = entry.Amount?.Max ?? 1;
             var stacks = template.EffectiveStackable(_tiles);
@@ -47,6 +51,7 @@ public sealed class BookAttachmentPreparationService : IBookAttachmentPreparatio
             {
                 throw new InvalidDataException("Invalid attachment amount or physical item count.");
             }
+
             var amount = entry.Amount?.Roll() ?? 1;
             for (var index = 0; index < (stacks ? 1 : amount); index++)
             {
@@ -56,9 +61,11 @@ public sealed class BookAttachmentPreparationService : IBookAttachmentPreparatio
                 {
                     item.SetProp(ItemPropKeys.LootType, lootType);
                 }
+
                 snapshots.Add(BookAttachmentCodec.Freeze(item));
             }
         }
+
         return BookAttachmentCodec.Encode(new() { Items = snapshots.ToImmutable() });
     }
 }

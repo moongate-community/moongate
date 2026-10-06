@@ -16,7 +16,7 @@ namespace Moongate.Server.Ultima.Services;
 ///     Regenerates hit points, mana and stamina, as ModernUO's classic rules: a point at a time, hit points every 11
 ///     seconds, stamina every 7, mana from 7 seconds down to three quarters of one by intelligence and Meditation. One
 ///     repeating <c>regeneration</c> timer every second ticks the players in the world; the NPCs are ticked by their
-///     think. A prop of the mobile (<c>regen.hits</c>, <c>regen.mana</c>, <c>regen.stamina</c>, in seconds) replaces
+///     think. A prop of the mobile ( <c>regen.hits</c>, <c>regen.mana</c>, <c>regen.stamina</c>, in seconds) replaces
 ///     the rate.
 /// </summary>
 public sealed class RegenerationService : IRegenerationService, IMoongateStartupService
@@ -113,7 +113,14 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
         }
         else
         {
-            var hits = Due(mobile.Hits, mobile.HitsMax, clock.HitsAt, now, Seconds(mobile, HitsProp, _config.HitsSeconds), out var hitsAt);
+            var hits = Due(
+                mobile.Hits,
+                mobile.HitsMax,
+                clock.HitsAt,
+                now,
+                Seconds(mobile, HitsProp, _config.HitsSeconds),
+                out var hitsAt
+            );
             clock.HitsAt = hitsAt;
 
             if (hits > 0)
@@ -123,7 +130,14 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
             }
         }
 
-        var mana = Due(mobile.Mana, mobile.ManaMax, clock.ManaAt, now, Seconds(mobile, ManaProp, ManaSeconds(mobile)), out var manaAt);
+        var mana = Due(
+            mobile.Mana,
+            mobile.ManaMax,
+            clock.ManaAt,
+            now,
+            Seconds(mobile, ManaProp, ManaSeconds(mobile)),
+            out var manaAt
+        );
         clock.ManaAt = manaAt;
 
         if (mana > 0)
@@ -238,10 +252,10 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
     {
         return mobile.Props?.GetValueOrDefault(prop) switch
         {
-            long own when own > 0                              => Math.Min(own, SlowestSeconds),
-            int own when own > 0                               => Math.Min(own, SlowestSeconds),
+            long own when own > 0                             => Math.Min(own, SlowestSeconds),
+            int own when own > 0                              => Math.Min(own, SlowestSeconds),
             double own when double.IsFinite(own) && own > 0.0 => Math.Clamp(own, 0.1, SlowestSeconds),
-            _                                                  => seconds
+            _                                                 => seconds
         };
     }
 

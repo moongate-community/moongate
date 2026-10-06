@@ -45,7 +45,10 @@ public sealed class BookServicesRegistrationTests
         container.RegisterInstance<IItemService>(fixture.Items, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
         container.RegisterInstance<IMobileService>(fixture.World.Mobiles, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
         container.RegisterInstance<IItemHandlingService>(fixture.Handling, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-        container.RegisterInstance<IItemTemplateService>(fixture.ItemTemplates, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+        container.RegisterInstance<IItemTemplateService>(
+            fixture.ItemTemplates,
+            ifAlreadyRegistered: IfAlreadyRegistered.Replace
+        );
         container.RegisterInstance<ISessionService>(fixture.World.Sessions);
         container.RegisterInstance<IBankService>(fixture.Bank, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
         container.RegisterInstance<IGumpService>(fixture.Gumps, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
@@ -57,12 +60,30 @@ public sealed class BookServicesRegistrationTests
         Assert.IsType<BookDocumentService>(container.Resolve<IBookDocumentService>());
         Assert.Contains(typeof(BookModule), container.Resolve<IScriptModuleRegistry>().ModuleTypes);
         Assert.NotNull(container.Resolve<BookModule>());
-        container.RegisterInstance<IDataAccess<JailSentenceEntity>>(new RecordingDataAccess<JailSentenceEntity>(), ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-        container.RegisterInstance<IDataAccess<MobileEntity>>(new RecordingDataAccess<MobileEntity>(), ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-        container.RegisterInstance<IDataAccess<AccountEntity>>(new RecordingDataAccess<AccountEntity>(), ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-        container.RegisterInstance<ITeleportService>(new RecordingTeleportService(), ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-        container.RegisterInstance<ISpeechService>(new RecordingSpeechService(), ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-        container.RegisterInstance<IWorldViewService>(new RecordingWorldViewService(), ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+        container.RegisterInstance<IDataAccess<JailSentenceEntity>>(
+            new RecordingDataAccess<JailSentenceEntity>(),
+            ifAlreadyRegistered: IfAlreadyRegistered.Replace
+        );
+        container.RegisterInstance<IDataAccess<MobileEntity>>(
+            new RecordingDataAccess<MobileEntity>(),
+            ifAlreadyRegistered: IfAlreadyRegistered.Replace
+        );
+        container.RegisterInstance<IDataAccess<AccountEntity>>(
+            new RecordingDataAccess<AccountEntity>(),
+            ifAlreadyRegistered: IfAlreadyRegistered.Replace
+        );
+        container.RegisterInstance<ITeleportService>(
+            new RecordingTeleportService(),
+            ifAlreadyRegistered: IfAlreadyRegistered.Replace
+        );
+        container.RegisterInstance<ISpeechService>(
+            new RecordingSpeechService(),
+            ifAlreadyRegistered: IfAlreadyRegistered.Replace
+        );
+        container.RegisterInstance<IWorldViewService>(
+            new RecordingWorldViewService(),
+            ifAlreadyRegistered: IfAlreadyRegistered.Replace
+        );
         container.RegisterInstance<ITimerService>(new RecordingTimerService());
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
         container.RegisterInstance(TestLocalization.With(), ifAlreadyRegistered: IfAlreadyRegistered.Replace);

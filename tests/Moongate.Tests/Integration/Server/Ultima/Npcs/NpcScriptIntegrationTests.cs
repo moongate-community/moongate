@@ -47,6 +47,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     private readonly List<LuaScriptEngineService> _engines = [];
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly MobileService _mobiles;
+
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             // The UOX3 cat's sounds, which the npc module plays by kind.
@@ -56,11 +57,13 @@ public sealed class NpcScriptIntegrationTests : IDisposable
             }
         )
     );
+
     private readonly MobileEntity _cat = new()
     {
         Id = new Serial(0x100), Name = "a cat", TemplateId = "cat", Map = MapType.Trammel,
         Location = new Point3D(1600, 1600, 0), Direction = DirectionType.North
     };
+
     private readonly MobileEntity _aria = new()
     {
         Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
@@ -291,7 +294,12 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         );
         using var engine = NewEngine();
         await engine.StartAsync();
-        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        var scripts = new NpcScriptService(
+            engine,
+            templates,
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
         await scripts.StartAsync();
         _cat.SetProp("vega.greeted", 4L);
         var hearing = new NpcHearingService(scripts, _sectors);
@@ -314,7 +322,12 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         );
         using var engine = NewEngine();
         await engine.StartAsync();
-        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        var scripts = new NpcScriptService(
+            engine,
+            templates,
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
         await scripts.StartAsync();
         var hearing = new NpcHearingService(scripts, _sectors);
 
@@ -340,7 +353,12 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         );
         using var engine = NewEngine();
         await engine.StartAsync();
-        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        var scripts = new NpcScriptService(
+            engine,
+            templates,
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
         await scripts.StartAsync();
         var hearing = new NpcHearingService(scripts, _sectors);
 
@@ -363,7 +381,12 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         );
         using var engine = NewEngine();
         await engine.StartAsync();
-        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        var scripts = new NpcScriptService(
+            engine,
+            templates,
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
         await scripts.StartAsync();
 
         new NpcHearingService(scripts, _sectors).Heard(_aria, "Hello!");
@@ -518,7 +541,11 @@ public sealed class NpcScriptIntegrationTests : IDisposable
     {
         var hearing = await StartBankerAsync();
         _mobiles.EnterWorld(
-            new MobileEntity { Id = new Serial(0x101), Name = "a teller", TemplateId = "cat", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) }
+            new MobileEntity
+            {
+                Id = new Serial(0x101), Name = "a teller", TemplateId = "cat", Map = MapType.Trammel,
+                Location = new Point3D(1601, 1600, 0)
+            }
         );
         _bank.Gold[_aria.Id] = 5000;
 
@@ -683,7 +710,10 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         var entries = Assert.IsType<LuaTable>(Assert.Single(result.Values));
         Assert.Equal(1, entries.ArrayLength);
         var entry = entries[1].Read<LuaTable>();
-        Assert.Equal(("bank", 3006105, 12), (entry["id"].Read<string>(), entry["cliloc"].Read<int>(), entry["range"].Read<int>()));
+        Assert.Equal(
+            ("bank", 3006105, 12),
+            (entry["id"].Read<string>(), entry["cliloc"].Read<int>(), entry["range"].Read<int>())
+        );
     }
 
     [Fact]
@@ -731,7 +761,12 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         var engine = NewEngine();
         _engines.Add(engine);
         await engine.StartAsync();
-        var scripts = new NpcScriptService(engine, templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+        var scripts = new NpcScriptService(
+            engine,
+            templates,
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
         await scripts.StartAsync();
 
         return scripts;

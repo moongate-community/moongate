@@ -12,7 +12,8 @@ namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
 ///     Loads the English texts and replaces them with those of the configured language. A language's texts are
-///     <c>data/messages/&lt;language&gt;.toml</c> plus every toml file in <c>data/messages/&lt;language&gt;/</c>, merged.
+///     <c>data/messages/&lt;language&gt;.toml</c> plus every toml file in <c>data/messages/&lt;language&gt;/</c>,
+///     merged.
 ///     A number that is not a message id, a text that is not a valid composite format, the same id in two files of a
 ///     language, a translation that needs more values than the English text or a translated id missing from English
 ///     stops the server at startup.
@@ -98,14 +99,13 @@ public class MessagesLoader : IDataLoader<MessageContent>
         return new DataLoaderResult<MessageContent>()
         {
             Entities = english.OrderBy(message => message.Key)
-                              .Select(
-                                  message => new MessageContent
-                                  {
-                                      Id = message.Key,
-                                      Text = translated.GetValueOrDefault(message.Key, message.Value.Text)
-                                  }
-                              )
-                              .ToList()
+                .Select(message => new MessageContent
+                    {
+                        Id = message.Key,
+                        Text = translated.GetValueOrDefault(message.Key, message.Value.Text)
+                    }
+                )
+                .ToList()
         };
     }
 

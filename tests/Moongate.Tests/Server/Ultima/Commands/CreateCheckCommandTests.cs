@@ -24,6 +24,7 @@ public sealed class CreateCheckCommandTests : IAsyncLifetime
 {
     private readonly ItemService _items = TestItems.Create();
     private readonly StubItemSerialPool _serials = new();
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) },
@@ -129,7 +130,10 @@ public sealed class CreateCheckCommandTests : IAsyncLifetime
     {
         Backpack();
 
-        var context = await RunAsync(["2000"], TestLocalization.With((30175, "Nel tuo zaino c'è un assegno da {0} monete.")));
+        var context = await RunAsync(
+            ["2000"],
+            TestLocalization.With((30175, "Nel tuo zaino c'è un assegno da {0} monete."))
+        );
 
         Assert.Equal("Nel tuo zaino c'è un assegno da 2,000 monete.", Assert.Single(context.Output).Text);
     }

@@ -60,7 +60,10 @@ public sealed class MobileStateService : IMobileStateService
 
     public bool SetStats(MobileEntity mobile, MobileStatsChange change)
     {
-        if (new[] { change.Strength, change.Dexterity, change.Intelligence, change.HitsMax, change.ManaMax, change.StaminaMax }
+        if (new[]
+            {
+                change.Strength, change.Dexterity, change.Intelligence, change.HitsMax, change.ManaMax, change.StaminaMax
+            }
             .Any(value => value is < 0 or > IMobileStateService.MaxValue))
         {
             return false;
@@ -216,7 +219,10 @@ public sealed class MobileStateService : IMobileStateService
             _mobiles.IsInWorld(mobile.Id) &&
             _sessions.TryGetByCharacterId(mobile.Id, out var own))
         {
-            _sender.TrySend(own.SessionId, new StatLockInfoPacket(mobile.Id, mobile.StrLock, mobile.DexLock, mobile.IntLock));
+            _sender.TrySend(
+                own.SessionId,
+                new StatLockInfoPacket(mobile.Id, mobile.StrLock, mobile.DexLock, mobile.IntLock)
+            );
         }
 
         return true;

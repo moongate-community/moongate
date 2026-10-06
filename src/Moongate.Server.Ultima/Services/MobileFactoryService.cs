@@ -92,7 +92,7 @@ public class MobileFactoryService : IMobileFactoryService
         {
             MobileGenderType.Female => GenderType.Female,
             MobileGenderType.Random => BuiltInRng.Next(2) == 0 ? GenderType.Male : GenderType.Female,
-            _ => GenderType.Male
+            _                       => GenderType.Male
         };
         var race = template.Race is { } templateRace
             ? _dataLoaderService.GetEntities<RaceContent>().FirstOrDefault(content => content.Race == templateRace)
@@ -205,7 +205,10 @@ public class MobileFactoryService : IMobileFactoryService
         var spawned = new SpawnedMobile(mobile, equipment, backpack, backpackItems);
 
         // After the commit the mobile is saved whatever happens: the events are published without cancellation.
-        await _eventBus.PublishAsync(new MobileMovedToWorldEvent(mobile, mobile.Map, mobile.Location), CancellationToken.None);
+        await _eventBus.PublishAsync(
+            new MobileMovedToWorldEvent(mobile, mobile.Map, mobile.Location),
+            CancellationToken.None
+        );
         await _eventBus.PublishAsync(new MobileAfterSpawnEvent(spawned), CancellationToken.None);
 
         return spawned;
@@ -334,9 +337,9 @@ public class MobileFactoryService : IMobileFactoryService
     {
         return nameList switch
         {
-            null => string.Empty,
+            null           => string.Empty,
             GenderNameList => _names.RandomName(gender == GenderType.Female ? "female" : "male"),
-            _ => _names.RandomName(nameList)
+            _              => _names.RandomName(nameList)
         };
     }
 

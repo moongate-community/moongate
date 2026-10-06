@@ -124,7 +124,9 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
     ///     Checks a gump made at runtime, such as one built from Lua or with its slots filled, as a file is checked:
     ///     against the schema, the rules the schema cannot say, and the gumps its <c>open</c> buttons name.
     /// </summary>
-    /// <exception cref="InvalidDataException">The gump breaks a rule; the message says which.</exception>
+    /// <exception cref="InvalidDataException">
+    ///     The gump breaks a rule; the message says which.
+    /// </exception>
     public static void Validate(string source, XElement root, Func<string, bool> gumpExists)
     {
         var document = new XDocument(new XElement(root));
@@ -167,7 +169,8 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
     {
         string? reason = element.Name.LocalName switch
         {
-            "button" when new[] { "on_click", "id", "page", "open" }.Count(name => element.Attribute(name) is not null) != 1 =>
+            "button" when new[] { "on_click", "id", "page", "open" }.Count(name => element.Attribute(name) is not null) !=
+                          1 =>
                 "a button needs exactly one of on_click, id, page or open",
             "html" when element.Attribute("cliloc") is not null && element.Attribute("message") is not null =>
                 "an html takes a cliloc or message, not both",

@@ -33,17 +33,21 @@ public sealed class SkillServiceStatGainTests
     private readonly RecordingMobileStateService _state = new();
     private readonly SkillsConfig _config = new();
     private readonly ScriptedRandom _random = new();
+
     private readonly SettableClock _clock = new();
+
     // 15 / 33.3 is 0.45 for strength, 0.3 for dexterity and 0.15 for intelligence.
     private readonly SkillContent _anatomy = new()
     {
         Id = SkillType.Anatomy, GainFactor = 1.0, StrGain = 15, DexGain = 10, IntGain = 5
     };
+
     private readonly MobileEntity _aria = new()
     {
         Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42),
         Strength = 50, Dexterity = 50, Intelligence = 50, HitsMax = 50, StaminaMax = 50, ManaMax = 50
     };
+
     private readonly SkillService _skills;
 
     public SkillServiceStatGainTests()
@@ -189,7 +193,9 @@ public sealed class SkillServiceStatGainTests
     [InlineData(StatType.Dex, 40, 60, 40 - 1)]
     [InlineData(StatType.Int, 60, 40, 40 - 1)]
     [InlineData(StatType.Int, 40, 60, 40 - 1)]
-    public void WhicheverStatRises_TheLowerOfTheOtherTwoGivesWay(StatType rises, int firstOther, int secondOther, int lowered)
+    public void WhicheverStatRises_TheLowerOfTheOtherTwoGivesWay(
+        StatType rises, int firstOther, int secondOther, int lowered
+    )
     {
         // The two others, in the order strength, dexterity, intelligence; both locked down, the total at the cap.
         var others = Enum.GetValues<StatType>().Where(stat => stat != rises).ToArray();
@@ -298,7 +304,9 @@ public sealed class SkillServiceStatGainTests
     [InlineData(40, 50, 40 - 1, 50)]
     [InlineData(60, 50, 60, 50 - 1)]
     [InlineData(40, 40, 40, 40 - 1)]
-    public void WhenBothOthersCanGiveWay_TheLowerOneDoes_TheSecondWhenTheyAreEqual(int dex, int intel, int expectedDex, int expectedInt)
+    public void WhenBothOthersCanGiveWay_TheLowerOneDoes_TheSecondWhenTheyAreEqual(
+        int dex, int intel, int expectedDex, int expectedInt
+    )
     {
         _aria.Dexterity = dex;
         _aria.Intelligence = intel;
@@ -351,7 +359,8 @@ public sealed class SkillServiceStatGainTests
     [Fact]
     public void ANpc_NeverGainsAStat()
     {
-        var orc = new MobileEntity { Id = new Serial(0x100), Name = "an orc", Strength = 50, Dexterity = 50, Intelligence = 50 };
+        var orc = new MobileEntity
+            { Id = new Serial(0x100), Name = "an orc", Strength = 50, Dexterity = 50, Intelligence = 50 };
         orc.Skills.Add(new MobileSkill { Skill = SkillType.Anatomy, Base = 500 });
         _random.Doubles(Success);
         _random.Rest = 0.0;

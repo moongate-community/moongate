@@ -64,7 +64,7 @@ public sealed class ItemScriptService : IItemScriptService, IMoongateStartupServ
             return ScriptResult.Missing;
         }
 
-        return _engine.CallMember($"{ItemsDirectory}/{script}.lua", script, function, [(long)item.Id.Value, ..args]);
+        return _engine.CallMember($"{ItemsDirectory}/{script}.lua", script, function, [(long)item.Id.Value, .. args]);
     }
 
     public void Queue(ItemEntity item, string function, params object?[] args)

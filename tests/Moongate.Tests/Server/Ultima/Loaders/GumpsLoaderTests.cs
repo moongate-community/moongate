@@ -47,7 +47,10 @@ public sealed class GumpsLoaderTests
      InlineData("<gump id=\"a\">\n<text x=\"1\" y=\"1\" cliloc=\"5\" /></gump>", "line 2"),
      InlineData("<gump id=\"a\"", "a.xml"),
      InlineData("<gump xmlns=\"urn:x\" id=\"a\"><text x=\"one\" y=\"1\" /></gump>", "line 1"),
-     InlineData("<gump id=\"a\"><text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"1\" max_length=\"240\" /></gump>", "max_length"),
+     InlineData(
+         "<gump id=\"a\"><text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"1\" max_length=\"240\" /></gump>",
+         "max_length"
+     ),
      InlineData("<gump id=\"a\"><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"99999999999\" /></gump>", "'id'"),
      InlineData("<gump id=\"a\"><checkbox x=\"1\" y=\"1\" off=\"1\" on=\"2\" switch=\"99999999999\" /></gump>", "'switch'")]
     public async Task LoadDataAsync_AFileTheSchemaRefuses_StopsWithTheFileAndLine(string xml, string expected)
@@ -69,9 +72,18 @@ public sealed class GumpsLoaderTests
      InlineData("<html x=\"1\" y=\"1\" width=\"1\" height=\"1\" cliloc=\"5\">text</html>", "cliloc or a text"),
      InlineData("<text x=\"1\" y=\"1\" message=\"5\">text</text>", "message or a text"),
      InlineData("<html x=\"1\" y=\"1\" width=\"1\" height=\"1\" color=\"5\">text</html>", "color needs a cliloc"),
-     InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"3\" /><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"3\" />", "button id 3 twice"),
-     InlineData("<checkbox x=\"1\" y=\"1\" off=\"1\" on=\"2\" switch=\"4\" /><group><radio x=\"1\" y=\"1\" off=\"1\" on=\"2\" switch=\"4\" /></group>", "switch 4 twice"),
-     InlineData("<text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"2\" /><text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"2\" />", "entry 2 twice"),
+     InlineData(
+         "<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"3\" /><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" id=\"3\" />",
+         "button id 3 twice"
+     ),
+     InlineData(
+         "<checkbox x=\"1\" y=\"1\" off=\"1\" on=\"2\" switch=\"4\" /><group><radio x=\"1\" y=\"1\" off=\"1\" on=\"2\" switch=\"4\" /></group>",
+         "switch 4 twice"
+     ),
+     InlineData(
+         "<text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"2\" /><text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"2\" />",
+         "entry 2 twice"
+     ),
      InlineData("<page><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" page=\"2\" /></page>", "page 2, but the gump has 1"),
      InlineData("<slot name=\"rows\" x=\"1\" y=\"1\" /><page />", "a slot cannot be in a gump with pages"),
      InlineData("<button x=\"1\" y=\"1\" up=\"1\" down=\"2\" on_click=\"__x\" />", "reserved")]
@@ -89,7 +101,10 @@ public sealed class GumpsLoaderTests
     public async Task LoadDataAsync_AButtonOpeningAnotherGump_Loads()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("templates/gumps/step1.xml", "<gump id=\"step1\"><text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"1\" bind=\"name\" /><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" open=\"step2\" /></gump>");
+        root.CreateFile(
+            "templates/gumps/step1.xml",
+            "<gump id=\"step1\"><text_entry x=\"1\" y=\"1\" width=\"1\" height=\"1\" entry=\"1\" bind=\"name\" /><button x=\"1\" y=\"1\" up=\"1\" down=\"2\" open=\"step2\" /></gump>"
+        );
         root.CreateFile("templates/gumps/step2.xml", "<gump id=\"step2\" />");
 
         Assert.Equal(2, (await CreateLoader(root).LoadDataAsync()).Entities.Count);

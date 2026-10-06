@@ -46,7 +46,9 @@ public sealed class CombatFormulasTests
     [InlineData(10, 50, 0, 0, 10)]
     // tactics 0: half; anatomy 100 adds a tenth more
     [InlineData(10, 0, 0, 100, 6)]
-    public void ScaleDamage_FollowsTacticsStrengthAndAnatomy(int damage, double tactics, double strength, double anatomy, int expected)
+    public void ScaleDamage_FollowsTacticsStrengthAndAnatomy(
+        int damage, double tactics, double strength, double anatomy, int expected
+    )
     {
         Assert.Equal(expected, CombatFormulas.ScaleDamage(damage, tactics, strength, anatomy));
     }

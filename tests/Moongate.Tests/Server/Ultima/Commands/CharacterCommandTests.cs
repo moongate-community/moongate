@@ -70,7 +70,8 @@ public sealed class CharacterCommandTests
         Assert.Equal("No character 0x00000009 is pending deletion.", line.Text);
     }
 
-    [Theory, InlineData("character"), InlineData("character restore"), InlineData("character restore nope"), InlineData("character wipe")]
+    [Theory, InlineData("character"), InlineData("character restore"), InlineData("character restore nope"),
+     InlineData("character wipe")]
     public async Task BadUsage_PrintsTheUsage(string commandLine)
     {
         var output = await ExecuteAsync(commandLine, new RecordingCharacterService());

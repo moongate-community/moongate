@@ -75,7 +75,9 @@ public sealed class HidingScriptIntegrationTests : IAsyncLifetime
                 new StubBankService()
             )
         );
-        var data = new StubDataLoaderService().With(new SkillContent { Id = SkillType.Hiding, GainFactor = 1.0, Delay = 10 });
+        var data = new StubDataLoaderService().With(
+            new SkillContent { Id = SkillType.Hiding, GainFactor = 1.0, Delay = 10 }
+        );
         _container.RegisterInstance<ISkillService>(
             new SkillService(
                 _state,
@@ -88,14 +90,13 @@ public sealed class HidingScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<SkillModule>();
         _container.RegisterDelegate<IScriptEngine>(_ => _engine);
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>(
-                      (evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
         _scripts.Write("skills/hiding.lua", File.ReadAllText(ShippedScript("skills/hiding.lua")));
 
         var options = new ScriptEngineOptions

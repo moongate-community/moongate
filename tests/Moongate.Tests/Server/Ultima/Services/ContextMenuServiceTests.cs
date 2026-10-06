@@ -32,7 +32,9 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
     private readonly RecordingNpcScriptService _npcScripts = new();
     private readonly RecordingItemScriptService _itemScripts = new();
     private readonly StubBankService _bank = new();
-    private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    private readonly ItemEntity _backpack = new()
+        { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
@@ -49,7 +51,11 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
         _aria.AccountId = new Serial(1002);
         _aria.Body = 400;
         _aria.Location = new Point3D(1600, 1600, 0);
-        _banker = new() { Id = Banker, Name = "a banker", TemplateId = "banker", Body = 400, Map = MapType.Trammel, Location = new Point3D(1605, 1600, 0) };
+        _banker = new()
+        {
+            Id = Banker, Name = "a banker", TemplateId = "banker", Body = 400, Map = MapType.Trammel,
+            Location = new Point3D(1605, 1600, 0)
+        };
         _fixture.Mobiles.EnterWorld(_banker);
         _backpack.Equip(_aria.Id, LayerType.Backpack);
         _items.Add([_backpack]);
@@ -60,7 +66,17 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
                 new ItemTemplate { Id = "staff_marker", ItemId = new Serial(0x1BC3), Visibility = AccountType.GameMaster }
             )
         );
-        _menus = new(_items, _fixture.Mobiles, templates, _fixture.Sender, _use, new WorldConfig(), _npcScripts, _itemScripts, _bank);
+        _menus = new(
+            _items,
+            _fixture.Mobiles,
+            templates,
+            _fixture.Sender,
+            _use,
+            new WorldConfig(),
+            _npcScripts,
+            _itemScripts,
+            _bank
+        );
     }
 
     public async Task DisposeAsync()
@@ -93,7 +109,10 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
     public void Request_OnOneself_OffersPaperdollAndBackpack_ButNoBackpackToAGhostOrOnAnother()
     {
         Assert.True(Request(_session, _aria.Id));
-        Assert.Equal([(Paperdoll, false), (Backpack, false)], _fixture.Sender.Sent.OfType<DisplayContextMenuPacket>().Last().Entries);
+        Assert.Equal(
+            [(Paperdoll, false), (Backpack, false)],
+            _fixture.Sender.Sent.OfType<DisplayContextMenuPacket>().Last().Entries
+        );
 
         // A ghost keeps its paperdoll and has no backpack to open.
         _aria.Body = 402;
@@ -150,7 +169,10 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
 
         Assert.True(Request(_session, Banker));
 
-        Assert.Equal([(Paperdoll, false), (Bank, false)], Assert.Single(_fixture.Sender.Sent.OfType<DisplayContextMenuPacket>()).Entries);
+        Assert.Equal(
+            [(Paperdoll, false), (Bank, false)],
+            Assert.Single(_fixture.Sender.Sent.OfType<DisplayContextMenuPacket>()).Entries
+        );
     }
 
     [Theory]
@@ -189,7 +211,10 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
 
         Assert.True(Request(_session, Banker));
 
-        Assert.Equal(ContextMenuService.MaxEntries, Assert.Single(_fixture.Sender.Sent.OfType<DisplayContextMenuPacket>()).Entries.Count);
+        Assert.Equal(
+            ContextMenuService.MaxEntries,
+            Assert.Single(_fixture.Sender.Sent.OfType<DisplayContextMenuPacket>()).Entries.Count
+        );
     }
 
     [Theory]
@@ -223,7 +248,8 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
                 _itemScripts.Result = ScriptResult.Completed([Entries(Entry("x", Bank))]);
                 break;
             default:
-                var theirs = new ItemEntity { Id = new Serial(0x40000050), TemplateId = "stone", ItemId = 0x0ED4, Amount = 1 };
+                var theirs = new ItemEntity
+                    { Id = new Serial(0x40000050), TemplateId = "stone", ItemId = 0x0ED4, Amount = 1 };
                 theirs.Equip(Banker, LayerType.OneHanded);
                 _items.Add([theirs]);
                 _itemScripts.Scripted.Add("stone");
@@ -415,7 +441,8 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
     [InlineData("target on another map")]
     public void Select_WhatTheMenuDidNotOffer_OrNoLongerHolds_RunsNothing(string what)
     {
-        _npcScripts.Result = ScriptResult.Completed([Entries(Entry("bank", Bank, range: 6), Entry("off", 3006104, enabled: false))]);
+        _npcScripts.Result =
+            ScriptResult.Completed([Entries(Entry("bank", Bank, range: 6), Entry("off", 3006104, enabled: false))]);
         Assert.True(Request(_session, Banker));
         _npcScripts.Calls.Clear();
         var target = Banker;
@@ -492,7 +519,8 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
 
     private ItemEntity Item(string template, int x)
     {
-        var item = new ItemEntity { Id = new Serial(0x40000010 + (uint)x), TemplateId = template, ItemId = 0x0ED4, Amount = 1 };
+        var item = new ItemEntity
+            { Id = new Serial(0x40000010 + (uint)x), TemplateId = template, ItemId = 0x0ED4, Amount = 1 };
         item.PlaceOnGround(MapType.Trammel, new Point3D(x, 1600, 0));
         _items.Add([item]);
 

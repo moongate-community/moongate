@@ -22,7 +22,9 @@ public sealed class ItemsConfig
     {
         if (string.IsNullOrWhiteSpace(BackpackTemplate) || string.IsNullOrWhiteSpace(GoldTemplate))
         {
-            throw new InvalidOperationException("ultima.items.backpack_template and ultima.items.gold_template must be set.");
+            throw new InvalidOperationException(
+                "ultima.items.backpack_template and ultima.items.gold_template must be set."
+            );
         }
     }
 }

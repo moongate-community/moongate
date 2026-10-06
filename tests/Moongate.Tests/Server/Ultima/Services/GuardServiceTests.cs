@@ -24,10 +24,12 @@ public sealed class GuardServiceTests : IAsyncLifetime
     private readonly RecordingTimerService _timers = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingEffectService _effects = new();
+
     private readonly StubNpcService _npcs = new()
     {
         Spawned = new() { Id = new Serial(0x200), Name = "a guard", TemplateId = "guard" }
     };
+
     private readonly CrimeConfig _config = new();
     private readonly SettableClock _clock = new();
     private readonly StubMovementService _movement = new();
@@ -141,8 +143,7 @@ public sealed class GuardServiceTests : IAsyncLifetime
         // Someone on seven of the eight tiles around the thief: the one to the north-west is left.
         var serial = 0x300u;
 
-        await _fixture.Network.ExecuteOnLoopAsync(
-            () =>
+        await _fixture.Network.ExecuteOnLoopAsync(() =>
             {
                 for (var x = 59; x <= 61; x++)
                 {
@@ -151,7 +152,11 @@ public sealed class GuardServiceTests : IAsyncLifetime
                         if ((x, y) is not ((60, 50) or (59, 49)))
                         {
                             _fixture.Mobiles.EnterWorld(
-                                new MobileEntity { Id = new Serial(serial++), Name = "a bystander", Map = MapType.Trammel, Location = new Point3D(x, y, 0) }
+                                new MobileEntity
+                                {
+                                    Id = new Serial(serial++), Name = "a bystander", Map = MapType.Trammel,
+                                    Location = new Point3D(x, y, 0)
+                                }
                             );
                         }
                     }
@@ -176,7 +181,10 @@ public sealed class GuardServiceTests : IAsyncLifetime
         Assert.True(_npcs.Spawned.GetProp("guard.summoned", false));
         // The effect and the sound are where the guard comes.
         var effect = Assert.Single(_effects.At);
-        Assert.Equal((MapType.Trammel, spawn.Location, GuardService.TeleportEffect), (effect.Map, effect.Location, effect.Options.Graphic));
+        Assert.Equal(
+            (MapType.Trammel, spawn.Location, GuardService.TeleportEffect),
+            (effect.Map, effect.Location, effect.Options.Graphic)
+        );
         Assert.Equal((MapType.Trammel, spawn.Location, GuardService.TeleportSound), Assert.Single(_speech.PlacedSounds));
         Assert.Equal((_npcs.Spawned, "Thou wilt regret thine actions, swine!"), Assert.Single(_speech.Said));
     }
@@ -262,9 +270,11 @@ public sealed class GuardServiceTests : IAsyncLifetime
     [Fact]
     public async Task ASummonedGuardLeftByAStoppedServer_IsRemovedAtTheFirstCheck()
     {
-        var leftover = new MobileEntity { Id = new Serial(0x300), Name = "a guard", TemplateId = "guard", Map = MapType.Trammel };
+        var leftover = new MobileEntity
+            { Id = new Serial(0x300), Name = "a guard", TemplateId = "guard", Map = MapType.Trammel };
         leftover.SetProp("guard.summoned", true);
-        var standing = new MobileEntity { Id = new Serial(0x301), Name = "a guard", TemplateId = "guard", Map = MapType.Trammel };
+        var standing = new MobileEntity
+            { Id = new Serial(0x301), Name = "a guard", TemplateId = "guard", Map = MapType.Trammel };
         _fixture.Mobiles.EnterWorld(leftover);
         _fixture.Mobiles.EnterWorld(standing);
 
@@ -297,7 +307,9 @@ public sealed class GuardServiceTests : IAsyncLifetime
     [InlineData(MapType.Ilshenar, "archerguard")]
     [InlineData(MapType.Malas, "archerguard")]
     [InlineData(MapType.Trammel, "guard")]
-    public async Task TheGuardsCalledInIlshenarAndMalas_AreArchers_AsModernUOs_ElsewhereWarriors(MapType map, string template)
+    public async Task TheGuardsCalledInIlshenarAndMalas_AreArchers_AsModernUOs_ElsewhereWarriors(
+        MapType map, string template
+    )
     {
         Assert.True(_fixture.Mobiles.MoveTo(_aria, map, new Point3D(50, 50, 0)));
         Assert.True(_fixture.Mobiles.MoveTo(_thief, map, new Point3D(60, 50, 0)));
@@ -323,7 +335,8 @@ public sealed class GuardServiceTests : IAsyncLifetime
     [Fact]
     public async Task AGuardThatWasCalled_IsNeverItselfATarget()
     {
-        var guard = new MobileEntity { Id = new Serial(0x400), Name = "a guard", TemplateId = "guard", Map = MapType.Trammel, Criminal = true };
+        var guard = new MobileEntity
+            { Id = new Serial(0x400), Name = "a guard", TemplateId = "guard", Map = MapType.Trammel, Criminal = true };
         guard.SetProp("guard.summoned", true);
         _fixture.Mobiles.EnterWorld(guard);
         Move(guard, 55, 50);

@@ -15,8 +15,8 @@ internal static class BundledMigrations
     public static MigrationCatalog[] Load(string source)
     {
         return new[] { MigrationTarget.Auth, MigrationTarget.World }
-               .Select(target => MigrationCatalog.Load(source, null, target))
-               .ToArray();
+            .Select(target => MigrationCatalog.Load(source, null, target))
+            .ToArray();
     }
 
     /// <summary>

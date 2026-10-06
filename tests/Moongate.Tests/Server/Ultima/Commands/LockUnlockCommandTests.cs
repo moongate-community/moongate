@@ -23,15 +23,19 @@ public sealed class LockUnlockCommandTests : IAsyncDisposable
 {
     private readonly StubTargetService _targets = new();
     private readonly ItemService _items = TestItems.Create();
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), ScriptId = "door" },
             new ItemTemplate { Id = "decoration", ItemId = new Serial(0x0A28) }
         )
     );
+
     private readonly ItemEntity _left = Door(0x40000010, 1600);
     private readonly ItemEntity _right = Door(0x40000011, 1601);
-    private readonly ItemEntity _candle = new() { Id = new Serial(0x40000012), TemplateId = "decoration", ItemId = 0x0A28, Amount = 1 };
+
+    private readonly ItemEntity _candle = new()
+        { Id = new Serial(0x40000012), TemplateId = "decoration", ItemId = 0x0A28, Amount = 1 };
 
     private SessionFixture? _fixture;
 

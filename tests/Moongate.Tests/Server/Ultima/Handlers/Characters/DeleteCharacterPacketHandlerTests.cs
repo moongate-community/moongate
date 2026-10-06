@@ -21,10 +21,17 @@ public sealed class DeleteCharacterPacketHandlerTests
         var (context, sender) = await Context(fixture, new Serial(42));
         var characters = new RecordingCharacterService
         {
-            DeletionResult = CharacterDeletionResult.Deleted(new() { Id = new(3), Name = "Bran" }, ["Aria", null, null, null, null])
+            DeletionResult = CharacterDeletionResult.Deleted(
+                new() { Id = new(3), Name = "Bran" },
+                ["Aria", null, null, null, null]
+            )
         };
 
-        await new DeleteCharacterPacketHandler(characters).HandleAsync(context, new() { CharacterIndex = 3 }, CancellationToken.None);
+        await new DeleteCharacterPacketHandler(characters).HandleAsync(
+            context,
+            new() { CharacterIndex = 3 },
+            CancellationToken.None
+        );
 
         Assert.Equal(3, characters.DeletionIndex);
         var list = Assert.IsType<CharacterListUpdatePacket>(Assert.Single(sender.Sent));
@@ -42,7 +49,11 @@ public sealed class DeleteCharacterPacketHandlerTests
             DeletionResult = CharacterDeletionResult.Refused(CharacterDeleteResultType.CharacterBeingPlayed)
         };
 
-        await new DeleteCharacterPacketHandler(characters).HandleAsync(context, new() { CharacterIndex = 0 }, CancellationToken.None);
+        await new DeleteCharacterPacketHandler(characters).HandleAsync(
+            context,
+            new() { CharacterIndex = 0 },
+            CancellationToken.None
+        );
 
         Assert.Equal(
             CharacterDeleteResultType.CharacterBeingPlayed,
@@ -58,7 +69,11 @@ public sealed class DeleteCharacterPacketHandlerTests
         var (context, sender) = await Context(fixture, new Serial(42));
         var characters = new RecordingCharacterService { Failure = new InvalidOperationException("database down") };
 
-        await new DeleteCharacterPacketHandler(characters).HandleAsync(context, new() { CharacterIndex = 0 }, CancellationToken.None);
+        await new DeleteCharacterPacketHandler(characters).HandleAsync(
+            context,
+            new() { CharacterIndex = 0 },
+            CancellationToken.None
+        );
 
         Assert.Equal(
             CharacterDeleteResultType.RequestFailed,
@@ -73,7 +88,11 @@ public sealed class DeleteCharacterPacketHandlerTests
         var (context, _) = await Context(fixture, null);
         var characters = new RecordingCharacterService();
 
-        await new DeleteCharacterPacketHandler(characters).HandleAsync(context, new() { CharacterIndex = 0 }, CancellationToken.None);
+        await new DeleteCharacterPacketHandler(characters).HandleAsync(
+            context,
+            new() { CharacterIndex = 0 },
+            CancellationToken.None
+        );
 
         Assert.Null(characters.DeletionIndex);
         Assert.False(fixture.Client.IsConnected);

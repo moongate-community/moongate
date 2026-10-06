@@ -20,7 +20,10 @@ public sealed class PublishedScriptModulesTests
     public void BookModule_PublishesTheThreeFunctionsWithExamples()
     {
         var module = Assert.Single(Published(), candidate => candidate.Name == "book");
-        Assert.Equal(["give", "open", "write"], module.Functions.Select(function => function.LuaName).Order(StringComparer.Ordinal));
+        Assert.Equal(
+            ["give", "open", "write"],
+            module.Functions.Select(function => function.LuaName).Order(StringComparer.Ordinal)
+        );
         var path = Path.Combine(RepositoryRoot(), "website/lua/examples/book.md");
         Assert.True(File.Exists(path), "The book module needs its published examples.");
         var examples = File.ReadAllText(path);
@@ -29,6 +32,7 @@ public sealed class PublishedScriptModulesTests
             Assert.Contains("## " + name, examples);
         }
     }
+
     [Fact]
     public void EveryModuleAndFunction_HasTheTextTheReferencePrints()
     {
@@ -81,7 +85,9 @@ public sealed class PublishedScriptModulesTests
     public void ACallbackParameter_IsTypedAsAFunction(string module, string function, string parameter)
     {
         var described = LuaFunctionDescriber.Describe(
-            Published().Single(candidate => candidate.Name == module).Functions.Single(candidate => candidate.LuaName == function)
+            Published()
+                .Single(candidate => candidate.Name == module)
+                .Functions.Single(candidate => candidate.LuaName == function)
         );
 
         Assert.Equal("function", described.Parameters.Single(candidate => candidate.Name == parameter).LuaType);

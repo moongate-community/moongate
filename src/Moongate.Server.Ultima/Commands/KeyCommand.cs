@@ -73,7 +73,12 @@ public sealed class KeyCommand : ICommandExecutor
             return;
         }
 
-        var target = await _targets.RequestAsync(session, TargetCursorType.Object, TargetFlagsType.Neutral, context.CancellationToken);
+        var target = await _targets.RequestAsync(
+            session,
+            TargetCursorType.Object,
+            TargetFlagsType.Neutral,
+            context.CancellationToken
+        );
 
         if (target.Kind != TargetResultType.Object)
         {
@@ -93,10 +98,13 @@ public sealed class KeyCommand : ICommandExecutor
                     busy = true;
                     return;
                 }
+
                 if (DoorKeys.TryGetDoor(_items, _templates, target.Serial, out var door))
                 {
                     value = DoorKeys.EnsureKeyValue(door, DoorKeys.LinkedDoor(_items, _templates, door));
-                    backpack = _items.GetWorn(session.CharacterId).FirstOrDefault(item => item.Layer == LayerType.Backpack)?.Id;
+                    backpack = _items.GetWorn(session.CharacterId)
+                        .FirstOrDefault(item => item.Layer == LayerType.Backpack)
+                        ?.Id;
                 }
             },
             context.CancellationToken
@@ -104,9 +112,15 @@ public sealed class KeyCommand : ICommandExecutor
 
         if (busy)
         {
-            context.PrintError(_localization.Text(Moongate.Server.Ultima.Services.Internal.Books.BookAttachmentService.BusyMessage, "Your backpack is busy. Try again shortly."));
+            context.PrintError(
+                _localization.Text(
+                    Moongate.Server.Ultima.Services.Internal.Books.BookAttachmentService.BusyMessage,
+                    "Your backpack is busy. Try again shortly."
+                )
+            );
             return;
         }
+
         if (value is not { } keyValue)
         {
             context.Print(_localization.Text(CommandMessages.NotADoor, "That is not a door."));
@@ -131,21 +145,25 @@ public sealed class KeyCommand : ICommandExecutor
         while (!applied)
         {
             Task? settlement = null;
-            await OnLoopAsync(() =>
-            {
-                if (_inventory?.AllowsOwner(session.CharacterId) == false)
+            await OnLoopAsync(
+                () =>
                 {
-                    settlement = _reservations!.WaitAsync(session.CharacterId);
-                    return;
-                }
-                applied = true;
-                if (!_items.TryGet(container, out _)) return;
-                key.GridIndex = ContainerSlotUtils.FirstFree(_items.GetContents(container));
-                _items.Add([key]);
-                delivered = true;
-                _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(key, session.UsesContainerGrid()));
-                _sender.TrySend(session.SessionId, _tooltips.Info(key));
-            }, CancellationToken.None);
+                    if (_inventory?.AllowsOwner(session.CharacterId) == false)
+                    {
+                        settlement = _reservations!.WaitAsync(session.CharacterId);
+                        return;
+                    }
+
+                    applied = true;
+                    if (!_items.TryGet(container, out _)) return;
+                    key.GridIndex = ContainerSlotUtils.FirstFree(_items.GetContents(container));
+                    _items.Add([key]);
+                    delivered = true;
+                    _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(key, session.UsesContainerGrid()));
+                    _sender.TrySend(session.SessionId, _tooltips.Info(key));
+                },
+                CancellationToken.None
+            );
             if (settlement is not null) await settlement;
         }
 

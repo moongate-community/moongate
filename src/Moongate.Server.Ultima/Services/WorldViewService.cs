@@ -28,7 +28,6 @@ namespace Moongate.Server.Ultima.Services;
 /// </summary>
 public sealed class WorldViewService : IWorldViewService
 {
-
     private const int NoDrawGraphic = 0x21A4;
     private const int StaffBlockerGraphic = 0x1183;
     private static readonly ClientVersion StygianAbyss = new(7, 0, 0, 0);
@@ -68,7 +67,9 @@ public sealed class WorldViewService : IWorldViewService
         _world = world;
     }
 
-    public void Entered(MobileEntity mobile, long sessionId, ClientVersion? version, AccountType account = AccountType.Regular)
+    public void Entered(
+        MobileEntity mobile, long sessionId, ClientVersion? version, AccountType account = AccountType.Regular
+    )
     {
         var own = new Viewer(sessionId, version, account);
         _sessions[mobile.Id] = own;
@@ -506,7 +507,8 @@ public sealed class WorldViewService : IWorldViewService
             return direction & 0xFF;
         }
 
-        return item.Props?.GetValueOrDefault("light") is string name && EnumNameUtils.TryParse<LightType>(name, out var light)
+        return item.Props?.GetValueOrDefault("light") is string name &&
+               EnumNameUtils.TryParse<LightType>(name, out var light)
             ? (int)light
             : 0;
     }
@@ -589,7 +591,9 @@ public sealed class WorldViewService : IWorldViewService
             // One item a layer; taken out of the corpse, or hidden from this viewer, it is not drawn.
             if (inside.TryGetValue(serial, out var item) && viewer.Account >= VisibilityOf(item) && layers.Add(layer))
             {
-                entries.Add(new(item.Id, item.ItemId, item.Amount, item.GridX ?? 0, item.GridY ?? 0, 0, corpse.Id, item.Hue));
+                entries.Add(
+                    new(item.Id, item.ItemId, item.Amount, item.GridX ?? 0, item.GridY ?? 0, 0, corpse.Id, item.Hue)
+                );
                 worn.Add(new(layer, item.Id));
             }
         }
@@ -622,8 +626,8 @@ public sealed class WorldViewService : IWorldViewService
     private static (int Graphic, Hue Hue)? HairOf(ItemEntity corpse, string graphicProp, string hueProp)
     {
         return WholeProp(corpse, graphicProp) is { } graphic and > 0
-                   ? (graphic, new Hue((ushort)(WholeProp(corpse, hueProp) ?? 0)))
-                   : null;
+            ? (graphic, new Hue((ushort)(WholeProp(corpse, hueProp) ?? 0)))
+            : null;
     }
 
     // The "serial:layer" pairs of the corpse's worn prop; what a script spoiled is left out.

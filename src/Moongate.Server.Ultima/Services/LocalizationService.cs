@@ -24,8 +24,9 @@ public class LocalizationService : ILocalizationService
     public LocalizationService(LocalizationConfig localizationConfig, IDataLoaderService dataLoaderService)
     {
         _localizationConfig = localizationConfig;
-        _messages = new(
-            () => dataLoaderService.GetEntities<MessageContent>().ToFrozenDictionary(message => message.Id, message => message.Text)
+        _messages = new(() =>
+            dataLoaderService.GetEntities<MessageContent>()
+                .ToFrozenDictionary(message => message.Id, message => message.Text)
         );
     }
 

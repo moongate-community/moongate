@@ -30,8 +30,8 @@ public class LootService : ILootService
         ITileDataService tiles
     )
     {
-        _tables = new(
-            () => dataLoaderService.GetEntities<LootTemplate>().ToFrozenDictionary(table => table.Id, StringComparer.Ordinal)
+        _tables = new(() =>
+            dataLoaderService.GetEntities<LootTemplate>().ToFrozenDictionary(table => table.Id, StringComparer.Ordinal)
         );
         _itemFactory = itemFactory;
         _itemTemplates = itemTemplates;

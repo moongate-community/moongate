@@ -61,7 +61,9 @@ public sealed class FakeItemFactoryService : IItemFactoryService
         return Task.CompletedTask;
     }
 
-    public Task SaveAsync(IPersistenceTransaction transaction, ItemEntity item, CancellationToken cancellationToken = default)
+    public Task SaveAsync(
+        IPersistenceTransaction transaction, ItemEntity item, CancellationToken cancellationToken = default
+    )
     {
         return SaveAsync([item], cancellationToken);
     }

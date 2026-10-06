@@ -49,7 +49,8 @@ public sealed class BankServiceTests : IAsyncLifetime
     {
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
-                new ItemTemplate { Id = BankService.BankTemplate, ItemId = new Serial(0x0E7C), Name = "bank box", Movable = false },
+                new ItemTemplate
+                    { Id = BankService.BankTemplate, ItemId = new Serial(0x0E7C), Name = "bank box", Movable = false },
                 new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED), Weight = 0.02m },
                 new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75), MaxWeight = 400 },
                 new ItemTemplate { Id = "bag", ItemId = new Serial(0x0E76) },
@@ -71,7 +72,9 @@ public sealed class BankServiceTests : IAsyncLifetime
         // A player: an NPC has no account, and no bank.
         _aria.AccountId = new Serial(1002);
         var layouts = new ContainerLayoutService(
-            new StubDataLoaderService().With(new ContainerContent { Name = "metal chest", Gump = 0x004A, Items = [0x0E7C], Default = true })
+            new StubDataLoaderService().With(
+                new ContainerContent { Name = "metal chest", Gump = 0x004A, Items = [0x0E7C], Default = true }
+            )
         );
         _layouts = layouts;
         _capacity = new ContainerCapacityService(_items, _templates, _config);
@@ -100,15 +103,17 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.Equal(box.Id, Assert.Single(_fixture.Sender.Sent.OfType<WornItemPacket>()).Item);
         Assert.Equal(0x004A, Assert.Single(_fixture.Sender.Sent.OfType<DisplayContainerPacket>()).Gump);
         Assert.Single(_fixture.Sender.Sent.OfType<ContainerContentPacket>());
-        Assert.Contains(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>(), message => message.Text == "Bank container has 0 items.");
+        Assert.Contains(
+            _fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>(),
+            message => message.Text == "Bank container has 0 items."
+        );
         Assert.True(_bank.IsOpen(_aria));
     }
 
     [Fact]
     public async Task Open_ThePlayerLeavesBeforeTheBoxIsSaved_LeavesItToTheNextLogin()
     {
-        await OnLoopAsync(
-            () =>
+        await OnLoopAsync(() =>
             {
                 _bank.Open(_aria);
                 _fixture.Sessions.Remove(_session.SessionId);
@@ -127,9 +132,9 @@ public sealed class BankServiceTests : IAsyncLifetime
     [Fact]
     public async Task Open_ThePlayerLogsInAgainBeforeTheBoxIsSaved_ShowsNothingToTheOldCharacter()
     {
-        var again = new MobileEntity { Id = _aria.Id, Name = "Aria", AccountId = _aria.AccountId, Map = MapType.Trammel, Location = _aria.Location };
-        await OnLoopAsync(
-            () =>
+        var again = new MobileEntity
+            { Id = _aria.Id, Name = "Aria", AccountId = _aria.AccountId, Map = MapType.Trammel, Location = _aria.Location };
+        await OnLoopAsync(() =>
             {
                 _bank.Open(_aria);
                 _fixture.Mobiles.EnterWorld(again);
@@ -152,8 +157,14 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.True(await OnLoopAsync(() => _bank.Open(_aria)));
 
         Assert.Empty(_factory.Saved);
-        Assert.Contains(coin.Id, Assert.Single(_fixture.Sender.Sent.OfType<ContainerContentPacket>()).Items.Select(item => item.Serial));
-        Assert.Contains(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>(), message => message.Text == "Bank container has 1 items.");
+        Assert.Contains(
+            coin.Id,
+            Assert.Single(_fixture.Sender.Sent.OfType<ContainerContentPacket>()).Items.Select(item => item.Serial)
+        );
+        Assert.Contains(
+            _fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>(),
+            message => message.Text == "Bank container has 1 items."
+        );
     }
 
     [Fact]
@@ -250,7 +261,8 @@ public sealed class BankServiceTests : IAsyncLifetime
 
     private (ItemEntity Box, ItemEntity Coin) AddBank()
     {
-        var box = new ItemEntity { Id = new Serial(0x40000010), TemplateId = BankService.BankTemplate, ItemId = 0x0E7C, Amount = 1 };
+        var box = new ItemEntity
+            { Id = new Serial(0x40000010), TemplateId = BankService.BankTemplate, ItemId = 0x0E7C, Amount = 1 };
         box.Equip(_aria.Id, LayerType.Bank);
         var coin = new ItemEntity { Id = new Serial(0x40000011), TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
         coin.PutInContainer(box.Id, new Point2D(44, 65));
@@ -455,7 +467,10 @@ public sealed class BankServiceTests : IAsyncLifetime
 
         _bank.Withdraw(_aria, 500);
 
-        Assert.Contains(_fixture.Sender.Sent.Skip(before).OfType<ContainerItemUpdatePacket>(), packet => packet.Item.Amount == 500);
+        Assert.Contains(
+            _fixture.Sender.Sent.Skip(before).OfType<ContainerItemUpdatePacket>(),
+            packet => packet.Item.Amount == 500
+        );
     }
 
     // The gold weighs: the player's status shows its new load, and it is warned when it is now overloaded.
@@ -601,7 +616,17 @@ public sealed class BankServiceTests : IAsyncLifetime
     private BankService BankWith(IWeightService weight)
     {
         var tooltips = TestTooltips.Create(_items, _fixture.Mobiles);
-        var handling = new ItemHandlingService(_items, _fixture.Sessions, _fixture.Sender, new RecordingWorldViewService(), tooltips, _factory, _serials, _layouts, _capacity);
+        var handling = new ItemHandlingService(
+            _items,
+            _fixture.Sessions,
+            _fixture.Sender,
+            new RecordingWorldViewService(),
+            tooltips,
+            _factory,
+            _serials,
+            _layouts,
+            _capacity
+        );
 
         return new(
             _items,
@@ -645,7 +670,8 @@ public sealed class BankServiceTests : IAsyncLifetime
         Assert.Equal(20_000, _bank.Balance(_aria));
     }
 
-    [Theory, InlineData(4999, BankResultType.CheckTooSmall), InlineData(1_000_001, BankResultType.CheckTooBig), InlineData(0, BankResultType.BadAmount)]
+    [Theory, InlineData(4999, BankResultType.CheckTooSmall), InlineData(1_000_001, BankResultType.CheckTooBig),
+     InlineData(0, BankResultType.BadAmount)]
     public async Task WriteCheck_OutOfTheBoundsOfTheSettings_IsRefused(int amount, BankResultType refusal)
     {
         Gold(await BoxAsync(), 60_000);
@@ -867,8 +893,7 @@ public sealed class BankServiceTests : IAsyncLifetime
     {
         var box = await BoxAsync();
         var check = Check(box, 5000);
-        await OnLoopAsync(
-            () =>
+        await OnLoopAsync(() =>
             {
                 _session.Set(ItemSessionKeys.Held, new HeldItem(check.Id));
 
@@ -1064,8 +1089,7 @@ public sealed class BankServiceTests : IAsyncLifetime
         _items.Add([theirs]);
         var stolen = Gold(theirs, 300);
         var held = Gold(Backpack(), 300);
-        await OnLoopAsync(
-            () =>
+        await OnLoopAsync(() =>
             {
                 _session.Set(ItemSessionKeys.Held, new HeldItem(held.Id));
 

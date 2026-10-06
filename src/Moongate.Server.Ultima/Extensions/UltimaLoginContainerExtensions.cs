@@ -42,7 +42,8 @@ public static class UltimaLoginContainerExtensions
         container.RegisterLoginPacketHandler<ServerSelectPacket, LoginRoleServerSelectPacketHandler>();
 
         // The Enhanced Client sends its hardware information right after the account login, before the server list.
-        container.RegisterLoginPacketHandler<ClientHardwareInfoPacket, LoginRoleIgnoredPacketHandler<ClientHardwareInfoPacket>>();
+        container
+            .RegisterLoginPacketHandler<ClientHardwareInfoPacket, LoginRoleIgnoredPacketHandler<ClientHardwareInfoPacket>>();
 
         return container;
     }

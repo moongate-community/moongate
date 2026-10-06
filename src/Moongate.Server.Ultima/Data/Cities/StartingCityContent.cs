@@ -15,5 +15,4 @@ public class StartingCityContent
     public MapType Map { get; set; }
 
     public Serial Cliloc { get; set; }
-
 }

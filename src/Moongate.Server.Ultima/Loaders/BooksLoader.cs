@@ -46,7 +46,8 @@ public sealed class BooksLoader : IDataLoader<BookTemplate>
         }
 
         var items = _data.GetEntities<ItemTemplate>().ToDictionary(item => item.Id, StringComparer.Ordinal);
-        foreach (var path in Directory.EnumerateFiles(directory, "*.toml", SearchOption.AllDirectories).Order(StringComparer.Ordinal))
+        foreach (var path in Directory.EnumerateFiles(directory, "*.toml", SearchOption.AllDirectories)
+                     .Order(StringComparer.Ordinal))
         {
             BookTemplate book;
             try
@@ -92,7 +93,9 @@ public sealed class BooksLoader : IDataLoader<BookTemplate>
         if (!items.TryGetValue(book.ItemTemplate, out var item) || item.Stackable != false ||
             !BookTextValidation.IsReadableScript(item.ScriptId))
         {
-            throw new InvalidDataException($"{book.File}: item_template must select an explicitly nonstackable readable item.");
+            throw new InvalidDataException(
+                $"{book.File}: item_template must select an explicitly nonstackable readable item."
+            );
         }
 
         if (book.ItemId is < 1 or > ushort.MaxValue)
@@ -114,7 +117,9 @@ public sealed class BooksLoader : IDataLoader<BookTemplate>
 
         if (book.Pages is not null && (!book.Writable || book.Pages is < 1 or > BookPagination.MaxPages))
         {
-            throw new InvalidDataException($"{book.File}: pages is the page count of a writable book, from 1 to {BookPagination.MaxPages}.");
+            throw new InvalidDataException(
+                $"{book.File}: pages is the page count of a writable book, from 1 to {BookPagination.MaxPages}."
+            );
         }
 
         ValidateFields(book.File, book.Title, book.Author, book.Content, names, book.Writable);
@@ -127,26 +132,39 @@ public sealed class BooksLoader : IDataLoader<BookTemplate>
 
             if (translation.ItemId is not null || translation.Writable is not null || translation.Pages is not null)
             {
-                throw new InvalidDataException($"{book.File}: item_id, writable and pages belong to the document, not to a translation.");
+                throw new InvalidDataException(
+                    $"{book.File}: item_id, writable and pages belong to the document, not to a translation."
+                );
             }
 
-            ValidateFields(book.File, translation.Title ?? book.Title, translation.Author ?? book.Author,
-                translation.Content ?? book.Content, names, book.Writable);
+            ValidateFields(
+                book.File,
+                translation.Title ?? book.Title,
+                translation.Author ?? book.Author,
+                translation.Content ?? book.Content,
+                names,
+                book.Writable
+            );
         }
     }
 
-    private static void ValidateFields(string file, string title, string author, string content, HashSet<string> names, bool mayBeBlank)
+    private static void ValidateFields(
+        string file, string title, string author, string content, HashSet<string> names, bool mayBeBlank
+    )
     {
         if (string.IsNullOrWhiteSpace(title) || (!mayBeBlank && string.IsNullOrWhiteSpace(content)))
         {
             throw new InvalidDataException($"{file}: title and content must be nonblank.");
         }
 
-        foreach (var (text, limit) in new[] { (title, int.MaxValue), (author, int.MaxValue), (content, BookTextValidation.ContentLimit) })
+        foreach (var (text, limit) in new[]
+                     { (title, int.MaxValue), (author, int.MaxValue), (content, BookTextValidation.ContentLimit) })
         {
             if (!BookTextValidation.IsValidText(text, limit))
             {
-                throw new InvalidDataException($"{file}: document text contains forbidden controls or exceeds its source limit.");
+                throw new InvalidDataException(
+                    $"{file}: document text contains forbidden controls or exceeds its source limit."
+                );
             }
 
             foreach (var token in TextTemplateTokens.Find(text, TextTemplateSyntaxType.Document))

@@ -67,7 +67,9 @@ public sealed class RecordingDataAccess<T> : IDataAccess<T> where T : class, IMo
         return Task.FromResult(Upserted.LastOrDefault(entity => entity.Id == id));
     }
 
-    public Task<IReadOnlyList<T>> QueryAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<T>> QueryAsync(
+        Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default
+    )
     {
         return Task.FromResult<IReadOnlyList<T>>(Upserted.Where(predicate.Compile()).ToList());
     }

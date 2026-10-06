@@ -28,6 +28,7 @@ public sealed class AddGoldCommandTests : IAsyncLifetime
     private readonly StubItemSerialPool _serials = new();
     private readonly StubTargetService _targets = new();
     private readonly RecordingFatigueService _fatigue = new();
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) },
@@ -44,7 +45,10 @@ public sealed class AddGoldCommandTests : IAsyncLifetime
         _fixture = await BroadcastFixture.CreateAsync();
         _session = await _fixture.AddAsync(2);
         await _fixture.AddAsync(3);
-        var factory = new FakeItemFactoryService(_templates, new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0));
+        var factory = new FakeItemFactoryService(
+            _templates,
+            new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0)
+        );
         _handling = new(
             _items,
             _fixture.Sessions,
@@ -192,7 +196,8 @@ public sealed class AddGoldCommandTests : IAsyncLifetime
 
     private ItemEntity Backpack(uint owner)
     {
-        var backpack = new ItemEntity { Id = new Serial(0x40001000 + owner), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        var backpack = new ItemEntity
+            { Id = new Serial(0x40001000 + owner), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
         backpack.Equip(new Serial(owner), LayerType.Backpack);
         _items.Add([backpack]);
 

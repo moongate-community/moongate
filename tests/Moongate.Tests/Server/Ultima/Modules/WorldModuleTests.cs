@@ -33,6 +33,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
     private readonly WorldPropsService _props = new(new RecordingDataAccess<WorldStateEntity>());
     private readonly StubClockService _clock = new() { Time = new GameTime(21, 5) };
     private readonly ItemService _items = TestItems.Create();
+
     private readonly RegionService _regions = new(
         new StubDataLoaderService().With(
             new RegionContent
@@ -42,10 +43,12 @@ public sealed class WorldModuleTests : IAsyncLifetime
             },
             new RegionContent
             {
-                Map = MapType.Trammel, Name = "Covetous", Areas = [new RegionAreaContent { X1 = 2400, Y1 = 400, X2 = 2600, Y2 = 600 }]
+                Map = MapType.Trammel, Name = "Covetous",
+                Areas = [new RegionAreaContent { X1 = 2400, Y1 = 400, X2 = 2600, Y2 = 600 }]
             }
         )
     );
+
     private readonly StubLineOfSightService _sight = new();
     private readonly StubMovementService _movement = new() { SpawnZ = (x, _) => x == 1600 ? 7 : null };
     private readonly StubWeatherService _weather = new();
@@ -56,11 +59,15 @@ public sealed class WorldModuleTests : IAsyncLifetime
 
     public WorldModuleTests()
     {
-        _sectors.Add(new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _sectors.Add(
+            new MobileEntity
+                { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         _sectors.Add(
             new MobileEntity
             {
-                Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca, Location = new Point3D(1400, 1600, 0)
+                Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca,
+                Location = new Point3D(1400, 1600, 0)
             }
         );
     }
@@ -157,7 +164,9 @@ public sealed class WorldModuleTests : IAsyncLifetime
     [Fact]
     public void Region_NamesTheRegionOfAPlace()
     {
-        var result = Run("return world.region('Trammel', 1500, 1600, 0), world.region('Trammel', 3000, 3000, 0), world.region('Trammel', 1500, 1600, 500)");
+        var result = Run(
+            "return world.region('Trammel', 1500, 1600, 0), world.region('Trammel', 3000, 3000, 0), world.region('Trammel', 1500, 1600, 500)"
+        );
 
         Assert.Equal("Britain", result[0].Read<string>());
         Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[1], result[2]));
@@ -182,7 +191,9 @@ public sealed class WorldModuleTests : IAsyncLifetime
         items.Add([gold]);
         items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1601, 1600, 0));
 
-        var result = Run("local found = world.items_in_range('Trammel', 1600, 1600, 1) return #found, found[1], #world.items_in_range('Trammel', 1500, 1600, 1)");
+        var result = Run(
+            "local found = world.items_in_range('Trammel', 1600, 1600, 1) return #found, found[1], #world.items_in_range('Trammel', 1500, 1600, 1)"
+        );
 
         Assert.Equal([1, 0x40000050, 0], result.Select(value => value.Read<long>()));
     }
@@ -210,7 +221,9 @@ public sealed class WorldModuleTests : IAsyncLifetime
     [Fact]
     public void StandingZ_IsWhereAMobileCanStand_OrNil()
     {
-        var result = Run("return world.standing_z('Trammel', 1600, 1600, 20), world.standing_z('Trammel', 1601, 1600, 20), world.standing_z('Trammel', -5, 1600, 20)");
+        var result = Run(
+            "return world.standing_z('Trammel', 1600, 1600, 20), world.standing_z('Trammel', 1601, 1600, 20), world.standing_z('Trammel', -5, 1600, 20)"
+        );
 
         Assert.Equal(7, result[0].Read<int>());
         Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[1], result[2]));
@@ -362,7 +375,9 @@ public sealed class WorldModuleTests : IAsyncLifetime
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
         aria.AccountId = new Serial(0x42);
 
-        var result = Run("return world.weather_profile(2), world.weather_profile(256), world.weather_profile(0), world.weather_profile(-1)");
+        var result = Run(
+            "return world.weather_profile(2), world.weather_profile(256), world.weather_profile(0), world.weather_profile(-1)"
+        );
 
         Assert.Equal("temperate", result[0].Read<string>());
         Assert.Equal([LuaValue.Nil, LuaValue.Nil, LuaValue.Nil], result[1..]);
@@ -469,7 +484,22 @@ public sealed class WorldModuleTests : IAsyncLifetime
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
         binder.Bind(
             state,
-            new WorldModule(_sectors, _clock, _fixture.Sessions, _items, _regions, _sight, _movement, _weather, _seasons, _broadcast, _fixture.Mobiles, _time, _props, _light)
+            new WorldModule(
+                _sectors,
+                _clock,
+                _fixture.Sessions,
+                _items,
+                _regions,
+                _sight,
+                _movement,
+                _weather,
+                _seasons,
+                _broadcast,
+                _fixture.Mobiles,
+                _time,
+                _props,
+                _light
+            )
         );
         binder.BindEnum(state, typeof(MapType));
         binder.BindEnum(state, typeof(MoonPhaseType));

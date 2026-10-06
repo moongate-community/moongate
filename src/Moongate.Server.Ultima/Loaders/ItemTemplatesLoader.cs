@@ -8,7 +8,8 @@ using Serilog;
 namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
-///     Loads every <c>*.toml</c> under <c>templates/items/</c>, recursively, and resolves <c>base_id</c>: a nullable field
+///     Loads every <c>*.toml</c> under <c>templates/items/</c>, recursively, and resolves <c>base_id</c>: a nullable
+///     field
 ///     left unset takes the parent's value, up the chain; <c>item_id</c> 0 takes the parent's; the child's <c>tags</c>
 ///     replace the parent's. An empty or duplicate id, a missing parent or a cycle stops the server at startup.
 /// </summary>
@@ -37,7 +38,7 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         if (Directory.Exists(itemsDirectoryPath))
         {
             foreach (var path in Directory.EnumerateFiles(itemsDirectoryPath, "*.toml", SearchOption.AllDirectories)
-                                          .Order(StringComparer.Ordinal))
+                         .Order(StringComparer.Ordinal))
             {
                 var file = await TomlUtils.DeserializeFromFileAsync<ItemTemplateFile>(path, null, cancellationToken) ??
                            new ItemTemplateFile();
@@ -99,7 +100,9 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         {
             if (!byId.ContainsKey(baseId))
             {
-                throw new InvalidDataException($"{file}: item template '{id}' has base_id '{baseId}', which does not exist.");
+                throw new InvalidDataException(
+                    $"{file}: item template '{id}' has base_id '{baseId}', which does not exist."
+                );
             }
 
             Inherit(template, Resolve(baseId, byId, resolved, visiting));
@@ -150,7 +153,7 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         child.Visibility ??= parent.Visibility;
         child.MaxItems ??= parent.MaxItems;
         child.MaxWeight ??= parent.MaxWeight;
-        child.Loot ??= parent.Loot is null ? null : [..parent.Loot];
+        child.Loot ??= parent.Loot is null ? null : [.. parent.Loot];
         child.Gold ??= parent.Gold;
     }
 }

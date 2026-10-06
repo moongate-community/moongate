@@ -59,7 +59,13 @@ public sealed class MoongateUltimaPluginWorldCommandsTests
         // No message files are loaded here: the texts are the English ones.
         container.RegisterInstance(TestLocalization.With(), ifAlreadyRegistered: IfAlreadyRegistered.Replace);
         var context = name == "broadcast"
-            ? new CommandContext("broadcast Maintenance soon", name, ["Maintenance", "soon"], CommandSourceType.Console, null)
+            ? new CommandContext(
+                "broadcast Maintenance soon",
+                name,
+                ["Maintenance", "soon"],
+                CommandSourceType.Console,
+                null
+            )
             : new CommandContext(name, name, [], CommandSourceType.Console, null);
 
         await registration.Bind(container)(context);

@@ -25,7 +25,11 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
         var (context, _, sender) = await Context(fixture, new Serial(42));
         var characters = new RecordingCharacterService();
 
-        await new CreateCharacterEnhancedPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterEnhancedPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         Assert.Equal(new Serial(42), characters.CreatedFor);
         Assert.Equal(
@@ -38,7 +42,10 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
             },
             characters.Request
         );
-        Assert.Equal([(SkillType.Alchemy, (byte)50), (SkillType.Magery, (byte)50)], characters.Request.Skills.Select(s => (s.Skill, s.Value)));
+        Assert.Equal(
+            [(SkillType.Alchemy, (byte)50), (SkillType.Magery, (byte)50)],
+            characters.Request.Skills.Select(s => (s.Skill, s.Value))
+        );
         Assert.Equal(0, sender.SentCount);
         Assert.True(fixture.Client.IsConnected);
     }
@@ -51,10 +58,15 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
         var character = new MobileEntity { Id = new(7), Name = "Aria" };
         var backpack = new ItemEntity { Id = new(0x40000001), MobileId = character.Id };
         var gold = new ItemEntity { Id = new(0x40000002), ContainerId = backpack.Id };
-        var characters = new RecordingCharacterService { Result = CharacterCreationResult.Created(character, [backpack, gold]) };
+        var characters = new RecordingCharacterService
+            { Result = CharacterCreationResult.Created(character, [backpack, gold]) };
         var enter = new RecordingCharacterEnterWorldService();
 
-        await new CreateCharacterEnhancedPacketHandler(characters, enter).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterEnhancedPacketHandler(characters, enter).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         var (accountId, play) = Assert.Single(enter.Entered);
         Assert.Equal(new Serial(42), accountId);
@@ -71,7 +83,11 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
         var characters = new RecordingCharacterService();
         var enter = new RecordingCharacterEnterWorldService { Allowed = false };
 
-        await new CreateCharacterEnhancedPacketHandler(characters, enter).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterEnhancedPacketHandler(characters, enter).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         // Nothing is saved for a client that cannot enter: no slot is used up.
         Assert.Equal(0, characters.CreateCalls);
@@ -91,7 +107,11 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
         };
         var enter = new RecordingCharacterEnterWorldService();
 
-        await new CreateCharacterEnhancedPacketHandler(characters, enter).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterEnhancedPacketHandler(characters, enter).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         Assert.Empty(enter.Entered);
     }
@@ -106,7 +126,11 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
             Result = CharacterCreationResult.Refused(CharacterCreationRefusalType.SlotUnavailable)
         };
 
-        await new CreateCharacterEnhancedPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterEnhancedPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         var popup = Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent));
         Assert.Equal(PopupMessageType.CharacterExists, popup.Type);
@@ -123,7 +147,11 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
             Result = CharacterCreationResult.Refused(CharacterCreationRefusalType.TooManyCharacters)
         };
 
-        await new CreateCharacterEnhancedPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterEnhancedPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         Assert.Equal(PopupMessageType.LoginSyncError, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
     }
@@ -135,7 +163,11 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
         var (context, _, sender) = await Context(fixture, new Serial(42));
         var characters = new RecordingCharacterService { Failure = new InvalidOperationException("database down") };
 
-        await new CreateCharacterEnhancedPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterEnhancedPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         Assert.Equal(PopupMessageType.CouldNotAttach, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
         Assert.False(fixture.Client.IsConnected);
@@ -148,7 +180,11 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
         var (context, _, _) = await Context(fixture, null);
         var characters = new RecordingCharacterService();
 
-        await new CreateCharacterEnhancedPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterEnhancedPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         Assert.Equal(0, characters.CreateCalls);
         Assert.False(fixture.Client.IsConnected);
@@ -176,7 +212,8 @@ public sealed class CreateCharacterEnhancedPacketHandlerTests
     {
         return new()
         {
-            CharacterSlot = 3, Name = "Aria", Profession = 2, StartingCity = 1, Gender = GenderType.Female, Race = RaceType.Elf,
+            CharacterSlot = 3, Name = "Aria", Profession = 2, StartingCity = 1, Gender = GenderType.Female,
+            Race = RaceType.Elf,
             Strength = 60, Dexterity = 20, Intelligence = 10, SkinHue = new(0x0BF),
             Skills = [new() { Skill = SkillType.Alchemy, Value = 50 }, new() { Skill = SkillType.Magery, Value = 50 }],
             HairHue = new(0x34), HairStyle = 0x2FBF, ShirtHue = new(0x20), ShirtStyle = 0x1517, FaceHue = new(0x0BF),

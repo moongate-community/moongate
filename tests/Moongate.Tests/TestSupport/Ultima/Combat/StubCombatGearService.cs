@@ -7,7 +7,8 @@ using Moongate.Server.Ultima.Types.Combat;
 namespace Moongate.Tests.TestSupport.Ultima.Combat;
 
 /// <summary>
-///     Gives every player the weapon in <see cref="Weapon" /> and the armor of <see cref="Armor" />, by part; NPCs are not asked.
+///     Gives every player the weapon in <see cref="Weapon" /> and the armor of <see cref="Armor" />, by part; NPCs are not
+///     asked.
 /// </summary>
 public sealed class StubCombatGearService : ICombatGearService
 {
@@ -58,7 +59,7 @@ public sealed class StubCombatGearService : ICombatGearService
     public MobileStatusInfo WithGear(MobileStatusInfo status, MobileEntity mobile)
     {
         return StatusDamage is { } damage && !mobile.IsNpc
-                   ? status with { DamageMin = damage.Min, DamageMax = damage.Max, PhysicalResistance = Armor.Values.Sum() }
-                   : status;
+            ? status with { DamageMin = damage.Min, DamageMax = damage.Max, PhysicalResistance = Armor.Values.Sum() }
+            : status;
     }
 }

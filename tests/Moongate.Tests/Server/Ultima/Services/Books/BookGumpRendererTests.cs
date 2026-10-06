@@ -24,7 +24,10 @@ public sealed class BookGumpRendererTests
         Assert.True(BookGumpRenderer.TryBuild("Title &<>\"", "By &<>\"", "First &<>\"\r\n\r\nLast", out var gump));
         Assert.NotNull(gump);
         var built = gump.Layout.Build();
-        Assert.Equal(["Title &amp;&lt;&gt;&quot;", "By &amp;&lt;&gt;&quot;", "First &amp;&lt;&gt;&quot;<br><br>Last"], built.Strings);
+        Assert.Equal(
+            ["Title &amp;&lt;&gt;&quot;", "By &amp;&lt;&gt;&quot;", "First &amp;&lt;&gt;&quot;<br><br>Last"],
+            built.Strings
+        );
         Assert.Contains("{ resizepic 0 0 9380 ", built.Layout);
         Assert.True(Assert.Single(gump.Layout.Entries.OfType<GumpHtml>(), html => html.Height > 100).Scrollbar);
     }

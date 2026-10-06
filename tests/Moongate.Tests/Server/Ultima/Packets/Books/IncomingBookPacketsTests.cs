@@ -14,7 +14,9 @@ public sealed class IncomingBookPacketsTests
     public void Pages_AnEdit_CarriesThePageAndItsLines()
     {
         // Page 3 with two lines, then page 4 with none.
-        var data = Convert.FromHexString("66" + "0017" + Serial + "0002" + "0003" + "0002" + "616200" + "C3A800" + "0004" + "0000");
+        var data = Convert.FromHexString(
+            "66" + "0017" + Serial + "0002" + "0003" + "0002" + "616200" + "C3A800" + "0004" + "0000"
+        );
 
         Assert.True(BookPagesRequestPacket.TryParse(data, out var packet));
 
@@ -71,7 +73,9 @@ public sealed class IncomingBookPacketsTests
     public void Header_CarriesTheTitleAndTheAuthor()
     {
         // serial, flags and page count skipped, then each text with the length of its bytes and its zero.
-        var data = Convert.FromHexString("D4" + "001C" + Serial + "01010014" + "0007" + "43697474C3A000" + "0006" + "596F72696300");
+        var data = Convert.FromHexString(
+            "D4" + "001C" + Serial + "01010014" + "0007" + "43697474C3A000" + "0006" + "596F72696300"
+        );
 
         Assert.True(BookHeaderChangePacket.TryParse(data, out var packet));
 
@@ -113,6 +117,8 @@ public sealed class IncomingBookPacketsTests
     {
         var data = Convert.FromHexString(hex);
 
-        Assert.False(data[0] == 0x66 ? BookPagesRequestPacket.TryParse(data, out _) : BookHeaderChangePacket.TryParse(data, out _));
+        Assert.False(
+            data[0] == 0x66 ? BookPagesRequestPacket.TryParse(data, out _) : BookHeaderChangePacket.TryParse(data, out _)
+        );
     }
 }

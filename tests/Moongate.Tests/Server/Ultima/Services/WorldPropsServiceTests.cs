@@ -42,7 +42,10 @@ public sealed class WorldPropsServiceTests
         service.Set("motto", null);
         service.Set("never", null);
 
-        Assert.Equal((13L, true, null, null), (service.Get("event.day"), service.Get("open"), service.Get("motto"), service.Get("never")));
+        Assert.Equal(
+            (13L, true, null, null),
+            (service.Get("event.day"), service.Get("open"), service.Get("motto"), service.Get("never"))
+        );
     }
 
     [Fact]

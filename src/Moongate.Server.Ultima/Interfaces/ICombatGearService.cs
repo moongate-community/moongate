@@ -29,7 +29,8 @@ public interface ICombatGearService
 
     /// <summary>
     ///     Gets the stack of ammunition the weapon spends, an arrow for a bow and a bolt for a crossbow, that the mobile
-    ///     carries in its backpack, in a bag too, that <paramref name="accept" /> allows, such as one not held on a cursor; null when
+    ///     carries in its backpack, in a bag too, that <paramref name="accept" /> allows, such as one not held on a cursor; null
+    ///     when
     ///     it has none or the weapon shoots nothing.
     /// </summary>
     ItemEntity? AmmoOf(MobileEntity mobile, WeaponInfo weapon, Func<ItemEntity, bool>? accept = null);

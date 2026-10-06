@@ -55,6 +55,7 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
     private readonly RecordingWorldViewService _view = new();
     private readonly StubPublicMoongateService _moongates = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+
     private readonly ItemEntity _gate = new()
     {
         Id = new Serial(0x40000040), TemplateId = "decoration_public_moongate", ItemId = 0x0F6C, Amount = 1
@@ -98,7 +99,9 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
         );
         _scripts.Write(
             "items/public_moongate.lua",
-            await File.ReadAllTextAsync(Path.Combine(RepositoryRoot(), "moongate_root", "scripts", "items", "public_moongate.lua"))
+            await File.ReadAllTextAsync(
+                Path.Combine(RepositoryRoot(), "moongate_root", "scripts", "items", "public_moongate.lua")
+            )
         );
         var options = new ScriptEngineOptions
         {
@@ -119,7 +122,14 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ISectorService>(_fixture.Sectors);
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(items, _fixture.Mobiles));
         _container.RegisterInstance<ITeleportService>(
-            new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService())
+            new TeleportService(
+                _fixture.Mobiles,
+                _view,
+                _fixture.Sessions,
+                _fixture.Sender,
+                _fixture.Sectors,
+                new StubBankService()
+            )
         );
         _container.RegisterInstance<IPublicMoongateService>(_moongates);
         _container.RegisterInstance<IGumpService>(_gumps);
@@ -135,22 +145,31 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<GumpModule>();
         _container.AddScriptModule<MoongatesModule>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>((evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
 
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         gumpScripts = new GumpScriptService(_engine, _loop, options);
         await gumpScripts.StartAsync();
         _itemScripts = new ItemScriptService(
             _engine,
             new ItemTemplateService(
-                new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_public_moongate", ScriptId = "public_moongate" })
+                new StubDataLoaderService().With(
+                    new ItemTemplate { Id = "decoration_public_moongate", ScriptId = "public_moongate" }
+                )
             ),
             _loop,
             options
@@ -190,7 +209,9 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
 
         // Trammel is the second facet of the file, yet its cities are on page 1: Moonglow comes before the page of Felucca.
         var layout = Assert.Single(_gumps.Opened).Gump.Layout.Build().Layout;
-        Assert.True(layout.IndexOf("1012003", StringComparison.Ordinal) < layout.IndexOf("{ page 2 }", StringComparison.Ordinal));
+        Assert.True(
+            layout.IndexOf("1012003", StringComparison.Ordinal) < layout.IndexOf("{ page 2 }", StringComparison.Ordinal)
+        );
     }
 
     [Fact]
@@ -317,7 +338,11 @@ public sealed class PublicMoongateScriptIntegrationTests : IAsyncLifetime
 
     private void Answer(int button)
     {
-        _gumps.Opened[0].Gump.OnResponse(_session, new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() });
+        _gumps.Opened[0]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
+            );
     }
 
     private static string RepositoryRoot()

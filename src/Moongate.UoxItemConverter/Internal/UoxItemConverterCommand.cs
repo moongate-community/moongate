@@ -6,15 +6,8 @@ namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
 ///     The converter's real logic, testable in-process: no CLI parsing, no <see cref="Environment.ExitCode" />,
-///     output written to the given writers rather than <see cref="Console" /> directly.
-///     <c>
-///         Program.cs
-///     </c>
-///     is the only caller that goes through
-///     <c>
-///         ConsoleApp.Run
-///     </c>
-///     .
+///     output written to the given writers rather than <see cref="Console" /> directly. <c>Program.cs</c> is the only
+///     caller that goes through <c>ConsoleApp.Run</c>.
 /// </summary>
 internal static class UoxItemConverterCommand
 {
@@ -33,7 +26,8 @@ internal static class UoxItemConverterCommand
         string? spawnsDestination = null
     )
     {
-        if (ValidateOptions(mobileSource, mobileDestination, namesDestination, startingItemsDestination, error) is { } invalid)
+        if (ValidateOptions(mobileSource, mobileDestination, namesDestination, startingItemsDestination, error) is
+            { } invalid)
         {
             return invalid;
         }
@@ -47,7 +41,9 @@ internal static class UoxItemConverterCommand
 
         if (npcListsDestination is not null && mobileSource is null)
         {
-            error.WriteLine("--npc-lists-destination and --spawns-destination need --mobile-source, which holds npc/ and spawn/.");
+            error.WriteLine(
+                "--npc-lists-destination and --spawns-destination need --mobile-source, which holds npc/ and spawn/."
+            );
 
             return 2;
         }
@@ -306,7 +302,9 @@ internal static class UoxItemConverterCommand
     {
         if ((mobileSource is null) != (mobileDestination is null) || (mobileSource is null) != (namesDestination is null))
         {
-            error.WriteLine("--mobile-source, --mobile-destination and --names-destination go together: give all three or none.");
+            error.WriteLine(
+                "--mobile-source, --mobile-destination and --names-destination go together: give all three or none."
+            );
 
             return 2;
         }
@@ -448,11 +446,7 @@ internal static class UoxItemConverterCommand
     }
 
     /// <summary>
-    ///     Reads every
-    ///     <c>
-    ///         .toml
-    ///     </c>
-    ///     file back from <paramref name="destination" /> and, when given,
+    ///     Reads every <c>.toml</c> file back from <paramref name="destination" /> and, when given,
     ///     <paramref name="lootDestination" />, exactly as a real loader would, and checks that no two
     ///     items or loot tables share an Id and that every <see cref="ItemTemplate.BaseId" />,
     ///     <see cref="LootEntry.ItemId" /> and <see cref="LootEntry.LootTemplateId" /> names something

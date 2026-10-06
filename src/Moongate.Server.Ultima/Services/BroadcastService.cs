@@ -20,7 +20,9 @@ public sealed class BroadcastService : IBroadcastService
     private readonly IMobileService _mobiles;
     private readonly IPacketSendService _sender;
 
-    public BroadcastService(IGameLoopService loop, ISessionService sessions, IMobileService mobiles, IPacketSendService sender)
+    public BroadcastService(
+        IGameLoopService loop, ISessionService sessions, IMobileService mobiles, IPacketSendService sender
+    )
     {
         _loop = loop;
         _sessions = sessions;
@@ -45,16 +47,17 @@ public sealed class BroadcastService : IBroadcastService
 
         var sent = 0;
         var work = new LoopActionWorkItem(() =>
-        {
-            foreach (var session in _sessions.GetAll())
             {
-                if (session.CharacterId.IsValid && _mobiles.IsInWorld(session.CharacterId) &&
-                    SpeechMessageHelper.TrySend(_sender, session, packet))
+                foreach (var session in _sessions.GetAll())
                 {
-                    sent++;
+                    if (session.CharacterId.IsValid && _mobiles.IsInWorld(session.CharacterId) &&
+                        SpeechMessageHelper.TrySend(_sender, session, packet))
+                    {
+                        sent++;
+                    }
                 }
             }
-        });
+        );
 
         if (_loop.IsOnLoopThread)
         {

@@ -8,7 +8,8 @@ using Moongate.Server.Ultima.Interfaces;
 namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
-///     <c>animate &lt;action&gt;</c>: makes the character or NPC a game master targets play an action of its body, seen by
+///     <c>animate &lt;action&gt;</c>: makes the character or NPC a game master targets play an action of its body, seen
+///     by
 ///     everyone around, as ModernUO's <c>[animate</c>: to try an animation, such as 21, a human falling dead.
 /// </summary>
 public sealed class AnimateCommand : ICommandExecutor

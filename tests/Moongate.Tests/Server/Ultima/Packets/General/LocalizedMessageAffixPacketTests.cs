@@ -10,7 +10,9 @@ public sealed class LocalizedMessageAffixPacketTests
     [Fact]
     public void Spoken_WritesTheSpeakerTheTextAndWhatIsAppendedToIt()
     {
-        var bytes = PacketCodec.Encode(LocalizedMessageAffixPacket.Spoken(new Serial(0x100), 0x0190, 1042673, "Bank Teller", "5,000"));
+        var bytes = PacketCodec.Encode(
+            LocalizedMessageAffixPacket.Spoken(new Serial(0x100), 0x0190, 1042673, "Bank Teller", "5,000")
+        );
 
         // serial, body, type 0 (regular), hue 0x3B2, font 3, cliloc 1042673, affix type 0 (appended)
         Assert.Equal(
@@ -29,7 +31,9 @@ public sealed class LocalizedMessageAffixPacketTests
     [Fact]
     public void Spoken_WithArguments_WritesThemInBigEndianUtf16()
     {
-        var bytes = PacketCodec.Encode(LocalizedMessageAffixPacket.Spoken(new Serial(0x100), 0x0190, 1042673, "B", "!", "ab"));
+        var bytes = PacketCodec.Encode(
+            LocalizedMessageAffixPacket.Spoken(new Serial(0x100), 0x0190, 1042673, "B", "!", "ab")
+        );
 
         Assert.Equal([(byte)'!', 0, 0, (byte)'a', 0, (byte)'b', 0, 0], bytes[49..57]);
         Assert.Equal(bytes.Length, bytes[1] << 8 | bytes[2]);

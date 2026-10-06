@@ -104,7 +104,10 @@ public sealed class GumpXmlRendererTests
             """
         );
 
-        Assert.Equal("{ page 0 }{ button 0 0 1 2 1 0 2 }{ button 0 0 1 2 1 0 1 }{ button 0 0 1 2 1 0 3 }", rendered.Layout.Build().Layout);
+        Assert.Equal(
+            "{ page 0 }{ button 0 0 1 2 1 0 2 }{ button 0 0 1 2 1 0 1 }{ button 0 0 1 2 1 0 3 }",
+            rendered.Layout.Build().Layout
+        );
         Assert.Equal(new Dictionary<int, string> { [2] = "first", [3] = "second" }, rendered.Clicks);
     }
 
@@ -145,7 +148,10 @@ public sealed class GumpXmlRendererTests
 
         Assert.Equal(new Dictionary<int, string> { [1] = "step2" }, rendered.Opens);
         Assert.Equal(
-            [("name", GumpBindType.Text, 3), ("hardcore", GumpBindType.Checkbox, 4), ("city", GumpBindType.Radio, 5), ("city", GumpBindType.Radio, 6)],
+            [
+                ("name", GumpBindType.Text, 3), ("hardcore", GumpBindType.Checkbox, 4), ("city", GumpBindType.Radio, 5),
+                ("city", GumpBindType.Radio, 6)
+            ],
             rendered.Binds.Select(bind => (bind.Name, bind.Kind, bind.Id))
         );
     }
@@ -167,7 +173,10 @@ public sealed class GumpXmlRendererTests
         var built = rendered.Layout.Build();
         Assert.Equal(["<b>Hi</b> &lt;a href=x&gt;Aria&lt;/a&gt;", "<a href=x>Aria</a>"], built.Strings);
 
-        var quoted = Render("""<gump id="a"><html x="1" y="1" width="1" height="1">&lt;a href="${link}"&gt;go&lt;/a&gt;</html></gump>""", new() { ["link"] = "x\" onclick=\"y" });
+        var quoted = Render(
+            """<gump id="a"><html x="1" y="1" width="1" height="1">&lt;a href="${link}"&gt;go&lt;/a&gt;</html></gump>""",
+            new() { ["link"] = "x\" onclick=\"y" }
+        );
         Assert.Equal("<a href=\"x&quot; onclick=&quot;y\">go</a>", quoted.Layout.Build().Strings[0]);
         Assert.Contains("@&lt;a href=x&gt;Aria&lt;/a&gt;@", built.Layout);
     }

@@ -26,10 +26,12 @@ public sealed class EffectModuleTests
     private readonly RecordingEffectService _effects = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly ItemService _items = TestItems.Create();
+
     private readonly MobileEntity _aria = new()
     {
         Id = new Serial(2), Name = "Aria", Map = MapType.Felucca, Location = new Point3D(1601, 1600, 5)
     };
+
     private readonly MobileEntity _orc = new()
     {
         Id = new Serial(3), Name = "an orc", Map = MapType.Felucca, Location = new Point3D(1610, 1600, 0)
@@ -72,7 +74,8 @@ public sealed class EffectModuleTests
         Assert.Equal(
             new EffectOptions
             {
-                Graphic = 0x376A, Speed = 9, Duration = 32, Hue = new Hue(0x47F), RenderMode = EffectRenderModeType.Translucent,
+                Graphic = 0x376A, Speed = 9, Duration = 32, Hue = new Hue(0x47F),
+                RenderMode = EffectRenderModeType.Translucent,
                 FixedDirection = true, Explodes = true, Particle = 5005, ExplodeParticle = 4019, ExplodeSound = 0x160,
                 Layer = EffectLayerType.Waist
             },
@@ -165,7 +168,10 @@ public sealed class EffectModuleTests
         Assert.False(Run("return effect.lightning(999)")[0].Read<bool>());
 
         Assert.Equal(
-            [(_orc.Id, MapType.Felucca, _orc.Location, new Hue(0)), (_orc.Id, MapType.Felucca, _orc.Location, new Hue(0x21))],
+            [
+                (_orc.Id, MapType.Felucca, _orc.Location, new Hue(0)),
+                (_orc.Id, MapType.Felucca, _orc.Location, new Hue(0x21))
+            ],
             _effects.Lightning
         );
     }

@@ -78,19 +78,20 @@ public static class ConfigContainerExtensions
         {
             var existing = File.Exists(document.FilePath) ? File.ReadAllText(document.FilePath) : "";
             var newline = existing.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
-            var separator = existing.Length == 0 ? "" : existing.EndsWith('\n') ? newline : newline + newline;
+            var separator = existing.Length == 0 ? "" :
+                existing.EndsWith('\n') ? newline : newline + newline;
             File.AppendAllText(document.FilePath, separator + toml.ReplaceLineEndings(newline));
             document.Table[section] = TomlUtils.Deserialize<TomlTable>(toml)![section];
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
             Log.ForContext(typeof(ConfigContainerExtensions))
-               .Warning(
-                   exception,
-                   "Could not add the [{Section}] section to {ConfigFile}; using its defaults",
-                   section,
-                   document.FilePath
-               );
+                .Warning(
+                    exception,
+                    "Could not add the [{Section}] section to {ConfigFile}; using its defaults",
+                    section,
+                    document.FilePath
+                );
         }
     }
 }

@@ -1,7 +1,9 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Services.Items;
 using Moongate.Tests.TestSupport.Scripting;
+
 namespace Moongate.Tests.Server.Ultima.Services.Items;
+
 public sealed class InventoryReservationServiceTests
 {
     [Fact]
@@ -14,15 +16,20 @@ public sealed class InventoryReservationServiceTests
         Assert.False(reservations.TryReserve(owner, Task.CompletedTask));
         Assert.True(reservations.IsReserved(owner));
         Assert.Same(finished.Task, reservations.WaitAsync(owner));
-        Assert.Throws<InvalidOperationException>(() => reservations.Apply(owner, () =>
-        {
-            Assert.False(reservations.IsReserved(owner));
-            throw new InvalidOperationException();
-        }));
+        Assert.Throws<InvalidOperationException>(() => reservations.Apply(
+                owner,
+                () =>
+                {
+                    Assert.False(reservations.IsReserved(owner));
+                    throw new InvalidOperationException();
+                }
+            )
+        );
         Assert.True(reservations.IsReserved(owner));
         reservations.Release(owner);
         Assert.False(reservations.IsReserved(owner));
     }
+
     [Fact]
     public void Reserve_OffLoopRefuses()
     {

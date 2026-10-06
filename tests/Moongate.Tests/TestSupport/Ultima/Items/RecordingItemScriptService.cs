@@ -6,7 +6,8 @@ namespace Moongate.Tests.TestSupport.Ultima.Items;
 
 /// <summary>
 ///     Gives a script to the items whose template id is in <see cref="Scripted" />, records the calls run as
-///     "0x40000003 on_use 2" in <see cref="Calls" /> and the queued ones in <see cref="Queued" /> and answers them with <see cref="Result" />.
+///     "0x40000003 on_use 2" in <see cref="Calls" /> and the queued ones in <see cref="Queued" /> and answers them with
+///     <see cref="Result" />.
 /// </summary>
 public sealed class RecordingItemScriptService : IItemScriptService
 {

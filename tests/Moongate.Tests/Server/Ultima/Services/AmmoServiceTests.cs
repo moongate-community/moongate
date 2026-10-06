@@ -28,7 +28,10 @@ public sealed class AmmoServiceTests : IAsyncLifetime
     private readonly StubItemSerialPool _serials = new();
     private readonly StubCombatGearService _gear = new();
     private readonly ScriptedRandom _random = new();
-    private readonly FakeTileDataService _tiles = new FakeTileDataService().Item(0x0F3F, TileFlagType.Generic, 0).Item(0x1BFB, TileFlagType.Generic, 0);
+
+    private readonly FakeTileDataService _tiles = new FakeTileDataService().Item(0x0F3F, TileFlagType.Generic, 0)
+        .Item(0x1BFB, TileFlagType.Generic, 0);
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "0x0f3f_arrow", ItemId = new Serial(0x0F3F), Stackable = true },
@@ -111,7 +114,10 @@ public sealed class AmmoServiceTests : IAsyncLifetime
 
         if (found)
         {
-            Assert.Equal(("0x0f3f_arrow", 1, (MapType?)MapType.Trammel, (Point3D?)new Point3D(7, 8, 0)), (arrow!.TemplateId, arrow.Amount, arrow.Map, arrow.GroundLocation));
+            Assert.Equal(
+                ("0x0f3f_arrow", 1, (MapType?)MapType.Trammel, (Point3D?)new Point3D(7, 8, 0)),
+                (arrow!.TemplateId, arrow.Amount, arrow.Map, arrow.GroundLocation)
+            );
             Assert.Contains($"Appeared {arrow.Id.Value}", _view.Calls);
         }
     }

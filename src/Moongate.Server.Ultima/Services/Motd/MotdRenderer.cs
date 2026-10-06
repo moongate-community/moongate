@@ -22,21 +22,32 @@ public sealed class MotdRenderer
     {
         foreach (var name in TextTemplateBuiltins.Values(new TextTemplateContext()).Keys)
         {
-            variables.Register(name, (context, _) => ValueTask.FromResult(TextTemplateBuiltins.Values(new TextTemplateContext
-            {
-                ServerName = context.ServerName,
-                RealmName = context.RealmName,
-                Version = context.Version,
-                Codename = context.Codename,
-                PlayerName = context.PlayerName,
-                UsersOnline = context.UsersOnline
-            })[name]));
+            variables.Register(
+                name,
+                (context, _) => ValueTask.FromResult(
+                    TextTemplateBuiltins.Values(
+                        new TextTemplateContext
+                        {
+                            ServerName = context.ServerName,
+                            RealmName = context.RealmName,
+                            Version = context.Version,
+                            Codename = context.Codename,
+                            PlayerName = context.PlayerName,
+                            UsersOnline = context.UsersOnline
+                        }
+                    )[name]
+                )
+            );
         }
     }
 
     public ValueTask<string> RenderAsync(MotdLine line, MotdContext context, CancellationToken cancellationToken)
     {
-        return TextTemplateRenderer.RenderAsync(line.Template,
-            (name, token) => _variables.ResolveAsync(name, context, token), TextTemplateSyntaxType.Motd, cancellationToken);
+        return TextTemplateRenderer.RenderAsync(
+            line.Template,
+            (name, token) => _variables.ResolveAsync(name, context, token),
+            TextTemplateSyntaxType.Motd,
+            cancellationToken
+        );
     }
 }

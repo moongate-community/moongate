@@ -104,12 +104,16 @@ public sealed class WorldConfig
 
         if (LampPostLight is < 0 or > 31)
         {
-            throw new InvalidOperationException($"ultima.world.lamp_post_light must be from 0 to 31, found {LampPostLight}.");
+            throw new InvalidOperationException(
+                $"ultima.world.lamp_post_light must be from 0 to 31, found {LampPostLight}."
+            );
         }
 
         if (DaysPerSeason is < 1 or > 365)
         {
-            throw new InvalidOperationException($"ultima.world.days_per_season must be from 1 to 365, found {DaysPerSeason}.");
+            throw new InvalidOperationException(
+                $"ultima.world.days_per_season must be from 1 to 365, found {DaysPerSeason}."
+            );
         }
 
         if (PathfindingRange is < 8 or > 64)

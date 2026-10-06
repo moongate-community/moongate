@@ -38,7 +38,11 @@ public sealed class ItemFactoryServicePersistenceTests : IAsyncLifetime
                 }
             )
         );
-        _factory = new ItemFactoryService(templates, new FakeTileDataService().Item(0x0F10, TileFlagType.None, 0), _host.Owner);
+        _factory = new ItemFactoryService(
+            templates,
+            new FakeTileDataService().Item(0x0F10, TileFlagType.None, 0),
+            _host.Owner
+        );
     }
 
     public async Task DisposeAsync()
@@ -77,7 +81,8 @@ public sealed class ItemFactoryServicePersistenceTests : IAsyncLifetime
     [Fact]
     public async Task SaveAsync_AnItemWithNoLocation_IsRejectedBeforeTheDatabase()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _factory.SaveAsync(_factory.Create("gem")));
+        var exception =
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _factory.SaveAsync(_factory.Create("gem")));
 
         Assert.Contains("no location", exception.Message);
     }

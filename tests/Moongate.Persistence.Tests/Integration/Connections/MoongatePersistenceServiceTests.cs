@@ -206,8 +206,10 @@ public sealed class MoongatePersistenceServiceTests
         );
         await using var output = new MemoryStream();
 
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => owner.ExportDataAsync(PersistenceDatabaseTarget.Realm, output)
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExportDataAsync(
+                PersistenceDatabaseTarget.Realm,
+                output
+            )
         );
         Assert.Equal(0, output.Length);
     }
@@ -222,8 +224,10 @@ public sealed class MoongatePersistenceServiceTests
         await owner.InitializeAsync();
         await using var output = new MemoryStream();
 
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => owner.ExportDataAsync(PersistenceDatabaseTarget.Accounts, output)
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExportDataAsync(
+                PersistenceDatabaseTarget.Accounts,
+                output
+            )
         );
     }
 }

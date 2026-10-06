@@ -18,7 +18,10 @@ public sealed class WeaponFamiliesTests
     [InlineData(WeaponType.Fencing, true, 0x23B, 0x238, 14)]
     public void TheFamilyOfAWeapon_GivesItsSoundsAndItsSwing(WeaponType type, bool twoHanded, int hit, int miss, int action)
     {
-        Assert.Equal((hit, miss, action), (WeaponFamilies.HitSound(type), WeaponFamilies.MissSound(type), (int)WeaponFamilies.Action(type, twoHanded)));
+        Assert.Equal(
+            (hit, miss, action),
+            (WeaponFamilies.HitSound(type), WeaponFamilies.MissSound(type), (int)WeaponFamilies.Action(type, twoHanded))
+        );
     }
 
     [Theory]
@@ -26,13 +29,19 @@ public sealed class WeaponFamiliesTests
     [InlineData(WeaponType.Crossbow, 0x234, 0x238, 19)]
     public void AShootingWeapon_HasItsSoundsAndItsShot(WeaponType type, int hit, int miss, int action)
     {
-        Assert.Equal((hit, miss, action), (WeaponFamilies.HitSound(type), WeaponFamilies.MissSound(type), (int)WeaponFamilies.Action(type, false)));
+        Assert.Equal(
+            (hit, miss, action),
+            (WeaponFamilies.HitSound(type), WeaponFamilies.MissSound(type), (int)WeaponFamilies.Action(type, false))
+        );
     }
 
     [Fact]
     public void AWeaponWithoutAKind_SoundsAndSwingsAsFists()
     {
-        Assert.Equal((0x135, 0x239, (int)HumanAnimationType.Punch), (WeaponFamilies.HitSound(null), WeaponFamilies.MissSound(null), (int)WeaponFamilies.Action(null, false)));
+        Assert.Equal(
+            (0x135, 0x239, (int)HumanAnimationType.Punch),
+            (WeaponFamilies.HitSound(null), WeaponFamilies.MissSound(null), (int)WeaponFamilies.Action(null, false))
+        );
     }
 
     [Theory]

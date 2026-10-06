@@ -21,6 +21,7 @@ internal sealed class CountingBookAttachmentPreparationService : IBookAttachment
         {
             throw new InvalidDataException("Attachment preparation failed after an earlier saved letter.");
         }
+
         return _inner.Prepare(source);
     }
 }

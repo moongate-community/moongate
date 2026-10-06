@@ -21,7 +21,9 @@ public sealed class RegionService : IRegionService
 
     private readonly IDataLoaderService _data;
     private readonly Lazy<Dictionary<(MapType Map, int X, int Y), RegionContent[]>> _cells;
+
     private readonly ConcurrentDictionary<Serial, (MapType Map, RegionContent? Region)> _players = new();
+
     // Resolved on the first change: the listeners depend on services that depend on this one.
     private readonly Lazy<IEnumerable<IRegionChangeListener>>? _listeners;
     private readonly ILogger _logger;
@@ -129,10 +131,10 @@ public sealed class RegionService : IRegionService
 
         // The order they apply in: priority, then the child before its parent, then the file order.
         var ordered = regions.Select((region, index) => (region, index, depth: Depth(region, regions)))
-                             .OrderByDescending(entry => entry.region.Priority)
-                             .ThenByDescending(entry => entry.depth)
-                             .ThenBy(entry => entry.index)
-                             .Select(entry => entry.region);
+            .OrderByDescending(entry => entry.region.Priority)
+            .ThenByDescending(entry => entry.depth)
+            .ThenBy(entry => entry.index)
+            .Select(entry => entry.region);
 
         foreach (var region in ordered)
         {

@@ -24,7 +24,9 @@ public sealed class UtcDateTimeConventionTests
         Assert.Null(loaded.LastSeenAt);
         Assert.Equal(
             "2026-09-25 12:00:00",
-            await database.ScalarAsync<string>("SELECT to_char(created_at, 'YYYY-MM-DD HH24:MI:SS') FROM host_test.timestamps")
+            await database.ScalarAsync<string>(
+                "SELECT to_char(created_at, 'YYYY-MM-DD HH24:MI:SS') FROM host_test.timestamps"
+            )
         );
     }
 

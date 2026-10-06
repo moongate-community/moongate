@@ -22,11 +22,11 @@ internal static class UoxSkillNames
     };
 
     private static readonly Dictionary<string, SkillType> ByName = Enum.GetValues<SkillType>()
-                                                                        .ToDictionary(
-                                                                            skill => skill.ToString(),
-                                                                            skill => skill,
-                                                                            StringComparer.OrdinalIgnoreCase
-                                                                        );
+        .ToDictionary(
+            skill => skill.ToString(),
+            skill => skill,
+            StringComparer.OrdinalIgnoreCase
+        );
 
     /// <summary>
     ///     Gets the skill a UOX3 tag sets; false for a tag that is not a skill.

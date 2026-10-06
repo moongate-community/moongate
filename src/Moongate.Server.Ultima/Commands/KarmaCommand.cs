@@ -8,7 +8,8 @@ using Moongate.Server.Ultima.Interfaces;
 namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
-///     <c>karma &lt;-32000..32000&gt;</c>: sets the karma of the character or NPC a game master targets, which its paperdoll
+///     <c>karma &lt;-32000..32000&gt;</c>: sets the karma of the character or NPC a game master targets, which its
+///     paperdoll
 ///     title follows.
 /// </summary>
 public sealed class KarmaCommand : ICommandExecutor

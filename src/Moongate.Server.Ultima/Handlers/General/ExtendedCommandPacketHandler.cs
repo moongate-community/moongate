@@ -89,7 +89,11 @@ public sealed class ExtendedCommandPacketHandler : IPacketHandler<ExtendedComman
             return;
         }
 
-        _logger.Debug("Session {SessionId} sent extended command 0x{Subcommand:X2}, not handled yet", session.SessionId, packet.Subcommand);
+        _logger.Debug(
+            "Session {SessionId} sent extended command 0x{Subcommand:X2}, not handled yet",
+            session.SessionId,
+            packet.Subcommand
+        );
     }
 
     // The status window's lock arrows: the stat is 0 strength, 1 dexterity, 2 intelligence, the lock as the client

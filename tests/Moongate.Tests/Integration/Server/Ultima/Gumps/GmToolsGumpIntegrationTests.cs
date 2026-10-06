@@ -35,7 +35,8 @@ using Lua;
 namespace Moongate.Tests.Integration.Server.Ultima.Gumps;
 
 /// <summary>
-///     Runs the gmtools gump shipped in <c>moongate_root</c> (templates/gumps/gmtools.xml and scripts/gumps/gmtools.lua)
+///     Runs the gmtools gump shipped in <c>moongate_root</c> (templates/gumps/gmtools.xml and
+///     scripts/gumps/gmtools.lua)
 ///     with the real Lua engine: the sidebar, the weather panel and what its buttons do.
 /// </summary>
 public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
@@ -75,8 +76,12 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         }
 
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
-        _scripts.Write("gumps/gmtools.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "gmtools.lua")));
-        var templates = (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
+        _scripts.Write(
+            "gumps/gmtools.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "gmtools.lua"))
+        );
+        var templates =
+            (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,
@@ -109,15 +114,22 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<MobileModule>();
         _container.AddScriptModule<GumpModule>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>((evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
 
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         gumpScripts = new GumpScriptService(_engine, _loop, options);
         await gumpScripts.StartAsync();
@@ -183,7 +195,9 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
     [InlineData(5, WeatherKindType.Rain, "rain")]
     [InlineData(6, WeatherKindType.Snow, "snow")]
     [InlineData(7, WeatherKindType.Storm, "storm")]
-    public void AKindButton_ForcesItOnTheProfile_TellsTheGameMaster_AndShowsTheWeatherAgain(int button, WeatherKindType kind, string name)
+    public void AKindButton_ForcesItOnTheProfile_TellsTheGameMaster_AndShowsTheWeatherAgain(
+        int button, WeatherKindType kind, string name
+    )
     {
         Open(Staff, "weather");
         _weather.State = new(kind, 60, -3);
@@ -235,7 +249,9 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
     [InlineData(6, SeasonType.Fall, "fall")]
     [InlineData(7, SeasonType.Winter, "winter")]
     [InlineData(8, SeasonType.Desolation, "desolation")]
-    public void ASeasonButton_SetsItOnTheMapOfTheGameMaster_TellsIt_AndShowsTheSeasonAgain(int button, SeasonType season, string name)
+    public void ASeasonButton_SetsItOnTheMapOfTheGameMaster_TellsIt_AndShowsTheSeasonAgain(
+        int button, SeasonType season, string name
+    )
     {
         Open(Staff, "season");
         _seasons.Here = season;
@@ -402,10 +418,11 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
     {
         // As the loop does: what the script posts runs after the script, not inside it.
         _loop.DeferTryPost = true;
-        _gumps.Opened[gump].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
-        );
+        _gumps.Opened[gump]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
+            );
         _loop.RunDeferred();
         _loop.DeferTryPost = false;
     }

@@ -35,7 +35,18 @@ public sealed class RegionAnnouncerTests
     {
         _announcer = new(
             new StubDataLoaderService().With(
-                Britain, Field, Inn, Covetous, Trinsic, OtherBritain, Nameless, HavenIsland, NewHaven, Den, DenHouse, Moongates
+                Britain,
+                Field,
+                Inn,
+                Covetous,
+                Trinsic,
+                OtherBritain,
+                Nameless,
+                HavenIsland,
+                NewHaven,
+                Den,
+                DenHouse,
+                Moongates
             ),
             _speech
         );
@@ -224,7 +235,12 @@ public sealed class RegionAnnouncerTests
         using var container = new Container();
         container.RegisterMoongateEventBus();
         var events = container.Resolve<IMoongateEventBus>();
-        var announcer = new RegionAnnouncer(new StubDataLoaderService().With(Britain), _speech, events, fixture.Network.Loop);
+        var announcer = new RegionAnnouncer(
+            new StubDataLoaderService().With(Britain),
+            _speech,
+            events,
+            fixture.Network.Loop
+        );
         var bran = new MobileEntity { Id = new Serial(3), AccountId = new Serial(0x43), Name = "Bran" };
         await announcer.StartAsync();
         await fixture.Network.ExecuteOnLoopAsync(() => announcer.RegionChanged(bran, null, Britain));

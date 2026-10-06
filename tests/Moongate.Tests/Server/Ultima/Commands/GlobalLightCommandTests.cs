@@ -35,7 +35,10 @@ public sealed class GlobalLightCommandTests
     {
         var context = await RunAsync(arguments.Split(' '));
 
-        Assert.Equal((CommandOutputLevel.Error, "Usage: globallight [0-31]"), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "Usage: globallight [0-31]"),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
         Assert.Equal(0, _light.Calls);
     }
 
@@ -44,7 +47,9 @@ public sealed class GlobalLightCommandTests
     {
         var context = new CommandContext("globallight 3", "globallight", ["3"], CommandSourceType.Console, null);
 
-        await new GlobalLightCommand(_light, TestLocalization.With((30060, "La luce globale ora è {0}."))).ExecuteAsync(context);
+        await new GlobalLightCommand(_light, TestLocalization.With((30060, "La luce globale ora è {0}."))).ExecuteAsync(
+            context
+        );
 
         Assert.Equal("La luce globale ora è 3.", Assert.Single(context.Output).Text);
     }

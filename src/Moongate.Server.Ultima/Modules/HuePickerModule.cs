@@ -37,10 +37,13 @@ public sealed class HuePickerModule
     }
 
     /// <summary>
-    ///     Shows the player the hue picker with a graphic in it; <c>hue_picker.open(user, item.item_id(tub),
-    ///     function(hue) if hue then item.set_hue(tub, hue) end end)</c>.
+    ///     Shows the player the hue picker with a graphic in it;
+    ///     <c>hue_picker.open(user, item.item_id(tub), function(hue) if hue then item.set_hue(tub, hue) end end)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Shows the player the client's hue picker with a graphic (0 to 65535) in it; the function gets the hue picked, from 2 to 1001, or nil when the picker ended without an answer: another picker took its place or the player left. A player that closes the picker sends nothing, so the function may never run: check again in it what was true when the picker opened. A picker a script replaces is told nil on the next turn of the game loop. False for a graphic out of range, an NPC or a player not in the world.")]
+    [ScriptFunction(
+        helpText:
+        "Shows the player the client's hue picker with a graphic (0 to 65535) in it; the function gets the hue picked, from 2 to 1001, or nil when the picker ended without an answer: another picker took its place or the player left. A player that closes the picker sends nothing, so the function may never run: check again in it what was true when the picker opened. A picker a script replaces is told nil on the next turn of the game loop. False for a graphic out of range, an NPC or a player not in the world."
+    )]
     public bool Open(long player, int graphic, [ScriptParameterType("function")] LuaValue callback)
     {
         if (callback.Type != LuaValueType.Function)
