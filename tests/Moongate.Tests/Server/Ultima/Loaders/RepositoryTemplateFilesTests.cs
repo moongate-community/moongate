@@ -6,7 +6,9 @@ using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Books;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Loaders;
+using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Services.Books;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Services.Internal.Books;
@@ -318,6 +320,41 @@ public sealed class RepositoryTemplateFilesTests
             ["0x230e_gilded_dress", "0x1711_thigh_boots", "base_royal_circlet"],
             lilly.Equipment!.SelectMany(entry => entry.Items)
         );
+    }
+
+    [Fact]
+    public async Task ShippedVendorsBankersAndGuards_AreInvulnerable_AsInModernUO()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots)).LoadDataAsync())
+                      .Entities.ToDictionary(t => t.Id);
+
+        // Every template that inherits the base vendor, and the bankers and the guards, which do not.
+        var vendors = mobiles.Values.Where(t => t.Id == "basevendor" || IsVendor(t, mobiles)).ToList();
+        Assert.True(vendors.Count > 100);
+        Assert.All(vendors, t => Assert.True(t.Notoriety == NotorietyType.Invulnerable, $"{t.Id} is not invulnerable"));
+        Assert.All(
+            new[] { "banker", "m_banker", "f_banker", "gypsybanker", "m_gypsybanker", "f_gypsybanker", "guard", "m_guard", "f_guard" },
+            id => Assert.Equal(NotorietyType.Invulnerable, mobiles[id].Notoriety)
+        );
+        // The townfolk and the monsters are not.
+        Assert.NotEqual(NotorietyType.Invulnerable, mobiles["skeleton"].Notoriety);
+    }
+
+    private static bool IsVendor(MobileTemplate template, Dictionary<string, MobileTemplate> mobiles)
+    {
+        for (var parent = template.BaseId; parent is not null && mobiles.TryGetValue(parent, out var next); parent = next.BaseId)
+        {
+            if (parent == "basevendor")
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     [Fact]

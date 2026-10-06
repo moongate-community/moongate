@@ -47,6 +47,7 @@ strength = "1d26+49"
 dexterity = "1d6+64"
 intelligence = "1d26+49"
 script_id = "banker"
+notoriety = "invulnerable"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
@@ -88,6 +89,7 @@ armor = 20
 karma = 10000
 fame = 10000
 script_id = "guard"
+notoriety = "invulnerable"
 [mobile.skills]
 detecting_hidden = "1d11+89"
 fencing = "1d11+89"
@@ -1399,6 +1401,7 @@ strength = "1d26+49"
 dexterity = "1d6+64"
 intelligence = "1d26+49"
 script_id = "banker"
+notoriety = "invulnerable"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]

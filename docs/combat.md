@@ -17,6 +17,9 @@ A player clicks a mobile, which sends the attack request (`0x05`), or a script c
 A player goes into war mode and is told whom it fights (`0xAA`). A refused request is answered with a clear
 target (`0xAA` with zero), so the client does not keep the target highlighted.
 
+The vendors (every template that inherits `basevendor`), the bankers and the guards are `invulnerable`, with a
+yellow name, as in ModernUO: they cannot be attacked. Monsters and animals are grey or red, not blue.
+
 A player who attacks an innocent (a blue name) that is not already fighting it becomes a
 [criminal](server-configuration.md), and the guards come. Attacking anyone else, a monster, a criminal or one
 that is fighting the player, is no crime.

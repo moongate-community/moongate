@@ -5,7 +5,7 @@ dexterity = "1d6+64"
 intelligence = "1d26+49"
 damage = "1d13+2"
 armor = 10
-notoriety = "innocent"
+notoriety = "invulnerable"
 
 [[mobile]]
 id = "m_bard"

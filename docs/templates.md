@@ -89,8 +89,10 @@ the gender from `races.toml`), name (the template's, else one of `name_list`, wh
 `{gender}` picks the `male` or `female` list), skin, hair and beard (from the template,
 else the race; `hair = []` is bald; females get no beard), stats (unset is 10), hits,
 mana and stamina (which default to strength, intelligence and dexterity), armor, resistances, fame,
-karma and skills (template points × 10, the tenths the mobile stores). `title` and
-`notoriety` stay null: the template's apply.
+karma and skills (template points × 10, the tenths the mobile stores). `title` stays null: the
+template's applies. `notoriety` is the template's, and for a template that has none a human is left with none, which
+reads as innocent, and anything else is `attackable` (grey), as ModernUO's animals and monsters. The NPCs saved
+before this was so are given theirs when the server starts, and saved with the world.
 
 `SpawnAsync(templateId, map, location)`:
 
@@ -337,7 +339,7 @@ to 120; a constant is a bare integer.
 | `Damage`, `Armor` | Dice for an unarmed hit and the natural armour; unset is `1d4` and 0 |
 | `Resistances` | `[mobile.resistances]` with `physical`, `fire`, `cold`, `poison`, `energy`, dice in percent; unset is 0 |
 | `Skills` | `[mobile.skills]`, skill names such as `resisting_spells` or `tactics`, dice in whole points 0 to 120 |
-| `Notoriety` | `innocent`, `ally`, `attackable`, `criminal`, `enemy`, `murderer` or `invulnerable`, the name colour; unset is `innocent` |
+| `Notoriety` | `innocent`, `ally`, `attackable`, `criminal`, `enemy`, `murderer` or `invulnerable`, the name colour; unset is `innocent` for a human and `attackable` for any other body |
 | `Karma`, `Fame` | Dice; karma may be negative |
 | `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |
 | `Loot`, `Gold` | Loot template ids and gold dice rolled into the backpack at spawn; no corpse system yet |

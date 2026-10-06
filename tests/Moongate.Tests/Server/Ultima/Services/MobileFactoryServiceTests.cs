@@ -3,6 +3,7 @@ using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Ultima.Types;
@@ -31,6 +32,11 @@ public sealed class MobileFactoryServiceTests
                               Id = "bald_monk", Race = RaceType.Human, Gender = MobileGenderType.Male, Name = "a monk", Hair = []
                           },
                           new MobileTemplate { Id = "orc", Body = 17, NameList = "orc" },
+                          new MobileTemplate { Id = "red_orc", Body = 17, NameList = "orc", Notoriety = NotorietyType.Murderer },
+                          new MobileTemplate
+                          {
+                              Id = "banker", Race = RaceType.Human, Name = "a banker", Notoriety = NotorietyType.Invulnerable
+                          },
                           new MobileTemplate { Id = "lord", Race = RaceType.Human, Name = "Lord British" }
                       )
                       .With(
@@ -101,7 +107,30 @@ public sealed class MobileFactoryServiceTests
         var tactics = Assert.Single(guard.Skills);
         Assert.Equal((SkillType.Tactics, 950), (tactics.Skill, tactics.Base));
         Assert.Null(guard.Title);
+        // A human that the template gives no notoriety is innocent, which is what no notoriety reads as.
         Assert.Null(guard.Notoriety);
+    }
+
+    [Fact]
+    public void Create_GivesTheNpcTheNotorietyOfItsTemplate()
+    {
+        Assert.Equal(NotorietyType.Murderer, _factory.Create("red_orc").Notoriety);
+        Assert.Equal(NotorietyType.Invulnerable, _factory.Create("banker").Notoriety);
+    }
+
+    [Fact]
+    public void Create_ANonHumanWithoutANotoriety_IsAttackable_AsAnimalsAndMonstersAreInModernUO()
+    {
+        Assert.Equal(NotorietyType.Attackable, _factory.Create("orc").Notoriety);
+    }
+
+    [Fact]
+    public void NpcNotoriety_OfAHumanWithoutOne_IsNone_AndOfNoTemplate_IsNone()
+    {
+        Assert.Null(NpcNotoriety.Of(new MobileTemplate { Id = "lord" }, 0x190));
+        Assert.Null(NpcNotoriety.Of(null, 17));
+        Assert.Equal(NotorietyType.Attackable, NpcNotoriety.Of(new MobileTemplate { Id = "cat" }, 201));
+        Assert.Equal(NotorietyType.Enemy, NpcNotoriety.Of(new MobileTemplate { Id = "cat", Notoriety = NotorietyType.Enemy }, 201));
     }
 
     [Fact]

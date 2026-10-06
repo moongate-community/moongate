@@ -115,7 +115,7 @@ written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has to
 | 3.1 | 🟡 | **Pathfinding** and movement that checks items and mobiles. Done: the A* path search, `npc.walk_to`, and items that block; mobiles do not block yet | AI cannot chase without it | |
 | 3.2 | 🟡 | **NPC AI**: melee, archer, mage, animal, fleeing; NPC memory of who attacked. Today a Lua script on a tick, wandering, and `monster.lua`, the melee AI without the fight, on the undead of the graveyards | The 29,000 spawned NPCs become content | UOX3 NPC tags dropped today (`NPCAI`, `FLEEAT`, `SPATTACK`), ModernUO `npc-speeds.json` |
 | 3.3 | 🟡 | **Loot on corpses**, carving, fame and karma gain. Loot is rolled into the backpack at spawn and lies in the corpse of a dead NPC; no carving, fame or karma | Reward for the fight | UOX3 `carve.dfn` (102 tables) |
-| 3.4 | 🟡 | **Notoriety**: criminal and murderer flags, name colours, murder counts. Today the name colour of the mobile template | Makes PvP rule-bound | |
+| 3.4 | 🟡 | **Notoriety**: criminal and murderer flags, name colours, murder counts. Today the name colour of the mobile template, which every NPC is given when it is made | Makes PvP rule-bound | |
 | 3.5 | ❌ | **Region rules and guards**: guarded towns, no recall, no gate, no housing | Makes towns safe | ModernUO `regions.json` (typed regions), UOX3 `regions.dfn` (179 rule sets) |
 
 ## Phase 4: economy and magic

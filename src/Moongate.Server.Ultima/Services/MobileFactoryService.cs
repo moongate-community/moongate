@@ -15,6 +15,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
@@ -127,6 +128,7 @@ public class MobileFactoryService : IMobileFactoryService
             ManaMax = mana,
             Stamina = stamina,
             StaminaMax = stamina,
+            Notoriety = NpcNotoriety.Of(template, template.Body ?? looks?.Body ?? 0),
             Armor = Roll(template.Armor),
             ResistPhysical = Roll(template.Resistances?.Physical),
             ResistFire = Roll(template.Resistances?.Fire),

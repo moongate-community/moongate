@@ -224,6 +224,7 @@ strength = "1d26+49"
 dexterity = "1d6+64"
 intelligence = "1d26+49"
 script_id = "banker"
+notoriety = "invulnerable"
 [[mobile.equipment]]
 items = ["0x1efd_fancy_shirt"]
 hue = "0x0835-0x0852"
@@ -798,6 +799,7 @@ strength = "1d26+49"
 dexterity = "1d6+64"
 intelligence = "1d26+49"
 script_id = "banker"
+notoriety = "invulnerable"
 [[mobile.equipment]]
 items = ["0x1efd_fancy_shirt"]
 
