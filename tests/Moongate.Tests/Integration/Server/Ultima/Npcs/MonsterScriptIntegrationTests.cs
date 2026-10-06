@@ -292,6 +292,31 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AMonsterThatRunsHurt_RunsForItsWholeTime_FarOrNear_AndAStaleRunIsForgotten()
+    {
+        _skeleton.SetProp("combat.passive", true);
+        Think(1);
+        Assert.False(_skeleton.GetProp<bool>("combat.passive"));
+
+        _skeleton.Hits = 10;
+        _skeleton.HitsMax = 100;
+        _combat.Attack(_skeleton, _aria);
+
+        for (var think = 0; think < 400 && !_skeleton.GetProp<bool>("combat.passive"); think++)
+        {
+            Think(1);
+        }
+
+        Assert.True(_skeleton.GetProp<bool>("combat.passive"));
+
+        // The prey stays where it was, 12 cells away or more, and the run goes on: a hurt creature runs its ten to thirty seconds.
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1640, 1600, 0)));
+        Think(10);
+
+        Assert.True(_skeleton.GetProp<bool>("combat.passive"));
+    }
+
+    [Fact]
     public void AMonsterThatIsUnhurt_OrWhoseTemplateNeverFlees_DoesNotRun()
     {
         _combat.Attack(_skeleton, _aria);

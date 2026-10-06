@@ -337,8 +337,8 @@ internal static class MobileTemplateBuilder
 
                     break;
                 case "FLEEAT":
-                    // From 0 to 100, or -1 for never; a value out of it is left out.
-                    template.FleeAt = UoxNumber.TryParse(value, out var fleeAt) && fleeAt is >= -1 and <= 100 ? (int)fleeAt : template.FleeAt;
+                    // From 1 to 100, or -1 for never; 0 is UOX3's "the server's default" and a value out of it is left out.
+                    template.FleeAt = UoxNumber.TryParse(value, out var fleeAt) && fleeAt is -1 or (>= 1 and <= 100) ? fleeAt : template.FleeAt;
 
                     break;
                 case "FLAG":

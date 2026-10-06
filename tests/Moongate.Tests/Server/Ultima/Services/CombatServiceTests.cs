@@ -525,6 +525,54 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void ARange_IsMeasuredInSquare_ADiagonalNeighbourIsOneCellAway_AndAnArcherOnTheDiagonalReaches()
+    {
+        // A swing at a diagonal neighbour, as the scripts count a cell.
+        _orc.Location = new Point3D(1, 1, 0);
+        _random.Integers(4);
+        _combat.Attack(_orc, _aria);
+        Tick();
+        Assert.True(_aria.Hits < 30);
+
+        // Eight cells on both axes: 11 by the straight line, 8 by the squares of a bow's range of 10.
+        _combat.Stop(_orc);
+        _gear.Ranged = Bow;
+        _orc.Location = new Point3D(8, 8, 0);
+        _clock.Advance(TimeSpan.FromSeconds(10));
+        _combat.Attack(_orc, _aria);
+        Tick();
+
+        Assert.Single(_effects.Moving);
+    }
+
+    [Fact]
+    public void TheSightOfAnArcher_IsFromEyeToEye_AsTheScriptsAre()
+    {
+        _gear.Ranged = Bow;
+        _orc.Location = new Point3D(6, 0, 0);
+        _combat.Attack(_orc, _aria);
+        _sight.Checks.Clear();
+
+        Tick();
+
+        Assert.Contains((new Point3D(6, 0, 14), new Point3D(0, 0, 14)), _sight.Checks);
+    }
+
+    [Fact]
+    public void AnNpcArcher_HitsWithTheDiceOfItsTemplate_NotTheDamageOfItsBow()
+    {
+        _gear.Ranged = Bow;
+        _orc.Location = new Point3D(6, 0, 0);
+        _random.Integers(4);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        // The orc's dice give 8, halved on a player: the bow's 9 to 41 would not.
+        Assert.Equal(26, _aria.Hits);
+    }
+
+    [Fact]
     public void AnNpcWithABow_DoesNotShootBeyondItsRange()
     {
         _gear.Ranged = Bow;

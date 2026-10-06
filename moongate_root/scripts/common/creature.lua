@@ -75,6 +75,11 @@ local function mind_of(serial)
         mind = { state = "wander", thinks = 0, rest = 0, until_think = 0, stalled = 0 }
         minds[serial] = mind
 
+        -- A creature the script lost track of, as after a restart in the middle of a run, is not told to run still.
+        if npc.get_prop(serial, "combat.passive") ~= nil then
+            npc.set_prop(serial, "combat.passive", nil)
+        end
+
         -- A creature the script lost track of, as after a script reload, may still be in war mode.
         local flags = mobile.flags(serial)
 
@@ -168,6 +173,8 @@ local function start_flee(serial, mind, attacker, thinks)
     mind.state = "flee"
     mind.target = attacker
     mind.until_think = mind.thinks + (thinks or FLEE_THINKS)
+    -- One that runs from a blow is far enough at some cells; one too hurt to fight runs for its whole time.
+    mind.hurt = thinks ~= nil
     mobile.set_war_mode(serial, false)
     -- Told to the combat service, which makes every hit NPC answer the blow: this one only runs.
     npc.set_prop(serial, "combat.passive", true)
@@ -193,7 +200,9 @@ local function flee(serial, mind, here)
 
     local from = mobile.location(mind.target)
 
-    if from == nil or mind.thinks >= mind.until_think or npc.distance_to(serial, from.x, from.y) >= FLEE_DISTANCE then
+    if from == nil
+        or mind.thinks >= mind.until_think
+        or (not mind.hurt and npc.distance_to(serial, from.x, from.y) >= FLEE_DISTANCE) then
         start_wander(serial, mind)
 
         return
@@ -377,6 +386,7 @@ function creature.new(options)
 
     -- It dies, or is raised again: what it was doing is forgotten with it.
     function script.on_death(serial)
+        npc.set_prop(serial, "combat.passive", nil)
         minds[serial] = nil
     end
 

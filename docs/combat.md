@@ -114,7 +114,7 @@ numbers, ModernUO's classic ones.
 An NPC that holds a **bow** or a **crossbow** shoots instead of fighting from beside its target, as ModernUO's and
 UOX3's archers do. The range is the weapon's: 10 cells for a bow, 8 for a crossbow. It must see its target: with no
 line of sight it keeps the fight but does not shoot, and its [creature script](scripting/shipped-scripts.md#commoncreaturelua)
-walks it to where it does. A shot is a swing like any other: the weapon's speed and the NPC's stamina give the delay,
+walks it to where it does. Ranges are counted in squares, the larger of the two differences along X and Y, as the scripts and the line of sight count them: a diagonal neighbour is one cell away. The line of sight is from eye to eye. A shot is a swing like any other: the weapon's speed and the NPC's stamina give the delay,
 the hit is rolled with the Archery skill against what the target defends with, the damage is the template's dice
 (not the bow's), and the arrow `0x0F42`, or the bolt `0x1BFE`, flies from the shooter to the target, hit or missed.
 A human body plays the shooting action of its weapon; a monster body plays its attack. The sound is the creature's own

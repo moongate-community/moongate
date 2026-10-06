@@ -54,6 +54,7 @@ public sealed class CombatService : ICombatService
     private const int ReachInHeight = 15;
     private const int SwingFrames = 7;
     private const byte ProjectileSpeed = 18;
+    private const int EyeHeight = 14;
     private const int OtherSwingFrames = 5;
     private const int HurtFrames = 5;
     private const int MonsterHurtFrames = 4;
@@ -278,7 +279,7 @@ public sealed class CombatService : ICombatService
 
         try
         {
-            return _sight.HasLineOfSight(attacker.Map, attacker.Location, target.Location) ? null : "the target is out of sight";
+            return _sight.HasLineOfSight(attacker.Map, EyeOf(attacker), EyeOf(target)) ? null : "the target is out of sight";
         }
         catch (KeyNotFoundException)
         {
@@ -357,7 +358,10 @@ public sealed class CombatService : ICombatService
 
     private bool InReach(MobileEntity attacker, MobileEntity target)
     {
-        return attacker.Location.InRange(target.Location, RangedOf(attacker)?.Range ?? _config.MaxRange) &&
+        // A square range, as the scripts and the line of sight measure: a diagonal neighbour is one cell away, not 1.4.
+        var range = RangedOf(attacker)?.Range ?? _config.MaxRange;
+
+        return Math.Max(Math.Abs(attacker.Location.X - target.Location.X), Math.Abs(attacker.Location.Y - target.Location.Y)) <= range &&
                Math.Abs(attacker.Location.Z - target.Location.Z) <= ReachInHeight;
     }
 
@@ -488,12 +492,20 @@ public sealed class CombatService : ICombatService
     {
         try
         {
-            return _sight.HasLineOfSight(attacker.Map, attacker.Location, target.Location);
+            return _sight.HasLineOfSight(attacker.Map, EyeOf(attacker), EyeOf(target));
         }
         catch (KeyNotFoundException)
         {
             return false;
         }
+    }
+
+    // Where a mobile sees from, as the scripts' sight: the eyes, not the feet, so a fence a mobile sees over does not stop it.
+    private static Point3D EyeOf(MobileEntity mobile)
+    {
+        var spot = mobile.Location;
+
+        return new(spot.X, spot.Y, Math.Min(spot.Z + EyeHeight, sbyte.MaxValue));
     }
 
     // Whether a script told the NPC not to fight back for now, as a creature that flees.
@@ -551,17 +563,18 @@ public sealed class CombatService : ICombatService
     // The weapon of a player, between its least and its most; the dice of the template of an NPC; else the fists of ModernUO.
     private int BaseDamage(MobileEntity attacker, WeaponInfo? weapon)
     {
-        if (weapon is not null)
-        {
-            return weapon.DamageMin + _random.Next(Math.Max(weapon.DamageMax - weapon.DamageMin, 0) + 1);
-        }
-
+        // An NPC hits with the dice of its template, a bow in its hands or not, as ModernUO's creatures do.
         if (attacker.IsNpc &&
             attacker.TemplateId is { } id &&
             _templates.TryGet(id, out var template) &&
             template.Damage is { } dice)
         {
             return dice.Roll();
+        }
+
+        if (weapon is not null)
+        {
+            return weapon.DamageMin + _random.Next(Math.Max(weapon.DamageMax - weapon.DamageMin, 0) + 1);
         }
 
         return _random.Next(CombatFormulas.FistsMaximumDamage) + CombatFormulas.FistsMinimumDamage;
