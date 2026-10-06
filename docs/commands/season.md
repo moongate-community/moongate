@@ -28,3 +28,4 @@ dead trees in desolation. It plays a sound on the change.
 - [All commands](../commands.md)
 - [`time`](time.md)
 - [`weather`](weather.md)
+- [`gmtools`](gmtools.md): the same buttons in a gump

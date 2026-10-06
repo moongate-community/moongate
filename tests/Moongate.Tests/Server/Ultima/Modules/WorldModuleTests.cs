@@ -248,6 +248,69 @@ public sealed class WorldModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SeasonHere_IsTheSeasonTheClientOfThePlayerShows()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        var result = Run("return world.season_here(2) == SeasonType.Fall, world.season_here(256), world.season_here(0)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal([LuaValue.Nil, LuaValue.Nil], result[1..]);
+    }
+
+    [Theory]
+    [InlineData("SeasonType.Spring", SeasonType.Spring)]
+    [InlineData("SeasonType.Summer", SeasonType.Summer)]
+    [InlineData("SeasonType.Fall", SeasonType.Fall)]
+    [InlineData("SeasonType.Winter", SeasonType.Winter)]
+    [InlineData("SeasonType.Desolation", SeasonType.Desolation)]
+    public void SetSeason_SetsTheSeasonOfTheMapOfThePlayer(string season, SeasonType expected)
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        Assert.True(Run($"return world.set_season(2, {season})")[0].Read<bool>());
+
+        Assert.Equal([(aria.Map, (SeasonType?)expected)], _seasons.Overrides);
+    }
+
+    [Fact]
+    public void ClearSeason_GivesTheMapItsOwnSeasonBack()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        Assert.True(Run("return world.clear_season(2)")[0].Read<bool>());
+
+        Assert.Equal([(aria.Map, (SeasonType?)null)], _seasons.Overrides);
+    }
+
+    [Theory]
+    [InlineData("world.set_season(256, SeasonType.Winter)")]
+    [InlineData("world.set_season(0, SeasonType.Winter)")]
+    [InlineData("world.set_season(2, SeasonType.Winter)")]
+    [InlineData("world.clear_season(256)")]
+    [InlineData("world.clear_season(2)")]
+    public void SetSeasonAndClearSeason_AnNpcOrAnUnknownPlayer_ChangeNothing(string call)
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var npc));
+        npc.AccountId = null;
+
+        Assert.False(Run($"return {call}")[0].Read<bool>());
+
+        Assert.Empty(_seasons.Overrides);
+    }
+
+    [Fact]
+    public void SetSeason_AKindThatDoesNotExist_IsAScriptError()
+    {
+        Assert.Throws<LuaRuntimeException>(() => Run("return world.set_season(2, 9)"));
+
+        Assert.Empty(_seasons.Overrides);
+    }
+
+    [Fact]
     public void WeatherProfile_IsTheNameOfTheProfileThePlayerStandsIn()
     {
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));

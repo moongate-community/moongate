@@ -323,6 +323,35 @@ public sealed class WorldModule
     }
 
     /// <summary>
+    ///     Gets the season the client of a player shows, its region's else its map's;
+    ///     <c>world.season_here(who) == SeasonType.Winter</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The season the client of the player shows where it stands (its region's, else its map's), a SeasonType; nil for an NPC, a player not in the world or when the seasons are not running.")]
+    public SeasonType? SeasonHere(long player)
+    {
+        return _seasons is not null && TryGetPlayer(player, out var mobile) ? _seasons.SeasonOf(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Sets the season of the map a player stands on until the restart, as the season command does;
+    ///     <c>world.set_season(who, SeasonType.Winter)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Sets the season of the map where the player stands, a SeasonType, until the restart, and sends it at once to the players of the map except those in a region with a season of its own. False for an NPC or a player not in the world; a season that does not exist is a script error. It does not check who calls it: a script for the staff checks world.is_staff first. Call it on the game loop, as a script does.")]
+    public bool SetSeason(long player, SeasonType season)
+    {
+        return OverrideSeason(player, season);
+    }
+
+    /// <summary>
+    ///     Gives the map a player stands on back the season of <c>maps.toml</c>; <c>world.clear_season(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Gives the map where the player stands back its own season: the one of maps.toml, rotated when season_rotation is on, instead of the one a script or .season set. False for an NPC or a player not in the world. It does not check who calls it: a script for the staff checks world.is_staff first.")]
+    public bool ClearSeason(long player)
+    {
+        return OverrideSeason(player, null);
+    }
+
+    /// <summary>
     ///     Gets the season of a map; <c>world.season(MapType.Trammel) == SeasonType.Winter</c>.
     /// </summary>
     [ScriptFunction(helpText: "The season of the map, a SeasonType; nil when the seasons are not running.")]
@@ -401,8 +430,26 @@ public sealed class WorldModule
     {
         mobile = null!;
 
-        return _weather is not null &&
-               _mobiles is not null &&
+        return _weather is not null && TryGetPlayer(player, out mobile);
+    }
+
+    private bool OverrideSeason(long player, SeasonType? season)
+    {
+        if (_seasons is null || !TryGetPlayer(player, out var mobile))
+        {
+            return false;
+        }
+
+        _seasons.SetOverride(mobile.Map, season);
+
+        return true;
+    }
+
+    private bool TryGetPlayer(long player, out MobileEntity mobile)
+    {
+        mobile = null!;
+
+        return _mobiles is not null &&
                player is > 0 and <= uint.MaxValue &&
                _mobiles.TryGet(new Serial((uint)player), out mobile!) &&
                !mobile.IsNpc;

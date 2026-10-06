@@ -22,6 +22,32 @@ Forces a kind of weather on that profile until the next game hour, as `.weather`
 world.set_weather(user, WeatherKindType.Storm)
 ```
 
+## season_here
+
+The season the client of a player shows where it stands, the region's else the map's:
+
+```lua
+if world.season_here(user) == SeasonType.Winter then
+    mobile.message(user, "Brr.")
+end
+```
+
+## set_season
+
+Sets the season of the map where the player stands until the restart, as `.season` does:
+
+```lua
+world.set_season(user, SeasonType.Winter)
+```
+
+## clear_season
+
+Gives that map back the season of `maps.toml`:
+
+```lua
+world.clear_season(user)
+```
+
 ## moon
 
 ```lua

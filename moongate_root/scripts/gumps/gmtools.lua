@@ -10,7 +10,9 @@
 --
 --   The weather tool shows the weather where the game master stands and forces none,
 --   rain, snow or storm on that weather profile, as .weather does, until the next
---   game hour.
+--   game hour. The season tool shows the season where the game master stands and of
+--   its map, and sets the season of the map until the restart, or gives it back its
+--   own, as .season does.
 --
 -- Functions:
 --   tools(g, player, args)  fills the sidebar slot; args.tool is the selected tool
@@ -89,9 +91,76 @@ local function weather_panel(g, player)
     end
 end
 
+-- The seasons, in the order of the buttons. Read when the gump opens, as the weather kinds are.
+local function seasons()
+    return {
+        { season = SeasonType.Spring, name = "spring" },
+        { season = SeasonType.Summer, name = "summer" },
+        { season = SeasonType.Fall, name = "fall" },
+        { season = SeasonType.Winter, name = "winter" },
+        { season = SeasonType.Desolation, name = "desolation" },
+    }
+end
+
+local function season_name(season)
+    for _, entry in ipairs(seasons()) do
+        if entry.season == season then
+            return entry.name
+        end
+    end
+
+    return "unknown"
+end
+
+-- The season of the map the game master stands on, as the file or a script left it.
+local function map_season(player)
+    local where = mobile.location(player)
+
+    return where and world.season(where.map)
+end
+
+local function season_panel(g, player)
+    local here = world.season_here(player)
+    local map = map_season(player)
+
+    if here == nil or map == nil then
+        return
+    end
+
+    g:label_cropped{ x = 0, y = 0, width = panel_width, height = text_height, hue = title_hue, text = "Season here: " .. season_name(here) }
+    g:label_cropped{ x = 0, y = 22, width = panel_width, height = text_height, text = "Season of your map: " .. season_name(map) }
+    g:label_cropped{ x = 0, y = 54, width = panel_width, height = text_height, text = "Set it until the restart:" }
+
+    local rows = seasons()
+    rows[#rows + 1] = { name = "auto" }
+
+    for index, entry in ipairs(rows) do
+        local y = 80 + (index - 1) * row_height
+
+        g:button{ x = 0, y = y, up = 4023, down = 4025, on_click = function(who)
+            -- The rank may have gone while the gump was open.
+            if not world.is_staff(who) then
+                return
+            end
+
+            if entry.season ~= nil then
+                if world.set_season(who, entry.season) then
+                    mobile.message(who, "The season of your map is now " .. entry.name .. ".")
+                end
+            elseif world.clear_season(who) then
+                mobile.message(who, "The season of your map is back to its own: " .. season_name(map_season(who)) .. ".")
+            end
+
+            open(who, "season")
+        end }
+        g:label_cropped{ x = 35, y = y, width = panel_width - 35, height = text_height, text = entry.name }
+    end
+end
+
 -- The tools of the sidebar, in order; the first is the one shown when none is chosen.
 local tools = {
     { id = "weather", title = "Weather", panel = weather_panel },
+    { id = "season", title = "Season", panel = season_panel },
 }
 
 local function selected(args)
