@@ -36,9 +36,14 @@ public sealed class StubDeathService : IDeathService
 
     public bool Resurrect(MobileEntity player)
     {
+        if (!player.IsDead || !Kills)
+        {
+            return false;
+        }
+
         PlayersRaised.Add(player);
 
-        return Kills;
+        return true;
     }
 
     /// <summary>

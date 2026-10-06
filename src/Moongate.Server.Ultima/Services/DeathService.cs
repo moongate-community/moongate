@@ -209,8 +209,28 @@ public sealed class DeathService : IDeathService
     public async Task<ResurrectResult> ResurrectAsync(Serial corpse, CancellationToken cancellationToken = default)
     {
         Raising? raising = null;
+        MobileEntity? player = null;
         var refusal = ResurrectResultType.NotACorpse;
-        await OnLoopAsync(() => refusal = TryBegin(corpse, out raising), cancellationToken);
+        await OnLoopAsync(
+            () =>
+            {
+                // A ghost is raised where it stands, without a corpse.
+                if (_mobiles.TryGet(corpse, out var ghost) && Resurrect(ghost))
+                {
+                    player = ghost;
+
+                    return;
+                }
+
+                refusal = TryBegin(corpse, out raising);
+            },
+            cancellationToken
+        );
+
+        if (player is not null)
+        {
+            return new(ResurrectResultType.Raised, player);
+        }
 
         if (raising is null)
         {

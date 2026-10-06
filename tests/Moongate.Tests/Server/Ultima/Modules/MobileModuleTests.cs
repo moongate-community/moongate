@@ -354,6 +354,19 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Resurrect_ADeadPlayer_RaisesItAtOnce_AndIsDeadSaysWhoIs()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 0x0192;
+
+        var result = Run("return mobile.is_dead(2), mobile.resurrect(2), mobile.is_dead(999)");
+
+        Assert.Equal([true, true, false], result.Select(value => value.Read<bool>()));
+        Assert.Equal([_aria], _death.PlayersRaised);
+        Assert.Empty(_death.Raised);
+    }
+
+    [Fact]
     public void Resurrect_WhatIsNoCorpse_IsFalse_AndStartsNothing()
     {
         // The backpack of the fixture, a mobile, nothing.

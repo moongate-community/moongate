@@ -718,6 +718,28 @@ public sealed class DeathServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ResurrectAsync_TheSerialOfAGhost_RaisesThePlayer()
+    {
+        _aria.Body = 0x0190;
+        _aria.HitsMax = 50;
+        _death.Kill(_aria);
+
+        var result = await _death.ResurrectAsync(_aria.Id);
+
+        Assert.Equal(ResurrectResultType.Raised, result.Type);
+        Assert.Same(_aria, result.Mobile);
+        Assert.False(_aria.IsDead);
+    }
+
+    [Fact]
+    public async Task ResurrectAsync_ThePlayerAlive_IsNotACorpse()
+    {
+        var result = await _death.ResurrectAsync(_aria.Id);
+
+        Assert.Equal(ResurrectResultType.NotACorpse, result.Type);
+    }
+
+    [Fact]
     public void Resurrect_APlayerThatIsAlive_IsRefused()
     {
         Assert.False(_death.Resurrect(_aria));
