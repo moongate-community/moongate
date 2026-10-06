@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"bed8692db5bdb5899ab098716e23401ac7ee302cd011666cbbd86f526dd58860","title":"Script dei mobile"} -->
+<!-- translation: {"sourceHash":"7ed24f5d003a22a9cf13f3ccf7b9a7c5899f97cc88b9b5744d85c7945e4bef10","title":"Script dei mobile"} -->
 
 # Script dei mobile
 
@@ -30,6 +30,8 @@ La tabella può definire queste funzioni; ciascuna è opzionale:
 | `on_mobile_killed(serial, killed, killer)` | Quando un mobile, giocatore o NPC, viene ucciso entro `ultima.npcs.sense_range` celle da questo NPC (8 per impostazione predefinita, un quadrato lungo X e Y), escluso chi è morto. `serial` è l'NPC che viene avvisato, `killed` il seriale di chi è morto e `killer` il seriale di chi lo ha ucciso, oppure `nil` quando non lo ha fatto nessuno. `npc.name(killed)` restituisce `nil` per un giocatore. Un NPC che sta morendo non viene avvisato. |
 | `on_death(serial, corpse, killer)` | Quando l'NPC muore ([Morte e resurrezione](../death.md)), dopo che il cadavere esiste ed è mostrato e prima che l'NPC lasci il mondo, quindi può ancora essere letto. `corpse` è il seriale del cadavere, nil quando non ne è stato creato uno; `killer` è il seriale di chi lo ha ucciso, nil quando non lo ha fatto nessuno. Se ucciso da uno script, viene eseguito al turno successivo del game loop, subito prima che l'NPC venga rimosso; non deve chiamare `wait()`. |
 | `on_drag_drop(serial, giver, item)` | Quando un giocatore rilascia un oggetto sull'NPC da 2 caselle o meno, sulla stessa mappa; lo staff da qualsiasi distanza, come in ModernUO. Da più lontano un giocatore legge `That is too far away.` e l'oggetto torna indietro. `giver` è il seriale del giocatore, `item` quello dell'oggetto. Restituisci `true` quando lo script ha preso l'oggetto, dopo averlo spostato o eliminato (`item.delete`, `item.move_into`, `item.move_to`): l'oggetto non è su alcun cursore mentre la funzione viene eseguita. Qualsiasi altra cosa, una funzione assente, un errore o un `wait()` restituiscono l'oggetto al punto da cui il giocatore lo ha sollevato, come ogni rilascio su un NPC senza questa funzione. Il `can_drop` dell'oggetto viene interrogato prima, e il suo `on_drop` non viene chiamato per un oggetto preso da un NPC. |
+| `on_context_menu(serial, player)` | Quando quel giocatore chiede il [menu contestuale](../context-menus.md) dell'NPC. Restituisci le voci che l'NPC aggiunge, una tabella di `{ id, cliloc, range, enabled }`, oppure nulla; risponde subito e non deve chiamare `wait`. |
+| `on_context_menu_select(serial, player, id)` | Quando il giocatore ha scelto una di quelle voci: `id` è quello della voce. Chiamato solo per una voce che il giocatore ha visto e che è nella sua portata. Può chiamare `wait`. |
 
 `on_spawn`, `on_mobile_in_range` e `on_mobile_killed` vengono eseguiti subito dopo ciò che li ha causati, al turno
 successivo del game loop: un passo fatto da `npc.step` dentro un handler in esecuzione non può

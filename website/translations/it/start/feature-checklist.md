@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"c1ad3e331e490ee6568c320c7321d6e562de064cc046ddeef0d1bf70af6fb0a6","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"de1c826c0f97c67c73727efd94da172d5d4880e282f3bdc89786185ad21342f2","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -342,7 +342,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Razze | 🟡 | Corpi e aspetti di umani, elfi e gargoyle; nessuna meccanica di gioco razziale |
 | Gump | ✅ | Layout XML verificati da un XSD, script Lua, gump costruiti in Lua, gump concatenati, risposte verificate |
 | Menu | ❌ | |
-| Menu contestuali | 🟡 | Il [menu](context-menus.md) di un mobile o di un oggetto: Apri paperdoll e Apri zaino, e le voci che aggiunge uno script Lua (`on_context_menu`, `on_context_menu_select`), come Apri cassetta di sicurezza del banchiere; la scelta viene verificata rispetto al menu inviato. Ancora nessuna voce per venditori, animali, addomesticamento o party, né le icone dei venditori del client migliorato |
+| Menu contestuali | 🟡 | Il [menu](context-menus.md) di un mobile o di un oggetto: Apri paperdoll e Apri zaino, e le voci che aggiunge uno script Lua (`on_context_menu`, `on_context_menu_select`), come Apri cassetta di sicurezza del banchiere; la scelta viene verificata rispetto al menu inviato. Le icone del client migliorato scelgono la voce con il suo testo. Ancora nessuna voce per venditori, animali, addomesticamento o party: arrivano con quei sistemi |
 | Barra dei buff | ❌ | |
 | Controlli della sequenza e della velocità di camminata | ✅ | |
 | Peso e sovraccarico | ✅ | Ciò che un mobile trasporta e può trasportare (40 e 3.5 per punto di forza) viene conteggiato e mostrato; un giocatore sovraccarico si stanca a ogni passo |

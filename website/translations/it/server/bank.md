@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"9ff26b60c53d0a3da64838bbb9d3696b2434027f27486edae84523c4df5b5426","title":"Banca"} -->
+<!-- translation: {"sourceHash":"63b0a857021237bcab6577db2c46d6e8de3ce9892116c808cc4b80006dae49d1","title":"Banca"} -->
 
 # Banca
 
@@ -20,6 +20,9 @@ Bank container has 3 items.
 La prima volta, la cassa bancaria viene creata (template `bank_box` di `templates/items/bank.toml`, grafica di una cassa
 metallica) e salvata, poi mostrata. I template di banchiere `banker`, `m_banker` e `f_banker` usano
 lo script, quindi ogni banchiere degli [spawn](spawns.md) risponde.
+
+Un banchiere offre anche `Open Bank Box` nel suo [menu contestuale](context-menus.md), dalle stesse 12
+caselle: apre la cassa come fa la parola, e un criminale riceve lo stesso rifiuto.
 
 ## Mentre è aperta
 
