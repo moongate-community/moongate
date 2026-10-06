@@ -2,6 +2,7 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Data.Templates.Items;
@@ -1098,6 +1099,52 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         Assert.Equal("0x044E", items["0x0001"].Hue.ToString());
         // No colour of its own: the server's loader takes the parent's.
         Assert.Null(items["0x0002"].Hue);
+    }
+
+    [Fact]
+    public void Run_ReadsTheCombatFieldsOfWeaponsAndArmor_AndTheKindOfWeaponByGraphic()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            "[base_longsword]\n{\nid=0x0f60\nlayer=1\n}\n" +
+            "[0x0f60_t2a]\n{\nget=base_longsword\ndamage=5 33\nspd=35\nstr=25\nhp=31 90\n}\n" +
+            "[ringmail_tunic]\n{\nid=0x13ec\nlayer=13\ndef=22\nstr=20\nhp=41 51\n}\n" +
+            "[bow]\n{\nid=0x13b2\nlayer=2\ndamage=9 41\nspd=25\n}\n" +
+            "[mace]\n{\nid=0x0f5c\nlayer=1\ndamage=8 32\nspd=40\n}\n" +
+            "[spear]\n{\nid=0x0f62\nlayer=2\ndamage=2 36\nspd=50\n}\n" +
+            "[bardiche]\n{\nid=0x0f4d\nlayer=2\ndamage=5 49\nspd=25\n}\n" +
+            "[flat]\n{\nid=0x1234\nlayer=1\ndamage=3\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems();
+        // The kind goes on the item that has the graphic; its eras inherit it, and only add numbers.
+        Assert.Equal(WeaponType.Sword, items["base_longsword"].WeaponType);
+        var era = items["0x0f60_t2a"];
+        Assert.Equal((5, 33, 35, 25, 90), (era.DamageMin!.Value, era.DamageMax!.Value, era.Speed!.Value, era.StrengthRequired!.Value, era.MaxHits!.Value));
+        Assert.Null(era.WeaponType);
+        var tunic = items["ringmail_tunic"];
+        Assert.Equal((22, 20, 51), (tunic.ArmorRating!.Value, tunic.StrengthRequired!.Value, tunic.MaxHits!.Value));
+        Assert.Null(tunic.DamageMax);
+        Assert.Equal(
+            (WeaponType.Bow, WeaponType.Mace, WeaponType.Fencing, WeaponType.PoleArm),
+            (items["bow"].WeaponType!.Value, items["mace"].WeaponType!.Value, items["spear"].WeaponType!.Value, items["bardiche"].WeaponType!.Value)
+        );
+        // A graphic UOX3 does not list is fought with fists: no kind, and a damage of one number is both ends.
+        Assert.Null(items["flat"].WeaponType);
+        Assert.Equal((3, 3), (items["flat"].DamageMin!.Value, items["flat"].DamageMax!.Value));
+    }
+
+    [Fact]
+    public void Run_ACombatFieldThatIsNotANumber_IsLeftOut()
+    {
+        _dirs.WriteSource("items.dfn", "[sword]\n{\nid=0x0f60\nlayer=1\ndamage=lots\nspd=fast\nstr=\ndef=-3\nhp=0 0\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var sword = ReadItems()["sword"];
+        Assert.Equal((null, null, null, null, null, null), (sword.DamageMax, sword.Speed, sword.StrengthRequired, sword.ArmorRating, sword.MaxHits, (int?)null));
     }
 
     [Fact]

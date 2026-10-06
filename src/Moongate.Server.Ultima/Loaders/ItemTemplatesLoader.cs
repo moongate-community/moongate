@@ -133,7 +133,7 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         child.Layer ??= parent.Layer;
         child.TwoHandedWeapon ??= parent.TwoHandedWeapon;
         child.Dyeable ??= parent.Dyeable;
-        child.WeaponSkill ??= parent.WeaponSkill;
+        child.WeaponType ??= parent.WeaponType;
         child.DamageMin ??= parent.DamageMin;
         child.DamageMax ??= parent.DamageMax;
         child.Speed ??= parent.Speed;

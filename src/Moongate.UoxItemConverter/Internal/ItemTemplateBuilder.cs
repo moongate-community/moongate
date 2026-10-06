@@ -260,7 +260,63 @@ internal static class ItemTemplateBuilder
             template.LootType = LootType.Newbied;
         }
 
+        ApplyCombatFields(block, template);
         ApplyTags(block, template);
+    }
+
+    // What combat reads, as UOX3 keeps it: damage=min max (one number is both), spd, str, def and hp=min max, of which
+    // the most is the durability. A kind of weapon follows the graphic of the block, by UOX3's own table, so it goes on
+    // the item that has the id= and its eras inherit it.
+    private static void ApplyCombatFields(DfnBlock block, ItemTemplate template)
+    {
+        if (block.Fields.TryGetValue("damage", out var damageText) && TryReadRange(damageText, out var damageMin, out var damageMax) && damageMax > 0)
+        {
+            template.DamageMin = damageMin;
+            template.DamageMax = damageMax;
+        }
+
+        if (block.Fields.TryGetValue("spd", out var speedText) && UoxNumber.TryParse(speedText, out var speed) && speed > 0)
+        {
+            template.Speed = speed;
+        }
+
+        if (block.Fields.TryGetValue("str", out var strengthText) && UoxNumber.TryParse(strengthText, out var strength) && strength > 0)
+        {
+            template.StrengthRequired = strength;
+        }
+
+        if (block.Fields.TryGetValue("def", out var armorText) && UoxNumber.TryParse(armorText, out var armor) && armor > 0)
+        {
+            template.ArmorRating = armor;
+        }
+
+        if (block.Fields.TryGetValue("hp", out var hitsText) && TryReadRange(hitsText, out _, out var hits) && hits > 0)
+        {
+            template.MaxHits = hits;
+        }
+
+        if (block.Fields.TryGetValue("id", out var idText) &&
+            UoxNumber.TryParse(idText, out var graphic) &&
+            UoxWeaponTypes.TryGet(graphic, out var type))
+        {
+            template.WeaponType = type;
+        }
+    }
+
+    // "5 33" is from 5 to 33, "3" is 3 to 3; a value that is not numbers, or is below 0, is not read.
+    private static bool TryReadRange(string text, out int min, out int max)
+    {
+        min = max = 0;
+        var parts = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        if (parts.Length is < 1 or > 2 || !UoxNumber.TryParse(parts[0], out min) || min < 0)
+        {
+            return false;
+        }
+
+        max = min;
+
+        return parts.Length == 1 || UoxNumber.TryParse(parts[1], out max) && max >= min;
     }
 
     private static bool IsShield(DfnBlock block)

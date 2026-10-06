@@ -3,6 +3,7 @@ using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Directories;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Loaders;
@@ -81,7 +82,7 @@ public sealed class ItemTemplatesLoaderTests
         using var root = new TemporaryDirectory();
         root.CreateFile(
             "templates/items/swords.toml",
-            "[[item]]\nid = \"base_longsword\"\nitem_id = 0x0F60\nlayer = \"one_handed\"\nweapon_skill = \"swordsmanship\"\n\n" +
+            "[[item]]\nid = \"base_longsword\"\nitem_id = 0x0F60\nlayer = \"one_handed\"\nweapon_type = \"sword\"\n\n" +
             "[[item]]\nid = \"longsword\"\nbase_id = \"base_longsword\"\nitem_id = 0x0F60\ndamage_min = 5\ndamage_max = 33\n" +
             "speed = 35\nstrength_required = 25\nmax_hits = 90\n\n" +
             "[[item]]\nid = \"fast_longsword\"\nbase_id = \"longsword\"\nitem_id = 0x0F60\nspeed = 50\n\n" +
@@ -92,14 +93,14 @@ public sealed class ItemTemplatesLoaderTests
 
         var longsword = templates["longsword"];
         Assert.Equal(
-            (SkillType.Swordsmanship, 5, 33, 35, 25, 90),
-            (longsword.WeaponSkill!.Value, longsword.DamageMin!.Value, longsword.DamageMax!.Value, longsword.Speed!.Value,
+            (WeaponType.Sword, 5, 33, 35, 25, 90),
+            (longsword.WeaponType!.Value, longsword.DamageMin!.Value, longsword.DamageMax!.Value, longsword.Speed!.Value,
                 longsword.StrengthRequired!.Value, longsword.MaxHits!.Value)
         );
         var fast = templates["fast_longsword"];
-        Assert.Equal((SkillType.Swordsmanship, 5, 33, 50), (fast.WeaponSkill!.Value, fast.DamageMin!.Value, fast.DamageMax!.Value, fast.Speed!.Value));
+        Assert.Equal((WeaponType.Sword, 5, 33, 50), (fast.WeaponType!.Value, fast.DamageMin!.Value, fast.DamageMax!.Value, fast.Speed!.Value));
         var tunic = templates["ringmail_tunic"];
-        Assert.Equal((22, 20, 51, (SkillType?)null, (int?)null), (tunic.ArmorRating!.Value, tunic.StrengthRequired!.Value, tunic.MaxHits!.Value, tunic.WeaponSkill, tunic.DamageMax));
+        Assert.Equal((22, 20, 51, (WeaponType?)null, (int?)null), (tunic.ArmorRating!.Value, tunic.StrengthRequired!.Value, tunic.MaxHits!.Value, tunic.WeaponType, tunic.DamageMax));
         Assert.Null(templates["base_longsword"].DamageMax);
     }
 

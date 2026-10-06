@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
@@ -107,10 +108,10 @@ public class ItemTemplate
     public bool? TwoHandedWeapon { get; set; }
 
     /// <summary>
-    ///     The skill a weapon is fought with, as UOX3 types it by graphic: swordsmanship, mace fighting, fencing, archery
-    ///     or throwing. Unset for what is not a weapon.
+    ///     The kind of a weapon, as UOX3 types it by graphic: it decides the skill, the swing animation and the sounds.
+    ///     Unset for what is not a weapon.
     /// </summary>
-    public SkillType? WeaponSkill { get; set; }
+    public WeaponType? WeaponType { get; set; }
 
     /// <summary>
     ///     The least damage a hit of the weapon does, before the bonuses of the one who wields it.
