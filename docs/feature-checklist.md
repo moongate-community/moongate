@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 80 done, 🟡 48 partly done, ❌ 140 not built yet.
+**268 systems:** ✅ 80 done, 🟡 50 partly done, ❌ 138 not built yet.
 
 **Coverage: 30%** of the systems done, **39%** counting a partly done system as half.
 
@@ -76,11 +76,11 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | War mode, melee and swing timing | 🟡 | A player [fights](combat.md) with its fists or the weapon it holds: the swing timer, the hit by skill, the damage with tactics, strength, anatomy and the armor of the target, the sounds and animations |
-| Archery | ❌ | |
+| Archery | 🟡 | NPCs that hold a bow or a crossbow shoot from its range with the arrow flying to the target; players do not yet: with a bow in the hands they fight with their fists |
 | Weapons and armour: damage, armour, durability, resistances | 🟡 | The weapon a player holds and the armor it wears set the [swing, the hit, the damage and what a blow takes off](combat.md#weapons-and-armor); no durability, parry, shields or resistances |
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
-| NPC combat AI | 🟡 | `monster.lua` on every creature that is evil or chaotic in UOX3 (about 200 templates): they notice a player or a townsman, walk to it, fight it and stand guard when they lose it, in melee also the casters, and the town guards go for them. Animals stroll and fight back when hit, scared ones run. No archers, spells or fleeing at low hit points |
+| NPC combat AI | 🟡 | `monster.lua` on every creature that is evil or chaotic in UOX3 (about 200 templates): they notice a player or a townsman, walk to it, fight it and stand guard when they lose it, in melee also the casters, and the town guards go for them. Animals stroll and fight back when hit, scared ones run. Hurt, they run (under 20% of their hit points, never the undead or the elementals). Archers shoot from their bow's range. No spells |
 | Guards in guarded regions | 🟡 | A player that says "guards" brings a guard beside each criminal near it: it appears, says its line and leaves. The guards standing in the towns notice a criminal by themselves and go to it (`guard.lua`). A criminal NPC is killed with one blow and leaves its corpse; a criminal player is only stood on, since players do not die yet |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
@@ -139,7 +139,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*, *balance*, *withdraw* and *check*, and the word *deposit*, which has no keyword; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
-| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. Only the scared animals flee, from a blow; NPCs do not open doors, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
+| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. Hurt creatures run from a fight (20% of their hit points, 10% for animals) and scared animals from a blow; NPCs do not open doors, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
 | Pets and followers: commands, loyalty, bonding | ❌ | |
 | Mounts | ❌ | |
 | Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |
@@ -160,7 +160,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Banker and bank box | ✅ | The *bank* keyword in any client language; open while the player stands still; balance, withdraw and deposit by speech; a limit of items; see [Bank](bank.md) |
 | Stable master, veterinarian | ❌ | |
 | Skill trainers | ❌ | |
-| Healers that resurrect | ❌ | |
+| Healers that resurrect | 🟡 | A ghost that comes near a healer is offered to live again; the evil healers are not placed in the world yet |
 | Player vendors | ❌ | |
 | Hirelings | ❌ | |
 | Escort quests | ❌ | |

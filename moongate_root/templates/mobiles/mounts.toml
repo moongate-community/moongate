@@ -115,6 +115,7 @@ death = 185
 [[mobile]]
 id = "frenziedostard"
 script_id = "monster"
+flee_at = -1
 base_id = "horse"
 name = "a frenzied ostard"
 body = 219

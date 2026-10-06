@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Services.Books;
 using Moongate.Server.Ultima.Services.Internal;
@@ -337,6 +338,28 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal("scared_animal", mobiles["rabbit"].ScriptId);
         Assert.Contains(mobiles.Values, template => template.ScriptId == "animal");
         Assert.True(mobiles.Values.Count(template => template.ScriptId == "monster") > 200);
+    }
+
+    [Fact]
+    public async Task ShippedArchers_HoldABow_AndTheUndeadAndTheElementalsNeverFlee()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots)).LoadDataAsync())
+                      .Entities.ToDictionary(t => t.Id);
+
+        // A ratman archer goes for the players, and what it holds is a bow: its item template shoots.
+        var archer = mobiles["ratmanarcher"];
+        Assert.Equal("monster", archer.ScriptId);
+        var held = archer.Equipment!.SelectMany(entry => entry.Items).Select(id => items.FirstOrDefault(item => item.Id == id || item.Id.StartsWith(id + "_", StringComparison.Ordinal)));
+        Assert.Contains(held, item => item?.WeaponType is WeaponType.Bow or WeaponType.Crossbow);
+
+        // UOX3's FLEEAT=-1, the creatures that never run.
+        Assert.Equal(-1, mobiles["zombie"].FleeAt);
+        Assert.Equal(-1, mobiles["skeleton"].FleeAt);
+        Assert.True(mobiles.Values.Count(template => template.FleeAt == -1) > 40);
     }
 
     [Fact]

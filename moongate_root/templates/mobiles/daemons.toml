@@ -6,6 +6,7 @@ notoriety = "attackable"
 [[mobile]]
 id = "balron"
 script_id = "monster"
+flee_at = -1
 name = "a balron"
 name_list = "balron"
 body = 40
@@ -39,6 +40,7 @@ death = 361
 [[mobile]]
 id = "daemon"
 script_id = "monster"
+flee_at = -1
 name = "a daemon"
 name_list = "daemon"
 body = 9
@@ -94,6 +96,7 @@ death = 772
 [[mobile]]
 id = "icefiend"
 script_id = "monster"
+flee_at = -1
 name = "an ice fiend"
 body = 43
 skin_hue = 1152

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"eca4f2791aceb05e844af0d8dca481dabcb022e734dde8eb8c39c51bb1f87239","title":"Migrare da UOX3"} -->
+<!-- translation: {"sourceHash":"1cb57f6c219939134a64425d83b6097d6f38b14b0710c65427a63269442c6f93","title":"Migrare da UOX3"} -->
 
 # Migrare da UOX3
 
@@ -225,6 +225,9 @@ Due errori noti nei dati oggetto UOX3 vengono corretti alla lettura dei blocchi
 (`UoxDataFixes`): `necro_sleeves` e `necro_leggings` nominano guanti e tunica di cuoio
 come padri; ricevono maniche (`0x13cd`) e gambali (`0x13cb`) di cuoio.
 
+`FLEEAT` diventa il `flee_at` del template (da 0 a 100, oppure `-1` per una creatura che non scappa mai; i non morti, gli
+elementali e i demoni hanno `-1`); un valore fuori da questi limiti viene scartato.
+
 Un mobile per cui Moongate ha uno script riceve il suo `script_id`: un banchiere
 (`NPCAI=8`) riceve `banker` (`scripts/mobiles/banker.lua`), una guardia cittadina
 (`NPCAI=4`) riceve `guard` (`scripts/mobiles/guard.lua`), le creature che attaccano tutti
@@ -236,7 +239,7 @@ combattenti e incantatori, `5` e `10`, combattono solo i criminali e non hanno a
 (`scripts/mobiles/scared_animal.lua`); i template basati su di essi ricevono lo script tramite `base_id`.
 
 Scartati, senza un posto ancora: resto dell'AI e del vagabondaggio (gli altri valori di `NPCAI`,
-`NPCWANDER`, `FX*`, velocità, `FLEEAT`), abilità di addomesticamento e bardo (`TOTAME`,
+`NPCWANDER`, `FX*`, velocità), abilità di addomesticamento e bardo (`TOTAME`,
 `CONTROLSLOTS`, `TOPROV`, `TOPEACE`), negozi (`SHOPKEEPER`, `SHOPLIST`), `PACKITEM`,
 `CARVE`, `FOOD`, `PRIV`, `SCRIPT` e gli altri tag senza un campo. L'esecuzione stampa
 quante volte ogni tipo di valore è stato scartato.

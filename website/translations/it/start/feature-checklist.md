@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0e056b2f1d35ae2c0c6540b5b3dc06de28a17bc2cb3c5884ac336b2e15769c9b","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"399c9b894e8eb1080e3656ab70e200aa4670a605f8347b9db21cd502226f4f39","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**268 sistemi:** ✅ 80 completati, 🟡 48 parzialmente completati, ❌ 140 non ancora realizzati.
+**268 sistemi:** ✅ 80 completati, 🟡 50 parzialmente completati, ❌ 138 non ancora realizzati.
 
 **Copertura: 30%** dei sistemi completati, **39%** contando un sistema parzialmente completato come metà.
 
@@ -78,11 +78,11 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Sistema | Moongate | Note |
 | --- | --- | --- |
 | Modalità guerra, corpo a corpo e tempi dei colpi | 🟡 | Un giocatore [combatte](combat.md) a pugni o con l'arma che impugna: timer del colpo, probabilità di colpire tramite abilità, danno con tactics, forza, anatomy e armatura del bersaglio, suoni e animazioni |
-| Tiro con l'arco | ❌ | |
+| Tiro con l'arco | 🟡 | Gli NPC che impugnano un arco o una balestra sparano dalla sua portata con la freccia che vola verso il bersaglio; i giocatori non ancora: con un arco in mano combattono a pugni |
 | Armi e armature: danno, armatura, durabilità, resistenze | 🟡 | L'arma impugnata e l'armatura indossata da un giocatore determinano [tempi dei colpi, probabilità di colpire, danno e riduzione del danno subito](combat.md#weapons-and-armor); nessuna durabilità, parata, scudo o resistenza |
 | Parata | ❌ | |
 | Mosse speciali delle armi | ❌ | |
-| IA di combattimento degli NPC | 🟡 | `monster.lua` su ogni creatura malvagia o caotica in UOX3 (circa 200 template): notano un giocatore o un cittadino, gli si avvicinano, lo combattono e fanno la guardia quando lo perdono, anche gli incantatori in corpo a corpo, e le guardie cittadine li attaccano. Gli animali passeggiano e rispondono se colpiti, quelli paurosi fuggono. Niente arcieri, incantesimi o fuga con pochi punti vita |
+| IA di combattimento degli NPC | 🟡 | `monster.lua` su ogni creatura malvagia o caotica in UOX3 (circa 200 template): notano un giocatore o un cittadino, gli si avvicinano, lo combattono e fanno la guardia quando lo perdono, anche gli incantatori in corpo a corpo, e le guardie cittadine li attaccano. Gli animali passeggiano e rispondono se colpiti, quelli paurosi fuggono. Se feriti scappano (sotto il 20% dei punti vita, mai i non morti o gli elementali). Gli arcieri sparano dalla portata del loro arco. Niente incantesimi |
 | Guardie nelle regioni sorvegliate | 🟡 | Un giocatore che dice "guards" fa arrivare una guardia accanto a ciascun criminale nelle vicinanze: appare, pronuncia la sua battuta e se ne va. Le guardie presenti nelle città notano autonomamente un criminale e lo raggiungono (`guard.lua`). Un NPC criminale viene ucciso con un colpo e lascia il cadavere; un giocatore criminale viene solo raggiunto, perché i giocatori non muoiono ancora |
 | Abilità speciali dei mostri | ❌ | |
 | Danno elementale e resistenze | ❌ | |
@@ -141,7 +141,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Parole chiave del parlato e risposte | 🟡 | Le parole chiave del client raggiungono `on_speech` in qualsiasi lingua; i banchieri rispondono a *bank*, *balance*, *withdraw* e *check*, e alla parola *deposit*, che non ha una parola chiave; nessuna parola chiave dei venditori ancora |
 | Creature acquatiche e anfibie | ✅ | Compaiono sull'acqua e nuotano |
 | Tipi di IA (venditore, guardia, guaritore, animale, mostro, incantatore) | ❌ | |
-| Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, aggirando porte chiuse e mobili. Fuggono solo gli animali paurosi, da un colpo; gli NPC non aprono le porte e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
+| Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, aggirando porte chiuse e mobili. Le creature ferite scappano da uno scontro (20% dei loro punti vita, 10% gli animali) e gli animali paurosi da un colpo; gli NPC non aprono le porte e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
 | Animali e seguaci: comandi, lealtà, legame | ❌ | |
 | Cavalcature | ❌ | |
 | Eventi di script per gli NPC (parlato, portata, danno) | 🟡 | Parlato e portata; nessun evento di combattimento |
@@ -162,7 +162,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Banchiere e cassetta di banca | ✅ | La parola chiave *bank* in qualsiasi lingua del client; aperta mentre il giocatore resta fermo; saldo, prelievo e deposito tramite parlato; limite di oggetti; vedi [Banca](bank.md) |
 | Stalliere, veterinario | ❌ | |
 | Istruttori delle abilità | ❌ | |
-| Guaritori che resuscitano | ❌ | |
+| Guaritori che resuscitano | 🟡 | Un fantasma che si avvicina a un guaritore riceve l'offerta di tornare in vita; i guaritori malvagi non sono ancora posizionati nel mondo |
 | Venditori dei giocatori | ❌ | |
 | Mercenari | ❌ | |
 | Missioni di scorta | ❌ | |

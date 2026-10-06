@@ -203,6 +203,7 @@ death = 593
 [[mobile]]
 id = "teramatriarch"
 script_id = "monster"
+flee_at = -1
 name = "terathan matriarch"
 body = 72
 skin_hue = 0

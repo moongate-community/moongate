@@ -370,6 +370,7 @@ death = 643
 [[mobile]]
 id = "ophmatriarch"
 script_id = "monster"
+flee_at = -1
 name = "an ophidian matriarch"
 body = 87
 strength = "1d90+415"

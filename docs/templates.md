@@ -346,6 +346,7 @@ to 120; a constant is a bare integer.
 | `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |
 | `Loot`, `Gold` | Loot template ids and gold dice rolled into the backpack at spawn; no corpse system yet |
 | `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death`; a mobile script plays them by kind with `npc.play_sound(serial, "idle")` |
+| `FleeAt` | The percent of its hit points (0 to 100) under which a creature that fights runs from the fight, `-1` for one that never does, as UOX3's `FLEEAT`; a base template's is inherited. Unset: the script's own, 20 for a monster and 10 for an animal. See [Creature scripts](scripting/shipped-scripts.md#commoncreaturelua) |
 | `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, `on_death` and `on_drag_drop` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting/mobile-scripts.md) |
 | `Visibility` | As in `ItemTemplate` |
 | `Movement` | `land`, `water` (a dolphin: it spawns and swims on the water only) or `both` (a walrus: it walks and swims, and spawns on land else on the water); unset is `land` |
