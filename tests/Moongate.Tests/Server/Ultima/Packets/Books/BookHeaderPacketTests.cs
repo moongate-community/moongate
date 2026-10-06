@@ -20,6 +20,14 @@ public sealed class BookHeaderPacketTests
     }
 
     [Fact]
+    public void Write_AWritableBook_SaysSo()
+    {
+        var bytes = PacketCodec.Encode(new BookHeaderPacket(new Serial(0x40000010), 20, "a book", "Aria", true));
+
+        Assert.Equal([0x01, 0x01, 0x00, 0x14], bytes[7..11]);
+    }
+
+    [Fact]
     public void Write_TextIsUtf8_AndItsLengthCountsBytesAndTheZero()
     {
         var bytes = PacketCodec.Encode(new BookHeaderPacket(new Serial(0x40000010), 1, "Città", ""));
