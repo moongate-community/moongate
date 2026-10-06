@@ -81,7 +81,7 @@ public sealed class LocationServiceTests
         var service = Service(Place(MapType.Tokuno, "Towns", "Luna"), Place(MapType.Felucca, "Towns", "Cove"));
 
         Assert.Equal(["Felucca"], service.GetNode("")!.Categories);
-        Assert.Null(service.GetNode("malas"));
+        Assert.Null(service.GetNode("tokuno"));
     }
 
     [Fact]

@@ -459,6 +459,12 @@ public sealed class CombatService : ICombatService
 
     private void Hit(MobileEntity attacker, MobileEntity target, DateTimeOffset now, WeaponInfo? weapon)
     {
+        // An invulnerable takes no harm, from a blow it was not refused: a monster's answer to a guard's arrow.
+        if (target.Notoriety == NotorietyType.Invulnerable)
+        {
+            return;
+        }
+
         var damage = DamageOf(attacker, target, weapon);
 
         if (SoundsOf(target)?.Hurt is { } hurt and > 0)
@@ -496,8 +502,13 @@ public sealed class CombatService : ICombatService
     // The NPC that is hit, or missed, fights the one who swings, if it fights no one; whoever hit it keeps it at it.
     private void FightBack(MobileEntity victim, MobileEntity attacker, DateTimeOffset now)
     {
-        // One that runs, a scared animal or a creature too hurt to fight, does not answer the blow: its script runs.
-        if (!victim.IsNpc || !_mobiles.IsInWorld(victim.Id) || RunsFromBlows(victim) || IsPassive(victim))
+        // One that runs, a scared animal or a creature too hurt to fight, does not answer the blow: its script runs. Nor
+        // does anyone answer an invulnerable, such as a guard: it cannot be hurt.
+        if (!victim.IsNpc ||
+            !_mobiles.IsInWorld(victim.Id) ||
+            RunsFromBlows(victim) ||
+            IsPassive(victim) ||
+            attacker.Notoriety == NotorietyType.Invulnerable)
         {
             return;
         }

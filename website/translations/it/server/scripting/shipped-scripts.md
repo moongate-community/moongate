@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"2e486ace8336a78fd2175c5f06314487ea5e88fdc8d9a4f81aa24e0cdf5dd432","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"4c74f65d5e2e31d023294653a435c5f40a5f096123abed8608b2c29a67193d52","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -70,7 +70,7 @@ quindi resta su di lui in silenzio senza passeggiare, e quando quel criminale vi
 nessun altro e attende di essere mandata via. Ciò che una guardia sta facendo viene mantenuto in memoria per seriale, non salvato.
 I numeri (12, 24, i 10 secondi) sono costanti all'inizio del file.
 
-**La guardia arciere**, template `archerguard` (le guardie chiamate a Ilshenar e Malas, come l'`ArcherGuard` di ModernUO), è
+**La guardia arciere**, template `archerguard` (le guardie chiamate a Ilshenar e Malas, sul modello dell'`ArcherGuard` di ModernUO, senza il suo cavallo e le sue statistiche: sono quelle della guardia con un arco), è
 questa guardia con un arco in mano e `combat.range` di 10. Davanti a un NPC che attacca, un criminale o un mostro, che sia
 entro la sua portata e nella sua vista, non gli si avvicina: resta dov'è, lo guarda e avvia lo scontro
 (`combat.attack`), e il servizio di combattimento spara con l'abilità Archery; l'arresto finisce quando il bersaglio è morto.

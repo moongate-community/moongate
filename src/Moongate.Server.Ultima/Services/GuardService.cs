@@ -16,7 +16,7 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     Sends a guard for each criminal near the player that called, as ModernUO's guarded regions: an NPC of
-///     <c>ultima.crime.guard_template</c> appears on the criminal with the teleport effect and sound, says its line,
+///     <c>ultima.crime.guard_template</c>, or of <c>archer_guard_template</c> in Ilshenar and Malas, appears on the criminal with the teleport effect and sound, says its line,
 ///     and leaves the same way after <c>ultima.crime.guard_seconds</c>. Only a criminal that stands in a guarded
 ///     region is reached. Spawns and removals wait for the game loop, so they are started off it. A summoned guard bears the prop
 ///     <c>guard.summoned</c>: one a stopped server left in the world is removed at the first check.

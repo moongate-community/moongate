@@ -3,10 +3,12 @@
 --
 -- What it is for:
 --   A mobile script for the guards of the towns, the ones that stand there by
---   their spawn and the ones a player calls by saying "guards". The server has no
---   combat yet: a guard kills a criminal that is an NPC with one blow, as
---   ModernUO's does, and only stands on one that is a player, since players do
---   not die yet. A mobile template uses it with script_id = "guard" (guard,
+--   their spawn and the ones a player calls by saying "guards". A guard kills a
+--   criminal or a monster that is an NPC with one blow, as ModernUO's does, and
+--   only stands on a player. A guard that holds a bow, the archer guard of
+--   Ilshenar and Malas, shoots an NPC it goes for from the bow's range instead,
+--   with the combat service, and does not come beside it unless it is out of its
+--   range or sight. A mobile template uses it with script_id = "guard" (guard,
 --   m_guard and f_guard do).
 --
 --   The guard is in one of two states:
@@ -153,8 +155,14 @@ local function can_shoot(serial, criminal)
     end
 
     local there = mobile.location(criminal)
+    local here = npc.location(serial)
 
-    return npc.distance_to(serial, there.x, there.y) <= range and npc.can_see(serial, criminal, range)
+    -- On its storey, as the combat service asks: a target on a roof above is out of reach.
+    return there ~= nil
+        and here ~= nil
+        and math.abs(there.z - here.z) <= STOREY
+        and npc.distance_to(serial, there.x, there.y) <= range
+        and npc.can_see(serial, criminal, range)
 end
 
 local function start_arrest(serial, mind, here, criminal)
@@ -231,14 +239,11 @@ local function arrest(serial, mind, here)
     local there = mobile.location(criminal)
 
     -- An archer shoots from where it stands: the shots are the combat service's, and it is done when its target is dead.
-    if can_shoot(serial, criminal) then
+    -- When the combat service refuses the fight, such as for a target it may not hurt, the guard goes on as any other.
+    if can_shoot(serial, criminal) and (combat.target(serial) == criminal or combat.attack(serial, criminal)) then
         mind.stalled = 0
         mind.strike = nil
         npc.face(serial, there.x, there.y)
-
-        if combat.target(serial) ~= criminal then
-            combat.attack(serial, criminal)
-        end
 
         local stats = mobile.stats(criminal)
 

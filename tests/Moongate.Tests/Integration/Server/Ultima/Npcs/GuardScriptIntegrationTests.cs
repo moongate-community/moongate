@@ -294,6 +294,32 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AnArcherGuard_ComesBesideATargetOnAnotherStorey_AndOneTheCombatServiceRefuses()
+    {
+        _combat.Range = 8;
+        var zombie = Npc(0x200, 1605, 1600);
+        zombie.TemplateId = "zombie";
+        zombie.Hits = 20;
+        // A roof: 30 above, within the range and in sight, yet out of the combat service's reach.
+        zombie.Location = new Point3D(1605, 1600, 30);
+
+        Think(3);
+
+        Assert.Single(_teleports.Teleports);
+        Assert.Empty(_combat.Attacks);
+
+        // A fight the combat service refuses is not shot at in vain: the guard goes on as a melee guard does.
+        zombie.Location = new Point3D(1605, 1600, 0);
+        _combat.Allows = false;
+        _teleports.Teleports.Clear();
+        _state.Flags.Clear();
+        Think(6);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.True(_combat.Attacks.Count < 6);
+    }
+
+    [Fact]
     public void AnArcherGuard_StillOnlyStandsOnACriminalPlayer()
     {
         _combat.Range = 8;
