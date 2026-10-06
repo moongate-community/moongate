@@ -194,7 +194,7 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 
 | Id | Text | Used by |
 | --- | --- | --- |
-| 30000–30004 | Common, Uncommon, Rare, Epic, Legendary | Tooltip rarity |
+| 30000–30004 | Common, Uncommon, Rare, Epic, Legendary | Tooltip rarity; an item shows it only above Common (30000 is kept for scripts and tools) |
 | 30005 | [Cursed] | Tooltip loot type |
 | 30006, 30007 | Weight: 1 stone, Weight: {0} stones | Tooltip weight |
 | 30008–30038, 30050–30052, most of 30055–30112, 30115–30120, 30122 and 30126 | Target canceled., Unknown command: {0}, Usage: {0}, The world has been saved in {0} seconds., {0} now has {1} fame., ... | Command replies and broadcasts (`CommandMessages`) |
