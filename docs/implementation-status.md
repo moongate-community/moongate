@@ -31,8 +31,9 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
   them up; items left on the ground decay.
 - Open the paperdoll, dress and undress (two-handed weapons included).
 - Read tooltips and names of what is in view.
-- Read personalized scrolls from [text templates](data-files/books.md): their text stays fixed when traded.
-  [Starting items](data-files/starting-items.md#personalized-starting-letters) can deliver them transactionally; the shipped common set includes a welcome letter.
+- Read personalized scrolls and native books from [text templates](data-files/books.md): their text stays fixed when traded.
+  Write titles, authors and pages in writable books carried in the backpack or an open bank box.
+  [Starting items](data-files/starting-items.md#personalized-starting-letters) can deliver them transactionally; the shipped common set includes a welcome letter and a blank writable book.
 - Open doors, and locked doors when carrying their key; light and douse lights.
 - See day and night pass, dark dungeons, and the weather, the season and the music of each region
   (rain, snow, storms).
@@ -66,7 +67,7 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - Read, post, reply and remove on the bulletin boards of the towns, each with its own messages;
   threads expire and a full board lets its oldest thread go: [Bulletin boards](bulletin-boards.md).
 - Set fame and karma, inspect what a target cursor picks: `.fame`, `.karma`, `.where`.
-- Create personalized scrolls in your backpack: [`.book`](commands/book.md).
+- Create personalized scrolls and books in your backpack: [`.book`](commands/book.md).
 - Make gold and bank checks out of nothing: `.add_gold`, `.create_check`.
 - Restore a character waiting to be deleted: `.character`.
 
@@ -149,7 +150,7 @@ See all of them in [Commands](commands.md).
   `base_id` inheritance, and the XML gumps of `templates/gumps`. See
   [Loading TOML templates](templates.md) and [Gumps](gumps.md).
 - Plain document sources in `templates/books`, with named variables resolved and saved on individual
-  scrolls at creation. [Letter attachments](data-files/books.md#letter-attachments) are frozen per letter and delivered once to its backpack bearer, with deferred weight and atomic capacity checks. The converter ships [62 lore books in eight languages](book-content-import.md) from ModernUO. Native book pages/editing remain separate work; see [Readable text templates](data-files/books.md).
+  scrolls and books at creation. [Letter attachments](data-files/books.md#letter-attachments) are frozen per letter and delivered once to its backpack bearer, with deferred weight and atomic capacity checks. The converter ships [62 lore books in eight languages](book-content-import.md) from ModernUO. Native books have covers and turnable pages; writable books let their carrier edit the title, author and pages, with changes saved on the item. See [Readable text templates](data-files/books.md).
 - Client files read from `ultima.ultima_path`: tile data, maps (MUL or UOP) and multis.
 - Messages in 8 languages, ported from UOX3; a language can be split into several toml
   files. See [Localization](localization.md).

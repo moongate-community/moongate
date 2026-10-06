@@ -32,6 +32,10 @@ function readable_scroll.on_use(serial, user)
 end
 ```
 
-This displays saved text, with normal item access and range checks. From Lua,
-true means the open was queued for the next loop turn; an item moved or deleted,
-or a replaced/disconnected session, prevents delivery. False means refused.
+This displays saved text, with normal item access and range checks. Native books submit
+their cover and page packets during the call; true means both packets were accepted for
+sending. Scrolls opened from Lua are queued for the next loop turn, so true means the request
+was queued. Before opening a queued scroll, the server rechecks the reader and item identities,
+the original session and item access. Deletion, replacement, disconnection or loss of access
+prevents delivery; moving a scroll only prevents delivery if it becomes inaccessible.
+False means the request was refused.

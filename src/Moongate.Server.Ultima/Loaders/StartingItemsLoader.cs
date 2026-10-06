@@ -5,7 +5,7 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Books;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Interfaces.Books;
-using Moongate.Server.Ultima.Services.Books;
+using Moongate.Server.Ultima.Services.Internal.Books;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Serilog;
@@ -81,8 +81,8 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
 
                 if (entry.BookTemplate is { } book)
                 {
-                    if (entry.Equip || entry.Items.Any(id => templates[id].Stackable != false ||
-                        !BookTextValidation.IsReadableScript(templates[id].ScriptId)) ||
+                    if (entry.Equip || !_books.TryGet(book, out var source) || source is null ||
+                        entry.Items.Any(id => !BookItemCompatibility.IsCompatible(source, templates[id])) ||
                         !_books.TryRender(book, new TextTemplateContext { PlayerName = "Player", ServerName = "Server", RealmName = "Realm", Version = "Version", Codename = "Codename" },
                             _localization.Language, entry.BookValues, out _))
                     {

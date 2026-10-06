@@ -38,7 +38,7 @@ public sealed class BookModule
             _books.Write(document, recipient, templateId, supplied);
     }
 
-    [ScriptFunction(helpText: "Displays the item's saved plain text without substituting reader variables. False for unknown data, inaccessible items or an oversized gump. From Lua, true means queued for the next game-loop turn; item access and the original session are checked again before delivery.")]
+    [ScriptFunction(helpText: "Displays the item's saved plain text without substituting reader variables. Native books submit cover and page packets during the call; true means both were accepted for sending. Scrolls opened from Lua are queued for the next game-loop turn; true means queued, with reader/item identity, the original session and item access checked again before delivery. False means refused, including invalid data, inaccessible items, size limits or unavailable queues.")]
     public bool Open(long item, long player)
     {
         return IsSerial(item) && IsSerial(player) && _items.TryGet(new Serial((uint)item), out var document) &&

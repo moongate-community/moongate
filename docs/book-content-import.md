@@ -22,7 +22,7 @@ are refused.
 The shipped catalog contains **62 books, 738 source pages and 5,635 source lines**, converted
 from [ModernUO revision `35e3a31b`](https://github.com/modernuo/ModernUO/tree/35e3a31b4c3af5668f0f0e2d3045b328ffb26b57).
 
-| Source under `Projects/UOContent` | Books | Pages |
+| Source under `Projects/UOContent` | Books | Source pages |
 | --- | ---: | ---: |
 | `Items/Books/Defined/LibraryBooks.cs` | 28 | 486 |
 | The other six `Items/Books/Defined/*.cs` files | 6 | 88 |
@@ -49,10 +49,14 @@ path and rerun.
 A class becomes a stable `<snake_case_class>.toml` filename. For example,
 `GrammarOfOrcish` becomes `grammar_of_orcish`. Titles are preserved and are never
 used for deduplication: the Grimmoch, Lysander and Tavara installments remain distinct.
-Leading spaces, empty pages, spelling and annotations stay as written. Lines are joined with
-a newline and pages with two newlines, so an empty line of the text is a page break; an empty
-line inside a ModernUO page is written as a line of one space, and the book keeps the pages of
-its source. The shipped translations have the same pages as the English text.
+Leading spaces, spelling and annotations stay as written. Lines are joined with a newline
+and source pages with two newlines; an empty line inside a ModernUO page is written as a line
+of one space. This preserves the source page breaks in the stored text, including empty
+source pages, but displayed pagination follows Moongate's native book limits: 79 UTF-16 code units
+per line and 8 lines per page. Longer lines wrap and longer source pages continue onto another
+displayed page. Trailing newlines are trimmed when opening a book, so final empty source pages
+are not displayed. For example, `children_tales_vol2` has 10 source pages and displays 9;
+the shipped English catalog displays 737 pages in total.
 
 The UTF-8 TOML body is multiline when that representation preserves the text exactly;
 leading newlines and CR/CRLF sequences use escaped basic strings when needed. Invalid
@@ -88,10 +92,11 @@ ModernUO; unrelated files remain untouched. Existing translations are retained v
 when upstream English changes, so review their meaning after importing a different
 upstream revision. No network translation service runs during import.
 
-The shipped translations are laid out as the English source: the same pages, lines wrapped to
-the width of the book's longest English line, and the four-space indent where the English page
-opens a paragraph. A translated page may run to more lines than its source, since the text is
-longer.
+The shipped translations follow the English source page breaks and use the width of the
+book's longest English line as a wrapping target. An unbreakable word can exceed that target.
+They retain the four-space indent where the English page opens a paragraph. A translated
+source page may need more lines and displayed pages than its English counterpart; the same
+native book pagination limits apply when it is opened.
 
 The ordinary `mgctl init` workflow copies missing shipped files into existing roots and
 preserves files already present. Newly added sources load at the next normal startup.

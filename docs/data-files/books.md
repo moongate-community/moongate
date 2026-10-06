@@ -6,10 +6,11 @@ filename stems must be unique. On this machine the server root is `~/moongate`.
 
 The server loads these sources at startup. A GameMaster can create one with
 [`.book <template> [name=value ...]`](../commands/book.md). A script creates a personalized
-scroll with `book.give`, or inscribes an existing readable item with `book.write`.
+scroll or book with `book.give`, or inscribes an existing readable item with `book.write`.
 Title, author and body are resolved once and saved on that individual item.
 Trading it, reading it as another player, renaming the recipient, editing the
-source or restarting the server never changes its saved text.
+source or restarting the server never changes its saved text. A writable book can be
+edited by its carrier as described below.
 
 ## A welcome letter
 
@@ -66,7 +67,8 @@ Its pages come from the saved text when it is opened:
 - Line ends at the end of the text add no line and no page.
 - A page holds 8 lines. A longer one, as a translated page often is, goes on in the page after it:
   nothing is cut.
-- A line of more than 79 characters is cut at a space.
+- A line longer than 79 UTF-16 units wraps at the last suitable space within that limit.
+  If no such space exists, it splits at 79 units, even inside a word.
 - A book holds 255 pages; a text that needs more does not open, and the log says so.
 - On the cover the title is cut to 60 bytes and the author to 30, as the client's fields hold.
 
@@ -99,11 +101,12 @@ pages = 20
 - `writable = true` makes the book one that the character carrying it writes in, in its backpack
   or in its open bank box: its title, its author and its pages, in the client's own book. Anyone else who may read it opens it read only,
   and so does everybody while it lies on the ground. Hand it over and the new carrier writes.
-- `pages` is how many pages it has, 1 to 255; 20 when unset. A writable source needs no `content`:
-  the book starts empty. It may have one, and then that text can be written over.
+- `pages` reserves a minimum of 1 to 255 pages; 20 when unset. Saved content can require more
+  pages than this minimum, up to the 255-page limit. A writable source may omit `content` or
+  leave it blank; supplied text can be written over.
 - The client's limits hold: a title of 60 bytes, an author of 30, 8 lines a page, a line under 80
-  characters. What does not fit them is not saved, and neither is a text that would pass the
-  16,384 characters of a document.
+  UTF-16 units. What does not fit them is not saved, and neither is text that exceeds the
+  16,384 UTF-16 units of a document.
 - With no title left, the item is called as its template is, `a book`. In a title or an author
   `<`, `>` and `#` become `(`, `)` and `-`, as in ModernUO: the name shows on a tooltip.
 - What is written is saved on the item, as every document's text, and stays through a restart.
@@ -154,11 +157,11 @@ one transaction. Existing roots must add the entry to their preserved
 | --- | --- |
 | `title` | Required, nonblank source title; supports variables |
 | `author` | Optional, defaults to empty; supports variables |
-| `content` | Required, nonblank multiline source body; supports variables |
+| `content` | Multiline source body; required and nonblank unless `writable = true`, when it may be blank or omitted; supports variables |
 | `variables` | Optional array of required custom value names |
 | `item_template` | Existing item template; default `readable_scroll`; `readable_book` for [a book](#books-and-parchments) |
 | `item_id` | Optional graphic of the created item, 1 to 0xFFFF; absent, the item keeps its template's. Not allowed in a translation |
-| `writable`, `pages` | Optional; a book [a player writes in](#books-a-player-writes-in) and its page count |
+| `writable`, `pages` | Optional; a book [a player writes in](#books-a-player-writes-in) and its minimum reserved page count |
 | `attachments` | Optional reward entries; see [Letter attachments](#letter-attachments) |
 | `translations.<language>` | Optional `title`, `author` and `content` overrides; each missing field falls back to the top-level value |
 
@@ -234,8 +237,8 @@ The shipped welcome letter has no rewards. To opt in, add the entries above to
 your own `templates/books/welcome_letter.toml` and restart. If your root already
 has an edited starting-items file, bind that source using the
 [personalized starting-letter entry](starting-items.md#personalized-starting-letters).
-Only newly issued letters receive the configured batch. Mailboxes and native
-book covers/pages/editing remain separate features.
+Only newly issued letters receive the configured batch. Mailboxes are not built. Native
+book covers, pages and editing are available as described in [Books and parchments](#books-and-parchments).
 
 ## Variables
 
@@ -277,11 +280,14 @@ readable item templates.
 Reading uses normal access: the reader's carried items, including an open bank,
 or a nearby reachable ground item/container on the same map. Another player's
 backpack, a closed bank, a held item/container or a distant ground root is refused.
-When called from Lua, opening is queued; access, item existence and the original
-connected session are checked again before sending.
+When called from Lua, opening a parchment gump is queued; access, item existence and the
+original connected session are checked again before sending. Native books send their cover
+and pages immediately, including from Lua.
 
-Saved props are `book.template`, `book.title`, `book.author` and `book.content`.
-The item's displayed name follows the rendered title.
+Saved text props are `book.template`, `book.title`, `book.author` and `book.content`.
+Writable books also save `book.writable = true` and `book.pages`, the minimum reserved page
+count. Applying a read-only source removes those two writable props. The item's displayed name
+follows the rendered title.
 
 ## Validation and upgrades
 

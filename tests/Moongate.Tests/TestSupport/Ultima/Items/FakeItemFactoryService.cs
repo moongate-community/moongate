@@ -8,7 +8,7 @@ namespace Moongate.Tests.TestSupport.Ultima.Items;
 
 /// <summary>
 ///     Builds items with a real <see cref="ItemFactoryService" /> and "saves" them without a database: an item without a
-///     serial gets the next one from 0x40000001, and every saved batch is recorded.
+///     serial gets the next one from 0x40000001, and every created template ID and saved batch is recorded.
 /// </summary>
 public sealed class FakeItemFactoryService : IItemFactoryService
 {
@@ -16,6 +16,8 @@ public sealed class FakeItemFactoryService : IItemFactoryService
     private uint _next = 0x40000001;
 
     public List<IReadOnlyList<ItemEntity>> Saved { get; } = [];
+
+    public List<string> CreatedTemplateIds { get; } = [];
 
     /// <summary>
     ///     The 1-based number of the save call that throws, as a failing database would; 0 never throws.
@@ -29,7 +31,10 @@ public sealed class FakeItemFactoryService : IItemFactoryService
 
     public ItemEntity Create(string templateId, int? amount = null, Hue? hue = null)
     {
-        return _factory.Create(templateId, amount, hue);
+        var item = _factory.Create(templateId, amount, hue);
+        CreatedTemplateIds.Add(templateId);
+
+        return item;
     }
 
     public Task SaveAsync(ItemEntity item, CancellationToken cancellationToken = default)
