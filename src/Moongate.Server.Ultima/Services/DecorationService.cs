@@ -33,6 +33,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
     ///     The template of a bulletin board the files place: its script opens it, as <c>bulletin_board.lua</c>.
     /// </summary>
     public const string BulletinBoardTemplate = "bulletin_board";
+    public const string AnkhTemplate = "decoration_ankh";
     public const string DoorTemplate = "decoration_door";
     public const string LightTemplate = "decoration_light";
     public const string TeleporterTemplate = "decoration_teleporter";
@@ -61,6 +62,18 @@ public sealed class DecorationService : IDecorationService, IDisposable
     private const string LibraryContentType = "library";
     private const string ClockType = "Clock";
     private const string BulletinBoardType = "BulletinBoard";
+    private const string AnkhWestType = "AnkhWest";
+    private const string AnkhNorthType = "AnkhNorth";
+
+    // The second piece of each ankh, as ModernUO's AnkhWest and AnkhNorth place it: the graphic and the cell next to the
+    // first, for the first's graphic, bloodied or not.
+    private static readonly Dictionary<int, (int Graphic, int DeltaX, int DeltaY)> AnkhCompanions = new()
+    {
+        [0x0003] = (0x0002, 0, 1),
+        [0x1D98] = (0x1D97, 0, 1),
+        [0x0004] = (0x0005, 1, 0),
+        [0x1E5D] = (0x1E5C, 1, 0)
+    };
     private const int GeneratedDoorGraphic = 0x06A5;
     private const int PublicMoongateGraphic = 0x0F6C;
 
@@ -345,7 +358,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
             }
         );
 
-        var items = free.Select(candidate => Build(candidate.Block, candidate.Map, candidate.Location)).ToList();
+        var items = free.SelectMany(candidate => BuildWithCompanion(candidate.Block, candidate.Map, candidate.Location)).ToList();
 
         if (items.Count > 0)
         {
@@ -441,6 +454,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
         {
             ClockType         => ClockTemplate,
             BulletinBoardType => BulletinBoardTemplate,
+            AnkhWestType or AnkhNorthType => AnkhTemplate,
             _                 => null
         };
     }
@@ -531,6 +545,22 @@ public sealed class DecorationService : IDecorationService, IDisposable
                props.GetValueOrDefault("door.x") is long x && x == location.X &&
                props.GetValueOrDefault("door.y") is long y && y == location.Y &&
                props.GetValueOrDefault("door.z") is long z && z == location.Z;
+    }
+
+    // The item of the block, and for an ankh the piece that stands beside it.
+    private IEnumerable<ItemEntity> BuildWithCompanion(DecorationBlock block, MapType map, Point3D location)
+    {
+        var item = Build(block, map, location);
+
+        yield return item;
+
+        if (block.Type is AnkhWestType or AnkhNorthType && AnkhCompanions.TryGetValue(block.ItemId!.Value, out var companion))
+        {
+            var other = Build(block, map, new Point3D(location.X + companion.DeltaX, location.Y + companion.DeltaY, location.Z));
+            other.ItemId = companion.Graphic;
+
+            yield return other;
+        }
     }
 
     private ItemEntity Build(DecorationBlock block, MapType map, Point3D location)

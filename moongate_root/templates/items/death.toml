@@ -4,6 +4,8 @@
 # What it is for:
 #   The two garments of death. A player that dies wears the shroud on its outer
 #   torso layer until it is raised; a player that is raised wears the robe.
+#   And the ankh, a place of resurrection: a ghost that double clicks it is
+#   asked whether it wants to come back to life (scripts/items/ankh.lua).
 #
 # Fields:
 #   base_id     inherits base_item
@@ -11,6 +13,7 @@
 #   layer       outer_torso, where both are worn
 #   movable     false for the shroud: nobody takes it off a ghost
 #   loot_type   newbied for the robe: it never goes into a corpse
+#   script_id   ankh, for the ankh: the script that asks the ghost
 #   hue         2301 for the robe, the grey of the death robe
 # ==============================================================================
 
@@ -32,3 +35,13 @@ rarity = "common"
 layer = "outer_torso"
 hue = 2301
 loot_type = "newbied"
+
+[[item]]
+id = "decoration_ankh"
+base_id = "base_item"
+item_id = 0x0003
+name = "an ankh"
+rarity = "common"
+movable = false
+decays = false
+script_id = "ankh"
