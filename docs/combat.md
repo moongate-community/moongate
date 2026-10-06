@@ -119,8 +119,8 @@ the hit is rolled with the Archery skill against what the target defends with, t
 A human body plays the shooting action of its weapon; a monster body plays its attack. The sound is the creature's own
 attack, else the bow's, `0x234` on a hit and `0x238` on a miss. An NPC's ammo is never counted, and it need not stand still.
 
-A **player** holding a bow or a crossbow shoots the same way, with the damage of the weapon (the bow's 9 to 41 and
-the status window shows it), and with these differences, as ModernUO and UOX3 have them:
+A **player** holding a bow or a crossbow shoots the same way, with the damage of the weapon (a plain bow's 8 to 41, which
+the status window shows), and with these differences, as ModernUO and UOX3 have them:
 
 - Each shot spends **one arrow** (bow) or **one bolt** (crossbow), found in the backpack or in a bag in it. With none,
   nothing flies and the swing is lost: its delay is paid all the same, and no message is shown, as in ModernUO.

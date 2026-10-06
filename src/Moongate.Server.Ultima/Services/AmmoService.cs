@@ -50,7 +50,8 @@ public sealed class AmmoService : IAmmoService
 
     public bool Spend(MobileEntity shooter, WeaponInfo weapon)
     {
-        return _gear.AmmoOf(shooter, weapon) is { } ammo && _handling.Consume(ammo);
+        // A stack held on a cursor is not spent: another one in the pack is.
+        return _gear.AmmoOf(shooter, weapon, item => !_handling.IsHeld(item)) is { } ammo && _handling.Consume(ammo);
     }
 
     public void Recover(MobileEntity target, WeaponInfo weapon)

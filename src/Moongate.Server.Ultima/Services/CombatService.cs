@@ -378,26 +378,28 @@ public sealed class CombatService : ICombatService
     {
         var (attacker, target) = (fighter.Attacker, fighter.Target);
 
-        // Swinging shows who hid.
-        if (attacker.Hidden)
-        {
-            _state.SetHidden(attacker, false);
-        }
-
         // A player fights with what it holds; an NPC with its template, whatever it is dressed in, except that a bow or a
         // crossbow it holds shoots.
         var weapon = RangedOf(attacker) ?? WeaponOf(attacker);
         fighter.NextSwingAt = now.AddSeconds(
             CombatFormulas.SwingDelaySeconds(attacker.Stamina, weapon?.Speed ?? FistsSpeed, _config.GlobalAttackSpeed)
         );
-        fighter.ExpiresAt = now.AddSeconds(_config.CombatantSeconds);
 
-        // A player spends an arrow or a bolt at each shot; with none the swing is lost, its delay paid, and nothing flies.
+        // A player spends an arrow or a bolt at each shot; with none the swing is lost, its delay paid, and nothing flies:
+        // the player is not shown if it hid, and the fight does not last for it.
         var shot = RangedOf(attacker);
 
         if (shot is not null && !attacker.IsNpc && _ammo is not null && !_ammo.Spend(attacker, shot))
         {
             return;
+        }
+
+        fighter.ExpiresAt = now.AddSeconds(_config.CombatantSeconds);
+
+        // Swinging shows who hid.
+        if (attacker.Hidden)
+        {
+            _state.SetHidden(attacker, false);
         }
 
         PayStamina(attacker);

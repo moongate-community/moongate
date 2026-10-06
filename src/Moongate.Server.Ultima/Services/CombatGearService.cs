@@ -39,7 +39,7 @@ public sealed class CombatGearService : ICombatGearService
         return HeldWeapon(mobile, shoots: true);
     }
 
-    public ItemEntity? AmmoOf(MobileEntity mobile, WeaponInfo weapon)
+    public ItemEntity? AmmoOf(MobileEntity mobile, WeaponInfo weapon, Func<ItemEntity, bool>? accept = null)
     {
         var graphic = weapon.Type?.Ammo ?? 0;
 
@@ -50,16 +50,16 @@ public sealed class CombatGearService : ICombatGearService
 
         var pack = _items.GetWorn(mobile.Id).FirstOrDefault(item => item.Layer == LayerType.Backpack);
 
-        return pack is null ? null : FindAmmo(pack.Id, graphic);
+        return pack is null ? null : FindAmmo(pack.Id, graphic, accept ?? (_ => true));
     }
 
     // The first stack of the graphic in the container, or in a container inside it.
-    private ItemEntity? FindAmmo(Serial container, int graphic)
+    private ItemEntity? FindAmmo(Serial container, int graphic, Func<ItemEntity, bool> accept)
     {
         var inside = _items.GetContents(container);
 
-        return inside.FirstOrDefault(item => item.ItemId == graphic && item.Amount > 0) ??
-               inside.Select(item => FindAmmo(item.Id, graphic)).FirstOrDefault(found => found is not null);
+        return inside.FirstOrDefault(item => item.ItemId == graphic && item.Amount > 0 && accept(item)) ??
+               inside.Select(item => FindAmmo(item.Id, graphic, accept)).FirstOrDefault(found => found is not null);
     }
 
     // What the mobile holds in its hands that is fought in melee, or that shoots: a bow or a crossbow.

@@ -690,6 +690,20 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AHiddenArcherWithNoArrows_StaysHidden_AndTheFightDoesNotGoOnForIt()
+    {
+        _gear.Ranged = Bow;
+        _ammo.Has = false;
+        _aria.Hidden = true;
+        _orc.Location = new Point3D(7, 0, 0);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.True(_aria.Hidden);
+    }
+
+    [Fact]
     public void AnNpcArcher_NeedsNeitherArrowsNorToStandStill()
     {
         _gear.Ranged = Bow;

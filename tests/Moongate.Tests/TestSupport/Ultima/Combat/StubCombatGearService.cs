@@ -35,7 +35,7 @@ public sealed class StubCombatGearService : ICombatGearService
     /// </summary>
     public ItemEntity? Ammo { get; set; }
 
-    public ItemEntity? AmmoOf(MobileEntity mobile, WeaponInfo weapon)
+    public ItemEntity? AmmoOf(MobileEntity mobile, WeaponInfo weapon, Func<ItemEntity, bool>? accept = null)
     {
         return Ammo;
     }

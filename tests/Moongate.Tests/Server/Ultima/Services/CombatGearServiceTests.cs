@@ -128,6 +128,8 @@ public sealed class CombatGearServiceTests
 
         Assert.Equal(arrows.Id, _gear.AmmoOf(_aria, bow)?.Id);
         Assert.Equal(bolts.Id, _gear.AmmoOf(_aria, crossbow)?.Id);
+        // A stack the caller does not accept, such as one held on a cursor, is passed over for the next.
+        Assert.Null(_gear.AmmoOf(_aria, bow, item => item.Id != arrows.Id));
         Assert.Null(_gear.AmmoOf(_aria, new WeaponInfo(SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35)));
     }
 
