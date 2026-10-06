@@ -249,36 +249,6 @@ public sealed class NpcModule
         return table;
     }
 
-    // One step, a turn first when needed, shown to the players around; true when the NPC moved.
-    private bool Take(MobileEntity npc, DirectionType direction, bool running)
-    {
-        var oldLocation = npc.Location;
-        var oldDirection = npc.Direction;
-        var ability = AbilityOf(npc);
-        var result = _mobiles.TryMove(npc, direction, ability);
-
-        if (result == MoveResultType.Turned)
-        {
-            result = _mobiles.TryMove(npc, direction, ability);
-        }
-
-        if (npc.Location != oldLocation || npc.Direction != oldDirection)
-        {
-            _view.Moved(npc, oldLocation, running);
-        }
-
-        // On the next turn of the loop: the items' scripts cannot run inside the NPC's own, which called this.
-        // Only for a cell that holds an item: most steps post nothing.
-        if (npc.Location != oldLocation &&
-            _moveOver is not null &&
-            _sectors?.GetItemsInRange(npc.Map, npc.Location, 0).Count > 0)
-        {
-            _loop?.TryPost(new LoopActionWorkItem(() => _moveOver.SteppedOn(npc)));
-        }
-
-        return result == MoveResultType.Moved;
-    }
-
     /// <summary>
     ///     Brings a new NPC of a template into the world;
     ///     <c>npc.spawn("orc", MapType.Trammel, 1500, 1600, 10, function(serial) npc.say(serial, "Grr") end)</c>. The
@@ -664,33 +634,6 @@ public sealed class NpcModule
             : null;
     }
 
-    // A whole number in the sound range, or a kind the template sets, as UOX3's creature sounds.
-    private int? ResolveSound(MobileEntity npc, object sound)
-    {
-        if (sound is double number)
-        {
-            return number is >= 0 and <= ushort.MaxValue && Math.Floor(number) == number ? (int)number : null;
-        }
-
-        if (sound is not string kind ||
-            npc.TemplateId is not { } templateId ||
-            !_templates.TryGet(templateId, out var template) ||
-            template.Sounds is not { } sounds)
-        {
-            return null;
-        }
-
-        return kind switch
-        {
-            "start_attack" => sounds.StartAttack,
-            "idle"         => sounds.Idle,
-            "attack"       => sounds.Attack,
-            "hurt"         => sounds.Hurt,
-            "death"        => sounds.Death,
-            _              => null
-        };
-    }
-
     /// <summary>
     ///     Gets the prop <paramref name="key" /> the NPC keeps, saved with it across restarts;
     ///     <c>npc.get_prop(serial, "vega.greeted")</c>.
@@ -733,6 +676,63 @@ public sealed class NpcModule
         npc.SetProp(key, prop);
 
         return true;
+    }
+
+    // One step, a turn first when needed, shown to the players around; true when the NPC moved.
+    private bool Take(MobileEntity npc, DirectionType direction, bool running)
+    {
+        var oldLocation = npc.Location;
+        var oldDirection = npc.Direction;
+        var ability = AbilityOf(npc);
+        var result = _mobiles.TryMove(npc, direction, ability);
+
+        if (result == MoveResultType.Turned)
+        {
+            result = _mobiles.TryMove(npc, direction, ability);
+        }
+
+        if (npc.Location != oldLocation || npc.Direction != oldDirection)
+        {
+            _view.Moved(npc, oldLocation, running);
+        }
+
+        // On the next turn of the loop: the items' scripts cannot run inside the NPC's own, which called this.
+        // Only for a cell that holds an item: most steps post nothing.
+        if (npc.Location != oldLocation &&
+            _moveOver is not null &&
+            _sectors?.GetItemsInRange(npc.Map, npc.Location, 0).Count > 0)
+        {
+            _loop?.TryPost(new LoopActionWorkItem(() => _moveOver.SteppedOn(npc)));
+        }
+
+        return result == MoveResultType.Moved;
+    }
+
+    // A whole number in the sound range, or a kind the template sets, as UOX3's creature sounds.
+    private int? ResolveSound(MobileEntity npc, object sound)
+    {
+        if (sound is double number)
+        {
+            return number is >= 0 and <= ushort.MaxValue && Math.Floor(number) == number ? (int)number : null;
+        }
+
+        if (sound is not string kind ||
+            npc.TemplateId is not { } templateId ||
+            !_templates.TryGet(templateId, out var template) ||
+            template.Sounds is not { } sounds)
+        {
+            return null;
+        }
+
+        return kind switch
+        {
+            "start_attack" => sounds.StartAttack,
+            "idle"         => sounds.Idle,
+            "attack"       => sounds.Attack,
+            "hurt"         => sounds.Hurt,
+            "death"        => sounds.Death,
+            _              => null
+        };
     }
 
     // The place a script names: at the height it gives, else on the ground of the cell, of the NPC's own storey when
