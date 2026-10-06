@@ -19,6 +19,9 @@ The first time, the bank box is made (template `bank_box` of `templates/items/ba
 chest graphic) and saved, then shown. The banker templates `banker`, `m_banker` and `f_banker` use
 the script, so every banker of the [spawns](spawns.md) answers.
 
+A banker also offers `Open Bank Box` in its [context menu](context-menus.md), from the same 12
+tiles: it opens the box as the word does, and a criminal gets the same refusal.
+
 ## While it is open
 
 The bank stays open while the player stands where it opened: a step, a teleport, a map change or a
