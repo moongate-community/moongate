@@ -119,6 +119,33 @@ public sealed class BookPaginationTests
         Assert.Equal(BookPagination.MaxPages, pages.Count);
     }
 
+    // What a player wrote, as the saved text: an empty line inside a page is a line of one space, so the page
+    // stays one page; empty lines at the end of a page and empty pages at the end of the book are not kept.
+    [Fact]
+    public void Join_WritesPagesAsTheSavedText()
+    {
+        IReadOnlyList<IReadOnlyList<string>> pages = [["one", "", "two", "", ""], [], ["three"], [], [""]];
+
+        Assert.Equal("one\n \ntwo\n\n\n\nthree", BookPagination.Join(pages));
+    }
+
+    [Fact]
+    public void Join_NothingWritten_IsNoText()
+    {
+        Assert.Equal("", BookPagination.Join([[], ["", ""], []]));
+        Assert.Equal("", BookPagination.Join([]));
+    }
+
+    [Fact]
+    public void Join_ThenPaginate_GivesThePagesBack()
+    {
+        IReadOnlyList<IReadOnlyList<string>> pages = [["    Dear diary,", "", "today"], [], ["the end"]];
+
+        Assert.True(BookPagination.TryPaginate(BookPagination.Join(pages), out var back));
+
+        Assert.Equal([["    Dear diary,", " ", "today"], [], ["the end"]], back);
+    }
+
     private static string Lines(int count)
     {
         return string.Join('\n', Enumerable.Range(1, count).Select(line => $"line {line}"));
