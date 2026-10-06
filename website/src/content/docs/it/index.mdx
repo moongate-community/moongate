@@ -1,0 +1,121 @@
+---
+title: Documentazione di Moongate
+description: Compila, esegui ed estendi il server Ultima Online Moongate e le sue librerie .NET riutilizzabili.
+template: splash
+hero:
+  title: Moongate
+  tagline: Un server Ultima Online open source, nato dal piacere di programmare.
+  image:
+    file: ../../../../../images/moongate_logo.png
+  actions:
+    - text: Inizia qui
+      link: /it/start/getting-started/
+      icon: right-arrow
+    - text: Esplora la documentazione
+      link: /it/#find-your-starting-point
+      variant: secondary
+---
+
+import Downloads from '../../../components/Downloads.astro';
+
+Moongate è un progetto personale per riscoprire Ultima Online, esplorare idee e
+godersi il lavoro di costruire un server. Dopo 25 anni di programmazione, c'è
+ancora molto da imparare e molto che vale la pena scrivere a mano.
+
+Le fondamenta sono C# e .NET 10, con script Lua, persistenza PostgreSQL e
+passaggio tra realm tramite Redis. Le librerie possono essere usate anche da sole.
+
+Se il progetto ti piace, puoi sostenerlo:
+[![Offrimi un caffè](https://img.shields.io/badge/Buy%20me%20a%20coffee-support-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/zk7bnrbk4i)
+
+> **Un progetto in evoluzione.** I personaggi entrano nel mondo, camminano, si
+> vedono, spostano oggetti e incontrano gli NPC creati da un game master; NPC e
+> oggetti eseguono script Lua, ma i sistemi di gioco sono ancora in evoluzione.
+> [Scopri cosa funziona oggi](/it/start/implementation-status/) prima di configurare un server.
+
+## Multi-shard fin dalla progettazione
+
+Una sola installazione di Moongate può eseguire più shard. Un login server
+autentica i giocatori ed elenca gli shard online; ogni shard è un processo game
+server separato, con il proprio database del mondo. I giocatori scelgono dove
+giocare dall'elenco dei server nel client.
+
+- **Aggiungi uno shard avviando un game server.** Si annuncia tramite Redis e
+  compare nell'elenco in pochi secondi; quando lo arresti, scompare. Fino a 128
+  shard possono condividere un login server.
+- **Un account per tutti gli shard.** Gli account risiedono in un database
+  dedicato, accessibile solo dal login server; un game server non vede mai le
+  credenziali degli account.
+- **Mondi separati.** Ogni shard conserva personaggi, oggetti e NPC nel proprio
+  database PostgreSQL: uno shard di test può così affiancare quello di produzione.
+- **Accesso per shard.** Uno shard può essere riservato ai game master o agli amministratori.
+- **Oppure una configurazione ridotta.** La modalità `standalone` esegue il login
+  e uno shard in un unico processo.
+
+[Esegui un login server con due shard](/it/server/docker-login-realms/) usando
+Docker Compose, oppure leggi [come sono separati login e gioco](/it/server/network-game-separation/).
+
+## Download
+
+<Downloads />
+
+<span id="find-your-starting-point"></span>
+
+## Trova il tuo punto di partenza
+
+<nav class="docs-paths" aria-label="Percorsi della documentazione">
+  <a href="/it/start/getting-started/">
+    <strong>Esegui il server</strong>
+    <span>Prepara la directory del server, configura le dipendenze e collegati per la prima volta.</span>
+  </a>
+  <a href="/it/server/scripting/">
+    <strong>Scrivi script e crea contenuti</strong>
+    <span>Scrivi script Lua e definisci lo shard con file di dati e template TOML.</span>
+  </a>
+  <a href="/it/server/plugins/">
+    <strong>Estendi con C#</strong>
+    <span>Aggiungi plugin, comandi e moduli Lua usando i punti di estensione del server.</span>
+  </a>
+  <a href="/it/reference/nuget-packaging/">
+    <strong>Usa le librerie</strong>
+    <span>Integra rete, persistenza e altre librerie Moongate nei tuoi progetti.</span>
+  </a>
+</nav>
+
+Cerchi un riferimento? Consulta i [file di dati](/it/server/data-files/), la
+[configurazione del server](/it/server/configuration/), [Docker](/it/server/docker/)
+o la [migrazione da UOX3](/it/server/uox3-migration/).
+
+## Installa su Linux
+
+<span id="install-in-one-line"></span>
+
+```sh
+curl -fsSL https://moongate.sh/install.sh | sh
+```
+
+Il programma di installazione scarica l'ultima release per Linux x64 o ARM64 in
+`/opt/moongate`. Mantieni la directory dati del server fuori da quella directory,
+perché gli aggiornamenti sostituiscono l'installazione. Segui [Primo avvio](/it/start/getting-started/)
+per preparare file del client, database e configurazione prima di eseguire il server.
+
+[Leggi la guida all'installazione](/it/start/install/) per lo script, le opzioni di
+installazione, gli aggiornamenti e la rimozione.
+
+## Costruito per imparare
+
+Il percorso conta quanto il risultato. [Come uso l'AI](/it/start/ai-usage/) spiega
+come aiuta nella migrazione, nei test e nella progettazione, e perché scrivere
+codice a mano resta parte del progetto.
+
+Per partecipare, inizia dalla [guida ai contributi](/it/contributing/getting-started/).
+Codice, test, esempi e [documentazione](/it/contributing/documentation/) sono tutti
+modi per contribuire.
+
+## Release
+
+L'intestazione del sito indica la versione documentata. Una pubblicazione manuale
+tra due release mantiene l'etichetta dell'ultima release: una pagina può quindi
+descrivere funzionalità non ancora incluse in quella versione. Consulta il
+[changelog in inglese](/start/changelog/) per funzionalità, correzioni e modifiche
+che interrompono la compatibilità.

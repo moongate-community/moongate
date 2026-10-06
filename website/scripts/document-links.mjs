@@ -1,5 +1,6 @@
 import { realpathSync, statSync } from 'node:fs';
 import path from 'node:path';
+import { localizedPath } from './translations.mjs';
 import { docsBasePath } from '../site-config.mjs';
 
 const repositoryUrl = 'https://github.com/moongate-community/moongate';
@@ -17,8 +18,8 @@ export function repositoryFile(repositoryRoot, relativePath, allowDirectory = fa
   return real;
 }
 
-export function resolveDocumentUrl(url, { source, repositoryRoot, sourceRef, entries, assets }) {
-  if (!url || url.startsWith('#') || url.startsWith('?') || (url.startsWith(docsBasePath) && !url.startsWith('//'))) return url;
+export function resolveDocumentUrl(url, { source, repositoryRoot, sourceRef, entries, assets, locale }) {
+  if (!url || url.startsWith('#') || url.startsWith('?') || (url.startsWith(docsBasePath) && !url.startsWith('//'))) return localizedPath(url, locale, entries);
   let local = url;
   let absoluteRepositoryPath = false;
   if (/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(url)) {
@@ -46,7 +47,7 @@ export function resolveDocumentUrl(url, { source, repositoryRoot, sourceRef, ent
       return `${repositoryUrl}/tree/${encodeURIComponent(sourceRef)}/${encodePath(target)}${suffix}`;
     }
     const entry = entries.find(value => value.source === target);
-    if (entry) return `${docsBasePath}${entry.slug}/${suffix}`;
+    if (entry) return localizedPath(`${docsBasePath}${entry.slug}/${suffix}`, locale, entries);
     if (imageExtensions.has(path.posix.extname(target).toLowerCase())) {
       const assetUrl = `${docsBasePath}generated/${encodePath(target)}`;
       assets.set(target, assetUrl);

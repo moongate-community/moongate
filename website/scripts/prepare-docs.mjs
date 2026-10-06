@@ -1,6 +1,7 @@
 import { cp, mkdir, mkdtemp, readFile, writeFile, copyFile, rename, rm, lstat, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { parseTranslation } from './translations.mjs';
 import { contentEntries } from '../content-manifest.mjs';
 import { repositoryFile } from './document-links.mjs';
 import { compileDocument } from './compile-document.mjs';
@@ -25,7 +26,7 @@ async function ensureOwnedParent(websiteRoot, destination) {
   }
 }
 
-export async function prepareDocs({ repositoryRoot, websiteRoot, sourceRef = 'develop', entries = contentEntries, coverage }) {
+export async function prepareDocs({ repositoryRoot, websiteRoot, sourceRef = 'develop', entries = contentEntries, coverage, warn = console.warn }) {
   const slugs = new Set();
   const sources = new Set();
   for (const entry of entries) {
@@ -43,9 +44,28 @@ export async function prepareDocs({ repositoryRoot, websiteRoot, sourceRef = 'de
   // Compile in memory before touching previous generated output.
   const pages = [];
   for (const entry of entries) {
-    const markdown = (await readFile(repositoryFile(repositoryRoot, entry.source), 'utf8'))
-      .replace(coverageMarker, report?.markdown ?? missingCoverageMarkdown);
+    const source = await readFile(repositoryFile(repositoryRoot, entry.source), 'utf8');
+    const markdown = source.replace(coverageMarker, report?.markdown ?? missingCoverageMarkdown);
     pages.push({ entry, markdown: compileDocument(entry, markdown, { repositoryRoot, sourceRef, entries, assets }) });
+    const translationPath = path.join(websiteRoot, 'translations/it', `${entry.slug}.md`);
+    if (await exists(translationPath)) {
+      if (entry.englishOnly) throw new Error(`English-only reference has a translation: ${entry.slug}`);
+      const editSource = path.relative(repositoryRoot, translationPath).split(path.sep).join('/');
+      let translation;
+      try {
+        translation = parseTranslation(await readFile(repositoryFile(repositoryRoot, editSource), 'utf8'), source);
+      } catch (error) {
+        throw new Error(`${editSource}: ${error.message}`, { cause: error });
+      }
+      if (translation.stale) {
+        warn(`Stale translation: it/${entry.slug}; using English fallback.`);
+      } else {
+        const localized = { ...entry, slug: `it/${entry.slug}`, title: translation.title, editSource };
+        pages.push({ entry: localized, markdown: compileDocument(localized, translation.markdown, {
+          repositoryRoot, sourceRef, entries, assets, locale: 'it', originalMarkdown: source,
+        }) });
+      }
+    }
   }
   const installer = await readFile(repositoryFile(repositoryRoot, 'scripts/install.sh'));
   await mkdir(websiteRoot, { recursive: true });

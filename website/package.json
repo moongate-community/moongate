@@ -13,7 +13,8 @@
     "dev": "npm run prepare:docs && npm run prepare:packets && npm run prepare:lua && astro dev",
     "build": "npm run prepare:docs && npm run prepare:packets && npm run prepare:lua && astro build && npm run check:links",
     "check:links": "node scripts/check-links.mjs",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "check:translations": "node scripts/check-translations.mjs"
   },
   "devDependencies": {
     "@astrojs/markdown-remark": "7.3.1",

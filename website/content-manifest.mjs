@@ -11,7 +11,7 @@ export const contentEntries = [
   { source: 'docs/implementation-status.md', slug: 'start/implementation-status', title: 'Implementation status', group: 'Start here' },
   { source: 'docs/feature-checklist.md', slug: 'start/feature-checklist', title: 'Feature checklist', group: 'Start here' },
   { source: 'docs/roadmap.md', slug: 'start/roadmap', title: 'Roadmap', group: 'Start here' },
-  { source: 'CHANGELOG.md', slug: 'start/changelog', title: 'Changelog', group: 'Start here' },
+  { source: 'CHANGELOG.md', englishOnly: true, slug: 'start/changelog', title: 'Changelog', group: 'Start here' },
 
   // Run a shard: the operator's pages.
   { source: 'docs/docker.md', slug: 'server/docker', title: 'Run with Docker', group: 'Run a shard' },
@@ -132,7 +132,7 @@ export const contentEntries = [
   // Contributing.
   { source: 'CONTRIBUTING.md', slug: 'contributing/getting-started', title: 'Contribute to Moongate', group: 'Contributing' },
   { source: 'docs/documentation.md', slug: 'contributing/documentation', title: 'Writing documentation', group: 'Contributing' },
-  { source: 'docs/test-coverage.md', slug: 'contributing/test-coverage', title: 'Test coverage', group: 'Contributing' },
+  { source: 'docs/test-coverage.md', englishOnly: true, slug: 'contributing/test-coverage', title: 'Test coverage', group: 'Contributing' },
   { source: 'docs/persistence-stress.md', slug: 'contributing/persistence-stress', title: 'Stress-test persistence', group: 'Contributing' },
   { source: 'docs/security-audit.md', slug: 'contributing/security-audit', title: 'Dependency security', group: 'Contributing' },
 ];
@@ -142,5 +142,5 @@ export const sidebarGroups = ['Start here', 'Run a shard', 'Scripting and conten
 // Groups whose pages are generated at build time, so they have no manifest entries: `Lua` holds the API
 // reference that `scripts/build-lua.mjs` writes to `src/content/docs/lua/`.
 export const generatedSidebarItems = {
-  Lua: [{ label: 'API reference', collapsed: true, items: [{ autogenerate: { directory: 'lua' } }] }],
+  Lua: [{ label: 'API reference (English)', translations: { it: 'Riferimento API (inglese)' }, collapsed: true, items: [{ autogenerate: { directory: 'lua' } }] }],
 };

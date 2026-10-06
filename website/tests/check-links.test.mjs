@@ -84,3 +84,15 @@ test('checking links before the Lua reference was generated says which step is m
   const missing = join(tmpdir(), 'moongate-lua-slugs-missing', 'lua');
   await assert.rejects(luaPageSlugs(missing), /npm run prepare:lua/);
 });
+
+test('validates language selector destinations without treating filter values as links', async t => {
+  const options = await fixture(t, '<select><option value="/moongate/it/missing/">Italiano</option><option value="incoming">Incoming</option></select>');
+  const errors = await validateSite(options);
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /it\/missing/);
+});
+
+test('rejects duplicate anchor IDs that make translated section links ambiguous', async t => {
+  const options = await fixture(t, '<a id="usage"></a><h2 id="usage">Uso</h2>');
+  assert.match((await validateSite(options)).join(), /Duplicate.*usage/);
+});
