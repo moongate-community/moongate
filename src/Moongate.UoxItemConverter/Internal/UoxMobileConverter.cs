@@ -94,6 +94,7 @@ internal static class UoxMobileConverter
             .ToList();
         var byHeader = builtByFile.SelectMany(pair => pair.Built)
             .Where(built => built.Template is not null)
+            // Safe: only blocks with a built template are kept by the filter above.
             .ToDictionary(built => built.Block.Header, built => built.Template!, StringComparer.OrdinalIgnoreCase);
         var byId = byHeader.Values.ToDictionary(template => template.Id);
 
@@ -110,6 +111,7 @@ internal static class UoxMobileConverter
 
             var relative = Path.GetRelativePath(npcDirectory, file);
             var outputPath = Path.Combine(mobileDestination, Path.ChangeExtension(relative, ".toml"));
+            // Safe: the path is built with GetFullPath and always has a parent directory.
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
             TomlUtils.SerializeToFile(new MobileTemplateFile { Mobile = templates }, outputPath);
             written += templates.Count;

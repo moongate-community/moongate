@@ -32,6 +32,7 @@ internal sealed class SpawnPool
             entry = Roll(_lists[list].Entries, random);
         }
 
+        // Safe: list entries always carry a mobile id.
         return entry.MobileId!;
     }
 

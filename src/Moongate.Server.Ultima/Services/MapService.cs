@@ -35,6 +35,7 @@ public class MapService : IMapService
         {
             foreach (var map in maps)
             {
+                // Safe: the tile matrix is only used for its index and size, never for tile data.
                 var matrix = new TileMatrix(map.FileIndex, (int)map.Map, map.Size.X, map.Size.Y, null!);
                 matrices.Add(map.Map, matrix);
 

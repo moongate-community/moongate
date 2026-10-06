@@ -16,6 +16,7 @@ public sealed class NpcTickService : INpcTickService
 {
     public const string TimerName = "npc_think";
 
+    private const int MaxStartJitterMs = 256;
     private readonly ILogger _logger = Log.ForContext<NpcTickService>();
     private readonly ITimerService _timers;
     private readonly NpcsConfig _config;
@@ -63,7 +64,7 @@ public sealed class NpcTickService : INpcTickService
                 TimerName,
                 TimeSpan.FromMilliseconds(_config.ThinkIntervalMs),
                 () => Think(npc),
-                TimeSpan.FromMilliseconds(Random.Shared.Next(1, 257)),
+                TimeSpan.FromMilliseconds(Random.Shared.Next(1, MaxStartJitterMs + 1)),
                 true
             );
         }

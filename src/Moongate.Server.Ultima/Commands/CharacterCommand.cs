@@ -76,7 +76,7 @@ public sealed class CharacterCommand : ICommandExecutor, ICommandArgumentComplet
 
         foreach (var character in pending)
         {
-            var requested = character.DeletionRequestedAt!.Value;
+            var requested = character.DeletionRequestedAt.Value;
             var removable = requested.AddHours(_config.DeletionDelayHours);
             context.Print(
                 _localization.Text(
@@ -84,7 +84,7 @@ public sealed class CharacterCommand : ICommandExecutor, ICommandArgumentComplet
                     "{0} \"{1}\" account {2}: requested {3} UTC, removable after {4} UTC",
                     character.Id,
                     character.DisplayName(),
-                    character.AccountId!,
+                    character.AccountId,
                     Format(requested),
                     Format(removable)
                 )

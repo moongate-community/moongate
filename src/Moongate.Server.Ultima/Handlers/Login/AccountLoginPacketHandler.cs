@@ -32,7 +32,7 @@ public sealed class AccountLoginPacketHandler : IAsyncPacketHandler<AccountLogin
                 {
                     _logger.Information("Login failed for account {Account}", packet.Account);
 
-                    if (!context.TrySend(new LoginDeniedPacket(result.DenialReason!.Value)))
+                    if (!context.TrySend(new LoginDeniedPacket(result.DenialReason.Value)))
                     {
                         _ = session.NetworkSession.Client?.CloseAsync(cancellationToken);
                     }

@@ -15,10 +15,17 @@ namespace Moongate.Server.Services.Network.Middleware;
 /// </summary>
 public sealed class UoEncryptionMiddleware : INetMiddleware
 {
+    private const int HandshakeBufferLength = 86;
+    private const byte EncryptedSeedMarker = 0xEF;
+    private const int ExtendedSeedLength = 21;
+    private const int ClassicSeedLength = 4;
+    private const int GameLoginLength = 65;
+    private const int AccountLoginLength = 62;
+
     private readonly NetworkEncryptionMode _mode;
     private readonly UoEncryptionProfile _profile;
     private readonly bool _gameConnection;
-    private readonly byte[] _handshake = new byte[86];
+    private readonly byte[] _handshake = new byte[HandshakeBufferLength];
     private int _buffered;
     private int _seedLength;
     private uint _seed;
@@ -110,7 +117,7 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
         var remaining = data.Span;
         if (_buffered == 0)
         {
-            _seedLength = remaining[0] == 0xEF ? 21 : 4;
+            _seedLength = remaining[0] == EncryptedSeedMarker ? ExtendedSeedLength : ClassicSeedLength;
         }
 
         if (_buffered < _seedLength)
@@ -121,7 +128,7 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
                 return ReadOnlyMemory<byte>.Empty;
             }
 
-            _seed = BinaryPrimitives.ReadUInt32BigEndian(_handshake.AsSpan(_seedLength == 21 ? 1 : 0));
+            _seed = BinaryPrimitives.ReadUInt32BigEndian(_handshake.AsSpan(_seedLength == ExtendedSeedLength ? 1 : 0));
             if (_seed == 0)
             {
                 throw new InvalidDataException("A UO connection cannot use a zero encryption seed.");
@@ -135,7 +142,7 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
             }
         }
 
-        var loginLength = _gameConnection ? 65 : 62;
+        var loginLength = _gameConnection ? GameLoginLength : AccountLoginLength;
         BufferUntil(ref remaining, _seedLength + loginLength);
         if (_buffered < _seedLength + loginLength)
         {
@@ -169,7 +176,7 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
             }
         }
 
-        var outputSeedLength = !_gameConnection && _seedLength == 4 ? 21 : _seedLength;
+        var outputSeedLength = !_gameConnection && _seedLength == ClassicSeedLength ? ExtendedSeedLength : _seedLength;
         var result = new byte[outputSeedLength + loginLength + remaining.Length];
         if (outputSeedLength != _seedLength)
         {
@@ -220,7 +227,7 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
 
     private void WriteVersionedSeed(Span<byte> destination)
     {
-        destination[0] = 0xEF;
+        destination[0] = EncryptedSeedMarker;
         BinaryPrimitives.WriteUInt32BigEndian(destination[1..], _seed);
         BinaryPrimitives.WriteUInt32BigEndian(destination[5..], (uint)_profile.Major);
         BinaryPrimitives.WriteUInt32BigEndian(destination[9..], (uint)_profile.Minor);

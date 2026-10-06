@@ -65,6 +65,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         ThrowIfDisposed();
         Prepare();
 
+        // Safe: Prepare() above freezes the snapshot.
         return _snapshot!.GetOwner(entityType);
     }
 
@@ -82,6 +83,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             if (_options.DevelopmentMigrations is not null)
             {
                 await new DevelopmentMigrationCoordinator(_options.DevelopmentMigrations, _logger)
+                    // Safe: the snapshot is frozen before migrations run.
                     .RunAsync(_databases, _snapshot!, cancellationToken)
                     .ConfigureAwait(false);
                 IsReady = true;
@@ -308,6 +310,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
     {
         var changes = new List<PersistenceSchemaChange>();
 
+        // Safe: the snapshot is frozen before this method runs.
         foreach (var module in _snapshot!.Modules)
         {
             var database = _databases[module.Module.DatabaseTarget];
@@ -330,6 +333,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
 
     private async Task SynchronizeCoreAsync(CancellationToken cancellationToken)
     {
+        // Safe: the snapshot is frozen before this method runs.
         foreach (var targetGroup in _snapshot!.Modules.GroupBy(module => module.Module.DatabaseTarget))
         {
             var database = _databases[targetGroup.Key];

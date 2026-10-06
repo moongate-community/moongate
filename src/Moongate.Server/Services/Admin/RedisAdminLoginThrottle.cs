@@ -12,6 +12,8 @@ namespace Moongate.Server.Services.Admin;
 /// </summary>
 public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
 {
+    private const int MaxUsernameLength = 255;
+
     private readonly RedisConnectionService _redis;
     private readonly string _prefix;
 
@@ -23,7 +25,7 @@ public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username);
 
-        if (username.Length > 255 || !IPAddress.TryParse(peerAddress, out var peer))
+        if (username.Length > MaxUsernameLength || !IPAddress.TryParse(peerAddress, out var peer))
         {
             throw new ArgumentException("Invalid administrative login throttle inputs.");
         }

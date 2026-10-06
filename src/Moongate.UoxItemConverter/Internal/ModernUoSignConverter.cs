@@ -89,6 +89,7 @@ internal static class ModernUoSignConverter
                 continue;
             }
 
+            // Safe: the path is built with GetFullPath and always has a parent directory.
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, Write(facet, blocks[facet]));
             output.WriteLine(

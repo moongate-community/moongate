@@ -150,6 +150,7 @@ public sealed class KeyCommand : ICommandExecutor
                 {
                     if (_inventory?.AllowsOwner(session.CharacterId) == false)
                     {
+                        // Safe: assigned during start-up, before this code can run.
                         settlement = _reservations!.WaitAsync(session.CharacterId);
                         return;
                     }

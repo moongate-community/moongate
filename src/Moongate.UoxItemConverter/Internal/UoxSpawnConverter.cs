@@ -153,6 +153,7 @@ internal static partial class UoxSpawnConverter
                 {
                     var unresolved = entry.MobileId is { } mobile
                         ? !mobileIds.Contains(mobile)
+                        // Safe: only entries that reference an NPC list are checked here.
                         : !byId.ContainsKey(entry.NpcListId!);
 
                     if (unresolved)
@@ -194,6 +195,7 @@ internal static partial class UoxSpawnConverter
             }
 
             var outputPath = Path.Combine(destination, Path.ChangeExtension(relative, ".toml"));
+            // Safe: the path is built with GetFullPath and always has a parent directory.
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
             TomlUtils.SerializeToFile(new NpcListTemplateFile { NpcList = kept }, outputPath);
             output.WriteLine(
@@ -222,6 +224,7 @@ internal static partial class UoxSpawnConverter
             if (splice)
             {
                 // A spliced list that does not exist is kept as a reference, so it is reported as unresolved.
+                // Safe: only entries that reference an NPC list reach this point.
                 entries.AddRange(raw.ContainsKey(entry.NpcListId!) ? Splice(entry.NpcListId!, raw, visiting) : [entry]);
             }
             else
@@ -295,6 +298,7 @@ internal static partial class UoxSpawnConverter
 
         foreach (var (file, blocks) in blocksByFile)
         {
+            // Safe: a file path always has a parent directory.
             var folder = Path.GetFileName(Path.GetDirectoryName(file)!);
             var stem = Path.GetFileNameWithoutExtension(file);
             var name = StringUtils.ToSnakeCase(SpawnFilePrefix().Replace(stem, string.Empty));
@@ -335,6 +339,7 @@ internal static partial class UoxSpawnConverter
         foreach (var ((map, name), spawns) in byOutput)
         {
             var outputPath = Path.Combine(destination, EnumNameUtils.Format(map), name + ".toml");
+            // Safe: the path is built with GetFullPath and always has a parent directory.
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
             TomlUtils.SerializeToFile(new SpawnTemplateFile { Spawn = spawns }, outputPath);
             written += spawns.Count;

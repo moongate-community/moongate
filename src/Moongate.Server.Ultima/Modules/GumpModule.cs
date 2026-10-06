@@ -226,6 +226,7 @@ public sealed partial class GumpModule
 
         foreach (var slot in root.Descendants("slot").ToList())
         {
+            // Safe: the XSD requires this attribute.
             var name = (string)slot.Attribute("name")!;
             var builder = GumpBuilder.Create(template.Id, 0, 0);
             var result = _scripts.Value.Call(template.Id, name, builder, player, table);
@@ -417,9 +418,11 @@ public sealed partial class GumpModule
 
     private bool TryGetSession(long player, out GameSession session)
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         session = null!;
 
         return player is > 0 and <= uint.MaxValue &&
+               // Safe: the out value is only used when the lookup succeeds.
                _sessions.TryGetByCharacterId(new Serial((uint)player), out session!);
     }
 }

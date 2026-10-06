@@ -66,6 +66,7 @@ public sealed class PlayCharacterPacket : BaseFixedPacket<PlayCharacterPacket>, 
 
         packet = new()
         {
+            // Safe: the Try read above succeeded, so the string is set.
             Name = name!,
             ClientFlags = (ClientFlags)clientFlags,
             LoginCount = loginCount,

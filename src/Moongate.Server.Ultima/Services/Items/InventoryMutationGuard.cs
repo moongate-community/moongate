@@ -55,6 +55,7 @@ public sealed class InventoryMutationGuard : IInventoryMutationGuard
                 return true;
             }
 
+            // Safe: the out value is only used when the lookup succeeds.
             if (!_items.Value.TryGet(parent, out current!))
             {
                 return false;

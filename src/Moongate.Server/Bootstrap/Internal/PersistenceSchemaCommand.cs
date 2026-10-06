@@ -122,6 +122,7 @@ internal static class PersistenceSchemaCommand
 
             var sql = "-- Draft generated against the current reference database. Review before applying.\n" +
                       string.Join("\n", selected.Select(change => $"-- {change.ModuleId}\n{change.Ddl}"));
+            // migrationOutput is validated for Generate mode; a full path always has a parent.
             var path = Path.GetFullPath(migrationOutput!);
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             var temporary = path + $".{Guid.NewGuid():N}.tmp";

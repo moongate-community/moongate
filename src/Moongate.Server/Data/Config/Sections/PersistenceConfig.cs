@@ -44,6 +44,7 @@ public sealed class PersistenceConfig
 
         var development = AutoGenerateMigrations
             ? new DevelopmentMigrationOptions(
+                // ResolveMigrationsDirectory returns a value whenever migrations are generated.
                 migrationsDirectory!,
                 pluginsDirectory,
                 new DevelopmentMigrationRunner(
@@ -127,11 +128,13 @@ public sealed class PersistenceConfig
 
         if ((mode & ServerMode.Login) != 0)
         {
+            // Validate(mode) above throws when the section of an active mode is null.
             Accounts!.Validate();
         }
 
         if ((mode & ServerMode.Game) != 0)
         {
+            // Validate(mode) above throws when the section of an active mode is null.
             Realm!.Validate();
         }
     }

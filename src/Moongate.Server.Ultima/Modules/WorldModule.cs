@@ -356,6 +356,7 @@ public sealed class WorldModule
     )]
     public string? WeatherProfile(long player)
     {
+        // Safe: assigned during start-up, before this code can run.
         return TryGetWeatherPlayer(player, out var mobile) ? _weather!.ProfileOf(mobile) : null;
     }
 
@@ -374,6 +375,7 @@ public sealed class WorldModule
             return false;
         }
 
+        // Safe: assigned during start-up, before this code can run.
         _weather!.Force(_weather.ProfileOf(mobile), kind);
 
         return true;
@@ -567,6 +569,7 @@ public sealed class WorldModule
     // A player in the world, when the weather service is there.
     private bool TryGetWeatherPlayer(long player, out MobileEntity mobile)
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         mobile = null!;
 
         return _weather is not null && TryGetPlayer(player, out mobile);
@@ -586,10 +589,12 @@ public sealed class WorldModule
 
     private bool TryGetPlayer(long player, out MobileEntity mobile)
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         mobile = null!;
 
         return _mobiles is not null &&
                player is > 0 and <= uint.MaxValue &&
+               // Safe: the out value is only used when the lookup succeeds.
                _mobiles.TryGet(new Serial((uint)player), out mobile!) &&
                !mobile.IsNpc;
     }

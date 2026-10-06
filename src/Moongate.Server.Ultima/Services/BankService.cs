@@ -50,6 +50,7 @@ public sealed class BankService : IBankService
     /// </summary>
     public const int CashPilesMaximum = 125;
 
+    private const int GoldItemId = 0x0EED;
     private static readonly Hue MessageHue = new(0x03B2);
     private static readonly TimeSpan ShowAgainAfter = TimeSpan.FromSeconds(1);
 
@@ -257,6 +258,7 @@ public sealed class BankService : IBankService
         }
         else
         {
+            // Safe: made is created whenever no existing stack was topped up.
             Put(made!, backpack);
         }
 
@@ -801,6 +803,7 @@ public sealed class BankService : IBankService
                 return true;
             }
 
+            // Safe: the out value is only used when the lookup succeeds.
             if (!_items.TryGet(parent, out current!))
             {
                 return false;
@@ -855,6 +858,7 @@ public sealed class BankService : IBankService
                     {
                         if (_inventory?.AllowsOwner(player.Id) == false)
                         {
+                            // Safe: assigned during start-up, before this code can run.
                             settlement = _reservations!.WaitAsync(player.Id);
                             return;
                         }

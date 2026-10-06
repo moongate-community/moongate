@@ -72,6 +72,7 @@ public sealed class CharacterListPacket : BasePacket<CharacterListPacket>, IOutg
 
         foreach (var name in slotSnapshot.Where(name => name is not null))
         {
+            // Safe: the Where above keeps only slots with a name.
             ValidateText(name!, SlotNameLength, nameof(characters));
         }
 

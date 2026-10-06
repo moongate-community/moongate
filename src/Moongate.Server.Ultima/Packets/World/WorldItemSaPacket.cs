@@ -18,6 +18,10 @@ public sealed class WorldItemSaPacket : BasePacket<WorldItemSaPacket>, IOutgoing
 {
     private const int StygianAbyssLength = 24;
     private const int HighSeasLength = 26;
+    private const int ItemIdMask = 0x7FFF; // Older clients; High Seas sends the full 16 bits.
+    private const int FullItemIdMask = 0xFFFF;
+    private const int XMask = 0x7FFF;
+    private const int YMask = 0x3FFF;
 
     public override int Length { get; }
 
@@ -58,13 +62,13 @@ public sealed class WorldItemSaPacket : BasePacket<WorldItemSaPacket>, IOutgoing
         // 0 is an item; 1 a mobile, 2 a multi.
         writer.WriteByte(0);
         writer.WriteSerial(Serial);
-        writer.WriteUInt16BigEndian((ushort)(ItemId & (HighSeas ? 0xFFFF : 0x7FFF)));
+        writer.WriteUInt16BigEndian((ushort)(ItemId & (HighSeas ? FullItemIdMask : ItemIdMask)));
         writer.WriteByte(0);
         // The amount twice, as the smallest and the largest shown.
         writer.WriteUInt16BigEndian((ushort)Amount);
         writer.WriteUInt16BigEndian((ushort)Amount);
-        writer.WriteUInt16BigEndian((ushort)(Location.X & 0x7FFF));
-        writer.WriteUInt16BigEndian((ushort)(Location.Y & 0x3FFF));
+        writer.WriteUInt16BigEndian((ushort)(Location.X & XMask));
+        writer.WriteUInt16BigEndian((ushort)(Location.Y & YMask));
         writer.WriteByte(unchecked((byte)(sbyte)Location.Z));
         writer.WriteByte((byte)Light);
         writer.WriteUInt16BigEndian(Hue.Value);

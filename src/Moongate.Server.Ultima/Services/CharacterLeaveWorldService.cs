@@ -72,14 +72,17 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
                         );
                         try
                         {
+                            // Safe: assigned during start-up, before this code can run.
                             await _loop!.PostAsync(work);
                         }
+                        // Safe: assigned during start-up, before this code can run.
                         catch (InvalidOperationException) when (_loop!.Completion.IsCompleted)
                         {
                             await _loop.Completion;
                             throw;
                         }
 
+                        // Safe: assigned during start-up, before this code can run.
                         await Task.WhenAny(work.Completion, _loop!.Completion);
                         if (!work.Completion.IsCompleted)
                         {

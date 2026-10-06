@@ -208,6 +208,7 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
 
                 if (account is not null && !account.IsLocked && account.CanAccessApi && Enum.IsDefined(account.AccountType))
                 {
+                    // Safe: the fence was installed earlier in this method.
                     await _sessions.TryOpenGateAsync(accountId, fenced!.Generation, token);
                 }
             },

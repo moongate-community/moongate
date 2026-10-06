@@ -76,6 +76,7 @@ public static class ResourceUtils
             }
 
             // Copy the resource content to the file
+            // an assembly that owns embedded resources has a name.
             var resourceContent = GetEmbeddedResourceContent(resourceName[(assemblyName!.Length + 1)..], assembly);
             File.WriteAllBytes(destinationPath, resourceContent);
         }

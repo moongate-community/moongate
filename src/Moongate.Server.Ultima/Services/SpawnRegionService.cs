@@ -452,6 +452,7 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         }
 
         location = default;
+        // Safe: out parameter; callers read it only when the method returns true.
         area = null!;
 
         return false;

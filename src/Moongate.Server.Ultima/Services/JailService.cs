@@ -191,7 +191,7 @@ public sealed class JailService : IJailService
 
         foreach (var character in characters.OrderBy(character => character.Id.Value))
         {
-            if (await _accounts.GetByIdAsync(character.AccountId!.Value, cancellationToken) is not { } account)
+            if (await _accounts.GetByIdAsync(character.AccountId.Value, cancellationToken) is not { } account)
             {
                 continue;
             }

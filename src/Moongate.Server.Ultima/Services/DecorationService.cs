@@ -337,7 +337,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
                     {
                         present++;
                     }
-                    else if (!seen.Add((map, location, block.ItemId!.Value)) ||
+                    else if (!seen.Add((map, location, block.ItemId.Value)) ||
                              IsThere(map, location, block) ||
                              IsTeleporter(block.Type) &&
                              teleporters.Any(other =>
@@ -464,7 +464,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
     {
         var plain = _sectors.GetItemsInRange(map, location, 0)
             .FirstOrDefault(item => item.TemplateId == DecorationTemplate &&
-                                    item.ItemId == block.ItemId!.Value &&
+                                    item.ItemId == block.ItemId.Value &&
                                     item.GroundLocation == location
             );
 
@@ -495,7 +495,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
     // A cell holds one teleporter within reach of a mobile's step, as ModernUO's [TelGen keeps one.
     private bool IsThere(MapType map, Point3D location, DecorationBlock block)
     {
-        var graphic = block.ItemId!.Value;
+        var graphic = block.ItemId.Value;
         var isLight = LightKinds.ContainsKey(block.Type);
         var isDoor = IsDoor(block.Type);
         var isTeleporter = IsTeleporter(block.Type);
@@ -554,7 +554,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
         yield return item;
 
         if (block.Type is AnkhWestType or AnkhNorthType &&
-            AnkhCompanions.TryGetValue(block.ItemId!.Value, out var companion))
+            AnkhCompanions.TryGetValue(block.ItemId.Value, out var companion))
         {
             var other = Build(
                 block,
@@ -580,7 +580,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
             LaterTemplateOf(block.Type) ?? DecorationTemplate
         );
         var props = new Dictionary<string, object?>(StringComparer.Ordinal);
-        item.ItemId = block.ItemId!.Value;
+        item.ItemId = block.ItemId.Value;
 
         foreach (var (key, value) in block.Props)
         {
@@ -667,9 +667,11 @@ public sealed class DecorationService : IDecorationService, IDisposable
         var doors = items.Where(item => item.TemplateId == DoorTemplate).ToList();
         var linked = new List<ItemEntity>();
 
+        // Safe: entities from the decorator always carry a props dictionary.
         foreach (var door in doors.Where(door => !door.Props!.ContainsKey(LinkProp)))
         {
             var partner = doors.FirstOrDefault(other =>
+                // Safe: entities from the decorator always carry a props dictionary.
                 other != door && !other.Props!.ContainsKey(LinkProp) && Adjacent(door, other)
             );
 
@@ -678,7 +680,9 @@ public sealed class DecorationService : IDecorationService, IDisposable
                 continue;
             }
 
+            // Safe: entities from the decorator always carry a props dictionary.
             door.Props![LinkProp] = (long)partner.Id.Value;
+            // Safe: entities from the decorator always carry a props dictionary.
             partner.Props![LinkProp] = (long)door.Id.Value;
             linked.Add(door);
             linked.Add(partner);
@@ -689,12 +693,13 @@ public sealed class DecorationService : IDecorationService, IDisposable
 
     private static bool Adjacent(ItemEntity door, ItemEntity other)
     {
-        var dx = Math.Abs(door.X!.Value - other.X!.Value);
-        var dy = Math.Abs(door.Y!.Value - other.Y!.Value);
+        var dx = Math.Abs(door.X.Value - other.X.Value);
+        var dy = Math.Abs(door.Y.Value - other.Y.Value);
 
         return door.Map == other.Map &&
                door.Z == other.Z &&
                dx + dy == 1 &&
+               // Safe: entities from the decorator always carry a props dictionary.
                Equals(door.Props![TypeProp], other.Props![TypeProp]) &&
                !(door.Props.GetValueOrDefault(FacingProp) is { } facing &&
                  Equals(facing, other.Props.GetValueOrDefault(FacingProp)));

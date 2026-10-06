@@ -138,6 +138,7 @@ public sealed class CreateCharacterPacket : BaseFixedPacket<CreateCharacterPacke
 
         packet = new()
         {
+            // Safe: the Try read above succeeded, so the string is set.
             Name = name!,
             ClientFlags = (ClientFlags)clientFlags,
             Profession = profession,

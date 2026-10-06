@@ -2,6 +2,8 @@ namespace Moongate.Persistence.Internal;
 
 internal sealed class MigrationDirectoryLock : IDisposable
 {
+    private const int RetryDelayMilliseconds = 50;
+
     private readonly List<FileStream> _files;
 
     private MigrationDirectoryLock(List<FileStream> files)
@@ -36,7 +38,7 @@ internal sealed class MigrationDirectoryLock : IDisposable
                     }
                     catch (IOException exception) when ((exception.HResult & 0xffff) is 11 or 32 or 33)
                     {
-                        await Task.Delay(50, cancellationToken).ConfigureAwait(false);
+                        await Task.Delay(RetryDelayMilliseconds, cancellationToken).ConfigureAwait(false);
                     }
                 }
             }

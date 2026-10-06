@@ -13,6 +13,7 @@ internal static class ConverterOutput
     /// </summary>
     public static void WriteToml<T>(string path, string header, T model)
     {
+        // Safe: the path is built with GetFullPath and always has a parent directory.
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path))!);
         File.WriteAllText(path, header + TomlUtils.Serialize(model));
     }

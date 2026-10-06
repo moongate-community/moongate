@@ -835,6 +835,7 @@ public sealed class MobileModule
 
         if (killer is { } id)
         {
+            // Safe: the out value is only used when the lookup succeeds.
             TryGetMobile(id, out by!);
         }
 

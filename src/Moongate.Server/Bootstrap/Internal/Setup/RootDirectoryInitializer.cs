@@ -117,6 +117,7 @@ internal static class RootDirectoryInitializer
         foreach (var file in files.Order(StringComparer.Ordinal))
         {
             var path = Path.Combine(destination, Path.GetRelativePath(sourceDirectory, file));
+            // path is combined with a directory, so it always has a parent.
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             CreateIfMissing(path, File.ReadAllBytes(file), output);
         }

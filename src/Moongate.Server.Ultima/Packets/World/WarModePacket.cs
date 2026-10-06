@@ -12,6 +12,9 @@ namespace Moongate.Server.Ultima.Packets.World;
 [PacketHandler(0x72, PacketSizing.Fixed, Length = 5)]
 public sealed class WarModePacket : BaseFixedPacket<WarModePacket>, IOutgoingPacket
 {
+    // The byte the client expects after the war mode, as ModernUO sends it.
+    private const byte TrailingMarker = 0x32;
+
     public bool WarMode { get; }
 
     public WarModePacket(bool warMode)
@@ -27,7 +30,7 @@ public sealed class WarModePacket : BaseFixedPacket<WarModePacket>, IOutgoingPac
 
         // Fixed trailing bytes the client expects.
         writer.WriteByte(0x00);
-        writer.WriteByte(0x32);
+        writer.WriteByte(TrailingMarker);
         writer.WriteByte(0x00);
     }
 }

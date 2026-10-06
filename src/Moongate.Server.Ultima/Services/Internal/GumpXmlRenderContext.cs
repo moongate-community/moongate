@@ -150,6 +150,7 @@ internal sealed partial class GumpXmlRenderContext
                     new GumpItemProperty
                     {
                         Serial = uint.TryParse(
+                            // Safe: the XSD requires this attribute.
                             Fill(element.Attribute("serial")!.Value),
                             CultureInfo.InvariantCulture,
                             out var serial

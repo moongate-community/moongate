@@ -44,6 +44,7 @@ public sealed class GameSession
     {
         ArgumentNullException.ThrowIfNull(key);
 
+        // values are stored by Set with the key's own T, so the cast cannot fail.
         return _values.TryGetValue(key, out var value) ? (T)value! : key.Default;
     }
 

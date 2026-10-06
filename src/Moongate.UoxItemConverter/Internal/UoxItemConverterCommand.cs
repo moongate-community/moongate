@@ -143,7 +143,9 @@ internal static class UoxItemConverterCommand
         mobileSource = Path.GetFullPath(mobileSource);
         var mobileResult = UoxMobileConverter.Run(
             mobileSource,
+            // Safe: destinations were validated as non-null for this mode.
             Path.GetFullPath(mobileDestination!),
+            // Safe: destinations were validated as non-null for this mode.
             Path.GetFullPath(namesDestination!),
             items,
             output,
@@ -175,8 +177,10 @@ internal static class UoxItemConverterCommand
             ? 0
             : UoxSpawnConverter.Run(
                 mobileSource,
+                // Safe: destinations were validated as non-null for this mode.
                 Path.GetFullPath(mobileDestination!),
                 Path.GetFullPath(npcListsDestination),
+                // Safe: destinations were validated as non-null for this mode.
                 Path.GetFullPath(spawnsDestination!),
                 output,
                 error
@@ -206,7 +210,7 @@ internal static class UoxItemConverterCommand
 
         if (lootDestination is not null)
         {
-            Directory.CreateDirectory(lootDestination!);
+            Directory.CreateDirectory(lootDestination);
         }
 
         foreach (var (file, blocks) in blocksByFile)
@@ -242,6 +246,7 @@ internal static class UoxItemConverterCommand
                     // Each loot table gets its own file, named after its own Id: unlike an item,
                     // reviewing or hand-editing one loot table has no reason to load every other
                     // table defined in the same source .dfn alongside it.
+                    // Safe: lootDestination was validated as non-null for this mode.
                     var lootOutputPath = Path.Combine(lootDestination!, lootTemplate.Id + ".toml");
                     TomlUtils.SerializeToFile(new LootTemplateFile { Loot = [lootTemplate] }, lootOutputPath);
                     lootWritten++;
@@ -262,11 +267,13 @@ internal static class UoxItemConverterCommand
                 templates.Add(template);
             }
 
+            // Safe: a source that is not a directory is a file, which has a parent directory.
             var relative = Path.GetRelativePath(Directory.Exists(source) ? source : Path.GetDirectoryName(source)!, file);
 
             if (templates.Count > 0)
             {
                 var outputPath = Path.Combine(destination, Path.ChangeExtension(relative, ".toml"));
+                // Safe: the path is built with GetFullPath and always has a parent directory.
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
                 TomlUtils.SerializeToFile(new ItemTemplateFile { Item = templates }, outputPath);
                 written += templates.Count;
@@ -536,6 +543,7 @@ internal static class UoxItemConverterCommand
         foreach (var path in Directory.EnumerateFiles(root, "*.toml", SearchOption.AllDirectories))
         {
             var file = TomlUtils.DeserializeFromFile<TFile>(path);
+            // Safe: the enumerated file path is never null.
             entities.AddRange(selectEntities(file!));
         }
 

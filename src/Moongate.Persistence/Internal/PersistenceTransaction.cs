@@ -215,6 +215,7 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
         return RunAsync(
             async (_, transaction, token) =>
             {
+                // Safe: a transaction that was begun always has a connection.
                 await using var command = transaction.Connection!.CreateCommand();
                 command.Transaction = transaction;
                 command.CommandText = "SET CONSTRAINTS ALL DEFERRED";

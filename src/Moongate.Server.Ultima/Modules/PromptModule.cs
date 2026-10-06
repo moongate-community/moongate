@@ -93,8 +93,10 @@ public sealed class PromptModule
 
     private bool TryGetSession(long player, out GameSession session)
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         session = null!;
 
+        // Safe: the out value is only used when the lookup succeeds.
         return player is > 0 and <= uint.MaxValue && _sessions.TryGetByCharacterId(new Serial((uint)player), out session!);
     }
 }

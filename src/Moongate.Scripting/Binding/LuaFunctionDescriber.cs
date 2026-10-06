@@ -30,6 +30,7 @@ public static class LuaFunctionDescriber
         foreach (var parameter in function.Method.GetParameters())
         {
             var isParams = parameter.GetCustomAttribute<ParamArrayAttribute>() is not null;
+            // Safe: isParams guarantees an array type, which has an element type.
             var type = isParams ? parameter.ParameterType.GetElementType()! : parameter.ParameterType;
             var underlying = Nullable.GetUnderlyingType(type) ?? type;
             var optional = !isParams && (parameter.HasDefaultValue || IsNullableValueType(parameter.ParameterType));
@@ -41,6 +42,7 @@ public static class LuaFunctionDescriber
                            (underlying.IsEnum ? LuaTypeName(type) + "|string" : LuaTypeName(type));
             parameters.Add(
                 new(
+                    // Safe: parameters of a described method always carry a name.
                     isParams ? "..." : LuaModuleBinder.ToSnakeCase(parameter.Name!),
                     typeName,
                     optional,

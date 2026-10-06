@@ -7,6 +7,8 @@ public sealed class RegenerationConfig
 {
     private const double MinimumSeconds = 0.1;
     private const double MaximumSeconds = 3600;
+    private const int MinimumHungerMinutes = 1;
+    private const int MaximumHungerMinutes = 1440; // One day.
 
     /// <summary>
     ///     Gets or sets the seconds between two hit points coming back; 11 is ModernUO's classic rate.
@@ -56,7 +58,7 @@ public sealed class RegenerationConfig
         Check(StaminaSeconds, "stamina_seconds");
         Check(ManaSeconds, "mana_seconds");
 
-        if (HungerMinutes is < 1 or > 1440)
+        if (HungerMinutes is < MinimumHungerMinutes or > MaximumHungerMinutes)
         {
             throw new InvalidOperationException(
                 $"ultima.regeneration.hunger_minutes must be from 1 to 1440, found {HungerMinutes}."

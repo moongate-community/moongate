@@ -66,6 +66,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     {
         var shutdownRequested = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         using var registration = _cancellationToken.Register(
+            // the state passed to Register is the shutdown TaskCompletionSource.
             static state => ((TaskCompletionSource)state!).TrySetResult(),
             shutdownRequested
         );

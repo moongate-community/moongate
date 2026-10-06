@@ -117,6 +117,7 @@ public class RegionsLoader : IDataLoader<RegionContent>
     // A region without music or season takes its nearest parent's, as in ModernUO; the parents are already validated.
     private static void InheritFromParents(List<RegionContent> regions)
     {
+        // Safe: the Where above keeps only regions with a name.
         var byName = regions.Where(region => region.Name is not null)
             .ToDictionary(region => region.Name!, StringComparer.Ordinal);
 
@@ -141,6 +142,7 @@ public class RegionsLoader : IDataLoader<RegionContent>
 
         foreach (var region in regions.Where(region => region.Name is not null))
         {
+            // Safe: the Where above keeps only regions with a name.
             if (!byName.TryAdd(region.Name!, region))
             {
                 throw new InvalidDataException($"{file}: region name '{region.Name}' is used twice.");

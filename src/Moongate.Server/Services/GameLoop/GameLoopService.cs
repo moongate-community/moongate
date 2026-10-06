@@ -213,6 +213,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         {
             if (ReferenceEquals(_finalWorkItem, finalWorkItem))
             {
+                // _finalStopTask is set together with _finalWorkItem.
                 return _finalStopTask!;
             }
 

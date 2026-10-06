@@ -18,6 +18,7 @@ public sealed class EnumTomlConverterFactory : TomlConverterFactory
     /// <inheritdoc />
     public override TomlConverter CreateConverter(Type typeToConvert, TomlSerializerOptions options)
     {
+        // the converter type has a public parameterless constructor.
         return (TomlConverter)Activator.CreateInstance(typeof(EnumTomlConverter<>).MakeGenericType(typeToConvert))!;
     }
 }
