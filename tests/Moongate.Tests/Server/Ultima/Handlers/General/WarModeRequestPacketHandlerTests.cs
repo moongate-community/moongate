@@ -34,6 +34,20 @@ public sealed class WarModeRequestPacketHandlerTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Handle_PeaceEndsTheFightOfTheCharacter_WarDoesNot()
+    {
+        var combat = new Moongate.Tests.TestSupport.Ultima.Combat.RecordingCombatService();
+        var handler = new WarModeRequestPacketHandler(_fixture.Mobiles, _state, combat);
+
+        handler.Handle(_session, new WarModeRequestPacket { WarMode = true });
+        Assert.Empty(combat.Stopped);
+
+        handler.Handle(_session, new WarModeRequestPacket { WarMode = false });
+
+        Assert.Equal(new Serial(2), Assert.Single(combat.Stopped).Id);
+    }
+
+    [Fact]
     public void Handle_WithoutACharacter_DoesNothing()
     {
         var stranger = _fixture.Sessions.GetOrCreate(new Moongate.Tests.TestSupport.Network.ControlledNetworkConnection(77));

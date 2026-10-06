@@ -13,11 +13,13 @@ public sealed class WarModeRequestPacketHandler : IPacketHandler<WarModeRequestP
 {
     private readonly IMobileService _mobiles;
     private readonly IMobileStateService _state;
+    private readonly ICombatService? _combat;
 
-    public WarModeRequestPacketHandler(IMobileService mobiles, IMobileStateService state)
+    public WarModeRequestPacketHandler(IMobileService mobiles, IMobileStateService state, ICombatService? combat = null)
     {
         _mobiles = mobiles;
         _state = state;
+        _combat = combat;
     }
 
     public void Handle(GameSession session, WarModeRequestPacket packet)
@@ -25,6 +27,12 @@ public sealed class WarModeRequestPacketHandler : IPacketHandler<WarModeRequestP
         if (session.CharacterId.IsValid && _mobiles.TryGet(session.CharacterId, out var character))
         {
             _state.SetWarMode(character, packet.WarMode);
+
+            // As ModernUO: peace ends the fight.
+            if (!packet.WarMode)
+            {
+                _combat?.Stop(character);
+            }
         }
     }
 }
