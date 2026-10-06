@@ -16,7 +16,7 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
         : base($"Moongate.Plugin:{Path.GetFileNameWithoutExtension(pluginPath)}", true)
     {
         _resolver = new(pluginPath);
-        // plugin paths are files inside a bundle directory, so they always have a parent.
+        // Safe: plugin paths are files inside a bundle directory, so they always have a parent.
         BundleDirectory = Path.GetDirectoryName(pluginPath)!;
     }
 

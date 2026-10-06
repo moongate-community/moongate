@@ -153,15 +153,15 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
     /// </summary>
     public TEnum Resolve()
     {
-        // _candidates is always set when IsRandom is true.
+        // Safe: _candidates is always set when IsRandom is true.
         return IsRandom ? _candidates![BuiltInRng.Next(_candidates.Length)] : _fixedValue;
     }
 
     /// <inheritdoc />
     public override string ToString()
     {
+        // Safe: _candidates is always set when IsRandom is true.
         return IsRandom
-            // _candidates is always set when IsRandom is true.
             ? $"{RandomOfPrefix}:{string.Join(',', _candidates!.Select(EnumNameUtils.Format))}"
             : EnumNameUtils.Format(_fixedValue);
     }

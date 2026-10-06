@@ -58,9 +58,9 @@ public sealed class RegionAnnouncer : IRegionAnnouncer
         _events = events;
         _loop = loop;
         _localization = localization;
+        // Safe: the Where keeps only regions with a name.
         _byName = new(() => data.GetEntities<RegionContent>()
             .Where(region => region.Name is not null)
-            // Safe: the Where above keeps only regions with a name.
             .GroupBy(region => (region.Map, region.Name!))
             .ToDictionary(group => group.Key, group => group.First())
         );

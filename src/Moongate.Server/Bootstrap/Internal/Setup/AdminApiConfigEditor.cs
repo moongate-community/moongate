@@ -86,7 +86,9 @@ internal static class AdminApiConfigEditor
 
         if (missing.Length > 0)
         {
-            var headerEnd = table.EndOfLineToken?.Span.End.Offset + 1 ?? (table.CloseBracket ?? throw new InvalidOperationException("The table header has no closing bracket.")).Span.End.Offset + 1;
+            var headerEnd = table.EndOfLineToken?.Span.End.Offset + 1 ??
+                (table.CloseBracket ?? throw new InvalidOperationException("The table header has no closing bracket."))
+                .Span.End.Offset + 1;
             var prefix = table.EndOfLineToken is null ? newline : "";
             edits.Add((headerEnd, 0, prefix + string.Concat(missing.Select(pair => $"{pair.Key} = {pair.Value}{newline}"))));
         }

@@ -209,7 +209,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         // A ghost uses only what its script says a ghost may, such as an ankh.
         if (character.IsDead)
         {
-            // Safe: assigned during start-up, before this code can run.
+            // Safe: the only caller, HandleAsync, runs this after its `_scripts is not null` check.
             var ghost = _scripts!.Run(item, GhostUseFunction, (long)character.Id.Value);
 
             if (ghost.Kind == ScriptResultKind.Missing)
@@ -220,7 +220,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
             return true;
         }
 
-        // Safe: assigned during start-up, before this code can run.
+        // Safe: the only caller, HandleAsync, runs this after its `_scripts is not null` check.
         var result = _scripts!.Run(item, UseFunction, (long)character.Id.Value);
 
         return result.Kind == ScriptResultKind.Suspended ||

@@ -141,11 +141,10 @@ internal static class UoxItemConverterCommand
         var items = new ItemIndex(idByHeader, blocksByHeader, knownLootIds);
 
         mobileSource = Path.GetFullPath(mobileSource);
+        // Safe: destinations were validated as non-null for this mode.
         var mobileResult = UoxMobileConverter.Run(
             mobileSource,
-            // Safe: destinations were validated as non-null for this mode.
             Path.GetFullPath(mobileDestination!),
-            // Safe: destinations were validated as non-null for this mode.
             Path.GetFullPath(namesDestination!),
             items,
             output,
@@ -173,14 +172,13 @@ internal static class UoxItemConverterCommand
             }
         }
 
+        // Safe: destinations were validated as non-null for this mode.
         return npcListsDestination is null
             ? 0
             : UoxSpawnConverter.Run(
                 mobileSource,
-                // Safe: destinations were validated as non-null for this mode.
                 Path.GetFullPath(mobileDestination!),
                 Path.GetFullPath(npcListsDestination),
-                // Safe: destinations were validated as non-null for this mode.
                 Path.GetFullPath(spawnsDestination!),
                 output,
                 error
@@ -273,7 +271,7 @@ internal static class UoxItemConverterCommand
             if (templates.Count > 0)
             {
                 var outputPath = Path.Combine(destination, Path.ChangeExtension(relative, ".toml"));
-                // Safe: the path is built with GetFullPath and always has a parent directory.
+                // Safe: GetDirectoryName is null only for a root or empty path, not a file combined under a folder.
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
                 TomlUtils.SerializeToFile(new ItemTemplateFile { Item = templates }, outputPath);
                 written += templates.Count;
@@ -543,7 +541,8 @@ internal static class UoxItemConverterCommand
         foreach (var path in Directory.EnumerateFiles(root, "*.toml", SearchOption.AllDirectories))
         {
             var file = TomlUtils.DeserializeFromFile<TFile>(path);
-            // Safe: the enumerated file path is never null.
+            // Safe: TomlUtils.Deserialize gives a class an instance with its defaults even for an empty document,
+            // as TomlUtilsTests.Deserialize_EmptyDocument_KeepsModelDefaults checks.
             entities.AddRange(selectEntities(file!));
         }
 

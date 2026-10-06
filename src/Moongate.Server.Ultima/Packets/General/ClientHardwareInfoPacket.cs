@@ -111,7 +111,6 @@ public sealed class ClientHardwareInfoPacket
             ScreenDepth = screenDepth,
             DirectXMajor = directXMajor,
             DirectXMinor = directXMinor,
-            // Safe: the Try read above succeeded, so the string is set.
             VideoDescription = videoDescription!,
             VideoVendorId = videoVendorId,
             VideoDeviceId = videoDeviceId,
@@ -120,7 +119,6 @@ public sealed class ClientHardwareInfoPacket
             ClientsRunning = clientsRunning,
             ClientsInstalled = clientsInstalled,
             PartialInstalled = partialInstalled,
-            // Safe: the Try read above succeeded, so the string is set.
             LanguageCode = languageCode!
         };
 

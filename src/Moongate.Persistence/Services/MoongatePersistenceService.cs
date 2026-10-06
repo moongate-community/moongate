@@ -386,7 +386,7 @@ public sealed class MoongatePersistenceService : IPersistenceDataExporter, IAsyn
 
             if (source is not null)
             {
-                // Safe: snapshot is assigned in the same registration path before this point.
+                // Safe: the `source is null != snapshot is null` check above throws unless both are set or both null.
                 _sources.Add(new PersistenceEntityRegistration<T>(source, snapshot!, deletions));
             }
 

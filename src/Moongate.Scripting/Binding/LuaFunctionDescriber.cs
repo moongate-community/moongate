@@ -40,9 +40,9 @@ public static class LuaFunctionDescriber
             // A declared Lua type (such as the EventName alias) wins over the one derived from the CLR type.
             var typeName = parameter.GetCustomAttribute<ScriptParameterTypeAttribute>()?.LuaType ??
                            (underlying.IsEnum ? LuaTypeName(type) + "|string" : LuaTypeName(type));
+            // Safe: parameters of a described method always carry a name.
             parameters.Add(
                 new(
-                    // Safe: parameters of a described method always carry a name.
                     isParams ? "..." : LuaModuleBinder.ToSnakeCase(parameter.Name!),
                     typeName,
                     optional,

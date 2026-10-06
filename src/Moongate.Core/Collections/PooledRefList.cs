@@ -178,7 +178,7 @@ public ref struct PooledRefList<T>
                     ThrowEnumerationNotStartedOrEnded();
                 }
 
-                // the index check above guarantees _current holds an element.
+                // Safe: the index check above guarantees _current holds an element.
                 return _current!;
             }
         }
@@ -784,7 +784,7 @@ public ref struct PooledRefList<T>
 
         if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
         {
-            // clears a reference slot; the slot is outside the live range.
+            // Safe: clears a reference slot; the slot is outside the live range.
             _items[_size] = default!;
         }
 

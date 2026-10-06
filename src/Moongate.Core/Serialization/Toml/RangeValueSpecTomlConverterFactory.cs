@@ -24,7 +24,7 @@ public sealed class RangeValueSpecTomlConverterFactory : TomlConverterFactory
         var numberType = typeToConvert.GetGenericArguments()[0];
         var converterType = typeof(RangeValueSpecTomlConverter<>).MakeGenericType(numberType);
 
-        // the converter type has a public parameterless constructor.
+        // Safe: the converter type has a public parameterless constructor.
         return (TomlConverter)Activator.CreateInstance(converterType)!;
     }
 }

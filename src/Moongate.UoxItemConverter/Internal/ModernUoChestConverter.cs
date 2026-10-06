@@ -81,7 +81,7 @@ internal static class ModernUoChestConverter
         foreach (var (mapName, spawns) in byMap)
         {
             var path = Path.Combine(destination, mapName, FileName);
-            // Safe: the path is built with GetFullPath and always has a parent directory.
+            // Safe: GetDirectoryName is null only for a root or empty path, not a file combined under a folder.
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             TomlUtils.SerializeToFile(new SpawnTemplateFile { Spawn = spawns }, path);
             output.WriteLine($"spawns/{mapName}/{FileName} ({spawns.Count} chest region(s))");

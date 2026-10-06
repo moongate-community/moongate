@@ -32,7 +32,8 @@ internal sealed class SpawnPool
             entry = Roll(_lists[list].Entries, random);
         }
 
-        // Safe: list entries always carry a mobile id.
+        // Safe: the loop exits only on an entry with no NpcListId, and NpcListsLoader refuses an entry that has
+        // neither a mobile id nor an NPC list id.
         return entry.MobileId!;
     }
 

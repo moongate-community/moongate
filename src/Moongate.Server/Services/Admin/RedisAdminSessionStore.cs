@@ -129,8 +129,8 @@ public sealed class RedisAdminSessionStore : IAdminSessionStore
             return null;
         }
 
+        // Safe: the shape was validated above, so element 1 is a non-empty string.
         return new(
-            // the shape was validated above, so element 1 is a non-empty string.
             new(new(id), (string)values[1]!, (AccountType)role),
             generation,
             DateTimeOffset.FromUnixTimeMilliseconds(expires)

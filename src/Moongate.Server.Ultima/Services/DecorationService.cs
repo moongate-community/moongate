@@ -670,8 +670,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
         // Safe: entities from the decorator always carry a props dictionary.
         foreach (var door in doors.Where(door => !door.Props!.ContainsKey(LinkProp)))
         {
+            // Safe: entities from the decorator always carry a props dictionary.
             var partner = doors.FirstOrDefault(other =>
-                // Safe: entities from the decorator always carry a props dictionary.
                 other != door && !other.Props!.ContainsKey(LinkProp) && Adjacent(door, other)
             );
 
@@ -696,10 +696,10 @@ public sealed class DecorationService : IDecorationService, IDisposable
         var dx = Math.Abs(door.X.Value - other.X.Value);
         var dy = Math.Abs(door.Y.Value - other.Y.Value);
 
+        // Safe: entities from the decorator always carry a props dictionary.
         return door.Map == other.Map &&
                door.Z == other.Z &&
                dx + dy == 1 &&
-               // Safe: entities from the decorator always carry a props dictionary.
                Equals(door.Props![TypeProp], other.Props![TypeProp]) &&
                !(door.Props.GetValueOrDefault(FacingProp) is { } facing &&
                  Equals(facing, other.Props.GetValueOrDefault(FacingProp)));

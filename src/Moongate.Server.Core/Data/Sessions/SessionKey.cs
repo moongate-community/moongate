@@ -20,7 +20,7 @@ public sealed class SessionKey<T>
     /// </summary>
     public T Default { get; }
 
-    // default! is the unset value of an unconstrained T; callers that need a real default pass one.
+    // Safe: default! is the unset value of an unconstrained T; callers that need a real default pass one.
     public SessionKey(string name, T defaultValue = default!)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);

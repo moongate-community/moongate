@@ -322,13 +322,13 @@ internal sealed class BookAttachmentService : IBookAttachmentService
     {
         parents = null;
         batch = null;
+        // Safe: batch is read only after TryDecode in the chain has just succeeded and set it.
         if (!CurrentSession(session) || !_mobiles.TryGet(session.CharacterId, out _) || _claimed.Contains(letter.Id) ||
             !_items.TryGet(letter.Id, out var live) || !ReferenceEquals(live, letter) || letter.Amount != 1 ||
             !_templates.TryGet(letter.TemplateId, out var template) || template.Stackable != false ||
             !BookTextValidation.IsReadableScript(template.ScriptId) ||
             letter.Props?.GetValueOrDefault(BookAttachmentCodec.PropKey) is not string payload ||
             !BookAttachmentCodec.TryDecode(payload, out batch) ||
-            // Safe: Eligible returned true, so it set batch.
             batch!.Items.Any(reward => !_templates.TryGet(reward.TemplateId, out var current) ||
                                        reward.Amount > 1 && !current.EffectiveStackable(_tiles)
             ))

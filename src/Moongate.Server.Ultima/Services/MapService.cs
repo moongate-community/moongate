@@ -35,7 +35,7 @@ public class MapService : IMapService
         {
             foreach (var map in maps)
             {
-                // Safe: the tile matrix is only used for its index and size, never for tile data.
+                // Safe: TileMatrix treats a null path as "resolve the map files through the Ultima Files path".
                 var matrix = new TileMatrix(map.FileIndex, (int)map.Map, map.Size.X, map.Size.Y, null!);
                 matrices.Add(map.Map, matrix);
 

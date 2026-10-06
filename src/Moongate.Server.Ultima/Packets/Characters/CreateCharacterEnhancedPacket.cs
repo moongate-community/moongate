@@ -151,10 +151,10 @@ public sealed class CreateCharacterEnhancedPacket
             return false;
         }
 
+        // Safe: the Try read above succeeded, so the string is set.
         packet = new()
         {
             CharacterSlot = characterSlot,
-            // Safe: the Try read above succeeded, so the string is set.
             Name = name!,
             Profession = profession,
             StartingCity = startingCity,

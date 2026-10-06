@@ -259,7 +259,7 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
             return null;
         }
 
-        // hash entries read from Redis always have a name and a value.
+        // Safe: hash entries read from Redis always have a name and a value.
         var values = entries.ToDictionary(
             entry => (string)entry.Name!,
             entry => (string)entry.Value!,

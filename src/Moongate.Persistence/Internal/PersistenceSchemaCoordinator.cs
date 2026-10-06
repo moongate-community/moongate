@@ -82,8 +82,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
 
             if (_options.DevelopmentMigrations is not null)
             {
+                // Safe: Prepare() above freezes the snapshot before migrations run.
                 await new DevelopmentMigrationCoordinator(_options.DevelopmentMigrations, _logger)
-                    // Safe: the snapshot is frozen before migrations run.
                     .RunAsync(_databases, _snapshot!, cancellationToken)
                     .ConfigureAwait(false);
                 IsReady = true;

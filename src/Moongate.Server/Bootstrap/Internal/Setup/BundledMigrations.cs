@@ -79,7 +79,7 @@ internal static class BundledMigrations
 
                 // Whole or not at all: a start killed half way must not leave a file the next one takes for a conflict.
                 var temporary = path + ".tmp";
-                // path is combined with a directory, so it always has a parent.
+                // Safe: path is combined with a directory, so it always has a parent.
                 Directory.CreateDirectory(Path.GetDirectoryName(path)!);
                 File.Copy(Path.Combine(source, target, script.FileName), temporary, true);
                 File.Move(temporary, path);

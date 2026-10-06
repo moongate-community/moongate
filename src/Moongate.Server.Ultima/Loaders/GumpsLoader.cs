@@ -143,7 +143,9 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
             }
         }
 
-        return new() { Id = (string?)root.Attribute("id") ?? throw new InvalidDataException($"{path}: the gump has no id."), File = path, Root = root };
+        var id = (string?)root.Attribute("id") ?? throw new InvalidDataException($"{path}: the gump has no id.");
+
+        return new() { Id = id, File = path, Root = root };
     }
 
     private static void CheckRules(string path, XElement root)

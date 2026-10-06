@@ -421,8 +421,8 @@ public sealed partial class GumpModule
         // Safe: out parameter; callers read it only when the method returns true.
         session = null!;
 
+        // Safe: the out value is only used when the lookup succeeds.
         return player is > 0 and <= uint.MaxValue &&
-               // Safe: the out value is only used when the lookup succeeds.
                _sessions.TryGetByCharacterId(new Serial((uint)player), out session!);
     }
 }

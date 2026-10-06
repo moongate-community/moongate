@@ -89,7 +89,7 @@ internal static class ModernUoSignConverter
                 continue;
             }
 
-            // Safe: the path is built with GetFullPath and always has a parent directory.
+            // Safe: GetDirectoryName is null only for a root or empty path, not a file combined under a folder.
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, Write(facet, blocks[facet]));
             output.WriteLine(

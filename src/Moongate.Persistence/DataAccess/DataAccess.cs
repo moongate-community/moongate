@@ -208,7 +208,8 @@ public sealed class DataAccess<T> : IDataAccess<T> where T : class, IMoongateEnt
 
                 if (skip.HasValue)
                 {
-                    // Safe: take was validated as positive above.
+                    // Safe: both QueryAsync overloads pass skip and take together (both set or both null),
+                    // so take is set here; a non-null take was checked as positive above.
                     query = query.OrderBy(entity => entity.Id).Skip(skip.Value).Limit(take!.Value);
                 }
 

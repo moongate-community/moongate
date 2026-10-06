@@ -827,7 +827,7 @@ public sealed class BankService : IBankService
     // That many coins as an item nobody holds yet, to ask a container whether it still holds anything.
     private ItemEntity Coins(int amount)
     {
-        return new() { TemplateId = _itemsConfig.GoldTemplate, ItemId = 0x0EED, Amount = amount };
+        return new() { TemplateId = _itemsConfig.GoldTemplate, ItemId = GoldItemId, Amount = amount };
     }
 
     private ItemEntity? BackpackOf(Serial player)
@@ -858,7 +858,8 @@ public sealed class BankService : IBankService
                     {
                         if (_inventory?.AllowsOwner(player.Id) == false)
                         {
-                            // Safe: assigned during start-up, before this code can run.
+                            // Safe: AddBookAttachments registers the guard and the reservations together,
+                            // so a guard that refuses comes with a reservation service.
                             settlement = _reservations!.WaitAsync(player.Id);
                             return;
                         }

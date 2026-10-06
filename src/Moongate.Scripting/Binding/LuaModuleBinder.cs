@@ -183,10 +183,10 @@ public sealed class LuaModuleBinder
                     {
                         if (!parameter.HasDefaultValue)
                         {
+                            // Safe: parameters of a bound method always carry a name.
                             throw new LuaRuntimeException(
                                 context.State,
                                 new LuaValue(
-                                    // Safe: parameters of a bound method always carry a name.
                                     $"bad argument #{i + 1} to '{qualified}' ({ToSnakeCase(parameter.Name!)} is required)"
                                 )
                             );

@@ -69,7 +69,7 @@ internal static class ModernUoLocationConverter
             return 2;
         }
 
-        // Safe: the path is built with GetFullPath and always has a parent directory.
+        // Safe: mgctl passes a full file path, whose GetDirectoryName is null only for a root, never a file.
         Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
         File.WriteAllText(destination, Write(places));
         output.WriteLine($"{Path.GetFileName(destination)}: {places.Count} places on {maps} maps");

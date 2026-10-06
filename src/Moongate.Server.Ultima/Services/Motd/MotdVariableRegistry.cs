@@ -65,10 +65,9 @@ public sealed class MotdVariableRegistry : IMotdVariableRegistry
 
         lock (_gate)
         {
+            // Safe: the out value is only used when the lookup succeeds.
             var found = _frozen is not null
-                // Safe: the out value is only used when the lookup succeeds.
                 ? _frozen.TryGetValue(name, out resolver!)
-                // Safe: the out value is only used when the lookup succeeds.
                 : _resolvers.TryGetValue(name, out resolver!);
 
             if (!found)

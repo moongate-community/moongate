@@ -356,9 +356,9 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
 
         lock (_lifecycleSync)
         {
+            // Safe: _configuredOptions is assigned in StartAsync before the state becomes Running.
             if (_state == TcpServerState.Running &&
                 !generationToken.IsCancellationRequested &&
-                // _configuredOptions is assigned in StartAsync before the state becomes Running.
                 _admittedConnections < _configuredOptions!.MaxConnections &&
                 _preparingConnections < _configuredOptions.MaxConcurrentPreparations)
             {
@@ -515,7 +515,7 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         MoongateTcpClient? client = null;
         TaskCompletionSource? started = null;
         var promoted = false;
-        // _configuredOptions is assigned in StartAsync before any connection is accepted.
+        // Safe: _configuredOptions is assigned in StartAsync before any connection is accepted.
         var options = _configuredOptions!;
         using var deadline = new CancellationTokenSource(options.PreparationTimeout, options.TimeProvider);
         using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(generationToken, deadline.Token);
@@ -574,7 +574,7 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         {
             if (promoted)
             {
-                // promoted is set only after client has been created.
+                // Safe: promoted is set only after client has been created.
                 _ = GetOrStartClientCleanupAsync(client!);
             }
 
@@ -679,7 +679,7 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
             var boundSocket = socket;
             var generation = lifetime;
             var accepted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            // a bound listening socket always has a local end point.
+            // Safe: a bound listening socket always has a local end point.
             var boundEndPoint = (IPEndPoint)socket.LocalEndPoint!;
 
             lock (_lifecycleSync)

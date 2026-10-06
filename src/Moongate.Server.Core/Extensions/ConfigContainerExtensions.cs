@@ -81,7 +81,7 @@ public static class ConfigContainerExtensions
             var separator = existing.Length == 0 ? "" :
                 existing.EndsWith('\n') ? newline : newline + newline;
             File.AppendAllText(document.FilePath, separator + toml.ReplaceLineEndings(newline));
-            // the TOML was just produced by serializing a table, so it parses to a table.
+            // Safe: the TOML was just produced by serializing a table, so it parses to a table.
             document.Table[section] = TomlUtils.Deserialize<TomlTable>(toml)![section];
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)

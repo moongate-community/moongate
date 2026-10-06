@@ -23,7 +23,7 @@ public sealed class EnumValueSpecTomlConverterFactory : TomlConverterFactory
         var enumType = typeToConvert.GetGenericArguments()[0];
         var converterType = typeof(EnumValueSpecTomlConverter<>).MakeGenericType(enumType);
 
-        // the converter type has a public parameterless constructor.
+        // Safe: the converter type has a public parameterless constructor.
         return (TomlConverter)Activator.CreateInstance(converterType)!;
     }
 }

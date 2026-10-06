@@ -78,8 +78,8 @@ public sealed class TeleportService : ITeleportService
                 state.NextStepAt = 0;
             }
 
+            // Safe: hasSession is true, so TryGetByCharacterId set the session.
             _sender.TrySend(
-                // Safe: hasSession is true, so TryGetByCharacterId set the session.
                 session!.SessionId,
                 new MobileUpdatePacket(
                     mobile.Id,
