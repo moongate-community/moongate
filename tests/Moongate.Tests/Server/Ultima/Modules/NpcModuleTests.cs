@@ -754,6 +754,34 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void GhostsInSight_AreTheDeadPlayersItSees_HiddenOnesToo_AndPlayersInSightLeavesThemOut()
+    {
+        var ghost = new MobileEntity
+        {
+            Id = new Serial(3), Name = "Boris", AccountId = new Serial(0x43), Map = MapType.Trammel,
+            Location = new Point3D(1603, 1600, 0), Body = 0x0192, Hidden = true
+        };
+        var farGhost = new MobileEntity
+        {
+            Id = new Serial(4), Name = "Carla", AccountId = new Serial(0x44), Map = MapType.Trammel,
+            Location = new Point3D(1610, 1600, 0), Body = 0x0193, Hidden = true
+        };
+        _mobiles.EnterWorld(ghost);
+        _mobiles.EnterWorld(farGhost);
+
+        var result = Run(
+            "local near = npc.ghosts_in_sight(256, 4) " +
+            "return #near, near[1], #npc.ghosts_in_sight(256, 16), #npc.ghosts_in_sight(256, 16, 1), #npc.players_in_sight(256, 16)"
+        );
+
+        // The living player of the fixture is no ghost; the ghosts are no players in sight.
+        Assert.Equal([1, 3, 2, 1, 1], result.Select(value => value.Read<int>()));
+
+        _sight.Allow = false;
+        Assert.Equal(0, Run("return #npc.ghosts_in_sight(256, 16)")[0].Read<int>());
+    }
+
+    [Fact]
     public void Home_ThatIsNotFourNumbersInOrder_IsNoHome_NotAnError()
     {
         SetHome(1602, 1597, 1598, 1603);

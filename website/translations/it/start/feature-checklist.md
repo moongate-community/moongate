@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"26a3a2756da92748dc888b0238b6b2d75f1e5c86809d1414724611898a6bc641","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"e42d54ad30846791c1dfea31f41b446c2c4a10b18c8a5090d21ae22dcfca2fa7","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -57,7 +57,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Fame e sete | ✅ | Entrambe da 0 a 20 e in diminuzione nel tempo: un giocatore affamato non recupera punti vita, uno assetato non recupera stamina; il cibo si mangia, le bevande si bevono un sorso alla volta |
 | Veleno | ❌ | |
 | Nascondersi e furtività | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) nasconde un giocatore fino al suo primo passo; nessuna Stealth, e parlare o essere colpiti non lo rivela ancora |
-| Morte, cadaveri, fantasmi e resurrezione | 🟡 | Un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill`: cadavere con ciò che trasportava, animazione e suono di morte, decadimento dopo 7 minuti. Un giocatore resta come fantasma (nascosto ai vivi se non in modalità guerra, sentito come oOo, senza combattere, usare abilità o sollevare oggetti) e viene resuscitato a un ankh, con `.resurrect` o `mobile.resurrect`. Niente guaritori, conteggi degli omicidi, perdita di statistiche o ossa |
+| Morte, cadaveri, fantasmi e resurrezione | 🟡 | Un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill`: cadavere con ciò che trasportava, animazione e suono di morte, decadimento dopo 7 minuti. Un giocatore resta come fantasma (nascosto ai vivi se non in modalità guerra, sentito come oOo, senza combattere, usare abilità o sollevare oggetti) e viene resuscitato a un ankh o da un guaritore (per un decimo della sua fama), con `.resurrect` o `mobile.resurrect`. Niente guaritori malvagi, conteggi degli omicidi, perdita di statistiche o ossa |
 | Protezione dei giovani giocatori | ❌ | |
 | Denunce di omicidio e bacheche delle taglie | ❌ | |
 | Virtù | ❌ | |

@@ -48,6 +48,8 @@ public sealed class RecordingMobileStateService : IMobileStateService
             mobile.Hits = change.Hits ?? mobile.Hits;
             mobile.Mana = change.Mana ?? mobile.Mana;
             mobile.Stamina = change.Stamina ?? mobile.Stamina;
+            mobile.Fame = change.Fame ?? mobile.Fame;
+            mobile.Karma = change.Karma ?? mobile.Karma;
         }
 
         return Result;
