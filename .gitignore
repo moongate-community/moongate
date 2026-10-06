@@ -613,3 +613,6 @@ website/.docs-stage-*/
 
 # Cooperative development migration generation locks
 **/.moongate-generation.lock
+
+# Core dumps a crashed process leaves at the repository root.
+/core.[0-9]*

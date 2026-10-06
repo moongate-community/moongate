@@ -155,52 +155,6 @@ public sealed class BookDocumentService : IBookDocumentService
         return OpenNow(session, reader, item);
     }
 
-    private bool IsBook(ItemEntity item)
-    {
-        return _itemTemplates.TryGet(item.TemplateId, out var template) && template.ScriptId == BookTextValidation.BookScript;
-    }
-
-    // The cover (0xD4), then every page (0x66): the client asks for nothing more.
-    private bool OpenBook(GameSession session, ItemEntity item)
-    {
-        if (_sender is null || item.GetProp<string?>("book.content") is not { } content)
-        {
-            return false;
-        }
-
-        BookPagesPacket pages;
-
-        try
-        {
-            if (!BookPagination.TryPaginate(content, out var paginated))
-            {
-                _logger.Warning("Cannot open book item {Item}: its text needs more than {Pages} pages", item.Id, BookPagination.MaxPages);
-
-                return false;
-            }
-
-            pages = new(item.Id, Padded(item, paginated));
-        }
-        catch (ArgumentException)
-        {
-            _logger.Warning("Cannot open book item {Item}: its pages do not fit one packet", item.Id);
-
-            return false;
-        }
-
-        // Whoever carries a writable book writes in it; anyone else who may read it reads it.
-        var writable = IsWritable(item) && _items.GetOwner(item) == session.CharacterId;
-        var header = new BookHeaderPacket(
-            item.Id,
-            pages.PageCount,
-            item.GetProp("book.title", item.Name ?? ""),
-            item.GetProp("book.author", ""),
-            writable
-        );
-
-        return _sender.TrySend(session.SessionId, header) && _sender.TrySend(session.SessionId, pages);
-    }
-
     public bool SetHeader(ItemEntity book, MobileEntity writer, string title, string author)
     {
         ArgumentNullException.ThrowIfNull(title);
@@ -269,6 +223,52 @@ public sealed class BookDocumentService : IBookDocumentService
         book.SetProp("book.content", content);
 
         return true;
+    }
+
+    private bool IsBook(ItemEntity item)
+    {
+        return _itemTemplates.TryGet(item.TemplateId, out var template) && template.ScriptId == BookTextValidation.BookScript;
+    }
+
+    // The cover (0xD4), then every page (0x66): the client asks for nothing more.
+    private bool OpenBook(GameSession session, ItemEntity item)
+    {
+        if (_sender is null || item.GetProp<string?>("book.content") is not { } content)
+        {
+            return false;
+        }
+
+        BookPagesPacket pages;
+
+        try
+        {
+            if (!BookPagination.TryPaginate(content, out var paginated))
+            {
+                _logger.Warning("Cannot open book item {Item}: its text needs more than {Pages} pages", item.Id, BookPagination.MaxPages);
+
+                return false;
+            }
+
+            pages = new(item.Id, Padded(item, paginated));
+        }
+        catch (ArgumentException)
+        {
+            _logger.Warning("Cannot open book item {Item}: its pages do not fit one packet", item.Id);
+
+            return false;
+        }
+
+        // Whoever carries a writable book writes in it; anyone else who may read it reads it.
+        var writable = IsWritable(item) && _items.GetOwner(item) == session.CharacterId;
+        var header = new BookHeaderPacket(
+            item.Id,
+            pages.PageCount,
+            item.GetProp("book.title", item.Name ?? ""),
+            item.GetProp("book.author", ""),
+            writable
+        );
+
+        return _sender.TrySend(session.SessionId, header) && _sender.TrySend(session.SessionId, pages);
     }
 
     private static bool IsWritable(ItemEntity item)

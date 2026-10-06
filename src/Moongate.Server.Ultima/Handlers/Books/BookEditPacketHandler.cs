@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Ultima.Interfaces;
@@ -45,10 +46,16 @@ public sealed class BookEditPacketHandler
 
     public void Handle(GameSession session, OldBookHeaderChangePacket packet)
     {
-        SetHeader(session, packet.Book, packet.Title, packet.Author);
+        // Sixty and thirty Latin-1 characters may be more bytes of UTF-8 than a book holds: what fits is kept.
+        SetHeader(
+            session,
+            packet.Book,
+            BookHeaderPacket.Fit(packet.Title, BookHeaderPacket.TitleBytes),
+            BookHeaderPacket.Fit(packet.Author, BookHeaderPacket.AuthorBytes)
+        );
     }
 
-    private void SetHeader(GameSession session, Moongate.Core.Primitives.Serial serial, string title, string author)
+    private void SetHeader(GameSession session, Serial serial, string title, string author)
     {
         if (_items.TryGet(serial, out var book) && _mobiles.TryGet(session.CharacterId, out var writer))
         {
