@@ -201,13 +201,19 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
         return _sessions.TryGetByCharacterId(mobile.Id, out var session) && session.AccountType >= AccountType.GameMaster;
     }
 
+    // As ModernUO's DefaultGuardType: the archers of Ilshenar and Malas, the warriors everywhere else.
+    private string TemplateOf(MapType map)
+    {
+        return map is MapType.Ilshenar or MapType.Malas ? _config.ArcherGuardTemplate : _config.GuardTemplate;
+    }
+
     // Off the loop: the spawn saves the guard, then puts it in the world on the loop and waits for that.
     private async Task SummonAsync(Serial criminal, MapType map, Point3D location)
     {
         try
         {
             var guard = await _npcs.SpawnAsync(
-                _config.GuardTemplate,
+                TemplateOf(map),
                 map,
                 location,
                 new Dictionary<string, object?> { [SummonedProp] = true }
@@ -220,7 +226,7 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
         }
         catch (Exception exception)
         {
-            _logger.Warning(exception, "No guard of {Template} came for {Criminal}", _config.GuardTemplate, criminal);
+            _logger.Warning(exception, "No guard of {Template} came for {Criminal}", TemplateOf(map), criminal);
             // On the loop, where the set lives; a loop that is stopping needs it no more.
             _loop.TryPost(new LoopActionWorkItem(() => _wanted.Remove(criminal)));
         }
