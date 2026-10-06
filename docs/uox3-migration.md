@@ -44,6 +44,12 @@ type 105) takes `script_id = "drink"` (`scripts/items/drink.lua`) the same way, 
 `pitchers.js`, but for the jar of honey (`0x09ec_jar_of_honey`).
 A folder missing either file exits `2`.
 
+What combat reads is converted too: `damage=min max`, `spd`, `str`, `def` and `hp=min max` of an item become `damage_min`,
+`damage_max`, `speed`, `strength_required`, `armor_rating` and `max_hits` (a value that is not a number, or is 0, is left
+out), and the kind of weapon (`weapon_type`) follows the graphic of a block with an `id=`, by the table of UOX3's own
+`GetWeaponType` (a graphic UOX3 does not list is fought with fists). The eras of UOX3 (`t2a`, `lbr`, `aos`, `tol`) keep
+their own numbers, and the kind goes on the item that has the graphic, which they inherit. See [Combat](combat.md).
+
 The dyes (item type 208) take `script_id = "dyes"` and the dye tub `script_id = "dye_tub"`
 (`scripts/items/dyes.lua`, `scripts/items/dye_tub.lua`). UOX3 types the tub by its graphic `0x0FAB`
 in `itemtypes.dfn`, not in its block, so the converter does the same: a block named by that graphic.

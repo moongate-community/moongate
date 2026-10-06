@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
@@ -15,6 +16,11 @@ namespace Moongate.Server.Ultima.Data.Templates.Items;
 /// </summary>
 public class ItemTemplate
 {
+    // The numbers of the combat fields are kept within what a client and the formulas can take.
+    private const int MaximumCombatNumber = 65535;
+    private const int MaximumSpeed = 500;
+    private const int MaximumArmorRating = 500;
+
     /// <summary>
     ///     The stable id a loot table, a spawn or the
     ///     <c>
@@ -100,6 +106,42 @@ public class ItemTemplate
     ///     torch) is held in the other hand and goes with a one-handed weapon.
     /// </summary>
     public bool? TwoHandedWeapon { get; set; }
+
+    /// <summary>
+    ///     The kind of a weapon, as UOX3 types it by graphic: it decides the skill, the swing animation and the sounds.
+    ///     Unset for what is not a weapon.
+    /// </summary>
+    public WeaponType? WeaponType { get; set; }
+
+    /// <summary>
+    ///     The least damage a hit of the weapon does, before the bonuses of the one who wields it.
+    /// </summary>
+    public int? DamageMin { get; set; }
+
+    /// <summary>
+    ///     The most damage a hit of the weapon does. A worn item with one above 0 is a weapon.
+    /// </summary>
+    public int? DamageMax { get; set; }
+
+    /// <summary>
+    ///     The speed of a weapon, ModernUO's: a swing takes 15000 / ((stamina + 100) * speed) seconds.
+    /// </summary>
+    public int? Speed { get; set; }
+
+    /// <summary>
+    ///     The strength a wearer needs for the item, as UOX3's <c>str</c>; read, not enforced yet.
+    /// </summary>
+    public int? StrengthRequired { get; set; }
+
+    /// <summary>
+    ///     The armor rating of a piece of armor or a shield, as UOX3's <c>def</c>.
+    /// </summary>
+    public int? ArmorRating { get; set; }
+
+    /// <summary>
+    ///     The most hit points the item has, its durability; read, not used yet.
+    /// </summary>
+    public int? MaxHits { get; set; }
 
     /// <summary>
     ///     Whether a dye tub can give the item its hue, as UOX3's <c>dyeable</c>: clothing is, a death robe is not.
@@ -207,6 +249,36 @@ public class ItemTemplate
         if (DecayMinutes < 1)
         {
             throw Invalid("decay_minutes", "must be at least 1");
+        }
+
+        if (DamageMin is < 0 or > MaximumCombatNumber)
+        {
+            throw Invalid("damage_min", $"must be from 0 to {MaximumCombatNumber}");
+        }
+
+        if (DamageMax is < 0 or > MaximumCombatNumber || DamageMin > DamageMax)
+        {
+            throw Invalid("damage_max", $"must be from damage_min to {MaximumCombatNumber}");
+        }
+
+        if (Speed is < 1 or > MaximumSpeed)
+        {
+            throw Invalid("speed", $"must be from 1 to {MaximumSpeed}");
+        }
+
+        if (ArmorRating is < 0 or > MaximumArmorRating)
+        {
+            throw Invalid("armor_rating", $"must be from 0 to {MaximumArmorRating}");
+        }
+
+        if (StrengthRequired is < 0 or > MaximumCombatNumber)
+        {
+            throw Invalid("strength_required", $"must be from 0 to {MaximumCombatNumber}");
+        }
+
+        if (MaxHits is < 0 or > MaximumCombatNumber)
+        {
+            throw Invalid("max_hits", $"must be from 0 to {MaximumCombatNumber}");
         }
 
         if (Tags is not null && Tags.Keys.Any(string.IsNullOrWhiteSpace))

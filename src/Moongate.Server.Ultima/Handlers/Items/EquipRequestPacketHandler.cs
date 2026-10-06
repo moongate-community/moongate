@@ -34,6 +34,7 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
     private readonly IItemScriptService? _scripts;
 
     private readonly IInventoryMutationGuard? _inventory;
+    private readonly IMobileStateService? _state;
 
     public EquipRequestPacketHandler(
         IItemService items,
@@ -43,9 +44,11 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
         IPacketSendService sender,
         ITooltipService tooltips,
         IItemScriptService? scripts = null,
-        IInventoryMutationGuard? inventory = null
+        IInventoryMutationGuard? inventory = null,
+        IMobileStateService? state = null
     )
     {
+        _state = state;
         _inventory = inventory;
         _scripts = scripts;
         _tooltips = tooltips;
@@ -96,6 +99,9 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
         {
             _items.Equip(item, character.Id, layer);
             _view.WornItemChanged(character, item);
+
+            // What it wields and wears is in the status: its damage and its armor rating.
+            _state?.SendStatus(session, character);
 
             return;
         }

@@ -7,6 +7,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -20,6 +21,7 @@ id = "0x13f5"
 base_id = "0x13f4_lbr"
 item_id = 5109
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_shepherds_crook"
@@ -30,6 +32,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -43,6 +46,7 @@ id = "0x0e82"
 base_id = "0x0e81_lbr"
 item_id = 3714
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_gnarled_staff"
@@ -53,6 +57,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -66,6 +71,7 @@ id = "0x13f9"
 base_id = "0x13f8_lbr"
 item_id = 5113
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_black_staff"
@@ -76,6 +82,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -89,6 +96,7 @@ id = "0x0df1"
 base_id = "0x0df0_lbr"
 item_id = 3569
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_quarter_staff"
@@ -99,6 +107,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -112,6 +121,7 @@ id = "0x0e8a"
 base_id = "0x0e89_lbr"
 item_id = 3722
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_halberd"
@@ -122,6 +132,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "sword"
 decays = true
 
 [[item]]
@@ -135,6 +146,7 @@ id = "0x143f"
 base_id = "0x143e_lbr"
 item_id = 5183
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "guardhalberd"
@@ -146,6 +158,12 @@ movable = true
 weight = 16.0
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "sword"
+damage_min = 75
+damage_max = 150
+speed = 60
+strength_required = 120
+max_hits = 80
 buy_price = 40
 sell_price = 20
 decays = true
@@ -160,6 +178,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "pole_arm"
 decays = true
 
 [[item]]
@@ -173,6 +192,7 @@ id = "0x0f4e"
 base_id = "0x0f4d_lbr"
 item_id = 3918
 rarity = "common"
+weapon_type = "pole_arm"
 
 [[item]]
 id = "base_scythe"
@@ -183,6 +203,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "pole_arm"
 decays = true
 
 [[item]]
@@ -196,6 +217,7 @@ id = "0x26c4"
 base_id = "0x26ba_lbr"
 item_id = 9924
 rarity = "common"
+weapon_type = "pole_arm"
 
 [[item]]
 id = "base_bladed_staff"
@@ -206,6 +228,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "sword"
 decays = true
 
 [[item]]
@@ -219,6 +242,7 @@ id = "0x26c7"
 base_id = "0x26bd_lbr"
 item_id = 9927
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "base_double_bladed_staff"
@@ -229,6 +253,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "fencing"
 decays = true
 
 [[item]]
@@ -242,6 +267,7 @@ id = "0x26c9"
 base_id = "0x26bf_lbr"
 item_id = 9929
 rarity = "common"
+weapon_type = "fencing"
 
 [[item]]
 id = "base_wild_staff"
@@ -252,6 +278,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -265,6 +292,7 @@ id = "0x2d31"
 base_id = "0x2d25_lbr"
 item_id = 11569
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_gargish_bardiche"
@@ -275,6 +303,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "pole_arm"
 decays = true
 
 [[item]]
@@ -288,6 +317,7 @@ id = "0x48b5"
 base_id = "0x48b4_lbr"
 item_id = 18613
 rarity = "common"
+weapon_type = "pole_arm"
 
 [[item]]
 id = "base_gargish_scythe"
@@ -298,6 +328,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "pole_arm"
 decays = true
 
 [[item]]
@@ -311,6 +342,7 @@ id = "0x48c5"
 base_id = "0x48c4_lbr"
 item_id = 18629
 rarity = "common"
+weapon_type = "pole_arm"
 
 [[item]]
 id = "base_serpentstone_staff"
@@ -321,6 +353,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -334,6 +367,7 @@ id = "0x406f"
 base_id = "0x0906_lbr"
 item_id = 16495
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_gargish_gnarled_staff"
@@ -367,6 +401,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -380,3 +415,4 @@ id = "0x4070"
 base_id = "0x0905_lbr"
 item_id = 16496
 rarity = "common"
+weapon_type = "mace"
