@@ -42,11 +42,6 @@ public sealed class MobileQueryPacketHandlerTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Handle_TheSkills_SendsTheWholeListOfTheCharacter()
     {
@@ -125,5 +120,10 @@ public sealed class MobileQueryPacketHandlerTests : IAsyncLifetime
     private void Handle(MobileQueryType kind, Serial target)
     {
         _handler.Handle(_session, new MobileQueryPacket { Kind = kind, Target = target });
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

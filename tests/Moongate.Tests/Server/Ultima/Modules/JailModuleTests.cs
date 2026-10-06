@@ -32,11 +32,6 @@ public sealed class JailModuleTests : IAsyncLifetime
         _jail.CellList.Add(new() { Number = 2, Location = new Point3D(5286, 1164, 0) });
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Cells_ListsFreeAndOccupiedCells()
     {
@@ -253,5 +248,10 @@ public sealed class JailModuleTests : IAsyncLifetime
         binder.BindEnum(state, typeof(JailResultType));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

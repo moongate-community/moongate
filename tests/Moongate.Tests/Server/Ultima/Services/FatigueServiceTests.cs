@@ -36,11 +36,6 @@ public sealed class FatigueServiceTests : IAsyncLifetime
         _fatigue = new(_weight, _state, _speech, _config);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public async Task Walking_WithALightLoad_CostsNothing_AndIsNeverRefused()
     {
@@ -209,5 +204,10 @@ public sealed class FatigueServiceTests : IAsyncLifetime
         await _fixture.Network.ExecuteOnLoopAsync(() => allowed = _fatigue.CanStep(_session, _aria, running));
 
         return allowed;
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

@@ -64,11 +64,6 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Give_MakesTheItemInTheBackpack_AndShowsItToTheOwner()
     {
@@ -163,5 +158,10 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
     {
         Assert.False(_handling.Delete(_backpack));
         Assert.True(_items.TryGet(_backpack.Id, out _));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

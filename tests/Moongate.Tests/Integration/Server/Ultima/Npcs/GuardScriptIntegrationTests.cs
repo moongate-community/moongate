@@ -164,13 +164,6 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
         await _npcs.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void AnInnocentInSight_IsLeftAlone()
     {
@@ -645,5 +638,12 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
         }
 
         return Path.Combine(directory!.FullName, "moongate_root", "scripts", relativePath);
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

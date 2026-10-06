@@ -34,11 +34,6 @@ public sealed class HungerServiceTests : IAsyncLifetime
         _hunger = new(_timers, _fixture.Sessions, _fixture.Mobiles, _speech, _config, _clock);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public async Task StartAsync_RegistersOneRepeatingTimer_EveryHungerMinutes_AndStopAsyncRemovesIt()
     {
@@ -195,5 +190,10 @@ public sealed class HungerServiceTests : IAsyncLifetime
     private void Fire()
     {
         _timers.Fire(_timers.Timers[0].Id);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

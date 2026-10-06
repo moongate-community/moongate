@@ -166,11 +166,6 @@ public sealed class NpcScriptServiceTests : IDisposable
         Assert.Contains("wander", warning.RenderMessage());
     }
 
-    public void Dispose()
-    {
-        _scripts.Dispose();
-    }
-
     private async Task<NpcScriptService> StartedAsync(params MobileTemplate[] templates)
     {
         var service = Create(templates);
@@ -190,5 +185,10 @@ public sealed class NpcScriptServiceTests : IDisposable
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path },
             logger
         );
+    }
+
+    public void Dispose()
+    {
+        _scripts.Dispose();
     }
 }

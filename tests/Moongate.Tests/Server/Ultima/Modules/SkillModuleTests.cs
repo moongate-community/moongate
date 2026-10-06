@@ -26,11 +26,6 @@ public sealed class SkillModuleTests : IAsyncLifetime
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out _aria!));
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -64,5 +59,10 @@ public sealed class SkillModuleTests : IAsyncLifetime
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new SkillModule(_skills, _fixture.Mobiles));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

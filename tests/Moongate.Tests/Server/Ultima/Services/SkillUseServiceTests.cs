@@ -43,11 +43,6 @@ public sealed class SkillUseServiceTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Use_RunsTheScriptOfTheSkillForTheCharacter()
     {
@@ -245,5 +240,10 @@ public sealed class SkillUseServiceTests : IAsyncLifetime
 
         Assert.Empty(_scripts.Used);
         Assert.Empty(_speech.ToldClilocs);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

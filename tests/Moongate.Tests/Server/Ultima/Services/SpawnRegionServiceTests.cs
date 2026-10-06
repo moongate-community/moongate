@@ -539,12 +539,6 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         Assert.Equal([timer], _timers.Unregistered);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _service.StopAsync();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public async Task AnItemRegion_SpawnsItsItemOnTheGround_AndNoNpc()
     {
@@ -885,5 +879,11 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
             .Where(pair => pair.packet is UnicodeSpeechMessagePacket)
             .Select(pair => (_fixture.Sender.SentSessionIds[pair.index], ((UnicodeSpeechMessagePacket)pair.packet).Text))
             .ToList();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _service.StopAsync();
+        await _fixture.DisposeAsync();
     }
 }

@@ -66,11 +66,6 @@ public sealed class MurderServiceTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public async Task StartAsync_RegistersOneRepeatingTimerOfFiveMinutes_AndStopAsyncTakesItAway()
     {
@@ -372,5 +367,10 @@ public sealed class MurderServiceTests : IAsyncLifetime
                 ButtonId = 1, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>()
             }
         };
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

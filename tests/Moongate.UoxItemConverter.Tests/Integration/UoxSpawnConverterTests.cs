@@ -332,11 +332,6 @@ public sealed class UoxSpawnConverterTests : IDisposable
         Assert.Contains("--npc-lists-destination and --spawns-destination need --mobile-source", _error.ToString());
     }
 
-    public void Dispose()
-    {
-        _dirs.Dispose();
-    }
-
     private void WriteSources(string? npcLists = null, string? spawns = null)
     {
         _dirs.WriteSource("items.dfn", "[coin]\n{\nid=0x0eed\n}\n");
@@ -367,5 +362,10 @@ public sealed class UoxSpawnConverterTests : IDisposable
             npcListsDestination: _dirs.NpcListsDestinationDirectory,
             spawnsDestination: _dirs.SpawnsDestinationDirectory
         );
+    }
+
+    public void Dispose()
+    {
+        _dirs.Dispose();
     }
 }

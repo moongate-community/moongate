@@ -52,6 +52,9 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
     private BulletinBoardService _service = null!;
     private BulletinBoardRequestPacketHandler _handler = null!;
 
+    // What was sent since the last call.
+    private int _read;
+
     public async Task InitializeAsync()
     {
         _fixture = await BroadcastFixture.CreateAsync();
@@ -77,11 +80,6 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
             _fixture.Sender
         );
         _handler = new BulletinBoardRequestPacketHandler(_service, _items, _fixture.Mobiles, _fixture.Sender, _speech);
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
     }
 
     [Fact]
@@ -375,9 +373,6 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
         Assert.Empty(Sent());
     }
 
-    // What was sent since the last call.
-    private int _read;
-
     private IOutgoingPacket[] Sent()
     {
         var sent = _fixture.Sender.Sent.Skip(_read).ToArray();
@@ -457,5 +452,10 @@ public sealed class BulletinBoardRequestPacketHandlerTests : IAsyncLifetime
         mobile.Location = place;
 
         return (session, mobile);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

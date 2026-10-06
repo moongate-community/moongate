@@ -88,12 +88,6 @@ public sealed class GuardServiceTests : IAsyncLifetime
         await _guards.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        await _guards.StopAsync();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void StartAsync_RegistersOneRepeatingTimerEverySecond()
     {
@@ -387,5 +381,11 @@ public sealed class GuardServiceTests : IAsyncLifetime
     {
         await _guards.Running.WaitAsync(TimeSpan.FromSeconds(10));
         await _fixture.Network.ExecuteOnLoopAsync(() => { });
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _guards.StopAsync();
+        await _fixture.DisposeAsync();
     }
 }

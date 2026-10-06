@@ -213,14 +213,6 @@ public sealed class BankerDragDropIntegrationTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public async Task GoldDroppedOnTheBanker_IsInTheBank_AndTheBankerSaysHowMuch()
     {
@@ -277,5 +269,13 @@ public sealed class BankerDragDropIntegrationTests : IAsyncLifetime
         }
 
         return Path.Combine(directory!.FullName, "moongate_root", "scripts", relativePath);
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

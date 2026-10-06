@@ -134,12 +134,6 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        _busContainer.Dispose();
-        await _host.DisposeAsync();
-    }
-
     [Fact]
     public async Task SpawnAsync_SavesTheMobileInTheMobileRange_Dressed_ByGender_ConflictsGoToTheBackpack()
     {
@@ -366,5 +360,11 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
 
         Assert.Equal(1, (await _mobiles.GetByIdAsync(spawned.Mobile.Id))!.Hits);
         await Assert.ThrowsAsync<InvalidOperationException>(() => _factory.SaveAsync(_factory.Create("guard")));
+    }
+
+    public async Task DisposeAsync()
+    {
+        _busContainer.Dispose();
+        await _host.DisposeAsync();
     }
 }

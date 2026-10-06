@@ -283,14 +283,6 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private GumpBuildResult Open(long player, string? path)
     {
         var args = new LuaTable();
@@ -341,5 +333,13 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
         }
 
         return directory!.FullName;
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

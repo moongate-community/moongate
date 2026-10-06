@@ -75,11 +75,6 @@ public sealed class AmmoServiceTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Spend_TakesOneOffTheStack_AndTheLastOneEmptiesIt()
     {
@@ -134,5 +129,10 @@ public sealed class AmmoServiceTests : IAsyncLifetime
         _ammo.Recover(_orc, Crossbow);
         Assert.True(_items.TryGet(new Serial(0x40000020), out var bolt));
         Assert.Equal("0x1bfb_crossbow_bolt", bolt.TemplateId);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

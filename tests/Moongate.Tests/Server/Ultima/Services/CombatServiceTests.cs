@@ -41,6 +41,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
     private const int OrcHurt = 0x1B2;
     private const int OrcAttack = 0x1B0;
 
+    private static readonly WeaponInfo Bow = new(SkillType.Archery, WeaponType.Bow, true, 9, 41, 25);
+
     private readonly RecordingMurderService _murders = new();
     private readonly RecordingEffectService _effects = new();
     private readonly RecordingAmmoService _ammo = new();
@@ -112,11 +114,6 @@ public sealed class CombatServiceTests : IAsyncLifetime
             _effects,
             _ammo
         );
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
     }
 
     [Fact]
@@ -503,8 +500,6 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Assert.Empty(_fixture.Sender.Sent.OfType<DamagePacket>());
         Assert.Equal(_aria, _combat.TargetOf(_orc));
     }
-
-    private static readonly WeaponInfo Bow = new(SkillType.Archery, WeaponType.Bow, true, 9, 41, 25);
 
     [Fact]
     public void AnNpcWithABow_ShootsFromTheRangeOfItsBow_WithAnArrowFlyingToItsTarget()
@@ -1178,5 +1173,10 @@ public sealed class CombatServiceTests : IAsyncLifetime
         _fixture.Mobiles.EnterWorld(npc);
 
         return npc;
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

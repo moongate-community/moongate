@@ -20,11 +20,6 @@ public sealed class WarModeRequestPacketHandlerTests : IAsyncLifetime
         _session = await _fixture.AddAsync(2);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Theory, InlineData(true), InlineData(false)]
     public void Handle_PutsTheCharacterInTheModeAsked(bool warMode)
     {
@@ -71,5 +66,10 @@ public sealed class WarModeRequestPacketHandlerTests : IAsyncLifetime
         Assert.True(WarModeRequestPacket.TryParse(Convert.FromHexString(hex), out var packet));
 
         Assert.Equal(warMode, packet.WarMode);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

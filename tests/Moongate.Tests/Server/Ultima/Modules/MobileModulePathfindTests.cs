@@ -22,11 +22,6 @@ public sealed class MobileModulePathfindTests : IAsyncLifetime
         _fixture.Mobiles.EnterWorld(new() { Id = new(0x100), Name = "a cat", Map = Moongate.Ultima.Types.MapType.Trammel });
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     // The client of that player walks there by itself, as after a double right click on the ground.
     [Fact]
     public void PathfindTo_TellsThePlayersClientWhereToWalk()
@@ -66,5 +61,10 @@ public sealed class MobileModulePathfindTests : IAsyncLifetime
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

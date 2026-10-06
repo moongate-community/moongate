@@ -151,13 +151,6 @@ public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
         await _npcs.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void AnAnimalThatSeesAPlayer_LeavesItAlone_ItNeverStartsAFight()
     {
@@ -243,5 +236,12 @@ public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
         }
 
         return Path.Combine(directory!.FullName, "moongate_root", "scripts", relativePath);
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

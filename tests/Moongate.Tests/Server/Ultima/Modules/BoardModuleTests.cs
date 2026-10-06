@@ -37,11 +37,6 @@ public sealed class BoardModuleTests : IAsyncLifetime
         _items.Add([_board]);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Open_OpensTheBoardOnThePlayersClient()
     {
@@ -216,5 +211,10 @@ public sealed class BoardModuleTests : IAsyncLifetime
         binder.Bind(state, new BoardModule(_boards, _items, _fixture.Sessions));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

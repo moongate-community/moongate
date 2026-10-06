@@ -288,11 +288,6 @@ public sealed class GumpServiceTests : IAsyncLifetime
         return _fixture.Network.ExecuteOnLoopAsync(action);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private GumpInstance Confirm(Action<GameSession, GumpResponse>? onResponse = null, string id = "confirm")
     {
         var layout = new GumpLayout()
@@ -324,5 +319,10 @@ public sealed class GumpServiceTests : IAsyncLifetime
             Serial = serial ?? sent.Serial, TypeId = typeId ?? sent.TypeId, ButtonId = button, Switches = switches ?? [],
             TextEntries = texts ?? []
         };
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

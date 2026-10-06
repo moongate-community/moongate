@@ -40,11 +40,6 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         _teleports = new(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, _bank);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Teleport_APlayer_MovesItAndTellsItsClientWhereItStands()
     {
@@ -198,5 +193,10 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         Assert.Equal(new Point3D(1600, 1600, 0), _aria.Location);
         Assert.Empty(_fixture.Sender.Sent);
         Assert.Empty(_view.Calls);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

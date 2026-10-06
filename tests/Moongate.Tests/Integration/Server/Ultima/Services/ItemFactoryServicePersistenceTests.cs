@@ -45,11 +45,6 @@ public sealed class ItemFactoryServicePersistenceTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        await _host.DisposeAsync();
-    }
-
     [Fact]
     public async Task SaveAsync_GivesAnItemSerial_AndKeepsTheRarity()
     {
@@ -85,5 +80,10 @@ public sealed class ItemFactoryServicePersistenceTests : IAsyncLifetime
             await Assert.ThrowsAsync<InvalidOperationException>(() => _factory.SaveAsync(_factory.Create("gem")));
 
         Assert.Contains("no location", exception.Message);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _host.DisposeAsync();
     }
 }

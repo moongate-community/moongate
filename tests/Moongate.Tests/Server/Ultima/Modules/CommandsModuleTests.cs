@@ -25,11 +25,6 @@ public sealed class CommandsModuleTests : IAsyncLifetime
         _session = await _fixture.AddAsync(2);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     // As the server console: every power, and no player behind it.
     [Fact]
     public void Execute_RunsTheCommandAsTheConsole_WithItsArgumentsInOneLine()
@@ -105,5 +100,10 @@ public sealed class CommandsModuleTests : IAsyncLifetime
         binder.Bind(state, new CommandsModule(_commands, _fixture.Sessions, _fixture.Sender));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

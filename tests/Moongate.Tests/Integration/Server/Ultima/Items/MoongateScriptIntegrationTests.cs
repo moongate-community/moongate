@@ -174,14 +174,6 @@ public sealed class MoongateScriptIntegrationTests : IAsyncLifetime
         await _itemScripts.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     [Theory, InlineData("on_move_over"), InlineData("on_use")]
     public void TouchingTheGate_TakesThePlayerToTheDestination_ASecondLater(string function)
     {
@@ -458,5 +450,13 @@ public sealed class MoongateScriptIntegrationTests : IAsyncLifetime
         }
 
         return directory!.FullName;
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

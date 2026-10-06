@@ -25,11 +25,6 @@ public sealed class HuePickerModuleTests : IAsyncLifetime
         await _fixture.AddAsync(2);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Open_ShowsTheGraphic_AndGivesTheHuePickedToTheFunction()
     {
@@ -94,5 +89,10 @@ public sealed class HuePickerModuleTests : IAsyncLifetime
         );
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

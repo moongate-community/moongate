@@ -66,7 +66,7 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
                             {
                                 if (_mobiles.TryGet(character.Id, out var current) && ReferenceEquals(current, character))
                                 {
-                                    save = CaptureLeave(session);
+                                    save = CaptureLeaveAsync(session);
                                 }
                             }
                         );
@@ -98,11 +98,11 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
 
         if (_mobiles.TryGet(session.CharacterId, out var leaving))
         {
-            Track(CaptureLeave(session), leaving.AccountId);
+            Track(CaptureLeaveAsync(session), leaving.AccountId);
         }
     }
 
-    private Task CaptureLeave(GameSession session)
+    private Task CaptureLeaveAsync(GameSession session)
     {
         if (!session.CharacterId.IsValid || !_mobiles.TryGet(session.CharacterId, out var character))
         {

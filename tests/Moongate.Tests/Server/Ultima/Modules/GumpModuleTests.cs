@@ -130,11 +130,6 @@ public sealed class GumpModuleTests : IAsyncLifetime
         Assert.Equal("Aria", Assert.IsType<LuaTable>(Assert.Single(_scripts.Calls).Args[1])["name"].Read<string>());
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private void Answer(int button, int[]? switches = null, Dictionary<int, string>? texts = null)
     {
         _gumps.Opened[0]
@@ -185,5 +180,10 @@ public sealed class GumpModuleTests : IAsyncLifetime
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

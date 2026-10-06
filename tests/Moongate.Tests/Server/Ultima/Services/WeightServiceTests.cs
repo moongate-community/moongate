@@ -69,11 +69,6 @@ public sealed class WeightServiceTests : IAsyncLifetime
         _weight = new(_items, templates, _tiles, _fixture.Sessions);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Holds_BatchCountsAllNewItemsTogether()
     {
@@ -219,5 +214,10 @@ public sealed class WeightServiceTests : IAsyncLifetime
     private static ItemEntity Item(uint serial, int graphic, string template = "item")
     {
         return new() { Id = new(serial), TemplateId = template, ItemId = graphic, Amount = 1 };
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

@@ -66,14 +66,6 @@ public sealed class AnimateCommandTests : IAsyncDisposable
         Assert.Equal("That is not a character or an NPC.", Assert.Single(context.Output).Text);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        if (_fixture is not null)
-        {
-            await _fixture.DisposeAsync();
-        }
-    }
-
     private async Task<CommandContext> RunAsync(params string[] arguments)
     {
         _fixture = await SessionFixture.CreateAsync();
@@ -83,5 +75,13 @@ public sealed class AnimateCommandTests : IAsyncDisposable
         await new AnimateCommand(_targets, _mobiles, _view, new StubGameLoop()).ExecuteAsync(context);
 
         return context;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_fixture is not null)
+        {
+            await _fixture.DisposeAsync();
+        }
     }
 }

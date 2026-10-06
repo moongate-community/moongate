@@ -30,11 +30,6 @@ public sealed class TargetModuleTests : IAsyncLifetime
         await _fixture.AddAsync(2);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Pick_AnObject_GivesItsSerialToTheFunction()
     {
@@ -123,5 +118,10 @@ public sealed class TargetModuleTests : IAsyncLifetime
         );
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

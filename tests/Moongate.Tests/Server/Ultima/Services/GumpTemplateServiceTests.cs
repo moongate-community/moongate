@@ -213,11 +213,6 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
         Assert.Equal([(_session, "confirm")], _gumps.Closed);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private async Task WaitForOpenAsync(int count = 1)
     {
         for (var tries = 0; tries < 200 && _gumps.Opened.Count < count; tries++)
@@ -229,5 +224,10 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
     private static GumpResponse Response(int button)
     {
         return new() { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() };
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

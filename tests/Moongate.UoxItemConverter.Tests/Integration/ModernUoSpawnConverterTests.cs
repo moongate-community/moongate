@@ -245,14 +245,6 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         Assert.Contains("does not exist", _error.ToString(), StringComparison.Ordinal);
     }
 
-    public void Dispose()
-    {
-        if (Directory.Exists(_root))
-        {
-            Directory.Delete(_root, true);
-        }
-    }
-
     private int Run(params MapType[] maps)
     {
         return ModernUoSpawnConverter.Run(Source, maps, Mobiles, Destination, _output, _error);
@@ -286,5 +278,13 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
                    "homeRange": {{homeRange}}, "walkingRange": 2, "entries": [{{entries}}]
                  }
                  """;
+    }
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_root))
+        {
+            Directory.Delete(_root, true);
+        }
     }
 }

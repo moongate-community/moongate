@@ -44,11 +44,6 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
         await _host.Container.Resolve<IDataAccess<MobileEntity>>().UpsertAsync(_mobile);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _host.DisposeAsync();
-    }
-
     [Fact]
     public async Task GiveAsync_FullFlow()
     {
@@ -394,5 +389,10 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
         {
             Items = [item], Amount = amount is null ? null : DiceSpec.Parse(amount), Equip = equip, Newbie = newbie
         };
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _host.DisposeAsync();
     }
 }

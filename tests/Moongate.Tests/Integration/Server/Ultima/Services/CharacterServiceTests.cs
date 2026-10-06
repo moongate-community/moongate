@@ -74,12 +74,6 @@ public sealed class CharacterServiceTests : IAsyncLifetime
             );
     }
 
-    public async Task DisposeAsync()
-    {
-        _eventContainer.Dispose();
-        await _host.DisposeAsync();
-    }
-
     [Fact]
     public async Task CreateAsync_AdvancedChoice_SavesThePlayerWithItsItems()
     {
@@ -748,5 +742,11 @@ public sealed class CharacterServiceTests : IAsyncLifetime
     private static ItemTemplate Template(string id, int itemId)
     {
         return new() { Id = id, ItemId = new Serial((uint)itemId), Hue = HueSpec.FromValue(0) };
+    }
+
+    public async Task DisposeAsync()
+    {
+        _eventContainer.Dispose();
+        await _host.DisposeAsync();
     }
 }

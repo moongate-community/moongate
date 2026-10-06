@@ -120,14 +120,6 @@ public sealed class HidingScriptIntegrationTests : IAsyncLifetime
         _use = new(_fixture.Mobiles, skillScripts, _speech, _time, data);
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Hiding_ATryThatPasses_HidesThePlayerOutOfWarMode_AndSaysSo()
     {
@@ -206,5 +198,13 @@ public sealed class HidingScriptIntegrationTests : IAsyncLifetime
         }
 
         return Path.Combine(directory!.FullName, "moongate_root", "scripts", relativePath);
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

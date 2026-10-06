@@ -26,11 +26,6 @@ public sealed class SkillLockPacketHandlerTests : IAsyncLifetime
         _handler = new(_fixture.Mobiles, _state);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Theory]
     [InlineData(21, 0, SkillLockType.Up)]
     [InlineData(21, 1, SkillLockType.Down)]
@@ -58,5 +53,10 @@ public sealed class SkillLockPacketHandlerTests : IAsyncLifetime
     private void Handle(int skill, byte lockValue)
     {
         _handler.Handle(_session, new() { Skill = skill, Lock = lockValue });
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

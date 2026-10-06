@@ -125,11 +125,6 @@ public sealed class DeathServiceTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Kill_AnNpc_LeavesItsCorpseWhereItStood_WithItsBodyItsFacingItsHueAndItsName()
     {
@@ -898,5 +893,10 @@ public sealed class DeathServiceTests : IAsyncLifetime
         _items.Add([item]);
 
         return item;
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

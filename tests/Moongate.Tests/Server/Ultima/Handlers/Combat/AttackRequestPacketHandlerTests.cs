@@ -28,11 +28,6 @@ public sealed class AttackRequestPacketHandlerTests : IAsyncLifetime
         Assert.True(_fixture.Mobiles.TryGet(new Serial(3), out _boris!));
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Handle_TellsTheCombatServiceToAttackTheTarget()
     {
@@ -75,5 +70,10 @@ public sealed class AttackRequestPacketHandlerTests : IAsyncLifetime
     private AttackRequestPacketHandler Create()
     {
         return new(_fixture.Mobiles, _combat, _fixture.Sender);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

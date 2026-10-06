@@ -63,13 +63,13 @@ public sealed class SkillScriptServiceTests : IDisposable
         Assert.Empty(_engine.MemberCalls);
     }
 
-    public void Dispose()
-    {
-        _scripts.Dispose();
-    }
-
     private SkillScriptService Create()
     {
         return new(_engine, new StubGameLoop(), new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+    }
+
+    public void Dispose()
+    {
+        _scripts.Dispose();
     }
 }

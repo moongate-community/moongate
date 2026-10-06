@@ -42,7 +42,7 @@ public sealed class EnumNameUtilsTests
     public void Format_ZeroFlags_UsesTheZeroNameOrAnEmptyString()
     {
         Assert.Equal("none", EnumNameUtils.Format(TileFlagType.None));
-        Assert.Equal(string.Empty, EnumNameUtils.Format(default(MovementAbilityType)));
+        Assert.Equal(string.Empty, EnumNameUtils.Format(default(FlagsWithoutZero)));
     }
 
     [Fact]
@@ -110,5 +110,12 @@ public sealed class EnumNameUtilsTests
     {
         Assert.True(EnumNameUtils.TryParse<MusicType>(text, out var value));
         Assert.Equal(MusicType.Mountn_a, value);
+    }
+
+    [Flags]
+    private enum FlagsWithoutZero : byte
+    {
+        One = 1,
+        Two = 2
     }
 }

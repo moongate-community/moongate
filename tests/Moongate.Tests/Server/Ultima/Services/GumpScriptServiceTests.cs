@@ -47,13 +47,13 @@ public sealed class GumpScriptServiceTests : IDisposable
         Assert.Empty(_engine.MemberCalls);
     }
 
-    public void Dispose()
-    {
-        _scripts.Dispose();
-    }
-
     private GumpScriptService Create()
     {
         return new(_engine, new StubGameLoop(), new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
+    }
+
+    public void Dispose()
+    {
+        _scripts.Dispose();
     }
 }

@@ -146,14 +146,6 @@ public sealed class HuePickerServiceTests : IAsyncDisposable
         Assert.Equal([0x0026], _hues);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        if (_fixture is not null)
-        {
-            await _fixture.DisposeAsync();
-        }
-    }
-
     private void Record(GameSession session, int? hue)
     {
         _hues.Add(hue);
@@ -175,5 +167,13 @@ public sealed class HuePickerServiceTests : IAsyncDisposable
     private Task OnLoopAsync(Action action)
     {
         return _fixture.ExecuteOnLoopAsync(action);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_fixture is not null)
+        {
+            await _fixture.DisposeAsync();
+        }
     }
 }

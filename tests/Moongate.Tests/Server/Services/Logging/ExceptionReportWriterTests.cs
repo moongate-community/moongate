@@ -100,18 +100,6 @@ public sealed class ExceptionReportWriterTests : IDisposable
         Assert.Contains("````text", report, StringComparison.Ordinal);
     }
 
-    public void Dispose()
-    {
-        if (Directory.Exists(_directory))
-        {
-            Directory.Delete(_directory, true);
-        }
-        else if (File.Exists(_directory))
-        {
-            File.Delete(_directory);
-        }
-    }
-
     private ExceptionReportWriter Writer()
     {
         return new(_directory, "0.11.0", "Lilly");
@@ -137,6 +125,18 @@ public sealed class ExceptionReportWriterTests : IDisposable
         catch (T caught)
         {
             return caught;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_directory))
+        {
+            Directory.Delete(_directory, true);
+        }
+        else if (File.Exists(_directory))
+        {
+            File.Delete(_directory);
         }
     }
 }

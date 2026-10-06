@@ -350,11 +350,6 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Empty(_fixture.Sender.Sent);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Give_PutsANewItemInTheBackpack_AndShowsItToItsOwner()
     {
@@ -928,5 +923,10 @@ public sealed class ItemModuleTests : IAsyncLifetime
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

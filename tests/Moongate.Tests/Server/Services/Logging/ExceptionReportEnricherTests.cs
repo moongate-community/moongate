@@ -70,20 +70,20 @@ public sealed class ExceptionReportEnricherTests : IDisposable
         );
     }
 
-    public void Dispose()
-    {
-        if (Directory.Exists(_directory))
-        {
-            Directory.Delete(_directory, true);
-        }
-    }
-
     private Serilog.Core.Logger Logger()
     {
         return new LoggerConfiguration()
             .Enrich.With(new ExceptionReportEnricher(new ExceptionReportWriter(_directory, "0.11.0", "Lilly")))
             .WriteTo.Sink(_sink)
             .CreateLogger();
+    }
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_directory))
+        {
+            Directory.Delete(_directory, true);
+        }
     }
 
     private sealed class BlankException : Exception

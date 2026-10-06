@@ -199,13 +199,6 @@ public sealed class WeatherServiceTests : IAsyncLifetime
         Assert.Equal(3, Sent().Count);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _weather.StopAsync();
-        _container.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private async Task StartAsync(System.Random random, bool storms = false)
     {
         var map = new MapContent { Map = MapType.Felucca, Name = "Felucca", Weather = "rainy" };
@@ -251,5 +244,12 @@ public sealed class WeatherServiceTests : IAsyncLifetime
             .Where(pair => pair.packet is WeatherPacket)
             .Select(pair => (((WeatherPacket)pair.packet).Kind, _fixture.Sender.SentSessionIds[pair.index]))
             .ToList();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _weather.StopAsync();
+        _container.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

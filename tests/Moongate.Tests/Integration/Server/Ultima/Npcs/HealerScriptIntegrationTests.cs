@@ -165,14 +165,6 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         await _npcs.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void AGhostComingNear_IsOfferedTheGump_WithTheSoundAndTheSparkles()
     {
@@ -399,5 +391,13 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         }
 
         return directory!.FullName;
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

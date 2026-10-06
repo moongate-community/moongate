@@ -204,11 +204,6 @@ public sealed class UoxStartingItemsConverterTests : IDisposable
         Assert.Contains("--starting-items-destination needs --mobile-source", _error.ToString());
     }
 
-    public void Dispose()
-    {
-        _dirs.Dispose();
-    }
-
     private void WriteSources(string newbie)
     {
         _dirs.WriteSource(
@@ -263,5 +258,10 @@ public sealed class UoxStartingItemsConverterTests : IDisposable
     private List<StartingItemSet> ReadSets()
     {
         return TomlUtils.DeserializeFromFile<StartingItemsFile>(_dirs.StartingItemsDestinationPath)!.Set;
+    }
+
+    public void Dispose()
+    {
+        _dirs.Dispose();
     }
 }

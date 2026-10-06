@@ -79,11 +79,6 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Request_OnAHumanMobile_OffersItsPaperdoll()
     {
@@ -561,5 +556,10 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
         }
 
         return entry;
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }
