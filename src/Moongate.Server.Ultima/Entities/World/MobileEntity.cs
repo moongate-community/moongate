@@ -23,6 +23,11 @@ namespace Moongate.Server.Ultima.Entities.World;
 [Table(Name = "world.mobiles")]
 public class MobileEntity : IMoongateEntity
 {
+    /// <summary>
+    ///     The reported kills from which a player is a murderer, as ModernUO.
+    /// </summary>
+    public const int MurderKills = 5;
+
     [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
 
@@ -235,6 +240,26 @@ public class MobileEntity : IMoongateEntity
     public int Thirst { get; set; } = 20;
 
     /// <summary>
+    ///     The long-term murder count: the kills a victim reported. From five the player is a murderer and its name is red.
+    /// </summary>
+    public int Kills { get; set; }
+
+    /// <summary>
+    ///     The short-term murder count, which decays faster than the kills; from five a resurrection costs skills and stats.
+    /// </summary>
+    public int ShortTermMurders { get; set; }
+
+    /// <summary>
+    ///     When the kills lose one, in UTC; null when there are none.
+    /// </summary>
+    public DateTime? KillsDecayAt { get; set; }
+
+    /// <summary>
+    ///     When the short-term murders lose one, in UTC; null when there are none.
+    /// </summary>
+    public DateTime? ShortTermDecayAt { get; set; }
+
+    /// <summary>
     ///     Whether the mobile is hidden: the players do not see it, the staff does.
     /// </summary>
     public bool Hidden { get; set; }
@@ -257,12 +282,19 @@ public class MobileEntity : IMoongateEntity
     public bool Criminal { get; set; }
 
     /// <summary>
+    ///     Gets whether the mobile is a murderer: the kills reported against it reach <see cref="MurderKills" />. It is
+    ///     not a column: the count is what is saved.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public bool IsMurderer => Kills >= MurderKills;
+
+    /// <summary>
     ///     Gets the notoriety those who see the mobile are shown: its own, grey while it is a criminal, and a
     ///     murderer's red before that.
     /// </summary>
     [Column(IsIgnore = true)]
     public NotorietyType ShownNotoriety =>
-        Notoriety == NotorietyType.Murderer ? NotorietyType.Murderer :
+        Notoriety == NotorietyType.Murderer || IsMurderer ? NotorietyType.Murderer :
         Criminal ? NotorietyType.Criminal : Notoriety ?? NotorietyType.Innocent;
 
     /// <summary>
