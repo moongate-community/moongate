@@ -9,10 +9,11 @@ where `wander.lua` and `potion.lua` are listed.
 
 The distribution's `scripts/mobiles/monster.lua` is the script of the monsters that go for the players,
 after ModernUO's melee AI: it chases a player and fights it from beside it. A template takes it with
-`script_id = "monster"`; the undead of the graveyards do (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`,
-`spectre`, `lich`), and so the templates based on them. The wraith, the spectre and the lich are casters in
-ModernUO: they walk up and fight like the others until magic exists. A
-monster is in one of three states:
+`script_id = "monster"`; the creatures whose UOX3 `NPCAI` is evil, evil caster, fighter, caster or chaotic do (the
+orcs, the ogres, the lizardmen, the dragons, the undead and the other 200 or so templates and those based on
+them; [UOX3 migration](../uox3-migration.md)). The casters, among them the wraith, the spectre and the lich, are
+casters in ModernUO: they walk up and fight like the others until magic exists. The behaviour is the shared module
+[`common/creature.lua`](#commoncreaturelua), `creature.new({ hunts = true })`. A monster is in one of three states:
 
 | State | What it does | It ends when |
 | --- | --- | --- |
@@ -59,6 +60,24 @@ A guard that was called bears the prop `guard.summoned`: it came beside its crim
 already, so it stays on it in silence and does not stroll, and once that criminal is let go it arrests
 no other and waits to be sent away. What a guard is doing is kept in memory by its serial, not saved.
 The numbers (12, 24, the 10 seconds) are constants at the top of the file.
+
+## animal.lua and scared_animal.lua
+
+The animals, after ModernUO's animal AI, use the same module with `hunts = false`: they stroll in their home, rest now and then
+with their idle sound and a fidget, and never go for a player. `scripts/mobiles/animal.lua` (`script_id = "animal"`, the
+creatures whose UOX3 `NPCAI` is 6: bears, wolves and the like) fights back when it is hit, as a monster does.
+`scripts/mobiles/scared_animal.lua` (`script_id = "scared_animal"`, `NPCAI` 12) does not: a scared animal that is hit
+stops fighting and runs, up to twelve cells and ten seconds at most, away from whoever hit it, then strolls again. The
+combat service makes every hit NPC answer the blow, so the scared animal is told to stop at its next think.
+
+## common/creature.lua
+
+`scripts/common/creature.lua` is what the three scripts above share, taken with
+`local creature = require("common.creature")`. `creature.new(options)` gives the table a mobile script defines, with its
+`on_think`; the options are `hunts` (it goes for the players it sees) and `flees` (it runs from a blow instead of
+fighting back). A creature of your own takes it the same way: `mycreature = creature.new({ hunts = true })` in
+`scripts/mobiles/mycreature.lua`. A root whose scripts are replaced by hand needs `scripts/common/` too, or the creatures
+stop thinking.
 
 ## orione.lua and vega.lua
 

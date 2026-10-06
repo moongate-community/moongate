@@ -3,6 +3,7 @@ id = "base_animals"
 
 [[mobile]]
 id = "brownbear"
+script_id = "animal"
 name = "a bear"
 body = 167
 strength = "1d25+75"
@@ -113,6 +114,7 @@ death = 618
 
 [[mobile]]
 id = "cat"
+script_id = "animal"
 name = "a cat"
 body = 201
 skin_hue = "0x08FD-0x090E"
@@ -137,6 +139,7 @@ death = 109
 
 [[mobile]]
 id = "cougar"
+script_id = "animal"
 name = "a cougar"
 body = 63
 strength = "1d25+55"
@@ -184,6 +187,7 @@ death = 124
 
 [[mobile]]
 id = "dog"
+script_id = "animal"
 name = "a dog"
 body = 217
 skin_hue = "0x08FD-0x090E"
@@ -254,6 +258,7 @@ death = 162
 
 [[mobile]]
 id = "greywolf"
+script_id = "animal"
 name = "a grey wolf"
 body = 25
 skin_hue = 998
@@ -284,6 +289,7 @@ base_id = "greywolf"
 
 [[mobile]]
 id = "grizbear"
+script_id = "animal"
 name = "a grizzly bear"
 body = 212
 strength = "1d30+125"
@@ -330,6 +336,7 @@ death = 132
 
 [[mobile]]
 id = "hind"
+script_id = "scared_animal"
 name = "a hind"
 body = 237
 strength = "1d31+20"
@@ -439,6 +446,7 @@ death = 185
 
 [[mobile]]
 id = "panther"
+script_id = "animal"
 name = "a panther"
 body = 214
 strength = "1d25+60"
@@ -486,6 +494,7 @@ death = 200
 
 [[mobile]]
 id = "polarbear"
+script_id = "animal"
 name = "a polar bear"
 body = 213
 strength = "1d25+115"
@@ -509,6 +518,7 @@ death = 167
 
 [[mobile]]
 id = "rabbit"
+script_id = "scared_animal"
 name = "a rabbit"
 body = 205
 skin_hue = "0x08FD-0x090E"
@@ -579,6 +589,7 @@ death = 218
 
 [[mobile]]
 id = "snowleopard"
+script_id = "animal"
 name = "a snow leopard"
 body = 64
 skin_hue = 72
@@ -604,6 +615,7 @@ death = 119
 
 [[mobile]]
 id = "timberwolf"
+script_id = "animal"
 name = "a timber wolf"
 body = 225
 strength = "1d25+55"
@@ -628,6 +640,7 @@ death = 233
 
 [[mobile]]
 id = "whitewolf"
+script_id = "animal"
 name = "a white wolf"
 body = 37
 skin_hue = 906
@@ -653,6 +666,7 @@ death = 233
 
 [[mobile]]
 id = "silverwolf"
+script_id = "monster"
 name = "a silver wolf"
 body = 100
 strength = "1d25+95"
@@ -678,6 +692,7 @@ death = 233
 
 [[mobile]]
 id = "squirrel"
+script_id = "scared_animal"
 name = "a squirrel"
 body = 278
 strength = "1d7+43"
@@ -698,6 +713,7 @@ death = 203
 
 [[mobile]]
 id = "ferret"
+script_id = "scared_animal"
 name = "a ferret"
 body = 279
 strength = "1d8+40"

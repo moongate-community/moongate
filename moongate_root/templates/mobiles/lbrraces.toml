@@ -1,5 +1,6 @@
 [[mobile]]
 id = "jukawarrior"
+script_id = "monster"
 name = "a juka warrior"
 body = 764
 strength = "1d100+250"
@@ -31,6 +32,7 @@ items = ["0x143e", "0x0f62", "0x0df1"]
 
 [[mobile]]
 id = "jukalord"
+script_id = "monster"
 name = "a juka lord"
 body = 766
 strength = "1d100+400"
@@ -62,6 +64,7 @@ items = ["0x13b1"]
 
 [[mobile]]
 id = "jukamage"
+script_id = "monster"
 name = "a juka mage"
 body = 765
 strength = "1d100+200"
@@ -92,6 +95,7 @@ death = 652
 
 [[mobile]]
 id = "meereternal"
+script_id = "monster"
 name = "a meer eternal"
 body = 772
 strength = "1d90+415"
@@ -119,6 +123,7 @@ death = 188
 
 [[mobile]]
 id = "meerwarrior"
+script_id = "monster"
 name = "a meer warrior"
 body = 771
 strength = "1d15+85"
@@ -141,6 +146,7 @@ death = 348
 
 [[mobile]]
 id = "meercaptain"
+script_id = "monster"
 name = "a meer captain"
 body = 773
 strength = "1d15+95"
@@ -164,6 +170,7 @@ death = 788
 
 [[mobile]]
 id = "meermage"
+script_id = "monster"
 name = "a meer mage"
 body = 770
 strength = "1d31+169"
@@ -191,6 +198,7 @@ death = 788
 
 [[mobile]]
 id = "blackthornjuggernaut"
+script_id = "monster"
 name = "a blackthorn juggernaut"
 body = 768
 strength = "1d100+300"
@@ -217,6 +225,7 @@ death = 348
 
 [[mobile]]
 id = "betrayer"
+script_id = "monster"
 name = "a betrayer"
 body = 767
 strength = "1d100+400"

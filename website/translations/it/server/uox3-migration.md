@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"be57da8135f726136602b3ad2e0226cf37140d081894a077b4da9e71832832cf","title":"Migrare da UOX3"} -->
+<!-- translation: {"sourceHash":"3dd5bd66de3086c07d4c16c00312ba5d4f347e5784db2cef7f40ff09d79136fc","title":"Migrare da UOX3"} -->
 
 # Migrare da UOX3
 
@@ -227,12 +227,14 @@ come padri; ricevono maniche (`0x13cd`) e gambali (`0x13cb`) di cuoio.
 
 Un mobile per cui Moongate ha uno script riceve il suo `script_id`: un banchiere
 (`NPCAI=8`) riceve `banker` (`scripts/mobiles/banker.lua`), una guardia cittadina
-(`NPCAI=4`) riceve `guard` (`scripts/mobiles/guard.lua`), e i non morti dei cimiteri
-(`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`, `spectre`, `lich`) ricevono
-`monster` (`scripts/mobiles/monster.lua`); i template basati su di essi lo ricevono
-tramite `base_id`.
+(`NPCAI=4`) riceve `guard` (`scripts/mobiles/guard.lua`), le creature che attaccano i giocatori
+(`NPCAI=2` malvagio, `5` combattente, `10` incantatore, `11` incantatore malvagio e `88` caotico, e i non morti
+dei cimiteri per nome: `skeleton`, `zombie`, `ghoul`, `headless`, `wraith`, `spectre`, `lich`) ricevono `monster`
+(`scripts/mobiles/monster.lua`; gli incantatori combattono corpo a corpo finché non esisterà la magia), un animale
+(`NPCAI=6`) riceve `animal` (`scripts/mobiles/animal.lua`) e un animale pauroso (`NPCAI=12`) riceve `scared_animal`
+(`scripts/mobiles/scared_animal.lua`); i template basati su di essi ricevono lo script tramite `base_id`.
 
-Scartati, senza un posto ancora: resto dell'AI e del vagabondaggio (`NPCAI`,
+Scartati, senza un posto ancora: resto dell'AI e del vagabondaggio (gli altri valori di `NPCAI`,
 `NPCWANDER`, `FX*`, velocità, `FLEEAT`), abilità di addomesticamento e bardo (`TOTAME`,
 `CONTROLSLOTS`, `TOPROV`, `TOPEACE`), negozi (`SHOPKEEPER`, `SHOPLIST`), `PACKITEM`,
 `CARVE`, `FOOD`, `PRIV`, `SCRIPT` e gli altri tag senza un campo. L'esecuzione stampa

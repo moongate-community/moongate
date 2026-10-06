@@ -1,5 +1,6 @@
 [[mobile]]
 id = "basesavage"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "savage"
 body = 184
@@ -8,6 +9,7 @@ notoriety = "murderer"
 
 [[mobile]]
 id = "savageshaman"
+script_id = "monster"
 base_id = "basesavage"
 name = "savage shaman"
 body = 183

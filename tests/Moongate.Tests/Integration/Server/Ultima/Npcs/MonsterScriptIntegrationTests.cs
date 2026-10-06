@@ -121,6 +121,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
                           return Task.CompletedTask;
                       }
                   );
+        _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
         _scripts.Write("mobiles/monster.lua", File.ReadAllText(ShippedScript("mobiles/monster.lua")));
         var options = new ScriptEngineOptions
         {

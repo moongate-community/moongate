@@ -1,5 +1,6 @@
 [[mobile]]
 id = "corpser"
+script_id = "monster"
 name = "a corpser"
 body = 8
 strength = "1d25+155"
@@ -25,6 +26,7 @@ death = 356
 
 [[mobile]]
 id = "reaper"
+script_id = "monster"
 name = "a reaper"
 body = 47
 strength = "1d150+65"
@@ -54,6 +56,7 @@ death = 446
 
 [[mobile]]
 id = "swamptentacle"
+script_id = "monster"
 name = "a swamp tentacle"
 body = 66
 strength = "1d25+95"
@@ -80,6 +83,7 @@ death = 854
 
 [[mobile]]
 id = "whippingvine"
+script_id = "monster"
 name = "a whipping vine"
 body = 8
 strength = "1d50+250"
@@ -104,6 +108,7 @@ death = 356
 
 [[mobile]]
 id = "quagmire"
+script_id = "monster"
 name = "a quagmire"
 body = 789
 strength = "1d30+100"
@@ -128,6 +133,7 @@ death = 356
 
 [[mobile]]
 id = "bogthing"
+script_id = "monster"
 name = "a bog thing"
 body = 780
 strength = "1d100+800"
@@ -154,6 +160,7 @@ death = 361
 
 [[mobile]]
 id = "bogling"
+script_id = "monster"
 name = "a bogling"
 body = 779
 strength = "1d25+95"

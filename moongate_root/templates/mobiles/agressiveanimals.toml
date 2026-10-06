@@ -4,6 +4,7 @@ notoriety = "attackable"
 
 [[mobile]]
 id = "direwolf"
+script_id = "monster"
 name = "a dire wolf"
 body = 23
 strength = "1d25+95"
@@ -29,6 +30,7 @@ death = 233
 
 [[mobile]]
 id = "giantrat"
+script_id = "monster"
 name = "a giant rat"
 body = 215
 strength = "1d43+31"
@@ -55,6 +57,7 @@ death = 396
 
 [[mobile]]
 id = "gianttoad"
+script_id = "monster"
 name = "a giant toad"
 body = 80
 strength = "1d25+75"
@@ -81,6 +84,7 @@ death = 623
 
 [[mobile]]
 id = "scorpion"
+script_id = "monster"
 name = "a giant scorpion"
 body = 48
 skin_hue = 0
@@ -108,6 +112,7 @@ death = 401
 
 [[mobile]]
 id = "sewerrat"
+script_id = "monster"
 name = "a sewer rat"
 body = 238
 strength = 9
@@ -132,6 +137,7 @@ death = 208
 
 [[mobile]]
 id = "phoenix"
+script_id = "monster"
 name = "a phoenix"
 body = 5
 skin_hue = 1209
@@ -158,6 +164,7 @@ death = 147
 
 [[mobile]]
 id = "base_bakekitsune"
+script_id = "monster"
 base_id = "base_agressiveanimals"
 name = "a bake kitsune"
 body = 246

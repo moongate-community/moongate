@@ -1,5 +1,6 @@
 [[mobile]]
 id = "deepseaserpent"
+script_id = "monster"
 name = "a deep sea serpent"
 body = 145
 strength = "1d175+250"
@@ -49,6 +50,7 @@ death = 142
 
 [[mobile]]
 id = "kraken"
+script_id = "monster"
 name = "a kraken"
 body = 77
 skin_hue = 0
@@ -76,6 +78,7 @@ death = 850
 
 [[mobile]]
 id = "seaserpent"
+script_id = "monster"
 name = "a sea serpent"
 body = 150
 skin_hue = 649

@@ -1,5 +1,6 @@
 [[mobile]]
 id = "ettin"
+script_id = "monster"
 name = "an ettin"
 body = 2
 strength = "1d30+135"
@@ -37,6 +38,7 @@ death = 371
 
 [[mobile]]
 id = "ogre"
+script_id = "monster"
 name = "an ogre"
 body = 1
 strength = "1d30+165"
@@ -64,6 +66,7 @@ death = 431
 
 [[mobile]]
 id = "ogrelord"
+script_id = "monster"
 name = "an ogre lord"
 body = 84
 strength = "1d179+766"
@@ -90,6 +93,7 @@ death = 431
 
 [[mobile]]
 id = "arcticogrelord"
+script_id = "monster"
 name = "an arctic ogre lord"
 body = 135
 strength = "1d179+766"
@@ -116,6 +120,7 @@ death = 643
 
 [[mobile]]
 id = "troll"
+script_id = "monster"
 name = "a troll"
 body = 54
 strength = "1d30+175"
@@ -153,6 +158,7 @@ death = 465
 
 [[mobile]]
 id = "frosttroll"
+script_id = "monster"
 name = "a frost troll"
 body = 55
 strength = "1d39+226"
@@ -179,6 +185,7 @@ death = 465
 
 [[mobile]]
 id = "cyclops"
+script_id = "monster"
 name = "a cyclopean warrior"
 body = 75
 strength = "1d50+335"
@@ -206,6 +213,7 @@ death = 608
 
 [[mobile]]
 id = "titan"
+script_id = "monster"
 name = "a titan"
 body = 76
 strength = "1d50+535"

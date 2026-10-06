@@ -118,6 +118,7 @@ items = ["0x1410"]
 
 [[mobile]]
 id = "f_murderer_archmage"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Archmage"
@@ -209,6 +210,7 @@ items = ["0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress"]
 
 [[mobile]]
 id = "f_pirate"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Pirate"
@@ -253,6 +255,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "f_fighter"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Fighter"
@@ -296,6 +299,7 @@ items = ["0x170b_boots"]
 
 [[mobile]]
 id = "f_paladin"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Paladin"
@@ -344,6 +348,7 @@ items = ["0x1515_cloak"]
 
 [[mobile]]
 id = "f_warrior"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Warrior"
@@ -425,6 +430,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "f_brigand"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 gender = "female"
@@ -589,6 +595,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "f_thief"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Thief"
@@ -926,6 +933,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "f_ranger"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Ranger"
@@ -1155,6 +1163,7 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "f_golemcontroller"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "golem_controller"
 title = "the controller"
@@ -1197,6 +1206,7 @@ hue = 2117
 
 [[mobile]]
 id = "f_executioner"
+script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Executioner"
@@ -1242,6 +1252,7 @@ items = ["0x0f46"]
 
 [[mobile]]
 id = "f_chaosdragoon"
+script_id = "monster"
 base_id = "basehuman"
 name = "a chaos dragoon"
 gender = "female"
@@ -1297,6 +1308,7 @@ items = ["swampdragon"]
 
 [[mobile]]
 id = "f_chaosdragoonelite"
+script_id = "monster"
 base_id = "basehuman"
 name = "a chaos dragoon elite"
 gender = "female"

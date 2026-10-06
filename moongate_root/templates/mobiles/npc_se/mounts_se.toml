@@ -1,5 +1,6 @@
 [[mobile]]
 id = "hiryu_se"
+script_id = "monster"
 base_id = "base_hiryu"
 strength = "1d211+1199"
 dexterity = "1d101+169"
@@ -24,6 +25,7 @@ wrestling = "1d21+99"
 
 [[mobile]]
 id = "lesser_hiryu_se"
+script_id = "monster"
 base_id = "base_hiryu"
 strength = "1d111+299"
 dexterity = "1d101+169"

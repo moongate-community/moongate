@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0729db8a0fb99ff4f0dcadc23a2fe93b15c0a73264d374a13cb978e277c7c4cc","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"c60bbbc82109a6ddf9ed3427adce85e103e4fb0d6132ccc8bd17b105bf34fdf5","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -82,7 +82,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Armi e armature: danno, armatura, durabilità, resistenze | 🟡 | L'arma impugnata e l'armatura indossata da un giocatore determinano [tempi dei colpi, probabilità di colpire, danno e riduzione del danno subito](combat.md#weapons-and-armor); nessuna durabilità, parata, scudo o resistenza |
 | Parata | ❌ | |
 | Mosse speciali delle armi | ❌ | |
-| IA di combattimento degli NPC | 🟡 | `monster.lua`: i non morti dei cimiteri notano un giocatore, gli si avvicinano, lo combattono e fanno la guardia quando lo perdono; un NPC colpito risponde all'attacco |
+| IA di combattimento degli NPC | 🟡 | `monster.lua` su ogni creatura malvagia, combattente, incantatrice o caotica in UOX3 (circa 210 template): notano un giocatore, gli si avvicinano, lo combattono e fanno la guardia quando lo perdono, anche gli incantatori in corpo a corpo. Gli animali passeggiano e rispondono se colpiti, quelli paurosi fuggono. Niente arcieri, incantesimi o fuga con pochi punti vita |
 | Guardie nelle regioni sorvegliate | 🟡 | Un giocatore che dice "guards" fa arrivare una guardia accanto a ciascun criminale nelle vicinanze: appare, pronuncia la sua battuta e se ne va. Le guardie presenti nelle città notano autonomamente un criminale e lo raggiungono (`guard.lua`). Un NPC criminale viene ucciso con un colpo e lascia il cadavere; un giocatore criminale viene solo raggiunto, perché i giocatori non muoiono ancora |
 | Abilità speciali dei mostri | ❌ | |
 | Danno elementale e resistenze | ❌ | |

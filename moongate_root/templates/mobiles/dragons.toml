@@ -1,5 +1,6 @@
 [[mobile]]
 id = "graydragon"
+script_id = "monster"
 name = "a dragon"
 body = 12
 strength = "1d30+795"
@@ -44,6 +45,7 @@ base_id = "graydragon"
 
 [[mobile]]
 id = "graydrake"
+script_id = "monster"
 name = "a drake"
 body = 60
 strength = "1d30+400"
@@ -86,6 +88,7 @@ base_id = "graydrake"
 
 [[mobile]]
 id = "shadowwyrm"
+script_id = "monster"
 name = "a shadow wyrm"
 body = 106
 strength = "1d101+899"
@@ -115,6 +118,7 @@ death = 366
 
 [[mobile]]
 id = "whitewyrm"
+script_id = "monster"
 name = "a white wyrm"
 body = 49
 strength = "1d40+720"
@@ -143,6 +147,7 @@ death = 366
 
 [[mobile]]
 id = "ancientwyrm"
+script_id = "monster"
 name = "an ancient wyrm"
 body = 46
 strength = "1d101+1099"
@@ -172,6 +177,7 @@ death = 366
 
 [[mobile]]
 id = "wyvern"
+script_id = "monster"
 name = "a wyvern"
 body = 62
 strength = "1d39+201"
@@ -229,6 +235,7 @@ death = 366
 
 [[mobile]]
 id = "skeletaldragon"
+script_id = "monster"
 name = "a skeletal dragon"
 body = 104
 strength = "1d101+899"

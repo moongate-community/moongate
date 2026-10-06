@@ -1,5 +1,6 @@
 [[mobile]]
 id = "base_humanoid"
+script_id = "monster"
 notoriety = "attackable"
 
 [[mobile]]

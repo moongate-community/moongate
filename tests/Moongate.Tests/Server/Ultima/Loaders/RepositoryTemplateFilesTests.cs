@@ -323,6 +323,23 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedCreatures_UseTheScriptOfTheirKind()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots)).LoadDataAsync())
+                      .Entities.ToDictionary(t => t.Id);
+
+        // The creatures that go for the players, those that keep to themselves and those that run.
+        Assert.All(new[] { "orc", "skeleton", "ogre", "lizardman", "dragon" }, id => Assert.Equal("monster", mobiles[id].ScriptId));
+        Assert.Equal("scared_animal", mobiles["rabbit"].ScriptId);
+        Assert.Contains(mobiles.Values, template => template.ScriptId == "animal");
+        Assert.True(mobiles.Values.Count(template => template.ScriptId == "monster") > 200);
+    }
+
+    [Fact]
     public async Task ShippedHealers_UseTheHealerScript()
     {
         var directories = Directories();

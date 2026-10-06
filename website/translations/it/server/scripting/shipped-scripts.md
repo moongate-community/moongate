@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3d41ee94b4dba544c76f0d87e58830094b915ee1a8f524ab44ec80aa27f9acd4","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"40434453d3e5d817df083dc5c9602f4fd7d828c46d2b61fb9bae577e8b2793f0","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -11,10 +11,11 @@ dove sono elencati `wander.lua` e `potion.lua`.
 
 Il file `scripts/mobiles/monster.lua` della distribuzione è lo script dei mostri che attaccano i giocatori,
 seguendo l'IA corpo a corpo di ModernUO: insegue un giocatore e lo combatte standogli accanto. Un template lo adotta con
-`script_id = "monster"`; lo fanno i non morti dei cimiteri (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`,
-`spectre`, `lich`), e quindi i template basati su di essi. Wraith, spectre e lich sono incantatori in
-ModernUO: si avvicinano e combattono come gli altri finché non esisterà la magia. Un
-mostro si trova in uno di tre stati:
+`script_id = "monster"`; lo fanno le creature il cui `NPCAI` di UOX3 è malvagio, incantatore malvagio, combattente,
+incantatore o caotico (gli orchi, gli orchi giganti, i lucertoloni, i draghi, i non morti e gli altri 200 circa template
+e quelli basati su di essi; [migrazione da UOX3](../uox3-migration.md)). Gli incantatori, tra cui wraith, spectre e lich,
+sono incantatori in ModernUO: si avvicinano e combattono come gli altri finché non esisterà la magia. Il comportamento è il modulo
+condiviso [`common/creature.lua`](#commoncreaturelua), `creature.new({ hunts = true })`. Un mostro si trova in uno di tre stati:
 
 | Stato | Cosa fa | Termina quando |
 | --- | --- | --- |
@@ -61,6 +62,24 @@ Una guardia chiamata porta la prop `guard.summoned`: è già arrivata accanto al
 quindi resta su di lui in silenzio senza passeggiare, e quando quel criminale viene lasciato andare non arresta
 nessun altro e attende di essere mandata via. Ciò che una guardia sta facendo viene mantenuto in memoria per seriale, non salvato.
 I numeri (12, 24, i 10 secondi) sono costanti all'inizio del file.
+
+## animal.lua e scared_animal.lua
+
+Gli animali, secondo l'IA animale di ModernUO, usano lo stesso modulo con `hunts = false`: passeggiano nella propria casa, ogni tanto si riposano
+con il suono di inattività e un'animazione, e non attaccano mai un giocatore. `scripts/mobiles/animal.lua` (`script_id = "animal"`, le
+creature il cui `NPCAI` di UOX3 è 6: orsi, lupi e simili) reagisce quando viene colpito, come un mostro.
+`scripts/mobiles/scared_animal.lua` (`script_id = "scared_animal"`, `NPCAI` 12) no: un animale pauroso colpito
+smette di combattere e fugge, fino a dodici celle e al massimo dieci secondi, lontano da chi l'ha colpito, poi riprende a passeggiare. Il
+servizio di combattimento fa rispondere al colpo ogni NPC colpito, quindi l'animale pauroso riceve l'ordine di smettere al think successivo.
+
+## common/creature.lua
+
+`scripts/common/creature.lua` è ciò che i tre script sopra condividono, preso con
+`local creature = require("common.creature")`. `creature.new(options)` restituisce la tabella che uno script mobile definisce, con il suo
+`on_think`; le opzioni sono `hunts` (attacca i giocatori che vede) e `flees` (fugge da un colpo invece di
+rispondere). Una tua creatura lo prende allo stesso modo: `mycreature = creature.new({ hunts = true })` in
+`scripts/mobiles/mycreature.lua`. Una root i cui script sono sostituiti manualmente ha bisogno anche di `scripts/common/`, altrimenti le creature
+smettono di pensare.
 
 ## orione.lua e vega.lua
 

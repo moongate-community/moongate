@@ -1,5 +1,6 @@
 [[mobile]]
 id = "energyvortex_summon"
+script_id = "monster"
 name = "an energy vortex"
 body = 164
 skin_hue = 117
@@ -111,6 +112,7 @@ death = 282
 
 [[mobile]]
 id = "bladespirit_summon"
+script_id = "monster"
 name = "a blade spirit"
 body = 574
 strength = 150
