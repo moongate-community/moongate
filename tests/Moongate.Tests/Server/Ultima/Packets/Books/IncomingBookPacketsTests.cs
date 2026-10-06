@@ -55,6 +55,18 @@ public sealed class IncomingBookPacketsTests
         Assert.Empty(packet.Pages);
     }
 
+    // More pages in one packet than a book has: none is taken.
+    [Fact]
+    public void Pages_ThreeHundredPagesInOnePacket_CarryNoPages()
+    {
+        var body = "012C" + string.Concat(Enumerable.Range(1, 300).Select(page => page.ToString("X4") + "0000"));
+        var data = Convert.FromHexString("66" + (7 + body.Length / 2).ToString("X4") + Serial + body);
+
+        Assert.True(BookPagesRequestPacket.TryParse(data, out var packet));
+
+        Assert.Empty(packet.Pages);
+    }
+
     [Fact]
     public void Header_CarriesTheTitleAndTheAuthor()
     {

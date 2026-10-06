@@ -17,9 +17,9 @@ public static class BookPagination
     public const int MaxPages = 255;
 
     /// <summary>
-    ///     The most characters of a line: the client takes fewer than 80.
+    ///     The most characters of a line: the client takes fewer than 80, and a player writes that many.
     /// </summary>
-    public const int MaxLineLength = 78;
+    public const int MaxLineLength = 79;
 
     private const string PageBreak = "\n\n";
     private const string BlankLine = " ";

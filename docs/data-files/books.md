@@ -66,7 +66,7 @@ Its pages come from the saved text when it is opened:
 - Line ends at the end of the text add no line and no page.
 - A page holds 8 lines. A longer one, as a translated page often is, goes on in the page after it:
   nothing is cut.
-- A line of more than 78 characters is cut at a space.
+- A line of more than 79 characters is cut at a space.
 - A book holds 255 pages; a text that needs more does not open, and the log says so.
 - On the cover the title is cut to 60 bytes and the author to 30, as the client's fields hold.
 
@@ -96,19 +96,23 @@ writable = true
 pages = 20
 ```
 
-- `writable = true` makes the book one that the character carrying it writes in: its title, its
-  author and its pages, in the client's own book. Anyone else who may read it opens it read only,
+- `writable = true` makes the book one that the character carrying it writes in, in its backpack
+  or in its open bank box: its title, its author and its pages, in the client's own book. Anyone else who may read it opens it read only,
   and so does everybody while it lies on the ground. Hand it over and the new carrier writes.
 - `pages` is how many pages it has, 1 to 255; 20 when unset. A writable source needs no `content`:
   the book starts empty. It may have one, and then that text can be written over.
 - The client's limits hold: a title of 60 bytes, an author of 30, 8 lines a page, a line under 80
   characters. What does not fit them is not saved, and neither is a text that would pass the
   16,384 characters of a document.
-- With no title left, the item is called as its template is, `a book`.
+- With no title left, the item is called as its template is, `a book`. In a title or an author
+  `<`, `>` and `#` become `(`, `)` and `-`, as in ModernUO: the name shows on a tooltip.
 - What is written is saved on the item, as every document's text, and stays through a restart.
 - `writable` and `pages` are for a book item only, and not for a translation.
 
-The shipped `blank_book` is this source. Every new character gets one from
+The shipped `blank_book` is this source. **A root made before books existed must add the
+`readable_book` item to its `templates/items/books.toml` before `mgctl init` runs** (the steps are
+under [Books and parchments](#books-and-parchments)): `mgctl init` copies `blank_book.toml` into the
+root, and a book source without its item stops the startup. Every new character gets one from
 [`data/starting_items.toml`](starting-items.md), with its own name as the author; `.book
 blank_book` gives one to a character that already exists. A root that keeps its own
 `starting_items.toml` adds the entry by hand, to the common set:

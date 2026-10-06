@@ -215,6 +215,8 @@ public sealed class BookDocumentService : IBookDocumentService
             return false;
         }
 
+        title = Plain(title);
+        author = Plain(author);
         book.SetProp("book.title", title);
         book.SetProp("book.author", author);
         // With no title the book is called as its kind is.
@@ -248,7 +250,7 @@ public sealed class BookDocumentService : IBookDocumentService
             if (page.Number < 1 ||
                 page.Number > written.Count ||
                 lines.Count > BookPagination.LinesPerPage ||
-                lines.Any(line => line.Length > BookPagination.MaxLineLength + 1 || !IsLine(line)))
+                lines.Any(line => line.Length > BookPagination.MaxLineLength || !IsLine(line)))
             {
                 return false;
             }
@@ -271,7 +273,14 @@ public sealed class BookDocumentService : IBookDocumentService
 
     private static bool IsWritable(ItemEntity item)
     {
-        return item.GetProp(BookDocumentText.WritableProp, false);
+        return BookDocumentText.IsWritable(item);
+    }
+
+    // As ModernUO's FixHtml: a name a player writes is shown on a tooltip, where these would be markup or the number
+    // of a text of the client.
+    private static string Plain(string text)
+    {
+        return text.Replace('<', '(').Replace('>', ')').Replace('#', '-');
     }
 
     // A writable book it carries, on no cursor, and reachable as a reader reaches it: in an open bank, not a closed one.
@@ -295,7 +304,7 @@ public sealed class BookDocumentService : IBookDocumentService
     // The pages of the text, and for a writable book its blank ones up to the count it was made with.
     private static IReadOnlyList<IReadOnlyList<string>> Padded(ItemEntity item, IReadOnlyList<IReadOnlyList<string>> pages)
     {
-        var count = IsWritable(item) ? (int)Math.Clamp(item.GetProp(BookDocumentText.PagesProp, 0L), 0, BookPagination.MaxPages) : 0;
+        var count = IsWritable(item) ? Math.Clamp(BookDocumentText.PagesOf(item), 0, BookPagination.MaxPages) : 0;
 
         return pages.Count >= count ? pages : [.. pages, .. Enumerable.Repeat<IReadOnlyList<string>>([], count - pages.Count)];
     }

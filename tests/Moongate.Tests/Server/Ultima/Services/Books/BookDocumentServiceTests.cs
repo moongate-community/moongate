@@ -279,6 +279,85 @@ public sealed class BookDocumentServiceTests
         });
     }
 
+    // The longest line the client sends, 79 characters, is saved and read back as one line: a page of eight of
+    // them stays one page, and the page after it stays where it was.
+    [Fact]
+    public async Task SetPages_LinesOfTheLongestLength_ComeBackAsTheyWereWritten()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+        var full = Enumerable.Repeat(new string('x', 79), 8).ToArray();
+
+        await f.OnLoopAsync(() =>
+        {
+            Assert.True(f.Books.SetPages(blank, f.Player, [new(1, full), new(2, ["second page"])]));
+
+            Assert.True(BookPagination.TryPaginate(blank.GetProp("book.content", ""), out var pages));
+            Assert.Equal(full, pages[0]);
+            Assert.Equal(["second page"], pages[1]);
+            Assert.Equal(2, pages.Count);
+        });
+    }
+
+    // A bank that is closed is out of reach, for the pen as for the eye.
+    [Fact]
+    public async Task SetPages_ABookInTheWritersClosedBank_ChangesNothing()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            f.Player.AccountId = new(1);
+            var bank = new ItemEntity { Id = new(0x40003000), TemplateId = "backpack", ItemId = 0xE75, Amount = 1 };
+            bank.Equip(f.Player.Id, LayerType.Bank);
+            f.Items.Add([bank]);
+            f.Items.MoveToContainer(blank, bank.Id, new(10, 10));
+
+            Assert.False(f.Books.SetPages(blank, f.Player, [new(1, ["hidden"])]));
+            Assert.False(f.Books.SetHeader(blank, f.Player, "Hidden", "Me"));
+
+            Assert.Equal(("", "a book"), (blank.GetProp("book.content", "x"), blank.GetProp("book.title", "")));
+        });
+    }
+
+    // Props a script or the staff set wrongly: the book is simply not one to write in, and nothing is thrown out
+    // of the handler of a packet.
+    [Theory]
+    [InlineData("book.writable", "yes")]
+    [InlineData("book.pages", "many")]
+    public async Task ABookWhoseWritingPropsAreNotWhatTheyShouldBe_IsNotWritten_AndStillOpens(string prop, string value)
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            blank.SetProp(prop, value);
+
+            var written = f.Books.SetPages(blank, f.Player, [new(1, ["x"])]);
+            f.Books.SetHeader(blank, f.Other, "T", "A");
+
+            Assert.Equal(prop == "book.pages", written);
+            Assert.True(f.Books.Open(blank, f.Player));
+        });
+    }
+
+    // As ModernUO: what a player writes on the cover cannot be markup, nor the number of a text of the client.
+    [Fact]
+    public async Task SetHeader_MarkupAndClilocSigns_AreReplaced()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            Assert.True(f.Books.SetHeader(blank, f.Player, "#1042971", "<b>Aria</b>"));
+
+            Assert.Equal(("-1042971", "(b)Aria(/b)", "-1042971"), (blank.GetProp("book.title", ""), blank.GetProp("book.author", ""), blank.Name));
+        });
+    }
+
     // A request for a page is no edit.
     [Fact]
     public async Task SetPages_OnlyRequests_ChangeNothing()
