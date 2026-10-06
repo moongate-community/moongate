@@ -69,12 +69,20 @@ client cannot choose what it was not offered.
 
 A choice that fails any of these does nothing, and the player is told nothing.
 
+## The Enhanced Client's icons
+
+The Enhanced Client can choose an entry from an icon of its own, such as the bank on a banker's
+status bar, without showing the menu's list. It then names the entry by a fixed number instead of
+its place in the menu: 0x78 for `Open Bank Box`, 0x12D for `Tame`, 0x82 to 0x89 for the commands of
+a pet, and so on, as in ServUO. Moongate reads such a number as the entry of the menu it sent that
+shows that text, and checks the choice as any other: the icon works only for an entry the menu
+really has, that is not greyed out and is in range. Scripts need do nothing: an entry with the
+cliloc 3006105 is the one the bank icon chooses.
+
 ## Not built yet
 
 - The entries of systems still to come: buy and sell on a vendor, the stable, the commands of a pet,
   taming, the party.
-- The Enhanced Client's own icons for a vendor, which name an entry by a fixed number instead of its
-  place in the menu.
 - The old menus of item pictures and of questions (packet 0x7C).
 
 ## See also

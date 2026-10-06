@@ -340,7 +340,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Races | 🟡 | Human, elf and gargoyle bodies and looks; no racial gameplay |
 | Gumps | ✅ | XML layouts checked by an XSD, Lua scripts, gumps built in Lua, chained gumps, checked answers |
 | Menus | ❌ | |
-| Context menus | 🟡 | The [menu](context-menus.md) of a mobile or an item: Open Paperdoll and Open Backpack, and the entries a Lua script adds (`on_context_menu`, `on_context_menu_select`), such as the banker's Open Bank Box; the choice is checked against the menu sent. No vendor, pet, taming or party entries yet, nor the Enhanced Client's vendor icons |
+| Context menus | 🟡 | The [menu](context-menus.md) of a mobile or an item: Open Paperdoll and Open Backpack, and the entries a Lua script adds (`on_context_menu`, `on_context_menu_select`), such as the banker's Open Bank Box; the choice is checked against the menu sent. The Enhanced Client's own icons choose the entry with their text. No vendor, pet, taming or party entries yet: they come with those systems |
 | Buff bar | ❌ | |
 | Walk sequence and speed checks | ✅ | |
 | Weight and overloading | ✅ | What a mobile carries and may carry (40 and 3.5 a point of strength) is counted and shown; an overloaded player tires at every step |

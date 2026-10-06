@@ -144,6 +144,11 @@ public sealed class ContextMenuService : IContextMenuService
         var sent = session.Get(ContextMenuSessionKeys.Sent);
         session.Set(ContextMenuSessionKeys.Sent, null);
 
+        if (sent is not null)
+        {
+            index = PlaceOf(sent, index);
+        }
+
         if (sent is null ||
             sent.Target != target ||
             index < 0 ||
@@ -197,6 +202,31 @@ public sealed class ContextMenuService : IContextMenuService
         _use.Use(session, target);
 
         return true;
+    }
+
+    // The Enhanced Client names an entry chosen from one of its icons by a fixed number, which stands for a text:
+    // the place is that of the entry of the menu sent that shows it; none, when the menu has no such entry.
+    private static int PlaceOf(SentContextMenu sent, int index)
+    {
+        if (index < EnhancedClientMenuIndexes.First)
+        {
+            return index;
+        }
+
+        if (!EnhancedClientMenuIndexes.TryGetCliloc(index, out var cliloc))
+        {
+            return -1;
+        }
+
+        for (var place = 0; place < sent.Entries.Count; place++)
+        {
+            if (sent.Entries[place].Cliloc == cliloc)
+            {
+                return place;
+            }
+        }
+
+        return -1;
     }
 
     private void AddServerEntries(MobileEntity player, MobileEntity mobile, List<ContextMenuEntry> entries)

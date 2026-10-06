@@ -351,6 +351,46 @@ public sealed class ContextMenuServiceTests : IAsyncLifetime
         Assert.Equal([$"0x{stone.Id.Value:X8} on_context_menu_select 2 touch"], _itemScripts.Queued);
     }
 
+    // The Enhanced Client's own icons, such as the bank on a banker's status bar, name an entry by a fixed number
+    // instead of its place in the menu: 0x78 is "Open Bank Box", wherever the menu has it.
+    [Fact]
+    public void Select_AFixedIndexOfTheEnhancedClient_ChoosesTheEntryWithThatText()
+    {
+        _npcScripts.Result = ScriptResult.Completed([Entries(Entry("other", 3006150), Entry("bank", Bank, range: 12))]);
+        Assert.True(Request(_session, Banker));
+        _npcScripts.Calls.Clear();
+
+        Assert.True(Select(_session, Banker, 0x78));
+
+        Assert.Equal([$"Queue {Banker.Value} on_context_menu_select 2 bank"], _npcScripts.Calls);
+    }
+
+    // A fixed number chooses only what the menu offered, and only what can be chosen.
+    [Theory]
+    [InlineData("not offered")]
+    [InlineData("unknown number")]
+    [InlineData("greyed")]
+    [InlineData("out of range")]
+    public void Select_AFixedIndexOfTheEnhancedClient_ForWhatCannotBeChosen_RunsNothing(string what)
+    {
+        _npcScripts.Result = what switch
+        {
+            "greyed"       => ScriptResult.Completed([Entries(Entry("bank", Bank, enabled: false))]),
+            "out of range" => ScriptResult.Completed([Entries(Entry("bank", Bank, range: 2))]),
+            _              => ScriptResult.Completed([Entries(Entry("bank", Bank, range: 12))])
+        };
+        Assert.True(Request(_session, Banker));
+        _npcScripts.Calls.Clear();
+
+        // 0x12D is "Tame", which this menu does not have; 0x7FF is no number the client uses.
+        var index = what switch { "not offered" => 0x12D, "unknown number" => 0x7FF, _ => 0x78 };
+
+        Assert.False(Select(_session, Banker, index));
+
+        Assert.Empty(_npcScripts.Calls);
+        Assert.Empty(_use.Used);
+    }
+
     // The menu is good for one choice: a second one, or one with no menu, runs nothing.
     [Fact]
     public void Select_Twice_OrWithNoMenu_RunsNothingTheSecondTime()
