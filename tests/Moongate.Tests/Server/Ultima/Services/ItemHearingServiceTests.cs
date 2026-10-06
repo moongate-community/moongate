@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
@@ -30,7 +31,7 @@ public sealed class ItemHearingServiceTests
     [Fact]
     public void Heard_AScriptedItemInRange_RunsItsOnSpeechWithTheSpeakerAndTheText()
     {
-        Ground(0x40000010, 1600 + ItemHearingService.HearingRange, 1600);
+        Ground(0x40000010, 1600 + 15, 1600);
 
         _hearing.Heard(_aria, "om om om", [0x3B]);
 
@@ -40,12 +41,28 @@ public sealed class ItemHearingServiceTests
     [Fact]
     public void Heard_ItemsTooFarOrWithoutAScript_AreLeftAlone()
     {
-        Ground(0x40000010, 1600 + ItemHearingService.HearingRange + 1, 1600);
+        Ground(0x40000010, 1600 + 15 + 1, 1600);
         Ground(0x40000011, 1600, 1600, "gold");
 
         _hearing.Heard(_aria, "om om om");
 
         Assert.Empty(_scripts.Calls);
+    }
+
+    [Theory]
+    [InlineData(SpeechType.Whisper, 1)]
+    [InlineData(SpeechType.Emote, 15)]
+    [InlineData(SpeechType.Yell, 18)]
+    public void Heard_AWhisperAnEmoteOrAYell_ReachesTheItemsWithinItsOwnRange_WithItsType(SpeechType type, int range)
+    {
+        Ground(0x40000010, 1600 + range, 1600);
+        Ground(0x40000011, 1601 + range, 1600);
+
+        _hearing.Heard(_aria, "om", null, type);
+
+        var call = Assert.Single(_scripts.Calls);
+        Assert.StartsWith("0x40000010 on_speech 2 om", call);
+        Assert.EndsWith($" {(long)type}", call);
     }
 
     private void Ground(uint serial, int x, int y, string template = "keyword_teleporter")

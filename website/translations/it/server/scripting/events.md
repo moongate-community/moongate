@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"bde93f438adda472b5b9a526408af5d1967a706e1f728b55dd19ea60abf9a25b","title":"Eventi e timer"} -->
+<!-- translation: {"sourceHash":"eeeebe40888be5513f16859281b63ac46341cb2161d0526a4fcb65146095ee77","title":"Eventi e timer"} -->
 
 # Eventi e timer
 
@@ -37,7 +37,7 @@ events.off(handle) -- returns false when the handle is unknown
 | `character_created` | `serial`, `account_id`, `name`, `race` e `gender` (numeri di `RaceType` e `GenderType`), `map`, `x`, `y`, `z`. Generato dopo il salvataggio di un nuovo personaggio e dei suoi oggetti iniziali. |
 | `character_deletion_requested` | `serial`, `account_id`, `name`. Generato dopo che un giocatore chiede di eliminare un personaggio; resta ripristinabile fino alla rimozione. |
 | `character_entered_world` | `serial`, `account_id`, `name`, `map`, `x`, `y`, `z`. Generato dopo che un personaggio è entrato nel mondo e il login del client è stato completato. |
-| `player_say` | `serial`, `name`, `text`. Generato dopo che il personaggio di un giocatore ha detto qualcosa e i giocatori e NPC intorno lo hanno sentito; `text` è ciò che hanno sentito. Un comando (testo che inizia con un punto) non genera nulla. |
+| `player_say` | `serial`, `name`, `text`, `type`. Generato dopo che il personaggio di un giocatore ha detto qualcosa e i giocatori e NPC intorno lo hanno sentito; `text` è ciò che hanno sentito e `type` il modo in cui è stato detto, un numero come `SpeechType.Yell`. Un comando (testo che inizia con un punto) non genera nulla. |
 | `character_left_world` | `serial`, `account_id`, `name`, `map`, `x`, `y`, `z`. Generato dopo che un personaggio ha lasciato il mondo perché la sessione si è chiusa, una volta tentato il salvataggio. |
 | `player_region_changed` | `serial`, `name`, `previous`, `current`, `map`, `x`, `y`, `z`. Generato quando il personaggio di un giocatore cammina o viene teletrasportato da una regione a un'altra, o cambia mappa; `previous` e `current` sono i nomi delle regioni, `nil` fuori da ogni regione, e `previous` è anche `nil` quando il personaggio è appena entrato nel mondo |
 

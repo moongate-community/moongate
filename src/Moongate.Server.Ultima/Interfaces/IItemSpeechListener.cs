@@ -1,4 +1,5 @@
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Types.Speech;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
@@ -9,7 +10,12 @@ public interface IItemSpeechListener
 {
     /// <summary>
     ///     <paramref name="speaker" /> said <paramref name="text" /> aloud, with the speech keywords the client found in
-    ///     it; commands never reach it.
+    ///     it; commands never reach it. Only the items within the range of <paramref name="type" /> hear it.
     /// </summary>
-    void Heard(MobileEntity speaker, string text, IReadOnlyList<int>? keywords = null);
+    void Heard(
+        MobileEntity speaker,
+        string text,
+        IReadOnlyList<int>? keywords = null,
+        SpeechType type = SpeechType.Regular
+    );
 }

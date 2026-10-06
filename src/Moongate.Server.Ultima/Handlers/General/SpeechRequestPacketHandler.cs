@@ -12,6 +12,7 @@ using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Speech;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services.Internal;
@@ -22,13 +23,13 @@ using Serilog;
 namespace Moongate.Server.Ultima.Handlers.General;
 
 /// <summary>
-///     Routes normal speech to nearby players and dot-prefixed text to the in-game command system.
+///     Routes what a player says aloud, as an emote, in a whisper or in a yell to the players within its range, and
+///     dot-prefixed text to the in-game command system.
 /// </summary>
 public sealed class SpeechRequestPacketHandler
     : IAsyncPacketHandler<AsciiSpeechRequestPacket>,
         IAsyncPacketHandler<UnicodeSpeechRequestPacket>
 {
-    private const int SayRange = 15;
     private const int MaximumTextLength = 128;
 
     private static readonly Hue InformationHue = new(0x03B2);
@@ -94,7 +95,7 @@ public sealed class SpeechRequestPacketHandler
         CancellationToken cancellationToken
     )
     {
-        if (speech.Type != SpeechType.Regular ||
+        if (!speech.Type.IsSpoken ||
             string.IsNullOrWhiteSpace(speech.Text) ||
             speech.Text.Length > MaximumTextLength)
         {
@@ -110,6 +111,7 @@ public sealed class SpeechRequestPacketHandler
             return;
         }
 
+        var range = speech.Type.Range;
         GameSession? invoker = null;
         MobileEntity? said = null;
         var available = await context.RunOnGameLoopAsync(
@@ -154,7 +156,7 @@ public sealed class SpeechRequestPacketHandler
                     if (recipient.CharacterId.IsValid &&
                         _mobiles.TryGet(recipient.CharacterId, out var mobile) &&
                         mobile.Map == speaker.Map &&
-                        mobile.Location.InRange(speaker.Location, SayRange) &&
+                        mobile.Location.InRange(speaker.Location, range) &&
                         (speaker.IsDead || !speaker.IsHiddenFrom(recipient.CharacterId, recipient.AccountType)))
                     {
                         var heardAsIs = !speaker.IsDead || mobile.IsDead || recipient.AccountType >= AccountType.GameMaster;
@@ -170,8 +172,8 @@ public sealed class SpeechRequestPacketHandler
                     return;
                 }
 
-                _npcs?.Heard(speaker, text, speech.Keywords);
-                _items?.Heard(speaker, text, speech.Keywords);
+                _npcs?.Heard(speaker, text, speech.Keywords, speech.Type);
+                _items?.Heard(speaker, text, speech.Keywords, speech.Type);
                 _guards?.Heard(speaker, text, speech.Keywords);
                 said = speaker;
             },
@@ -181,7 +183,7 @@ public sealed class SpeechRequestPacketHandler
         // Off the loop, after everyone around heard it: scripts are told last (the player_say event).
         if (said is not null && _events is not null)
         {
-            await _events.PublishAsync(new PlayerSaidEvent(said, text), CancellationToken.None);
+            await _events.PublishAsync(new PlayerSaidEvent(said, text, speech.Type), CancellationToken.None);
         }
 
         if (!available || !command || invoker is null)

@@ -23,6 +23,7 @@ public sealed class UltimaScriptContainerExtensionsTests
         Assert.Contains(typeof(DiceModule), registry.ModuleTypes);
         Assert.Contains(typeof(DirectionType), registry.EnumTypes);
         Assert.Contains(typeof(SpeechKeywordType), registry.EnumTypes);
+        Assert.Contains(typeof(SpeechType), registry.EnumTypes);
     }
 
     [Fact]

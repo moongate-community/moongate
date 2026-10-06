@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e840a2fb7ec0f4a61283d0dec8b2e4986b187a0b7d1f7ef33cb54a1afd19919c","title":"Pacchetti e handler"} -->
+<!-- translation: {"sourceHash":"0df269eac693221bc04a843b94fe3cf32fe63555742a971da765d1177ebcadd2","title":"Pacchetti e handler"} -->
 
 # Pacchetti e handler
 
@@ -118,9 +118,11 @@ modalità, perché l'Enhanced Client lo invia anche al server di accesso:
 | `0xB1` | `GumpResponsePacket` | In ingresso | Variabile, minimo 23 | `GumpResponsePacketHandler`: consegna la risposta verificata al gump inviato al giocatore |
 | `0xBF` | `CloseGumpPacket` | In uscita | Variabile, 13 (sottocomando `0x04`) | — |
 
-Il parlato normale (`say`) raggiunge chi parla e gli altri personaggi giocanti entro 15
-caselle sulla stessa mappa. Sussurro, urlo, emote, chat globale e la finestra di chat
-separata non sono ancora supportati. Un `.` iniziale richiama il sistema dei comandi esistente
+Il parlato raggiunge chi parla e gli altri personaggi giocanti sulla stessa mappa entro
+la sua portata, come in ModernUO: 15 caselle a voce normale o come emote, 1 casella per un
+sussurro, 18 per un urlo. Il client sceglie il modo da ciò che il giocatore scrive (`; ` sussurra,
+`! ` urla, `: ` fa un emote) e il testo esce invariato, con il suo tipo. La chat globale e la
+finestra di chat separata non sono ancora supportate. Un `.` iniziale richiama il sistema dei comandi esistente
 in privato; `..` permette di scrivere un punto iniziale. Il parlato vuoto o superiore a 128 caratteri viene ignorato.
 
 `0xAD` viene letto in modo tollerante, come negli altri emulatori, perché un pacchetto rifiutato disconnette il

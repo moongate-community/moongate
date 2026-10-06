@@ -96,11 +96,55 @@ public sealed class SpeechRequestPacketHandlerTests
 
         await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello"), CancellationToken.None);
         await fixture.EnterSpeakerAsync();
-        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello", 8), CancellationToken.None);
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello", 1), CancellationToken.None);
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello", 6), CancellationToken.None);
         await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("   "), CancellationToken.None);
         await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(new string('a', 129)), CancellationToken.None);
 
         Assert.Empty(fixture.Sender.Sent);
+    }
+
+    [Theory]
+    [InlineData(SpeechType.Whisper, 1)]
+    [InlineData(SpeechType.Emote, 15)]
+    [InlineData(SpeechType.Yell, 18)]
+    public async Task Handle_AWhisperAnEmoteOrAYell_ReachesThePlayersWithinItsOwnRange_WithItsType(SpeechType type, int range)
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+        var near = await fixture.AddPlayerAsync(1001, 2, "Near", MapType.Trammel, 100 + range, 100);
+        var far = await fixture.AddPlayerAsync(1002, 3, "Far", MapType.Trammel, 101 + range, 100);
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello", (byte)type), CancellationToken.None);
+
+        Assert.Equal(2, fixture.Sender.Sent.Count);
+        Assert.Contains(near.SessionId, fixture.Sender.SentSessionIds);
+        Assert.DoesNotContain(far.SessionId, fixture.Sender.SentSessionIds);
+        Assert.All(
+            fixture.Sender.Sent,
+            packet =>
+            {
+                var message = Assert.IsType<UnicodeSpeechMessagePacket>(packet);
+                Assert.Equal("hello", message.Text);
+                Assert.Equal(type, message.Type);
+            }
+        );
+    }
+
+    [Fact]
+    public async Task Handle_AWhisperOrAYell_TellsTheNpcsTheItemsAndTheScriptsItsType()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("psst", 8), CancellationToken.None);
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hey", 9), CancellationToken.None);
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello"), CancellationToken.None);
+
+        SpeechType[] expected = [SpeechType.Whisper, SpeechType.Yell, SpeechType.Regular];
+        Assert.Equal(expected, fixture.Listener.Types);
+        Assert.Equal(expected, fixture.ItemListener.Types);
+        Assert.Equal(expected, fixture.Said.Select(said => said.Type));
     }
 
     [Fact]

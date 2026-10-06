@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 81 done, 🟡 50 partly done, ❌ 137 not built yet.
+**268 systems:** ✅ 82 done, 🟡 49 partly done, ❌ 137 not built yet.
 
-**Coverage: 30%** of the systems done, **40%** counting a partly done system as half.
+**Coverage: 31%** of the systems done, **40%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -258,7 +258,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Tips window | ❌ | |
 | Quest arrow and quest button | ❌ | |
 | Quests | ❌ | |
-| Speech modes: say, whisper, yell, emote | 🟡 | Local speech; no whisper or yell ranges |
+| Speech modes: say, whisper, yell, emote | ✅ | A whisper is heard 1 cell away, a yell 18, speech and emotes 15; NPC and item scripts are told how it was said |
 
 ## Economy
 

@@ -1,19 +1,18 @@
 using Lua;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.Speech;
 
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Lets the scripted items on the ground hear the players around them: each one within
-///     <see cref="HearingRange" /> cells runs
-///     <c>on_speech(serial, speaker, text, keywords)</c>, as ModernUO's items that
-///     handle speech, such as the teleporter that answers a word.
+///     Lets the scripted items on the ground hear the players around them: each one within the range of the speech
+///     (a whisper carries 1 cell, a yell 18) runs <c>on_speech(serial, speaker, text, keywords, type)</c>, as
+///     ModernUO's items that handle speech, such as the teleporter that answers a word.
 /// </summary>
 public sealed class ItemHearingService : IItemSpeechListener
 {
-    public const int HearingRange = SpeechService.SayRange;
-
     private const string SpeechFunction = "on_speech";
 
     private readonly ISectorService _sectors;
@@ -25,14 +24,19 @@ public sealed class ItemHearingService : IItemSpeechListener
         _scripts = scripts;
     }
 
-    public void Heard(MobileEntity speaker, string text, IReadOnlyList<int>? keywords = null)
+    public void Heard(
+        MobileEntity speaker,
+        string text,
+        IReadOnlyList<int>? keywords = null,
+        SpeechType type = SpeechType.Regular
+    )
     {
         // The list is the service's own copy: a script may move or delete items.
-        foreach (var item in _sectors.GetItemsInRange(speaker.Map, speaker.Location, HearingRange))
+        foreach (var item in _sectors.GetItemsInRange(speaker.Map, speaker.Location, type.Range))
         {
             if (_scripts.HasScript(item))
             {
-                _scripts.Run(item, SpeechFunction, (long)speaker.Id.Value, text, Table(keywords));
+                _scripts.Run(item, SpeechFunction, (long)speaker.Id.Value, text, Table(keywords), (long)type);
             }
         }
     }

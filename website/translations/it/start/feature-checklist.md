@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"05d7d84df665b2726dd5db7fb74ec3dbfca9dd6f71d185187a1d669e4acf6c56","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"549ebdaf60143862a8338c637b11bc5cdc2600800ae9b7eb65a3909ade5bfd4f","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**268 sistemi:** ✅ 81 completati, 🟡 50 parzialmente completati, ❌ 137 non ancora realizzati.
+**268 sistemi:** ✅ 82 completati, 🟡 49 parzialmente completati, ❌ 137 non ancora realizzati.
 
-**Copertura: 30%** dei sistemi completati, **40%** contando un sistema parzialmente completato come metà.
+**Copertura: 31%** dei sistemi completati, **40%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -260,7 +260,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Finestra dei suggerimenti | ❌ | |
 | Freccia e pulsante delle missioni | ❌ | |
 | Missioni | ❌ | |
-| Modalità del parlato: parlare, sussurrare, urlare, emote | 🟡 | Parlato locale; nessuna portata per sussurri o urla |
+| Modalità del parlato: parlare, sussurrare, urlare, emote | ✅ | Un sussurro si sente a 1 casella, un urlo a 18, parlato ed emote a 15; gli script di NPC e oggetti sanno come è stato detto |
 
 ## Economia
 

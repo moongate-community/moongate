@@ -93,6 +93,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         _container.AddScriptModule<MobileModule>();
         _container.RegisterScriptEnum<BankResultType>();
         _container.RegisterScriptEnum<SpeechKeywordType>();
+        _container.RegisterScriptEnum<SpeechType>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
                 {
@@ -156,6 +157,46 @@ public sealed class NpcScriptIntegrationTests : IDisposable
 
         Assert.Empty(_errors);
         Assert.Equal("Hello to you, 2", Assert.Single(_speech.Said).Text);
+    }
+
+    [Fact]
+    public async Task AWhisperOrAYell_IsHeardByTheNpcsWithinItsOwnRange_AndOnSpeechGetsItsType()
+    {
+        _scripts.Write(
+            "mobiles/greeter.lua",
+            """
+            greeter = {}
+
+            function greeter.on_speech(serial, speaker, text, keywords, type)
+                if type == SpeechType.Whisper then
+                    npc.say(serial, "a whisper")
+                elseif type == SpeechType.Yell then
+                    npc.say(serial, "a yell")
+                else
+                    npc.say(serial, "speech " .. type)
+                end
+            end
+            """
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = NewScripts(engine);
+        await scripts.StartAsync();
+        var hearing = new NpcHearingService(scripts, _sectors);
+
+        // The cat is five cells from Aria: too far for a whisper.
+        hearing.Heard(_aria, "psst", null, SpeechType.Whisper);
+        Assert.Empty(_speech.Said);
+
+        hearing.Heard(_aria, "hey", null, SpeechType.Yell);
+        hearing.Heard(_aria, "hello");
+        _aria.Location = new Point3D(1601, 1600, 0);
+        hearing.Heard(_aria, "psst", null, SpeechType.Whisper);
+        _aria.Location = new Point3D(1619, 1600, 0);
+        hearing.Heard(_aria, "hey", null, SpeechType.Yell);
+
+        Assert.Empty(_errors);
+        Assert.Equal(["a yell", "speech 0", "a whisper"], _speech.Said.Select(said => said.Text));
     }
 
     [Fact]

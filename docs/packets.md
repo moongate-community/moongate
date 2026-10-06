@@ -116,9 +116,11 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0xB1` | `GumpResponsePacket` | Incoming | Variable, minimum 23 | `GumpResponsePacketHandler`: hands the checked answer to the gump the player was sent |
 | `0xBF` | `CloseGumpPacket` | Outgoing | Variable, 13 (subcommand `0x04`) | — |
 
-Normal speech (`say`) reaches the speaker and other player characters within 15
-tiles on the same map. Whisper, yell, emote, global chat and the separate chat
-window are not supported yet. A leading `.` invokes the existing command system
+Speech reaches the speaker and the other player characters on the same map within
+its range, as in ModernUO: 15 tiles aloud or as an emote, 1 tile for a whisper, 18
+for a yell. The client chooses the way from what the player types (`; ` whispers,
+`! ` yells, `: ` emotes) and the text goes out unchanged, with its type. Global chat
+and the separate chat window are not supported yet. A leading `.` invokes the existing command system
 privately; `..` escapes one dot. Empty or over-128-character speech is ignored.
 
 `0xAD` is read leniently, as in the other emulators, since a refused packet disconnects the

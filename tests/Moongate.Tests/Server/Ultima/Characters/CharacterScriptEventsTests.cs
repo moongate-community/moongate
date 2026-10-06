@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -66,14 +67,14 @@ public sealed class CharacterScriptEventsTests
     }
 
     [Fact]
-    public void PlayerSay_MapsSerialNameAndText()
+    public void PlayerSay_MapsSerialNameTextAndType()
     {
         var character = new MobileEntity { Id = new(0x0002), AccountId = new Serial(42), Name = "Aria" };
 
-        var fields = CharacterScriptEvents.PlayerSay(new PlayerSaidEvent(character, "hello there"));
+        var fields = CharacterScriptEvents.PlayerSay(new PlayerSaidEvent(character, "hello there", SpeechType.Yell));
 
         Assert.Equal(
-            new Dictionary<string, object?> { ["serial"] = 2L, ["name"] = "Aria", ["text"] = "hello there" },
+            new Dictionary<string, object?> { ["serial"] = 2L, ["name"] = "Aria", ["text"] = "hello there", ["type"] = 9L },
             fields
         );
     }
