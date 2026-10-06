@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Ultima.Handlers.Books;
 using Moongate.Server.Ultima.Handlers.BulletinBoards;
 using Moongate.Server.Ultima.Handlers.Characters;
 using Moongate.Server.Ultima.Handlers.General;
@@ -90,10 +91,13 @@ public static class UltimaPacketsContainerExtensions
         RegisterIgnoredPacket<OpenChatWindowPacket>(container);
         RegisterIgnoredPacket<ClientTypePacket>(container);
         RegisterIgnoredPacket<PublicHouseContentPacket>(container);
-        // Books are read only: what the client sends about one is recognised and dropped.
-        RegisterIgnoredPacket<BookPagesRequestPacket>(container);
-        RegisterIgnoredPacket<BookHeaderChangePacket>(container);
-        RegisterIgnoredPacket<OldBookHeaderChangePacket>(container);
+        // What a player wrote in a book: its pages, its title and its author.
+        container.RegisterIncomingPacket<BookPagesRequestPacket>();
+        container.RegisterPacketHandler<BookPagesRequestPacket, BookEditPacketHandler>();
+        container.RegisterIncomingPacket<BookHeaderChangePacket>();
+        container.RegisterPacketHandler<BookHeaderChangePacket, BookEditPacketHandler>();
+        container.RegisterIncomingPacket<OldBookHeaderChangePacket>();
+        container.RegisterPacketHandler<OldBookHeaderChangePacket, BookEditPacketHandler>();
         container.RegisterAsyncPacketHandler<DeleteCharacterPacket, DeleteCharacterPacketHandler>();
         container.RegisterAsyncPacketHandler<CreateCharacterPacket, CreateCharacterPacketHandler>();
         container.RegisterAsyncPacketHandler<CreateCharacterEnhancedPacket, CreateCharacterEnhancedPacketHandler>();

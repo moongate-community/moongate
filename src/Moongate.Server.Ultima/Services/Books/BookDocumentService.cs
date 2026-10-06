@@ -1,3 +1,4 @@
+using System.Text;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Types.Books;
@@ -178,7 +179,7 @@ public sealed class BookDocumentService : IBookDocumentService
                 return false;
             }
 
-            pages = new(item.Id, paginated);
+            pages = new(item.Id, Padded(item, paginated));
         }
         catch (ArgumentException)
         {
@@ -187,9 +188,116 @@ public sealed class BookDocumentService : IBookDocumentService
             return false;
         }
 
-        var header = new BookHeaderPacket(item.Id, pages.PageCount, item.GetProp("book.title", item.Name ?? ""), item.GetProp("book.author", ""));
+        // Whoever carries a writable book writes in it; anyone else who may read it reads it.
+        var writable = IsWritable(item) && _items.GetOwner(item) == session.CharacterId;
+        var header = new BookHeaderPacket(
+            item.Id,
+            pages.PageCount,
+            item.GetProp("book.title", item.Name ?? ""),
+            item.GetProp("book.author", ""),
+            writable
+        );
 
         return _sender.TrySend(session.SessionId, header) && _sender.TrySend(session.SessionId, pages);
+    }
+
+    public bool SetHeader(ItemEntity book, MobileEntity writer, string title, string author)
+    {
+        ArgumentNullException.ThrowIfNull(title);
+        ArgumentNullException.ThrowIfNull(author);
+
+        if (!CanWrite(writer, book) ||
+            !IsLine(title) ||
+            !IsLine(author) ||
+            Encoding.UTF8.GetByteCount(title) > BookHeaderPacket.TitleBytes ||
+            Encoding.UTF8.GetByteCount(author) > BookHeaderPacket.AuthorBytes)
+        {
+            return false;
+        }
+
+        book.SetProp("book.title", title);
+        book.SetProp("book.author", author);
+        // With no title the book is called as its kind is.
+        book.Name = string.IsNullOrWhiteSpace(title) ? null : title;
+        _handling.Refresh(book);
+
+        return true;
+    }
+
+    public bool SetPages(ItemEntity book, MobileEntity writer, IReadOnlyList<BookPageEdit> pages)
+    {
+        ArgumentNullException.ThrowIfNull(pages);
+
+        if (!CanWrite(writer, book) ||
+            !BookPagination.TryPaginate(book.GetProp("book.content", ""), out var saved))
+        {
+            return false;
+        }
+
+        var written = Padded(book, saved).ToList();
+        var changed = false;
+
+        foreach (var page in pages)
+        {
+            // The client asking for the page: nothing was written.
+            if (page.Lines is not { } lines)
+            {
+                continue;
+            }
+
+            if (page.Number < 1 ||
+                page.Number > written.Count ||
+                lines.Count > BookPagination.LinesPerPage ||
+                lines.Any(line => line.Length > BookPagination.MaxLineLength + 1 || !IsLine(line)))
+            {
+                return false;
+            }
+
+            written[page.Number - 1] = lines;
+            changed = true;
+        }
+
+        var content = BookPagination.Join(written);
+
+        if (!changed || !BookTextValidation.IsValidText(content, BookTextValidation.ContentLimit))
+        {
+            return false;
+        }
+
+        book.SetProp("book.content", content);
+
+        return true;
+    }
+
+    private static bool IsWritable(ItemEntity item)
+    {
+        return item.GetProp(BookDocumentText.WritableProp, false);
+    }
+
+    // A writable book it carries, on no cursor, and reachable as a reader reaches it: in an open bank, not a closed one.
+    private bool CanWrite(MobileEntity writer, ItemEntity book)
+    {
+        return _loop.IsOnLoopThread &&
+               IsLive(writer) &&
+               _sessions.TryGetByCharacterId(writer.Id, out var session) &&
+               IsBook(book) &&
+               IsWritable(book) &&
+               CanRead(session, writer, book) &&
+               _items.GetOwner(book) == writer.Id;
+    }
+
+    // One line of a book: no line end, tab or other control character.
+    private static bool IsLine(string text)
+    {
+        return !text.Any(char.IsControl);
+    }
+
+    // The pages of the text, and for a writable book its blank ones up to the count it was made with.
+    private static IReadOnlyList<IReadOnlyList<string>> Padded(ItemEntity item, IReadOnlyList<IReadOnlyList<string>> pages)
+    {
+        var count = IsWritable(item) ? (int)Math.Clamp(item.GetProp(BookDocumentText.PagesProp, 0L), 0, BookPagination.MaxPages) : 0;
+
+        return pages.Count >= count ? pages : [.. pages, .. Enumerable.Repeat<IReadOnlyList<string>>([], count - pages.Count)];
     }
 
     private bool OpenNow(GameSession session, MobileEntity reader, ItemEntity item)
