@@ -20,6 +20,20 @@ public sealed class StubSkillService : ISkillService
         return Result;
     }
 
+    public List<(MobileEntity Mobile, SkillType Skill, double Chance)> Chances { get; } = [];
+
+    /// <summary>
+    ///     What <see cref="CheckChance" /> answers.
+    /// </summary>
+    public bool ChanceResult { get; set; } = true;
+
+    public bool CheckChance(MobileEntity mobile, SkillType skill, double chance)
+    {
+        Chances.Add((mobile, skill, chance));
+
+        return ChanceResult;
+    }
+
     public int Total(MobileEntity mobile)
     {
         return 0;

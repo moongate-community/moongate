@@ -83,29 +83,46 @@ public sealed class SkillService : ISkillService
             return true;
         }
 
-        var chance = (value - min) / (max - min);
+        return Attempt(mobile, known, (value - min) / (max - min));
+    }
+
+    public bool CheckChance(MobileEntity mobile, SkillType skill, double chance)
+    {
+        if (!Enum.IsDefined(skill))
+        {
+            return false;
+        }
+
+        var known = mobile.Skills.FirstOrDefault(entry => entry.Skill == skill) ?? new MobileSkill { Skill = skill };
+
+        return Attempt(mobile, known, chance);
+    }
+
+    public int Total(MobileEntity mobile)
+    {
+        return mobile.Skills.Sum(skill => skill.Base);
+    }
+
+    // The roll of a try at a chance and what it teaches: the skill, and for a success the stats.
+    private bool Attempt(MobileEntity mobile, MobileSkill known, double chance)
+    {
         var success = chance >= _random.NextDouble();
 
         if (_config.GainEnabled && !mobile.IsNpc)
         {
-            if (Learns(mobile, known, chance, success))
+            if (Learns(mobile, known, Math.Clamp(chance, 0, 1), success))
             {
                 Gain(mobile, known);
             }
 
             // As ModernUO: whether or not the skill itself rose, a success can raise a stat.
-            if (success && _skills.Value.TryGetValue(skill, out var content))
+            if (success && _skills.Value.TryGetValue(known.Skill, out var content))
             {
                 GainStats(mobile, content);
             }
         }
 
         return success;
-    }
-
-    public int Total(MobileEntity mobile)
-    {
-        return mobile.Skills.Sum(skill => skill.Base);
     }
 
     // Whether this try teaches: always below ten points; after that the more room is left, and the harder the task,
