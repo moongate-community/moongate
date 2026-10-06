@@ -627,16 +627,70 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void ATickThatFails_IsLoggedAndTheTimerKeepsGoing()
+    public void AFighterThatThrows_IsStopped_AndTheOthersStillSwing()
     {
+        var troll = Npc(0x101, new Point3D(0, 1, 0));
+        _orc.Hits = 1;
+        _death.KillFailure = new InvalidOperationException("the death failed");
         _combat.Attack(_aria, _orc);
-        _death.Kills = false;
-        _fixture.Mobiles.LeaveWorld(new Serial(2));
+        _combat.Attack(troll, _aria);
 
         Tick();
-        Tick();
 
+        // The first fighter's kill threw: it is stopped, and the second one swung all the same (the troll has no
+        // tactics: 8 is 4, halved 2).
         Assert.Null(_combat.TargetOf(_aria));
+        Assert.Equal(28, _aria.Hits);
+    }
+
+    [Fact]
+    public void Attack_AnInvulnerableTarget_IsRefused()
+    {
+        _orc.Notoriety = NotorietyType.Invulnerable;
+
+        Assert.False(_combat.Attack(_aria, _orc));
+        Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public void Attack_ATargetWithNoHitPoints_AnNpcThatIsDying_IsRefused()
+    {
+        _orc.Hits = 0;
+
+        Assert.False(_combat.Attack(_aria, _orc));
+    }
+
+    [Fact]
+    public void ANpcThatIsKilled_FightsNoMore_WhileItFalls()
+    {
+        // It fights back after the first hit and is killed by the second; the dead stay in the world a while.
+        _orc.Hits = 8;
+        _random.Integers(4, 4);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+        Assert.Equal(_aria, _combat.TargetOf(_orc));
+        _clock.Advance(TimeSpan.FromSeconds(2.5));
+        Tick();
+
+        Assert.Equal([(_orc, (MobileEntity?)_aria)], _death.Killed);
+        Assert.Null(_combat.TargetOf(_orc));
+        var hits = _aria.Hits;
+        _clock.Advance(TimeSpan.FromSeconds(5));
+        Tick();
+        Assert.Equal(hits, _aria.Hits);
+    }
+
+    [Fact]
+    public void Attack_TheSameInnocentAgain_DoesNotRefreshTheCrime()
+    {
+        _orc.Notoriety = NotorietyType.Innocent;
+
+        _combat.Attack(_aria, _orc);
+        _combat.Attack(_aria, _orc);
+        _combat.Attack(_aria, _orc);
+
+        Assert.Equal(["criminal 2"], _crimes.Calls);
     }
 
     private void Tick()

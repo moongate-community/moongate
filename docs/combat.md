@@ -9,7 +9,8 @@ the death of a player and the combat events of Lua come later.
 A player clicks a mobile, which sends the attack request (`0x05`), or a script calls
 `combat.attack(attacker, target)`. The fight starts when:
 
-- both are in the world, on the same map, and the target is not the attacker;
+- both are in the world, on the same map, and the target is not the attacker, is alive and is not invulnerable
+  (`notoriety = "invulnerable"`);
 - the target is not hidden from the attacker, is within the view range (`ultima.world.view_range`) and in line
   of sight.
 
@@ -26,7 +27,7 @@ another map, after `combatant_seconds` (60) without a swing, or by `combat.stop`
 ## The swing
 
 Every tenth of a second a fighter whose delay is over, and whose target is within `max_range` tiles (1) and
-16 storeys of height, swings. The first swing is at once; the delay after each is
+15 units of height, swings. The first swing is at once; the delay after each is
 
 ```text
 15000 / ((stamina + 100) * speed) / global_attack_speed      seconds, speed 30 for fists

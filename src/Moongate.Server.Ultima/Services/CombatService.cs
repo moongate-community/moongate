@@ -150,7 +150,8 @@ public sealed class CombatService : ICombatService
         // A player who goes for an innocent that is not fighting it is a criminal, and the guards come.
         if (!attacker.IsNpc &&
             target.ShownNotoriety == NotorietyType.Innocent &&
-            TargetOf(target)?.Id != attacker.Id)
+            TargetOf(target)?.Id != attacker.Id &&
+            TargetOf(attacker)?.Id != target.Id)
         {
             _crimes.MakeCriminal(attacker);
         }
@@ -206,6 +207,8 @@ public sealed class CombatService : ICombatService
     private bool CanAttack(MobileEntity attacker, MobileEntity target)
     {
         if (attacker.Id == target.Id ||
+            target.Notoriety == NotorietyType.Invulnerable ||
+            target.Hits <= 0 ||
             !_mobiles.IsInWorld(attacker.Id) ||
             !_mobiles.IsInWorld(target.Id) ||
             attacker.Map != target.Map)
@@ -250,7 +253,16 @@ public sealed class CombatService : ICombatService
 
             foreach (var fighter in _fighters.Values.ToArray())
             {
-                Step(fighter, now);
+                // One that fails is stopped, so the others still swing and it does not fail at every tick.
+                try
+                {
+                    Step(fighter, now);
+                }
+                catch (Exception exception)
+                {
+                    _logger.Error(exception, "The fight of {Attacker} against {Target} failed", fighter.Attacker, fighter.Target);
+                    Stop(fighter.Attacker);
+                }
             }
         }
         catch (Exception exception)
@@ -267,6 +279,9 @@ public sealed class CombatService : ICombatService
             !_mobiles.IsInWorld(target.Id) ||
             attacker.Map != target.Map ||
             now >= fighter.ExpiresAt ||
+            // An NPC with no hit points is dying: the dead do not fight, nor are they fought.
+            attacker.IsNpc && attacker.Hits <= 0 ||
+            target.IsNpc && target.Hits <= 0 ||
             !attacker.IsNpc && !attacker.WarMode)
         {
             Stop(attacker);
@@ -361,6 +376,7 @@ public sealed class CombatService : ICombatService
         _state.SetStats(target, new MobileStatsChange { Hits = 0 });
         _death.Kill(target, attacker);
         Stop(attacker);
+        Stop(target);
     }
 
     // The NPC that is hit, or missed, fights the one who swings, if it fights no one; whoever hit it keeps it at it.
