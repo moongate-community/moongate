@@ -71,6 +71,12 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
         var held = session.Get(ItemSessionKeys.Held);
         session.Set(ItemSessionKeys.Held, null);
 
+        // A ghost keeps nothing in its hands: what it held went into its corpse.
+        if (_mobiles.TryGet(session.CharacterId, out var ghost) && ghost.IsDead)
+        {
+            return;
+        }
+
         if (held is not null && held.Item != packet.Item && _items.TryGet(held.Item, out var other))
         {
             // The hand is freed either way, so the held item must go back where it still is.

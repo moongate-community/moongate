@@ -19,4 +19,11 @@ public interface INpcSenseService
     ///     <paramref name="mobile" /> stepped from <paramref name="oldLocation" /> to where it stands, on the same map.
     /// </summary>
     void Moved(MobileEntity mobile, Point3D oldLocation);
+
+    /// <summary>
+    ///     Queues <c>on_mobile_killed(serial, killed, killer)</c> on each NPC within the sense range of a mobile that was
+    ///     killed, player or NPC, except the killed itself: <c>serial</c> is the NPC that is told, <c>killer</c> is nil
+    ///     when nobody killed it. Queued, not run.
+    /// </summary>
+    void Killed(MobileEntity killed, MobileEntity? killer);
 }

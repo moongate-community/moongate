@@ -423,6 +423,71 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SetDead_MakesAGhostHiddenFromTheLiving_TellsItsPlayerItDied_AndSetDeadFalseRaisesIt()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 400;
+
+        _service.SetDead(_aria, true);
+
+        Assert.True(_aria.IsDead);
+        Assert.Equal(402, _aria.Body);
+        Assert.True(_aria.Hidden);
+        Assert.Contains(_fixture.Sender.Sent, packet => packet is DeathStatusPacket);
+
+        _service.SetDead(_aria, false);
+
+        Assert.False(_aria.IsDead);
+        Assert.Equal(400, _aria.Body);
+        Assert.False(_aria.Hidden);
+    }
+
+    [Fact]
+    public void SetDead_AMobileThatWasHidden_IsHiddenAgainWhenRaised_AndOneThatWasNotIsNot()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 400;
+        _aria.Hidden = true;
+
+        _service.SetDead(_aria, true);
+        _service.SetWarMode(_aria, true);
+        _service.SetDead(_aria, false);
+
+        Assert.True(_aria.Hidden);
+        Assert.False(_aria.TryGetProp<bool>("death.hidden", out _));
+
+        _aria.Hidden = false;
+        _service.SetDead(_aria, true);
+        _service.SetDead(_aria, false);
+
+        Assert.False(_aria.Hidden);
+    }
+
+    [Fact]
+    public void SetDead_ForAnNpc_DoesNothing()
+    {
+        _aria.Body = 400;
+
+        _service.SetDead(_aria, true);
+
+        Assert.Equal(400, _aria.Body);
+    }
+
+    [Fact]
+    public void SetWarMode_OfAGhost_ShowsItToTheLivingWhileItIsOn()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 400;
+        _service.SetDead(_aria, true);
+
+        _service.SetWarMode(_aria, true);
+        Assert.False(_aria.Hidden);
+
+        _service.SetWarMode(_aria, false);
+        Assert.True(_aria.Hidden);
+    }
+
+    [Fact]
     public void SetFrozen_FreezesAndFrees_AndTellsTheViewOnceForEachChange()
     {
         _service.SetFrozen(_aria, true);

@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Data.Movement;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Ultima.Primitives;
 using Moongate.Ultima.Types;
 
@@ -21,6 +22,7 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class MobileStateService : IMobileStateService
 {
     private const int DefaultSkillCap = 1000;
+    private const string HiddenBeforeDeathProp = "death.hidden";
 
     private readonly IMobileService _mobiles;
     private readonly ISessionService _sessions;
@@ -288,6 +290,43 @@ public sealed class MobileStateService : IMobileStateService
         return true;
     }
 
+    public void SetDead(MobileEntity mobile, bool dead)
+    {
+        if (mobile.IsNpc || mobile.IsDead == dead)
+        {
+            return;
+        }
+
+        var body = dead ? GhostBodies.GhostOf(mobile.Body) : GhostBodies.LivingOf(mobile.Body);
+
+        if (body == mobile.Body)
+        {
+            return;
+        }
+
+        // Hidden first: the players around lose the figure that dies, and the ghost they may see is shown after. What
+        // it was before dying, such as a game master that hid, comes back with it.
+        if (dead)
+        {
+            mobile.SetProp(HiddenBeforeDeathProp, mobile.Hidden);
+        }
+
+        var wasHidden = !dead && mobile.GetProp(HiddenBeforeDeathProp, false);
+
+        if (!dead)
+        {
+            mobile.RemoveProp(HiddenBeforeDeathProp);
+        }
+
+        SetHidden(mobile, dead ? !mobile.WarMode : wasHidden);
+        SetLooks(mobile, body, null);
+
+        if (dead && _sessions.TryGetByCharacterId(mobile.Id, out var own))
+        {
+            _sender.TrySend(own.SessionId, new DeathStatusPacket());
+        }
+    }
+
     public void SetHidden(MobileEntity mobile, bool hidden)
     {
         if (mobile.Hidden == hidden)
@@ -322,6 +361,12 @@ public sealed class MobileStateService : IMobileStateService
     {
         var changed = mobile.WarMode != warMode;
         mobile.WarMode = warMode;
+
+        // A ghost is seen by the living only while it is in war mode.
+        if (mobile.IsDead)
+        {
+            SetHidden(mobile, !warMode);
+        }
 
         if (!_mobiles.IsInWorld(mobile.Id))
         {

@@ -451,6 +451,14 @@ public sealed class WorldViewService : IWorldViewService
         }
     }
 
+    public void OwnItemRemoved(MobileEntity owner, ItemEntity item)
+    {
+        if (_sessions.TryGetValue(owner.Id, out var viewer))
+        {
+            _sender.TrySend(viewer.SessionId, new RemoveEntityPacket(item.Id));
+        }
+    }
+
     private static IOutgoingPacket WorldItem(ItemEntity item, ClientVersion? version, AccountType account)
     {
         var spot = item.GroundLocation!.Value;

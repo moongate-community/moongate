@@ -664,7 +664,7 @@ public sealed class MobileModule
     /// <summary>
     ///     Kills an NPC, which dies where it stands and leaves its corpse; <c>mobile.kill(orc, user)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Kills an NPC: it leaves its corpse with what it carried and wore, the players around see and hear it die, its script runs on_death(npc, corpse, killer) and it leaves the world; killer is the serial of who did it, kept on the corpse, or nil. False for a player, which does not die yet, or a mobile not in the world.")]
+    [ScriptFunction(helpText: "Kills a mobile: it leaves its corpse with what it carried and wore and the players around see and hear it die. An NPC runs its on_death(npc, corpse, killer) and leaves the world; a player stays as a ghost. killer is the serial of who did it, kept on the corpse, or nil. False for a mobile not in the world, a player that is dead already, or a body without a ghost.")]
     public bool Kill(long serial, long? killer = null)
     {
         if (_death is null || !TryGetMobile(serial, out var mobile))
@@ -683,11 +683,25 @@ public sealed class MobileModule
     }
 
     /// <summary>
-    ///     Raises who died from its corpse; <c>mobile.resurrect(corpse)</c>.
+    ///     Tells whether the mobile is a dead player, a ghost; <c>mobile.is_dead(serial)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Raises the NPC a corpse is of, on a later turn of the game loop: one of the same template is born where the corpse lies, with the name and the facing of who died and the equipment of its template, and the corpse is gone with what was left inside. False, and nothing is started, for what is not an item with the corpse graphic; a corpse that names no template is left as it is.")]
+    [ScriptFunction(helpText: "True for a player that is dead, a ghost; false for anyone else, an NPC that dies leaves the world, or a serial that is not a mobile.")]
+    public bool IsDead(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) && mobile.IsDead;
+    }
+
+    /// <summary>
+    ///     Raises who died from its corpse, or a ghost where it stands; <c>mobile.resurrect(corpse)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Raises a dead player, a ghost, at once: its living body is back with 10 hit points, full stamina and no mana, and a death robe replaces its shroud; false for a player that is not dead. Given the corpse of an NPC instead, raises the NPC a corpse is of, on a later turn of the game loop: one of the same template is born where the corpse lies, with the name and the facing of who died and the equipment of its template, and the corpse is gone with what was left inside. False, and nothing is started, for what is not an item with the corpse graphic; a corpse that names no template is left as it is.")]
     public bool Resurrect(long corpse)
     {
+        if (_death is not null && TryGetMobile(corpse, out var ghost))
+        {
+            return _death.Resurrect(ghost);
+        }
+
         if (_death is null ||
             _items is null ||
             corpse is <= 0 or > uint.MaxValue ||

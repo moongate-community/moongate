@@ -52,7 +52,7 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 ## What a game master can do
 
 - Spawn and remove single NPCs: `.spawn`, `.remove`; kill one, which leaves its corpse with what it
-  carried: [`.kill`](commands/kill.md), see [Death of NPCs](death.md).
+  carried: [`.kill`](commands/kill.md), see [Death and resurrection](death.md).
 - See the spawn regions where they stand: `.spawns`; get a message when regions spawn.
 - Go to any spot of any map, or to one of the 558 named places, by name or from a gump that
   lists them by map and category: [`.go`](commands/go.md); walk through doors.

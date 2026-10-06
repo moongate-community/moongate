@@ -127,6 +127,47 @@ public sealed class NpcSenseServiceTests
     }
 
     [Fact]
+    public void Moved_AGhostInWarModeComingWithinRange_IsNotSensed()
+    {
+        Add(Npc(0x100, 1600, 1600));
+        var aria = Add(Player(2, 1609, 1600));
+        aria.Body = 0x0192;
+
+        Step(aria, 1608, 1600);
+
+        Assert.Empty(_scripts.Calls);
+    }
+
+    [Fact]
+    public void Killed_AMobile_IsToldToTheNpcsWithinRange_WithTheKiller()
+    {
+        Add(Npc(0x100, 1600, 1600));
+        Add(Npc(0x101, 1610, 1600));
+        Add(Npc(0x102, 1608, 1608));
+        var aria = Add(Player(2, 1601, 1600));
+        var killer = Add(Npc(0x103, 1601, 1601));
+
+        _senses.Killed(aria, killer);
+
+        // 0x101 is 9 cells away from the killed; the killer itself is told too, as who sees it happen.
+        Assert.Equal(
+            ["Queue 256 on_mobile_killed 2 259", "Queue 258 on_mobile_killed 2 259", "Queue 259 on_mobile_killed 2 259"],
+            _scripts.Calls.Order()
+        );
+    }
+
+    [Fact]
+    public void Killed_ByNobody_PassesNilForTheKiller_AndTheKilledNpcIsNotTold()
+    {
+        var orc = Add(Npc(0x100, 1600, 1600));
+        Add(Npc(0x101, 1601, 1600));
+
+        _senses.Killed(orc, null);
+
+        Assert.Equal(["Queue 257 on_mobile_killed 256 "], _scripts.Calls);
+    }
+
+    [Fact]
     public void Appeared_AnNpcNearAHiddenPlayer_DoesNotSenseIt()
     {
         var aria = Add(Player(2, 1601, 1600));
@@ -154,7 +195,7 @@ public sealed class NpcSenseServiceTests
 
     private static MobileEntity Npc(uint serial, int x, int y, MapType map = MapType.Trammel)
     {
-        return new() { Id = new Serial(serial), Name = "npc", TemplateId = "orc", Map = map, Location = new Point3D(x, y, 0) };
+        return new() { Id = new Serial(serial), Name = "npc", TemplateId = "orc", Map = map, Location = new Point3D(x, y, 0), Hits = 10 };
     }
 
     private static MobileEntity Player(uint serial, int x, int y)

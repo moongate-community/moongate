@@ -180,7 +180,7 @@
 30151 = "i resti di {0}"
 30152 = "Uccide l'NPC che scegli: muore dove si trova e lascia il suo cadavere."
 30153 = "{0} è morto."
-30154 = "I giocatori non possono ancora morire."
+30154 = "{0} non può morire."
 
 # Moongate: texts of the bulletin boards (30155-30157, to who posts or removes).
 30155 = "Devi aspettare {0} secondi prima di scrivere di nuovo."

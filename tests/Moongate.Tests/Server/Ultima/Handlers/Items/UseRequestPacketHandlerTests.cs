@@ -261,6 +261,32 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_AGhostUsingAScriptedItem_RunsItsOnGhostUse()
+    {
+        _scripts.Scripted.Add("dagger");
+        await StartAsync(Aria);
+        Die(Aria);
+
+        await UseAsync(_dagger.Id);
+
+        Assert.Equal(["0x40000003 on_ghost_use 2"], _scripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AGhostUsingAnItemWhoseScriptHasNoOnGhostUse_IsToldItIsDead()
+    {
+        _scripts.Scripted.Add("dagger");
+        _scripts.Result = ScriptResult.Missing;
+        await StartAsync(Aria);
+        Die(Aria);
+
+        await UseAsync(_dagger.Id);
+
+        var told = Assert.IsType<LocalizedMessagePacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(1019048, told.Cliloc);
+    }
+
+    [Fact]
     public async Task Handle_AScriptedBagWhoseScriptReturnsNothing_StillOpens()
     {
         _scripts.Scripted.Add("bag");
@@ -581,6 +607,13 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         _items.PlaceOnGround(chest, MapType.Felucca, new Point3D(x, 1000, 0));
 
         return (chest, ruby);
+    }
+
+    private void Die(Serial id)
+    {
+        Assert.True(_mobiles.TryGet(id, out var mobile));
+        mobile.AccountId = new Serial(0x42);
+        mobile.Body = 0x0193;
     }
 
     private static MobileEntity Mobile(Serial id, string name, int body, Point3D location)

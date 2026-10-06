@@ -208,7 +208,7 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30138 | Thou wilt regret thine actions, swine! | What a guard says when it comes for a criminal |
 | 30148, 30149 | You have been jailed for {0} days: {1}, Reason: {0} | What a prisoner reads when a reason was given, and the reason on its release note |
 | 30151 | the remains of {0} | The name of the corpse an NPC leaves |
-| 30152 to 30154 | Kills the NPC you target…, {0} is dead., Players cannot die yet. | The `kill` command |
+| 30152 to 30154 | Kills the NPC you target…, {0} is dead., {0} cannot die. | The `kill` command |
 | 30164 to 30167 | Raises the NPC whose corpse you target…, {0} is back., That is not a corpse., That corpse cannot be raised. | The `resurrect` command |
 | 30155 to 30157 | You must wait {0} seconds before posting again., That message is not yours., The board is busy: post again in a moment. | What a player reads at a [bulletin board](bulletin-boards.md) |
 | 30168 | You may not use skills in jail. | What a prisoner reads when it uses a [skill](skills.md) |

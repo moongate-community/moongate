@@ -5133,5 +5133,29 @@
     ],
     "notes": "The damage of a hit, which the client shows over the head of the one hit.",
     "handler": "CombatService: sent to the players in the fight when display_damage_numbers is on."
+  },
+  "0x2C:outgoing": {
+    "category": "Mobiles",
+    "tags": [
+      "Mobiles",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Status",
+        "type": "byte",
+        "size": "1",
+        "description": "2: the character is dead. The client shows its death and the ghost view; it is sent to the player of the character that dies."
+      }
+    ],
+    "notes": "Sent when a player dies, as ModernUO's DeathStatus. Coming back to life sends no packet of its own: the living body (0x20) and the flags tell the client."
   }
 }

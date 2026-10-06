@@ -88,6 +88,14 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
 
         _items.TryGet(packet.Item, out var item);
 
+        // A ghost lifts nothing.
+        if (_mobiles.TryGet(session.CharacterId, out var ghost) && ghost.IsDead)
+        {
+            Refuse(session, LiftRejectReasonType.CannotLift, item);
+
+            return;
+        }
+
         if (session.Get(ItemSessionKeys.Held) is not null)
         {
             Refuse(session, LiftRejectReasonType.AreHolding, item);

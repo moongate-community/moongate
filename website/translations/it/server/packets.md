@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5004e8f7ebdcdfc14c4c6ded5ddcd659973613c98181d56ef30f9a8dd345514a","title":"Pacchetti e handler"} -->
+<!-- translation: {"sourceHash":"e840a2fb7ec0f4a61283d0dec8b2e4986b187a0b7d1f7ef33cb54a1afd19919c","title":"Pacchetti e handler"} -->
 
 # Pacchetti e handler
 
@@ -72,6 +72,7 @@ modalità, perché l'Enhanced Client lo invia anche al server di accesso:
 | `0x2E` | `WornItemPacket` | In uscita | Fissa 15 | — |
 | `0x6E` | `MobileAnimationPacket` | In uscita | Fissa 14 | — |
 | `0xAF` | `DeathAnimationPacket` | In uscita | Fissa 13 | — |
+| `0x2C` | `DeathStatusPacket` | In uscita | Fissa 2 | — |
 | `0x89` | `CorpseEquipmentPacket` | In uscita | Variabile | — |
 | `0x6C` | `TargetCursorPacket` | In uscita | Fissa 19 | — |
 | `0x6C` | `TargetResponsePacket` | In ingresso | Fissa 19 | `TargetResponsePacketHandler`: completa il bersaglio in attesa del giocatore |
@@ -289,7 +290,7 @@ pacchetto). La tinta viene mascherata con `0x3FFF` e mantenuta tra 2 e 1001, com
 `ClipDyedHue` di ModernUO. Un client che chiude il selettore non invia nulla, quindi il callback potrebbe non essere mai eseguito: chi
 apre un selettore controlla di nuovo, nel callback, ciò che era vero all'apertura.
 
-`IDeathService` uccide un NPC ([Morte degli NPC](death.md)). Ai giocatori che lo vedono vengono inviati, in
+`IDeathService` uccide un NPC ([Morte e resurrezione](death.md)). Ai giocatori che lo vedono vengono inviati, in
 quest'ordine, il cadavere (`0xF3`, oppure `0x1A` a un client vecchio), la morte (`0xAF`: il mobile, il suo
 cadavere, quattro byte zero, come in ModernUO) e, quando l'NPC viene rimosso, `0x1D`. Il client riproduce
 l'animazione di morte del corpo autonomamente; il server non ne indica una. Un cadavere è la grafica `0x2006` e

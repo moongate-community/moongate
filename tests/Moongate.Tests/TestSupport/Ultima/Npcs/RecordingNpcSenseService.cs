@@ -16,6 +16,11 @@ public sealed class RecordingNpcSenseService : INpcSenseService
         Calls.Add($"Appeared {mobile.Id.Value}");
     }
 
+    public void Killed(MobileEntity killed, MobileEntity? killer)
+    {
+        Calls.Add($"Killed {killed.Id.Value} {killer?.Id.Value}");
+    }
+
     public void Moved(MobileEntity mobile, Point3D oldLocation)
     {
         Calls.Add($"Moved {mobile.Id.Value} {oldLocation.X},{oldLocation.Y},{oldLocation.Z}");

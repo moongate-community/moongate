@@ -124,6 +124,20 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_AGhost_LiftsNothing()
+    {
+        await StartAsync(Aria);
+        Assert.True(_mobiles.TryGet(Aria, out var aria));
+        aria.AccountId = new Serial(0x42);
+        aria.Body = 0x0192;
+
+        await LiftAsync(_dagger.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        AssertRefused(LiftRejectReasonType.CannotLift, _dagger);
+    }
+
+    [Fact]
     public async Task Handle_AnItemInAClosedBank_IsRefusedAndShownBack()
     {
         await StartAsync(Aria);

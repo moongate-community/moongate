@@ -156,6 +156,12 @@ public sealed class FatigueServiceTests : IAsyncLifetime
         Assert.True(await CanStepAsync(true));
         _aria.AccountId = new Serial(0x42);
 
+        // A ghost has no stamina and gets none back: it still walks and runs.
+        _aria.Body = 0x0192;
+        _aria.Stamina = 0;
+        Assert.True(await CanStepAsync(true));
+        _aria.Body = 0x0190;
+
         _config.FatigueEnabled = false;
         _aria.Stamina = 50;
         Assert.True(await CanStepAsync(true));

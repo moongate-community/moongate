@@ -123,4 +123,10 @@ public interface IWorldViewService
     ///     already took it off when it was picked up.
     /// </summary>
     void WornItemRemoved(MobileEntity wearer, ItemEntity item);
+
+    /// <summary>
+    ///     Tells the player of <paramref name="owner" />, and only it, that the item is gone from its character: a ghost
+    ///     loses its gear and its pack to its corpse, and its own client must not keep them.
+    /// </summary>
+    void OwnItemRemoved(MobileEntity owner, ItemEntity item);
 }

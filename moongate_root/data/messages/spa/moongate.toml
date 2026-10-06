@@ -180,7 +180,7 @@
 30151 = "los restos de {0}"
 30152 = "Mata al PNJ que selecciones: muere donde está y deja su cadáver."
 30153 = "{0} ha muerto."
-30154 = "Los jugadores todavía no pueden morir."
+30154 = "{0} no puede morir."
 
 # Moongate: texts of the bulletin boards (30155-30157, to who posts or removes).
 30155 = "Debes esperar {0} segundos antes de volver a publicar."

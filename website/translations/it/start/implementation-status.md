@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"65177a284d8a58f3f7fba1076613d89dc41f559bcfdaba9763d29d7bc7a09b55","title":"Stato dell'implementazione"} -->
+<!-- translation: {"sourceHash":"5c574d3f418100d87b076f62152c60201995c7f3a60f703c9d2bf9872b184239","title":"Stato dell'implementazione"} -->
 
 # Stato dell'implementazione
 
@@ -54,7 +54,7 @@ La [roadmap](roadmap.md) indica l'ordine in cui vengono realizzati i sistemi man
 ## Cosa può fare un game master
 
 - Generare e rimuovere singoli NPC: `.spawn`, `.remove`; ucciderne uno, che lascia un cadavere con ciò che
-  trasportava: [`.kill`](commands/kill.md), vedi [Morte degli NPC](death.md).
+  trasportava: [`.kill`](commands/kill.md), vedi [Morte e resurrezione](death.md).
 - Vedere le regioni di spawn nel luogo in cui si trova: `.spawns`; ricevere un messaggio quando le regioni generano NPC.
 - Raggiungere qualsiasi punto di qualsiasi mappa, o uno dei 558 luoghi nominati, per nome o da un gump che
   li elenca per mappa e categoria: [`.go`](commands/go.md); attraversare le porte.

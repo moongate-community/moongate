@@ -37,6 +37,7 @@ public sealed class DecorationServiceTests
             new StubDataLoaderService().With(
                 new ItemTemplate { Id = "decoration", ItemId = new Serial(0x0A28), Movable = false, Decays = false },
                 new ItemTemplate { Id = "decoration_clock", ItemId = new Serial(0x104B), Movable = false, Decays = false, ScriptId = "clock" },
+                new ItemTemplate { Id = "decoration_ankh", ItemId = new Serial(0x0003), Movable = false, Decays = false, ScriptId = "ankh" },
                 new ItemTemplate { Id = "bulletin_board", ItemId = new Serial(0x1E5E), Movable = false, Decays = false, ScriptId = "bulletin_board" },
                 new ItemTemplate { Id = "decoration_fillable", ItemId = new Serial(0x0E3C), Movable = false, Decays = false, ScriptId = "fillable" },
                 new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door" },
@@ -162,6 +163,22 @@ public sealed class DecorationServiceTests
 
         var board = Assert.Single(_items.Items);
         Assert.Equal(("bulletin_board", graphic), (board.TemplateId, board.ItemId));
+    }
+
+    [Theory]
+    [InlineData("AnkhWest", 0x0003, 0x0002, 0, 1)]
+    [InlineData("AnkhWest", 0x1D98, 0x1D97, 0, 1)]
+    [InlineData("AnkhNorth", 0x0004, 0x0005, 1, 0)]
+    [InlineData("AnkhNorth", 0x1E5D, 0x1E5C, 1, 0)]
+    public async Task DecorateAsync_AnAnkh_IsTwoPieces_BothOfTheAnkhTemplate(string type, int main, int other, int dx, int dy)
+    {
+        await Service(File("trammel", Block(type, main))).DecorateAsync(_progress);
+
+        Assert.Equal(2, _items.Items.Count);
+        Assert.All(_items.Items, item => Assert.Equal("decoration_ankh", item.TemplateId));
+        var first = _items.Items.Single(item => item.ItemId == main);
+        var second = _items.Items.Single(item => item.ItemId == other);
+        Assert.Equal((first.GroundLocation!.Value.X + dx, first.GroundLocation.Value.Y + dy), (second.GroundLocation!.Value.X, second.GroundLocation.Value.Y));
     }
 
     // Bounties do not exist yet: its board stays a thing to look at.

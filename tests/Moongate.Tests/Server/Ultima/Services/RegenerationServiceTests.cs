@@ -44,6 +44,20 @@ public sealed class RegenerationServiceTests
     }
 
     [Fact]
+    public void Tick_AGhost_GetsNothingBack()
+    {
+        _aria.Body = 0x0192;
+        _aria.Hits = 0;
+        _aria.Stamina = 0;
+
+        _regeneration.Tick(_aria);
+        Pass(60);
+        _regeneration.Tick(_aria);
+
+        Assert.Empty(_state.Stats);
+    }
+
+    [Fact]
     public void Tick_HitsBelowTheMaximum_ComeBackOneEveryElevenSeconds()
     {
         _aria.Hits = 50;

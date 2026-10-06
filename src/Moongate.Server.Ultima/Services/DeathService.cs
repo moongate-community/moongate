@@ -6,6 +6,7 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Death;
 using Moongate.Server.Ultima.Data.Internal.Death;
+using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services.Internal;
@@ -27,6 +28,21 @@ public sealed class DeathService : IDeathService
 
     private const string DeathFunction = "on_death";
     private const string FallTimer = "npc-fall";
+
+    /// <summary>
+    ///     The item template of the shroud a ghost wears, on its outer torso layer.
+    /// </summary>
+    public const string ShroudTemplate = "death_shroud";
+
+    /// <summary>
+    ///     The item template of the robe a player wears when it is raised.
+    /// </summary>
+    public const string RobeTemplate = "death_robe";
+
+    /// <summary>
+    ///     The hit points of a player raised, as ServUO and ModernUO.
+    /// </summary>
+    public const int ResurrectedHits = 10;
 
     /// <summary>
     ///     The action a human body falls dead with, forward: the one the client draws its corpse lying in.
@@ -65,6 +81,8 @@ public sealed class DeathService : IDeathService
     private readonly IContainerLayoutService? _layouts;
     private readonly ICrimeService? _crimes;
     private readonly ILocalizationService? _localization;
+    private readonly IMobileStateService? _state;
+    private readonly INpcSenseService? _senses;
     private readonly ILogger _logger;
 
     // Who is between its death and its removal: it does not die twice.
@@ -89,9 +107,13 @@ public sealed class DeathService : IDeathService
         IContainerLayoutService? layouts = null,
         ICrimeService? crimes = null,
         ILocalizationService? localization = null,
+        IMobileStateService? state = null,
+        INpcSenseService? senses = null,
         ILogger? logger = null
     )
     {
+        _state = state;
+        _senses = senses;
         _mobiles = mobiles;
         _items = items;
         _handling = handling;
@@ -112,7 +134,12 @@ public sealed class DeathService : IDeathService
 
     public bool Kill(MobileEntity mobile, MobileEntity? killer = null)
     {
-        if (!mobile.IsNpc || !_mobiles.IsInWorld(mobile.Id) || !_dying.Add(mobile.Id))
+        if (!mobile.IsNpc)
+        {
+            return KillPlayer(mobile, killer);
+        }
+
+        if (!_mobiles.IsInWorld(mobile.Id) || !_dying.Add(mobile.Id))
         {
             return false;
         }
@@ -131,6 +158,7 @@ public sealed class DeathService : IDeathService
             mobile.Map,
             killer?.Name ?? "nobody"
         );
+        _senses?.Killed(mobile, killer);
 
         if (DeathSound(mobile) is { } sound)
         {
@@ -157,11 +185,57 @@ public sealed class DeathService : IDeathService
         return true;
     }
 
+    public bool Resurrect(MobileEntity player)
+    {
+        if (_state is null || !player.IsDead || !_mobiles.IsInWorld(player.Id))
+        {
+            return false;
+        }
+
+        _state.SetDead(player, false);
+        _state.SetStats(
+            player,
+            new MobileStatsChange { Hits = Math.Min(ResurrectedHits, player.HitsMax), Stamina = player.StaminaMax, Mana = 0 }
+        );
+
+        foreach (var shroud in _items.GetWorn(player.Id).Where(item => item.TemplateId == ShroudTemplate).ToArray())
+        {
+            _view.WornItemRemoved(player, shroud);
+            _view.OwnItemRemoved(player, shroud);
+            _items.Absorb(shroud);
+        }
+
+        Wear(player, RobeTemplate, LayerType.OuterTorso);
+        _logger.Information("{Name:l} ({Serial:l}) is raised at {Location:l} of {Map}", player.Name, player.Id, player.Location, player.Map);
+
+        return true;
+    }
+
     public async Task<ResurrectResult> ResurrectAsync(Serial corpse, CancellationToken cancellationToken = default)
     {
         Raising? raising = null;
+        MobileEntity? player = null;
         var refusal = ResurrectResultType.NotACorpse;
-        await OnLoopAsync(() => refusal = TryBegin(corpse, out raising), cancellationToken);
+        await OnLoopAsync(
+            () =>
+            {
+                // A ghost is raised where it stands, without a corpse.
+                if (_mobiles.TryGet(corpse, out var ghost) && Resurrect(ghost))
+                {
+                    player = ghost;
+
+                    return;
+                }
+
+                refusal = TryBegin(corpse, out raising);
+            },
+            cancellationToken
+        );
+
+        if (player is not null)
+        {
+            return new(ResurrectResultType.Raised, player);
+        }
 
         if (raising is null)
         {
@@ -186,6 +260,75 @@ public sealed class DeathService : IDeathService
         await OnLoopAsync(() => risen = Rise(corpse, raising, npc), CancellationToken.None);
 
         return risen ? new(ResurrectResultType.Raised, npc) : new(ResurrectResultType.CannotBeRaised, null);
+    }
+
+    // A player dies where it stands, at once: the corpse with its gear and what its backpack held, then the ghost in
+    // its place. The backpack, the hair and what cannot be lost stay with it.
+    private bool KillPlayer(MobileEntity player, MobileEntity? killer)
+    {
+        if (_state is null ||
+            player.IsDead ||
+            GhostBodies.GhostOf(player.Body) == player.Body ||
+            !_mobiles.IsInWorld(player.Id))
+        {
+            return false;
+        }
+
+        if (player.Criminal)
+        {
+            _crimes?.Pardon(player);
+        }
+
+        _logger.Information(
+            "{Name:l} ({Serial:l}) died at {Location:l} of {Map}, killed by {Killer:l}",
+            player.Name,
+            player.Id,
+            player.Location,
+            player.Map,
+            killer?.Name ?? "nobody"
+        );
+        _senses?.Killed(player, killer);
+
+        if (DeathSound(player) is { } sound)
+        {
+            _speech.PlaySound(player, sound);
+        }
+
+        var corpse = MakeCorpse(player, killer);
+
+        if (corpse is not null)
+        {
+            _view.ItemAppeared(corpse);
+        }
+
+        _state.SetWarMode(player, false);
+        _view.MobileDied(player, corpse?.Id ?? default);
+        _state.SetStats(player, new MobileStatsChange { Hits = 0, Stamina = 0, Mana = 0 });
+        _state.SetDead(player, true);
+
+        // The robe of the last time would keep the shroud off: it is gone, as ModernUO deletes it.
+        foreach (var robe in _items.GetWorn(player.Id).Where(item => item.TemplateId == RobeTemplate).ToArray())
+        {
+            _view.OwnItemRemoved(player, robe);
+            _items.Absorb(robe);
+        }
+
+        Wear(player, ShroudTemplate, LayerType.OuterTorso);
+
+        return true;
+    }
+
+    // An item of a template put on the mobile and shown, when there is a template, a serial and the layer is free.
+    private void Wear(MobileEntity mobile, string template, LayerType layer)
+    {
+        if (_items.GetWorn(mobile.Id).Any(item => item.Layer == layer) || _handling.Make(template) is not { } item)
+        {
+            return;
+        }
+
+        _items.Add([item]);
+        _items.Equip(item, mobile.Id, layer);
+        _view.WornItemChanged(mobile, item);
     }
 
     // On the game loop: what the corpse says of who died, read once; the corpse is marked so nobody else raises it.
@@ -431,6 +574,12 @@ public sealed class DeathService : IDeathService
             }
 
             _items.MoveToContainer(item, corpse.Id, _layouts?.RandomGridPosition(CorpseProps.Graphic) ?? DefaultSpot);
+
+            // A player stays in the world: its own client must lose what it lost.
+            if (!mobile.IsNpc)
+            {
+                _view.OwnItemRemoved(mobile, item);
+            }
         }
 
         if (worn.Count > 0)

@@ -52,7 +52,6 @@ its own: it comes with the priority that gives it its rule.
 | Training dummies, archery buttes and dart boards (107 placed) | Skill gain (1.2) | 2 |
 | Locks and lockpicking of the treasure chests and of the town containers | Skill check (1.2) | 2 |
 | Traps of the chests, and the 490 traps placed in the dungeons | Damage (2.1) | 4 |
-| Ankhs that resurrect (44 placed) | Death (2.3) | 4 |
 | Wands in the treasure chests | Spells (4.3) | 7 |
 | Forges and anvils that craft | Crafting (5.2) | 8 |
 | Chess and checker boards and bounty boards (the [bulletin boards](bulletin-boards.md) work) | Chat and boards (6.3) | 9 |
@@ -103,7 +102,7 @@ written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has to
 | --- | --- | --- | --- |
 | 2.1 | 🟡 | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability. Done: a [fight](combat.md) with fists or a weapon, the swing timer, the hit by skill, the damage and the armor of an NPC or of what a player wears. Left: parry, archery, durability | The core loop of the game |
 | 2.2 | ❌ | **Aggressor lists** | Notoriety, guards and loot rights rest on them |
-| 2.3 | 🟡 | **Death, corpse, ghost, resurrection**; healer NPCs and shrines. Done: an NPC dies by `.kill` or `mobile.kill` and leaves its [corpse](death.md) with what it carried. Left: player death, ghosts, resurrection | Gives combat a result |
+| 2.3 | 🟡 | **Death, corpse, ghost, resurrection**; healer NPCs and shrines. Done: an NPC or a player dies by a fight, `.kill` or `mobile.kill` and leaves its [corpse](death.md) with what it carried; a player stays as a [ghost](death.md#death-of-a-player) and comes back at an ankh, by `.resurrect` or `mobile.resurrect`. Left: healers, murder counts and the loss of skills, looting rules, bones | Gives combat a result |
 | 2.4 | ❌ | **Bandages and healing** | Needed as soon as damage exists |
 | 2.5 | ❌ | **Combat events for Lua**: attack, hit, miss, damage, death, resurrect | Lets content change the rules |
 | 2.6 | ❌ | **Combat settings**: swing speed, damage rules, corpse decay | A shard owner expects to tune them |

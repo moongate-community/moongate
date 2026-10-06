@@ -69,6 +69,11 @@ public sealed class RecordingWorldViewService : IWorldViewService
     /// </summary>
     public List<MobileEntity> Mobiles { get; } = [];
 
+    public void OwnItemRemoved(MobileEntity owner, ItemEntity item)
+    {
+        Record($"OwnItemRemoved {owner.Id.Value} {item.Id.Value}");
+    }
+
     public void MobileFlagsChanged(MobileEntity mobile)
     {
         Mobiles.Add(mobile);

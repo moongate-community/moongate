@@ -11,7 +11,7 @@ namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
 ///     Kills the NPC the game master targets: it dies where it stands and leaves its corpse, as when something kills
-///     it. Players are refused: they do not die yet.
+///     it. A player dies too and stays as a ghost.
 /// </summary>
 public sealed class KillCommand : ICommandExecutor
 {
@@ -71,18 +71,13 @@ public sealed class KillCommand : ICommandExecutor
                     return;
                 }
 
-                if (!mobile.IsNpc)
-                {
-                    answer = _localization.Text(CommandMessages.PlayersCannotDie, "Players cannot die yet.");
-
-                    return;
-                }
-
                 var name = mobile.Name ?? "";
                 _mobiles.TryGet(session.CharacterId, out var killer);
                 answer = _death.Kill(mobile, killer)
                              ? _localization.Text(CommandMessages.Killed, "{0} is dead.", name)
-                             : _localization.Text(CommandMessages.NotAnNpc, "That is not an NPC.");
+                             : mobile.IsNpc
+                                 ? _localization.Text(CommandMessages.NotAnNpc, "That is not an NPC.")
+                                 : _localization.Text(CommandMessages.CannotDie, "{0} cannot die.", name);
             }
         );
         await _loop.PostAsync(work, context.CancellationToken);
