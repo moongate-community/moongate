@@ -4,7 +4,8 @@ namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
 ///     The guards of the guarded regions, called by voice as in ModernUO: a player that says "guards" brings a guard
-///     onto every criminal near it that stands in a guarded region. There is no combat yet, so the guard appears, says its line and leaves after a while. Called
+///     onto every criminal near it that stands in a guarded region. There is no combat yet, so the guard appears, says its line
+///     and leaves after a while. Called
 ///     on the game loop.
 /// </summary>
 public interface IGuardService

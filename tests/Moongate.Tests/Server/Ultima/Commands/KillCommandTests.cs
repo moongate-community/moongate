@@ -24,14 +24,18 @@ public sealed class KillCommandTests : IAsyncDisposable
     private readonly StubTargetService _targets = new();
     private readonly StubDeathService _death = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
+
     private readonly MobileEntity _staff = new()
     {
-        Id = new(2), Name = "Giachi", AccountId = new Serial(1002), Map = MapType.Felucca, Location = new Point3D(100, 100, 0)
+        Id = new(2), Name = "Giachi", AccountId = new Serial(1002), Map = MapType.Felucca,
+        Location = new Point3D(100, 100, 0)
     };
+
     private readonly MobileEntity _aria = new()
     {
         Id = new(3), Name = "Aria", AccountId = new Serial(1003), Map = MapType.Felucca, Location = new Point3D(101, 100, 0)
     };
+
     private readonly MobileEntity _orc = new()
     {
         Id = new(0x100), Name = "an orc", Map = MapType.Felucca, Location = new Point3D(102, 100, 0)

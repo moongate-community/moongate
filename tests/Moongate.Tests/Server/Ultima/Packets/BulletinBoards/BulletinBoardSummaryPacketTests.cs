@@ -13,7 +13,9 @@ public sealed class BulletinBoardSummaryPacketTests
     [Fact]
     public void Encode_AFirstMessage_HasNoThread_AndThreeStringsWithTheirLengthAndZero()
     {
-        var bytes = PacketCodec.Encode(new BulletinBoardSummaryPacket(Board, Message, Serial.Zero, "Aria", "Horse", "Oct 05, 2026"));
+        var bytes = PacketCodec.Encode(
+            new BulletinBoardSummaryPacket(Board, Message, Serial.Zero, "Aria", "Horse", "Oct 05, 2026")
+        );
 
         Assert.Equal(
             Convert.FromHexString(
@@ -29,7 +31,9 @@ public sealed class BulletinBoardSummaryPacketTests
     [Fact]
     public void Encode_AReply_NamesItsThread()
     {
-        var bytes = PacketCodec.Encode(new BulletinBoardSummaryPacket(Board, new Serial(0x40000011), Message, "Bruno", "Re: Horse", "Oct 06, 2026"));
+        var bytes = PacketCodec.Encode(
+            new BulletinBoardSummaryPacket(Board, new Serial(0x40000011), Message, "Bruno", "Re: Horse", "Oct 06, 2026")
+        );
 
         Assert.Equal(Convert.FromHexString("40000011" + "40000010"), bytes[8..16]);
     }
@@ -37,7 +41,9 @@ public sealed class BulletinBoardSummaryPacketTests
     [Fact]
     public void Encode_AnEmptyString_IsOneZero()
     {
-        var bytes = PacketCodec.Encode(new BulletinBoardSummaryPacket(Board, Message, Serial.Zero, "", "Horse", "Oct 05, 2026"));
+        var bytes = PacketCodec.Encode(
+            new BulletinBoardSummaryPacket(Board, Message, Serial.Zero, "", "Horse", "Oct 05, 2026")
+        );
 
         Assert.Equal([0x01, 0x00, 0x06], bytes[16..19]);
     }

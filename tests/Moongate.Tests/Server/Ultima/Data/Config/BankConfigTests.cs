@@ -22,7 +22,9 @@ public sealed class BankConfigTests
      InlineData(125, 60000, 0, 1_000_000, "ultima.bank.min_check"),
      InlineData(125, 60000, 5000, 4999, "ultima.bank.min_check"),
      InlineData(125, 60000, 5000, 2_000_000_001, "ultima.bank.max_check")]
-    public void Validate_AValueOutOfRange_NamesTheSetting(int items, int withdraw, int minCheck, int maxCheck, string setting)
+    public void Validate_AValueOutOfRange_NamesTheSetting(
+        int items, int withdraw, int minCheck, int maxCheck, string setting
+    )
     {
         var config = new BankConfig { MaxItems = items, MaxWithdraw = withdraw, MinCheck = minCheck, MaxCheck = maxCheck };
 

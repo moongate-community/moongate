@@ -23,7 +23,8 @@ using Npgsql;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Creates player characters: refuses a full account or a concurrent slot collision, picks a free slot, sanitizes other choices with
+///     Creates player characters: refuses a full account or a concurrent slot collision, picks a free slot, sanitizes other
+///     choices with
 ///     <see cref="CharacterCreationRules" />, and saves the character with its starting items in one transaction.
 /// </summary>
 public sealed class CharacterService : ICharacterService
@@ -142,7 +143,10 @@ public sealed class CharacterService : ICharacterService
     )
     {
         // The client names the character by its position in the list it was sent, laid out as for deletion.
-        var layout = CharacterListBuilder.Layout(await GetCharactersAsync(accountId, cancellationToken), _config.MaxPerAccount);
+        var layout = CharacterListBuilder.Layout(
+            await GetCharactersAsync(accountId, cancellationToken),
+            _config.MaxPerAccount
+        );
 
         if (listIndex < 0 || listIndex >= layout.Length || layout[listIndex] is not { } character)
         {
@@ -226,9 +230,9 @@ public sealed class CharacterService : ICharacterService
         }
 
         var used = (await GetCharactersAsync(character.AccountId.Value, cancellationToken))
-                   .Where(other => other.DeletionRequestedAt is null && other.Slot is not null)
-                   .Select(other => other.Slot!.Value)
-                   .ToHashSet();
+            .Where(other => other.DeletionRequestedAt is null && other.Slot is not null)
+            .Select(other => other.Slot!.Value)
+            .ToHashSet();
         var free = Enumerable.Range(0, _config.MaxPerAccount).Where(slot => !used.Contains(slot)).ToList();
 
         // An account that filled up meanwhile leaves the character without a slot: the list shows it once there is room.
@@ -270,7 +274,8 @@ public sealed class CharacterService : ICharacterService
         var city = StartingCity(request.StartingCity);
         var (strength, dexterity, intelligence, skills) = StatsAndSkills(request, race.Race);
         var (hairStyle, hairHue) = CharacterCreationRules.ValidateHair(race, gender, request.HairStyle, request.HairHue);
-        var (beardStyle, beardHue) = CharacterCreationRules.ValidateBeard(race, gender, request.BeardStyle, request.BeardHue);
+        var (beardStyle, beardHue) =
+            CharacterCreationRules.ValidateBeard(race, gender, request.BeardStyle, request.BeardHue);
         var bannedNames = _data.GetEntities<BannedNamesContent>() is [var first, ..] ? first : new BannedNamesContent();
 
         return new()
@@ -319,8 +324,9 @@ public sealed class CharacterService : ICharacterService
         if (profession is not null)
         {
             return (profession.Str, profession.Dex, profession.Int,
-                    profession.Skills.Select(skill => new CharacterSkillChoice { Skill = skill.Skill, Value = (byte)skill.Value })
-                              .ToList());
+                profession.Skills.Select(skill => new CharacterSkillChoice { Skill = skill.Skill, Value = (byte)skill.Value }
+                    )
+                    .ToList());
         }
 
         var (strength, dexterity, intelligence) =

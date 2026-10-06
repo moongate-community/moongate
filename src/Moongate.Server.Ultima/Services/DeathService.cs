@@ -209,7 +209,13 @@ public sealed class DeathService : IDeathService
         }
 
         Wear(player, RobeTemplate, LayerType.OuterTorso);
-        _logger.Information("{Name:l} ({Serial:l}) is raised at {Location:l} of {Map}", player.Name, player.Id, player.Location, player.Map);
+        _logger.Information(
+            "{Name:l} ({Serial:l}) is raised at {Location:l} of {Map}",
+            player.Name,
+            player.Id,
+            player.Location,
+            player.Map
+        );
 
         return true;
     }
@@ -376,7 +382,7 @@ public sealed class DeathService : IDeathService
                 _          => null
             },
             props.Where(prop => prop.Key.StartsWith(CorpseProps.Kept + CorpseProps.SpawnProps, StringComparison.Ordinal))
-                 .ToDictionary(prop => prop.Key[CorpseProps.Kept.Length..], prop => prop.Value)
+                .ToDictionary(prop => prop.Key[CorpseProps.Kept.Length..], prop => prop.Value)
         );
 
         return ResurrectResultType.Raised;

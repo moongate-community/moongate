@@ -102,20 +102,24 @@ public sealed class WeightService : IWeightService
             {
                 return false;
             }
+
             if (current.Layer == LayerType.Bank)
             {
                 return true;
             }
+
             var maximum = MaximumOf(current);
             if (maximum > 0 && (long)Of(current) - PileWeight(current) + added > maximum)
             {
                 return false;
             }
+
             if (current.ContainerId is { } parent && !_items.TryGet(parent, out _))
             {
                 return false;
             }
         }
+
         return true;
     }
 

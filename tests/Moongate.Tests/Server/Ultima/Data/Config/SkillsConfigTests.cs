@@ -9,7 +9,10 @@ public sealed class SkillsConfigTests
     {
         var config = new SkillsConfig();
 
-        Assert.Equal((700, true, 100, 225, 10.0), (config.TotalCap, config.GainEnabled, config.StatMax, config.StatCap, config.StatGainMinutes));
+        Assert.Equal(
+            (700, true, 100, 225, 10.0),
+            (config.TotalCap, config.GainEnabled, config.StatMax, config.StatCap, config.StatGainMinutes)
+        );
         config.Validate();
     }
 
@@ -23,7 +26,8 @@ public sealed class SkillsConfigTests
     [InlineData(700, 100, 225, 1441.0)]
     public void Validate_ABadNumber_Throws(int totalCap, int statMax, int statCap, double minutes)
     {
-        var config = new SkillsConfig { TotalCap = totalCap, StatMax = statMax, StatCap = statCap, StatGainMinutes = minutes };
+        var config = new SkillsConfig
+            { TotalCap = totalCap, StatMax = statMax, StatCap = statCap, StatGainMinutes = minutes };
 
         var error = Assert.Throws<InvalidOperationException>(config.Validate);
 

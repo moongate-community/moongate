@@ -24,7 +24,10 @@ public sealed class CombatModule
     /// <summary>
     ///     Makes <paramref name="attacker" /> fight <paramref name="target" />; <c>combat.attack(npc, player)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Makes the first mobile fight the second: it swings at it, by the swing timer, while the other is within reach. A player goes into war mode and is told whom it fights; one that attacks an innocent who is not fighting it is a criminal. False when either is not in the world, they are on another map, or the second is hidden, out of view or out of sight of the first. The fight ends when the target is gone or dead, after 60 seconds without a swing (ultima.combat.combatant_seconds), by combat.stop or, for a player, by peace.")]
+    [ScriptFunction(
+        helpText:
+        "Makes the first mobile fight the second: it swings at it, by the swing timer, while the other is within reach. A player goes into war mode and is told whom it fights; one that attacks an innocent who is not fighting it is a criminal. False when either is not in the world, they are on another map, or the second is hidden, out of view or out of sight of the first. The fight ends when the target is gone or dead, after 60 seconds without a swing (ultima.combat.combatant_seconds), by combat.stop or, for a player, by peace."
+    )]
     public bool Attack(long attacker, long target)
     {
         return TryGet(attacker, out var who) && TryGet(target, out var other) && _combat.Attack(who, other);
@@ -58,7 +61,10 @@ public sealed class CombatModule
     /// <summary>
     ///     Gets how far a mobile's blows reach; <c>combat.range(archer)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "How far, in cells, the mobile's blows reach: the range of the bow (10) or crossbow (8) an NPC holds, else 1, the melee range of ultima.combat.max_range. nil for a mobile not in the world.")]
+    [ScriptFunction(
+        helpText:
+        "How far, in cells, the mobile's blows reach: the range of the bow (10) or crossbow (8) an NPC holds, else 1, the melee range of ultima.combat.max_range. nil for a mobile not in the world."
+    )]
     public int? Range(long mobile)
     {
         return TryGet(mobile, out var who) ? _combat.RangeOf(who) : null;

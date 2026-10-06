@@ -102,8 +102,7 @@ public sealed class JailCommand : ICommandExecutor
         }
 
         var opened = false;
-        var open = new LoopActionWorkItem(
-            () =>
+        var open = new LoopActionWorkItem(() =>
             {
                 var args = new LuaTable();
                 args["days"] = "1";

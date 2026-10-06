@@ -6,7 +6,8 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     Lets the scripted items on the ground hear the players around them: each one within
-///     <see cref="HearingRange" /> cells runs <c>on_speech(serial, speaker, text, keywords)</c>, as ModernUO's items that
+///     <see cref="HearingRange" /> cells runs
+///     <c>on_speech(serial, speaker, text, keywords)</c>, as ModernUO's items that
 ///     handle speech, such as the teleporter that answers a word.
 /// </summary>
 public sealed class ItemHearingService : IItemSpeechListener

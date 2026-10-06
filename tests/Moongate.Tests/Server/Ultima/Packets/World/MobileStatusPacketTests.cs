@@ -46,7 +46,10 @@ public sealed class MobileStatusPacketTests
 
         var name = new byte[30];
         "an orc"u8.CopyTo(name);
-        Assert.Equal(Convert.FromHexString("11" + "002B" + "00000100" + Convert.ToHexString(name) + "0032" + "0064" + "00" + "00"), bytes);
+        Assert.Equal(
+            Convert.FromHexString("11" + "002B" + "00000100" + Convert.ToHexString(name) + "0032" + "0064" + "00" + "00"),
+            bytes
+        );
         Assert.Equal(43, bytes.Length);
     }
 

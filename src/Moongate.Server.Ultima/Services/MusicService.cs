@@ -17,7 +17,8 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     The region music, as ModernUO plays it: the track of the region a player enters when it differs from the one
-///     playing; the map's track where the region has none (<c>music</c> in <c>maps.toml</c>); silence where neither has
+///     playing; the map's track where the region has none ( <c>music</c> in <c>maps.toml</c>); silence where neither
+///     has
 ///     any.
 /// </summary>
 public sealed class MusicService : IMusicService
@@ -49,8 +50,7 @@ public sealed class MusicService : IMusicService
     public Task StartAsync()
     {
         // The event comes from the login handler's thread; the listeners change on the game loop only.
-        _logins = _events.Subscribe<CharacterEnteredWorldEvent>(
-            async (evt, cancellationToken) =>
+        _logins = _events.Subscribe<CharacterEnteredWorldEvent>(async (evt, cancellationToken) =>
             {
                 var work = new LoopActionWorkItem(() => LoggedIn(evt.Character));
                 await _loop.PostAsync(work, cancellationToken);

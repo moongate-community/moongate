@@ -23,7 +23,8 @@ public sealed class StartingItemsServiceTests
     [InlineData("readable_scroll", true, false)]
     [InlineData("jail_note", true, false)]
     public async Task GiveAsync_LoaderBypassedWithIncompatibleDocument_RejectsBeforePreparingOrSavingDocument(
-        string script, bool writable, bool attachments)
+        string script, bool writable, bool attachments
+    )
     {
         var (service, factory, preparation) = CreateService(script, writable, attachments);
 
@@ -42,7 +43,8 @@ public sealed class StartingItemsServiceTests
     [InlineData("readable_scroll", false, false)]
     [InlineData("readable_book", false, false)]
     public async Task GiveAsync_CompatibleCustomItem_PreservesDocumentCapabilitiesAndCover(
-        string script, bool writable, bool attachments)
+        string script, bool writable, bool attachments
+    )
     {
         var (service, factory, preparation) = CreateService(script, writable, attachments);
 
@@ -68,8 +70,10 @@ public sealed class StartingItemsServiceTests
         }
     }
 
-    private static (StartingItemsService Service, FakeItemFactoryService Factory, CountingBookAttachmentPreparationService Preparation) CreateService(
-        string script, bool writable, bool attachments)
+    private static (StartingItemsService Service, FakeItemFactoryService Factory, CountingBookAttachmentPreparationService
+        Preparation) CreateService(
+            string script, bool writable, bool attachments
+        )
     {
         var source = new BookTemplate
         {
@@ -77,27 +81,45 @@ public sealed class StartingItemsServiceTests
             ItemTemplate = writable || !attachments ? "source_book" : "source_scroll", ItemId = 0x0FF1,
             Attachments = attachments ? [new() { ItemTemplate = "gold", Amount = DiceSpec.Parse("100") }] : []
         };
-        var data = new StubDataLoaderService().With(source).With(
-            new ItemTemplate { Id = "backpack", ItemId = new(0x0E75), Stackable = false },
-            new ItemTemplate { Id = "gold", ItemId = new(0x0EED), Stackable = true },
-            new ItemTemplate { Id = "custom_item", ItemId = new(0x14ED), Stackable = false, ScriptId = script }
-        ).With(new StartingItemSet
-        {
-            Common = true, Items = [new() { Items = ["custom_item"], BookTemplate = "document" }]
-        }).With(new ContainerContent { Name = "default", Default = true, Bounds = new(new(44, 65), new(186, 159)) });
+        var data = new StubDataLoaderService().With(source)
+            .With(
+                new ItemTemplate { Id = "backpack", ItemId = new(0x0E75), Stackable = false },
+                new ItemTemplate { Id = "gold", ItemId = new(0x0EED), Stackable = true },
+                new ItemTemplate { Id = "custom_item", ItemId = new(0x14ED), Stackable = false, ScriptId = script }
+            )
+            .With(
+                new StartingItemSet
+                {
+                    Common = true, Items = [new() { Items = ["custom_item"], BookTemplate = "document" }]
+                }
+            )
+            .With(new ContainerContent { Name = "default", Default = true, Bounds = new(new(44, 65), new(186, 159)) });
         var tiles = new FakeTileDataService();
         var templates = new ItemTemplateService(data);
         var factory = new FakeItemFactoryService(templates, tiles);
-        var preparation = new CountingBookAttachmentPreparationService(new BookAttachmentPreparationService(factory, templates, tiles));
+        var preparation =
+            new CountingBookAttachmentPreparationService(new BookAttachmentPreparationService(factory, templates, tiles));
         // This test exercises the caller-owned transaction overload, which does not use the persistence service.
-        var service = new StartingItemsService(data, factory, templates, new ContainerLayoutService(data), tiles, null!,
-            new StartingItemsConfig(), new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" },
-            new BookTemplateService(data), TestBookContexts.Create(), new LocalizationConfig(), preparation);
+        var service = new StartingItemsService(
+            data,
+            factory,
+            templates,
+            new ContainerLayoutService(data),
+            tiles,
+            null!,
+            new StartingItemsConfig(),
+            new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" },
+            new BookTemplateService(data),
+            TestBookContexts.Create(),
+            new LocalizationConfig(),
+            preparation
+        );
         return (service, factory, preparation);
     }
 
     private static StartingItemsRequest Request()
     {
-        return new(new(0x100), RaceType.Human, GenderType.Male, new Dictionary<SkillType, int>(), default, default) { PlayerName = "Aria" };
+        return new(new(0x100), RaceType.Human, GenderType.Male, new Dictionary<SkillType, int>(), default, default)
+            { PlayerName = "Aria" };
     }
 }

@@ -5,7 +5,8 @@ using Moongate.Server.Ultima.Interfaces;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Tells the NPCs within the say range what a player said: <c>on_speech(serial, speaker, text, keywords)</c> of their
+///     Tells the NPCs within the say range what a player said: <c>on_speech(serial, speaker, text, keywords)</c> of
+///     their
 ///     mobile script, the keywords an array of speech.mul ids. The handler may wait: it runs once per speech.
 /// </summary>
 public sealed class NpcHearingService : INpcSpeechListener

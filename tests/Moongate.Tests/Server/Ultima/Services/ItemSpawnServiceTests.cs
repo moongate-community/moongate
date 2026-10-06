@@ -23,13 +23,20 @@ public sealed class ItemSpawnServiceTests
 
     private readonly StubDataLoaderService _data = new StubDataLoaderService()
         .With(
-            new ItemTemplate { Id = "chest", ItemId = new Serial(0x0E41), Movable = false, Loot = ["gems", "gems"], Gold = DiceSpec.FromValue(99) },
+            new ItemTemplate
+            {
+                Id = "chest", ItemId = new Serial(0x0E41), Movable = false, Loot = ["gems", "gems"],
+                Gold = DiceSpec.FromValue(99)
+            },
             new ItemTemplate { Id = "rich_chest", ItemId = new Serial(0x0E41), Gold = DiceSpec.FromValue(69_999) },
             new ItemTemplate { Id = "box", ItemId = new Serial(0x09A8) },
             new ItemTemplate { Id = "0x0eed_gold_coin", ItemId = new Serial(0x0EED), Stackable = true },
             new ItemTemplate { Id = "ruby", ItemId = new Serial(0x0F13), Stackable = true }
         )
-        .With(new LootTemplate { Id = "gems", Entries = [new() { ItemId = "ruby", Amount = RangeValueSpec<int>.FromValue(3) }] })
+        .With(
+            new LootTemplate
+                { Id = "gems", Entries = [new() { ItemId = "ruby", Amount = RangeValueSpec<int>.FromValue(3) }] }
+        )
         .With(new ContainerContent { Default = true, Gump = 0x3C, Bounds = new(44, 65, 142, 94) });
 
     private readonly RecordingWorldViewService _view = new();
@@ -61,7 +68,12 @@ public sealed class ItemSpawnServiceTests
     [Fact]
     public async Task SpawnAsync_PutsTheItemOnTheGround_WithItsProps_AndShowsIt()
     {
-        var box = await _service.SpawnAsync("box", MapType.Felucca, Spot, new Dictionary<string, object?> { ["spawn.region"] = "r1" });
+        var box = await _service.SpawnAsync(
+            "box",
+            MapType.Felucca,
+            Spot,
+            new Dictionary<string, object?> { ["spawn.region"] = "r1" }
+        );
 
         Assert.True(_items.TryGet(box.Id, out var live));
         Assert.Same(box, live);
@@ -83,7 +95,10 @@ public sealed class ItemSpawnServiceTests
         var contents = _items.GetContents(chest.Id);
         Assert.Equal(["0x0eed_gold_coin", "ruby", "ruby"], contents.Select(item => item.TemplateId));
         Assert.Equal([99, 3, 3], contents.Select(item => item.Amount));
-        Assert.All(contents, item => Assert.Equal((ItemLocationType.Container, chest.Id), (item.Location, item.ContainerId)));
+        Assert.All(
+            contents,
+            item => Assert.Equal((ItemLocationType.Container, chest.Id), (item.Location, item.ContainerId))
+        );
         // Each on a slot of its own, for the grid of the Enhanced Client.
         Assert.Equal(3, contents.Select(item => item.GridIndex).Distinct().Count());
         // The contents are not shown: the client asks when the chest is opened.

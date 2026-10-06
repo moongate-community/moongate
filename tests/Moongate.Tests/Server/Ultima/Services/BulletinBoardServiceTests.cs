@@ -28,16 +28,23 @@ public sealed class BulletinBoardServiceTests
     private readonly RecordingTimerService _timers = new();
     private readonly BulletinBoardsConfig _config = new();
     private readonly SettableClock _clock = new() { Now = new DateTimeOffset(2026, 10, 5, 12, 0, 0, TimeSpan.Zero) };
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
-            new ItemTemplate { Id = "bulletin_board", ItemId = new Serial(0x1E5E), ScriptId = BulletinBoardService.ScriptId },
+            new ItemTemplate
+                { Id = "bulletin_board", ItemId = new Serial(0x1E5E), ScriptId = BulletinBoardService.ScriptId },
             new ItemTemplate { Id = "chair", ItemId = new Serial(0x0B2E) }
         )
     );
 
-    private readonly MobileEntity _aria = new() { Id = new Serial(2), Name = "Aria", Body = 0x0191, SkinHue = new Hue(0x83EA), Map = MapType.Trammel };
-    private readonly MobileEntity _bruno = new() { Id = new Serial(3), Name = "Bruno", Body = 0x0190, Map = MapType.Trammel };
-    private readonly MobileEntity _staff = new() { Id = new Serial(4), Name = "Giachi", Body = 0x0190, Map = MapType.Trammel };
+    private readonly MobileEntity _aria = new()
+        { Id = new Serial(2), Name = "Aria", Body = 0x0191, SkinHue = new Hue(0x83EA), Map = MapType.Trammel };
+
+    private readonly MobileEntity _bruno = new()
+        { Id = new Serial(3), Name = "Bruno", Body = 0x0190, Map = MapType.Trammel };
+
+    private readonly MobileEntity _staff = new()
+        { Id = new Serial(4), Name = "Giachi", Body = 0x0190, Map = MapType.Trammel };
 
     private const uint FirstSerial = 0x40001000;
     private readonly ItemEntity _board;
@@ -72,7 +79,8 @@ public sealed class BulletinBoardServiceTests
         var now = _clock.Now.ToUnixTimeMilliseconds();
         Assert.Equal(
             (new Serial(0x40001000), _board.Id, Serial.Zero, _aria.Id, "Aria", "Horse for sale", now, now),
-            (message.Id, message.BoardId, message.ThreadId, message.PosterId, message.PosterName, message.Subject, message.PostedAt, message.LastReplyAt)
+            (message.Id, message.BoardId, message.ThreadId, message.PosterId, message.PosterName, message.Subject,
+                message.PostedAt, message.LastReplyAt)
         );
         Assert.Equal(["A fine mare.", "", "Ask Aria in Britain."], message.Lines());
         Assert.Same(message, _service.GetMessage(message.Id));
@@ -89,7 +97,10 @@ public sealed class BulletinBoardServiceTests
 
         Assert.Equal((0x0191, 0x83EA), (message.PosterBody, message.PosterHue));
         // In the order of the layers: the hair is on 11, the robe on 22; the bank box is not worn.
-        Assert.Equal([new BulletinEquipment(0x203B, 0x044E), new BulletinEquipment(0x1F03, 0x0021)], BulletinEquipment.Parse(message.PosterEquipment));
+        Assert.Equal(
+            [new BulletinEquipment(0x203B, 0x044E), new BulletinEquipment(0x1F03, 0x0021)],
+            BulletinEquipment.Parse(message.PosterEquipment)
+        );
     }
 
     [Fact]
@@ -120,7 +131,9 @@ public sealed class BulletinBoardServiceTests
     [Fact]
     public void Post_CutsTheSubjectTheLinesAndTheirNumber_AndTakesControlCharactersOut()
     {
-        var lines = Enumerable.Range(0, 40).Select(index => index == 0 ? new string('y', 200) : "l\u0007ine\t" + index).ToArray();
+        var lines = Enumerable.Range(0, 40)
+            .Select(index => index == 0 ? new string('y', 200) : "l\u0007ine\t" + index)
+            .ToArray();
 
         var message = Post(_aria, "  " + new string('x', 100) + "  ", lines).Message!;
 
@@ -255,7 +268,10 @@ public sealed class BulletinBoardServiceTests
         _clock.Advance(TimeSpan.FromSeconds(10));
         _service.Remove(reply.Id);
 
-        Assert.Equal((BulletinPostResultType.TooSoon, 20), Post(_aria, "Re: Horse", ["again"], thread.Id) switch { var result => (result.Type, result.WaitSeconds) });
+        Assert.Equal(
+            (BulletinPostResultType.TooSoon, 20),
+            Post(_aria, "Re: Horse", ["again"], thread.Id) switch { var result => (result.Type, result.WaitSeconds) }
+        );
     }
 
     // A clock set back must not make a poster wait longer than the setting says.
@@ -265,7 +281,10 @@ public sealed class BulletinBoardServiceTests
         Post(_aria, "Horse", ["x"]);
         _clock.Advance(TimeSpan.FromHours(-3));
 
-        Assert.Equal((BulletinPostResultType.TooSoon, 120), Post(_aria, "Cart", ["x"]) switch { var result => (result.Type, result.WaitSeconds) });
+        Assert.Equal(
+            (BulletinPostResultType.TooSoon, 120),
+            Post(_aria, "Cart", ["x"]) switch { var result => (result.Type, result.WaitSeconds) }
+        );
     }
 
     [Fact]
@@ -285,7 +304,10 @@ public sealed class BulletinBoardServiceTests
         Post(_aria, "Horse", ["x"]);
 
         Assert.Equal(BulletinPostResultType.Ok, Post(_bruno, "Cart", ["x"]).Type);
-        Assert.Equal(BulletinPostResultType.Ok, _service.Post(_other, _aria, AccountType.Regular, Serial.Zero, "Cart", ["x"]).Type);
+        Assert.Equal(
+            BulletinPostResultType.Ok,
+            _service.Post(_other, _aria, AccountType.Regular, Serial.Zero, "Cart", ["x"]).Type
+        );
     }
 
     [Theory, InlineData(AccountType.GameMaster), InlineData(AccountType.Administrator)]
@@ -301,7 +323,10 @@ public sealed class BulletinBoardServiceTests
     {
         var service = Create(serials: new StubItemSerialPool());
 
-        Assert.Equal(BulletinPostResultType.Busy, service.Post(_board, _aria, AccountType.Regular, Serial.Zero, "Horse", ["x"]).Type);
+        Assert.Equal(
+            BulletinPostResultType.Busy,
+            service.Post(_board, _aria, AccountType.Regular, Serial.Zero, "Horse", ["x"]).Type
+        );
         Assert.Empty(service.Messages);
     }
 
@@ -319,7 +344,10 @@ public sealed class BulletinBoardServiceTests
         );
         Assert.Equal(["The bank is closed today."], message.Lines());
         // A body the client can draw beside the message, wearing nothing.
-        Assert.Equal((BulletinBoardService.ScriptBody, 0, ""), (message.PosterBody, message.PosterHue, message.PosterEquipment));
+        Assert.Equal(
+            (BulletinBoardService.ScriptBody, 0, ""),
+            (message.PosterBody, message.PosterHue, message.PosterEquipment)
+        );
     }
 
     [Fact]
@@ -492,7 +520,10 @@ public sealed class BulletinBoardServiceTests
 
         Assert.Equal(BulletinPostResultType.Ok, result.Type);
         Assert.Equal([second.Id], result.Dropped);
-        Assert.Equal([first.Id, reply.Id, result.Message!.Id], _service.GetMessages(_board.Id).Select(message => message.Id));
+        Assert.Equal(
+            [first.Id, reply.Id, result.Message!.Id],
+            _service.GetMessages(_board.Id).Select(message => message.Id)
+        );
     }
 
     // The thread a reply was just added to is not the one that goes: its oldest replies do.
@@ -510,7 +541,10 @@ public sealed class BulletinBoardServiceTests
         var result = Post(_bruno, "Re: three", ["x"], thread.Id);
 
         Assert.Equal([oldest.Id], result.Dropped);
-        Assert.Equal([thread.Id, middle.Id, result.Message!.Id], _service.GetMessages(_board.Id).Select(message => message.Id));
+        Assert.Equal(
+            [thread.Id, middle.Id, result.Message!.Id],
+            _service.GetMessages(_board.Id).Select(message => message.Id)
+        );
     }
 
     [Fact]
@@ -549,7 +583,10 @@ public sealed class BulletinBoardServiceTests
         await _service.StartAsync();
 
         var timer = Assert.Single(_timers.Timers);
-        Assert.Equal((BulletinBoardService.TimerName, TimeSpan.FromHours(1), true), (timer.Name, timer.Interval, timer.Repeat));
+        Assert.Equal(
+            (BulletinBoardService.TimerName, TimeSpan.FromHours(1), true),
+            (timer.Name, timer.Interval, timer.Repeat)
+        );
 
         await _service.StopAsync();
 
@@ -575,9 +612,15 @@ public sealed class BulletinBoardServiceTests
     public async Task Start_DropsAReplyWhoseThreadIsGone()
     {
         _table.Upserted.Add(
-            new BulletinMessageEntity { Id = new Serial(0x40002001), BoardId = _board.Id, ThreadId = new Serial(0x40002000), Subject = "Re: gone", Body = "x" }
+            new BulletinMessageEntity
+            {
+                Id = new Serial(0x40002001), BoardId = _board.Id, ThreadId = new Serial(0x40002000), Subject = "Re: gone",
+                Body = "x"
+            }
         );
-        _table.Upserted.Add(new BulletinMessageEntity { Id = new Serial(0x40002002), BoardId = _board.Id, Subject = "Kept", Body = "x" });
+        _table.Upserted.Add(
+            new BulletinMessageEntity { Id = new Serial(0x40002002), BoardId = _board.Id, Subject = "Kept", Body = "x" }
+        );
 
         var again = Create();
         await again.StartAsync();
@@ -617,7 +660,10 @@ public sealed class BulletinBoardServiceTests
 
     private void Wear(MobileEntity mobile, int itemId, ushort hue, LayerType layer)
     {
-        var item = new ItemEntity { Id = new Serial(0x40000100 + (uint)layer), TemplateId = "chair", ItemId = itemId, Amount = 1, Hue = new Hue(hue) };
+        var item = new ItemEntity
+        {
+            Id = new Serial(0x40000100 + (uint)layer), TemplateId = "chair", ItemId = itemId, Amount = 1, Hue = new Hue(hue)
+        };
         item.Equip(mobile.Id, layer);
         _items.Add([item]);
     }
@@ -635,6 +681,15 @@ public sealed class BulletinBoardServiceTests
             }
         }
 
-        return new BulletinBoardService(_table, _items, _templates, serials, _timers, _config, _clock, new StubPacketSendService());
+        return new BulletinBoardService(
+            _table,
+            _items,
+            _templates,
+            serials,
+            _timers,
+            _config,
+            _clock,
+            new StubPacketSendService()
+        );
     }
 }

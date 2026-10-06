@@ -19,11 +19,15 @@ internal static class ModernUoBookSourceReader
     public static IReadOnlyList<ImportedBook> Read(string source, string path)
     {
         var tree = CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Preview), path);
-        var fields = tree.GetRoot().DescendantNodes().OfType<FieldDeclarationSyntax>()
-            .Where(field => IsType(field.Declaration.Type, "BookContent")).ToArray();
+        var fields = tree.GetRoot()
+            .DescendantNodes()
+            .OfType<FieldDeclarationSyntax>()
+            .Where(field => IsType(field.Declaration.Type, "BookContent"))
+            .ToArray();
         if (fields.Length == 0) return [];
 
-        var syntaxError = tree.GetDiagnostics().FirstOrDefault(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
+        var syntaxError = tree.GetDiagnostics()
+            .FirstOrDefault(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
         if (syntaxError is not null) throw new InvalidDataException(syntaxError.ToString());
 
         var books = new List<ImportedBook>();
@@ -46,9 +50,15 @@ internal static class ModernUoBookSourceReader
                     var author = Literal(arguments[1].Expression);
                     // An empty line of the text is a page break, so an empty line inside a page is written as a
                     // space: the page stays one page, as in the source.
-                    var pages = arguments.Skip(2).Select(argument => string.Join('\n',
-                        Arguments(argument.Expression, "BookPageInfo").Select(line => Literal(line.Expression))
-                            .Select(line => line.Length == 0 ? BlankLine : line))).ToArray();
+                    var pages = arguments.Skip(2)
+                        .Select(argument => string.Join(
+                                '\n',
+                                Arguments(argument.Expression, "BookPageInfo")
+                                    .Select(line => Literal(line.Expression))
+                                    .Select(line => line.Length == 0 ? BlankLine : line)
+                            )
+                        )
+                        .ToArray();
                     var content = string.Join("\n\n", pages);
                     var utf8 = new UTF8Encoding(false, true);
                     utf8.GetByteCount(title);
@@ -65,7 +75,13 @@ internal static class ModernUoBookSourceReader
                         !BookPagination.TryPaginate(content, out _))
                         throw new InvalidDataException("Book id or text is invalid or exceeds the document limits.");
 
-                    books.Add(new() { Id = id, Title = title, Author = author, Content = content, PageCount = pages.Length, ItemId = Graphic(owner) });
+                    books.Add(
+                        new()
+                        {
+                            Id = id, Title = title, Author = author, Content = content, PageCount = pages.Length,
+                            ItemId = Graphic(owner)
+                        }
+                    );
                 }
             }
             catch (Exception exception) when (exception is InvalidDataException or EncoderFallbackException)
@@ -73,6 +89,7 @@ internal static class ModernUoBookSourceReader
                 throw new InvalidDataException($"{path}: {name}: {exception.Message}", exception);
             }
         }
+
         return books;
     }
 
@@ -81,7 +98,9 @@ internal static class ModernUoBookSourceReader
     private static int? Graphic(ClassDeclarationSyntax owner)
     {
         var constructors = owner.Members.OfType<ConstructorDeclarationSyntax>()
-            .Where(constructor => constructor.Initializer is { } initializer && initializer.IsKind(SyntaxKind.BaseConstructorInitializer))
+            .Where(constructor => constructor.Initializer is { } initializer &&
+                                  initializer.IsKind(SyntaxKind.BaseConstructorInitializer)
+            )
             .OrderBy(constructor => constructor.ParameterList.Parameters.Count);
 
         foreach (var constructor in constructors)
@@ -91,7 +110,10 @@ internal static class ModernUoBookSourceReader
                 continue;
             }
 
-            if (first is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name.Identifier.ValueText: "Random" } } random)
+            if (first is InvocationExpressionSyntax
+                {
+                    Expression: MemberAccessExpressionSyntax { Name.Identifier.ValueText: "Random" }
+                } random)
             {
                 first = random.ArgumentList.Arguments.FirstOrDefault()?.Expression ?? first;
             }
@@ -103,15 +125,19 @@ internal static class ModernUoBookSourceReader
             }
         }
 
-        return owner.BaseList?.Types.Select(type => type.Type).OfType<IdentifierNameSyntax>().Select(type => type.Identifier.ValueText)
+        return owner.BaseList?.Types.Select(type => type.Type)
+            .OfType<IdentifierNameSyntax>()
+            .Select(type => type.Identifier.ValueText)
             .Select(name => name switch
-            {
-                "BrownBook" => 0x0FEF,
-                "TanBook" => 0x0FF0,
-                "RedBook" => 0x0FF1,
-                "BlueBook" => 0x0FF2,
-                _ => (int?)null
-            }).FirstOrDefault(graphic => graphic is not null);
+                {
+                    "BrownBook" => 0x0FEF,
+                    "TanBook"   => 0x0FF0,
+                    "RedBook"   => 0x0FF1,
+                    "BlueBook"  => 0x0FF2,
+                    _           => (int?)null
+                }
+            )
+            .FirstOrDefault(graphic => graphic is not null);
     }
 
     private static SeparatedSyntaxList<ArgumentSyntax> Arguments(ExpressionSyntax expression, string type)
@@ -119,11 +145,13 @@ internal static class ModernUoBookSourceReader
         var list = expression switch
         {
             ImplicitObjectCreationExpressionSyntax { Initializer: null } creation => creation.ArgumentList,
-            ObjectCreationExpressionSyntax { Initializer: null } creation when IsType(creation.Type, type) => creation.ArgumentList,
+            ObjectCreationExpressionSyntax { Initializer: null } creation when IsType(creation.Type, type) => creation
+                .ArgumentList,
             _ => null
         };
         if (list is null || list.Arguments.Any(argument => argument.NameColon is not null ||
-                                                         !argument.RefKindKeyword.IsKind(SyntaxKind.None)))
+                                                           !argument.RefKindKeyword.IsKind(SyntaxKind.None)
+            ))
             throw new InvalidDataException($"Expected literal {type} constructor arguments.");
         return list.Arguments;
     }
@@ -133,9 +161,9 @@ internal static class ModernUoBookSourceReader
         return type switch
         {
             IdentifierNameSyntax identifier => identifier.Identifier.ValueText == name,
-            QualifiedNameSyntax qualified => qualified.Right.Identifier.ValueText == name,
-            AliasQualifiedNameSyntax alias => alias.Name.Identifier.ValueText == name,
-            _ => false
+            QualifiedNameSyntax qualified   => qualified.Right.Identifier.ValueText == name,
+            AliasQualifiedNameSyntax alias  => alias.Name.Identifier.ValueText == name,
+            _                               => false
         };
     }
 
@@ -143,9 +171,11 @@ internal static class ModernUoBookSourceReader
     {
         return expression switch
         {
-            LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.StringLiteralExpression) => literal.Token.ValueText,
+            LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.StringLiteralExpression) => literal.Token
+                .ValueText,
             ParenthesizedExpressionSyntax parentheses => Literal(parentheses.Expression),
-            BinaryExpressionSyntax binary when binary.IsKind(SyntaxKind.AddExpression) => Literal(binary.Left) + Literal(binary.Right),
+            BinaryExpressionSyntax binary when binary.IsKind(SyntaxKind.AddExpression) => Literal(binary.Left) +
+                Literal(binary.Right),
             _ => throw new InvalidDataException("Only literal strings are supported; runtime expressions are not executed.")
         };
     }

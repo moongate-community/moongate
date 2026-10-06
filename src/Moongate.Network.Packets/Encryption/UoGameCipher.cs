@@ -1,11 +1,14 @@
 // POL protocol port; see THIRD-PARTY-NOTICES.md for origin and license.
+
 using System.Security.Cryptography;
 using Moongate.Network.Packets.Encryption.Internal;
 using Moongate.Network.Packets.Types.Encryption;
 
 namespace Moongate.Network.Packets.Encryption;
 
-/// <summary>Independent inbound and outbound POL game stream state for one connection.</summary>
+/// <summary>
+///     Independent inbound and outbound POL game stream state for one connection.
+/// </summary>
 public sealed class UoGameCipher
 {
     private readonly TwofishEngine? _twofish;
@@ -21,6 +24,7 @@ public sealed class UoGameCipher
         {
             throw new ArgumentOutOfRangeException(nameof(type));
         }
+
         if (type is UoEncryptionType.BlowfishTwofish or UoEncryptionType.Twofish)
         {
             _twofish = new(seed);
@@ -29,6 +33,7 @@ public sealed class UoGameCipher
             {
                 _receiveTable[i] = (byte)i;
             }
+
             _twofish.EncryptBlocks(_receiveTable);
             if (type == UoEncryptionType.Twofish)
             {
@@ -38,6 +43,7 @@ public sealed class UoGameCipher
 #pragma warning restore CA5351
             }
         }
+
         if (type is UoEncryptionType.OldBlowfish or UoEncryptionType.Blowfish12536 or
             UoEncryptionType.Blowfish or UoEncryptionType.BlowfishTwofish)
         {
@@ -45,7 +51,9 @@ public sealed class UoGameCipher
         }
     }
 
-    /// <summary>Deciphers client bytes in place; call serially in receive order.</summary>
+    /// <summary>
+    ///     Deciphers client bytes in place; call serially in receive order.
+    /// </summary>
     public void Decrypt(Span<byte> data)
     {
         if (_twofish is not null)
@@ -57,19 +65,24 @@ public sealed class UoGameCipher
                     _twofish.EncryptBlocks(_receiveTable!);
                     _receivePosition = 0;
                 }
+
                 data[i] ^= _receiveTable![_receivePosition++];
             }
         }
+
         _blowfish?.Decrypt(data);
     }
 
-    /// <summary>Enciphers compressed server bytes; safe concurrently with one receive caller.</summary>
+    /// <summary>
+    ///     Enciphers compressed server bytes; safe concurrently with one receive caller.
+    /// </summary>
     public void Encrypt(Span<byte> data)
     {
         if (_sendKey is null)
         {
             return;
         }
+
         for (var i = 0; i < data.Length; i++)
         {
             data[i] ^= _sendKey[_sendPosition];

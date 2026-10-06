@@ -13,9 +13,17 @@ public sealed class BulletinBoardRequestPacketTests
      InlineData("06", BulletinBoardCommandType.Remove)]
     public void TryParse_ARequestAboutOneMessage_HasTheBoardAndTheMessage(string command, BulletinBoardCommandType expected)
     {
-        Assert.True(BulletinBoardRequestPacket.TryParse(Convert.FromHexString("71000C" + command + "40000001" + "40000010"), out var packet));
+        Assert.True(
+            BulletinBoardRequestPacket.TryParse(
+                Convert.FromHexString("71000C" + command + "40000001" + "40000010"),
+                out var packet
+            )
+        );
 
-        Assert.Equal((expected, new Serial(0x40000001), new Serial(0x40000010)), (packet.Command, packet.Board, packet.Message));
+        Assert.Equal(
+            (expected, new Serial(0x40000001), new Serial(0x40000010)),
+            (packet.Command, packet.Board, packet.Message)
+        );
         Assert.Empty(packet.Lines);
     }
 
@@ -26,7 +34,10 @@ public sealed class BulletinBoardRequestPacketTests
 
         Assert.True(BulletinBoardRequestPacket.TryParse(data, out var packet));
 
-        Assert.Equal((BulletinBoardCommandType.Post, new Serial(0x40000001), new Serial(0x40000010)), (packet.Command, packet.Board, packet.Message));
+        Assert.Equal(
+            (BulletinBoardCommandType.Post, new Serial(0x40000001), new Serial(0x40000010)),
+            (packet.Command, packet.Board, packet.Message)
+        );
         Assert.Equal("Re: Horse", packet.Subject);
         Assert.Equal(["How much?", "", "Bruno"], packet.Lines);
     }
@@ -54,7 +65,12 @@ public sealed class BulletinBoardRequestPacketTests
     [Fact]
     public void TryParse_APostWithNoSubjectAndNoLine_Parses_ForTheServiceToRefuse()
     {
-        Assert.True(BulletinBoardRequestPacket.TryParse(Convert.FromHexString("71000E" + "05" + "40000001" + "00000000" + "00" + "00"), out var packet));
+        Assert.True(
+            BulletinBoardRequestPacket.TryParse(
+                Convert.FromHexString("71000E" + "05" + "40000001" + "00000000" + "00" + "00"),
+                out var packet
+            )
+        );
 
         Assert.Equal("", packet.Subject);
         Assert.Empty(packet.Lines);

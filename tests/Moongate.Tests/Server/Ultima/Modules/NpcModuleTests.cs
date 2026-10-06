@@ -41,21 +41,25 @@ public sealed class NpcModuleTests
     private readonly StubGameLoop _loop = new();
     private readonly StubLineOfSightService _sight = new();
     private readonly SectorService _sectors = TestSectors.Create();
+
     private readonly MobileEntity _orc = new()
     {
         Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
         Location = new Point3D(1600, 1600, 0), Direction = DirectionType.North
     };
+
     private readonly MobileEntity _silentOrc = new()
     {
         Id = new Serial(0x101), Name = "a quiet orc", TemplateId = "quiet", Map = MapType.Trammel,
         Location = new Point3D(1602, 1600, 0)
     };
+
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate
             {
-                Id = "orc", Sounds = new MobileSounds { StartAttack = 0x69, Idle = 0x2A3, Attack = 0x6B, Hurt = 0x6C, Death = 0x6D }
+                Id = "orc",
+                Sounds = new MobileSounds { StartAttack = 0x69, Idle = 0x2A3, Attack = 0x6B, Hurt = 0x6C, Death = 0x6D }
             },
             new MobileTemplate { Id = "quiet" },
             new MobileTemplate { Id = "zombie", ScriptId = "monster", FleeAt = -1 },
@@ -63,6 +67,7 @@ public sealed class NpcModuleTests
             new MobileTemplate { Id = "walrus", Movement = MobileMovementType.Both }
         )
     );
+
     private readonly MobileEntity _player = new()
     {
         Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
@@ -340,7 +345,8 @@ public sealed class NpcModuleTests
     public void Step_ThatMoves_TellsTheItemsOfTheNewCell_ABlockedOneDoesNot()
     {
         var items = TestItems.Create(_sectors);
-        var pad = new ItemEntity { Id = new Serial(0x40000010), TemplateId = "decoration_teleporter", ItemId = 0x1BC3, Amount = 1 };
+        var pad = new ItemEntity
+            { Id = new Serial(0x40000010), TemplateId = "decoration_teleporter", ItemId = 0x1BC3, Amount = 1 };
         items.Add([pad]);
         items.PlaceOnGround(pad, MapType.Trammel, new Point3D(1600, 1599, 0));
 
@@ -439,8 +445,16 @@ public sealed class NpcModuleTests
     [Fact]
     public void Nearby_ListsTheOtherNpcsAround_NearestFirst()
     {
-        var far = new MobileEntity { Id = new Serial(0x102), Name = "a far orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1606, 1600, 0) };
-        var elsewhere = new MobileEntity { Id = new Serial(0x103), Name = "an orc elsewhere", TemplateId = "orc", Map = MapType.Felucca, Location = new Point3D(1601, 1600, 0) };
+        var far = new MobileEntity
+        {
+            Id = new Serial(0x102), Name = "a far orc", TemplateId = "orc", Map = MapType.Trammel,
+            Location = new Point3D(1606, 1600, 0)
+        };
+        var elsewhere = new MobileEntity
+        {
+            Id = new Serial(0x103), Name = "an orc elsewhere", TemplateId = "orc", Map = MapType.Felucca,
+            Location = new Point3D(1601, 1600, 0)
+        };
         _mobiles.EnterWorld(far);
         _mobiles.EnterWorld(elsewhere);
 
@@ -553,7 +567,9 @@ public sealed class NpcModuleTests
     [Fact]
     public void Face_TurnsTheNpcTowardsThePlace_AndShowsTheTurn()
     {
-        var result = Run("return npc.face(256, 1605, 1600), npc.face(256, 1605, 1600), npc.face(256, 1600, 1600), npc.face(2, 1605, 1600)");
+        var result = Run(
+            "return npc.face(256, 1605, 1600), npc.face(256, 1605, 1600), npc.face(256, 1600, 1600), npc.face(2, 1605, 1600)"
+        );
 
         Assert.True(result[0].Read<bool>());
         Assert.True(result[1].Read<bool>());
@@ -568,7 +584,9 @@ public sealed class NpcModuleTests
     public void LookAt_TurnsTheNpcTowardsTheMobile_AndRefusesWhatItCannotLookAt()
     {
         // Aria (2) stands east of the NPC (256); 999 is nobody, 256 is itself.
-        var result = Run("return npc.look_at(256, 2), npc.look_at(256, 999), npc.look_at(256, 256), npc.look_at(2, 256), npc.look_at(256, -1)");
+        var result = Run(
+            "return npc.look_at(256, 2), npc.look_at(256, 999), npc.look_at(256, 256), npc.look_at(2, 256), npc.look_at(256, -1)"
+        );
 
         Assert.Equal([true, false, false, false, false], result.Select(value => value.Read<bool>()));
     }
@@ -589,7 +607,9 @@ public sealed class NpcModuleTests
     [Fact]
     public void DistanceTo_CountsTilesAsTheViewRangeDoes()
     {
-        var result = Run("return npc.distance_to(256, 1603, 1595), npc.distance_to(256, 1600, 1600), npc.distance_to(999, 1, 1)");
+        var result = Run(
+            "return npc.distance_to(256, 1603, 1595), npc.distance_to(256, 1600, 1600), npc.distance_to(999, 1, 1)"
+        );
 
         Assert.Equal((5, 0), (result[0].Read<int>(), result[1].Read<int>()));
         Assert.Equal(LuaValue.Nil, result[2]);
@@ -746,7 +766,9 @@ public sealed class NpcModuleTests
 
         // With a limit only the nearest are looked at.
         _sight.Checks.Clear();
-        var limited = Run("local one = npc.players_in_sight(256, 16, 1) return #one, one[1], #npc.players_in_sight(256, 16, 0), #npc.players_in_sight(256)");
+        var limited = Run(
+            "local one = npc.players_in_sight(256, 16, 1) return #one, one[1], #npc.players_in_sight(256, 16, 0), #npc.players_in_sight(256)"
+        );
         Assert.Equal([1, 2, 0, 2], limited.Select(value => value.Read<int>()));
         Assert.Equal(3, _sight.Checks.Count);
 
@@ -761,7 +783,10 @@ public sealed class NpcModuleTests
 
         var result = Run("return npc.flee_at(256), npc.flee_at(257), npc.flee_at(2), npc.flee_at(999)");
 
-        Assert.Equal([-1, null, null, null], result.Select(value => value.Type == LuaValueType.Nil ? (int?)null : value.Read<int>()));
+        Assert.Equal(
+            [-1, null, null, null],
+            result.Select(value => value.Type == LuaValueType.Nil ? (int?)null : value.Read<int>())
+        );
     }
 
     [Fact]
@@ -771,7 +796,10 @@ public sealed class NpcModuleTests
 
         var result = Run("return npc.script_id(256), npc.script_id(257), npc.script_id(2), npc.script_id(999)");
 
-        Assert.Equal(["monster", null, null, null], result.Select(value => value.Type == LuaValueType.Nil ? null : value.Read<string>()));
+        Assert.Equal(
+            ["monster", null, null, null],
+            result.Select(value => value.Type == LuaValueType.Nil ? null : value.Read<string>())
+        );
     }
 
     [Fact]
@@ -869,7 +897,25 @@ public sealed class NpcModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new NpcModule(_mobiles, _speech, _view, _templates, _npcs, new Lazy<IScriptEngine>(() => _engine), _loop, _sectors, _moveOver, _paths, _finder, _movement, null, _sight));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(
+            state,
+            new NpcModule(
+                _mobiles,
+                _speech,
+                _view,
+                _templates,
+                _npcs,
+                new Lazy<IScriptEngine>(() => _engine),
+                _loop,
+                _sectors,
+                _moveOver,
+                _paths,
+                _finder,
+                _movement,
+                null,
+                _sight
+            )
+        );
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

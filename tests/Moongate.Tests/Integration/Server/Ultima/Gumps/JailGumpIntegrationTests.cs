@@ -91,9 +91,16 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         }
 
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
-        _scripts.Write("gumps/jail_sentence.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "jail_sentence.lua")));
-        _scripts.Write("items/jail_note.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "jail_note.lua")));
-        var templates = (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
+        _scripts.Write(
+            "gumps/jail_sentence.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "jail_sentence.lua"))
+        );
+        _scripts.Write(
+            "items/jail_note.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "jail_note.lua"))
+        );
+        var templates =
+            (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
         _options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,
@@ -129,10 +136,21 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<MobileModule>();
         _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
-        var noteTemplates = new ItemTemplateService(new StubDataLoaderService().With(
-            new ItemTemplate { Id = "jail_release_note", ScriptId = "jail_note", Stackable = false }));
-        _container.RegisterInstance<IBookDocumentService>(await TestBookDocuments.CreateAsync(
-            _fixture, _items, _container.Resolve<IItemHandlingService>(), noteTemplates, _loop, _gumps));
+        var noteTemplates = new ItemTemplateService(
+            new StubDataLoaderService().With(
+                new ItemTemplate { Id = "jail_release_note", ScriptId = "jail_note", Stackable = false }
+            )
+        );
+        _container.RegisterInstance<IBookDocumentService>(
+            await TestBookDocuments.CreateAsync(
+                _fixture,
+                _items,
+                _container.Resolve<IItemHandlingService>(),
+                noteTemplates,
+                _loop,
+                _gumps
+            )
+        );
         _container.AddScriptModule<BookModule>();
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<GumpModule>();
@@ -140,15 +158,22 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<TargetModule>();
         _container.RegisterScriptEnum<JailResultType>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>((evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
 
-        _engine = new(_options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            _options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         gumpScripts = new GumpScriptService(_engine, _loop, _options);
         await gumpScripts.StartAsync();
@@ -201,7 +226,8 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
-    [Theory, InlineData(""), InlineData("abc"), InlineData("0"), InlineData("-3"), InlineData("2.5"), InlineData("999999999999"), InlineData("31")]
+    [Theory, InlineData(""), InlineData("abc"), InlineData("0"), InlineData("-3"), InlineData("2.5"),
+     InlineData("999999999999"), InlineData("31")]
     public void AFreeCell_WithBadDays_JailsNobody_SaysWhy_AndOpensTheGumpAgain(string days)
     {
         Open(Staff);
@@ -304,7 +330,10 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         _jail.OfflineResult = JailResultType.Pending;
         Answer(1, Jail(4), "7", "Stole a horse");
 
-        Assert.Equal((new Serial((uint)Offline), 4, 7), (_jail.JailedOffline[0].Prisoner, _jail.JailedOffline[0].Cell, _jail.JailedOffline[0].Days));
+        Assert.Equal(
+            (new Serial((uint)Offline), 4, 7),
+            (_jail.JailedOffline[0].Prisoner, _jail.JailedOffline[0].Cell, _jail.JailedOffline[0].Days)
+        );
         Assert.Empty(_errors);
     }
 
@@ -346,7 +375,10 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         Answer(0, Jail(3), "3", "Stole a horse");
 
         var sent = Assert.Single(_jail.JailedOffline);
-        Assert.Equal((new Serial((uint)Offline), 3, 3, new Serial((uint)Staff)), (sent.Prisoner, sent.Cell, sent.Days, sent.By.Id));
+        Assert.Equal(
+            (new Serial((uint)Offline), 3, 3, new Serial((uint)Staff)),
+            (sent.Prisoner, sent.Cell, sent.Days, sent.By.Id)
+        );
         Assert.Equal(["Stole a horse"], _jail.Reasons);
         Assert.Equal("Pippo will be in cell 3 for 3 days from its next login.", Assert.Single(_speech.Told).Text);
         // Done: the gump does not come back.
@@ -548,7 +580,10 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         Assert.Equal(25, again.Buttons.Count);
 
         Answer(1, Jail(4), "7");
-        Assert.Equal((new Serial((uint)Player), 4, 7), (_jail.Jailed[0].Prisoner.Id, _jail.Jailed[0].Cell, _jail.Jailed[0].Days));
+        Assert.Equal(
+            (new Serial((uint)Player), 4, 7),
+            (_jail.Jailed[0].Prisoner.Id, _jail.Jailed[0].Cell, _jail.Jailed[0].Days)
+        );
         Assert.Empty(_errors);
     }
 
@@ -598,13 +633,16 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         note.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
         _items.Add([note]);
         await _fixture.Network.ExecuteOnLoopAsync(() =>
-        {
-            Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Staff), out var reader));
-            _fixture.Mobiles.MoveTo(reader, MapType.Trammel, new Point3D(1600, 1600, 0));
-        });
+            {
+                Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Staff), out var reader));
+                _fixture.Mobiles.MoveTo(reader, MapType.Trammel, new Point3D(1600, 1600, 0));
+            }
+        );
         var scripts = new ItemScriptService(
             _engine,
-            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "jail_release_note", ScriptId = "jail_note" })),
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "jail_release_note", ScriptId = "jail_note" })
+            ),
             _loop,
             _options
         );
@@ -650,7 +688,10 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
 
     private JailSentenceEntity Waiting(long prisoner, string name, int cell)
     {
-        return new() { Id = new Serial((uint)prisoner), Name = name, Cell = cell, Days = 3, JailedBy = "Giachi", Pending = true };
+        return new()
+        {
+            Id = new Serial((uint)prisoner), Name = name, Cell = cell, Days = 3, JailedBy = "Giachi", Pending = true
+        };
     }
 
     // What .jail Pippo opens the gump with when it finds one player, who is offline.
@@ -713,10 +754,15 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
     {
         // As the loop does: what the script posts runs after the script, not inside it.
         _loop.DeferTryPost = true;
-        _gumps.Opened[gump].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = days, [2] = reason } }
-        );
+        _gumps.Opened[gump]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse
+                {
+                    ButtonId = button, Switches = new HashSet<int>(),
+                    Texts = new Dictionary<int, string> { [1] = days, [2] = reason }
+                }
+            );
         _loop.RunDeferred();
         _loop.DeferTryPost = false;
     }

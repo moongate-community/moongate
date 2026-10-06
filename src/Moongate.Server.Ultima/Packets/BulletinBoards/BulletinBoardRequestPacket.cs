@@ -15,7 +15,8 @@ namespace Moongate.Server.Ultima.Packets.BulletinBoards;
 ///     message, the removal of one, or a new post with its subject and lines.
 /// </summary>
 [PacketHandler(0x71, PacketSizing.Variable, MinimumLength = HeaderLength, Description = "Bulletin board request")]
-public sealed class BulletinBoardRequestPacket : BasePacket<BulletinBoardRequestPacket>, IIncomingPacket<BulletinBoardRequestPacket>
+public sealed class BulletinBoardRequestPacket
+    : BasePacket<BulletinBoardRequestPacket>, IIncomingPacket<BulletinBoardRequestPacket>
 {
     private const int HeaderLength = 12;
 

@@ -27,7 +27,10 @@ public sealed class ScriptCommandTests
         var command = new ScriptCommand(_engine, _loop, new ScriptEngineOptions { ScriptsDirectory = scripts.Path });
 
         Assert.Equal(["reload", "metrics"], command.GetArgumentCompletions([]));
-        Assert.Equal(["init.lua", "mobiles/wander.lua"], command.GetArgumentCompletions(["reload"]).Order(StringComparer.Ordinal));
+        Assert.Equal(
+            ["init.lua", "mobiles/wander.lua"],
+            command.GetArgumentCompletions(["reload"]).Order(StringComparer.Ordinal)
+        );
         Assert.Empty(command.GetArgumentCompletions(["metrics"]));
     }
 

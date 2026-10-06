@@ -39,7 +39,10 @@ public sealed class CommandsModule
     /// <summary>
     ///     Runs a command as the server console; <c>commands.execute("season", "winter")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Runs a command as the server console does: with every power and with no player behind it, so a command that needs one, such as a target cursor, answers that it works in game only. The arguments follow the name, one each: strings, numbers and booleans, joined by spaces into one line (an argument with a space in it is read as two). True when the command was started, false for an empty name, a line end in it or in an argument, or an argument that is a table or a function. The command runs on its own: what it answers is written in the server log, and a failure of it is logged, never raised in the script.")]
+    [ScriptFunction(
+        helpText:
+        "Runs a command as the server console does: with every power and with no player behind it, so a command that needs one, such as a target cursor, answers that it works in game only. The arguments follow the name, one each: strings, numbers and booleans, joined by spaces into one line (an argument with a space in it is read as two). True when the command was started, false for an empty name, a line end in it or in an argument, or an argument that is a table or a function. The command runs on its own: what it answers is written in the server log, and a failure of it is logged, never raised in the script."
+    )]
     public bool Execute(string command, params object?[] args)
     {
         if (!TryLine(command, args, out var line))
@@ -55,7 +58,10 @@ public sealed class CommandsModule
     /// <summary>
     ///     Runs a command as a player wrote it; <c>commands.execute_as(player, "go", "britain")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Runs a command as the player wrote it in game: with the level of its account, so a command above it is refused as it would be, and with its session, so a target cursor opens for it. The player reads what the command answers. True when the command was started; false as commands.execute, and for a player that is not in the world. The command runs on its own.")]
+    [ScriptFunction(
+        helpText:
+        "Runs a command as the player wrote it in game: with the level of its account, so a command above it is refused as it would be, and with its session, so a target cursor opens for it. The player reads what the command answers. True when the command was started; false as commands.execute, and for a player that is not in the world. The command runs on its own."
+    )]
     public bool ExecuteAs(long player, string command, params object?[] args)
     {
         if (player is <= 0 or > uint.MaxValue ||
@@ -86,10 +92,10 @@ public sealed class CommandsModule
         {
             var text = arg switch
             {
-                string value                 => value,
-                bool value                   => value ? "true" : "false",
-                IFormattable value           => value.ToString(null, CultureInfo.InvariantCulture),
-                _                            => null
+                string value       => value,
+                bool value         => value ? "true" : "false",
+                IFormattable value => value.ToString(null, CultureInfo.InvariantCulture),
+                _                  => null
             };
 
             if (text is null || text.Any(char.IsControl))

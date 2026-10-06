@@ -45,9 +45,15 @@ public class SpawnsLoader : IDataLoader<SpawnTemplate>
             return new() { Entities = spawns };
         }
 
-        var mobileIds = _dataLoaderService.GetEntities<MobileTemplate>().Select(template => template.Id).ToHashSet(StringComparer.Ordinal);
-        var listIds = _dataLoaderService.GetEntities<NpcListTemplate>().Select(list => list.Id).ToHashSet(StringComparer.Ordinal);
-        var itemIds = _dataLoaderService.GetEntities<ItemTemplate>().Select(template => template.Id).ToHashSet(StringComparer.Ordinal);
+        var mobileIds = _dataLoaderService.GetEntities<MobileTemplate>()
+            .Select(template => template.Id)
+            .ToHashSet(StringComparer.Ordinal);
+        var listIds = _dataLoaderService.GetEntities<NpcListTemplate>()
+            .Select(list => list.Id)
+            .ToHashSet(StringComparer.Ordinal);
+        var itemIds = _dataLoaderService.GetEntities<ItemTemplate>()
+            .Select(template => template.Id)
+            .ToHashSet(StringComparer.Ordinal);
         var files = new Dictionary<string, string>(StringComparer.Ordinal);
 
         foreach (var folder in Directory.GetDirectories(spawnsDirectoryPath).Order(StringComparer.Ordinal))
@@ -59,7 +65,8 @@ public class SpawnsLoader : IDataLoader<SpawnTemplate>
                 throw new InvalidDataException($"{folder}: spawn folder '{name}' is not a map, such as felucca.");
             }
 
-            foreach (var path in Directory.EnumerateFiles(folder, "*.toml", SearchOption.AllDirectories).Order(StringComparer.Ordinal))
+            foreach (var path in Directory.EnumerateFiles(folder, "*.toml", SearchOption.AllDirectories)
+                         .Order(StringComparer.Ordinal))
             {
                 var file = await TomlUtils.DeserializeFromFileAsync<SpawnTemplateFile>(path, null, cancellationToken) ??
                            new SpawnTemplateFile();
@@ -75,7 +82,9 @@ public class SpawnsLoader : IDataLoader<SpawnTemplate>
 
                     if (!files.TryAdd(spawn.Id, path))
                     {
-                        throw new InvalidDataException($"Spawn '{spawn.Id}' is defined twice: in {files[spawn.Id]} and {path}.");
+                        throw new InvalidDataException(
+                            $"Spawn '{spawn.Id}' is defined twice: in {files[spawn.Id]} and {path}."
+                        );
                     }
 
                     Check(spawn, path, mobileIds, listIds, itemIds);

@@ -116,10 +116,12 @@ public sealed class GumpModuleTests : IAsyncLifetime
     {
         Run("gump.open(7, 'ask_name', { greeting = 'Hi' })");
 
-        _gumps.Opened[0].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = 1, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = "Aria" } }
-        );
+        _gumps.Opened[0]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse
+                    { ButtonId = 1, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = "Aria" } }
+            );
 
         Assert.Equal(2, _gumps.Opened.Count);
         Assert.Equal("Hi Aria", _gumps.Opened[1].Gump.Layout.Build().Strings[0]);
@@ -135,10 +137,11 @@ public sealed class GumpModuleTests : IAsyncLifetime
 
     private void Answer(int button, int[]? switches = null, Dictionary<int, string>? texts = null)
     {
-        _gumps.Opened[0].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = button, Switches = (switches ?? []).ToHashSet(), Texts = texts ?? [] }
-        );
+        _gumps.Opened[0]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse { ButtonId = button, Switches = (switches ?? []).ToHashSet(), Texts = texts ?? [] }
+            );
     }
 
     private LuaValue[] Run(string chunk)
@@ -169,7 +172,13 @@ public sealed class GumpModuleTests : IAsyncLifetime
             new GumpTemplate { Id = "greet", File = "c.xml", Root = greet }
         );
         var templates = new GumpTemplateService(_gumps, data, _fixture.Network.Loop, _fixture.Sessions);
-        var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts), _fixture.Network.Loop);
+        var module = new GumpModule(
+            _fixture.Sessions,
+            _gumps,
+            templates,
+            new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts),
+            _fixture.Network.Loop
+        );
 
         using var state = LuaState.Create();
         state.OpenBasicLibrary();

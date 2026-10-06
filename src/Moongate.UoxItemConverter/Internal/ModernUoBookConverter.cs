@@ -20,6 +20,7 @@ internal static class ModernUoBookConverter
             error.WriteLine($"ModernUO source folder does not exist: {source}");
             return 2;
         }
+
         try
         {
             RejectLink(source);
@@ -31,9 +32,11 @@ internal static class ModernUoBookConverter
                 var text = File.ReadAllText(path, new UTF8Encoding(false, true));
                 foreach (var book in ModernUoBookSourceReader.Read(text, path))
                 {
-                    if (!books.TryAdd(book.Id, book)) throw new InvalidDataException($"{path}: duplicate book id {book.Id}.");
+                    if (!books.TryAdd(book.Id, book))
+                        throw new InvalidDataException($"{path}: duplicate book id {book.Id}.");
                 }
             }
+
             if (books.Count == 0) throw new InvalidDataException($"{source}: no static books found.");
 
             // Serialize and validate every target before touching earlier output.
@@ -45,17 +48,22 @@ internal static class ModernUoBookConverter
                 if (Directory.Exists(path)) throw new InvalidDataException($"Output file is a directory: {path}");
                 var document = new ConvertedBookSource<BookTranslation>
                 {
-                    Title = EscapeDollars(book.Title), Author = EscapeDollars(book.Author), Content = EscapeDollars(book.Content), ItemId = book.ItemId,
+                    Title = EscapeDollars(book.Title), Author = EscapeDollars(book.Author),
+                    Content = EscapeDollars(book.Content), ItemId = book.ItemId,
                     Translations = ModernUoBookTranslationReader.Read(path, book)
                 };
                 files.Add((path, Serialize(document, book.Id)));
             }
+
             Directory.CreateDirectory(destination);
             foreach (var file in files) File.WriteAllText(file.Path, file.Text, new UTF8Encoding(false));
-            output.WriteLine($"{books.Count} books, {books.Values.Sum(book => book.PageCount)} pages converted to {destination}");
+            output.WriteLine(
+                $"{books.Count} books, {books.Values.Sum(book => book.PageCount)} pages converted to {destination}"
+            );
             return 0;
         }
-        catch (Exception exception) when (exception is InvalidDataException or IOException or UnauthorizedAccessException or DecoderFallbackException or TomlException)
+        catch (Exception exception) when (exception is InvalidDataException or IOException or UnauthorizedAccessException
+                                              or DecoderFallbackException or TomlException)
         {
             error.WriteLine($"Book conversion failed: {exception.Message}");
             return 2;
@@ -65,26 +73,40 @@ internal static class ModernUoBookConverter
     private static string Serialize(ConvertedBookSource<BookTranslation> document, string id)
     {
         // Translated bodies stay editable multiline text when that keeps them exactly; else they are plain strings.
-        var text = HexGraphic(TomlUtils.Serialize(new ConvertedBookSource<ConvertedBookTranslation>
-        {
-            Title = document.Title, Author = document.Author, Content = document.Content, ItemTemplate = document.ItemTemplate,
-            ItemId = document.ItemId,
-            Translations = document.Translations?.ToDictionary(pair => pair.Key, pair => new ConvertedBookTranslation
-            {
-                Title = pair.Value.Title, Author = pair.Value.Author, Content = pair.Value.Content
-            }, StringComparer.Ordinal)
-        }));
+        var text = HexGraphic(
+            TomlUtils.Serialize(
+                new ConvertedBookSource<ConvertedBookTranslation>
+                {
+                    Title = document.Title, Author = document.Author, Content = document.Content,
+                    ItemTemplate = document.ItemTemplate,
+                    ItemId = document.ItemId,
+                    Translations = document.Translations?.ToDictionary(
+                        pair => pair.Key,
+                        pair => new ConvertedBookTranslation
+                        {
+                            Title = pair.Value.Title, Author = pair.Value.Author, Content = pair.Value.Content
+                        },
+                        StringComparer.Ordinal
+                    )
+                }
+            )
+        );
         if (MatchesSource(text, document)) return text;
 
         text = HexGraphic(TomlUtils.Serialize(document));
         if (MatchesSource(text, document)) return text;
 
         // Escaped strings retain leading newlines and CR/CRLF sequences that multiline TOML normalizes.
-        text = HexGraphic(TomlUtils.Serialize(new ConvertedPlainBookSource
-        {
-            Title = document.Title, Author = document.Author, Content = document.Content, ItemTemplate = document.ItemTemplate,
-            ItemId = document.ItemId, Translations = document.Translations
-        }));
+        text = HexGraphic(
+            TomlUtils.Serialize(
+                new ConvertedPlainBookSource
+                {
+                    Title = document.Title, Author = document.Author, Content = document.Content,
+                    ItemTemplate = document.ItemTemplate,
+                    ItemId = document.ItemId, Translations = document.Translations
+                }
+            )
+        );
         if (!MatchesSource(text, document))
             throw new InvalidDataException($"{id}: serialized TOML does not preserve the source text.");
         return text;
@@ -94,9 +116,13 @@ internal static class ModernUoBookConverter
     private static string HexGraphic(string text)
     {
         // Only the field written right after item_template: a line of a body that reads the same is text.
-        return Regex.Replace(text, @"(?<=^item_template = ""[^""\r\n]*""\r?\n)item_id = (\d+)(?=\r?$)",
+        return Regex.Replace(
+            text,
+            @"(?<=^item_template = ""[^""\r\n]*""\r?\n)item_id = (\d+)(?=\r?$)",
             match => $"item_id = 0x{int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture):X4}",
-            RegexOptions.Multiline, TimeSpan.FromSeconds(1));
+            RegexOptions.Multiline,
+            TimeSpan.FromSeconds(1)
+        );
     }
 
     private static bool MatchesSource(string text, ConvertedBookSource<BookTranslation> expected)
@@ -105,12 +131,14 @@ internal static class ModernUoBookConverter
         {
             var actual = TomlUtils.Deserialize<ConvertedBookSource<BookTranslation>>(text);
             return actual is not null && actual.Title == expected.Title && actual.Author == expected.Author &&
-                   actual.Content == expected.Content && actual.ItemTemplate == expected.ItemTemplate && actual.ItemId == expected.ItemId &&
+                   actual.Content == expected.Content && actual.ItemTemplate == expected.ItemTemplate &&
+                   actual.ItemId == expected.ItemId &&
                    (actual.Translations?.Count ?? 0) == (expected.Translations?.Count ?? 0) &&
                    (expected.Translations is null || expected.Translations.All(pair =>
                        actual.Translations is not null && actual.Translations.TryGetValue(pair.Key, out var translation) &&
                        translation.Title == pair.Value.Title && translation.Author == pair.Value.Author &&
-                       translation.Content == pair.Value.Content));
+                       translation.Content == pair.Value.Content
+                   ));
         }
         catch (TomlException)
         {

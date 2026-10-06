@@ -35,17 +35,42 @@ public static class TestBookDocuments
         ];
     }
 
-    public static async Task<BookDocumentService> CreateAsync(BroadcastFixture world, IItemService items,
+    public static async Task<BookDocumentService> CreateAsync(
+        BroadcastFixture world, IItemService items,
         IItemHandlingService handling, IItemTemplateService itemTemplates, IGameLoopService loop,
-        IGumpService? gumps = null)
+        IGumpService? gumps = null
+    )
     {
         var source = new StubDataLoaderService().With(ShippedItems());
-        var directories = new DirectoriesConfig(Path.Combine(BookLuaFixture.RepositoryRoot(), "moongate_root"), ["templates"]);
+        var directories = new DirectoriesConfig(
+            Path.Combine(BookLuaFixture.RepositoryRoot(), "moongate_root"),
+            ["templates"]
+        );
         var books = (await new BooksLoader(directories, source).LoadDataAsync()).Entities.ToArray();
-        var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
-        var contexts = new BookContextFactory(world.Sessions, new AdminServerInfoProvider(ServerMode.Game, realm), realm, new MotdServerIdentity("Moongate"), loop);
-        return new(new BookTemplateService(new StubDataLoaderService().With(books)), contexts, items, world.Mobiles,
-            handling, itemTemplates, world.Sessions, new StubBankService(), gumps ?? new RecordingGumpService(),
-            loop, new(() => new FakeScriptEngine()), new());
+        var realm = new RealmInstance(
+            new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular),
+            Guid.NewGuid()
+        );
+        var contexts = new BookContextFactory(
+            world.Sessions,
+            new AdminServerInfoProvider(ServerMode.Game, realm),
+            realm,
+            new MotdServerIdentity("Moongate"),
+            loop
+        );
+        return new(
+            new BookTemplateService(new StubDataLoaderService().With(books)),
+            contexts,
+            items,
+            world.Mobiles,
+            handling,
+            itemTemplates,
+            world.Sessions,
+            new StubBankService(),
+            gumps ?? new RecordingGumpService(),
+            loop,
+            new(() => new FakeScriptEngine()),
+            new()
+        );
     }
 }

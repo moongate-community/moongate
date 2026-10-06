@@ -23,10 +23,10 @@ public sealed class WeightServiceTests : IAsyncLifetime
     private static readonly Serial Aria = new(2);
 
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
-                                                  .Item(BackpackGraphic, TileFlagType.Container, 0, 3)
-                                                  .Item(BagGraphic, TileFlagType.Container, 0, 2)
-                                                  .Item(DaggerGraphic, TileFlagType.None, 0, 1)
-                                                  .Item(AnvilGraphic, TileFlagType.None, 0, 255);
+        .Item(BackpackGraphic, TileFlagType.Container, 0, 3)
+        .Item(BagGraphic, TileFlagType.Container, 0, 2)
+        .Item(DaggerGraphic, TileFlagType.None, 0, 1)
+        .Item(AnvilGraphic, TileFlagType.None, 0, 255);
 
     private readonly ItemEntity _backpack = Item(0x40000001, BackpackGraphic);
     private readonly ItemEntity _bag = Item(0x40000002, BagGraphic, "small_bag");

@@ -29,7 +29,9 @@ internal sealed class UoxScriptAssociations
     /// <summary>
     ///     Reads the two association files of <paramref name="directory" />.
     /// </summary>
-    /// <exception cref="FileNotFoundException">One of them is missing.</exception>
+    /// <exception cref="FileNotFoundException">
+    ///     One of them is missing.
+    /// </exception>
     public static UoxScriptAssociations Load(string directory)
     {
         var files = new Dictionary<int, string>();

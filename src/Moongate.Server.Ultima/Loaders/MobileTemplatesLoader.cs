@@ -10,7 +10,8 @@ using Serilog;
 namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
-///     Loads every <c>*.toml</c> under <c>templates/mobiles/</c>, recursively, and resolves <c>base_id</c> as documented
+///     Loads every <c>*.toml</c> under <c>templates/mobiles/</c>, recursively, and resolves <c>base_id</c> as
+///     documented
 ///     on <see cref="MobileTemplate" />: unset fields come from the parent; skills, resistances and sounds key by key;
 ///     tags merge; equipment and loot, when set, replace. Inherited values are copies. A duplicate or missing id, a
 ///     cycle, an invalid template, an unknown name list, an equipment item that is not an item template or a loot id
@@ -45,7 +46,7 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
         if (Directory.Exists(mobilesDirectoryPath))
         {
             foreach (var path in Directory.EnumerateFiles(mobilesDirectoryPath, "*.toml", SearchOption.AllDirectories)
-                                          .Order(StringComparer.Ordinal))
+                         .Order(StringComparer.Ordinal))
             {
                 var file = await TomlUtils.DeserializeFromFileAsync<MobileTemplateFile>(path, null, cancellationToken) ??
                            new MobileTemplateFile();
@@ -75,14 +76,14 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
         }
 
         var nameLists = _dataLoaderService.GetEntities<NameList>()
-                                          .Select(list => list.Id)
-                                          .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            .Select(list => list.Id)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         var itemIds = _dataLoaderService.GetEntities<ItemTemplate>()
-                                        .Select(template => template.Id)
-                                        .ToHashSet(StringComparer.Ordinal);
+            .Select(template => template.Id)
+            .ToHashSet(StringComparer.Ordinal);
         var lootIds = _dataLoaderService.GetEntities<LootTemplate>()
-                                        .Select(table => table.Id)
-                                        .ToHashSet(StringComparer.Ordinal);
+            .Select(table => table.Id)
+            .ToHashSet(StringComparer.Ordinal);
 
         if (resolved.Values.Any(template => template.NameList == GenderNameList) &&
             new[] { "male", "female" }.FirstOrDefault(list => !nameLists.Contains(list)) is { } missingList)
@@ -98,7 +99,9 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
 
             if (template.NameList is { } list && list != GenderNameList && !nameLists.Contains(list))
             {
-                throw new InvalidDataException($"Mobile template '{template.Id}' has name_list '{list}', which does not exist.");
+                throw new InvalidDataException(
+                    $"Mobile template '{template.Id}' has name_list '{list}', which does not exist."
+                );
             }
 
             if (template.Equipment?.SelectMany(entry => entry.Items).FirstOrDefault(item => !itemIds.Contains(item)) is
@@ -145,7 +148,9 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
         {
             if (!byId.ContainsKey(baseId))
             {
-                throw new InvalidDataException($"{file}: mobile template '{id}' has base_id '{baseId}', which does not exist.");
+                throw new InvalidDataException(
+                    $"{file}: mobile template '{id}' has base_id '{baseId}', which does not exist."
+                );
             }
 
             Inherit(template, Resolve(baseId, byId, resolved, visiting));
@@ -166,9 +171,9 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
         child.Gender ??= parent.Gender;
         child.Race ??= parent.Race;
         child.SkinHue ??= parent.SkinHue;
-        child.Hair ??= parent.Hair is null ? null : [..parent.Hair];
+        child.Hair ??= parent.Hair is null ? null : [.. parent.Hair];
         child.HairHue ??= parent.HairHue;
-        child.Beard ??= parent.Beard is null ? null : [..parent.Beard];
+        child.Beard ??= parent.Beard is null ? null : [.. parent.Beard];
         child.BeardHue ??= parent.BeardHue;
         child.Strength ??= parent.Strength;
         child.Dexterity ??= parent.Dexterity;
@@ -186,12 +191,11 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
         child.FleeAt ??= parent.FleeAt;
         child.Visibility ??= parent.Visibility;
         child.Movement ??= parent.Movement;
-        child.Loot ??= parent.Loot is null ? null : [..parent.Loot];
-        child.Equipment ??= parent.Equipment?.Select(
-                                                entry => new MobileEquipmentEntry
-                                                    { Items = [..entry.Items], Hue = entry.Hue, Gender = entry.Gender }
-                                            )
-                                            .ToList();
+        child.Loot ??= parent.Loot is null ? null : [.. parent.Loot];
+        child.Equipment ??= parent.Equipment?.Select(entry => new MobileEquipmentEntry
+                { Items = [.. entry.Items], Hue = entry.Hue, Gender = entry.Gender }
+            )
+            .ToList();
 
         if (parent.Skills is not null)
         {

@@ -12,7 +12,7 @@ public sealed class NpcsConfig
 
     /// <summary>
     ///     Gets or sets how near, in cells along X or Y, another mobile must come for an NPC's script to sense it
-    ///     (<c>on_mobile_in_range</c>).
+    ///     ( <c>on_mobile_in_range</c>).
     /// </summary>
     public int SenseRange { get; set; } = 8;
 

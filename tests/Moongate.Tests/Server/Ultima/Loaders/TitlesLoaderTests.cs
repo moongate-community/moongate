@@ -10,7 +10,9 @@ public sealed class TitlesLoaderTests
     public async Task CompleteGrid_LoadsTitlesIncludingAnEmptyPrefix()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("data/titles.toml", """
+        root.CreateFile(
+            "data/titles.toml",
+            """
             [[titles]]
             fame = 0
             karma = -100
@@ -32,7 +34,8 @@ public sealed class TitlesLoaderTests
             karma = 0
             title = "The Glorious Lord"
             female_title = "The Glorious Lady"
-            """);
+            """
+        );
 
         var rows = (await CreateLoader(root).LoadDataAsync()).Entities;
 
@@ -71,7 +74,9 @@ public sealed class TitlesLoaderTests
     public async Task DuplicatePair_FailsWithPair()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("data/titles.toml", """
+        root.CreateFile(
+            "data/titles.toml",
+            """
             [[titles]]
             fame = 0
             karma = -100
@@ -81,7 +86,8 @@ public sealed class TitlesLoaderTests
             fame = 0
             karma = -100
             title = "B"
-            """);
+            """
+        );
 
         var error = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
 
@@ -94,7 +100,9 @@ public sealed class TitlesLoaderTests
     public async Task MissingGridPair_FailsWithPair()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("data/titles.toml", """
+        root.CreateFile(
+            "data/titles.toml",
+            """
             [[titles]]
             fame = 0
             karma = -100
@@ -109,7 +117,8 @@ public sealed class TitlesLoaderTests
             fame = 1000
             karma = -100
             title = "C"
-            """);
+            """
+        );
 
         var error = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
 

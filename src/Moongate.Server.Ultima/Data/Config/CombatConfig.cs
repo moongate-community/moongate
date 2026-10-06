@@ -76,7 +76,9 @@ public sealed class CombatConfig
 
         if (MaxRange is < 1 or > MaximumRange)
         {
-            throw new InvalidOperationException($"ultima.combat.max_range must be from 1 to {MaximumRange}, found {MaxRange}.");
+            throw new InvalidOperationException(
+                $"ultima.combat.max_range must be from 1 to {MaximumRange}, found {MaxRange}."
+            );
         }
 
         if (double.IsNaN(ArcheryStandStillSeconds) || ArcheryStandStillSeconds is < 0 or > MaximumStandStill)

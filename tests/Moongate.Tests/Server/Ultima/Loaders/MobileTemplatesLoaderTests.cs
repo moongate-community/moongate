@@ -55,7 +55,10 @@ public sealed class MobileTemplatesLoaderTests
         var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
         var captain = templates["orc_captain"];
-        Assert.Equal(("orc", (int?)17, "1d25+95", "the Captain"), (captain.NameList, captain.Body, captain.Strength.ToString(), captain.Title));
+        Assert.Equal(
+            ("orc", (int?)17, "1d25+95", "the Captain"),
+            (captain.NameList, captain.Body, captain.Strength.ToString(), captain.Title)
+        );
         Assert.Equal(("90", "50"), (captain.Skills!["tactics"].ToString(), captain.Skills["wrestling"].ToString()));
         Assert.Equal(("30", "10"), (captain.Resistances!.Fire.ToString(), captain.Resistances.Cold.ToString()));
         Assert.Equal(((int?)0x45B, (int?)0x45D), (captain.Sounds!.Idle, captain.Sounds.Death));
@@ -175,7 +178,10 @@ public sealed class MobileTemplatesLoaderTests
                     new NameList { Id = "male", Names = ["Aaron"] },
                     new NameList { Id = "female", Names = ["Alice"] }
                 )
-                .With(new ItemTemplate { Id = "club", ItemId = new Serial(0x13B4) }, new ItemTemplate { Id = "axe", ItemId = new Serial(0x0F49) })
+                .With(
+                    new ItemTemplate { Id = "club", ItemId = new Serial(0x13B4) },
+                    new ItemTemplate { Id = "axe", ItemId = new Serial(0x0F49) }
+                )
                 .With(new LootTemplate { Id = "gems", Entries = [new LootEntry()] })
         );
     }

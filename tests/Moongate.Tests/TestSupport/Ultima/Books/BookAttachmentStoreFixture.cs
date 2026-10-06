@@ -40,13 +40,18 @@ internal sealed class BookAttachmentStoreFixture : IAsyncDisposable
             else
             {
                 host.Container.AddPersistenceWorld<MobileEntity>(() => [world.Player], mobile => mobile.Snapshot());
-                host.Container.AddPersistenceWorld<ItemEntity>(() =>
-                {
-                    Assert.True(world.World.Network.Loop.IsOnLoopThread);
-                    fixture!.Captures++;
-                    return world.Items.Items.OrderBy(item => item.MobileId is not null);
-                }, item => item.Snapshot(), world.Items);
+                host.Container.AddPersistenceWorld<ItemEntity>(
+                    () =>
+                    {
+                        Assert.True(world.World.Network.Loop.IsOnLoopThread);
+                        fixture!.Captures++;
+                        return world.Items.Items.OrderBy(item => item.MobileId is not null);
+                    },
+                    item => item.Snapshot(),
+                    world.Items
+                );
             }
+
             host.Container.AddPersistenceWorld<BookAttachmentClaimEntity>();
             await CoreMigrationFiles.ApplyAsync(host.Database, "world");
             await host.Owner.InitializeAsync();
@@ -69,8 +74,11 @@ internal sealed class BookAttachmentStoreFixture : IAsyncDisposable
         letter.SetProp("book.content", "Welcome Pippo");
         var reward = new ItemEntity { Id = new(rewardId), TemplateId = "gold", ItemId = 0xEED, Amount = amount };
         reward.PutInContainer(pack.Id, new(20, 20), 1);
-        return new() { Letter = letter, Parents = [pack], Items = [reward],
-            Receipt = new() { Id = letter.Id, ClaimantId = new(100), ClaimedAt = 1000 } };
+        return new()
+        {
+            Letter = letter, Parents = [pack], Items = [reward],
+            Receipt = new() { Id = letter.Id, ClaimantId = new(100), ClaimedAt = 1000 }
+        };
     }
 
     public async ValueTask DisposeAsync()

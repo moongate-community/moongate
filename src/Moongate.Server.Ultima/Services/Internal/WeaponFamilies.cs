@@ -24,11 +24,11 @@ internal static class WeaponFamilies
         return type switch
         {
             WeaponType.Sword or WeaponType.Fencing => 0x23B,
-            WeaponType.Axe                          => 0x232,
-            WeaponType.PoleArm                      => 0x237,
-            WeaponType.Mace                         => 0x233,
-            WeaponType.Bow or WeaponType.Crossbow   => ShotHitSound,
-            _                                       => FistsHitSound
+            WeaponType.Axe                         => 0x232,
+            WeaponType.PoleArm                     => 0x237,
+            WeaponType.Mace                        => 0x233,
+            WeaponType.Bow or WeaponType.Crossbow  => ShotHitSound,
+            _                                      => FistsHitSound
         };
     }
 
@@ -39,11 +39,11 @@ internal static class WeaponFamilies
     {
         return type switch
         {
-            WeaponType.Sword or WeaponType.Axe => 0x23A,
+            WeaponType.Sword or WeaponType.Axe       => 0x23A,
             WeaponType.PoleArm or WeaponType.Fencing => 0x238,
-            WeaponType.Mace                    => 0x239,
-            WeaponType.Bow or WeaponType.Crossbow => ShotMissSound,
-            _                                  => FistsMissSound
+            WeaponType.Mace                          => 0x239,
+            WeaponType.Bow or WeaponType.Crossbow    => ShotMissSound,
+            _                                        => FistsMissSound
         };
     }
 
@@ -54,13 +54,15 @@ internal static class WeaponFamilies
     {
         return type switch
         {
-            WeaponType.Sword or WeaponType.Axe => twoHanded ? HumanAnimationType.AttackSlash2H : HumanAnimationType.AttackSlash1H,
-            WeaponType.PoleArm                 => HumanAnimationType.AttackSlash2H,
-            WeaponType.Mace                    => twoHanded ? HumanAnimationType.AttackBash2H : HumanAnimationType.AttackBash1H,
-            WeaponType.Fencing                 => twoHanded ? HumanAnimationType.AttackPierce2H : HumanAnimationType.AttackPierce1H,
-            WeaponType.Bow                     => HumanAnimationType.AttackBow,
-            WeaponType.Crossbow                => HumanAnimationType.AttackCrossbow,
-            _                                  => HumanAnimationType.Punch
+            WeaponType.Sword or WeaponType.Axe => twoHanded
+                ? HumanAnimationType.AttackSlash2H
+                : HumanAnimationType.AttackSlash1H,
+            WeaponType.PoleArm  => HumanAnimationType.AttackSlash2H,
+            WeaponType.Mace     => twoHanded ? HumanAnimationType.AttackBash2H : HumanAnimationType.AttackBash1H,
+            WeaponType.Fencing  => twoHanded ? HumanAnimationType.AttackPierce2H : HumanAnimationType.AttackPierce1H,
+            WeaponType.Bow      => HumanAnimationType.AttackBow,
+            WeaponType.Crossbow => HumanAnimationType.AttackCrossbow,
+            _                   => HumanAnimationType.Punch
         };
     }
 }

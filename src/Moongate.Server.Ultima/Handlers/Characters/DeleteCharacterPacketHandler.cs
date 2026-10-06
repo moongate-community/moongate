@@ -36,9 +36,9 @@ public sealed class DeleteCharacterPacketHandler : IAsyncPacketHandler<DeleteCha
         {
             _logger.Warning("Character deletion from session {SessionId} without an account", context.SessionId);
             await context.SendAndDisconnectAsync(
-                             new CharacterDeleteResultPacket(CharacterDeleteResultType.RequestFailed),
-                             cancellationToken
-                         );
+                new CharacterDeleteResultPacket(CharacterDeleteResultType.RequestFailed),
+                cancellationToken
+            );
 
             return;
         }

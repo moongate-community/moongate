@@ -10,7 +10,8 @@ internal static class ToolProcess
 {
     public static async Task<(int ExitCode, string Output)> RunAsync(string tool, params string[] arguments)
     {
-        var start = new ProcessStartInfo(tool) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
+        var start = new ProcessStartInfo(tool)
+            { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
 
         foreach (var argument in arguments)
         {

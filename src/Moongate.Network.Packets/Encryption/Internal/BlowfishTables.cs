@@ -1,4 +1,5 @@
 // POL protocol tables; see THIRD-PARTY-NOTICES.md for origin and license.
+
 namespace Moongate.Network.Packets.Encryption.Internal;
 
 internal static class BlowfishTables

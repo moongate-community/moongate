@@ -50,7 +50,12 @@ public sealed class ShutdownCommand : ICommandExecutor
 
         if (_shutdown.Requested.IsCompleted || Interlocked.CompareExchange(ref _scheduled, 1, 0) != 0)
         {
-            context.PrintError(_localization.Text(CommandMessages.ShutdownAlreadyScheduled, "A shutdown is already scheduled or in progress."));
+            context.PrintError(
+                _localization.Text(
+                    CommandMessages.ShutdownAlreadyScheduled,
+                    "A shutdown is already scheduled or in progress."
+                )
+            );
 
             return;
         }

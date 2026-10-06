@@ -309,8 +309,8 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         if (previous.Count == 0)
         {
             return _commands.GetRegisteredCommands()
-                            .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
-                            .SelectMany(definition => definition.Aliases);
+                .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
+                .SelectMany(definition => definition.Aliases);
         }
 
         return _commands.GetArgumentCompletions(previous[0], previous.Skip(1).ToArray());

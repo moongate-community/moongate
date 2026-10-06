@@ -71,7 +71,8 @@ internal sealed class ExceptionReportWriter
 
     private string Report(LogEvent logEvent, string details)
     {
-        var source = logEvent.Properties.TryGetValue("SourceContext", out var value) && value is ScalarValue { Value: string name }
+        var source = logEvent.Properties.TryGetValue("SourceContext", out var value) &&
+                     value is ScalarValue { Value: string name }
             ? name
             : "Moongate";
 

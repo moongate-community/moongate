@@ -5,15 +5,23 @@ namespace Moongate.Server.Ultima.Types.BulletinBoards;
 /// </summary>
 public enum BulletinBoardCommandType : byte
 {
-    /// <summary>The text of a message.</summary>
+    /// <summary>
+    ///     The text of a message.
+    /// </summary>
     RequestMessage = 0x03,
 
-    /// <summary>The summary of a message: who, what about and when.</summary>
+    /// <summary>
+    ///     The summary of a message: who, what about and when.
+    /// </summary>
     RequestSummary = 0x04,
 
-    /// <summary>A new message, or a reply to one.</summary>
+    /// <summary>
+    ///     A new message, or a reply to one.
+    /// </summary>
     Post = 0x05,
 
-    /// <summary>The removal of a message.</summary>
+    /// <summary>
+    ///     The removal of a message.
+    /// </summary>
     Remove = 0x06
 }

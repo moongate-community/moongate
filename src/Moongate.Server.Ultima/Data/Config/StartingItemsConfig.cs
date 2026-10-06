@@ -18,7 +18,9 @@ public sealed class StartingItemsConfig
     {
         if (BestSkills < 1)
         {
-            throw new InvalidOperationException($"ultima.starting_items.best_skills must be at least 1, found {BestSkills}.");
+            throw new InvalidOperationException(
+                $"ultima.starting_items.best_skills must be at least 1, found {BestSkills}."
+            );
         }
     }
 }

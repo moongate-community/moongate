@@ -55,6 +55,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     private readonly StubLineOfSightService _sight = new();
     private readonly StubPathfindingService _finder = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate
@@ -65,6 +66,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
             new MobileTemplate { Id = "lich", ScriptId = "monster", FleeAt = -1 }
         )
     );
+
     private readonly MobileEntity _skeleton = new()
     {
         Id = new Serial(0x100), Name = "a skeleton", TemplateId = "skeleton", Body = 0x32, Map = MapType.Trammel,
@@ -117,17 +119,19 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         _container.RegisterScriptEnum<MonsterAnimationType>();
         _container.RegisterScriptEnum<BodyType>();
         _container.RegisterInstance<IDataLoaderService>(
-            new StubDataLoaderService().With(new BodyContent { Body = new(0x32), Type = BodyType.Monster }, new BodyContent { Body = new(0x190), Type = BodyType.Human })
+            new StubDataLoaderService().With(
+                new BodyContent { Body = new(0x32), Type = BodyType.Monster },
+                new BodyContent { Body = new(0x190), Type = BodyType.Human }
+            )
         );
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>(
-                      (evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
         _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
         _scripts.Write("mobiles/monster.lua", File.ReadAllText(ShippedScript("mobiles/monster.lua")));
         var options = new ScriptEngineOptions
@@ -138,7 +142,14 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
             HookInterval = 100,
             WriteDefinitions = false
         };
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         _npcs = new(_engine, _templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
         await _npcs.StartAsync();
@@ -534,7 +545,8 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     {
         var npc = new MobileEntity
         {
-            Id = new Serial(serial), Name = "a townsman", TemplateId = "townsman", Notoriety = notoriety, Map = MapType.Trammel,
+            Id = new Serial(serial), Name = "a townsman", TemplateId = "townsman", Notoriety = notoriety,
+            Map = MapType.Trammel,
             Location = new Point3D(x, y, 0), Hits = 20, HitsMax = 20
         };
         _fixture.Mobiles.EnterWorld(npc);

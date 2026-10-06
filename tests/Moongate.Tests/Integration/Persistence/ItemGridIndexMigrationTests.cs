@@ -35,7 +35,10 @@ public sealed class ItemGridIndexMigrationTests
         await db.ExecuteAsync(await File.ReadAllTextAsync(migration));
 
         Assert.Equal(
-            [(1073741824L, null), (1073741825L, (short?)0), (1073741826L, (short?)1), (1073741827L, (short?)2), (1073741830L, null)],
+            [
+                (1073741824L, null), (1073741825L, (short?)0), (1073741826L, (short?)1), (1073741827L, (short?)2),
+                (1073741830L, null)
+            ],
             await ReadGridIndicesAsync(db)
         );
     }

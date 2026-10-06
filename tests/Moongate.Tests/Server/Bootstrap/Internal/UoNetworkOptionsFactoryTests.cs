@@ -113,7 +113,8 @@ public sealed class UoNetworkOptionsFactoryTests
         var config = new MoongateServerConfig();
         config.Network.Encryption.Mode = NetworkEncryptionMode.Required;
         Assert.Throws<InvalidOperationException>(() => UoNetworkOptionsFactory.CreateLogin(config, PacketRegistry.Default));
-        Assert.Throws<InvalidOperationException>(() => UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, []));
+        Assert.Throws<InvalidOperationException>(() => UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, [])
+        );
     }
 
     private sealed class PassThroughMiddleware : INetMiddleware

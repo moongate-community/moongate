@@ -155,7 +155,12 @@ public sealed class GumpService : IGumpService
         }
         catch (Exception exception)
         {
-            _logger.Error(exception, "Gump {Gump} failed to handle the answer of session {SessionId}", open.Gump.Id, session.SessionId);
+            _logger.Error(
+                exception,
+                "Gump {Gump} failed to handle the answer of session {SessionId}",
+                open.Gump.Id,
+                session.SessionId
+            );
         }
     }
 

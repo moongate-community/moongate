@@ -39,8 +39,8 @@ internal static class RootDirectoryInitializer
         }
 
         var dataFiles = Directory.Exists(dataDirectory)
-                            ? Directory.GetFiles(dataDirectory, "*", SearchOption.AllDirectories)
-                            : [];
+            ? Directory.GetFiles(dataDirectory, "*", SearchOption.AllDirectories)
+            : [];
 
         if (dataFiles.Length == 0)
         {

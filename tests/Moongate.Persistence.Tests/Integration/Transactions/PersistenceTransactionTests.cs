@@ -24,14 +24,19 @@ public sealed class PersistenceTransactionTests
         var store = owner.RegisterEntity<CharacterEntity>();
         owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
-        await owner.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm,
-            tx => tx.InsertAsync(new CharacterEntity { Id = new(1), Name = "original" }));
+        await owner.ExecuteInTransactionAsync(
+            PersistenceDatabaseTarget.Realm,
+            tx => tx.InsertAsync(new CharacterEntity { Id = new(1), Name = "original" })
+        );
         await Assert.ThrowsAnyAsync<Exception>(() => owner.ExecuteInTransactionAsync(
-            PersistenceDatabaseTarget.Realm, async tx =>
-            {
-                await tx.InsertAsync(new CharacterEntity { Id = new(2), Name = "rollback" });
-                await tx.InsertAsync(new CharacterEntity { Id = new(1), Name = "replacement" });
-            }));
+                PersistenceDatabaseTarget.Realm,
+                async tx =>
+                {
+                    await tx.InsertAsync(new CharacterEntity { Id = new(2), Name = "rollback" });
+                    await tx.InsertAsync(new CharacterEntity { Id = new(1), Name = "replacement" });
+                }
+            )
+        );
         Assert.Equal("original", (await store.GetByIdAsync(new(1)))!.Name);
         Assert.Null(await store.GetByIdAsync(new(2)));
     }
@@ -49,13 +54,17 @@ public sealed class PersistenceTransactionTests
         await owner.InitializeAsync();
         await store.UpsertAsync(new() { Id = new(1), Name = "original" });
         await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExecuteInTransactionAsync(
-            PersistenceDatabaseTarget.Realm, async tx =>
-            {
-                await tx.InsertAsync(new CharacterEntity { Id = new(2), Name = "rollback" });
-                await Assert.ThrowsAnyAsync<Exception>(() => invalid == "target"
-                    ? tx.InsertAsync(new AccountsSharedEntity { Id = new(1) })
-                    : tx.InsertAsync(new CharacterEntity { Id = new(invalid == "zero" ? 0u : 1u), Name = "invalid" }));
-            }));
+                PersistenceDatabaseTarget.Realm,
+                async tx =>
+                {
+                    await tx.InsertAsync(new CharacterEntity { Id = new(2), Name = "rollback" });
+                    await Assert.ThrowsAnyAsync<Exception>(() => invalid == "target"
+                        ? tx.InsertAsync(new AccountsSharedEntity { Id = new(1) })
+                        : tx.InsertAsync(new CharacterEntity { Id = new(invalid == "zero" ? 0u : 1u), Name = "invalid" })
+                    );
+                }
+            )
+        );
         Assert.Null(await store.GetByIdAsync(new(2)));
         Assert.Equal("original", (await store.GetByIdAsync(new(1)))!.Name);
     }
@@ -69,13 +78,18 @@ public sealed class PersistenceTransactionTests
         owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
         IPersistenceTransaction? escaped = null;
-        await owner.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm, tx =>
-        {
-            escaped = tx;
-            return Task.CompletedTask;
-        });
+        await owner.ExecuteInTransactionAsync(
+            PersistenceDatabaseTarget.Realm,
+            tx =>
+            {
+                escaped = tx;
+                return Task.CompletedTask;
+            }
+        );
         await Assert.ThrowsAsync<InvalidOperationException>(() => escaped!.InsertAsync(
-            new CharacterEntity { Id = new(1), Name = "invalid" }));
+                new CharacterEntity { Id = new(1), Name = "invalid" }
+            )
+        );
         Assert.Empty(await store.GetAllAsync());
     }
 

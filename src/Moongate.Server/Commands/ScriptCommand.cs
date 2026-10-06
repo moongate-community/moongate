@@ -41,7 +41,8 @@ public sealed class ScriptCommand : ICommandExecutor, ICommandArgumentCompleter
     ///     Loop a reload is posted to, since the command runs on the caller's thread.
     /// </param>
     /// <param name="options">
-    ///     The engine's settings, whose scripts directory gives the files <c>reload</c> completes; without them nothing is
+    ///     The engine's settings, whose scripts directory gives the files <c>reload</c> completes; without them nothing
+    ///     is
     ///     completed.
     /// </param>
     public ScriptCommand(IScriptEngine engine, IGameLoopService gameLoop, ScriptEngineOptions? options = null)
@@ -92,9 +93,9 @@ public sealed class ScriptCommand : ICommandExecutor, ICommandArgumentCompleter
     {
         return previousArguments switch
         {
-            [] => ["reload", "metrics"],
+            []                                                                            => ["reload", "metrics"],
             [var action] when action.Equals("reload", StringComparison.OrdinalIgnoreCase) => ScriptFiles(),
-            _ => []
+            _                                                                             => []
         };
     }
 
@@ -106,9 +107,9 @@ public sealed class ScriptCommand : ICommandExecutor, ICommandArgumentCompleter
         }
 
         return Directory.EnumerateFiles(_options.ScriptsDirectory, "*.lua", ScriptFileSearch)
-                        .Select(path => Path.GetRelativePath(_options.ScriptsDirectory, path).Replace('\\', '/'))
-                        .Take(MaxListedScripts)
-                        .ToArray();
+            .Select(path => Path.GetRelativePath(_options.ScriptsDirectory, path).Replace('\\', '/'))
+            .Take(MaxListedScripts)
+            .ToArray();
     }
 
     private void PrintMetrics(CommandContext context)

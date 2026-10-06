@@ -16,21 +16,23 @@ public sealed class ReadableBookIntegrationTests
         await using var fixture = await BookLuaFixture.CreateAsync(realGumps: true);
         var documents = fixture.Documents;
         documents.Data.With(
-            new BookTemplate { Id = "tome", Title = "Tome", Author = "Yorick", Content = "one\n\ntwo", ItemTemplate = "readable_book" }
+            new BookTemplate
+                { Id = "tome", Title = "Tome", Author = "Yorick", Content = "one\n\ntwo", ItemTemplate = "readable_book" }
         );
 
         await documents.OnLoopAsync(() =>
-        {
-            var tome = Assert.IsType<ItemEntity>(documents.Books.Give(documents.Player, "tome"));
-            documents.World.Sender.Sent.Clear();
+            {
+                var tome = Assert.IsType<ItemEntity>(documents.Books.Give(documents.Player, "tome"));
+                documents.World.Sender.Sent.Clear();
 
-            var used = fixture.ItemScripts.Run(tome, "on_use", 2L);
+                var used = fixture.ItemScripts.Run(tome, "on_use", 2L);
 
-            Assert.Equal(ScriptResultKind.Completed, used.Kind);
-            Assert.Equal(true, Assert.Single(used.Values));
-            Assert.Equal(2, Assert.Single(documents.World.Sender.Sent.OfType<BookHeaderPacket>()).PageCount);
-            Assert.Equal(tome.Id, Assert.Single(documents.World.Sender.Sent.OfType<BookPagesPacket>()).Book);
-        });
+                Assert.Equal(ScriptResultKind.Completed, used.Kind);
+                Assert.Equal(true, Assert.Single(used.Values));
+                Assert.Equal(2, Assert.Single(documents.World.Sender.Sent.OfType<BookHeaderPacket>()).PageCount);
+                Assert.Equal(tome.Id, Assert.Single(documents.World.Sender.Sent.OfType<BookPagesPacket>()).Book);
+            }
+        );
         await documents.OnLoopAsync(() => Assert.Empty(documents.World.Sender.Sent.OfType<CompressedGumpPacket>()));
         Assert.Empty(fixture.Errors);
     }

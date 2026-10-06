@@ -13,9 +13,8 @@ public static class MobileEntityExtensions
     /// </summary>
     public static string DisplayName(this MobileEntity mobile)
     {
-        var name = !string.IsNullOrWhiteSpace(mobile.Name) ? mobile.Name
-            : !string.IsNullOrWhiteSpace(mobile.TemplateId) ? mobile.TemplateId
-            : mobile.Id.ToString();
+        var name = !string.IsNullOrWhiteSpace(mobile.Name) ? mobile.Name :
+            !string.IsNullOrWhiteSpace(mobile.TemplateId) ? mobile.TemplateId : mobile.Id.ToString();
 
         return string.IsNullOrWhiteSpace(mobile.Title) ? name : $"{name} {mobile.Title}";
     }

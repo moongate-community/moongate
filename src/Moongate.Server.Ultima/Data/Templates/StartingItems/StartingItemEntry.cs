@@ -31,6 +31,7 @@ public class StartingItemEntry
     ///     Whether the item stays with the character on death; unset leaves the server's default.
     /// </summary>
     public bool? Newbie { get; set; }
+
     /// <summary>
     ///     Optional readable text template applied once when this item is created.
     /// </summary>
@@ -40,5 +41,4 @@ public class StartingItemEntry
     ///     Explicit custom values required by the book template.
     /// </summary>
     public Dictionary<string, object?> BookValues { get; set; } = new(StringComparer.Ordinal);
-
 }

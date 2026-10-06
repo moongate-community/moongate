@@ -123,7 +123,8 @@ public class StartingItemsService : IStartingItemsService
     {
         var entries = SelectSets(request).SelectMany(set => set.Items).ToList();
         var context = entries.Any(entry => entry.BookTemplate is not null)
-            ? _contexts.CaptureForCreation(request.PlayerName) : null;
+            ? _contexts.CaptureForCreation(request.PlayerName)
+            : null;
         var given = new List<ItemEntity>();
         var backpack = _factory.Create(_items.BackpackTemplate);
         backpack.Equip(request.MobileId, LayerType.Backpack);
@@ -183,7 +184,8 @@ public class StartingItemsService : IStartingItemsService
         if (entry.BookTemplate is { } book)
         {
             if (context is null || string.IsNullOrWhiteSpace(request.PlayerName) || entry.Equip ||
-                !_books.TryGet(book, out source) || source is null || !BookItemCompatibility.IsCompatible(source, template) ||
+                !_books.TryGet(book, out source) || source is null ||
+                !BookItemCompatibility.IsCompatible(source, template) ||
                 !_books.TryRender(book, context, _localization.Language, entry.BookValues, out rendered) || rendered is null)
             {
                 throw new InvalidDataException($"Cannot create starting document '{book}' for item '{templateId}'.");
@@ -208,8 +210,10 @@ public class StartingItemsService : IStartingItemsService
                 {
                     item.SetProp(BookAttachmentCodec.PropKey, payload);
                 }
+
                 BookDocumentText.Apply(item, rendered);
             }
+
             ApplyLootType(item, template, entry.Newbie);
 
             if (entry.Equip && template.EffectiveLayer(_tiles) is { } layer && usedLayers.Add(layer))

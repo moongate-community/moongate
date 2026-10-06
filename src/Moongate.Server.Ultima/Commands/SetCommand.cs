@@ -11,7 +11,8 @@ using Moongate.Server.Ultima.Types.Targeting;
 namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
-///     Sets a number of the mobile the game master targets: <c>set hits|mana|stamina|hunger|thirst|criminal &lt;value&gt;</c>. Hit
+///     Sets a number of the mobile the game master targets:
+///     <c>set hits|mana|stamina|hunger|thirst|criminal &lt;value&gt;</c>. Hit
 ///     points, mana and stamina stay between 0 and their maximum, hunger and thirst between 0 and 20;
 ///     criminal makes a criminal of it with anything but 0, and pardons it with 0.
 /// </summary>
@@ -56,7 +57,8 @@ public sealed class SetCommand : ICommandExecutor
         }
 
         if (context.Arguments.Length != 2 ||
-            context.Arguments[0].ToLowerInvariant() is not ("hits" or "mana" or "stamina" or "hunger" or "thirst" or "criminal") ||
+            context.Arguments[0].ToLowerInvariant() is not ("hits" or "mana" or "stamina" or "hunger" or "thirst"
+                or "criminal") ||
             !int.TryParse(context.Arguments[1], out var value) ||
             value < 0)
         {
@@ -82,8 +84,7 @@ public sealed class SetCommand : ICommandExecutor
 
         string? name = null;
         var now = 0;
-        var work = new LoopActionWorkItem(
-            () =>
+        var work = new LoopActionWorkItem(() =>
             {
                 if (!_mobiles.TryGet(target.Serial, out var mobile))
                 {

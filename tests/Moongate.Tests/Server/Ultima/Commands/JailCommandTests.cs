@@ -54,7 +54,10 @@ public sealed class JailCommandTests : IAsyncDisposable
         var context = await RunAsync();
 
         var line = Assert.Single(context.Output);
-        Assert.Equal((CommandOutputLevel.Error, "The jail is not set up: data/jail.toml is missing."), (line.Level, line.Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "The jail is not set up: data/jail.toml is missing."),
+            (line.Level, line.Text)
+        );
     }
 
     [Fact]
@@ -80,7 +83,9 @@ public sealed class JailCommandTests : IAsyncDisposable
     [Fact]
     public async Task WithAName_OneFound_OpensTheGumpOnIt()
     {
-        _jail.Found.Add(new() { Id = new Serial(200), Name = "Pippo", Account = "mario", AccountType = AccountType.Regular });
+        _jail.Found.Add(
+            new() { Id = new Serial(200), Name = "Pippo", Account = "mario", AccountType = AccountType.Regular }
+        );
 
         // Typed in another case: the gump shows the name the character has.
         var context = await RunAsync("pippo");
@@ -109,8 +114,12 @@ public sealed class JailCommandTests : IAsyncDisposable
     [Fact]
     public async Task WithAName_SeveralFound_OpensTheGumpWithNoTarget_AndTheirList()
     {
-        _jail.Found.Add(new() { Id = new Serial(200), Name = "Pippo", Account = "mario", AccountType = AccountType.Regular });
-        _jail.Found.Add(new() { Id = new Serial(210), Name = "Pippo", Account = "luigi", AccountType = AccountType.GameMaster });
+        _jail.Found.Add(
+            new() { Id = new Serial(200), Name = "Pippo", Account = "mario", AccountType = AccountType.Regular }
+        );
+        _jail.Found.Add(
+            new() { Id = new Serial(210), Name = "Pippo", Account = "luigi", AccountType = AccountType.GameMaster }
+        );
 
         var context = await RunAsync("Pippo");
 
@@ -118,7 +127,10 @@ public sealed class JailCommandTests : IAsyncDisposable
         var candidates = Arguments()["candidates"].Read<LuaTable>();
         Assert.Equal(2, candidates.ArrayLength);
         var second = candidates[2].Read<LuaTable>();
-        Assert.Equal((210, "Pippo", "luigi"), (second["serial"].Read<int>(), second["name"].Read<string>(), second["account"].Read<string>()));
+        Assert.Equal(
+            (210, "Pippo", "luigi"),
+            (second["serial"].Read<int>(), second["name"].Read<string>(), second["account"].Read<string>())
+        );
         Assert.Empty(context.Output);
     }
 
@@ -144,7 +156,9 @@ public sealed class JailCommandTests : IAsyncDisposable
                 new GumpTemplate
                 {
                     Id = JailCommand.GumpId, File = "jail_sentence.xml",
-                    Root = XElement.Parse("""<gump id="jail_sentence"><text x="1" y="1">jail:${target}:${name}:${days}</text><slot name="rows" x="1" y="20" /></gump>""")
+                    Root = XElement.Parse(
+                        """<gump id="jail_sentence"><text x="1" y="1">jail:${target}:${name}:${days}</text><slot name="rows" x="1" y="20" /></gump>"""
+                    )
                 }
             ),
             _fixture.Loop,

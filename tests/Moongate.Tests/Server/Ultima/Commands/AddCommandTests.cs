@@ -21,8 +21,11 @@ public sealed class AddCommandTests : IAsyncDisposable
 {
     private readonly StubTargetService _targets = new();
     private readonly StubItemSpawnService _spawns = new();
+
     private readonly ItemTemplateService _templates = new(
-        new StubDataLoaderService().With(new ItemTemplate { Id = "treasure_chest_level_1", ItemId = new Serial(0x0E43), Name = "treasure chest" })
+        new StubDataLoaderService().With(
+            new ItemTemplate { Id = "treasure_chest_level_1", ItemId = new Serial(0x0E43), Name = "treasure chest" }
+        )
     );
 
     private SessionFixture? _fixture;
@@ -32,7 +35,10 @@ public sealed class AddCommandTests : IAsyncDisposable
     {
         var context = await RunAsync(arguments);
 
-        Assert.Equal((CommandOutputLevel.Error, "Usage: add <template>"), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "Usage: add <template>"),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
         Assert.Equal(0, _targets.Requests);
     }
 
@@ -52,7 +58,10 @@ public sealed class AddCommandTests : IAsyncDisposable
 
         var context = await RunAsync("treasure_chest_level_1");
 
-        Assert.Equal(("treasure_chest_level_1", MapType.Trammel, new Point3D(1385, 1490, 10)), Assert.Single(_spawns.Spawns));
+        Assert.Equal(
+            ("treasure_chest_level_1", MapType.Trammel, new Point3D(1385, 1490, 10)),
+            Assert.Single(_spawns.Spawns)
+        );
         Assert.Equal(
             "Added treasure_chest_level_1 (0x40001000) at Trammel (1385, 1490, 10).",
             Assert.Single(context.Output).Text

@@ -13,7 +13,8 @@ namespace Moongate.Server.Ultima.Handlers.Books;
 ///     or one that is not well formed, changes nothing and is answered with nothing.
 /// </summary>
 public sealed class BookEditPacketHandler
-    : IPacketHandler<BookPagesRequestPacket>, IPacketHandler<BookHeaderChangePacket>, IPacketHandler<OldBookHeaderChangePacket>
+    : IPacketHandler<BookPagesRequestPacket>, IPacketHandler<BookHeaderChangePacket>,
+        IPacketHandler<OldBookHeaderChangePacket>
 {
     private readonly IBookDocumentService _books;
     private readonly IItemService _items;

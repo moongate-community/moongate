@@ -4,7 +4,7 @@ using System.Text;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Converts ModernUO's shop and world signs (<c>Distribution/Data/signs.cfg</c>, placed there by <c>[SignGen</c>)
+///     Converts ModernUO's shop and world signs ( <c>Distribution/Data/signs.cfg</c>, placed there by <c>[SignGen</c>)
 ///     into decoration files: <c>&lt;folder&gt;/signs.toml</c> for <c>britannia</c> (Trammel and Felucca) and for each
 ///     map with signs of its own, replacing those of a previous run. A line is
 ///     <c>&lt;facet&gt; &lt;graphic&gt; &lt;x&gt; &lt;y&gt; &lt;z&gt; &lt;text&gt;</c>; a text of <c>#</c> and a number
@@ -30,8 +30,9 @@ internal static class ModernUoSignConverter
         }
 
         // Per facet: the blocks in the order of their first sign, each with its locations.
-        var blocks = Folders.Select(_ => new List<(int ItemId, string Text, int Hue, List<(int X, int Y, int Z)> Locations)>())
-                            .ToArray();
+        var blocks = Folders
+            .Select(_ => new List<(int ItemId, string Text, int Hue, List<(int X, int Y, int Z)> Locations)>())
+            .ToArray();
         var lines = File.ReadAllLines(source);
 
         for (var index = 0; index < lines.Length; index++)

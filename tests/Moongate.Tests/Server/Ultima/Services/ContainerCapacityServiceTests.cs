@@ -16,6 +16,7 @@ public sealed class ContainerCapacityServiceTests
 
     private readonly ItemService _items = TestItems.Create();
     private readonly BankConfig _config = new() { MaxItems = 5 };
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "bank_box", ItemId = new Serial(0x0E7C) },

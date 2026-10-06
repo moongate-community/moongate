@@ -15,13 +15,13 @@ internal static class CombatZones
     {
         return layer switch
         {
-            LayerType.Neck                                                       => ArmorZoneType.Neck,
-            LayerType.Gloves                                                     => ArmorZoneType.Hands,
-            LayerType.Arms                                                       => ArmorZoneType.Arms,
-            LayerType.Helm                                                       => ArmorZoneType.Head,
-            LayerType.Pants or LayerType.OuterLegs or LayerType.InnerLegs        => ArmorZoneType.Legs,
+            LayerType.Neck                                                                           => ArmorZoneType.Neck,
+            LayerType.Gloves                                                                         => ArmorZoneType.Hands,
+            LayerType.Arms                                                                           => ArmorZoneType.Arms,
+            LayerType.Helm                                                                           => ArmorZoneType.Head,
+            LayerType.Pants or LayerType.OuterLegs or LayerType.InnerLegs                            => ArmorZoneType.Legs,
             LayerType.Shirt or LayerType.InnerTorso or LayerType.MiddleTorso or LayerType.OuterTorso => ArmorZoneType.Chest,
-            _                                                                    => null
+            _                                                                                        => null
         };
     }
 }

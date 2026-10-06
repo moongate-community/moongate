@@ -36,6 +36,7 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
     private readonly StubPacketSendService _sender = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly MobileService _mobiles;
+
     private readonly MobileEntity _aria = new()
     {
         Id = new(2), AccountId = new Serial(42), Name = "Aria", Map = MapType.Trammel,
@@ -170,7 +171,10 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         await StepAsync(DirectionType.East, 3);
 
         var reject = Assert.IsType<MovementRejectPacket>(Assert.Single(_sender.Sent));
-        Assert.Equal(((byte)3, new Point3D(1496, 1628, 10), DirectionType.East), (reject.Sequence, reject.Location, reject.Direction));
+        Assert.Equal(
+            ((byte)3, new Point3D(1496, 1628, 10), DirectionType.East),
+            (reject.Sequence, reject.Location, reject.Direction)
+        );
         Assert.Equal(new Point3D(1496, 1628, 10), _aria.Location);
 
         await StepAsync(DirectionType.East, 0);
@@ -457,8 +461,19 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
 
     private Task StepAsync(DirectionType direction, byte sequence, bool running = false)
     {
-        var handler = new MoveRequestPacketHandler(_mobiles, _view, _sender, _time, _bank, _moveOver, _fatigue, _state, _speech);
-        var packet = new MoveRequestPacket { Direction = direction, Running = running, Sequence = sequence, FastWalkKey = 0 };
+        var handler = new MoveRequestPacketHandler(
+            _mobiles,
+            _view,
+            _sender,
+            _time,
+            _bank,
+            _moveOver,
+            _fatigue,
+            _state,
+            _speech
+        );
+        var packet = new MoveRequestPacket
+            { Direction = direction, Running = running, Sequence = sequence, FastWalkKey = 0 };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));
     }

@@ -70,7 +70,12 @@ public sealed class AddGoldCommand : ICommandExecutor
             return;
         }
 
-        var target = await _targets.RequestAsync(session, TargetCursorType.Object, TargetFlagsType.Neutral, context.CancellationToken);
+        var target = await _targets.RequestAsync(
+            session,
+            TargetCursorType.Object,
+            TargetFlagsType.Neutral,
+            context.CancellationToken
+        );
 
         if (target.Kind != TargetResultType.Object)
         {
@@ -83,8 +88,7 @@ public sealed class AddGoldCommand : ICommandExecutor
         string? name = null;
         var found = false;
         var given = false;
-        var work = new LoopActionWorkItem(
-            () =>
+        var work = new LoopActionWorkItem(() =>
             {
                 if (!_mobiles.TryGet(target.Serial, out var mobile))
                 {
@@ -120,7 +124,9 @@ public sealed class AddGoldCommand : ICommandExecutor
 
         if (!given)
         {
-            context.PrintError(_localization.Text(CommandMessages.GoldNotAdded, "{0} has no backpack, or it is full.", name ?? ""));
+            context.PrintError(
+                _localization.Text(CommandMessages.GoldNotAdded, "{0} has no backpack, or it is full.", name ?? "")
+            );
 
             return;
         }

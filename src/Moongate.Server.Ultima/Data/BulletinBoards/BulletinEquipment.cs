@@ -22,7 +22,10 @@ public readonly record struct BulletinEquipment
     /// </summary>
     public static string Format(IEnumerable<BulletinEquipment> pieces)
     {
-        return string.Join(',', pieces.Select(piece => string.Create(CultureInfo.InvariantCulture, $"{piece.ItemId}:{piece.Hue}")));
+        return string.Join(
+            ',',
+            pieces.Select(piece => string.Create(CultureInfo.InvariantCulture, $"{piece.ItemId}:{piece.Hue}"))
+        );
     }
 
     /// <summary>

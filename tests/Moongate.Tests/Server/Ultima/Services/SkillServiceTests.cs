@@ -41,7 +41,9 @@ public sealed class SkillServiceTests
     [InlineData(500, 60.0, 60.0, false)]
     [InlineData(500, 50.0, 50.0, true)]
     [InlineData(500, 50.0, 40.0, true)]
-    public void Check_BelowTheMinimumFails_AtTheMaximumSucceeds_AndNeitherRollsNorTeaches(int tenths, double min, double max, bool expected)
+    public void Check_BelowTheMinimumFails_AtTheMaximumSucceeds_AndNeitherRollsNorTeaches(
+        int tenths, double min, double max, bool expected
+    )
     {
         Has(_aria, SkillType.Hiding, tenths);
 
@@ -70,7 +72,9 @@ public sealed class SkillServiceTests
     [InlineData(0.999, 1.5, true)]
     [InlineData(0.0, 0.0, true)]
     [InlineData(0.0, -1.0, false)]
-    public void CheckChance_SucceedsWhenTheChanceReachesTheRoll_WhateverThePointsOfTheSkill(double roll, double chance, bool expected)
+    public void CheckChance_SucceedsWhenTheChanceReachesTheRoll_WhateverThePointsOfTheSkill(
+        double roll, double chance, bool expected
+    )
     {
         Has(_aria, SkillType.Hiding, 500);
         // The roll of the check, then the roll of whether it learns (it does not).
@@ -140,7 +144,9 @@ public sealed class SkillServiceTests
     [InlineData(0.4, 0.49, false)]
     [InlineData(0.6, 0.40, true)]
     [InlineData(0.6, 0.41, false)]
-    public void Check_LearnsMoreOftenWithRoomUnderTheCapsAndAHardTask_AndLessFromAFailure(double roll, double gainRoll, bool learns)
+    public void Check_LearnsMoreOftenWithRoomUnderTheCapsAndAHardTask_AndLessFromAFailure(
+        double roll, double gainRoll, bool learns
+    )
     {
         Has(_aria, SkillType.Hiding, 500);
         // The check, whether it learns, whether a skill gives way (none is set down).

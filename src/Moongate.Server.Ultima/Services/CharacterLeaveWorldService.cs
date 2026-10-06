@@ -57,37 +57,45 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
             _mobiles.TryGet(session.CharacterId, out var character))
         {
             var settlement = _reservations.WaitAsync(character.Id);
-            Track(Task.Run(async () =>
-            {
-                await settlement;
-                Task save = Task.CompletedTask;
-                var work = new LoopActionWorkItem(() =>
-                {
-                    if (_mobiles.TryGet(character.Id, out var current) && ReferenceEquals(current, character))
+            Track(
+                Task.Run(async () =>
                     {
-                        save = CaptureLeave(session);
+                        await settlement;
+                        Task save = Task.CompletedTask;
+                        var work = new LoopActionWorkItem(() =>
+                            {
+                                if (_mobiles.TryGet(character.Id, out var current) && ReferenceEquals(current, character))
+                                {
+                                    save = CaptureLeave(session);
+                                }
+                            }
+                        );
+                        try
+                        {
+                            await _loop!.PostAsync(work);
+                        }
+                        catch (InvalidOperationException) when (_loop!.Completion.IsCompleted)
+                        {
+                            await _loop.Completion;
+                            throw;
+                        }
+
+                        await Task.WhenAny(work.Completion, _loop!.Completion);
+                        if (!work.Completion.IsCompleted)
+                        {
+                            await _loop.Completion;
+                            throw new InvalidOperationException("The game loop stopped before deferred logout capture.");
+                        }
+
+                        await work.Completion;
+                        await save;
                     }
-                });
-                try
-                {
-                    await _loop!.PostAsync(work);
-                }
-                catch (InvalidOperationException) when (_loop!.Completion.IsCompleted)
-                {
-                    await _loop.Completion;
-                    throw;
-                }
-                await Task.WhenAny(work.Completion, _loop!.Completion);
-                if (!work.Completion.IsCompleted)
-                {
-                    await _loop.Completion;
-                    throw new InvalidOperationException("The game loop stopped before deferred logout capture.");
-                }
-                await work.Completion;
-                await save;
-            }), character.AccountId);
+                ),
+                character.AccountId
+            );
             return;
         }
+
         if (_mobiles.TryGet(session.CharacterId, out var leaving))
         {
             Track(CaptureLeave(session), leaving.AccountId);
@@ -125,9 +133,9 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         // One someone carries or wears now is saved by that owner's leave or the world save: writing it here could
         // take a layer that owner's own saved row still holds.
         var released = _items.TakeReleasedOf(character.Id)
-                             .Where(item => !carriedIds.Contains(item.Id) && _items.GetOwner(item) is null)
-                             .Select(item => item.Snapshot())
-                             .ToList();
+            .Where(item => !carriedIds.Contains(item.Id) && _items.GetOwner(item) is null)
+            .Select(item => item.Snapshot())
+            .ToList();
         // Taken on the loop: from now on only this leave deletes them, in the transaction that saves their stacks.
         var merged = _items.TakeTombstonesOf(character.Id);
         _items.Remove(carried.Select(item => item.Id));
@@ -166,8 +174,7 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         // One transaction: logging back in before the next world save must never find a merged stack again.
         try
         {
-            await _world.ExecuteAsync(
-                async transaction =>
+            await _world.ExecuteAsync(async transaction =>
                 {
                     await transaction.GetDataAccess<MobileEntity>().UpsertAsync(character);
                     var data = transaction.GetDataAccess<ItemEntity>();

@@ -51,53 +51,139 @@ public sealed class BookTestFixture : IAsyncDisposable
     public MobileEntity Player { get; }
     public MobileEntity Other { get; }
     public GameSession Session { get; }
-    public ItemEntity Backpack { get; } = new() { Id = new(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    public ItemEntity Backpack { get; } =
+        new() { Id = new(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
     public BookTemplate Source { get; } = new()
     {
-        Id = "welcome_letter", Title = "Welcome $player_name", Author = "British", Content = "Dear $player_name,\n\nBring this to $contact_name.",
+        Id = "welcome_letter", Title = "Welcome $player_name", Author = "British",
+        Content = "Dear $player_name,\n\nBring this to $contact_name.",
         Variables = ["contact_name"]
     };
 
-    private BookTestFixture(BroadcastFixture world, MobileEntity player, MobileEntity other, GameSession session, bool realGumps)
+    private BookTestFixture(
+        BroadcastFixture world, MobileEntity player, MobileEntity other, GameSession session, bool realGumps
+    )
     {
         World = world;
         Player = player;
         Other = other;
         Session = session;
-        Data.With(Source).With(
-            new ItemTemplate { Id = "backpack", ItemId = new(0x0E75) },
-            new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll", Weight = 1m },
-            new ItemTemplate { Id = "jail_release_note", ItemId = new(0x14F0), Stackable = false, ScriptId = "jail_note" },
-            new ItemTemplate { Id = "readable_book", ItemId = new(0x0FF1), Stackable = false, ScriptId = "readable_book", Weight = 1m },
-            new ItemTemplate { Id = BankService.CheckTemplate, ItemId = new(0x14F0), Stackable = false },
-            new ItemTemplate { Id = "gold", ItemId = new(0xEED), Stackable = true, Weight = 0.02m },
-            new ItemTemplate { Id = "unrelated", ItemId = new(0x14ED), Stackable = false });
+        Data.With(Source)
+            .With(
+                new ItemTemplate { Id = "backpack", ItemId = new(0x0E75) },
+                new ItemTemplate
+                {
+                    Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll",
+                    Weight = 1m
+                },
+                new ItemTemplate
+                    { Id = "jail_release_note", ItemId = new(0x14F0), Stackable = false, ScriptId = "jail_note" },
+                new ItemTemplate
+                {
+                    Id = "readable_book", ItemId = new(0x0FF1), Stackable = false, ScriptId = "readable_book", Weight = 1m
+                },
+                new ItemTemplate { Id = BankService.CheckTemplate, ItemId = new(0x14F0), Stackable = false },
+                new ItemTemplate { Id = "gold", ItemId = new(0xEED), Stackable = true, Weight = 0.02m },
+                new ItemTemplate { Id = "unrelated", ItemId = new(0x14ED), Stackable = false }
+            );
         Reservations = new(world.Network.Loop);
         Inventory = new(new Lazy<IItemService>(() => Items!), Reservations);
         Items = TestItems.Create(world.Sectors, loop: world.Network.Loop, inventory: Inventory);
         ItemTemplates = new(Data);
-        Data.With(new Moongate.Server.Ultima.Data.Containers.ContainerContent
-            { Name = "backpack", Gump = 0x3C, Items = [0xE75], Default = true });
-        var tiles = new FakeTileDataService().Item(0x0E75, TileFlagType.Container, 0).Item(0x14ED, TileFlagType.None, 1).Item(0x14F0, TileFlagType.None, 1)
-            .Item(0x0FF1, TileFlagType.None, 1).Item(0x0FF2, TileFlagType.None, 1);
+        Data.With(
+            new Moongate.Server.Ultima.Data.Containers.ContainerContent
+                { Name = "backpack", Gump = 0x3C, Items = [0xE75], Default = true }
+        );
+        var tiles = new FakeTileDataService().Item(0x0E75, TileFlagType.Container, 0)
+            .Item(0x14ED, TileFlagType.None, 1)
+            .Item(0x14F0, TileFlagType.None, 1)
+            .Item(0x0FF1, TileFlagType.None, 1)
+            .Item(0x0FF2, TileFlagType.None, 1);
         var factory = new FakeItemFactoryService(ItemTemplates, tiles);
         var tooltips = TestTooltips.Create(Items, world.Mobiles);
-        Handling = new(Items, world.Sessions, world.Sender, new RecordingWorldViewService(), tooltips, factory, Serials, inventory: Inventory);
-        Bank = new(Items, factory, world.Sessions, world.Mobiles, world.Sender, tooltips, new ContainerLayoutService(Data), world.Network.Loop,
-            Handling, new ContainerCapacityService(Items, ItemTemplates, new BankConfig()), new StubWeightService(), new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" }, new BankConfig(), inventory: Inventory, reservations: Reservations);
-        var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
-        Contexts = new(world.Sessions, new AdminServerInfoProvider(ServerMode.Game, realm), realm, new MotdServerIdentity("Moongate"), world.Network.Loop);
-        Books = new(new BookTemplateService(Data), Contexts, Items, world.Mobiles, Handling, ItemTemplates, world.Sessions,
-            Bank, realGumps ? new GumpService(world.Sender) : Gumps, world.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory, sender: world.Sender);
+        Handling = new(
+            Items,
+            world.Sessions,
+            world.Sender,
+            new RecordingWorldViewService(),
+            tooltips,
+            factory,
+            Serials,
+            inventory: Inventory
+        );
+        Bank = new(
+            Items,
+            factory,
+            world.Sessions,
+            world.Mobiles,
+            world.Sender,
+            tooltips,
+            new ContainerLayoutService(Data),
+            world.Network.Loop,
+            Handling,
+            new ContainerCapacityService(Items, ItemTemplates, new BankConfig()),
+            new StubWeightService(),
+            new ItemsConfig { GoldTemplate = "gold", BackpackTemplate = "backpack" },
+            new BankConfig(),
+            inventory: Inventory,
+            reservations: Reservations
+        );
+        var realm = new RealmInstance(
+            new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular),
+            Guid.NewGuid()
+        );
+        Contexts = new(
+            world.Sessions,
+            new AdminServerInfoProvider(ServerMode.Game, realm),
+            realm,
+            new MotdServerIdentity("Moongate"),
+            world.Network.Loop
+        );
+        Books = new(
+            new BookTemplateService(Data),
+            Contexts,
+            Items,
+            world.Mobiles,
+            Handling,
+            ItemTemplates,
+            world.Sessions,
+            Bank,
+            realGumps ? new GumpService(world.Sender) : Gumps,
+            world.Network.Loop,
+            new(() => Engine),
+            new(),
+            new BookAttachmentPreparationService(factory, ItemTemplates, tiles),
+            Inventory,
+            sender: world.Sender
+        );
     }
 
     public void RebuildDocuments(IBookAttachmentService claims, IGumpService? gumps = null)
     {
         var tiles = new FakeTileDataService();
         var factory = new FakeItemFactoryService(ItemTemplates, tiles);
-        Books = new(new BookTemplateService(Data), Contexts, Items, World.Mobiles, Handling, ItemTemplates, World.Sessions,
-            Bank, gumps ?? Gumps, World.Network.Loop, new(() => Engine), new(), new BookAttachmentPreparationService(factory, ItemTemplates, tiles), Inventory,
-            claims, TestLocalization.With((30169, "Ritira allegati")), Speech, World.Sender);
+        Books = new(
+            new BookTemplateService(Data),
+            Contexts,
+            Items,
+            World.Mobiles,
+            Handling,
+            ItemTemplates,
+            World.Sessions,
+            Bank,
+            gumps ?? Gumps,
+            World.Network.Loop,
+            new(() => Engine),
+            new(),
+            new BookAttachmentPreparationService(factory, ItemTemplates, tiles),
+            Inventory,
+            claims,
+            TestLocalization.With((30169, "Ritira allegati")),
+            Speech,
+            World.Sender
+        );
     }
 
     public static async Task<BookTestFixture> CreateAsync(bool realGumps = false)
@@ -109,15 +195,16 @@ public sealed class BookTestFixture : IAsyncDisposable
         Assert.True(world.Mobiles.TryGet(new(3), out var other));
         var fixture = new BookTestFixture(world, player, other, session, realGumps);
         await fixture.OnLoopAsync(() =>
-        {
-            player.Name = "Pippo";
-            other.Name = "Bruno";
-            fixture.Backpack.Equip(player.Id, LayerType.Backpack);
-            fixture.Items.Add([fixture.Backpack]);
-            world.Mobiles.MoveTo(player, MapType.Trammel, new Point3D(1600, 1600, 0));
-            world.Mobiles.MoveTo(other, MapType.Trammel, new Point3D(1600, 1600, 0));
-            fixture.Serials.Serials.Enqueue(new(0x40000F00));
-        });
+            {
+                player.Name = "Pippo";
+                other.Name = "Bruno";
+                fixture.Backpack.Equip(player.Id, LayerType.Backpack);
+                fixture.Items.Add([fixture.Backpack]);
+                world.Mobiles.MoveTo(player, MapType.Trammel, new Point3D(1600, 1600, 0));
+                world.Mobiles.MoveTo(other, MapType.Trammel, new Point3D(1600, 1600, 0));
+                fixture.Serials.Serials.Enqueue(new(0x40000F00));
+            }
+        );
         return fixture;
     }
 
@@ -128,7 +215,9 @@ public sealed class BookTestFixture : IAsyncDisposable
 
     public ItemEntity Give()
     {
-        return Assert.IsType<ItemEntity>(Books.Give(Player, "welcome_letter", new Dictionary<string, object?> { ["contact_name"] = "Vega" }));
+        return Assert.IsType<ItemEntity>(
+            Books.Give(Player, "welcome_letter", new Dictionary<string, object?> { ["contact_name"] = "Vega" })
+        );
     }
 
     public async ValueTask DisposeAsync()

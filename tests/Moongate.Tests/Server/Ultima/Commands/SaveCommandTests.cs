@@ -20,11 +20,18 @@ public sealed class SaveCommandTests
         var saves = new ControlledWorldSaveService();
         saves.Completion.SetResult();
         var broadcast = new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender);
-        var command = new SaveCommand(saves, broadcast, TestLocalization.With((30015, "Il mondo è stato salvato in {0} secondi.")));
+        var command = new SaveCommand(
+            saves,
+            broadcast,
+            TestLocalization.With((30015, "Il mondo è stato salvato in {0} secondi."))
+        );
 
         await command.ExecuteAsync(new CommandContext("save", "save", [], CommandSourceType.Console, null));
 
-        Assert.StartsWith("Il mondo è stato salvato in ", Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent)).Text);
+        Assert.StartsWith(
+            "Il mondo è stato salvato in ",
+            Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent)).Text
+        );
     }
 
     [Theory]
@@ -67,8 +74,10 @@ public sealed class SaveCommandTests
         await fixture.AddAsync(1);
         var saves = new ControlledWorldSaveService();
         saves.Completion.SetException(new IOException("Database unavailable"));
-        var command = new SaveCommand(saves,
-            new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender));
+        var command = new SaveCommand(
+            saves,
+            new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender)
+        );
         var context = new CommandContext("save", "save", [], CommandSourceType.Console, null);
 
         await Assert.ThrowsAsync<IOException>(() => command.ExecuteAsync(context));
@@ -82,8 +91,10 @@ public sealed class SaveCommandTests
     {
         await using var fixture = await BroadcastFixture.CreateAsync();
         var saves = new ControlledWorldSaveService();
-        var command = new SaveCommand(saves,
-            new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender));
+        var command = new SaveCommand(
+            saves,
+            new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender)
+        );
         var context = new CommandContext("save now", "save", ["now"], CommandSourceType.Console, null);
 
         await command.ExecuteAsync(context);
@@ -99,8 +110,10 @@ public sealed class SaveCommandTests
         await using var fixture = await BroadcastFixture.CreateAsync();
         await fixture.AddAsync(1);
         var saves = new ControlledWorldSaveService();
-        var command = new SaveCommand(saves,
-            new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender));
+        var command = new SaveCommand(
+            saves,
+            new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender)
+        );
         using var cancellation = new CancellationTokenSource();
         var context = new CommandContext("save", "save", [], CommandSourceType.Console, null, cancellation.Token);
 

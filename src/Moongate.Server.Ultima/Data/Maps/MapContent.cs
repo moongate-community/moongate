@@ -26,5 +26,4 @@ public class MapContent
     ///     Gets or sets the music played where no region with music covers a place; none stops the music.
     /// </summary>
     public MusicType? Music { get; set; }
-
 }

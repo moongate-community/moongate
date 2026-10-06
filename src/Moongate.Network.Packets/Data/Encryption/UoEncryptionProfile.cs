@@ -3,7 +3,9 @@ using Moongate.Network.Packets.Types.Encryption;
 
 namespace Moongate.Network.Packets.Data.Encryption;
 
-/// <summary>Immutable POL cipher selection and public protocol keys derived from the raw wire version.</summary>
+/// <summary>
+///     Immutable POL cipher selection and public protocol keys derived from the raw wire version.
+/// </summary>
 public sealed record UoEncryptionProfile
 {
     public UoEncryptionType Type { get; }
@@ -25,7 +27,9 @@ public sealed record UoEncryptionProfile
         Patch = patch;
     }
 
-    /// <summary>Parses a POL version without removing the Enhanced Client's major-version offset.</summary>
+    /// <summary>
+    ///     Parses a POL version without removing the Enhanced Client's major-version offset.
+    /// </summary>
     public static UoEncryptionProfile Parse(string version)
     {
         if (string.IsNullOrWhiteSpace(version))
@@ -71,11 +75,10 @@ public sealed record UoEncryptionProfile
 
         var (major, minor, revision, patch) = (numbers[0], numbers[1], numbers[2], numbers[3]);
         var comparable = new Version(major, minor, revision);
-        var type = comparable <= new Version(1, 25, 35) ? UoEncryptionType.OldBlowfish
-            : comparable == new Version(1, 25, 36) ? UoEncryptionType.Blowfish12536
-            : comparable <= new Version(2, 0, 0) ? UoEncryptionType.Blowfish
-            : comparable <= new Version(2, 0, 3) ? UoEncryptionType.BlowfishTwofish
-            : UoEncryptionType.Twofish;
+        var type = comparable <= new Version(1, 25, 35) ? UoEncryptionType.OldBlowfish :
+            comparable == new Version(1, 25, 36) ? UoEncryptionType.Blowfish12536 :
+            comparable <= new Version(2, 0, 0) ? UoEncryptionType.Blowfish :
+            comparable <= new Version(2, 0, 3) ? UoEncryptionType.BlowfishTwofish : UoEncryptionType.Twofish;
 
         unchecked
         {

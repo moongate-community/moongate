@@ -52,7 +52,18 @@ public sealed class MurderServiceTests : IAsyncLifetime
         }
 
         _gumps.Ids.Add(MurderService.ReportGump);
-        _murders = new(_timers, _fixture.Sessions, _fixture.Mobiles, _state, _view, _speech, _gumps, _crimes, _config, _clock);
+        _murders = new(
+            _timers,
+            _fixture.Sessions,
+            _fixture.Mobiles,
+            _state,
+            _view,
+            _speech,
+            _gumps,
+            _crimes,
+            _config,
+            _clock
+        );
     }
 
     public async Task DisposeAsync()
@@ -66,7 +77,10 @@ public sealed class MurderServiceTests : IAsyncLifetime
         await _murders.StartAsync();
 
         var timer = Assert.Single(_timers.Timers);
-        Assert.Equal((MurderService.DecayTimerName, TimeSpan.FromMinutes(5), true), (timer.Name, timer.Interval, timer.Repeat));
+        Assert.Equal(
+            (MurderService.DecayTimerName, TimeSpan.FromMinutes(5), true),
+            (timer.Name, timer.Interval, timer.Repeat)
+        );
 
         await _murders.StopAsync();
 
@@ -92,7 +106,10 @@ public sealed class MurderServiceTests : IAsyncLifetime
         Assert.True(_murders.Report(_aria, _boris));
 
         Assert.True(_boris.IsMurderer);
-        Assert.Equal([MurderService.ReportedCliloc, MurderService.MurdererCliloc], _speech.ToldClilocs.Select(told => told.Cliloc));
+        Assert.Equal(
+            [MurderService.ReportedCliloc, MurderService.MurdererCliloc],
+            _speech.ToldClilocs.Select(told => told.Cliloc)
+        );
         Assert.Contains($"FlagsChanged {_boris.Id.Value}", _view.Calls);
     }
 

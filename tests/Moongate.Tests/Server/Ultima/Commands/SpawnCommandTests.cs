@@ -23,12 +23,14 @@ public sealed class SpawnCommandTests : IAsyncDisposable
 {
     private readonly StubTargetService _targets = new();
     private readonly StubNpcService _npcs = new();
+
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate { Id = "orc" },
             new MobileTemplate { Id = "dolphin", Movement = MobileMovementType.Water }
         )
     );
+
     private readonly StubMovementService _movement = new();
 
     private SessionFixture? _fixture;
@@ -70,7 +72,10 @@ public sealed class SpawnCommandTests : IAsyncDisposable
         var context = await RunAsync("dolphin");
 
         Assert.Empty(_npcs.Spawns);
-        Assert.Equal((CommandOutputLevel.Error, "dolphin lives in the water: target the water."), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "dolphin lives in the water: target the water."),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
     }
 
     [Fact]

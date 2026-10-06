@@ -43,7 +43,9 @@ public sealed class ExtendedCommandStatLockTests : IAsyncLifetime
     [InlineData(0, 1, StatType.Str, StatLockType.Down)]
     [InlineData(1, 2, StatType.Dex, StatLockType.Locked)]
     [InlineData(2, 1, StatType.Int, StatLockType.Down)]
-    public void Subcommand0x1A_SetsTheLockOfTheStatOfTheCharacter(byte stat, byte lockValue, StatType expectedStat, StatLockType expected)
+    public void Subcommand0x1A_SetsTheLockOfTheStatOfTheCharacter(
+        byte stat, byte lockValue, StatType expectedStat, StatLockType expected
+    )
     {
         Handle(stat, lockValue);
 
@@ -83,7 +85,9 @@ public sealed class ExtendedCommandStatLockTests : IAsyncLifetime
 
     private void Handle(byte stat, byte lockValue)
     {
-        Assert.True(ExtendedCommandPacket.TryParse(Convert.FromHexString($"BF0007001A{stat:X2}{lockValue:X2}"), out var packet));
+        Assert.True(
+            ExtendedCommandPacket.TryParse(Convert.FromHexString($"BF0007001A{stat:X2}{lockValue:X2}"), out var packet)
+        );
 
         _handler.Handle(_session, packet);
     }

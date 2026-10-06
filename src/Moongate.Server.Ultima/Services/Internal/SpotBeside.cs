@@ -22,7 +22,9 @@ internal static class SpotBeside
     ///     so not one behind a wall, and that nobody stands on; the first found going round from a direction picked at
     ///     random. Null when there is none, or the map is not loaded.
     /// </summary>
-    public static Point3D? Find(IMovementService movement, ISectorService sectors, MapType map, Point3D center, Random? random = null)
+    public static Point3D? Find(
+        IMovementService movement, ISectorService sectors, MapType map, Point3D center, Random? random = null
+    )
     {
         var first = (random ?? Random.Shared).Next(Directions.Length);
 

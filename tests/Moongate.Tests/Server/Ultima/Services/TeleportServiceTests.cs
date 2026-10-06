@@ -52,7 +52,10 @@ public sealed class TeleportServiceTests : IAsyncLifetime
 
         Assert.Equal(new Point3D(5690, 569, 25), _aria.Location);
         var update = Assert.IsType<MobileUpdatePacket>(Assert.Single(_fixture.Sender.Sent));
-        Assert.Equal((_aria.Id, new Point3D(5690, 569, 25), DirectionType.South), (update.Serial, update.Location, update.Direction));
+        Assert.Equal(
+            (_aria.Id, new Point3D(5690, 569, 25), DirectionType.South),
+            (update.Serial, update.Location, update.Direction)
+        );
         Assert.Equal([_session.SessionId], _fixture.Sender.SentSessionIds);
     }
 
@@ -80,7 +83,8 @@ public sealed class TeleportServiceTests : IAsyncLifetime
     [Fact]
     public void Teleport_AnNpc_OnlyTellsThePlayersAround()
     {
-        var orc = new MobileEntity { Id = new Serial(9), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
+        var orc = new MobileEntity
+            { Id = new Serial(9), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
         _fixture.Mobiles.EnterWorld(orc);
 
         Assert.True(_teleports.Teleport(orc, MapType.Trammel, new Point3D(5690, 569, 25)));
@@ -95,7 +99,10 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         Assert.True(_teleports.Teleport(_aria, MapType.Felucca, new Point3D(5690, 569, 25)));
 
         Assert.Equal((MapType.Felucca, new Point3D(5690, 569, 25)), (_aria.Map, _aria.Location));
-        Assert.Equal([typeof(MapChangePacket), typeof(MobileUpdatePacket)], _fixture.Sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal(
+            [typeof(MapChangePacket), typeof(MobileUpdatePacket)],
+            _fixture.Sender.Sent.Select(packet => packet.GetType())
+        );
         Assert.Equal(MapType.Felucca, ((MapChangePacket)_fixture.Sender.Sent[0]).Map);
         Assert.Equal(["Teleported 2 Trammel 1600,1600,0"], _view.Calls);
     }
@@ -105,7 +112,10 @@ public sealed class TeleportServiceTests : IAsyncLifetime
     {
         // The season, the light and the weather are sent by the listeners of the region change.
         var listener = new RecordingRegionChangeListener();
-        var regions = new RegionService(new StubDataLoaderService(), new Lazy<IEnumerable<IRegionChangeListener>>(() => [listener]));
+        var regions = new RegionService(
+            new StubDataLoaderService(),
+            new Lazy<IEnumerable<IRegionChangeListener>>(() => [listener])
+        );
         var mobiles = new MobileService(new StubMovementService(), _fixture.Sectors, regions: regions);
         var aria = new MobileEntity
         {
@@ -116,8 +126,10 @@ public sealed class TeleportServiceTests : IAsyncLifetime
         listener.Changes.Clear();
         listener.OnChange = () => Assert.IsType<MapChangePacket>(Assert.Single(_fixture.Sender.Sent));
 
-        Assert.True(new TeleportService(mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, _bank)
-            .Teleport(aria, MapType.Felucca, new Point3D(5690, 569, 25)));
+        Assert.True(
+            new TeleportService(mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, _bank)
+                .Teleport(aria, MapType.Felucca, new Point3D(5690, 569, 25))
+        );
 
         Assert.Equal(["Aria: - -> -"], listener.Changes);
     }
@@ -125,7 +137,8 @@ public sealed class TeleportServiceTests : IAsyncLifetime
     [Fact]
     public void Teleport_AnNpcToAnotherMap_SendsNoMapChange()
     {
-        var orc = new MobileEntity { Id = new Serial(9), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
+        var orc = new MobileEntity
+            { Id = new Serial(9), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
         _fixture.Mobiles.EnterWorld(orc);
 
         Assert.True(_teleports.Teleport(orc, MapType.Felucca, new Point3D(5690, 569, 25)));

@@ -69,8 +69,7 @@ public sealed class TargetService : ITargetService
 
         var completion = new TaskCompletionSource<TargetResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var id = 0;
-        var begin = new LoopActionWorkItem(
-            () =>
+        var begin = new LoopActionWorkItem(() =>
             {
                 Begin(session, cursor, flags, (_, result) => completion.TrySetResult(result));
                 id = session.Get(TargetSessionKeys.State)?.Pending?.Id ?? 0;
@@ -80,9 +79,9 @@ public sealed class TargetService : ITargetService
         await begin.Completion;
 
         // Cancels this target only: a newer one has another id.
-        await using var registration = cancellationToken.Register(
-            () => _loop.TryPost(new LoopActionWorkItem(() => CancelIfPending(session, id)))
-        );
+        await using var registration =
+            cancellationToken.Register(() => _loop.TryPost(new LoopActionWorkItem(() => CancelIfPending(session, id)))
+            );
 
         return await completion.Task;
     }

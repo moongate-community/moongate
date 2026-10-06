@@ -86,7 +86,8 @@ public sealed class ItemHandlingService : IItemHandlingService
 
     public ItemEntity? Give(MobileEntity owner, string template, int? amount = null)
     {
-        if (_inventory?.AllowsOwner(owner.Id) == false || _items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
+        if (_inventory?.AllowsOwner(owner.Id) == false ||
+            _items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
             _capacity?.HasRoomFor(backpack, 1) == false ||
             Make(template, amount) is not { } item)
         {
@@ -103,7 +104,8 @@ public sealed class ItemHandlingService : IItemHandlingService
 
     public bool Consume(ItemEntity item, int amount = 1)
     {
-        if (_inventory?.Allows(item) == false || amount < 1 || item.MobileId is not null || IsHeld(item) || item.Amount < amount)
+        if (_inventory?.Allows(item) == false || amount < 1 || item.MobileId is not null || IsHeld(item) ||
+            item.Amount < amount)
         {
             return false;
         }
@@ -121,7 +123,8 @@ public sealed class ItemHandlingService : IItemHandlingService
 
     public bool Delete(ItemEntity item)
     {
-        if (_inventory?.Allows(item) == false || item.MobileId is not null || IsHeld(item) || _items.GetContents(item.Id).Count > 0)
+        if (_inventory?.Allows(item) == false || item.MobileId is not null || IsHeld(item) ||
+            _items.GetContents(item.Id).Count > 0)
         {
             return false;
         }

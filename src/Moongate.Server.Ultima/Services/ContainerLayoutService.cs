@@ -16,14 +16,13 @@ public class ContainerLayoutService : IContainerLayoutService
 
     public ContainerLayoutService(IDataLoaderService dataLoaderService)
     {
-        _layouts = new(
-            () =>
+        _layouts = new(() =>
             {
                 var containers = dataLoaderService.GetEntities<ContainerContent>();
 
                 return (containers.SelectMany(container => container.Items, (container, itemId) => (itemId, container))
-                                  .ToFrozenDictionary(pair => pair.itemId, pair => pair.container),
-                        containers.Single(container => container.Default));
+                        .ToFrozenDictionary(pair => pair.itemId, pair => pair.container),
+                    containers.Single(container => container.Default));
             }
         );
     }

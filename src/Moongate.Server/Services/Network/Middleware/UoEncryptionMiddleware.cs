@@ -33,10 +33,12 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
         {
             throw new ArgumentOutOfRangeException(nameof(mode));
         }
+
         if (mode != NetworkEncryptionMode.Disabled && profile.Type == UoEncryptionType.None)
         {
             throw new ArgumentException("Enabled encryption requires an encrypted profile.", nameof(profile));
         }
+
         _mode = mode;
         _profile = profile;
         _gameConnection = gameConnection;
@@ -54,10 +56,12 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
         {
             throw new InvalidDataException("The UO encryption handshake has failed.");
         }
+
         if (_mode == NetworkEncryptionMode.Disabled || data.IsEmpty)
         {
             return ValueTask.FromResult(data);
         }
+
         try
         {
             return ValueTask.FromResult(ProcessReceived(data));
@@ -83,6 +87,7 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
         {
             return ValueTask.FromResult(data);
         }
+
         var result = data.ToArray();
         cipher.Encrypt(result);
         return ValueTask.FromResult<ReadOnlyMemory<byte>>(result);
@@ -96,6 +101,7 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
             {
                 return data;
             }
+
             var transformed = data.ToArray();
             Decrypt(transformed);
             return transformed;
@@ -106,6 +112,7 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
         {
             _seedLength = remaining[0] == 0xEF ? 21 : 4;
         }
+
         if (_buffered < _seedLength)
         {
             BufferUntil(ref remaining, _seedLength);
@@ -113,14 +120,18 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
             {
                 return ReadOnlyMemory<byte>.Empty;
             }
+
             _seed = BinaryPrimitives.ReadUInt32BigEndian(_handshake.AsSpan(_seedLength == 21 ? 1 : 0));
             if (_seed == 0)
             {
                 throw new InvalidDataException("A UO connection cannot use a zero encryption seed.");
             }
+
             if (_seed == uint.MaxValue)
             {
-                throw new InvalidDataException("The legacy KR encryption handshake is not supported by POL stream encryption.");
+                throw new InvalidDataException(
+                    "The legacy KR encryption handshake is not supported by POL stream encryption."
+                );
             }
         }
 
@@ -168,6 +179,7 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
         {
             _handshake.AsSpan(0, _seedLength).CopyTo(result);
         }
+
         login.CopyTo(result.AsSpan(outputSeedLength));
         remaining.CopyTo(result.AsSpan(outputSeedLength + loginLength));
         Decrypt(result.AsSpan(outputSeedLength + loginLength));

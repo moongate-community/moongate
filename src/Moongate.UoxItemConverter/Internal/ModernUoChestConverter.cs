@@ -7,7 +7,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Converts the treasure chests of ModernUO's spawners (<c>Distribution/Data/Spawns/&lt;era&gt;/&lt;map&gt;/*.json</c>,
+///     Converts the treasure chests of ModernUO's spawners (
+///     <c>Distribution/Data/Spawns/&lt;era&gt;/&lt;map&gt;/*.json</c>,
 ///     the entries named <c>TreasureChestLevel1</c> to <c>4</c>) into spawn regions of items, one per spawner
 ///     with chests, and
 ///     writes them as <c>&lt;map&gt;/treasure_chests.toml</c>, replacing that of a previous run. The creatures of the

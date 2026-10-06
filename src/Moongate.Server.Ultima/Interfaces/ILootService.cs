@@ -17,7 +17,9 @@ public interface ILootService
     /// <summary>
     ///     Gets the table with id <paramref name="id" />, matching case.
     /// </summary>
-    /// <exception cref="KeyNotFoundException">No table has that id.</exception>
+    /// <exception cref="KeyNotFoundException">
+    ///     No table has that id.
+    /// </exception>
     LootTemplate Get(string id);
 
     /// <summary>
@@ -25,6 +27,8 @@ public interface ILootService
     ///     serial and no location: nothing for a blank entry, one pile for a stackable item, that many items
     ///     otherwise, and the roll of a nested table.
     /// </summary>
-    /// <exception cref="KeyNotFoundException">No table has that id.</exception>
+    /// <exception cref="KeyNotFoundException">
+    ///     No table has that id.
+    /// </exception>
     IReadOnlyList<ItemEntity> Roll(string lootTemplateId);
 }

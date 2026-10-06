@@ -23,7 +23,8 @@ public sealed class RegionAreaContentTomlConverterTests
                 { bounds = "(1, 2)..(3, 4)", z1 = 0 },
                 { x1 = 10, y1 = 20, x2 = 30, y2 = 40, z2 = -80 },
             ]
-            """, Options
+            """,
+            Options
         )!;
 
         var areas = file.Areas;
@@ -47,7 +48,8 @@ public sealed class RegionAreaContentTomlConverterTests
     {
         var original = new RegionContent
         {
-            Areas = [
+            Areas =
+            [
                 new() { X1 = 1330, Y1 = 1991, X2 = 1343, Y2 = 2004 },
                 new() { X1 = 1416, Y1 = 1498, X2 = 1740, Y2 = 1777, Z1 = -10, Z2 = 128 },
                 new() { X1 = 1, Y1 = 2, X2 = 3, Y2 = 4, Z2 = -80 },
@@ -60,7 +62,8 @@ public sealed class RegionAreaContentTomlConverterTests
         Assert.Contains("bounds = \"(1416, 1498)..(1740, 1777)\"", toml);
         Assert.DoesNotContain("x1 =", toml);
         var areas = TomlUtils.Deserialize<RegionContent>(toml, Options)!.Areas;
-        (int X1, int Y1, int X2, int Y2, int? Z1, int? Z2)[] expected = [
+        (int X1, int Y1, int X2, int Y2, int? Z1, int? Z2)[] expected =
+        [
             (1330, 1991, 1343, 2004, null, null),
             (1416, 1498, 1740, 1777, -10, 128),
             (1, 2, 3, 4, null, -80),
@@ -84,7 +87,9 @@ public sealed class RegionAreaContentTomlConverterTests
     public void Deserialize_InvalidArea_ThrowsTomlException(string area)
     {
         Assert.Throws<TomlException>(() => TomlUtils.Deserialize<RegionContent>(
-            $"areas = [{area}]\n", Options
-        ));
+                $"areas = [{area}]\n",
+                Options
+            )
+        );
     }
 }

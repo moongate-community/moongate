@@ -17,8 +17,10 @@ public static class BookGumpRenderer
         return TryBuild(title, author, content, null, (_, _) => { }, out gump);
     }
 
-    public static bool TryBuild(string title, string author, string content, string? claimLabel,
-        Action<GameSession, GumpResponse> onResponse, out GumpInstance? gump)
+    public static bool TryBuild(
+        string title, string author, string content, string? claimLabel,
+        Action<GameSession, GumpResponse> onResponse, out GumpInstance? gump
+    )
     {
         gump = null;
         if (!BookTextValidation.IsValidText(title, BookTextValidation.HeaderLimit) ||
@@ -33,7 +35,13 @@ public static class BookGumpRenderer
             .Add(new GumpBackground { GumpId = ParchmentBackground, Width = 440, Height = 480 })
             .Add(new GumpHtml { X = 40, Y = 35, Width = 360, Height = 40, Text = Html(title) })
             .Add(new GumpHtml { X = 40, Y = 80, Width = 360, Height = 30, Text = Html(author) })
-            .Add(new GumpHtml { X = 40, Y = 120, Width = 360, Height = claimLabel is null ? 315 : 285, Text = Html(content), Scrollbar = true });
+            .Add(
+                new GumpHtml
+                {
+                    X = 40, Y = 120, Width = 360, Height = claimLabel is null ? 315 : 285, Text = Html(content),
+                    Scrollbar = true
+                }
+            );
 
         if (claimLabel is not null)
         {
@@ -58,7 +66,9 @@ public static class BookGumpRenderer
 
     private static string Html(string text)
     {
-        return WebUtility.HtmlEncode(text).Replace("\r\n", "\n", StringComparison.Ordinal)
-            .Replace("\r", "\n", StringComparison.Ordinal).Replace("\n", "<br>", StringComparison.Ordinal);
+        return WebUtility.HtmlEncode(text)
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace("\r", "\n", StringComparison.Ordinal)
+            .Replace("\n", "<br>", StringComparison.Ordinal);
     }
 }

@@ -10,7 +10,9 @@ internal static class ConsoleCompletion
     ///     <paramref name="candidates" /> gives for the words before it (none for the command name), in any case: one match
     ///     gives the value and a space, several give their common prefix.
     /// </summary>
-    /// <returns>The completed line, and the values that matched in order.</returns>
+    /// <returns>
+    ///     The completed line, and the values that matched in order.
+    /// </returns>
     public static (string Text, IReadOnlyList<string> Matches) Complete(
         string line,
         Func<IReadOnlyList<string>, IEnumerable<string>> candidates
@@ -28,10 +30,10 @@ internal static class ConsoleCompletion
         var word = line[start..];
         var previous = head.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
         var matches = candidates(previous)
-                      .Where(value => value.StartsWith(word, StringComparison.OrdinalIgnoreCase))
-                      .Distinct(StringComparer.OrdinalIgnoreCase)
-                      .Order(StringComparer.Ordinal)
-                      .ToList();
+            .Where(value => value.StartsWith(word, StringComparison.OrdinalIgnoreCase))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Order(StringComparer.Ordinal)
+            .ToList();
 
         return matches.Count switch
         {

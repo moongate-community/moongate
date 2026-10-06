@@ -27,7 +27,10 @@ public sealed class NpcServiceTests : IAsyncDisposable
     private readonly ItemService _items;
     private readonly MobileEntity _orc = new() { Id = new(0x00000100), Name = "Orc", TemplateId = "orc", Body = 0x0011 };
     private readonly ItemEntity _shirt = new() { Id = new(0x40000100), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
-    private readonly ItemEntity _backpack = new() { Id = new(0x40000101), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    private readonly ItemEntity _backpack = new()
+        { Id = new(0x40000101), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
     private readonly ItemEntity _gold = new() { Id = new(0x40000102), TemplateId = "gold", ItemId = 0x0EED, Amount = 50 };
     private readonly StubMobileFactoryService _factory;
 
@@ -74,7 +77,13 @@ public sealed class NpcServiceTests : IAsyncDisposable
     {
         // A script sets itself up in on_spawn: nothing else of it may run before.
         var npcs = await CreateAsync();
-        _sectors.Add(new MobileEntity { Id = new(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1496, 1630, 0) });
+        _sectors.Add(
+            new MobileEntity
+            {
+                Id = new(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
+                Location = new Point3D(1496, 1630, 0)
+            }
+        );
 
         await npcs.SpawnAsync("orc", MapType.Trammel, new Point3D(1496, 1628, 0));
 
@@ -111,8 +120,7 @@ public sealed class NpcServiceTests : IAsyncDisposable
         await npcs.SpawnAsync("orc", MapType.Trammel, new Point3D(1496, 1628, 0));
         var removed = new List<bool>();
 
-        await _fixture.ExecuteOnLoopAsync(
-            () =>
+        await _fixture.ExecuteOnLoopAsync(() =>
             {
                 removed.Add(npcs.Remove(_orc.Id));
                 removed.Add(npcs.Remove(_orc.Id));
@@ -143,7 +151,13 @@ public sealed class NpcServiceTests : IAsyncDisposable
     public async Task RemoveAsync_AnNpcNextToAPlayer_StopsItsThinks()
     {
         var npcs = await CreateAsync();
-        _sectors.Add(new MobileEntity { Id = new(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) });
+        _sectors.Add(
+            new MobileEntity
+            {
+                Id = new(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
+                Location = new Point3D(1496, 1628, 0)
+            }
+        );
         await npcs.SpawnAsync("orc", MapType.Trammel, new Point3D(1496, 1628, 0));
         Assert.True(_ticks.IsAwake(_orc.Id));
 

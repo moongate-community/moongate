@@ -16,7 +16,11 @@ public sealed class BookAttachmentStoreTests
         await fixture.Store.CommitAsync(claim);
         await using var output = new MemoryStream();
         await Moongate.Persistence.Internal.PostgreSqlDataExporter.ExportAsync(
-            fixture.Host.Database.ConnectionString, output, DateTimeOffset.UtcNow, CancellationToken.None);
+            fixture.Host.Database.ConnectionString,
+            output,
+            DateTimeOffset.UtcNow,
+            CancellationToken.None
+        );
         var script = System.Text.Encoding.UTF8.GetString(output.ToArray());
         await SqlDumpReplayer.ReplayAsync(fixture.Host.Database.ConnectionString, script);
         Assert.Equal(BookAttachmentCommitState.Committed, await fixture.Store.ReconcileAsync(claim));
@@ -31,7 +35,9 @@ public sealed class BookAttachmentStoreTests
     {
         await using var fixture = await BookAttachmentStoreFixture.CreateAsync();
         var exception = await Assert.ThrowsAsync<PostgresException>(() => fixture.Host.Database.ExecuteAsync(
-            "INSERT INTO world.book_attachment_claims(letter_id, claimant_id, claimed_at) VALUES (1073741900, 100, 1000)"));
+                "INSERT INTO world.book_attachment_claims(letter_id, claimant_id, claimed_at) VALUES (1073741900, 100, 1000)"
+            )
+        );
         Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, exception.SqlState);
         Assert.Empty(await fixture.Receipts.GetAllAsync());
     }
@@ -53,7 +59,9 @@ public sealed class BookAttachmentStoreTests
         await using var deletion = await deleter.BeginTransactionAsync();
         await using var insert = new NpgsqlCommand(
             "INSERT INTO world.book_attachment_claims(letter_id, claimant_id, claimed_at) VALUES (@letter, 100, 1000)",
-            inserter, insertion) { CommandTimeout = 10 };
+            inserter,
+            insertion
+        ) { CommandTimeout = 10 };
         insert.Parameters.AddWithValue("letter", (long)claim.Letter.Id.Value);
         await using var delete = new NpgsqlCommand("DELETE FROM world.items WHERE id = @letter", deleter, deletion)
             { CommandTimeout = 10 };
@@ -79,6 +87,7 @@ public sealed class BookAttachmentStoreTests
             Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, exception.SqlState);
             await insertion.RollbackAsync();
         }
+
         Assert.Null(await fixture.Items.GetByIdAsync(claim.Letter.Id));
         Assert.Empty(await fixture.Receipts.GetAllAsync());
     }
@@ -157,7 +166,8 @@ public sealed class BookAttachmentStoreTests
     {
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         while (await database.ScalarAsync<long>(
-            $"SELECT COUNT(*) FROM pg_stat_activity WHERE pid = {processId} AND wait_event_type = 'Lock'") == 0)
+                   $"SELECT COUNT(*) FROM pg_stat_activity WHERE pid = {processId} AND wait_event_type = 'Lock'"
+               ) == 0)
         {
             await Task.Delay(10, deadline.Token);
         }

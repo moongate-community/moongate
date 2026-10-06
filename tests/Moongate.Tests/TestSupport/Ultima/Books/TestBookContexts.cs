@@ -15,7 +15,16 @@ public static class TestBookContexts
     public static BookContextFactory Create()
     {
         var loop = new StubGameLoop { IsOnLoopThread = false };
-        var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
-        return new(new SessionService(loop), new AdminServerInfoProvider(ServerMode.Game, realm), realm, new MotdServerIdentity("Moongate"), loop);
+        var realm = new RealmInstance(
+            new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular),
+            Guid.NewGuid()
+        );
+        return new(
+            new SessionService(loop),
+            new AdminServerInfoProvider(ServerMode.Game, realm),
+            realm,
+            new MotdServerIdentity("Moongate"),
+            loop
+        );
     }
 }

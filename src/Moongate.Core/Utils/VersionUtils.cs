@@ -101,8 +101,8 @@ public static class VersionUtils
     }
 
     /// <summary>
-    ///     Fills the placeholders of a startup header with the metadata of the specified assembly:
-    ///     <c>{Version}</c>, <c>{Codename}</c>, <c>{Configuration}</c> and <c>{BuildTime}</c>.
+    ///     Fills the placeholders of a startup header with the metadata of the specified assembly: <c>{Version}</c>,
+    ///     <c>{Codename}</c>, <c>{Configuration}</c> and <c>{BuildTime}</c>.
     /// </summary>
     /// <param name="template">
     ///     The header text with its placeholders.
@@ -118,9 +118,9 @@ public static class VersionUtils
         ArgumentNullException.ThrowIfNull(template);
 
         return template.Replace("{Version}", GetVersion(assembly), StringComparison.Ordinal)
-                       .Replace("{Codename}", GetCodename(assembly), StringComparison.Ordinal)
-                       .Replace("{Configuration}", FormatBuildConfiguration(GetBuildConfiguration(assembly)), StringComparison.Ordinal)
-                       .Replace("{BuildTime}", FormatBuildTime(GetBuildTime(assembly)), StringComparison.Ordinal);
+            .Replace("{Codename}", GetCodename(assembly), StringComparison.Ordinal)
+            .Replace("{Configuration}", FormatBuildConfiguration(GetBuildConfiguration(assembly)), StringComparison.Ordinal)
+            .Replace("{BuildTime}", FormatBuildTime(GetBuildTime(assembly)), StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -136,11 +136,7 @@ public static class VersionUtils
 
     /// <summary>
     ///     Gets the informational version of the specified assembly, stripping any build metadata
-    ///     after the
-    ///     <c>
-    ///         +
-    ///     </c>
-    ///     separator (e.g. the source revision appended by SourceLink).
+    ///     after the <c>+</c> separator (e.g. the source revision appended by SourceLink).
     /// </summary>
     /// <param name="assembly">
     ///     The assembly to read version metadata from.

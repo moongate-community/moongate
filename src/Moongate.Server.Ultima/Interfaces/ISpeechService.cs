@@ -13,7 +13,9 @@ public interface ISpeechService
     ///     Sends <paramref name="text" /> as regular speech of <paramref name="speaker" /> (0xAE) to the players within 15
     ///     cells on its map.
     /// </summary>
-    /// <returns>How many players it was sent to.</returns>
+    /// <returns>
+    ///     How many players it was sent to.
+    /// </returns>
     int Say(MobileEntity speaker, string text);
 
     /// <summary>
@@ -28,28 +30,37 @@ public interface ISpeechService
     ///     Plays <paramref name="sound" /> once where <paramref name="source" /> stands (0x54), for the players within 15
     ///     cells on its map.
     /// </summary>
-    /// <returns>How many players it was sent to.</returns>
+    /// <returns>
+    ///     How many players it was sent to.
+    /// </returns>
     int PlaySound(MobileEntity source, int sound);
 
     /// <summary>
     ///     Plays <paramref name="sound" /> once at <paramref name="location" /> on <paramref name="map" /> (0x54), for the
     ///     players within 15 cells, such as where an item lies.
     /// </summary>
-    /// <returns>How many players it was sent to.</returns>
+    /// <returns>
+    ///     How many players it was sent to.
+    /// </returns>
     int PlaySound(MapType map, Point3D location, int sound);
 
     /// <summary>
     ///     Sends <paramref name="text" /> as a system message (0xAE) to the player <paramref name="player" /> only, in
     ///     the lower left of its screen.
     /// </summary>
-    /// <returns>Whether it was sent: false for an NPC or a player whose client is gone.</returns>
+    /// <returns>
+    ///     Whether it was sent: false for an NPC or a player whose client is gone.
+    /// </returns>
     bool Tell(MobileEntity player, string text, int? hue = null);
 
     /// <summary>
     ///     Sends a text of the client, by its number, as a system message (0xC1) to the player
     ///     <paramref name="player" /> only: the client shows it in its own language, with
-    ///     <paramref name="arguments" /> in its <c>~1_NAME~</c> places, split by tabs.
+    ///     <paramref name="arguments" /> in its
+    ///     <c>~1_NAME~</c> places, split by tabs.
     /// </summary>
-    /// <returns>Whether it was sent: false for an NPC or a player whose client is gone.</returns>
+    /// <returns>
+    ///     Whether it was sent: false for an NPC or a player whose client is gone.
+    /// </returns>
     bool TellCliloc(MobileEntity player, int cliloc, string arguments = "", int? hue = null);
 }

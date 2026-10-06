@@ -38,7 +38,6 @@ using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Services.Motd;
 using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
-
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Handlers.Movement;
@@ -89,7 +88,10 @@ public sealed class ServerRoleRegistrationTests
         ServerRoleRegistration.Register(container, config, directories);
         new MoongateUltimaPlugin().Register(container);
 
-        Assert.Contains(typeof(Moongate.Server.Ultima.Modules.CommandsModule), container.Resolve<Moongate.Scripting.Interfaces.IScriptModuleRegistry>().ModuleTypes);
+        Assert.Contains(
+            typeof(Moongate.Server.Ultima.Modules.CommandsModule),
+            container.Resolve<Moongate.Scripting.Interfaces.IScriptModuleRegistry>().ModuleTypes
+        );
         Assert.NotNull(container.Resolve<Moongate.Server.Ultima.Modules.CommandsModule>(IfUnresolved.Throw));
     }
 
@@ -117,10 +119,14 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         var handler = container.Resolve<Moongate.Server.Ultima.Handlers.General.ExtendedCommandPacketHandler>();
-        var field = handler.GetType().GetField("_contextMenus", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        var field = handler.GetType()
+            .GetField("_contextMenus", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
         Assert.IsType<Moongate.Server.Ultima.Services.ContextMenuService>(field!.GetValue(handler));
-        Assert.Same(container.Resolve<Moongate.Server.Ultima.Handlers.Items.UseRequestPacketHandler>(), container.Resolve<Moongate.Server.Ultima.Interfaces.IUseService>());
+        Assert.Same(
+            container.Resolve<Moongate.Server.Ultima.Handlers.Items.UseRequestPacketHandler>(),
+            container.Resolve<Moongate.Server.Ultima.Interfaces.IUseService>()
+        );
     }
 
     [Fact]
@@ -140,7 +146,9 @@ public sealed class ServerRoleRegistrationTests
         ServerRoleRegistration.Register(container, config, directories);
         new MoongateUltimaPlugin().Register(container);
 
-        var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
+        var definitions = container.Resolve<CommandRegistry>()
+            .Registrations.Values.Select(registration => registration.Definition)
+            .Distinct();
         Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30186));
     }
 
@@ -167,7 +175,8 @@ public sealed class ServerRoleRegistrationTests
     }
 
     // 0x66, 0xD4 and 0x93: what the client sends about a book, a page request right after every opening.
-    [Theory, InlineData(0x09), InlineData(0xB8), InlineData(0xBF), InlineData(0xD6), InlineData(0xF0), InlineData(0x66), InlineData(0xD4), InlineData(0x93)]
+    [Theory, InlineData(0x09), InlineData(0xB8), InlineData(0xBF), InlineData(0xD6), InlineData(0xF0), InlineData(0x66),
+     InlineData(0xD4), InlineData(0x93)]
     public void Register_TheTooltipRequests_AreIncomingPacketsTheFramerKnows(int opCode)
     {
         // A packet with a handler but no incoming registration closes the connection when the client sends it.
@@ -207,9 +216,9 @@ public sealed class ServerRoleRegistrationTests
         new MoongateUltimaPlugin().Register(container);
 
         var twice = container.Resolve<List<ServiceRegistrationData>>()
-                             .GroupBy(registration => registration.ServiceType)
-                             .Where(group => group.Count() > 1)
-                             .Select(group => group.Key.Name);
+            .GroupBy(registration => registration.ServiceType)
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key.Name);
         Assert.Empty(twice);
     }
 
@@ -321,7 +330,10 @@ public sealed class ServerRoleRegistrationTests
             Assert.NotNull(container.Resolve<WorldModule>());
             Assert.NotNull(container.Resolve<MobileModule>());
             Assert.NotNull(container.Resolve<TargetModule>());
-            Assert.Contains("player_region_changed", container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(e => e.Name));
+            Assert.Contains(
+                "player_region_changed",
+                container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(e => e.Name)
+            );
             Assert.Contains(typeof(SpeechKeywordType), container.Resolve<IScriptModuleRegistry>().EnumTypes);
             Assert.Contains("player_say", container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(e => e.Name));
             Assert.IsType<EffectService>(container.Resolve<IEffectService>());
@@ -334,7 +346,10 @@ public sealed class ServerRoleRegistrationTests
             Assert.All(
                 new[] { "_locations", "_gumps" },
                 field => Assert.NotNull(
-                    typeof(GoCommand).GetField(field, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.GetValue(go)
+                    typeof(GoCommand).GetField(
+                        field,
+                        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic
+                    )!.GetValue(go)
                 )
             );
             Assert.IsType<ItemHearingService>(container.Resolve<IItemSpeechListener>());
@@ -346,7 +361,10 @@ public sealed class ServerRoleRegistrationTests
             // The scripts hear of a region change last, after the light, the weather, the music and the season.
             var listeners = container.Resolve<IEnumerable<IRegionChangeListener>>().ToList();
             Assert.Equal(
-                [container.Resolve<IWeatherService>(), container.Resolve<ILightService>(), container.Resolve<IMusicService>(), container.Resolve<ISeasonService>()],
+                [
+                    container.Resolve<IWeatherService>(), container.Resolve<ILightService>(),
+                    container.Resolve<IMusicService>(), container.Resolve<ISeasonService>()
+                ],
                 listeners.Take(4)
             );
             // The announcer of places, then the scripts last.
@@ -365,6 +383,7 @@ public sealed class ServerRoleRegistrationTests
             Assert.IsType<NpcHearingService>(container.Resolve<INpcSpeechListener>());
             Assert.Contains(container.ResolveMany<IMetricProvider>(), provider => provider.ProviderName == "npcs");
         }
+
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IAccountService>());
         Assert.True(container.IsRegistered<RedisConnectionService>());
         Assert.True(container.IsRegistered<IRealmCatalog>());

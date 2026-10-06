@@ -37,8 +37,12 @@ public sealed class TooltipRequestHandlersTests : IAsyncDisposable
         var sectors = TestSectors.Create();
         _items = TestItems.Create(sectors);
         _mobiles = new(new StubMovementService(), sectors);
-        _mobiles.EnterWorld(new() { Id = Aria, Name = "Aria", Body = 401, Map = MapType.Trammel, Location = new Point3D(1000, 1000, 0) });
-        _mobiles.EnterWorld(new() { Id = Far, Name = "Far", Body = 400, Map = MapType.Trammel, Location = new Point3D(1500, 1000, 0) });
+        _mobiles.EnterWorld(
+            new() { Id = Aria, Name = "Aria", Body = 401, Map = MapType.Trammel, Location = new Point3D(1000, 1000, 0) }
+        );
+        _mobiles.EnterWorld(
+            new() { Id = Far, Name = "Far", Body = 400, Map = MapType.Trammel, Location = new Point3D(1500, 1000, 0) }
+        );
         _items.Add([_gold]);
         _items.PlaceOnGround(_gold, MapType.Trammel, new Point3D(1001, 1000, 0));
         _tooltips = TestTooltips.Create(_items, _mobiles);

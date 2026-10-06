@@ -36,6 +36,9 @@ public sealed class ItemServiceTests
 
         Assert.True(live.TryGet(bag.Id, out _));
         Assert.True(live.TryGet(coins.Id, out _));
-        Assert.Equal([bag.Id], sectors.GetItemsInRange(MapType.Trammel, new Point3D(1497, 1628, 0), 0).Select(item => item.Id));
+        Assert.Equal(
+            [bag.Id],
+            sectors.GetItemsInRange(MapType.Trammel, new Point3D(1497, 1628, 0), 0).Select(item => item.Id)
+        );
     }
 }

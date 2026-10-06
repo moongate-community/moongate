@@ -85,7 +85,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
                     new MobileTemplate { Id = "rabbit", ScriptId = "scared_animal" },
                     new MobileTemplate
                     {
-                        Id = "orc", Damage = DiceSpec.FromValue(8), Sounds = new MobileSounds { Attack = OrcAttack, Hurt = OrcHurt }
+                        Id = "orc", Damage = DiceSpec.FromValue(8),
+                        Sounds = new MobileSounds { Attack = OrcAttack, Hurt = OrcHurt }
                     }
                 )
             ),
@@ -124,7 +125,10 @@ public sealed class CombatServiceTests : IAsyncLifetime
         await _combat.StartAsync();
 
         var timer = Assert.Single(_timers.Timers);
-        Assert.Equal((CombatService.TimerName, TimeSpan.FromMilliseconds(100), true), (timer.Name, timer.Interval, timer.Repeat));
+        Assert.Equal(
+            (CombatService.TimerName, TimeSpan.FromMilliseconds(100), true),
+            (timer.Name, timer.Interval, timer.Repeat)
+        );
 
         await _combat.StopAsync();
 
@@ -181,7 +185,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
     public void Attack_ATargetOnAnotherMap_OrNotInTheWorld_IsRefused()
     {
         var elsewhere = Npc(0x101, new Point3D(1, 0, 0), MapType.Felucca);
-        var gone = new MobileEntity { Id = new Serial(0x102), Name = "gone", Map = MapType.Trammel, Location = new Point3D(1, 1, 0) };
+        var gone = new MobileEntity
+            { Id = new Serial(0x102), Name = "gone", Map = MapType.Trammel, Location = new Point3D(1, 1, 0) };
 
         Assert.False(_combat.Attack(_aria, elsewhere));
         Assert.False(_combat.Attack(_aria, gone));
@@ -511,7 +516,10 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Tick();
 
         var shot = Assert.Single(_effects.Moving);
-        Assert.Equal((_orc.Id, _aria.Id, 0x0F42, (byte)18), (shot.Source, shot.Target, shot.Options.Graphic, shot.Options.Speed));
+        Assert.Equal(
+            (_orc.Id, _aria.Id, 0x0F42, (byte)18),
+            (shot.Source, shot.Target, shot.Options.Graphic, shot.Options.Speed)
+        );
         Assert.Equal(_orc.Location, shot.From);
         Assert.Equal(_aria.Location, shot.To);
     }

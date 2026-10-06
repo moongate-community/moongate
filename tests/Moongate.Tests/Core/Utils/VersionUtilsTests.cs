@@ -114,7 +114,10 @@ public sealed class VersionUtilsTests
             new Dictionary<string, string> { ["BuildTime"] = "2026-10-05T14:32:07Z", ["BuildConfiguration"] = "Release" }
         );
 
-        var header = VersionUtils.FormatHeader("Version: {Version} ({Configuration}) Codename: \"{Codename}\"\nBuilt: {BuildTime}", assembly);
+        var header = VersionUtils.FormatHeader(
+            "Version: {Version} ({Configuration}) Codename: \"{Codename}\"\nBuilt: {BuildTime}",
+            assembly
+        );
 
         Assert.Equal("Version: 0.14.0 (Release) Codename: \"Lilly\"\nBuilt: 2026-10-05 14:32 UTC", header);
     }
@@ -125,7 +128,10 @@ public sealed class VersionUtilsTests
     {
         var assembly = DynamicAssemblyFactory.Create(new(1, 0, 0, 0), "0.14.0", "Lilly");
 
-        Assert.Equal("0.14.0 (unknown) built unknown", VersionUtils.FormatHeader("{Version} ({Configuration}) built {BuildTime}", assembly));
+        Assert.Equal(
+            "0.14.0 (unknown) built unknown",
+            VersionUtils.FormatHeader("{Version} ({Configuration}) built {BuildTime}", assembly)
+        );
     }
 
     [Fact]

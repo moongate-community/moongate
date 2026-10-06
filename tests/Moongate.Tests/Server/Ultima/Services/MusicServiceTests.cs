@@ -17,14 +17,20 @@ namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class MusicServiceTests : IAsyncLifetime
 {
-    private static readonly RegionContent Britain = new() { Map = MapType.Felucca, Name = "Britain", Music = MusicType.Britain1 };
-    private static readonly RegionContent BritainBank = new() { Map = MapType.Felucca, Name = "Bank", Music = MusicType.Britain1 };
+    private static readonly RegionContent Britain = new()
+        { Map = MapType.Felucca, Name = "Britain", Music = MusicType.Britain1 };
+
+    private static readonly RegionContent BritainBank = new()
+        { Map = MapType.Felucca, Name = "Bank", Music = MusicType.Britain1 };
+
     private static readonly RegionContent Quiet = new() { Map = MapType.Felucca, Name = "Quiet" };
 
     private readonly Container _container = new();
+
     private readonly MobileEntity _aria = new()
     {
-        Id = new Serial(1), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca, Location = new Point3D(50, 50, 0)
+        Id = new Serial(1), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca,
+        Location = new Point3D(50, 50, 0)
     };
 
     private BroadcastFixture _fixture = null!;
@@ -39,7 +45,13 @@ public sealed class MusicServiceTests : IAsyncLifetime
             new MapContent { Map = MapType.Felucca, Name = "Felucca", Music = MusicType.Create1 },
             new MapContent { Map = MapType.Trammel, Name = "Trammel" }
         );
-        _music = new(data, _fixture.Sessions, _fixture.Sender, _container.Resolve<IMoongateEventBus>(), _fixture.Network.Loop);
+        _music = new(
+            data,
+            _fixture.Sessions,
+            _fixture.Sender,
+            _container.Resolve<IMoongateEventBus>(),
+            _fixture.Network.Loop
+        );
         await _music.StartAsync();
     }
 

@@ -16,10 +16,12 @@ public sealed class HuePickerServiceTests : IAsyncDisposable
 {
     private readonly StubPacketSendService _sender = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
+
     private readonly MobileEntity _aria = new()
     {
         Id = new(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0)
     };
+
     private readonly List<int?> _hues = [];
 
     private SessionFixture _fixture = null!;

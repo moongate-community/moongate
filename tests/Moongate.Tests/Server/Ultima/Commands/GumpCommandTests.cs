@@ -31,7 +31,13 @@ public sealed class GumpCommandTests : IAsyncLifetime
             _fixture.Network.Loop,
             _fixture.Sessions
         );
-        var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(new RecordingGumpScriptService()), _fixture.Network.Loop);
+        var module = new GumpModule(
+            _fixture.Sessions,
+            _gumps,
+            templates,
+            new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(new RecordingGumpScriptService()),
+            _fixture.Network.Loop
+        );
         _command = new(module, templates, _fixture.Network.Loop);
     }
 
@@ -51,7 +57,10 @@ public sealed class GumpCommandTests : IAsyncLifetime
     {
         var context = await RunAsync("nowhere");
 
-        Assert.Equal((CommandOutputLevel.Error, "No gump nowhere in templates/gumps."), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "No gump nowhere in templates/gumps."),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
         Assert.Empty(_gumps.Opened);
     }
 
@@ -70,7 +79,10 @@ public sealed class GumpCommandTests : IAsyncLifetime
 
         var context = await RunAsync("hello");
 
-        Assert.Equal((CommandOutputLevel.Error, "Gump hello could not open."), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "Gump hello could not open."),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
     }
 
     [Theory, InlineData(), InlineData("hello", "no_equals_sign"), InlineData("hello", "=empty")]

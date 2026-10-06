@@ -36,7 +36,6 @@ public static class CharacterCreationRules
     ];
 
 
-
     /// <summary>
     ///     Keeps the stats when each is between <see cref="MinStat" /> and <see cref="MaxStat" /> and they add up to
     ///     <see cref="StatTotal" />; otherwise every stat becomes <see cref="MinStat" />.
@@ -160,8 +159,8 @@ public static class CharacterCreationRules
         return skill switch
         {
             SkillType.Throwing => race == RaceType.Gargoyle,
-            SkillType.Archery => race != RaceType.Gargoyle,
-            _ => true
+            SkillType.Archery  => race != RaceType.Gargoyle,
+            _                  => true
         };
     }
 

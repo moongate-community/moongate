@@ -4,7 +4,9 @@ using Moongate.Server.Types.Network;
 
 namespace Moongate.Server.Data.Config.Sections;
 
-/// <summary>POL-compatible encryption policy shared by the login and game listeners.</summary>
+/// <summary>
+///     POL-compatible encryption policy shared by the login and game listeners.
+/// </summary>
 public sealed class NetworkEncryptionConfig
 {
     public NetworkEncryptionMode Mode { get; set; } = NetworkEncryptionMode.Disabled;
@@ -31,13 +33,18 @@ public sealed class NetworkEncryptionConfig
         }
         catch (FormatException exception)
         {
-            throw new InvalidOperationException("network.encryption.client_version must be a valid POL client version.", exception);
+            throw new InvalidOperationException(
+                "network.encryption.client_version must be a valid POL client version.",
+                exception
+            );
         }
 
         throw new InvalidOperationException("Enabled network encryption requires an encrypted client version.");
     }
 
-    /// <summary>Describes the effective policy and algorithms for the startup log.</summary>
+    /// <summary>
+    ///     Describes the effective policy and algorithms for the startup log.
+    /// </summary>
     public string GetDescription()
     {
         Validate();

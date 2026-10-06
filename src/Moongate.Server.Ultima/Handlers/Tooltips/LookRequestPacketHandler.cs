@@ -17,7 +17,9 @@ public sealed class LookRequestPacketHandler : IPacketHandler<LookRequestPacket>
     private readonly IMobileService _mobiles;
     private readonly IPacketSendService _sender;
 
-    public LookRequestPacketHandler(ITooltipService tooltips, IItemService items, IMobileService mobiles, IPacketSendService sender)
+    public LookRequestPacketHandler(
+        ITooltipService tooltips, IItemService items, IMobileService mobiles, IPacketSendService sender
+    )
     {
         _tooltips = tooltips;
         _items = items;
@@ -27,7 +29,8 @@ public sealed class LookRequestPacketHandler : IPacketHandler<LookRequestPacket>
 
     public void Handle(GameSession session, LookRequestPacket packet)
     {
-        if (!_tooltips.TryBuildFor(session.CharacterId, packet.Target, out var list, session.AccountType) || list.Entries.Count == 0)
+        if (!_tooltips.TryBuildFor(session.CharacterId, packet.Target, out var list, session.AccountType) ||
+            list.Entries.Count == 0)
         {
             return;
         }
@@ -43,7 +46,10 @@ public sealed class LookRequestPacketHandler : IPacketHandler<LookRequestPacket>
         }
         else if (_items.TryGet(packet.Target, out var item))
         {
-            _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, name.Cliloc, "", name.Arguments));
+            _sender.TrySend(
+                session.SessionId,
+                new LocalizedMessagePacket(item.Id, item.ItemId, name.Cliloc, "", name.Arguments)
+            );
         }
     }
 }

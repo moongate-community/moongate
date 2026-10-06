@@ -158,8 +158,8 @@ public sealed class SkillService : ISkillService
 
         // The fuller the character, the more often something it set to go down gives way.
         if (total / (double)totalCap >= _random.NextDouble() &&
-            mobile.Skills.FirstOrDefault(
-                other => other.Skill != known.Skill && other.Lock == SkillLockType.Down && other.Base >= amount
+            mobile.Skills.FirstOrDefault(other =>
+                other.Skill != known.Skill && other.Lock == SkillLockType.Down && other.Base >= amount
             ) is { } lowered)
         {
             _state.SetSkill(mobile, lowered.Skill, lowered.Base - amount);
@@ -212,7 +212,8 @@ public sealed class SkillService : ISkillService
         {
             var (first, second) = (others[0], others[1]);
 
-            if (CanLower(mobile, first, values) && (values[(int)first] < values[(int)second] || !CanLower(mobile, second, values)))
+            if (CanLower(mobile, first, values) &&
+                (values[(int)first] < values[(int)second] || !CanLower(mobile, second, values)))
             {
                 values[(int)first]--;
             }
@@ -234,20 +235,25 @@ public sealed class SkillService : ISkillService
 
         // The maximum of each bar follows its stat, as at creation.
         if (!_state.SetStats(
-            mobile,
-            new MobileStatsChange
-            {
-                Strength = values[0],
-                Dexterity = values[1],
-                Intelligence = values[2],
-                HitsMax = mobile.HitsMax + values[0] - before[0],
-                StaminaMax = mobile.StaminaMax + values[1] - before[1],
-                ManaMax = mobile.ManaMax + values[2] - before[2]
-            }
-        ))
+                mobile,
+                new MobileStatsChange
+                {
+                    Strength = values[0],
+                    Dexterity = values[1],
+                    Intelligence = values[2],
+                    HitsMax = mobile.HitsMax + values[0] - before[0],
+                    StaminaMax = mobile.StaminaMax + values[1] - before[1],
+                    ManaMax = mobile.ManaMax + values[2] - before[2]
+                }
+            ))
         {
             // Refused, as when a number would pass what the status can show: nothing changed.
-            _logger.Warning("The stat of {Mobile} could not be changed: {Stat} stays at {Value}", mobile, stat, before[(int)stat]);
+            _logger.Warning(
+                "The stat of {Mobile} could not be changed: {Stat} stays at {Value}",
+                mobile,
+                stat,
+                before[(int)stat]
+            );
         }
     }
 

@@ -90,7 +90,9 @@ public class ItemFactoryService : IItemFactoryService
 
         if (!item.Id.IsItem)
         {
-            throw new InvalidOperationException($"Item '{item.TemplateId}' was saved with {item.Id}, outside the item range.");
+            throw new InvalidOperationException(
+                $"Item '{item.TemplateId}' was saved with {item.Id}, outside the item range."
+            );
         }
     }
 

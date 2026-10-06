@@ -37,10 +37,14 @@ public sealed class TargetModule
     }
 
     /// <summary>
-    ///     Gives the player a cursor to pick an item or a mobile; <c>target.pick(user, function(picked) if picked.kind ==
-    ///     "object" then ... end end)</c>. A cursor the player already had is canceled, and its function told so.
+    ///     Gives the player a cursor to pick an item or a mobile;
+    ///     <c>target.pick(user, function(picked) if picked.kind == "object" then ... end end)</c>. A cursor the player
+    ///     already had is canceled, and its function told so.
     /// </summary>
-    [ScriptFunction(helpText: "Gives the player a cursor to pick an item or a mobile; the function gets { kind = 'object', serial } or { kind = 'canceled', reason } (reason is 'canceled' for ESC, 'overridden' when another cursor took its place, 'disconnected' when the player left). A cursor a script replaces is told canceled on the next turn of the game loop. False for an NPC or a player not in the world.")]
+    [ScriptFunction(
+        helpText:
+        "Gives the player a cursor to pick an item or a mobile; the function gets { kind = 'object', serial } or { kind = 'canceled', reason } (reason is 'canceled' for ESC, 'overridden' when another cursor took its place, 'disconnected' when the player left). A cursor a script replaces is told canceled on the next turn of the game loop. False for an NPC or a player not in the world."
+    )]
     public bool Pick(long player, [ScriptParameterType("function")] LuaValue callback)
     {
         return Begin(player, TargetCursorType.Object, callback);
@@ -50,7 +54,10 @@ public sealed class TargetModule
     ///     Gives the player a cursor to pick a place; <c>target.pick_location(user, function(picked) ... end)</c>. A
     ///     click on an item or a mobile gives that object instead.
     /// </summary>
-    [ScriptFunction(helpText: "Gives the player a cursor to pick a place; the function gets { kind = 'location', map, x, y, z }, an object when one was clicked, or { kind = 'canceled', reason } (reason is 'canceled' for ESC, 'overridden' when another cursor took its place, 'disconnected' when the player left). A cursor a script replaces is told canceled on the next turn of the game loop. False for an NPC or a player not in the world.")]
+    [ScriptFunction(
+        helpText:
+        "Gives the player a cursor to pick a place; the function gets { kind = 'location', map, x, y, z }, an object when one was clicked, or { kind = 'canceled', reason } (reason is 'canceled' for ESC, 'overridden' when another cursor took its place, 'disconnected' when the player left). A cursor a script replaces is told canceled on the next turn of the game loop. False for an NPC or a player not in the world."
+    )]
     public bool PickLocation(long player, [ScriptParameterType("function")] LuaValue callback)
     {
         return Begin(player, TargetCursorType.Location, callback);
@@ -60,7 +67,10 @@ public sealed class TargetModule
     ///     Takes the target cursor away from the player; its function is told <c>canceled</c>;
     ///     <c>target.cancel(user)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Cancels the player's target cursor; its function runs with { kind = 'canceled' } on the next turn of the game loop. False for an NPC or a player not in the world.")]
+    [ScriptFunction(
+        helpText:
+        "Cancels the player's target cursor; its function runs with { kind = 'canceled' } on the next turn of the game loop. False for an NPC or a player not in the world."
+    )]
     public bool Cancel(long player)
     {
         if (!TryGetSession(player, out var session))

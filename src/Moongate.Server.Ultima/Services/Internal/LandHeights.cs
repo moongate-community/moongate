@@ -4,7 +4,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Services.Internal;
 
 /// <summary>
-///     The terrain heights of a cell from its four corners, as ModernUO's <c>Map.GetAverageZ</c>, shared by movement and
+///     The terrain heights of a cell from its four corners, as ModernUO's <c>Map.GetAverageZ</c>, shared by movement
+///     and
 ///     line of sight.
 /// </summary>
 internal static class LandHeights
@@ -38,8 +39,8 @@ internal static class LandHeights
         lowest = Math.Min(Math.Min(zTop, zLeft), Math.Min(zRight, zBottom));
         highest = Math.Max(Math.Max(zTop, zLeft), Math.Max(zRight, zBottom));
         average = Math.Abs(zTop - zBottom) > Math.Abs(zLeft - zRight)
-                      ? FloorAverage(zLeft, zRight)
-                      : FloorAverage(zTop, zBottom);
+            ? FloorAverage(zLeft, zRight)
+            : FloorAverage(zTop, zBottom);
     }
 
     /// <summary>

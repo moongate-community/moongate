@@ -98,9 +98,16 @@ public sealed class ItemTemplatesLoaderTests
                 longsword.StrengthRequired!.Value, longsword.MaxHits!.Value)
         );
         var fast = templates["fast_longsword"];
-        Assert.Equal((WeaponType.Sword, 5, 33, 50), (fast.WeaponType!.Value, fast.DamageMin!.Value, fast.DamageMax!.Value, fast.Speed!.Value));
+        Assert.Equal(
+            (WeaponType.Sword, 5, 33, 50),
+            (fast.WeaponType!.Value, fast.DamageMin!.Value, fast.DamageMax!.Value, fast.Speed!.Value)
+        );
         var tunic = templates["ringmail_tunic"];
-        Assert.Equal((22, 20, 51, (WeaponType?)null, (int?)null), (tunic.ArmorRating!.Value, tunic.StrengthRequired!.Value, tunic.MaxHits!.Value, tunic.WeaponType, tunic.DamageMax));
+        Assert.Equal(
+            (22, 20, 51, (WeaponType?)null, (int?)null),
+            (tunic.ArmorRating!.Value, tunic.StrengthRequired!.Value, tunic.MaxHits!.Value, tunic.WeaponType,
+                tunic.DamageMax)
+        );
         Assert.Null(templates["base_longsword"].DamageMax);
     }
 
@@ -128,7 +135,10 @@ public sealed class ItemTemplatesLoaderTests
     public async Task LoadDataAsync_ResolvesBaseIdThroughThreeLevels_AndReadsSubfolders()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("templates/items/base.toml", "[[item]]\nid = \"base_item\"\nitem_id = 0\nstackable = false\ndecays = false\n");
+        root.CreateFile(
+            "templates/items/base.toml",
+            "[[item]]\nid = \"base_item\"\nitem_id = 0\nstackable = false\ndecays = false\n"
+        );
         root.CreateFile(
             "templates/items/clothes/shirts.toml",
             "[[item]]\nid = \"base_shirt\"\nbase_id = \"base_item\"\nitem_id = 0x1517\nlayer = \"shirt\"\nweight = 1.0\n\n" +
@@ -165,7 +175,10 @@ public sealed class ItemTemplatesLoaderTests
     public async Task LoadDataAsync_ZeroItemId_TakesTheParentGraphic()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("templates/items/a.toml", "[[item]]\nid = \"coin\"\nitem_id = 0x0EED\n\n[[item]]\nid = \"big_coin\"\nbase_id = \"coin\"\nitem_id = 0\n");
+        root.CreateFile(
+            "templates/items/a.toml",
+            "[[item]]\nid = \"coin\"\nitem_id = 0x0EED\n\n[[item]]\nid = \"big_coin\"\nbase_id = \"coin\"\nitem_id = 0\n"
+        );
 
         var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
@@ -220,7 +233,10 @@ public sealed class ItemTemplatesLoaderTests
     [Theory,
      InlineData("[[item]]\nid = \"a\"\nitem_id = 1\n", "[[item]]\nid = \"a\"\nitem_id = 2\n"),
      InlineData("[[item]]\nid = \"a\"\nbase_id = \"missing\"\nitem_id = 1\n", ""),
-     InlineData("[[item]]\nid = \"a\"\nbase_id = \"b\"\nitem_id = 1\n", "[[item]]\nid = \"b\"\nbase_id = \"a\"\nitem_id = 1\n"),
+     InlineData(
+         "[[item]]\nid = \"a\"\nbase_id = \"b\"\nitem_id = 1\n",
+         "[[item]]\nid = \"b\"\nbase_id = \"a\"\nitem_id = 1\n"
+     ),
      InlineData("[[item]]\nid = \" \"\nitem_id = 1\n", "")]
     public async Task LoadDataAsync_ABadTemplateSet_ThrowsInvalidDataException(string first, string second)
     {

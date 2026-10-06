@@ -34,8 +34,10 @@ public sealed class ShutdownCommandTests
 
         await fixture.Command.ExecuteAsync(fixture.Context("30", cancellation.Token)).WaitAsync(TimeSpan.FromSeconds(5));
         Assert.False(fixture.Shutdown.Requested.IsCompleted);
-        Assert.Equal("The server will shut down in 30 seconds.",
-            Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.World.Sender.Sent)).Text);
+        Assert.Equal(
+            "The server will shut down in 30 seconds.",
+            Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.World.Sender.Sent)).Text
+        );
         cancellation.Cancel();
         await fixture.AdvanceAsync(TimeSpan.FromSeconds(29));
         Assert.False(fixture.Shutdown.Requested.IsCompleted);
@@ -86,7 +88,8 @@ public sealed class ShutdownCommandTests
         cancellation.Cancel();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            fixture.Command.ExecuteAsync(fixture.Context("30", cancellation.Token)));
+            fixture.Command.ExecuteAsync(fixture.Context("30", cancellation.Token))
+        );
 
         Assert.False(fixture.Shutdown.Requested.IsCompleted);
         Assert.Equal(0, fixture.Timers.GetMetricsSnapshot().ActiveTimers);
@@ -131,7 +134,8 @@ public sealed class ShutdownCommandTests
     public async Task ExecuteAsync_AnnouncementFailureDoesNotStopAndAllowsRetry()
     {
         await using var fixture = await ShutdownCommandFixture.CreateAsync();
-        var broadcast = new ControlledBroadcastService { Delivery = Task.FromException<int>(new IOException("Send failed")) };
+        var broadcast = new ControlledBroadcastService
+            { Delivery = Task.FromException<int>(new IOException("Send failed")) };
         var command = new ShutdownCommand(fixture.Shutdown, fixture.Timers, broadcast);
 
         await Assert.ThrowsAsync<IOException>(() => command.ExecuteAsync(fixture.Context()));

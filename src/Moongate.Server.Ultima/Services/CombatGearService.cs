@@ -71,7 +71,9 @@ public sealed class CombatGearService : ICombatGearService
                 Array.IndexOf(HandLayers, layer) < 0 ||
                 !_templates.TryGet(item.TemplateId, out var template) ||
                 template is not { DamageMax: > 0 } ||
-                (shoots ? template.WeaponType is not (WeaponType.Bow or WeaponType.Crossbow) : template.WeaponType is { IsRanged: true }))
+                (shoots
+                    ? template.WeaponType is not (WeaponType.Bow or WeaponType.Crossbow)
+                    : template.WeaponType is { IsRanged: true }))
             {
                 continue;
             }
@@ -129,8 +131,8 @@ public sealed class CombatGearService : ICombatGearService
 
         var weapon = RangedWeaponOf(mobile) ?? WeaponOf(mobile);
         var (min, max) = weapon is null
-                             ? (CombatFormulas.FistsMinimumDamage, CombatFormulas.FistsMaximumDamage)
-                             : (weapon.DamageMin, weapon.DamageMax);
+            ? (CombatFormulas.FistsMinimumDamage, CombatFormulas.FistsMaximumDamage)
+            : (weapon.DamageMin, weapon.DamageMax);
         var tactics = Points(mobile, SkillType.Tactics);
         var anatomy = Points(mobile, SkillType.Anatomy);
 

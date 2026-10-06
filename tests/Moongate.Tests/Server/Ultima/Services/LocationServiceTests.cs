@@ -17,7 +17,8 @@ public sealed class LocationServiceTests
     [Fact]
     public void GetNode_TheRoot_ListsTheMapsThatHavePlaces_InFileOrder()
     {
-        var root = Service(Place(MapType.Trammel, "Towns", "Britain"), Place(MapType.Felucca, "Towns", "Britain")).GetNode("");
+        var root = Service(Place(MapType.Trammel, "Towns", "Britain"), Place(MapType.Felucca, "Towns", "Britain"))
+            .GetNode("");
 
         Assert.NotNull(root);
         Assert.Equal(("", ""), (root.Path, root.Name));
@@ -89,7 +90,10 @@ public sealed class LocationServiceTests
     {
         // The fake map service opens Felucca only.
         var service = new LocationService(
-            new StubDataLoaderService().With(Place(MapType.Trammel, "Towns", "Cove"), Place(MapType.Felucca, "Towns", "Cove")),
+            new StubDataLoaderService().With(
+                Place(MapType.Trammel, "Towns", "Cove"),
+                Place(MapType.Felucca, "Towns", "Cove")
+            ),
             TestSectors.Create(),
             new FakeMapService(16, 16)
         );
@@ -100,7 +104,8 @@ public sealed class LocationServiceTests
     [Fact]
     public void GetNode_APlaceOutsideItsMap_IsLeftOut()
     {
-        var outside = new NamedLocation { Map = MapType.Felucca, Category = "Towns", Name = "Nowhere", Location = new Point3D(9000, 10, 0) };
+        var outside = new NamedLocation
+            { Map = MapType.Felucca, Category = "Towns", Name = "Nowhere", Location = new Point3D(9000, 10, 0) };
 
         var service = Service(outside, Place(MapType.Felucca, "Towns", "Cove"));
 
@@ -136,7 +141,10 @@ public sealed class LocationServiceTests
     [InlineData("/covetous/entrance/")]
     public void Find_APathWrittenWithSlashes_IsReadAsItsWords(string text)
     {
-        var service = Service(Place(MapType.Felucca, "Dungeons/Covetous", "Entrance"), Place(MapType.Felucca, "Dungeons/Shame", "Entrance"));
+        var service = Service(
+            Place(MapType.Felucca, "Dungeons/Covetous", "Entrance"),
+            Place(MapType.Felucca, "Dungeons/Shame", "Entrance")
+        );
 
         Assert.Equal("Dungeons/Covetous", Assert.Single(service.Find(text, MapType.Felucca)).Category);
     }
@@ -198,7 +206,10 @@ public sealed class LocationServiceTests
     [Fact]
     public void Find_APlaceNamedAsTheText_WinsOverACategory()
     {
-        var service = Service(Place(MapType.Felucca, "Towns/Britain", "Bank"), Place(MapType.Felucca, "Factions/Towns", "Britain"));
+        var service = Service(
+            Place(MapType.Felucca, "Towns/Britain", "Bank"),
+            Place(MapType.Felucca, "Factions/Towns", "Britain")
+        );
 
         Assert.Equal("Factions/Towns", Assert.Single(service.Find("britain", MapType.Felucca)).Category);
     }
@@ -207,7 +218,10 @@ public sealed class LocationServiceTests
     [Fact]
     public void Find_ACategoryOfTheOwnMap_WinsOverAPlaceOfAnotherMap()
     {
-        var service = Service(Place(MapType.Felucca, "Factions/Towns", "Britain"), Place(MapType.Trammel, "Towns/Britain", "Bank"));
+        var service = Service(
+            Place(MapType.Felucca, "Factions/Towns", "Britain"),
+            Place(MapType.Trammel, "Towns/Britain", "Bank")
+        );
 
         var found = Assert.Single(service.Find("britain", MapType.Trammel));
 

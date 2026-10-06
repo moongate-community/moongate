@@ -51,7 +51,8 @@ public sealed class SpeechServiceTests
         Place(fixture, 3, 116, 100);
         var banker = new MobileEntity
         {
-            Id = new Serial(0x100), Name = "Bank Teller", Body = 0x0190, Map = MapType.Trammel, Location = new Point3D(100, 100, 0)
+            Id = new Serial(0x100), Name = "Bank Teller", Body = 0x0190, Map = MapType.Trammel,
+            Location = new Point3D(100, 100, 0)
         };
         var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
         var sent = 0;
@@ -61,7 +62,10 @@ public sealed class SpeechServiceTests
         Assert.Equal(1, sent);
         Assert.Equal([near.SessionId], fixture.Sender.SentSessionIds);
         var message = Assert.IsType<LocalizedMessagePacket>(Assert.Single(fixture.Sender.Sent));
-        Assert.Equal((banker.Id, 0x0190, 1042759, "Bank Teller", "1,200"), (message.Serial, message.Graphic, message.Cliloc, message.Name, message.Arguments));
+        Assert.Equal(
+            (banker.Id, 0x0190, 1042759, "Bank Teller", "1,200"),
+            (message.Serial, message.Graphic, message.Cliloc, message.Name, message.Arguments)
+        );
     }
 
     [Fact]
@@ -72,14 +76,18 @@ public sealed class SpeechServiceTests
         Place(fixture, 2, 105, 100);
         var banker = new MobileEntity
         {
-            Id = new Serial(0x100), Name = "Bank Teller", Body = 0x0190, Map = MapType.Trammel, Location = new Point3D(100, 100, 0)
+            Id = new Serial(0x100), Name = "Bank Teller", Body = 0x0190, Map = MapType.Trammel,
+            Location = new Point3D(100, 100, 0)
         };
         var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
 
         await fixture.Network.ExecuteOnLoopAsync(() => speech.SayCliloc(banker, 1042673, "", "5,000"));
 
         var message = Assert.IsType<LocalizedMessageAffixPacket>(Assert.Single(fixture.Sender.Sent));
-        Assert.Equal((banker.Id, 0x0190, 1042673, "Bank Teller", "5,000"), (message.Serial, message.Graphic, message.Cliloc, message.Name, message.Affix));
+        Assert.Equal(
+            (banker.Id, 0x0190, 1042673, "Bank Teller", "5,000"),
+            (message.Serial, message.Graphic, message.Cliloc, message.Name, message.Affix)
+        );
     }
 
     [Fact]
@@ -124,7 +132,8 @@ public sealed class SpeechServiceTests
     {
         await using var fixture = await BroadcastFixture.CreateAsync();
         await fixture.AddAsync(2);
-        var orc = new MobileEntity { Id = new Serial(0x100), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(100, 100, 0) };
+        var orc = new MobileEntity
+            { Id = new Serial(0x100), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(100, 100, 0) };
         var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
         var told = true;
 
@@ -189,8 +198,7 @@ public sealed class SpeechServiceTests
         var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
         var sent = 0;
 
-        await fixture.Network.ExecuteOnLoopAsync(
-            () =>
+        await fixture.Network.ExecuteOnLoopAsync(() =>
             {
                 staff.Set(SessionKeys.AccountType, AccountType.GameMaster);
                 sent = speech.Say(speaker, "psst");
@@ -218,8 +226,7 @@ public sealed class SpeechServiceTests
         var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
         var sent = 0;
 
-        await fixture.Network.ExecuteOnLoopAsync(
-            () =>
+        await fixture.Network.ExecuteOnLoopAsync(() =>
             {
                 staff.Set(SessionKeys.AccountType, AccountType.GameMaster);
                 sent = speech.PlaySound(source, 0x69);

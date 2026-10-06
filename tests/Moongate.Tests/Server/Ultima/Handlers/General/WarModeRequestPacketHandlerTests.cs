@@ -28,7 +28,10 @@ public sealed class WarModeRequestPacketHandlerTests : IAsyncLifetime
     [Theory, InlineData(true), InlineData(false)]
     public void Handle_PutsTheCharacterInTheModeAsked(bool warMode)
     {
-        new WarModeRequestPacketHandler(_fixture.Mobiles, _state).Handle(_session, new WarModeRequestPacket { WarMode = warMode });
+        new WarModeRequestPacketHandler(_fixture.Mobiles, _state).Handle(
+            _session,
+            new WarModeRequestPacket { WarMode = warMode }
+        );
 
         Assert.Equal([$"war 2 {warMode}"], _state.Flags);
     }
@@ -52,7 +55,10 @@ public sealed class WarModeRequestPacketHandlerTests : IAsyncLifetime
     {
         var stranger = _fixture.Sessions.GetOrCreate(new Moongate.Tests.TestSupport.Network.ControlledNetworkConnection(77));
 
-        new WarModeRequestPacketHandler(_fixture.Mobiles, _state).Handle(stranger, new WarModeRequestPacket { WarMode = true });
+        new WarModeRequestPacketHandler(_fixture.Mobiles, _state).Handle(
+            stranger,
+            new WarModeRequestPacket { WarMode = true }
+        );
 
         Assert.Empty(_state.Flags);
     }

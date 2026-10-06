@@ -14,22 +14,25 @@ public sealed class LootServiceTests
     public LootServiceTests()
     {
         var loaders = new StubDataLoaderService()
-                      .With(
-                          new ItemTemplate { Id = "ruby", ItemId = new Serial(0x0F13) },
-                          new ItemTemplate { Id = "arrow", ItemId = new Serial(0x0F3F) },
-                          new ItemTemplate { Id = "bottle", ItemId = new Serial(0x0F0E) }
-                      )
-                      .With(
-                          Table("mostly_nothing", new LootEntry { Weight = 80 }, new LootEntry { Weight = 20, ItemId = "ruby" }),
-                          Table("arrows", new LootEntry { ItemId = "arrow", Amount = RangeValueSpec<int>.FromValue(30) }),
-                          Table("bottles", new LootEntry { ItemId = "bottle", Amount = RangeValueSpec<int>.FromValue(3) }),
-                          Table("nested", new LootEntry { LootTemplateId = "arrows" }),
-                          Table("nested_twice", new LootEntry { LootTemplateId = "arrows", Amount = RangeValueSpec<int>.FromValue(2) }),
-                          Table("empty")
-                      );
+            .With(
+                new ItemTemplate { Id = "ruby", ItemId = new Serial(0x0F13) },
+                new ItemTemplate { Id = "arrow", ItemId = new Serial(0x0F3F) },
+                new ItemTemplate { Id = "bottle", ItemId = new Serial(0x0F0E) }
+            )
+            .With(
+                Table("mostly_nothing", new LootEntry { Weight = 80 }, new LootEntry { Weight = 20, ItemId = "ruby" }),
+                Table("arrows", new LootEntry { ItemId = "arrow", Amount = RangeValueSpec<int>.FromValue(30) }),
+                Table("bottles", new LootEntry { ItemId = "bottle", Amount = RangeValueSpec<int>.FromValue(3) }),
+                Table("nested", new LootEntry { LootTemplateId = "arrows" }),
+                Table(
+                    "nested_twice",
+                    new LootEntry { LootTemplateId = "arrows", Amount = RangeValueSpec<int>.FromValue(2) }
+                ),
+                Table("empty")
+            );
         var tiles = new FakeTileDataService().Item(0x0F13, TileFlagType.None, 0)
-                                             .Item(0x0F3F, TileFlagType.Generic, 0)
-                                             .Item(0x0F0E, TileFlagType.None, 0);
+            .Item(0x0F3F, TileFlagType.Generic, 0)
+            .Item(0x0F0E, TileFlagType.None, 0);
         var itemTemplates = new ItemTemplateService(loaders);
 
         // Roll only builds items in memory; the factory's persistence is never touched.
@@ -68,6 +71,6 @@ public sealed class LootServiceTests
 
     private static LootTemplate Table(string id, params LootEntry[] entries)
     {
-        return new() { Id = id, Entries = [..entries] };
+        return new() { Id = id, Entries = [.. entries] };
     }
 }

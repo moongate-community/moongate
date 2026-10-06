@@ -307,19 +307,26 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
 
         await TickAsync();
 
-        Assert.Equal((staff, "Spawn: 2 NPCs in 2 regions: Yew Woods 1, glade 1 - world 3/8 (37%)"), Assert.Single(Notices()));
+        Assert.Equal(
+            (staff, "Spawn: 2 NPCs in 2 regions: Yew Woods 1, glade 1 - world 3/8 (37%)"),
+            Assert.Single(Notices())
+        );
     }
 
     [Fact]
     public async Task TheStaff_HearAtMostFiveRegionsByName()
     {
         await AddPlayerAsync(1, AccountType.Administrator);
-        var spawns = Enumerable.Range(1, 7).Select(index => Spawn($"r{index}", name: $"R{index}", call: index == 7 ? 2 : 1, max: 2));
+        var spawns = Enumerable.Range(1, 7)
+            .Select(index => Spawn($"r{index}", name: $"R{index}", call: index == 7 ? 2 : 1, max: 2));
         await StartAsync(new ScriptedRandom(0), spawns.ToArray());
 
         await TickAsync();
 
-        Assert.Equal("Spawn: 8 NPCs in 7 regions: R7 2, R1 1, R2 1, R3 1, R4 1 and 2 more - world 0/14 (0%)", Assert.Single(Notices()).Text);
+        Assert.Equal(
+            "Spawn: 8 NPCs in 7 regions: R7 2, R1 1, R2 1, R3 1, R4 1 and 2 more - world 0/14 (0%)",
+            Assert.Single(Notices()).Text
+        );
     }
 
     [Fact]
@@ -412,7 +419,10 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         var here = await _service.RegionsAtAsync(MapType.Felucca, 16, 16);
 
         Assert.Equal(
-            [new("forest", "Yew Woods", 1, 4, TimeSpan.FromSeconds(90), false), new SpawnRegionStatus("glade", null, 0, 2, TimeSpan.FromSeconds(90), false)],
+            [
+                new("forest", "Yew Woods", 1, 4, TimeSpan.FromSeconds(90), false),
+                new SpawnRegionStatus("glade", null, 0, 2, TimeSpan.FromSeconds(90), false)
+            ],
             here
         );
         Assert.Empty(await _service.RegionsAtAsync(MapType.Trammel, 16, 16));
@@ -593,11 +603,14 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         var bag = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
         bag.PlaceOnGround(MapType.Felucca, new Point3D(1, 1, 0));
 
-        await _fixture.Network.ExecuteOnLoopAsync(
-            () =>
+        await _fixture.Network.ExecuteOnLoopAsync(() =>
             {
                 _items.Add([bag]);
-                _items.MoveToContainer(_items.Items.Single(item => item.TemplateId == "treasure_chest"), bag.Id, new Point2D(1, 1));
+                _items.MoveToContainer(
+                    _items.Items.Single(item => item.TemplateId == "treasure_chest"),
+                    bag.Id,
+                    new Point2D(1, 1)
+                );
             }
         );
         await TickAsync();
@@ -609,7 +622,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task TheItemsOfARegionAlreadyInTheWorldAtTheStart_AreCounted()
     {
         _itemSpawns.Items = _items;
-        var chest = new ItemEntity { Id = new Serial(0x40000700), TemplateId = "treasure_chest", ItemId = 0x0E41, Amount = 1 };
+        var chest = new ItemEntity
+            { Id = new Serial(0x40000700), TemplateId = "treasure_chest", ItemId = 0x0E41, Amount = 1 };
         chest.PlaceOnGround(MapType.Felucca, new Point3D(10, 10, 0));
         chest.SetProp(SpawnRegionService.RegionProp, "crypt");
         _items.Add([chest]);
@@ -796,13 +810,13 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     private async Task StartAsync(System.Random random, (int Id, string Text)[] messages, params SpawnTemplate[] spawns)
     {
         var data = new StubDataLoaderService()
-                   .With(spawns)
-                   .With(new NpcListTemplate { Id = "unused" })
-                   .With(
-                       new MobileTemplate { Id = "rabbit", Body = 205 },
-                       new MobileTemplate { Id = "dolphin", Body = 151, Movement = MobileMovementType.Water },
-                       new MobileTemplate { Id = "walrus", Body = 221, Movement = MobileMovementType.Both }
-                   );
+            .With(spawns)
+            .With(new NpcListTemplate { Id = "unused" })
+            .With(
+                new MobileTemplate { Id = "rabbit", Body = 205 },
+                new MobileTemplate { Id = "dolphin", Body = 151, Movement = MobileMovementType.Water },
+                new MobileTemplate { Id = "walrus", Body = 221, Movement = MobileMovementType.Both }
+            );
         (int Id, string Text)[] defaults =
         [
             (CommandMessages.SpawnedInOneRegion, "Spawn: {0} ({1}): {2} NPCs"),
@@ -848,7 +862,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
 
     private async Task<MobileEntity> AddLiveAsync(string region)
     {
-        var npc = new MobileEntity { Id = new Serial(_nextSerial++), Name = "Rabbit", TemplateId = "rabbit", Map = MapType.Felucca };
+        var npc = new MobileEntity
+            { Id = new Serial(_nextSerial++), Name = "Rabbit", TemplateId = "rabbit", Map = MapType.Felucca };
         npc.SetProp(SpawnRegionService.RegionProp, region);
         await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(npc));
 
@@ -866,9 +881,9 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     private List<(long Session, string Text)> Notices()
     {
         return _fixture.Sender.Sent
-                       .Select((packet, index) => (packet, index))
-                       .Where(pair => pair.packet is UnicodeSpeechMessagePacket)
-                       .Select(pair => (_fixture.Sender.SentSessionIds[pair.index], ((UnicodeSpeechMessagePacket)pair.packet).Text))
-                       .ToList();
+            .Select((packet, index) => (packet, index))
+            .Where(pair => pair.packet is UnicodeSpeechMessagePacket)
+            .Select(pair => (_fixture.Sender.SentSessionIds[pair.index], ((UnicodeSpeechMessagePacket)pair.packet).Text))
+            .ToList();
     }
 }

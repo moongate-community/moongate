@@ -17,7 +17,9 @@ public sealed class ModernUoBookConverterTests : IDisposable
     [Fact]
     public void Run_LiteralCatalog_PreservesTitleAuthorLinesBlankPagesAndDistinctJournalParts()
     {
-        _directories.WriteSource("Defined/Journal.cs", """
+        _directories.WriteSource(
+            "Defined/Journal.cs",
+            """
             namespace Server.Items;
             public class Journal1 : BaseBook
             {
@@ -30,7 +32,8 @@ public sealed class ModernUoBookConverterTests : IDisposable
                     new BookPageInfo("another part"));
             }
             public class BlankBook : BaseBook { public string Title = "no fixed content"; }
-            """);
+            """
+        );
 
         Assert.True(Run() == 0, _error.ToString());
         var first = Read("journal1");
@@ -47,7 +50,10 @@ public sealed class ModernUoBookConverterTests : IDisposable
         Assert.Empty(first.Variables);
         Assert.Empty(first.Attachments);
         Assert.Empty(first.Translations);
-        Assert.Contains("content = \"\"\"", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "journal1.toml")));
+        Assert.Contains(
+            "content = \"\"\"",
+            File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "journal1.toml"))
+        );
         Assert.Equal(2, Directory.GetFiles(_directories.DestinationDirectory).Length);
         Assert.Contains("2 books, 4 pages", _output.ToString());
     }
@@ -57,7 +63,9 @@ public sealed class ModernUoBookConverterTests : IDisposable
     [Fact]
     public void Run_ABook_TakesTheGraphicOfItsSource()
     {
-        _directories.WriteSource("Covers.cs", """
+        _directories.WriteSource(
+            "Covers.cs",
+            """
             namespace Server.Items;
             public class StatedCover : BaseBook
             {
@@ -79,17 +87,27 @@ public sealed class ModernUoBookConverterTests : IDisposable
             {
                 public static readonly BookContent Content = new("T", "A", new BookPageInfo("x"));
             }
-            """);
+            """
+        );
 
         Assert.True(Run() == 0, _error.ToString());
         Assert.Equal(0x0FF2, Read("stated_cover").ItemId);
         Assert.Equal(0x0FEF, Read("random_cover").ItemId);
         Assert.Equal(0x0FF1, Read("derived_cover").ItemId);
         Assert.Null(Read("unknown_cover").ItemId);
-        Assert.All(new[] { "stated_cover", "random_cover", "derived_cover", "unknown_cover" }, id => Assert.Equal("readable_book", Read(id).ItemTemplate));
+        Assert.All(
+            new[] { "stated_cover", "random_cover", "derived_cover", "unknown_cover" },
+            id => Assert.Equal("readable_book", Read(id).ItemTemplate)
+        );
         // Written as the graphics are read everywhere else: in hexadecimal.
-        Assert.Contains("item_id = 0x0FF2", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "stated_cover.toml")));
-        Assert.DoesNotContain("item_id", File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "unknown_cover.toml")));
+        Assert.Contains(
+            "item_id = 0x0FF2",
+            File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "stated_cover.toml"))
+        );
+        Assert.DoesNotContain(
+            "item_id",
+            File.ReadAllText(Path.Combine(_directories.DestinationDirectory, "unknown_cover.toml"))
+        );
     }
 
     // A body that only an escaped string keeps exactly, with a translation to keep: both are written.
@@ -104,20 +122,26 @@ public sealed class ModernUoBookConverterTests : IDisposable
         Assert.True(Run() == 0, _error.ToString());
 
         Assert.Equal("\nfirst", Read("known").Content);
-        Assert.Equal(("Titolo", "\n\nCorpo"), (Read("known").Translations["ita"].Title, Read("known").Translations["ita"].Content));
+        Assert.Equal(
+            ("Titolo", "\n\nCorpo"),
+            (Read("known").Translations["ita"].Title, Read("known").Translations["ita"].Content)
+        );
     }
 
     // A line of a body that reads like the graphic field is text, and stays as written.
     [Fact]
     public void Run_ABodyLineThatLooksLikeTheGraphic_IsLeftAlone()
     {
-        _directories.WriteSource("Covers.cs", """
+        _directories.WriteSource(
+            "Covers.cs",
+            """
             public class Tricky : BaseBook
             {
                 public static readonly BookContent Content = new("T", "A", new BookPageInfo("item_id = 5", "end"));
                 public Tricky() : base(0xFF2, false) { }
             }
-            """);
+            """
+        );
 
         Assert.True(Run() == 0, _error.ToString());
 
@@ -131,12 +155,15 @@ public sealed class ModernUoBookConverterTests : IDisposable
     public void Run_ABookOfMorePagesThanTheClientTakes_IsRefused()
     {
         var pages = string.Join(", ", Enumerable.Range(1, 256).Select(page => $"new BookPageInfo(\"p{page}\")"));
-        _directories.WriteSource("Long.cs", $$"""
-            class Endless
-            {
-                public static readonly BookContent Content = new("T", "A", {{pages}});
-            }
-            """);
+        _directories.WriteSource(
+            "Long.cs",
+            $$"""
+              class Endless
+              {
+                  public static readonly BookContent Content = new("T", "A", {{pages}});
+              }
+              """
+        );
 
         Assert.Equal(2, Run());
         Assert.Contains("Endless", _error.ToString());
@@ -145,7 +172,9 @@ public sealed class ModernUoBookConverterTests : IDisposable
     [Fact]
     public void Run_StringLiteralsAndComments_DecodeWithoutTreatingLiteralDollarsAsVariables()
     {
-        _directories.WriteSource("Escapes.cs", """"
+        _directories.WriteSource(
+            "Escapes.cs",
+            """"
             // BookContent Content = new("fake", "fake", new BookPageInfo("fake"));
             class UOJournal16b
             {
@@ -154,15 +183,18 @@ public sealed class ModernUoBookConverterTests : IDisposable
                         "caf\u00e8", "price $5; $player_name; ${unknown}",
                         "http://example.test/" + "path", """raw \ text"""));
             }
-            """");
+            """"
+        );
 
         Assert.True(Run() == 0, _error.ToString());
         var book = Read("uo_journal16b");
         Assert.Equal("A \"quoted\" title", book.Title);
         Assert.Equal("A\\B", book.Author);
         Assert.Equal("cafè\nprice $$5; $$player_name; $${unknown}\nhttp://example.test/path\nraw \\ text", book.Content);
-        Assert.Equal("cafè\nprice $5; $player_name; ${unknown}\nhttp://example.test/path\nraw \\ text",
-            TextTemplateRenderer.Render(book.Content, new Dictionary<string, string>(), TextTemplateSyntaxType.Document));
+        Assert.Equal(
+            "cafè\nprice $5; $player_name; ${unknown}\nhttp://example.test/path\nraw \\ text",
+            TextTemplateRenderer.Render(book.Content, new Dictionary<string, string>(), TextTemplateSyntaxType.Document)
+        );
     }
 
     [Theory]
@@ -193,7 +225,10 @@ public sealed class ModernUoBookConverterTests : IDisposable
     [InlineData("Title", "Writer", "bad\u0000text")]
     public void Run_InvalidDocumentText_RejectsWithoutCreatingDestination(string title, string author, string content)
     {
-        _directories.WriteSource("Bad.cs", $"class Bad {{ public static readonly BookContent Content = new({Literal(title)}, {Literal(author)}, new BookPageInfo({Literal(content)})); }}");
+        _directories.WriteSource(
+            "Bad.cs",
+            $"class Bad {{ public static readonly BookContent Content = new({Literal(title)}, {Literal(author)}, new BookPageInfo({Literal(content)})); }}"
+        );
 
         Assert.Equal(2, Run());
         Assert.Contains("Bad.cs", _error.ToString());
@@ -207,7 +242,10 @@ public sealed class ModernUoBookConverterTests : IDisposable
     {
         var title = header ? new string('x', 129) : "Title";
         var content = header ? "text" : new string('x', 16385);
-        _directories.WriteSource("Large.cs", $"class Large {{ public static readonly BookContent Content = new({Literal(title)}, \"Writer\", new BookPageInfo({Literal(content)})); }}");
+        _directories.WriteSource(
+            "Large.cs",
+            $"class Large {{ public static readonly BookContent Content = new({Literal(title)}, \"Writer\", new BookPageInfo({Literal(content)})); }}"
+        );
 
         Assert.Equal(2, Run());
         Assert.Contains("Large.cs", _error.ToString());
@@ -249,8 +287,14 @@ public sealed class ModernUoBookConverterTests : IDisposable
 
         Assert.True(Run() == 0, _error.ToString());
         Assert.Equal(16384, Read("dollars").Content.Length);
-        Assert.Equal(content, TextTemplateRenderer.Render(Read("dollars").Content,
-            new Dictionary<string, string>(), TextTemplateSyntaxType.Document));
+        Assert.Equal(
+            content,
+            TextTemplateRenderer.Render(
+                Read("dollars").Content,
+                new Dictionary<string, string>(),
+                TextTemplateSyntaxType.Document
+            )
+        );
     }
 
     [Theory]
@@ -277,7 +321,10 @@ public sealed class ModernUoBookConverterTests : IDisposable
         var path = Path.Combine(_directories.DestinationDirectory, "earlier.toml");
         var previous = File.ReadAllBytes(path);
         _directories.WriteSource("A.cs", Book("Earlier", "changed"));
-        _directories.WriteSource("Z.cs", $"class Bad {{ public static readonly BookContent Content = new(\"{title}\", \"{author}\", new BookPageInfo(\"{content}\")); }}");
+        _directories.WriteSource(
+            "Z.cs",
+            $"class Bad {{ public static readonly BookContent Content = new(\"{title}\", \"{author}\", new BookPageInfo(\"{content}\")); }}"
+        );
 
         Assert.Equal(2, Run());
         Assert.Equal(previous, File.ReadAllBytes(path));
@@ -370,7 +417,8 @@ public sealed class ModernUoBookConverterTests : IDisposable
         _directories.WriteSource("A.cs", Book("Known", "before"));
         Assert.Equal(0, Run());
         var path = Path.Combine(_directories.DestinationDirectory, "known.toml");
-        var text = header ? new string('x', 129) : packet ? new string('&', 16000) : new string('x', 16385);
+        var text = header ? new string('x', 129) :
+            packet ? new string('&', 16000) : new string('x', 16385);
         File.AppendAllText(path, $"\n[translations.ita]\n{(header ? "title" : "content")} = {Literal(text)}\n");
         var previous = File.ReadAllBytes(path);
 
@@ -448,7 +496,8 @@ public sealed class ModernUoBookConverterTests : IDisposable
 
     private static string Book(string name, string text)
     {
-        return $"class {name} {{ public static readonly BookContent Content = new(\"Title\", \"Writer\", new BookPageInfo({Literal(text)})); }}";
+        return
+            $"class {name} {{ public static readonly BookContent Content = new(\"Title\", \"Writer\", new BookPageInfo({Literal(text)})); }}";
     }
 
     private static string Literal(string text)
@@ -463,8 +512,11 @@ public sealed class ModernUoBookConverterTests : IDisposable
 
     private BookTemplateSource Read(string id)
     {
-        return Assert.IsType<BookTemplateSource>(TomlUtils.DeserializeFromFile<BookTemplateSource>(
-            Path.Combine(_directories.DestinationDirectory, id + ".toml")));
+        return Assert.IsType<BookTemplateSource>(
+            TomlUtils.DeserializeFromFile<BookTemplateSource>(
+                Path.Combine(_directories.DestinationDirectory, id + ".toml")
+            )
+        );
     }
 
     public void Dispose()

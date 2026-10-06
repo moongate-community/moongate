@@ -46,7 +46,10 @@ public sealed class DisplayPaperdollPacket : BaseFixedPacket<DisplayPaperdollPac
     {
         var cut = title.Length > TitleLength ? title[..TitleLength] : title;
 
-        return string.Create(cut.Length, cut, static (span, source) =>
+        return string.Create(
+            cut.Length,
+            cut,
+            static (span, source) =>
             {
                 for (var i = 0; i < source.Length; i++)
                 {

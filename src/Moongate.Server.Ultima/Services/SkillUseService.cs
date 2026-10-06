@@ -24,6 +24,7 @@ public sealed class SkillUseService : ISkillUseService
     ///     "I am dead and cannot do that."
     /// </summary>
     public const int DeadCliloc = 1019048;
+
     public const int CannotUseCliloc = 500014;
 
     /// <summary>
@@ -140,15 +141,20 @@ public sealed class SkillUseService : ISkillUseService
     private static double? DelayOf(IReadOnlyList<object?> values)
     {
         var seconds = values.Count > 0
-                          ? values[0] switch
-                          {
-                              double value => value,
-                              long value   => value,
-                              int value    => value,
-                              string value when double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed) => parsed,
-                              _            => double.NaN
-                          }
-                          : double.NaN;
+            ? values[0] switch
+            {
+                double value => value,
+                long value   => value,
+                int value    => value,
+                string value when double.TryParse(
+                    value,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out var parsed
+                ) => parsed,
+                _ => double.NaN
+            }
+            : double.NaN;
 
         return double.IsNaN(seconds) ? null : Math.Clamp(seconds, 0, SkillsLoader.MaximumDelaySeconds);
     }

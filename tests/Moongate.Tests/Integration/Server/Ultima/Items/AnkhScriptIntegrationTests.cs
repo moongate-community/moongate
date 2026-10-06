@@ -59,6 +59,7 @@ public sealed class AnkhScriptIntegrationTests : IAsyncLifetime
     private readonly StubDeathService _death = new();
     private readonly RecordingEffectService _effects = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+
     private readonly ItemEntity _ankh = new()
     {
         Id = new Serial(0x40000040), TemplateId = "decoration_ankh", ItemId = 0x0003, Amount = 1
@@ -84,8 +85,12 @@ public sealed class AnkhScriptIntegrationTests : IAsyncLifetime
         items.Add([_ankh]);
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
         _scripts.Write("items/ankh.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "ankh.lua")));
-        _scripts.Write("gumps/resurrect.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "resurrect.lua")));
-        var templates = (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
+        _scripts.Write(
+            "gumps/resurrect.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "resurrect.lua"))
+        );
+        var templates =
+            (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,
@@ -105,7 +110,14 @@ public sealed class AnkhScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ISectorService>(_fixture.Sectors);
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(items, _fixture.Mobiles));
         _container.RegisterInstance<ITeleportService>(
-            new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService())
+            new TeleportService(
+                _fixture.Mobiles,
+                _view,
+                _fixture.Sessions,
+                _fixture.Sender,
+                _fixture.Sectors,
+                new StubBankService()
+            )
         );
         _container.RegisterInstance<IDeathService>(_death);
         _container.RegisterInstance<IEffectService>(_effects);
@@ -123,15 +135,22 @@ public sealed class AnkhScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<MobileModule>();
         _container.AddScriptModule<GumpModule>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>((evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
 
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         gumpScripts = new GumpScriptService(_engine, _loop, options);
         await gumpScripts.StartAsync();
@@ -228,7 +247,11 @@ public sealed class AnkhScriptIntegrationTests : IAsyncLifetime
 
     private void Answer(int button)
     {
-        _gumps.Opened[0].Gump.OnResponse(_session, new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() });
+        _gumps.Opened[0]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
+            );
     }
 
     private static string RepositoryRoot()

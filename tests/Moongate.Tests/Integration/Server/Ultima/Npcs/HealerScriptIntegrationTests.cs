@@ -37,7 +37,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.Integration.Server.Ultima.Npcs;
 
 /// <summary>
-///     The shipped <c>scripts/mobiles/healer.lua</c>, the gump <c>resurrect</c> it opens and its script, on the real Lua
+///     The shipped <c>scripts/mobiles/healer.lua</c>, the gump <c>resurrect</c> it opens and its script, on the real
+///     Lua
 ///     engine and the real modules: a healer at 1600,1600 and a ghost three tiles east of it.
 /// </summary>
 public sealed class HealerScriptIntegrationTests : IAsyncLifetime
@@ -61,6 +62,7 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
     private readonly StubLineOfSightService _sight = new();
     private readonly StubDeathService _death = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate { Id = "healer", ScriptId = "healer" },
@@ -68,6 +70,7 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
             new MobileTemplate { Id = "evilhealer", ScriptId = "healer" }
         )
     );
+
     private readonly MobileEntity _healer = new()
     {
         Id = new Serial(0x100), Name = "Brother Ames", TemplateId = "healer", Map = MapType.Trammel,
@@ -94,7 +97,8 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         var time = new SettableClock();
         GumpScriptService? gumpScripts = null;
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
-        var templates = (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
+        var templates =
+            (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
         _container.RegisterMoongateEventBus();
         _container.RegisterInstance<IGameLoopService>(_loop);
         _container.RegisterInstance<ITimerService>(_timers);
@@ -126,22 +130,34 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<GumpModule>();
         _container.RegisterScriptEnum<EffectGraphicType>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>(
-                      (evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
-        _scripts.Write("mobiles/healer.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "mobiles", "healer.lua")));
-        _scripts.Write("gumps/resurrect.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "resurrect.lua")));
+                    return Task.CompletedTask;
+                }
+            );
+        _scripts.Write(
+            "mobiles/healer.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "mobiles", "healer.lua"))
+        );
+        _scripts.Write(
+            "gumps/resurrect.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "resurrect.lua"))
+        );
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,
             HookInterval = 100, WriteDefinitions = false
         };
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         gumpScripts = new GumpScriptService(_engine, _loop, options);
         await gumpScripts.StartAsync();
@@ -366,10 +382,11 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
 
     private void Answer(int button)
     {
-        _gumps.Opened[0].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
-        );
+        _gumps.Opened[0]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
+            );
     }
 
     private static string RepositoryRoot()

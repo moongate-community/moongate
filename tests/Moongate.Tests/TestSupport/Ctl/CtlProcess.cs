@@ -26,7 +26,9 @@ internal static class CtlProcess
         return RunAsync(directory, null, arguments);
     }
 
-    private static async Task<(int ExitCode, string Output)> RunAsync(string directory, string? workingDirectory, string[] arguments)
+    private static async Task<(int ExitCode, string Output)> RunAsync(
+        string directory, string? workingDirectory, string[] arguments
+    )
     {
         var start = new ProcessStartInfo("dotnet")
         {

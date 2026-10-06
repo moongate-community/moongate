@@ -23,7 +23,10 @@ public sealed class SpawnsLoaderTests
 
         var spawn = Assert.Single((await Loader(root).LoadDataAsync()).Entities);
 
-        Assert.Equal((MapType.Trammel, "The Hammer And Anvil", 2, true), (spawn.Map, spawn.Name, spawn.Max, spawn.OnlyOutside));
+        Assert.Equal(
+            (MapType.Trammel, "The Hammer And Anvil", 2, true),
+            (spawn.Map, spawn.Name, spawn.Max, spawn.OnlyOutside)
+        );
         Assert.Equal(["orc"], spawn.MobileIds);
         Assert.Equal(["forest"], spawn.NpcListIds);
         Assert.True(spawn.Areas[0].Contains(15, 25));
@@ -67,12 +70,20 @@ public sealed class SpawnsLoaderTests
     [Theory,
      InlineData("mobile_ids = [\"orc\"]", "mobile_ids = [\"dragon\"]", "dragon"),
      InlineData("npc_list_ids = [\"forest\"]", "npc_list_ids = [\"swamp\"]", "swamp"),
-     InlineData("mobile_ids = [\"orc\"]\nnpc_list_ids = [\"forest\"]", "mobile_ids = []\nnpc_list_ids = []", "nothing to spawn"),
+     InlineData(
+         "mobile_ids = [\"orc\"]\nnpc_list_ids = [\"forest\"]",
+         "mobile_ids = []\nnpc_list_ids = []",
+         "nothing to spawn"
+     ),
      InlineData("max = 2", "max = 0", "max"),
      InlineData("call = 1", "call = 0", "call"),
      InlineData("max_minutes = 10", "max_minutes = 4", "min_minutes"),
      InlineData("areas = [{ x1 = 10, y1 = 20, x2 = 15, y2 = 25 }]", "areas = []", "no area"),
-     InlineData("areas = [{ x1 = 10, y1 = 20, x2 = 15, y2 = 25 }]", "areas = [{ x1 = 15, y1 = 20, x2 = 10, y2 = 25 }]", "area")]
+     InlineData(
+         "areas = [{ x1 = 10, y1 = 20, x2 = 15, y2 = 25 }]",
+         "areas = [{ x1 = 15, y1 = 20, x2 = 10, y2 = 25 }]",
+         "area"
+     )]
     public async Task LoadDataAsync_ABrokenSpawn_StopsTheLoad(string from, string to, string reason)
     {
         using var root = new TemporaryDirectory();
@@ -89,13 +100,19 @@ public sealed class SpawnsLoaderTests
         using var root = new TemporaryDirectory();
         root.CreateFile("templates/spawns/sosaria/towns.toml", Shop);
 
-        Assert.Contains("sosaria", (await Assert.ThrowsAsync<InvalidDataException>(() => Loader(root).LoadDataAsync())).Message);
+        Assert.Contains(
+            "sosaria",
+            (await Assert.ThrowsAsync<InvalidDataException>(() => Loader(root).LoadDataAsync())).Message
+        );
 
         using var twice = new TemporaryDirectory();
         twice.CreateFile("templates/spawns/trammel/a.toml", Shop);
         twice.CreateFile("templates/spawns/trammel/b.toml", Shop);
 
-        Assert.Contains("trammel_0", (await Assert.ThrowsAsync<InvalidDataException>(() => Loader(twice).LoadDataAsync())).Message);
+        Assert.Contains(
+            "trammel_0",
+            (await Assert.ThrowsAsync<InvalidDataException>(() => Loader(twice).LoadDataAsync())).Message
+        );
     }
 
     [Fact]

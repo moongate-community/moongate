@@ -36,7 +36,8 @@ public class WeatherLoader : IDataLoader<WeatherContent>
 
     public async Task<DataLoaderResult<WeatherContent>> LoadDataAsync(CancellationToken cancellationToken = default)
     {
-        var weatherFile = await TomlUtils.DeserializeFromFileAsync<WeatherContentFile>(weatherFilePath, null, cancellationToken);
+        var weatherFile =
+            await TomlUtils.DeserializeFromFileAsync<WeatherContentFile>(weatherFilePath, null, cancellationToken);
         var profiles = weatherFile?.Weather ?? [];
 
         if (profiles.Count == 0)
@@ -55,7 +56,8 @@ public class WeatherLoader : IDataLoader<WeatherContent>
                 );
             }
 
-            int[] chances = [profile.RainChance, profile.SnowChance, profile.StormChance, profile.ColdChance, profile.HeatChance];
+            int[] chances =
+                [profile.RainChance, profile.SnowChance, profile.StormChance, profile.ColdChance, profile.HeatChance];
 
             if (chances.Any(chance => chance is < 0 or > 100) || profile.MinTemperature > profile.MaxTemperature)
             {

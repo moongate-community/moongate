@@ -8,11 +8,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Builds an <see cref="ItemTemplate" /> from one parsed block, resolving its
-///     <c>
-///         get=
-///     </c>
-///     target against a fully precomputed header-to-Id map.
+///     Builds an <see cref="ItemTemplate" /> from one parsed block, resolving its <c>get=</c> target against a fully
+///     precomputed header-to-Id map.
 /// </summary>
 internal static class ItemTemplateBuilder
 {
@@ -166,7 +163,8 @@ internal static class ItemTemplateBuilder
             template.Hue = hue;
         }
 
-        if (block.Fields.TryGetValue("weightmax", out var weightMaxText) && UoxNumber.TryParse(weightMaxText, out var weightMax))
+        if (block.Fields.TryGetValue("weightmax", out var weightMaxText) &&
+            UoxNumber.TryParse(weightMaxText, out var weightMax))
         {
             // Hundredths of a stone, as weight=: weightmax=40000 is 400 stones. Whole stones here, rounded up.
             template.MaxWeight = (int)Math.Ceiling(weightMax / 100m);
@@ -200,8 +198,8 @@ internal static class ItemTemplateBuilder
         return text switch
         {
             "1" or "3" => true,
-            "2" => false,
-            _ => null
+            "2"        => false,
+            _          => null
         };
     }
 
@@ -213,7 +211,8 @@ internal static class ItemTemplateBuilder
             template.Weight = hundredths / 100m;
         }
 
-        if (block.Fields.TryGetValue("amount", out var amountText) && UoxNumber.TryParse(amountText, out var amount) && amount >= 1)
+        if (block.Fields.TryGetValue("amount", out var amountText) && UoxNumber.TryParse(amountText, out var amount) &&
+            amount >= 1)
         {
             template.Amount = RangeValueSpec<int>.FromValue(amount);
         }
@@ -269,28 +268,33 @@ internal static class ItemTemplateBuilder
     // the item that has the id= and its eras inherit it.
     private static void ApplyCombatFields(DfnBlock block, ItemTemplate template)
     {
-        if (block.Fields.TryGetValue("damage", out var damageText) && TryReadRange(damageText, out var damageMin, out var damageMax) && damageMax > 0)
+        if (block.Fields.TryGetValue("damage", out var damageText) &&
+            TryReadRange(damageText, out var damageMin, out var damageMax) && damageMax > 0)
         {
             template.DamageMin = damageMin;
             template.DamageMax = damageMax;
         }
-        else if (block.Fields.TryGetValue("hidamage", out var highText) && UoxNumber.TryParse(highText, out var high) && high > 0)
+        else if (block.Fields.TryGetValue("hidamage", out var highText) && UoxNumber.TryParse(highText, out var high) &&
+                 high > 0)
         {
             // UOX3 also reads the two ends apart, lodamage and hidamage: the practice weapons are written so.
             template.DamageMax = high;
-            template.DamageMin = block.Fields.TryGetValue("lodamage", out var lowText) && UoxNumber.TryParse(lowText, out var low) && low is >= 0 && low <= high
-                                     ? low
-                                     : high;
+            template.DamageMin = block.Fields.TryGetValue("lodamage", out var lowText) &&
+                                 UoxNumber.TryParse(lowText, out var low) && low is >= 0 && low <= high
+                ? low
+                : high;
         }
 
         // spd, or speed which UOX3 reads as the same tag.
-        if (block.Fields.TryGetValue("spd", out var speedText) && UoxNumber.TryParse(speedText, out var speed) && speed > 0 ||
+        if (block.Fields.TryGetValue("spd", out var speedText) && UoxNumber.TryParse(speedText, out var speed) &&
+            speed > 0 ||
             block.Fields.TryGetValue("speed", out speedText) && UoxNumber.TryParse(speedText, out speed) && speed > 0)
         {
             template.Speed = speed;
         }
 
-        if (block.Fields.TryGetValue("str", out var strengthText) && UoxNumber.TryParse(strengthText, out var strength) && strength > 0)
+        if (block.Fields.TryGetValue("str", out var strengthText) && UoxNumber.TryParse(strengthText, out var strength) &&
+            strength > 0)
         {
             template.StrengthRequired = strength;
         }
@@ -331,7 +335,8 @@ internal static class ItemTemplateBuilder
 
     private static bool IsShield(DfnBlock block)
     {
-        return block.Fields.TryGetValue("type", out var typeText) && UoxNumber.TryParse(typeText, out var type) && type == UoxShieldType;
+        return block.Fields.TryGetValue("type", out var typeText) && UoxNumber.TryParse(typeText, out var type) &&
+               type == UoxShieldType;
     }
 
     private static bool IsLight(DfnBlock block)

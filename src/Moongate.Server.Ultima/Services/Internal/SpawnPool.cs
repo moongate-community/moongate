@@ -4,7 +4,8 @@ using Moongate.Server.Ultima.Data.Templates.Spawns;
 namespace Moongate.Server.Ultima.Services.Internal;
 
 /// <summary>
-///     What a spawn region picks its NPCs from, as UOX3's <c>NPC</c> and <c>NPCLIST</c> lines: each mobile weighs 1, each
+///     What a spawn region picks its NPCs from, as UOX3's <c>NPC</c> and <c>NPCLIST</c> lines: each mobile weighs 1,
+///     each
 ///     entry of a list its own weight, and an entry naming another list picks again from that list.
 /// </summary>
 internal sealed class SpawnPool
@@ -16,9 +17,9 @@ internal sealed class SpawnPool
     {
         _lists = lists;
         _entries = spawn.MobileIds
-                        .Select(id => new NpcListEntry { MobileId = id })
-                        .Concat(spawn.NpcListIds.SelectMany(id => lists[id].Entries))
-                        .ToList();
+            .Select(id => new NpcListEntry { MobileId = id })
+            .Concat(spawn.NpcListIds.SelectMany(id => lists[id].Entries))
+            .ToList();
     }
 
     public string Pick(Random random)

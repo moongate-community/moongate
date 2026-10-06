@@ -7,7 +7,7 @@ using Moongate.Ultima.Types;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Converts UOX3's NPC lists (<c>[NPCLIST name]</c> under <c>npc/</c>) and spawn regions (<c>[REGIONSPAWN n]</c>
+///     Converts UOX3's NPC lists ( <c>[NPCLIST name]</c> under <c>npc/</c>) and spawn regions ( <c>[REGIONSPAWN n]</c>
 ///     under <c>spawn/</c>) of a dfndata folder, after the mobile pass, against the mobile templates it wrote.
 /// </summary>
 internal static partial class UoxSpawnConverter
@@ -45,7 +45,13 @@ internal static partial class UoxSpawnConverter
         ConverterOutput.WriteReport(output, report);
         output.WriteLine($"Converted {lists.Count} npc list(s) and {spawns} spawn region(s).");
 
-        var errors = Verify(npcListsDestination, spawnsDestination, mobileIds, out var verifiedLists, out var verifiedSpawns);
+        var errors = Verify(
+            npcListsDestination,
+            spawnsDestination,
+            mobileIds,
+            out var verifiedLists,
+            out var verifiedSpawns
+        );
 
         if (ConverterOutput.ReportErrors(error, errors, "spawns") != 0)
         {
@@ -94,7 +100,9 @@ internal static partial class UoxSpawnConverter
         var raw = new Dictionary<string, List<(NpcListEntry Entry, bool Splice)>>(StringComparer.Ordinal);
 
         var files = Directory.Exists(npcDirectory)
-            ? Directory.EnumerateFiles(npcDirectory, "*.dfn", SearchOption.AllDirectories).Order(StringComparer.Ordinal).ToList()
+            ? Directory.EnumerateFiles(npcDirectory, "*.dfn", SearchOption.AllDirectories)
+                .Order(StringComparer.Ordinal)
+                .ToList()
             : [];
 
         foreach (var file in files)
@@ -108,7 +116,8 @@ internal static partial class UoxSpawnConverter
                     continue;
                 }
 
-                var list = new NpcListTemplate { Id = StringUtils.ToSnakeCase(block.Header[ListHeaderPrefix.Length..].Trim()) };
+                var list = new NpcListTemplate
+                    { Id = StringUtils.ToSnakeCase(block.Header[ListHeaderPrefix.Length..].Trim()) };
 
                 if (!byId.TryAdd(list.Id, list))
                 {
@@ -124,7 +133,9 @@ internal static partial class UoxSpawnConverter
             if (lists.Count > 0)
             {
                 var root = Path.Combine(npcDirectory, "npclists");
-                var relative = file.StartsWith(root, StringComparison.Ordinal) ? Path.GetRelativePath(root, file) : Path.GetRelativePath(npcDirectory, file);
+                var relative = file.StartsWith(root, StringComparison.Ordinal)
+                    ? Path.GetRelativePath(root, file)
+                    : Path.GetRelativePath(npcDirectory, file);
                 byFile.Add((relative, lists));
             }
         }
@@ -138,10 +149,11 @@ internal static partial class UoxSpawnConverter
         // Drop what does not resolve, then the lists left empty and the entries naming them, until nothing changes.
         foreach (var list in byId.Values)
         {
-            list.Entries.RemoveAll(
-                entry =>
+            list.Entries.RemoveAll(entry =>
                 {
-                    var unresolved = entry.MobileId is { } mobile ? !mobileIds.Contains(mobile) : !byId.ContainsKey(entry.NpcListId!);
+                    var unresolved = entry.MobileId is { } mobile
+                        ? !mobileIds.Contains(mobile)
+                        : !byId.ContainsKey(entry.NpcListId!);
 
                     if (unresolved)
                     {
@@ -170,8 +182,7 @@ internal static partial class UoxSpawnConverter
             {
                 changed |= list.Entries.RemoveAll(entry => entry.NpcListId is { } nested && !byId.ContainsKey(nested)) > 0;
             }
-        }
-        while (changed);
+        } while (changed);
 
         foreach (var (relative, lists) in byFile)
         {
@@ -185,7 +196,9 @@ internal static partial class UoxSpawnConverter
             var outputPath = Path.Combine(destination, Path.ChangeExtension(relative, ".toml"));
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
             TomlUtils.SerializeToFile(new NpcListTemplateFile { NpcList = kept }, outputPath);
-            output.WriteLine($"npc/{relative} -> {Path.GetRelativePath(destination, outputPath)} ({kept.Count} npc list(s))");
+            output.WriteLine(
+                $"npc/{relative} -> {Path.GetRelativePath(destination, outputPath)} ({kept.Count} npc list(s))"
+            );
         }
 
         return byId.Keys.ToHashSet(StringComparer.Ordinal);
@@ -241,7 +254,8 @@ internal static partial class UoxSpawnConverter
         }
 
         return line.StartsWith(NestedListPrefix, StringComparison.OrdinalIgnoreCase)
-            ? (new() { Weight = weight, NpcListId = StringUtils.ToSnakeCase(line[NestedListPrefix.Length..].Trim()) }, pipe < 0)
+            ? (new() { Weight = weight, NpcListId = StringUtils.ToSnakeCase(line[NestedListPrefix.Length..].Trim()) },
+                pipe < 0)
             : (new NpcListEntry { Weight = weight, MobileId = StringUtils.ToSnakeCase(line) }, false);
     }
 
@@ -256,7 +270,9 @@ internal static partial class UoxSpawnConverter
     {
         var spawnDirectory = Path.Combine(mobileSource, "spawn");
         var files = Directory.Exists(spawnDirectory)
-            ? Directory.EnumerateFiles(spawnDirectory, "*.dfn", SearchOption.AllDirectories).Order(StringComparer.Ordinal).ToList()
+            ? Directory.EnumerateFiles(spawnDirectory, "*.dfn", SearchOption.AllDirectories)
+                .Order(StringComparer.Ordinal)
+                .ToList()
             : [];
         var blocksByFile = files.Select(file => (File: file, Blocks: DfnParser.Parse(File.ReadAllLines(file)))).ToList();
         var byNumber = new Dictionary<string, DfnBlock>(StringComparer.OrdinalIgnoreCase);
@@ -264,7 +280,11 @@ internal static partial class UoxSpawnConverter
         foreach (var (_, blocks) in blocksByFile)
         {
             // UOX3 keeps the last definition of a header.
-            foreach (var block in blocks.Where(block => block.Header.StartsWith(SpawnHeaderPrefix, StringComparison.OrdinalIgnoreCase)))
+            foreach (var block in blocks.Where(block => block.Header.StartsWith(
+                             SpawnHeaderPrefix,
+                             StringComparison.OrdinalIgnoreCase
+                         )
+                     ))
             {
                 byNumber[block.Header[SpawnHeaderPrefix.Length..].Trim()] = block;
             }
@@ -279,7 +299,11 @@ internal static partial class UoxSpawnConverter
             var stem = Path.GetFileNameWithoutExtension(file);
             var name = StringUtils.ToSnakeCase(SpawnFilePrefix().Replace(stem, string.Empty));
 
-            foreach (var block in blocks.Where(block => block.Header.StartsWith(SpawnHeaderPrefix, StringComparison.OrdinalIgnoreCase)))
+            foreach (var block in blocks.Where(block => block.Header.StartsWith(
+                             SpawnHeaderPrefix,
+                             StringComparison.OrdinalIgnoreCase
+                         )
+                     ))
             {
                 var number = block.Header[SpawnHeaderPrefix.Length..].Trim();
 
@@ -322,7 +346,9 @@ internal static partial class UoxSpawnConverter
 
     // The KEY=VALUE lines of the region, after those of the region it GETs; its own keys win, and naming an NPC or a
     // list replaces what it would inherit to spawn.
-    private static List<(string Key, string Value)> Resolve(DfnBlock block, Dictionary<string, DfnBlock> byNumber, HashSet<string> seen)
+    private static List<(string Key, string Value)> Resolve(
+        DfnBlock block, Dictionary<string, DfnBlock> byNumber, HashSet<string> seen
+    )
     {
         var own = block.Entries.Select(SplitField).OfType<(string Key, string Value)>().ToList();
         var parent = own.FirstOrDefault(field => field.Key == "GET").Value;
@@ -336,8 +362,8 @@ internal static partial class UoxSpawnConverter
         var ownKeys = own.Select(field => field.Key).ToHashSet();
 
         return inherited.Where(field => !ownKeys.Contains(field.Key) && !NotInherited.Contains(field.Key))
-                        .Concat(own.Where(field => field.Key != "GET"))
-                        .ToList();
+            .Concat(own.Where(field => field.Key != "GET"))
+            .ToList();
     }
 
     private static (string Key, string Value)? SplitField(string line)
@@ -357,10 +383,18 @@ internal static partial class UoxSpawnConverter
     )
     {
         string? Get(string key) => fields.LastOrDefault(field => field.Key == key).Value;
-        int? Number(params string[] keys) => keys.Select(Get).OfType<string>().Select(text => UoxNumber.TryParse(text, out var value) ? (int?)value : null).FirstOrDefault(value => value is not null);
 
-        var mobiles = fields.Where(field => field.Key == "NPC").Select(field => StringUtils.ToSnakeCase(field.Value)).ToList();
-        var lists = fields.Where(field => field.Key == "NPCLIST").Select(field => StringUtils.ToSnakeCase(field.Value)).ToList();
+        int? Number(params string[] keys) => keys.Select(Get)
+            .OfType<string>()
+            .Select(text => UoxNumber.TryParse(text, out var value) ? (int?)value : null)
+            .FirstOrDefault(value => value is not null);
+
+        var mobiles = fields.Where(field => field.Key == "NPC")
+            .Select(field => StringUtils.ToSnakeCase(field.Value))
+            .ToList();
+        var lists = fields.Where(field => field.Key == "NPCLIST")
+            .Select(field => StringUtils.ToSnakeCase(field.Value))
+            .ToList();
 
         if (mobiles.Count == 0 && lists.Count == 0)
         {
@@ -387,7 +421,9 @@ internal static partial class UoxSpawnConverter
             return null;
         }
 
-        var map = Number("WORLD") is { } world && Worlds.TryGetValue(world, out var worldMap) ? worldMap : MapOfFolder(folder);
+        var map = Number("WORLD") is { } world && Worlds.TryGetValue(world, out var worldMap)
+            ? worldMap
+            : MapOfFolder(folder);
         var spawn = new SpawnTemplate
         {
             Id = $"{EnumNameUtils.Format(map)}_{number}",
@@ -407,7 +443,9 @@ internal static partial class UoxSpawnConverter
 
         if (Number("X1") is { } x1 && Number("Y1") is { } y1 && Number("X2") is { } x2 && Number("Y2") is { } y2)
         {
-            spawn.Areas.Add(new() { X1 = Math.Min(x1, x2), Y1 = Math.Min(y1, y2), X2 = Math.Max(x1, x2), Y2 = Math.Max(y1, y2) });
+            spawn.Areas.Add(
+                new() { X1 = Math.Min(x1, x2), Y1 = Math.Min(y1, y2), X2 = Math.Max(x1, x2), Y2 = Math.Max(y1, y2) }
+            );
         }
 
         foreach (var exclude in fields.Where(field => field.Key == "EXCLUDEAREA").Select(field => field.Value.Split(',')))
@@ -439,11 +477,11 @@ internal static partial class UoxSpawnConverter
     {
         return folder.ToLowerInvariant() switch
         {
-            "trammel" => MapType.Trammel,
+            "trammel"                 => MapType.Trammel,
             "ilishenar" or "ilshenar" => MapType.Ilshenar,
-            "malas" => MapType.Malas,
-            "tokuno" => MapType.Tokuno,
-            _ => MapType.Felucca
+            "malas"                   => MapType.Malas,
+            "tokuno"                  => MapType.Tokuno,
+            _                         => MapType.Felucca
         };
     }
 
@@ -459,8 +497,8 @@ internal static partial class UoxSpawnConverter
         var errors = new List<string>();
         var lists = Directory.Exists(npcListsDestination)
             ? Directory.EnumerateFiles(npcListsDestination, "*.toml", SearchOption.AllDirectories)
-                       .SelectMany(file => TomlUtils.DeserializeFromFile<NpcListTemplateFile>(file)?.NpcList ?? [])
-                       .ToList()
+                .SelectMany(file => TomlUtils.DeserializeFromFile<NpcListTemplateFile>(file)?.NpcList ?? [])
+                .ToList()
             : [];
         var listIds = lists.Select(list => list.Id).ToHashSet(StringComparer.Ordinal);
 
@@ -468,7 +506,9 @@ internal static partial class UoxSpawnConverter
         {
             foreach (var entry in list.Entries)
             {
-                if (entry.MobileId is { } mobile ? !mobileIds.Contains(mobile) : !listIds.Contains(entry.NpcListId ?? string.Empty))
+                if (entry.MobileId is { } mobile
+                        ? !mobileIds.Contains(mobile)
+                        : !listIds.Contains(entry.NpcListId ?? string.Empty))
                 {
                     errors.Add($"npc list '{list.Id}' names '{entry.MobileId ?? entry.NpcListId}', which does not resolve.");
                 }
@@ -477,8 +517,8 @@ internal static partial class UoxSpawnConverter
 
         var spawns = Directory.Exists(spawnsDestination)
             ? Directory.EnumerateFiles(spawnsDestination, "*.toml", SearchOption.AllDirectories)
-                       .SelectMany(file => TomlUtils.DeserializeFromFile<SpawnTemplateFile>(file)?.Spawn ?? [])
-                       .ToList()
+                .SelectMany(file => TomlUtils.DeserializeFromFile<SpawnTemplateFile>(file)?.Spawn ?? [])
+                .ToList()
             : [];
 
         foreach (var spawn in spawns)

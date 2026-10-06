@@ -9,6 +9,9 @@ public sealed class LiftRejectPacketTests
     [Fact]
     public void Encode_WritesTheReason()
     {
-        Assert.Equal(Convert.FromHexString("2704"), PacketCodec.Encode(new LiftRejectPacket(LiftRejectReasonType.AreHolding)));
+        Assert.Equal(
+            Convert.FromHexString("2704"),
+            PacketCodec.Encode(new LiftRejectPacket(LiftRejectReasonType.AreHolding))
+        );
     }
 }

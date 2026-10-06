@@ -25,7 +25,12 @@ public sealed class BankModuleTests
     private readonly ItemService _items = TestItems.Create();
     private BankModule? _module;
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
-    private readonly MobileEntity _aria = new() { Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+
+    private readonly MobileEntity _aria = new()
+    {
+        Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
+        Location = new Point3D(1600, 1600, 0)
+    };
 
     public BankModuleTests()
     {
@@ -119,7 +124,8 @@ public sealed class BankModuleTests
         Assert.True(Run("return bank.check(2, 10) == BankResultType.CheckTooSmall")[0].Read<bool>());
     }
 
-    [Theory, InlineData("999, 5000", "NoPlayer"), InlineData("2, 2.5", "BadAmount"), InlineData("2, 99999999999", "BadAmount")]
+    [Theory, InlineData("999, 5000", "NoPlayer"), InlineData("2, 2.5", "BadAmount"),
+     InlineData("2, 99999999999", "BadAmount")]
     public void Check_ForWhoIsNotAPlayer_OrAnAmountThatIsNone_AsksNothing(string arguments, string answer)
     {
         Assert.True(Run($"return bank.check({arguments}) == BankResultType.{answer}")[0].Read<bool>());
@@ -139,7 +145,8 @@ public sealed class BankModuleTests
         Assert.True(Run("return bank.cash(2, 0x40000500) == BankResultType.BankFull")[0].Read<bool>());
     }
 
-    [Theory, InlineData("2, 0x4000FFFF", "NotInBank"), InlineData("2, -1", "NotInBank"), InlineData("999, 0x40000500", "NoPlayer")]
+    [Theory, InlineData("2, 0x4000FFFF", "NotInBank"), InlineData("2, -1", "NotInBank"),
+     InlineData("999, 0x40000500", "NoPlayer")]
     public void Cash_AnItemThatIsNotThere_OrForWhoIsNotAPlayer_AsksNothing(string arguments, string answer)
     {
         Check(0x40000500, 5000);
@@ -161,7 +168,8 @@ public sealed class BankModuleTests
         Assert.True(Run("return bank.deposit_item(2, 0x40000500) == BankResultType.BankFull")[0].Read<bool>());
     }
 
-    [Theory, InlineData("2, 0x4000FFFF", "NotMoney"), InlineData("2, -1", "NotMoney"), InlineData("999, 0x40000500", "NoPlayer")]
+    [Theory, InlineData("2, 0x4000FFFF", "NotMoney"), InlineData("2, -1", "NotMoney"),
+     InlineData("999, 0x40000500", "NoPlayer")]
     public void DepositItem_AnItemThatIsNotThere_OrForWhoIsNotAPlayer_AsksNothing(string arguments, string answer)
     {
         Check(0x40000500, 5000);

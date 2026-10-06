@@ -6,7 +6,11 @@ namespace Moongate.UoxItemConverter.Tests.Integration;
 
 public sealed class ModernUoLocationConverterTests : IDisposable
 {
-    private readonly string _root = Path.Combine(Path.GetTempPath(), "moongate-modernuo-locations-" + Guid.NewGuid().ToString("N"));
+    private readonly string _root = Path.Combine(
+        Path.GetTempPath(),
+        "moongate-modernuo-locations-" + Guid.NewGuid().ToString("N")
+    );
+
     private readonly StringWriter _output = new();
     private readonly StringWriter _error = new();
 
@@ -60,7 +64,10 @@ public sealed class ModernUoLocationConverterTests : IDisposable
         Assert.True(Run() == 0, CombinedOutput);
 
         Assert.Equal(
-            [("malas", "", "Arena", "(1, 2, -3)"), ("malas", "Towns", "Luna", "(989, 520, -50)"), ("malas", "Towns/Inns", "Luna Inn", "(4, 5, 6)")],
+            [
+                ("malas", "", "Arena", "(1, 2, -3)"), ("malas", "Towns", "Luna", "(989, 520, -50)"),
+                ("malas", "Towns/Inns", "Luna Inn", "(4, 5, 6)")
+            ],
             Read().Select(Row)
         );
     }

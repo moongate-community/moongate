@@ -5,7 +5,9 @@ using Moongate.Server.Ultima.Services.Items;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Ultima.Types;
+
 namespace Moongate.Tests.Server.Ultima.Services.Items;
+
 public sealed class InventoryMutationGuardTests
 {
     [Fact]

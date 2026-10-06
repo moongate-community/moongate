@@ -17,7 +17,8 @@ namespace Moongate.Server.Ultima.Packets.Books;
 ///     author in 30, Latin-1 and zero filled.
 /// </remarks>
 [PacketHandler(0x93, PacketSizing.Fixed, Length = TotalLength, Description = "Book header change (old)")]
-public sealed class OldBookHeaderChangePacket : BaseFixedPacket<OldBookHeaderChangePacket>, IIncomingPacket<OldBookHeaderChangePacket>
+public sealed class OldBookHeaderChangePacket
+    : BaseFixedPacket<OldBookHeaderChangePacket>, IIncomingPacket<OldBookHeaderChangePacket>
 {
     private const int TotalLength = 99;
     private const int TitleOffset = 9;
@@ -53,7 +54,11 @@ public sealed class OldBookHeaderChangePacket : BaseFixedPacket<OldBookHeaderCha
             return false;
         }
 
-        packet = new(book, Field(data.Slice(TitleOffset, TitleLength)), Field(data.Slice(TitleOffset + TitleLength, AuthorLength)));
+        packet = new(
+            book,
+            Field(data.Slice(TitleOffset, TitleLength)),
+            Field(data.Slice(TitleOffset + TitleLength, AuthorLength))
+        );
 
         return true;
     }

@@ -62,8 +62,10 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
     public void Handle(GameSession session, EquipRequestPacket packet)
     {
         if (_inventory is not null && (!_inventory.AllowsOwner(session.CharacterId) ||
-            (_items.TryGet(packet.Item, out var guarded) && !_inventory.Allows(guarded)) ||
-            (session.Get(ItemSessionKeys.Held) is { } hand && _items.TryGet(hand.Item, out var heldItem) && !_inventory.Allows(heldItem)) || !_inventory.AllowsOwner(packet.Mobile)))
+                                       (_items.TryGet(packet.Item, out var guarded) && !_inventory.Allows(guarded)) ||
+                                       (session.Get(ItemSessionKeys.Held) is { } hand &&
+                                        _items.TryGet(hand.Item, out var heldItem) && !_inventory.Allows(heldItem)) ||
+                                       !_inventory.AllowsOwner(packet.Mobile)))
         {
             return;
         }

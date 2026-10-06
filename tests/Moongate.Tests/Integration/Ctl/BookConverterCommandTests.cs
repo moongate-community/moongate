@@ -13,16 +13,26 @@ public sealed class BookConverterCommandTests
         using var directory = new TemporaryDirectory();
         var source = Path.Combine(directory.Path, "source");
         Directory.CreateDirectory(source);
-        File.WriteAllText(Path.Combine(source, "Sample.cs"), """
+        File.WriteAllText(
+            Path.Combine(source, "Sample.cs"),
+            """
             class SampleBook
             {
                 public static readonly BookContent Content = new("Title", "Writer",
                     new BookPageInfo("First line", "Second line"));
             }
-            """);
+            """
+        );
         var destination = Path.Combine(directory.Path, "books");
 
-        var result = await CtlProcess.RunAsync("convert", "modernuo-books", "--source", source, "--destination", destination);
+        var result = await CtlProcess.RunAsync(
+            "convert",
+            "modernuo-books",
+            "--source",
+            source,
+            "--destination",
+            destination
+        );
 
         Assert.True(result.ExitCode == 0, result.Output);
         var book = TomlUtils.DeserializeFromFile<BookTemplateSource>(Path.Combine(destination, "sample_book.toml"));

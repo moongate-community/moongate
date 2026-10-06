@@ -1,7 +1,8 @@
 namespace Moongate.Server.Ultima.Types.Mobiles;
 
 /// <summary>
-///     The actions of a human body, by their number in the client's animation files (UOFiddler's names): what <c>mobile.animate</c> plays on a player or a human NPC.
+///     The actions of a human body, by their number in the client's animation files (UOFiddler's names): what
+///     <c>mobile.animate</c> plays on a player or a human NPC.
 /// </summary>
 public enum HumanAnimationType
 {

@@ -20,7 +20,9 @@ public sealed class RegenerationConfigTests
      InlineData(11, 7, double.NaN, 5, "ultima.regeneration.mana_seconds"),
      InlineData(11, 7, 7, 0, "ultima.regeneration.hunger_minutes"),
      InlineData(11, 7, 7, 1441, "ultima.regeneration.hunger_minutes")]
-    public void Validate_AValueOutOfRange_NamesTheSetting(double hits, double stamina, double mana, int hungerMinutes, string setting)
+    public void Validate_AValueOutOfRange_NamesTheSetting(
+        double hits, double stamina, double mana, int hungerMinutes, string setting
+    )
     {
         var config = new RegenerationConfig
         {

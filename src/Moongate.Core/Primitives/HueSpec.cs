@@ -9,8 +9,8 @@ namespace Moongate.Core.Primitives;
 ///     called, such as when a template spawns an item.
 /// </summary>
 /// <remarks>
-///     Every hue is a 16-bit value (0 to 0xFFFF), written in decimal (<c>1150</c>) or in hex (<c>0x047E</c>). A range
-///     is <c>min-max</c> (<c>1150-1200</c>, <c>0x047E-0x04B0</c>) or <c>hue(min:max)</c>; both bounds are inclusive.
+///     Every hue is a 16-bit value (0 to 0xFFFF), written in decimal ( <c>1150</c>) or in hex ( <c>0x047E</c>). A range
+///     is <c>min-max</c> ( <c>1150-1200</c>, <c>0x047E-0x04B0</c>) or <c>hue(min:max)</c>; both bounds are inclusive.
 /// </remarks>
 public readonly struct HueSpec : IEquatable<HueSpec>
 {

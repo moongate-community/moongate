@@ -14,6 +14,7 @@ public sealed class ItemScriptServiceTests : IDisposable
 {
     private readonly TemporaryDirectory _scripts = new();
     private readonly FakeScriptEngine _engine = new();
+
     private readonly ItemEntity _potion = new()
     {
         Id = new Serial(0x40000100), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3
@@ -55,7 +56,10 @@ public sealed class ItemScriptServiceTests : IDisposable
 
         Assert.False(service.HasScript(_potion));
         Assert.Equal(ScriptResultKind.Missing, service.Run(_potion, "on_use").Kind);
-        Assert.Equal(ScriptResultKind.Missing, service.Run(new ItemEntity { Id = new Serial(0x40000101), TemplateId = "gone" }, "on_use").Kind);
+        Assert.Equal(
+            ScriptResultKind.Missing,
+            service.Run(new ItemEntity { Id = new Serial(0x40000101), TemplateId = "gone" }, "on_use").Kind
+        );
         Assert.Empty(_engine.MemberCalls);
     }
 

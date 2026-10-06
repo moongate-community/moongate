@@ -58,7 +58,10 @@ public sealed class MobileServiceTests
     [Fact]
     public void FirstVirtualSerial_IsTheStartOfTheVirtualRange()
     {
-        Assert.Equal(new Serial(Serial.MinVirtual), new MobileService(new StubMovementService(), TestSectors.Create()).HairSerial(new Serial(2)));
+        Assert.Equal(
+            new Serial(Serial.MinVirtual),
+            new MobileService(new StubMovementService(), TestSectors.Create()).HairSerial(new Serial(2))
+        );
     }
 
     [Fact]
@@ -130,7 +133,8 @@ public sealed class MobileServiceTests
             new StubDataLoaderService().With(
                 new RegionContent
                 {
-                    Map = MapType.Trammel, Name = "Britain", Areas = [new RegionAreaContent { X1 = 1500, Y1 = 1500, X2 = 1601, Y2 = 1700 }]
+                    Map = MapType.Trammel, Name = "Britain",
+                    Areas = [new RegionAreaContent { X1 = 1500, Y1 = 1500, X2 = 1601, Y2 = 1700 }]
                 }
             )
         );
@@ -186,7 +190,8 @@ public sealed class MobileServiceTests
             new StubDataLoaderService().With(
                 new RegionContent
                 {
-                    Map = MapType.Trammel, Name = "Wrong", Areas = [new RegionAreaContent { X1 = 5600, Y1 = 500, X2 = 5900, Y2 = 700 }]
+                    Map = MapType.Trammel, Name = "Wrong",
+                    Areas = [new RegionAreaContent { X1 = 5600, Y1 = 500, X2 = 5900, Y2 = 700 }]
                 }
             )
         );
@@ -229,7 +234,8 @@ public sealed class MobileServiceTests
             new StubDataLoaderService().With(
                 new RegionContent
                 {
-                    Map = MapType.Felucca, Name = "Wrong", Areas = [new RegionAreaContent { X1 = 1500, Y1 = 1500, X2 = 1700, Y2 = 1700 }]
+                    Map = MapType.Felucca, Name = "Wrong",
+                    Areas = [new RegionAreaContent { X1 = 1500, Y1 = 1500, X2 = 1700, Y2 = 1700 }]
                 }
             )
         );
@@ -269,7 +275,9 @@ public sealed class MobileServiceTests
         var sectors = TestSectors.Create();
         var aria = Aria();
 
-        Assert.False(new MobileService(new StubMovementService(), sectors).MoveTo(aria, MapType.Trammel, new Point3D(100, 100, 0)));
+        Assert.False(
+            new MobileService(new StubMovementService(), sectors).MoveTo(aria, MapType.Trammel, new Point3D(100, 100, 0))
+        );
 
         Assert.Equal(new Point3D(1496, 1628, 10), aria.Location);
         Assert.Empty(sectors.GetMobilesInRange(MapType.Trammel, new Point3D(100, 100, 0), 0));
@@ -344,7 +352,10 @@ public sealed class MobileServiceTests
         var aria = Aria();
         aria.Direction = DirectionType.East;
 
-        var result = new MobileService(new StubMovementService(), TestSectors.Create()).TryMove(aria, DirectionType.East | DirectionType.Running);
+        var result = new MobileService(new StubMovementService(), TestSectors.Create()).TryMove(
+            aria,
+            DirectionType.East | DirectionType.Running
+        );
 
         Assert.Equal(MoveResultType.Moved, result);
         Assert.Equal(DirectionType.East, aria.Direction);
@@ -357,7 +368,10 @@ public sealed class MobileServiceTests
         var aria = Aria();
         aria.Direction = DirectionType.East;
 
-        var result = new MobileService(new StubMovementService { Allow = false }, TestSectors.Create()).TryMove(aria, DirectionType.East);
+        var result = new MobileService(new StubMovementService { Allow = false }, TestSectors.Create()).TryMove(
+            aria,
+            DirectionType.East
+        );
 
         Assert.Equal(MoveResultType.Blocked, result);
         Assert.Equal(new Point3D(1496, 1628, 10), aria.Location);
@@ -369,7 +383,10 @@ public sealed class MobileServiceTests
         var aria = Aria();
         aria.Direction = DirectionType.East;
 
-        var result = new MobileService(new StubMovementService { ThrowMapNotLoaded = true }, TestSectors.Create()).TryMove(aria, DirectionType.East);
+        var result = new MobileService(new StubMovementService { ThrowMapNotLoaded = true }, TestSectors.Create()).TryMove(
+            aria,
+            DirectionType.East
+        );
 
         Assert.Equal(MoveResultType.Blocked, result);
         Assert.Equal(new Point3D(1496, 1628, 10), aria.Location);
@@ -385,8 +402,11 @@ public sealed class MobileServiceTests
             (status.Serial, status.Name, status.Hits, status.HitsMax, status.Female, status.Strength, status.Dexterity,
                 status.Intelligence, status.Stamina, status.StaminaMax, status.Mana, status.ManaMax, status.Race)
         );
-        Assert.Equal((1, 2, 3, 4, 5), (status.PhysicalResistance, status.FireResistance, status.ColdResistance,
-            status.PoisonResistance, status.EnergyResistance));
+        Assert.Equal(
+            (1, 2, 3, 4, 5),
+            (status.PhysicalResistance, status.FireResistance, status.ColdResistance,
+                status.PoisonResistance, status.EnergyResistance)
+        );
         Assert.Equal((225, 5), (status.StatCap, status.FollowersMax));
     }
 
@@ -436,7 +456,10 @@ public sealed class MobileServiceTests
 
         Assert.Equal([LayerType.Backpack, LayerType.Hair, LayerType.FacialHair], equipment.Select(entry => entry.Layer));
         Assert.Equal(new Serial(0x40000001), equipment[0].Serial);
-        Assert.Equal((mobiles.HairSerial(aria.Id), 0x203C, (ushort)0x044E), (equipment[1].Serial, equipment[1].ItemId, equipment[1].Hue.Value));
+        Assert.Equal(
+            (mobiles.HairSerial(aria.Id), 0x203C, (ushort)0x044E),
+            (equipment[1].Serial, equipment[1].ItemId, equipment[1].Hue.Value)
+        );
         Assert.Equal((mobiles.BeardSerial(aria.Id), 0x203E), (equipment[2].Serial, equipment[2].ItemId));
     }
 
@@ -445,7 +468,10 @@ public sealed class MobileServiceTests
     {
         var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
 
-        var equipment = mobiles.GetEquipment(Aria(hair: 0), [Worn(0x40000001, LayerType.Backpack), Worn(0x40000002, LayerType.Bank)]);
+        var equipment = mobiles.GetEquipment(
+            Aria(hair: 0),
+            [Worn(0x40000001, LayerType.Backpack), Worn(0x40000002, LayerType.Bank)]
+        );
 
         Assert.Equal([LayerType.Backpack], equipment.Select(entry => entry.Layer));
     }
@@ -461,7 +487,11 @@ public sealed class MobileServiceTests
     [Fact]
     public void GetEquipment_AnItemOnTheHairLayer_TakesItsPlace()
     {
-        var equipment = new MobileService(new StubMovementService(), TestSectors.Create()).GetEquipment(Aria(), [Worn(0x40000005, LayerType.Hair)]);
+        var equipment =
+            new MobileService(new StubMovementService(), TestSectors.Create()).GetEquipment(
+                Aria(),
+                [Worn(0x40000005, LayerType.Hair)]
+            );
 
         Assert.Equal(new Serial(0x40000005), Assert.Single(equipment).Serial);
     }

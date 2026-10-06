@@ -18,7 +18,9 @@ public interface IDecorationService
     ///     (teleporters, spawners, mark containers, moongates, addons) are skipped; an item with the same graphic already
     ///     on the spot, or a door opened from it, is kept, so running it again places only what is missing.
     /// </summary>
-    /// <exception cref="InvalidOperationException">Another decoration is running.</exception>
+    /// <exception cref="InvalidOperationException">
+    ///     Another decoration is running.
+    /// </exception>
     Task<DecorationResult> DecorateAsync(
         IProgress<DecorationFileResult>? progress = null,
         CancellationToken cancellationToken = default

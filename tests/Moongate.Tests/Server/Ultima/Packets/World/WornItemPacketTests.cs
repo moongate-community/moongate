@@ -10,7 +10,8 @@ public sealed class WornItemPacketTests
     [Fact]
     public void Encode_WritesItemGraphicLayerWearerAndHue()
     {
-        var shirt = new ItemEntity { Id = new(0x40000010), TemplateId = "shirt", ItemId = 0x1517, Amount = 1, Hue = new(0x0481) };
+        var shirt = new ItemEntity
+            { Id = new(0x40000010), TemplateId = "shirt", ItemId = 0x1517, Amount = 1, Hue = new(0x0481) };
         shirt.Equip(new(0x00000002), LayerType.Shirt);
 
         var bytes = PacketCodec.Encode(new WornItemPacket(shirt));

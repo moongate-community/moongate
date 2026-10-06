@@ -161,8 +161,7 @@ public sealed class GumpTemplateService : IGumpTemplateService
         await _loop.PostAsync(open, cancellationToken);
         await open.Completion;
 
-        await using var registration = cancellationToken.Register(
-            () =>
+        await using var registration = cancellationToken.Register(() =>
             {
                 if (completion.TrySetCanceled(cancellationToken))
                 {
@@ -182,9 +181,9 @@ public sealed class GumpTemplateService : IGumpTemplateService
     {
         return value switch
         {
-            bool flag => flag ? "true" : "false",
+            bool flag           => flag ? "true" : "false",
             IFormattable number => number.ToString(null, CultureInfo.InvariantCulture),
-            _ => value.ToString() ?? string.Empty
+            _                   => value.ToString() ?? string.Empty
         };
     }
 

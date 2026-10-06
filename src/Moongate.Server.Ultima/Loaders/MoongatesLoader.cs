@@ -56,7 +56,9 @@ public class MoongatesLoader : IDataLoader<MoongateFacet>
 
             if (facet.Cliloc <= 0 || facet.SelectedCliloc <= 0)
             {
-                throw new InvalidDataException($"{moongatesFilePath}: the facet {facet.Map} needs cliloc and selected_cliloc.");
+                throw new InvalidDataException(
+                    $"{moongatesFilePath}: the facet {facet.Map} needs cliloc and selected_cliloc."
+                );
             }
 
             if (facet.Destination.Count == 0)

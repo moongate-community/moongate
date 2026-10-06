@@ -33,10 +33,21 @@ public sealed class BookLuaFixture : IAsyncDisposable
     {
         var fixture = new BookLuaFixture(await BookTestFixture.CreateAsync(realGumps));
         var root = RepositoryRoot();
-        fixture._scripts.Write("items/readable_scroll.lua", await File.ReadAllTextAsync(Path.Combine(root, "moongate_root/scripts/items/readable_scroll.lua")));
-        fixture._scripts.Write("items/readable_book.lua", await File.ReadAllTextAsync(Path.Combine(root, "moongate_root/scripts/items/readable_book.lua")));
-        fixture._scripts.Write("items/jail_note.lua", jailScript ?? await File.ReadAllTextAsync(Path.Combine(root, "moongate_root/scripts/items/jail_note.lua")));
-        fixture._scripts.Write("init.lua", """
+        fixture._scripts.Write(
+            "items/readable_scroll.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "moongate_root/scripts/items/readable_scroll.lua"))
+        );
+        fixture._scripts.Write(
+            "items/readable_book.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "moongate_root/scripts/items/readable_book.lua"))
+        );
+        fixture._scripts.Write(
+            "items/jail_note.lua",
+            jailScript ?? await File.ReadAllTextAsync(Path.Combine(root, "moongate_root/scripts/items/jail_note.lua"))
+        );
+        fixture._scripts.Write(
+            "init.lua",
+            """
             function make_letter()
                 return book.give(2, "welcome_letter", { contact_name = "Vega" })
             end
@@ -46,7 +57,8 @@ public sealed class BookLuaFixture : IAsyncDisposable
             function use_letter(serial)
                 return book.open(serial, 2)
             end
-            """);
+            """
+        );
         var options = new ScriptEngineOptions { ScriptsDirectory = fixture._scripts.Path, WriteDefinitions = false };
         var container = fixture._container;
         container.RegisterMoongateEventBus();
@@ -54,16 +66,29 @@ public sealed class BookLuaFixture : IAsyncDisposable
         container.RegisterInstance<IItemService>(fixture.Documents.Items);
         container.RegisterInstance<IMobileService>(fixture.Documents.World.Mobiles);
         container.AddScriptModule<BookModule>();
-        container.Resolve<IMoongateEventBus>().Subscribe<ScriptErrorEvent>((error, _) =>
-        {
-            fixture.Errors.Add(error);
-            return Task.CompletedTask;
-        });
-        fixture.Engine = new(options, container.Resolve<IScriptModuleRegistry>(), container,
-            fixture.Documents.World.Network.Loop, new RecordingTimerService(), new EventBusAdapter(container));
+        container.Resolve<IMoongateEventBus>()
+            .Subscribe<ScriptErrorEvent>((error, _) =>
+                {
+                    fixture.Errors.Add(error);
+                    return Task.CompletedTask;
+                }
+            );
+        fixture.Engine = new(
+            options,
+            container.Resolve<IScriptModuleRegistry>(),
+            container,
+            fixture.Documents.World.Network.Loop,
+            new RecordingTimerService(),
+            new EventBusAdapter(container)
+        );
         fixture.Documents.Engine = fixture.Engine;
         await fixture.Engine.StartAsync();
-        fixture.ItemScripts = new(fixture.Engine, fixture.Documents.ItemTemplates, fixture.Documents.World.Network.Loop, options);
+        fixture.ItemScripts = new(
+            fixture.Engine,
+            fixture.Documents.ItemTemplates,
+            fixture.Documents.World.Network.Loop,
+            options
+        );
         await fixture.ItemScripts.StartAsync();
         return fixture;
     }

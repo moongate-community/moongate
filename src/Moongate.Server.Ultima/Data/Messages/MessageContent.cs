@@ -1,7 +1,8 @@
 namespace Moongate.Server.Ultima.Data.Messages;
 
 /// <summary>
-///     One text of <c>data/messages/&lt;language&gt;.toml</c> or of a toml file in <c>data/messages/&lt;language&gt;/</c>, in
+///     One text of <c>data/messages/&lt;language&gt;.toml</c> or of a toml file in
+///     <c>data/messages/&lt;language&gt;/</c>, in
 ///     the configured language, or in English when the language does not have it.
 /// </summary>
 public class MessageContent

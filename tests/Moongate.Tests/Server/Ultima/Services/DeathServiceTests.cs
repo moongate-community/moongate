@@ -42,10 +42,12 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly RecordingNpcSenseService _senses = new();
     private readonly RecordingMurderService _murders = new();
+
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
-                                                 .Item(0x0EED, TileFlagType.Generic, 0)
-                                                 .Item(0x0E75, TileFlagType.Container, 0)
-                                                 .Item(0x2006, TileFlagType.Container, 0);
+        .Item(0x0EED, TileFlagType.Generic, 0)
+        .Item(0x0E75, TileFlagType.Container, 0)
+        .Item(0x2006, TileFlagType.Container, 0);
+
     private readonly ItemTemplateService _itemTemplates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "corpse", ItemId = new Serial(0x2006), Movable = false },
@@ -60,6 +62,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
             new ItemTemplate { Id = "death_robe", ItemId = new Serial(0x2684), LootType = LootType.Newbied }
         )
     );
+
     private readonly MobileTemplateService _mobileTemplates = new(
         new StubDataLoaderService().With(
             new MobileTemplate { Id = "orc", Sounds = new() { Death = 0x01B2 } },
@@ -140,7 +143,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.Equal((MapType.Felucca, Spot), (corpse.Map, corpse.GroundLocation));
         Assert.Equal(
             (0x0011, (int)DirectionType.East, "orc"),
-            (corpse.GetProp<int>("corpse.body"), corpse.GetProp<int>("corpse.direction"), corpse.GetProp<string>("corpse.template"))
+            (corpse.GetProp<int>("corpse.body"), corpse.GetProp<int>("corpse.direction"),
+                corpse.GetProp<string>("corpse.template"))
         );
         Assert.False(corpse.TryGetProp<long>("corpse.killer", out _));
     }
@@ -252,7 +256,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
         Assert.Equal(
             (0x203B, 0x0455, 0x203E, 0x0456),
-            (corpse.GetProp<int>("corpse.hair"), corpse.GetProp<int>("corpse.hair_hue"), corpse.GetProp<int>("corpse.beard"), corpse.GetProp<int>("corpse.beard_hue"))
+            (corpse.GetProp<int>("corpse.hair"), corpse.GetProp<int>("corpse.hair_hue"), corpse.GetProp<int>("corpse.beard"),
+                corpse.GetProp<int>("corpse.beard_hue"))
         );
     }
 
@@ -345,7 +350,9 @@ public sealed class DeathServiceTests : IAsyncLifetime
     [InlineData(0x0191, GenderType.Female, 0x150)]
     [InlineData(0x025D, GenderType.Male, 0x15A)]
     [InlineData(0x029B, GenderType.Female, 0x150)]
-    public void Kill_AHumanBodyWithoutASoundOfItsOwn_DiesWithOneOfTheFourVoicesOfItsGender(int body, GenderType gender, int first)
+    public void Kill_AHumanBodyWithoutASoundOfItsOwn_DiesWithOneOfTheFourVoicesOfItsGender(
+        int body, GenderType gender, int first
+    )
     {
         _orc.TemplateId = "mute";
         _orc.Body = body;
@@ -450,7 +457,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
         Assert.Equal(
             ("an orc", "felucca_12", 1690),
-            (corpse.GetProp<string>("corpse.name"), corpse.GetProp<string>("corpse.spawn.region"), corpse.GetProp<int>("corpse.spawn.x1"))
+            (corpse.GetProp<string>("corpse.name"), corpse.GetProp<string>("corpse.spawn.region"),
+                corpse.GetProp<int>("corpse.spawn.x1"))
         );
         // Only what its region gave it.
         Assert.False(corpse.Props!.ContainsKey("corpse.mood"));
@@ -461,7 +469,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
     {
         _orc.SetProp("spawn.region", "felucca_12");
         // Its home: without the four of them it would wander anywhere.
-        foreach (var (key, value) in new[] { ("spawn.x1", 1690), ("spawn.y1", 1691), ("spawn.x2", 1710), ("spawn.y2", 1711) })
+        foreach (var (key, value) in new[]
+                     { ("spawn.x1", 1690), ("spawn.y1", 1691), ("spawn.x2", 1710), ("spawn.y2", 1711) })
         {
             _orc.SetProp(key, value);
         }
@@ -474,7 +483,10 @@ public sealed class DeathServiceTests : IAsyncLifetime
 
         Assert.Equal((ResurrectResultType.Raised, born), (result.Type, result.Mobile));
         Assert.Equal(("orc", MapType.Felucca, Spot), Assert.Single(_npcs.Spawns));
-        Assert.Equal(("an orc", DirectionType.East, "felucca_12"), (born.Name, born.Direction, born.GetProp<string>("spawn.region")));
+        Assert.Equal(
+            ("an orc", DirectionType.East, "felucca_12"),
+            (born.Name, born.Direction, born.GetProp<string>("spawn.region"))
+        );
         Assert.Equal(
             [1690, 1691, 1710, 1711],
             new[] { "spawn.x1", "spawn.y1", "spawn.x2", "spawn.y2" }.Select(key => born.GetProp<int>(key))
@@ -687,7 +699,10 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.Equal((0, 0, 0), (_aria.Hits, _aria.Stamina, _aria.Mana));
         Assert.False(_aria.WarMode);
         Assert.Contains($"MobileDied {_aria.Id.Value} {CorpseSerial}", _view.Calls);
-        Assert.Contains(_items.GetWorn(_aria.Id), item => item.Layer == LayerType.OuterTorso && item.TemplateId == "death_shroud");
+        Assert.Contains(
+            _items.GetWorn(_aria.Id),
+            item => item.Layer == LayerType.OuterTorso && item.TemplateId == "death_shroud"
+        );
         Assert.Empty(_scripts.Calls);
         Assert.Empty(_npcs.Removals);
     }
@@ -701,7 +716,10 @@ public sealed class DeathServiceTests : IAsyncLifetime
         _death.Kill(_orc, _aria);
         _death.Kill(_aria, _orc);
 
-        Assert.Equal([$"Killed {_orc.Id.Value} {_aria.Id.Value}", $"Killed {_aria.Id.Value} {_orc.Id.Value}"], _senses.Calls);
+        Assert.Equal(
+            [$"Killed {_orc.Id.Value} {_aria.Id.Value}", $"Killed {_aria.Id.Value} {_orc.Id.Value}"],
+            _senses.Calls
+        );
     }
 
     [Fact]
@@ -739,7 +757,10 @@ public sealed class DeathServiceTests : IAsyncLifetime
 
         Assert.Equal([$"Died {_aria.Id.Value}"], _murders.Calls);
         Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
-        Assert.Equal(((long)_aria.Id.Value, true), (corpse.GetProp<long>("corpse.owner"), corpse.GetProp<bool>("corpse.innocent")));
+        Assert.Equal(
+            ((long)_aria.Id.Value, true),
+            (corpse.GetProp<long>("corpse.owner"), corpse.GetProp<bool>("corpse.innocent"))
+        );
     }
 
     [Theory]
@@ -849,8 +870,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
     {
         var born = new MobileEntity { Id = new Serial(901), Name = "an ettin", TemplateId = "orc", Body = body };
         _npcs.Spawned = born;
-        await _fixture.Network.ExecuteOnLoopAsync(
-            () =>
+        await _fixture.Network.ExecuteOnLoopAsync(() =>
             {
                 _fixture.Mobiles.Delete(born.Id);
                 born.Map = MapType.Felucca;

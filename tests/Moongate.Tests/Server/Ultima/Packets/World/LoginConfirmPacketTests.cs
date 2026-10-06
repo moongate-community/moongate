@@ -12,7 +12,14 @@ public sealed class LoginConfirmPacketTests
     [Fact]
     public void Encode_WritesThePlayerAndTheMapSize()
     {
-        var packet = new LoginConfirmPacket(new Serial(0x00000002), new Body(0x0191), new Point3D(1496, 1628, -5), DirectionType.South, 7168, 4096);
+        var packet = new LoginConfirmPacket(
+            new Serial(0x00000002),
+            new Body(0x0191),
+            new Point3D(1496, 1628, -5),
+            DirectionType.South,
+            7168,
+            4096
+        );
 
         Assert.Equal(
             Convert.FromHexString(

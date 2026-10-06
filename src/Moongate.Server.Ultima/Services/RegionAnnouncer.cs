@@ -58,11 +58,10 @@ public sealed class RegionAnnouncer : IRegionAnnouncer
         _events = events;
         _loop = loop;
         _localization = localization;
-        _byName = new(
-            () => data.GetEntities<RegionContent>()
-                      .Where(region => region.Name is not null)
-                      .GroupBy(region => (region.Map, region.Name!))
-                      .ToDictionary(group => group.Key, group => group.First())
+        _byName = new(() => data.GetEntities<RegionContent>()
+            .Where(region => region.Name is not null)
+            .GroupBy(region => (region.Map, region.Name!))
+            .ToDictionary(group => group.Key, group => group.First())
         );
     }
 
@@ -71,8 +70,7 @@ public sealed class RegionAnnouncer : IRegionAnnouncer
         if (_events is not null && _loop is not null)
         {
             // The event comes from the login handler's thread; the players are followed on the game loop only.
-            _logins = _events.Subscribe<CharacterEnteredWorldEvent>(
-                async (evt, cancellationToken) =>
+            _logins = _events.Subscribe<CharacterEnteredWorldEvent>(async (evt, cancellationToken) =>
                 {
                     var work = new LoopActionWorkItem(() => LoggedIn(evt.Character));
                     await _loop.PostAsync(work, cancellationToken);
@@ -137,7 +135,14 @@ public sealed class RegionAnnouncer : IRegionAnnouncer
         // Out first, the inner place before the one around it; then in, the outer first.
         if (wasGuarded && (!isGuarded || oldGuards != newGuards))
         {
-            Tell(player, UnguardedMessage, "You have left the protection of the guards of {0}.", oldGuards, UnguardedCliloc, LeaveHue);
+            Tell(
+                player,
+                UnguardedMessage,
+                "You have left the protection of the guards of {0}.",
+                oldGuards,
+                UnguardedCliloc,
+                LeaveHue
+            );
         }
 
         foreach (var place in from.Where(place => to.All(other => other.Name != place.Name)))
@@ -152,7 +157,14 @@ public sealed class RegionAnnouncer : IRegionAnnouncer
 
         if (isGuarded && (!wasGuarded || oldGuards != newGuards))
         {
-            Tell(player, GuardedMessage, "You are now under the protection of the guards of {0}.", newGuards, GuardedCliloc, EnterHue);
+            Tell(
+                player,
+                GuardedMessage,
+                "You are now under the protection of the guards of {0}.",
+                newGuards,
+                GuardedCliloc,
+                EnterHue
+            );
         }
     }
 

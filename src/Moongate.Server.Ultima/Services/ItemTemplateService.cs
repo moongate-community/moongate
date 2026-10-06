@@ -17,9 +17,8 @@ public class ItemTemplateService : IItemTemplateService
 
     public ItemTemplateService(IDataLoaderService dataLoaderService)
     {
-        _templates = new(
-            () => dataLoaderService.GetEntities<ItemTemplate>()
-                                   .ToFrozenDictionary(template => template.Id, StringComparer.Ordinal)
+        _templates = new(() => dataLoaderService.GetEntities<ItemTemplate>()
+            .ToFrozenDictionary(template => template.Id, StringComparer.Ordinal)
         );
     }
 

@@ -82,8 +82,7 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
             : new(_container.Resolve<CommandRegistry>(), _container, commandLogger);
         _container.RegisterMoongateEventBus();
         var events = _container.Resolve<IMoongateEventBus>();
-        events.Subscribe<PlayerSaidEvent>(
-            (said, _) =>
+        events.Subscribe<PlayerSaidEvent>((said, _) =>
             {
                 Said.Add(said);
 
@@ -93,7 +92,9 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
         Handler = new(Commands, Sessions, Mobiles, Sender, localization, Listener, events, ItemListener, Guards);
     }
 
-    public static async Task<SpeechHandlerFixture> CreateAsync(ILogger? commandLogger = null, ILocalizationService? localization = null)
+    public static async Task<SpeechHandlerFixture> CreateAsync(
+        ILogger? commandLogger = null, ILocalizationService? localization = null
+    )
     {
         var fixture = new SpeechHandlerFixture(await SessionFixture.CreateAsync(), commandLogger, localization);
         await fixture.Commands.StartAsync();
@@ -163,14 +164,17 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
     )
     {
         await _network.ExecuteOnLoopAsync(() =>
-        {
-            session.Set(SessionKeys.CharacterId, serial);
-            session.Set(SessionKeys.AccountType, accountType);
-            Mobiles.EnterWorld(new MobileEntity
             {
-                Id = serial, AccountId = new Serial(42), Name = name, Map = map, Location = location, Body = 0x0190
-            });
-        });
+                session.Set(SessionKeys.CharacterId, serial);
+                session.Set(SessionKeys.AccountType, accountType);
+                Mobiles.EnterWorld(
+                    new MobileEntity
+                    {
+                        Id = serial, AccountId = new Serial(42), Name = name, Map = map, Location = location, Body = 0x0190
+                    }
+                );
+            }
+        );
     }
 
     public async ValueTask DisposeAsync()

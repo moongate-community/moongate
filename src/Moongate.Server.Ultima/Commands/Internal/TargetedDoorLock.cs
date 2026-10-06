@@ -33,7 +33,12 @@ internal static class TargetedDoorLock
             return;
         }
 
-        var target = await targets.RequestAsync(session, TargetCursorType.Object, TargetFlagsType.Neutral, context.CancellationToken);
+        var target = await targets.RequestAsync(
+            session,
+            TargetCursorType.Object,
+            TargetFlagsType.Neutral,
+            context.CancellationToken
+        );
 
         if (target.Kind != TargetResultType.Object)
         {
@@ -43,8 +48,7 @@ internal static class TargetedDoorLock
         }
 
         var done = false;
-        var work = new LoopActionWorkItem(
-            () =>
+        var work = new LoopActionWorkItem(() =>
             {
                 if (!DoorKeys.TryGetDoor(items, templates, target.Serial, out var door))
                 {

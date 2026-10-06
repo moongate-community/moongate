@@ -14,6 +14,8 @@ public enum EffectLayerType : byte
     RightFoot = 5,
     CenterFeet = 7,
 
-    /// <summary>No body part: the effect is not tied to one.</summary>
+    /// <summary>
+    ///     No body part: the effect is not tied to one.
+    /// </summary>
     None = 255
 }

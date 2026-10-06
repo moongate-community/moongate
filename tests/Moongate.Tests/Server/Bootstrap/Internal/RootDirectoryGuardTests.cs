@@ -20,8 +20,8 @@ public sealed class RootDirectoryGuardTests
     {
         using var directory = new TemporaryDirectory();
 
-        var exception = Assert.Throws<InvalidOperationException>(
-            () => RootDirectoryGuard.EnsureNotBinaryDirectory(directory.Path, directory.Path)
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RootDirectoryGuard.EnsureNotBinaryDirectory(directory.Path, directory.Path)
         );
 
         Assert.Contains("--root-directory", exception.Message, StringComparison.Ordinal);

@@ -12,7 +12,8 @@ public sealed class BannedNamesContentTests
         Words = ["mage"]
     };
 
-    [Theory, InlineData("GMaria"), InlineData("gm Aria"), InlineData("Aria the Mage"), InlineData("MAGE"), InlineData("Aria-mage")]
+    [Theory, InlineData("GMaria"), InlineData("gm Aria"), InlineData("Aria the Mage"), InlineData("MAGE"),
+     InlineData("Aria-mage")]
     public void IsBanned_PrefixOrWholeWord_IgnoringCase_IsTrue(string name)
     {
         Assert.True(BannedNames.IsBanned(name, Separators));

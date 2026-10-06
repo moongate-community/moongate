@@ -74,7 +74,10 @@ public sealed class ProfessionsLoaderTests
         Assert.Equal(1061230, warrior.DescriptionCliloc);
         Assert.Equal(5577, warrior.Gump);
         Assert.Equal((45, 35, 10), (warrior.Str, warrior.Dex, warrior.Int));
-        Assert.Equal([(SkillType.Alchemy, 30), (SkillType.Anatomy, 20)], warrior.Skills.Select(skill => (skill.Skill, skill.Value)));
+        Assert.Equal(
+            [(SkillType.Alchemy, 30), (SkillType.Anatomy, 20)],
+            warrior.Skills.Select(skill => (skill.Skill, skill.Value))
+        );
     }
 
     [Theory, InlineData("id = 1", "id = 0"), InlineData("id = 1", "id = -2")]

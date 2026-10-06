@@ -86,9 +86,18 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var loadedWand = (await _items.GetByIdAsync(wand.Id))!;
         var loadedPack = (await _items.GetByIdAsync(backpack.Id))!;
 
-        Assert.Equal((backpack.Id, new Point2D(44, 65), 250), (loadedCoin.ContainerId!.Value, loadedCoin.GridLocation!.Value, loadedCoin.Amount));
-        Assert.Equal(((short?)9, (short?)null, (short?)null), (loadedCoin.GridIndex, loadedWand.GridIndex, loadedPack.GridIndex));
-        Assert.Equal((MapType.Trammel, new Point3D(1602, 1591, 20)), (loadedWand.Map!.Value, loadedWand.GroundLocation!.Value));
+        Assert.Equal(
+            (backpack.Id, new Point2D(44, 65), 250),
+            (loadedCoin.ContainerId!.Value, loadedCoin.GridLocation!.Value, loadedCoin.Amount)
+        );
+        Assert.Equal(
+            ((short?)9, (short?)null, (short?)null),
+            (loadedCoin.GridIndex, loadedWand.GridIndex, loadedPack.GridIndex)
+        );
+        Assert.Equal(
+            (MapType.Trammel, new Point3D(1602, 1591, 20)),
+            (loadedWand.Map!.Value, loadedWand.GroundLocation!.Value)
+        );
         Assert.Equal(12, loadedWand.GetProp<int>(ItemPropKeys.Charges));
         Assert.Equal(ItemQualityType.Exceptional, loadedWand.GetProp(ItemPropKeys.Quality, ItemQualityType.Regular));
         Assert.Equal(AccountType.GameMaster, loadedWand.Visibility);
@@ -104,7 +113,10 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var mobile = await NewMobileAsync();
         var backpack = Item(0x40000001, i => i.Equip(mobile.Id, LayerType.Backpack));
         var book = Item(0x40000002, i => i.PutInContainer(backpack.Id, new Point2D(44, 65)));
-        BookDocumentText.Apply(book, new() { TemplateId = "blank_book", Title = "a book", Author = "Aria", Content = "", Writable = true, Pages = 20 });
+        BookDocumentText.Apply(
+            book,
+            new() { TemplateId = "blank_book", Title = "a book", Author = "Aria", Content = "", Writable = true, Pages = 20 }
+        );
         IReadOnlyList<IReadOnlyList<string>> written = [["Dear diary,", "", "today è"], [], ["the end"]];
         book.SetProp("book.content", BookPagination.Join(written));
         book.SetProp("book.title", "My diary");
@@ -116,7 +128,10 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
 
         Assert.True(BookDocumentText.IsWritable(loaded));
         Assert.Equal(20, BookDocumentText.PagesOf(loaded));
-        Assert.Equal(("My diary", "My diary", "Aria"), (loaded.Name, loaded.GetProp<string>("book.title"), loaded.GetProp<string>("book.author")));
+        Assert.Equal(
+            ("My diary", "My diary", "Aria"),
+            (loaded.Name, loaded.GetProp<string>("book.title"), loaded.GetProp<string>("book.author"))
+        );
         Assert.True(BookPagination.TryPaginate(loaded.GetProp<string>("book.content"), out var pages));
         Assert.Equal([["Dear diary,", " ", "today è"], [], ["the end"]], pages);
     }
@@ -127,7 +142,13 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var clock = new SettableClock();
         var door = Item(0x40000040, i => i.PlaceOnGround(MapType.Felucca, new Point3D(5, 5, 0)));
         var started = new ItemTimerQueue(clock);
-        var timers = new ItemTimerService(new RecordingTimerService(), started, TestItems.Create(), new RecordingItemScriptService(), clock);
+        var timers = new ItemTimerService(
+            new RecordingTimerService(),
+            started,
+            TestItems.Create(),
+            new RecordingItemScriptService(),
+            clock
+        );
         Assert.True(timers.Start(door, "close", TimeSpan.FromSeconds(20)));
         await _items.UpsertAsync(door);
 
@@ -161,7 +182,8 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     [Fact]
     public async Task SelfContainedItem_IsRejectedByTheDatabase()
     {
-        var item = new ItemEntity { Id = new(0x40000012), TemplateId = "t", ItemId = 1, ContainerId = new(0x40000012), GridX = 0, GridY = 0 };
+        var item = new ItemEntity
+            { Id = new(0x40000012), TemplateId = "t", ItemId = 1, ContainerId = new(0x40000012), GridX = 0, GridY = 0 };
 
         await AssertRejectedAsync(item);
     }
@@ -244,9 +266,10 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     public async Task AnItemWithoutATemplate_IsRejectedByTheDatabase()
     {
         var exception = await Record.ExceptionAsync(() => _host.Database.ExecuteAsync(
-            "INSERT INTO world.items (id, template_id, item_id, hue, amount, map, x, y, z) " +
-            "VALUES (1073741900, NULL, 1, 0, 1, 0, 1, 1, 0)"
-        ));
+                "INSERT INTO world.items (id, template_id, item_id, hue, amount, map, x, y, z) " +
+                "VALUES (1073741900, NULL, 1, 0, 1, 0, 1, 1, 0)"
+            )
+        );
 
         Assert.IsType<PostgresException>(exception);
     }
@@ -261,16 +284,20 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         await _items.UpsertAsync(item);
         var loaded = (await _items.GetByIdAsync(item.Id))!;
 
-        Assert.Equal((ItemRarityType.Epic, (LootType?)LootType.Newbied), (loaded.Rarity, (LootType?)loaded.GetProp<LootType>(ItemPropKeys.LootType)));
+        Assert.Equal(
+            (ItemRarityType.Epic, (LootType?)LootType.Newbied),
+            (loaded.Rarity, (LootType?)loaded.GetProp<LootType>(ItemPropKeys.LootType))
+        );
     }
 
     [Fact]
     public async Task ARarityOutsideTheEnum_IsRejectedByTheDatabase()
     {
         var exception = await Record.ExceptionAsync(() => _host.Database.ExecuteAsync(
-            "INSERT INTO world.items (id, template_id, item_id, hue, amount, rarity, map, x, y, z) " +
-            "VALUES (1073741901, 't', 1, 0, 1, 9, 0, 1, 1, 0)"
-        ));
+                "INSERT INTO world.items (id, template_id, item_id, hue, amount, rarity, map, x, y, z) " +
+                "VALUES (1073741901, 't', 1, 0, 1, 9, 0, 1, 1, 0)"
+            )
+        );
 
         Assert.IsType<PostgresException>(exception);
     }
@@ -470,16 +497,16 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         await host.Owner.InitializeAsync();
         var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
         var filler = Enumerable.Range(0, 3000)
-                               .Select(
-                                   index =>
-                                   {
-                                       var item = new ItemEntity { Id = new Serial(0x40000100 + (uint)index), TemplateId = "rock", ItemId = 0x1363 };
-                                       item.PlaceOnGround(MapType.Trammel, new Point3D(1 + index % 100, 1 + index / 100, 0));
+            .Select(index =>
+                {
+                    var item = new ItemEntity
+                        { Id = new Serial(0x40000100 + (uint)index), TemplateId = "rock", ItemId = 0x1363 };
+                    item.PlaceOnGround(MapType.Trammel, new Point3D(1 + index % 100, 1 + index / 100, 0));
 
-                                       return item;
-                                   }
-                               )
-                               .ToList();
+                    return item;
+                }
+            )
+            .ToList();
         var corpse = new ItemEntity { Id = new Serial(0x40002000), TemplateId = "corpse", ItemId = 0x2006 };
         corpse.PlaceOnGround(MapType.Trammel, new Point3D(100, 100, 0));
         var sword = new ItemEntity { Id = new Serial(0x40000002), TemplateId = "sword", ItemId = 0x0F5E };
@@ -507,16 +534,16 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var sword = new ItemEntity { Id = new Serial(0x40000002), TemplateId = "sword", ItemId = 0x0F5E };
         sword.PutInContainer(corpse.Id, new Point2D(30, 30));
         var filler = Enumerable.Range(0, 600)
-                               .Select(
-                                   index =>
-                                   {
-                                       var item = new ItemEntity { Id = new Serial(0x40000100 + (uint)index), TemplateId = "rock", ItemId = 0x1363 };
-                                       item.PlaceOnGround(MapType.Trammel, new Point3D(1 + index % 100, 1 + index / 100, 0));
+            .Select(index =>
+                {
+                    var item = new ItemEntity
+                        { Id = new Serial(0x40000100 + (uint)index), TemplateId = "rock", ItemId = 0x1363 };
+                    item.PlaceOnGround(MapType.Trammel, new Point3D(1 + index % 100, 1 + index / 100, 0));
 
-                                       return item;
-                                   }
-                               )
-                               .ToList();
+                    return item;
+                }
+            )
+            .ToList();
         // The sword in the first batch, the corpse in the last.
         ItemEntity[] ordered = [sword, .. filler, corpse];
         host.Container.AddPersistenceWorld<ItemEntity>(() => ordered, item => item.Snapshot());

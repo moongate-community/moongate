@@ -31,6 +31,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     private readonly RecordingWorldViewService _view = new();
     private readonly List<Serial> _saveOrder = [];
     private readonly List<CharacterLeftWorldEvent> _left = [];
+
     private readonly MobileEntity _aria = new()
     {
         Id = new(2), AccountId = new Serial(42), Name = "Aria", Map = MapType.Trammel,
@@ -51,23 +52,34 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         var reservations = new Moongate.Server.Ultima.Services.Items.InventoryReservationService(fixture.Loop);
         var settlement = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _events.RegisterMoongateEventBus();
-        var service = new CharacterLeaveWorldService(_mobiles, _items, _view, _world,
-            _events.Resolve<IMoongateEventBus>(), reservations, fixture.Loop);
+        var service = new CharacterLeaveWorldService(
+            _mobiles,
+            _items,
+            _view,
+            _world,
+            _events.Resolve<IMoongateEventBus>(),
+            reservations,
+            fixture.Loop
+        );
         await fixture.ExecuteOnLoopAsync(() =>
-        {
-            Assert.True(reservations.TryReserve(_aria.Id, settlement.Task));
-            service.OnSessionClosed(session);
-        });
+            {
+                Assert.True(reservations.TryReserve(_aria.Id, settlement.Task));
+                service.OnSessionClosed(session);
+            }
+        );
         var loginWait = service.WaitForAccountAsync(_aria.AccountId!.Value);
         using var release = new ManualResetEventSlim();
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        await fixture.Loop.PostAsync(new Moongate.Tests.Support.GameLoop.ActionGameLoopWorkItem(() =>
-        {
-            reservations.Release(_aria.Id);
-            entered.SetResult();
-            release.Wait();
-            throw new ApplicationException("Owner loop lost before deferred logout.");
-        }));
+        await fixture.Loop.PostAsync(
+            new Moongate.Tests.Support.GameLoop.ActionGameLoopWorkItem(() =>
+                {
+                    reservations.Release(_aria.Id);
+                    entered.SetResult();
+                    release.Wait();
+                    throw new ApplicationException("Owner loop lost before deferred logout.");
+                }
+            )
+        );
         try
         {
             await entered.Task.WaitAsync(Timeout);
@@ -77,6 +89,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
             {
                 await Task.Delay(10, deadline.Token);
             }
+
             release.Set();
             await Assert.ThrowsAsync<ApplicationException>(() => fixture.Loop.Completion);
             await Assert.ThrowsAsync<ApplicationException>(() => loginWait.WaitAsync(Timeout));
@@ -101,18 +114,31 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         var reservations = new Moongate.Server.Ultima.Services.Items.InventoryReservationService(fixture.Loop);
         var settlement = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _events.RegisterMoongateEventBus();
-        var service = new CharacterLeaveWorldService(_mobiles, _items, _view, _world,
-            _events.Resolve<IMoongateEventBus>(), reservations, fixture.Loop);
+        var service = new CharacterLeaveWorldService(
+            _mobiles,
+            _items,
+            _view,
+            _world,
+            _events.Resolve<IMoongateEventBus>(),
+            reservations,
+            fixture.Loop
+        );
         await fixture.ExecuteOnLoopAsync(() =>
-        {
-            Assert.True(reservations.TryReserve(_aria.Id, settlement.Task));
-            service.OnSessionClosed(session);
-        });
+            {
+                Assert.True(reservations.TryReserve(_aria.Id, settlement.Task));
+                service.OnSessionClosed(session);
+            }
+        );
         Assert.True(_mobiles.IsInWorld(_aria.Id));
         var loginWait = service.WaitForAccountAsync(_aria.AccountId!.Value);
         Assert.False(loginWait.IsCompleted);
         Assert.Empty(_world.Items.Upserted);
-        await fixture.ExecuteOnLoopAsync(() => { coin.Amount = 77; reservations.Release(_aria.Id); });
+        await fixture.ExecuteOnLoopAsync(() =>
+            {
+                coin.Amount = 77;
+                reservations.Release(_aria.Id);
+            }
+        );
         settlement.SetResult();
         await loginWait.WaitAsync(Timeout);
         Assert.False(_mobiles.IsInWorld(_aria.Id));
@@ -128,13 +154,21 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         var reservations = new Moongate.Server.Ultima.Services.Items.InventoryReservationService(fixture.Loop);
         var settlement = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _events.RegisterMoongateEventBus();
-        var service = new CharacterLeaveWorldService(_mobiles, _items, _view, _world,
-            _events.Resolve<IMoongateEventBus>(), reservations, fixture.Loop);
+        var service = new CharacterLeaveWorldService(
+            _mobiles,
+            _items,
+            _view,
+            _world,
+            _events.Resolve<IMoongateEventBus>(),
+            reservations,
+            fixture.Loop
+        );
         await fixture.ExecuteOnLoopAsync(() =>
-        {
-            reservations.TryReserve(_aria.Id, settlement.Task);
-            service.OnSessionClosed(session);
-        });
+            {
+                reservations.TryReserve(_aria.Id, settlement.Task);
+                service.OnSessionClosed(session);
+            }
+        );
         var wait = service.WaitForAccountAsync(_aria.AccountId!.Value);
         settlement.SetException(new IOException("Uncertain claim."));
         await Assert.ThrowsAsync<IOException>(() => wait);
@@ -195,7 +229,10 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
         await service.StopAsync().WaitAsync(Timeout);
 
-        Assert.Contains(_view.Calls, call => call.StartsWith($"ContainedAppeared {ruby.Id.Value} in {chest.Id.Value}", StringComparison.Ordinal));
+        Assert.Contains(
+            _view.Calls,
+            call => call.StartsWith($"ContainedAppeared {ruby.Id.Value} in {chest.Id.Value}", StringComparison.Ordinal)
+        );
         Assert.True(_items.TryGet(ruby.Id, out _));
         Assert.DoesNotContain(_world.Items.Upserted, item => item.Id == ruby.Id);
     }

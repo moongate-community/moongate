@@ -29,7 +29,9 @@ public sealed class LoginConfirmPacket : BaseFixedPacket<LoginConfirmPacket>, IO
 
     public int MapHeight { get; }
 
-    public LoginConfirmPacket(Serial serial, Body body, Point3D location, DirectionType direction, int mapWidth, int mapHeight)
+    public LoginConfirmPacket(
+        Serial serial, Body body, Point3D location, DirectionType direction, int mapWidth, int mapHeight
+    )
     {
         Serial = serial;
         Body = body;

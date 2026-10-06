@@ -57,19 +57,30 @@ public sealed class MotdService : IMotdService
 
         try
         {
-            var available = await context.RunOnGameLoopAsync(session =>
-            {
-                if (session.CharacterId != character.Id)
+            var available = await context.RunOnGameLoopAsync(
+                session =>
                 {
-                    return;
-                }
+                    if (session.CharacterId != character.Id)
+                    {
+                        return;
+                    }
 
-                var usersOnline = _sessions.GetAll().Count(other =>
-                    other.CharacterId.IsValid && other.NetworkSession.Client is { IsConnected: true });
-                var info = _serverInfo.GetSnapshot();
-                snapshot = new MotdContext(_identity.ServerName, _realm.Descriptor.Name, info.Version,
-                    info.Codename, character.Name, usersOnline);
-            }, cancellationToken);
+                    var usersOnline = _sessions.GetAll()
+                        .Count(other =>
+                            other.CharacterId.IsValid && other.NetworkSession.Client is { IsConnected: true }
+                        );
+                    var info = _serverInfo.GetSnapshot();
+                    snapshot = new MotdContext(
+                        _identity.ServerName,
+                        _realm.Descriptor.Name,
+                        info.Version,
+                        info.Codename,
+                        character.Name,
+                        usersOnline
+                    );
+                },
+                cancellationToken
+            );
 
             if (!available || snapshot is null)
             {

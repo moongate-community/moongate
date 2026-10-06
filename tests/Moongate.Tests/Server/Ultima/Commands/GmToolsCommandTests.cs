@@ -79,19 +79,32 @@ public sealed class GmToolsCommandTests : IAsyncDisposable
         var sessions = new SessionService(_fixture.Loop);
         var session = sessions.GetOrCreate(_fixture.Client);
         await _fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, new Serial(2)));
-        _mobiles.EnterWorld(new MobileEntity { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _mobiles.EnterWorld(
+            new MobileEntity
+                { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         var context = new CommandContext(".gmtools", "gmtools", [], CommandSourceType.InGame, session);
         var templates = new GumpTemplateService(
             _gumps,
             withTemplate
                 ? new StubDataLoaderService().With(
-                    new GumpTemplate { Id = "gmtools", File = "gmtools.xml", Root = XElement.Parse("""<gump id="gmtools"><text x="1" y="1">tools</text></gump>""") }
+                    new GumpTemplate
+                    {
+                        Id = "gmtools", File = "gmtools.xml",
+                        Root = XElement.Parse("""<gump id="gmtools"><text x="1" y="1">tools</text></gump>""")
+                    }
                 )
                 : new StubDataLoaderService().With<GumpTemplate>(),
             _fixture.Loop,
             sessions
         );
-        var gumps = new GumpModule(sessions, _gumps, templates, new Lazy<IGumpScriptService>(new RecordingGumpScriptService()), _fixture.Loop);
+        var gumps = new GumpModule(
+            sessions,
+            _gumps,
+            templates,
+            new Lazy<IGumpScriptService>(new RecordingGumpScriptService()),
+            _fixture.Loop
+        );
 
         await new GmToolsCommand(_mobiles, _fixture.Loop, localization, gumps).ExecuteAsync(context);
 

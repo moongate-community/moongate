@@ -7,7 +7,11 @@ namespace Moongate.Tests.Server.Services.Logging;
 
 public sealed class ExceptionReportEnricherTests : IDisposable
 {
-    private readonly string _directory = Path.Combine(Path.GetTempPath(), "moongate-reports-" + Guid.NewGuid().ToString("N"));
+    private readonly string _directory = Path.Combine(
+        Path.GetTempPath(),
+        "moongate-reports-" + Guid.NewGuid().ToString("N")
+    );
+
     private readonly RecordingLogEventSink _sink = new(new RecordingConsoleDriver());
 
     [Fact]
@@ -41,7 +45,8 @@ public sealed class ExceptionReportEnricherTests : IDisposable
     public void AWrapperException_ShowsTheMessageOfWhatItWraps(bool aggregate)
     {
         var cause = new InvalidOperationException("the real cause");
-        Exception wrapper = aggregate ? new AggregateException(cause) : new System.Reflection.TargetInvocationException(cause);
+        Exception wrapper =
+            aggregate ? new AggregateException(cause) : new System.Reflection.TargetInvocationException(cause);
 
         using (var logger = Logger())
         {
@@ -59,7 +64,10 @@ public sealed class ExceptionReportEnricherTests : IDisposable
             logger.Error(new BlankException(), "Failed");
         }
 
-        Assert.Equal(nameof(BlankException), ((ScalarValue)Assert.Single(_sink.Events).Properties["ExceptionMessage"]).Value);
+        Assert.Equal(
+            nameof(BlankException),
+            ((ScalarValue)Assert.Single(_sink.Events).Properties["ExceptionMessage"]).Value
+        );
     }
 
     public void Dispose()
@@ -73,9 +81,9 @@ public sealed class ExceptionReportEnricherTests : IDisposable
     private Serilog.Core.Logger Logger()
     {
         return new LoggerConfiguration()
-               .Enrich.With(new ExceptionReportEnricher(new ExceptionReportWriter(_directory, "0.11.0", "Lilly")))
-               .WriteTo.Sink(_sink)
-               .CreateLogger();
+            .Enrich.With(new ExceptionReportEnricher(new ExceptionReportWriter(_directory, "0.11.0", "Lilly")))
+            .WriteTo.Sink(_sink)
+            .CreateLogger();
     }
 
     private sealed class BlankException : Exception

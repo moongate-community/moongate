@@ -23,9 +23,9 @@ public sealed class DecorationBlock
     public int? ItemId { get; init; }
 
     /// <summary>
-    ///     The kind's settings that are a string, a whole number, a number or a bool, such as <c>hue</c>, <c>name</c> or
-    ///     <c>facing</c>, and those that are a point <c>[x, y, z]</c>, a <see cref="Point3D" /> such as a teleporter's
-    ///     <c>point_dest</c>; other lists are left out.
+    ///     The kind's settings that are a string, a whole number, a number or a bool, such as <c>hue</c>, <c>name</c>
+    ///     or <c>facing</c>, and those that are a point <c>[x, y, z]</c>, a <see cref="Point3D" /> such as a
+    ///     teleporter's <c>point_dest</c>; other lists are left out.
     /// </summary>
     public IReadOnlyDictionary<string, object> Props { get; init; } = new Dictionary<string, object>();
 

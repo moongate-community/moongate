@@ -7,7 +7,9 @@ public static class BookTextValidation
 
     public static bool IsValidText(string text, int limit)
     {
-        return text.Length <= limit && !text.Any(character => char.IsControl(character) && character is not '\n' and not '\r' and not '\t');
+        return text.Length <= limit && !text.Any(character =>
+            char.IsControl(character) && character is not '\n' and not '\r' and not '\t'
+        );
     }
 
     /// <summary>

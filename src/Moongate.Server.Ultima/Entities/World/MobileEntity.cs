@@ -63,11 +63,9 @@ public class MobileEntity : IMoongateEntity
 
     public string Name { get; set; }
 
-    [Column(MapType = typeof(byte))]
-    public GenderType Gender { get; set; }
+    [Column(MapType = typeof(byte))] public GenderType Gender { get; set; }
 
-    [Column(MapType = typeof(byte))]
-    public RaceType Race { get; set; }
+    [Column(MapType = typeof(byte))] public RaceType Race { get; set; }
 
     /// <summary>
     ///     The body id, which follows race and gender (for example 400 for a male human).
@@ -356,7 +354,9 @@ public class MobileEntity : IMoongateEntity
     ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />, or <paramref name="defaultValue" /> when
     ///     the mobile does not have it.
     /// </summary>
-    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    /// <exception cref="InvalidCastException">
+    ///     The prop holds a value that does not convert to <typeparamref name="T" />.
+    /// </exception>
     public T GetProp<T>(string key, T defaultValue = default!)
     {
         return TryGetProp<T>(key, out var value) ? value : defaultValue;
@@ -365,7 +365,9 @@ public class MobileEntity : IMoongateEntity
     /// <summary>
     ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />; false when the mobile does not have it.
     /// </summary>
-    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    /// <exception cref="InvalidCastException">
+    ///     The prop holds a value that does not convert to <typeparamref name="T" />.
+    /// </exception>
     public bool TryGetProp<T>(string key, out T value)
     {
         return PropsDictionary.TryGet(Props, key, out value);
@@ -401,11 +403,11 @@ public class MobileEntity : IMoongateEntity
         {
             copy.CriminalUntil = null;
         }
+
         copy.Skills =
         [
-            .. Skills.Select(
-                skill => new MobileSkill
-                    { Skill = skill.Skill, Base = skill.Base, Cap = skill.Cap, Lock = skill.Lock }
+            .. Skills.Select(skill => new MobileSkill
+                { Skill = skill.Skill, Base = skill.Base, Cap = skill.Cap, Lock = skill.Lock }
             )
         ];
         copy.Props = Props is null ? null : new Dictionary<string, object?>(Props);

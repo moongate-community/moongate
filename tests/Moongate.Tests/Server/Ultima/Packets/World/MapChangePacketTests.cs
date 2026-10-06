@@ -9,6 +9,9 @@ public sealed class MapChangePacketTests
     [Fact]
     public void Encode_WritesTheGeneralInfoSubcommand()
     {
-        Assert.Equal(new byte[] { 0xBF, 0x00, 0x06, 0x00, 0x08, 0x01 }, PacketCodec.Encode(new MapChangePacket(MapType.Trammel)));
+        Assert.Equal(
+            new byte[] { 0xBF, 0x00, 0x06, 0x00, 0x08, 0x01 },
+            PacketCodec.Encode(new MapChangePacket(MapType.Trammel))
+        );
     }
 }

@@ -13,29 +13,54 @@ public sealed class TextTemplateRendererTests
             ["player_name"] = "Pippo", ["contact_name"] = "$server_name", ["server_name"] = "Moongate"
         };
 
-        Assert.Equal("Pippo / Pippo / $ / $server_name",
-            TextTemplateRenderer.Render("$player_name / ${player_name} / $$ / $contact_name", values, TextTemplateSyntaxType.Document));
-        Assert.Equal("Pippo_suffix", TextTemplateRenderer.Render("${player_name}_suffix", values, TextTemplateSyntaxType.Document));
-        Assert.Throws<KeyNotFoundException>(() => TextTemplateRenderer.Render("$player_name_suffix", values, TextTemplateSyntaxType.Document));
+        Assert.Equal(
+            "Pippo / Pippo / $ / $server_name",
+            TextTemplateRenderer.Render(
+                "$player_name / ${player_name} / $$ / $contact_name",
+                values,
+                TextTemplateSyntaxType.Document
+            )
+        );
+        Assert.Equal(
+            "Pippo_suffix",
+            TextTemplateRenderer.Render("${player_name}_suffix", values, TextTemplateSyntaxType.Document)
+        );
+        Assert.Throws<KeyNotFoundException>(() => TextTemplateRenderer.Render(
+                "$player_name_suffix",
+                values,
+                TextTemplateSyntaxType.Document
+            )
+        );
     }
 
     [Fact]
     public void Render_DollarsAndUnicode_AreLiteralOutsideTokens()
     {
-        Assert.Equal("è $ $player_name ${player_name}", TextTemplateRenderer.Render(
-            "è $$ $$player_name $${player_name}", new Dictionary<string, string>(), TextTemplateSyntaxType.Document));
+        Assert.Equal(
+            "è $ $player_name ${player_name}",
+            TextTemplateRenderer.Render(
+                "è $$ $$player_name $${player_name}",
+                new Dictionary<string, string>(),
+                TextTemplateSyntaxType.Document
+            )
+        );
     }
 
     [Fact]
     public async Task RenderAsync_MotdGrammar_PreservesBareTokensAndResolverBehavior()
     {
         var calls = 0;
-        var result = await TextTemplateRenderer.RenderAsync("$player_name $$ ${player_name} ${player_name}", async (_, token) =>
-        {
-            await Task.Delay(1, token);
-            calls++;
-            return "${server_name}";
-        }, TextTemplateSyntaxType.Motd, CancellationToken.None);
+        var result = await TextTemplateRenderer.RenderAsync(
+            "$player_name $$ ${player_name} ${player_name}",
+            async (_, token) =>
+            {
+                await Task.Delay(1, token);
+                calls++;
+                return "${server_name}";
+            },
+            TextTemplateSyntaxType.Motd,
+            CancellationToken.None
+        );
 
         Assert.Equal("$player_name $$ ${server_name} ${server_name}", result);
         Assert.Equal(2, calls);
@@ -47,7 +72,12 @@ public sealed class TextTemplateRendererTests
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await TextTemplateRenderer.RenderAsync(
-            "${player_name}", (_, _) => ValueTask.FromResult("Pippo"), TextTemplateSyntaxType.Motd, canceled.Token));
+                "${player_name}",
+                (_, _) => ValueTask.FromResult("Pippo"),
+                TextTemplateSyntaxType.Motd,
+                canceled.Token
+            )
+        );
     }
 
     [Theory]

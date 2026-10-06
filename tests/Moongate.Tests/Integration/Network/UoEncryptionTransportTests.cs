@@ -33,7 +33,11 @@ public sealed class UoEncryptionTransportTests
         network.DataReceived += (_, e) => received.Writer.TryWrite((e.Connection, e.Data.ToArray()));
         var vector = PolEncryptionFixture.Read().First(x => x.GetProperty("Version").GetString() == "67.0.117.0");
         var seed = vector.GetProperty("Seed").GetUInt32();
-        byte[] wire = [.. PolEncryptionFixture.Seed(seed, !game), .. Convert.FromHexString(vector.GetProperty(game ? "GameLoginAndPing" : "LoginPacketAndSelect").GetString()!)];
+        byte[] wire =
+        [
+            .. PolEncryptionFixture.Seed(seed, !game),
+            .. Convert.FromHexString(vector.GetProperty(game ? "GameLoginAndPing" : "LoginPacketAndSelect").GetString()!)
+        ];
         try
         {
             await network.StartAsync();
@@ -63,6 +67,7 @@ public sealed class UoEncryptionTransportTests
                         expected[i] ^= (byte)(encryptedReference[i] ^ i);
                     }
                 }
+
                 await login.Connection.SendAsync(reply, token);
                 var actual = new byte[expected.Length];
                 await peer.GetStream().ReadExactlyAsync(actual, token);
@@ -82,7 +87,8 @@ public sealed class UoEncryptionTransportTests
         var token = timeout.Token;
         await using var registry = await ConnectionRegistryFixture.CreateAsync();
         var config = Config(NetworkEncryptionMode.Optional);
-        var options = game ? UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, [])
+        var options = game
+            ? UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, [])
             : UoNetworkOptionsFactory.CreateLogin(config, PacketRegistry.Default);
         var network = new NetworkService(options, registry.Service);
         var closed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -101,6 +107,7 @@ public sealed class UoEncryptionTransportTests
                 payload[game ? 5 : 1] = 0xFF;
                 payload = PolEncryptionFixture.EncryptModernLogin(payload, game);
             }
+
             byte[] wire = [.. PolEncryptionFixture.Seed(0x12345678, !game), .. payload];
             await peer.GetStream().WriteAsync(wire, token);
             await closed.Task.WaitAsync(token);

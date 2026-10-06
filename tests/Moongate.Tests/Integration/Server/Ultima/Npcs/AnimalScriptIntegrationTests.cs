@@ -35,7 +35,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.Integration.Server.Ultima.Npcs;
 
 /// <summary>
-///     The shipped <c>scripts/mobiles/animal.lua</c> and <c>scripts/mobiles/scared_animal.lua</c> on the real Lua engine
+///     The shipped <c>scripts/mobiles/animal.lua</c> and <c>scripts/mobiles/scared_animal.lua</c> on the real Lua
+///     engine
 ///     and the real modules: an animal two a second thinks, a player five tiles east of it.
 /// </summary>
 public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
@@ -55,12 +56,14 @@ public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
     private readonly StubLineOfSightService _sight = new();
     private readonly StubPathfindingService _finder = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate { Id = "bear", ScriptId = "animal", Sounds = new MobileSounds { Idle = IdleSound } },
             new MobileTemplate { Id = "rabbit", ScriptId = "scared_animal" }
         )
     );
+
     private readonly MobileEntity _animal = new()
     {
         Id = new Serial(0x100), Name = "a bear", TemplateId = "bear", Body = 0xD3, Map = MapType.Trammel,
@@ -116,14 +119,13 @@ public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
             new StubDataLoaderService().With(new BodyContent { Body = new(0xD3), Type = BodyType.Animal })
         );
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>(
-                      (evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
         _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
         _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
         _scripts.Write("mobiles/animal.lua", File.ReadAllText(ShippedScript("mobiles/animal.lua")));
@@ -136,7 +138,14 @@ public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
             HookInterval = 100,
             WriteDefinitions = false
         };
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         _npcs = new(_engine, _templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
         await _npcs.StartAsync();

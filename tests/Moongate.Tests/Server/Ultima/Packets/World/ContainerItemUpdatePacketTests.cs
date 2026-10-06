@@ -47,7 +47,8 @@ public sealed class ContainerItemUpdatePacketTests
 
     private static ItemEntity Coins()
     {
-        var coins = new ItemEntity { Id = new(0x40000012), TemplateId = "gold", ItemId = 0x0EED, Amount = 250, Hue = new(0x0481) };
+        var coins = new ItemEntity
+            { Id = new(0x40000012), TemplateId = "gold", ItemId = 0x0EED, Amount = 250, Hue = new(0x0481) };
         coins.PutInContainer(new Serial(0x40000001), new Point2D(44, 65));
 
         return coins;

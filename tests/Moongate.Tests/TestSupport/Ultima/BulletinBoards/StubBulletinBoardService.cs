@@ -65,7 +65,10 @@ public sealed class StubBulletinBoardService : IBulletinBoardService
     /// </summary>
     public BulletinPostResultType PostAsResult { get; set; } = BulletinPostResultType.Ok;
 
-    public List<(ItemEntity Board, string Name, string Subject, IReadOnlyList<string> Lines, Serial ReplyTo)> PostedAs { get; } = [];
+    public List<(ItemEntity Board, string Name, string Subject, IReadOnlyList<string> Lines, Serial ReplyTo)> PostedAs
+    {
+        get;
+    } = [];
 
     public BulletinPostResult PostAs(
         ItemEntity board,

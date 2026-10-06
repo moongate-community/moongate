@@ -14,6 +14,7 @@ public sealed class ItemHearingServiceTests
     private readonly ItemService _items;
     private readonly RecordingItemScriptService _scripts = new();
     private readonly ItemHearingService _hearing;
+
     private readonly MobileEntity _aria = new()
     {
         Id = new Serial(2), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0)

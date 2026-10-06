@@ -5,7 +5,7 @@ using Lua;
 namespace Moongate.Server.Ultima.Modules.Internal;
 
 /// <summary>
-///     The gumps built from Lua: <c>gump.create(id)</c> gives a table whose methods (<c>g:text{ ... }</c>,
+///     The gumps built from Lua: <c>gump.create(id)</c> gives a table whose methods ( <c>g:text{ ... }</c>,
 ///     <c>g:button{ ... }</c>, ...) each add a control with the attributes of the XML elements of the same name;
 ///     <see cref="ToXml" /> turns them into those elements, so a built gump renders, binds and answers as an XML one.
 /// </summary>
@@ -16,7 +16,9 @@ internal static class GumpBuilder
     public const string KindKey = "__kind";
     private const string XKey = "__x";
     private const string YKey = "__y";
+
     private const string PagerKey = "__pager";
+
     // XML on_click names may not start with __ (the loader refuses them), so these never meet one.
     public const string ReservedPrefix = "__";
     private const string FunctionPrefix = "__fn_";
@@ -56,8 +58,9 @@ internal static class GumpBuilder
 
     /// <summary>
     ///     Gets the controls of <paramref name="gump" /> as XML elements, moved by <paramref name="dx" />,
-    ///     <paramref name="dy" />: those before any <c>g:page()</c>, and one <c>&lt;page&gt;</c> per page. A button whose
-    ///     <c>on_click</c> is a function gets a name in <paramref name="functions" /> instead.
+    ///     <paramref name="dy" />: those before any
+    ///     <c>g:page()</c>, and one <c>&lt;page&gt;</c> per page. A button whose <c>on_click</c> is a function gets a
+    ///     name in <paramref name="functions" /> instead.
     /// </summary>
     public static (List<XElement> Controls, List<XElement> Pages) ToXml(
         LuaTable gump,
@@ -150,7 +153,8 @@ internal static class GumpBuilder
             {
                 element.Value = Text(value);
             }
-            else if (name == "on_click" && value.TryRead<string>(out var named) && named.StartsWith(ReservedPrefix, StringComparison.Ordinal))
+            else if (name == "on_click" && value.TryRead<string>(out var named) &&
+                     named.StartsWith(ReservedPrefix, StringComparison.Ordinal))
             {
                 throw new ArgumentException($"on_click names starting with {ReservedPrefix} are reserved: {named}");
             }
@@ -186,7 +190,9 @@ internal static class GumpBuilder
         }
 
         return value.TryRead<double>(out var number)
-            ? number % 1 == 0 ? ((long)number).ToString(CultureInfo.InvariantCulture) : number.ToString(CultureInfo.InvariantCulture)
+            ? number % 1 == 0
+                ? ((long)number).ToString(CultureInfo.InvariantCulture)
+                : number.ToString(CultureInfo.InvariantCulture)
             : string.Empty;
     }
 

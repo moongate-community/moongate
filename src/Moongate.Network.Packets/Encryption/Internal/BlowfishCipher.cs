@@ -1,4 +1,5 @@
 // POL protocol port; see THIRD-PARTY-NOTICES.md for origin and license.
+
 using System.Buffers.Binary;
 
 namespace Moongate.Network.Packets.Encryption.Internal;
@@ -27,6 +28,7 @@ internal sealed class BlowfishCipher
                 _streamPosition = 0;
                 _blockPosition = 0;
             }
+
             if (_blockPosition == 0)
             {
                 var left = BinaryPrimitives.ReadUInt32BigEndian(_feedback);
@@ -35,6 +37,7 @@ internal sealed class BlowfishCipher
                 BinaryPrimitives.WriteUInt32BigEndian(_feedback, left);
                 BinaryPrimitives.WriteUInt32BigEndian(_feedback.AsSpan(4), right);
             }
+
             var cipherByte = data[i];
             data[i] ^= _feedback[_blockPosition];
             _feedback[_blockPosition] = cipherByte;
@@ -64,8 +67,10 @@ internal sealed class BlowfishCipher
                     mask = (mask << 8) | BlowfishTables.Keys[table * 6 + keyPosition];
                     keyPosition = (keyPosition + 1) % 6;
                 }
+
                 p[i] ^= mask;
             }
+
             tables[table] = (p, s);
             uint left = 0, right = 0;
             for (var i = 0; i < p.Length; i += 2)
@@ -74,6 +79,7 @@ internal sealed class BlowfishCipher
                 p[i] = left;
                 p[i + 1] = right;
             }
+
             for (var i = 0; i < s.Length; i += 2)
             {
                 EncryptBlock(ref left, ref right, tables[table]);
@@ -81,6 +87,7 @@ internal sealed class BlowfishCipher
                 s[i + 1] = right;
             }
         }
+
         return tables;
     }
 
@@ -93,6 +100,7 @@ internal sealed class BlowfishCipher
             right ^= p[i] ^ F(left, s);
             left ^= p[i + 1] ^ F(right, s);
         }
+
         right ^= p[17];
         (left, right) = (right, left);
     }

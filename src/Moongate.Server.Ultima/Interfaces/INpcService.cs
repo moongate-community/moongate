@@ -15,7 +15,8 @@ public interface INpcService : IMoongateStartupService
 {
     /// <summary>
     ///     Spawns an NPC from template <paramref name="templateId" /> through <see cref="IMobileFactoryService" />, which
-    ///     saves it with the <paramref name="props" /> given, then puts it and its items in the live world and shows it to the players in range. Call it off the
+    ///     saves it with the <paramref name="props" /> given, then puts it and its items in the live world and shows it to the
+    ///     players in range. Call it off the
     ///     game loop.
     /// </summary>
     Task<MobileEntity> SpawnAsync(

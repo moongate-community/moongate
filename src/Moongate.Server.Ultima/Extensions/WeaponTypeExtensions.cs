@@ -15,11 +15,11 @@ public static class WeaponTypeExtensions
         /// </summary>
         public SkillType Skill => type switch
         {
-            WeaponType.Mace    => SkillType.MaceFighting,
-            WeaponType.Fencing => SkillType.Fencing,
+            WeaponType.Mace                       => SkillType.MaceFighting,
+            WeaponType.Fencing                    => SkillType.Fencing,
             WeaponType.Bow or WeaponType.Crossbow => SkillType.Archery,
-            WeaponType.Thrown  => SkillType.Throwing,
-            _                  => SkillType.Swordsmanship
+            WeaponType.Thrown                     => SkillType.Throwing,
+            _                                     => SkillType.Swordsmanship
         };
 
         /// <summary>

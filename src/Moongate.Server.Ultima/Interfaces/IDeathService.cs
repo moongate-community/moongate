@@ -34,7 +34,8 @@ public interface IDeathService
     ///     name and the facing of who died and, when it had one, its spawn region; a human body rises with its fall
     ///     played backwards. It comes with the equipment of its template, and the corpse is gone with what was left
     ///     inside. The serial of a dead player raises the player as <see cref="Resurrect" /> does. Nothing happens for what
-    ///     is not a corpse on the ground, or for a corpse that names no template that exists. Call it off the game loop: the birth of an NPC waits for the database.
+    ///     is not a corpse on the ground, or for a corpse that names no template that exists. Call it off the game loop: the birth
+    ///     of an NPC waits for the database.
     /// </summary>
     Task<ResurrectResult> ResurrectAsync(Serial corpse, CancellationToken cancellationToken = default);
 }

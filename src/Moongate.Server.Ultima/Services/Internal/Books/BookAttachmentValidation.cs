@@ -15,17 +15,21 @@ internal static class BookAttachmentValidation
         var count = 0L;
         foreach (var entry in book.Attachments)
         {
-            if (entry is null || string.IsNullOrWhiteSpace(entry.ItemTemplate) || !items.TryGetValue(entry.ItemTemplate, out var item))
+            if (entry is null || string.IsNullOrWhiteSpace(entry.ItemTemplate) ||
+                !items.TryGetValue(entry.ItemTemplate, out var item))
             {
                 throw new InvalidDataException($"{book.File}: unknown attachment item_template.");
             }
+
             var min = entry.Amount?.Min ?? 1;
             var max = entry.Amount?.Max ?? 1;
             if (min < 1 || max > MaximumAmount || max < min)
             {
                 throw new InvalidDataException($"{book.File}: attachment amount must stay within 1..65535.");
             }
-            var stacks = item.Stackable ?? (tiles is not null ? item.EffectiveStackable(tiles)
+
+            var stacks = item.Stackable ?? (tiles is not null
+                ? item.EffectiveStackable(tiles)
                 : throw new InvalidDataException($"{book.File}: tiledata is required to validate attachment stackability."));
             count += stacks ? 1 : max;
             if (count > MaximumItems)

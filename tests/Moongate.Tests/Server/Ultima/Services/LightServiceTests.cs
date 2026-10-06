@@ -17,9 +17,13 @@ namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class LightServiceTests : IAsyncLifetime
 {
-    private static readonly RegionContent Despise = new() { Map = MapType.Trammel, Name = "Despise", Type = RegionType.Dungeon };
+    private static readonly RegionContent Despise = new()
+        { Map = MapType.Trammel, Name = "Despise", Type = RegionType.Dungeon };
+
     private static readonly RegionContent Jail = new() { Map = MapType.Trammel, Name = "Jail", Type = RegionType.Jail };
-    private static readonly RegionContent MedusasLair = new() { Map = MapType.Trammel, Name = "Medusas Lair", Parent = "Despise" };
+
+    private static readonly RegionContent MedusasLair = new()
+        { Map = MapType.Trammel, Name = "Medusas Lair", Parent = "Despise" };
 
     private readonly StubClockService _clock = new();
     private readonly RecordingTimerService _timers = new();
@@ -256,10 +260,10 @@ public sealed class LightServiceTests : IAsyncLifetime
     private List<(long, int)> Sent()
     {
         return _fixture.Sender.Sent
-                       .Select((packet, index) => (packet, index))
-                       .Where(pair => pair.packet is GlobalLightLevelPacket)
-                       .Select(pair => (_fixture.Sender.SentSessionIds[pair.index], ((GlobalLightLevelPacket)pair.packet).Level))
-                       .ToList();
+            .Select((packet, index) => (packet, index))
+            .Where(pair => pair.packet is GlobalLightLevelPacket)
+            .Select(pair => (_fixture.Sender.SentSessionIds[pair.index], ((GlobalLightLevelPacket)pair.packet).Level))
+            .ToList();
     }
 
     private void FireChecks(string timer, int count)

@@ -79,7 +79,8 @@ public sealed class EnumNameUtilsTests
         Assert.Equal(TileFlagType.None, value);
     }
 
-    [Theory, InlineData("1"), InlineData("99"), InlineData("admin"), InlineData("regular|game_master"), InlineData(""), InlineData(null)]
+    [Theory, InlineData("1"), InlineData("99"), InlineData("admin"), InlineData("regular|game_master"), InlineData(""),
+     InlineData(null)]
     public void TryParse_ANumberAnUnknownNameAPipeOnAPlainEnumOrNothing_ReturnsFalse(string? text)
     {
         Assert.False(EnumNameUtils.TryParse<AccountType>(text, out _));

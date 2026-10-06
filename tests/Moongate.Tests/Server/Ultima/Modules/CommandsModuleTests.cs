@@ -34,11 +34,16 @@ public sealed class CommandsModuleTests : IAsyncLifetime
     [Fact]
     public void Execute_RunsTheCommandAsTheConsole_WithItsArgumentsInOneLine()
     {
-        var result = Run("return commands.execute('season', 'winter'), commands.execute('save'), commands.execute('time', 12, true, 1.5)");
+        var result = Run(
+            "return commands.execute('season', 'winter'), commands.execute('save'), commands.execute('time', 12, true, 1.5)"
+        );
 
         Assert.All(result, value => Assert.True(value.Read<bool>()));
         Assert.Equal(
-            [("season winter", CommandSourceType.Console, null), ("save", CommandSourceType.Console, null), ("time 12 true 1.5", CommandSourceType.Console, (GameSession?)null)],
+            [
+                ("season winter", CommandSourceType.Console, null), ("save", CommandSourceType.Console, null),
+                ("time 12 true 1.5", CommandSourceType.Console, (GameSession?)null)
+            ],
             _commands.Executed
         );
     }
@@ -54,7 +59,10 @@ public sealed class CommandsModuleTests : IAsyncLifetime
 
         Assert.True(result[0].Read<bool>());
         Assert.Equal(("go britain", CommandSourceType.InGame, _session), Assert.Single(_commands.Executed));
-        Assert.Equal(["Going to Britain.", "Careful."], _fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>().Select(message => message.Text));
+        Assert.Equal(
+            ["Going to Britain.", "Careful."],
+            _fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>().Select(message => message.Text)
+        );
     }
 
     [Theory]

@@ -58,7 +58,9 @@ public sealed class StartupMigrationsTests : IDisposable
     [Fact]
     public async Task PrepareAsync_WithGenerationAlsoOn_OnlyCopies_TheDevelopmentStartApplies()
     {
-        await PrepareAsync(new() { AutoApplyMigrations = true, AutoGenerateMigrations = true, MigrationsDirectory = _migrations });
+        await PrepareAsync(
+            new() { AutoApplyMigrations = true, AutoGenerateMigrations = true, MigrationsDirectory = _migrations }
+        );
 
         Assert.True(File.Exists(Path.Combine(_migrations, "world/0001_base.sql")));
         Assert.Empty(_runner.Applied);

@@ -47,11 +47,16 @@ public sealed class UoxSpawnConverterTests : IDisposable
 
         Assert.True(Run() == 0, CombinedOutput);
 
-        var lists = TomlUtils.DeserializeFromFile<NpcListTemplateFile>(Path.Combine(_dirs.NpcListsDestinationDirectory, "npclists.toml"))!
-                             .NpcList.ToDictionary(list => list.Id);
+        var lists = TomlUtils.DeserializeFromFile<NpcListTemplateFile>(
+                Path.Combine(_dirs.NpcListsDestinationDirectory, "npclists.toml")
+            )!
+            .NpcList.ToDictionary(list => list.Id);
         Assert.Equal(
             ["gorilla:20", "orc:1", "list trolls:7"],
-            lists["jungle"].Entries.Select(entry => entry.MobileId is { } id ? $"{id}:{entry.Weight}" : $"list {entry.NpcListId}:{entry.Weight}")
+            lists["jungle"]
+                .Entries.Select(entry =>
+                    entry.MobileId is { } id ? $"{id}:{entry.Weight}" : $"list {entry.NpcListId}:{entry.Weight}"
+                )
         );
         Assert.Equal(["troll"], lists["trolls"].Entries.Select(entry => entry.MobileId));
     }
@@ -103,18 +108,24 @@ public sealed class UoxSpawnConverterTests : IDisposable
 
         Assert.True(Run() == 0, CombinedOutput);
 
-        var spawns = TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "trammel", "town_test.toml"))!
-                              .Spawn;
+        var spawns = TomlUtils.DeserializeFromFile<SpawnTemplateFile>(
+                Path.Combine(_dirs.SpawnsDestinationDirectory, "trammel", "town_test.toml")
+            )!
+            .Spawn;
         Assert.Equal(["trammel_0", "trammel_1"], spawns.Select(spawn => spawn.Id));
 
         var shop = spawns[0];
         Assert.Equal(
             (MapType.Trammel, "The Hammer And Anvil", 2, 480, 600, 1, true, (int?)22, (int?)null),
-            (shop.Map, shop.Name, shop.Max, shop.MinMinutes, shop.MaxMinutes, shop.Call, shop.OnlyOutside, shop.PrefZ, shop.Z)
+            (shop.Map, shop.Name, shop.Max, shop.MinMinutes, shop.MaxMinutes, shop.Call, shop.OnlyOutside, shop.PrefZ,
+                shop.Z)
         );
         Assert.Equal(["orc"], shop.MobileIds);
         Assert.Equal((1422, 1547, 1426, 1550), (shop.Areas[0].X1, shop.Areas[0].Y1, shop.Areas[0].X2, shop.Areas[0].Y2));
-        Assert.Equal((1423, 1548, 1424, 1549), (shop.Exclude[0].X1, shop.Exclude[0].Y1, shop.Exclude[0].X2, shop.Exclude[0].Y2));
+        Assert.Equal(
+            (1423, 1548, 1424, 1549),
+            (shop.Exclude[0].X1, shop.Exclude[0].Y1, shop.Exclude[0].X2, shop.Exclude[0].Y2)
+        );
 
         var next = spawns[1];
         Assert.Equal(("Next Door", 2, 480, (int?)36), (next.Name, next.Max, next.MinMinutes, next.Z));
@@ -134,25 +145,34 @@ public sealed class UoxSpawnConverterTests : IDisposable
 
         Assert.Equal(
             ["felucca_0", "felucca_1"],
-            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml"))!
-                     .Spawn.Select(spawn => spawn.Id)
+            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(
+                    Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml")
+                )!
+                .Spawn.Select(spawn => spawn.Id)
         );
         Assert.Equal(
             ["trammel_2"],
-            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "trammel", "town_test.toml"))!
-                     .Spawn.Select(spawn => spawn.Id)
+            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(
+                    Path.Combine(_dirs.SpawnsDestinationDirectory, "trammel", "town_test.toml")
+                )!
+                .Spawn.Select(spawn => spawn.Id)
         );
     }
 
     [Fact]
     public void Run_ARegionNumberDefinedTwice_KeepsTheLastDefinition_AsUox3()
     {
-        WriteSources(spawns: Region(0, world: 0).Replace("MAXNPCS=1", "MAXNPCS=1") + Region(0, world: 0).Replace("MAXNPCS=1", "MAXNPCS=4"));
+        WriteSources(
+            spawns: Region(0, world: 0).Replace("MAXNPCS=1", "MAXNPCS=1") +
+                    Region(0, world: 0).Replace("MAXNPCS=1", "MAXNPCS=4")
+        );
 
         Assert.True(Run() == 0, CombinedOutput);
 
         var spawn = Assert.Single(
-            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml"))!.Spawn
+            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(
+                Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml")
+            )!.Spawn
         );
         Assert.Equal(4, spawn.Max);
         Assert.Contains("1 x duplicate spawn region", CombinedOutput);
@@ -179,11 +199,16 @@ public sealed class UoxSpawnConverterTests : IDisposable
 
         Assert.True(Run() == 0, CombinedOutput);
 
-        var covetous = TomlUtils.DeserializeFromFile<NpcListTemplateFile>(Path.Combine(_dirs.NpcListsDestinationDirectory, "npclists.toml"))!
-                                .NpcList.Single(list => list.Id == "covetous");
+        var covetous =
+            TomlUtils.DeserializeFromFile<NpcListTemplateFile>(
+                    Path.Combine(_dirs.NpcListsDestinationDirectory, "npclists.toml")
+                )!
+                .NpcList.Single(list => list.Id == "covetous");
         Assert.Equal(
             ["troll:1", "orc:1", "gorilla:1", "list trolls:2"],
-            covetous.Entries.Select(entry => entry.MobileId is { } id ? $"{id}:{entry.Weight}" : $"list {entry.NpcListId}:{entry.Weight}")
+            covetous.Entries.Select(entry =>
+                entry.MobileId is { } id ? $"{id}:{entry.Weight}" : $"list {entry.NpcListId}:{entry.Weight}"
+            )
         );
     }
 
@@ -199,7 +224,9 @@ public sealed class UoxSpawnConverterTests : IDisposable
         Assert.True(Run() == 0, CombinedOutput);
 
         var trammel = Assert.Single(
-            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "trammel", "town_test.toml"))!.Spawn
+            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(
+                Path.Combine(_dirs.SpawnsDestinationDirectory, "trammel", "town_test.toml")
+            )!.Spawn
         );
         Assert.Equal(("trammel_1", MapType.Trammel), (trammel.Id, trammel.Map));
         Assert.Equal(["troll"], trammel.MobileIds);
@@ -209,13 +236,18 @@ public sealed class UoxSpawnConverterTests : IDisposable
     [Fact]
     public void Run_ARegionOfAnotherEra_IsSkipped()
     {
-        WriteSources(spawns: Region(0, world: 0).Replace("WORLD=0", "WORLD=0\nERAS=UO,T2A,UOR,TD") + Region(1, world: 0).Replace("WORLD=0", "WORLD=0\nERAS=LBR,AOS,TOL"));
+        WriteSources(
+            spawns: Region(0, world: 0).Replace("WORLD=0", "WORLD=0\nERAS=UO,T2A,UOR,TD") +
+                    Region(1, world: 0).Replace("WORLD=0", "WORLD=0\nERAS=LBR,AOS,TOL")
+        );
 
         Assert.True(Run() == 0, CombinedOutput);
 
         Assert.Equal(
             ["felucca_1"],
-            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml"))!.Spawn.Select(spawn => spawn.Id)
+            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(
+                Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml")
+            )!.Spawn.Select(spawn => spawn.Id)
         );
         Assert.Contains("1 x spawn region of another era skipped", CombinedOutput);
     }
@@ -228,7 +260,9 @@ public sealed class UoxSpawnConverterTests : IDisposable
         Assert.True(Run() == 0, CombinedOutput);
 
         var spawn = Assert.Single(
-            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml"))!.Spawn
+            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(
+                Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml")
+            )!.Spawn
         );
         Assert.Equal((2, 2, 4, 4), (spawn.Exclude[0].X1, spawn.Exclude[0].Y1, spawn.Exclude[0].X2, spawn.Exclude[0].Y2));
         Assert.Equal((5, 10), (spawn.MinMinutes, spawn.MaxMinutes));
@@ -243,7 +277,10 @@ public sealed class UoxSpawnConverterTests : IDisposable
 
         Assert.True(Run() == 0, CombinedOutput);
 
-        Assert.True(File.Exists(Path.Combine(_dirs.SpawnsDestinationDirectory, "ilshenar", "world_general.toml")), CombinedOutput);
+        Assert.True(
+            File.Exists(Path.Combine(_dirs.SpawnsDestinationDirectory, "ilshenar", "world_general.toml")),
+            CombinedOutput
+        );
     }
 
     private static string Region(int number, int world)
@@ -309,7 +346,10 @@ public sealed class UoxSpawnConverterTests : IDisposable
             "npc/monsters.dfn",
             "[orc]\n{\nNAME=an orc\nID=0x0011\n}\n[troll]\n{\nNAME=a troll\nID=0x0036\n}\n[gorilla]\n{\nNAME=a gorilla\nID=0x001D\n}\n"
         );
-        _dirs.WriteMobileSource("npc/npclists/npclists.dfn", npcLists ?? "[NPCLIST jungle]\n{\norc\n}\n[NPCLIST trolls]\n{\ntroll\n}\n");
+        _dirs.WriteMobileSource(
+            "npc/npclists/npclists.dfn",
+            npcLists ?? "[NPCLIST jungle]\n{\norc\n}\n[NPCLIST trolls]\n{\ntroll\n}\n"
+        );
         _dirs.WriteMobileSource("spawn/felucca/spawn_felucca_town_test.dfn", spawns ?? "");
     }
 

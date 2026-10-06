@@ -29,9 +29,11 @@ public sealed class WeatherServiceTests : IAsyncLifetime
     private readonly RecordingTimerService _timers = new();
     private readonly FakeMapService _map = new(200, 200);
     private readonly WorldConfig _world = new();
+
     private readonly MobileEntity _aria = new()
     {
-        Id = new Serial(1), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca, Location = new Point3D(50, 50, 0)
+        Id = new Serial(1), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca,
+        Location = new Point3D(50, 50, 0)
     };
 
     private BroadcastFixture _fixture = null!;
@@ -167,7 +169,8 @@ public sealed class WeatherServiceTests : IAsyncLifetime
         await LoginAsync();
         var again = new MobileEntity
         {
-            Id = _aria.Id, Name = "Aria", AccountId = _aria.AccountId, Map = MapType.Felucca, Location = new Point3D(60, 60, 0)
+            Id = _aria.Id, Name = "Aria", AccountId = _aria.AccountId, Map = MapType.Felucca,
+            Location = new Point3D(60, 60, 0)
         };
         _map.AddStatic(60, 60, 0x0600, 20);
 
@@ -209,12 +212,12 @@ public sealed class WeatherServiceTests : IAsyncLifetime
         var data = storms
             ? new StubDataLoaderService().With(new WeatherContent { Name = "rainy", StormChance = 100 }).With(map)
             : new StubDataLoaderService()
-              .With(
-                  new WeatherContent { Name = "none" },
-                  new WeatherContent { Name = "rainy", RainChance = 100, MinTemperature = 10, MaxTemperature = 10 },
-                  new WeatherContent { Name = "snowy", SnowChance = 100, SnowThreshold = 50 }
-              )
-              .With(map);
+                .With(
+                    new WeatherContent { Name = "none" },
+                    new WeatherContent { Name = "rainy", RainChance = 100, MinTemperature = 10, MaxTemperature = 10 },
+                    new WeatherContent { Name = "snowy", SnowChance = 100, SnowThreshold = 50 }
+                )
+                .With(map);
 
         _timers.Timers.Clear();
         _weather = new(
@@ -244,9 +247,9 @@ public sealed class WeatherServiceTests : IAsyncLifetime
     private List<(WeatherKindType, long)> Sent()
     {
         return _fixture.Sender.Sent
-                       .Select((packet, index) => (packet, index))
-                       .Where(pair => pair.packet is WeatherPacket)
-                       .Select(pair => (((WeatherPacket)pair.packet).Kind, _fixture.Sender.SentSessionIds[pair.index]))
-                       .ToList();
+            .Select((packet, index) => (packet, index))
+            .Where(pair => pair.packet is WeatherPacket)
+            .Select(pair => (((WeatherPacket)pair.packet).Kind, _fixture.Sender.SentSessionIds[pair.index]))
+            .ToList();
     }
 }

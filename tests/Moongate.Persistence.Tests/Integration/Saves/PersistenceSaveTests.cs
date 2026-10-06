@@ -653,7 +653,10 @@ public sealed class PersistenceSaveTests
         await using var owner = FacadeFixture.Create(database);
         var deletions = new RecordingDeletionSource();
         var store = owner.RegisterEntity<CharacterEntity>(() => [], e => new() { Id = e.Id }, deletions: deletions);
-        owner.RegisterEntity<InventoryEntity>(() => throw new InvalidOperationException("capture failed"), e => new() { Id = e.Id });
+        owner.RegisterEntity<InventoryEntity>(
+            () => throw new InvalidOperationException("capture failed"),
+            e => new() { Id = e.Id }
+        );
         await owner.InitializeAsync();
         await store.UpsertAsync(new() { Id = new(2) });
         deletions.Pending.Add(new(2));
@@ -716,7 +719,10 @@ public sealed class PersistenceSaveTests
         await using var owner = FacadeFixture.Create(database);
         var live = new CharacterEntity { Id = new(1), Name = "Aria" };
         var present = true;
-        var store = owner.RegisterEntity<CharacterEntity>(() => present ? [live] : [], e => new() { Id = e.Id, Name = e.Name });
+        var store = owner.RegisterEntity<CharacterEntity>(
+            () => present ? [live] : [],
+            e => new() { Id = e.Id, Name = e.Name }
+        );
         owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
         await owner.SaveAllAsync();

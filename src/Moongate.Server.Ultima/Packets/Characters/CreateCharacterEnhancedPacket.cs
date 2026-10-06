@@ -19,7 +19,12 @@ namespace Moongate.Server.Ultima.Packets.Characters;
 ///     cast from bytes and may not be defined values. When a profession is chosen, the client leaves stats and skills
 ///     at 0 and the server applies those of the profession.
 /// </remarks>
-[PacketHandler(0x8D, PacketSizing.Variable, MinimumLength = PacketLength, Description = "Create character (Enhanced Client)")]
+[PacketHandler(
+    0x8D,
+    PacketSizing.Variable,
+    MinimumLength = PacketLength,
+    Description = "Create character (Enhanced Client)"
+)]
 public sealed class CreateCharacterEnhancedPacket
     : BasePacket<CreateCharacterEnhancedPacket>, IIncomingPacket<CreateCharacterEnhancedPacket>
 {

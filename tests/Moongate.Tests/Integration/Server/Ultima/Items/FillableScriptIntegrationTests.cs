@@ -32,7 +32,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.Integration.Server.Ultima.Items;
 
 /// <summary>
-///     Runs the script of the town containers shipped in <c>moongate_root</c> (scripts/items/fillable.lua) with the real
+///     Runs the script of the town containers shipped in <c>moongate_root</c> (scripts/items/fillable.lua) with the
+///     real
 ///     Lua engine: what a double click puts into a container, and when.
 /// </summary>
 public sealed class FillableScriptIntegrationTests : IAsyncLifetime
@@ -50,9 +51,11 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
     private readonly StubItemSerialPool _serials = new();
     private readonly List<ScriptErrorEvent> _errors = [];
     private readonly FakeTileDataService _tiles = new FakeTileDataService().Item(0x0E3C, TileFlagType.Container, 0);
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
-            new ItemTemplate { Id = "decoration_fillable", ItemId = new Serial(0x0E3C), Movable = false, ScriptId = "fillable" },
+            new ItemTemplate
+                { Id = "decoration_fillable", ItemId = new Serial(0x0E3C), Movable = false, ScriptId = "fillable" },
             new ItemTemplate { Id = "book", ItemId = new Serial(0x0FEF) },
             new ItemTemplate { Id = "bread", ItemId = new Serial(0x103B) },
             new ItemTemplate { Id = "hammer", ItemId = new Serial(0x13E3) }
@@ -118,15 +121,22 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<MobileModule>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>((evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
 
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         _itemScripts = new ItemScriptService(_engine, _templates, _loop, options);
         await _itemScripts.StartAsync();
@@ -366,7 +376,8 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
 
     private ItemEntity Container(string? contentType)
     {
-        var container = new ItemEntity { Id = new Serial(_nextItem++), TemplateId = "decoration_fillable", ItemId = 0x0E3C, Amount = 1 };
+        var container = new ItemEntity
+            { Id = new Serial(_nextItem++), TemplateId = "decoration_fillable", ItemId = 0x0E3C, Amount = 1 };
 
         if (contentType is not null)
         {
@@ -409,7 +420,8 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
     {
         var npc = new MobileEntity
         {
-            Id = new Serial(_nextNpc++), Name = template, TemplateId = template, Map = MapType.Trammel, Location = new Point3D(x, y, 0)
+            Id = new Serial(_nextNpc++), Name = template, TemplateId = template, Map = MapType.Trammel,
+            Location = new Point3D(x, y, 0)
         };
 
         return _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(npc));

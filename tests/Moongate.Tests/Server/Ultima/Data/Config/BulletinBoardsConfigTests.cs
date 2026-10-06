@@ -24,7 +24,8 @@ public sealed class BulletinBoardsConfigTests
      InlineData(7, 50, 120, 86401, "ultima.bulletin_boards.reply_seconds")]
     public void Validate_AValueOutOfRange_NamesTheSetting(int days, int messages, int thread, int reply, string setting)
     {
-        var config = new BulletinBoardsConfig { ExpireDays = days, MaxMessages = messages, ThreadSeconds = thread, ReplySeconds = reply };
+        var config = new BulletinBoardsConfig
+            { ExpireDays = days, MaxMessages = messages, ThreadSeconds = thread, ReplySeconds = reply };
 
         Assert.Contains(setting, Assert.Throws<InvalidOperationException>(config.Validate).Message);
     }
@@ -32,7 +33,8 @@ public sealed class BulletinBoardsConfigTests
     [Theory, InlineData(0, 1, 0, 0), InlineData(3650, 200, 86400, 86400)]
     public void Validate_TheLimits_AreAccepted(int days, int messages, int thread, int reply)
     {
-        new BulletinBoardsConfig { ExpireDays = days, MaxMessages = messages, ThreadSeconds = thread, ReplySeconds = reply }.Validate();
+        new BulletinBoardsConfig { ExpireDays = days, MaxMessages = messages, ThreadSeconds = thread, ReplySeconds = reply }
+            .Validate();
     }
 
     [Fact]
@@ -44,6 +46,9 @@ public sealed class BulletinBoardsConfigTests
 
         config.BulletinBoards.MaxMessages = 0;
 
-        Assert.Contains("ultima.bulletin_boards.max_messages", Assert.Throws<InvalidOperationException>(config.Validate).Message);
+        Assert.Contains(
+            "ultima.bulletin_boards.max_messages",
+            Assert.Throws<InvalidOperationException>(config.Validate).Message
+        );
     }
 }

@@ -137,7 +137,10 @@ public sealed class RegionsLoaderTests
     public async Task LoadDataAsync_ParentLoop_ThrowsInvalidDataException()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("data/regions/trammel.toml", Town.Replace("type = \"town\"", "type = \"town\"\nparent = \"The Tavern\"") + Tavern);
+        root.CreateFile(
+            "data/regions/trammel.toml",
+            Town.Replace("type = \"town\"", "type = \"town\"\nparent = \"The Tavern\"") + Tavern
+        );
 
         await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
     }
@@ -197,7 +200,10 @@ public sealed class RegionsLoaderTests
     public async Task LoadDataAsync_WeatherMissingFromWeatherFile_ThrowsInvalidDataException()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("data/regions/trammel.toml", Town.Replace("guarded = true", "weather = \"blizzard\"\nguarded = true"));
+        root.CreateFile(
+            "data/regions/trammel.toml",
+            Town.Replace("guarded = true", "weather = \"blizzard\"\nguarded = true")
+        );
 
         var exception =
             await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
@@ -209,7 +215,10 @@ public sealed class RegionsLoaderTests
     public async Task LoadDataAsync_Weather_DefaultsToNoneAndReadsTheProfileName()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("data/regions/trammel.toml", Town.Replace("guarded = true", "weather = \"temperate\"\nguarded = true") + Tavern);
+        root.CreateFile(
+            "data/regions/trammel.toml",
+            Town.Replace("guarded = true", "weather = \"temperate\"\nguarded = true") + Tavern
+        );
 
         var regions = (await CreateLoader(root).LoadDataAsync()).Entities;
 
@@ -224,8 +233,8 @@ public sealed class RegionsLoaderTests
         root.CreateFile("data/regions/trammel.toml", Town);
         var dataLoaderService = Weather().With(new MapContent { Name = "Trammel", Weather = "blizzard" });
 
-        await Assert.ThrowsAsync<InvalidDataException>(
-            () => new RegionsLoader(new DirectoriesConfig(root.Path, ["data"]), dataLoaderService).LoadDataAsync()
+        await Assert.ThrowsAsync<InvalidDataException>(() =>
+            new RegionsLoader(new DirectoriesConfig(root.Path, ["data"]), dataLoaderService).LoadDataAsync()
         );
     }
 

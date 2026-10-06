@@ -195,7 +195,10 @@ public sealed class NpcSenseServiceTests
 
     private static MobileEntity Npc(uint serial, int x, int y, MapType map = MapType.Trammel)
     {
-        return new() { Id = new Serial(serial), Name = "npc", TemplateId = "orc", Map = map, Location = new Point3D(x, y, 0), Hits = 10 };
+        return new()
+        {
+            Id = new Serial(serial), Name = "npc", TemplateId = "orc", Map = map, Location = new Point3D(x, y, 0), Hits = 10
+        };
     }
 
     private static MobileEntity Player(uint serial, int x, int y)

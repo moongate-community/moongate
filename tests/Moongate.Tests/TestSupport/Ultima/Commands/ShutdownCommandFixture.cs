@@ -21,8 +21,11 @@ public sealed class ShutdownCommandFixture : IAsyncDisposable
     {
         World = world;
         Timers = new(new() { TickDuration = TimeSpan.FromMilliseconds(1), MaxPendingTimers = 1 }, Clock);
-        Command = new(Shutdown, Timers,
-            new BroadcastService(world.Network.Loop, world.Sessions, world.Mobiles, world.Sender));
+        Command = new(
+            Shutdown,
+            Timers,
+            new BroadcastService(world.Network.Loop, world.Sessions, world.Mobiles, world.Sender)
+        );
     }
 
     public static async Task<ShutdownCommandFixture> CreateAsync()
@@ -37,16 +40,23 @@ public sealed class ShutdownCommandFixture : IAsyncDisposable
     public Task AdvanceAsync(TimeSpan elapsed)
     {
         return World.Network.ExecuteOnLoopAsync(() =>
-        {
-            Clock.Advance(elapsed);
-            Timers.ProcessDueTimers();
-        });
+            {
+                Clock.Advance(elapsed);
+                Timers.ProcessDueTimers();
+            }
+        );
     }
 
     public CommandContext Context(string arguments = "", CancellationToken cancellationToken = default)
     {
-        return new("shutdown " + arguments, "shutdown", arguments.Split(' ', StringSplitOptions.RemoveEmptyEntries),
-            CommandSourceType.Console, null, cancellationToken);
+        return new(
+            "shutdown " + arguments,
+            "shutdown",
+            arguments.Split(' ', StringSplitOptions.RemoveEmptyEntries),
+            CommandSourceType.Console,
+            null,
+            cancellationToken
+        );
     }
 
     public async ValueTask DisposeAsync()

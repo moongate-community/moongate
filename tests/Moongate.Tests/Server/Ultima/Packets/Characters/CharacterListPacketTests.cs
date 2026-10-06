@@ -17,16 +17,22 @@ public sealed class CharacterListPacketTests
         var maximum = new CharacterListPacket(Slots(5), Enumerable.Repeat(city, 255), CharacterListFlags.None);
 
         Assert.Equal(11 + 5 * 60 + 255 * 89, maximum.Length);
-        Assert.Throws<ArgumentException>(
-            () => new CharacterListPacket(Slots(5), Enumerable.Repeat(city, 256), CharacterListFlags.None)
+        Assert.Throws<ArgumentException>(() => new CharacterListPacket(
+                Slots(5),
+                Enumerable.Repeat(city, 256),
+                CharacterListFlags.None
+            )
         );
     }
 
     [Fact]
     public void Constructor_NullCity_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(
-            () => new CharacterListPacket(Slots(5), new StartingCityContent[] { null! }, CharacterListFlags.None)
+        Assert.Throws<ArgumentException>(() => new CharacterListPacket(
+                Slots(5),
+                new StartingCityContent[] { null! },
+                CharacterListFlags.None
+            )
         );
     }
 
@@ -50,8 +56,7 @@ public sealed class CharacterListPacketTests
     [InlineData(8)]
     public void Constructor_UnsupportedSlotCount_ThrowsArgumentException(int slotCount)
     {
-        Assert.Throws<ArgumentException>(
-            () => new CharacterListPacket(Slots(slotCount), [], CharacterListFlags.None)
+        Assert.Throws<ArgumentException>(() => new CharacterListPacket(Slots(slotCount), [], CharacterListFlags.None)
         );
     }
 

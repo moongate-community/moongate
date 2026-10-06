@@ -4,30 +4,11 @@ using Moongate.Core.DiceNotation;
 namespace Moongate.Core.Primitives;
 
 /// <summary>
-///     A numeric field rolled with dice notation, such as
-///     <c>
-///         "1d25+95"
-///     </c>
-///     or
-///     <c>
-///         "3d6+10"
-///     </c>
-///     , or a constant.
+///     A numeric field rolled with dice notation, such as <c>"1d25+95"</c> or <c>"3d6+10"</c>, or a constant.
 /// </summary>
 /// <remarks>
-///     A uniform range from a to b is one die,
-///     <c>
-///         1d(b-a+1)+(a-1)
-///     </c>
-///     : 96 to 120 is
-///     <c>
-///         1d25+95
-///     </c>
-///     .
-///     <c>
-///         "96-120"
-///     </c>
-///     is a subtraction, -24, not a range.
+///     A uniform range from a to b is one die, <c>1d(b-a+1)+(a-1)</c>: 96 to 120 is <c>1d25+95</c>. <c>"96-120"</c> is
+///     a subtraction, -24, not a range.
 /// </remarks>
 public readonly struct DiceSpec
 {
@@ -76,7 +57,9 @@ public readonly struct DiceSpec
     /// <summary>
     ///     Parses an integer, negative allowed, or a dice expression.
     /// </summary>
-    /// <exception cref="FormatException">The text is neither.</exception>
+    /// <exception cref="FormatException">
+    ///     The text is neither.
+    /// </exception>
     public static DiceSpec Parse(string text)
     {
         return TryParse(text, out var spec)
@@ -87,7 +70,9 @@ public readonly struct DiceSpec
     /// <summary>
     ///     Parses an integer, negative allowed, or a dice expression.
     /// </summary>
-    /// <returns>False, with <paramref name="spec" /> left default, when the text is neither.</returns>
+    /// <returns>
+    ///     False, with <paramref name="spec" /> left default, when the text is neither.
+    /// </returns>
     public static bool TryParse(string? text, out DiceSpec spec)
     {
         spec = default;

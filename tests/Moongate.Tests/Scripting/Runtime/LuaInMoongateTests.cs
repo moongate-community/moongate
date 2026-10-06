@@ -113,7 +113,9 @@ public sealed class LuaInMoongateTests : IDisposable
     [Fact]
     public async Task InfinityAndNotANumber_AreWrittenAsDotNetWritesThem_AndPercentGWritesEveryDigit()
     {
-        var values = await Run("""return tostring(1 / 0), tostring(-1 / 0), tostring(0 / 0), string.format("%g", 0.1 + 0.2)""");
+        var values = await Run(
+            """return tostring(1 / 0), tostring(-1 / 0), tostring(0 / 0), string.format("%g", 0.1 + 0.2)"""
+        );
 
         Assert.Equal(["Infinity", "-Infinity", "NaN", "0.30000000000000004"], values);
     }

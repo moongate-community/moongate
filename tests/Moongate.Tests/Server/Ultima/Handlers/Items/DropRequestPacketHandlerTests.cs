@@ -46,10 +46,11 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemService _items;
     private readonly MobileService _mobiles;
     private readonly StubPacketSendService _sender = new StubPacketSendService().Ignore<PropertyListInfoPacket>();
+
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
-                                                  .Item(BackpackGraphic, TileFlagType.Container, 0)
-                                                  .Item(BagGraphic, TileFlagType.Container, 0)
-                                                  .Item(CoinGraphic, TileFlagType.Generic, 0);
+        .Item(BackpackGraphic, TileFlagType.Container, 0)
+        .Item(BagGraphic, TileFlagType.Container, 0)
+        .Item(CoinGraphic, TileFlagType.Generic, 0);
 
     private readonly ItemEntity _backpack = Item(0x40000001, BackpackGraphic);
     private readonly ItemEntity _bag = Item(0x40000002, BagGraphic);
@@ -75,7 +76,9 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         var sectors = TestSectors.Create();
         _items = TestItems.Create(sectors, new StubMovementService { DropZ = 0 }, _sight);
         _mobiles = new(new StubMovementService(), sectors);
-        _mobiles.EnterWorld(new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) });
+        _mobiles.EnterWorld(
+            new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) }
+        );
         _backpack.Equip(Aria, LayerType.Backpack);
         _bag.PutInContainer(_backpack.Id, new Point2D(50, 50));
         _innerBag.PutInContainer(_bag.Id, new Point2D(30, 30));
@@ -164,8 +167,15 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(100, _pile.Amount);
         Assert.False(_items.TryGet(_coins.Id, out _));
         Assert.Equal([_coins.Id], _items.TombstonesOf(Aria));
-        Assert.Equal([typeof(ContainerItemUpdatePacket), typeof(RemoveEntityPacket)], _sender.Sent.Select(packet => packet.GetType()));
-        Assert.Equal((_pile.Id, 100), (((ContainerItemUpdatePacket)_sender.Sent[0]).Item.Serial, ((ContainerItemUpdatePacket)_sender.Sent[0]).Item.Amount));
+        Assert.Equal(
+            [typeof(ContainerItemUpdatePacket), typeof(RemoveEntityPacket)],
+            _sender.Sent.Select(packet => packet.GetType())
+        );
+        Assert.Equal(
+            (_pile.Id, 100),
+            (((ContainerItemUpdatePacket)_sender.Sent[0]).Item.Serial,
+                ((ContainerItemUpdatePacket)_sender.Sent[0]).Item.Amount)
+        );
         Assert.Equal(_coins.Id, ((RemoveEntityPacket)_sender.Sent[1]).Serial);
         Assert.Null(_session.Get(ItemSessionKeys.Held));
     }
@@ -1061,7 +1071,11 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     public async Task Handle_OnAPlayer_AsksNoScript(uint player)
     {
         _mobiles.EnterWorld(
-            new() { Id = Bran, Name = "Bran", AccountId = new Serial(1003), Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) }
+            new()
+            {
+                Id = Bran, Name = "Bran", AccountId = new Serial(1003), Map = MapType.Trammel,
+                Location = new Point3D(1497, 1628, 0)
+            }
         );
         await HoldingAsync(_coins);
 
@@ -1134,7 +1148,8 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     // An NPC on Aria's row at the given x; Aria stands at 1496.
     private MobileEntity Npc(int x, uint serial = 0x100, MapType map = MapType.Trammel)
     {
-        var npc = new MobileEntity { Id = new(serial), Name = "a banker", TemplateId = "banker", Map = map, Location = new Point3D(x, 1628, 0) };
+        var npc = new MobileEntity
+            { Id = new(serial), Name = "a banker", TemplateId = "banker", Map = map, Location = new Point3D(x, 1628, 0) };
         _mobiles.EnterWorld(npc);
 
         return npc;
@@ -1203,8 +1218,24 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
                 }
             )
         );
-        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _weight, _speech, _fatigue, _capacity, npcScripts: _npcScripts);
-        var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, GridIndex = gridIndex, Destination = destination };
+        var handler = new DropRequestPacketHandler(
+            _items,
+            _mobiles,
+            _view,
+            _tiles,
+            layouts,
+            _sender,
+            TestTooltips.Create(_items, _mobiles),
+            _scripts,
+            _bank,
+            _weight,
+            _speech,
+            _fatigue,
+            _capacity,
+            npcScripts: _npcScripts
+        );
+        var packet = new DropRequestPacket
+            { Item = item, X = x, Y = y, Z = 0, GridIndex = gridIndex, Destination = destination };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));
     }

@@ -10,11 +10,14 @@ public static partial class TextTemplateTokens
     {
         var matches = syntax == TextTemplateSyntaxType.Motd ? FindMotd(source) : DocumentRegex().Matches(source);
         return matches.Select(match => new TextTemplateToken
-        {
-            Index = match.Index,
-            Length = match.Length,
-            Name = match.Value == "$$" ? null : match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Value
-        }).ToArray();
+                {
+                    Index = match.Index,
+                    Length = match.Length,
+                    Name = match.Value == "$$" ? null :
+                        match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Value
+                }
+            )
+            .ToArray();
     }
 
     public static MatchCollection FindMotd(string source)
@@ -25,7 +28,7 @@ public static partial class TextTemplateTokens
     public static bool IsValidName(string name)
     {
         return name.Length > 0 && name[0] is >= 'a' and <= 'z' &&
-            name.Skip(1).All(character => character is >= 'a' and <= 'z' or >= '0' and <= '9' or '_');
+               name.Skip(1).All(character => character is >= 'a' and <= 'z' or >= '0' and <= '9' or '_');
     }
 
     [GeneratedRegex(@"\$\{([^}]*)\}", RegexOptions.CultureInvariant)]

@@ -122,7 +122,9 @@ public sealed class BulletinBoardService : IBulletinBoardService
         }
 
         // A reply whose thread is not there has no place in the list of its board.
-        foreach (var orphan in _messages.Values.Where(message => !message.IsThread && !_messages.ContainsKey(message.ThreadId)).ToArray())
+        foreach (var orphan in _messages.Values
+                     .Where(message => !message.IsThread && !_messages.ContainsKey(message.ThreadId))
+                     .ToArray())
         {
             Forget(orphan);
         }
@@ -166,7 +168,10 @@ public sealed class BulletinBoardService : IBulletinBoardService
     /// </summary>
     public static ItemEntity AsItem(BulletinMessageEntity message)
     {
-        return new() { Id = message.Id, ItemId = MessageItemId, Amount = 1, ContainerId = message.BoardId, GridX = 0, GridY = 0 };
+        return new()
+        {
+            Id = message.Id, ItemId = MessageItemId, Amount = 1, ContainerId = message.BoardId, GridX = 0, GridY = 0
+        };
     }
 
     public IReadOnlyList<BulletinMessageEntity> GetMessages(Serial board)
@@ -174,11 +179,15 @@ public sealed class BulletinBoardService : IBulletinBoardService
         var mine = _messages.Values.Where(message => message.BoardId == board).ToArray();
         var listed = new List<BulletinMessageEntity>(mine.Length);
 
-        foreach (var thread in mine.Where(message => message.IsThread).OrderBy(message => message.PostedAt).ThenBy(message => message.Id.Value))
+        foreach (var thread in mine.Where(message => message.IsThread)
+                     .OrderBy(message => message.PostedAt)
+                     .ThenBy(message => message.Id.Value))
         {
             listed.Add(thread);
             listed.AddRange(
-                mine.Where(message => message.ThreadId == thread.Id).OrderBy(message => message.PostedAt).ThenBy(message => message.Id.Value)
+                mine.Where(message => message.ThreadId == thread.Id)
+                    .OrderBy(message => message.PostedAt)
+                    .ThenBy(message => message.Id.Value)
             );
         }
 
@@ -342,7 +351,9 @@ public sealed class BulletinBoardService : IBulletinBoardService
         var oldest = Now() - _config.ExpireDays * MillisecondsADay;
         var gone = new List<Serial>();
 
-        foreach (var thread in _messages.Values.Where(message => message.BoardId == board && message.IsThread && message.LastReplyAt < oldest).ToArray())
+        foreach (var thread in _messages.Values
+                     .Where(message => message.BoardId == board && message.IsThread && message.LastReplyAt < oldest)
+                     .ToArray())
         {
             gone.AddRange(Remove(thread.Id));
         }
@@ -450,15 +461,15 @@ public sealed class BulletinBoardService : IBulletinBoardService
         while (_messages.Values.Count(message => message.BoardId == board) > _config.MaxMessages)
         {
             var oldest = _messages.Values
-                                  .Where(message => message.BoardId == board && message.IsThread && message.Id != keep)
-                                  .OrderBy(message => message.LastReplyAt)
-                                  .ThenBy(message => message.Id.Value)
-                                  .FirstOrDefault()
+                             .Where(message => message.BoardId == board && message.IsThread && message.Id != keep)
+                             .OrderBy(message => message.LastReplyAt)
+                             .ThenBy(message => message.Id.Value)
+                             .FirstOrDefault()
                          ?? _messages.Values
-                                     .Where(message => message.ThreadId == keep && message.Id != posted.Id)
-                                     .OrderBy(message => message.PostedAt)
-                                     .ThenBy(message => message.Id.Value)
-                                     .FirstOrDefault();
+                             .Where(message => message.ThreadId == keep && message.Id != posted.Id)
+                             .OrderBy(message => message.PostedAt)
+                             .ThenBy(message => message.Id.Value)
+                             .FirstOrDefault();
 
             if (oldest is null)
             {
@@ -475,9 +486,9 @@ public sealed class BulletinBoardService : IBulletinBoardService
     private IEnumerable<BulletinEquipment> Worn(MobileEntity poster)
     {
         return _items.GetWorn(poster.Id)
-                     .Where(item => item.Layer is >= LayerType.OneHanded and <= LayerType.Mount)
-                     .OrderBy(item => item.Layer)
-                     .Select(item => new BulletinEquipment(item.ItemId, item.Hue.Value));
+            .Where(item => item.Layer is >= LayerType.OneHanded and <= LayerType.Mount)
+            .OrderBy(item => item.Layer)
+            .Select(item => new BulletinEquipment(item.ItemId, item.Hue.Value));
     }
 
     // One line of plain text, no longer than the limit.

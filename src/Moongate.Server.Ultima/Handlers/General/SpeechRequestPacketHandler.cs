@@ -24,9 +24,9 @@ namespace Moongate.Server.Ultima.Handlers.General;
 /// <summary>
 ///     Routes normal speech to nearby players and dot-prefixed text to the in-game command system.
 /// </summary>
-public sealed class SpeechRequestPacketHandler :
-    IAsyncPacketHandler<AsciiSpeechRequestPacket>,
-    IAsyncPacketHandler<UnicodeSpeechRequestPacket>
+public sealed class SpeechRequestPacketHandler
+    : IAsyncPacketHandler<AsciiSpeechRequestPacket>,
+        IAsyncPacketHandler<UnicodeSpeechRequestPacket>
 {
     private const int SayRange = 15;
     private const int MaximumTextLength = 128;
@@ -231,8 +231,8 @@ public sealed class SpeechRequestPacketHandler :
                 var hue = line.Level switch
                 {
                     CommandOutputLevel.Warning => WarningHue,
-                    CommandOutputLevel.Error => ErrorHue,
-                    _ => InformationHue
+                    CommandOutputLevel.Error   => ErrorHue,
+                    _                          => InformationHue
                 };
 
                 if (!context.TrySend(SpeechMessageHelper.CreateSystem(line.Text, hue)))

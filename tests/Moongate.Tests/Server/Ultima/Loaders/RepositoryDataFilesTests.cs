@@ -119,8 +119,8 @@ public sealed class RepositoryDataFilesTests
                 [SkillType.RemoveTrap] = 10
             },
             service.GetEntities<SkillContent>()
-                   .Where(skill => skill.Delay is not null)
-                   .ToDictionary(skill => skill.Id, skill => skill.Delay.GetValueOrDefault())
+                .Where(skill => skill.Delay is not null)
+                .ToDictionary(skill => skill.Id, skill => skill.Delay.GetValueOrDefault())
         );
         Assert.Equal(7, service.GetEntities<ProfessionContent>().Count);
         Assert.Equal(3, service.GetEntities<RaceContent>().Count);
@@ -159,7 +159,11 @@ public sealed class RepositoryDataFilesTests
         var speech = new RecordingSpeechService();
         var announcer = new RegionAnnouncer(service, speech);
         var newcomer = new MobileEntity { Id = new Serial(2), AccountId = new Serial(1), Name = "Newcomer" };
-        announcer.RegionChanged(newcomer, null, Assert.Single(regions, region => region.Map == MapType.Trammel && region.Name == "New Haven"));
+        announcer.RegionChanged(
+            newcomer,
+            null,
+            Assert.Single(regions, region => region.Map == MapType.Trammel && region.Name == "New Haven")
+        );
         announcer.LoggedIn(newcomer);
         Assert.Equal(
             [
@@ -168,8 +172,15 @@ public sealed class RepositoryDataFilesTests
             ],
             speech.Told.Select(told => told.Text)
         );
-        Assert.Contains(regions, region => region.Map == MapType.Felucca && region.Priority == 0 && region.Weather == "snowy" && region.Contains(4000, 300, 0));
-        Assert.All(regions.Where(region => region.Type == RegionType.Dungeon), region => Assert.Equal("none", region.Weather));
+        Assert.Contains(
+            regions,
+            region => region.Map == MapType.Felucca && region.Priority == 0 && region.Weather == "snowy" &&
+                      region.Contains(4000, 300, 0)
+        );
+        Assert.All(
+            regions.Where(region => region.Type == RegionType.Dungeon),
+            region => Assert.Equal("none", region.Weather)
+        );
         Assert.Equal(new Point3D(1495, 1629, 10), britain.GoLocation);
         Assert.True(britain.Contains(1495, 1629, 10));
         var lookup = new RegionService(service);
@@ -191,11 +202,14 @@ public sealed class RepositoryDataFilesTests
         Assert.False(bedlam.TeleportIn);
         Assert.True(bedlam.TeleportOut);
         Assert.True(britain.TeleportIn);
-        var crystalCave = regions.Where(region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -90));
+        var crystalCave = regions.Where(region =>
+            region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -90)
+        );
         Assert.False(Assert.Single(crystalCave).TeleportOut);
         Assert.DoesNotContain(
             regions,
-            region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -70) && !region.RecallOut &&
+            region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -70) &&
+                      !region.RecallOut &&
                       region.Areas.Any(area => area.Z2 == -80)
         );
     }
@@ -264,7 +278,10 @@ public sealed class RepositoryDataFilesTests
         var messages = (Tomlyn.Model.TomlTable)own["messages"];
 
         // Every language carries its own text, not the English fallback.
-        Assert.All(Enumerable.Range(30008, 47).Concat(Enumerable.Range(30181, 4)), id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}"));
+        Assert.All(
+            Enumerable.Range(30008, 47).Concat(Enumerable.Range(30181, 4)),
+            id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}")
+        );
     }
 
     [Theory,

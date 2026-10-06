@@ -41,9 +41,14 @@ public sealed class BookDocumentService : IBookDocumentService
     private readonly IPacketSendService? _sender;
     private readonly ILogger _logger = Log.ForContext<BookDocumentService>();
 
-    public BookDocumentService(IBookTemplateService templates, BookContextFactory contexts, IItemService items, IMobileService mobiles,
+    public BookDocumentService(
+        IBookTemplateService templates, BookContextFactory contexts, IItemService items, IMobileService mobiles,
         IItemHandlingService handling, IItemTemplateService itemTemplates, ISessionService sessions, IBankService bank,
-        IGumpService gumps, IGameLoopService loop, Lazy<IScriptEngine> scripts, LocalizationConfig localization, IBookAttachmentPreparationService? attachments = null, IInventoryMutationGuard? inventory = null, IBookAttachmentService? claims = null, ILocalizationService? messages = null, ISpeechService? speech = null, IPacketSendService? sender = null)
+        IGumpService gumps, IGameLoopService loop, Lazy<IScriptEngine> scripts, LocalizationConfig localization,
+        IBookAttachmentPreparationService? attachments = null, IInventoryMutationGuard? inventory = null,
+        IBookAttachmentService? claims = null, ILocalizationService? messages = null, ISpeechService? speech = null,
+        IPacketSendService? sender = null
+    )
     {
         _sender = sender;
         _claims = claims;
@@ -65,10 +70,19 @@ public sealed class BookDocumentService : IBookDocumentService
         _localization = localization;
     }
 
-    public ItemEntity? Give(MobileEntity recipient, string templateId, IReadOnlyDictionary<string, object?>? values = null, string? recordedPlayerName = null)
+    public ItemEntity? Give(
+        MobileEntity recipient, string templateId, IReadOnlyDictionary<string, object?>? values = null,
+        string? recordedPlayerName = null
+    )
     {
         if (!_loop.IsOnLoopThread || !IsLive(recipient) || _inventory?.AllowsOwner(recipient.Id) == false ||
-            !_templates.TryRender(templateId, _contexts.Capture(recipient, recordedPlayerName), _localization.Language, values, out var rendered) ||
+            !_templates.TryRender(
+                templateId,
+                _contexts.Capture(recipient, recordedPlayerName),
+                _localization.Language,
+                values,
+                out var rendered
+            ) ||
             rendered is null)
         {
             return null;
@@ -82,6 +96,7 @@ public sealed class BookDocumentService : IBookDocumentService
             {
                 return null;
             }
+
             payload = _attachments?.Prepare(source);
         }
         catch (Exception exception) when (exception is InvalidDataException or KeyNotFoundException or ArgumentException)
@@ -100,14 +115,24 @@ public sealed class BookDocumentService : IBookDocumentService
         {
             item.SetProp(BookAttachmentCodec.PropKey, payload);
         }
+
         Apply(item, rendered);
         return item;
     }
 
-    public bool Write(ItemEntity item, MobileEntity recipient, string templateId, IReadOnlyDictionary<string, object?>? values = null, string? recordedPlayerName = null)
+    public bool Write(
+        ItemEntity item, MobileEntity recipient, string templateId, IReadOnlyDictionary<string, object?>? values = null,
+        string? recordedPlayerName = null
+    )
     {
         if (!_loop.IsOnLoopThread || !IsLive(recipient) || !IsReadable(item) || _inventory?.Allows(item) == false ||
-            !_templates.TryRender(templateId, _contexts.Capture(recipient, recordedPlayerName), _localization.Language, values, out var rendered) ||
+            !_templates.TryRender(
+                templateId,
+                _contexts.Capture(recipient, recordedPlayerName),
+                _localization.Language,
+                values,
+                out var rendered
+            ) ||
             rendered is null)
         {
             return false;
@@ -124,6 +149,7 @@ public sealed class BookDocumentService : IBookDocumentService
         {
             return false;
         }
+
         Apply(item, rendered);
         return true;
     }
@@ -227,7 +253,8 @@ public sealed class BookDocumentService : IBookDocumentService
 
     private bool IsBook(ItemEntity item)
     {
-        return _itemTemplates.TryGet(item.TemplateId, out var template) && template.ScriptId == BookTextValidation.BookScript;
+        return _itemTemplates.TryGet(item.TemplateId, out var template) &&
+               template.ScriptId == BookTextValidation.BookScript;
     }
 
     // The cover (0xD4), then every page (0x66): the client asks for nothing more.
@@ -244,7 +271,11 @@ public sealed class BookDocumentService : IBookDocumentService
         {
             if (!BookPagination.TryPaginate(content, out var paginated))
             {
-                _logger.Warning("Cannot open book item {Item}: its text needs more than {Pages} pages", item.Id, BookPagination.MaxPages);
+                _logger.Warning(
+                    "Cannot open book item {Item}: its text needs more than {Pages} pages",
+                    item.Id,
+                    BookPagination.MaxPages
+                );
 
                 return false;
             }
@@ -306,13 +337,16 @@ public sealed class BookDocumentService : IBookDocumentService
     {
         var count = IsWritable(item) ? Math.Clamp(BookDocumentText.PagesOf(item), 0, BookPagination.MaxPages) : 0;
 
-        return pages.Count >= count ? pages : [.. pages, .. Enumerable.Repeat<IReadOnlyList<string>>([], count - pages.Count)];
+        return pages.Count >= count
+            ? pages
+            : [.. pages, .. Enumerable.Repeat<IReadOnlyList<string>>([], count - pages.Count)];
     }
 
     private bool OpenNow(GameSession session, MobileEntity reader, ItemEntity item)
     {
         if (!IsLive(reader) || !_sessions.TryGetByCharacterId(reader.Id, out var current) ||
-            !ReferenceEquals(current, session) || !CanRead(session, reader, item) || !TryBuild(session, reader, item, out var gump) || gump is null)
+            !ReferenceEquals(current, session) || !CanRead(session, reader, item) ||
+            !TryBuild(session, reader, item, out var gump) || gump is null)
         {
             return false;
         }
@@ -321,7 +355,9 @@ public sealed class BookDocumentService : IBookDocumentService
         return true;
     }
 
-    private bool TryBuild(GameSession session, MobileEntity reader, ItemEntity item, out Moongate.Server.Ultima.Data.Gumps.GumpInstance? gump)
+    private bool TryBuild(
+        GameSession session, MobileEntity reader, ItemEntity item, out Moongate.Server.Ultima.Data.Gumps.GumpInstance? gump
+    )
     {
         var content = item.GetProp<string?>("book.content") ?? item.GetProp<string?>("jail.text");
         gump = null;
@@ -331,9 +367,16 @@ public sealed class BookDocumentService : IBookDocumentService
         }
 
         var claimLabel = _claims?.CanClaim(item, session) == true
-            ? _messages.Text(BookAttachmentService.ClaimLabelMessage, "Claim attachments") : null;
-        if (!BookGumpRenderer.TryBuild(item.GetProp("book.title", item.Name ?? ""), item.GetProp("book.author", ""), content,
-                claimLabel, (answering, response) => HandleClaim(session, reader, item, answering, response), out gump))
+            ? _messages.Text(BookAttachmentService.ClaimLabelMessage, "Claim attachments")
+            : null;
+        if (!BookGumpRenderer.TryBuild(
+                item.GetProp("book.title", item.Name ?? ""),
+                item.GetProp("book.author", ""),
+                content,
+                claimLabel,
+                (answering, response) => HandleClaim(session, reader, item, answering, response),
+                out gump
+            ))
         {
             _logger.Warning("Cannot display document item {Item}: invalid fields or packet capacity", item.Id);
             return false;
@@ -342,40 +385,57 @@ public sealed class BookDocumentService : IBookDocumentService
         return true;
     }
 
-    private void HandleClaim(GameSession original, MobileEntity reader, ItemEntity letter, GameSession answering, GumpResponse response)
+    private void HandleClaim(
+        GameSession original, MobileEntity reader, ItemEntity letter, GameSession answering, GumpResponse response
+    )
     {
         if (response.ButtonId != 1 || !ReferenceEquals(original, answering) || _claims is null ||
-            !IsLive(reader) || !_sessions.TryGetByCharacterId(reader.Id, out var current) || !ReferenceEquals(current, original) ||
+            !IsLive(reader) || !_sessions.TryGetByCharacterId(reader.Id, out var current) ||
+            !ReferenceEquals(current, original) ||
             !_items.TryGet(letter.Id, out var live) || !ReferenceEquals(live, letter) || !_claims.CanClaim(letter, original))
         {
             return;
         }
+
         _ = ObserveClaimAsync(_claims.ClaimAsync(letter.Id, original), original, reader, letter);
     }
 
-    private async Task ObserveClaimAsync(Task<BookAttachmentClaimResultType> pending, GameSession original, MobileEntity reader, ItemEntity letter)
+    private async Task ObserveClaimAsync(
+        Task<BookAttachmentClaimResultType> pending, GameSession original, MobileEntity reader, ItemEntity letter
+    )
     {
         try
         {
             var result = await pending;
-            _loop.TryPost(new LoopActionWorkItem(() =>
-            {
-                if (!IsLive(reader) || !_sessions.TryGetByCharacterId(reader.Id, out var current) || !ReferenceEquals(current, original) ||
-                    !_items.TryGet(letter.Id, out var live) || !ReferenceEquals(live, letter) || !CanRead(original, reader, letter))
-                {
-                    return;
-                }
-                var (id, fallback) = result switch
-                {
-                    BookAttachmentClaimResultType.Claimed => (BookAttachmentService.SuccessMessage, "The attachments are in your backpack."),
-                    BookAttachmentClaimResultType.NoCapacity => (BookAttachmentService.CapacityMessage, "Your backpack has no room for all the attachments."),
-                    BookAttachmentClaimResultType.Busy => (BookAttachmentService.BusyMessage, "Your backpack is busy. Try again shortly."),
-                    BookAttachmentClaimResultType.Unavailable => (BookAttachmentService.UnavailableMessage, "These attachments cannot be claimed."),
-                    _ => (BookAttachmentService.FailureMessage, "The attachments could not be delivered. Try again shortly.")
-                };
-                _speech?.Tell(reader, _messages.Text(id, fallback));
-                OpenNow(original, reader, letter);
-            }));
+            _loop.TryPost(
+                new LoopActionWorkItem(() =>
+                    {
+                        if (!IsLive(reader) || !_sessions.TryGetByCharacterId(reader.Id, out var current) ||
+                            !ReferenceEquals(current, original) ||
+                            !_items.TryGet(letter.Id, out var live) || !ReferenceEquals(live, letter) ||
+                            !CanRead(original, reader, letter))
+                        {
+                            return;
+                        }
+
+                        var (id, fallback) = result switch
+                        {
+                            BookAttachmentClaimResultType.Claimed => (BookAttachmentService.SuccessMessage,
+                                "The attachments are in your backpack."),
+                            BookAttachmentClaimResultType.NoCapacity => (BookAttachmentService.CapacityMessage,
+                                "Your backpack has no room for all the attachments."),
+                            BookAttachmentClaimResultType.Busy => (BookAttachmentService.BusyMessage,
+                                "Your backpack is busy. Try again shortly."),
+                            BookAttachmentClaimResultType.Unavailable => (BookAttachmentService.UnavailableMessage,
+                                "These attachments cannot be claimed."),
+                            _ => (BookAttachmentService.FailureMessage,
+                                "The attachments could not be delivered. Try again shortly.")
+                        };
+                        _speech?.Tell(reader, _messages.Text(id, fallback));
+                        OpenNow(original, reader, letter);
+                    }
+                )
+            );
         }
         catch (Exception exception)
         {
@@ -385,7 +445,8 @@ public sealed class BookDocumentService : IBookDocumentService
 
     private bool CanRead(GameSession session, MobileEntity reader, ItemEntity item)
     {
-        if (session.NetworkSession.Client is not { IsConnected: true } || !IsReadable(item) || !_bank.CanAccess(session, reader, item))
+        if (session.NetworkSession.Client is not { IsConnected: true } || !IsReadable(item) ||
+            !_bank.CanAccess(session, reader, item))
         {
             return false;
         }
@@ -396,7 +457,7 @@ public sealed class BookDocumentService : IBookDocumentService
         }
 
         return _items.GetGroundRoot(item) is { } root && !_handling.IsHeld(root) &&
-            _items.IsLyingOnGround(root) && _items.CanReach(reader, root);
+               _items.IsLyingOnGround(root) && _items.CanReach(reader, root);
     }
 
     private bool IsLive(MobileEntity mobile)
@@ -407,8 +468,8 @@ public sealed class BookDocumentService : IBookDocumentService
     private bool IsReadable(ItemEntity item)
     {
         return _items.TryGet(item.Id, out var live) && ReferenceEquals(live, item) && item.Amount == 1 &&
-            !IsHeldInChain(item) && _itemTemplates.TryGet(item.TemplateId, out var template) &&
-            template.Stackable == false && BookTextValidation.IsReadableScript(template.ScriptId);
+               !IsHeldInChain(item) && _itemTemplates.TryGet(item.TemplateId, out var template) &&
+               template.Stackable == false && BookTextValidation.IsReadableScript(template.ScriptId);
     }
 
     private bool IsHeldInChain(ItemEntity item)

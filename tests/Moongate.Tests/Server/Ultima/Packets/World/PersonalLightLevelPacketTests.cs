@@ -9,6 +9,9 @@ public sealed class PersonalLightLevelPacketTests
     [Fact]
     public void Encode_WritesTheExpectedBytes()
     {
-        Assert.Equal(Convert.FromHexString("4E0000000205"), PacketCodec.Encode(new PersonalLightLevelPacket(new Serial(0x00000002), 5)));
+        Assert.Equal(
+            Convert.FromHexString("4E0000000205"),
+            PacketCodec.Encode(new PersonalLightLevelPacket(new Serial(0x00000002), 5))
+        );
     }
 }

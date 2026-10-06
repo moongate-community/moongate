@@ -16,8 +16,10 @@ public static class TextTemplateRenderer
         return Expand(source, tokens, replacements);
     }
 
-    public static async ValueTask<string> RenderAsync(string source, Func<string, CancellationToken, ValueTask<string>> resolve,
-        TextTemplateSyntaxType syntax, CancellationToken cancellationToken)
+    public static async ValueTask<string> RenderAsync(
+        string source, Func<string, CancellationToken, ValueTask<string>> resolve,
+        TextTemplateSyntaxType syntax, CancellationToken cancellationToken
+    )
     {
         var tokens = TextTemplateTokens.Find(source, syntax);
         var replacements = new string[tokens.Count];

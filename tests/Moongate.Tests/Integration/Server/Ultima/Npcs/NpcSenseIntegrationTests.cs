@@ -56,7 +56,9 @@ public sealed class NpcSenseIntegrationTests : IDisposable
         );
         _npcScripts = new(
             _engine,
-            new MobileTemplateService(new StubDataLoaderService().With(new MobileTemplate { Id = "orc", ScriptId = "watcher" })),
+            new MobileTemplateService(
+                new StubDataLoaderService().With(new MobileTemplate { Id = "orc", ScriptId = "watcher" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );

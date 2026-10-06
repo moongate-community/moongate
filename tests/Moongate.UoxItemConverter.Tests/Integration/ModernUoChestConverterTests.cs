@@ -7,7 +7,11 @@ namespace Moongate.UoxItemConverter.Tests.Integration;
 
 public sealed class ModernUoChestConverterTests : IDisposable
 {
-    private readonly string _root = Path.Combine(Path.GetTempPath(), "moongate-modernuo-chests-" + Guid.NewGuid().ToString("N"));
+    private readonly string _root = Path.Combine(
+        Path.GetTempPath(),
+        "moongate-modernuo-chests-" + Guid.NewGuid().ToString("N")
+    );
+
     private readonly StringWriter _output = new();
     private readonly StringWriter _error = new();
 
@@ -90,7 +94,8 @@ public sealed class ModernUoChestConverterTests : IDisposable
     [Fact]
     public void Run_EveryMapAndEra_GoIntoOneFilePerMap_AndAPreviousFileIsReplaced()
     {
-        const string chest = """[ { "location": [1, 2, 0], "count": 1, "minDelay": "00:05:00", "maxDelay": "00:10:00", "entries": [ { "name": "TreasureChestLevel4" } ] } ]""";
+        const string chest =
+            """[ { "location": [1, 2, 0], "count": 1, "minDelay": "00:05:00", "maxDelay": "00:10:00", "entries": [ { "name": "TreasureChestLevel4" } ] } ]""";
         Write("shared/felucca/A.json", chest);
         Write("post-uoml/felucca/B.json", chest);
         Write("shared/ilshenar/C.json", chest);
@@ -184,7 +189,10 @@ public sealed class ModernUoChestConverterTests : IDisposable
 
         // The file and the ids stay with the folder; a spawner that names no map takes the folder's.
         Assert.Equal(
-            [("tokuno_chest_shared_fan_dancers_dojo_0", MapType.Malas), ("tokuno_chest_shared_fan_dancers_dojo_1", MapType.Tokuno)],
+            [
+                ("tokuno_chest_shared_fan_dancers_dojo_0", MapType.Malas),
+                ("tokuno_chest_shared_fan_dancers_dojo_1", MapType.Tokuno)
+            ],
             Read("tokuno").Select(spawn => (spawn.Id, spawn.Map))
         );
     }
@@ -203,7 +211,8 @@ public sealed class ModernUoChestConverterTests : IDisposable
 
     private List<SpawnTemplate> Read(string map)
     {
-        return TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(Destination, map, "treasure_chests.toml"))!.Spawn;
+        return TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(Destination, map, "treasure_chests.toml"))!
+            .Spawn;
     }
 
     public void Dispose()

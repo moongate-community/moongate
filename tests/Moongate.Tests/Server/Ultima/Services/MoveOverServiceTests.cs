@@ -18,6 +18,7 @@ public sealed class MoveOverServiceTests
     private readonly ItemService _items;
     private readonly RecordingItemScriptService _scripts = new();
     private readonly MoveOverService _moveOver;
+
     private readonly MobileEntity _aria = new()
     {
         Id = new Serial(2), AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0)
@@ -44,7 +45,8 @@ public sealed class MoveOverServiceTests
     public void SteppedOn_ByAnNpc_RunsOnNpcMoveOverInstead()
     {
         Ground(0x40000010, 1600, 1600, 0);
-        var orc = new MobileEntity { Id = new Serial(0x100), TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+        var orc = new MobileEntity
+            { Id = new Serial(0x100), TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
 
         _moveOver.SteppedOn(orc);
 

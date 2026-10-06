@@ -70,11 +70,11 @@ public sealed class TextPromptResponsePacketHandlerTests : IAsyncDisposable
     {
         _fixture = await SessionFixture.CreateAsync();
         _session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
-        var aria = new MobileEntity { Id = new(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) };
+        var aria = new MobileEntity
+            { Id = new(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) };
         _mobiles.EnterWorld(aria);
         _prompts = new(_mobiles, _sender);
-        await _fixture.ExecuteOnLoopAsync(
-            () =>
+        await _fixture.ExecuteOnLoopAsync(() =>
             {
                 _session.Set(SessionKeys.CharacterId, aria.Id);
                 _prompts.Begin(_session, (_, text) => _answers.Add(text));

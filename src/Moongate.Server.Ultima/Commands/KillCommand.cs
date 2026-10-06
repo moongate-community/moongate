@@ -61,8 +61,7 @@ public sealed class KillCommand : ICommandExecutor
 
         // On the game loop, where the mobiles live.
         var answer = "";
-        var work = new LoopActionWorkItem(
-            () =>
+        var work = new LoopActionWorkItem(() =>
             {
                 if (!_mobiles.TryGet(target.Serial, out var mobile) || !_mobiles.IsInWorld(mobile.Id))
                 {
@@ -73,11 +72,9 @@ public sealed class KillCommand : ICommandExecutor
 
                 var name = mobile.Name ?? "";
                 _mobiles.TryGet(session.CharacterId, out var killer);
-                answer = _death.Kill(mobile, killer)
-                             ? _localization.Text(CommandMessages.Killed, "{0} is dead.", name)
-                             : mobile.IsNpc
-                                 ? _localization.Text(CommandMessages.NotAnNpc, "That is not an NPC.")
-                                 : _localization.Text(CommandMessages.CannotDie, "{0} cannot die.", name);
+                answer = _death.Kill(mobile, killer) ? _localization.Text(CommandMessages.Killed, "{0} is dead.", name) :
+                    mobile.IsNpc ? _localization.Text(CommandMessages.NotAnNpc, "That is not an NPC.") :
+                    _localization.Text(CommandMessages.CannotDie, "{0} cannot die.", name);
             }
         );
         await _loop.PostAsync(work, context.CancellationToken);

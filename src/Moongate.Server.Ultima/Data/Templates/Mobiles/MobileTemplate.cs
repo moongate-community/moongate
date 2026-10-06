@@ -8,11 +8,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Data.Templates.Mobiles;
 
 /// <summary>
-///     An authored mobile definition, creature or human NPC, one TOML entry under
-///     <c>
-///         templates/mobiles/
-///     </c>
-///     . Every field but <see cref="Id" /> may be unset: it is then inherited through
+///     An authored mobile definition, creature or human NPC, one TOML entry under <c>templates/mobiles/</c>. Every
+///     field but <see cref="Id" /> may be unset: it is then inherited through
 ///     <see cref="BaseId" />, and with none anywhere the stated default applies.
 /// </summary>
 public class MobileTemplate
@@ -23,7 +20,8 @@ public class MobileTemplate
     public string Id { get; set; }
 
     /// <summary>
-    ///     The <see cref="Id" /> of another <see cref="MobileTemplate" /> this one inherits unset fields from. Resolved by the loader across every loaded file.
+    ///     The <see cref="Id" /> of another <see cref="MobileTemplate" /> this one inherits unset fields from. Resolved by the
+    ///     loader across every loaded file.
     /// </summary>
     public string? BaseId { get; set; }
 
@@ -38,7 +36,8 @@ public class MobileTemplate
     public string? Name { get; set; }
 
     /// <summary>
-    ///     The id of a list in <c>data/names.toml</c> to draw a random name from. <c>{gender}</c> becomes <c>male</c> or <c>female</c>, the gender the mobile gets. Unset with no <see cref="Name" />: no name.
+    ///     The id of a list in <c>data/names.toml</c> to draw a random name from. <c>{gender}</c> becomes <c>male</c>
+    ///     or <c>female</c>, the gender the mobile gets. Unset with no <see cref="Name" />: no name.
     /// </summary>
     public string? NameList { get; set; }
 
@@ -58,7 +57,8 @@ public class MobileTemplate
     public MobileGenderType? Gender { get; set; }
 
     /// <summary>
-    ///     The race: its body, skin, hair and beard come from <c>data/races.toml</c> when not set here. Unset for a creature.
+    ///     The race: its body, skin, hair and beard come from <c>data/races.toml</c> when not set here. Unset for a
+    ///     creature.
     /// </summary>
     public RaceType? Race { get; set; }
 
@@ -174,8 +174,9 @@ public class MobileTemplate
     public MobileSounds? Sounds { get; set; }
 
     /// <summary>
-    ///     The global Lua table, defined by <c>scripts/mobiles/&lt;script_id&gt;.lua</c>, whose functions handle the NPC's events:
-    ///     <c>on_think</c>, <c>on_speech</c>, <c>on_spawn</c> and <c>on_mobile_in_range</c>. A lower-case Lua identifier.
+    ///     The global Lua table, defined by <c>scripts/mobiles/&lt;script_id&gt;.lua</c>, whose functions handle the
+    ///     NPC's events: <c>on_think</c>, <c>on_speech</c>, <c>on_spawn</c> and <c>on_mobile_in_range</c>. A lower-case
+    ///     Lua identifier.
     ///     Unset: no script.
     /// </summary>
     public string? ScriptId { get; set; }
@@ -204,7 +205,9 @@ public class MobileTemplate
     /// <summary>
     ///     Checks the values a template author can get wrong; the template loader calls it for every template.
     /// </summary>
-    /// <exception cref="InvalidDataException">A value is out of range; the message names the template and the field.</exception>
+    /// <exception cref="InvalidDataException">
+    ///     A value is out of range; the message names the template and the field.
+    /// </exception>
     public void Validate()
     {
         foreach (var (field, dice) in new (string, DiceSpec?)[]
@@ -249,7 +252,8 @@ public class MobileTemplate
             throw Invalid("sounds", "must be 0 or more");
         }
 
-        if (Equipment is not null && Equipment.Any(entry => entry.Items.Count == 0 || entry.Items.Any(string.IsNullOrWhiteSpace)))
+        if (Equipment is not null &&
+            Equipment.Any(entry => entry.Items.Count == 0 || entry.Items.Any(string.IsNullOrWhiteSpace)))
         {
             throw Invalid("equipment", "must name at least one item and no empty item id");
         }

@@ -81,9 +81,9 @@ internal static class PersistenceSchemaCommand
         {
             selectedTarget = migrationTarget switch
             {
-                "auth" => PersistenceDatabaseTarget.Accounts,
+                "auth"  => PersistenceDatabaseTarget.Accounts,
                 "world" => PersistenceDatabaseTarget.Realm,
-                _ => throw new InvalidOperationException("Generate requires --migration-target auth|world.")
+                _       => throw new InvalidOperationException("Generate requires --migration-target auth|world.")
             };
 
             if (migrationOutput is null ||

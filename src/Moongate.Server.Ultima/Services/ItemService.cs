@@ -18,7 +18,8 @@ namespace Moongate.Server.Ultima.Services;
 ///     Keeps the live items by serial, the ones on the ground in the sector grid, the worn ones by wearer and the
 ///     contents by container, so what a mobile owns or a container holds is found without scanning the world. The
 ///     ground rules are
-///     ModernUO's <c>DropToWorld</c>, simplified: a player reaches 2 tiles in line of sight, and a dropped item lands on
+///     ModernUO's <c>DropToWorld</c>, simplified: a player reaches 2 tiles in line of sight, and a dropped item lands
+///     on
 ///     the highest surface up to 16 above the player's feet, without stacking on other ground items. At startup it
 ///     loads the items lying on the ground with their contents.
 /// </summary>
@@ -117,12 +118,15 @@ public sealed class ItemService : IItemService, IMoongateStartupService
                     {
                         throw new InvalidOperationException("Cannot add cyclic inventory.");
                     }
+
                     root = next;
                 }
+
                 EnsureAllowed(root);
                 if (_items.TryGetValue(item.Id, out var previous)) EnsureAllowed(previous);
             }
         }
+
         foreach (var item in batch)
         {
             if (_items.TryGetValue(item.Id, out var previous))
@@ -181,6 +185,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         {
             if (_items.TryGetValue(serial, out var item)) EnsureAllowed(item);
         }
+
         foreach (var serial in batch)
         {
             if (_items.TryRemove(serial, out var item))
@@ -392,7 +397,9 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         rest.Id = serial;
 
         // The timers stay with the part that keeps the serial: the rest is not a second item waiting for them.
-        foreach (var key in rest.Props?.Keys.Where(key => key.StartsWith(ItemTimerQueue.PropPrefix, StringComparison.Ordinal)).ToList() ?? [])
+        foreach (var key in rest.Props?.Keys
+                     .Where(key => key.StartsWith(ItemTimerQueue.PropPrefix, StringComparison.Ordinal))
+                     .ToList() ?? [])
         {
             rest.RemoveProp(key);
         }

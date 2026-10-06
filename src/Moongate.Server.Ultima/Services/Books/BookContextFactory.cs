@@ -18,7 +18,10 @@ public sealed class BookContextFactory
     private readonly MotdServerIdentity _identity;
     private readonly IGameLoopService _loop;
 
-    public BookContextFactory(ISessionService sessions, IAdminServerInfoProvider serverInfo, RealmInstance realm, MotdServerIdentity identity, IGameLoopService loop)
+    public BookContextFactory(
+        ISessionService sessions, IAdminServerInfoProvider serverInfo, RealmInstance realm, MotdServerIdentity identity,
+        IGameLoopService loop
+    )
     {
         _sessions = sessions;
         _serverInfo = serverInfo;
@@ -51,7 +54,8 @@ public sealed class BookContextFactory
             Version = info.Version,
             Codename = info.Codename,
             PlayerName = playerName,
-            UsersOnline = _sessions.GetAll().Count(session => session.CharacterId.IsValid && session.NetworkSession.Client is { IsConnected: true })
+            UsersOnline = _sessions.GetAll()
+                .Count(session => session.CharacterId.IsValid && session.NetworkSession.Client is { IsConnected: true })
         };
     }
 }

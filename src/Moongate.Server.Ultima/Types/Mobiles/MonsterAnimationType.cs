@@ -1,7 +1,8 @@
 namespace Moongate.Server.Ultima.Types.Mobiles;
 
 /// <summary>
-///     The actions of a monster body, by their number in the client's animation files (UOFiddler's names): what <c>mobile.animate</c> plays on a skeleton, an orc or a dragon.
+///     The actions of a monster body, by their number in the client's animation files (UOFiddler's names): what
+///     <c>mobile.animate</c> plays on a skeleton, an orc or a dragon.
 /// </summary>
 public enum MonsterAnimationType
 {

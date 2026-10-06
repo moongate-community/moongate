@@ -43,8 +43,13 @@ public sealed class RepositoryTemplateFilesTests
             Assert.True(source!.Messages.TryGetValue(id.ToString(), out var text));
             Assert.False(string.IsNullOrWhiteSpace(text));
         }
-        if (language == "ita") Assert.Equal("Ritira allegati", source!.Messages[BookAttachmentService.ClaimLabelMessage.ToString()]);
-        Assert.NotEmpty((await new MessagesLoader(Directories(), new LocalizationConfig { Language = language }).LoadDataAsync()).Entities);
+
+        if (language == "ita")
+            Assert.Equal("Ritira allegati", source!.Messages[BookAttachmentService.ClaimLabelMessage.ToString()]);
+        Assert.NotEmpty(
+            (await new MessagesLoader(Directories(), new LocalizationConfig { Language = language }).LoadDataAsync())
+            .Entities
+        );
     }
 
     [Fact]
@@ -54,9 +59,16 @@ public sealed class RepositoryTemplateFilesTests
         var books = (await new BooksLoader(Directories(), new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
         Assert.Equal(66, books.Count);
         var blank = Assert.Single(books, book => book.Id == "blank_book");
-        Assert.Equal(("a book", "$player_name", "readable_book", true, 20, ""), (blank.Title, blank.Author, blank.ItemTemplate, blank.Writable, blank.Pages, blank.Content));
-        Assert.Equal(["jail_release_note", "welcome_letter"], books.Where(book => book.Id is "jail_release_note" or "welcome_letter")
-            .Select(book => book.Id).Order(StringComparer.Ordinal));
+        Assert.Equal(
+            ("a book", "$player_name", "readable_book", true, 20, ""),
+            (blank.Title, blank.Author, blank.ItemTemplate, blank.Writable, blank.Pages, blank.Content)
+        );
+        Assert.Equal(
+            ["jail_release_note", "welcome_letter"],
+            books.Where(book => book.Id is "jail_release_note" or "welcome_letter")
+                .Select(book => book.Id)
+                .Order(StringComparer.Ordinal)
+        );
         var welcome = Assert.Single(books, book => book.Id == "welcome_letter");
         Assert.Equal(["contact_name"], welcome.Variables);
         Assert.Equal("readable_scroll", welcome.ItemTemplate);
@@ -72,7 +84,8 @@ public sealed class RepositoryTemplateFilesTests
         var data = new StubDataLoaderService().With(items);
         var catalog = ImportedBookIds();
         var books = (await new BooksLoader(Directories(), data).LoadDataAsync()).Entities
-            .Where(book => catalog.Contains(book.Id)).ToArray();
+            .Where(book => catalog.Contains(book.Id))
+            .ToArray();
         Assert.Equal(62, books.Length);
         Assert.Equal(9, books.Count(book => book.Id.StartsWith("grimmoch_journal", StringComparison.Ordinal)));
         Assert.Equal(6, books.Count(book => book.Id.StartsWith("lysander_notebook", StringComparison.Ordinal)));
@@ -85,8 +98,20 @@ public sealed class RepositoryTemplateFilesTests
         {
             Assert.Empty(book.Variables);
             Assert.Empty(book.Attachments);
-            Assert.Equal(["cze", "fre", "ger", "ita", "pol", "por", "spa"], book.Translations.Keys.Order(StringComparer.Ordinal));
-            Assert.True(service.TryRender(book.Id, new TextTemplateContext { PlayerName = "Changed reader" }, "eng", null, out var rendered), book.Id);
+            Assert.Equal(
+                ["cze", "fre", "ger", "ita", "pol", "por", "spa"],
+                book.Translations.Keys.Order(StringComparer.Ordinal)
+            );
+            Assert.True(
+                service.TryRender(
+                    book.Id,
+                    new TextTemplateContext { PlayerName = "Changed reader" },
+                    "eng",
+                    null,
+                    out var rendered
+                ),
+                book.Id
+            );
             Assert.Equal((book.Title, book.Author, book.Content), (rendered!.Title, rendered.Author, rendered.Content));
             Assert.True(BookGumpRenderer.TryBuild(rendered.Title, rendered.Author, rendered.Content, out _), book.Id);
         }
@@ -109,7 +134,8 @@ public sealed class RepositoryTemplateFilesTests
         var data = new StubDataLoaderService().With(items);
         var catalog = ImportedBookIds();
         var books = (await new BooksLoader(Directories(), data).LoadDataAsync()).Entities
-            .Where(book => catalog.Contains(book.Id)).ToArray();
+            .Where(book => catalog.Contains(book.Id))
+            .ToArray();
         data.With(books);
         var service = new BookTemplateService(data);
         Assert.Equal("readable_book", Assert.Single(items, item => item.Id == "readable_book").ScriptId);
@@ -126,9 +152,15 @@ public sealed class RepositoryTemplateFilesTests
             Assert.Equal(book.Content.Split("\n\n").Length, rendered!.Content.Split("\n\n").Length);
             Assert.True(BookPagination.TryPaginate(rendered.Content, out var pages), book.Id);
             Assert.All(pages, page => Assert.InRange(page.Count, 0, BookPagination.LinesPerPage));
-            Assert.Equal(rendered.Content.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries), pages.SelectMany(page => page).SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)));
+            Assert.Equal(
+                rendered.Content.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries),
+                pages.SelectMany(page => page).SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            );
             Assert.Equal(pages.Count, new BookPagesPacket(new(0x40000001), pages).PageCount);
-            Assert.Equal(pages.Count, new BookHeaderPacket(new(0x40000001), pages.Count, rendered.Title, rendered.Author).PageCount);
+            Assert.Equal(
+                pages.Count,
+                new BookHeaderPacket(new(0x40000001), pages.Count, rendered.Title, rendered.Author).PageCount
+            );
         }
     }
 
@@ -146,7 +178,8 @@ public sealed class RepositoryTemplateFilesTests
         var data = new StubDataLoaderService().With(items);
         var catalog = ImportedBookIds();
         var books = (await new BooksLoader(Directories(), data).LoadDataAsync()).Entities
-            .Where(book => catalog.Contains(book.Id)).ToArray();
+            .Where(book => catalog.Contains(book.Id))
+            .ToArray();
         data.With(books);
         var service = new BookTemplateService(data);
         Assert.Equal(62, books.Length);
@@ -156,12 +189,24 @@ public sealed class RepositoryTemplateFilesTests
             Assert.False(string.IsNullOrWhiteSpace(translation!.Title), book.Id);
             Assert.False(string.IsNullOrWhiteSpace(translation.Content), book.Id);
             Assert.Null(translation.Author);
-            Assert.True(service.TryRender(book.Id, new TextTemplateContext { PlayerName = "Another reader" }, language, null, out var rendered), book.Id);
+            Assert.True(
+                service.TryRender(
+                    book.Id,
+                    new TextTemplateContext { PlayerName = "Another reader" },
+                    language,
+                    null,
+                    out var rendered
+                ),
+                book.Id
+            );
             Assert.Equal(translation.Title, rendered!.Title);
             Assert.Equal(translation.Content, rendered.Content);
             Assert.Equal(book.Author, rendered.Author);
             Assert.NotEqual(book.Content, rendered.Content);
-            Assert.True(BookGumpRenderer.TryBuild(rendered.Title, rendered.Author, rendered.Content, out _), $"{book.Id}: {language}");
+            Assert.True(
+                BookGumpRenderer.TryBuild(rendered.Title, rendered.Author, rendered.Content, out _),
+                $"{book.Id}: {language}"
+            );
         }
     }
 
@@ -182,8 +227,11 @@ public sealed class RepositoryTemplateFilesTests
 
         Assert.Equal(55, rows.Count);
         Assert.Contains(rows, row => row.Fame == 0 && row.Karma == -15000 && row.Title == "The Outcast");
-        Assert.Contains(rows, row => row.Fame == 10000 && row.Karma == 10000 &&
-                                     row.Title == "The Glorious Lord" && row.FemaleTitle == "The Glorious Lady");
+        Assert.Contains(
+            rows,
+            row => row.Fame == 10000 && row.Karma == 10000 &&
+                   row.Title == "The Glorious Lord" && row.FemaleTitle == "The Glorious Lady"
+        );
     }
 
     public RepositoryTemplateFilesTests()
@@ -230,7 +278,10 @@ public sealed class RepositoryTemplateFilesTests
         var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
         var corpse = templates["corpse"];
-        Assert.Equal((0x2006u, (bool?)false, (bool?)true, (int?)7), (corpse.ItemId.Value, corpse.Movable, corpse.Decays, corpse.DecayMinutes));
+        Assert.Equal(
+            (0x2006u, (bool?)false, (bool?)true, (int?)7),
+            (corpse.ItemId.Value, corpse.Movable, corpse.Decays, corpse.DecayMinutes)
+        );
     }
 
     [Fact]
@@ -260,7 +311,9 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Null(templates["base_heater_shield"].TwoHandedWeapon);
         Assert.Null(templates["0x0f64_torch"].TwoHandedWeapon);
         Assert.All(
-            templates.Values.Where(t => t.Name?.EndsWith("shield", StringComparison.Ordinal) == true && t.Layer == LayerType.TwoHanded),
+            templates.Values.Where(t =>
+                t.Name?.EndsWith("shield", StringComparison.Ordinal) == true && t.Layer == LayerType.TwoHanded
+            ),
             shield => Assert.Null(shield.TwoHandedWeapon)
         );
     }
@@ -305,7 +358,8 @@ public sealed class RepositoryTemplateFilesTests
         var directories = Directories();
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
         var loader = new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots));
 
         var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
@@ -313,10 +367,16 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(677, mobiles.Count);
         Assert.Equal("{gender}", mobiles["guard"].NameList);
         // Moongate's own cats inherit the UOX3 cat and add their name and script.
-        Assert.Equal((201, "Orione", "orione"), (mobiles["orione"].Body, mobiles["orione"].Name, mobiles["orione"].ScriptId));
+        Assert.Equal(
+            (201, "Orione", "orione"),
+            (mobiles["orione"].Body, mobiles["orione"].Name, mobiles["orione"].ScriptId)
+        );
         Assert.Equal((201, "Vega", "vega"), (mobiles["vega"].Body, mobiles["vega"].Name, mobiles["vega"].ScriptId));
         var lilly = mobiles["lilly"];
-        Assert.Equal(("Lilly", "the Noble", 32000, 32000), (lilly.Name, lilly.Title, lilly.Fame!.Value.Roll(), lilly.Karma!.Value.Roll()));
+        Assert.Equal(
+            ("Lilly", "the Noble", 32000, 32000),
+            (lilly.Name, lilly.Title, lilly.Fame!.Value.Roll(), lilly.Karma!.Value.Roll())
+        );
         Assert.Equal(
             ["0x230e_gilded_dress", "0x1711_thigh_boots", "base_royal_circlet"],
             lilly.Equipment!.SelectMany(entry => entry.Items)
@@ -329,12 +389,19 @@ public sealed class RepositoryTemplateFilesTests
         var directories = Directories();
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
-        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots)).LoadDataAsync())
-                      .Entities.ToDictionary(t => t.Id);
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            ).LoadDataAsync())
+            .Entities.ToDictionary(t => t.Id);
 
         // The creatures that go for the players, those that keep to themselves and those that run.
-        Assert.All(new[] { "orc", "skeleton", "ogre", "lizardman", "dragon" }, id => Assert.Equal("monster", mobiles[id].ScriptId));
+        Assert.All(
+            new[] { "orc", "skeleton", "ogre", "lizardman", "dragon" },
+            id => Assert.Equal("monster", mobiles[id].ScriptId)
+        );
         Assert.Equal("scared_animal", mobiles["rabbit"].ScriptId);
         Assert.Contains(mobiles.Values, template => template.ScriptId == "animal");
         Assert.True(mobiles.Values.Count(template => template.ScriptId == "monster") > 200);
@@ -346,21 +413,31 @@ public sealed class RepositoryTemplateFilesTests
         var directories = Directories();
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
-        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots)).LoadDataAsync())
-                      .Entities.ToDictionary(t => t.Id);
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            ).LoadDataAsync())
+            .Entities.ToDictionary(t => t.Id);
 
         // A ratman archer goes for the players, and what it holds is a bow: its item template shoots.
         var archer = mobiles["ratmanarcher"];
         Assert.Equal("monster", archer.ScriptId);
-        var held = archer.Equipment!.SelectMany(entry => entry.Items).Select(id => items.FirstOrDefault(item => item.Id == id || item.Id.StartsWith(id + "_", StringComparison.Ordinal)));
+        var held = archer.Equipment!.SelectMany(entry => entry.Items)
+            .Select(id =>
+                items.FirstOrDefault(item => item.Id == id || item.Id.StartsWith(id + "_", StringComparison.Ordinal))
+            );
         Assert.Contains(held, item => item?.WeaponType is WeaponType.Bow or WeaponType.Crossbow);
 
         // The guard of Ilshenar and Malas: the guard script, invulnerable, with a bow in its hands and the skill to use it.
         var guard = mobiles["archerguard"];
         Assert.Equal(("guard", NotorietyType.Invulnerable), (guard.ScriptId, guard.Notoriety));
         Assert.Contains(
-            guard.Equipment!.SelectMany(entry => entry.Items).Select(id => items.FirstOrDefault(item => item.Id == id || item.Id.StartsWith(id + "_", StringComparison.Ordinal))),
+            guard.Equipment!.SelectMany(entry => entry.Items)
+                .Select(id =>
+                    items.FirstOrDefault(item => item.Id == id || item.Id.StartsWith(id + "_", StringComparison.Ordinal))
+                ),
             item => item?.WeaponType is WeaponType.Bow
         );
         Assert.True(guard.Skills!.ContainsKey("archery"));
@@ -378,9 +455,13 @@ public sealed class RepositoryTemplateFilesTests
         var directories = Directories();
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
-        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots)).LoadDataAsync())
-                      .Entities.ToDictionary(t => t.Id);
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            ).LoadDataAsync())
+            .Entities.ToDictionary(t => t.Id);
 
         Assert.All(
             new[] { "healer", "m_healer", "f_healer", "whealer", "m_whealer", "f_whealer" },
@@ -397,16 +478,24 @@ public sealed class RepositoryTemplateFilesTests
         var directories = Directories();
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
-        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots)).LoadDataAsync())
-                      .Entities.ToDictionary(t => t.Id);
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            ).LoadDataAsync())
+            .Entities.ToDictionary(t => t.Id);
 
         // Every template that inherits the base vendor, and the bankers and the guards, which do not.
         var vendors = mobiles.Values.Where(t => t.Id == "basevendor" || IsVendor(t, mobiles)).ToList();
         Assert.True(vendors.Count > 100);
         Assert.All(vendors, t => Assert.True(t.Notoriety == NotorietyType.Invulnerable, $"{t.Id} is not invulnerable"));
         Assert.All(
-            new[] { "banker", "m_banker", "f_banker", "gypsybanker", "m_gypsybanker", "f_gypsybanker", "guard", "m_guard", "f_guard" },
+            new[]
+            {
+                "banker", "m_banker", "f_banker", "gypsybanker", "m_gypsybanker", "f_gypsybanker", "guard", "m_guard",
+                "f_guard"
+            },
             id => Assert.Equal(NotorietyType.Invulnerable, mobiles[id].Notoriety)
         );
         // The townfolk and the monsters are not.
@@ -415,7 +504,9 @@ public sealed class RepositoryTemplateFilesTests
 
     private static bool IsVendor(MobileTemplate template, Dictionary<string, MobileTemplate> mobiles)
     {
-        for (var parent = template.BaseId; parent is not null && mobiles.TryGetValue(parent, out var next); parent = next.BaseId)
+        for (var parent = template.BaseId;
+             parent is not null && mobiles.TryGetValue(parent, out var next);
+             parent = next.BaseId)
         {
             if (parent == "basevendor")
             {
@@ -432,7 +523,8 @@ public sealed class RepositoryTemplateFilesTests
         var directories = Directories();
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
         var loader = new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots));
 
         var bankers = (await loader.LoadDataAsync()).Entities
@@ -452,18 +544,27 @@ public sealed class RepositoryTemplateFilesTests
         var directories = Directories();
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
-        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots))
-                          .LoadDataAsync()).Entities.ToArray();
-        var lists = (await new NpcListsLoader(directories, new StubDataLoaderService().With(mobiles)).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            )
+            .LoadDataAsync()).Entities.ToArray();
+        var lists = (await new NpcListsLoader(directories, new StubDataLoaderService().With(mobiles)).LoadDataAsync())
+            .Entities.ToArray();
 
-        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists).With(items)).LoadDataAsync())
-                     .Entities.ToDictionary(spawn => spawn.Id);
+        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists).With(items))
+                .LoadDataAsync())
+            .Entities.ToDictionary(spawn => spawn.Id);
 
         Assert.Equal(446, lists.Length);
         Assert.Equal(4450, spawns.Count);
         // The treasure chests of ModernUO's spawners: regions of items.
-        var chests = spawns.Values.Where(spawn => spawn.ItemIds.Count > 0 && !spawn.Id.StartsWith("felucca_jail_chest_", StringComparison.Ordinal)).ToList();
+        var chests = spawns.Values.Where(spawn =>
+                spawn.ItemIds.Count > 0 && !spawn.Id.StartsWith("felucca_jail_chest_", StringComparison.Ordinal)
+            )
+            .ToList();
         Assert.Equal(399, chests.Count);
         Assert.Equal(633, chests.Sum(chest => chest.Max));
         Assert.Equal(
@@ -493,12 +594,27 @@ public sealed class RepositoryTemplateFilesTests
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var races = (await new RacesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
-        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots))
-                       .LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            )
+            .LoadDataAsync()).Entities.ToArray();
         var loaders = new StubDataLoaderService().With(names).With(races).With(mobiles);
         var factory = new MobileFactoryService(
-            new MobileTemplateService(loaders), new NameService(loaders), loaders, null!, null!, null!, null!, null!, null!, null!, null!, null!
+            new MobileTemplateService(loaders),
+            new NameService(loaders),
+            loaders,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!
         );
 
         var guard = factory.Create("guard");
@@ -535,7 +651,8 @@ public sealed class RepositoryTemplateFilesTests
         var directories = Directories();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
 
-        var tables = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
+        var tables = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities;
 
         Assert.Equal(126, tables.Count);
         // What the town containers fill up with: ModernUO's 35 kinds of place.
@@ -552,13 +669,19 @@ public sealed class RepositoryTemplateFilesTests
         var directories = Directories();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var templates = items.ToDictionary(template => template.Id);
-        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
         var tables = loots.ToDictionary(table => table.Id);
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots))
-                          .LoadDataAsync()).Entities.ToArray();
-        var lists = (await new NpcListsLoader(directories, new StubDataLoaderService().With(mobiles)).LoadDataAsync()).Entities.ToArray();
-        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists).With(items)).LoadDataAsync()).Entities;
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            )
+            .LoadDataAsync()).Entities.ToArray();
+        var lists = (await new NpcListsLoader(directories, new StubDataLoaderService().With(mobiles)).LoadDataAsync())
+            .Entities.ToArray();
+        var spawns = (await new SpawnsLoader(directories, new StubDataLoaderService().With(mobiles).With(lists).With(items))
+            .LoadDataAsync()).Entities;
         var jail = Assert.Single((await new JailLoader(directories).LoadDataAsync()).Entities);
 
         Assert.Equal("jail_note", templates[JailService.NoteTemplate].ScriptId);
@@ -592,7 +715,9 @@ public sealed class RepositoryTemplateFilesTests
     {
         var folder = Path.Combine(FindRepositoryRoot(), "moongate_root", "templates", "books", "modernuo");
 
-        return Directory.EnumerateFiles(folder, "*.toml").Select(file => Path.GetFileNameWithoutExtension(file)!).ToHashSet(StringComparer.Ordinal);
+        return Directory.EnumerateFiles(folder, "*.toml")
+            .Select(file => Path.GetFileNameWithoutExtension(file)!)
+            .ToHashSet(StringComparer.Ordinal);
     }
 
     private static DirectoriesConfig Directories()

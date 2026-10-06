@@ -29,33 +29,37 @@ public sealed class TooltipServiceTests
     public TooltipServiceTests()
     {
         var data = new StubDataLoaderService()
-                   .With(
-                       new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
-                       new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Name = "robe of the magi", Weight = 2m },
-                       new ItemTemplate { Id = "blessed_ring", ItemId = new Serial(0x108A), LootType = LootType.Blessed },
-                       new ItemTemplate { Id = "feather", ItemId = new Serial(0x1BD1), Weight = 0.1m },
-                       new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false },
-                       new ItemTemplate { Id = "teleporter", ItemId = new Serial(0x1BC3), Visibility = AccountType.GameMaster }
-                   )
-                   .With(
-                       new MessageContent { Id = 9055, Text = "[Benedetto]" },
-                       new MessageContent { Id = 30005, Text = "[Maledetto]" },
-                       new MessageContent { Id = 30006, Text = "Peso: 1 pietra" },
-                       new MessageContent { Id = 30007, Text = "Peso: {0} pietre" },
-                       new MessageContent { Id = 30000, Text = "Comune" },
-                       new MessageContent { Id = 30002, Text = "Raro" },
-                       new MessageContent { Id = 30004, Text = "Leggendario" }
-                   );
+            .With(
+                new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
+                new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Name = "robe of the magi", Weight = 2m },
+                new ItemTemplate { Id = "blessed_ring", ItemId = new Serial(0x108A), LootType = LootType.Blessed },
+                new ItemTemplate { Id = "feather", ItemId = new Serial(0x1BD1), Weight = 0.1m },
+                new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false },
+                new ItemTemplate { Id = "teleporter", ItemId = new Serial(0x1BC3), Visibility = AccountType.GameMaster }
+            )
+            .With(
+                new MessageContent { Id = 9055, Text = "[Benedetto]" },
+                new MessageContent { Id = 30005, Text = "[Maledetto]" },
+                new MessageContent { Id = 30006, Text = "Peso: 1 pietra" },
+                new MessageContent { Id = 30007, Text = "Peso: {0} pietre" },
+                new MessageContent { Id = 30000, Text = "Comune" },
+                new MessageContent { Id = 30002, Text = "Raro" },
+                new MessageContent { Id = 30004, Text = "Leggendario" }
+            );
         var tiles = new FakeTileDataService()
-                    .Item(0x0EED, TileFlagType.Generic, 0)
-                    .Item(0x1F03, TileFlagType.Wearable, 0)
-                    .Item(0x108A, TileFlagType.Wearable, 0)
-                    .Item(0x4001, TileFlagType.None, 0);
+            .Item(0x0EED, TileFlagType.Generic, 0)
+            .Item(0x1F03, TileFlagType.Wearable, 0)
+            .Item(0x108A, TileFlagType.Wearable, 0)
+            .Item(0x4001, TileFlagType.None, 0);
         var sectors = TestSectors.Create();
         _items = TestItems.Create(sectors);
         _mobiles = new(new StubMovementService(), sectors);
-        _mobiles.EnterWorld(new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1000, 1000, 0) });
-        _mobiles.EnterWorld(new() { Id = Bran, Name = "Bran", Map = MapType.Trammel, Location = new Point3D(1010, 1000, 0) });
+        _mobiles.EnterWorld(
+            new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1000, 1000, 0) }
+        );
+        _mobiles.EnterWorld(
+            new() { Id = Bran, Name = "Bran", Map = MapType.Trammel, Location = new Point3D(1010, 1000, 0) }
+        );
         _tooltips = new(
             new ItemTemplateService(data),
             tiles,
@@ -248,7 +252,8 @@ public sealed class TooltipServiceTests
         Assert.Equal("2\ta b", _tooltips.Build(robe).Entries[0].Arguments);
     }
 
-    [Theory, InlineData(LootType.Blessed, "[Benedetto]"), InlineData(LootType.Newbied, "[Benedetto]"), InlineData(LootType.Cursed, "[Maledetto]")]
+    [Theory, InlineData(LootType.Blessed, "[Benedetto]"), InlineData(LootType.Newbied, "[Benedetto]"),
+     InlineData(LootType.Cursed, "[Maledetto]")]
     public void Build_TheLootTypeOfTheItem_AddsItsLineInTheServerLanguage(LootType type, string text)
     {
         var robe = Item("robe", 0x1F03);
@@ -278,7 +283,10 @@ public sealed class TooltipServiceTests
     [Fact]
     public void Build_ACommonItem_ShowsNoRarity()
     {
-        Assert.DoesNotContain(_tooltips.Build(Item("robe", 0x1F03)).Entries, line => line.Arguments.Contains("Comune") || line.Arguments.Contains("BASEFONT"));
+        Assert.DoesNotContain(
+            _tooltips.Build(Item("robe", 0x1F03)).Entries,
+            line => line.Arguments.Contains("Comune") || line.Arguments.Contains("BASEFONT")
+        );
     }
 
     [Theory]
@@ -291,7 +299,10 @@ public sealed class TooltipServiceTests
         var robe = Item("robe", 0x1F03);
         robe.Rarity = rarity;
 
-        Assert.Single(_tooltips.Build(robe).Entries, line => line.Arguments.StartsWith("<BASEFONT COLOR=#", StringComparison.Ordinal));
+        Assert.Single(
+            _tooltips.Build(robe).Entries,
+            line => line.Arguments.StartsWith("<BASEFONT COLOR=#", StringComparison.Ordinal)
+        );
     }
 
     [Fact]
@@ -465,7 +476,8 @@ public sealed class TooltipServiceTests
     [Fact]
     public void TryBuildFor_AMobile_IsBuiltOnlyInViewRangeOnTheSameMap()
     {
-        var elsewhere = new MobileEntity { Id = new(0x00000004), Name = "Far", Map = MapType.Felucca, Location = new Point3D(1000, 1000, 0) };
+        var elsewhere = new MobileEntity
+            { Id = new(0x00000004), Name = "Far", Map = MapType.Felucca, Location = new Point3D(1000, 1000, 0) };
         _mobiles.EnterWorld(elsewhere);
 
         Assert.True(_tooltips.TryBuildFor(Aria, Bran, out var list));

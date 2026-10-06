@@ -30,19 +30,18 @@ public sealed class ContainerContentPacket : BasePacket<ContainerContentPacket>,
     {
         ArgumentNullException.ThrowIfNull(items);
 
-        Items = items.Select(
-                         item => new ContainerItemEntry(
-                             item.Id,
-                             item.ItemId,
-                             item.Amount,
-                             item.GridX ?? 0,
-                             item.GridY ?? 0,
-                             (byte)(item.GridIndex ?? 0),
-                             item.ContainerId ?? default,
-                             item.Hue
-                         )
-                     )
-                     .ToArray();
+        Items = items.Select(item => new ContainerItemEntry(
+                    item.Id,
+                    item.ItemId,
+                    item.Amount,
+                    item.GridX ?? 0,
+                    item.GridY ?? 0,
+                    (byte)(item.GridIndex ?? 0),
+                    item.ContainerId ?? default,
+                    item.Hue
+                )
+            )
+            .ToArray();
         GridBytes = gridBytes;
         Length = HeaderLength + Items.Count * (gridBytes ? GridItemLength : ItemLength);
     }

@@ -4,15 +4,19 @@ using ShaiRandom.Generators;
 namespace Moongate.Core.DiceNotation.Terms;
 
 /// <summary>
-/// Term representing the addition operator -- adds two terms together.
+///     Term representing the addition operator -- adds two terms together.
 /// </summary>
 public class AddTerm : ITerm
 {
     /// <summary>
-    /// Constructor. Takes the two terms to add.
+    ///     Constructor. Takes the two terms to add.
     /// </summary>
-    /// <param name="term1">Left-hand side.</param>
-    /// <param name="term2">Right-hand side.</param>
+    /// <param name="term1">
+    ///     Left-hand side.
+    /// </param>
+    /// <param name="term2">
+    ///     Right-hand side.
+    /// </param>
     public AddTerm(ITerm term1, ITerm term2)
     {
         Term1 = term1;
@@ -20,29 +24,35 @@ public class AddTerm : ITerm
     }
 
     /// <summary>
-    /// First term (left-hand side).
+    ///     First term (left-hand side).
     /// </summary>
     public readonly ITerm Term1;
 
     /// <summary>
-    /// Second term (right-hand side).
+    ///     Second term (right-hand side).
     /// </summary>
     public readonly ITerm Term2;
 
     /// <summary>
-    /// Adds its two terms together, evaluating those two terms as necessary.
+    ///     Adds its two terms together, evaluating those two terms as necessary.
     /// </summary>
-    /// <param name="rng">The rng to use, passed to other terms.</param>
-    /// <returns>The result of adding <see cref="Term1" /> and <see cref="Term2" />.</returns>
+    /// <param name="rng">
+    ///     The rng to use, passed to other terms.
+    /// </param>
+    /// <returns>
+    ///     The result of adding <see cref="Term1" /> and <see cref="Term2" />.
+    /// </returns>
     public int GetResult(IEnhancedRandom rng)
     {
         return Term1.GetResult(rng) + Term2.GetResult(rng);
     }
 
     /// <summary>
-    /// Converts to a parenthesized string.
+    ///     Converts to a parenthesized string.
     /// </summary>
-    /// <returns>A parenthesized string representing the term.</returns>
+    /// <returns>
+    ///     A parenthesized string representing the term.
+    /// </returns>
     /// <inheritdoc />
     public (int Min, int Max) GetBounds()
     {

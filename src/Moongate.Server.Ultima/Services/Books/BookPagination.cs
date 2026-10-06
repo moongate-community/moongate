@@ -67,20 +67,19 @@ public static class BookPagination
     {
         ArgumentNullException.ThrowIfNull(pages);
 
-        var texts = pages.Select(
-                             page =>
-                             {
-                                 var lines = page.ToList();
+        var texts = pages.Select(page =>
+                {
+                    var lines = page.ToList();
 
-                                 while (lines.Count > 0 && string.IsNullOrEmpty(lines[^1]))
-                                 {
-                                     lines.RemoveAt(lines.Count - 1);
-                                 }
+                    while (lines.Count > 0 && string.IsNullOrEmpty(lines[^1]))
+                    {
+                        lines.RemoveAt(lines.Count - 1);
+                    }
 
-                                 return string.Join('\n', lines.Select(line => line.Length == 0 ? BlankLine : line));
-                             }
-                         )
-                         .ToList();
+                    return string.Join('\n', lines.Select(line => line.Length == 0 ? BlankLine : line));
+                }
+            )
+            .ToList();
 
         while (texts.Count > 0 && texts[^1].Length == 0)
         {

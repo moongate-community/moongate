@@ -61,7 +61,10 @@ public sealed class NpcServiceTests
             .StartAsync();
 
         Assert.True(mobiles.IsInWorld(orc.Id));
-        Assert.Equal([orc.Id], sectors.GetMobilesInRange(MapType.Trammel, new Point3D(1497, 1628, 0), 0).Select(mobile => mobile.Id));
+        Assert.Equal(
+            [orc.Id],
+            sectors.GetMobilesInRange(MapType.Trammel, new Point3D(1497, 1628, 0), 0).Select(mobile => mobile.Id)
+        );
         Assert.All([shirt.Id, backpack.Id, gold.Id], serial => Assert.True(items.TryGet(serial, out _)));
         Assert.False(mobiles.IsInWorld(aria.Id));
         Assert.False(items.TryGet(ariaPack.Id, out _));
@@ -81,9 +84,16 @@ public sealed class NpcServiceTests
         await host.Owner.InitializeAsync();
         var mobileData = host.Container.Resolve<IDataAccess<MobileEntity>>();
         var itemData = host.Container.Resolve<IDataAccess<ItemEntity>>();
-        var banker = new MobileEntity { Name = "Bob", TemplateId = "banker", Body = 0x0190, Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) };
-        var cat = new MobileEntity { Name = "a cat", TemplateId = "cat", Body = 201, Map = MapType.Trammel, Location = new Point3D(1498, 1628, 0) };
-        var priest = new MobileEntity { Name = "Fra", TemplateId = "priest", Body = 0x0190, Map = MapType.Trammel, Location = new Point3D(1499, 1628, 0) };
+        var banker = new MobileEntity
+        {
+            Name = "Bob", TemplateId = "banker", Body = 0x0190, Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0)
+        };
+        var cat = new MobileEntity
+            { Name = "a cat", TemplateId = "cat", Body = 201, Map = MapType.Trammel, Location = new Point3D(1498, 1628, 0) };
+        var priest = new MobileEntity
+        {
+            Name = "Fra", TemplateId = "priest", Body = 0x0190, Map = MapType.Trammel, Location = new Point3D(1499, 1628, 0)
+        };
         var rat = new MobileEntity
         {
             Name = "a rat", TemplateId = "rat", Body = 238, Map = MapType.Trammel, Location = new Point3D(1500, 1628, 0),
@@ -106,7 +116,13 @@ public sealed class NpcServiceTests
         );
 
         await new NpcService(
-                new StubMobileFactoryService { Spawned = new SpawnedMobile(banker, [], null!, []) }, mobiles, items, new RecordingWorldViewService(), mobileData, itemData, fixture.Loop,
+                new StubMobileFactoryService { Spawned = new SpawnedMobile(banker, [], null!, []) },
+                mobiles,
+                items,
+                new RecordingWorldViewService(),
+                mobileData,
+                itemData,
+                fixture.Loop,
                 templates: templates
             )
             .StartAsync();

@@ -21,6 +21,7 @@ public sealed class AnimateCommandTests : IAsyncDisposable
     private readonly StubTargetService _targets = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
+
     private readonly MobileEntity _orc = new()
     {
         Id = new(0x100), Name = "an orc", Map = MapType.Felucca, Location = new Point3D(102, 100, 0)

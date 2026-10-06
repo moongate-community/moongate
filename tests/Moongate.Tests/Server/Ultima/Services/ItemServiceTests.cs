@@ -21,10 +21,12 @@ public sealed class ItemServiceTests
 
     private readonly StubMovementService _dropMovement = new() { DropZ = 3 };
     private readonly StubLineOfSightService _sight = new();
+
     private readonly MobileEntity _aria = new()
     {
         Id = new(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 10)
     };
+
     private readonly ItemEntity _backpack = Item(0x40000001);
     private readonly ItemEntity _bag = Item(0x40000002);
     private readonly ItemEntity _coin = Item(0x40000003);
@@ -200,16 +202,15 @@ public sealed class ItemServiceTests
     {
         var items = Service();
         var others = Enumerable.Range(0, 100_000)
-                               .Select(
-                                   index =>
-                                   {
-                                       var item = Item(0x41000000u + (uint)index);
-                                       item.PlaceOnGround(MapType.Trammel, new Point3D(100 + index % 1000, 100, 0));
+            .Select(index =>
+                {
+                    var item = Item(0x41000000u + (uint)index);
+                    item.PlaceOnGround(MapType.Trammel, new Point3D(100 + index % 1000, 100, 0));
 
-                                       return item;
-                                   }
-                               )
-                               .ToList();
+                    return item;
+                }
+            )
+            .ToList();
         items.Add(others);
         var watch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -245,7 +246,10 @@ public sealed class ItemServiceTests
     {
         var service = Service();
 
-        Assert.Equal((_backpack, _backpack, null), (service.GetWornRoot(_coin), service.GetWornRoot(_backpack), service.GetWornRoot(_ground)));
+        Assert.Equal(
+            (_backpack, _backpack, null),
+            (service.GetWornRoot(_coin), service.GetWornRoot(_backpack), service.GetWornRoot(_ground))
+        );
     }
 
     [Fact]
@@ -258,7 +262,10 @@ public sealed class ItemServiceTests
         gem.PutInContainer(box.Id, new Point2D(1, 1));
         service.Add([box, gem]);
 
-        Assert.Equal((_ground, _ground, _ground), (service.GetGroundRoot(gem), service.GetGroundRoot(box), service.GetGroundRoot(_ground)));
+        Assert.Equal(
+            (_ground, _ground, _ground),
+            (service.GetGroundRoot(gem), service.GetGroundRoot(box), service.GetGroundRoot(_ground))
+        );
         Assert.Equal((null, null), (service.GetGroundRoot(_coin), service.GetGroundRoot(_backpack)));
     }
 

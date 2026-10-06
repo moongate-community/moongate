@@ -8,7 +8,8 @@ namespace Moongate.Server.Ultima.Interfaces;
 ///     line of sight and item properties read.
 /// </summary>
 /// <remarks>
-///     The first call copies the tables that <c>IUltimaDataService</c> loaded at startup into read-only arrays, so every
+///     The first call copies the tables that <c>IUltimaDataService</c> loaded at startup into read-only arrays, so
+///     every
 ///     later lookup is an array index and callers on any thread see the same tiles. Calling before the tables are
 ///     loaded throws <see cref="InvalidOperationException" />.
 /// </remarks>

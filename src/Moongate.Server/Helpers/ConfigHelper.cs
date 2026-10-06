@@ -52,7 +52,7 @@ public static class ConfigHelper
 
         var table = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(filePath)) ?? new TomlTable();
         var sections = typeof(MoongateServerConfig).GetProperties()
-                                                   .Select(property => JsonNamingPolicy.SnakeCaseLower.ConvertName(property.Name));
+            .Select(property => JsonNamingPolicy.SnakeCaseLower.ConvertName(property.Name));
 
         return new(filePath, table, sections);
     }

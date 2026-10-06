@@ -9,6 +9,9 @@ public sealed class RemoveEntityPacketTests
     [Fact]
     public void Encode_WritesTheSerial()
     {
-        Assert.Equal(Convert.FromHexString("1D40000012"), PacketCodec.Encode(new RemoveEntityPacket(new Serial(0x40000012))));
+        Assert.Equal(
+            Convert.FromHexString("1D40000012"),
+            PacketCodec.Encode(new RemoveEntityPacket(new Serial(0x40000012)))
+        );
     }
 }

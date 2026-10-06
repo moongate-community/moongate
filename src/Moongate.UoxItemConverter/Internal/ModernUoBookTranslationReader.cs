@@ -21,7 +21,7 @@ internal static class ModernUoBookTranslationReader
         {
             var utf8 = new UTF8Encoding(false, true);
             var source = TomlUtils.Deserialize<BookTemplateSource>(File.ReadAllText(path, utf8))
-                ?? throw new InvalidDataException("Existing document cannot be deserialized.");
+                         ?? throw new InvalidDataException("Existing document cannot be deserialized.");
             if (source.Translations.Count == 0) return null;
 
             var translations = new Dictionary<string, BookTranslation>(StringComparer.Ordinal);
@@ -32,13 +32,15 @@ internal static class ModernUoBookTranslationReader
                 var title = translation.Title ?? book.Title.Replace("$", "$$", StringComparison.Ordinal);
                 var author = translation.Author ?? book.Author.Replace("$", "$$", StringComparison.Ordinal);
                 var content = translation.Content ?? book.Content.Replace("$", "$$", StringComparison.Ordinal);
-                foreach (var (text, limit) in new[] { (title, int.MaxValue), (author, int.MaxValue), (content, BookTextValidation.ContentLimit) })
+                foreach (var (text, limit) in new[]
+                             { (title, int.MaxValue), (author, int.MaxValue), (content, BookTextValidation.ContentLimit) })
                 {
                     utf8.GetByteCount(text);
                     if (!BookTextValidation.IsValidText(text, limit) ||
                         TextTemplateTokens.Find(text, TextTemplateSyntaxType.Document).Any(token => token.Name is not null))
                         throw new InvalidDataException($"Invalid literal translation text: {language}.");
                 }
+
                 var values = new Dictionary<string, string>();
                 title = TextTemplateRenderer.Render(title, values, TextTemplateSyntaxType.Document);
                 author = TextTemplateRenderer.Render(author, values, TextTemplateSyntaxType.Document);
@@ -48,9 +50,11 @@ internal static class ModernUoBookTranslationReader
                     throw new InvalidDataException($"Translation exceeds document or packet limits: {language}.");
                 translations.Add(language, translation);
             }
+
             return translations;
         }
-        catch (Exception exception) when (exception is InvalidDataException or TomlException or EncoderFallbackException or DecoderFallbackException)
+        catch (Exception exception) when (exception is InvalidDataException or TomlException or EncoderFallbackException
+                                              or DecoderFallbackException)
         {
             throw new InvalidDataException($"{path}: {exception.Message}", exception);
         }

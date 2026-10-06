@@ -133,7 +133,12 @@ internal static class ConvertCommands
     /// </param>
     public static int ModernUoSigns(string source, string destination)
     {
-        return ModernUoSignConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+        return ModernUoSignConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
     }
 
     /// <summary>
@@ -149,7 +154,12 @@ internal static class ConvertCommands
     /// </param>
     public static int ModernUoTeleporters(string source, string destination)
     {
-        return ModernUoTeleporterConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+        return ModernUoTeleporterConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
     }
 
     /// <summary>
@@ -164,7 +174,12 @@ internal static class ConvertCommands
     /// </param>
     public static int ModernUoLocations(string source, string destination)
     {
-        return ModernUoLocationConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+        return ModernUoLocationConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
     }
 
     /// <summary>
@@ -180,7 +195,12 @@ internal static class ConvertCommands
     /// </param>
     public static int ModernUoChests(string source, string destination)
     {
-        return ModernUoChestConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+        return ModernUoChestConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
     }
 
     /// <summary>
@@ -194,6 +214,11 @@ internal static class ConvertCommands
     /// </param>
     public static int ModernUoBooks(string source, string destination)
     {
-        return ModernUoBookConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+        return ModernUoBookConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
     }
 }

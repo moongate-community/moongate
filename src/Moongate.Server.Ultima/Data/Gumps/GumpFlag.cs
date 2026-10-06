@@ -15,10 +15,10 @@ public sealed class GumpFlag : GumpEntry
         layout.Append(
             Flag switch
             {
-                GumpFlagType.NoMove => "{ nomove }",
-                GumpFlagType.NoClose => "{ noclose }",
+                GumpFlagType.NoMove    => "{ nomove }",
+                GumpFlagType.NoClose   => "{ noclose }",
                 GumpFlagType.NoDispose => "{ nodispose }",
-                _ => "{ noresize }"
+                _                      => "{ noresize }"
             }
         );
     }

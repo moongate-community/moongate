@@ -110,7 +110,8 @@ public sealed class ContextMenuService : IContextMenuService
                 AddScriptEntries(_npcScripts.Run(mobile, EntriesFunction, (long)player.Id.Value), target, entries);
             }
         }
-        else if (!player.IsDead && _items.TryGet(target, out var item) && _itemScripts is not null && _itemScripts.HasScript(item))
+        else if (!player.IsDead && _items.TryGet(target, out var item) && _itemScripts is not null &&
+                 _itemScripts.HasScript(item))
         {
             AddScriptEntries(_itemScripts.Run(item, EntriesFunction, (long)player.Id.Value), target, entries);
         }
@@ -122,11 +123,17 @@ public sealed class ContextMenuService : IContextMenuService
 
         if (entries.Count > MaxEntries)
         {
-            _logger.Warning("The context menu of {Target} has {Count} entries: only the first {Max} are shown", target, entries.Count, MaxEntries);
+            _logger.Warning(
+                "The context menu of {Target} has {Count} entries: only the first {Max} are shown",
+                target,
+                entries.Count,
+                MaxEntries
+            );
             entries.RemoveRange(MaxEntries, entries.Count - MaxEntries);
         }
 
-        var shown = entries.Select(entry => (entry.Cliloc, !entry.Enabled || !InRange(player, place, entry.Range))).ToArray();
+        var shown = entries.Select(entry => (entry.Cliloc, !entry.Enabled || !InRange(player, place, entry.Range)))
+            .ToArray();
 
         if (!_sender.TrySend(session.SessionId, new DisplayContextMenuPacket(target, shown)))
         {
@@ -265,7 +272,11 @@ public sealed class ContextMenuService : IContextMenuService
             }
             else
             {
-                _logger.Warning("The script of {Target} gave a context menu entry that is not one, at position {Position}: left out", target, index);
+                _logger.Warning(
+                    "The script of {Target} gave a context menu entry that is not one, at position {Position}: left out",
+                    target,
+                    index
+                );
             }
         }
     }
@@ -308,7 +319,8 @@ public sealed class ContextMenuService : IContextMenuService
         }
         else if (_items.TryGet(target, out var item))
         {
-            var visibility = item.Visibility ?? (_templates.TryGet(item.TemplateId, out var template) ? template.Visibility : null);
+            var visibility = item.Visibility ??
+                             (_templates.TryGet(item.TemplateId, out var template) ? template.Visibility : null);
 
             if (session.AccountType < (visibility ?? AccountType.Regular))
             {
@@ -327,7 +339,8 @@ public sealed class ContextMenuService : IContextMenuService
                 map = player.Map;
                 place = player.Location;
             }
-            else if (_items.GetGroundRoot(item) is { Map: { } itemMap, GroundLocation: { } ground } root && _items.IsLyingOnGround(root))
+            else if (_items.GetGroundRoot(item) is { Map: { } itemMap, GroundLocation: { } ground } root &&
+                     _items.IsLyingOnGround(root))
             {
                 map = itemMap;
                 place = ground;

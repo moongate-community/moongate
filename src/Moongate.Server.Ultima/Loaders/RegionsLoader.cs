@@ -12,7 +12,7 @@ namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
 ///     Loads the regions of every <c>data/regions/&lt;map&gt;.toml</c> file, where the file name is the map
-///     (<c>felucca.toml</c>). A file named after no map, a region without areas, an area whose end is not past its
+///     ( <c>felucca.toml</c>). A file named after no map, a region without areas, an area whose end is not past its
 ///     start, a name used twice on a map, a parent that is missing or loops back, or a weather profile missing from
 ///     <c>weather.toml</c> stops the server at startup, so this loader runs after <see cref="WeatherLoader" />.
 /// </summary>
@@ -117,7 +117,8 @@ public class RegionsLoader : IDataLoader<RegionContent>
     // A region without music or season takes its nearest parent's, as in ModernUO; the parents are already validated.
     private static void InheritFromParents(List<RegionContent> regions)
     {
-        var byName = regions.Where(region => region.Name is not null).ToDictionary(region => region.Name!, StringComparer.Ordinal);
+        var byName = regions.Where(region => region.Name is not null)
+            .ToDictionary(region => region.Name!, StringComparer.Ordinal);
 
         foreach (var region in regions.Where(region => region.Parent is not null))
         {

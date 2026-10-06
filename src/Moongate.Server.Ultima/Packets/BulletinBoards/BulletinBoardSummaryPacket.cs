@@ -12,7 +12,12 @@ namespace Moongate.Server.Ultima.Packets.BulletinBoards;
 ///     The line of a message in the list of a bulletin board (0x71, sub-command 0x01): who posted it, what about and
 ///     when, and the thread it replies to. The answer to a client that asked for it with sub-command 0x04.
 /// </summary>
-[PacketHandler(0x71, PacketSizing.Variable, MinimumLength = HeaderLength + 3 * 2, Description = "Bulletin board: message summary")]
+[PacketHandler(
+    0x71,
+    PacketSizing.Variable,
+    MinimumLength = HeaderLength + 3 * 2,
+    Description = "Bulletin board: message summary"
+)]
 public sealed class BulletinBoardSummaryPacket : BasePacket<BulletinBoardSummaryPacket>, IOutgoingPacket
 {
     private const byte Subcommand = 0x01;
@@ -33,7 +38,9 @@ public sealed class BulletinBoardSummaryPacket : BasePacket<BulletinBoardSummary
     /// </summary>
     public Serial Thread { get; }
 
-    public BulletinBoardSummaryPacket(Serial board, Serial message, Serial thread, string poster, string subject, string date)
+    public BulletinBoardSummaryPacket(
+        Serial board, Serial message, Serial thread, string poster, string subject, string date
+    )
     {
         Board = board;
         Message = message;

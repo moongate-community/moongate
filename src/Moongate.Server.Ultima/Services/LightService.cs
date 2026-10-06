@@ -14,7 +14,8 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     ModernUO's light cycle: one repeating <c>light_cycle</c> timer every 5 seconds sends each player in the world the
+///     ModernUO's light cycle: one repeating <c>light_cycle</c> timer every 5 seconds sends each player in the world
+///     the
 ///     light of its time of day when it differs from the last one sent.
 /// </summary>
 public sealed class LightService : ILightService
@@ -31,7 +32,9 @@ public sealed class LightService : ILightService
     private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(5);
 
     private readonly ILogger _logger = Log.ForContext<LightService>();
-    private static readonly HashSet<string> LampPostKinds = new(StringComparer.Ordinal) { "LampPost1", "LampPost2", "LampPost3" };
+
+    private static readonly HashSet<string> LampPostKinds = new(StringComparer.Ordinal)
+        { "LampPost1", "LampPost2", "LampPost3" };
 
     private readonly ConcurrentDictionary<Serial, int> _sent = new();
     private readonly Dictionary<Serial, bool> _lampPosts = [];
@@ -70,11 +73,10 @@ public sealed class LightService : ILightService
     {
         _items = items;
         _itemScripts = itemScripts;
-        _regionsByName = new(
-            () => data.GetEntities<RegionContent>()
-                      .Where(region => region.Name is not null)
-                      .GroupBy(region => (region.Map, region.Name!))
-                      .ToDictionary(group => group.Key, group => group.First())
+        _regionsByName = new(() => data.GetEntities<RegionContent>()
+            .Where(region => region.Name is not null)
+            .GroupBy(region => (region.Map, region.Name!))
+            .ToDictionary(group => group.Key, group => group.First())
         );
         _clock = clock;
         _sessions = sessions;
@@ -131,10 +133,10 @@ public sealed class LightService : ILightService
         // ModernUO's bands: two hours of fade on each side of the night.
         return time.Hours switch
         {
-            < 4 => night,
-            < 6 => night + ((time.Hours - 4) * 60 + time.Minutes) * (day - night) / 120,
+            < 4  => night,
+            < 6  => night + ((time.Hours - 4) * 60 + time.Minutes) * (day - night) / 120,
             < 22 => day,
-            _ => day + ((time.Hours - 22) * 60 + time.Minutes) * (night - day) / 120
+            _    => day + ((time.Hours - 22) * 60 + time.Minutes) * (night - day) / 120
         };
     }
 

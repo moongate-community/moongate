@@ -28,13 +28,16 @@ public sealed class SpeechRequestPacketHandlerTests
         Assert.Equal(2, fixture.Sender.Sent.Count);
         Assert.Contains(fixture.Speaker.SessionId, fixture.Sender.SentSessionIds);
         Assert.Contains(near.SessionId, fixture.Sender.SentSessionIds);
-        Assert.All(fixture.Sender.Sent, packet =>
-        {
-            var message = Assert.IsType<UnicodeSpeechMessagePacket>(packet);
-            Assert.Equal("hello", message.Text);
-            Assert.Equal(SpeechType.Regular, message.Type);
-            Assert.Equal("Alice", message.Name);
-        });
+        Assert.All(
+            fixture.Sender.Sent,
+            packet =>
+            {
+                var message = Assert.IsType<UnicodeSpeechMessagePacket>(packet);
+                Assert.Equal("hello", message.Text);
+                Assert.Equal(SpeechType.Regular, message.Type);
+                Assert.Equal("Alice", message.Name);
+            }
+        );
     }
 
     [Fact]
@@ -109,7 +112,10 @@ public sealed class SpeechRequestPacketHandlerTests
         await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello"), CancellationToken.None);
         await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("..dot"), CancellationToken.None);
 
-        Assert.Equal([("Alice", "hello"), ("Alice", ".dot")], fixture.Listener.Heard.Select(entry => (entry.Speaker.Name, entry.Text)));
+        Assert.Equal(
+            [("Alice", "hello"), ("Alice", ".dot")],
+            fixture.Listener.Heard.Select(entry => (entry.Speaker.Name, entry.Text))
+        );
     }
 
     [Fact]
@@ -172,7 +178,10 @@ public sealed class SpeechRequestPacketHandlerTests
         await using var fixture = await SpeechHandlerFixture.CreateAsync();
         await fixture.EnterSpeakerAsync();
         Assert.True(
-            UnicodeSpeechRequestPacket.TryParse(Convert.FromHexString("AD00168003B20003454E5500002001002062616E6B00"), out var packet)
+            UnicodeSpeechRequestPacket.TryParse(
+                Convert.FromHexString("AD00168003B20003454E5500002001002062616E6B00"),
+                out var packet
+            )
         );
 
         await fixture.Handler.HandleAsync(fixture.Context(), packet, CancellationToken.None);
@@ -216,9 +225,20 @@ public sealed class SpeechRequestPacketHandlerTests
 
         Assert.NotEmpty(fixture.Sender.Sent);
         Assert.All(fixture.Sender.SentSessionIds, sessionId => Assert.Equal(fixture.Speaker.SessionId, sessionId));
-        Assert.All(fixture.Sender.Sent, packet => Assert.Equal(SpeechType.System, Assert.IsType<UnicodeSpeechMessagePacket>(packet).Type));
-        Assert.Contains(fixture.Sender.Sent, packet => Assert.IsType<UnicodeSpeechMessagePacket>(packet).Text.Contains("Available commands", StringComparison.Ordinal));
-        Assert.Contains(fixture.Sender.Sent, packet => Assert.IsType<UnicodeSpeechMessagePacket>(packet).Text.Contains("Unknown command", StringComparison.Ordinal));
+        Assert.All(
+            fixture.Sender.Sent,
+            packet => Assert.Equal(SpeechType.System, Assert.IsType<UnicodeSpeechMessagePacket>(packet).Type)
+        );
+        Assert.Contains(
+            fixture.Sender.Sent,
+            packet => Assert.IsType<UnicodeSpeechMessagePacket>(packet)
+                .Text.Contains("Available commands", StringComparison.Ordinal)
+        );
+        Assert.Contains(
+            fixture.Sender.Sent,
+            packet => Assert.IsType<UnicodeSpeechMessagePacket>(packet)
+                .Text.Contains("Unknown command", StringComparison.Ordinal)
+        );
     }
 
     [Fact]
@@ -228,17 +248,28 @@ public sealed class SpeechRequestPacketHandlerTests
         await fixture.EnterSpeakerAsync();
         await fixture.AddPlayerAsync(1001, 2, "Near", MapType.Trammel, 101, 100);
 
-        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".account create bob secret"), CancellationToken.None);
+        await fixture.Handler.HandleAsync(
+            fixture.Context(),
+            fixture.Unicode(".account create bob secret"),
+            CancellationToken.None
+        );
         await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
 
         Assert.Empty(fixture.AccountExecutor.Invocations);
         Assert.All(fixture.Sender.SentSessionIds, id => Assert.Equal(fixture.Speaker.SessionId, id));
-        Assert.DoesNotContain(fixture.Sender.Sent, packet => Assert.IsType<UnicodeSpeechMessagePacket>(packet).Text.Contains("secret", StringComparison.Ordinal));
+        Assert.DoesNotContain(
+            fixture.Sender.Sent,
+            packet => Assert.IsType<UnicodeSpeechMessagePacket>(packet).Text.Contains("secret", StringComparison.Ordinal)
+        );
 
         await fixture.EnterSpeakerAsync(AccountType.Administrator);
         fixture.Sender.Sent.Clear();
         fixture.Sender.SentSessionIds.Clear();
-        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".account create bob secret"), CancellationToken.None);
+        await fixture.Handler.HandleAsync(
+            fixture.Context(),
+            fixture.Unicode(".account create bob secret"),
+            CancellationToken.None
+        );
         await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
 
         var invocation = Assert.Single(fixture.AccountExecutor.Invocations);
@@ -268,8 +299,11 @@ public sealed class SpeechRequestPacketHandlerTests
         var invocation = Assert.Single(fixture.AccountExecutor.Invocations);
         Assert.Equal(["create", "bob", "secret"], invocation.Arguments);
         Assert.All(fixture.Sender.SentSessionIds, id => Assert.Equal(fixture.Speaker.SessionId, id));
-        Assert.DoesNotContain(fixture.Sender.Sent, packet =>
-            Assert.IsType<UnicodeSpeechMessagePacket>(packet).Text.Contains("secret", StringComparison.Ordinal));
+        Assert.DoesNotContain(
+            fixture.Sender.Sent,
+            packet =>
+                Assert.IsType<UnicodeSpeechMessagePacket>(packet).Text.Contains("secret", StringComparison.Ordinal)
+        );
         Assert.DoesNotContain(sink.Events, entry => entry.RenderMessage().Contains("secret", StringComparison.Ordinal));
     }
 
@@ -289,7 +323,8 @@ public sealed class SpeechRequestPacketHandlerTests
         await using var fixture = await SpeechHandlerFixture.CreateAsync();
         await fixture.EnterSpeakerAsync();
 
-        var handling = fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".wait"), CancellationToken.None).AsTask();
+        var handling = fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".wait"), CancellationToken.None)
+            .AsTask();
         await fixture.DelayedExecutor.Started.WaitAsync(TimeSpan.FromSeconds(5));
         fixture.ReplaceSpeakerSession();
         fixture.DelayedExecutor.Release();
@@ -344,7 +379,8 @@ public sealed class SpeechRequestPacketHandlerTests
         await fixture.EnterSpeakerAsync();
 
         // A command waiting for the player (a target cursor) must not keep the session's next packets waiting.
-        var handling = fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".wait"), CancellationToken.None).AsTask();
+        var handling = fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".wait"), CancellationToken.None)
+            .AsTask();
         await fixture.DelayedExecutor.Started.WaitAsync(TimeSpan.FromSeconds(5));
 
         await handling.WaitAsync(TimeSpan.FromSeconds(5));

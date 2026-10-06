@@ -10,7 +10,8 @@ namespace Moongate.Server.Ultima.Packets.General;
 ///     A request to resend the player's position. (0x22, 3 bytes). Only its frame is read: the server does not act on it yet.
 /// </summary>
 [PacketHandler(0x22, PacketSizing.Fixed, Length = 3, Description = "Resynchronize request")]
-public sealed class ResynchronizeRequestPacket : BaseFixedPacket<ResynchronizeRequestPacket>, IIncomingPacket<ResynchronizeRequestPacket>
+public sealed class ResynchronizeRequestPacket
+    : BaseFixedPacket<ResynchronizeRequestPacket>, IIncomingPacket<ResynchronizeRequestPacket>
 {
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out ResynchronizeRequestPacket? packet)
     {

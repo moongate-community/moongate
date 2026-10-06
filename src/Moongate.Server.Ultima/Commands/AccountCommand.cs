@@ -74,7 +74,9 @@ public sealed class AccountCommand : ICommandExecutor, ICommandArgumentCompleter
 
         if (result.Success)
         {
-            context.Print(_localization.Text(CommandMessages.AccountCreated, "Account '{0}' created ({1}).", username, accountType));
+            context.Print(
+                _localization.Text(CommandMessages.AccountCreated, "Account '{0}' created ({1}).", username, accountType)
+            );
         }
         else if (result.ResultType == AccountCreateResultType.UsernameAlreadyExists)
         {
@@ -82,12 +84,19 @@ public sealed class AccountCommand : ICommandExecutor, ICommandArgumentCompleter
         }
         else
         {
-            context.PrintError(_localization.Text(CommandMessages.AccountCreationFailed, "The account creation failed. Check the server logs."));
+            context.PrintError(
+                _localization.Text(
+                    CommandMessages.AccountCreationFailed,
+                    "The account creation failed. Check the server logs."
+                )
+            );
         }
     }
 
     /// <inheritdoc />
-    /// <remarks>The user name and the password are never offered.</remarks>
+    /// <remarks>
+    ///     The user name and the password are never offered.
+    /// </remarks>
     public IReadOnlyList<string> GetArgumentCompletions(IReadOnlyList<string> previousArguments)
     {
         return previousArguments switch
@@ -96,7 +105,7 @@ public sealed class AccountCommand : ICommandExecutor, ICommandArgumentCompleter
             [var action, _, _] when action.Equals("create", StringComparison.OrdinalIgnoreCase) =>
                 Enum.GetNames<AccountType>(),
             [var action, _] when action.Equals("api-access", StringComparison.OrdinalIgnoreCase) => ["on", "off"],
-            _ => []
+            _                                                                                    => []
         };
     }
 
@@ -106,7 +115,9 @@ public sealed class AccountCommand : ICommandExecutor, ICommandArgumentCompleter
 
         if (context.Source != CommandSourceType.Console)
         {
-            context.PrintError(_localization.Text(CommandMessages.LocalConsoleOnly, "This is available only from the local console."));
+            context.PrintError(
+                _localization.Text(CommandMessages.LocalConsoleOnly, "This is available only from the local console.")
+            );
 
             return;
         }

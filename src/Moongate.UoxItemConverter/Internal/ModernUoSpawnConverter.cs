@@ -7,11 +7,13 @@ using Moongate.Ultima.Types;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Converts ModernUO's spawners (<c>Distribution/Data/Spawns/&lt;era&gt;/&lt;map&gt;/*.json</c>) of the chosen maps
+///     Converts ModernUO's spawners ( <c>Distribution/Data/Spawns/&lt;era&gt;/&lt;map&gt;/*.json</c>) of the chosen
+///     maps
 ///     into spawn regions, for the maps UOX3 has no spawns for. It reads the <c>shared</c> and <c>post-uoml</c> eras,
 ///     the world of a modern client, and writes <c>&lt;map&gt;/modernuo_&lt;file&gt;.toml</c>, replacing the
 ///     <c>modernuo_</c> files of the maps it converts. A region keeps the map its spawner names, which may differ
-///     from its folder's, and goes into that map's folder, where the server looks for it. A region id names the era, the file and the spawner's index in
+///     from its folder's, and goes into that map's folder, where the server looks for it. A region id names the era, the file
+///     and the spawner's index in
 ///     it, so it stays the same when a later run resolves more mobiles.
 /// </summary>
 internal static class ModernUoSpawnConverter
@@ -250,7 +252,10 @@ internal static class ModernUoSpawnConverter
 
         if (shared.Count > 0)
         {
-            var max = Math.Max(1, (int)Math.Round(rest * shared.Count / (double)(shared.Count + unknownShared), MidpointRounding.AwayFromZero));
+            var max = Math.Max(
+                1,
+                (int)Math.Round(rest * shared.Count / (double)(shared.Count + unknownShared), MidpointRounding.AwayFromZero)
+            );
 
             yield return Region(spawner, id, map, shared, max);
         }
@@ -270,7 +275,7 @@ internal static class ModernUoSpawnConverter
             Id = id,
             Map = map,
             Name = $"{map} {string.Join(", ", mobiles)}",
-            MobileIds = [..mobiles],
+            MobileIds = [.. mobiles],
             Max = max,
             MinMinutes = min,
             MaxMinutes = Math.Max(min, Minutes(spawner, "maxDelay"))

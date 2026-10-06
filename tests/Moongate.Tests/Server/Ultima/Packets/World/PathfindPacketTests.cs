@@ -10,12 +10,18 @@ public sealed class PathfindPacketTests
     [Fact]
     public void Encode_IsWhereTheClientIsToWalk()
     {
-        Assert.Equal(Convert.FromHexString("38" + "05DC" + "0640" + "000A"), PacketCodec.Encode(new PathfindPacket(new Point3D(1500, 1600, 10))));
+        Assert.Equal(
+            Convert.FromHexString("38" + "05DC" + "0640" + "000A"),
+            PacketCodec.Encode(new PathfindPacket(new Point3D(1500, 1600, 10)))
+        );
     }
 
     [Fact]
     public void Encode_ANegativeHeight_IsWrittenSigned()
     {
-        Assert.Equal(Convert.FromHexString("38" + "05DC" + "0640" + "FFEC"), PacketCodec.Encode(new PathfindPacket(new Point3D(1500, 1600, -20))));
+        Assert.Equal(
+            Convert.FromHexString("38" + "05DC" + "0640" + "FFEC"),
+            PacketCodec.Encode(new PathfindPacket(new Point3D(1500, 1600, -20)))
+        );
     }
 }

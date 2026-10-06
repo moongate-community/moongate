@@ -9,7 +9,8 @@ public sealed class MobileTemplateServiceTests
     [Fact]
     public void TryGet_Get_AndCount()
     {
-        var service = new MobileTemplateService(new StubDataLoaderService().With(new MobileTemplate { Id = "orc", Body = 17 }));
+        var service =
+            new MobileTemplateService(new StubDataLoaderService().With(new MobileTemplate { Id = "orc", Body = 17 }));
 
         Assert.True(service.TryGet("orc", out var orc));
         Assert.Equal(17, orc!.Body);
