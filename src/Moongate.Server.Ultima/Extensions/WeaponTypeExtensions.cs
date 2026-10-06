@@ -44,6 +44,17 @@ public static class WeaponTypeExtensions
         };
 
         /// <summary>
+        ///     Gets the item graphic of the ammunition the weapon spends at each shot: the arrow 0x0F3F of a bow, the bolt
+        ///     0x1BFB of a crossbow; 0 for any other weapon.
+        /// </summary>
+        public int Ammo => type switch
+        {
+            WeaponType.Bow      => 0x0F3F,
+            WeaponType.Crossbow => 0x1BFB,
+            _                   => 0
+        };
+
+        /// <summary>
         ///     Gets whether the weapon shoots or throws: it is not fought in melee, which is all there is yet.
         /// </summary>
         public bool IsRanged => type is WeaponType.Bow or WeaponType.Crossbow or WeaponType.Thrown;

@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 80 done, 🟡 51 partly done, ❌ 137 not built yet.
+**268 systems:** ✅ 81 done, 🟡 50 partly done, ❌ 137 not built yet.
 
-**Coverage: 30%** of the systems done, **39%** counting a partly done system as half.
+**Coverage: 30%** of the systems done, **40%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -76,7 +76,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | War mode, melee and swing timing | 🟡 | A player [fights](combat.md) with its fists or the weapon it holds: the swing timer, the hit by skill, the damage with tactics, strength, anatomy and the armor of the target, the sounds and animations |
-| Archery | 🟡 | NPCs that hold a bow or a crossbow shoot from its range with the arrow flying to the target; players do not yet: with a bow in the hands they fight with their fists |
+| Archery | ✅ | NPCs and players that hold a bow or a crossbow shoot from its range, the arrow flying to the target; a player spends an arrow or a bolt at each shot, must stand still a second, and finds 40% of the ammunition on the ground |
 | Weapons and armour: damage, armour, durability, resistances | 🟡 | The weapon a player holds and the armor it wears set the [swing, the hit, the damage and what a blow takes off](combat.md#weapons-and-armor); no durability, parry, shields or resistances |
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |

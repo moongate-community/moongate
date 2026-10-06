@@ -1,8 +1,7 @@
 # Combat
 
 A player fights an NPC with its fists, as ModernUO's classic (pre-AOS) combat does; the NPC fights back and
-dies when its hit points are gone. This is the first slice: weapons and armor of items, parry, archery for players,
-the combat events of Lua come later.
+dies when its hit points are gone. This is the first slice: weapons and armor of items, parry, the combat events of Lua come later.
 
 ## Starting a fight
 
@@ -118,12 +117,22 @@ walks it to where it does. Ranges are counted in squares, the larger of the two 
 the hit is rolled with the Archery skill against what the target defends with, the damage is the template's dice
 (not the bow's), and the arrow `0x0F42`, or the bolt `0x1BFE`, flies from the shooter to the target, hit or missed.
 A human body plays the shooting action of its weapon; a monster body plays its attack. The sound is the creature's own
-attack, else the bow's, `0x234` on a hit and `0x238` on a miss. An NPC's ammo is never counted. A **player** holding a
-bow still fights with its fists: player archery, with arrows to carry and spend, is not built yet.
+attack, else the bow's, `0x234` on a hit and `0x238` on a miss. An NPC's ammo is never counted, and it need not stand still.
+
+A **player** holding a bow or a crossbow shoots the same way, with the damage of the weapon (a plain bow's 8 to 41, which
+the status window shows), and with these differences, as ModernUO and UOX3 have them:
+
+- Each shot spends **one arrow** (bow) or **one bolt** (crossbow), found in the backpack or in a bag in it. With none,
+  nothing flies and the swing is lost: its delay is paid all the same, and no message is shown, as in ModernUO.
+- Of the shots, hit or missed, **40 percent** leave an arrow or a bolt on the ground at the target's feet, to be picked
+  up.
+- The player must have **stood still for a second**: a step, not a turn, within `archery_stand_still_seconds`
+  ([`[ultima.combat]`](server-configuration.md)) of the shot delays it. 0 asks for nothing.
+- The Archery skill is the one rolled, and the one that gains; a bow in the hands of the target is what it defends with.
 
 ## Not yet
 
-Parry (a shield counts for nothing yet), archery for players, special moves, durability (`max_hits` is kept, not used), the
+Parry (a shield counts for nothing yet), a quiver (ammunition is taken from the backpack), special moves, durability (`max_hits` is kept, not used), the
 strength a weapon or armor asks for (`strength_required` is kept, not used), the lumberjacking bonus of axes, aggressor
 lists beyond the target, bandages and the combat events of Lua (`attack`, `hit`, `miss`,
 `get_hit`).

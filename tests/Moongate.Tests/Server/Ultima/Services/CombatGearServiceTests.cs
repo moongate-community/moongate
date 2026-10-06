@@ -1,4 +1,6 @@
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
@@ -108,6 +110,30 @@ public sealed class CombatGearServiceTests
     }
 
     [Fact]
+    public void AmmoOf_IsTheStackOfArrowsOrBoltsInTheBackpack_AtAnyDepth_NothingWithoutOrForAMeleeWeapon()
+    {
+        var bow = new WeaponInfo(SkillType.Archery, WeaponType.Bow, true, 9, 41, 25);
+        var crossbow = new WeaponInfo(SkillType.Archery, WeaponType.Crossbow, true, 9, 41, 25);
+        Assert.Null(_gear.AmmoOf(_aria, bow));
+
+        var pack = new ItemEntity { Id = new Serial(_next++), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        pack.Equip(Aria, LayerType.Backpack);
+        var bag = new ItemEntity { Id = new Serial(_next++), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
+        bag.PutInContainer(pack.Id, new Point2D(10, 10));
+        var arrows = new ItemEntity { Id = new Serial(_next++), TemplateId = "arrow", ItemId = 0x0F3F, Amount = 20 };
+        arrows.PutInContainer(bag.Id, new Point2D(10, 10));
+        var bolts = new ItemEntity { Id = new Serial(_next++), TemplateId = "bolt", ItemId = 0x1BFB, Amount = 5 };
+        bolts.PutInContainer(pack.Id, new Point2D(20, 20));
+        _items.Add([pack, bag, arrows, bolts]);
+
+        Assert.Equal(arrows.Id, _gear.AmmoOf(_aria, bow)?.Id);
+        Assert.Equal(bolts.Id, _gear.AmmoOf(_aria, crossbow)?.Id);
+        // A stack the caller does not accept, such as one held on a cursor, is passed over for the next.
+        Assert.Null(_gear.AmmoOf(_aria, bow, item => item.Id != arrows.Id));
+        Assert.Null(_gear.AmmoOf(_aria, new WeaponInfo(SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35)));
+    }
+
+    [Fact]
     public void WeaponOf_ABow_IsNotFoughtWithYet()
     {
         Wear("bow");
@@ -193,6 +219,18 @@ public sealed class CombatGearServiceTests
 
         // 5 and 33 with tactics 100 (+50%) and then strength 100 (+20%): 5 * 1.8 = 9 and 33 * 1.8 = 59; 10.5 rounds to 11
         Assert.Equal((9, 59, 11), (status.DamageMin, status.DamageMax, status.PhysicalResistance));
+    }
+
+    [Fact]
+    public void WithGear_ABowInTheHands_ShowsTheDamageOfTheBow()
+    {
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Tactics, Base = 1000 });
+        Wear("bow");
+
+        var status = _gear.WithGear(new MobileStatusInfo { Serial = Aria, Name = "Aria" }, _aria);
+
+        // 9 and 41 with tactics 100 and strength 100: 9 * 1.8 = 16 and 41 * 1.8 = 73
+        Assert.Equal((16, 73), (status.DamageMin, status.DamageMax));
     }
 
     [Fact]

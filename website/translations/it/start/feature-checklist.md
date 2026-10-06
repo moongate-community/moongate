@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"de1c826c0f97c67c73727efd94da172d5d4880e282f3bdc89786185ad21342f2","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"4f27de987228741f717656b6aa8c2542760a270e51ee6ccd0c78f6cae769a839","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**268 sistemi:** ✅ 80 completati, 🟡 51 parzialmente completati, ❌ 137 non ancora realizzati.
+**268 sistemi:** ✅ 81 completati, 🟡 50 parzialmente completati, ❌ 137 non ancora realizzati.
 
-**Copertura: 30%** dei sistemi completati, **39%** contando un sistema parzialmente completato come metà.
+**Copertura: 30%** dei sistemi completati, **40%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -78,7 +78,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Sistema | Moongate | Note |
 | --- | --- | --- |
 | Modalità guerra, corpo a corpo e tempi dei colpi | 🟡 | Un giocatore [combatte](combat.md) a pugni o con l'arma che impugna: timer del colpo, probabilità di colpire tramite abilità, danno con tactics, forza, anatomy e armatura del bersaglio, suoni e animazioni |
-| Tiro con l'arco | 🟡 | Gli NPC che impugnano un arco o una balestra sparano dalla sua portata con la freccia che vola verso il bersaglio; i giocatori non ancora: con un arco in mano combattono a pugni |
+| Tiro con l'arco | ✅ | Gli NPC e i giocatori che impugnano un arco o una balestra sparano dalla sua portata, con la freccia che vola verso il bersaglio; un giocatore consuma una freccia o un dardo a ogni colpo, deve stare fermo un secondo e ritrova il 40% delle munizioni a terra |
 | Armi e armature: danno, armatura, durabilità, resistenze | 🟡 | L'arma impugnata e l'armatura indossata da un giocatore determinano [tempi dei colpi, probabilità di colpire, danno e riduzione del danno subito](combat.md#weapons-and-armor); nessuna durabilità, parata, scudo o resistenza |
 | Parata | ❌ | |
 | Mosse speciali delle armi | ❌ | |

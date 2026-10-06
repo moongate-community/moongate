@@ -368,6 +368,21 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_AStep_NotesWhenTheMobileMoved_ATurnDoesNot()
+    {
+        await EnterAsync();
+        Assert.Null(_aria.LastMovedAt);
+
+        // A turn: the mobile faces another way and stays where it is.
+        await StepAsync(DirectionType.North, 0);
+        Assert.Null(_aria.LastMovedAt);
+
+        await StepAsync(DirectionType.North, 1);
+
+        Assert.InRange((_time.GetUtcNow() - _aria.LastMovedAt!.Value).TotalSeconds, 0, 1);
+    }
+
+    [Fact]
     public async Task Handle_AStepOfAHiddenPlayer_ShowsIt_AndSaysSo()
     {
         await EnterAsync();

@@ -29,6 +29,15 @@ public sealed class WeaponTypeExtensionsTests
     }
 
     [Theory]
+    [InlineData(WeaponType.Bow, 0x0F3F)]
+    [InlineData(WeaponType.Crossbow, 0x1BFB)]
+    [InlineData(WeaponType.Sword, 0)]
+    public void ABow_ShootsArrows_ACrossbowBolts_AnyOtherWeaponNoAmmo(WeaponType type, int ammo)
+    {
+        Assert.Equal(ammo, type.Ammo);
+    }
+
+    [Theory]
     [InlineData(WeaponType.Sword)]
     [InlineData(WeaponType.Thrown)]
     public void AnyOtherWeapon_ReachesOneCell_AndShootsNothing(WeaponType type)

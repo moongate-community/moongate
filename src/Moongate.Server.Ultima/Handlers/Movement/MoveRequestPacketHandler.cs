@@ -124,6 +124,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
             return;
         }
 
+        mobile.LastMovedAt = _time.GetUtcNow();
         state.NextStepAt = Math.Max(now, state.NextStepAt) + (packet.Running ? RunDelayMs : WalkDelayMs);
         _fatigue?.Stepped(session, mobile, packet.Running);
         // As ModernUO, a step closes the bank box.

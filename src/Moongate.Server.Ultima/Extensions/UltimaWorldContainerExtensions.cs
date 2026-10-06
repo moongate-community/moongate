@@ -54,6 +54,7 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<ICrimeService, CrimeService>(12);
         container.AddMoongateService<IMurderService, MurderService>(12);
         container.Register<ICombatGearService, CombatGearService>(Reuse.Singleton);
+        container.Register<IAmmoService, AmmoService>(Reuse.Singleton);
         container.AddMoongateService<ICombatService, CombatService>(12);
         container.AddMoongateService<IGuardService, GuardService>(12);
         // After the data loaders: the cells come from data/jail.toml; its sentences are read from the world database.

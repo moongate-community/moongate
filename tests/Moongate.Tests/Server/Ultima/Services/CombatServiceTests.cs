@@ -43,6 +43,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
 
     private readonly RecordingMurderService _murders = new();
     private readonly RecordingEffectService _effects = new();
+    private readonly RecordingAmmoService _ammo = new();
     private readonly StubCombatGearService _gear = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly StubSkillService _skills = new();
@@ -107,7 +108,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
             _clock,
             _random,
             _murders,
-            _effects
+            _effects,
+            _ammo
         );
     }
 
@@ -515,13 +517,13 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void RangeOf_IsTheRangeOfTheBowAnNpcHolds_ElseTheMeleeRange_APlayersBowCountsForNothing()
+    public void RangeOf_IsTheRangeOfTheBowAMobileHolds_ElseTheMeleeRange()
     {
         Assert.Equal((1, 1), (_combat.RangeOf(_orc), _combat.RangeOf(_aria)));
 
         _gear.Ranged = Bow;
 
-        Assert.Equal((10, 1), (_combat.RangeOf(_orc), _combat.RangeOf(_aria)));
+        Assert.Equal((10, 10), (_combat.RangeOf(_orc), _combat.RangeOf(_aria)));
     }
 
     [Fact]
@@ -635,15 +637,84 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void APlayerWithABowInItsHands_StillFightsWithItsFists_TheShotsAreTheNpcsOnly()
+    public void APlayerWithABow_ShootsFromItsRange_SpendingAnArrow_WithTheArrowFlyingAndSomeLeftOnTheGround()
     {
         _gear.Ranged = Bow;
-        _aria.Location = new Point3D(5, 0, 0);
+        _orc.Location = new Point3D(7, 0, 0);
         _combat.Attack(_aria, _orc);
 
         Tick();
 
+        Assert.Equal([_aria], _ammo.Spent);
+        Assert.Equal([_orc], _ammo.Recovered);
+        var shot = Assert.Single(_effects.Moving);
+        Assert.Equal((_aria.Id, _orc.Id, 0x0F42), (shot.Source, shot.Target, shot.Options.Graphic));
+        Assert.Contains($"Animated {_aria.Id.Value} {(int)HumanAnimationType.AttackBow} 7 1", _view.Calls);
+    }
+
+    [Fact]
+    public void APlayerWithABowAndNoArrows_DoesNotShoot_YetTheSwingDelayIsPaid()
+    {
+        _gear.Ranged = Bow;
+        _ammo.Has = false;
+        _orc.Location = new Point3D(7, 0, 0);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Equal([_aria], _ammo.Spent);
         Assert.Empty(_effects.Moving);
+        Assert.Empty(_ammo.Recovered);
+        Assert.Equal(30, _orc.Hits);
+
+        // The next try is after the delay, not at the next tick.
+        Tick();
+        Assert.Single(_ammo.Spent);
+    }
+
+    [Fact]
+    public void APlayerWhoMovedLessThanASecondAgo_DoesNotShootYet_ButOneWhoStoodStillDoes()
+    {
+        _gear.Ranged = Bow;
+        _orc.Location = new Point3D(7, 0, 0);
+        _aria.LastMovedAt = _clock.GetUtcNow().AddMilliseconds(-500);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+        Assert.Empty(_ammo.Spent);
+
+        _clock.Advance(TimeSpan.FromMilliseconds(600));
+        Tick();
+
+        Assert.Equal([_aria], _ammo.Spent);
+    }
+
+    [Fact]
+    public void AHiddenArcherWithNoArrows_StaysHidden_AndTheFightDoesNotGoOnForIt()
+    {
+        _gear.Ranged = Bow;
+        _ammo.Has = false;
+        _aria.Hidden = true;
+        _orc.Location = new Point3D(7, 0, 0);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.True(_aria.Hidden);
+    }
+
+    [Fact]
+    public void AnNpcArcher_NeedsNeitherArrowsNorToStandStill()
+    {
+        _gear.Ranged = Bow;
+        _orc.Location = new Point3D(6, 0, 0);
+        _orc.LastMovedAt = _clock.GetUtcNow();
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        Assert.Empty(_ammo.Spent);
+        Assert.Single(_effects.Moving);
     }
 
     [Fact]
