@@ -310,6 +310,13 @@ public class MobileEntity : IMoongateEntity
     public DateTimeOffset? NextSkillMessageAt { get; set; }
 
     /// <summary>
+    ///     When the mobile last took a step, in UTC; null before its first. It is not a column: a bow is drawn by who has
+    ///     stood still for a while, and a restart is as good as that.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public DateTimeOffset? LastMovedAt { get; set; }
+
+    /// <summary>
     ///     Whether the mobile is in war mode. It is not a column: a mobile comes back in peace.
     /// </summary>
     [Column(IsIgnore = true)]
@@ -386,6 +393,7 @@ public class MobileEntity : IMoongateEntity
         var copy = (MobileEntity)MemberwiseClone();
         // Not a column: left in, a change of war mode alone would write the row again.
         copy.WarMode = false;
+        copy.LastMovedAt = null;
         copy.Criminal = false;
 
         // Only a character keeps its time: an NPC comes back innocent.
