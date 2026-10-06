@@ -54,6 +54,16 @@ public sealed class GuardServiceTests : IAsyncLifetime
                 {
                     Map = MapType.Trammel, Name = "Britain", Guarded = true,
                     Areas = [new() { X1 = 0, Y1 = 0, X2 = 100, Y2 = 100 }]
+                },
+                new RegionContent
+                {
+                    Map = MapType.Ilshenar, Name = "Wisp town", Guarded = true,
+                    Areas = [new() { X1 = 0, Y1 = 0, X2 = 100, Y2 = 100 }]
+                },
+                new RegionContent
+                {
+                    Map = MapType.Malas, Name = "Luna", Guarded = true,
+                    Areas = [new() { X1 = 0, Y1 = 0, X2 = 100, Y2 = 100 }]
                 }
             )
         );
@@ -281,6 +291,20 @@ public sealed class GuardServiceTests : IAsyncLifetime
     private void Move(MobileEntity mobile, int x, int y)
     {
         Assert.True(_fixture.Mobiles.MoveTo(mobile, MapType.Trammel, new Point3D(x, y, 0)));
+    }
+
+    [Theory]
+    [InlineData(MapType.Ilshenar, "archerguard")]
+    [InlineData(MapType.Malas, "archerguard")]
+    [InlineData(MapType.Trammel, "guard")]
+    public async Task TheGuardsCalledInIlshenarAndMalas_AreArchers_AsModernUOs_ElsewhereWarriors(MapType map, string template)
+    {
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, map, new Point3D(50, 50, 0)));
+        Assert.True(_fixture.Mobiles.MoveTo(_thief, map, new Point3D(60, 50, 0)));
+
+        await HeardAsync("qualcosa", GuardsKeyword);
+
+        Assert.Equal((template, map), (Assert.Single(_npcs.Spawns).TemplateId, _npcs.Spawns[0].Map));
     }
 
     [Fact]

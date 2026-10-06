@@ -19,7 +19,9 @@ public static class TestSectors
     {
         var loaders = new StubDataLoaderService().With(
             new MapContent { Map = MapType.Trammel, Size = new Point2D(7168, 4096), Name = "Trammel" },
-            new MapContent { Map = MapType.Felucca, Size = new Point2D(7168, 4096), Name = "Felucca" }
+            new MapContent { Map = MapType.Felucca, Size = new Point2D(7168, 4096), Name = "Felucca" },
+            new MapContent { Map = MapType.Ilshenar, Size = new Point2D(2304, 1600), Name = "Ilshenar" },
+            new MapContent { Map = MapType.Malas, Size = new Point2D(2560, 2048), Name = "Malas" }
         );
 
         return new(loaders, world ?? new WorldConfig(), ticks ?? new RecordingNpcTickService());

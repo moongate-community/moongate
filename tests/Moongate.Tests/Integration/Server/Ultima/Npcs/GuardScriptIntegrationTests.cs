@@ -30,6 +30,7 @@ using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
+using Moongate.Tests.TestSupport.Ultima.Combat;
 using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Ultima.Types;
 
@@ -56,6 +57,7 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
     private readonly StubPathfindingService _finder = new();
     private readonly List<ScriptErrorEvent> _errors = [];
     private readonly StubDeathService _death = new();
+    private readonly RecordingCombatService _combat = new();
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate { Id = "guard", ScriptId = "guard" },
@@ -125,6 +127,8 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<MobileModule>();
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<EffectModule>();
+        _container.RegisterInstance<ICombatService>(_combat);
+        _container.AddScriptModule<CombatModule>();
         _container.AddScriptModule<LocalizationModule>();
         _container.RegisterScriptEnum<EffectGraphicType>();
         _container.RegisterScriptEnum<HumanAnimationType>();
@@ -248,6 +252,85 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors.Select(error => error.ToString()));
         Assert.Equal((zombie, (MobileEntity?)_guard), Assert.Single(_death.Killed));
+    }
+
+    [Fact]
+    public void AnArcherGuard_ShootsAMonsterFromWhereItStands_InsteadOfComingBesideItAndStrikingIt()
+    {
+        _combat.Range = 8;
+        var zombie = Npc(0x200, 1605, 1600);
+        zombie.TemplateId = "zombie";
+        zombie.Hits = 20;
+
+        Think(8);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal([(_guard, zombie)], _combat.Attacks);
+        Assert.Empty(_teleports.Teleports);
+        Assert.Empty(_death.Killed);
+        Assert.Equal(new Point3D(1600, 1600, 0), _guard.Location);
+    }
+
+    [Fact]
+    public void AnArcherGuard_ComesBesideAMonsterOutOfItsRange_AndIsDoneWhenItIsDead()
+    {
+        _combat.Range = 8;
+        var zombie = Npc(0x200, 1610, 1600);
+        zombie.TemplateId = "zombie";
+        zombie.Hits = 20;
+
+        Think(3);
+
+        // Out of the bow's range: it comes as any guard does.
+        Assert.Single(_teleports.Teleports);
+
+        // The test teleport moves nobody: put the guard where it came, a step from the zombie, and let it die.
+        Assert.True(_fixture.Mobiles.MoveTo(_guard, MapType.Trammel, new Point3D(1609, 1600, 0)));
+        zombie.Hits = 0;
+        Think(3);
+
+        Assert.Equal(["war 256 True", "war 256 False"], _state.Flags);
+        Assert.Contains(_guard, _combat.Stopped);
+    }
+
+    [Fact]
+    public void AnArcherGuard_ComesBesideATargetOnAnotherStorey_AndOneTheCombatServiceRefuses()
+    {
+        _combat.Range = 8;
+        var zombie = Npc(0x200, 1605, 1600);
+        zombie.TemplateId = "zombie";
+        zombie.Hits = 20;
+        // A roof: 30 above, within the range and in sight, yet out of the combat service's reach.
+        zombie.Location = new Point3D(1605, 1600, 30);
+
+        Think(3);
+
+        Assert.Single(_teleports.Teleports);
+        Assert.Empty(_combat.Attacks);
+
+        // A fight the combat service refuses is not shot at in vain: the guard goes on as a melee guard does.
+        zombie.Location = new Point3D(1605, 1600, 0);
+        _combat.Allows = false;
+        _teleports.Teleports.Clear();
+        _state.Flags.Clear();
+        Think(6);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.True(_combat.Attacks.Count < 6);
+    }
+
+    [Fact]
+    public void AnArcherGuard_StillOnlyStandsOnACriminalPlayer()
+    {
+        _combat.Range = 8;
+        _aria.Criminal = true;
+
+        Think(4);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Empty(_combat.Attacks);
+        Assert.Empty(_death.Killed);
+        Assert.Single(_teleports.Teleports);
     }
 
     [Fact]

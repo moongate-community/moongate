@@ -310,7 +310,7 @@ public sealed class RepositoryTemplateFilesTests
 
         var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
-        Assert.Equal(676, mobiles.Count);
+        Assert.Equal(677, mobiles.Count);
         Assert.Equal("{gender}", mobiles["guard"].NameList);
         // Moongate's own cats inherit the UOX3 cat and add their name and script.
         Assert.Equal((201, "Orione", "orione"), (mobiles["orione"].Body, mobiles["orione"].Name, mobiles["orione"].ScriptId));
@@ -355,6 +355,16 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal("monster", archer.ScriptId);
         var held = archer.Equipment!.SelectMany(entry => entry.Items).Select(id => items.FirstOrDefault(item => item.Id == id || item.Id.StartsWith(id + "_", StringComparison.Ordinal)));
         Assert.Contains(held, item => item?.WeaponType is WeaponType.Bow or WeaponType.Crossbow);
+
+        // The guard of Ilshenar and Malas: the guard script, invulnerable, with a bow in its hands and the skill to use it.
+        var guard = mobiles["archerguard"];
+        Assert.Equal(("guard", NotorietyType.Invulnerable), (guard.ScriptId, guard.Notoriety));
+        Assert.Contains(
+            guard.Equipment!.SelectMany(entry => entry.Items).Select(id => items.FirstOrDefault(item => item.Id == id || item.Id.StartsWith(id + "_", StringComparison.Ordinal))),
+            item => item?.WeaponType is WeaponType.Bow
+        );
+        Assert.True(guard.Skills!.ContainsKey("archery"));
+        Assert.DoesNotContain(guard.Equipment!.SelectMany(entry => entry.Items), id => id == "guardhalberd");
 
         // UOX3's FLEEAT=-1, the creatures that never run.
         Assert.Equal(-1, mobiles["zombie"].FleeAt);

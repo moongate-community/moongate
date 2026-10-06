@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0085667e8edf7ca682a730e5da8a4371ade69a4f456d1aedc32aab7bce6840b7","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"4c74f65d5e2e31d023294653a435c5f40a5f096123abed8608b2c29a67193d52","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -69,6 +69,13 @@ Una guardia chiamata porta la prop `guard.summoned`: è già arrivata accanto al
 quindi resta su di lui in silenzio senza passeggiare, e quando quel criminale viene lasciato andare non arresta
 nessun altro e attende di essere mandata via. Ciò che una guardia sta facendo viene mantenuto in memoria per seriale, non salvato.
 I numeri (12, 24, i 10 secondi) sono costanti all'inizio del file.
+
+**La guardia arciere**, template `archerguard` (le guardie chiamate a Ilshenar e Malas, sul modello dell'`ArcherGuard` di ModernUO, senza il suo cavallo e le sue statistiche: sono quelle della guardia con un arco), è
+questa guardia con un arco in mano e `combat.range` di 10. Davanti a un NPC che attacca, un criminale o un mostro, che sia
+entro la sua portata e nella sua vista, non gli si avvicina: resta dov'è, lo guarda e avvia lo scontro
+(`combat.attack`), e il servizio di combattimento spara con l'abilità Archery; l'arresto finisce quando il bersaglio è morto.
+Fuori portata, o fuori vista, gli si avvicina come ogni guardia, e spara da lì. Con un giocatore è la stessa guardia
+delle altre: gli si avvicina e gli sta addosso.
 
 ## animal.lua e scared_animal.lua
 

@@ -3,10 +3,12 @@
 --
 -- What it is for:
 --   A mobile script for the guards of the towns, the ones that stand there by
---   their spawn and the ones a player calls by saying "guards". The server has no
---   combat yet: a guard kills a criminal that is an NPC with one blow, as
---   ModernUO's does, and only stands on one that is a player, since players do
---   not die yet. A mobile template uses it with script_id = "guard" (guard,
+--   their spawn and the ones a player calls by saying "guards". A guard kills a
+--   criminal or a monster that is an NPC with one blow, as ModernUO's does, and
+--   only stands on a player. A guard that holds a bow, the archer guard of
+--   Ilshenar and Malas, shoots an NPC it goes for from the bow's range instead,
+--   with the combat service, and does not come beside it unless it is out of its
+--   range or sight. A mobile template uses it with script_id = "guard" (guard,
 --   m_guard and f_guard do).
 --
 --   The guard is in one of two states:
@@ -143,6 +145,26 @@ local function puff(where)
     effect.at(where.map, where.x, where.y, where.z, EffectGraphicType.Smoke)
 end
 
+-- Whether the guard shoots the NPC from where it stands: it holds a bow, the target is no player and is within the bow's
+-- range and in its sight. A player is only stood on, with a bow or without.
+local function can_shoot(serial, criminal)
+    local range = combat.range(serial) or 1
+
+    if range <= 1 or mobile.is_player(criminal) then
+        return false
+    end
+
+    local there = mobile.location(criminal)
+    local here = npc.location(serial)
+
+    -- On its storey, as the combat service asks: a target on a roof above is out of reach.
+    return there ~= nil
+        and here ~= nil
+        and math.abs(there.z - here.z) <= STOREY
+        and npc.distance_to(serial, there.x, there.y) <= range
+        and npc.can_see(serial, criminal, range)
+end
+
 local function start_arrest(serial, mind, here, criminal)
     mind.state = "arrest"
     mind.target = criminal
@@ -155,7 +177,8 @@ local function start_arrest(serial, mind, here, criminal)
 
     -- Not beside it: the guard is gone from where it stood and stands beside the criminal, on a free tile a step
     -- from it, or on it when there is none. A teleport that is refused leaves it where it is, to run there.
-    if npc.distance_to(serial, there.x, there.y) > 1 or math.abs(there.z - here.z) > STOREY then
+    if not can_shoot(serial, criminal)
+        and (npc.distance_to(serial, there.x, there.y) > 1 or math.abs(there.z - here.z) > STOREY) then
         local spot = world.spot_beside(there.map, there.x, there.y, there.z) or there
 
         if mobile.teleport(serial, spot.x, spot.y, spot.z) then
@@ -172,6 +195,7 @@ local function start_arrest(serial, mind, here, criminal)
 end
 
 local function back_to_post(serial, mind)
+    combat.stop(serial)
     mind.state = "post"
     mind.target = nil
     -- A guard that was called came for this one.
@@ -213,6 +237,23 @@ local function arrest(serial, mind, here)
     end
 
     local there = mobile.location(criminal)
+
+    -- An archer shoots from where it stands: the shots are the combat service's, and it is done when its target is dead.
+    -- When the combat service refuses the fight, such as for a target it may not hurt, the guard goes on as any other.
+    if can_shoot(serial, criminal) and (combat.target(serial) == criminal or combat.attack(serial, criminal)) then
+        mind.stalled = 0
+        mind.strike = nil
+        npc.face(serial, there.x, there.y)
+
+        local stats = mobile.stats(criminal)
+
+        if stats ~= nil and stats.hits <= 0 then
+            mind.killed = criminal
+            back_to_post(serial, mind)
+        end
+
+        return
+    end
 
     if npc.distance_to(serial, there.x, there.y) <= 1 and math.abs(there.z - here.z) <= STOREY then
         mind.stalled = 0

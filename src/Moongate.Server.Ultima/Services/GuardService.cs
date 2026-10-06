@@ -16,7 +16,7 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     Sends a guard for each criminal near the player that called, as ModernUO's guarded regions: an NPC of
-///     <c>ultima.crime.guard_template</c> appears on the criminal with the teleport effect and sound, says its line,
+///     <c>ultima.crime.guard_template</c>, or of <c>archer_guard_template</c> in Ilshenar and Malas, appears on the criminal with the teleport effect and sound, says its line,
 ///     and leaves the same way after <c>ultima.crime.guard_seconds</c>. Only a criminal that stands in a guarded
 ///     region is reached. Spawns and removals wait for the game loop, so they are started off it. A summoned guard bears the prop
 ///     <c>guard.summoned</c>: one a stopped server left in the world is removed at the first check.
@@ -201,13 +201,19 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
         return _sessions.TryGetByCharacterId(mobile.Id, out var session) && session.AccountType >= AccountType.GameMaster;
     }
 
+    // As ModernUO's DefaultGuardType: the archers of Ilshenar and Malas, the warriors everywhere else.
+    private string TemplateOf(MapType map)
+    {
+        return map is MapType.Ilshenar or MapType.Malas ? _config.ArcherGuardTemplate : _config.GuardTemplate;
+    }
+
     // Off the loop: the spawn saves the guard, then puts it in the world on the loop and waits for that.
     private async Task SummonAsync(Serial criminal, MapType map, Point3D location)
     {
         try
         {
             var guard = await _npcs.SpawnAsync(
-                _config.GuardTemplate,
+                TemplateOf(map),
                 map,
                 location,
                 new Dictionary<string, object?> { [SummonedProp] = true }
@@ -220,7 +226,7 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
         }
         catch (Exception exception)
         {
-            _logger.Warning(exception, "No guard of {Template} came for {Criminal}", _config.GuardTemplate, criminal);
+            _logger.Warning(exception, "No guard of {Template} came for {Criminal}", TemplateOf(map), criminal);
             // On the loop, where the set lives; a loop that is stopping needs it no more.
             _loop.TryPost(new LoopActionWorkItem(() => _wanted.Remove(criminal)));
         }

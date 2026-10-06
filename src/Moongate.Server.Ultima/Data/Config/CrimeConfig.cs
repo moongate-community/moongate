@@ -24,6 +24,11 @@ public sealed class CrimeConfig
     public string GuardTemplate { get; set; } = "guard";
 
     /// <summary>
+    ///     Gets or sets the mobile template of a guard that is called in Ilshenar and Malas, as ModernUO's archer guards.
+    /// </summary>
+    public string ArcherGuardTemplate { get; set; } = "archerguard";
+
+    /// <summary>
     ///     Gets or sets the seconds a called guard stays before it leaves; 40 is about ModernUO's.
     /// </summary>
     public int GuardSeconds { get; set; } = 40;
@@ -39,6 +44,11 @@ public sealed class CrimeConfig
             throw new InvalidOperationException(
                 $"ultima.crime.guard_seconds must be from 1 to {MaximumSeconds}, found {GuardSeconds}."
             );
+        }
+
+        if (string.IsNullOrWhiteSpace(ArcherGuardTemplate))
+        {
+            throw new InvalidOperationException("ultima.crime.archer_guard_template cannot be empty.");
         }
 
         if (string.IsNullOrWhiteSpace(GuardTemplate))

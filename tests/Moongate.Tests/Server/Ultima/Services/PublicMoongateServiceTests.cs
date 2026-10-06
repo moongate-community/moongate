@@ -16,8 +16,8 @@ public sealed class PublicMoongateServiceTests
     [Fact]
     public void GetFacets_GivesTheFacetsOfTheLoadedMapsOnly_InFileOrder()
     {
-        // The test sectors hold Trammel and Felucca: Malas is not loaded.
-        var service = Service(Facet(MapType.Trammel, Britain()), Facet(MapType.Malas, Britain()), Facet(MapType.Felucca, Britain()));
+        // The test sectors hold Trammel, Felucca, Ilshenar and Malas: Tokuno is not loaded.
+        var service = Service(Facet(MapType.Trammel, Britain()), Facet(MapType.Tokuno, Britain()), Facet(MapType.Felucca, Britain()));
 
         Assert.Equal([MapType.Trammel, MapType.Felucca], service.GetFacets().Select(facet => facet.Map));
     }

@@ -732,6 +732,27 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AnInvulnerable_IsNotHurtByABlow_AndWhoIsShotByItDoesNotAnswerIt()
+    {
+        _aria.Notoriety = NotorietyType.Invulnerable;
+        _orc.Notoriety = NotorietyType.Enemy;
+        _random.Integers(4);
+
+        // A blow that reached it, such as an answer to its own arrow: no harm.
+        _combat.Attack(_orc, _aria);
+        Tick();
+        Assert.Equal(30, _aria.Hits);
+
+        // And the orc it hits does not turn on it.
+        _combat.Stop(_orc);
+        _aria.Notoriety = NotorietyType.Invulnerable;
+        _orc.Notoriety = NotorietyType.Enemy;
+        _combat.Attack(_aria, _orc);
+        Tick();
+        Assert.Null(_combat.TargetOf(_orc));
+    }
+
+    [Fact]
     public void AnNpcTheScriptMadePassive_DoesNotFightBack_UntilItIsNotAny()
     {
         _orc.SetProp(CombatService.PassiveProp, true);

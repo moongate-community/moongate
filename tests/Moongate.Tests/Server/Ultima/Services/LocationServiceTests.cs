@@ -77,11 +77,11 @@ public sealed class LocationServiceTests
     [Fact]
     public void GetNode_ThePlacesOfAMapThatIsNotLoaded_AreLeftOut()
     {
-        // The test sectors hold Trammel and Felucca: Malas is not loaded.
-        var service = Service(Place(MapType.Malas, "Towns", "Luna"), Place(MapType.Felucca, "Towns", "Cove"));
+        // The test sectors hold Trammel, Felucca, Ilshenar and Malas: Tokuno is not loaded.
+        var service = Service(Place(MapType.Tokuno, "Towns", "Luna"), Place(MapType.Felucca, "Towns", "Cove"));
 
         Assert.Equal(["Felucca"], service.GetNode("")!.Categories);
-        Assert.Null(service.GetNode("malas"));
+        Assert.Null(service.GetNode("tokuno"));
     }
 
     [Fact]
