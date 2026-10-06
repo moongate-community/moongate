@@ -167,14 +167,6 @@ public sealed class GumpTutorialIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private void Answer(int gump, int button, Dictionary<int, string>? texts = null)
     {
         _gumps.Opened[gump]
@@ -194,5 +186,13 @@ public sealed class GumpTutorialIntegrationTests : IAsyncLifetime
         }
 
         return directory!.FullName;
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

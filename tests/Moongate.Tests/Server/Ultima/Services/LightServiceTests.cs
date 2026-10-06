@@ -245,11 +245,6 @@ public sealed class LightServiceTests : IAsyncLifetime
         Assert.Empty(_timers.Timers);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private async Task LoginAsync(long id)
     {
         await _fixture.AddAsync(id);
@@ -289,5 +284,10 @@ public sealed class LightServiceTests : IAsyncLifetime
     private static MobileEntity Mobile()
     {
         return new() { Id = new Serial(9), Map = MapType.Trammel };
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

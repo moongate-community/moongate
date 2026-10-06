@@ -63,11 +63,6 @@ public sealed class AddGoldCommandTests : IAsyncLifetime
         _serials.Serials.Enqueue(new Serial(0x40002000));
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public async Task AnAmount_ThenAMobile_PutsThatGoldInItsBackpack()
     {
@@ -202,5 +197,10 @@ public sealed class AddGoldCommandTests : IAsyncLifetime
         _items.Add([backpack]);
 
         return backpack;
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

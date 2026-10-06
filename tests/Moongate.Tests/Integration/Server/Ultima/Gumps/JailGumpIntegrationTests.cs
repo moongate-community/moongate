@@ -56,6 +56,10 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
     // A player found by .jail <name> who is not in the world.
     private const long Offline = 200;
 
+    // The buttons answer in the order the script makes them: the target button, then for each cell its jail button
+    // (or the release of who is inside) and its go. So it is with a target and nobody of its own in jail.
+    private const int TargetButton = 1;
+
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
     private readonly StubGameLoop _loop = new();
@@ -655,14 +659,6 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private JailSentenceEntity Sentence(long prisoner, string name, int cell, long secondsLeft)
     {
         return new()
@@ -671,10 +667,6 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
             ReleaseAt = _jail.Now + secondsLeft * 1000
         };
     }
-
-    // The buttons answer in the order the script makes them: the target button, then for each cell its jail button
-    // (or the release of who is inside) and its go. So it is with a target and nobody of its own in jail.
-    private const int TargetButton = 1;
 
     private static int Jail(int cell)
     {
@@ -777,5 +769,13 @@ public sealed class JailGumpIntegrationTests : IAsyncLifetime
         }
 
         return directory!.FullName;
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

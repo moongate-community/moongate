@@ -155,13 +155,6 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         await _npcs.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void APlayerInSight_IsThreatened_WalkedTo_AndFoughtFromBesideIt()
     {
@@ -580,5 +573,12 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         }
 
         return Path.Combine(directory!.FullName, "moongate_root", "scripts", relativePath);
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

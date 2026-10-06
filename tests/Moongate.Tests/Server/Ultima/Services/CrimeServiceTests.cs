@@ -32,12 +32,6 @@ public sealed class CrimeServiceTests : IAsyncLifetime
         await _crimes.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        await _crimes.StopAsync();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void StartAsync_RegistersOneRepeatingTimerEverySecond_AndStopAsyncRemovesIt()
     {
@@ -222,5 +216,11 @@ public sealed class CrimeServiceTests : IAsyncLifetime
     private void Fire()
     {
         _timers.Fire(_timers.Timers[0].Id);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _crimes.StopAsync();
+        await _fixture.DisposeAsync();
     }
 }

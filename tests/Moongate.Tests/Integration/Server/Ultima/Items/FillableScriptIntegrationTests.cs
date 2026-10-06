@@ -361,14 +361,6 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
         Assert.False(result.Values is [true, ..]);
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private ScriptResult Open(ItemEntity container)
     {
         return _itemScripts.Run(container, "on_use", Player);
@@ -449,5 +441,13 @@ public sealed class FillableScriptIntegrationTests : IAsyncLifetime
         }
 
         return directory!.FullName;
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

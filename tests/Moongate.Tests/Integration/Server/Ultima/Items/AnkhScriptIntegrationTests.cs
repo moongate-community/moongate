@@ -165,14 +165,6 @@ public sealed class AnkhScriptIntegrationTests : IAsyncLifetime
         await _itemScripts.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void AGhostUsingAnAnkh_IsAskedWhetherItWantsToLive_AndTheLivingHaveNoFunctionToRun()
     {
@@ -264,5 +256,13 @@ public sealed class AnkhScriptIntegrationTests : IAsyncLifetime
         }
 
         return directory!.FullName;
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

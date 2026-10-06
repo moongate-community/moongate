@@ -97,11 +97,6 @@ public sealed class JailServiceTests : IAsyncLifetime
         _jail = await CreateAsync(_file);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Jail_APlayer_TeleportsItToTheCellAndKeepsWhereItWas()
     {
@@ -1400,5 +1395,10 @@ public sealed class JailServiceTests : IAsyncLifetime
         _read = _log.Events.Count;
 
         return lines;
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

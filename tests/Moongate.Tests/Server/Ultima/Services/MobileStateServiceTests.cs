@@ -49,11 +49,6 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void SetStats_ChangesWhatIsGiven_AndKeepsTheRest()
     {
@@ -599,5 +594,10 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
             Enum.GetValues<SkillType>().Length,
             Assert.IsType<SkillsPacket>(Assert.Single(_fixture.Sender.Sent)).Skills.Count
         );
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

@@ -86,11 +86,6 @@ public sealed class BankServiceTests : IAsyncLifetime
         }
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public async Task Open_TheFirstTime_CreatesTheBankBox_SavesIt_AndShowsIt()
     {
@@ -1210,5 +1205,10 @@ public sealed class BankServiceTests : IAsyncLifetime
         gold.Amount = amount;
 
         return gold;
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

@@ -218,13 +218,6 @@ public sealed class SeasonServiceTests : IAsyncLifetime
         Assert.Contains(id, _timers.Unregistered);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _seasons.StopAsync();
-        _container.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private async Task EnterAsync(RegionContent? region)
     {
         _seasons.RegionChanged(_aria, null, region);
@@ -249,5 +242,12 @@ public sealed class SeasonServiceTests : IAsyncLifetime
             .Where(pair => pair.packet is SeasonChangePacket)
             .Select(pair => (((SeasonChangePacket)pair.packet).Season, _fixture.Sender.SentSessionIds[pair.index]))
             .ToList();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _seasons.StopAsync();
+        _container.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

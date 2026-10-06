@@ -108,11 +108,6 @@ public sealed class ItemScriptServiceTests : IDisposable
         Assert.Empty(_engine.MemberCalls);
     }
 
-    public void Dispose()
-    {
-        _scripts.Dispose();
-    }
-
     private ItemScriptService Create(params ItemTemplate[] templates)
     {
         return Create(new StubGameLoop(), templates);
@@ -126,5 +121,10 @@ public sealed class ItemScriptServiceTests : IDisposable
             loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );
+    }
+
+    public void Dispose()
+    {
+        _scripts.Dispose();
     }
 }

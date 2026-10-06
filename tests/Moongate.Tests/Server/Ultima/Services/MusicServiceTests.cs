@@ -183,13 +183,6 @@ public sealed class MusicServiceTests : IAsyncLifetime
         Assert.Equal(MusicType.Create1, _music.MusicOf(_aria));
     }
 
-    public async Task DisposeAsync()
-    {
-        await _music.StopAsync();
-        _container.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private async Task LoginAsync(MobileEntity? character = null)
     {
         await _container.Resolve<IMoongateEventBus>().PublishAsync(new CharacterEnteredWorldEvent(character ?? _aria));
@@ -198,5 +191,12 @@ public sealed class MusicServiceTests : IAsyncLifetime
     private List<MusicType> Sent()
     {
         return _fixture.Sender.Sent.OfType<PlayMusicPacket>().Select(packet => packet.Music).ToList();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _music.StopAsync();
+        _container.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

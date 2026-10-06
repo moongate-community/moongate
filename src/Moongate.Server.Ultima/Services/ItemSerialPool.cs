@@ -30,7 +30,7 @@ public sealed class ItemSerialPool : IItemSerialPool
 
     public Task StartAsync()
     {
-        return StartRefill();
+        return StartRefillAsync();
     }
 
     public Task StopAsync()
@@ -47,13 +47,13 @@ public sealed class ItemSerialPool : IItemSerialPool
 
         if (_serials.Count < RefillBelow)
         {
-            StartRefill();
+            StartRefillAsync();
         }
 
         return taken;
     }
 
-    private Task StartRefill()
+    private Task StartRefillAsync()
     {
         lock (_gate)
         {

@@ -25,11 +25,6 @@ public sealed class PromptModuleTests : IAsyncLifetime
         await _fixture.AddAsync(2);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Ask_GivesTheTypedTextToTheFunction_OwnedByTheScriptThatAsked()
     {
@@ -104,5 +99,10 @@ public sealed class PromptModuleTests : IAsyncLifetime
         );
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

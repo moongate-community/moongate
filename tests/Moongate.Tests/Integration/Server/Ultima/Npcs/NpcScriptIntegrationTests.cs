@@ -772,17 +772,6 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         return scripts;
     }
 
-    public void Dispose()
-    {
-        foreach (var engine in _engines)
-        {
-            engine.Dispose();
-        }
-
-        _container.Dispose();
-        _scripts.Dispose();
-    }
-
     private static string ShippedScript(string relativePath)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -847,5 +836,16 @@ public sealed class NpcScriptIntegrationTests : IDisposable
             _timers,
             new EventBusAdapter(_container)
         );
+    }
+
+    public void Dispose()
+    {
+        foreach (var engine in _engines)
+        {
+            engine.Dispose();
+        }
+
+        _container.Dispose();
+        _scripts.Dispose();
     }
 }

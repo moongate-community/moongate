@@ -176,14 +176,6 @@ public sealed class DyeScriptsIntegrationTests : IAsyncLifetime
         await _itemScripts.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public void Dyes_OnADyeTub_OpenThePickerWithTheTubInIt_AndTheTubTakesTheHuePicked()
     {
@@ -514,5 +506,13 @@ public sealed class DyeScriptsIntegrationTests : IAsyncLifetime
         }
 
         return Path.Combine(directory!.FullName, "moongate_root", "scripts", relativePath);
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

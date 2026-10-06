@@ -42,11 +42,6 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         _items = _host.Container.Resolve<IDataAccess<ItemEntity>>();
     }
 
-    public async Task DisposeAsync()
-    {
-        await _host.DisposeAsync();
-    }
-
     [Fact]
     public async Task ASchemaGeneratedFromTheEntities_GivesTheFirstItemTheFirstItemSerial()
     {
@@ -606,5 +601,10 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
 
         Assert.Null(await data.GetByIdAsync(gold.Id));
         Assert.Empty(((IPersistenceDeletionSource)items).Capture());
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _host.DisposeAsync();
     }
 }

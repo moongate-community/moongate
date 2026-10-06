@@ -38,11 +38,6 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         Location = new Point3D(1497, 1628, 12)
     };
 
-    public void Dispose()
-    {
-        _events.Dispose();
-    }
-
     [Fact]
     public async Task Claim_DeferredLogoutPropagatesLoopFaultInsteadOfHanging()
     {
@@ -466,5 +461,10 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         );
 
         return new(_mobiles, _items, _view, _world, bus);
+    }
+
+    public void Dispose()
+    {
+        _events.Dispose();
     }
 }

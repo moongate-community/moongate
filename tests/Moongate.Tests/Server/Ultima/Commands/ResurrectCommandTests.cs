@@ -66,14 +66,6 @@ public sealed class ResurrectCommandTests : IAsyncDisposable
         Assert.Equal("Target canceled.", Assert.Single(context.Output).Text);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        if (_fixture is not null)
-        {
-            await _fixture.DisposeAsync();
-        }
-    }
-
     private async Task<CommandContext> RunAsync()
     {
         _fixture = await SessionFixture.CreateAsync();
@@ -83,5 +75,13 @@ public sealed class ResurrectCommandTests : IAsyncDisposable
         await new ResurrectCommand(_death, _targets).ExecuteAsync(context);
 
         return context;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_fixture is not null)
+        {
+            await _fixture.DisposeAsync();
+        }
     }
 }

@@ -26,11 +26,6 @@ public sealed class WorldStateEntityPersistenceTests : IAsyncLifetime
         _state = _host.Container.Resolve<IDataAccess<WorldStateEntity>>();
     }
 
-    public async Task DisposeAsync()
-    {
-        await _host.DisposeAsync();
-    }
-
     [Fact]
     public async Task ANewWorld_HasNoRow()
     {
@@ -87,5 +82,10 @@ public sealed class WorldStateEntityPersistenceTests : IAsyncLifetime
         await again.StartAsync();
         Assert.Equal(13L, again.Get("event.day"));
         Assert.Single(await data.GetAllAsync());
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _host.DisposeAsync();
     }
 }

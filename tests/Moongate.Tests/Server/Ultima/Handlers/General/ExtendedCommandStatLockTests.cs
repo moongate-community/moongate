@@ -33,11 +33,6 @@ public sealed class ExtendedCommandStatLockTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Theory]
     [InlineData(0, 0, StatType.Str, StatLockType.Up)]
     [InlineData(0, 1, StatType.Str, StatLockType.Down)]
@@ -90,5 +85,10 @@ public sealed class ExtendedCommandStatLockTests : IAsyncLifetime
         );
 
         _handler.Handle(_session, packet);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

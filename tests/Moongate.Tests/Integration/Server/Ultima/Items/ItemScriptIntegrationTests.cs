@@ -1315,18 +1315,6 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         return scripts;
     }
 
-    public async Task DisposeAsync()
-    {
-        foreach (var engine in _engines)
-        {
-            engine.Dispose();
-        }
-
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private LuaScriptEngineService NewEngine()
     {
         return new(
@@ -1355,5 +1343,17 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         }
 
         return Path.Combine(directory!.FullName, "moongate_root", "scripts", relativePath);
+    }
+
+    public async Task DisposeAsync()
+    {
+        foreach (var engine in _engines)
+        {
+            engine.Dispose();
+        }
+
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

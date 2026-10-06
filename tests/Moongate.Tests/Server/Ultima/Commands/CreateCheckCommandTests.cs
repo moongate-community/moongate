@@ -55,11 +55,6 @@ public sealed class CreateCheckCommandTests : IAsyncLifetime
         _serials.Serials.Enqueue(new Serial(0x40002000));
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public async Task AnAmount_PutsACheckWorthItInTheBackpack()
     {
@@ -159,5 +154,10 @@ public sealed class CreateCheckCommandTests : IAsyncLifetime
         _items.Add([backpack]);
 
         return backpack;
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

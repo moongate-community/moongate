@@ -88,16 +88,6 @@ public sealed class ServerLoggerFactoryTests : IDisposable
         Assert.False(Directory.Exists(_logs));
     }
 
-    public void Dispose()
-    {
-        _console.Dispose();
-
-        if (Directory.Exists(_logs))
-        {
-            Directory.Delete(_logs, true);
-        }
-    }
-
     private static async Task WaitForAsync(Func<bool> condition)
     {
         var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
@@ -108,5 +98,15 @@ public sealed class ServerLoggerFactoryTests : IDisposable
         }
 
         Assert.True(condition(), "The condition was not met within the timeout.");
+    }
+
+    public void Dispose()
+    {
+        _console.Dispose();
+
+        if (Directory.Exists(_logs))
+        {
+            Directory.Delete(_logs, true);
+        }
     }
 }

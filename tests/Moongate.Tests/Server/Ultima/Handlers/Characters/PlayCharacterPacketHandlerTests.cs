@@ -47,11 +47,6 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
     private readonly RecordingMotdService _motd = new();
 
-    public void Dispose()
-    {
-        _events.Dispose();
-    }
-
     [Fact]
     public async Task HandleAsync_SendsTheLightOfTheCharactersTimeOfDay()
     {
@@ -474,6 +469,11 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         }
 
         return (context, session, sender);
+    }
+
+    public void Dispose()
+    {
+        _events.Dispose();
     }
 
     private sealed class RecordingMotdService : IMotdService

@@ -186,11 +186,6 @@ public sealed class GumpBuilderTests : IAsyncLifetime
         Assert.Empty(_gumps.Opened);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private void Answer(int button, int gump = 0)
     {
         _gumps.Opened[gump]
@@ -226,5 +221,10 @@ public sealed class GumpBuilderTests : IAsyncLifetime
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

@@ -13,5 +13,9 @@ namespace Moongate.Server.Core.Interfaces.Sessions;
 /// </remarks>
 public interface ISessionClosedListener
 {
+    /// <summary>
+    ///     Called when the session closes.
+    /// </summary>
+    /// <param name="session">The session that is closing.</param>
     void OnSessionClosed(GameSession session);
 }

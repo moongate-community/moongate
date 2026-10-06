@@ -392,14 +392,6 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private GumpBuildResult Open(long player, string? tool)
     {
         var args = new LuaTable();
@@ -437,5 +429,13 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         }
 
         return directory!.FullName;
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

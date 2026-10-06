@@ -103,16 +103,16 @@ public sealed class GumpCommandTests : IAsyncLifetime
         Assert.Equal(CommandOutputLevel.Error, Assert.Single(context.Output).Level);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private async Task<CommandContext> RunAsync(params string[] arguments)
     {
         var context = new CommandContext(".gump", "gump", arguments, CommandSourceType.InGame, _session);
         await _command.ExecuteAsync(context);
 
         return context;
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

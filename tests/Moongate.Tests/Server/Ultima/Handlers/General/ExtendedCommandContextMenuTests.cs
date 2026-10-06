@@ -36,11 +36,6 @@ public sealed class ExtendedCommandContextMenuTests : IAsyncLifetime
         _handler = new(TestTooltips.Create(TestItems.Create(sectors), mobiles), _sender, mobiles, contextMenus: _menus);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     // Sub-command 0x13: the serial of what the player clicked.
     [Fact]
     public async Task ARequest_AsksForTheMenuOfTheTarget()
@@ -78,5 +73,10 @@ public sealed class ExtendedCommandContextMenuTests : IAsyncLifetime
         Assert.True(ExtendedCommandPacket.TryParse(Convert.FromHexString(hex), out var packet));
 
         return _fixture.ExecuteOnLoopAsync(() => _handler.Handle(_session, packet));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

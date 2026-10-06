@@ -99,11 +99,6 @@ public sealed class WorldModuleTests : IAsyncLifetime
         await _fixture.Network.ExecuteOnLoopAsync(() => gm.Set(SessionKeys.AccountType, AccountType.GameMaster));
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Theory,
      InlineData("return world.is_staff(3)", true),
      InlineData("return world.is_staff(2)", false),
@@ -509,5 +504,10 @@ public sealed class WorldModuleTests : IAsyncLifetime
         state.OpenTableLibrary();
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

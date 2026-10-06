@@ -22,11 +22,6 @@ public sealed class TextCommandPacketHandlerTests : IAsyncLifetime
         _session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Theory]
     [InlineData("21 0", SkillType.Hiding)]
     [InlineData("21", SkillType.Hiding)]
@@ -76,5 +71,10 @@ public sealed class TextCommandPacketHandlerTests : IAsyncLifetime
         Assert.True(TextCommandPacket.TryParse(data, out var packet));
 
         new TextCommandPacketHandler(_skills).Handle(_session, packet);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }
