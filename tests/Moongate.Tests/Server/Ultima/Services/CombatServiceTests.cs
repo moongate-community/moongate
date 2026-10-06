@@ -532,15 +532,51 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void APlayer_IsLeftWithOneHitPoint_NotKilled()
+    public void APlayerAtNoHitPoints_Dies_ByTheKiller_AndTheFightIsOver()
     {
         _aria.Hits = 2;
         _combat.Attack(_orc, _aria);
 
         Tick();
 
+        Assert.Equal([(_aria, (MobileEntity?)_orc)], _death.Killed);
+        Assert.Equal(0, _aria.Hits);
+        Assert.Null(_combat.TargetOf(_orc));
+    }
+
+    [Fact]
+    public void APlayerThatCannotDie_IsLeftWithOneHitPoint()
+    {
+        _death.Kills = false;
+        _aria.Hits = 2;
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
         Assert.Equal(1, _aria.Hits);
-        Assert.Empty(_death.Killed);
+    }
+
+    [Fact]
+    public void AGhost_CannotAttack_AndCannotBeAttacked()
+    {
+        _aria.Body = 0x0192;
+        _aria.WarMode = true;
+
+        Assert.False(_combat.Attack(_aria, _orc));
+        Assert.False(_combat.Attack(_orc, _aria));
+    }
+
+    [Fact]
+    public void AFighterThatDies_SwingsNoMore()
+    {
+        _combat.Attack(_aria, _orc);
+        _aria.Body = 0x0192;
+        _fixture.Sender.Sent.Clear();
+
+        Tick();
+
+        Assert.Equal(30, _orc.Hits);
+        Assert.Null(_combat.TargetOf(_aria));
     }
 
     [Fact]

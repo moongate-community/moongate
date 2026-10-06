@@ -221,7 +221,12 @@ public sealed class CombatService : ICombatService
             return "the target is invulnerable";
         }
 
-        if (target.Hits <= 0)
+        if (attacker.IsDead)
+        {
+            return "the attacker is dead";
+        }
+
+        if (target.Hits <= 0 || target.IsDead)
         {
             return "the target has no hit points";
         }
@@ -302,6 +307,8 @@ public sealed class CombatService : ICombatService
             // An NPC with no hit points is dying: the dead do not fight, nor are they fought.
             attacker.IsNpc && attacker.Hits <= 0 ||
             target.IsNpc && target.Hits <= 0 ||
+            attacker.IsDead ||
+            target.IsDead ||
             !attacker.IsNpc && !attacker.WarMode)
         {
             Stop(attacker);
@@ -388,8 +395,7 @@ public sealed class CombatService : ICombatService
         _view.MobileAnimated(target, action, frames, 1);
         ShowDamage(attacker, target, damage);
 
-        // A player cannot die yet: it is left with one hit point.
-        var hits = target.IsNpc ? target.Hits - damage : Math.Max(target.Hits - damage, 1);
+        var hits = target.Hits - damage;
 
         if (hits > 0)
         {
@@ -400,7 +406,13 @@ public sealed class CombatService : ICombatService
         }
 
         _state.SetStats(target, new MobileStatsChange { Hits = 0 });
-        _death.Kill(target, attacker);
+
+        // A player that cannot die, such as one with a body that has no ghost, is left with one hit point.
+        if (!_death.Kill(target, attacker) && !target.IsNpc)
+        {
+            _state.SetStats(target, new MobileStatsChange { Hits = 1 });
+        }
+
         Stop(attacker);
         Stop(target);
     }
