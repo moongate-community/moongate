@@ -1,0 +1,9 @@
+---
+import ContentNotice from '@astrojs/starlight/components/ContentNotice.astro';
+import { contentEntries } from '../../content-manifest.mjs';
+import { isEnglishOnlyPath } from '../../scripts/translations.mjs';
+const generated = isEnglishOnlyPath(Astro.url.pathname, contentEntries);
+---
+<ContentNotice icon={generated ? 'information' : 'warning'} label={generated
+  ? 'Questo riferimento è generato dal codice e viene mantenuto in inglese.'
+  : 'Questa pagina non ha ancora una traduzione aggiornata. Viene mostrata la versione inglese.'} />

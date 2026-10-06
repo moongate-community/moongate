@@ -4,6 +4,7 @@ import { visit } from 'unist-util-visit';
 import { parseFragment } from 'parse5';
 import { slug } from 'github-slugger';
 import { toString } from 'mdast-util-to-string';
+import { headingAliases } from './translations.mjs';
 import { rewriteSrcset } from './srcset.mjs';
 import { resolveDocumentUrl } from './document-links.mjs';
 
@@ -37,6 +38,9 @@ function transformHtml(html, resolve, removeTitle) {
 export function compileDocument(entry, markdown, context) {
   const processor = remark().use(remarkGfm);
   const tree = processor.parse(markdown);
+  const aliases = context.originalMarkdown ? headingAliases(context.originalMarkdown, markdown) : [];
+  const aliasNodes = [];
+  let headingIndex = 0;
   let removedTitle = false;
   const removeTitle = () => {
     if (removedTitle) return false;
@@ -45,6 +49,10 @@ export function compileDocument(entry, markdown, context) {
   };
   const resolve = url => resolveDocumentUrl(url, { ...context, source: entry.source });
   visit(tree, (node, index, parent) => {
+    if (node.type === 'heading') {
+      const alias = aliases[headingIndex++];
+      if (alias) aliasNodes.push({ parent, node, alias });
+    }
     if (parent === tree && node.type === 'heading' && node.depth === 1 && removeTitle()) {
       const id = slug(toString(node));
       node.type = 'html';
@@ -55,11 +63,14 @@ export function compileDocument(entry, markdown, context) {
     if (['link', 'image', 'definition'].includes(node.type)) node.url = resolve(node.url);
     if (node.type === 'html') node.value = transformHtml(node.value, resolve, parent === tree ? removeTitle : () => false);
   });
+  for (const { parent, node, alias } of aliasNodes.reverse()) {
+    parent.children.splice(parent.children.indexOf(node), 0, { type: 'html', value: `<a id="${escapeAttribute(alias)}"></a>` });
+  }
   const header = [
     '---',
     `title: ${JSON.stringify(entry.title)}`,
     `slug: ${JSON.stringify(entry.slug)}`,
-    `editUrl: ${JSON.stringify(`https://github.com/moongate-community/moongate/edit/develop/${entry.source}`)}`,
+    `editUrl: ${JSON.stringify(`https://github.com/moongate-community/moongate/edit/develop/${entry.editSource ?? entry.source}`)}`,
     '---', '',
   ].join('\n');
   return `${header}\n${processor.stringify(tree)}`;

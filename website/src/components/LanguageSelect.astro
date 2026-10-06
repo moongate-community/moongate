@@ -1,0 +1,27 @@
+---
+import Select from '@astrojs/starlight/components/Select.astro';
+import { contentEntries } from '../../content-manifest.mjs';
+import { isEnglishOnlyPath } from '../../scripts/translations.mjs';
+const italian = Astro.locals.starlightRoute.locale === 'it';
+const pathname = Astro.url.pathname.replace(/^\/it(?=\/|$)/, '') || '/';
+const englishPath = pathname === '/404/' ? '/' : pathname;
+const italianPath = isEnglishOnlyPath(englishPath, contentEntries) ? '/it/' : `/it${englishPath}`;
+---
+<docs-language-select>
+  <Select icon="translate" label={Astro.locals.t('languageSelect.accessibleLabel')} width="7em" options={[
+    { value: englishPath, label: 'English', selected: !italian },
+    { value: italianPath, label: 'Italiano', selected: italian },
+  ]} />
+</docs-language-select>
+<script>
+  class DocsLanguageSelect extends HTMLElement {
+    connectedCallback() {
+      const select = this.querySelector('select');
+      select?.addEventListener('change', () => { window.location.href = select.value; });
+      window.addEventListener('pageshow', () => {
+        if (select) select.selectedIndex = select.querySelector('option[selected]')?.index ?? 0;
+      });
+    }
+  }
+  customElements.define('docs-language-select', DocsLanguageSelect);
+</script>
