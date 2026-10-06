@@ -51,6 +51,7 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<IRegenerationService, RegenerationService>(12);
         container.AddMoongateService<IHungerService, HungerService>(12);
         container.AddMoongateService<ICrimeService, CrimeService>(12);
+        container.AddMoongateService<IMurderService, MurderService>(12);
         container.Register<ICombatGearService, CombatGearService>(Reuse.Singleton);
         container.AddMoongateService<ICombatService, CombatService>(12);
         container.AddMoongateService<IGuardService, GuardService>(12);
