@@ -11,6 +11,23 @@ public sealed class BookTemplateServiceTests
     private static readonly TextTemplateContext Context = new() { PlayerName = "Pippo", ServerName = "Moongate", UsersOnline = 3 };
 
     [Fact]
+    public void TryRender_AWritableSource_IsRenderedBlank_WithItsPages()
+    {
+        var service = new BookTemplateService(
+            new StubDataLoaderService().With(
+                new BookTemplate { Id = "blank", Title = "a book", Author = "$player_name", Content = "", Writable = true, Pages = 30 },
+                new BookTemplate { Id = "default", Title = "a book", Content = "", Writable = true }
+            )
+        );
+
+        Assert.True(service.TryRender("blank", Context, "eng", null, out var blank));
+        Assert.True(service.TryRender("default", Context, "eng", null, out var byDefault));
+
+        Assert.Equal(("a book", "Pippo", "", true, 30), (blank!.Title, blank.Author, blank.Content, blank.Writable, blank.Pages));
+        Assert.Equal((true, 20), (byDefault!.Writable, byDefault.Pages));
+    }
+
+    [Fact]
     public void TryRender_CarriesTheItemIdOfTheSource_WhateverTheLanguage()
     {
         var service = Service(new BookTemplate

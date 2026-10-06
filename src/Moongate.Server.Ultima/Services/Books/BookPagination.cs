@@ -17,11 +17,12 @@ public static class BookPagination
     public const int MaxPages = 255;
 
     /// <summary>
-    ///     The most characters of a line: the client takes fewer than 80.
+    ///     The most characters of a line: the client takes fewer than 80, and a player writes that many.
     /// </summary>
-    public const int MaxLineLength = 78;
+    public const int MaxLineLength = 79;
 
     private const string PageBreak = "\n\n";
+    private const string BlankLine = " ";
 
     /// <summary>
     ///     Splits <paramref name="content" /> into pages; false when it needs more than <see cref="MaxPages" />.
@@ -55,6 +56,38 @@ public static class BookPagination
         pages = result;
 
         return true;
+    }
+
+    /// <summary>
+    ///     Writes pages as the saved text <see cref="TryPaginate" /> reads: lines joined by a line end and pages by an
+    ///     empty line. An empty line inside a page becomes a line of one space, so the page stays one page; the empty
+    ///     lines at the end of a page and the empty pages at the end of the book are not kept.
+    /// </summary>
+    public static string Join(IReadOnlyList<IReadOnlyList<string>> pages)
+    {
+        ArgumentNullException.ThrowIfNull(pages);
+
+        var texts = pages.Select(
+                             page =>
+                             {
+                                 var lines = page.ToList();
+
+                                 while (lines.Count > 0 && string.IsNullOrEmpty(lines[^1]))
+                                 {
+                                     lines.RemoveAt(lines.Count - 1);
+                                 }
+
+                                 return string.Join('\n', lines.Select(line => line.Length == 0 ? BlankLine : line));
+                             }
+                         )
+                         .ToList();
+
+        while (texts.Count > 0 && texts[^1].Length == 0)
+        {
+            texts.RemoveAt(texts.Count - 1);
+        }
+
+        return string.Join(PageBreak, texts);
     }
 
     // A line the packet cannot carry is cut at its last space that fits, or inside a word that is longer than a line.

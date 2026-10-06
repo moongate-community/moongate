@@ -10,6 +10,7 @@ and puts it in your backpack.
 ```text
 .book welcome_letter contact_name=Vega
 .book grammar_of_orcish
+.book blank_book
 ```
 
 The template is the case-sensitive filename without `.toml`, from

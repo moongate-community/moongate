@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
@@ -9,19 +10,31 @@ using Moongate.Network.Packets.Types.Packets;
 namespace Moongate.Server.Ultima.Packets.Books;
 
 /// <summary>
-///     The title and author a player wrote on a book, as the older clients send them (0x93). Books are read only:
-///     it is recognised, so the stream goes on, and nothing is done with it.
+///     The title and author a player wrote on a book, as the older clients send them (0x93).
 /// </summary>
+/// <remarks>
+///     ModernUO's <c>OldHeaderChange</c>: serial, four bytes of flags and page count, the title in 60 bytes and the
+///     author in 30, Latin-1 and zero filled.
+/// </remarks>
 [PacketHandler(0x93, PacketSizing.Fixed, Length = TotalLength, Description = "Book header change (old)")]
 public sealed class OldBookHeaderChangePacket : BaseFixedPacket<OldBookHeaderChangePacket>, IIncomingPacket<OldBookHeaderChangePacket>
 {
     private const int TotalLength = 99;
+    private const int TitleOffset = 9;
+    private const int TitleLength = 60;
+    private const int AuthorLength = 30;
 
     public Serial Book { get; }
 
-    private OldBookHeaderChangePacket(Serial book)
+    public string Title { get; }
+
+    public string Author { get; }
+
+    private OldBookHeaderChangePacket(Serial book, string title, string author)
     {
         Book = book;
+        Title = title;
+        Author = author;
     }
 
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out OldBookHeaderChangePacket? packet)
@@ -40,8 +53,15 @@ public sealed class OldBookHeaderChangePacket : BaseFixedPacket<OldBookHeaderCha
             return false;
         }
 
-        packet = new(book);
+        packet = new(book, Field(data.Slice(TitleOffset, TitleLength)), Field(data.Slice(TitleOffset + TitleLength, AuthorLength)));
 
         return true;
+    }
+
+    private static string Field(ReadOnlySpan<byte> field)
+    {
+        var zero = field.IndexOf((byte)0);
+
+        return Encoding.Latin1.GetString(zero < 0 ? field : field[..zero]);
     }
 }

@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Data.Books;
 using Moongate.Server.Ultima.Services.Books;
 using Moongate.Server.Ultima.Packets.Books;
 using Moongate.Server.Ultima.Data.Templates.Books;
@@ -138,6 +139,364 @@ public sealed class BookDocumentServiceTests
 
             Assert.DoesNotContain(f.World.Sender.Sent, packet => packet is BookHeaderPacket or BookPagesPacket);
         });
+    }
+
+    // What makes a book one a player writes in is on the item, and goes when a read-only text is written on it.
+    [Fact]
+    public async Task Give_AWritableSource_MarksTheItem_AndAReadOnlyTextWrittenOnItUnmarksIt()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        f.Data.With(
+            new BookTemplate { Id = "blank", Title = "a book", Author = "$player_name", Content = "", ItemTemplate = "readable_book", Writable = true, Pages = 30 },
+            new BookTemplate { Id = "tome", Title = "Tome", Content = "Text", ItemTemplate = "readable_book" });
+
+        await f.OnLoopAsync(() =>
+        {
+            var blank = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "blank"));
+
+            Assert.Equal((true, 30L, "Pippo", ""), (blank.GetProp("book.writable", false), blank.GetProp("book.pages", 0L), blank.GetProp("book.author", ""), blank.GetProp("book.content", "x")));
+
+            Assert.True(f.Books.Write(blank, f.Player, "tome"));
+
+            Assert.False(blank.TryGetProp<bool>("book.writable", out _));
+            Assert.False(blank.TryGetProp<long>("book.pages", out _));
+        });
+    }
+
+    // The character that carries a writable book opens it for writing, with all its pages, blank ones too.
+    [Fact]
+    public async Task Open_AWritableBookByItsCarrier_IsWritable_WithAllItsPages()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            f.World.Sender.Sent.Clear();
+
+            Assert.True(f.Books.Open(blank, f.Player));
+
+            var header = Assert.Single(f.World.Sender.Sent.OfType<BookHeaderPacket>());
+            Assert.Equal((true, 30), (header.Writable, header.PageCount));
+            Assert.Equal(30, Assert.Single(f.World.Sender.Sent.OfType<BookPagesPacket>()).PageCount);
+        });
+    }
+
+    // Lying on the ground, anyone near reads it and nobody writes in it.
+    [Fact]
+    public async Task Open_AWritableBookNobodyCarries_IsReadOnly()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            f.Items.PlaceOnGround(blank, MapType.Trammel, f.Player.Location);
+            f.World.Sender.Sent.Clear();
+
+            Assert.True(f.Books.Open(blank, f.Player));
+
+            Assert.False(Assert.Single(f.World.Sender.Sent.OfType<BookHeaderPacket>()).Writable);
+            Assert.False(f.Books.SetHeader(blank, f.Player, "Mine", "Me"));
+            Assert.False(f.Books.SetPages(blank, f.Player, [new(1, ["no"])]));
+            Assert.Equal("", blank.GetProp("book.content", "x"));
+        });
+    }
+
+    [Fact]
+    public async Task SetHeader_ByTheCarrier_SetsTitleAndAuthor_AndTheNameFollows()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            f.World.Sender.Sent.Clear();
+
+            Assert.True(f.Books.SetHeader(blank, f.Player, "My diary", "Aria"));
+
+            Assert.Equal(("My diary", "Aria", "My diary"), (blank.GetProp("book.title", ""), blank.GetProp("book.author", ""), blank.Name));
+            // Its carrier sees the new name.
+            Assert.NotEmpty(f.World.Sender.Sent);
+        });
+    }
+
+    [Theory]
+    // More than the client's fields hold, counted in bytes, and what is not text.
+    [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "A")]
+    [InlineData("èèèèèèèèèèèèèèèèèèèèèèèèèèèèèèè", "A")]
+    [InlineData("T", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
+    [InlineData("two\nlines", "A")]
+    [InlineData("T", "tab\there")]
+    public async Task SetHeader_WhatTheClientCannotHold_ChangesNothing(string title, string author)
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            Assert.False(f.Books.SetHeader(blank, f.Player, title, author));
+
+            Assert.Equal(("a book", "Pippo"), (blank.GetProp("book.title", ""), blank.GetProp("book.author", "")));
+        });
+    }
+
+    // A title wiped out: the book is called as its kind is.
+    [Fact]
+    public async Task SetHeader_ABlankTitle_LeavesTheNameOfTheItemTemplate()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            Assert.True(f.Books.SetHeader(blank, f.Player, "", ""));
+
+            Assert.Equal(("", null), (blank.GetProp("book.title", "x"), blank.Name));
+        });
+    }
+
+    // What is written is what is read back: a blank line inside a page stays in its page.
+    [Fact]
+    public async Task SetPages_ByTheCarrier_WritesThePages_AndOpeningGivesThemBack()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            Assert.True(f.Books.SetPages(blank, f.Player, [new(1, ["Dear diary,", "", "today"]), new(3, ["the end", ""])]));
+
+            Assert.Equal("Dear diary,\n \ntoday\n\n\n\nthe end", blank.GetProp("book.content", ""));
+
+            // A second edit touches its page alone.
+            Assert.True(f.Books.SetPages(blank, f.Player, [new(2, ["middle"])]));
+
+            Assert.Equal("Dear diary,\n \ntoday\n\nmiddle\n\nthe end", blank.GetProp("book.content", ""));
+            f.World.Sender.Sent.Clear();
+            Assert.True(f.Books.Open(blank, f.Player));
+            Assert.Equal(30, Assert.Single(f.World.Sender.Sent.OfType<BookPagesPacket>()).PageCount);
+        });
+    }
+
+    // The longest line the client sends, 79 characters, is saved and read back as one line: a page of eight of
+    // them stays one page, and the page after it stays where it was.
+    [Fact]
+    public async Task SetPages_LinesOfTheLongestLength_ComeBackAsTheyWereWritten()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+        var full = Enumerable.Repeat(new string('x', 79), 8).ToArray();
+
+        await f.OnLoopAsync(() =>
+        {
+            Assert.True(f.Books.SetPages(blank, f.Player, [new(1, full), new(2, ["second page"])]));
+
+            Assert.True(BookPagination.TryPaginate(blank.GetProp("book.content", ""), out var pages));
+            Assert.Equal(full, pages[0]);
+            Assert.Equal(["second page"], pages[1]);
+            Assert.Equal(2, pages.Count);
+        });
+    }
+
+    // A bank that is closed is out of reach, for the pen as for the eye.
+    [Fact]
+    public async Task SetPages_ABookInTheWritersClosedBank_ChangesNothing()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            f.Player.AccountId = new(1);
+            var bank = new ItemEntity { Id = new(0x40003000), TemplateId = "backpack", ItemId = 0xE75, Amount = 1 };
+            bank.Equip(f.Player.Id, LayerType.Bank);
+            f.Items.Add([bank]);
+            f.Items.MoveToContainer(blank, bank.Id, new(10, 10));
+
+            Assert.False(f.Books.SetPages(blank, f.Player, [new(1, ["hidden"])]));
+            Assert.False(f.Books.SetHeader(blank, f.Player, "Hidden", "Me"));
+
+            Assert.Equal(("", "a book"), (blank.GetProp("book.content", "x"), blank.GetProp("book.title", "")));
+        });
+    }
+
+    // Props a script or the staff set wrongly: the book is simply not one to write in, and nothing is thrown out
+    // of the handler of a packet.
+    [Theory]
+    [InlineData("book.writable", "yes")]
+    [InlineData("book.pages", "many")]
+    public async Task ABookWhoseWritingPropsAreNotWhatTheyShouldBe_IsNotWritten_AndStillOpens(string prop, string value)
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            blank.SetProp(prop, value);
+
+            var written = f.Books.SetPages(blank, f.Player, [new(1, ["x"])]);
+            f.Books.SetHeader(blank, f.Other, "T", "A");
+
+            Assert.Equal(prop == "book.pages", written);
+            Assert.True(f.Books.Open(blank, f.Player));
+        });
+    }
+
+    // As ModernUO: what a player writes on the cover cannot be markup, nor the number of a text of the client.
+    [Fact]
+    public async Task SetHeader_MarkupAndClilocSigns_AreReplaced()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            Assert.True(f.Books.SetHeader(blank, f.Player, "#1042971", "<b>Aria</b>"));
+
+            Assert.Equal(("-1042971", "(b)Aria(/b)", "-1042971"), (blank.GetProp("book.title", ""), blank.GetProp("book.author", ""), blank.Name));
+        });
+    }
+
+    // A request for a page is no edit.
+    [Fact]
+    public async Task SetPages_OnlyRequests_ChangeNothing()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            Assert.True(f.Books.SetPages(blank, f.Player, [new(1, ["kept"])]));
+
+            Assert.False(f.Books.SetPages(blank, f.Player, [new(1, null), new(2, null)]));
+
+            Assert.Equal("kept", blank.GetProp("book.content", ""));
+        });
+    }
+
+    [Theory]
+    [InlineData("page 0")]
+    [InlineData("page beyond")]
+    [InlineData("nine lines")]
+    [InlineData("long line")]
+    [InlineData("control")]
+    [InlineData("one bad page among good ones")]
+    public async Task SetPages_WhatIsNotAPageOfTheBook_ChangesNothing(string what)
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+        IReadOnlyList<BookPageEdit> edit = what switch
+        {
+            "page 0"      => [new(0, ["x"])],
+            "page beyond" => [new(31, ["x"])],
+            "nine lines"  => [new(1, Enumerable.Repeat("x", 9).ToArray())],
+            "long line"   => [new(1, [new string('x', 80)])],
+            "control"     => [new(1, ["bell\a"])],
+            _             => [new(1, ["good"]), new(99, ["bad"])]
+        };
+
+        await f.OnLoopAsync(() =>
+        {
+            Assert.False(f.Books.SetPages(blank, f.Player, edit));
+
+            Assert.Equal("", blank.GetProp("book.content", "x"));
+        });
+    }
+
+    // Not the carrier, a book that is not writable, a scroll, a book on a cursor.
+    [Theory]
+    [InlineData("other")]
+    [InlineData("read only")]
+    [InlineData("scroll")]
+    [InlineData("held")]
+    public async Task SetHeaderAndSetPages_ByWhoMayNotWrite_ChangeNothing(string who)
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            var book = blank;
+
+            if (who == "read only")
+            {
+                Assert.True(f.Books.Write(blank, f.Player, "tome"));
+            }
+            else if (who == "scroll")
+            {
+                f.Serials.Serials.Enqueue(new(0x40000F02));
+                book = f.Give();
+                book.SetProp("book.writable", true);
+            }
+            else if (who == "held")
+            {
+                f.Session.Set(ItemSessionKeys.Held, new HeldItem(blank.Id));
+            }
+
+            var writer = who == "other" ? f.Other : f.Player;
+            var before = (book.GetProp("book.title", ""), book.GetProp("book.content", ""));
+
+            Assert.False(f.Books.SetHeader(book, writer, "Mine", "Me"));
+            Assert.False(f.Books.SetPages(book, writer, [new(1, ["mine"])]));
+
+            Assert.Equal(before, (book.GetProp("book.title", ""), book.GetProp("book.content", "")));
+        });
+    }
+
+    // Traded, the book is written by who carries it now.
+    [Fact]
+    public async Task SetPages_AfterTheBookChangesHands_OnlyTheNewCarrierWrites()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var blank = await BlankBookAsync(f);
+
+        await f.OnLoopAsync(() =>
+        {
+            var theirs = new ItemEntity { Id = new(0x40002100), TemplateId = "backpack", ItemId = 0xE75, Amount = 1 };
+            theirs.Equip(f.Other.Id, LayerType.Backpack);
+            f.Items.Add([theirs]);
+            f.Items.MoveToContainer(blank, theirs.Id, new(10, 10));
+
+            Assert.False(f.Books.SetPages(blank, f.Player, [new(1, ["old owner"])]));
+            Assert.True(f.Books.SetPages(blank, f.Other, [new(1, ["new owner"])]));
+
+            Assert.Equal("new owner", blank.GetProp("book.content", ""));
+        });
+    }
+
+    // A text beyond what a document holds is refused whole.
+    [Fact]
+    public async Task SetPages_BeyondTheLengthOfADocument_ChangesNothing()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        f.Data.With(new BookTemplate { Id = "thick", Title = "Thick", Content = "", ItemTemplate = "readable_book", Writable = true, Pages = 255 });
+
+        await f.OnLoopAsync(() =>
+        {
+            var thick = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "thick"));
+            var line = new string('x', 79);
+            var full = Enumerable.Range(1, 26).Select(page => new BookPageEdit(page, Enumerable.Repeat(line, 8).ToArray())).ToArray();
+
+            Assert.True(f.Books.SetPages(thick, f.Player, full[..25]));
+            var before = thick.GetProp("book.content", "");
+
+            Assert.False(f.Books.SetPages(thick, f.Player, full));
+
+            Assert.Equal(before, thick.GetProp("book.content", ""));
+        });
+    }
+
+    private static async Task<ItemEntity> BlankBookAsync(BookTestFixture f)
+    {
+        f.Data.With(
+            f.Source,
+            new BookTemplate { Id = "blank", Title = "a book", Author = "$player_name", Content = "", ItemTemplate = "readable_book", Writable = true, Pages = 30 },
+            new BookTemplate { Id = "tome", Title = "Tome", Content = "Text", ItemTemplate = "readable_book" });
+        ItemEntity? blank = null;
+        await f.OnLoopAsync(() => blank = Assert.IsType<ItemEntity>(f.Books.Give(f.Player, "blank")));
+
+        return blank!;
     }
 
     [Fact]

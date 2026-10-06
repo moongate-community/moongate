@@ -173,6 +173,20 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
         await Assert.ThrowsAsync<InvalidDataException>(service.StartAsync);
     }
 
+    // The blank book of a new character: its own name as the author, and pages it writes in.
+    [Fact]
+    public async Task GiveAsync_ABlankBook_IsWritable_WithTheCharactersNameAsAuthor()
+    {
+        var service = CreateService(Set(common: true, entries: [new StartingItemEntry { Items = ["readable_book"], BookTemplate = "blank_book" }]));
+
+        var given = await service.GiveAsync(Request(new()));
+
+        var book = Assert.Single(await _items.QueryAsync(item => item.ContainerId == given[0].Id));
+        Assert.Equal(("readable_book", "a book", "Aria", ""), (book.TemplateId, book.Name, book.GetProp<string>("book.author"), book.GetProp<string>("book.content")));
+        Assert.True(book.GetProp<bool>("book.writable"));
+        Assert.Equal(20, book.GetProp<long>("book.pages"));
+    }
+
     [Fact]
     public async Task GiveAsync_MultipleLetters_SaveIndependentSnapshotsInTheBackpack()
     {
@@ -248,12 +262,16 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
                           Template("pants", 0x152E, 0x100),
                           Template("elven_boots", 0x2FC4),
                           Template("spellbook", 0x0EFA),
-                          new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll" }
+                          new ItemTemplate { Id = "readable_scroll", ItemId = new(0x14ED), Stackable = false, ScriptId = "readable_scroll" },
+                          new ItemTemplate { Id = "readable_book", ItemId = new(0x0FF1), Stackable = false, ScriptId = "readable_book" }
                       )
                       .With(new ContainerContent { Name = "default", Bounds = new(new Point2D(44, 65), new Point2D(186, 159)), Default = true })
                       .With<StartingItemSet>(sets);
         _source = new BookTemplate { Id = "welcome_letter", Title = "Welcome $player_name", Content = "Meet $contact_name", Variables = ["contact_name"] };
-        loaders.With(_source);
+        loaders.With(
+            _source,
+            new BookTemplate { Id = "blank_book", Title = "a book", Author = "$player_name", ItemTemplate = "readable_book", Writable = true, Pages = 20 }
+        );
         var tiles = new FakeTileDataService()
                     .Item(0x0E75, TileFlagType.Container, 0, layer: (byte)LayerType.Backpack)
                     .Item(0x0EED, TileFlagType.Generic, 0)
@@ -263,7 +281,7 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
                     .Item(0x1EFD, TileFlagType.Wearable, 0, layer: (byte)LayerType.Shirt)
                     .Item(0x152E, TileFlagType.Wearable, 0, layer: (byte)LayerType.Pants)
                     .Item(0x2FC4, TileFlagType.Wearable, 0, layer: (byte)LayerType.Shoes)
-                    .Item(0x0EFA, TileFlagType.None, 0).Item(0x14ED, TileFlagType.None, 1);
+                    .Item(0x0EFA, TileFlagType.None, 0).Item(0x14ED, TileFlagType.None, 1).Item(0x0FF1, TileFlagType.None, 1);
         var templates = new ItemTemplateService(loaders);
 
         var factory = new ItemFactoryService(templates, tiles, _host.Owner);

@@ -156,6 +156,40 @@ public sealed class BooksLoaderTests
         Assert.Contains("tome.toml", error.Message);
     }
 
+    // A blank book a player writes in: no text of its own, and as many pages as it says.
+    [Fact]
+    public async Task LoadDataAsync_AWritableBook_MayBeBlank_AndSaysItsPages()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/blank.toml", "title = \"a book\"\nauthor = \"$player_name\"\nwritable = true\npages = 30\n");
+        root.CreateFile("templates/books/diary.toml", "title = \"Diary\"\nwritable = true\ncontent = \"Day one.\"\n");
+
+        var books = (await Loader(root, script: "readable_book").LoadDataAsync()).Entities;
+
+        var blank = books.Single(book => book.Id == "blank");
+        Assert.Equal((true, 30, ""), (blank.Writable, blank.Pages, blank.Content));
+        Assert.Equal((true, (int?)null, "Day one."), (books.Single(book => book.Id == "diary").Writable, books.Single(book => book.Id == "diary").Pages, books.Single(book => book.Id == "diary").Content));
+    }
+
+    [Theory]
+    // A scroll is not written in.
+    [InlineData("readable_scroll", "title = \"T\"\ncontent = \"x\"\nwritable = true\n")]
+    // Only a book that is written in has a number of pages, and only a writable one may be blank.
+    [InlineData("readable_book", "title = \"T\"\ncontent = \"x\"\npages = 20\n")]
+    [InlineData("readable_book", "title = \"T\"\n")]
+    [InlineData("readable_book", "title = \"T\"\nwritable = true\npages = 0\n")]
+    [InlineData("readable_book", "title = \"T\"\nwritable = true\npages = 256\n")]
+    [InlineData("readable_book", "title = \"\"\nwritable = true\n")]
+    public async Task LoadDataAsync_AWritableSourceThatIsWrong_FailsWithPath(string script, string source)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/books/bad.toml", source);
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Loader(root, script: script).LoadDataAsync());
+
+        Assert.Contains("books/bad.toml", error.Message);
+    }
+
     [Fact]
     public async Task LoadDataAsync_ABookItem_IsAReadableItem()
     {

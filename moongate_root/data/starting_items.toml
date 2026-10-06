@@ -797,9 +797,11 @@ equip = false
 items = ["0x0f51"]
 equip = false
 
+# The blank book of every new character: twenty pages it writes in, with its name as the author.
 [[set.items]]
-items = ["0x0fef_book"]
+items = ["readable_book"]
 equip = false
+book_template = "blank_book"
 
 [[set.items]]
 items = ["0x0a0f_candle"]
