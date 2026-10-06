@@ -4,5 +4,7 @@ base_id = "base_fukiya"
 item_id = 0
 rarity = "common"
 weight = 4.0
+damage_min = 4
+damage_max = 6
 buy_price = 52
 sell_price = 34

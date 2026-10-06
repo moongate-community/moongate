@@ -6,6 +6,7 @@ name = "war axe"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -19,6 +20,7 @@ id = "0x13b0"
 base_id = "0x13af_lbr"
 item_id = 5040
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_smiths_hammer"
@@ -28,6 +30,7 @@ name = "smith's hammer"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -41,6 +44,7 @@ id = "0x13e4"
 base_id = "0x13e3_lbr"
 item_id = 5092
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_club"
@@ -50,6 +54,7 @@ name = "club"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -63,6 +68,7 @@ id = "0x13b4"
 base_id = "0x13b3_lbr"
 item_id = 5044
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_sledge_hammer"
@@ -72,6 +78,7 @@ name = "sledge hammer"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -85,6 +92,7 @@ id = "0x0fb5"
 base_id = "0x0fb4_lbr"
 item_id = 4021
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_mace"
@@ -94,6 +102,7 @@ name = "mace"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -107,6 +116,7 @@ id = "0x0f5d"
 base_id = "0x0f5c_lbr"
 item_id = 3933
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_war_mace"
@@ -116,6 +126,7 @@ name = "war mace"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -129,6 +140,7 @@ id = "0x1407"
 base_id = "0x1406_lbr"
 item_id = 5127
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_war_hammer"
@@ -139,6 +151,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -152,6 +165,7 @@ id = "0x1439"
 base_id = "0x1438_lbr"
 item_id = 5177
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_maul"
@@ -161,6 +175,7 @@ name = "maul"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -174,6 +189,7 @@ id = "0x143b"
 base_id = "0x143a_lbr"
 item_id = 5179
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_hammer_pick"
@@ -183,6 +199,7 @@ name = "hammer pick"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -196,6 +213,7 @@ id = "0x143d"
 base_id = "0x143c_lbr"
 item_id = 5181
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_scepter"
@@ -205,6 +223,7 @@ name = "scepter"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -218,6 +237,7 @@ id = "0x26c6"
 base_id = "0x26bc_lbr"
 item_id = 9926
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_tessen"
@@ -228,6 +248,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -241,6 +262,7 @@ id = "0x27ee"
 base_id = "0x27a3_lbr"
 item_id = 10222
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_tetsubo"
@@ -251,6 +273,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -264,6 +287,7 @@ id = "0x27f1"
 base_id = "0x27a6_lbr"
 item_id = 10225
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_nunchaku"
@@ -274,6 +298,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -287,6 +312,7 @@ id = "0x27f9"
 base_id = "0x27ae_lbr"
 item_id = 10233
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_diamond_mace"
@@ -296,6 +322,7 @@ name = "diamond mace"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -309,6 +336,7 @@ id = "0x2d30"
 base_id = "0x2d24_lbr"
 item_id = 11568
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_gargish_maul"
@@ -318,6 +346,7 @@ name = "gargish maul"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -331,6 +360,7 @@ id = "0x48c3"
 base_id = "0x48c2_lbr"
 item_id = 18627
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_disc_mace"
@@ -340,6 +370,7 @@ name = "disc mace"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -353,6 +384,7 @@ id = "0x406e"
 base_id = "0x0903_lbr"
 item_id = 16494
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_gargish_war_hammer"
@@ -363,6 +395,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -376,6 +409,7 @@ id = "0x48c1"
 base_id = "0x48c0_lbr"
 item_id = 18625
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_gargish_tessen"
@@ -386,6 +420,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -399,6 +434,7 @@ id = "0x48cd"
 base_id = "0x48cc_lbr"
 item_id = 18637
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "base_barbed_whip"
@@ -408,6 +444,7 @@ name = "barbed whip"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "mace"
 decays = true
 
 [[item]]
@@ -421,3 +458,4 @@ id = "0xa291"
 base_id = "0xa289_lbr"
 item_id = 41617
 rarity = "common"
+weapon_type = "mace"
