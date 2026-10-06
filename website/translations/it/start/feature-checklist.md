@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"4f27de987228741f717656b6aa8c2542760a270e51ee6ccd0c78f6cae769a839","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"05d7d84df665b2726dd5db7fb74ec3dbfca9dd6f71d185187a1d669e4acf6c56","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -83,7 +83,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Parata | ❌ | |
 | Mosse speciali delle armi | ❌ | |
 | IA di combattimento degli NPC | 🟡 | `monster.lua` su ogni creatura malvagia o caotica in UOX3 (circa 200 template): notano un giocatore o un cittadino, gli si avvicinano, lo combattono e fanno la guardia quando lo perdono, anche gli incantatori in corpo a corpo, e le guardie cittadine li attaccano. Gli animali passeggiano e rispondono se colpiti, quelli paurosi fuggono. Se feriti scappano (sotto il 20% dei punti vita, mai i non morti o gli elementali). Gli arcieri sparano dalla portata del loro arco. Niente incantesimi |
-| Guardie nelle regioni sorvegliate | 🟡 | Un giocatore che dice "guards" fa arrivare una guardia accanto a ciascun criminale nelle vicinanze: appare, pronuncia la sua battuta e se ne va. Le guardie presenti nelle città notano autonomamente un criminale e lo raggiungono (`guard.lua`). Un NPC criminale viene ucciso con un colpo e lascia il cadavere; un giocatore criminale viene solo raggiunto, perché i giocatori non muoiono ancora |
+| Guardie nelle regioni sorvegliate | 🟡 | Un giocatore che dice "guards" fa arrivare una guardia accanto a ciascun criminale nelle vicinanze: appare, pronuncia la sua battuta e se ne va. Le guardie presenti nelle città notano autonomamente un criminale e lo raggiungono (`guard.lua`). Un NPC criminale viene ucciso con un colpo e lascia il cadavere; un giocatore criminale viene solo raggiunto, perché i giocatori non muoiono ancora. Le guardie chiamate a Ilshenar e Malas sono arcieri: sparano dalla portata del loro arco |
 | Abilità speciali dei mostri | ❌ | |
 | Danno elementale e resistenze | ❌ | |
 | Elenchi degli aggressori e timeout degli attacchi | ❌ | |

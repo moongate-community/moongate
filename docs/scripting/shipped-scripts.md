@@ -64,6 +64,13 @@ hidden player, a game master or an administrator. An NPC it has just killed is s
 falls: the guard does not turn on it again. A teleport that is refused leaves the guard where it is, to
 run to the criminal.
 
+**The archer guard**, template `archerguard` (the guards called in Ilshenar and Malas, as ModernUO's `ArcherGuard`), is
+this guard with a bow in its hands and `combat.range` of 10. At an NPC it goes for, a criminal or a monster, that is
+within its range and in its sight, it does not come beside it: it stands where it is, faces it and starts the fight
+(`combat.attack`), and the combat service shoots with the Archery skill; the arrest is over when the target is dead.
+Out of its range, or out of its sight, it comes beside the NPC as any guard does, and shoots from there. At a player it
+is the same guard as the others: it comes beside it and stands on it.
+
 A guard that was called bears the prop `guard.summoned`: it came beside its criminal and said its line
 already, so it stays on it in silence and does not stroll, and once that criminal is let go it arrests
 no other and waits to be sent away. What a guard is doing is kept in memory by its serial, not saved.
