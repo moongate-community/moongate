@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e42d54ad30846791c1dfea31f41b446c2c4a10b18c8a5090d21ae22dcfca2fa7","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"0729db8a0fb99ff4f0dcadc23a2fe93b15c0a73264d374a13cb978e277c7c4cc","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**268 sistemi:** ✅ 80 completati, 🟡 47 parzialmente completati, ❌ 141 non ancora realizzati.
+**268 sistemi:** ✅ 80 completati, 🟡 48 parzialmente completati, ❌ 140 non ancora realizzati.
 
 **Copertura: 30%** dei sistemi completati, **39%** contando un sistema parzialmente completato come metà.
 
@@ -52,14 +52,14 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Rigenerazione di punti vita, mana e stamina | ✅ | Un punto alla volta, ai ritmi classici di ModernUO; mana in base a intelligenza e Meditation; ritmi per mobile dagli script |
 | Titoli | 🟡 | Titoli di fama e karma nella paperdoll; nessun titolo di abilità |
 | Fama e karma | 🟡 | Impostati dallo staff (`.fame`, `.karma`); nulla li aumenta o riduce ancora |
-| Notorietà (innocente, criminale, assassino) | 🟡 | Colore del nome dal template del mobile, grigio mentre il mobile è criminale |
-| Crimini, timer criminale e conteggio degli omicidi | 🟡 | Flag criminale con relativo timer, salvato con il mobile, impostato dagli script e dallo staff; nessuna azione rende ancora criminali, nessun conteggio degli omicidi |
+| Notorietà (innocente, criminale, assassino) | 🟡 | Colore del nome dal template del mobile, grigio mentre il mobile è criminale, rosso da cinque uccisioni segnalate |
+| Crimini, timer criminale e conteggio degli omicidi | 🟡 | Flag criminale con relativo timer, salvato con il mobile; attaccare un innocente o saccheggiare il cadavere di uno rende criminali. Una vittima segnala i suoi assassini in un gump: uccisioni e omicidi a breve termine, cinque rendono assassino con il nome rosso, dimenticati con il tempo (8 e 40 ore). Ancora niente furti o altri crimini |
 | Fame e sete | ✅ | Entrambe da 0 a 20 e in diminuzione nel tempo: un giocatore affamato non recupera punti vita, uno assetato non recupera stamina; il cibo si mangia, le bevande si bevono un sorso alla volta |
 | Veleno | ❌ | |
 | Nascondersi e furtività | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) nasconde un giocatore fino al suo primo passo; nessuna Stealth, e parlare o essere colpiti non lo rivela ancora |
-| Morte, cadaveri, fantasmi e resurrezione | 🟡 | Un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill`: cadavere con ciò che trasportava, animazione e suono di morte, decadimento dopo 7 minuti. Un giocatore resta come fantasma (nascosto ai vivi se non in modalità guerra, sentito come oOo, senza combattere, usare abilità o sollevare oggetti) e viene resuscitato a un ankh o da un guaritore (per un decimo della sua fama), con `.resurrect` o `mobile.resurrect`. Niente guaritori malvagi, conteggi degli omicidi, perdita di statistiche o ossa |
+| Morte, cadaveri, fantasmi e resurrezione | 🟡 | Un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill`: cadavere con ciò che trasportava, animazione e suono di morte, decadimento dopo 7 minuti. Un giocatore resta come fantasma (nascosto ai vivi se non in modalità guerra, sentito come oOo, senza combattere, usare abilità o sollevare oggetti) e viene resuscitato a un ankh o da un guaritore (per un decimo della sua fama), con `.resurrect` o `mobile.resurrect`. Niente ossa |
 | Protezione dei giovani giocatori | ❌ | |
-| Denunce di omicidio e bacheche delle taglie | ❌ | |
+| Denunce di omicidio e bacheche delle taglie | 🟡 | Il gump di denuncia che una vittima riceve dopo la morte funziona, con i conteggi che aggiunge; niente taglie né bacheche |
 | Virtù | ❌ | |
 | Barra di stato | ✅ | Nome, statistiche, punti vita, mana, stamina, oro, peso |
 | Stato esteso (resistenze, fortuna, limiti) | ❌ | I blocchi delle statistiche sono realizzati, vedi Statistiche |

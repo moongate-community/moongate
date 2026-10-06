@@ -47,7 +47,7 @@ guard is in one of two states:
 | arrest | Goes into war mode; when it is not beside the criminal it appears on a free tile a step from it (`world.spot_beside`; on it when none is free), with a puff of smoke where it stood and where it comes and the teleport sound; says "Thou wilt regret thine actions, swine!" (message 30138). Then it stays on the criminal, facing it, and runs after it with `npc.walk_to` when it moves. Beside a criminal NPC it strikes (an attack animation) and a second later the NPC is dead: `mobile.kill`, with the guard as its killer, so it [dies as any other](../death.md) and leaves its corpse | The NPC is killed; or the criminal is pardoned or its time is over, hides, leaves the guarded region, goes farther than 24 tiles from the guard or from its post, or cannot be reached for 10 seconds: back to its post, in peace |
 
 It looks for a criminal every second: the nearest player or NPC of `npc.nearby` within 12 tiles whose
-`mobile.criminal` is true, that stands in a guarded region (`world.is_guarded`) no farther than 24
+`mobile.criminal` or `mobile.is_murderer` is true (a red name is wanted like a grey one), that stands in a guarded region (`world.is_guarded`) no farther than 24
 tiles from the guard's post (`npc.home`), and that it sees (`npc.can_see`); only a criminal costs the
 look along the line of sight. The post is the measure, not the guard, so a criminal cannot lead a guard
 out of town step by step. A criminal it could not reach is left alone until it moves. It never sees a
@@ -241,7 +241,9 @@ itself does nothing.
 there at the last think is turned to (`npc.look_at`), gets the sound `0x1F2` and the sparkles `SparkleHeal`, and
 the gump `resurrect` with the argument `healer`, as ModernUO's `BaseHealer`. A healer waits 2 seconds (4 thinks)
 between two offers, and a ghost met during the wait is offered when it is over. A criminal is refused with the
-client text 501222, and a player of negative karma is told 501224 and offered all the same. A healer of a
+client text 501222 and a murderer (red) with 501223, and a player of negative karma is told 501224 and offered all
+the same. An evil healer, whose template id starts with `evil` (`evilhealer`, `evilwhealer`), refuses and says
+nothing. A healer of a
 template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think.
 
 ## ankh.lua and resurrect.lua
@@ -254,7 +256,8 @@ resurrection](../death.md#death-of-a-player)): from more than 2 cells it says "T
 Continue button calls `resurrect.accept` in `scripts/gumps/resurrect.lua`, which, if the player is
 still dead and within 2 cells of the ankh (8 of the healer, when it was a [healer](#healerlua) that
 asked), calls `mobile.resurrect`, plays the sound `0x214` and the effect `SparkleHeal` on the player and
-takes a tenth of its fame. Cancel does nothing.
+takes a tenth of its fame; from five short-term murders it takes skills and stats too ([Murder counts](../death.md#murder-counts)).
+Cancel does nothing.
 
 ## moongate.lua
 

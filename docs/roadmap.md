@@ -102,7 +102,7 @@ written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has to
 | --- | --- | --- | --- |
 | 2.1 | 🟡 | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability. Done: a [fight](combat.md) with fists or a weapon, the swing timer, the hit by skill, the damage and the armor of an NPC or of what a player wears. Left: parry, archery, durability | The core loop of the game |
 | 2.2 | ❌ | **Aggressor lists** | Notoriety, guards and loot rights rest on them |
-| 2.3 | 🟡 | **Death, corpse, ghost, resurrection**; healer NPCs and shrines. Done: an NPC or a player dies by a fight, `.kill` or `mobile.kill` and leaves its [corpse](death.md) with what it carried; a player stays as a [ghost](death.md#death-of-a-player) and comes back at an ankh or at a healer, by `.resurrect` or `mobile.resurrect`. Left: evil healers, murder counts and the loss of skills, looting rules, bones | Gives combat a result |
+| 2.3 | 🟡 | **Death, corpse, ghost, resurrection**; healer NPCs and shrines. Done: an NPC or a player dies by a fight, `.kill` or `mobile.kill` and leaves its [corpse](death.md) with what it carried; a player stays as a [ghost](death.md#death-of-a-player) and comes back at an ankh or at a healer, by `.resurrect` or `mobile.resurrect`. Left: bones, bounties and the places of the evil healers | Gives combat a result |
 | 2.4 | ❌ | **Bandages and healing** | Needed as soon as damage exists |
 | 2.5 | ❌ | **Combat events for Lua**: attack, hit, miss, damage, death, resurrect | Lets content change the rules |
 | 2.6 | ❌ | **Combat settings**: swing speed, damage rules, corpse decay | A shard owner expects to tune them |
