@@ -138,6 +138,19 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     }
 
     [Fact]
+    public async Task HandleAsync_TellsTheMurderServiceToForgetTheCountsOfWhoComesBack()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var murders = new RecordingMurderService();
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender, murders: murders)
+              .HandleAsync(context, Packet(0), CancellationToken.None);
+
+        Assert.Equal(["Restore 2"], murders.Calls);
+    }
+
+    [Fact]
     public async Task HandleAsync_SendsTheSeasonOfTheSeasonService()
     {
         await using var fixture = await SessionFixture.CreateAsync();
@@ -359,7 +372,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         StubPacketSendService sender,
         IMobileService? mobiles = null,
         ILightService? light = null,
-        ISeasonService? seasons = null
+        ISeasonService? seasons = null,
+        IMurderService? murders = null
     )
     {
         _events.RegisterMoongateEventBus();
@@ -379,7 +393,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         return new(
             characters,
             _leaves,
-            new CharacterEnterWorldService(mobiles ?? _mobiles, _items, loaders, bus, _sessions, _view, _motd, light, seasons)
+            new CharacterEnterWorldService(mobiles ?? _mobiles, _items, loaders, bus, _sessions, _view, _motd, light, seasons, murders: murders)
         );
     }
 
