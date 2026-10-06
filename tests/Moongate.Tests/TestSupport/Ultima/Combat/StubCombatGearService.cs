@@ -30,8 +30,15 @@ public sealed class StubCombatGearService : ICombatGearService
         return Armor.Values.Sum();
     }
 
+    /// <summary>
+    ///     The damage <see cref="WithGear" /> gives the status of a player; none leaves it as it is.
+    /// </summary>
+    public (int Min, int Max)? StatusDamage { get; set; }
+
     public MobileStatusInfo WithGear(MobileStatusInfo status, MobileEntity mobile)
     {
-        return status;
+        return StatusDamage is { } damage && !mobile.IsNpc
+                   ? status with { DamageMin = damage.Min, DamageMax = damage.Max, PhysicalResistance = Armor.Values.Sum() }
+                   : status;
     }
 }

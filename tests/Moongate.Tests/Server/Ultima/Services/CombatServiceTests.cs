@@ -8,10 +8,13 @@ using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.Combat;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Combat;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Randomness;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
+using Moongate.Tests.TestSupport.Ultima.Combat;
 using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
@@ -35,6 +38,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
     private const int OrcHurt = 0x1B2;
     private const int OrcAttack = 0x1B0;
 
+    private readonly StubCombatGearService _gear = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly StubSkillService _skills = new();
     private readonly RecordingSpeechService _speech = new();
@@ -86,6 +90,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
             _death,
             _crimes,
             _sight,
+            _gear,
             new StubDataLoaderService().With(
                 new BodyContent { Body = new Body(HumanBody), Type = BodyType.Human },
                 new BodyContent { Body = new Body(OrcBody), Type = BodyType.Monster }
@@ -277,6 +282,119 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AWeapon_GivesTheSwingItsSpeed_ItsAnimation_AndItsSounds()
+    {
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        // Slash of one hand, and the sword's sound for the hit: 15000 / ((100 + 100) * 35) = 2.14 seconds.
+        Assert.Contains("Animated 2 9 7 1", _view.Calls);
+        Assert.Contains((_aria, 0x23B), _speech.Sounds);
+        _clock.Advance(TimeSpan.FromSeconds(2.1));
+        Tick();
+        Assert.Equal(1, Swings());
+        _clock.Advance(TimeSpan.FromSeconds(0.1));
+        Tick();
+        Assert.Equal(2, Swings());
+    }
+
+    [Fact]
+    public void AWeaponThatMisses_PlaysItsOwnMissSound()
+    {
+        _gear.Weapon = new(SkillType.MaceFighting, WeaponType.Mace, false, 8, 32, 40);
+        _skills.ChanceResult = false;
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Contains((_aria, 0x239), _speech.Sounds);
+        Assert.Contains("Animated 2 11 7 1", _view.Calls);
+    }
+
+    [Fact]
+    public void TheHitIsRolledWithTheSkillOfTheWeapon_AgainstTheSkillOfTheTargetsOwnWeapon()
+    {
+        _gear.Weapon = new(SkillType.Fencing, WeaponType.Fencing, false, 2, 36, 50);
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Fencing, Base = 700 });
+        // A player target is asked for its own weapon too: the stub gives the same weapon to everyone.
+        _orc.Skills.Add(new MobileSkill { Skill = SkillType.Wrestling, Base = 300 });
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        // The attacker's fencing 70 against the orc's wrestling 30 (an NPC has no weapon of its own): 120 / 160.
+        var (mobile, skill, chance) = Assert.Single(_skills.Chances);
+        Assert.Equal((_aria, SkillType.Fencing), (mobile, skill));
+        Assert.Equal(0.75, chance, 6);
+    }
+
+    [Fact]
+    public void AWeaponWithoutAKind_IsFoughtWithWrestling_AndSoundsAsFists()
+    {
+        _gear.Weapon = new(SkillType.Wrestling, null, false, 3, 9, 40);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Contains((_aria, CombatService.FistsHitSound), _speech.Sounds);
+        Assert.Contains("Animated 2 31 7 1", _view.Calls);
+        Assert.Equal(SkillType.Wrestling, Assert.Single(_skills.Chances).Skill);
+    }
+
+    [Fact]
+    public void TheDamageOfAWeapon_IsRolledBetweenItsLeastAndItsMost()
+    {
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 10, 20, 35);
+        // 0..10 in the integer asked, plus the least: 10 + 4 = 14; tactics 50 leaves it
+        _random.Integers(4);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Equal(30 - 14, _orc.Hits);
+    }
+
+    [Fact]
+    public void ANpcIsNotGivenTheWeaponsItWears_ItKeepsItsTemplateDice()
+    {
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 100, 200, 35);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        // 8 of the template, halved on a player: 4.
+        Assert.Equal(26, _aria.Hits);
+    }
+
+    [Fact]
+    public void TheArmorOfAPlayer_IsThePieceTheBlowLands_AndTakesHalfToAllOfItsRating()
+    {
+        // A blow at the chest, which wears 30, takes 15 to 30 off; the orc's 8 halved is 4: the least is 1.
+        _gear.Armor[ArmorZoneType.Chest] = 30;
+        _random.Doubles(0.99, 0.0);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        Assert.Equal(29, _aria.Hits);
+    }
+
+    [Fact]
+    public void ABlowOnAPartWithoutArmor_IsNotReduced()
+    {
+        _gear.Armor[ArmorZoneType.Chest] = 30;
+        // the roll hits the neck, where the player wears nothing
+        _random.Doubles(0.01, 0.0);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        Assert.Equal(26, _aria.Hits);
+    }
+
+    [Fact]
     public void AMonster_SwingsItsAttack_AnAnimalItsOwn()
     {
         _combat.Attack(_orc, _aria);
@@ -438,19 +556,18 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void TheArmorOfTheTargetAbsorbsAPartOfTheDamage()
+    public void TheArmorOfAnNpc_IsOneNumber_AndAZoneOfItAbsorbsAPartOfTheDamage()
     {
-        _orc.Skills.Clear();
-        _orc.Skills.Add(new MobileSkill { Skill = SkillType.Tactics, Base = 500 });
-        _aria.Armor = 100;
-        // the zone roll hits the chest (0.35 of 100 = 35), the second roll gives the least: 17
+        _orc.Armor = 100;
+        // fists: the integer 7 is 8; the zone roll hits the chest (0.35 of 100 = 35), the second roll gives the least: 17
+        _random.Integers(7);
         _random.Doubles(0.99, 0.0);
-        _combat.Attack(_orc, _aria);
+        _combat.Attack(_aria, _orc);
 
         Tick();
 
-        // 8 halved is 4: 17 absorbed leaves the least, 1
-        Assert.Equal(29, _aria.Hits);
+        // 8 less 17 is the least, 1
+        Assert.Equal(29, _orc.Hits);
     }
 
     [Fact]

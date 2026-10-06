@@ -32,6 +32,9 @@ public sealed class MobileStateService : IMobileStateService
     // Lazy: the weight service reads the items, whose scripts reach this service through the Lua modules.
     private readonly Lazy<IWeightService>? _weight;
 
+    // Lazy as the weights: the gear reads the items.
+    private readonly Lazy<ICombatGearService>? _gear;
+
     public MobileStateService(
         IMobileService mobiles,
         ISessionService sessions,
@@ -39,9 +42,11 @@ public sealed class MobileStateService : IMobileStateService
         IPacketSendService sender,
         IWorldViewService view,
         WorldConfig world,
-        Lazy<IWeightService>? weight = null
+        Lazy<IWeightService>? weight = null,
+        Lazy<ICombatGearService>? gear = null
     )
     {
+        _gear = gear;
         _weight = weight;
         _mobiles = mobiles;
         _sessions = sessions;
@@ -349,6 +354,12 @@ public sealed class MobileStateService : IMobileStateService
         if (own && _weight?.Value is { } weight)
         {
             status = status with { Weight = weight.Carried(target), MaxWeight = weight.MaxCarried(target) };
+        }
+
+        // As the weights, the damage of the weapon and the armor rating are those of the player's own character.
+        if (own && _gear?.Value is { } gear)
+        {
+            status = gear.WithGear(status, target);
         }
 
         _sender.TrySend(session.SessionId, new MobileStatusPacket(status, !own));

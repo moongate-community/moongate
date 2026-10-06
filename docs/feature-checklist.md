@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 80 done, 🟡 46 partly done, ❌ 142 not built yet.
+**268 systems:** ✅ 80 done, 🟡 47 partly done, ❌ 141 not built yet.
 
-**Coverage: 30%** of the systems done, **38%** counting a partly done system as half.
+**Coverage: 30%** of the systems done, **39%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -77,7 +77,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | --- | --- | --- |
 | War mode, melee and swing timing | 🟡 | A player [fights](combat.md) with its fists: the swing timer, the hit by Wrestling, the damage with tactics, strength, anatomy and the armor of the target, the sounds and animations; no weapons or armor of items |
 | Archery | ❌ | |
-| Weapons and armour: damage, armour, durability, resistances | ❌ | NPC templates carry damage and armour; item templates do not yet |
+| Weapons and armour: damage, armour, durability, resistances | 🟡 | The weapon a player holds and the armor it wears set the [swing, the hit, the damage and what a blow takes off](combat.md#weapons-and-armor); no durability, parry, shields or resistances |
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
 | NPC combat AI | 🟡 | `monster.lua`: the undead of the graveyards notice a player, walk to it, fight it and stand guard when they lose it; an NPC that is hit fights back |

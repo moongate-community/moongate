@@ -50,13 +50,16 @@ so 2.5 seconds at 100 stamina. A swing:
 
 ## The damage
 
-- The base is the dice of the template of an NPC (`damage`), or 1 to 8 for a player's fists.
+- The base is the weapon a player holds (a number from its `damage_min` to its `damage_max`), the dice of the template of
+  an NPC (`damage`), or 1 to 8 for fists.
 - Raised by the attacker's tactics (`+ (tactics - 50)%`), strength and anatomy (`strength/5%`, `anatomy/5%`, and
   10% more at anatomy 100). Tactics and anatomy are tried at every hit and teach a player.
 - Halved when the target is a player or the attacker is an NPC; a player hitting an NPC does all of it.
   `npc_damage_rate` divides what an NPC does to a player.
-- The armor of the target, `Armor`, takes one zone's share off, from half to all of it: neck 7%, hands 7%,
-  arms 14%, head 15%, legs 22%, chest 35%, the zone being chosen as ModernUO chooses it. At least 1 is done.
+- The armor takes its share off. A **player** is hit on a part of the body, chosen as ModernUO chooses it (neck 7%,
+  hands 7%, arms 14%, head 15%, legs 22%, chest 35%), and the piece it wears there takes half to all of its
+  `armor_rating` off; a part with no armor takes nothing. An **NPC** has one number, the `Armor` of its template, and a
+  zone's share of it, from half to all, is taken. At least 1 is done.
 - The damage is shown over the target to the players in the fight (`0x0B`, `display_damage_numbers`) and the
   health bar moves.
 
@@ -81,11 +84,36 @@ another keeps at it. A player that is hit does not fight back by itself: it clic
 
 The `combat` module: `combat.attack(attacker, target)`, `combat.stop(mobile)` and `combat.target(mobile)`.
 
+## Weapons and armor
+
+What a player holds in its hands is read from the templates of the items on the one-handed and two-handed layers: the
+first with a `damage_max` is the weapon. It gives the swing speed, the damage, the skill of the hit chance
+(swordsmanship for a sword, an axe or a pole arm, mace fighting for a mace, fencing for a spear or a dagger) and
+the sounds and the swing of its kind:
+
+| Kind | Hit, miss | Swing (one hand, two hands) |
+| --- | --- | --- |
+| `sword` | `0x23B`, `0x23A` | slash (9, 13) |
+| `axe` | `0x232`, `0x23A` | slash (9, 13) |
+| `pole_arm` | `0x237`, `0x238` | slash (13) |
+| `mace` | `0x233`, `0x239` | bash (11, 12) |
+| `fencing` | `0x23B`, `0x238` | pierce (10, 14) |
+
+A weapon with no kind, which UOX3 does not list, is fought with Wrestling and sounds as fists. The defender's hit
+skill is the one of its own weapon, Wrestling when it holds none. A bow, a crossbow and a thrown weapon are read and
+**not** fought with yet: such a player fights with its fists. An NPC fights with its template, whatever it wears.
+
+The armor rating of the whole player (the 31 of the status window) is the armor of each part weighted by the share
+of the blows it takes, and the damage shown there is the weapon's, with the bonuses. The numbers are those of UOX3's
+eras, converted by `mgctl convert uox` (see [Migrate from UOX3](uox3-migration.md)); a plain graphic inherits the LBR
+numbers, ModernUO's classic ones.
+
 ## Not yet
 
-Weapons and armor of items (the damage, speed and armor rating of what is carried), parry, archery, special
-moves, durability, aggressor lists beyond the target, the death of a player, bandages and the combat events
-of Lua (`attack`, `hit`, `miss`, `get_hit`).
+Parry (a shield counts for nothing yet), archery, special moves, durability (`max_hits` is kept, not used), the
+strength a weapon or armor asks for (`strength_required` is kept, not used), the lumberjacking bonus of axes, aggressor
+lists beyond the target, the death of a player, bandages and the combat events of Lua (`attack`, `hit`, `miss`,
+`get_hit`).
 
 ## See also
 

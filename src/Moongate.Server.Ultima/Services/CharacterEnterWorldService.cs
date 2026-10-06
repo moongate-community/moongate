@@ -41,6 +41,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
     private readonly IWorldViewService _view;
     private readonly IWeightService? _weight;
     private readonly ICrimeService? _crimes;
+    private readonly ICombatGearService? _gear;
 
     public CharacterEnterWorldService(
         IMobileService mobiles,
@@ -53,9 +54,11 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         ILightService? light = null,
         ISeasonService? seasons = null,
         IWeightService? weight = null,
-        ICrimeService? crimes = null
+        ICrimeService? crimes = null,
+        ICombatGearService? gear = null
     )
     {
+        _gear = gear;
         _crimes = crimes;
         _weight = weight;
         _light = light;
@@ -187,6 +190,12 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
             _mobiles.GetEquipment(character, play.Equipment)
         );
         var status = _mobiles.GetStatus(character);
+
+        if (_gear is not null)
+        {
+            status = _gear.WithGear(status, character);
+        }
+
         yield return new MobileStatusPacket(
             _weight is null
                 ? status

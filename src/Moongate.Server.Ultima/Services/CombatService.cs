@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Data.Internal.Combat;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -61,6 +62,7 @@ public sealed class CombatService : ICombatService
     private readonly IDeathService _death;
     private readonly ICrimeService _crimes;
     private readonly ILineOfSightService _sight;
+    private readonly ICombatGearService _gear;
     private readonly ITimerService _timers;
     private readonly CombatConfig _config;
     private readonly WorldConfig _world;
@@ -80,6 +82,7 @@ public sealed class CombatService : ICombatService
         IDeathService death,
         ICrimeService crimes,
         ILineOfSightService sight,
+        ICombatGearService gear,
         IDataLoaderService data,
         ITimerService timers,
         CombatConfig config,
@@ -99,6 +102,7 @@ public sealed class CombatService : ICombatService
         _death = death;
         _crimes = crimes;
         _sight = sight;
+        _gear = gear;
         _timers = timers;
         _config = config;
         _world = world;
@@ -329,7 +333,11 @@ public sealed class CombatService : ICombatService
             _state.SetHidden(attacker, false);
         }
 
-        fighter.NextSwingAt = now.AddSeconds(CombatFormulas.SwingDelaySeconds(attacker.Stamina, FistsSpeed, _config.GlobalAttackSpeed));
+        // A player fights with what it holds; an NPC with its template, whatever it is dressed in.
+        var weapon = WeaponOf(attacker);
+        fighter.NextSwingAt = now.AddSeconds(
+            CombatFormulas.SwingDelaySeconds(attacker.Stamina, weapon?.Speed ?? FistsSpeed, _config.GlobalAttackSpeed)
+        );
         fighter.ExpiresAt = now.AddSeconds(_config.CombatantSeconds);
         PayStamina(attacker);
 
@@ -338,20 +346,22 @@ public sealed class CombatService : ICombatService
             _sender.TrySend(own.SessionId, new SwingPacket(attacker.Id, target.Id));
         }
 
-        var (action, frames) = SwingAnimation(attacker);
+        var (action, frames) = SwingAnimation(attacker, weapon);
         _view.MobileAnimated(attacker, action, frames, 1);
 
-        var chance = CombatFormulas.HitChance(Wrestling(attacker), Wrestling(target));
+        var attackSkill = weapon?.Skill ?? SkillType.Wrestling;
+        var defenseSkill = WeaponOf(target)?.Skill ?? SkillType.Wrestling;
+        var chance = CombatFormulas.HitChance(Points(attacker, attackSkill), Points(target, defenseSkill));
 
-        if (!_skills.CheckChance(attacker, SkillType.Wrestling, chance))
+        if (!_skills.CheckChance(attacker, attackSkill, chance))
         {
-            _speech.PlaySound(attacker, MissSound);
+            _speech.PlaySound(attacker, WeaponFamilies.MissSound(weapon?.Type));
             FightBack(target, attacker, now);
 
             return;
         }
 
-        _speech.PlaySound(attacker, SoundsOf(attacker)?.Attack is { } sound and > 0 ? sound : FistsHitSound);
+        _speech.PlaySound(attacker, SoundsOf(attacker)?.Attack is { } sound and > 0 ? sound : WeaponFamilies.HitSound(weapon?.Type));
         Hit(attacker, target, now);
     }
 
@@ -409,6 +419,12 @@ public sealed class CombatService : ICombatService
         }
     }
 
+    // The weapon a player holds; none for an NPC, which fights with its template.
+    private WeaponInfo? WeaponOf(MobileEntity mobile)
+    {
+        return mobile.IsNpc ? null : _gear.WeaponOf(mobile);
+    }
+
     private int DamageOf(MobileEntity attacker, MobileEntity target)
     {
         var damage = Math.Max(BaseDamage(attacker), CombatFormulas.FistsMinimumDamage);
@@ -425,12 +441,30 @@ public sealed class CombatService : ICombatService
         var halved = !target.IsNpc || attacker.IsNpc;
         var rate = attacker.IsNpc && !target.IsNpc ? _config.NpcDamageRate : 1.0;
 
-        return CombatFormulas.Final(CombatFormulas.Reduce(damage, halved, rate), target.Armor, _random);
+        return Absorb(CombatFormulas.Reduce(damage, halved, rate), target);
     }
 
-    // The dice of the template of an NPC, else the fists of ModernUO.
+    // An NPC has the armor of its template, one number; a player the piece of armor on the part the blow lands on.
+    private int Absorb(int damage, MobileEntity target)
+    {
+        if (target.IsNpc)
+        {
+            return CombatFormulas.Final(damage, target.Armor, _random);
+        }
+
+        var piece = _gear.ArmorAt(target, CombatFormulas.ZoneOf(_random.NextDouble()));
+
+        return Math.Max(damage - CombatFormulas.AbsorbedByPiece(piece, _random), 1);
+    }
+
+    // The weapon of a player, between its least and its most; the dice of the template of an NPC; else the fists of ModernUO.
     private int BaseDamage(MobileEntity attacker)
     {
+        if (WeaponOf(attacker) is { } weapon)
+        {
+            return weapon.DamageMin + _random.Next(Math.Max(weapon.DamageMax - weapon.DamageMin, 0) + 1);
+        }
+
         if (attacker.IsNpc &&
             attacker.TemplateId is { } id &&
             _templates.TryGet(id, out var template) &&
@@ -477,11 +511,11 @@ public sealed class CombatService : ICombatService
         return _bodies.Value.GetValueOrDefault(mobile.Body, BodyType.Monster);
     }
 
-    private (int Action, int Frames) SwingAnimation(MobileEntity attacker)
+    private (int Action, int Frames) SwingAnimation(MobileEntity attacker, WeaponInfo? weapon)
     {
         return BodyOf(attacker) switch
         {
-            BodyType.Human  => ((int)HumanAnimationType.Punch, SwingFrames),
+            BodyType.Human  => ((int)WeaponFamilies.Action(weapon?.Type, weapon?.TwoHanded == true), SwingFrames),
             BodyType.Animal => ((int)AnimalAnimationType.Attack1, OtherSwingFrames),
             _               => ((int)MonsterAnimationType.Attack1, OtherSwingFrames)
         };
@@ -495,11 +529,6 @@ public sealed class CombatService : ICombatService
             BodyType.Animal => ((int)AnimalAnimationType.GetHit, HurtFrames),
             _               => ((int)MonsterAnimationType.GetHit, MonsterHurtFrames)
         };
-    }
-
-    private static double Wrestling(MobileEntity mobile)
-    {
-        return Points(mobile, SkillType.Wrestling);
     }
 
     // The points of a skill, whole and tenths, as 50.5; 0 for one the mobile does not have.
