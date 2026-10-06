@@ -28,6 +28,12 @@ public interface ICombatGearService
     WeaponInfo? RangedWeaponOf(MobileEntity mobile);
 
     /// <summary>
+    ///     Gets the stack of ammunition the weapon spends, an arrow for a bow and a bolt for a crossbow, that the mobile
+    ///     carries in its backpack, in a bag too; null when it has none or the weapon shoots nothing.
+    /// </summary>
+    ItemEntity? AmmoOf(MobileEntity mobile, WeaponInfo weapon);
+
+    /// <summary>
     ///     Gets the armor rating of the piece the mobile wears on a part of its body, the best of the layers of that part;
     ///     0 for none.
     /// </summary>

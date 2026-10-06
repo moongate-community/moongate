@@ -30,6 +30,16 @@ public sealed class StubCombatGearService : ICombatGearService
         return Ranged;
     }
 
+    /// <summary>
+    ///     The ammunition every shooter carries, when set.
+    /// </summary>
+    public ItemEntity? Ammo { get; set; }
+
+    public ItemEntity? AmmoOf(MobileEntity mobile, WeaponInfo weapon)
+    {
+        return Ammo;
+    }
+
     public int ArmorAt(MobileEntity mobile, ArmorZoneType zone)
     {
         return Armor.GetValueOrDefault(zone);
