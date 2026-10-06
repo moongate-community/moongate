@@ -49,6 +49,25 @@ public sealed class BookEditPacketHandlerTests
         Assert.Equal(("Second", "Bran"), (book.GetProp("book.title", ""), book.GetProp("book.author", "")));
     }
 
+    // The older packet holds sixty Latin-1 characters; the book holds sixty bytes of UTF-8, where an accented
+    // letter is two. What fits is kept, cut before the letter that does not.
+    [Fact]
+    public async Task AnOldHeaderOfAccentedLetters_IsCutToWhatTheBookHolds_NotRefused()
+    {
+        await using var f = await BookTestFixture.CreateAsync();
+        var (handler, book) = await StartAsync(f);
+        var old = new byte[99];
+        old[0] = 0x93;
+        Convert.FromHexString($"{book.Id.Value:X8}").CopyTo(old, 1);
+        Encoding.Latin1.GetBytes(new string('é', 40)).CopyTo(old, 9);
+        Encoding.Latin1.GetBytes(new string('ò', 20)).CopyTo(old, 69);
+        Assert.True(OldBookHeaderChangePacket.TryParse(old, out var packet));
+
+        await f.OnLoopAsync(() => handler.Handle(f.Session, packet));
+
+        Assert.Equal((new string('é', 30), new string('ò', 15)), (book.GetProp("book.title", ""), book.GetProp("book.author", "")));
+    }
+
     // A request for a page, a packet that is not well formed, a book that is not there: nothing changes and
     // nothing is thrown.
     [Theory]

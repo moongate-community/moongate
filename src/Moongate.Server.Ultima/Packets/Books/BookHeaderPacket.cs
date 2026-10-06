@@ -69,9 +69,14 @@ public sealed class BookHeaderPacket : BasePacket<BookHeaderPacket>, IOutgoingPa
         writer.WriteByte(0);
     }
 
-    // The text in UTF-8, cut before the character that would pass the limit.
-    private static byte[] Cut(string text, int limit)
+    /// <summary>
+    ///     Cuts <paramref name="text" /> to what <paramref name="limit" /> bytes of UTF-8 hold, before the character
+    ///     that would pass them.
+    /// </summary>
+    public static string Fit(string text, int limit)
     {
+        ArgumentNullException.ThrowIfNull(text);
+
         var length = 0;
         var characters = 0;
 
@@ -86,6 +91,11 @@ public sealed class BookHeaderPacket : BasePacket<BookHeaderPacket>, IOutgoingPa
             characters += rune.Utf16SequenceLength;
         }
 
-        return Encoding.UTF8.GetBytes(text[..characters]);
+        return text[..characters];
+    }
+
+    private static byte[] Cut(string text, int limit)
+    {
+        return Encoding.UTF8.GetBytes(Fit(text, limit));
     }
 }

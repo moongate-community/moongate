@@ -1,3 +1,5 @@
+using Moongate.Server.Ultima.Services.Internal.Books;
+using Moongate.Server.Ultima.Services.Books;
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -93,6 +95,30 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         Assert.Null(loadedCoin.Visibility);
         Assert.Equal("3", loadedWand.GetProp<string>("quest_step"));
         Assert.Equal((mobile.Id, LayerType.Backpack), (loadedPack.MobileId!.Value, loadedPack.Layer!.Value));
+    }
+
+    // A book a player wrote in, through the database: its text page for page, and still one to write in.
+    [Fact]
+    public async Task AWrittenBook_ComesBackFromTheDatabase_WithItsPages_AndStillWritable()
+    {
+        var mobile = await NewMobileAsync();
+        var backpack = Item(0x40000001, i => i.Equip(mobile.Id, LayerType.Backpack));
+        var book = Item(0x40000002, i => i.PutInContainer(backpack.Id, new Point2D(44, 65)));
+        BookDocumentText.Apply(book, new() { TemplateId = "blank_book", Title = "a book", Author = "Aria", Content = "", Writable = true, Pages = 20 });
+        IReadOnlyList<IReadOnlyList<string>> written = [["Dear diary,", "", "today è"], [], ["the end"]];
+        book.SetProp("book.content", BookPagination.Join(written));
+        book.SetProp("book.title", "My diary");
+        book.Name = "My diary";
+        await _items.UpsertAsync(backpack);
+        await _items.UpsertAsync(book);
+
+        var loaded = (await _items.GetByIdAsync(book.Id))!;
+
+        Assert.True(BookDocumentText.IsWritable(loaded));
+        Assert.Equal(20, BookDocumentText.PagesOf(loaded));
+        Assert.Equal(("My diary", "My diary", "Aria"), (loaded.Name, loaded.GetProp<string>("book.title"), loaded.GetProp<string>("book.author")));
+        Assert.True(BookPagination.TryPaginate(loaded.GetProp<string>("book.content"), out var pages));
+        Assert.Equal([["Dear diary,", " ", "today è"], [], ["the end"]], pages);
     }
 
     [Fact]
