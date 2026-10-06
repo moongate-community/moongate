@@ -220,6 +220,18 @@ public sealed class CombatGearServiceTests
     }
 
     [Fact]
+    public void WithGear_ABowInTheHands_ShowsTheDamageOfTheBow()
+    {
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Tactics, Base = 1000 });
+        Wear("bow");
+
+        var status = _gear.WithGear(new MobileStatusInfo { Serial = Aria, Name = "Aria" }, _aria);
+
+        // 9 and 41 with tactics 100 and strength 100: 9 * 1.8 = 16 and 41 * 1.8 = 73
+        Assert.Equal((16, 73), (status.DamageMin, status.DamageMax));
+    }
+
+    [Fact]
     public void WithGear_WithoutAWeapon_ShowsTheFists()
     {
         _aria.Skills.Add(new MobileSkill { Skill = SkillType.Tactics, Base = 1000 });

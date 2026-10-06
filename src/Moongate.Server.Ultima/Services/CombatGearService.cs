@@ -127,7 +127,7 @@ public sealed class CombatGearService : ICombatGearService
             return status;
         }
 
-        var weapon = WeaponOf(mobile);
+        var weapon = RangedWeaponOf(mobile) ?? WeaponOf(mobile);
         var (min, max) = weapon is null
                              ? (CombatFormulas.FistsMinimumDamage, CombatFormulas.FistsMaximumDamage)
                              : (weapon.DamageMin, weapon.DamageMax);

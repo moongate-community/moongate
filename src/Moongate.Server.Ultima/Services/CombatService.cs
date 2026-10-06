@@ -84,6 +84,7 @@ public sealed class CombatService : ICombatService
     private readonly Random _random;
     private readonly IMurderService? _murders;
     private readonly IEffectService? _effects;
+    private readonly IAmmoService? _ammo;
     private string? _timerId;
 
     public CombatService(
@@ -106,9 +107,11 @@ public sealed class CombatService : ICombatService
         TimeProvider time,
         Random? random = null,
         IMurderService? murders = null,
-        IEffectService? effects = null
+        IEffectService? effects = null,
+        IAmmoService? ammo = null
     )
     {
+        _ammo = ammo;
         _effects = effects;
         _murders = murders;
         _mobiles = mobiles;
@@ -353,6 +356,12 @@ public sealed class CombatService : ICombatService
             return;
         }
 
+        // A player draws its bow when it has stood still for a while, as ModernUO and UOX3 ask.
+        if (!attacker.IsNpc && RangedOf(attacker) is not null && MovedRecently(attacker, now))
+        {
+            return;
+        }
+
         Swing(fighter, now);
     }
 
@@ -382,6 +391,15 @@ public sealed class CombatService : ICombatService
             CombatFormulas.SwingDelaySeconds(attacker.Stamina, weapon?.Speed ?? FistsSpeed, _config.GlobalAttackSpeed)
         );
         fighter.ExpiresAt = now.AddSeconds(_config.CombatantSeconds);
+
+        // A player spends an arrow or a bolt at each shot; with none the swing is lost, its delay paid, and nothing flies.
+        var shot = RangedOf(attacker);
+
+        if (shot is not null && !attacker.IsNpc && _ammo is not null && !_ammo.Spend(attacker, shot))
+        {
+            return;
+        }
+
         PayStamina(attacker);
 
         if (_sessions.TryGetByCharacterId(attacker.Id, out var own))
@@ -403,10 +421,16 @@ public sealed class CombatService : ICombatService
                 target.Location,
                 new EffectOptions { Graphic = kind.Projectile, Speed = ProjectileSpeed }
             );
+
+            // Some arrows are found again on the ground where they fell.
+            if (!attacker.IsNpc && weapon is not null)
+            {
+                _ammo?.Recover(target, weapon);
+            }
         }
 
         var attackSkill = weapon?.Skill ?? SkillType.Wrestling;
-        var defenseSkill = WeaponOf(target)?.Skill ?? SkillType.Wrestling;
+        var defenseSkill = (RangedOf(target) ?? WeaponOf(target))?.Skill ?? SkillType.Wrestling;
         var chance = CombatFormulas.HitChance(Points(attacker, attackSkill), Points(target, defenseSkill));
 
         if (!_skills.CheckChance(attacker, attackSkill, chance))
@@ -482,10 +506,15 @@ public sealed class CombatService : ICombatService
         }
     }
 
-    // The bow or the crossbow an NPC holds: the shots are the NPCs' for now, a player's are fists.
+    // The bow or the crossbow a mobile holds.
     private WeaponInfo? RangedOf(MobileEntity mobile)
     {
-        return mobile.IsNpc ? _gear.RangedWeaponOf(mobile) : null;
+        return _gear.RangedWeaponOf(mobile);
+    }
+
+    private bool MovedRecently(MobileEntity mobile, DateTimeOffset now)
+    {
+        return mobile.LastMovedAt is { } moved && now - moved < TimeSpan.FromSeconds(_config.ArcheryStandStillSeconds);
     }
 
     private bool CanSee(MobileEntity attacker, MobileEntity target)

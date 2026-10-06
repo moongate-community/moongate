@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"1e36a3802019162d95e8a6a461c460b92ab9c5168cdba92e258eb46ed3830dab","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"7dc63e0273a364cdae0a4c374b099065d1e98af7e7b1e66c7c2838ccdeca0644","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -114,7 +114,7 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | Passaggio | Stato | Cosa | Perché viene qui | Dati pronti da importare |
 | --- | --- | --- | --- | --- |
 | 3.1 | 🟡 | **Ricerca del percorso** e movimento che controlla oggetti e mobile. Completato: ricerca A*, `npc.walk_to` e oggetti che bloccano; i mobile non bloccano ancora | L'IA non può inseguire senza questo | |
-| 3.2 | 🟡 | **IA degli NPC**: corpo a corpo, arciere, mago, animale, fuga; memoria degli NPC di chi ha attaccato. Fatto: gli arcieri (un NPC con un arco spara), le creature che scappano quando sono ferite. Restano: i maghi. Oggi uno script Lua a ogni tick, movimento casuale, `monster.lua`, l'IA corpo a corpo, sui 200 circa template malvagi e caotici, che attaccano giocatori e cittadini e che le guardie uccidono, e gli animali (`animal.lua`, `scared_animal.lua`) sul modulo condiviso `common/creature.lua` | I 29.000 NPC generati diventano contenuti | Tag NPC UOX3 oggi scartati (valori di `NPCAI`, `SPATTACK`), ModernUO `npc-speeds.json` |
+| 3.2 | 🟡 | **IA degli NPC**: corpo a corpo, arciere, mago, animale, fuga; memoria degli NPC di chi ha attaccato. Fatto: gli arcieri (un NPC con un arco spara, e così un giocatore), le creature che scappano quando sono ferite. Restano: i maghi. Oggi uno script Lua a ogni tick, movimento casuale, `monster.lua`, l'IA corpo a corpo, sui 200 circa template malvagi e caotici, che attaccano giocatori e cittadini e che le guardie uccidono, e gli animali (`animal.lua`, `scared_animal.lua`) sul modulo condiviso `common/creature.lua` | I 29.000 NPC generati diventano contenuti | Tag NPC UOX3 oggi scartati (valori di `NPCAI`, `SPATTACK`), ModernUO `npc-speeds.json` |
 | 3.3 | 🟡 | **Bottino sui cadaveri**, smembramento, incremento di fama e karma. Il bottino viene generato nello zaino allo spawn e si trova nel cadavere di un NPC morto; nessuno smembramento, fama o karma | Ricompensa del combattimento | UOX3 `carve.dfn` (102 tabelle) |
 | 3.4 | 🟡 | **Notorietà**: flag criminale e assassino, colori dei nomi, conteggi degli omicidi. Oggi il colore del nome dal template mobile, assegnato a ogni NPC alla creazione | Dà regole al PvP | |
 | 3.5 | ❌ | **Regole delle regioni e guardie**: città sorvegliate, no recall, no gate, no case | Rende sicure le città | ModernUO `regions.json` (regioni tipizzate), UOX3 `regions.dfn` (179 insiemi di regole) |

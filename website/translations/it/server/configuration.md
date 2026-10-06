@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"38eff86f4f1e6faa0aad28f735689bc43248857df0f09fcfe424c1b2b61e44b4","title":"Configurazione"} -->
+<!-- translation: {"sourceHash":"c31680fe2d6035919a244a20d217ff12c3f1814be397c101a42326c1f6ff209c","title":"Configurazione"} -->
 
 # Configurazione del server
 
@@ -119,6 +119,7 @@ npc_damage_rate = 1.0                 # Divides the damage an NPC does to a play
 max_range = 1                         # Tiles a melee swing reaches.
 combatant_seconds = 60                # Seconds a fighter keeps its target without swinging.
 display_damage_numbers = true         # The damage shows over the one hit.
+archery_stand_still_seconds = 1.0     # Seconds a player must have stood still before it shoots; 0 for none.
 
 [ultima.crime]
 criminal_seconds = 120                # How long a mobile stays a criminal after its last criminal act.
@@ -277,6 +278,7 @@ Vedi [Persistenza PostgreSQL](persistence.md).
 | `ultima.combat.global_attack_speed`, `npc_damage_rate` | 1,0 ciascuno, maggiori di 0 e massimo 100. Fattore che divide il ritardo tra due [colpi](combat.md) (2 colpisce il doppio, 0,5 la metà) e numero che divide il danno inflitto da un NPC a un giocatore (2 lo dimezza). |
 | `ultima.combat.attack_stamina` | 0 (da 0 a 100). Stamina consumata da un colpo di un giocatore; ModernUO non ne consuma, UOX3 ne consuma 2. Gli NPC non pagano nulla. |
 | `ultima.combat.max_range`, `combatant_seconds` | 1 (da 1 a 24) e 60 (da 1 a 3600). Tile raggiunti da un colpo in mischia, e durata del mantenimento del bersaglio senza colpire, come il minuto di ModernUO. |
+| `ultima.combat.archery_stand_still_seconds` | `1.0` (da 0 a 60). I secondi in cui un giocatore che impugna un arco o una balestra deve essere rimasto fermo, dal suo ultimo passo, prima di poter sparare; un cambio di direzione non conta. 0 non chiede nulla. Vedi [Arcieri](combat.md#archers) |
 | `ultima.combat.display_damage_numbers` | `true`. Il danno del colpo viene mostrato sopra chi lo riceve (pacchetto `0x0B`), ai giocatori nel combattimento. |
 | `ultima.crime.criminal_seconds` | Valore predefinito 120 (da 1 a 86400), i due minuti di ModernUO e UOX3. Un mobile che compie un atto criminale resta criminale per questa durata, con il nome grigio per chi lo vede; un altro atto riavvia il tempo, e un assassino resta rosso. Il tempo viene salvato con il personaggio, quindi uscire dal mondo non lo azzera; un NPC torna innocente dopo un riavvio. Un giocatore legge il messaggio client "Hai commesso un atto criminale!!" quando diventa criminale. Nulla rende ancora criminali automaticamente: lo fanno gli script con `mobile.set_criminal`, lo staff con `set criminal`. |
 | `ultima.murder.*` | I conteggi degli omicidi, come in ModernUO. `short_term_hours` (predefinito 8) e `long_term_hours` (predefinito 40), da 1 a 8760: un omicidio a breve termine e un'uccisione segnalata vengono dimenticati dopo questo tempo, uno alla volta, in tempo reale, comprese le ore passate fuori dal mondo (ModernUO conta il tempo online), mentre il giocatore è nel mondo o quando ci ritorna. `report_delay_seconds` (predefinito 4), `recently_reported_minutes` (predefinito 10) e `aggressor_seconds` (predefinito 120), da 1 a 86400: quanto tempo dopo la morte a un giocatore viene chiesto di segnalare chi lo ha attaccato, quanto prima che possa segnalare di nuovo lo stesso assassino, e per quanto tempo un attacco a un innocente mantiene segnalabile chi l'ha compiuto. Vedi [Conteggi degli omicidi](death.md#murder-counts). |
