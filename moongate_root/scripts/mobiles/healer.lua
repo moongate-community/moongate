@@ -10,9 +10,11 @@
 --   a ghost is offered only when it comes near: it must leave and come back to
 --   be offered again. A mobile template uses it with script_id = "healer".
 --
---   A criminal is refused (client text 501222). A player of negative karma is
---   told it has strayed (501224) and offered all the same. A healer of a
---   "whealer" template, a wandering healer, also strolls.
+--   A criminal is refused (client text 501222), and so is a murderer (501223). A
+--   player of negative karma is told it has strayed (501224) and offered all the
+--   same. An evil healer, of a template whose id starts with "evil", refuses
+--   nobody: it raises the red players too. A healer of a "whealer" template, a
+--   wandering healer, also strolls.
 --
 -- Functions:
 --   on_think(serial)   every think of an NPC near a player
@@ -39,6 +41,7 @@ local offer_sound = 0x1F2
 -- Client texts: "Thou art a criminal. I shall not resurrect thee.", "Thou hast strayed
 -- from the path of virtue, but thou still deservest a second chance."
 local criminal_cliloc = 501222
+local murderer_cliloc = 501223
 local strayed_cliloc = 501224
 
 local thinks = {}
@@ -52,18 +55,33 @@ local function wanders(serial)
     return template ~= nil and template:sub(-7) == "whealer"
 end
 
+-- Whether the healer is an evil one, who turns nobody away.
+local function is_evil(serial)
+    local template = mobile.template(serial)
+
+    return template ~= nil and template:sub(1, 4) == "evil"
+end
+
 -- Offers the ghost to come back. False when there was nobody to offer to, such as a ghost with no
 -- client left; a refusal is an answer, so it is true.
 local function offer(serial, ghost)
-    if mobile.criminal(ghost) then
+    local evil = is_evil(serial)
+
+    if not evil and mobile.criminal(ghost) then
         npc.say_cliloc(serial, criminal_cliloc)
+
+        return true
+    end
+
+    if not evil and mobile.is_murderer(ghost) then
+        npc.say_cliloc(serial, murderer_cliloc)
 
         return true
     end
 
     local stats = mobile.stats(ghost)
 
-    if stats and stats.karma < 0 then
+    if not evil and stats and stats.karma < 0 then
         npc.say_cliloc(serial, strayed_cliloc)
     end
 

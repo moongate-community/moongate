@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -58,6 +59,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
                                                   .Item(ChestGraphic, TileFlagType.Container, 0, weight: 255);
 
     private readonly RecordingFatigueService _fatigue = new();
+    private readonly RecordingMurderService _murders = new();
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -389,6 +391,21 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_AnItemOfAChestOnTheGround_IsToldToTheMurderServiceAsLooted_AFloorItemIsNot()
+    {
+        var (chest, ruby) = GroundChest(1497);
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 1);
+        Assert.Empty(_murders.Calls);
+
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(ItemSessionKeys.Held, null));
+        await LiftAsync(ruby.Id, 1);
+
+        Assert.Equal([$"Looted {Aria.Value} {chest.Id.Value}"], _murders.Calls);
+    }
+
+    [Fact]
     public async Task Handle_PartOfAPileInAChestOnTheGround_ShowsTheRestToThoseAround()
     {
         var (chest, ruby) = GroundChest(1497);
@@ -706,7 +723,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private Task LiftAsync(Serial item, int amount)
     {
-        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _templates, _sessions, _fatigue);
+        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _templates, _sessions, _fatigue, murders: _murders);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new LiftRequestPacket { Item = item, Amount = amount }));
     }

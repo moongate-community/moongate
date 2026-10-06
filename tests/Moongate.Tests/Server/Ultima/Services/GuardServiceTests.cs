@@ -91,6 +91,30 @@ public sealed class GuardServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AGuard_ComesForAMurdererToo_WhoseNameIsRed()
+    {
+        _thief.Criminal = false;
+        _thief.Kills = 5;
+
+        await HeardAsync("guards", GuardsKeyword);
+
+        Assert.Single(_npcs.Spawns);
+    }
+
+    [Fact]
+    public async Task AGuard_DoesNotComeForAGhostThatIsRed()
+    {
+        _thief.Criminal = false;
+        _thief.Kills = 5;
+        _thief.AccountId = new Serial(0x43);
+        _thief.Body = 0x0192;
+
+        await HeardAsync("guards", GuardsKeyword);
+
+        Assert.Empty(_npcs.Spawns);
+    }
+
+    [Fact]
     public async Task AGuard_ComesOntoTheCriminal_WhenNoTileAroundItCanBeSteppedOn()
     {
         // Walled in on every side.

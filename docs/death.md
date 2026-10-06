@@ -187,12 +187,42 @@ mobile.is_dead(serial)   -- true for a player that is a ghost
 mobile.resurrect(serial) -- the serial of a ghost raises it at once
 ```
 
+## Murder counts
+
+A player that attacks an innocent player who does not fight back is a criminal, and the attack is noted. When that
+victim dies, a few seconds later (`report_delay_seconds`) it is asked in a gump, for each of those who attacked it as
+a criminal in the last two minutes, whether to report them as a murderer; the gump closed or answered No reports
+nobody. Nothing is counted by the death itself, as ModernUO.
+
+- **Yes** adds a **kill** (long term) and a **short-term murder** to the killer, and sets its karma to −1000 for
+  each kill. It reads "You have been reported for murder!" and at **five kills** "You are now known as a murderer!":
+  its name is red for everyone. The same victim cannot report the same killer again for 10 minutes.
+- Both counts are forgotten one at a time, the short-term murders after 8 hours and the kills after 40, counted from
+  the last report, in real time: hours spent out of the world count too (ModernUO counts online time), and the
+  counts are brought up to date while the player is in the world and when it comes back. A player is red while it has five kills
+  or more.
+- A red player is wanted by the guards, as a criminal is, and a healer refuses it. See
+  [`[ultima.murder]`](server-configuration.md) for the times.
+- **Resurrecting costs a murderer**: from five short-term murders, an ankh or a healer takes 5 to 15% of each stat
+  and of each skill (`100 − (4 + murders/5)` percent kept, never under 85% nor over 95%), but leaves a stat at 10 or
+  a skill at 35 points untouched when it would fall under it.
+- **Looting is a crime**: taking an item from the corpse of an innocent player (one that was no criminal and no
+  murderer when it died) makes the looter a criminal, unless it is the corpse's owner or staff. The corpse of a
+  criminal or a murderer is free. ModernUO does this outside Trammel only; here there is no Trammel rule yet.
+
+The counts are saved with the player. `mobile.murders(serial)` reads them as `{ kills, short_term }` and
+`mobile.is_murderer(serial)` says whether it is red.
+
+An **evil healer** (`evilhealer`, `evilwhealer`, the id starts with `evil`) turns nobody away: it raises the red
+players and the criminals too, as ModernUO's before AOS. The data places none yet.
+
 ## What is not there yet
 
-- Spells that raise, the evil healers (the ones that raise the red players), the murder counts and their
-  report, the refusal of a murderer by a healer, the loss of skills and stats that a resurrection costs from five
-  murders (ModernUO's `TryGiveStatLoss`), and looting a player's corpse by the rules of crimes. A ghost is not seen
-  by other ghosts. Bones: a corpse just decays.
+- Spells that raise, and the evil healers' places in the world. A ghost is not seen by other ghosts. Bones: a
+  corpse just decays. A party or a guild that may loot a corpse, and the bounty a victim can put on a murderer, as
+  ModernUO: none of them exist here.
+- A player that attacks a player at once back is no criminal and cannot be reported, as ModernUO; but the "reportable"
+  list is kept in memory: a restart forgets it.
 - Whether the spot is free for a body (ModernUO's `Map.CanFit`) is not checked when an ankh or a healer raises a
   ghost.
 - Carving, fame and karma, looting as a crime, loot shared among those who fought.

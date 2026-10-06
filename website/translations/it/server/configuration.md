@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5a06d7e9aa86497ed5bae24042a232aa549436e7f26e0e716b9eb035bfdd6c0b","title":"Configurazione"} -->
+<!-- translation: {"sourceHash":"38eff86f4f1e6faa0aad28f735689bc43248857df0f09fcfe424c1b2b61e44b4","title":"Configurazione"} -->
 
 # Configurazione del server
 
@@ -125,6 +125,13 @@ criminal_seconds = 120                # How long a mobile stays a criminal after
 guards_enabled = true                 # Saying "guards" in a guarded region brings a guard beside a criminal.
 guard_template = "guard"              # The mobile template of a guard that is called.
 guard_seconds = 40                    # How long a called guard stays.
+
+[ultima.murder]
+short_term_hours = 8                  # Hours before a short-term murder is forgotten.
+long_term_hours = 40                  # Hours before a reported kill is forgotten.
+report_delay_seconds = 4              # Seconds after a death before the victim is asked to report.
+recently_reported_minutes = 10        # Minutes before the same victim can report the same killer again.
+aggressor_seconds = 120               # Seconds an attack on an innocent keeps the attacker reportable.
 
 [ultima.spawns]
 initial_fill = true                   # The first spawn of each region after the start fills it to its max.
@@ -272,6 +279,7 @@ Vedi [Persistenza PostgreSQL](persistence.md).
 | `ultima.combat.max_range`, `combatant_seconds` | 1 (da 1 a 24) e 60 (da 1 a 3600). Tile raggiunti da un colpo in mischia, e durata del mantenimento del bersaglio senza colpire, come il minuto di ModernUO. |
 | `ultima.combat.display_damage_numbers` | `true`. Il danno del colpo viene mostrato sopra chi lo riceve (pacchetto `0x0B`), ai giocatori nel combattimento. |
 | `ultima.crime.criminal_seconds` | Valore predefinito 120 (da 1 a 86400), i due minuti di ModernUO e UOX3. Un mobile che compie un atto criminale resta criminale per questa durata, con il nome grigio per chi lo vede; un altro atto riavvia il tempo, e un assassino resta rosso. Il tempo viene salvato con il personaggio, quindi uscire dal mondo non lo azzera; un NPC torna innocente dopo un riavvio. Un giocatore legge il messaggio client "Hai commesso un atto criminale!!" quando diventa criminale. Nulla rende ancora criminali automaticamente: lo fanno gli script con `mobile.set_criminal`, lo staff con `set criminal`. |
+| `ultima.murder.*` | I conteggi degli omicidi, come in ModernUO. `short_term_hours` (predefinito 8) e `long_term_hours` (predefinito 40), da 1 a 8760: un omicidio a breve termine e un'uccisione segnalata vengono dimenticati dopo questo tempo, uno alla volta, in tempo reale, comprese le ore passate fuori dal mondo (ModernUO conta il tempo online), mentre il giocatore è nel mondo o quando ci ritorna. `report_delay_seconds` (predefinito 4), `recently_reported_minutes` (predefinito 10) e `aggressor_seconds` (predefinito 120), da 1 a 86400: quanto tempo dopo la morte a un giocatore viene chiesto di segnalare chi lo ha attaccato, quanto prima che possa segnalare di nuovo lo stesso assassino, e per quanto tempo un attacco a un innocente mantiene segnalabile chi l'ha compiuto. Vedi [Conteggi degli omicidi](death.md#murder-counts). |
 | `ultima.crime.guards_enabled`, `guard_template`, `guard_seconds` | Valori predefiniti `true`, `guard` e 40 (da 1 a 86400). Un giocatore che dice "guards" in una regione sorvegliata, usando la parola chiave del client in qualsiasi lingua o la parola semplice, chiama le guardie: per ogni criminale entro 14 tile che si trova a sua volta in una regione sorvegliata, escluso lo staff, un NPC di `guard_template` appare accanto a lui, su un tile libero a un passo (sul suo se nessuno è libero), con effetto e suono di teletrasporto, e pronuncia la sua frase (messaggio 30138); un criminale riceve una guardia per volta. La guardia scompare allo stesso modo dopo `guard_seconds`. Non c'è ancora combattimento, quindi la guardia non fa altro. ModernUO è più restrittivo sui bersagli: lì solo chi ha commesso il crimine in quella città negli ultimi 15 secondi, e un assassino; qui chiunque sia criminale. Una guardia chiamata porta la proprietà `guard.summoned`: una lasciata nel mondo da un server arrestato viene rimossa all'avvio successivo. Disabilitato, non arriva nessuno. |
 | `ultima.spawns.initial_fill` | Valore predefinito `true`. La prima generazione di ogni regione di spawn dopo l'avvio la riempie immediatamente fino a `max`, così un mondo vuoto si popola in circa 10 minuti; `false` mantiene il comportamento di UOX3, dove anche la prima generazione porta solo `call` NPC. Usato nelle modalità game e standalone. Vedi [Spawn degli NPC](spawns.md#how-spawning-works). |
 | `ultima.jail.fine_gold`, `ultima.jail.max_days` | Valori predefiniti 500 (da 0 a 1.000.000.000) e 30 (da 1 a 3650). Oro prelevato da un prigioniero alla fine della pena, prima dallo zaino poi dalla banca, e pena massima accettata da [`.jail`](commands/jail.md), in giorni reali; vedi [Prigione](jail.md). |

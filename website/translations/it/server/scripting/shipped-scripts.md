@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ef1cc8b94be861aadcd275ebb1f19edb67c9697a4d781bb9a1ee38612adf2fa5","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"3d41ee94b4dba544c76f0d87e58830094b915ee1a8f524ab44ec80aa27f9acd4","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -49,7 +49,7 @@ guardia si trova in uno di due stati:
 | arrest | Passa in modalità guerra; quando non è accanto al criminale appare su una casella libera a un passo da lui (`world.spot_beside`; sulla sua se nessuna è libera), con uno sbuffo di fumo dove si trovava e dove arriva e il suono del teletrasporto; dice "Rimpiangerai le tue azioni, porco!" (messaggio 30138). Poi resta sul criminale, rivolta verso di lui, e lo rincorre con `npc.walk_to` quando si muove. Accanto a un NPC criminale colpisce (un'animazione di attacco) e un secondo dopo l'NPC è morto: `mobile.kill`, con la guardia come uccisore, quindi [muore come qualsiasi altro](../death.md) e lascia il cadavere | L'NPC viene ucciso; oppure il criminale è perdonato o il suo tempo termina, si nasconde, lascia la regione sorvegliata, si allontana oltre 24 caselle dalla guardia o dalla postazione, oppure non può essere raggiunto per 10 secondi: ritorno alla postazione, in pace |
 
 Cerca un criminale ogni secondo: il giocatore o NPC più vicino di `npc.nearby` entro 12 caselle il cui
-`mobile.criminal` è true, che si trova in una regione sorvegliata (`world.is_guarded`) a non più di 24
+`mobile.criminal` o `mobile.is_murderer` è true (un nome rosso è ricercato come uno grigio), che si trova in una regione sorvegliata (`world.is_guarded`) a non più di 24
 caselle dalla postazione della guardia (`npc.home`), e che vede (`npc.can_see`); solo un criminale costa il
 controllo lungo la linea di vista. Il riferimento è la postazione, non la guardia, quindi un criminale non può condurre una guardia
 fuori città passo dopo passo. Un criminale che non riesce a raggiungere viene lasciato in pace finché non si muove. Non vede mai un
@@ -243,7 +243,7 @@ stesso non fa nulla.
 al think precedente viene guardato (`npc.look_at`), riceve il suono `0x1F2` e le scintille `SparkleHeal`, e
 il gump `resurrect` con l'argomento `healer`, come il `BaseHealer` di ModernUO. Un guaritore aspetta 2 secondi (4 think)
 tra due offerte, e un fantasma incontrato durante l'attesa riceve l'offerta quando finisce. Un criminale viene rifiutato con il
-testo del client 501222, e un giocatore con karma negativo si sente dire 501224 e riceve comunque l'offerta. Un guaritore di un
+testo del client 501222, e un assassino (rosso) con 501223, e un giocatore con karma negativo si sente dire 501224 e riceve comunque l'offerta. Un guaritore malvagio, il cui id di template inizia con `evil` (`evilhealer`, `evilwhealer`), non rifiuta nessuno e non dice nulla. Un guaritore di un
 template che finisce con `whealer`, uno errante, fa un passo con `npc.wander` a ogni quarto think.
 
 ## ankh.lua e resurrect.lua
@@ -256,7 +256,8 @@ resurrezione](../death.md#death-of-a-player)): da più di 2 celle dice "È tropp
 pulsante Continue chiama `resurrect.accept` in `scripts/gumps/resurrect.lua`, che, se il giocatore è
 ancora morto ed entro 2 celle dall'ankh (8 dal guaritore, se ha offerto un [guaritore](#healerlua)),
 chiama `mobile.resurrect`, riproduce il suono `0x214` e l'effetto `SparkleHeal` sul giocatore e gli toglie un
-decimo della fama. Cancel non fa nulla.
+decimo della fama; da cinque omicidi a breve termine toglie anche abilità e statistiche ([Conteggi degli omicidi](../death.md#murder-counts)).
+Cancel non fa nulla.
 
 ## moongate.lua
 

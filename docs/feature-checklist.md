@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 80 done, 🟡 47 partly done, ❌ 141 not built yet.
+**268 systems:** ✅ 80 done, 🟡 48 partly done, ❌ 140 not built yet.
 
 **Coverage: 30%** of the systems done, **39%** counting a partly done system as half.
 
@@ -50,14 +50,14 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Hit points, mana and stamina regeneration | ✅ | A point at a time, ModernUO's classic rates; mana by intelligence and Meditation; rates per mobile from scripts |
 | Titles | 🟡 | Fame and karma titles in the paperdoll; no skill titles |
 | Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); nothing gains or loses them yet |
-| Notoriety (innocent, criminal, murderer) | 🟡 | Name colour from the mobile template, grey while the mobile is a criminal |
-| Crimes, criminal timer and murder counts | 🟡 | The criminal flag with its timer, saved with the mobile, set by scripts and by the staff; no act makes a criminal yet, no murder counts |
+| Notoriety (innocent, criminal, murderer) | 🟡 | Name colour from the mobile template, grey while the mobile is a criminal, red from five reported kills |
+| Crimes, criminal timer and murder counts | 🟡 | The criminal flag with its timer, saved with the mobile; attacking an innocent or looting the corpse of one makes a criminal. A victim reports its killers in a gump: kills and short-term murders, five make a red murderer, forgotten with time (8 and 40 hours). No theft or other crimes yet |
 | Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
 | Hiding and stealth | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) hides a player until its first step; no Stealth, and speaking or being hit does not show it yet |
-| Death, corpses, ghosts and resurrection | 🟡 | An NPC or a player dies by a fight, `.kill` or `mobile.kill`: corpse with what it carried, death animation and sound, decay after 7 minutes. A player stays as a ghost (hidden from the living unless in war mode, heard as oOo, no fight, skill or lifting) and is raised at an ankh or by a healer (for a tenth of its fame), by `.resurrect` or `mobile.resurrect`. No evil healers, murder counts, stat loss or bones |
+| Death, corpses, ghosts and resurrection | 🟡 | An NPC or a player dies by a fight, `.kill` or `mobile.kill`: corpse with what it carried, death animation and sound, decay after 7 minutes. A player stays as a ghost (hidden from the living unless in war mode, heard as oOo, no fight, skill or lifting) and is raised at an ankh or by a healer (for a tenth of its fame), by `.resurrect` or `mobile.resurrect`. No bones |
 | Young player protection | ❌ | |
-| Murder reports and bounty boards | ❌ | |
+| Murder reports and bounty boards | 🟡 | The report gump a victim gets after its death works, with the counts it adds; no bounty and no boards |
 | Virtues | ❌ | |
 | Status bar | ✅ | Name, stats, hit points, mana, stamina, gold, weight |
 | Extended status (resistances, luck, caps) | ❌ | The stat locks are built, see Stats |

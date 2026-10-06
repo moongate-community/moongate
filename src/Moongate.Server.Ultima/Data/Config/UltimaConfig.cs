@@ -27,6 +27,8 @@ public class UltimaConfig : IConfigSection
 
     public CrimeConfig Crime { get; set; } = new();
 
+    public MurderConfig Murder { get; set; } = new();
+
     public SkillsConfig Skills { get; set; } = new();
 
     public CombatConfig Combat { get; set; } = new();
@@ -111,6 +113,13 @@ public class UltimaConfig : IConfigSection
         }
 
         Crime.Validate();
+
+        if (Murder is null)
+        {
+            throw new InvalidOperationException("The ultima.murder configuration section cannot be null.");
+        }
+
+        Murder.Validate();
 
         if (Skills is null)
         {

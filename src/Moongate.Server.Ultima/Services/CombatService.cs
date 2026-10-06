@@ -68,6 +68,7 @@ public sealed class CombatService : ICombatService
     private readonly WorldConfig _world;
     private readonly TimeProvider _time;
     private readonly Random _random;
+    private readonly IMurderService? _murders;
     private string? _timerId;
 
     public CombatService(
@@ -88,9 +89,11 @@ public sealed class CombatService : ICombatService
         CombatConfig config,
         WorldConfig world,
         TimeProvider time,
-        Random? random = null
+        Random? random = null,
+        IMurderService? murders = null
     )
     {
+        _murders = murders;
         _mobiles = mobiles;
         _state = state;
         _templates = templates;
@@ -158,6 +161,7 @@ public sealed class CombatService : ICombatService
             TargetOf(attacker)?.Id != target.Id)
         {
             _crimes.MakeCriminal(attacker);
+            _murders?.Aggressed(attacker, target);
         }
 
         var now = _time.GetUtcNow();
@@ -395,6 +399,7 @@ public sealed class CombatService : ICombatService
         _view.MobileAnimated(target, action, frames, 1);
         ShowDamage(attacker, target, damage);
 
+        _murders?.Struck(attacker, target);
         var hits = target.Hits - damage;
 
         if (hits > 0)

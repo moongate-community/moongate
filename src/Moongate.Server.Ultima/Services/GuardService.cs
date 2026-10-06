@@ -146,11 +146,12 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
         return sent;
     }
 
-    // A criminal the guards of this place reach: in the world, standing in a guarded region itself, not staff and not
+    // A criminal, or a murderer with its red name, that the guards of this place reach: in the world, standing in a guarded region itself, not staff and not
     // one of the guards that were called.
     private bool IsWanted(MobileEntity mobile)
     {
-        return mobile.Criminal &&
+        return (mobile.Criminal || mobile.IsMurderer) &&
+               !mobile.IsDead &&
                _mobiles.IsInWorld(mobile.Id) &&
                !IsStaff(mobile) &&
                !IsSummoned(mobile) &&

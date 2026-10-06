@@ -44,6 +44,7 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
 {
     private const int ContinueButton = 1;
     private const int CriminalCliloc = 501222;
+    private const int MurdererCliloc = 501223;
     private const int StrayedCliloc = 501224;
     private const int OfferSound = 0x1F2;
 
@@ -63,7 +64,8 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate { Id = "healer", ScriptId = "healer" },
-            new MobileTemplate { Id = "m_whealer", ScriptId = "healer" }
+            new MobileTemplate { Id = "m_whealer", ScriptId = "healer" },
+            new MobileTemplate { Id = "evilhealer", ScriptId = "healer" }
         )
     );
     private readonly MobileEntity _healer = new()
@@ -243,6 +245,64 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors.Select(error => error.ToString()));
         Assert.Empty(_gumps.Opened);
         Assert.Equal((_healer, CriminalCliloc, ""), Assert.Single(_speech.SaidClilocs));
+    }
+
+    [Fact]
+    public void AMurdererGhost_IsRefused_ByAGoodHealer_WithoutTheGump()
+    {
+        _aria.Kills = 5;
+
+        Think(1);
+
+        Assert.Empty(_gumps.Opened);
+        Assert.Equal((_healer, MurdererCliloc, ""), Assert.Single(_speech.SaidClilocs));
+    }
+
+    [Fact]
+    public void AnEvilHealer_RaisesTheCriminalAndTheMurdererToo_WithoutAWord()
+    {
+        _healer.TemplateId = "evilhealer";
+        _aria.Kills = 5;
+        _aria.Criminal = true;
+        _aria.Karma = -3000;
+
+        Think(1);
+
+        Assert.Single(_gumps.Opened);
+        Assert.Empty(_speech.SaidClilocs);
+    }
+
+    [Fact]
+    public void Continue_OfAPlayerWithFiveShortTermMurders_CostsItsStatsAndItsSkills_NotBelowTheirFloors()
+    {
+        _aria.ShortTermMurders = 10;
+        _aria.Strength = 100;
+        _aria.Dexterity = 10;
+        _aria.Intelligence = 50;
+        _state.Skills.Add(new() { Skill = SkillType.Magery, Base = 800 });
+        _state.Skills.Add(new() { Skill = SkillType.Tactics, Base = 360 });
+        Think(1);
+
+        Answer(ContinueButton);
+
+        Assert.Empty(_errors.Select(error => error.Error.Message));
+        // Ten murders keep 94%: 94 strength, 47 intelligence; a stat that would fall under 10 is kept, as a skill under 35.
+        Assert.Equal((94, 10, 47), (_aria.Strength, _aria.Dexterity, _aria.Intelligence));
+        Assert.Equal([(_aria, SkillType.Magery, 752, (int?)null)], _state.SkillsSet);
+    }
+
+    [Fact]
+    public void Continue_OfAPlayerWithFewMurders_KeepsItsStatsAndSkills()
+    {
+        _aria.ShortTermMurders = 4;
+        _aria.Strength = 100;
+        _state.Skills.Add(new() { Skill = SkillType.Magery, Base = 800 });
+        Think(1);
+
+        Answer(ContinueButton);
+
+        Assert.Equal(100, _aria.Strength);
+        Assert.Empty(_state.SkillsSet);
     }
 
     [Fact]

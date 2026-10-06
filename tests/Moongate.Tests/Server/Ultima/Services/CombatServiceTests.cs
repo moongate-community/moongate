@@ -38,6 +38,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
     private const int OrcHurt = 0x1B2;
     private const int OrcAttack = 0x1B0;
 
+    private readonly RecordingMurderService _murders = new();
     private readonly StubCombatGearService _gear = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly StubSkillService _skills = new();
@@ -99,7 +100,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
             _config,
             new WorldConfig(),
             _clock,
-            _random
+            _random,
+            _murders
         );
     }
 
@@ -211,6 +213,30 @@ public sealed class CombatServiceTests : IAsyncLifetime
         _combat.Attack(_aria, _orc);
 
         Assert.Equal(["criminal 2"], _crimes.Calls);
+    }
+
+    [Fact]
+    public void Attack_AnInnocent_NotesTheAggressionForTheMurderReport_AndAnyoneElseDoesNot()
+    {
+        _orc.Notoriety = NotorietyType.Enemy;
+        _combat.Attack(_aria, _orc);
+        Assert.Empty(_murders.Calls);
+
+        _orc.Notoriety = NotorietyType.Innocent;
+        _combat.Stop(_aria);
+        _combat.Attack(_aria, _orc);
+
+        Assert.Equal([$"Aggressed {_aria.Id.Value} {_orc.Id.Value}"], _murders.Calls);
+    }
+
+    [Fact]
+    public void AHit_IsToldToTheMurderServiceAsAStrike_ToKeepTheAttackerReportable()
+    {
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Contains($"Struck {_aria.Id.Value} {_orc.Id.Value}", _murders.Calls);
     }
 
     [Theory]

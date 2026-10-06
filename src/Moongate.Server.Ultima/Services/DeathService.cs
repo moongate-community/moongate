@@ -83,6 +83,7 @@ public sealed class DeathService : IDeathService
     private readonly ILocalizationService? _localization;
     private readonly IMobileStateService? _state;
     private readonly INpcSenseService? _senses;
+    private readonly IMurderService? _murders;
     private readonly ILogger _logger;
 
     // Who is between its death and its removal: it does not die twice.
@@ -109,9 +110,11 @@ public sealed class DeathService : IDeathService
         ILocalizationService? localization = null,
         IMobileStateService? state = null,
         INpcSenseService? senses = null,
+        IMurderService? murders = null,
         ILogger? logger = null
     )
     {
+        _murders = murders;
         _state = state;
         _senses = senses;
         _mobiles = mobiles;
@@ -274,6 +277,9 @@ public sealed class DeathService : IDeathService
             return false;
         }
 
+        // Read before the pardon: a criminal or a murderer is no innocent to loot.
+        var innocent = !player.IsMurderer && !player.Criminal;
+
         if (player.Criminal)
         {
             _crimes?.Pardon(player);
@@ -288,6 +294,7 @@ public sealed class DeathService : IDeathService
             killer?.Name ?? "nobody"
         );
         _senses?.Killed(player, killer);
+        _murders?.Died(player);
 
         if (DeathSound(player) is { } sound)
         {
@@ -298,6 +305,8 @@ public sealed class DeathService : IDeathService
 
         if (corpse is not null)
         {
+            corpse.SetProp(CorpseProps.Owner, (long)player.Id.Value);
+            corpse.SetProp(CorpseProps.Innocent, innocent);
             _view.ItemAppeared(corpse);
         }
 

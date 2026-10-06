@@ -692,6 +692,33 @@ public sealed class MobileModule
     }
 
     /// <summary>
+    ///     Gets the murder counts of a player; <c>mobile.murders(serial).short_term</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The murder counts of the mobile as { kills, short_term }: the kills a victim reported (five make a murderer, red) and the short-term murders (five make a resurrection cost skills and stats). nil for a mobile not in the world.")]
+    public LuaTable? Murders(long serial)
+    {
+        if (!TryGetMobile(serial, out var mobile))
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        table["kills"] = mobile.Kills;
+        table["short_term"] = mobile.ShortTermMurders;
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Tells whether the mobile is a murderer; <c>mobile.is_murderer(serial)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "True for a player with five kills or more reported against it, a murderer with a red name; false for anyone else or a serial that is not a mobile.")]
+    public bool IsMurderer(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) && mobile.IsMurderer;
+    }
+
+    /// <summary>
     ///     Raises who died from its corpse, or a ghost where it stands; <c>mobile.resurrect(corpse)</c>.
     /// </summary>
     [ScriptFunction(helpText: "Raises a dead player, a ghost, at once: its living body is back with 10 hit points, full stamina and no mana, and a death robe replaces its shroud; false for a player that is not dead. Given the corpse of an NPC instead, raises the NPC a corpse is of, on a later turn of the game loop: one of the same template is born where the corpse lies, with the name and the facing of who died and the equipment of its template, and the corpse is gone with what was left inside. False, and nothing is started, for what is not an item with the corpse graphic; a corpse that names no template is left as it is.")]
