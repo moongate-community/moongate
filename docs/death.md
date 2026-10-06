@@ -170,7 +170,7 @@ A ghost:
 - A **healer** (templates `healer`, `m_healer`, `f_healer`, and the wandering `whealer`, `m_whealer`,
   `f_whealer`, script `healer.lua`): a ghost that comes within 4 cells of one, with the healer in sight, is
   offered the same gump, with the healer's sound `0x1F2` and the sparkles. A healer offers every 2 seconds at most
-  and only to a ghost that comes near, as ModernUO: it must leave and come back to be offered again. A criminal is
+  and only to a ghost that comes near: it must leave and come back to be offered again. A ghost met while the healer waits for its turn is offered when the wait is over, which ModernUO does not do. The ghost of a game master is offered too. A criminal is
   refused ("Thou art a criminal. I shall not resurrect thee."), and one of negative karma is told it has strayed
   and offered all the same. It costs nothing, and the ghost may answer from up to 8 cells away.
 - A game master with [`.resurrect`](commands/resurrect.md), a script with `mobile.resurrect(serial)`.

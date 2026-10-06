@@ -32,12 +32,13 @@ local sound = 0x214
 local function in_reach(player, args)
     if args.healer then
         local at = mobile.location(player)
-        local distance = at and npc.distance_to(args.healer, at.x, at.y)
+        local healer_at = npc.location(args.healer)
 
-        return distance ~= nil and distance <= healer_range
+        return at ~= nil and healer_at ~= nil and healer_at.map == at.map and
+            npc.distance_to(args.healer, at.x, at.y) <= healer_range
     end
 
-    return item.in_range(args.ankh, player, use_range)
+    return args.ankh ~= nil and item.in_range(args.ankh, player, use_range)
 end
 
 function resurrect.accept(player, response, args)

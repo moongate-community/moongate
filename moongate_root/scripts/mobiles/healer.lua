@@ -52,12 +52,13 @@ local function wanders(serial)
     return template ~= nil and template:sub(-7) == "whealer"
 end
 
--- Offers the ghost to come back. False when the healer refuses it.
+-- Offers the ghost to come back. False when there was nobody to offer to, such as a ghost with no
+-- client left; a refusal is an answer, so it is true.
 local function offer(serial, ghost)
     if mobile.criminal(ghost) then
         npc.say_cliloc(serial, criminal_cliloc)
 
-        return
+        return true
     end
 
     local stats = mobile.stats(ghost)
@@ -69,7 +70,8 @@ local function offer(serial, ghost)
     npc.look_at(serial, ghost)
     npc.play_sound(serial, offer_sound)
     effect.on(ghost, EffectGraphicType.SparkleHeal)
-    gump.open(ghost, "resurrect", { healer = serial })
+
+    return gump.open(ghost, "resurrect", { healer = serial })
 end
 
 function healer.on_think(serial)
@@ -84,9 +86,10 @@ function healer.on_think(serial)
             now[ghost] = true
         elseif count - (last_offer[serial] or -between_offers) >= between_offers then
             -- A ghost met while the healer waits for its turn is offered when the wait is over.
-            last_offer[serial] = count
-            now[ghost] = true
-            offer(serial, ghost)
+            if offer(serial, ghost) then
+                last_offer[serial] = count
+                now[ghost] = true
+            end
         end
     end
 

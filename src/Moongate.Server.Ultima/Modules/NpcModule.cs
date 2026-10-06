@@ -527,7 +527,7 @@ public sealed class NpcModule
     /// <summary>
     ///     Gets the serials of the dead players an NPC sees, nearest first; <c>npc.ghosts_in_sight(healer, 4)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serials of the dead players, ghosts, within range cells that the NPC sees, in the line of sight and whatever their hidden flag says, the staff left out; at most limit of them. Nearest first. Empty for an unknown NPC or a range out of bounds. What a healer looks for: npc.players_in_sight never lists a ghost.")]
+    [ScriptFunction(helpText: "The serials of the dead players, ghosts, within range cells that the NPC sees, in the line of sight and whatever their hidden flag says, staff ghosts too; at most limit of them. Nearest first. Empty for an unknown NPC or a range out of bounds. What a healer looks for: npc.players_in_sight never lists a ghost.")]
     public LuaTable GhostsInSight(long serial, int range = DefaultSight, int limit = int.MaxValue)
     {
         var table = new LuaTable();
@@ -713,7 +713,8 @@ public sealed class NpcModule
             other.Map != npc.Map ||
             !_mobiles.IsInWorld(other.Id) ||
             Distance(npc.Location, other.Location) > range ||
-            IsStaff(other))
+            // A healer raises the ghost of a game master too: only the monsters leave the staff alone.
+            (!ghost && IsStaff(other)))
         {
             return false;
         }

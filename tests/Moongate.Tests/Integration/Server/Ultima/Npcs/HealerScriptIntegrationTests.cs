@@ -12,6 +12,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
@@ -163,6 +164,27 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         Assert.Equal("resurrect", Assert.Single(_gumps.Opened).Gump.Id);
         Assert.Equal((_healer, OfferSound), Assert.Single(_speech.Sounds));
         Assert.Equal(0x376A, Assert.Single(_effects.On).Options.Graphic);
+    }
+
+    [Fact]
+    public async Task TheGhostOfAGameMaster_IsOfferedToo()
+    {
+        await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        Think(1);
+
+        Assert.Single(_gumps.Opened);
+    }
+
+    [Fact]
+    public void Continue_OfAGhostOnAnotherMap_RaisesNobody()
+    {
+        Think(1);
+        _aria.Map = MapType.Felucca;
+
+        Answer(ContinueButton);
+
+        Assert.Empty(_death.PlayersRaised);
     }
 
     [Fact]
