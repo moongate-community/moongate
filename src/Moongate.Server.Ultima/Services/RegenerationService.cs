@@ -85,6 +85,14 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
     {
         var clock = _clocks.GetOrCreateValue(mobile);
 
+        // The dead get nothing back, as ModernUO: only a resurrection does.
+        if (mobile.IsDead)
+        {
+            clock.HitsAt = clock.ManaAt = clock.StaminaAt = 0;
+
+            return;
+        }
+
         // Nothing to give back: the three waits start again when a bar drops.
         if (mobile.Hits >= mobile.HitsMax && mobile.Mana >= mobile.ManaMax && mobile.Stamina >= mobile.StaminaMax)
         {

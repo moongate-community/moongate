@@ -19,6 +19,11 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class SkillUseService : ISkillUseService
 {
     public const int MustWaitCliloc = 500118;
+
+    /// <summary>
+    ///     "I am dead and cannot do that."
+    /// </summary>
+    public const int DeadCliloc = 1019048;
     public const int CannotUseCliloc = 500014;
 
     /// <summary>
@@ -76,6 +81,13 @@ public sealed class SkillUseService : ISkillUseService
             !_mobiles.TryGet(session.CharacterId, out var user) ||
             !_mobiles.IsInWorld(user.Id))
         {
+            return false;
+        }
+
+        if (user.IsDead)
+        {
+            _speech.TellCliloc(user, DeadCliloc);
+
             return false;
         }
 

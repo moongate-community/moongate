@@ -185,6 +185,19 @@ public sealed class SkillUseServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Use_AGhost_IsToldItIsDead_AndRunsNoScript()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 0x0192;
+
+        Assert.False(_skills.Use(_session, SkillType.Magery));
+
+        Assert.Empty(_scripts.Used);
+        Assert.Equal([(_aria, SkillUseService.DeadCliloc, "")], _speech.ToldClilocs);
+        Assert.Null(_aria.NextSkillAt);
+    }
+
+    [Fact]
     public void Use_APrisoner_IsRefused_AndRunsNoScript()
     {
         _jail.SentenceList.Add(new() { Id = _aria.Id, Cell = 1 });
