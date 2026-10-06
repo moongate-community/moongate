@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 80 done, 🟡 48 partly done, ❌ 140 not built yet.
+**268 systems:** ✅ 80 done, 🟡 49 partly done, ❌ 139 not built yet.
 
 **Coverage: 30%** of the systems done, **39%** counting a partly done system as half.
 
@@ -340,7 +340,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Races | 🟡 | Human, elf and gargoyle bodies and looks; no racial gameplay |
 | Gumps | ✅ | XML layouts checked by an XSD, Lua scripts, gumps built in Lua, chained gumps, checked answers |
 | Menus | ❌ | |
-| Context menus | ❌ | |
+| Context menus | 🟡 | The [menu](context-menus.md) of a mobile or an item: Open Paperdoll and Open Backpack, and the entries a Lua script adds (`on_context_menu`, `on_context_menu_select`), such as the banker's Open Bank Box; the choice is checked against the menu sent. No vendor, pet, taming or party entries yet, nor the Enhanced Client's vendor icons |
 | Buff bar | ❌ | |
 | Walk sequence and speed checks | ✅ | |
 | Weight and overloading | ✅ | What a mobile carries and may carry (40 and 3.5 a point of strength) is counted and shown; an overloaded player tires at every step |

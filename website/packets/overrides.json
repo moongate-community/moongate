@@ -2143,8 +2143,8 @@
         "description": "Subcommand data."
       }
     ],
-    "notes": "Subcommand 0x10 asks for one tooltip and 0x1A sets the lock of a stat (a byte for the stat, 0 strength, 1 dexterity, 2 intelligence, and a byte for the lock, 0 up, 1 down, 2 locked); the others are ignored for now. Outgoing 0xBF/0x08 and 0xBF/0x19 are separate subcommands.",
-    "handler": "ExtendedCommandPacketHandler: subcommand 0x10 answers the tooltip; subcommand 0x1A sets the stat lock of the character in the world (a lock past locked reads as up)"
+    "notes": "Subcommand 0x10 asks for one tooltip and 0x1A sets the lock of a stat (a byte for the stat, 0 strength, 1 dexterity, 2 intelligence, and a byte for the lock, 0 up, 1 down, 2 locked). Subcommand 0x13 asks for the context menu of a mobile or an item (its serial, four bytes) and 0x15 chooses an entry of it (the serial and the index of the entry, two bytes). The others are ignored for now. Outgoing 0xBF/0x08, 0xBF/0x14 and 0xBF/0x19 are separate subcommands.",
+    "handler": "ExtendedCommandPacketHandler: subcommand 0x10 answers the tooltip; subcommand 0x1A sets the stat lock of the character in the world (a lock past locked reads as up); subcommands 0x13 and 0x15 go to ContextMenuService.Request and Select"
   },
   "0xC8:incoming": {
     "category": "World",
@@ -5197,5 +5197,65 @@
     ],
     "notes": "Tells the client to walk its character to a spot by itself, as after a double right click on the ground: the client finds the way, writes \"Pathfinding!\" and sends its steps one by one. The client decides whether it goes: the server is not told.",
     "handler": "MobileModule.PathfindTo: mobile.pathfind_to(player, x, y, z)."
+  },
+  "0xBF/0x14:outgoing": {
+    "category": "World",
+    "tags": [
+      "Context menus",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "ushort",
+        "size": "2",
+        "description": "0x14."
+      },
+      {
+        "offset": "5",
+        "name": "Format",
+        "type": "ushort",
+        "size": "2",
+        "description": "2: the format every client from 6.0.0.0 takes, with the cliloc whole."
+      },
+      {
+        "offset": "7",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the mobile or item the menu is of."
+      },
+      {
+        "offset": "11",
+        "name": "Count",
+        "type": "byte",
+        "size": "1",
+        "description": "How many entries follow, 20 at most."
+      },
+      {
+        "offset": "12",
+        "name": "Entry",
+        "type": "loop",
+        "size": "variable",
+        "description": "For each entry: its cliloc, the text the client shows (uint); its index in the menu, from 0 (ushort); its flags (ushort): 1 greyed out, 0 otherwise."
+      }
+    ],
+    "notes": "The context menu of a mobile or an item: the server's own entries (Open Paperdoll, Open Backpack), then the ones its Lua script adds. An entry the player is out of range of, or that is not enabled, is greyed out. The client answers with 0xBF subcommand 0x15 and the index chosen. A target with no entry gets no packet.",
+    "handler": "ContextMenuService.Request, asked by the client with 0xBF subcommand 0x13."
   }
 }

@@ -1,3 +1,4 @@
+using Lua;
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -668,6 +669,51 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         Assert.Equal([false], result.Values);
         Assert.Equal([_aria], _bank.Opened);
         Assert.Empty(_speech.SaidClilocs);
+    }
+
+    // The banker's own entry of its context menu: the client's "Open Bank Box", from twelve tiles.
+    [Fact]
+    public async Task TheBanker_OffersToOpenTheBankBox_InItsContextMenu()
+    {
+        var scripts = await StartBankerScriptsAsync();
+
+        var result = scripts.Run(_cat, "on_context_menu", (long)_aria.Id.Value);
+
+        Assert.Empty(_errors);
+        var entries = Assert.IsType<LuaTable>(Assert.Single(result.Values));
+        Assert.Equal(1, entries.ArrayLength);
+        var entry = entries[1].Read<LuaTable>();
+        Assert.Equal(("bank", 3006105, 12), (entry["id"].Read<string>(), entry["cliloc"].Read<int>(), entry["range"].Read<int>()));
+    }
+
+    [Fact]
+    public async Task TheBanker_OpensTheBankOfWhoChoosesIt_AndRefusesACriminal()
+    {
+        var scripts = await StartBankerScriptsAsync();
+
+        scripts.Run(_cat, "on_context_menu_select", (long)_aria.Id.Value, "bank");
+
+        Assert.Empty(_errors);
+        Assert.Equal([_aria], _bank.Opened);
+        Assert.Empty(_speech.SaidClilocs);
+
+        _aria.Criminal = true;
+        scripts.Run(_cat, "on_context_menu_select", (long)_aria.Id.Value, "bank");
+
+        Assert.Equal([_aria], _bank.Opened);
+        Assert.Equal((_cat, 500378, ""), Assert.Single(_speech.SaidClilocs));
+    }
+
+    // An entry that is not the banker's does nothing.
+    [Fact]
+    public async Task TheBanker_IgnoresAnEntryItDidNotOffer()
+    {
+        var scripts = await StartBankerScriptsAsync();
+
+        scripts.Run(_cat, "on_context_menu_select", (long)_aria.Id.Value, "sell");
+
+        Assert.Empty(_errors);
+        Assert.Empty(_bank.Opened);
     }
 
     private async Task<NpcHearingService> StartBankerAsync()
