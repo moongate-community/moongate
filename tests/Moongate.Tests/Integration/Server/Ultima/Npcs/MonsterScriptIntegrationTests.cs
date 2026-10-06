@@ -12,10 +12,12 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -64,7 +66,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     );
     private readonly MobileEntity _skeleton = new()
     {
-        Id = new Serial(0x100), Name = "a skeleton", TemplateId = "skeleton", Map = MapType.Trammel,
+        Id = new Serial(0x100), Name = "a skeleton", TemplateId = "skeleton", Body = 0x32, Map = MapType.Trammel,
         Location = new Point3D(1600, 1600, 0), Direction = DirectionType.North
     };
 
@@ -112,6 +114,10 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<CombatModule>();
         _container.RegisterInstance<ICombatService>(_combat);
         _container.RegisterScriptEnum<MonsterAnimationType>();
+        _container.RegisterScriptEnum<BodyType>();
+        _container.RegisterInstance<IDataLoaderService>(
+            new StubDataLoaderService().With(new BodyContent { Body = new(0x32), Type = BodyType.Monster }, new BodyContent { Body = new(0x190), Type = BodyType.Human })
+        );
         _container.Resolve<IMoongateEventBus>()
                   .Subscribe<ScriptErrorEvent>(
                       (evt, _) =>
@@ -171,6 +177,55 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(DirectionType.East, _skeleton.Direction);
         Assert.Equal([(_skeleton, _aria)], _combat.Attacks);
         Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void ABlueNpcInSight_IsGoneForToo_WithNoPlayerAround()
+    {
+        _aria.Hidden = true;
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+        var townsman = Npc(0x200, 1605, 1600, NotorietyType.Innocent);
+
+        Think(4);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(["war 256 True"], _state.Flags);
+
+        // One step a think until it stands beside the townsman, and then it fights him.
+        Think(4);
+        Assert.Equal(new Point3D(1604, 1600, 0), _skeleton.Location);
+        Think(12);
+        Assert.Equal([(_skeleton, townsman)], _combat.Attacks);
+    }
+
+    [Theory]
+    [InlineData(NotorietyType.Invulnerable)]
+    [InlineData(NotorietyType.Attackable)]
+    [InlineData(NotorietyType.Enemy)]
+    [InlineData(NotorietyType.Murderer)]
+    public void AnNpcThatIsNoBlueTownsman_IsLeftAlone(NotorietyType notoriety)
+    {
+        _aria.Hidden = true;
+        Npc(0x200, 1605, 1600, notoriety);
+
+        Think(40);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Empty(_state.Flags);
+        Assert.Empty(_combat.Attacks);
+    }
+
+    [Fact]
+    public void ADeadPlayer_AGhost_IsNotPreyEither_AndTheBodyOfAHumanDoesNotPlayMonsterActions()
+    {
+        _skeleton.Body = 0x0190;
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+
+        Think(4);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(["war 256 True"], _state.Flags);
+        Assert.DoesNotContain(_view.Calls, call => call.StartsWith("Animated", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -368,6 +423,18 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
 
         Assert.Contains(_skeleton, _combat.Stopped);
         Assert.Empty(_errors);
+    }
+
+    private MobileEntity Npc(uint serial, int x, int y, NotorietyType notoriety)
+    {
+        var npc = new MobileEntity
+        {
+            Id = new Serial(serial), Name = "a townsman", TemplateId = "townsman", Notoriety = notoriety, Map = MapType.Trammel,
+            Location = new Point3D(x, y, 0), Hits = 20, HitsMax = 20
+        };
+        _fixture.Mobiles.EnterWorld(npc);
+
+        return npc;
     }
 
     private void Think(int times)

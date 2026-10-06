@@ -12,10 +12,12 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -61,7 +63,7 @@ public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
     );
     private readonly MobileEntity _animal = new()
     {
-        Id = new Serial(0x100), Name = "a bear", TemplateId = "bear", Map = MapType.Trammel,
+        Id = new Serial(0x100), Name = "a bear", TemplateId = "bear", Body = 0xD3, Map = MapType.Trammel,
         Location = new Point3D(1600, 1600, 0), Direction = DirectionType.North
     };
 
@@ -109,6 +111,10 @@ public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<CombatModule>();
         _container.RegisterInstance<ICombatService>(_combat);
         _container.RegisterScriptEnum<MonsterAnimationType>();
+        _container.RegisterScriptEnum<BodyType>();
+        _container.RegisterInstance<IDataLoaderService>(
+            new StubDataLoaderService().With(new BodyContent { Body = new(0xD3), Type = BodyType.Animal })
+        );
         _container.Resolve<IMoongateEventBus>()
                   .Subscribe<ScriptErrorEvent>(
                       (evt, _) =>

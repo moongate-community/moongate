@@ -80,7 +80,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Weapons and armour: damage, armour, durability, resistances | 🟡 | The weapon a player holds and the armor it wears set the [swing, the hit, the damage and what a blow takes off](combat.md#weapons-and-armor); no durability, parry, shields or resistances |
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
-| NPC combat AI | 🟡 | `monster.lua` on every creature that is evil, a fighter, a caster or chaotic in UOX3 (about 210 templates): they notice a player, walk to it, fight it and stand guard when they lose it, in melee also the casters. Animals stroll and fight back when hit, scared ones run. No archers, spells or fleeing at low hit points |
+| NPC combat AI | 🟡 | `monster.lua` on every creature that is evil or chaotic in UOX3 (about 200 templates): they notice a player or a townsman, walk to it, fight it and stand guard when they lose it, in melee also the casters, and the town guards go for them. Animals stroll and fight back when hit, scared ones run. No archers, spells or fleeing at low hit points |
 | Guards in guarded regions | 🟡 | A player that says "guards" brings a guard beside each criminal near it: it appears, says its line and leaves. The guards standing in the towns notice a criminal by themselves and go to it (`guard.lua`). A criminal NPC is killed with one blow and leaves its corpse; a criminal player is only stood on, since players do not die yet |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |

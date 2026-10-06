@@ -77,6 +77,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
             _state,
             new MobileTemplateService(
                 new StubDataLoaderService().With(
+                    new MobileTemplate { Id = "rabbit", ScriptId = "scared_animal" },
                     new MobileTemplate
                     {
                         Id = "orc", Damage = DiceSpec.FromValue(8), Sounds = new MobileSounds { Attack = OrcAttack, Hurt = OrcHurt }
@@ -489,6 +490,20 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Assert.Contains((_aria, CombatService.MissSound), _speech.Sounds);
         Assert.Empty(_fixture.Sender.Sent.OfType<DamagePacket>());
         Assert.Equal(_aria, _combat.TargetOf(_orc));
+    }
+
+    [Fact]
+    public void AScaredAnimal_DoesNotFightBack_ItsScriptRunsFromTheBlow()
+    {
+        _orc.TemplateId = "rabbit";
+        _random.Integers(4);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+        Tick();
+
+        Assert.Null(_combat.TargetOf(_orc));
+        Assert.Equal(30, _aria.Hits);
     }
 
     [Fact]

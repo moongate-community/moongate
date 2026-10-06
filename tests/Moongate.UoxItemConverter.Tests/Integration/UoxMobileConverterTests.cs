@@ -170,7 +170,9 @@ public sealed class UoxMobileConverterTests : IDisposable
         // A template based on one of them takes the script through its base; the others have none yet.
         Assert.True(string.IsNullOrEmpty(mobiles["boneknight"].ScriptId));
         // The creatures that go for the players, the animals that keep to themselves and those that run.
-        Assert.All(new[] { "orc", "fighter", "mage", "evilmage", "chaos" }, id => Assert.Equal("monster", mobiles[id].ScriptId));
+        Assert.All(new[] { "orc", "evilmage", "chaos" }, id => Assert.Equal("monster", mobiles[id].ScriptId));
+        // The good fighters and casters fight criminals only: no script yet.
+        Assert.All(new[] { "fighter", "mage" }, id => Assert.True(string.IsNullOrEmpty(mobiles[id].ScriptId)));
         Assert.Equal(("animal", "scared_animal"), (mobiles["bunny"].ScriptId, mobiles["rabbit"].ScriptId));
         // A dummy, 7, has none yet; one based on a monster takes its script through its base.
         Assert.True(string.IsNullOrEmpty(mobiles["merchant"].ScriptId));

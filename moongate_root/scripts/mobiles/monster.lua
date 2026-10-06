@@ -2,12 +2,13 @@
 -- Moongate - scripts/mobiles/monster.lua
 --
 -- What it is for:
---   A mobile script for the monsters that go for the players, as ModernUO's melee
---   AI: it chases a player and, beside it, fights it (combat.attack: the server
---   swings, hits and kills by its combat rules). A mobile template uses it with
---   script_id = "monster": the creatures whose UOX3 NPCAI is evil, evil caster,
---   fighter, caster or chaotic (the casters fight in melee until there is magic)
---   do, and so do those based on them. The behaviour is the shared
+--   A mobile script for the monsters that go for everyone, as ModernUO's melee
+--   AI: it chases a player, or a townsman with a blue name, and, beside it, fights
+--   it (combat.attack: the server swings, hits and kills by its combat rules). The
+--   town guards go for it in turn. A mobile template uses it with
+--   script_id = "monster": the creatures whose UOX3 NPCAI is evil, evil caster or
+--   chaotic (the casters fight in melee until there is magic) do, and so do those
+--   based on them. The behaviour is the shared
 --   scripts/common/creature.lua with hunts = true.
 --
 --   The monster is in one of three states (and turns on whoever hits it, as ModernUO's

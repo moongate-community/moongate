@@ -39,6 +39,11 @@ public sealed class CombatService : ICombatService
     public const int MissSound = 0x239;
 
     // How far apart in height two fighters can be and still reach each other.
+    /// <summary>
+    ///     The script id of the animals that run from a blow instead of fighting back.
+    /// </summary>
+    public const string ScaredAnimalScript = "scared_animal";
+
     private const int ReachInHeight = 15;
     private const int SwingFrames = 7;
     private const int OtherSwingFrames = 5;
@@ -425,7 +430,8 @@ public sealed class CombatService : ICombatService
     // The NPC that is hit, or missed, fights the one who swings, if it fights no one; whoever hit it keeps it at it.
     private void FightBack(MobileEntity victim, MobileEntity attacker, DateTimeOffset now)
     {
-        if (!victim.IsNpc || !_mobiles.IsInWorld(victim.Id))
+        // A scared animal runs from the blow: its script, not the fight, answers it.
+        if (!victim.IsNpc || !_mobiles.IsInWorld(victim.Id) || RunsFromBlows(victim))
         {
             return;
         }
@@ -434,6 +440,14 @@ public sealed class CombatService : ICombatService
         {
             Fight(victim, attacker, now, false);
         }
+    }
+
+    // Whether the NPC's template names the script of the animals that run instead of fighting back.
+    private bool RunsFromBlows(MobileEntity mobile)
+    {
+        return mobile.TemplateId is { } id &&
+               _templates.TryGet(id, out var template) &&
+               template.ScriptId == ScaredAnimalScript;
     }
 
     // The weapon a player holds; none for an NPC, which fights with its template.

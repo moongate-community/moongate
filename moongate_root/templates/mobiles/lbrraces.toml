@@ -95,7 +95,6 @@ death = 652
 
 [[mobile]]
 id = "meereternal"
-script_id = "monster"
 name = "a meer eternal"
 body = 772
 strength = "1d90+415"
@@ -123,7 +122,6 @@ death = 188
 
 [[mobile]]
 id = "meerwarrior"
-script_id = "monster"
 name = "a meer warrior"
 body = 771
 strength = "1d15+85"
@@ -146,7 +144,6 @@ death = 348
 
 [[mobile]]
 id = "meercaptain"
-script_id = "monster"
 name = "a meer captain"
 body = 773
 strength = "1d15+95"
@@ -170,7 +167,6 @@ death = 788
 
 [[mobile]]
 id = "meermage"
-script_id = "monster"
 name = "a meer mage"
 body = 770
 strength = "1d31+169"

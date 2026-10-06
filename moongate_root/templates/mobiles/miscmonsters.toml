@@ -30,7 +30,6 @@ death = 1204
 
 [[mobile]]
 id = "pixie"
-script_id = "monster"
 name = "a pixie"
 name_list = "pixie"
 body = 128
@@ -89,7 +88,6 @@ items = ["0x13b1"]
 
 [[mobile]]
 id = "ethwarrior"
-script_id = "monster"
 name = "an ethereal warrior"
 name_list = "ethereal_warrior"
 body = 123

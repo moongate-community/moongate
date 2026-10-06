@@ -9,9 +9,9 @@ where `wander.lua` and `potion.lua` are listed.
 
 The distribution's `scripts/mobiles/monster.lua` is the script of the monsters that go for the players,
 after ModernUO's melee AI: it chases a player and fights it from beside it. A template takes it with
-`script_id = "monster"`; the creatures whose UOX3 `NPCAI` is evil, evil caster, fighter, caster or chaotic do (the
+`script_id = "monster"`; the creatures whose UOX3 `NPCAI` is evil, evil caster or chaotic do (the
 orcs, the ogres, the lizardmen, the dragons, the undead and the other 200 or so templates and those based on
-them; [UOX3 migration](../uox3-migration.md)). The casters, among them the wraith, the spectre and the lich, are
+them; [UOX3 migration](../uox3-migration.md)); the good fighters and casters, who fight criminals only, do not. The casters, among them the wraith, the spectre and the lich, are
 casters in ModernUO: they walk up and fight like the others until magic exists. The behaviour is the shared module
 [`common/creature.lua`](#commoncreaturelua), `creature.new({ hunts = true })`. A monster is in one of three states:
 
@@ -25,13 +25,21 @@ A monster that is hit, or missed, fights back (the [combat service](../combat.md
 whatever it was doing, wandering or on guard, even if it had not seen it: it goes to war mode and chases it, without
 threatening it again.
 
-It looks for a player every two seconds while it wanders and every second on guard, and takes the
-nearest one of `npc.players_in_sight`: within 16 tiles and in line of sight, from eye to eye. It never
-sees a hidden player, a game master or an administrator, and it ignores NPCs. Once it chases a player
-it follows it without seeing it (`npc.can_see` with `in_sight` false), up to the leash. A player it could not
-reach is left alone until it moves. What a monster is doing is kept in memory by its serial, not
-saved: after a restart, or once no player is near enough for it to think, it starts again from
-wandering. The numbers (16, 32, the times) are constants at the top of the file.
+It looks for prey every two seconds while it wanders and every second on guard, among the first six of
+`npc.mobiles_in_sight`: within 16 tiles and in line of sight, from eye to eye, nearest first. Its prey is any player
+and, of the NPCs, the ones with a blue name, the townsfolk, `mobile.notoriety` innocent: a monster in a town goes for
+the people in the street as well as for the players. It leaves alone the yellow ones, the vendors, the bankers and
+the guards, that cannot be hurt, and the other creatures, animals or monsters. It never sees a hidden player, a ghost, a
+game master or an administrator. Once it chases its prey it follows it without seeing it (`npc.can_see` with
+`in_sight` false), up to the leash. Prey it could not reach is left alone until it moves. Its threat and its fidget
+are the actions of a monster body; a creature with a human or an animal body, such as a brigand, plays none, since
+those bodies number their actions otherwise. What a monster is doing is kept in memory by its serial, not
+saved, and forgotten when it dies: after a restart, or once no player is near enough for it to think, it starts again
+from wandering. The numbers (16, 32, the times) are constants at the top of the file.
+
+**The town guards go for the monsters**, as ModernUO's: `guard.lua` counts as wanted any NPC whose
+`npc.script_id` is `monster` that stands in a guarded region, as a criminal. The guard appears beside it, strikes it
+and kills it with one blow.
 
 ## guard.lua
 
@@ -68,7 +76,7 @@ with their idle sound and a fidget, and never go for a player. `scripts/mobiles/
 creatures whose UOX3 `NPCAI` is 6: bears, wolves and the like) fights back when it is hit, as a monster does.
 `scripts/mobiles/scared_animal.lua` (`script_id = "scared_animal"`, `NPCAI` 12) does not: a scared animal that is hit
 stops fighting and runs, up to twelve cells and ten seconds at most, away from whoever hit it, then strolls again. The
-combat service makes every hit NPC answer the blow, so the scared animal is told to stop at its next think.
+combat service makes every hit NPC answer the blow except one whose template has this script, which only runs.
 
 ## common/creature.lua
 

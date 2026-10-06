@@ -28,18 +28,16 @@ internal static class MobileTemplateBuilder
     private static readonly HashSet<int> HairItemLists = [13, 14, 15];
 
     // UOX3's NPCAI values Moongate has a mobile script for: the town guards (4, scripts/mobiles/guard.lua), the
-    // bankers (8, scripts/mobiles/banker.lua), the creatures that go for the players (2 evil, 5 fighter, 10 caster,
-    // 11 evil caster and 88 chaotic: scripts/mobiles/monster.lua, the casters fight in melee until there is magic),
-    // the animals that keep to themselves (6, scripts/mobiles/animal.lua) and those that run (12 scared animal,
+    // bankers (8, scripts/mobiles/banker.lua), the creatures that go for everyone (2 evil, 11 evil caster and 88
+    // chaotic: scripts/mobiles/monster.lua, the casters fight in melee until there is magic; the fighter, 5, and the
+    // caster, 10, are the good ones, who fight criminals only, and have none yet), the animals that keep to themselves (6, scripts/mobiles/animal.lua) and those that run (12 scared animal,
     // scripts/mobiles/scared_animal.lua).
     private static readonly Dictionary<string, string> AiScripts = new(StringComparer.Ordinal)
     {
         ["2"] = "monster",
         ["4"] = "guard",
-        ["5"] = "monster",
         ["6"] = "animal",
         ["8"] = "banker",
-        ["10"] = "monster",
         ["11"] = "monster",
         ["12"] = "scared_animal",
         ["88"] = "monster"

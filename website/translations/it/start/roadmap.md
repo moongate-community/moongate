@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3f7acc24128d51eb0000a85614426c8edd365d99f5cbcfd973f5d4916d63de36","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"e4218da779e13445de1bd645187b7e0ef18d55274f6d0e3d4f9e829915263b9b","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -114,7 +114,7 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | Passaggio | Stato | Cosa | Perché viene qui | Dati pronti da importare |
 | --- | --- | --- | --- | --- |
 | 3.1 | 🟡 | **Ricerca del percorso** e movimento che controlla oggetti e mobile. Completato: ricerca A*, `npc.walk_to` e oggetti che bloccano; i mobile non bloccano ancora | L'IA non può inseguire senza questo | |
-| 3.2 | 🟡 | **IA degli NPC**: corpo a corpo, arciere, mago, animale, fuga; memoria degli NPC di chi ha attaccato. Oggi uno script Lua a ogni tick, movimento casuale, `monster.lua`, l'IA corpo a corpo, sui 200 circa template malvagi, combattenti e incantatori, e gli animali (`animal.lua`, `scared_animal.lua`) sul modulo condiviso `common/creature.lua` | I 29.000 NPC generati diventano contenuti | Tag NPC UOX3 oggi scartati (`NPCAI`, `FLEEAT`, `SPATTACK`), ModernUO `npc-speeds.json` |
+| 3.2 | 🟡 | **IA degli NPC**: corpo a corpo, arciere, mago, animale, fuga; memoria degli NPC di chi ha attaccato. Oggi uno script Lua a ogni tick, movimento casuale, `monster.lua`, l'IA corpo a corpo, sui 200 circa template malvagi e caotici, che attaccano giocatori e cittadini e che le guardie uccidono, e gli animali (`animal.lua`, `scared_animal.lua`) sul modulo condiviso `common/creature.lua` | I 29.000 NPC generati diventano contenuti | Tag NPC UOX3 oggi scartati (`NPCAI`, `FLEEAT`, `SPATTACK`), ModernUO `npc-speeds.json` |
 | 3.3 | 🟡 | **Bottino sui cadaveri**, smembramento, incremento di fama e karma. Il bottino viene generato nello zaino allo spawn e si trova nel cadavere di un NPC morto; nessuno smembramento, fama o karma | Ricompensa del combattimento | UOX3 `carve.dfn` (102 tabelle) |
 | 3.4 | 🟡 | **Notorietà**: flag criminale e assassino, colori dei nomi, conteggi degli omicidi. Oggi il colore del nome dal template mobile, assegnato a ogni NPC alla creazione | Dà regole al PvP | |
 | 3.5 | ❌ | **Regole delle regioni e guardie**: città sorvegliate, no recall, no gate, no case | Rende sicure le città | ModernUO `regions.json` (regioni tipizzate), UOX3 `regions.dfn` (179 insiemi di regole) |

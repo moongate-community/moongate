@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"40434453d3e5d817df083dc5c9602f4fd7d828c46d2b61fb9bae577e8b2793f0","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"7d383c25edc7916947d217efdac8db515752c7af0d4d15c9feca50291b9d538e","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -11,9 +11,8 @@ dove sono elencati `wander.lua` e `potion.lua`.
 
 Il file `scripts/mobiles/monster.lua` della distribuzione è lo script dei mostri che attaccano i giocatori,
 seguendo l'IA corpo a corpo di ModernUO: insegue un giocatore e lo combatte standogli accanto. Un template lo adotta con
-`script_id = "monster"`; lo fanno le creature il cui `NPCAI` di UOX3 è malvagio, incantatore malvagio, combattente,
-incantatore o caotico (gli orchi, gli orchi giganti, i lucertoloni, i draghi, i non morti e gli altri 200 circa template
-e quelli basati su di essi; [migrazione da UOX3](../uox3-migration.md)). Gli incantatori, tra cui wraith, spectre e lich,
+`script_id = "monster"`; lo fanno le creature il cui `NPCAI` di UOX3 è malvagio, incantatore malvagio o caotico (gli orchi, gli orchi giganti, i lucertoloni, i draghi, i non morti e gli altri 200 circa template
+e quelli basati su di essi; [migrazione da UOX3](../uox3-migration.md)); i buoni combattenti e incantatori, che combattono solo i criminali, no. Gli incantatori, tra cui wraith, spectre e lich,
 sono incantatori in ModernUO: si avvicinano e combattono come gli altri finché non esisterà la magia. Il comportamento è il modulo
 condiviso [`common/creature.lua`](#commoncreaturelua), `creature.new({ hunts = true })`. Un mostro si trova in uno di tre stati:
 
@@ -27,13 +26,21 @@ Un mostro colpito, o mancato, risponde all'attacco (se ne occupa il [servizio di
 qualunque cosa stesse facendo, passeggiando o facendo la guardia, anche se non lo aveva visto: passa in modalità guerra e lo insegue, senza
 minacciarlo di nuovo.
 
-Cerca un giocatore ogni due secondi mentre passeggia e ogni secondo quando fa la guardia, e sceglie il
-più vicino da `npc.players_in_sight`: entro 16 caselle e in linea di vista, da occhio a occhio. Non
-vede mai un giocatore nascosto, un game master o un amministratore, e ignora gli NPC. Una volta che insegue un giocatore
-lo segue senza vederlo (`npc.can_see` con `in_sight` false), fino al limite di inseguimento. Un giocatore che non è riuscito a
-raggiungere viene lasciato in pace finché non si muove. Ciò che un mostro sta facendo è mantenuto in memoria per seriale, non
-salvato: dopo un riavvio, o quando nessun giocatore è abbastanza vicino da farlo pensare, riparte dal
-movimento casuale. I numeri (16, 32, i tempi) sono costanti all'inizio del file.
+Cerca una preda ogni due secondi mentre passeggia e ogni secondo quando fa la guardia, tra le prime sei di
+`npc.mobiles_in_sight`: entro 16 caselle e in linea di vista, da occhio a occhio, la più vicina per prima. La sua preda è qualsiasi giocatore
+e, tra gli NPC, quelli con il nome blu, i cittadini, `mobile.notoriety` innocente: un mostro in una città attacca
+la gente per strada oltre ai giocatori. Lascia in pace quelli gialli, venditori, banchieri e
+guardie, che non si possono ferire, e le altre creature, animali o mostri. Non vede mai un giocatore nascosto, un fantasma, un
+game master o un amministratore. Una volta che insegue la preda la segue senza vederla (`npc.can_see` con
+`in_sight` false), fino al limite di inseguimento. Una preda che non riesce a raggiungere viene lasciata in pace finché non si muove. La sua minaccia e il suo gesto
+sono le azioni di un corpo da mostro; una creatura con corpo umano o animale, come un brigante, non ne esegue,
+perché quei corpi numerano le azioni in modo diverso. Ciò che un mostro sta facendo è mantenuto in memoria per seriale, non
+salvato, e dimenticato quando muore: dopo un riavvio, o quando nessun giocatore è abbastanza vicino da farlo pensare, riparte
+dal movimento casuale. I numeri (16, 32, i tempi) sono costanti all'inizio del file.
+
+**Le guardie cittadine attaccano i mostri**, come in ModernUO: `guard.lua` considera ricercato qualsiasi NPC il cui
+`npc.script_id` è `monster` e che si trova in una regione sorvegliata, come un criminale. La guardia appare accanto a lui, lo colpisce
+e lo uccide con un colpo.
 
 ## guard.lua
 
@@ -70,7 +77,7 @@ con il suono di inattività e un'animazione, e non attaccano mai un giocatore. `
 creature il cui `NPCAI` di UOX3 è 6: orsi, lupi e simili) reagisce quando viene colpito, come un mostro.
 `scripts/mobiles/scared_animal.lua` (`script_id = "scared_animal"`, `NPCAI` 12) no: un animale pauroso colpito
 smette di combattere e fugge, fino a dodici celle e al massimo dieci secondi, lontano da chi l'ha colpito, poi riprende a passeggiare. Il
-servizio di combattimento fa rispondere al colpo ogni NPC colpito, quindi l'animale pauroso riceve l'ordine di smettere al think successivo.
+servizio di combattimento fa rispondere al colpo ogni NPC colpito tranne uno il cui template ha questo script, che si limita a fuggire.
 
 ## common/creature.lua
 

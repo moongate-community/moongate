@@ -666,7 +666,6 @@ death = 233
 
 [[mobile]]
 id = "silverwolf"
-script_id = "monster"
 name = "a silver wolf"
 body = 100
 strength = "1d25+95"

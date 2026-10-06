@@ -255,7 +255,6 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "f_fighter"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Fighter"
@@ -299,7 +298,6 @@ items = ["0x170b_boots"]
 
 [[mobile]]
 id = "f_paladin"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Paladin"
@@ -348,7 +346,6 @@ items = ["0x1515_cloak"]
 
 [[mobile]]
 id = "f_warrior"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Warrior"
@@ -933,7 +930,6 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "f_ranger"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "female"
 title = "the Ranger"

@@ -9,8 +9,9 @@
 --   its own table with creature.new(options).
 --
 -- Options:
---   hunts   true: it goes for the players it sees (ModernUO's melee AI); false: it
---           never starts a fight, it only answers one
+--   hunts   true: it goes for the players it sees and for the townsfolk, the NPCs with a
+--           blue name (ModernUO's melee AI); false: it never starts a fight, it only
+--           answers one
 --   flees   true: it does not fight back, it runs from who hit it
 --
 -- Functions:
@@ -27,6 +28,9 @@ local creature = {}
 -- How far a creature runs from who hit it, in cells, and for how many thinks (ten seconds).
 local FLEE_DISTANCE = 12
 local FLEE_THINKS = 20
+
+-- How many mobiles it looks at in a scan, nearest first: those that are no prey are passed over.
+local SEEN = 6
 
 -- How far a creature sees a player, and how far it follows one before it gives up (ModernUO: 16 and twice that).
 local PERCEPTION = 16
@@ -45,6 +49,12 @@ local STOREY = 16
 -- A creature body's actions: it threatens and fidgets (ModernUO's choices); its attacks are the combat service's.
 local THREATEN = MonsterAnimationType.Pillage
 local FIDGETS = { MonsterAnimationType.Fidget1, MonsterAnimationType.Fidget2 }
+
+-- Whether the body has the actions of a monster: a human or an animal body numbers its actions otherwise, and would
+-- play a spell or a bow for these.
+local function has_monster_actions(serial)
+    return mobile.body_type(serial) == BodyType.Monster
+end
 
 -- What each creature is doing, by serial.
 local minds = {}
@@ -80,16 +90,23 @@ local function is_given_up(mind, player)
     return there ~= nil and there.x == given_up.x and there.y == given_up.y
 end
 
--- The nearest player the creature sees, or nil. One it could not reach is left alone until it moves: the two
--- nearest are asked for, so the next one is taken then.
+-- Whether the creature goes for the mobile: any player, and of the NPCs those with a blue name, the townsfolk. The yellow
+-- ones, vendors, bankers and guards, cannot be hurt, and the others are its own kind, the animals or the people of
+-- the wilds, left alone as ModernUO's creatures leave them.
+local function is_prey(who)
+    return mobile.is_player(who) or mobile.notoriety(who) == "innocent"
+end
+
+-- The nearest player or NPC the creature goes for and sees, or nil. One it could not reach is left alone until it
+-- moves, so the first few are asked for, and the first one that is prey and not given up is taken.
 local function look_for_prey(serial, mind, hunts)
     if not hunts then
         return nil
     end
 
-    for _, player in ipairs(npc.players_in_sight(serial, PERCEPTION, 2)) do
-        if not is_given_up(mind, player) then
-            return player
+    for _, who in ipairs(npc.mobiles_in_sight(serial, PERCEPTION, SEEN)) do
+        if is_prey(who) and not is_given_up(mind, who) then
+            return who
         end
     end
 
@@ -104,7 +121,9 @@ local function start_chase(serial, mind, player)
     mind.given_up = nil
     mobile.set_war_mode(serial, true)
     npc.play_sound(serial, "start_attack")
-    mobile.animate(serial, THREATEN)
+    if has_monster_actions(serial) then
+        mobile.animate(serial, THREATEN)
+    end
 end
 
 -- Someone hit it, or missed it, and the combat service made it fight back: it turns on that one, whatever it was doing,
@@ -158,7 +177,11 @@ local function flee(serial, mind, here)
     local away_x = here.x + (here.x >= from.x and FLEE_DISTANCE or -FLEE_DISTANCE)
     local away_y = here.y + (here.y >= from.y and FLEE_DISTANCE or -FLEE_DISTANCE)
 
-    npc.walk_to(serial, away_x, away_y, here.z, 0, true)
+    -- The far corner; when the way is blocked, the same way along one axis, then along the other.
+    if npc.walk_to(serial, away_x, away_y, here.z, 0, true) ~= "moving"
+        and npc.walk_to(serial, away_x, here.y, here.z, 0, true) ~= "moving" then
+        npc.walk_to(serial, here.x, away_y, here.z, 0, true)
+    end
 end
 
 local function wander(serial, mind, hunts)
@@ -182,7 +205,9 @@ local function wander(serial, mind, hunts)
     if math.random(20) == 1 then
         mind.rest = math.random(REST_MIN, REST_MAX)
         npc.play_sound(serial, "idle")
-        mobile.animate(serial, FIDGETS[math.random(#FIDGETS)])
+        if has_monster_actions(serial) then
+            mobile.animate(serial, FIDGETS[math.random(#FIDGETS)])
+        end
 
         return
     end
@@ -300,6 +325,11 @@ function creature.new(options)
         else
             wander(serial, mind, hunts)
         end
+    end
+
+    -- It dies, or is raised again: what it was doing is forgotten with it.
+    function script.on_death(serial)
+        minds[serial] = nil
     end
 
     return script
