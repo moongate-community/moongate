@@ -70,3 +70,17 @@ A player's client is told of the map change (0xBF 0x08) and where it stands (0x2
 ```lua
 mobile.teleport(who, x, y, z, "Tokuno")
 ```
+
+## pathfind_to
+
+A guide that sends who asks the way to the bank of Britain: the player's client walks there by itself, and the
+player can stop by walking elsewhere:
+
+```lua
+function guide.on_speech(serial, speaker, text)
+    if text:lower():find("bank", 1, true) then
+        npc.say(serial, "Follow your feet.")
+        mobile.pathfind_to(speaker, 1434, 1699, 0)
+    end
+end
+```
