@@ -139,7 +139,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*, *balance*, *withdraw* and *check*, and the word *deposit*, which has no keyword; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
-| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. No fleeing, NPCs do not open doors, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
+| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. Only the scared animals flee, from a blow; NPCs do not open doors, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
 | Pets and followers: commands, loyalty, bonding | ❌ | |
 | Mounts | ❌ | |
 | Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |

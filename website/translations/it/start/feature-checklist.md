@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"32b94c8c9a0f34b0d9662eb2d01154746707f44d2c761805e5425f5adbd0a9e8","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"0e056b2f1d35ae2c0c6540b5b3dc06de28a17bc2cb3c5884ac336b2e15769c9b","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -141,7 +141,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Parole chiave del parlato e risposte | 🟡 | Le parole chiave del client raggiungono `on_speech` in qualsiasi lingua; i banchieri rispondono a *bank*, *balance*, *withdraw* e *check*, e alla parola *deposit*, che non ha una parola chiave; nessuna parola chiave dei venditori ancora |
 | Creature acquatiche e anfibie | ✅ | Compaiono sull'acqua e nuotano |
 | Tipi di IA (venditore, guardia, guaritore, animale, mostro, incantatore) | ❌ | |
-| Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, aggirando porte chiuse e mobili. Nessuna fuga, gli NPC non aprono le porte e i mobile non bloccano il percorso |
+| Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, aggirando porte chiuse e mobili. Fuggono solo gli animali paurosi, da un colpo; gli NPC non aprono le porte e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
 | Animali e seguaci: comandi, lealtà, legame | ❌ | |
 | Cavalcature | ❌ | |
 | Eventi di script per gli NPC (parlato, portata, danno) | 🟡 | Parlato e portata; nessun evento di combattimento |
