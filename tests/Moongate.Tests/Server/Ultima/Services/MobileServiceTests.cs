@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Regions;
+using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -387,6 +388,42 @@ public sealed class MobileServiceTests
         Assert.Equal((1, 2, 3, 4, 5), (status.PhysicalResistance, status.FireResistance, status.ColdResistance,
             status.PoisonResistance, status.EnergyResistance));
         Assert.Equal((225, 5), (status.StatCap, status.FollowersMax));
+    }
+
+    [Fact]
+    public void GetStatus_ShowsTheDamageOfThePlayersFists_WithItsTacticsStrengthAndAnatomy()
+    {
+        var aria = Aria();
+        aria.Strength = 100;
+        aria.Skills.Add(new MobileSkill { Skill = SkillType.Tactics, Base = 1000 });
+
+        var status = new MobileService(new StubMovementService(), TestSectors.Create()).GetStatus(aria);
+
+        // Fists 1 to 8: tactics 100 adds half, strength 100 a fifth: 1 * 1.8 and 8 * 1.8.
+        Assert.Equal((1, 14), (status.DamageMin, status.DamageMax));
+    }
+
+    [Fact]
+    public void GetStatus_APlayerWithoutTactics_StillShowsAtLeastOne()
+    {
+        var aria = Aria();
+        aria.Strength = 0;
+
+        var status = new MobileService(new StubMovementService(), TestSectors.Create()).GetStatus(aria);
+
+        // Tactics 0 halves the damage: 1 stays 1, and 8 is 4.
+        Assert.Equal((1, 4), (status.DamageMin, status.DamageMax));
+    }
+
+    [Fact]
+    public void GetStatus_AnNpc_ShowsNoDamage()
+    {
+        var orc = Aria();
+        orc.AccountId = null;
+
+        var status = new MobileService(new StubMovementService(), TestSectors.Create()).GetStatus(orc);
+
+        Assert.Equal((0, 0), (status.DamageMin, status.DamageMax));
     }
 
     [Fact]

@@ -11,6 +11,16 @@ internal static class CombatFormulas
     /// </summary>
     public const double NoSpeedDelaySeconds = 3600;
 
+    /// <summary>
+    ///     The least damage of a player's fists, as ModernUO's.
+    /// </summary>
+    public const int FistsMinimumDamage = 1;
+
+    /// <summary>
+    ///     The most damage of a player's fists.
+    /// </summary>
+    public const int FistsMaximumDamage = 8;
+
     // The skills of the hit chance never count for less than this.
     private const double SkillFloor = -49.9;
     private const double SwingScale = 15000.0;

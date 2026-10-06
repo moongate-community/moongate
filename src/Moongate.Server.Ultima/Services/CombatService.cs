@@ -39,8 +39,6 @@ public sealed class CombatService : ICombatService
 
     // How far apart in height two fighters can be and still reach each other.
     private const int ReachInHeight = 15;
-    private const int FistsMinimumDamage = 1;
-    private const int FistsMaximumDamage = 8;
     private const int SwingFrames = 7;
     private const int OtherSwingFrames = 5;
     private const int HurtFrames = 5;
@@ -413,7 +411,7 @@ public sealed class CombatService : ICombatService
 
     private int DamageOf(MobileEntity attacker, MobileEntity target)
     {
-        var damage = Math.Max(BaseDamage(attacker), FistsMinimumDamage);
+        var damage = Math.Max(BaseDamage(attacker), CombatFormulas.FistsMinimumDamage);
         // Tactics and anatomy are tried at every hit: they teach a player as they are used.
         _skills.Check(attacker, SkillType.Tactics, PassiveMinimum, PassiveMaximum);
         _skills.Check(attacker, SkillType.Anatomy, PassiveMinimum, PassiveMaximum);
@@ -441,7 +439,7 @@ public sealed class CombatService : ICombatService
             return dice.Roll();
         }
 
-        return _random.Next(FistsMaximumDamage) + FistsMinimumDamage;
+        return _random.Next(CombatFormulas.FistsMaximumDamage) + CombatFormulas.FistsMinimumDamage;
     }
 
     private void ShowDamage(MobileEntity attacker, MobileEntity target, int damage)

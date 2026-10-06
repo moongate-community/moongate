@@ -6,6 +6,7 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Ultima.Types;
@@ -230,8 +231,14 @@ public sealed class MobileService : IMobileService
 
     public MobileStatusInfo GetStatus(MobileEntity mobile)
     {
+        // The damage the status window shows is the one of the fists with the bonuses of the player, as ModernUO's
+        // weapon: an NPC's is not shown.
+        var (damageMin, damageMax) = mobile.IsNpc ? (0, 0) : FistsDamage(mobile);
+
         return new()
         {
+            DamageMin = damageMin,
+            DamageMax = damageMax,
             Serial = mobile.Id,
             Name = mobile.Name,
             Hits = mobile.Hits,
@@ -286,5 +293,22 @@ public sealed class MobileService : IMobileService
         var offset = (Interlocked.Increment(ref _nextVirtual) - 1 - Serial.MinVirtual) % rangeSize;
 
         return new Serial((uint)(Serial.MinVirtual + offset));
+    }
+
+    private static (int Min, int Max) FistsDamage(MobileEntity mobile)
+    {
+        var tactics = Points(mobile, SkillType.Tactics);
+        var anatomy = Points(mobile, SkillType.Anatomy);
+
+        return (
+            Math.Max(CombatFormulas.ScaleDamage(CombatFormulas.FistsMinimumDamage, tactics, mobile.Strength, anatomy), 1),
+            Math.Max(CombatFormulas.ScaleDamage(CombatFormulas.FistsMaximumDamage, tactics, mobile.Strength, anatomy), 1)
+        );
+    }
+
+    // The points of a skill, whole and tenths, as 50.5; 0 for one the mobile does not have.
+    private static double Points(MobileEntity mobile, SkillType skill)
+    {
+        return (mobile.Skills.FirstOrDefault(known => known.Skill == skill)?.Base ?? 0) / 10.0;
     }
 }

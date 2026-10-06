@@ -60,6 +60,9 @@ so 2.5 seconds at 100 stamina. A swing:
 - The damage is shown over the target to the players in the fight (`0x0B`, `display_damage_numbers`) and the
   health bar moves.
 
+The status window of a player shows the damage of its fists, `1` to `8` with the same bonuses of tactics, strength and
+anatomy (the least is never under 1); the status of an NPC shows none.
+
 An NPC with no hit points left dies as when a game master [kills it](death.md), with the attacker as its killer
 and its corpse. **A player does not die yet**: it is left with 1 hit point.
 
