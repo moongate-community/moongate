@@ -86,6 +86,20 @@ items = ["0x1f9e_pitcher_of_water"]
 equip = false
 ```
 
+## The blank book
+
+The shipped common set also gives every new character a blank book it writes in, as ModernUO
+does: twenty pages, with the character's name as its author. Its source is
+[`templates/books/blank_book.toml`](books.md#books-a-player-writes-in). A root that keeps its own
+`starting_items.toml` adds it to its common set:
+
+```toml
+[[set.items]]
+items = ["readable_book"]
+equip = false
+book_template = "blank_book"
+```
+
 ## Personalized starting letters
 
 The shipped common set gives every new character a welcome letter in the backpack.

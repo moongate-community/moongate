@@ -4834,7 +4834,7 @@
         "name": "Writable",
         "type": "byte",
         "size": "1",
-        "description": "0: the book is read only."
+        "description": "1 when the player who opens the book carries it and the book is one a player writes in; else 0."
       },
       {
         "offset": "9",
@@ -4931,13 +4931,20 @@
       {
         "offset": "7",
         "name": "Pages",
+        "type": "ushort",
+        "size": "2",
+        "description": "How many pages follow."
+      },
+      {
+        "offset": "9",
+        "name": "Page",
         "type": "loop",
         "size": "variable",
-        "description": "The page count, then for each page its number, its line count (0xFFFF asks for the page) and the lines a player wrote."
+        "description": "For each page: its number from 1 (ushort), its line count (ushort; 0xFFFF asks for the page and no line follows), then each line in UTF-8 ended by a zero."
       }
     ],
-    "notes": "A page the client asks for, or the lines a player wrote. Books are read only and every page is sent at the opening: the packet is recognised and dropped.",
-    "handler": "IgnoredPacketHandler."
+    "notes": "The lines a player wrote on pages of a book, or a request for a page. An edit is saved when the sender carries the book and the book is writable, within 8 lines a page and 79 characters a line; a request is not answered, since every page is sent at the opening. A packet that is not well formed changes nothing.",
+    "handler": "BookEditPacketHandler: BookDocumentService.SetPages."
   },
   "0xD4:incoming": {
     "category": "Items",
@@ -4969,14 +4976,21 @@
       },
       {
         "offset": "7",
+        "name": "Skipped",
+        "type": "uint",
+        "size": "4",
+        "description": "Flags and page count, not read."
+      },
+      {
+        "offset": "11",
         "name": "Title and author",
         "type": "loop",
         "size": "variable",
-        "description": "Flags and page count, then the title and the author a player wrote, each with its length."
+        "description": "The title, then the author: for each the length of its bytes (ushort), then the text in UTF-8, read up to its first zero."
       }
     ],
-    "notes": "The title and author a player wrote. Books are read only: the packet is recognised and dropped.",
-    "handler": "IgnoredPacketHandler."
+    "notes": "The title and author a player wrote. Saved when the sender carries the book and the book is writable, a title of 60 bytes and an author of 30 at most; the item takes the title as its name.",
+    "handler": "BookEditPacketHandler: BookDocumentService.SetHeader."
   },
   "0x93:incoming": {
     "category": "Items",
@@ -5001,13 +5015,27 @@
       },
       {
         "offset": "5",
-        "name": "Rest",
-        "type": "loop",
-        "size": "94",
-        "description": "Flags, page count, the title in 60 bytes and the author in 30."
+        "name": "Skipped",
+        "type": "uint",
+        "size": "4",
+        "description": "Flags and page count, not read."
+      },
+      {
+        "offset": "9",
+        "name": "Title",
+        "type": "ascii",
+        "size": "60",
+        "description": "The title, Latin-1, zero filled."
+      },
+      {
+        "offset": "69",
+        "name": "Author",
+        "type": "ascii",
+        "size": "30",
+        "description": "The author, Latin-1, zero filled."
       }
     ],
-    "notes": "The title and author a player wrote, as the older clients send them. Books are read only: the packet is recognised and dropped.",
-    "handler": "IgnoredPacketHandler."
+    "notes": "The title and author a player wrote, as the older clients send them. Saved as those of 0xD4.",
+    "handler": "BookEditPacketHandler: BookDocumentService.SetHeader."
   }
 }

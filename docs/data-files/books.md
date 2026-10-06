@@ -59,14 +59,14 @@ The item decides how a document opens:
 | `readable_scroll` (0x14ED) | `readable_scroll` | The parchment gump, with a scrollable body |
 | `readable_book` (0x0FF1) | `readable_book` | The client's own book: a cover with title and author, and pages to turn |
 
-A book is read only. Its pages come from the saved text when it is opened:
+Its pages come from the saved text when it is opened:
 
 - An empty line of the text is a page break. For a blank line inside a page write a line of one
   space.
 - Line ends at the end of the text add no line and no page.
 - A page holds 8 lines. A longer one, as a translated page often is, goes on in the page after it:
   nothing is cut.
-- A line of more than 78 characters is cut at a space.
+- A line of more than 79 characters is cut at a space.
 - A book holds 255 pages; a text that needs more does not open, and the log says so.
 - On the cover the title is cut to 60 bytes and the author to 30, as the client's fields hold.
 
@@ -83,6 +83,48 @@ content = """..."""
 
 A book cannot carry [attachments](#letter-attachments): it has no button to claim them with, so
 such a source is refused at startup. Use a scroll for a letter with a gift.
+
+### Books a player writes in
+
+A book is read only unless its source says otherwise:
+
+```toml
+title = "a book"
+author = "$player_name"
+item_template = "readable_book"
+writable = true
+pages = 20
+```
+
+- `writable = true` makes the book one that the character carrying it writes in, in its backpack
+  or in its open bank box: its title, its author and its pages, in the client's own book. Anyone else who may read it opens it read only,
+  and so does everybody while it lies on the ground. Hand it over and the new carrier writes.
+- `pages` is how many pages it has, 1 to 255; 20 when unset. A writable source needs no `content`:
+  the book starts empty. It may have one, and then that text can be written over.
+- The client's limits hold: a title of 60 bytes, an author of 30, 8 lines a page, a line under 80
+  characters. What does not fit them is not saved, and neither is a text that would pass the
+  16,384 characters of a document.
+- With no title left, the item is called as its template is, `a book`. In a title or an author
+  `<`, `>` and `#` become `(`, `)` and `-`, as in ModernUO: the name shows on a tooltip.
+- What is written is saved on the item, as every document's text, and stays through a restart.
+- `writable` and `pages` are for a book item only, and not for a translation.
+
+The shipped `blank_book` is this source. **A root made before books existed must add the
+`readable_book` item to its `templates/items/books.toml` before `mgctl init` runs** (the steps are
+under [Books and parchments](#books-and-parchments)): `mgctl init` copies `blank_book.toml` into the
+root, and a book source without its item stops the startup. Every new character gets one from
+[`data/starting_items.toml`](starting-items.md), with its own name as the author; `.book
+blank_book` gives one to a character that already exists. A root that keeps its own
+`starting_items.toml` adds the entry by hand, to the common set:
+
+```toml
+[[set.items]]
+items = ["readable_book"]
+equip = false
+book_template = "blank_book"
+```
+
+Copying, signing and sealing a book are not built.
 
 A root made before books existed keeps its own files, which `mgctl init` does not overwrite, and
 its imported texts stay parchments until you do both of these:
@@ -116,6 +158,7 @@ one transaction. Existing roots must add the entry to their preserved
 | `variables` | Optional array of required custom value names |
 | `item_template` | Existing item template; default `readable_scroll`; `readable_book` for [a book](#books-and-parchments) |
 | `item_id` | Optional graphic of the created item, 1 to 0xFFFF; absent, the item keeps its template's. Not allowed in a translation |
+| `writable`, `pages` | Optional; a book [a player writes in](#books-a-player-writes-in) and its page count |
 | `attachments` | Optional reward entries; see [Letter attachments](#letter-attachments) |
 | `translations.<language>` | Optional `title`, `author` and `content` overrides; each missing field falls back to the top-level value |
 
@@ -297,4 +340,4 @@ reason. Its `player_name` is the name recorded with the sentence. Old notes with
 only `jail.text` remain readable, and `jail.cell`, `jail.days` and `jail.fine`
 remain available.
 
-Books players write, copy or sign are not built: a [book](#books-and-parchments) is read only.
+A [book](#books-and-parchments) is read only unless it is one [a player writes in](#books-a-player-writes-in).
