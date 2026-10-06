@@ -49,7 +49,9 @@ public sealed class RepositoryTemplateFilesTests
     {
         var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
         var books = (await new BooksLoader(Directories(), new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
-        Assert.Equal(65, books.Count);
+        Assert.Equal(66, books.Count);
+        var blank = Assert.Single(books, book => book.Id == "blank_book");
+        Assert.Equal(("a book", "$player_name", "readable_book", true, 20, ""), (blank.Title, blank.Author, blank.ItemTemplate, blank.Writable, blank.Pages, blank.Content));
         Assert.Equal(["jail_release_note", "welcome_letter"], books.Where(book => book.Id is "jail_release_note" or "welcome_letter")
             .Select(book => book.Id).Order(StringComparer.Ordinal));
         var welcome = Assert.Single(books, book => book.Id == "welcome_letter");
@@ -283,6 +285,8 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Single(common.Items, entry => entry.Items.SequenceEqual(["0x1f9e_pitcher_of_water"]));
         Assert.Equal("food", templates.Single(template => template.Id == "0x103b_bread_loaf").ScriptId);
         Assert.Equal("drink", templates.Single(template => template.Id == "0x1f9e_pitcher_of_water").ScriptId);
+        // And can write: the blank book of ModernUO's new characters.
+        Assert.Equal(["readable_book"], Assert.Single(common.Items, entry => entry.BookTemplate == "blank_book").Items);
         var letter = Assert.Single(common.Items, entry => entry.BookTemplate == "welcome_letter");
         Assert.Equal(["readable_scroll"], letter.Items);
         Assert.Equal("Vega", letter.BookValues["contact_name"]);
