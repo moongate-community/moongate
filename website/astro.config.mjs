@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import { contentEntries, generatedSidebarItems, sidebarGroups } from './content-manifest.mjs';
+import { sidebarTranslations } from './sidebar-translations.mjs';
 import { docsSite, docsBasePath } from './site-config.mjs';
 
 const releaseVersion = JSON.parse(readFileSync(new URL('../.release-please-manifest.json', import.meta.url), 'utf8'))['.'];
@@ -11,15 +12,18 @@ const version = process.env.MOONGATE_DOCS_VERSION || `v${releaseVersion}`;
 function sidebarItems(entries) {
   const items = [];
   for (const entry of entries) {
+    const item = entry.englishOnly
+      ? { link: `/${entry.slug}/`, label: `${entry.title} (English)`, translations: { it: `${entry.title} (inglese)` } }
+      : { slug: entry.slug };
     if (!entry.subgroup) {
-      items.push({ slug: entry.slug });
+      items.push(item);
       continue;
     }
     const last = items.at(-1);
     if (last?.label === entry.subgroup) {
-      last.items.push({ slug: entry.slug });
+      last.items.push(item);
     } else {
-      items.push({ label: entry.subgroup, collapsed: true, items: [{ slug: entry.slug }] });
+      items.push({ label: entry.subgroup, translations: { it: sidebarTranslations[entry.subgroup] ?? entry.subgroup }, collapsed: true, items: [item] });
     }
   }
   return items;
@@ -31,15 +35,22 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [starlight({
     title: `Moongate ${version}`,
+    defaultLocale: 'root',
+    locales: { root: { label: 'English', lang: 'en' }, it: { label: 'Italiano', lang: 'it' } },
     routeMiddleware: './src/route-data.ts',
     favicon: '/favicon.png',
     description: 'An Ultima Online server and reusable .NET libraries.',
     logo: { src: '../images/moongate_mark.png', alt: 'Moongate' },
     customCss: ['./src/styles/custom.css'],
-    components: { Footer: './src/components/Footer.astro' },
+    components: {
+      Footer: './src/components/Footer.astro',
+      LanguageSelect: './src/components/LanguageSelect.astro',
+      FallbackContentNotice: './src/components/FallbackContentNotice.astro',
+    },
     social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/moongate-community/moongate' }],
     sidebar: sidebarGroups.map(label => ({
       label,
+      translations: { it: sidebarTranslations[label] ?? label },
       items: [...sidebarItems(contentEntries.filter(entry => entry.group === label)), ...(generatedSidebarItems[label] ?? [])],
     })),
   })],

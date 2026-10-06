@@ -111,3 +111,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Splash and custom pages have no mobile sidebar to host language preferences. */
+@media (max-width: 49.999rem) {
+  :root:not([data-has-sidebar]) .header .right-group {
+    display: flex;
+  }
+
+  :root:not([data-has-sidebar]) .header .right-group > :not(docs-language-select) {
+    display: none;
+  }
+}

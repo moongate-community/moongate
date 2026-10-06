@@ -1,0 +1,354 @@
+<!-- translation: {"sourceHash":"a9435379ffcfd93b2b7342eec977679ef873980a398f7c4de7b68d3a7bb3a7e1","title":"Script forniti"} -->
+
+# Script forniti
+
+Questa pagina fa parte di [Scrivere script Lua](../scripting.md). La distribuzione fornisce questi script sotto
+`scripts/`, e `mgctl init` li copia nella root: ciascuno è un esempio da leggere e modificare. Come uno
+script viene associato a un template è spiegato in [Script dei mobile](mobile-scripts.md) e [Script degli oggetti](item-scripts.md),
+dove sono elencati `wander.lua` e `potion.lua`.
+
+## monster.lua
+
+Il file `scripts/mobiles/monster.lua` della distribuzione è lo script dei mostri che attaccano i giocatori,
+seguendo l'IA corpo a corpo di ModernUO: insegue un giocatore e lo combatte standogli accanto. Un template lo adotta con
+`script_id = "monster"`; lo fanno i non morti dei cimiteri (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`,
+`spectre`, `lich`), e quindi i template basati su di essi. Wraith, spectre e lich sono incantatori in
+ModernUO: si avvicinano e combattono come gli altri finché non esisterà la magia. Un
+mostro si trova in uno di tre stati:
+
+| Stato | Cosa fa | Termina quando |
+| --- | --- | --- |
+| wander | Passeggia nella propria casa, l'area della regione di spawn: circa un passo ogni due secondi, soprattutto dritto. Passeggia con `npc.wander`, che lo riporta dall'esterno, come dopo un inseguimento. Un ciclo di pensiero su venti riposa da 15 a 25 secondi, con il suono `idle` e un movimento inattivo | Vede un giocatore |
+| chase | Minaccia il giocatore con il suono `start_attack` e un'animazione, passa in modalità guerra e gli si avvicina con `npc.walk_to`, un passo ogni ciclo di pensiero, senza correre. Accanto a lui si orienta verso di lui e lo combatte con `combat.attack`, una volta: colpi, impatti e [morte](../combat.md) sono del servizio di combattimento | Il giocatore si nasconde, se ne va, dista più di 32 caselle o non può essere raggiunto per 20 secondi |
+| guard | Smette di combattere, resta in modalità guerra per 10 secondi guardandosi intorno | Vede un giocatore, oppure il tempo termina: torna a wander, in pace |
+
+Un mostro colpito, o mancato, risponde all'attacco (se ne occupa il [servizio di combattimento](../combat.md)) e si rivolge a chi lo combatte
+qualunque cosa stesse facendo, passeggiando o facendo la guardia, anche se non lo aveva visto: passa in modalità guerra e lo insegue, senza
+minacciarlo di nuovo.
+
+Cerca un giocatore ogni due secondi mentre passeggia e ogni secondo quando fa la guardia, e sceglie il
+più vicino da `npc.players_in_sight`: entro 16 caselle e in linea di vista, da occhio a occhio. Non
+vede mai un giocatore nascosto, un game master o un amministratore, e ignora gli NPC. Una volta che insegue un giocatore
+lo segue senza vederlo (`npc.can_see` con `in_sight` false), fino al limite di inseguimento. Un giocatore che non è riuscito a
+raggiungere viene lasciato in pace finché non si muove. Ciò che un mostro sta facendo è mantenuto in memoria per seriale, non
+salvato: dopo un riavvio, o quando nessun giocatore è abbastanza vicino da farlo pensare, riparte dal
+movimento casuale. I numeri (16, 32, i tempi) sono costanti all'inizio del file.
+
+## guard.lua
+
+Il file `scripts/mobiles/guard.lua` della distribuzione è lo script delle guardie cittadine: quelle presenti nelle
+città tramite spawn e quelle chiamate da un giocatore dicendo "guards" (vedi
+[`ultima.crime`](../server-configuration.md)). Un template lo adotta con `script_id = "guard"`; lo fanno `guard`,
+`m_guard` e `f_guard`. Il server non ha ancora combattimento: una guardia uccide un criminale NPC con
+un colpo, come in ModernUO, e si limita a raggiungere un criminale giocatore, perché i giocatori non muoiono ancora. Una
+guardia si trova in uno di due stati:
+
+| Stato | Cosa fa | Termina quando |
+| --- | --- | --- |
+| post | Passeggia intorno alla propria postazione, l'area della regione di spawn, circa un passo ogni quattro secondi, con `npc.wander`, che la riporta anche dall'esterno | Vede un criminale: passa ad arrest |
+| arrest | Passa in modalità guerra; quando non è accanto al criminale appare su una casella libera a un passo da lui (`world.spot_beside`; sulla sua se nessuna è libera), con uno sbuffo di fumo dove si trovava e dove arriva e il suono del teletrasporto; dice "Rimpiangerai le tue azioni, porco!" (messaggio 30138). Poi resta sul criminale, rivolta verso di lui, e lo rincorre con `npc.walk_to` quando si muove. Accanto a un NPC criminale colpisce (un'animazione di attacco) e un secondo dopo l'NPC è morto: `mobile.kill`, con la guardia come uccisore, quindi [muore come qualsiasi altro](../death.md) e lascia il cadavere | L'NPC viene ucciso; oppure il criminale è perdonato o il suo tempo termina, si nasconde, lascia la regione sorvegliata, si allontana oltre 24 caselle dalla guardia o dalla postazione, oppure non può essere raggiunto per 10 secondi: ritorno alla postazione, in pace |
+
+Cerca un criminale ogni secondo: il giocatore o NPC più vicino di `npc.nearby` entro 12 caselle il cui
+`mobile.criminal` è true, che si trova in una regione sorvegliata (`world.is_guarded`) a non più di 24
+caselle dalla postazione della guardia (`npc.home`), e che vede (`npc.can_see`); solo un criminale costa il
+controllo lungo la linea di vista. Il riferimento è la postazione, non la guardia, quindi un criminale non può condurre una guardia
+fuori città passo dopo passo. Un criminale che non riesce a raggiungere viene lasciato in pace finché non si muove. Non vede mai un
+ giocatore nascosto, un game master o un amministratore. Un NPC appena ucciso è ancora presente mentre
+cade: la guardia non lo attacca di nuovo. Un teletrasporto rifiutato lascia la guardia dov'è, affinché
+corra verso il criminale.
+
+Una guardia chiamata porta la prop `guard.summoned`: è già arrivata accanto al criminale e ha pronunciato la battuta,
+quindi resta su di lui in silenzio senza passeggiare, e quando quel criminale viene lasciato andare non arresta
+nessun altro e attende di essere mandata via. Ciò che una guardia sta facendo viene mantenuto in memoria per seriale, non salvato.
+I numeri (12, 24, i 10 secondi) sono costanti all'inizio del file.
+
+## orione.lua e vega.lua
+
+Il repository fornisce anche due gatti di Moongate v2, `orione` e `vega` (`templates/mobiles/moongate_cats.toml` con `scripts/mobiles/orione.lua` e `vega.lua`): generali con `.spawn orione` o `.spawn vega`.
+
+## door.lua
+
+La distribuzione fornisce anche `scripts/items/door.lua`, lo script del template
+`decoration_door` che [`.decorate`](../commands/decorate.md) assegna a porte e cancelli. Un doppio clic
+su una porta chiusa apre lei e la porta collegata (prop `door.link`): la grafica passa alla
+successiva, la porta si sposta di lato secondo la prop `facing` e riproduce il suono del suo
+`decoration_type` (metallo, legno, cancello o segreta). Un doppio clic su una porta aperta chiude entrambe
+quando nessuno si trova in uno dei due vani. Una porta aperta si chiude da sola dopo 20 secondi, poi
+riprova ogni 10 secondi mentre il vano è occupato. Una porta che non può spostarsi di lato, come
+una al bordo della mappa, resta chiusa. Lo stato aperto è la prop `door.open`, con la
+posizione chiusa in `door.x`, `door.y` e `door.z`, salvata con la porta, così come il timer di chiusura automatica (il timer `close` della porta, avviato con
+`item.start_timer`): una porta lasciata aperta quando il server si arresta si chiude quando torna attivo. Una porta salvata
+aperta da una versione precedente non ha timer e resta aperta finché qualcuno la usa. Una porta chiusa con la prop `locked` non
+si apre per i giocatori, che leggono "È chiuso a chiave." (messaggio 398, nella lingua del server), a meno che
+portino in qualsiasi punto dello zaino una chiave la cui prop `key.value` è il `key.value` della porta
+(messaggio 405: la aprono e resta chiusa a chiave); game master e amministratori la aprono
+(messaggio 404). La prop proviene dai dati della decorazione
+(`props = { facing = "west_cw", locked = true }`), come le porte laterali della banca di New Haven.
+`.lock` assegna a una porta un numero di chiave e `.key` ne crea la chiave.
+
+## light.lua
+
+`scripts/items/light.lua` accende e spegne candele, candelabri, lanterne, lampioni, applique e
+torce: lo usano il template `decoration_light` e i template delle luci di
+`templates/items`. Un doppio clic su una luce spenta le assegna la grafica accesa (le coppie di ModernUO),
+una forma della luce se non ne ha e il suono `0x47`; un doppio clic su una accesa le assegna la
+grafica spenta e il suono `0x3BE`, conservando la forma per la volta successiva. Una luce senza grafica
+spenta, come un braciere, resta com'è. Le luci posizionate da `.decorate` hanno la prop
+`protected`: solo game master e amministratori le accendono o spengono. I lampioni cittadini
+si accendono e spengono da soli: ogni 30 secondi il server chiama `on_darkness(serial, dark)` su un
+lampione il cui punto è diventato buio o luminoso (`ultima.world.lamp_post_light`), e `light.lua`
+cambia la grafica silenziosamente.
+
+## food.lua
+
+`scripts/items/food.lua` è lo script di ciò che si può mangiare, come `Food` di ModernUO: i template
+convertiti del cibo contengono `script_id = "food"`. Il doppio clic su un pezzo ne mangia uno: il valore di fame del giocatore aumenta
+della prop `food.fill` dell'oggetto (3 in sua assenza), fino a 20; recupera da 6 a 8 punti di stamina, emette
+il suono e, con un corpo di tipo `Human` (`mobile.body_type`), il gesto di mangiare, e legge quanto si sente sazio
+nella lingua del client (messaggi da 500868 a 500872). Un giocatore sazio legge "Sei semplicemente troppo pieno
+per mangiare ancora!" (500867) e non mangia nulla.
+
+## drink.lua
+
+`scripts/items/drink.lua` è lo script di ciò che si può bere, come le bevande di ModernUO: i template
+convertiti delle bevande contengono `script_id = "drink"`. Un doppio clic ne beve un sorso: il valore di sete del giocatore aumenta
+della prop `drink.fill` dell'oggetto (3 in sua assenza), fino a 20, ed emette il suono e, con un corpo di
+tipo `Human`, il gesto di bere. La grafica indica quanti sorsi contiene un contenitore pieno: una
+brocca o una bottiglia 5, una caraffa 10, un bicchiere o una tazza 1; i sorsi rimasti vengono mantenuti nella prop `drink.uses`.
+Una volta vuota, una brocca, un bicchiere o una tazza passa alla grafica vuota, viene rinominata e resta; una bottiglia o caraffa
+scompare. Un giocatore dissetato legge "Sei semplicemente troppo pieno per bere ancora!" e non beve nulla.
+Riempimento, versamento e ubriachezza non sono ancora presenti.
+
+## dyes.lua e dye_tub.lua
+
+`scripts/items/dyes.lua` e `scripts/items/dye_tub.lua` tingono i vestiti in due passaggi, come ModernUO;
+i template convertiti delle tinture (`0x0fa9_dyes`) e della vasca (`0x0fab_dying_tub`) contengono
+`script_id = "dyes"` e `script_id = "dye_tub"`.
+
+1. Fai doppio clic sulle tinture e scegli una vasca: si apre il selettore di colori del client con la vasca,
+   che assume il colore scelto, da 2 a 1001, come proprio colore.
+2. Fai doppio clic sulla vasca e scegli cosa tingere: assume il colore della vasca, con il suono della tintura
+   (`0x23E`).
+
+Si può tingere un oggetto il cui template indica [`dyeable = true`](../templates.md), come gli abiti
+convertiti da UOX3. Non deve essere indossato, e il giocatore deve raggiungere l'oggetto, la vasca e le tinture:
+trasportati, oppure a terra entro 1 casella. Né le tinture né la vasca vengono consumate, e una vasca mai
+tinta ha colore 0, che rimuove il colore. Un oggetto tenuto sul cursore non viene tinto ("Non puoi tingere
+quello."), e uno dentro un contenitore a terra conta come troppo lontano: prendilo prima.
+
+I testi sono quelli del client, letti nella sua lingua:
+
+| Testo | Cliloc |
+| --- | --- |
+| Seleziona la vasca su cui usare le tinture. | 500856 |
+| Usa questo su una vasca per tintura. | 500857 |
+| Seleziona gli abiti da tingere. | 500859 |
+| Non puoi tingere abiti indossati. | 500861 |
+| Non puoi tingere quello. | 1042083 |
+| È troppo lontano. | 500446 |
+
+Il giocatore può rispondere al selettore di colori molto più tardi, oppure mai. Quando arriva la risposta lo script controlla
+di nuovo che tinture e vasca siano raggiungibili, e il server accetta una risposta solo per il selettore
+che ha aperto: gli altri emulatori la accettano come arriva. `scripts/common/dye.lua` contiene ciò che i due
+script condividono (`dye.reach`, `dye.worn`, `dye.tell`). Le vasche speciali (pelle, mobili, nere,
+metalliche) e le tinture dei capelli non sono ancora presenti.
+
+## hiding.lua
+
+`scripts/skills/hiding.lua` è lo [script dell'abilità](../skills.md) Hiding, come quello di ModernUO senza
+ciò che richiede un combattimento o una casa. Un giocatore che usa l'abilità viene verificato con
+`skill.check(user, "hiding", 0, 100)`: la probabilità è pari ai suoi punti su cento, e il tentativo può aumentare
+l'abilità.
+
+- Successo: il giocatore è nascosto (`mobile.set_hidden`), fuori dalla modalità guerra, e legge "Ti sei nascosto
+  bene." (cliloc 501240).
+- Fallimento: il giocatore viene mostrato, anche se era nascosto, e legge "Non riesci a nasconderti qui."
+  (501241).
+
+In entrambi i casi attende prima di un'altra abilità il `delay` di `hiding` in
+[`data/skills.toml`](../data-files/skills.md), 10 secondi. Il primo passo lo mostra di nuovo, con "Sei stato
+rivelato!" (500814): il server lo fa per ogni giocatore nascosto di un account regolare, perché
+non c'è ancora Stealth; girarsi sul posto non lo fa. Lo staff si nasconde per osservare e resta nascosto.
+Parlare, essere colpiti e la vista di chi sta vicino non lo mostrano ancora.
+
+## Props di rigenerazione
+
+Punti vita, mana e stamina tornano da soli (vedi
+[`ultima.regeneration`](../server-configuration.md)). Uno script cambia il ritmo di un mobile con le sue
+props, in secondi per punto: `mobile.set_prop(who, "regen.hits", 2)` lo cura cinque volte più velocemente del
+valore predefinito; `nil` gli restituisce il ritmo configurato. Le props sono `regen.hits`, `regen.mana` e
+`regen.stamina`.
+
+Muoversi sottrae stamina a un giocatore (vedi `fatigue_enabled` in
+[`ultima.regeneration`](../server-configuration.md)): correndo, e a ogni passo quando trasporta più di
+`mobile.max_weight`. Uno script che dà o toglie oggetti cambia subito ciò che il mobile trasporta; la
+barra di stato del giocatore segue al prossimo aggiornamento dello stato.
+
+## common/teleport.lua
+
+I due script di teletrasporto sotto condividono `scripts/common/teleport.lua`, un modulo Lua che prendono con
+`local teleport = require("common.teleport")`: `teleport.send(serial, who)` manda un mobile dove indicano le
+props dell'oggetto (`teleport.x`, `teleport.y`, `teleport.z`, `teleport.map`), con il fumo di
+`source_effect` e `dest_effect` e il suono di `sound_id`, e `teleport.is_on(value)` legge un flag
+che i file di decorazione contengono come testo. Un tuo script che teletrasporta può prenderlo allo stesso modo.
+Uno script conserva il modulo acquisito: dopo `script reload common/teleport.lua`, ricarica anche gli script che
+lo usano (vedi [Ricaricamento e appartenenza](runtime.md#reload-and-ownership)). `mgctl init` aggiunge `scripts/common/` a una
+root esistente e conserva gli script già presenti; una root i cui script degli oggetti vengono sostituiti manualmente richiede
+anche `scripts/common/`, altrimenti i suoi teletrasporti smettono di funzionare.
+
+## common/numbers.lua
+
+`scripts/common/numbers.lua` è il modo in cui gli script forniti scrivono un numero letto dal giocatore:
+`numbers.with_thousands(1234567)` restituisce `"1,234,567"`. Il banchiere e l'assegno bancario lo prendono con
+`local numbers = require("common.numbers")`, e un tuo script può fare lo stesso. Una root i cui
+script sono sostituiti manualmente ne ha bisogno, altrimenti banchieri e assegni bancari smettono di funzionare.
+
+## teleporter.lua
+
+`scripts/items/teleporter.lua` è lo script del template `decoration_teleporter` che
+[`.decorate`](../commands/decorate.md) assegna al `Teleporter` di ModernUO: su `on_move_over`
+teletrasporta il giocatore alle props `teleport.x`, `teleport.y` e `teleport.z` con
+`mobile.teleport`, mostra uno sbuffo di fumo dove il giocatore è partito (prop `source_effect`) e
+arrivato (prop `dest_effect`), poi vi riproduce la prop `sound_id` quando il teletrasporto ne ha una. La prop
+`active = false` disattiva un teletrasporto. Viaggiano solo i giocatori, a meno che la prop `creatures` sia true: allora viaggia anche un NPC che vi cammina sopra. Un teletrasporto con la prop `teleport.map`, un numero `MapType`,
+porta il giocatore su quella mappa: il client cambia mappa, poi riceve la stagione quando differisce
+da quella mostrata, la luce, il meteo e la musica del luogo; quando la mappa non è caricata non succede nulla. Il template ha `visibility = "game_master"`: un oggetto a terra viene inviato solo agli
+account consentiti dalla sua visibilità, quindi i giocatori camminano su un teletrasporto che non vedono mai.
+
+## keyword_teleport.lua
+
+`scripts/items/keyword_teleport.lua` è lo script del template `decoration_keyword_teleporter`
+che `.decorate` assegna al `KeywordTeleporter` di ModernUO, come il mantra di un
+santuario: su `on_speech` teletrasporta il giocatore che dice la prop `substring` (trovata ovunque nel
+testo, senza distinzione di maiuscole) o il cui client invia la parola chiave del parlato della prop `keyword`, trovandosi
+entro `range` caselle (0, il valore predefinito, è la casella stessa del teletrasporto). Con un `delay`
+(`"0:0:1"` o un numero di secondi) il teletrasporto avviene più tardi, se il giocatore è ancora
+entro la portata. Destinazione, fumo, suono e `active` sono quelli del teletrasporto semplice.
+
+## public_moongate.lua
+
+`scripts/items/public_moongate.lua` è lo script del template `decoration_public_moongate`
+che `.decorate` posiziona su ogni destinazione di [`moongates.toml`](../data-files/moongates.md), come
+il `PublicMoongate` di ModernUO: su `on_move_over`, e su `on_use` dalla casella accanto, costruisce un
+gump con `gump.create`, una pagina per mappa di `moongates.facets()` e un pulsante per città, prima la
+pagina della mappa del giocatore, e riproduce il suono `0x20E`. Un pulsante teletrasporta il giocatore
+con `mobile.teleport`, anche su un'altra mappa, e vi riproduce `0x1FE`. Un giocatore che si è allontanato più
+di una casella mentre il gump era aperto viene avvisato e resta; scegliere la città del portale
+stesso non fa nulla.
+
+## moongate.lua
+
+`scripts/items/moongate.lua` è lo script del template `moongate`, il portale con una
+destinazione che il comando [`moongate`](../commands/moongate.md) posiziona ai piedi di un game master, come
+il `Moongate` di ModernUO. Su `on_move_over`, e su `on_use` dalla casella accanto, attende un secondo
+con `timer.after`, poi porta il giocatore, se è ancora lì, alle props `teleport.x`,
+`teleport.y` e `teleport.z`, sulla mappa della prop `teleport.map` (un numero `MapType` o il suo
+nome; la mappa del giocatore in sua assenza), e riproduce `0x1FE`. Un portale senza i tre
+numeri, con una mappa inesistente o non caricata, o con un punto fuori dalla mappa dice al
+giocatore "Questo moongate non sembra portare da nessuna parte." (messaggio 30114). Toccare nuovamente il portale
+durante quel secondo non avvia nulla. Quando il portale
+si trova in una regione sorvegliata e la destinazione no (`world.is_guarded`), chiede prima conferma: un
+gump con OKAY e CANCEL e il suono `0x20E`; OKAY da più di una casella di distanza dice "È
+troppo lontano." (messaggio 393) con `mobile.message`. Le regole ModernUO su sigilli, giovani
+giocatori, assassini, lancio di incantesimi, animali e dissoluzione del portale non sono ancora presenti.
+
+## bulletin_board.lua
+
+`scripts/items/bulletin_board.lua` è lo script delle [bacheche](../bulletin-boards.md)
+(il template di oggetto `bulletin_board` posizionato da `.decorate`, e `0x1e5e_bulletin_board` e
+`0x1e5f_bulletin_board` per una bacheca aggiunta manualmente). Il suo `on_use` chiama `board.open(serial, user)`
+e restituisce `true`: il client del giocatore riceve la bacheca e l'elenco dei messaggi, e da
+lì legge, pubblica, risponde e rimuove i propri. Qualsiasi template di oggetto con questo script è una bacheca,
+ciascun oggetto con i propri messaggi.
+
+## clock.lua
+
+`scripts/items/clock.lua` è lo script degli orologi (template degli oggetti `0x104b_clock` e
+`0x104c_clock`, e `decoration_clock` per quelli posizionati da `.decorate`), come il `Clock` di ModernUO: su
+`on_use` il giocatore legge sopra l'orologio la parte del giorno ("È pomeriggio") e l'ora al
+minuto ("1:07 per l'esattezza") del luogo in cui si trova, da `world.time`, come testi del client inviati
+con `item.message_cliloc`.
+
+## fillable.lua
+
+`scripts/items/fillable.lua` è lo script del template `decoration_fillable` che `.decorate`
+assegna ai contenitori cittadini, il `FillableContainer` di ModernUO: casse, scatole, forzieri e barili
+dei negozi e librerie delle biblioteche. Su `on_use`, prima dell'apertura del contenitore, un
+contenitore il cui tempo è arrivato (prop `fill.next`, secondo il conteggio di `world.now()`) e che contiene due cose
+o meno, una pila contando per la propria quantità, riceve fino al doppio di ciò che manca per arrivare a tre, ciascuna
+un'estrazione della tabella del bottino del proprio tipo con `item.add_loot`; una libreria si riempie fino a cinque libri. Poi attende da 60 a 90 minuti; un riempimento che non ha potuto aggiungere nulla viene riprovato all'apertura successiva.
+Non viene eseguito nulla mentre nessuno apre il contenitore, e i tempi sopravvivono al riavvio. Il tipo è la
+prop `content_type`, come `baker` per la tabella `fillable_baker` di
+`templates/loots/fillable_containers.toml`; in sua assenza il contenitore assume il tipo del venditore più vicino
+entro 20 caselle, indicato da `mobile.template`, e lo conserva. Senza venditori intorno resta
+vuoto e cerca di nuovo cinque minuti dopo. ModernUO inizia l'attesa quando viene estratto un oggetto e
+chiude a chiave e mette trappole al contenitore: questi aspetti non sono ancora presenti. Le tabelle cittadine usano
+`templates/loots/randomshields.toml` (uno scudo semplice, `Loot.ShieldTypes` di ModernUO) e i due prodotti di
+`templates/items/town_goods.toml` (mazzuolo e scalpello, aste per frecce) mancanti nei file di oggetti convertiti.
+
+## gmtools.lua
+
+`scripts/gumps/gmtools.lua` è lo script del gump degli strumenti del game master
+(`templates/gumps/gmtools.xml`), aperto da [`.gmtools`](../commands/gmtools.md). Il gump ha due
+slot, riempiti da due funzioni: `tools` disegna la barra laterale, un pulsante per ogni voce della tabella
+`tools` nello script, e `panel` disegna il pannello di quello selezionato (`args.tool`, il primo quando
+non viene fornito o è sconosciuto). Un clic sulla barra laterale riapre il gump su quello strumento.
+
+Ci sono tre strumenti, meteo, stagione e ora. Il pannello meteo legge `world.weather_profile` e `world.weather` e
+ha un pulsante per ciascun tipo, `none`, `rain`, `snow` e `storm`, che chiama `world.set_weather` sul
+giocatore, gli dice `The weather of temperate is now storm until the next hour.` e riapre il gump.
+Il pannello stagione legge `world.season_here` e la stagione della mappa del giocatore
+(`world.season` di `mobile.location(player).map`) e ha un pulsante per ogni stagione e uno per
+`auto`, che chiamano `world.set_season` o `world.clear_season`, dicono al giocatore `The season of your map
+is now winter.` e riaprono il gump. Il pannello ora legge `world.time`, `world.moon`,
+`world.light_here` e `world.global_light` e ha un pulsante per ciascuno di quattro livelli di luce e uno per
+`auto`, che chiamano `world.set_global_light` o `world.clear_global_light` e dicono al giocatore `The
+global light is now 26.`. Solo staff: gli slot sono vuoti per chiunque altro, e ogni
+pulsante ricontrolla `world.is_staff`.
+
+Per aggiungere uno strumento, scrivi una funzione pannello con firma `function(g, player)` e aggiungi
+`{ id = "...", title = "...", panel = ... }` a `tools`.
+
+## jail_sentence.lua
+
+`scripts/gumps/jail_sentence.lua` è lo script del gump della [prigione](../jail.md)
+(`templates/gumps/jail_sentence.xml`), aperto da [`.jail`](../commands/jail.md) senza bersaglio,
+e da `.jail <name>` sul giocatore con quel nome.
+La sua funzione `rows` riempie lo slot: prima un pulsante che fornisce il cursore con `target.pick` e riapre
+il gump sul personaggio selezionato, poi le celle di `jail.cells()`, dieci per pagina. Con un
+personaggio selezionato, una cella libera ha un pulsante che legge i giorni digitati nel gump e chiama
+`jail.send(target, cell, days, who, reason)`, il motivo è ciò che viene digitato nel secondo campo; giorni vuoti, non numerici, frazionari o oltre
+`jail.max_days()` non incarcerano nessuno, e il gump si riapre con il motivo. Una cella occupata
+mostra il nome, il tempo rimanente come `2d 4h`, `5h 10m` o `12m`, e un pulsante che chiama
+`jail.release`. Ogni cella ha un pulsante che vi porta il game master con
+`mobile.teleport(who, cell.x, cell.y, cell.z, cell.map)`, sulla mappa della prigione. Un bersaglio già
+in prigione ha il proprio rilascio su una riga separata in alto.
+Un bersaglio fuori dal mondo, un giocatore trovato da `.jail <name>`, viene mostrato come `(offline)`:
+`mobile.name` è nil per lui. `jail.send` risponde allora `JailResultType.Pending` e il game master
+viene informato che la cella è riservata fino al login; una cella così mostra `waits for login`, dal `pending`
+di `jail.cells()`. Quando il gump viene aperto con `candidates`, più giocatori con lo stesso nome, la
+funzione li elenca, al massimo dieci, con account e stato online, ciascuno con un
+pulsante che apre il gump su di lui, e omette le celle finché non ne viene scelto uno.
+Ogni pulsante ricontrolla `world.is_staff`: il grado potrebbe essere stato rimosso mentre il gump era aperto.
+
+## jail_note.lua
+
+`scripts/items/jail_note.lua` è lo script del template `jail_release_note`, la nota che un
+prigioniero trova nello zaino alla fine della pena. Su `on_use` delega a
+`book.open`, mostrando `book.content` salvato o il vecchio `jail.text`: giorni scontati, cella, date
+e multa pagata. La pergamena condivisa esegue l'escape del testo semplice e scorre i testi lunghi. Una nota senza
+testo, come una creata con `.add`, non mostra nulla.
+
+## readable_scroll.lua
+
+`scripts/items/readable_scroll.lua` delega il doppio clic a `book.open`. Il template non impilabile
+`readable_scroll` è usato dal [catalogo dei testi](../data-files/books.md).
+Crea una lettera personalizzata con `book.give(player, "welcome_letter", { contact_name = "Vega" })`.
+Titolo, autore e corpo salvati restano fissi quando un altro giocatore la legge.
+
+## readable_book.lua
+
+`scripts/items/readable_book.lua` delega il doppio clic a `book.open` come la pergamena; per un
+oggetto del template `readable_book`, `book.open` invia il libro del client, la copertina e ogni pagina,
+invece della pergamena ([libri e pergamene](../data-files/books.md#books-and-parchments)).
+I testi importati da ModernUO lo usano: `book.give(player, "grammar_of_orcish")`.

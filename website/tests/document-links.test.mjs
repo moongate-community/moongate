@@ -102,3 +102,9 @@ test('rewrites img and source srcset candidates, preserving descriptors and data
   assert(html.includes('srcset="/generated/images/logo.png 640w, /generated/images/logo.png 1280w"'));
   assert(html.includes('srcset="data:image/png;base64,AAAA 1x, /generated/images/logo.png 2x"'));
 });
+
+test('Italian compilation rewrites absolute site guide links but keeps generated references English', async t => {
+  const context = { ...await fixture(t), locale: 'it' };
+  assert.equal(resolveDocumentUrl('https://moongate.sh/server/guide/#usage', context), '/it/server/guide/#usage');
+  assert.equal(resolveDocumentUrl('https://moongate.sh/lua/book/', context), 'https://moongate.sh/lua/book/');
+});
