@@ -22,7 +22,7 @@ namespace Moongate.Server.Ultima.Services;
 /// <inheritdoc />
 /// <remarks>
 ///     The texts are the server's, in the server language, through <see cref="ILocalizationService" /> as free text
-///     (as UOX3): blessed and cursed, the weight and the rarity. Names stay the client's clilocs (its item names, the
+///     (as UOX3): blessed and cursed, the weight and, for an item above common, the rarity. Names stay the client's clilocs (its item names, the
 ///     amount and a mobile's name and title) until the server has translated names. A tooltip depends only on a few
 ///     fields of its item or mobile (<see cref="ItemTooltipKey" />, <see cref="MobileTooltipKey" />), so it is cached by
 ///     them: a change gives another key, and nothing is ever invalidated. The returned lists are shared and must not
@@ -185,8 +185,12 @@ public sealed class TooltipService : ITooltipService
             list.Add(ValueCliloc, gold.ToString("N0", CultureInfo.InvariantCulture));
         }
 
-        var rarity = _localization.Text(RarityMessageBase + (int)item.Rarity, item.Rarity.ToString());
-        list.AddText($"<BASEFONT COLOR={RarityColor(item.Rarity)}>{rarity}</BASEFONT>");
+        // Almost everything is common: only what is above it says its rarity.
+        if (item.Rarity > ItemRarityType.Common)
+        {
+            var rarity = _localization.Text(RarityMessageBase + (int)item.Rarity, item.Rarity.ToString());
+            list.AddText($"<BASEFONT COLOR={RarityColor(item.Rarity)}>{rarity}</BASEFONT>");
+        }
 
         return list;
     }
@@ -299,7 +303,6 @@ public sealed class TooltipService : ITooltipService
     {
         return rarity switch
         {
-            ItemRarityType.Common => "#FFFFFF",
             ItemRarityType.Uncommon => "#1EFF00",
             ItemRarityType.Rare => "#0070DD",
             ItemRarityType.Epic => "#A335EE",

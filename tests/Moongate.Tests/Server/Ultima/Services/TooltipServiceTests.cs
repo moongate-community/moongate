@@ -274,13 +274,24 @@ public sealed class TooltipServiceTests
         Assert.StartsWith("<BASEFONT COLOR=#", rarity.Arguments);
     }
 
+    // Almost everything is common: saying so on every tooltip tells nothing. Only what is above it says its rarity.
     [Fact]
-    public void Build_ACommonItem_ShowsItsRarityInWhite()
+    public void Build_ACommonItem_ShowsNoRarity()
     {
-        Assert.Contains(
-            _tooltips.Build(Item("robe", 0x1F03)).Entries,
-            line => line.Arguments == "<BASEFONT COLOR=#FFFFFF>Comune</BASEFONT>"
-        );
+        Assert.DoesNotContain(_tooltips.Build(Item("robe", 0x1F03)).Entries, line => line.Arguments.Contains("Comune") || line.Arguments.Contains("BASEFONT"));
+    }
+
+    [Theory]
+    [InlineData(ItemRarityType.Uncommon)]
+    [InlineData(ItemRarityType.Rare)]
+    [InlineData(ItemRarityType.Epic)]
+    [InlineData(ItemRarityType.Legendary)]
+    public void Build_AnItemAboveCommon_ShowsItsRarity(ItemRarityType rarity)
+    {
+        var robe = Item("robe", 0x1F03);
+        robe.Rarity = rarity;
+
+        Assert.Single(_tooltips.Build(robe).Entries, line => line.Arguments.StartsWith("<BASEFONT COLOR=#", StringComparison.Ordinal));
     }
 
     [Fact]
