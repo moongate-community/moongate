@@ -8,6 +8,16 @@ namespace Moongate.Core.Attributes;
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class SerialRangeAttribute : Attribute
 {
+    /// <summary>
+    ///     Gets the first serial of the range.
+    /// </summary>
+    public uint Min { get; }
+
+    /// <summary>
+    ///     Gets the last serial of the range.
+    /// </summary>
+    public uint Max { get; }
+
     /// <param name="min">
     ///     The first serial of the range.
     /// </param>
@@ -24,14 +34,4 @@ public sealed class SerialRangeAttribute : Attribute
         Min = min;
         Max = max;
     }
-
-    /// <summary>
-    ///     Gets the first serial of the range.
-    /// </summary>
-    public uint Min { get; }
-
-    /// <summary>
-    ///     Gets the last serial of the range.
-    /// </summary>
-    public uint Max { get; }
 }
