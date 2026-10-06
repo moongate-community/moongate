@@ -1,4 +1,5 @@
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Bodies;
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
@@ -13,6 +14,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Ultima.Types;
@@ -43,6 +45,9 @@ public sealed class MobileModule
     private readonly ICrimeService? _crimes;
     private readonly IDeathService? _death;
 
+    private readonly ISessionService? _sessions;
+    private readonly IPacketSendService? _sender;
+
     public MobileModule(
         IMobileService mobiles,
         ITeleportService teleports,
@@ -56,9 +61,13 @@ public sealed class MobileModule
         IDataLoaderService? data = null,
         IWeightService? weight = null,
         ICrimeService? crimes = null,
-        IDeathService? death = null
+        IDeathService? death = null,
+        ISessionService? sessions = null,
+        IPacketSendService? sender = null
     )
     {
+        _sessions = sessions;
+        _sender = sender;
         _death = death;
         _crimes = crimes;
         _weight = weight;
@@ -552,6 +561,29 @@ public sealed class MobileModule
         _speech.PlaySound(mobile, sound);
 
         return true;
+    }
+
+    /// <summary>
+    ///     Tells the client of a player to walk its character to a spot; <c>mobile.pathfind_to(who, 1500, 1600, 10)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Tells the player's client to walk its character to x, y, z of its map by itself, as after a double right click on the ground: the client finds the way and walks it step by step, and the player may walk elsewhere at any time. It is the client that decides: a spot too far or with no way to it is simply not walked to, and the server is not told. True when the client was told; false for an NPC, a player that is not in the world, or coordinates outside 0 to 65535 (x, y) and -128 to 127 (z).")]
+    public bool PathfindTo(long serial, double x, double y, double z)
+    {
+        if (_sessions is null ||
+            _sender is null ||
+            !TryGetMobile(serial, out var mobile) ||
+            x is < 0 or > ushort.MaxValue ||
+            y is < 0 or > ushort.MaxValue ||
+            z is < sbyte.MinValue or > sbyte.MaxValue ||
+            Math.Floor(x) != x ||
+            Math.Floor(y) != y ||
+            Math.Floor(z) != z ||
+            !_sessions.TryGetByCharacterId(mobile.Id, out var session))
+        {
+            return false;
+        }
+
+        return _sender.TrySend(session.SessionId, new PathfindPacket(new Point3D((int)x, (int)y, (int)z)));
     }
 
     /// <summary>

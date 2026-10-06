@@ -5156,6 +5156,46 @@
         "description": "2: the character is dead. The client shows its death and the ghost view; it is sent to the player of the character that dies."
       }
     ],
-    "notes": "Sent when a player dies, as ModernUO's DeathStatus. Coming back to life sends no packet of its own: the living body (0x20) and the flags tell the client."
+    "notes": "Sent when a player dies, as ModernUO's DeathStatus. Coming back to life sends no packet of its own: the living body (0x20) and the flags tell the client.",
+    "handler": "MobileStateService.SetDead: sent to the player's own client when its character dies."
+  },
+  "0x38:outgoing": {
+    "category": "Movement",
+    "tags": [
+      "Movement",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "X of the spot to walk to."
+      },
+      {
+        "offset": "3",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Y of the spot."
+      },
+      {
+        "offset": "5",
+        "name": "Z",
+        "type": "ushort",
+        "size": "2",
+        "description": "Height of the spot, signed."
+      }
+    ],
+    "notes": "Tells the client to walk its character to a spot by itself, as after a double right click on the ground: the client finds the way, writes \"Pathfinding!\" and sends its steps one by one. The client decides whether it goes: the server is not told.",
+    "handler": "MobileModule.PathfindTo: mobile.pathfind_to(player, x, y, z)."
   }
 }
