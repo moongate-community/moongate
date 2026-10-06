@@ -145,6 +145,59 @@ public sealed class StartingItemsLoaderTests
         }
     }
 
+    [Theory]
+    [InlineData("readable_book", false, true, false)]
+    [InlineData("readable_book", false, true, true)]
+    [InlineData("readable_scroll", true, false, false)]
+    [InlineData("readable_scroll", true, false, true)]
+    [InlineData("jail_note", true, false, false)]
+    [InlineData("jail_note", true, false, true)]
+    public async Task LoadDataAsync_AnyRandomCandidateLacksDocumentCapabilities_IsRefused(
+        string script, bool writable, bool attachments, bool incompatibleFirst)
+    {
+        using var root = new TemporaryDirectory();
+        var choices = incompatibleFirst ? "\"incompatible\", \"compatible\"" : "\"compatible\", \"incompatible\"";
+        root.CreateFile("data/starting_items.toml", "[[set]]\ncommon = true\n[[set.items]]\nitems = [" + choices + "]\nbook_template = \"document\"\n");
+        var book = new BookTemplate
+        {
+            Id = "document", Title = "Document", Writable = writable,
+            ItemTemplate = writable ? "compatible_book" : "compatible_scroll",
+            Attachments = attachments ? [new() { ItemTemplate = "gold" }] : []
+        };
+        var data = new StubDataLoaderService().With(book).With(
+            new ItemTemplate { Id = "compatible", Stackable = false, ScriptId = writable ? "readable_book" : "readable_scroll" },
+            new ItemTemplate { Id = "incompatible", Stackable = false, ScriptId = script }
+        );
+        var loader = new StartingItemsLoader(new DirectoriesConfig(root.Path, ["data"]), data, new BookTemplateService(data), new LocalizationConfig());
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => loader.LoadDataAsync());
+
+        Assert.Contains("starting_items.toml", error.Message);
+        Assert.Contains("document", error.Message);
+    }
+
+    [Theory]
+    [InlineData("readable_book", true, false, "source_book")]
+    [InlineData("readable_scroll", false, true, "source_scroll")]
+    [InlineData("jail_note", false, true, "source_scroll")]
+    [InlineData("readable_scroll", false, false, "source_book")]
+    [InlineData("readable_book", false, false, "source_scroll")]
+    public async Task LoadDataAsync_CompatibleDocumentWithDifferentItemTemplate_IsAccepted(
+        string script, bool writable, bool attachments, string sourceItem)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/starting_items.toml", "[[set]]\ncommon = true\n[[set.items]]\nitems = [\"custom_item\"]\nbook_template = \"document\"\n");
+        var book = new BookTemplate
+        {
+            Id = "document", Title = "Document", Writable = writable, ItemTemplate = sourceItem, ItemId = 0x0FF1,
+            Attachments = attachments ? [new() { ItemTemplate = "gold" }] : []
+        };
+        var data = new StubDataLoaderService().With(book).With(new ItemTemplate { Id = "custom_item", Stackable = false, ScriptId = script });
+        var loader = new StartingItemsLoader(new DirectoriesConfig(root.Path, ["data"]), data, new BookTemplateService(data), new LocalizationConfig());
+
+        Assert.Single((await loader.LoadDataAsync()).Entities);
+    }
+
     private static StartingItemsLoader CreateLoader(TemporaryDirectory root)
     {
         var data = new StubDataLoaderService().With(

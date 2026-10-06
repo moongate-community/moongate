@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Services.Books;
 using Moongate.Server.Ultima.Services.Internal.Books;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Items;
+using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Entities.World;
@@ -178,13 +179,19 @@ public class StartingItemsService : IStartingItemsService
         var templateId = entry.Items[BuiltInRng.Next(entry.Items.Count)];
         var template = _templates.Get(templateId);
         RenderedBook? rendered = null;
+        BookTemplate? source = null;
         if (entry.BookTemplate is { } book)
         {
-            if (context is null || string.IsNullOrWhiteSpace(request.PlayerName) || entry.Equip || template.Stackable != false ||
-                !BookTextValidation.IsReadableScript(template.ScriptId) ||
+            if (context is null || string.IsNullOrWhiteSpace(request.PlayerName) || entry.Equip ||
+                !_books.TryGet(book, out source) || source is null || !BookItemCompatibility.IsCompatible(source, template) ||
                 !_books.TryRender(book, context, _localization.Language, entry.BookValues, out rendered) || rendered is null)
             {
                 throw new InvalidDataException($"Cannot create starting document '{book}' for item '{templateId}'.");
+            }
+
+            if (source.Attachments.Count > 0 && _attachments is null)
+            {
+                throw new InvalidDataException($"Cannot prepare attachments for starting document '{book}'.");
             }
         }
 
@@ -194,12 +201,8 @@ public class StartingItemsService : IStartingItemsService
         for (var i = 0; i < (stacks ? 1 : amount); i++)
         {
             var item = _factory.Create(templateId, stacks ? amount : 1, entry.Hue?.Resolve());
-            if (rendered is not null)
+            if (rendered is not null && source is not null)
             {
-                if (!_books.TryGet(rendered.TemplateId, out var source) || (source.Attachments.Count > 0 && _attachments is null))
-                {
-                    throw new InvalidDataException($"Cannot prepare attachments for starting document '{rendered.TemplateId}'.");
-                }
                 var payload = _attachments?.Prepare(source);
                 if (payload is not null)
                 {

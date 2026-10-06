@@ -125,7 +125,8 @@ context; do not put them in `book_values`.
 
 Title, author and body use `[localization].language` and are saved as
 `book.template`, `book.title`, `book.author` and `book.content` before the item is
-persisted. The displayed name follows the rendered title. Trading the letter,
+persisted. Writable books also save `book.writable = true` and `book.pages`, their minimum
+reserved page count. The displayed name follows the rendered title. Trading the letter,
 renaming its recipient or editing the source cannot change its saved text.
 `amount` creates separate, nonstacking copies; normal hue, newbie and backpack
 placement rules still apply.
@@ -137,10 +138,14 @@ starting weight. Any late attachment-preparation failure rolls back the characte
 and all earlier starting items. The shipped welcome source contains no rewards;
 add them to your own source to opt in.
 
-All item ids in the entry must explicitly resolve to `stackable = false` and
-use `script_id = "readable_scroll"` or `"jail_note"`. Text entries must have
-`equip = false`. If rendering fails during character creation, the character,
-backpack and all starting items are rolled back in the same transaction.
+Every item id in the entry must resolve to `stackable = false` and use
+`script_id = "readable_scroll"`, `"readable_book"` or `"jail_note"`; inherited values count.
+A source with attachments requires every candidate item to use `readable_scroll` or
+`jail_note`, which provide the claim gump. A writable source requires every candidate item
+to use `readable_book`. The entry's item ids need not match the source's `item_template`: a
+read-only source without attachments can be applied to any of these readable items.
+Text entries must have `equip = false`. If rendering fails during character creation,
+the character, backpack and all starting items are rolled back in the same transaction.
 
 An existing root keeps its edited `data/starting_items.toml` when you run
 `mgctl init`: add the entry above yourself and restart the server. Removing it
