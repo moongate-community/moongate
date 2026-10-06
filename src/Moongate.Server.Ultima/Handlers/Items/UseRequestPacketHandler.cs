@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Interfaces.Items;
 using System.Collections.Frozen;
 using Moongate.Scripting.Types.Scripts;
@@ -28,7 +29,7 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 ///     A container is an item whose graphic has the tiledata Container flag; <see cref="IContainerLayoutService" />
 ///     gives its gump.
 /// </remarks>
-public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
+public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, IUseService
 {
     // The client sets this bit on the serial when the player asks for their own paperdoll.
     private const uint PaperdollRequestFlag = 0x80000000;
@@ -220,6 +221,16 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         var name = string.IsNullOrEmpty(prefix) ? mobile.Name : $"{prefix} {mobile.Name}";
 
         return string.IsNullOrEmpty(mobile.Title) ? name : $"{name}, {mobile.Title}";
+    }
+
+    public void Use(GameSession session, Serial target)
+    {
+        Handle(session, new UseRequestPacket { Target = target });
+    }
+
+    public bool HasPaperdoll(MobileEntity mobile)
+    {
+        return _bodies.Value.TryGetValue(mobile.Body, out var type) && type == BodyType.Human;
     }
 
     private void OpenOwnPaperdoll(GameSession session)

@@ -7,6 +7,7 @@ using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Books;
 using Moongate.Server.Ultima.Loaders;
@@ -113,6 +114,9 @@ public static class UltimaWorldContainerExtensions
         container.RegisterMapping<ISessionClosedListener, IGumpService>();
         container.Register<IGumpTemplateService, GumpTemplateService>(Reuse.Singleton);
         container.Register<IBankService, BankService>(Reuse.Singleton);
+        // The use handler is what a double click does: a context menu entry asks it for the same.
+        container.RegisterDelegate<IUseService>(resolver => resolver.Resolve<UseRequestPacketHandler>(), Reuse.Singleton);
+        container.Register<IContextMenuService, ContextMenuService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IBankService>();
         container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);

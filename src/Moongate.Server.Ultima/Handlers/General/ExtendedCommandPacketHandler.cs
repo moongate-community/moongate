@@ -20,6 +20,12 @@ public sealed class ExtendedCommandPacketHandler : IPacketHandler<ExtendedComman
 {
     private const ushort QueryPropertiesSubcommand = 0x10;
     private const ushort StatLockSubcommand = 0x1A;
+
+    // A context menu: the client asks for the one of what was clicked, and later says which entry was chosen.
+    private const ushort ContextMenuRequestSubcommand = 0x13;
+    private const ushort ContextMenuSelectSubcommand = 0x15;
+    private const int ContextMenuRequestLength = 4;
+    private const int ContextMenuSelectLength = 6;
     private const int StatLockLength = 2;
 
     private readonly ILogger _logger = Log.ForContext<ExtendedCommandPacketHandler>();
@@ -28,13 +34,17 @@ public sealed class ExtendedCommandPacketHandler : IPacketHandler<ExtendedComman
     private readonly IMobileService? _mobiles;
     private readonly IMobileStateService? _state;
 
+    private readonly IContextMenuService? _contextMenus;
+
     public ExtendedCommandPacketHandler(
         ITooltipService tooltips,
         IPacketSendService sender,
         IMobileService? mobiles = null,
-        IMobileStateService? state = null
+        IMobileStateService? state = null,
+        IContextMenuService? contextMenus = null
     )
     {
+        _contextMenus = contextMenus;
         _mobiles = mobiles;
         _state = state;
         _tooltips = tooltips;
@@ -58,6 +68,24 @@ public sealed class ExtendedCommandPacketHandler : IPacketHandler<ExtendedComman
         if (packet.Subcommand == StatLockSubcommand && packet.Payload.Length >= StatLockLength)
         {
             SetStatLock(session, packet.Payload[0], packet.Payload[1]);
+
+            return;
+        }
+
+        if (packet.Subcommand == ContextMenuRequestSubcommand && packet.Payload.Length >= ContextMenuRequestLength)
+        {
+            _contextMenus?.Request(session, new Serial(BinaryPrimitives.ReadUInt32BigEndian(packet.Payload)));
+
+            return;
+        }
+
+        if (packet.Subcommand == ContextMenuSelectSubcommand && packet.Payload.Length >= ContextMenuSelectLength)
+        {
+            _contextMenus?.Select(
+                session,
+                new Serial(BinaryPrimitives.ReadUInt32BigEndian(packet.Payload)),
+                BinaryPrimitives.ReadUInt16BigEndian(packet.Payload.AsSpan(sizeof(uint)))
+            );
 
             return;
         }
