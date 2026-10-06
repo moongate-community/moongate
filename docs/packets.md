@@ -70,6 +70,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x2E` | `WornItemPacket` | Outgoing | Fixed 15 | — |
 | `0x6E` | `MobileAnimationPacket` | Outgoing | Fixed 14 | — |
 | `0xAF` | `DeathAnimationPacket` | Outgoing | Fixed 13 | — |
+| `0x2C` | `DeathStatusPacket` | Outgoing | Fixed 2 | — |
 | `0x89` | `CorpseEquipmentPacket` | Outgoing | Variable | — |
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
@@ -287,7 +288,7 @@ packet names). The hue is masked with `0x3FFF` and kept from 2 to 1001, as Moder
 `ClipDyedHue`. A client that closes the picker sends nothing, so the callback may never run: whoever
 opens a picker checks again, in the callback, what was true when it opened.
 
-`IDeathService` kills an NPC ([Death of NPCs](death.md)). The players who see it are sent, in
+`IDeathService` kills an NPC ([Death and resurrection](death.md)). The players who see it are sent, in
 this order, the corpse (`0xF3`, or `0x1A` to an old client), the death (`0xAF`: the mobile, its
 corpse, four zero bytes, as ModernUO) and, when the NPC is removed, `0x1D`. The client plays the
 death animation of the body by itself; the server names none. A corpse is the graphic `0x2006` and

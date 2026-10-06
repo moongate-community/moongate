@@ -234,6 +234,17 @@ with `mobile.teleport`, to another map too, and plays `0x1FE` there. A player wh
 than a cell away while the gump was open is told so and stays; choosing the city of the gate
 itself does nothing.
 
+## ankh.lua and resurrect.lua
+
+`scripts/items/ankh.lua` is the script of the `decoration_ankh` template, the two pieces of each
+`AnkhWest` and `AnkhNorth` that `.decorate` places. It has no `on_use`: the living have nothing to do
+with an ankh. Its `on_ghost_use` runs when a dead player double clicks it ([Death and
+resurrection](../death.md#death-of-a-player)): from more than 2 cells it says "That is too far away."
+(client text 500446), else it opens the gump `resurrect` (`templates/gumps/resurrect.xml`). Its
+Continue button calls `resurrect.accept` in `scripts/gumps/resurrect.lua`, which, if the player is
+still dead and within 2 cells of the ankh, calls `mobile.resurrect`, plays the sound `0x214` and the
+effect `SparkleHeal` on the player. Cancel does nothing.
+
 ## moongate.lua
 
 `scripts/items/moongate.lua` is the script of the `moongate` template, the gate with one

@@ -71,18 +71,13 @@ public sealed class KillCommand : ICommandExecutor
                     return;
                 }
 
-                if (!mobile.IsNpc)
-                {
-                    answer = _localization.Text(CommandMessages.PlayersCannotDie, "Players cannot die yet.");
-
-                    return;
-                }
-
                 var name = mobile.Name ?? "";
                 _mobiles.TryGet(session.CharacterId, out var killer);
                 answer = _death.Kill(mobile, killer)
                              ? _localization.Text(CommandMessages.Killed, "{0} is dead.", name)
-                             : _localization.Text(CommandMessages.NotAnNpc, "That is not an NPC.");
+                             : mobile.IsNpc
+                                 ? _localization.Text(CommandMessages.NotAnNpc, "That is not an NPC.")
+                                 : _localization.Text(CommandMessages.CannotDie, "{0} cannot die.", name);
             }
         );
         await _loop.PostAsync(work, context.CancellationToken);

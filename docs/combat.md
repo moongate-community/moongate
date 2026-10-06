@@ -2,7 +2,7 @@
 
 A player fights an NPC with its fists, as ModernUO's classic (pre-AOS) combat does; the NPC fights back and
 dies when its hit points are gone. This is the first slice: weapons and armor of items, parry, archery,
-the death of a player and the combat events of Lua come later.
+the combat events of Lua come later.
 
 ## Starting a fight
 
@@ -66,8 +66,9 @@ so 2.5 seconds at 100 stamina. A swing:
 The status window of a player shows the damage of its fists, `1` to `8` with the same bonuses of tactics, strength and
 anatomy (the least is never under 1); the status of an NPC shows none.
 
-An NPC with no hit points left dies as when a game master [kills it](death.md), with the attacker as its killer
-and its corpse. **A player does not die yet**: it is left with 1 hit point.
+A mobile with no hit points left dies as when a game master [kills it](death.md), with the attacker as its killer
+and its corpse: an NPC leaves the world, a [player](death.md#death-of-a-player) stays as a ghost. A ghost does not fight,
+and nobody fights it.
 
 ## The NPC fights back
 
@@ -112,11 +113,11 @@ numbers, ModernUO's classic ones.
 
 Parry (a shield counts for nothing yet), archery, special moves, durability (`max_hits` is kept, not used), the
 strength a weapon or armor asks for (`strength_required` is kept, not used), the lumberjacking bonus of axes, aggressor
-lists beyond the target, the death of a player, bandages and the combat events of Lua (`attack`, `hit`, `miss`,
+lists beyond the target, bandages and the combat events of Lua (`attack`, `hit`, `miss`,
 `get_hit`).
 
 ## See also
 
-- [Death of NPCs](death.md)
+- [Death and resurrection](death.md)
 - [Skills](skills.md)
 - [Server configuration](server-configuration.md)

@@ -1,10 +1,10 @@
-# Death of NPCs
+# Death and resurrection
 
 An NPC can die: it falls where it stands, leaves its corpse with what it carried, and is gone from
 the world. Nothing fights yet, so an NPC dies when a game master kills it with
 [`.kill`](commands/kill.md), a script calls `mobile.kill`, or a [town
-guard](scripting/shipped-scripts.md#guardlua) reaches it while it is a criminal. Players do not die
-yet.
+guard](scripting/shipped-scripts.md#guardlua) reaches it while it is a criminal, or something fights it
+to no hit points. A [player dies too](#death-of-a-player), and stays as a ghost.
 
 ## What happens
 
@@ -137,8 +137,51 @@ made without a template, or whose template no longer exists, cannot be raised an
 mobile.resurrect(corpse)
 ```
 
+## Death of a player
+
+A player dies when something takes its last hit point (a fight, `.kill`, `mobile.kill`). There is no saved
+"dead" flag: a player is dead while it wears the **ghost body** of its race and gender (human 400/401 to
+402/403, elf 605/606 to 607/608, gargoyle 666/667 to 694/695), which is what `mobile.is_dead(serial)` reads.
+
+1. The players around hear its death sound; a criminal is pardoned.
+2. Its corpse lies where it stood, as an NPC's, with what it wore and what lay in its backpack, except what
+   cannot move and the newbied and blessed items. The backpack, hair and beard stay with the player.
+3. Everyone around sees it die (`0xAF`); the player's own client gets the death status (`0x2C`).
+4. War mode is off and hit points, stamina and mana are 0.
+5. The player takes the ghost body and puts on a **death shroud** (`death_shroud`, outer torso layer, cannot be
+   taken off).
+
+A ghost:
+
+- is **hidden from the living**, as a hidden player, unless it is in war mode; the staff and the other ghosts of the
+  staff see it. A step does not show it, only war mode does.
+- is heard by the living as `oOo` for each word it says; the staff and the dead hear it as it spoke, and no NPC,
+  item or guard answers it.
+- does not fight and is not fought; NPCs do not sense it.
+- uses no skill, lifts no item and gets no hit point, mana or stamina back. A double click on an item runs its
+  `on_ghost_use(serial, user)` if the script has one, and says `I am dead and cannot do that.` if not.
+
+### Coming back
+
+- An **ankh** (the two pieces of each `AnkhWest` and `AnkhNorth` that `.decorate` places, template
+  `decoration_ankh`, script `ankh.lua`): a ghost that double clicks it from 2 cells or closer is asked in a gump
+  whether it wants to live; Continue raises it with the sound `0x214` and the sparkles `0x376A`, and it must still
+  be there, dead and within 2 cells when it answers.
+- A game master with [`.resurrect`](commands/resurrect.md), a script with `mobile.resurrect(serial)`.
+
+The player comes back in its living body with **10 hit points**, full stamina and no mana, the shroud is gone and a
+**death robe** (`death_robe`, hue 2301, newbied so it never goes into a corpse) is worn in its place. Its corpse is
+not given back: it lies on its own until it decays.
+
+```lua
+mobile.is_dead(serial)   -- true for a player that is a ghost
+mobile.resurrect(serial) -- the serial of a ghost raises it at once
+```
+
 ## What is not there yet
 
-- The death of players: ghost, resurrection, healers and ankhs.
+- Healers, spells that raise, the murder counts and their report, the loss of skills and stats, and looting a
+  player's corpse by the rules of crimes. A ghost is not seen by other ghosts. Bones: a corpse just decays.
+- Whether the spot is free for a body (ModernUO's `Map.CanFit`) is not checked when an ankh raises a ghost.
 - Carving, fame and karma, looting as a crime, loot shared among those who fought.
 - Summoned creatures that leave no corpse, and bones.

@@ -58,14 +58,25 @@ public sealed class KillCommandTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task ExecuteAsync_APlayer_SaysPlayersDoNotDieYet_AndKillsNobody()
+    public async Task ExecuteAsync_APlayer_IsKilledLikeAnNpc()
     {
         _targets.Result = TargetResult.ForObject(_aria.Id);
 
         var context = await RunAsync();
 
-        Assert.Empty(_death.Killed);
-        Assert.Equal("Players cannot die yet.", Assert.Single(context.Output).Text);
+        Assert.Equal((_aria, _staff), Assert.Single(_death.Killed));
+        Assert.Equal($"{_aria.Name} is dead.", Assert.Single(context.Output).Text);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_APlayerThatCannotDie_SaysSo()
+    {
+        _death.Kills = false;
+        _targets.Result = TargetResult.ForObject(_aria.Id);
+
+        var context = await RunAsync();
+
+        Assert.Equal($"{_aria.Name} cannot die.", Assert.Single(context.Output).Text);
     }
 
     [Theory, InlineData(0x40000010u), InlineData(0x00000999u)]
