@@ -362,7 +362,7 @@ public sealed class CombatService : ICombatService
         }
 
         _speech.PlaySound(attacker, SoundsOf(attacker)?.Attack is { } sound and > 0 ? sound : WeaponFamilies.HitSound(weapon?.Type));
-        Hit(attacker, target, now);
+        Hit(attacker, target, now, weapon);
     }
 
     private void PayStamina(MobileEntity attacker)
@@ -375,9 +375,9 @@ public sealed class CombatService : ICombatService
         _state.SetStats(attacker, new MobileStatsChange { Stamina = Math.Max(attacker.Stamina - _config.AttackStamina, 0) });
     }
 
-    private void Hit(MobileEntity attacker, MobileEntity target, DateTimeOffset now)
+    private void Hit(MobileEntity attacker, MobileEntity target, DateTimeOffset now, WeaponInfo? weapon)
     {
-        var damage = DamageOf(attacker, target);
+        var damage = DamageOf(attacker, target, weapon);
 
         if (SoundsOf(target)?.Hurt is { } hurt and > 0)
         {
@@ -425,9 +425,9 @@ public sealed class CombatService : ICombatService
         return mobile.IsNpc ? null : _gear.WeaponOf(mobile);
     }
 
-    private int DamageOf(MobileEntity attacker, MobileEntity target)
+    private int DamageOf(MobileEntity attacker, MobileEntity target, WeaponInfo? weapon)
     {
-        var damage = Math.Max(BaseDamage(attacker), CombatFormulas.FistsMinimumDamage);
+        var damage = Math.Max(BaseDamage(attacker, weapon), CombatFormulas.FistsMinimumDamage);
         // Tactics and anatomy are tried at every hit: they teach a player as they are used.
         _skills.Check(attacker, SkillType.Tactics, PassiveMinimum, PassiveMaximum);
         _skills.Check(attacker, SkillType.Anatomy, PassiveMinimum, PassiveMaximum);
@@ -458,9 +458,9 @@ public sealed class CombatService : ICombatService
     }
 
     // The weapon of a player, between its least and its most; the dice of the template of an NPC; else the fists of ModernUO.
-    private int BaseDamage(MobileEntity attacker)
+    private int BaseDamage(MobileEntity attacker, WeaponInfo? weapon)
     {
-        if (WeaponOf(attacker) is { } weapon)
+        if (weapon is not null)
         {
             return weapon.DamageMin + _random.Next(Math.Max(weapon.DamageMax - weapon.DamageMin, 0) + 1);
         }

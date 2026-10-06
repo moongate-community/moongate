@@ -1137,6 +1137,23 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     [Fact]
+    public void Run_TheOtherNamesOfUox3_LoDamageHiDamageAndSpeed_AreReadToo()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            "[practice_sword]\n{\nid=0x13b9\nlayer=1\nlodamage=2\nhidamage=8\nspeed=25\n}\n" +
+            "[both]\n{\nid=0x13b8\nlayer=1\ndamage=5 9\nlodamage=1\nhidamage=2\nspd=30\nspeed=99\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems();
+        Assert.Equal((2, 8, 25), (items["practice_sword"].DamageMin!.Value, items["practice_sword"].DamageMax!.Value, items["practice_sword"].Speed!.Value));
+        // damage= and spd= win when a block has both.
+        Assert.Equal((5, 9, 30), (items["both"].DamageMin!.Value, items["both"].DamageMax!.Value, items["both"].Speed!.Value));
+    }
+
+    [Fact]
     public void Run_ACombatFieldThatIsNotANumber_IsLeftOut()
     {
         _dirs.WriteSource("items.dfn", "[sword]\n{\nid=0x0f60\nlayer=1\ndamage=lots\nspd=fast\nstr=\ndef=-3\nhp=0 0\n}\n");

@@ -103,8 +103,8 @@ A weapon with no kind, which UOX3 does not list, is fought with Wrestling and so
 skill is the one of its own weapon, Wrestling when it holds none. A bow, a crossbow and a thrown weapon are read and
 **not** fought with yet: such a player fights with its fists. An NPC fights with its template, whatever it wears.
 
-The armor rating of the whole player (the 31 of the status window) is the armor of each part weighted by the share
-of the blows it takes, and the damage shown there is the weapon's, with the bonuses. The numbers are those of UOX3's
+The armor rating of the whole player, which the status window shows, is the armor of each part weighted by the share
+of the blows it takes (rounded), and the damage shown there is the weapon's, with the bonuses. The numbers are those of UOX3's
 eras, converted by `mgctl convert uox` (see [Migrate from UOX3](uox3-migration.md)); a plain graphic inherits the LBR
 numbers, ModernUO's classic ones.
 

@@ -51,7 +51,9 @@ public sealed class CombatGearServiceTests
                     new ItemTemplate { Id = "gloves", ItemId = new Serial(0x1414), Layer = LayerType.Gloves, ArmorRating = 30 },
                     new ItemTemplate { Id = "arms", ItemId = new Serial(0x1410), Layer = LayerType.Arms, ArmorRating = 30 },
                     new ItemTemplate { Id = "leggings", ItemId = new Serial(0x1411), Layer = LayerType.Pants, ArmorRating = 30 },
-                    new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Layer = LayerType.OuterTorso }
+                    new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Layer = LayerType.OuterTorso },
+                    new ItemTemplate { Id = "studded_tunic", ItemId = new Serial(0x1C02), Layer = LayerType.Shirt, ArmorRating = 16 },
+                    new ItemTemplate { Id = "plate_skirt", ItemId = new Serial(0x1416), Layer = LayerType.OuterLegs, ArmorRating = 30 }
                 )
             )
         );
@@ -132,6 +134,15 @@ public sealed class CombatGearServiceTests
     }
 
     [Fact]
+    public void ArmorAt_AStuddedTunicOnTheShirtLayer_IsChestArmor_AndASkirtOnTheOuterLegsIsLegArmor()
+    {
+        Wear("studded_tunic");
+        Wear("plate_skirt");
+
+        Assert.Equal((16, 30), (_gear.ArmorAt(_aria, ArmorZoneType.Chest), _gear.ArmorAt(_aria, ArmorZoneType.Legs)));
+    }
+
+    [Fact]
     public void ArmorAt_APieceWithoutAnArmorRating_AddsNothing()
     {
         Wear("robe");
@@ -147,8 +158,8 @@ public sealed class CombatGearServiceTests
             Wear(piece);
         }
 
-        // 30*.35 + 40*.15 + 30*.07 + 30*.07 + 30*.14 + 30*.22 = 10.5 + 6 + 2.1 + 2.1 + 4.2 + 6.6 = 31.5
-        Assert.Equal(31, _gear.ArmorRatingOf(_aria));
+        // 30*.35 + 40*.15 + 30*.07 + 30*.07 + 30*.14 + 30*.22 = 10.5 + 6 + 2.1 + 2.1 + 4.2 + 6.6 = 31.5, rounded as ModernUO
+        Assert.Equal(32, _gear.ArmorRatingOf(_aria));
     }
 
     [Fact]
@@ -166,8 +177,8 @@ public sealed class CombatGearServiceTests
 
         var status = _gear.WithGear(new MobileStatusInfo { Serial = Aria, Name = "Aria" }, _aria);
 
-        // 5 and 33 with tactics 100 (+50%) and then strength 100 (+20%): 5 * 1.8 = 9 and 33 * 1.8 = 59
-        Assert.Equal((9, 59, 10), (status.DamageMin, status.DamageMax, status.PhysicalResistance));
+        // 5 and 33 with tactics 100 (+50%) and then strength 100 (+20%): 5 * 1.8 = 9 and 33 * 1.8 = 59; 10.5 rounds to 11
+        Assert.Equal((9, 59, 11), (status.DamageMin, status.DamageMax, status.PhysicalResistance));
     }
 
     [Fact]
@@ -205,6 +216,8 @@ public sealed class CombatGearServiceTests
             "longsword" or "club" => LayerType.OneHanded,
             "halberd" or "bow" or "heater" => LayerType.TwoHanded,
             "plate_tunic" => LayerType.InnerTorso,
+            "studded_tunic" => LayerType.Shirt,
+            "plate_skirt" => LayerType.OuterLegs,
             "chain_tunic" => LayerType.MiddleTorso,
             "plate_helm" => LayerType.Helm,
             "gorget" => LayerType.Neck,

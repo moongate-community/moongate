@@ -20,7 +20,7 @@ internal static class CombatZones
             LayerType.Arms                                                       => ArmorZoneType.Arms,
             LayerType.Helm                                                       => ArmorZoneType.Head,
             LayerType.Pants or LayerType.OuterLegs or LayerType.InnerLegs        => ArmorZoneType.Legs,
-            LayerType.InnerTorso or LayerType.MiddleTorso or LayerType.OuterTorso => ArmorZoneType.Chest,
+            LayerType.Shirt or LayerType.InnerTorso or LayerType.MiddleTorso or LayerType.OuterTorso => ArmorZoneType.Chest,
             _                                                                    => null
         };
     }

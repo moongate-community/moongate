@@ -80,7 +80,8 @@ public sealed class CombatGearService : ICombatGearService
             rating += ArmorAt(mobile, zone) * CombatFormulas.ShareOf(zone);
         }
 
-        return (int)rating;
+        // Rounded, as ModernUO's status.
+        return (int)(rating + 0.5);
     }
 
     public MobileStatusInfo WithGear(MobileStatusInfo status, MobileEntity mobile)

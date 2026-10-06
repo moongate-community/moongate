@@ -75,7 +75,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| War mode, melee and swing timing | 🟡 | A player [fights](combat.md) with its fists: the swing timer, the hit by Wrestling, the damage with tactics, strength, anatomy and the armor of the target, the sounds and animations; no weapons or armor of items |
+| War mode, melee and swing timing | 🟡 | A player [fights](combat.md) with its fists or the weapon it holds: the swing timer, the hit by skill, the damage with tactics, strength, anatomy and the armor of the target, the sounds and animations |
 | Archery | ❌ | |
 | Weapons and armour: damage, armour, durability, resistances | 🟡 | The weapon a player holds and the armor it wears set the [swing, the hit, the damage and what a blow takes off](combat.md#weapons-and-armor); no durability, parry, shields or resistances |
 | Parrying | ❌ | |

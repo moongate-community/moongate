@@ -274,8 +274,18 @@ internal static class ItemTemplateBuilder
             template.DamageMin = damageMin;
             template.DamageMax = damageMax;
         }
+        else if (block.Fields.TryGetValue("hidamage", out var highText) && UoxNumber.TryParse(highText, out var high) && high > 0)
+        {
+            // UOX3 also reads the two ends apart, lodamage and hidamage: the practice weapons are written so.
+            template.DamageMax = high;
+            template.DamageMin = block.Fields.TryGetValue("lodamage", out var lowText) && UoxNumber.TryParse(lowText, out var low) && low is >= 0 && low <= high
+                                     ? low
+                                     : high;
+        }
 
-        if (block.Fields.TryGetValue("spd", out var speedText) && UoxNumber.TryParse(speedText, out var speed) && speed > 0)
+        // spd, or speed which UOX3 reads as the same tag.
+        if (block.Fields.TryGetValue("spd", out var speedText) && UoxNumber.TryParse(speedText, out var speed) && speed > 0 ||
+            block.Fields.TryGetValue("speed", out speedText) && UoxNumber.TryParse(speedText, out speed) && speed > 0)
         {
             template.Speed = speed;
         }

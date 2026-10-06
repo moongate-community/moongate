@@ -121,9 +121,8 @@ internal static class CombatFormulas
             return 0;
         }
 
-        var half = pieceRating / 2;
-
-        return half + (int)((pieceRating - half + 1) * random.NextDouble());
+        // From half of the rating up to just under all of it, as ModernUO: (int)(rating / 2 + rating / 2 * roll).
+        return (int)(pieceRating / 2.0 * (1 + random.NextDouble()));
     }
 
     /// <summary>

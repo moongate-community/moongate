@@ -1,4 +1,5 @@
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Types.Combat;
 using Moongate.Tests.TestSupport.Randomness;
 
 namespace Moongate.Tests.Server.Ultima.Services.Internal;
@@ -74,6 +75,36 @@ public sealed class CombatFormulasTests
         // armor 100 on the chest (0.35): from 17 to 35, by the second roll
         Assert.Equal(17, CombatFormulas.Absorbed(100, new ScriptedRandom().Doubles(0.99, 0.0)));
         Assert.Equal(35, CombatFormulas.Absorbed(100, new ScriptedRandom().Doubles(0.99, 0.999)));
+    }
+
+    [Theory]
+    [InlineData(30, 0.0, 15)]
+    [InlineData(30, 0.999, 29)]
+    [InlineData(1, 0.999, 0)]
+    [InlineData(1, 0.0, 0)]
+    [InlineData(22, 0.5, 16)]
+    public void AbsorbedByPiece_IsFromHalfOfItsRatingUpToJustUnderIt(int rating, double roll, int expected)
+    {
+        Assert.Equal(expected, CombatFormulas.AbsorbedByPiece(rating, new ScriptedRandom().Doubles(roll)));
+    }
+
+    [Fact]
+    public void AbsorbedByPiece_NoRating_AbsorbsNothing()
+    {
+        Assert.Equal(0, CombatFormulas.AbsorbedByPiece(0, new ScriptedRandom()));
+        Assert.Equal(0, CombatFormulas.AbsorbedByPiece(-4, new ScriptedRandom()));
+    }
+
+    [Theory]
+    [InlineData(0.00, ArmorZoneType.Neck)]
+    [InlineData(0.10, ArmorZoneType.Hands)]
+    [InlineData(0.20, ArmorZoneType.Arms)]
+    [InlineData(0.30, ArmorZoneType.Head)]
+    [InlineData(0.50, ArmorZoneType.Legs)]
+    [InlineData(0.90, ArmorZoneType.Chest)]
+    public void ZoneOf_IsThePartTheRollHits(double roll, ArmorZoneType zone)
+    {
+        Assert.Equal(zone, CombatFormulas.ZoneOf(roll));
     }
 
     [Fact]
