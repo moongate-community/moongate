@@ -151,6 +151,7 @@ public sealed class GuardService : IGuardService, IMoongateStartupService
     private bool IsWanted(MobileEntity mobile)
     {
         return (mobile.Criminal || mobile.IsMurderer) &&
+               !mobile.IsDead &&
                _mobiles.IsInWorld(mobile.Id) &&
                !IsStaff(mobile) &&
                !IsSummoned(mobile) &&

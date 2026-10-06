@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Data.Gumps;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.Gumps;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -118,6 +119,14 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
         attackers[attacker.Id] = _time.GetUtcNow();
     }
 
+    public void Struck(MobileEntity attacker, MobileEntity victim)
+    {
+        if (_aggressors.TryGetValue(victim.Id, out var attackers) && attackers.ContainsKey(attacker.Id))
+        {
+            attackers[attacker.Id] = _time.GetUtcNow();
+        }
+    }
+
     public void Died(MobileEntity victim)
     {
         if (!_aggressors.Remove(victim.Id, out var attackers))
@@ -130,7 +139,7 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
 
         if (queue.Count > 0)
         {
-            _timers.RegisterTimer(AskTimerName, TimeSpan.FromSeconds(_config.ReportDelaySeconds), () => Ask(victim, queue));
+            _timers.RegisterTimer(AskTimerName, TimeSpan.FromSeconds(_config.ReportDelaySeconds), () => AskSafely(victim, queue));
         }
     }
 
@@ -189,7 +198,21 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
         Decay(mobile, _time.GetUtcNow().UtcDateTime);
     }
 
-    // One question at a time, as ModernUO's gump: the answer, or closing it, brings the next.
+    // A timer callback that throws closes the timer wheel: the gump of a player must not stop the server.
+    private void AskSafely(MobileEntity victim, Queue<Serial> queue)
+    {
+        try
+        {
+            Ask(victim, queue);
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(exception, "Asking {Victim:l} to report a murder failed", victim.Name);
+        }
+    }
+
+    // One question at a time, as ModernUO's gump: the answer, or closing it, brings the next. The killer is looked up
+    // again when the answer comes: it may have left the world and come back as another entity meanwhile.
     private void Ask(MobileEntity victim, Queue<Serial> queue)
     {
         while (queue.TryDequeue(out var serial))
@@ -207,14 +230,21 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
                 new Dictionary<string, string> { ["name"] = killer.Name ?? "" },
                 (_, answer) =>
                 {
-                    if (answer.Click == YesClick)
+                    if (answer.Click == YesClick && _mobiles.TryGet(serial, out var live))
                     {
-                        Report(victim, killer);
+                        Report(victim, live);
                     }
 
                     Ask(victim, queue);
                 },
-                (_, _) => Ask(victim, queue)
+                // Another report gump opened on the victim closed this one: it brings its own question.
+                (_, reason) =>
+                {
+                    if (reason != GumpCloseReasonType.Replaced)
+                    {
+                        Ask(victim, queue);
+                    }
+                }
             );
 
             if (opened)
@@ -230,6 +260,7 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
         try
         {
             var now = _time.GetUtcNow().UtcDateTime;
+            Prune(_time.GetUtcNow());
 
             foreach (var session in _sessions.GetAll())
             {
@@ -245,9 +276,46 @@ public sealed class MurderService : IMurderService, IMoongateStartupService
         }
     }
 
+    // What is old enough no longer matters: the attacks that can no longer be reported and the reports that can be made again.
+    private void Prune(DateTimeOffset now)
+    {
+        var attackSince = now.AddSeconds(-_config.AggressorSeconds);
+
+        foreach (var (victim, attackers) in _aggressors.ToArray())
+        {
+            foreach (var attacker in attackers.Where(pair => pair.Value < attackSince).Select(pair => pair.Key).ToArray())
+            {
+                attackers.Remove(attacker);
+            }
+
+            if (attackers.Count == 0)
+            {
+                _aggressors.Remove(victim);
+            }
+        }
+
+        var reportedSince = now.AddMinutes(-_config.RecentlyReportedMinutes);
+
+        foreach (var key in _reported.Where(pair => pair.Value < reportedSince).Select(pair => pair.Key).ToArray())
+        {
+            _reported.Remove(key);
+        }
+    }
+
     private void Decay(MobileEntity mobile, DateTime now)
     {
         var wasMurderer = mobile.IsMurderer;
+
+        // Counts that came without a time, such as one a staff gave, start theirs now.
+        if (mobile.Kills > 0 && mobile.KillsDecayAt is null)
+        {
+            mobile.KillsDecayAt = now.AddHours(_config.LongTermHours);
+        }
+
+        if (mobile.ShortTermMurders > 0 && mobile.ShortTermDecayAt is null)
+        {
+            mobile.ShortTermDecayAt = now.AddHours(_config.ShortTermHours);
+        }
 
         while (mobile.Kills > 0 && mobile.KillsDecayAt is { } killsAt && killsAt <= now)
         {

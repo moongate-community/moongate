@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"d8a0d1339b524a3b6c9547022ef191879abce616fab8dcfa74984c5dc71fd69f","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"3d41ee94b4dba544c76f0d87e58830094b915ee1a8f524ab44ec80aa27f9acd4","title":"Script forniti"} -->
 
 # Script forniti
 

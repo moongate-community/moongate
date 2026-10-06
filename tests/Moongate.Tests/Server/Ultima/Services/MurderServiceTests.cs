@@ -149,6 +149,81 @@ public sealed class MurderServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Struck_KeepsTheAttackerReportable_AfterALongFight_ButNotAStranger()
+    {
+        _murders.Aggressed(_boris, _aria);
+        _clock.Advance(TimeSpan.FromSeconds(100));
+        _murders.Struck(_boris, _aria);
+        _murders.Struck(_carla, _aria);
+        _clock.Advance(TimeSpan.FromSeconds(100));
+
+        _murders.Died(_aria);
+        _timers.Fire(_timers.Timers.Single().Id);
+
+        Assert.Equal("Boris", Assert.Single(_gumps.Opened).Args["name"]);
+    }
+
+    [Fact]
+    public void TheKillerIsLookedUpAgainWhenTheAnswerComes_AKillerThatLeftIsNotReported()
+    {
+        _murders.Aggressed(_boris, _aria);
+        _murders.Died(_aria);
+        _timers.Fire(_timers.Timers.Single().Id);
+        var killer = _boris.Id;
+
+        // The killer left the world and came back as another entity: the count goes to the one that is there.
+        _fixture.Mobiles.Delete(killer);
+        var back = new MobileEntity { Id = killer, Name = "Boris", AccountId = _boris.AccountId, Map = MapType.Trammel };
+        _fixture.Mobiles.EnterWorld(back);
+        _gumps.Opened[0].OnAnswer(_ariaSession, Answer(MurderService.YesClick));
+
+        Assert.Equal((0, 1), (_boris.Kills, back.Kills));
+    }
+
+    [Fact]
+    public void AGumpReplacedByAnotherOfTheSameVictim_DoesNotAskTheNextOneTwice()
+    {
+        _murders.Aggressed(_boris, _aria);
+        _murders.Aggressed(_carla, _aria);
+        _murders.Died(_aria);
+        _timers.Fire(_timers.Timers.Single().Id);
+
+        _gumps.Opened[0].OnClosed!(_ariaSession, GumpCloseReasonType.Replaced);
+
+        Assert.Single(_gumps.Opened);
+    }
+
+    [Fact]
+    public void ARecordThatFailsToOpenItsGump_DoesNotThrowOutOfTheTimer()
+    {
+        _gumps.Ids.Clear();
+        _murders.Aggressed(_boris, _aria);
+        _murders.Died(_aria);
+
+        var exception = Record.Exception(() => _timers.Fire(_timers.Timers.Single().Id));
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public async Task TheDecayTimer_ForgetsTheOldAttacksAndReports_AndGivesATimeToCountsThatHaveNone()
+    {
+        await _murders.StartAsync();
+        _murders.Aggressed(_boris, _aria);
+        _murders.Report(_aria, _carla);
+        _boris.Kills = 2;
+        _clock.Advance(TimeSpan.FromMinutes(11));
+
+        _timers.Fire(_timers.Timers.Single().Id);
+
+        // The attack is gone (older than two minutes), the report can be made again, and the staff's count got a time.
+        _murders.Died(_aria);
+        Assert.Single(_timers.Timers);
+        Assert.True(_murders.Report(_aria, _carla));
+        Assert.Equal(_clock.GetUtcNow().UtcDateTime.AddHours(40), _boris.KillsDecayAt);
+    }
+
+    [Fact]
     public void Yes_ReportsTheKiller_AndTheNextIsAsked_NoAndClosingReportNobody()
     {
         _murders.Aggressed(_boris, _aria);

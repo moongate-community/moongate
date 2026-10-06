@@ -19,6 +19,12 @@ public interface IMurderService
     void Aggressed(MobileEntity attacker, MobileEntity victim);
 
     /// <summary>
+    ///     Keeps <paramref name="attacker" /> reportable for another while when it strikes a victim it is already noted
+    ///     against: a long fight does not make it forgettable. Nothing for any other pair.
+    /// </summary>
+    void Struck(MobileEntity attacker, MobileEntity victim);
+
+    /// <summary>
     ///     Asks the player that died, a few seconds later, to report each of those who attacked it as a criminal, one gump
     ///     after the other.
     /// </summary>

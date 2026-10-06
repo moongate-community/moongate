@@ -15,6 +15,11 @@ public sealed class RecordingMurderService : IMurderService
         Calls.Add($"Aggressed {attacker.Id.Value} {victim.Id.Value}");
     }
 
+    public void Struck(MobileEntity attacker, MobileEntity victim)
+    {
+        Calls.Add($"Struck {attacker.Id.Value} {victim.Id.Value}");
+    }
+
     public void Died(MobileEntity victim)
     {
         Calls.Add($"Died {victim.Id.Value}");

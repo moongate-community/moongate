@@ -229,6 +229,16 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Assert.Equal([$"Aggressed {_aria.Id.Value} {_orc.Id.Value}"], _murders.Calls);
     }
 
+    [Fact]
+    public void AHit_IsToldToTheMurderServiceAsAStrike_ToKeepTheAttackerReportable()
+    {
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Contains($"Struck {_aria.Id.Value} {_orc.Id.Value}", _murders.Calls);
+    }
+
     [Theory]
     [InlineData(NotorietyType.Attackable)]
     [InlineData(NotorietyType.Enemy)]

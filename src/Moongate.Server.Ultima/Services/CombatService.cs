@@ -399,6 +399,7 @@ public sealed class CombatService : ICombatService
         _view.MobileAnimated(target, action, frames, 1);
         ShowDamage(attacker, target, damage);
 
+        _murders?.Struck(attacker, target);
         var hits = target.Hits - damage;
 
         if (hits > 0)

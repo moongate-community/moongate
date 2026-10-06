@@ -242,8 +242,8 @@ there at the last think is turned to (`npc.look_at`), gets the sound `0x1F2` and
 the gump `resurrect` with the argument `healer`, as ModernUO's `BaseHealer`. A healer waits 2 seconds (4 thinks)
 between two offers, and a ghost met during the wait is offered when it is over. A criminal is refused with the
 client text 501222 and a murderer (red) with 501223, and a player of negative karma is told 501224 and offered all
-the same. An evil healer, whose template id starts with `evil` (`evilhealer`, `evilwhealer`), refuses and says
-nothing. A healer of a
+the same. An evil healer, whose template id starts with `evil` (`evilhealer`, `evilwhealer`), refuses
+nobody and says nothing. A healer of a
 template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think.
 
 ## ankh.lua and resurrect.lua

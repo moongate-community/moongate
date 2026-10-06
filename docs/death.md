@@ -198,7 +198,8 @@ nobody. Nothing is counted by the death itself, as ModernUO.
   each kill. It reads "You have been reported for murder!" and at **five kills** "You are now known as a murderer!":
   its name is red for everyone. The same victim cannot report the same killer again for 10 minutes.
 - Both counts are forgotten one at a time, the short-term murders after 8 hours and the kills after 40, counted from
-  the last report, while the player is in the world and when it comes back. A player is red while it has five kills
+  the last report, in real time: hours spent out of the world count too (ModernUO counts online time), and the
+  counts are brought up to date while the player is in the world and when it comes back. A player is red while it has five kills
   or more.
 - A red player is wanted by the guards, as a criminal is, and a healer refuses it. See
   [`[ultima.murder]`](server-configuration.md) for the times.

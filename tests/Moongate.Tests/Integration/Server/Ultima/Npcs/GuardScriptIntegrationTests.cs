@@ -179,6 +179,19 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AMurdererThatIsAGhost_IsLeftAlone()
+    {
+        _aria.Kills = 5;
+        _aria.Body = 0x0192;
+
+        Think(4);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Empty(_state.Flags);
+        Assert.Empty(_teleports.Teleports);
+    }
+
+    [Fact]
     public void ACriminalInSight_GetsTheGuardOnIt_WithItsEffectSoundAndLine()
     {
         _aria.Criminal = true;
