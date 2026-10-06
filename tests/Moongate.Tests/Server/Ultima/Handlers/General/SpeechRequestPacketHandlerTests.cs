@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Types.Speech;
@@ -52,6 +53,35 @@ public sealed class SpeechRequestPacketHandlerTests
         Assert.Contains(fixture.Speaker.SessionId, fixture.Sender.SentSessionIds);
         Assert.Contains(staff.SessionId, fixture.Sender.SentSessionIds);
         Assert.DoesNotContain(player.SessionId, fixture.Sender.SentSessionIds);
+    }
+
+    [Fact]
+    public async Task Handle_SayOfAGhost_IsHeardAsOOoByTheLiving_AndWordForWordByTheStaffAndTheDead()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+        var living = await fixture.AddPlayerAsync(1001, 2, "Living", MapType.Trammel, 105, 100);
+        var staff = await fixture.AddPlayerAsync(1002, 3, "Staff", MapType.Trammel, 106, 100, AccountType.GameMaster);
+        var dead = await fixture.AddPlayerAsync(1003, 4, "Dead", MapType.Trammel, 107, 100);
+        Assert.True(fixture.Mobiles.TryGet(fixture.Speaker.CharacterId, out var speaker));
+        Assert.True(fixture.Mobiles.TryGet(dead.CharacterId, out var ghost));
+        speaker.AccountId = new Serial(0x42);
+        speaker.Body = 0x0192;
+        ghost.AccountId = new Serial(0x43);
+        ghost.Body = 0x0193;
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello world"), CancellationToken.None);
+
+        string TextOf(GameSession session)
+        {
+            var index = fixture.Sender.SentSessionIds.ToList().IndexOf(session.SessionId);
+
+            return Assert.IsType<UnicodeSpeechMessagePacket>(fixture.Sender.Sent[index]).Text;
+        }
+
+        Assert.Equal("oOo oOo", TextOf(living));
+        Assert.Equal("hello world", TextOf(staff));
+        Assert.Equal("hello world", TextOf(dead));
     }
 
     [Fact]

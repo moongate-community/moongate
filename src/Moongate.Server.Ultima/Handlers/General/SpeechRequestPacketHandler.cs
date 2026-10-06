@@ -6,6 +6,7 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Ultima.Data.Events;
@@ -13,6 +14,7 @@ using Moongate.Server.Ultima.Data.Speech;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Speech;
 using Moongate.Server.Ultima.Types.Speech;
 using Serilog;
@@ -137,6 +139,16 @@ public sealed class SpeechRequestPacketHandler :
                     speech with { Text = text }
                 );
 
+                // The living hear a ghost as "oOo"; the dead and the staff hear it as it spoke.
+                var whispered = speaker.IsDead
+                    ? SpeechMessageHelper.CreatePlayer(
+                        speaker.Id,
+                        (ushort)speaker.Body,
+                        speaker.Name,
+                        speech with { Text = GhostSpeech.Garble(text) }
+                    )
+                    : message;
+
                 foreach (var recipient in _sessions.GetAll())
                 {
                     if (recipient.CharacterId.IsValid &&
@@ -145,8 +157,17 @@ public sealed class SpeechRequestPacketHandler :
                         mobile.Location.InRange(speaker.Location, SayRange) &&
                         !speaker.IsHiddenFrom(recipient.CharacterId, recipient.AccountType))
                     {
-                        SpeechMessageHelper.TrySend(_sender, recipient, message);
+                        var heardAsIs = !speaker.IsDead || mobile.IsDead || recipient.AccountType >= AccountType.GameMaster;
+                        SpeechMessageHelper.TrySend(_sender, recipient, heardAsIs ? message : whispered);
                     }
+                }
+
+                // The dead are heard by nobody that answers: no NPC, item or guard.
+                if (speaker.IsDead)
+                {
+                    said = speaker;
+
+                    return;
                 }
 
                 _npcs?.Heard(speaker, text, speech.Keywords);
