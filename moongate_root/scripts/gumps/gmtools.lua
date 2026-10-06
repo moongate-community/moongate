@@ -12,7 +12,9 @@
 --   rain, snow or storm on that weather profile, as .weather does, until the next
 --   game hour. The season tool shows the season where the game master stands and of
 --   its map, and sets the season of the map until the restart, or gives it back its
---   own, as .season does.
+--   own, as .season does. The time tool shows the game time and the moons where the
+--   game master stands and the light, and gives every player the same light or goes
+--   back to the time of day, as .globallight does.
 --
 -- Functions:
 --   tools(g, player, args)  fills the sidebar slot; args.tool is the selected tool
@@ -157,10 +159,83 @@ local function season_panel(g, player)
     end
 end
 
+-- The names of the moon phases, as the time command writes them. Read when the gump opens, as the other enums are.
+local function moon_name(phase)
+    local names = {
+        [MoonPhaseType.NewMoon] = "new moon",
+        [MoonPhaseType.WaxingCrescent] = "waxing crescent",
+        [MoonPhaseType.FirstQuarter] = "first quarter",
+        [MoonPhaseType.WaxingGibbous] = "waxing gibbous",
+        [MoonPhaseType.FullMoon] = "full moon",
+        [MoonPhaseType.WaningGibbous] = "waning gibbous",
+        [MoonPhaseType.LastQuarter] = "last quarter",
+        [MoonPhaseType.WaningCrescent] = "waning crescent",
+    }
+
+    return names[phase] or "unknown"
+end
+
+-- The light levels of the buttons, from 0 (brightest) to 31 (darkest), and the one that goes back to the clock.
+local light_levels = {
+    { level = 0, name = "0 (brightest)" },
+    { level = 12, name = "12" },
+    { level = 26, name = "26" },
+    { level = 31, name = "31 (darkest)" },
+    { name = "auto (the time of day)" },
+}
+
+local function two_digits(number)
+    return string.format("%02d", number)
+end
+
+local function time_panel(g, player)
+    local where = mobile.location(player)
+    local light = world.light_here(player)
+
+    if where == nil or light == nil then
+        return
+    end
+
+    local now = world.time(where.map, where.x)
+    local global = world.global_light()
+
+    g:label_cropped{ x = 0, y = 0, width = panel_width, height = text_height, hue = title_hue,
+        text = "Game time here: " .. two_digits(now.hours) .. ":" .. two_digits(now.minutes) }
+    g:label_cropped{ x = 0, y = 22, width = panel_width, height = text_height,
+        text = "Moons: Trammel " .. moon_name(world.moon(MapType.Trammel, where.x)) .. ", Felucca " ..
+            moon_name(world.moon(MapType.Felucca, where.x)) }
+    g:label_cropped{ x = 0, y = 44, width = panel_width, height = text_height,
+        text = "Light here: " .. light .. (global ~= nil and ", the same for every player" or ", following the time of day") }
+    g:label_cropped{ x = 0, y = 76, width = panel_width, height = text_height, text = "Light of every player:" }
+
+    for index, entry in ipairs(light_levels) do
+        local y = 100 + (index - 1) * row_height
+
+        g:button{ x = 0, y = y, up = 4023, down = 4025, on_click = function(who)
+            -- The rank may have gone while the gump was open.
+            if not world.is_staff(who) then
+                return
+            end
+
+            if entry.level ~= nil then
+                if world.set_global_light(entry.level) then
+                    mobile.message(who, "The global light is now " .. entry.level .. ".")
+                end
+            elseif world.clear_global_light() then
+                mobile.message(who, "The global light follows the time of day again.")
+            end
+
+            open(who, "time")
+        end }
+        g:label_cropped{ x = 35, y = y, width = panel_width - 35, height = text_height, text = entry.name }
+    end
+end
+
 -- The tools of the sidebar, in order; the first is the one shown when none is chosen.
 local tools = {
     { id = "weather", title = "Weather", panel = weather_panel },
     { id = "season", title = "Season", panel = season_panel },
+    { id = "time", title = "Time", panel = time_panel },
 }
 
 local function selected(args)

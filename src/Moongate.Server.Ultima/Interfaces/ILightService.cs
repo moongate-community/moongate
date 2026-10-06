@@ -30,7 +30,13 @@ public interface ILightService : IMoongateStartupService, IRegionChangeListener
     int LevelOnLogin(MobileEntity character);
 
     /// <summary>
-    ///     Sets or, with null, clears the override, and sends every player in the world its level at once.
+    ///     Sets or, with null, clears the override, and sends every player in the world its level at once. Call it on the
+    ///     game loop, as a script does; <see cref="SetOverrideAsync" /> is for the rest.
+    /// </summary>
+    void SetOverride(int? level);
+
+    /// <summary>
+    ///     Does what <see cref="SetOverride" /> does, on the game loop, and completes when it is done.
     /// </summary>
     Task SetOverrideAsync(int? level, CancellationToken cancellationToken = default);
 }

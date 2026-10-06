@@ -50,6 +50,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
     private readonly StubMovementService _movement = new() { SpawnZ = (x, _) => x == 1600 ? 7 : null };
     private readonly StubWeatherService _weather = new();
     private readonly StubSeasonService _seasons = new();
+    private readonly RecordingLightService _light = new();
     private readonly ControlledBroadcastService _broadcast = new();
     private BroadcastFixture _fixture = null!;
 
@@ -248,6 +249,51 @@ public sealed class WorldModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void LightHere_IsTheLevelOfThePlayer_AndGlobalLightTheOverrideOrNil()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        var before = Run("return world.light_here(2), world.global_light(), world.light_here(256)");
+        _light.SetOverride(26);
+        var after = Run("return world.light_here(2), world.global_light()");
+
+        Assert.Equal((0, LuaValue.Nil, LuaValue.Nil), (before[0].Read<int>(), before[1], before[2]));
+        Assert.Equal((26, 26), (after[0].Read<int>(), after[1].Read<int>()));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(12)]
+    [InlineData(31)]
+    public void SetGlobalLight_GivesEveryPlayerThatLevel(int level)
+    {
+        Assert.True(Run($"return world.set_global_light({level})")[0].Read<bool>());
+
+        Assert.Equal(level, _light.Override);
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(32)]
+    public void SetGlobalLight_ALevelOutOfRange_ChangesNothing(int level)
+    {
+        Assert.False(Run($"return world.set_global_light({level})")[0].Read<bool>());
+
+        Assert.Equal(0, _light.Calls);
+    }
+
+    [Fact]
+    public void ClearGlobalLight_GoesBackToTheTimeOfDay()
+    {
+        _light.SetOverride(26);
+
+        Assert.True(Run("return world.clear_global_light()")[0].Read<bool>());
+
+        Assert.Null(_light.Override);
+    }
+
+    [Fact]
     public void SeasonHere_IsTheSeasonTheClientOfThePlayerShows()
     {
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
@@ -423,7 +469,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
         binder.Bind(
             state,
-            new WorldModule(_sectors, _clock, _fixture.Sessions, _items, _regions, _sight, _movement, _weather, _seasons, _broadcast, _fixture.Mobiles, _time, _props)
+            new WorldModule(_sectors, _clock, _fixture.Sessions, _items, _regions, _sight, _movement, _weather, _seasons, _broadcast, _fixture.Mobiles, _time, _props, _light)
         );
         binder.BindEnum(state, typeof(MapType));
         binder.BindEnum(state, typeof(MoonPhaseType));

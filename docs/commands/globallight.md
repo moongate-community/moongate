@@ -21,3 +21,4 @@ the time of day.
 
 - [All commands](../commands.md)
 - [`weather`](weather.md)
+- [`gmtools`](gmtools.md): the same levels as buttons

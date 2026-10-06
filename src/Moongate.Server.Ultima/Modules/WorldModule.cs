@@ -23,6 +23,10 @@ public sealed class WorldModule
 {
     public const int MaximumRange = 32;
 
+    // The levels of the light, as the client counts them.
+    private const int MinimumLight = 0;
+    private const int MaximumLight = 31;
+
     private readonly ISectorService _sectors;
     private readonly IClockService _clock;
     private readonly TimeProvider _time;
@@ -36,6 +40,7 @@ public sealed class WorldModule
     private readonly ISeasonService? _seasons;
     private readonly IBroadcastService? _broadcast;
     private readonly IMobileService? _mobiles;
+    private readonly ILightService? _light;
     private readonly ILogger _logger = Log.ForContext<WorldModule>();
 
     public WorldModule(
@@ -51,9 +56,11 @@ public sealed class WorldModule
         IBroadcastService? broadcast = null,
         IMobileService? mobiles = null,
         TimeProvider? time = null,
-        IWorldPropsService? props = null
+        IWorldPropsService? props = null,
+        ILightService? light = null
     )
     {
+        _light = light;
         _props = props;
         _time = time ?? TimeProvider.System;
         _sight = sight;
@@ -349,6 +356,58 @@ public sealed class WorldModule
     public bool ClearSeason(long player)
     {
         return OverrideSeason(player, null);
+    }
+
+    /// <summary>
+    ///     Gets the light level where a player stands, from 0 (brightest) to 31 (darkest);
+    ///     <c>world.light_here(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The light level where the player stands, from 0 (brightest) to 31 (darkest): the global light when one is set, else the dungeon or jail level of its region, else the time of day's. Nil for an NPC, a player not in the world or when the light is not running.")]
+    public int? LightHere(long player)
+    {
+        return _light is not null && TryGetPlayer(player, out var mobile) ? _light.LevelFor(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Gets the light level every player is given by the game master, <c>nil</c> when the light follows the time of
+    ///     day; <c>world.global_light()</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The level every player is given instead of the clock's, set by world.set_global_light or .globallight, from 0 to 31; nil when the light follows the time of day.")]
+    public int? GlobalLight()
+    {
+        return _light?.Override;
+    }
+
+    /// <summary>
+    ///     Gives every player the same light, as the globallight command does; <c>world.set_global_light(26)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Gives every player in the world the same light, from 0 (brightest) to 31 (darkest), at once, until world.clear_global_light or a restart. False for a level out of 0 to 31. It does not check who calls it: a script for the staff checks world.is_staff first. Call it on the game loop, as a script does.")]
+    public bool SetGlobalLight(int level)
+    {
+        if (_light is null || level is < MinimumLight or > MaximumLight)
+        {
+            return false;
+        }
+
+        _light.SetOverride(level);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Makes the light follow the time of day again; <c>world.clear_global_light()</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Makes the light follow the time of day again, whatever world.set_global_light or .globallight set. It does not check who calls it: a script for the staff checks world.is_staff first. Call it on the game loop, as a script does.")]
+    public bool ClearGlobalLight()
+    {
+        if (_light is null)
+        {
+            return false;
+        }
+
+        _light.SetOverride(null);
+
+        return true;
     }
 
     /// <summary>
