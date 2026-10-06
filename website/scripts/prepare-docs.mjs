@@ -30,7 +30,7 @@ export async function prepareDocs({ repositoryRoot, websiteRoot, sourceRef = 'de
   const slugs = new Set();
   const sources = new Set();
   for (const entry of entries) {
-    if (!/^[a-z0-9]+(?:[/-][a-z0-9]+)*$/.test(entry.slug) || entry.slug === '404') {
+    if (!/^[a-z0-9]+(?:[/-][a-z0-9]+)*$/.test(entry.slug) || entry.slug === '404' || entry.slug === 'it' || entry.slug.startsWith('it/')) {
       throw new Error(`Invalid documentation slug: ${entry.slug}`);
     }
     if (slugs.has(entry.slug)) throw new Error(`Duplicate documentation slug: ${entry.slug}`);

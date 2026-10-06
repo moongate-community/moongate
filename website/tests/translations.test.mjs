@@ -38,3 +38,9 @@ test('translation validation preserves HTML destinations, explicit IDs and table
 test('translation validation preserves inline commands and API identifiers', () => {
   assert.throws(() => parseTranslation(wrap(translated.replace('Esegui `foo`', 'Esegui `bar`')), source), /identifiers/);
 });
+
+test('translation validation catches a missing prose paragraph', () => {
+  const expanded = source + '\nAdditional instructions.\n';
+  const hash = createHash('sha256').update(expanded).digest('hex');
+  assert.throws(() => parseTranslation(wrap(translated, hash), expanded), /blocks/);
+});

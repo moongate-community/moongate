@@ -160,3 +160,10 @@ test('invalid translation code preserves the last complete output', async t => {
   await assert.rejects(prepareDocs(options), /changed code/);
   assert.equal(await readFile(join(options.generated, 'stale.md'), 'utf8'), 'last successful build');
 });
+
+test('manifest slugs cannot occupy the reserved Italian namespace', async t => {
+  const options = await fixture(t);
+  options.entries[0].slug = 'it/start/overview';
+  await assert.rejects(prepareDocs(options), /Invalid documentation slug/);
+  assert.equal(await readFile(join(options.generated, 'stale.md'), 'utf8'), 'last successful build');
+});

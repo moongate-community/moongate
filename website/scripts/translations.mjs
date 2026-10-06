@@ -7,7 +7,7 @@ import GithubSlugger from 'github-slugger';
 import { toString } from 'mdast-util-to-string';
 
 function structure(markdown) {
-  const headings = [], code = [], destinations = [], HTML = [], tables = [], identifiers = [];
+  const headings = [], code = [], destinations = [], HTML = [], tables = [], identifiers = [], blocks = [];
   const htmlAttributes = node => {
     for (const attr of node.attrs ?? []) {
       if (['id', 'href', 'src', 'srcset'].includes(attr.name) || (node.tagName === 'a' && attr.name === 'name')) {
@@ -17,6 +17,7 @@ function structure(markdown) {
     for (const child of node.childNodes ?? []) htmlAttributes(child);
   };
   visit(remark().use(remarkGfm).parse(markdown), node => {
+    if (['paragraph', 'listItem', 'blockquote', 'tableRow'].includes(node.type)) blocks.push(node.type);
     if (node.type === 'heading') headings.push({ depth: node.depth, text: toString(node) });
     if (node.type === 'code') code.push(markdown.slice(node.position.start.offset, node.position.end.offset));
     if (node.type === 'inlineCode') identifiers.push(node.value);
@@ -24,7 +25,7 @@ function structure(markdown) {
     if (node.type === 'table') tables.push([node.align, node.children.map(row => row.children.length)]);
     if (['link', 'image', 'definition'].includes(node.type)) destinations.push(node.url);
   });
-  return { headings, code, destinations, HTML, tables, identifiers: identifiers.sort() };
+  return { headings, code, destinations, HTML, tables, identifiers: identifiers.sort(), blocks };
 }
 
 export function parseTranslation(text, source) {
@@ -39,7 +40,7 @@ export function parseTranslation(text, source) {
   // A stale file belongs to an earlier structure; it is never published as current.
   if (!stale) {
     const original = structure(source), translated = structure(markdown);
-    for (const key of ['code', 'destinations', 'HTML', 'tables', 'identifiers']) {
+    for (const key of ['code', 'destinations', 'HTML', 'tables', 'identifiers', 'blocks']) {
       if (JSON.stringify(original[key]) !== JSON.stringify(translated[key])) throw new Error(`Translation changed ${key}`);
     }
     if (JSON.stringify(original.headings.map(h => h.depth)) !== JSON.stringify(translated.headings.map(h => h.depth))) {
