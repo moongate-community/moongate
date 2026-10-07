@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6e08ae657f02538bd1849bdfd04742b7347195f4321ec9a2560d68416d2d6387","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"a6fd9d1f458fa00f2ec0e191cfae43440ab65ada9d396736e1ba52f8985609dc","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -53,7 +53,7 @@ separatamente: arrivano con la priorità che dà loro la regola.
 | Contenuto | Attende | Priorità |
 | --- | --- | --- |
 | Bersagli per freccette (i manichini e i bersagli per il tiro con l'arco ora funzionano) | Abilità Throwing (5.4) | 8 |
-| Serrature e scassinamento dei forzieri del tesoro e dei contenitori cittadini | Verifica delle abilità (1.2) | 2 |
+| Serrature dei contenitori cittadini (i forzieri del tesoro dei dungeon ora sono chiusi e si scassinano) | Livelli di serratura nei dati | 2 |
 | Trappole dei forzieri e le 490 trappole posizionate nei dungeon | Danno (2.1) | 4 |
 | Bacchette nei forzieri del tesoro | Incantesimi (4.3) | 7 |
 | Forge e incudini per la creazione | Creazione (5.2) | 8 |
@@ -178,7 +178,7 @@ Dopo la fase 7. Ciascuna di queste voci richiede gran parte di ciò che precede.
 
 - **Missioni**: un motore per missioni e scorte; circa 35.000 righe in ModernUO.
 - **Spawn dei campioni, mappe del tesoro, accampamenti.** I forzieri dei dungeon ricompaiono e i contenitori cittadini
-  si riempiono già; le loro serrature e trappole arrivano con le priorità 2 e 4.
+  si riempiono già; i forzieri dei dungeon sono già chiusi a chiave, e le loro trappole e le serrature dei contenitori cittadini arrivano con le priorità 4 e 2.
 - **Virtù e fazioni.**
 - **Le regole moderne**: proprietà e resistenze degli oggetti, bottino magico casuale, mosse speciali,
   Necromancy, Chivalry, Bushido, Ninjitsu, Spellweaving, Mysticism, ordini di produzione in massa, progettazione

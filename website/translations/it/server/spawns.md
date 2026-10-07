@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6d415d9f7bd5329d16e560264700895efd53bd11ce6aa623878e3debe5b112e1","title":"Spawn degli NPC"} -->
+<!-- translation: {"sourceHash":"abbe654db9924d7f4146d557af967de3d5248f514ba6ab0c97cc92cbc0de8f5b","title":"Spawn degli NPC"} -->
 
 # Spawn degli NPC
 
@@ -177,7 +177,7 @@ di un altro forziere generato. Un forziere non può essere raccolto, se non dall
 e decade 45 minuti dopo la creazione, aperto o no, con ciò che resta dentro; la
 regione ne crea poi uno nuovo da 5 a 10 minuti dopo. I contenitori cittadini funzionano
 diversamente: rimangono e [si riempiono all'apertura](scripting/shipped-scripts.md#fillablelua).
-I forzieri non hanno ancora serratura o trappola, ogni livello ha un aspetto unico,
+I forzieri nascono [chiusi a chiave](scripting/shipped-scripts.md#lockpicklua-and-treasure_chestlua) e non hanno ancora trappola, ogni livello ha un aspetto unico,
 e il tempo di decadimento è fisso, mentre ModernUO sceglie da 15 a 74 minuti.
 
 ## NPC acquatici e anfibi

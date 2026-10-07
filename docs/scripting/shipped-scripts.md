@@ -211,6 +211,28 @@ as ModernUO's classic Healing. Double click it, pick who it is for and wait: the
 There is no poison and no bleeding in the game yet, so there is no cure; and the ground where a ghost is raised is
 not checked, as it is not at an ankh.
 
+## lockpick.lua and treasure_chest.lua
+
+`scripts/items/lockpick.lua` is the script of the lockpicks (`0x14fb`, `0x14fc`, `0x14fd` and `0x14fe`,
+`script_id = "lockpick"`), as ModernUO's `Lockpick`. Double click it, pick a locked item within a tile, and three
+seconds later the skill is tried; the player must stay within a tile.
+
+What can be picked is an item with these props: `locked` (true while it is locked), `lock.level` and `lock.max`, the
+points of Lockpicking where the try may just succeed and where it never fails, and `lock.required`, the least points
+to try at all. A lock without `lock.level` "cannot be picked by normal means"; a player under `lock.required` "does
+not see how that lock can be manipulated". A success unlocks the item for good (`locked` is false, `lock.picker` is
+the player); a failure breaks the lockpick one time in four, which is taken out of its stack. Lockpicking is a skill
+that rises with use, as the others.
+
+`scripts/items/treasure_chest.lua` is the script of the four treasure chests of the dungeons
+(`templates/items/treasure_chests.toml`, `script_id = "treasure_chest"`), as ModernUO's `TreasureChestLevel1` to `4`.
+A chest is made locked: it asks 57, 72, 84 and 92 points of Lockpicking by level, and the try runs from that less a roll
+of 1 to 10 to that plus a roll of 1 to 10. A locked chest does not open ("It appears to be locked."); a game master opens
+it ("That is locked, but you open it with your godly powers."); a picked chest opens as any container. Nobody but a
+game master drops an item into a locked chest (`can_insert`). The traps of ModernUO's chests are not there yet, and
+what is already inside a chest open on a client can still be lifted. Chests made before this release have no lock and
+stay as they were until they decay.
+
 ## training_dummy.lua
 
 `scripts/items/training_dummy.lua` is the script of the training dummies (`0x1070` and `0x1071` facing south, `0x1074`

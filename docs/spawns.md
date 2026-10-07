@@ -158,7 +158,7 @@ items into it, a pile onto a pile of the same kind; the players around see what 
 of another spawned chest. A chest
 cannot be picked up, by all but the staff, and decays 45 minutes after it was made, opened or not,
 with what is left inside; the region then makes a new one 5 to 10 minutes later. The containers of the towns work another way: they stay and
-[fill up when opened](scripting/shipped-scripts.md#fillablelua). Chests have no lock and no trap yet, each level has one
+[fill up when opened](scripting/shipped-scripts.md#fillablelua). Chests are made [locked](scripting/shipped-scripts.md#lockpicklua-and-treasure_chestlua) and have no trap yet, each level has one
 look, and the time to decay is fixed, where ModernUO picks 15 to 74 minutes.
 
 ## Water and amphibious NPCs
