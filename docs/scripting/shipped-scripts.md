@@ -170,7 +170,8 @@ Refilling, pouring and drunkenness are not there yet.
 as ModernUO's classic Healing. Double click it, pick who it is for and wait: the one picked is healed, or raised.
 
 - **Reach:** the bandage in the backpack, and who it is for within 1 tile; farther, the client's "too far away".
-  The bandage is taken out of the stack when the healing begins. A second bandage of the same healer replaces the
+  The healer must see who it is for: a hidden one or one behind a wall "can not be seen". Using a bandage reveals a
+  hidden healer. The bandage is taken out of the stack when the healing begins. A second bandage of the same healer replaces the
   first.
 - **The wait:** 3 seconds for a healer with 100 dexterity or more, 4 from 40, 5 under it; 5 more to raise a
   ghost; 9.4 + 0.6 × (120 − dexterity) / 10 on itself. The healer has to stay within 1 tile and alive, or the
@@ -181,9 +182,9 @@ as ModernUO's classic Healing. Double click it, pick who it is for and wait: the
   Lore, with a point more per 100 of its hit points. One that is not hurt reads "That being is not damaged!" and
   keeps the bandage.
 - **A ghost:** it needs 80 points of Healing and of Anatomy and a chance of (Healing − 68) / 50; then the ghost
-  is asked in the gump of the ankhs whether to come back. It costs no fame, as a healer NPC does.
-- **Skills:** both are tried for a rise after a healing, whether the roll worked or not, and after a raise when
-  both are at 80 or more.
+  is asked in the gump of the ankhs whether to come back, and it costs a tenth of its fame, as at an ankh.
+- **Skills:** both are tried for a rise after a healing, whether the roll worked or not, and after a raise that
+  worked.
 
 There is no poison and no bleeding in the game yet, so there is no cure; and the ground where a ghost is raised is
 not checked, as it is not at an ankh.

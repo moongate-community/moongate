@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"66d3ba89b84ca49d27655482af59834906ae9064fde52e43f116c39b888b1b75","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"a367868cd8fc73d2ec9b5290649647af10f64f267d5489f78f4416bb9a8b35dd","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -172,7 +172,8 @@ come la Healing classica di ModernUO. Si fa doppio clic, si sceglie a chi è des
 scelto viene curato, o resuscitato.
 
 - **Portata:** la benda nello zaino, e chi la riceve entro 1 casella; più lontano, il "too far away" del client.
-  La benda esce dalla pila quando la cura inizia. Una seconda benda dello stesso curatore sostituisce la prima.
+  Il curatore deve vedere chi riceve la benda: uno nascosto o dietro un muro "can not be seen". Usare una benda
+  rivela un curatore nascosto. La benda esce dalla pila quando la cura inizia. Una seconda benda dello stesso curatore sostituisce la prima.
 - **L'attesa:** 3 secondi per un curatore con 100 di destrezza o più, 4 da 40, 5 sotto; 5 in più per resuscitare
   un fantasma; 9,4 + 0,6 × (120 − destrezza) / 10 su sé stessi. Il curatore deve restare entro 1 casella e vivo,
   altrimenti la cura va persa insieme alla benda.
@@ -181,9 +182,9 @@ scelto viene curato, o resuscitato.
   creatura con il corpo di un mostro o di un animale è un caso per Veterinary e Animal Lore, con un punto in più
   ogni 100 punti vita. Chi non è ferito legge "That being is not damaged!" e la benda resta.
 - **Un fantasma:** servono 80 punti di Healing e di Anatomy e una probabilità di (Healing − 68) / 50; poi al
-  fantasma viene chiesto, nel gump degli ankh, se vuole tornare. Non costa fama, come invece fa un guaritore NPC.
+  fantasma viene chiesto, nel gump degli ankh, se vuole tornare, e gli costa un decimo della fama, come a un ankh.
 - **Abilità:** entrambe vengono provate per la crescita dopo una cura, anche se il tiro non è riuscito, e dopo una
-  resurrezione quando tutte e due sono a 80 o più.
+  resurrezione riuscita.
 
 Non ci sono ancora veleno e sanguinamento, quindi nessuna cura per essi; e il terreno dove un fantasma viene
 resuscitato non viene controllato, come non lo è a un ankh.

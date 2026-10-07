@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Server.Ultima.Data.Templates.Gumps;
@@ -65,6 +66,7 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
     private const int NotClose = 500963;
     private const int Raised = 500965;
     private const int Attempting = 1008078;
+    private const int CannotSee = 500237;
     private const int GhostBody = 0x0192;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
@@ -80,6 +82,7 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
     private readonly StubTargetService _targets = new();
     private readonly ScriptedRandom _random = new();
     private readonly StubDeathService _death = new();
+    private readonly StubLineOfSightService _sight = new();
     private readonly RecordingEffectService _effects = new();
     private readonly ItemService _items;
 
@@ -183,6 +186,10 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<TargetModule>();
         _container.AddScriptModule<SkillModule>();
         _container.AddScriptModule<GumpModule>();
+        _container.RegisterInstance<IClockService>(new StubClockService());
+        _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
+        _container.RegisterInstance<ILineOfSightService>(_sight);
+        _container.AddScriptModule<WorldModule>();
         _container.RegisterInstance<IDeathService>(_death);
         _container.RegisterInstance<IEffectService>(_effects);
         _container.RegisterScriptEnum<EffectGraphicType>();
@@ -336,7 +343,7 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Bandage_TheGhostThatAgrees_ComesBackWithItsFame_ForABandageCostsNone()
+    public void Bandage_TheGhostThatAgrees_ComesBack_AndLosesATenthOfItsFame_AsAtAnAnkh()
     {
         _bruno.Body = GhostBody;
         _bruno.Fame = 1000;
@@ -354,7 +361,62 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal([_bruno], _death.PlayersRaised);
-        Assert.DoesNotContain(_state.Stats, change => change.Change.Fame is not null);
+        Assert.Equal(900, _bruno.Fame);
+    }
+
+    [Fact]
+    public void Bandage_AFailedRaise_TeachesNothing()
+    {
+        Skills(790, 1200);
+        _bruno.Body = GhostBody;
+        _targets.Result = TargetResult.ForObject(_bruno.Id);
+
+        Use();
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal(0, _random.Rolls);
+    }
+
+    [Fact]
+    public void Bandage_OnSomeoneHidden_OrBehindAWall_CannotBeSeen_AndKeepsTheBandage()
+    {
+        _bruno.Hidden = true;
+        _targets.Result = TargetResult.ForObject(_bruno.Id);
+        Use();
+
+        _bruno.Hidden = false;
+        _sight.Allow = false;
+        Use();
+
+        Assert.Empty(_errors);
+        Assert.Equal([Who, CannotSee, Who, CannotSee], Told(_aria));
+        Assert.Equal(5, _bandage.Amount);
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public void Bandage_RevealsAHiddenHealer()
+    {
+        _aria.Hidden = true;
+        _targets.Result = TargetResult.Canceled(TargetCancelType.Canceled);
+
+        Use();
+
+        Assert.False(_aria.Hidden);
+    }
+
+    [Fact]
+    public void Bandage_AHealerThatDiedWhileTheCursorWasOpen_UsesNoBandage()
+    {
+        _aria.Body = GhostBody;
+        _targets.Result = TargetResult.ForObject(_bruno.Id);
+
+        Use();
+
+        Assert.Empty(_errors);
+        Assert.Equal(5, _bandage.Amount);
+        Assert.Empty(_timers.Timers);
     }
 
     [Fact]

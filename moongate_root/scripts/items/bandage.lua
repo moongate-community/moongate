@@ -18,14 +18,16 @@
 --             comes under 1 heals 1 and says the bandages barely helped.
 --     ghost   a player that is dead: the healer needs 80 points of both skills
 --             and a chance of (Healing - 68) / 50; if it works the ghost is asked
---             whether to come back, in the gump of the ankhs. There is no fame
---             loss: it is not a healer NPC.
+--             whether to come back, in the gump of the ankhs, which costs a tenth
+--             of its fame as it does at an ankh.
 --   The wait is 3 seconds for a healer with 100 dexterity or more, 4 from 40 and
 --   5 under it, 5 more to raise a ghost; 9.4 - 0.6 * (dexterity - 120) / 10 on
 --   itself. A second bandage of the same healer replaces the first. The healer
 --   has to stay within 1 tile of who is healed and alive, or the healing is lost
 --   (and the bandage with it). Both skills are tried for a rise after a healing,
---   whether the roll worked or not, and after a raise when both are at 80 or more.
+--   whether the roll worked or not, and after a raise that worked. The one who
+--   heals is revealed if hidden, and sees who it heals: a hidden one or one
+--   behind a wall is not picked.
 --   There is no poison and no bleeding in the game yet, so no cure: bandages
 --   heal, and raise.
 --
@@ -51,6 +53,11 @@ local CANNOT = 500970           -- Bandages can not be used on that.
 local RAISED = 500965           -- You are able to resurrect your patient.
 local NOT_RAISED = 500966       -- You are unable to resurrect your patient.
 local ATTEMPTING = 1008078      -- {0} : Attempting to heal you.
+
+local CANNOT_SEE = 500237       -- Target can not be seen.
+
+-- How high above its feet a mobile sees, as the combat does.
+local EYE = 14
 
 local HEAL_SOUND = 0x57
 local RAISE_SOUND = 0x214
@@ -105,6 +112,19 @@ local function near(healer, patient)
         and here ~= nil
         and here.map == at.map
         and math.max(math.abs(here.x - at.x), math.abs(here.y - at.y)) <= RANGE
+end
+
+-- Whether the healer sees the patient: not hidden, and nothing in the way, as ModernUO's cursor asks.
+local function sees(healer, patient)
+    local here = mobile.location(healer)
+    local at = mobile.location(patient)
+    local flags = mobile.flags(patient)
+
+    if here == nil or at == nil or flags == nil or flags.hidden then
+        return false
+    end
+
+    return world.line_of_sight(here.map, here.x, here.y, here.z + EYE, at.x, at.y, at.z + EYE)
 end
 
 local function try_for_rise(healer, primary, secondary)
@@ -173,10 +193,8 @@ local function finish(healer, patient)
     local healing, anatomy, primary, secondary = skills_of(healer, patient)
 
     if mobile.is_dead(patient) then
-        raise(healer, patient, healing, anatomy)
-
-        -- The skills are tried for a rise only when both are high enough to raise.
-        if healing >= RAISE_SKILL and anatomy >= RAISE_SKILL then
+        -- The skills are tried for a rise only by a raise that worked.
+        if raise(healer, patient, healing, anatomy) then
             try_for_rise(healer, primary, secondary)
         end
 
@@ -217,6 +235,12 @@ local function begin(serial, healer, patient)
         return
     end
 
+    if not sees(healer, patient) then
+        mobile.message_cliloc(healer, CANNOT_SEE)
+
+        return
+    end
+
     if not item.consume(serial) then
         return
     end
@@ -249,10 +273,13 @@ function bandage.on_use(serial, user)
         return true
     end
 
+    -- Bandaging is not hidden work.
+    mobile.set_hidden(user, false)
     mobile.message_cliloc(user, WHO)
 
     target.pick(user, function(picked)
-        if picked.kind ~= "object" then
+        -- The cursor may have been open while the healer died.
+        if picked.kind ~= "object" or mobile.is_dead(user) then
             return
         end
 

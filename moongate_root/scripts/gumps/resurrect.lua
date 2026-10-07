@@ -13,7 +13,7 @@
 --   accept(player, response, args)  the Continue button; args.ankh is the ankh,
 --                                    args.healer the healer that offered,
 --                                    args.bandager the player whose bandages raised it:
---                                    no reach to keep and no fame lost
+--                                    no reach to keep, as ModernUO's
 --   cancel(player, response, args)   the Cancel button: nothing happens
 -- ==============================================================================
 
@@ -122,8 +122,7 @@ function resurrect.accept(player, response, args)
 
         local stats = mobile.stats(player)
 
-        -- A player's bandages cost no fame: only a healer NPC and an ankh take their tenth.
-        if stats and stats.fame > 0 and not args.bandager then
+        if stats and stats.fame > 0 then
             mobile.set_stats(player, { fame = stats.fame - math.floor(stats.fame / fame_tenth) })
         end
 
