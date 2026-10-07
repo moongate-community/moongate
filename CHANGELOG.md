@@ -2,6 +2,14 @@
 
 ## [0.15.0](https://github.com/moongate-community/moongate/compare/v0.14.0...v0.15.0) (2026-10-07)
 
+### Upgrade notes
+
+- Nine new world migrations, `0017_mobile_criminal.sql` to `0025_mobile_murder_counts.sql` (criminal flag, jail sentences, bulletin messages, deferred container foreign key, book attachment claims, stat locks, murder counts): run `mgctl init <root>` and then `mgctl migrate apply --root-directory <root> --target world` before starting the server, or set `persistence.auto_apply_migrations = true`.
+- `mgctl init` adds the files a root lacks and never replaces one that is there. To get what changed in files a 0.14.0 root already has, delete the ones you did not edit and run `mgctl init` again: `templates/items`, `templates/mobiles` (every creature template now carries `flee_at`, and `archerguard` is new), `templates/gumps`, `templates/books`, `templates/decorations` and `scripts/`.
+- New configuration sections, all with defaults: `[ultima.skills]`, `[ultima.combat]`, `[ultima.crime]`, `[ultima.murder]`, `[ultima.jail]`, `[ultima.bulletin_boards]`, `[ultima.bank]`. The server configuration page lists every key.
+- Players now fight, die and come back as ghosts at an ankh or a healer. Creatures that go for everyone (the `monster` script) attack players and townsfolk, and the guards kill them. A criminal player is still only stood on by the guards.
+- Most of the new gameplay was not tried with a real client yet; death, healers, monsters and the books were.
+
 
 ### Features
 
