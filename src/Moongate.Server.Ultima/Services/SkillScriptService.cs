@@ -57,4 +57,16 @@ public sealed class SkillScriptService : ISkillScriptService, IMoongateStartupSe
 
         return _engine.CallMember($"{SkillsDirectory}/{name}.lua", name, UseFunction, (long)user.Id.Value);
     }
+
+    public ScriptResult Call(SkillType skill, string function, params object?[] args)
+    {
+        if (!_running || !Enum.IsDefined(skill))
+        {
+            return ScriptResult.Missing;
+        }
+
+        var name = EnumNameUtils.Format(skill);
+
+        return _engine.CallMember($"{SkillsDirectory}/{name}.lua", name, function, args);
+    }
 }

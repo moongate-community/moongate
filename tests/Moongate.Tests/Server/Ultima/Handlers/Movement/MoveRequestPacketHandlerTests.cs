@@ -399,6 +399,36 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_AStepTheStealthAllowed_KeepsThePlayerHidden_ThenTheNextStepShowsIt()
+    {
+        await EnterAsync();
+        _aria.Hidden = true;
+        _aria.AllowedStealthSteps = 1;
+
+        await StepAsync(DirectionType.East, 0);
+        Assert.True(_aria.Hidden);
+        Assert.Empty(_speech.ToldClilocs);
+
+        _time.Advance(TimeSpan.FromMilliseconds(400));
+        await StepAsync(DirectionType.East, 1);
+
+        Assert.False(_aria.Hidden);
+        Assert.Equal([(_aria, MoveRequestPacketHandler.RevealedCliloc, "")], _speech.ToldClilocs);
+    }
+
+    [Fact]
+    public async Task Handle_ARunningStep_ShowsAHiddenPlayer_ThoughStealthAllowedMoreSteps()
+    {
+        await EnterAsync();
+        _aria.Hidden = true;
+        _aria.AllowedStealthSteps = 5;
+
+        await StepAsync(DirectionType.East, 0, true);
+
+        Assert.False(_aria.Hidden);
+    }
+
+    [Fact]
     public async Task Handle_ATurnOrARefusedStepOfAHiddenPlayer_KeepsItHidden()
     {
         await EnterAsync();

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"4cb3d94cb6313a926ffa4e64b1c7040844600f0287d601b4fab587064f873f86","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"541ee026ef9cdf2c99e9f611636e63fcce30c9d08c6abbb9137fb758a7fabb4e","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 83 completati, 🟡 54 parzialmente completati, ❌ 132 non ancora realizzati.
+**269 sistemi:** ✅ 83 completati, 🟡 55 parzialmente completati, ❌ 131 non ancora realizzati.
 
 **Copertura: 31%** dei sistemi completati, **41%** contando un sistema parzialmente completato come metà.
 
@@ -56,7 +56,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Crimini, timer criminale e conteggio degli omicidi | 🟡 | Flag criminale con relativo timer, salvato con il mobile; attaccare un innocente o saccheggiare il cadavere di uno rende criminali. Una vittima segnala i suoi assassini in un gump: uccisioni e omicidi a breve termine, cinque rendono assassino con il nome rosso, dimenticati con il tempo (8 e 40 ore). Ancora niente furti o altri crimini |
 | Fame e sete | ✅ | Entrambe da 0 a 20 e in diminuzione nel tempo: un giocatore affamato non recupera punti vita, uno assetato non recupera stamina; il cibo si mangia, le bevande si bevono un sorso alla volta |
 | Veleno | ❌ | |
-| Nascondersi e furtività | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) nasconde un giocatore fino al suo primo passo; nessuna Stealth, e parlare o essere colpiti non lo rivela ancora |
+| Nascondersi e furtività | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) nasconde un giocatore fino al suo primo passo, [Stealth](scripting/shipped-scripts.md#stealthlua) gli lascia fare alcuni passi inosservato; parlare o essere colpiti non lo rivela ancora |
 | Morte, cadaveri, fantasmi e resurrezione | 🟡 | Un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill`: cadavere con ciò che trasportava, animazione e suono di morte, decadimento dopo 7 minuti. Un giocatore resta come fantasma (nascosto ai vivi se non in modalità guerra, sentito come oOo, senza combattere, usare abilità o sollevare oggetti) e viene resuscitato a un ankh o da un guaritore (per un decimo della sua fama), con `.resurrect` o `mobile.resurrect`. Niente ossa |
 | Protezione dei giovani giocatori | ❌ | |
 | Denunce di omicidio e bacheche delle taglie | 🟡 | Il gump di denuncia che una vittima riceve dopo la morte funziona, con i conteggi che aggiunge; niente taglie né bacheche |
@@ -120,7 +120,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Addomesticamento e conoscenza degli animali | ❌ | |
 | Guarigione e veterinaria | 🟡 | La [benda](scripting/shipped-scripts.md#bandagelua) pulita cura un giocatore o una creatura (Healing e Anatomy, Veterinary e Animal Lore) e resuscita un fantasma; niente veleno, niente sanguinamento, niente animali |
 | Scassinamento, rimozione delle trappole | 🟡 | Il [grimaldello](scripting/shipped-scripts.md#lockpicklua-and-treasure_chestlua) scassina un oggetto chiuso (i forzieri del tesoro dei dungeon nascono chiusi); niente trappole, quindi niente rimozione. Le porte si chiudono e si aprono con la loro chiave |
-| Frugare e rubare | ❌ | |
+| Frugare e rubare | 🟡 | [Snooping](scripting/shipped-scripts.md#snoopinglua) apre lo zaino di un altro mobile con un doppio clic; niente furto |
 | Inseguimento, individuazione dei nascosti, medicina legale, parlare con gli spiriti | 🟡 | [Individuazione dei nascosti e medicina legale](scripting/shipped-scripts.md#the-lore-skills) funzionano (niente trappole, niente gilda dei ladri); niente inseguimento, niente parlare con gli spiriti |
 | Abilità del bardo: musicalità, pacificazione, provocazione, discordanza | ❌ | |
 | Abilità di conoscenza: anatomia, conoscenza delle armi, identificazione degli oggetti, valutazione dell'intelligenza, identificazione dei sapori | 🟡 | [Anatomia e valutazione dell'intelligenza](scripting/shipped-scripts.md#the-lore-skills) leggono le caratteristiche di un bersaglio; niente conoscenza delle armi (manca la durabilità), niente identificazione degli oggetti, niente identificazione dei sapori |

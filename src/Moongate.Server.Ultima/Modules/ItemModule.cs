@@ -57,6 +57,7 @@ public sealed class ItemModule
     private readonly IItemTimerService? _timers;
 
     private readonly IInventoryMutationGuard? _inventory;
+    private readonly IContainerViewService? _views;
 
     public ItemModule(
         IItemService items,
@@ -75,9 +76,11 @@ public sealed class ItemModule
         ILootService? loot = null,
         IEquipmentService? equipment = null,
         IItemTimerService? timers = null,
-        IInventoryMutationGuard? inventory = null
+        IInventoryMutationGuard? inventory = null,
+        IContainerViewService? views = null
     )
     {
+        _views = views;
         _inventory = inventory;
         _timers = timers;
         _equipment = equipment;
@@ -996,6 +999,31 @@ public sealed class ItemModule
     private GameSession? OwnerSession(ItemEntity item)
     {
         return _items.GetOwner(item) is { } owner ? SessionOf(owner) : null;
+    }
+
+    /// <summary>
+    ///     Shows a container, and what is directly in it, to a player; <c>item.show_contents(backpack, user)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Opens the container on the player's client, with the items directly inside it, as a double click would, with no check of whether the player may: the script has decided. False for a serial that is not an item container, or a player not in the world."
+    )]
+    public bool ShowContents(long container, long player)
+    {
+        if (_views is null ||
+            !TryGetItem(container, out var item) ||
+            player is <= 0 or > uint.MaxValue ||
+            SessionOf(new Serial((uint)player)) is not { } session ||
+            _tiles is null ||
+            !_tiles.TryGetItem(item.ItemId, out var tile) ||
+            (tile.Flags & TileFlagType.Container) == 0)
+        {
+            return false;
+        }
+
+        _views.Show(session, item);
+
+        return true;
     }
 
     private GameSession? SessionOf(Serial character)

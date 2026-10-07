@@ -71,6 +71,23 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void StealthSteps_AreSetAndRead_AndOnlyWithinRangeForAMobileInTheWorld()
+    {
+        var result = Run(
+            "return mobile.stealth_steps(2), mobile.set_stealth_steps(2, 8), mobile.stealth_steps(2), mobile.set_stealth_steps(2, -1), mobile.set_stealth_steps(2, 1001), mobile.set_stealth_steps(999, 3), mobile.stealth_steps(999)"
+        );
+
+        Assert.Equal(0, result[0].Read<int>());
+        Assert.True(result[1].Read<bool>());
+        Assert.Equal(8, result[2].Read<int>());
+        Assert.False(result[3].Read<bool>());
+        Assert.False(result[4].Read<bool>());
+        Assert.False(result[5].Read<bool>());
+        Assert.Equal(LuaValue.Nil, result[6]);
+        Assert.Equal(8, _aria.AllowedStealthSteps);
+    }
+
+    [Fact]
     public void IsFemale_IsTrueOnlyForAFemaleMobile_PlayerOrNpc()
     {
         _aria.Gender = GenderType.Female;

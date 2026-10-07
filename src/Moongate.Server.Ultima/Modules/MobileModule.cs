@@ -34,6 +34,7 @@ namespace Moongate.Server.Ultima.Modules;
 public sealed class MobileModule
 {
     private const double TenthsPerPoint = 10.0;
+    private const int MaximumStealthSteps = 1000;
 
     private readonly IMobileService _mobiles;
     private readonly ITeleportService _teleports;
@@ -122,6 +123,37 @@ public sealed class MobileModule
     public string? Name(long serial)
     {
         return TryGetMobile(serial, out var mobile) ? mobile.Name : null;
+    }
+
+    /// <summary>
+    ///     Gets how many steps a hidden player may still take unseen; <c>mobile.stealth_steps(who)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "How many more steps the mobile may take hidden before a step shows it, as the Stealth skill gave them; 0 for none, nil for a mobile not in the world."
+    )]
+    public int? StealthSteps(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? mobile.AllowedStealthSteps : null;
+    }
+
+    /// <summary>
+    ///     Sets how many steps a hidden player may take unseen; <c>mobile.set_stealth_steps(who, 8)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Sets how many steps the hidden mobile may take before a step shows it (0 to 1000); hiding or showing it again clears them, and running always shows it. False for a mobile not in the world or a number out of range."
+    )]
+    public bool SetStealthSteps(long serial, int steps)
+    {
+        if (steps is < 0 or > MaximumStealthSteps || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        mobile.AllowedStealthSteps = steps;
+
+        return true;
     }
 
     /// <summary>

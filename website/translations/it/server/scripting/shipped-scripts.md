@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"f6a344c00d4c0b2d9016e85b77b2852cd6906671dafc159af17cd808039d483a","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"2197bd5e7151ba9f7ad6f44a09e0707f86dea87861e646ff8860cd5023ea1858","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -211,6 +211,40 @@ scelto viene curato, o resuscitato.
 Non ci sono ancora veleno e sanguinamento, quindi nessuna cura per essi; e il terreno dove un fantasma viene
 resuscitato non viene controllato, come non lo è a un ankh.
 
+## stealth.lua
+
+`scripts/skills/stealth.lua` è lo script di Stealth, come quello classico di ModernUO. Un giocatore nascosto usa
+l'abilità e, se il controllo riesce, può fare alcuni passi senza essere mostrato: un decimo della sua Stealth in passi,
+almeno uno (`mobile.set_stealth_steps`; il server li conta in `MoveRequestPacketHandler`). Correre lo mostra sempre.
+Nascondersi o essere mostrati di nuovo azzera i passi.
+
+- **Prima del controllo:** chi non è nascosto riceve l'invito a nascondersi prima (502725); chi ha meno di 80 punti di
+  Hiding "non è nascosto abbastanza bene" (502726), e chi ha un valore di armatura (`combat.armor_rating`) di 26 o più "non
+  può sperare di muoversi in silenzio" (502727): entrambi vengono mostrati.
+- **Il controllo** va da -20 a 80 punti, ciascuno aumentato del doppio del valore di armatura. Un successo legge "You begin
+  to move quietly." (502730); un fallimento legge "You fail in your attempt to move unnoticed." (502731) e mostra il
+  giocatore. L'abilità aspetta 10 secondi in ogni caso.
+- **Non c'è ancora:** le regole di Stealth delle versioni successive (il costo dei passi per armatura, il furtivo in sella).
+
+## snooping.lua
+
+`scripts/skills/snooping.lua` è lo script di Snooping, come quello di ModernUO. Non si usa dalla finestra delle abilità:
+un doppio clic sullo zaino di un altro mobile non lo apre, il server chiama `on_snoop(user, owner, container)` di questo
+script (`ISkillScriptService.Call`).
+
+- **Regole:** entro una casella dal proprietario (lo staff no); niente se il proprietario è morto; un game master o un
+  amministratore non si può frugare, e nemmeno un giocatore invulnerabile ("You cannot perform negative acts on your
+  target."). Un PNG in una regione sorvegliata di una mappa diversa da Felucca si fruga solo se non è umano, oppure
+  attaccabile, oppure assassino.
+- **Un giocatore che non è staff** perde 4 di karma ed è notato dai giocatori entro 8 caselle ("You notice <nome>
+  attempting to peek into <proprietario>'s belongings."): sempre sotto 100 punti di Snooping, con una probabilità pari ai
+  punti su cento di passare inosservato.
+- **Il controllo** va da 0 a 100 punti: un successo apre lo zaino sul client del giocatore (`item.show_contents`); un
+  fallimento legge "You failed to peek into the container." e mostra il giocatore, più probabilmente quanto meno ha di
+  Hiding. Lo staff vede sempre.
+- **Non c'è ancora:** le trappole dei contenitori. Gli oggetti visti non si possono sollevare: il sollevamento di un
+  oggetto che il giocatore non possiede è rifiutato come prima.
+
 ## lockpick.lua e treasure_chest.lua
 
 `scripts/items/lockpick.lua` è lo script dei grimaldelli (`0x14fb`, `0x14fc`, `0x14fd` e `0x14fe`,
@@ -317,8 +351,8 @@ l'abilità.
 
 In entrambi i casi attende prima di un'altra abilità il `delay` di `hiding` in
 [`data/skills.toml`](../data-files/skills.md), 10 secondi. Il primo passo lo mostra di nuovo, con "Sei stato
-rivelato!" (500814): il server lo fa per ogni giocatore nascosto di un account regolare, perché
-non c'è ancora Stealth; girarsi sul posto non lo fa. Lo staff si nasconde per osservare e resta nascosto.
+rivelato!" (500814): il server lo fa per ogni giocatore nascosto di un account regolare, a
+meno che [Stealth](#stealthlua) non abbia permesso il passo; girarsi sul posto non lo fa. Lo staff si nasconde per osservare e resta nascosto.
 Parlare, essere colpiti e la vista di chi sta vicino non lo mostrano ancora.
 
 ## Props di rigenerazione

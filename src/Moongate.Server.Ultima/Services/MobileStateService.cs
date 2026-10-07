@@ -341,6 +341,7 @@ public sealed class MobileStateService : IMobileStateService
         }
 
         mobile.Hidden = hidden;
+        mobile.AllowedStealthSteps = 0;
 
         if (_mobiles.IsInWorld(mobile.Id))
         {

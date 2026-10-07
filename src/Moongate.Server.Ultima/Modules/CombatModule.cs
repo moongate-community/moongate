@@ -19,9 +19,11 @@ public sealed class CombatModule
 {
     private readonly ICombatService _combat;
     private readonly IMobileService _mobiles;
+    private readonly ICombatGearService? _gear;
 
-    public CombatModule(ICombatService combat, IMobileService mobiles)
+    public CombatModule(ICombatService combat, IMobileService mobiles, ICombatGearService? gear = null)
     {
+        _gear = gear;
         _combat = combat;
         _mobiles = mobiles;
     }
@@ -73,6 +75,18 @@ public sealed class CombatModule
     public int? Range(long mobile)
     {
         return TryGet(mobile, out var who) ? _combat.RangeOf(who) : null;
+    }
+
+    /// <summary>
+    ///     Gets the armor rating of what a mobile wears; <c>combat.armor_rating(user)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The armor rating of what the mobile wears, as its status shows it: the best piece of each part of the body, each weighted by its share. 0 for none, and nil for a mobile not in the world."
+    )]
+    public int? ArmorRating(long mobile)
+    {
+        return _gear is not null && TryGet(mobile, out var who) ? _gear.ArmorRatingOf(who) : null;
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Skills;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
@@ -56,6 +57,7 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _pouch = Item(0x40000006, PouchGraphic);
 
     private readonly RecordingItemScriptService _scripts = new();
+    private readonly StubSkillScriptService _skillScripts = new();
 
     private readonly ItemTemplateService _itemTemplates = new(
         new StubDataLoaderService().With(new ItemTemplate { Id = "butte", ItemId = new Serial(0x100A), UseRange = 6 })
@@ -436,13 +438,25 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task Handle_AnotherCharactersBackpack_DoesNotOpen()
+    public async Task Handle_AnotherCharactersBackpack_DoesNotOpen_ButIsSnoopedByTheScriptOfTheSkill()
     {
         await StartAsync(Aria);
 
         await UseAsync(_otherBackpack.Id);
 
         Assert.Empty(_sender.Sent);
+        Assert.Equal([$"Snooping on_snoop {Aria.Value} {Bran.Value} {_otherBackpack.Id.Value}"], _skillScripts.Called);
+    }
+
+    [Fact]
+    public async Task Handle_ABagOfAnotherCharacter_OrTheOwnBackpack_IsNotSnooped()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(_backpack.Id);
+        await UseAsync(_pouch.Id);
+
+        Assert.Empty(_skillScripts.Called);
     }
 
     [Fact]
@@ -627,7 +641,8 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             _scripts,
             _bank,
             null,
-            _itemTemplates
+            _itemTemplates,
+            _skillScripts
         );
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));

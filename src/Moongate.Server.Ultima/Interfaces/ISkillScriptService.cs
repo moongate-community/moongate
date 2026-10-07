@@ -17,4 +17,10 @@ public interface ISkillScriptService
     ///     script or the script lacks it: a skill that cannot be used directly.
     /// </summary>
     ScriptResult Use(SkillType skill, MobileEntity user);
+
+    /// <summary>
+    ///     Calls another function of the script of a skill, such as the <c>on_snoop</c> of Snooping, which is not used
+    ///     from the skill window; <see cref="ScriptResult.Missing" /> when the skill has no script or function.
+    /// </summary>
+    ScriptResult Call(SkillType skill, string function, params object?[] args);
 }

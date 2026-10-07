@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**269 systems:** ✅ 83 done, 🟡 54 partly done, ❌ 132 not built yet.
+**269 systems:** ✅ 83 done, 🟡 55 partly done, ❌ 131 not built yet.
 
 **Coverage: 31%** of the systems done, **41%** counting a partly done system as half.
 
@@ -54,7 +54,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Crimes, criminal timer and murder counts | 🟡 | The criminal flag with its timer, saved with the mobile; attacking an innocent or looting the corpse of one makes a criminal. A victim reports its killers in a gump: kills and short-term murders, five make a red murderer, forgotten with time (8 and 40 hours). No theft or other crimes yet |
 | Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
-| Hiding and stealth | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) hides a player until its first step; no Stealth, and speaking or being hit does not show it yet |
+| Hiding and stealth | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) hides a player until its first step, [Stealth](scripting/shipped-scripts.md#stealthlua) lets it take some steps unseen; speaking or being hit does not show it yet |
 | Death, corpses, ghosts and resurrection | 🟡 | An NPC or a player dies by a fight, `.kill` or `mobile.kill`: corpse with what it carried, death animation and sound, decay after 7 minutes. A player stays as a ghost (hidden from the living unless in war mode, heard as oOo, no fight, skill or lifting) and is raised at an ankh or by a healer (for a tenth of its fame), by `.resurrect` or `mobile.resurrect`. No bones |
 | Young player protection | ❌ | |
 | Murder reports and bounty boards | 🟡 | The report gump a victim gets after its death works, with the counts it adds; no bounty and no boards |
@@ -118,7 +118,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Taming and animal lore | ❌ | |
 | Healing and veterinary | 🟡 | The clean [bandage](scripting/shipped-scripts.md#bandagelua) heals a player or a creature (Healing and Anatomy, Veterinary and Animal Lore) and raises a ghost; no poison, no bleeding, no pets |
 | Lockpicking, remove trap | 🟡 | The [lockpick](scripting/shipped-scripts.md#lockpicklua-and-treasure_chestlua) picks a locked item (the dungeon treasure chests are made locked); no trap, so no remove trap. Doors lock and open with their key |
-| Snooping and stealing | ❌ | |
+| Snooping and stealing | 🟡 | [Snooping](scripting/shipped-scripts.md#snoopinglua) opens the backpack of another mobile on a double click; no stealing |
 | Tracking, detect hidden, forensics, spirit speak | 🟡 | [Detect hidden and forensic evaluation](scripting/shipped-scripts.md#the-lore-skills) work (no traps, no thieves' guild); no tracking, no spirit speak |
 | Bard skills: musicianship, peacemaking, provocation, discordance | ❌ | |
 | Lore skills: anatomy, arms lore, item ID, evaluate intelligence, taste ID | 🟡 | [Anatomy and evaluating intelligence](scripting/shipped-scripts.md#the-lore-skills) read a target's stats; no arms lore (no durability), no item ID, no taste ID |

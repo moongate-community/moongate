@@ -42,6 +42,30 @@ public sealed class SkillScriptServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task Call_AnotherFunctionOfTheTableOfTheSkill_WithItsArguments()
+    {
+        var service = Create();
+        await service.StartAsync();
+
+        service.Call(SkillType.Snooping, "on_snoop", 2L, 3L, 4L);
+
+        var call = Assert.Single(_engine.MemberCalls);
+        Assert.Equal(("skills/snooping.lua", "snooping", "on_snoop"), (call.Owner, call.Table, call.Function));
+        Assert.Equal([2L, 3L, 4L], call.Args);
+    }
+
+    [Fact]
+    public async Task Call_BeforeTheStartOrANumberThatIsNoSkill_IsMissing()
+    {
+        var service = Create();
+
+        Assert.Equal(ScriptResultKind.Missing, service.Call(SkillType.Snooping, "on_snoop").Kind);
+        await service.StartAsync();
+        Assert.Equal(ScriptResultKind.Missing, service.Call(unchecked((SkillType)999), "on_snoop").Kind);
+        Assert.Empty(_engine.MemberCalls);
+    }
+
+    [Fact]
     public async Task Use_BeforeTheStartOrAfterTheStop_IsMissing()
     {
         var service = Create();

@@ -8,6 +8,7 @@ using Moongate.Scripting.Utils;
 using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Types.Items;
+using Moongate.Server.Ultima.Types.Combat;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Combat;
@@ -20,6 +21,7 @@ namespace Moongate.Tests.Server.Ultima.Modules;
 public sealed class CombatModuleTests
 {
     private readonly RecordingCombatService _combat = new();
+    private readonly StubCombatGearService _gear = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
 
     private readonly MobileEntity _aria = new()
@@ -149,11 +151,22 @@ public sealed class CombatModuleTests
         Assert.Equal(LuaValue.Nil, Run("return combat.target(999)")[0]);
     }
 
+    [Fact]
+    public void ArmorRating_IsWhatTheGearServiceSays_AndNilForAMobileNotInTheWorld()
+    {
+        _gear.Armor[ArmorZoneType.Chest] = 30;
+
+        var result = Run("return combat.armor_rating(2), combat.armor_rating(999)");
+
+        Assert.Equal(30, result[0].Read<int>());
+        Assert.True(result[1].Type == LuaValueType.Nil);
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new CombatModule(_combat, _mobiles));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new CombatModule(_combat, _mobiles, _gear));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }
