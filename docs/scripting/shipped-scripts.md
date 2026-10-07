@@ -164,6 +164,30 @@ Once empty, a pitcher, a glass or a mug turns into its empty graphic, is renamed
 is gone. A quenched player reads "You are simply too full to drink any more!" and drinks nothing.
 Refilling, pouring and drunkenness are not there yet.
 
+## bandage.lua
+
+`scripts/items/bandage.lua` is the script of the clean bandage (`0x0e21_clean_bandage`, `script_id = "bandage"`),
+as ModernUO's classic Healing. Double click it, pick who it is for and wait: the one picked is healed, or raised.
+
+- **Reach:** the bandage in the backpack, and who it is for within 1 tile; farther, the client's "too far away".
+  The bandage is taken out of the stack when the healing begins. A second bandage of the same healer replaces the
+  first.
+- **The wait:** 3 seconds for a healer with 100 dexterity or more, 4 from 40, 5 under it; 5 more to raise a
+  ghost; 9.4 + 0.6 × (120 − dexterity) / 10 on itself. The healer has to stay within 1 tile and alive, or the
+  healing is lost with its bandage.
+- **A living one that is hurt:** it works with a chance of (Healing + 10) %, and heals from
+  Anatomy / 5 + Healing / 5 + 3 up to Anatomy / 5 + Healing / 2 + 10 points; a roll under 1 heals 1 and says the
+  bandages barely helped. A creature with the body of a monster or an animal is a case for Veterinary and Animal
+  Lore, with a point more per 100 of its hit points. One that is not hurt reads "That being is not damaged!" and
+  keeps the bandage.
+- **A ghost:** it needs 80 points of Healing and of Anatomy and a chance of (Healing − 68) / 50; then the ghost
+  is asked in the gump of the ankhs whether to come back. It costs no fame, as a healer NPC does.
+- **Skills:** both are tried for a rise after a healing, whether the roll worked or not, and after a raise when
+  both are at 80 or more.
+
+There is no poison and no bleeding in the game yet, so there is no cure; and the ground where a ghost is raised is
+not checked, as it is not at an ankh.
+
 ## dyes.lua and dye_tub.lua
 
 `scripts/items/dyes.lua` and `scripts/items/dye_tub.lua` dye clothes in two steps, as ModernUO does;

@@ -128,5 +128,6 @@ adds the three columns.
 ## See also
 
 - [`hiding.lua`](scripting/shipped-scripts.md#hidinglua)
+- [`bandage.lua`](scripting/shipped-scripts.md#bandagelua): Healing, with the bandages
 - [Server configuration](server-configuration.md): `[ultima.skills]`
 - [Roadmap](roadmap.md): 1.2

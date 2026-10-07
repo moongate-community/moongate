@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**269 systems:** ✅ 83 done, 🟡 49 partly done, ❌ 137 not built yet.
+**269 systems:** ✅ 83 done, 🟡 50 partly done, ❌ 136 not built yet.
 
 **Coverage: 31%** of the systems done, **40%** counting a partly done system as half.
 
@@ -116,7 +116,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | The crafts: blacksmithing, tailoring, carpentry, tinkering, alchemy, cooking, inscription, fletching, cartography | ❌ | |
 | Repairing and enhancing items | ❌ | |
 | Taming and animal lore | ❌ | |
-| Healing and veterinary | ❌ | |
+| Healing and veterinary | 🟡 | The clean [bandage](scripting/shipped-scripts.md#bandagelua) heals a player or a creature (Healing and Anatomy, Veterinary and Animal Lore) and raises a ghost; no poison, no bleeding, no pets |
 | Lockpicking, remove trap | ❌ | Doors lock and open with their key |
 | Snooping and stealing | ❌ | |
 | Tracking, detect hidden, forensics, spirit speak | ❌ | |

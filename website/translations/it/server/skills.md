@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"53833c20af5b945cdb0b6bea16bd9512b04d8419fcaf6651d6dd529caa50ffa1","title":"Skill"} -->
+<!-- translation: {"sourceHash":"76c1ab582ef75a9f00c6e441c3bc71a1838abab5d0c841a23555e63cc27edf7d","title":"Skill"} -->
 
 # Skill
 
@@ -130,5 +130,6 @@ aggiunge le tre colonne.
 ## Vedi anche
 
 - [`hiding.lua`](scripting/shipped-scripts.md#hidinglua)
+- [`bandage.lua`](scripting/shipped-scripts.md#bandagelua): Healing, con le bende
 - [Configurazione del server](server-configuration.md): `[ultima.skills]`
 - [Roadmap](roadmap.md): 1.2
