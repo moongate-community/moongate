@@ -439,6 +439,20 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SetHidden_HidingOrShowingClearsTheStealthSteps()
+    {
+        _aria.AllowedStealthSteps = 7;
+
+        _service.SetHidden(_aria, true);
+        Assert.Equal(0, _aria.AllowedStealthSteps);
+
+        _aria.AllowedStealthSteps = 7;
+        _service.SetHidden(_aria, false);
+
+        Assert.Equal(0, _aria.AllowedStealthSteps);
+    }
+
+    [Fact]
     public void SetDead_MakesAGhostHiddenFromTheLiving_TellsItsPlayerItDied_AndSetDeadFalseRaisesIt()
     {
         _aria.AccountId = new Serial(0x42);

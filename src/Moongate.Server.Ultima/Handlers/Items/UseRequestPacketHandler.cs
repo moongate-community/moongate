@@ -14,6 +14,7 @@ using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Titles;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Services;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -37,6 +38,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
     private const int DeadCliloc = 1019048;
     private const string UseFunction = "on_use";
     private const string GhostUseFunction = "on_ghost_use";
+    private const string SnoopFunction = "on_snoop";
 
     private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     private readonly IItemService _items;
@@ -52,6 +54,8 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
     private readonly IBankService? _bank;
     private readonly IInventoryMutationGuard? _inventory;
     private readonly IItemTemplateService? _templates;
+    private readonly ISkillScriptService? _skillScripts;
+    private readonly IContainerViewService _views;
 
     public UseRequestPacketHandler(
         IItemService items,
@@ -66,9 +70,13 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         IItemScriptService? scripts = null,
         IBankService? bank = null,
         IInventoryMutationGuard? inventory = null,
-        IItemTemplateService? templates = null
+        IItemTemplateService? templates = null,
+        ISkillScriptService? skillScripts = null,
+        IContainerViewService? views = null
     )
     {
+        _skillScripts = skillScripts;
+        _views = views ?? new ContainerViewService(items, layouts, sender, tooltips);
         _templates = templates;
         _inventory = inventory;
         _bank = bank;
@@ -131,6 +139,23 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
             return;
         }
 
+        // The backpack of another mobile, and a bag in it, is not opened but snooped, by the script of the skill.
+        if (_items.GetOwner(item) is { } owner &&
+            owner != session.CharacterId &&
+            _mobiles.IsInWorld(owner) &&
+            _items.GetWornRoot(item) is { Layer: LayerType.Backpack })
+        {
+            _skillScripts?.Call(
+                SkillType.Snooping,
+                SnoopFunction,
+                (long)session.CharacterId.Value,
+                (long)owner.Value,
+                (long)item.Id.Value
+            );
+
+            return;
+        }
+
         if (_items.GetOwner(item) != session.CharacterId && !CanOpenOnTheGround(session, item))
         {
             _logger.Debug(
@@ -142,16 +167,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
             return;
         }
 
-        var gump = _layouts.GetLayout(item.ItemId).Gump;
-        _sender.TrySend(session.SessionId, new DisplayContainerPacket(item.Id, gump, session.UsesHighSeasContainers()));
-        var contents = _items.GetContents(item.Id);
-        _sender.TrySend(session.SessionId, new ContainerContentPacket(contents, session.UsesContainerGrid()));
-
-        // As ModernUO and Source-X: each item shown is followed by its tooltip revision.
-        foreach (var content in contents)
-        {
-            _sender.TrySend(session.SessionId, _tooltips.Info(content));
-        }
+        _views.Show(session, item);
     }
 
     public void Use(GameSession session, Serial target)

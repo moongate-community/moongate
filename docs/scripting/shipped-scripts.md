@@ -211,6 +211,42 @@ as ModernUO's classic Healing. Double click it, pick who it is for and wait: the
 There is no poison and no bleeding in the game yet, so there is no cure; and the ground where a ghost is raised is
 not checked, as it is not at an ankh.
 
+## stealth.lua
+
+`scripts/skills/stealth.lua` is the script of Stealth, as ModernUO's classic one. A hidden player uses the skill and,
+if the check passes, may take a few steps without being shown: a tenth of its Stealth in steps, at least one
+(`mobile.set_stealth_steps`; the server counts them in `MoveRequestPacketHandler`). Running always shows the player.
+Hiding or being shown again clears the steps.
+
+- **Before the check:** a player that is not hidden is told to hide first (502725); one with under 80 points of Hiding
+  is "not hidden well enough" (502726), and one whose armor rating (`combat.armor_rating`) is 26 or more "could not hope
+  to move quietly" (502727): both are shown.
+- **The check** runs from -20 to 80 points, each raised by twice the armor rating. A success reads "You begin to move
+  quietly." (502730); a failure reads "You fail in your attempt to move unnoticed." (502731) and shows the player.
+  The skill waits 10 seconds either way.
+- **Not there yet:** the rules of Stealth of the later versions (the steps cost by armor, sneaking by a mount).
+
+## snooping.lua
+
+`scripts/skills/snooping.lua` is the script of Snooping, as ModernUO's. It is not used from the skill window: a double
+click on the backpack of another mobile does not open it, the server calls `on_snoop(user, owner, container)` of this
+script (`ISkillScriptService.Call`). It does so for the backpack and for a bag inside it, and not for a dead player.
+
+- **Rules:** within a tile of the owner (staff need not be); nothing for a dead owner; a game master or administrator
+  cannot be snooped, nor an invulnerable player ("You cannot perform negative acts on your target."; Moongate has no
+  rules of harmful acts by map yet, which this stands in for). An NPC in a guarded region of another map than Felucca is
+  snooped only when it is not human, or attackable, or a murderer: ModernUO's comment says so, though its code lets
+  anyone snoop an NPC in an active town.
+- **A player who is not staff** loses 4 karma, as ModernUO's `AwardKarma` takes a loss (more from a good name, nothing
+  under -400, never under -15000, and the loss is told), and is noticed by the players within 8 tiles ("You notice <name>
+  attempting to peek into <owner>'s belongings."): always under 100 points of Snooping, with a chance of the points in a
+  hundred of passing unnoticed.
+- **The check** runs from 0 to 100 points: a success opens the backpack on the client of the player (`item.show_contents`);
+  a failure reads "You failed to peek into the container." and shows the player, more likely the less it has of Hiding.
+  Staff always see.
+- **Not there yet:** the traps of containers. The items seen cannot be lifted: a lift of an item the player does not own is
+  refused as before.
+
 ## lockpick.lua and treasure_chest.lua
 
 `scripts/items/lockpick.lua` is the script of the lockpicks (`0x14fb`, `0x14fc`, `0x14fd` and `0x14fe`,
@@ -314,8 +350,8 @@ the skill.
 
 Either way it waits before another skill the `delay` of `hiding` in
 [`data/skills.toml`](../data-files/skills.md), 10 seconds. Its first step shows it again, with "You have
-been revealed!" (500814): the server does that for every hidden player of a regular account, since
-there is no Stealth yet; a turn on the spot does not. The staff hides to watch and stays hidden.
+been revealed!" (500814): the server does that for every hidden player of a regular account, unless
+[Stealth](#stealthlua) allowed the step; a turn on the spot does not. The staff hides to watch and stays hidden.
 Speaking, being hit and the sight of who stands near do not show it yet.
 
 ## Regeneration props
