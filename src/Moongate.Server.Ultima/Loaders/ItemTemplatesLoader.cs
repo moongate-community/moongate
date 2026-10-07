@@ -147,6 +147,7 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         child.SellPrice ??= parent.SellPrice;
         child.Decays ??= parent.Decays;
         child.DecayMinutes ??= parent.DecayMinutes;
+        child.UseRange ??= parent.UseRange;
         child.LootType ??= parent.LootType;
         // A copy, so changing one template's tags never changes its parent's or a sibling's.
         child.Tags ??= parent.Tags is null ? null : new Dictionary<string, string>(parent.Tags);

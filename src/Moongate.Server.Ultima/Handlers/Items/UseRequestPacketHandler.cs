@@ -51,6 +51,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
     private readonly IItemScriptService? _scripts;
     private readonly IBankService? _bank;
     private readonly IInventoryMutationGuard? _inventory;
+    private readonly IItemTemplateService? _templates;
 
     public UseRequestPacketHandler(
         IItemService items,
@@ -64,9 +65,11 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         IFameKarmaTitleService titles,
         IItemScriptService? scripts = null,
         IBankService? bank = null,
-        IInventoryMutationGuard? inventory = null
+        IInventoryMutationGuard? inventory = null,
+        IItemTemplateService? templates = null
     )
     {
+        _templates = templates;
         _inventory = inventory;
         _bank = bank;
         _tooltips = tooltips;
@@ -182,6 +185,15 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         return false;
     }
 
+    // Whether the character reaches what it uses on the ground: within the use range of the item's template, such as
+    // the archery butte's six tiles, else the 2 tiles of any ground item.
+    private bool CanReachToUse(MobileEntity character, ItemEntity item, ItemEntity root)
+    {
+        return _templates is not null && _templates.TryGet(item.TemplateId, out var template) && template.UseRange is { } range
+            ? _items.CanReach(character, root, range)
+            : _items.CanReach(character, root);
+    }
+
     // The item's on_use, for an item the character carries or reaches on the ground; true when the script handled the
     // double click, by returning true or by waiting, so the default action must not follow.
     private bool RunOnUse(GameSession session, ItemEntity item)
@@ -199,7 +211,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         if (_items.GetOwner(item) != character.Id &&
             (_items.GetGroundRoot(item) is not { } root ||
              !_items.IsLyingOnGround(root) ||
-             !_items.CanReach(character, root)))
+             !CanReachToUse(character, item, root)))
         {
             _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, TooFarCliloc, "", ""));
 

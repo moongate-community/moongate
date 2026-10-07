@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a367868cd8fc73d2ec9b5290649647af10f64f267d5489f78f4416bb9a8b35dd","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"784dd3c3cf7b013a2e7f57b9be43e9271bcd9228f1bd26d201910bc18165c85e","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -188,6 +188,40 @@ scelto viene curato, o resuscitato.
 
 Non ci sono ancora veleno e sanguinamento, quindi nessuna cura per essi; e il terreno dove un fantasma viene
 resuscitato non viene controllato, come non lo è a un ankh.
+
+## training_dummy.lua
+
+`scripts/items/training_dummy.lua` è lo script dei manichini da allenamento (`0x1070` e `0x1071` rivolti a sud, `0x1074`
+e `0x1075` rivolti a est), come il `TrainingDummy` di ModernUO: i template hanno `script_id = "training_dummy"`. Si fa
+doppio clic su un manichino con un'arma da mischia in mano, o a mani nude: il giocatore si gira e colpisce
+(`combat.swing`), il manichino mostra la grafica oscillante da un quarto di secondo, con il suono di un colpo, e dopo
+tre secondi torna a riposo, e l'abilità dell'arma (Wrestling per i pugni) viene provata da -25 a 25 punti, quindi può
+salire fino a 25.
+
+Un arco o una balestra non possono allenarsi su di esso ("You can't practice ranged weapons on this."), l'arma deve
+raggiungerlo (una casella, `combat.range`), un manichino che oscilla ancora fa aspettare il giocatore, e un'abilità a
+25 legge "Your skill cannot improve any further by simply practicing with a dummy.". Non c'è il controllo del
+giocatore in sella: le cavalcature non esistono ancora.
+
+## archery_butte.lua
+
+`scripts/items/archery_butte.lua` è lo script dei bersagli per il tiro con l'arco (`0x100A` rivolto a est, `0x100B`
+rivolto a sud), come l'`ArcheryButte` di ModernUO: i template hanno `script_id = "archery_butte"` e `use_range = 6`, così
+il giocatore può fare doppio clic da dove tira.
+
+- **Tiro:** con un arco o una balestra, ci si mette davanti al bersaglio, in linea con esso, a cinque o sei caselle, e
+  si fa doppio clic. Una freccia o un dardo viene speso (`combat.spend_ammo`), il giocatore tira (`combat.swing` e la
+  freccia che vola, `effect.moving`) e l'abilità dell'arma viene provata da -25 a 25 punti: può salire, e il tiro può
+  mancare. Tra due tiri allo stesso bersaglio passano due secondi. I testi dicono che cosa non va quando il giocatore sta
+  dietro, fuori linea, troppo lontano o troppo vicino.
+- **Punteggio:** un tiro a segno vale 50 (il centro, uno su dieci), 10, 5 o 2 punti, e al giocatore viene detto il suo
+  totale a quel bersaglio e quanti tiri ha fatto. La freccia può spezzarsi, più probabilmente quante più munizioni
+  sono conficcate nel bersaglio (il 2 per cento ciascuna), e allora vale di più e va persa. I testi sono detti a chi
+  tira, non agli altri.
+- **Raccolta:** doppio clic sul bersaglio entro una casella, quando ci sono frecce o dardi conficcati (prop
+  `butte.arrows` e `butte.bolts`): vanno nello zaino e i punteggi vengono azzerati.
+
+I bersagli per freccette non esistono ancora.
 
 ## dyes.lua e dye_tub.lua
 

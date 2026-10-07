@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**269 systems:** ✅ 83 done, 🟡 50 partly done, ❌ 136 not built yet.
+**269 systems:** ✅ 83 done, 🟡 51 partly done, ❌ 135 not built yet.
 
 **Coverage: 31%** of the systems done, **40%** counting a partly done system as half.
 
@@ -127,7 +127,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Resource regions (ore, wood, fish per area, regrowing) | ❌ | |
 | Resource processing: smelting, looms, spinning wheels, hides | ❌ | |
 | Skill classes and caps (skill total, stat total) | 🟡 | The skill total stops at `ultima.skills.total_cap` (700.0) and the stat total at `ultima.skills.stat_cap` (225), both lowering what is locked down; no classes |
-| Training objects: dummies, pickpocket dips, archery buttes | ❌ | |
+| Training objects: dummies, pickpocket dips, archery buttes | 🟡 | The [training dummies](scripting/shipped-scripts.md#training_dummylua) swing back and teach a weapon's skill up to 25, and the [archery buttes](scripting/shipped-scripts.md#archery_buttelua) take arrows and score; no pickpocket dips, no dart boards |
 
 ## NPCs
 

@@ -90,7 +90,10 @@ another keeps at it. A player that is hit does not fight back by itself: it clic
 
 ## Lua
 
-The `combat` module: `combat.attack(attacker, target)`, `combat.stop(mobile)` and `combat.target(mobile)`.
+The `combat` module: `combat.attack(attacker, target)`, `combat.stop(mobile)`, `combat.target(mobile)` and
+`combat.range(mobile)`; and, for what practices on a dummy or a butte, `combat.weapon(mobile)` (the skill, whether it is
+a bow, its range, its projectile and ammunition), `combat.swing(mobile, x, y)` (turns and plays the swing, no fight)
+and `combat.spend_ammo(mobile)` (takes an arrow or a bolt).
 
 ## Weapons and armor
 

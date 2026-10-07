@@ -481,6 +481,26 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedDummiesAndButtes_UseTheirScripts_AndTheButtesAreShotFromAfar()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        Assert.All(
+            new[] { "0x1070_training_dummy", "0x1071_training_dummy", "0x1074_training_dummy", "0x1075_training_dummy" },
+            id => Assert.Equal("training_dummy", items[id].ScriptId)
+        );
+        Assert.All(
+            new[] { "0x100a_archery_butte", "0x100b_archery_butte" },
+            id => Assert.Equal(("archery_butte", (int?)6), (items[id].ScriptId, items[id].UseRange))
+        );
+
+        foreach (var script in new[] { "training_dummy.lua", "archery_butte.lua" })
+        {
+            Assert.True(File.Exists(Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", script)));
+        }
+    }
+
+    [Fact]
     public async Task ShippedBandage_UsesTheBandageScript_AndTheScriptIsThere()
     {
         var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();

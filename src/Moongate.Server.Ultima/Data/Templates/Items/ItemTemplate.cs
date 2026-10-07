@@ -14,6 +14,7 @@ public class ItemTemplate
 {
     // The numbers of the combat fields are kept within what a client and the formulas can take.
     private const int MaximumCombatNumber = 65535;
+    private const int MaximumUseRange = 24;
     private const int MaximumSpeed = 500;
     private const int MaximumArmorRating = 500;
 
@@ -155,6 +156,12 @@ public class ItemTemplate
     public int? DecayMinutes { get; set; }
 
     /// <summary>
+    ///     How many tiles away a player may double click the item lying on the ground to run its <c>on_use</c>, from 1
+    ///     to 24, as the archery butte is shot from five or six tiles. Unset: 2, as ModernUO's reach of an item.
+    /// </summary>
+    public int? UseRange { get; set; }
+
+    /// <summary>
     ///     What happens to the item when its owner dies. Unset is <see cref="Types.Templates.LootType.Regular" />.
     /// </summary>
     public LootType? LootType { get; set; }
@@ -235,6 +242,11 @@ public class ItemTemplate
         if (DecayMinutes < 1)
         {
             throw Invalid("decay_minutes", "must be at least 1");
+        }
+
+        if (UseRange is < 1 or > MaximumUseRange)
+        {
+            throw Invalid("use_range", $"must be from 1 to {MaximumUseRange}");
         }
 
         if (DamageMin is < 0 or > MaximumCombatNumber)

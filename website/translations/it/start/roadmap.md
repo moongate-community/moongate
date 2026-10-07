@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"10072022044e274bea3e40284e3372bb8cc394437d0483007fd0dafa95488d9f","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"54f0320f96984e90353f834931d0db15645a71cfbc912ef0e61022c6421abc13","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -52,7 +52,7 @@ separatamente: arrivano con la priorità che dà loro la regola.
 
 | Contenuto | Attende | Priorità |
 | --- | --- | --- |
-| Manichini da allenamento, bersagli di tiro con l'arco e bersagli per freccette (107 posizionati) | Incremento delle abilità (1.2) | 2 |
+| Bersagli per freccette (i manichini e i bersagli per il tiro con l'arco ora funzionano) | Abilità Throwing (5.4) | 8 |
 | Serrature e scassinamento dei forzieri del tesoro e dei contenitori cittadini | Verifica delle abilità (1.2) | 2 |
 | Trappole dei forzieri e le 490 trappole posizionate nei dungeon | Danno (2.1) | 4 |
 | Bacchette nei forzieri del tesoro | Incantesimi (4.3) | 7 |

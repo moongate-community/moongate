@@ -5,7 +5,9 @@ using Moongate.Core.Primitives;
 using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
 using Moongate.Scripting.Utils;
+using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Combat;
@@ -49,6 +51,62 @@ public sealed class CombatModuleTests
         _combat.Allows = false;
 
         Assert.False(Run("return combat.attack(256, 2)")[0].Read<bool>());
+    }
+
+    [Fact]
+    public void Weapon_IsFists_WhenTheMobileHoldsNone_AndTheMeleeRangeIsTheServicesOwn()
+    {
+        _combat.Range = 2;
+
+        var weapon = Run("return combat.weapon(2)")[0].Read<LuaTable>();
+
+        Assert.Equal(("wrestling", false, 2), (weapon["skill"].Read<string>(), weapon["ranged"].Read<bool>(), weapon["range"].Read<int>()));
+        Assert.True(weapon["projectile"].Type == LuaValueType.Nil);
+    }
+
+    [Theory]
+    [InlineData(WeaponType.Bow, "archery", 0x0F42, "arrow")]
+    [InlineData(WeaponType.Crossbow, "archery", 0x1BFE, "bolt")]
+    public void Weapon_ABowOrACrossbow_TellsWhatItShoots(WeaponType type, string skill, int projectile, string ammo)
+    {
+        _combat.Weapon = new WeaponInfo(SkillType.Archery, type, true, 9, 41, 25);
+
+        var weapon = Run("return combat.weapon(2)")[0].Read<LuaTable>();
+
+        Assert.Equal(
+            (skill, true, projectile, ammo),
+            (weapon["skill"].Read<string>(), weapon["ranged"].Read<bool>(), weapon["projectile"].Read<int>(), weapon["ammo"].Read<string>())
+        );
+    }
+
+    [Fact]
+    public void Weapon_AMeleeWeapon_NamesItsSkill()
+    {
+        _combat.Weapon = new WeaponInfo(SkillType.MaceFighting, WeaponType.Mace, false, 5, 33, 35);
+
+        var weapon = Run("return combat.weapon(2)")[0].Read<LuaTable>();
+
+        Assert.Equal(("mace_fighting", false), (weapon["skill"].Read<string>(), weapon["ranged"].Read<bool>()));
+    }
+
+    [Fact]
+    public void Swing_PlaysTheSwingTowardsAPlace_AndSpendAmmoAsksTheService()
+    {
+        Assert.True(Run("return combat.swing(2, 1590, 1600)")[0].Read<bool>());
+        Assert.Equal([(_aria, 1590, 1600)], _combat.Swings);
+
+        Assert.True(Run("return combat.spend_ammo(2)")[0].Read<bool>());
+        _combat.HasAmmo = false;
+        Assert.False(Run("return combat.spend_ammo(2)")[0].Read<bool>());
+        Assert.Equal([_aria, _aria], _combat.Spent);
+    }
+
+    [Fact]
+    public void WeaponSwingAndSpendAmmo_OfAMobileNotInTheWorld_AreNilOrFalse()
+    {
+        Assert.True(Run("return combat.weapon(999)")[0].Type == LuaValueType.Nil);
+        Assert.False(Run("return combat.swing(999, 1, 1)")[0].Read<bool>());
+        Assert.False(Run("return combat.spend_ammo(999)")[0].Read<bool>());
     }
 
     [Theory]

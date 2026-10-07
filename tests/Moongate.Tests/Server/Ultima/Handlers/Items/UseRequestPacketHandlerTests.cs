@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -55,6 +56,10 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _pouch = Item(0x40000006, PouchGraphic);
 
     private readonly RecordingItemScriptService _scripts = new();
+
+    private readonly ItemTemplateService _itemTemplates = new(
+        new StubDataLoaderService().With(new ItemTemplate { Id = "butte", ItemId = new Serial(0x100A), UseRange = 6 })
+    );
     private readonly StubBankService _bank = new();
 
     private SessionFixture _fixture = null!;
@@ -326,6 +331,20 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         Assert.Empty(_scripts.Calls);
         var message = Assert.IsType<LocalizedMessagePacket>(Assert.Single(_sender.Sent));
         Assert.Equal(500446, message.Cliloc);
+    }
+
+    [Theory, InlineData(1006, true), InlineData(1007, false)]
+    public async Task Handle_AScriptedGroundItemWithAUseRange_RunsFromAsFarAsItSays(int x, bool reached)
+    {
+        var butte = new ItemEntity { Id = new(0x40000011), TemplateId = "butte", ItemId = 0x100A, Amount = 1 };
+        butte.PlaceOnGround(MapType.Felucca, new Point3D(x, 1000, 0));
+        _items.Add([butte]);
+        _scripts.Scripted.Add("butte");
+        await StartAsync(Aria);
+
+        await UseAsync(butte.Id);
+
+        Assert.Equal(reached ? ["0x40000011 on_use 2"] : [], _scripts.Calls);
     }
 
     [Theory, InlineData(1002, true), InlineData(1003, false)]
@@ -606,7 +625,9 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             TestTooltips.Create(_items, _mobiles),
             Titles(),
             _scripts,
-            _bank
+            _bank,
+            null,
+            _itemTemplates
         );
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));

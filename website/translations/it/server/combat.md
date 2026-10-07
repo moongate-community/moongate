@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ccc48ca6da212fcdc0b4a099889e11c460cdc3b192d2b7237f5ca03378384644","title":"Combattimento"} -->
+<!-- translation: {"sourceHash":"eb9ef98909cd0d477a6bbee39c69aeca8b6ccb50ca1eb6cf1336bffbdbd38c63","title":"Combattimento"} -->
 
 # Combattimento
 
@@ -93,7 +93,10 @@ un altro continua con quello. Un giocatore colpito non risponde da solo: clicca.
 
 ## Lua
 
-Il modulo `combat`: `combat.attack(attacker, target)`, `combat.stop(mobile)` e `combat.target(mobile)`.
+Il modulo `combat`: `combat.attack(attacker, target)`, `combat.stop(mobile)`, `combat.target(mobile)` e
+`combat.range(mobile)`; e, per ciò che si allena su un manichino o un bersaglio, `combat.weapon(mobile)` (l'abilità, se
+è un arco, la sua portata, il proiettile e le munizioni), `combat.swing(mobile, x, y)` (gira e mostra il colpo, senza
+combattimento) e `combat.spend_ammo(mobile)` (toglie una freccia o un dardo).
 
 ## Armi e armature
 
